@@ -87,7 +87,7 @@ function Get-Executable {
 function Install-WingetPackage {
     param([string]$Id, [string]$Label)
     $winget = Get-Executable @('winget')
-    if (-not $winget) { throw "Windows Package Manager is required to install $Label automatically. Install App Installer, then run autorun.bat again." }
+    if (-not $winget) { throw "Windows Package Manager is required to install $Label automatically. Install App Installer, then run launcher.bat again." }
     Add-Log INFO "Installing $Label…"
     Render-Dashboard
     & $winget install --id $Id --exact --silent --accept-package-agreements --accept-source-agreements
@@ -111,7 +111,7 @@ function Ensure-Directories {
 function Ensure-Dependencies {
     $node = Get-Executable @('node')
     if (-not $node) { Install-WingetPackage 'OpenJS.NodeJS.LTS' 'Node.js LTS'; $node = Get-Executable @('node') }
-    if (-not $node) { throw 'Node.js is still unavailable after installation. Open a new terminal and run autorun.bat again.' }
+    if (-not $node) { throw 'Node.js is still unavailable after installation. Open a new terminal and run launcher.bat again.' }
     $nodeVersion = [version]((& $node --version).Trim().TrimStart('v'))
     if ($nodeVersion -lt [version]'20.19.0') { Install-WingetPackage 'OpenJS.NodeJS.LTS' 'Node.js LTS'; $node = Get-Executable @('node') }
     Add-Log OK "Node.js $((& $node --version).Trim())"
@@ -122,7 +122,7 @@ function Ensure-Dependencies {
 
     $python = Get-Executable @('python', 'py')
     if (-not $python) { Install-WingetPackage 'Python.Python.3.12' 'Python 3.12'; $python = Get-Executable @('python', 'py') }
-    if (-not $python) { throw 'Python is still unavailable after installation. Open a new terminal and run autorun.bat again.' }
+    if (-not $python) { throw 'Python is still unavailable after installation. Open a new terminal and run launcher.bat again.' }
     & $python -c "from zoneinfo import ZoneInfo; ZoneInfo('Asia/Tehran')"
     if ($LASTEXITCODE -ne 0) {
         & $python -m pip install --disable-pip-version-check --quiet tzdata
@@ -138,7 +138,8 @@ function Ensure-NpmPackages {
         (Join-Path $ChartRoot 'node_modules\vite'),
         (Join-Path $ChartRoot 'node_modules\playwright-core')
     )
-    if ($requiredPackages | ForEach-Object { Test-Path -LiteralPath $_ } | Where-Object { -not $_ }) {
+    $missingPackages = @($requiredPackages | Where-Object { -not (Test-Path -LiteralPath $_) })
+    if ($missingPackages.Count -gt 0) {
         Add-Log WARN 'Node packages are incomplete; restoring the locked dependencies.'
     } elseif (Test-Path -LiteralPath (Join-Path $ChartRoot 'node_modules')) {
         Add-Log OK 'Node packages are ready.'

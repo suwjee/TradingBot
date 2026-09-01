@@ -12,6 +12,12 @@ const config = readFileSync(new URL("../vite.config.js", import.meta.url), "utf8
 const id = "candle-history TEST 5S from 2026-01-01 00-00-00 to 2026-01-01 00-01-00 .json";
 const request = { id, timeframe: 30, from: 1, to: 30, direction: "bullish", blueLines: true };
 const files = ["reaction_bridge.py", "Reaction-detection-new.py", "blue_line.py", "a_detector.py", "s_detector.py", "e_detector.py", "stopall_detector.py"];
+
+test("detector uses the Python executable selected by the launcher", () => {
+  assert.match(config, /const pythonCommand = process\.env\.TRADINGBOT_PYTHON \|\| 'python'/);
+  assert.match(config, /spawn\(pythonCommand,/);
+});
+
 function server(disk = new Map(), sources = new Map(files.map((name) => [name, "version-1"])), entries = [id], rawSources = new Map()) {
   const routes = new Map(); let runs = 0;
   const directoryEntries = (directory) => {

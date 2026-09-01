@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import vm from "node:vm";
 
 const main = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
 const ui = readFileSync(new URL("../src/candle-export.js", import.meta.url), "utf8");
@@ -98,8 +99,9 @@ test("Exporter clears stale extraction state and limits checkbox activation to i
   assert.match(ui, /void refreshAuth\(\)/);
   assert.match(ui, /if \(visible\) refreshAuth\(\)/);
   assert.match(ui, /candleOpenFaraz/);
-  assert.match(main, /Only the native checkbox hit target can toggle it/);
+  assert.match(main, /Export controls keep their checkbox-only hit target/);
   assert.match(main, /label:has\(input\[type="checkbox"\]\)/);
+  assert.match(main, /allowsCheckboxLabelToggle\(checkboxLabel\)/);
   assert.match(ui, /candleValidationList/);
   assert.match(ui, /Saved file check/);
   assert.match(ui, /candleOpenFile/);
@@ -130,9 +132,42 @@ test("FARAZ belongs with Cache and side panels close outside chart", () => {
   assert.match(main, /if \(!chartWorkspaceActive\(\)\) return;/);
 });
 
-test("zoom culling is limited to reactions and Blue Lines", () => {
+test("Indicator, Cache, and FARAZ show a blinking red dot for an actual error", () => {
+  assert.match(appCss, /\.status-state\[data-state="error"\] \.dot,[\s\S]*\.status-faraz\[data-state="error"\] \.dot/);
+  assert.match(appCss, /animation: status-error-pulse/);
+  assert.match(appCss, /prefers-reduced-motion: reduce/);
+  assert.match(main, /indicatorStatusFooter"\)\.dataset\.state = "error"/);
+  assert.match(main, /setFooterCacheStatus\("error"\)/);
+  assert.match(main, /hasError \? "error" : "inactive"/);
+});
+
+test("zoom never culls indicator objects", () => {
   const drawIndicator = main.slice(main.indexOf("function drawIndicator()"), main.indexOf("function drawIndicatorSelection()"));
-  assert.equal((drawIndicator.match(/if \(!isTime(?:Range)?Visible/g) || []).length, 2);
-  assert.match(drawIndicator, /reaction\.firstTime, reaction\.breakTime/);
-  assert.match(drawIndicator, /blueLine\.sourceTime/);
+  assert.doesNotMatch(drawIndicator, /getVisibleRange|isTime(?:Range)?Visible|visiblePadding|visibleFrom|visibleTo/);
+  assert.match(drawIndicator, /const settings = state\.indicator\.settings,\s*timeframe = Number\(state\.indicator\.results\.timeframe \|\| state\.tf\)/);
+  assert.match(drawIndicator, /state\.indicator\.hitBoxes\.push\(\{[\s\S]*?shape: "rect"/);
+  assert.match(drawIndicator, /for \(const \[blueIndex, blueLine\] of \(group\.blueLines \|\| \[\]\)\.entries\(\)\) \{\s*const blueObjectId/);
+  assert.doesNotMatch(drawIndicator, /chart\.timeScale\(\)\.timeToCoordinate\(/);
+  assert.match(drawIndicator, /indicatorTimeToCoordinate\(zone\.sourceTime\)/);
+});
+
+test("unlimited zoom out is retired and cannot reintroduce annotation failures", () => {
+  assert.doesNotMatch(main, /unlimitedZoom|Unlimited zoom out|Compress the full available history/);
+  assert.doesNotMatch(main, /minBarSpacing: 0\.01/);
+  assert.equal((main.match(/minBarSpacing: 2/g) || []).length, 2);
+});
+
+test("indicator time anchors interpolate between chart candles instead of disappearing", () => {
+  const helper = main.slice(main.indexOf("function indicatorTimeToCoordinate("), main.indexOf("function drawIndicator()"));
+  const context = {
+    state: { data: [{ time: 100 }, { time: 160 }], tf: 60 },
+    chart: {
+      timeScale: () => ({
+        timeToCoordinate: (time) => ({ 100: 10, 160: 70 })[time] ?? null,
+        options: () => ({ barSpacing: 60 }),
+      }),
+    },
+  };
+  vm.runInNewContext(`${helper}\nresult = indicatorTimeToCoordinate(130);`, context);
+  assert.equal(context.result, 40);
 });

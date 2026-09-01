@@ -287,10 +287,21 @@ button:disabled, select:disabled, input:disabled { cursor: not-allowed; opacity:
 .status-state[data-state="active"] .dot, .status-cache[data-state="cold"] .dot { background: var(--ui-positive); box-shadow: 0 0 0 2px var(--ui-positive-soft); }
 .status-state[data-state="inactive"] .dot, .status-cache[data-state="idle"] .dot { background: var(--ui-text-disabled); box-shadow: 0 0 0 2px var(--ui-bg-active); }
 .status-faraz[data-state="inactive"] .dot { background: var(--ui-danger); box-shadow: 0 0 0 2px var(--ui-danger-soft); }
+.status-state[data-state="error"] .dot,
+.status-faraz[data-state="error"] .dot {
+  background: var(--ui-danger);
+  box-shadow: 0 0 0 2px var(--ui-danger-soft);
+  animation: status-error-pulse 1.15s ease-in-out infinite;
+}
 .status-cache[data-state="cache"] .dot { background: #ffb424; box-shadow: 0 0 0 2px rgb(255 180 36 / .26); }
 .status-range { gap: 10px; font-family: var(--ui-font-mono); }
 .status-range span { display: inline-flex; gap: 4px; }
 @keyframes status-error-pulse { 50% { box-shadow: 0 0 0 4px var(--ui-danger-soft); opacity: .45; } }
+@media (prefers-reduced-motion: reduce) {
+  .status-health[data-state="error"] .dot,
+  .status-state[data-state="error"] .dot,
+  .status-faraz[data-state="error"] .dot { animation: none; opacity: 1; }
+}
 
 /* Dialog and settings primitives */
 .modal-backdrop, .settings-backdrop {

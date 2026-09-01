@@ -28,6 +28,21 @@ function visibilityHarness() {
   return { context, state, payload, objects, controls, frames, saved };
 }
 
+test("indicator switch labels remain clickable without widening exporter checkbox targets", () => {
+  const context = vm.createContext({});
+  vm.runInContext(
+    section("function allowsCheckboxLabelToggle(", "document.addEventListener"),
+    context,
+  );
+  const label = (className) => ({
+    matches: (selector) => selector.split(", ").includes(`.${className}`),
+  });
+  assert.equal(context.allowsCheckboxLabelToggle(label("master-switch")), true);
+  assert.equal(context.allowsCheckboxLabelToggle(label("module-row")), true);
+  assert.equal(context.allowsCheckboxLabelToggle(label("candle-toggle-row")), false);
+  assert.equal(context.allowsCheckboxLabelToggle(null), false);
+});
+
 test("master off/on restores the exact cached payload and preserves manual drawings and overrides", () => {
   const h = visibilityHarness(); const bytes = JSON.stringify(h.payload);
   h.controls["#indicatorEnabled"].onchange();
@@ -83,6 +98,39 @@ test("visibility tolerates blocked browser storage and does not pretend absent r
   assert.equal(h.state.indicator.enabled, true);
   h.state.indicator.results = null; h.context.setIndicatorVisibility(true);
   assert.equal(h.state.indicator.enabled, false);
+});
+
+test("manual drawings stay anchored to time and price, not a stale logical index", () => {
+  const calls = { logical: 0 };
+  const context = vm.createContext({
+    state: { data: [{ time: 100 }, { time: 160 }], tf: 60 },
+    chart: {
+      timeScale: () => ({
+        timeToCoordinate: (time) => time === 120 ? 48 : null,
+        logicalToCoordinate() { calls.logical++; return 999; },
+        options: () => ({ barSpacing: 8 }),
+      }),
+    },
+    series: { priceToCoordinate: (price) => price * 2 },
+    log: { chart: { warn() {} } },
+  });
+  vm.runInContext(
+    section("function validDrawingPoint(", "function validStoredDrawing(") +
+      section("function xy(", "function rgba("),
+    context,
+  );
+  const rendered = context.xy({ time: 120, price: 25, logical: 999 });
+  assert.equal(rendered.x, 48);
+  assert.equal(rendered.y, 50);
+  assert.equal(calls.logical, 0);
+});
+
+test("moving a drawing never changes its legacy logical metadata", () => {
+  const context = vm.createContext({ clone: (value) => structuredClone(value) });
+  vm.runInContext(section("function shiftPoint(", "function selectDrawingTool("), context);
+  const point = { time: 100, price: 25, logical: 42 };
+  assert.equal(context.shiftPoint(point, 30, -5), true);
+  assert.deepEqual(point, { time: 130, price: 20, logical: 42 });
 });
 
 test("mobile swipe/cancel suppresses tool click, but fresh taps and keyboard activation still work", () => {

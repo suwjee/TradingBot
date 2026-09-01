@@ -16,15 +16,17 @@ import "./drawings/object-tree.css";
 import "../../indicator/indicator-settings/frontend/reaction-detector.css";
 import "./styles/qg-modern.css";
 
-// Checkboxes remain keyboard-accessible, but a broad label/row click must not
-// change their value.  Only the native checkbox hit target can toggle it.
+function allowsCheckboxLabelToggle(label) {
+  return Boolean(label?.matches(".master-switch, .module-row"));
+}
+
+// Export controls keep their checkbox-only hit target, while the indicator's
+// styled switches intentionally use their complete label row as the hit target.
 document.addEventListener("click", (event) => {
   const target = event.target instanceof Element ? event.target : null;
   if (!target || target.matches('input[type="checkbox"]')) return;
   const checkboxLabel = target.closest('label:has(input[type="checkbox"])');
-  // The compact indicator power switch intentionally exposes its styled span
-  // as the click target.  Other setting rows remain non-toggleable by label.
-  if (checkboxLabel?.classList.contains("master-switch")) return;
+  if (allowsCheckboxLabelToggle(checkboxLabel)) return;
   if (checkboxLabel) event.preventDefault();
 }, true);
 
@@ -331,7 +333,7 @@ document.querySelector("#app").innerHTML = `<main class="app">
  <footer class="statusbar" aria-label="Workstation status"><div class="status-cluster status-runtime" aria-label="Runtime status"><button class="status-group status-health" id="healthStatus" type="button" data-state="healthy" title="Application health"><i class="dot" aria-hidden="true"></i><b id="healthLabel">Healthy</b></button><button class="status-group status-state status-indicator" id="indicatorStatusFooter" type="button" data-state="inactive" title="Open indicator settings" aria-label="Open indicator settings"><i class="dot" aria-hidden="true"></i><b>Indicator</b></button><span class="status-group status-state status-cache" id="cacheStatusFooter" data-state="idle" title="No indicator calculation source yet"><i class="dot" aria-hidden="true"></i><b>Cache</b></span><span class="status-group status-state status-faraz" id="farazStatusFooter" data-state="inactive" title="FARAZ session is not configured"><i class="dot" aria-hidden="true"></i><b>FARAZ</b></span></div><span class="status-separator" aria-hidden="true"></span><div class="status-cluster status-market" aria-label="Visible chart range"><span class="status-group status-data" title="Candle count for the selected chart timeframe"><span id="candleCount">0 candles</span></span><span class="status-group status-range" title="First and last candle in local system time"><span>From <time id="chartFrom">—</time></span><span>To <time id="chartTo">—</time></span></span></div><span class="status-separator" aria-hidden="true"></span><time class="status-clock" id="clock" title="Local workstation time"></time></footer></main>
  <div id="symbolMenu" class="popover symbol-menu hidden"><div class="searchbox">${icon("search", 17)}<input id="symbolSearch" placeholder="Search local symbols"></div><div id="symbolList"></div></div>
  <div id="gotoModal" class="modal-backdrop hidden"><div class="modal goto-dialog" role="dialog" aria-modal="true" aria-labelledby="gotoTitle"><div class="modal-title"><span id="gotoTitle">Go to date and time</span><button class="icon-btn modal-close" aria-label="Close">${icon("close")}</button></div><p>Jump to an exact candle in Tehran time.</p><div class="field"><label>Tehran date & time</label><button class="date-field" id="gotoPickerButton"><b id="gotoInputDisplay">Select date & time</b>${icon("calendar",16)}</button><input type="hidden" id="gotoInput"></div><div class="modal-actions"><button class="btn modal-close">Cancel</button><button class="btn primary" id="gotoApply">Go to candle</button></div></div></div>
- <div id="chartSettings" class="settings-backdrop hidden"><section class="settings-panel modern-chart-settings" role="dialog" aria-modal="true" aria-labelledby="chartSettingsTitle"><header><div class="settings-title-icon">${icon("chartSettings",20)}</div><div><strong id="chartSettingsTitle">Chart settings</strong><small>Display, scales and interaction</small></div><button id="closeSettings" aria-label="Close">${icon("close",18)}</button></header><div class="settings-body"><div class="settings-section"><h3>Canvas</h3><div class="color-grid"><label>Background<input id="backgroundColor" type="color" value="#ffffff"></label><label>Axis text<input id="axisTextColor" type="color" value="#5f636e"></label></div></div><div class="settings-section"><h3>Candles</h3><div class="color-grid"><label>Bullish<input id="upColor" type="color" value="#089981"></label><label>Bearish<input id="downColor" type="color" value="#f23645"></label><label>Wick up<input id="wickUpColor" type="color" value="#089981"></label><label>Wick down<input id="wickDownColor" type="color" value="#f23645"></label></div></div><div class="settings-section"><h3>Time and scales</h3><label class="settings-select"><span><b>Time format</b><small>Applied to the bottom chart axis</small></span><select id="timeFormat"><option value="compact">DD MMM HH:mm</option><option value="numeric">DD/MM HH:mm</option><option value="time">HH:mm:ss</option><option value="full">YYYY-MM-DD HH:mm:ss</option></select></label><label class="settings-toggle"><span><b>Price scale border</b><small>Right axis divider</small></span><input id="priceBorderEnabled" type="checkbox" checked></label><label class="settings-toggle"><span><b>Time scale border</b><small>Bottom axis divider</small></span><input id="timeBorderEnabled" type="checkbox" checked></label></div><div class="settings-section"><h3>Interaction</h3><label class="settings-toggle"><span><b>Crosshair</b><small>Show precise tracking guides</small></span><input id="crosshairEnabled" type="checkbox" checked></label><label class="settings-toggle"><span><b>Unlimited zoom out</b><small>Compress the full available history</small></span><input id="unlimitedZoom" type="checkbox" checked></label><button id="resetChartSettings" class="settings-reset">Restore defaults</button></div></div></section></div><div id="toast" class="toast hidden"><span id="toastMessage"></span><button id="toastClose" type="button" aria-label="Close notification">${icon("close", 16)}</button></div><div id="errorLogModal" class="modal-backdrop error-log-backdrop hidden"><section class="modal error-log-dialog" role="dialog" aria-modal="true" aria-labelledby="errorLogTitle"><header class="modal-title"><div><strong id="errorLogTitle">Error log</strong><small id="errorLogSummary">No errors recorded</small></div><button id="closeErrorLog" class="icon-btn" type="button" aria-label="Close error log">${icon("close", 18)}</button></header><div id="errorLogList" class="error-log-list"></div><footer class="modal-actions"><button id="copyErrorLogs" class="btn primary" type="button">Copy all errors</button></footer></section></div>`;
+ <div id="chartSettings" class="settings-backdrop hidden"><section class="settings-panel modern-chart-settings" role="dialog" aria-modal="true" aria-labelledby="chartSettingsTitle"><header><div class="settings-title-icon">${icon("chartSettings",20)}</div><div><strong id="chartSettingsTitle">Chart settings</strong><small>Display, scales and interaction</small></div><button id="closeSettings" aria-label="Close">${icon("close",18)}</button></header><div class="settings-body"><div class="settings-section"><h3>Canvas</h3><div class="color-grid"><label>Background<input id="backgroundColor" type="color" value="#ffffff"></label><label>Axis text<input id="axisTextColor" type="color" value="#5f636e"></label></div></div><div class="settings-section"><h3>Candles</h3><div class="color-grid"><label>Bullish<input id="upColor" type="color" value="#089981"></label><label>Bearish<input id="downColor" type="color" value="#f23645"></label><label>Wick up<input id="wickUpColor" type="color" value="#089981"></label><label>Wick down<input id="wickDownColor" type="color" value="#f23645"></label></div></div><div class="settings-section"><h3>Time and scales</h3><label class="settings-select"><span><b>Time format</b><small>Applied to the bottom chart axis</small></span><select id="timeFormat"><option value="compact">DD MMM HH:mm</option><option value="numeric">DD/MM HH:mm</option><option value="time">HH:mm:ss</option><option value="full">YYYY-MM-DD HH:mm:ss</option></select></label><label class="settings-toggle"><span><b>Price scale border</b><small>Right axis divider</small></span><input id="priceBorderEnabled" type="checkbox" checked></label><label class="settings-toggle"><span><b>Time scale border</b><small>Bottom axis divider</small></span><input id="timeBorderEnabled" type="checkbox" checked></label></div><div class="settings-section"><h3>Interaction</h3><label class="settings-toggle"><span><b>Crosshair</b><small>Show precise tracking guides</small></span><input id="crosshairEnabled" type="checkbox" checked></label><button id="resetChartSettings" class="settings-reset">Restore defaults</button></div></div></section></div><div id="toast" class="toast hidden"><span id="toastMessage"></span><button id="toastClose" type="button" aria-label="Close notification">${icon("close", 16)}</button></div><div id="errorLogModal" class="modal-backdrop error-log-backdrop hidden"><section class="modal error-log-dialog" role="dialog" aria-modal="true" aria-labelledby="errorLogTitle"><header class="modal-title"><div><strong id="errorLogTitle">Error log</strong><small id="errorLogSummary">No errors recorded</small></div><button id="closeErrorLog" class="icon-btn" type="button" aria-label="Close error log">${icon("close", 18)}</button></header><div id="errorLogList" class="error-log-list"></div><footer class="modal-actions"><button id="copyErrorLogs" class="btn primary" type="button">Copy all errors</button></footer></section></div>`;
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
@@ -477,7 +479,7 @@ const chart = createChart($("#chart"), {
     secondsVisible: true,
     rightOffset: 8,
     barSpacing: 8,
-    minBarSpacing: 0.01,
+    minBarSpacing: 2,
   },
   handleScroll: {
     mouseWheel: true,
@@ -512,7 +514,6 @@ const chartSettingsDefaults = {
   priceBorder: true,
   timeBorder: true,
   watermark: false,
-  unlimitedZoom: true,
   timeFormat: "compact",
 };
 let chartSettings = { ...chartSettingsDefaults };
@@ -552,7 +553,7 @@ function applyChartSettings(persist = true) {
     timeScale: {
       borderVisible: chartSettings.timeBorder,
       borderColor: "#e4e7ed",
-      minBarSpacing: chartSettings.unlimitedZoom ? 0.01 : 0.5,
+      minBarSpacing: 2,
       tickMarkFormatter: (time) => formatChartAxisTime(time),
     },
   });
@@ -654,8 +655,12 @@ candleExportController = initCandleExport({
   openDateTimePicker,
   onConnectionChange: (connected, status) => {
     const footer = $("#farazStatusFooter");
-    footer.dataset.state = connected ? "active" : "inactive";
-    footer.title = connected ? `FARAZ session active · ${status.host || "faraz.io"}` : "FARAZ session is not configured";
+    const hasError = Boolean(status?.error);
+    footer.dataset.state = connected ? "active" : hasError ? "error" : "inactive";
+    footer.title = connected
+      ? `FARAZ session active · ${status.host || "faraz.io"}`
+      : hasError ? `FARAZ error · ${status.error}` : "FARAZ session is not configured";
+    footer.setAttribute("aria-label", footer.title);
   },
 });
 $("#candleExportBtn").onclick = () => {
@@ -1538,7 +1543,6 @@ function syncChartSettingsForm() {
   $("#crosshairEnabled").checked = chartSettings.crosshair;
   $("#priceBorderEnabled").checked = chartSettings.priceBorder;
   $("#timeBorderEnabled").checked = chartSettings.timeBorder;
-  $("#unlimitedZoom").checked = chartSettings.unlimitedZoom;
   $("#timeFormat").value = chartSettings.timeFormat;
 }
 const chartSettingInputs = {
@@ -1551,7 +1555,6 @@ const chartSettingInputs = {
   crosshairEnabled: "crosshair",
   priceBorderEnabled: "priceBorder",
   timeBorderEnabled: "timeBorder",
-  unlimitedZoom: "unlimitedZoom",
   timeFormat: "timeFormat",
 };
 Object.entries(chartSettingInputs).forEach(([id, key]) => {
@@ -1741,7 +1744,6 @@ function point(e) {
   const result = {
     x,
     y,
-    logical: chart.timeScale().coordinateToLogical(x),
     time: chart.timeScale().coordinateToTime(x),
     price: series.coordinateToPrice(y),
   };
@@ -1808,11 +1810,10 @@ function xy(p) {
     return null;
   }
   const time = Number(p.time);
-  let x = Number.isFinite(Number(p.logical))
-    ? chart.timeScale().logicalToCoordinate(Number(p.logical))
-    : chart.timeScale().timeToCoordinate(time);
-  if (x == null && Number.isFinite(Number(p.logical)))
-    x = chart.timeScale().timeToCoordinate(time);
+  // Drawings are anchored exclusively to market time and price.  Logical
+  // indexes are viewport-relative and caused a completed drawing to shift
+  // after the chart recalculated its scale or aggregation.
+  let x = chart.timeScale().timeToCoordinate(time);
   if (x == null && state.data.length) {
     const first = state.data[0];
     const last = state.data.at(-1);
@@ -2103,24 +2104,45 @@ function offsetIndicatorRect(item, x1, y1, x2, y2) {
   const offset = indicatorOffset(item);
   return { x1: x1 + offset.x, y1: y1 + offset.y, x2: x2 + offset.x, y2: y2 + offset.y };
 }
+function indicatorTimeToCoordinate(time) {
+  const target = Number(time);
+  if (!Number.isFinite(target)) return null;
+  const direct = chart.timeScale().timeToCoordinate(target);
+  if (direct != null) return direct;
+
+  // Indicator events can originate from a lower timeframe and therefore fall
+  // between two displayed chart bars. Lightweight Charts returns null for
+  // those valid times; interpolate the same time scale instead of dropping
+  // the label/shape as the viewport is zoomed.
+  const candles = state.data;
+  if (!candles.length) return null;
+  let low = 0, high = candles.length;
+  while (low < high) {
+    const middle = (low + high) >> 1;
+    if (Number(candles[middle].time) < target) low = middle + 1;
+    else high = middle;
+  }
+  const after = candles[low] || null;
+  const before = candles[low - 1] || null;
+  if (before && after) {
+    const beforeTime = Number(before.time), afterTime = Number(after.time),
+      beforeX = chart.timeScale().timeToCoordinate(beforeTime),
+      afterX = chart.timeScale().timeToCoordinate(afterTime);
+    if (Number.isFinite(beforeX) && Number.isFinite(afterX) && afterTime > beforeTime)
+      return beforeX + ((target - beforeTime) / (afterTime - beforeTime)) * (afterX - beforeX);
+  }
+  const anchor = after || before;
+  const anchorX = anchor ? chart.timeScale().timeToCoordinate(Number(anchor.time)) : null;
+  if (!Number.isFinite(anchorX)) return null;
+  const spacing = Math.max(1, Number(chart.timeScale().options().barSpacing) || 6);
+  const timeframe = Math.max(1, Number(state.tf) || 1);
+  return anchorX + ((target - Number(anchor.time)) / timeframe) * spacing;
+}
 function drawIndicator() {
   state.indicator.hitBoxes = [];
   if (!state.indicator.enabled || !state.indicator.results) return;
   const settings = state.indicator.settings,
-    visibleRange = chart.timeScale().getVisibleRange(),
-    timeframe = Number(state.indicator.results.timeframe || state.tf),
-    visiblePadding = Number.isFinite(timeframe) ? timeframe * 30 : 0,
-    visibleFrom = visibleRange ? Number(visibleRange.from) - visiblePadding : -Infinity,
-    visibleTo = visibleRange ? Number(visibleRange.to) + visiblePadding : Infinity,
-    isTimeVisible = (time) => {
-      const value = Number(time);
-      return !Number.isFinite(value) || (value >= visibleFrom && value <= visibleTo);
-    },
-    isTimeRangeVisible = (from, to = from) => {
-      const start = Number(from), end = Number(to);
-      return !Number.isFinite(start) || !Number.isFinite(end) ||
-        Math.max(start, end) >= visibleFrom && Math.min(start, end) <= visibleTo;
-    };
+    timeframe = Number(state.indicator.results.timeframe || state.tf);
   for (const direction of Object.keys(state.indicator.results.directions)) {
     const group = state.indicator.results.directions[direction],
       bullish = direction === "bullish",
@@ -2170,15 +2192,14 @@ function drawIndicator() {
         count = restart ? 1 : count + 1;
       } else count++;
       lastFirst = reaction.firstIndex;
-      if (!isTimeRangeVisible(reaction.firstTime, reaction.breakTime)) continue;
       const reactionObjectId = `indicator:${direction}:reaction:${reactionIndex}`;
       if (!settings.reactionVisible || !indicatorObjectVisible(reactionObjectId)) continue;
       const reactionObject = indicatorObject(reactionObjectId);
       const startTime = bullish
           ? reaction.boxTopSourceTime
           : reaction.boxBottomSourceTime,
-        x1 = chart.timeScale().timeToCoordinate(startTime),
-        x2 = chart.timeScale().timeToCoordinate(reaction.breakTime),
+        x1 = indicatorTimeToCoordinate(startTime),
+        x2 = indicatorTimeToCoordinate(reaction.breakTime),
         yTop = series.priceToCoordinate(+reaction.boxTop),
         yBottom = series.priceToCoordinate(+reaction.boxBottom);
       if ([x1, x2, yTop, yBottom].some((v) => v == null)) continue;
@@ -2213,7 +2234,9 @@ function drawIndicator() {
       ctx.rect(left, top, Math.max(1, right - left), Math.max(1, bottom - top));
       ctx.fill();
       if (width > 0) ctx.stroke();
+      ctx.restore();
       if (settings.numberEnabled) {
+        ctx.save();
         ctx.font = `${settings.numberWeight} ${settings.numberSize}px Inter`;
         ctx.textAlign = "center";
         ctx.textBaseline = bullish ? "top" : "bottom";
@@ -2223,17 +2246,16 @@ function drawIndicator() {
           (left + right) / 2,
           bullish ? bottom + settings.numberGap : top - settings.numberGap,
         );
+        ctx.restore();
       }
-      ctx.restore();
     }
     if (settings.blueLineEnabled) {
       for (const [blueIndex, blueLine] of (group.blueLines || []).entries()) {
-        if (!isTimeVisible(blueLine.sourceTime)) continue;
         const blueObjectId = `indicator:${direction}:blue:${blueIndex}`,
           blueObject = indicatorObject(blueObjectId);
         if (blueObject?.hidden) continue;
-        const x1 = chart.timeScale().timeToCoordinate(blueLine.startTime),
-          x2 = chart.timeScale().timeToCoordinate(blueLine.endTime),
+        const x1 = indicatorTimeToCoordinate(blueLine.startTime),
+          x2 = indicatorTimeToCoordinate(blueLine.endTime),
           y = series.priceToCoordinate(+blueLine.linePrice);
         if ([x1, x2, y].some((value) => value == null)) continue;
         const shifted = offsetIndicatorRect(blueObject, x1, y, x2, y);
@@ -2264,7 +2286,7 @@ function drawIndicator() {
         sSourceIndices.has(Number(zone.sourceIndex))
       )
         continue;
-      const x = chart.timeScale().timeToCoordinate(zone.sourceTime),
+      const x = indicatorTimeToCoordinate(zone.sourceTime),
         y = series.priceToCoordinate(+zone.price);
       if (x == null || y == null) continue;
       const shifted = offsetIndicatorPoint(labelObject, x, bullish ? y + settings.aGap : y - settings.aGap);
@@ -2289,8 +2311,8 @@ function drawIndicator() {
         orderStartTime = orderBullish
           ? zone.orderBoxTopSourceTime
           : zone.orderBoxBottomSourceTime,
-        boxX1 = hasOrder ? chart.timeScale().timeToCoordinate(orderStartTime) : null,
-        boxX2 = hasOrder ? chart.timeScale().timeToCoordinate(zone.orderBreakTime) : null,
+        boxX1 = hasOrder ? indicatorTimeToCoordinate(orderStartTime) : null,
+        boxX2 = hasOrder ? indicatorTimeToCoordinate(zone.orderBreakTime) : null,
         boxYTop = hasOrder ? series.priceToCoordinate(+zone.orderBoxTop) : null,
         boxYBottom = hasOrder ? series.priceToCoordinate(+zone.orderBoxBottom) : null;
       if (hasOrder && settings.orderVisible && !orderObject?.hidden && ![boxX1, boxX2, boxYTop, boxYBottom].some((v) => v == null)) {
@@ -2315,7 +2337,7 @@ function drawIndicator() {
         ctx.stroke();
         ctx.restore();
       }
-      const x = chart.timeScale().timeToCoordinate(zone.sourceTime),
+      const x = indicatorTimeToCoordinate(zone.sourceTime),
         y = series.priceToCoordinate(+zone.price);
       if (x == null || y == null) continue;
       const shiftedLabel = offsetIndicatorPoint(labelObject, x, bullish ? y + settings.sGap : y - settings.sGap);
@@ -2344,8 +2366,8 @@ function drawIndicator() {
         orderStartTime = orderBullish
           ? zone.orderBoxTopSourceTime
           : zone.orderBoxBottomSourceTime,
-        boxX1 = chart.timeScale().timeToCoordinate(orderStartTime),
-        boxX2 = chart.timeScale().timeToCoordinate(zone.orderBreakTime),
+        boxX1 = indicatorTimeToCoordinate(orderStartTime),
+        boxX2 = indicatorTimeToCoordinate(zone.orderBreakTime),
         boxYTop = series.priceToCoordinate(+zone.orderBoxTop),
         boxYBottom = series.priceToCoordinate(+zone.orderBoxBottom);
       if (settings.orderVisible && !orderObject?.hidden && ![boxX1, boxX2, boxYTop, boxYBottom].some((v) => v == null)) {
@@ -2370,7 +2392,7 @@ function drawIndicator() {
         ctx.stroke();
         ctx.restore();
       }
-      const x = chart.timeScale().timeToCoordinate(zone.sourceTime),
+      const x = indicatorTimeToCoordinate(zone.sourceTime),
         y = series.priceToCoordinate(+zone.price);
       if (x == null || y == null) continue;
       const shiftedLabel = offsetIndicatorPoint(labelObject, x, bullish ? y + settings.eGap : y - settings.eGap);
@@ -2399,11 +2421,11 @@ function drawIndicator() {
         orderStartTime = orderBullish
           ? zone.orderBoxTopSourceTime
           : zone.orderBoxBottomSourceTime,
-        boxX1 = chart.timeScale().timeToCoordinate(orderStartTime),
-        boxX2 = chart.timeScale().timeToCoordinate(zone.orderBreakTime),
+        boxX1 = indicatorTimeToCoordinate(orderStartTime),
+        boxX2 = indicatorTimeToCoordinate(zone.orderBreakTime),
         boxYTop = series.priceToCoordinate(+zone.orderBoxTop),
         boxYBottom = series.priceToCoordinate(+zone.orderBoxBottom),
-        x = chart.timeScale().timeToCoordinate(zone.sourceTime),
+        x = indicatorTimeToCoordinate(zone.sourceTime),
         y = series.priceToCoordinate(+zone.price);
       if (settings.orderVisible && !orderObject?.hidden && ![boxX1, boxX2, boxYTop, boxYBottom].some((value) => value == null)) {
         const shifted = offsetIndicatorRect(orderObject, boxX1, boxYTop, boxX2, boxYBottom),
@@ -2470,8 +2492,8 @@ function drawIndicator() {
             ? Math.min(+zone.decisionTime, endTime)
             : endTime;
         const
-          x1 = chart.timeScale().timeToCoordinate(startTime),
-          x2 = chart.timeScale().timeToCoordinate(visibleEndTime),
+          x1 = indicatorTimeToCoordinate(startTime),
+          x2 = indicatorTimeToCoordinate(visibleEndTime),
           y = series.priceToCoordinate(+zone.orderStopLevel);
         if ([x1, x2, y].some((value) => value == null)) continue;
         const shifted = offsetIndicatorRect(stopObject, x1, y, x2, y);
@@ -2508,8 +2530,8 @@ function drawIndicator() {
         const objectId = `indicator:${direction}:e-stop:${zoneIndex}`,
           stopObject = indicatorObject(objectId);
         if (stopObject?.hidden) continue;
-        const x1 = chart.timeScale().timeToCoordinate(zone.parentSourceTime),
-          x2 = chart.timeScale().timeToCoordinate(zone.parentStopTime),
+        const x1 = indicatorTimeToCoordinate(zone.parentSourceTime),
+          x2 = indicatorTimeToCoordinate(zone.parentStopTime),
           y = series.priceToCoordinate(+zone.parentPrice);
         if ([x1, x2, y].some((value) => value == null)) continue;
         const shifted = offsetIndicatorRect(stopObject, x1, y, x2, y);
@@ -2997,28 +3019,26 @@ function finishDraft() {
     totalDrawings: state.drawings.length,
   });
 }
-function shiftPoint(p, dt, dp, logicalDelta = 0) {
+function shiftPoint(p, dt, dp) {
   const time = Number(p.time) + Number(dt);
   const price = Number(p.price) + Number(dp);
   if (!Number.isFinite(time) || time <= 0 || !Number.isFinite(price)) return false;
   p.time = time;
   p.price = price;
-  if (Number.isFinite(Number(p.logical)) && Number.isFinite(Number(logicalDelta)))
-    p.logical = Number(p.logical) + Number(logicalDelta);
   return true;
 }
-function moveDrawing(d, dt, dp, logicalDelta = 0) {
+function moveDrawing(d, dt, dp) {
   if (!Number.isFinite(Number(dt)) || !Number.isFinite(Number(dp))) return false;
   const candidate = clone(d);
   if (["brush", "path"].includes(candidate.type)) {
-    if (!(candidate.points || []).every((p) => shiftPoint(p, dt, dp, logicalDelta))) return false;
+    if (!(candidate.points || []).every((p) => shiftPoint(p, dt, dp))) return false;
     if (candidate.points?.length) {
       candidate.a = clone(candidate.points[0]);
       candidate.b = clone(candidate.points.at(-1));
     }
   } else {
-    if (!shiftPoint(candidate.a, dt, dp, logicalDelta)) return false;
-    if (candidate.b && candidate.b !== candidate.a && !shiftPoint(candidate.b, dt, dp, logicalDelta)) return false;
+    if (!shiftPoint(candidate.a, dt, dp)) return false;
+    if (candidate.b && candidate.b !== candidate.a && !shiftPoint(candidate.b, dt, dp)) return false;
   }
   Object.assign(d, candidate);
   return true;
@@ -3388,9 +3408,6 @@ shell.addEventListener(
         d,
         Number(p.time) - Number(state.interaction.last.time),
         Number(p.price) - Number(state.interaction.last.price),
-        Number.isFinite(Number(p.logical)) && Number.isFinite(Number(state.interaction.last.logical))
-          ? Number(p.logical) - Number(state.interaction.last.logical)
-          : 0,
       );
     } else d[state.interaction.mode] = p;
     state.interaction.last = p;
@@ -4288,6 +4305,7 @@ function setIndicatorVisibility(enabled) {
   if (footer) {
     footer.dataset.state = state.indicator.enabled ? "active" : "inactive";
     footer.title = state.indicator.enabled ? "Indicator is active" : "Indicator is inactive";
+    footer.setAttribute("aria-label", footer.title);
   }
   if (!state.indicator.enabled) {
     state.indicator.hitBoxes = [];
@@ -4311,8 +4329,10 @@ function setFooterCacheStatus(cache) {
   if (!footer) return;
   const fromCache = source === "file" || source === "memory" || source === "hit";
   const cold = source === "miss" || source === "cold";
-  footer.dataset.state = fromCache ? "cache" : cold ? "cold" : "idle";
-  footer.title = fromCache ? "Indicator result loaded from cache" : cold ? "Indicator result calculated without a cache hit" : "Calculation source is not available";
+  const failed = source === "error";
+  footer.dataset.state = failed ? "error" : fromCache ? "cache" : cold ? "cold" : "idle";
+  footer.title = failed ? "Indicator cache error" : fromCache ? "Indicator result loaded from cache" : cold ? "Indicator result calculated without a cache hit" : "Calculation source is not available";
+  footer.setAttribute("aria-label", footer.title);
 }
 function formatDuration(durationMs) {
   const milliseconds = Math.max(0, Number(durationMs) || 0);
@@ -4811,6 +4831,7 @@ async function calculateIndicator() {
     };
     setFooterCacheStatus(completedTiming.serverCache);
     $("#indicatorStatusFooter").title = state.indicator.enabled ? "Indicator is active" : "Indicator is inactive";
+    $("#indicatorStatusFooter").setAttribute("aria-label", $("#indicatorStatusFooter").title);
     log.indicator.info("CALCULATION_COMPLETED", completedTiming);
   } catch (error) {
     const failedDurationMs = Math.round((performance.now() - calculationStarted) * 100) / 100;
@@ -4828,8 +4849,10 @@ async function calculateIndicator() {
       durationMs: failedDurationMs,
       symbol: state.file?.symbol,
     });
-    $("#indicatorStatusFooter").dataset.state = "inactive";
-    $("#indicatorStatusFooter").title = "Indicator is inactive after calculation error";
+    $("#indicatorStatusFooter").dataset.state = "error";
+    $("#indicatorStatusFooter").title = "Indicator calculation error";
+    $("#indicatorStatusFooter").setAttribute("aria-label", "Indicator calculation error. Open indicator settings.");
+    setFooterCacheStatus("error");
   } finally {
     stopCalculationProgress(progressTimer, succeeded);
     if (succeeded) renderIndicatorInfo();
@@ -4860,6 +4883,7 @@ $("#reloadIndicatorBtn").onclick = async () => {
     toast("Indicator cache cleared. Calculation has not started.");
   } catch (error) {
     log.indicator.error("RELOAD_FAILED", error);
+    setFooterCacheStatus("error");
     toast(error.message);
   } finally {
     $("#reloadIndicatorBtn").classList.remove("is-loading");

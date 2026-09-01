@@ -17,6 +17,7 @@ const sEnginePath = path.join(moduleRoot, '4_S-zones', 'app', 's_detector.py');
 const eEnginePath = path.join(moduleRoot, '5_E-zones', 'app', 'e_detector.py');
 const stopAllEnginePath = path.join(moduleRoot, '6_StopAll', 'app', 'stopall_detector.py');
 const calculationSources = [bridgePath, enginePath, blueEnginePath, aEnginePath, sEnginePath, eEnginePath, stopAllEnginePath];
+const pythonCommand = process.env.TRADINGBOT_PYTHON || 'python';
 
 function calculationSourceFingerprint() {
   const hash = createHash('sha256');
@@ -107,7 +108,7 @@ function readBody(req) {
 
 function runDetector(args, onProgress = () => {}) {
   return new Promise((resolve, reject) => {
-    const child = spawn('python', [bridgePath, '--engine', enginePath, '--blue-engine', blueEnginePath, '--a-engine', aEnginePath, '--s-engine', sEnginePath, '--e-engine', eEnginePath, '--stopall-engine', stopAllEnginePath, ...args], { windowsHide: true });
+    const child = spawn(pythonCommand, [bridgePath, '--engine', enginePath, '--blue-engine', blueEnginePath, '--a-engine', aEnginePath, '--s-engine', sEnginePath, '--e-engine', eEnginePath, '--stopall-engine', stopAllEnginePath, ...args], { windowsHide: true });
     let stdout = '', stderr = '', stderrBuffer = '';
     child.stdout.on('data', (part) => { stdout += part; });
     child.stderr.on('data', (part) => {

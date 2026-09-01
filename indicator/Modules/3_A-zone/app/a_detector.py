@@ -9,7 +9,7 @@ from decimal import Decimal
 from typing import Sequence
 
 
-A_VERSION = "2.0.0"
+A_VERSION = "3.0.0"
 
 
 @dataclass(frozen=True)
@@ -171,6 +171,12 @@ class ADetector:
         return value, int(getattr(source, "index")), getattr(source, "timestamp")
 
     def _formation(self, line: object) -> tuple[int, datetime, datetime]:
+        explicit_index = getattr(line, "formation_index", None)
+        explicit_time = getattr(line, "formation_time", None)
+        if explicit_index is not None and explicit_time is not None:
+            index = int(explicit_index)
+            event_time = explicit_time
+            return index, event_time, event_time
         reaction_number = int(getattr(line, "reaction_number"))
         if reaction_number < 1 or reaction_number > len(self.reactions):
             raise ValueError("Blue Line refers to a missing reaction.")

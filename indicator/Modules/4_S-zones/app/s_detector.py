@@ -545,6 +545,9 @@ class SDetector:
         return self._candidate_source(a_stop_index, first_index)
 
     def _blue_formation_time(self, line: object) -> datetime:
+        explicit = getattr(line, "formation_time", None)
+        if explicit is not None:
+            return explicit
         source_index = int(getattr(line, "source_index"))
         source_time = getattr(self.candles[source_index], "timestamp")
         if str(getattr(line, "kind")) != "reset":

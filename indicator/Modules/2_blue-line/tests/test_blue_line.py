@@ -79,7 +79,8 @@ class BlueLineTests(unittest.TestCase):
             candle(1, "GREEN", "121", "105"),
             candle(2, "RED", "112", "97"),
             candle(3, "GREEN", "122", "106"),
-            candle(4, "RED", "111", "96"),
+            candle(4, "RED", "111", "98"),
+            candle(5, "GREEN", "110", "99"),
         ]
         reactions = [
             Reaction(0, 1, Decimal("120"), Decimal("100"), "A", Decimal("90")),
@@ -93,7 +94,7 @@ class BlueLineTests(unittest.TestCase):
         reset_lines = [line for line in lines if line.kind == "reset"]
         self.assertEqual([line.source_index for line in reset_lines], [2, 4])
         self.assertEqual(reset_lines[0].line_price, Decimal("100"))
-        self.assertEqual(reset_lines[1].line_price, Decimal("99"))
+        self.assertEqual(reset_lines[1].line_price, Decimal("100.6"))
 
     def test_reset_that_forms_before_stopping_prior_blue_is_visual_a_only(self):
         candles = [
@@ -101,7 +102,7 @@ class BlueLineTests(unittest.TestCase):
             candle(1, "GREEN", "121", "105"),
             candle(2, "RED", "112", "97"),
             candle(3, "GREEN", "122", "106"),
-            candle(4, "RED", "111", "96"),
+            candle(4, "GREEN", "111", "96"),
         ]
         reactions = [
             Reaction(0, 1, Decimal("120"), Decimal("100"), "A", Decimal("90")),
@@ -109,9 +110,35 @@ class BlueLineTests(unittest.TestCase):
         ]
         resets = [
             Reset(2, candles[2].timestamp.strftime("%Y-%m-%d %H:%M:%S"), Decimal("100"), 0),
-            Reset(4, candles[4].timestamp.strftime("%Y-%m-%d %H:%M:%S"), Decimal("99"), 2),
+            Reset(
+                4,
+                candles[4].timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                Decimal("99"),
+                2,
+                (candles[4].timestamp + timedelta(seconds=5)).strftime("%Y-%m-%d %H:%M:%S"),
+            ),
         ]
-        lines = detect_blue_lines("bullish", reactions, candles, [], 30, resets)
+        lower = [
+            Candle(
+                4,
+                candles[4].timestamp + timedelta(seconds=5),
+                "GREEN",
+                Decimal("100"),
+                Decimal("101"),
+                Decimal("98"),
+                Decimal("100"),
+            ),
+            Candle(
+                4,
+                candles[4].timestamp + timedelta(seconds=10),
+                "GREEN",
+                Decimal("98"),
+                Decimal("100"),
+                Decimal("96"),
+                Decimal("99"),
+            ),
+        ]
+        lines = detect_blue_lines("bullish", reactions, candles, lower, 30, resets)
         self.assertEqual([line.calculation_valid for line in lines], [True, False])
         self.assertLess(lines[1].source_extreme, lines[0].source_extreme)
 
@@ -120,6 +147,7 @@ class BlueLineTests(unittest.TestCase):
             candle(0, "GREEN", "110", "100"),
             candle(1, "RED", "108", "90"),
             candle(2, "GREEN", "120", "100"),
+            candle(3, "RED", "115", "95"),
         ]
         reactions = [
             Reaction(0, 1, Decimal("110"), Decimal("90"), "A", Decimal("120"))
@@ -132,6 +160,68 @@ class BlueLineTests(unittest.TestCase):
         self.assertEqual(lines[0].kind, "reset")
         self.assertEqual(lines[0].line_price, Decimal("116"))
         self.assertEqual(lines[0].source_extreme, Decimal("120"))
+
+    def test_reset_source_window_uses_extreme_through_first_trend_candle(self):
+        bearish_candles = [
+            candle(0, "GREEN", "110", "100"),
+            candle(1, "RED", "108", "90"),
+            candle(2, "GREEN", "120", "100"),
+            candle(3, "GREEN", "130", "105"),
+            candle(4, "RED", "125", "95"),
+        ]
+        bearish_reactions = [
+            Reaction(0, 1, Decimal("110"), Decimal("90"), "A", Decimal("120"))
+        ]
+        bearish_resets = [
+            Reset(2, bearish_candles[2].timestamp.strftime("%Y-%m-%d %H:%M:%S"), Decimal("110"), 0)
+        ]
+        bearish = detect_blue_lines(
+            "bearish", bearish_reactions, bearish_candles, [], 30, bearish_resets
+        )
+        self.assertEqual(bearish[0].source_index, 3)
+        self.assertEqual(bearish[0].source_extreme, Decimal("130"))
+        self.assertEqual(bearish[0].formation_index, 4)
+
+        bullish_candles = [
+            candle(0, "RED", "110", "100"),
+            candle(1, "GREEN", "120", "102"),
+            candle(2, "RED", "100", "80"),
+            candle(3, "RED", "95", "70"),
+            candle(4, "GREEN", "105", "75"),
+        ]
+        bullish_reactions = [
+            Reaction(0, 1, Decimal("120"), Decimal("100"), "A", Decimal("90"))
+        ]
+        bullish_resets = [
+            Reset(2, bullish_candles[2].timestamp.strftime("%Y-%m-%d %H:%M:%S"), Decimal("100"), 0)
+        ]
+        bullish = detect_blue_lines(
+            "bullish", bullish_reactions, bullish_candles, [], 30, bullish_resets
+        )
+        self.assertEqual(bullish[0].source_index, 3)
+        self.assertEqual(bullish[0].source_extreme, Decimal("70"))
+        self.assertEqual(bullish[0].formation_index, 4)
+
+    def test_reset_candidate_expires_when_prior_blue_stops_before_formation(self):
+        candles = [
+            candle(0, "GREEN", "100", "90"),
+            candle(1, "RED", "105", "85"),
+            candle(2, "RED", "110", "90"),
+            candle(3, "GREEN", "108", "88"),
+            candle(4, "RED", "107", "87"),
+            candle(5, "GREEN", "120", "90"),
+            candle(6, "RED", "121", "91"),
+        ]
+        reactions = [
+            Reaction(0, 1, Decimal("100"), Decimal("85"), "A", Decimal("110")),
+            Reaction(3, 4, Decimal("108"), Decimal("87"), "A", Decimal("120")),
+        ]
+        resets = [
+            Reset(2, candles[2].timestamp.strftime("%Y-%m-%d %H:%M:%S"), Decimal("100"), 0),
+            Reset(5, candles[5].timestamp.strftime("%Y-%m-%d %H:%M:%S"), Decimal("108"), 3),
+        ]
+        lines = detect_blue_lines("bearish", reactions, candles, [], 30, resets)
+        self.assertEqual([line.source_index for line in lines], [2])
 
     def test_scale_blue_blocks_immediate_reset_blue(self):
         candles = [

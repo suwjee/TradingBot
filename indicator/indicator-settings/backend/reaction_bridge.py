@@ -198,6 +198,8 @@ def serialize_blue_lines(items):
         "sourceIndex": item.source_index,
         "sourceTime": epoch(item.source_time),
         "sourceExtreme": str(item.source_extreme),
+        "formationIndex": item.formation_index,
+        "formationTime": epoch(item.formation_time),
         "brokenLevel": str(item.broken_level) if item.broken_level is not None else None,
         "linePrice": str(item.line_price),
         "startTime": epoch(item.start_time),
