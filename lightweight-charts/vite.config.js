@@ -8,6 +8,7 @@ import { createFarazCandleApi } from './plugins/faraz-candle-api.js';
 
 const inputDir = path.resolve(process.cwd(), '..', 'market-data', 'raw');
 const pattern = /^(?:candle-history\s+(.+?)\s+(\d+[SMHD])\s+from\s+(.+?)\s+to\s+(.+?)\s*|RAW\s+(.+?)\s+(\d+[SMHD])\s+FROM\s+(.+?)\s+TO\s+(.+?))\.json$/i;
+const rawPrefixPattern = /^RAW(?:\s+|_)(.+?)(?:\s+|_)(\d+[SMHD])(?:\s+|_)FROM(?:\s+|_)/i;
 const bridgePath = path.resolve(process.cwd(), '..', 'indicator', 'indicator-settings', 'backend', 'reaction_bridge.py');
 const moduleRoot = path.resolve(process.cwd(), '..', 'indicator', 'Modules');
 const enginePath = path.join(moduleRoot, '1_reaction-detector', 'app', 'Reaction-detection-new.py');
@@ -153,7 +154,16 @@ function candleRows(filename) {
   const source = fs.readFileSync(path.join(inputDir, filename), "utf8");
   const rows = JSON.parse(source);
   if (!Array.isArray(rows) || !rows.length) return null;
-  const valid = rows.every((row) => ["time", "open", "high", "low", "close"].every((key) => Number.isFinite(Number(row?.[key]))));
+  const keys = ["time", "open", "high", "low", "close"];
+  const valid = rows.every((row, index) => {
+    if (!row || Object.keys(row).length !== keys.length || !keys.every((key) => Object.hasOwn(row, key))) return false;
+    const candle = Object.fromEntries(keys.map((key) => [key, Number(row[key])]));
+    return Number.isSafeInteger(candle.time) && candle.time > 0
+      && [candle.open, candle.high, candle.low, candle.close].every(Number.isFinite)
+      && candle.high >= Math.max(candle.open, candle.close, candle.low)
+      && candle.low <= Math.min(candle.open, candle.close, candle.high)
+      && (!index || candle.time > Number(rows[index - 1].time));
+  });
   return valid ? rows : null;
 }
 
@@ -163,6 +173,7 @@ function inventory() {
     .filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith('.json'))
     .map((entry) => {
       const match = entry.name.match(pattern);
+      const rawPrefix = entry.name.match(rawPrefixPattern);
       const stat = fs.statSync(path.join(inputDir, entry.name));
       const cached = inventoryMeta.get(entry.name);
       let meta = cached?.mtimeMs === stat.mtimeMs ? cached : null;
@@ -185,8 +196,8 @@ function inventory() {
       }
       return {
         id: entry.name,
-        symbol: (match?.[1] || match?.[5])?.replace(/_/g, ":") || fallbackSymbol(entry.name),
-        timeframe: (match?.[2] || match?.[6])?.toUpperCase() || meta.timeframe,
+        symbol: (match?.[1] || match?.[5] || rawPrefix?.[1])?.replace(/_/g, ":") || fallbackSymbol(entry.name),
+        timeframe: (match?.[2] || match?.[6] || rawPrefix?.[2])?.toUpperCase() || meta.timeframe,
         from: match?.[3] || match?.[7] || meta.from,
         to: match?.[4] || match?.[8] || meta.to,
         bytes: stat.size,

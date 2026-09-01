@@ -1076,6 +1076,7 @@ function aggregate(rows, seconds) {
 }
 const CHART_LOD_TARGET_CANDLES = 4_000;
 const CHART_LOD_BARS_PER_PIXEL = 2;
+const CHART_LOD_STABLE_DATA_LIMIT = 100_000;
 function viewportIndexRange(range) {
   const first = state.data[0], last = state.data.at(-1);
   if (!first || !last) return null;
@@ -1088,6 +1089,14 @@ function viewportIndexRange(range) {
 function renderChartViewport(range, { preserveRange = false, force = false } = {}) {
   const visible = viewportIndexRange(range);
   if (!visible) return;
+  if (state.data.length <= CHART_LOD_STABLE_DATA_LIMIT) {
+    if (!force && state.chartRender?.fullData) return;
+    series.setData(state.data);
+    state.chartRender = { start: 0, end: state.data.length, stride: 1, displayCount: state.data.length, fullData: true };
+    if (preserveRange && range?.from != null && range?.to != null)
+      chart.timeScale().setVisibleRange({ from: range.from, to: range.to });
+    return;
+  }
   const visibleCount = Math.max(1, visible.end - visible.start);
   const stride = chooseLodStride(
     visibleCount,
@@ -1261,15 +1270,21 @@ async function loadFile(item) {
   const rows = await r.json();
   if (!Array.isArray(rows) || !rows.length)
     throw new Error("The candle file is empty or invalid.");
-  state.raw = rows
-    .map((x) => ({
+  const normalizedRows = rows.map((x) => ({
       time: +x.time,
       open: +x.open,
       high: +x.high,
       low: +x.low,
       close: +x.close,
-    }))
-    .sort((a, b) => a.time - b.time);
+    }));
+  const validRows = normalizedRows.every((candle, index) =>
+    Number.isSafeInteger(candle.time) && candle.time > 0
+    && [candle.open, candle.high, candle.low, candle.close].every(Number.isFinite)
+    && candle.high >= Math.max(candle.open, candle.close, candle.low)
+    && candle.low <= Math.min(candle.open, candle.close, candle.high)
+    && (!index || candle.time > normalizedRows[index - 1].time));
+  if (!validRows) throw new Error("The candle file failed strict chronology or OHLC validation.");
+  state.raw = normalizedRows;
   if ($("#rangePreset")) $("#rangePreset").value = "all";
   if ($("#indicatorFrom"))
     setDateTimeValue("#indicatorFrom", inputFromTehran(state.raw[0].time));

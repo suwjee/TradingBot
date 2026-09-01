@@ -25,7 +25,7 @@ test("authentication gates every extraction control and raw credentials stay abs
   assert.match(ui, /controls\.disabled = !connected/);
   assert.doesNotMatch(ui, /document\.cookie|localStorage.*token|cookieValue|authorizationValue/i);
   assert.match(api, /primary-cache", "secret/);
-  assert.match(api, /format: "clear-text"/);
+  assert.match(api, /protection: "windows-dpapi-current-user"/);
   assert.doesNotMatch(ui, /id="candleExportClose"/);
 });
 
@@ -58,6 +58,10 @@ test("session controls support confirmed logout and footer connection state", ()
   assert.match(api, /auth\/logout/);
   assert.doesNotMatch(api, /void authStatus\(\)\.catch/);
   assert.match(api, /never launch a browser or migrate an old profile/);
+  assert.match(api, /chromium\.launchServer/);
+  assert.match(api, /launchedServer\.process\(\)\?\.pid/);
+  assert.match(api, /taskkill\.exe/);
+  assert.match(api, /closeBrowserContext\(\{ forceKill: true \}\)/);
 });
 
 test("export settings and active operation survive chart navigation", () => {
@@ -72,12 +76,14 @@ test("native context menu is blocked only while the chart surface is active", ()
 });
 
 test("FARAZ failures stay in the complete log, not the status heading", () => {
-  assert.match(api, /timeoutMs: REQUEST_TIMEOUT_MS/);
+  assert.match(api, /directRequest\(url/);
   assert.doesNotMatch(api, /MAX_LOGS/);
   assert.doesNotMatch(ui, /logs\.slice\(-100\)/);
   assert.doesNotMatch(ui, /candleStatusMessage/);
   assert.match(api, /Packet \$\{chunk\.index \+ 1\}/);
   assert.match(api, /const retryable = true/);
+  assert.match(api, /Completeness verification reproduced all/);
+  assert.match(api, /conflicting duplicate candle/);
 });
 
 test("FARAZ request context follows the last real FARAZ history request but is not required for manual credentials", () => {
@@ -155,6 +161,12 @@ test("unlimited zoom out is retired and cannot reintroduce annotation failures",
   assert.doesNotMatch(main, /unlimitedZoom|Unlimited zoom out|Compress the full available history/);
   assert.doesNotMatch(main, /minBarSpacing: 0\.01/);
   assert.equal((main.match(/minBarSpacing: 2/g) || []).length, 2);
+});
+
+test("moderate candle files keep one stable series during pan instead of swapping LOD data", () => {
+  assert.match(main, /CHART_LOD_STABLE_DATA_LIMIT = 100_000/);
+  assert.match(main, /state\.data\.length <= CHART_LOD_STABLE_DATA_LIMIT/);
+  assert.match(main, /state\.chartRender\?\.fullData/);
 });
 
 test("indicator time anchors interpolate between chart candles instead of disappearing", () => {

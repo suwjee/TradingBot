@@ -96,6 +96,18 @@ test("inventory recognizes the FARAZ RAW export filename", () => {
   assert.equal(item.to, "2026-09-01 00-29-31");
 });
 
+test("inventory recognizes underscore RAW filenames and rejects unsafe candle chronology", () => {
+  const raw = "RAW_FOREXCOM_XAUUSD_30S_FROM_2026_08_25_12_04_30_TO_2026_09_01_22.json";
+  const reversed = "reversed.json";
+  const rawRows = '[{"time":60,"open":1,"high":2,"low":1,"close":2},{"time":90,"open":2,"high":3,"low":2,"close":2.5}]';
+  const reversedRows = '[{"time":90,"open":2,"high":3,"low":2,"close":2.5},{"time":60,"open":1,"high":2,"low":1,"close":2}]';
+  const s = server(new Map(), new Map(files.map((name) => [name, "version-1"])), [raw, reversed], new Map([[raw, rawRows], [reversed, reversedRows]]));
+  const [item] = s.context.inventory();
+  assert.equal(item.id, raw);
+  assert.equal(item.symbol, "FOREXCOM:XAUUSD");
+  assert.equal(item.timeframe, "30S");
+});
+
 test("same-source requests reuse only the persisted primary-cache JSON", async () => {
   const s = server();
   const first = await s.post(); assert.equal(first.headers["X-QG-Cache"], "miss");

@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { execFile, execFileSync } from "node:child_process";
 import { chromium } from "playwright-core";
 
@@ -28,22 +28,36 @@ export function parseResolutionToSeconds(value) {
 }
 
 export function normalizeHistoryPayload(payload) {
+  return normalizeHistoryPayloadDetails(payload).candles;
+}
+
+export function normalizeHistoryPayloadDetails(payload) {
   const result = payload?.result && typeof payload.result === "object" ? payload.result : payload;
+  if (result?.s === "no_data") return { candles: [], receivedRows: 0, rejectedRows: 0 };
   const t = Array.isArray(result?.t) ? result.t : [];
   const o = Array.isArray(result?.o) ? result.o : [];
   const h = Array.isArray(result?.h) ? result.h : [];
   const l = Array.isArray(result?.l) ? result.l : [];
   const c = Array.isArray(result?.c) ? result.c : [];
+  const lengths = [t.length, o.length, h.length, l.length, c.length];
+  if (!lengths.some(Boolean) && !Array.isArray(result?.t)) {
+    throw new Error("FARAZ history response does not contain candle arrays.");
+  }
   const rows = [];
-  for (let index = 0; index < Math.min(t.length, o.length, h.length, l.length, c.length); index++) {
+  const receivedRows = Math.max(...lengths);
+  let rejectedRows = receivedRows - Math.min(...lengths);
+  for (let index = 0; index < Math.min(...lengths); index++) {
     const candle = { time: Math.trunc(Number(t[index])), open: Number(o[index]), high: Number(h[index]), low: Number(l[index]), close: Number(c[index]) };
-    if (!Number.isSafeInteger(candle.time) || candle.time <= 0) continue;
-    if (![candle.open, candle.high, candle.low, candle.close].every(Number.isFinite)) continue;
-    if (candle.high < Math.max(candle.open, candle.close, candle.low)) continue;
-    if (candle.low > Math.min(candle.open, candle.close, candle.high)) continue;
+    if (!Number.isSafeInteger(candle.time) || candle.time <= 0
+      || ![candle.open, candle.high, candle.low, candle.close].every(Number.isFinite)
+      || candle.high < Math.max(candle.open, candle.close, candle.low)
+      || candle.low > Math.min(candle.open, candle.close, candle.high)) {
+      rejectedRows++;
+      continue;
+    }
     rows.push(candle);
   }
-  return rows;
+  return { candles: rows, receivedRows, rejectedRows };
 }
 
 export function mergeCandles(chunks, from, to) {
@@ -226,8 +240,8 @@ function clearTextCredentials(value = {}) {
   };
 }
 
-// The session file is deliberately user-editable.  Keeping this conversion
-// pure also makes the manual-token format usable without a browser profile.
+// Clear text is accepted only as a one-time legacy/manual import. Loading it
+// immediately rewrites the file as a current-user Windows DPAPI envelope.
 export function normalizeClearTextSession(value) {
   if (!value || typeof value !== "object") return null;
   const credentials = clearTextCredentials(value);
@@ -244,7 +258,7 @@ export function normalizeClearTextSession(value) {
   return { storageState, credentials, historyAuth };
 }
 
-export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(), ".."), launchBrowser } = {}) {
+export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(), ".."), launchBrowser, fetchImpl = globalThis.fetch } = {}) {
   const secretDir = path.join(workspaceRoot, "primary-cache", "secret");
   const secretPath = path.join(secretDir, "faraz-session.dpapi.json");
   const outputDir = path.join(workspaceRoot, "market-data", "raw");
@@ -254,31 +268,49 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
   let context = null;
   let authPage = null;
   let contextHeadless = null;
+  let browserServer = null;
+  let browserPid = null;
   let historyAuth = null;
   let credentials = { xAccessToken: "", farazSession: "" };
+  let storedStorageState = { cookies: [], origins: [] };
+  let sessionCapturePending = null;
   const observedHistoryPages = new WeakSet();
 
   function loadStoredSession() {
     if (!fs.existsSync(secretPath)) return null;
-    const restored = normalizeClearTextSession(JSON.parse(fs.readFileSync(secretPath, "utf8")));
+    const envelope = JSON.parse(fs.readFileSync(secretPath, "utf8"));
+    let decoded;
+    let migrateClearText = false;
+    if (envelope.version === SESSION_FILE_VERSION && envelope.protection === "windows-dpapi-current-user" && typeof envelope.payload === "string") {
+      decoded = JSON.parse(unprotectForCurrentWindowsUser(envelope.payload));
+    } else if (envelope.format === "clear-text") {
+      decoded = envelope;
+      migrateClearText = true;
+    } else {
+      throw new Error("The stored FARAZ session file has an unsupported format.");
+    }
+    const restored = normalizeClearTextSession(decoded);
     if (!restored) throw new Error("The stored FARAZ session file is empty or has an unsupported format.");
     credentials = restored.credentials;
     historyAuth = restored.historyAuth;
-    return restored.storageState;
+    storedStorageState = restored.storageState;
+    if (migrateClearText) persistStorageState(storedStorageState);
+    return storedStorageState;
   }
 
   function persistStorageState(storageState) {
     fs.mkdirSync(secretDir, { recursive: true, mode: 0o700 });
-    const session = {
+    storedStorageState = storageState;
+    const protectedSession = protectForCurrentWindowsUser(JSON.stringify({
       version: SESSION_FILE_VERSION,
-      format: "clear-text",
       updatedAt: new Date().toISOString(),
       "x-access-token": credentials.xAccessToken,
       farazSession: credentials.farazSession,
       storageState,
       historyAuth,
-    };
-    fs.writeFileSync(secretPath, JSON.stringify(session, null, 2), { encoding: "utf8", mode: 0o600 });
+    }));
+    const envelope = { version: SESSION_FILE_VERSION, protection: "windows-dpapi-current-user", payload: protectedSession };
+    fs.writeFileSync(secretPath, JSON.stringify(envelope), { encoding: "utf8", mode: 0o600 });
   }
 
   async function persistSession() {
@@ -292,22 +324,38 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
       }).catch(() => "");
       if (pageToken) credentials.xAccessToken = pageToken;
     }
-    persistStorageState({ storageState, historyAuth });
+    persistStorageState(storageState);
   }
 
-  async function closeBrowserContext() {
+  function killBrowserProcessTree(pid) {
+    if (process.platform !== "win32" || !Number.isSafeInteger(pid) || pid <= 0) return;
+    try { execFileSync("taskkill.exe", ["/PID", String(pid), "/T", "/F"], { windowsHide: true, stdio: "ignore" }); }
+    catch {}
+  }
+
+  async function closeBrowserContext({ forceKill = false } = {}) {
     const closingBrowser = browser;
+    const closingServer = browserServer;
+    const closingPid = browserPid;
     browser = null;
+    browserServer = null;
+    browserPid = null;
     context = null;
     authPage = null;
     contextHeadless = null;
     if (closingBrowser?.isConnected()) await closingBrowser.close().catch(() => {});
+    await closingServer?.close().catch(() => {});
+    if (forceKill) {
+      await closingServer?.kill().catch(() => {});
+      killBrowserProcessTree(closingPid);
+    }
   }
 
   async function clearStoredSession() {
     await closeBrowserContext();
     historyAuth = null;
     credentials = { xAccessToken: "", farazSession: "" };
+    storedStorageState = { cookies: [], origins: [] };
     if (fs.existsSync(secretPath)) fs.unlinkSync(secretPath);
   }
 
@@ -321,6 +369,49 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
       const encoded = Buffer.from(command, "utf16le").toString("base64");
       execFile("powershell.exe", ["-NoLogo", "-NoProfile", "-NonInteractive", "-EncodedCommand", encoded], { windowsHide: true }, (error) => error ? reject(error) : resolve());
     });
+  }
+
+  function sessionHeaders(storageState = storedStorageState) {
+    const now = Date.now() / 1000;
+    const cookie = (storageState?.cookies || [])
+      .filter((item) => item?.name && item?.value && /(^|\.)faraz\.io$/i.test(item.domain || "") && (!Number.isFinite(item.expires) || item.expires < 0 || item.expires > now))
+      .map((item) => `${item.name}=${item.value}`)
+      .join("; ");
+    return {
+      Accept: "application/json, text/plain, */*",
+      ...(cookie ? { Cookie: cookie } : {}),
+      ...(credentials.xAccessToken ? { "x-access-token": credentials.xAccessToken } : {}),
+    };
+  }
+
+  async function directRequest(url, { timeoutMs = REQUEST_TIMEOUT_MS, controller = new AbortController() } = {}) {
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await fetchImpl(url, { method: "GET", signal: controller.signal, headers: sessionHeaders() });
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  async function probeStoredSession(symbolName = "FXCM:USOIL") {
+    const host = safeHost(historyAuth?.host);
+    const url = new URL(historyAuth?.endpoint && new URL(historyAuth.endpoint).host === host
+      ? historyAuth.endpoint
+      : `https://${host}${HISTORY_PATH}`);
+    const to = Math.floor(Date.now() / 1000);
+    for (const [key, value] of Object.entries({
+      symbolName: endpointSymbolName(symbolName), resolution: historyAuth?.resolution || "30S",
+      from: to - 86_400, to, countback: 1, firstDataRequest: true, latest: true,
+      adjustType: historyAuth?.adjustType || "2", json: true,
+    })) url.searchParams.set(key, String(value));
+    const startedAt = Date.now();
+    const response = await directRequest(url);
+    const contentType = response.headers?.get?.("content-type") || "";
+    return {
+      connected: response.status !== 401 && response.status !== 403 && response.ok && /(?:application|text)\/json/i.test(contentType),
+      status: response.status,
+      pingMs: Date.now() - startedAt,
+    };
   }
 
   function captureHistoryRequest(request) {
@@ -342,7 +433,18 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
         xAccessToken: String(headers["x-access-token"] || headers.authorization || credentials.xAccessToken || "").replace(/^Bearer\s+/i, ""),
         farazSession: readCookieValue(headers.cookie, "farazSession") || credentials.farazSession,
       };
-      void persistSession().catch(() => {});
+    } catch {}
+  }
+
+  function captureHistoryResponse(response) {
+    try {
+      const url = new URL(response.url());
+      if (!ALLOWED_HOSTS.has(url.host) || url.pathname !== HISTORY_PATH || !response.ok()) return;
+      if (sessionCapturePending) return;
+      sessionCapturePending = (async () => {
+        await persistSession();
+        await closeBrowserContext({ forceKill: true });
+      })().catch(() => {}).finally(() => { sessionCapturePending = null; });
     } catch {}
   }
 
@@ -350,6 +452,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
     if (!page || observedHistoryPages.has(page)) return;
     observedHistoryPages.add(page);
     page.on("request", captureHistoryRequest);
+    page.on("response", captureHistoryResponse);
   }
 
   function endpointSymbolName(symbolName) {
@@ -362,11 +465,11 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
   async function ensureContext({ showLogin = false, showBrowser = false } = {}) {
     if (context && (showLogin || showBrowser) && contextHeadless) await closeBrowserContext();
     if (!context) {
-      const executablePath = browserExecutable();
+      const executablePath = launchBrowser ? (process.env.FARAZ_BROWSER_PATH || null) : browserExecutable();
       let storageState;
       try {
         storageState = loadStoredSession();
-      } catch {
+      } catch (error) {
         // Only an explicit browser action may discard an obsolete encrypted
         // file.  Passive status checks must never recreate or alter it.
         if (!showLogin && !showBrowser) throw error;
@@ -377,16 +480,19 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
       }
       const headless = !showLogin && !showBrowser;
       const launch = launchBrowser || (async ({ executablePath }) => {
-        const launchedBrowser = await chromium.launch({
+        const launchedServer = await chromium.launchServer({
           executablePath, headless,
           args: headless ? ["--no-first-run", "--no-default-browser-check"] : ["--start-maximized", "--no-first-run", "--no-default-browser-check"],
         });
+        const launchedBrowser = await chromium.connect(launchedServer.wsEndpoint());
         const launchedContext = await launchedBrowser.newContext({ storageState: storageState || undefined, viewport: null });
-        return { browser: launchedBrowser, context: launchedContext };
+        return { browser: launchedBrowser, context: launchedContext, browserServer: launchedServer, browserPid: launchedServer.process()?.pid || null };
       });
       const launched = await launch({ executablePath, headless, storageState });
       browser = launched.browser;
       context = launched.context;
+      browserServer = launched.browserServer || null;
+      browserPid = Number(launched.browserPid) || null;
       contextHeadless = headless;
       if (credentials.xAccessToken) await context.setExtraHTTPHeaders({ "x-access-token": credentials.xAccessToken });
       context.on?.("page", observeHistoryRequests);
@@ -419,13 +525,16 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
       if (!context) {
         if (!fs.existsSync(secretPath)) return { connected: false, state: "not_connected" };
         const storageState = loadStoredSession();
+        const probe = await probeStoredSession(symbolName);
         return {
-          connected: true,
-          state: "saved_session",
+          connected: probe.connected,
+          state: probe.connected ? "saved_session" : "expired_session",
           host: historyAuth?.host || "faraz.io",
           historyHost: historyAuth?.host || null,
           endpoint: historyAuth?.endpoint || null,
-          credentialStorage: "Clear-text primary cache",
+          httpStatus: probe.status,
+          pingMs: probe.pingMs,
+          credentialStorage: "Windows-encrypted primary cache",
           savedCookies: storageState.cookies.filter((cookie) => /(^|\.)faraz\.io$/i.test(cookie?.domain || "")).length,
         };
       }
@@ -444,19 +553,24 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
         };
       }, { endpoint: CHART_LIST_PATH, symbol: symbolName });
       const connected = probe.status !== 401 && probe.status !== 403 && /(?:application|text)\/json/i.test(probe.contentType) && !probe.redirectedToLogin;
-      if (connected) await persistSession();
+      const pageHost = new URL(authPage.url()).host;
+      if (connected) {
+        await persistSession();
+        const storedProbe = await probeStoredSession(symbolName);
+        if (storedProbe.connected) await closeBrowserContext({ forceKill: true });
+      }
       return {
         connected,
         state: connected ? "connected" : "waiting_for_login",
         checkedAt: Date.now(),
-        host: historyAuth?.host || new URL(authPage.url()).host,
+        host: historyAuth?.host || pageHost,
         historyHost: historyAuth?.host || null,
         endpoint: historyAuth?.endpoint || null,
         adjustType: historyAuth?.adjustType || null,
         historyCapturedAt: historyAuth?.capturedAt || null,
         httpStatus: probe.status,
         pingMs: Date.now() - probeStartedAt,
-        credentialStorage: "Clear-text primary cache",
+        credentialStorage: "Windows-encrypted primary cache",
       };
     } catch (error) {
       return { connected: false, state: "waiting_for_login", error: error.message };
@@ -465,7 +579,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
 
   function publicJob(job) {
     if (!job) return null;
-    const { outputPath, abort, chunks, page, ...safe } = job;
+    const { outputPath, abort, chunks, page, requestController, ...safe } = job;
     return { ...safe, totalPackets: chunks?.length || safe.totalPackets || 0, openUrl: job.done && outputPath ? `/api/faraz/candles/open?id=${encodeURIComponent(job.id)}` : null };
   }
 
@@ -482,52 +596,50 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
     }
   }
 
-  async function fetchChunkOnce(page, job, chunk) {
+  async function fetchChunkOnce(job, chunk) {
     const url = new URL(job.endpoint);
     for (const [key, value] of Object.entries({
       symbolName: job.endpointSymbolName, resolution: job.resolution, from: chunk.from, to: chunk.to,
       countback: chunk.countback, firstDataRequest: chunk.firstDataRequest, latest: chunk.latest,
       adjustType: job.adjustType, json: true,
     })) url.searchParams.set(key, String(value));
-    const response = await page.evaluate(async ({ requestUrl, jobId, timeoutMs }) => {
-      window.__qgFarazAbortControllers ||= new Map();
-      const controller = new AbortController();
-      window.__qgFarazAbortControllers.set(jobId, controller);
-      const timeout = setTimeout(() => controller.abort(), timeoutMs);
-      try {
-        const result = await fetch(requestUrl, { credentials: "include", signal: controller.signal, headers: { Accept: "application/json, text/plain, */*" } });
-        return { ok: result.ok, status: result.status, text: await result.text() };
-      } catch (error) {
-        return { ok: false, status: 0, text: "", aborted: error?.name === "AbortError", networkError: error?.message || "Network error" };
-      } finally {
-        clearTimeout(timeout);
-        if (window.__qgFarazAbortControllers.get(jobId) === controller) window.__qgFarazAbortControllers.delete(jobId);
-      }
-    }, { requestUrl: url.toString(), jobId: job.id, timeoutMs: REQUEST_TIMEOUT_MS });
-    if (response.aborted) {
+    let response;
+    const requestController = new AbortController();
+    job.requestController = requestController;
+    try {
+      response = await directRequest(url, { controller: requestController });
+    } catch (cause) {
       if (job.abort.cancelled) throw new Error("Extraction cancelled.");
-      throw new Error("FARAZ history request timed out.");
+      const error = new Error(cause?.name === "AbortError" ? "FARAZ history request timed out." : `FARAZ network error: ${cause?.message || "Network error"}`);
+      error.cause = cause;
+      throw error;
+    } finally {
+      if (job.requestController === requestController) job.requestController = null;
     }
-    if (response.networkError) throw new Error(`FARAZ network error: ${response.networkError}`);
+    const text = await response.text();
     if (!response.ok) {
-      const error = new Error(`FARAZ history request failed with HTTP ${response.status}: ${response.text}`);
+      const error = new Error(`FARAZ history request failed with HTTP ${response.status}: ${text}`);
       error.status = response.status;
       throw error;
     }
     let payload;
-    try { payload = JSON.parse(response.text); }
+    try { payload = JSON.parse(text); }
     catch {
       const error = new Error("FARAZ returned invalid JSON with HTTP 200.");
       error.status = 200;
       throw error;
     }
-    return normalizeHistoryPayload(payload);
+    const normalized = normalizeHistoryPayloadDetails(payload);
+    if (normalized.rejectedRows) {
+      throw new Error(`FARAZ packet ${chunk.index + 1} contained ${normalized.rejectedRows} malformed or invalid candle row(s).`);
+    }
+    return normalized.candles.filter((candle) => candle.time <= chunk.to);
   }
 
-  async function fetchChunk(page, job, chunk) {
+  async function fetchChunk(job, chunk) {
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       try {
-        return await fetchChunkOnce(page, job, chunk);
+        return await fetchChunkOnce(job, chunk);
       } catch (error) {
         if (job.abort.cancelled || error?.name === "AbortError") throw new Error("Extraction cancelled.");
         // A 200 response with an empty normalized array is a valid, complete
@@ -544,13 +656,47 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
     throw new Error("FARAZ history request failed.");
   }
 
+  function candleIndexAt(candles, time) {
+    let low = 0, high = candles.length;
+    while (low < high) {
+      const middle = low + Math.floor((high - low) / 2);
+      if (candles[middle].time < time) low = middle + 1;
+      else high = middle;
+    }
+    return low < candles.length && candles[low].time === time ? low : -1;
+  }
+
+  async function verifyRemoteCandles(job, candles) {
+    const from = job.mode === "count" ? candles[0].time : job.requestedFrom;
+    const span = job.timeframeSeconds * job.packetSize;
+    const shiftedFrom = from - Math.max(job.timeframeSeconds, Math.floor(span / 2));
+    const verificationChunks = chunkRange(shiftedFrom, job.requestedTo, job.timeframeSeconds, job.packetSize);
+    const seen = new Uint8Array(candles.length);
+    log(job, "info", `Completeness verification started with ${verificationChunks.length} independent packet(s).`);
+    for (let index = 0; index < verificationChunks.length; index++) {
+      if (job.abort.cancelled) throw new Error("Extraction cancelled.");
+      const rows = await fetchChunk(job, verificationChunks[index]);
+      for (const candle of rows) {
+        if (candle.time < from || candle.time > job.requestedTo) continue;
+        const candleIndex = candleIndexAt(candles, candle.time);
+        if (candleIndex < 0) throw new Error(`Completeness verification found a missing primary candle at ${candle.time}.`);
+        const expected = candles[candleIndex];
+        if (expected.open !== candle.open || expected.high !== candle.high || expected.low !== candle.low || expected.close !== candle.close) {
+          throw new Error(`Completeness verification found conflicting OHLC at ${candle.time}.`);
+        }
+        seen[candleIndex] = 1;
+      }
+      if (index + 1 < verificationChunks.length && job.rateLimitMs) await cancellableDelay(job, job.rateLimitMs);
+    }
+    const missingIndex = seen.indexOf(0);
+    if (missingIndex >= 0) throw new Error(`Completeness verification could not reproduce candle ${candles[missingIndex].time}.`);
+    log(job, "success", `Completeness verification reproduced all ${candles.length} candle(s) with shifted packet boundaries.`);
+  }
+
   async function runJob(job) {
-    const page = await ensureContext();
-    job.page = page;
+    loadStoredSession();
     const status = await authStatus(job.symbolName);
     if (!status.connected) throw new Error("FARAZ authentication is required.");
-    const historyOrigin = `https://${job.host}`;
-    if (new URL(page.url()).origin !== historyOrigin) await page.goto(historyOrigin, { waitUntil: "domcontentloaded" });
     const collected = [];
     let cursor = 0;
     while (cursor < job.chunks.length) {
@@ -559,7 +705,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
       job.stage = "Fetching candles";
       job.sentPackets++;
       log(job, "info", `Packet ${cursor + 1}/${job.chunks.length} sent for ${chunk.from} → ${chunk.to}.`);
-      const rows = await fetchChunk(page, job, chunk);
+      const rows = await fetchChunk(job, chunk);
       collected.push(rows);
       job.receivedPackets++;
       job.receivedRows += rows.length;
@@ -587,6 +733,9 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
     if (job.mode === "count") candles = candles.slice(-job.candleCount);
     if (!candles.length) throw new Error("No valid candles were returned for the requested range.");
     if (job.mode === "count" && candles.length !== job.candleCount) throw new Error(`Only ${candles.length}/${job.candleCount} candles were available.`);
+    if (merged.conflicts) throw new Error(`Extraction found ${merged.conflicts} conflicting duplicate candle(s); nothing was saved.`);
+    job.stage = "Verifying completeness";
+    await verifyRemoteCandles(job, candles);
     let gaps = 0;
     for (let index = 1; index < candles.length; index++) if (candles[index].time - candles[index - 1].time > job.timeframeSeconds) gaps++;
     fs.mkdirSync(outputDir, { recursive: true });
@@ -606,16 +755,26 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
       if (!validation.valid) throw new Error("Existing RAW file validation failed; it was not reused.");
     } else {
       const temporaryPath = path.join(temporaryOutputDir, `${job.id}.json.tmp`);
-      fs.writeFileSync(temporaryPath, serialized, { encoding: "utf8", flag: "wx" });
-      const validation = verifySavedCandles(JSON.parse(fs.readFileSync(temporaryPath, "utf8")), {
-        from: job.requestedFrom, to: job.requestedTo, timeframeSeconds: job.timeframeSeconds,
-      });
-      job.validation = validation.checks;
-      if (!validation.valid) {
-        for (const check of validation.checks.filter((item) => !item.passed)) log(job, "error", `Saved-file check failed: ${check.label}. ${check.detail}`);
-        throw new Error("Saved RAW file validation failed; it was not moved into market-data/raw.");
+      let published = false;
+      try {
+        fs.writeFileSync(temporaryPath, serialized, { encoding: "utf8", flag: "wx" });
+        const validation = verifySavedCandles(JSON.parse(fs.readFileSync(temporaryPath, "utf8")), {
+          from: job.requestedFrom, to: job.requestedTo, timeframeSeconds: job.timeframeSeconds,
+        });
+        job.validation = validation.checks;
+        if (!validation.valid) {
+          for (const check of validation.checks.filter((item) => !item.passed)) log(job, "error", `Saved-file check failed: ${check.label}. ${check.detail}`);
+          throw new Error("Saved RAW file validation failed; it was not moved into market-data/raw.");
+        }
+        const written = fs.readFileSync(temporaryPath);
+        const expectedHash = createHash("sha256").update(serialized).digest("hex");
+        const writtenHash = createHash("sha256").update(written).digest("hex");
+        if (expectedHash !== writtenHash) throw new Error("Saved RAW file hash verification failed; the temporary file was not published.");
+        fs.renameSync(temporaryPath, job.outputPath);
+        published = true;
+      } finally {
+        if (!published && fs.existsSync(temporaryPath)) fs.unlinkSync(temporaryPath);
       }
-      fs.renameSync(temporaryPath, job.outputPath);
     }
     Object.assign(job, { running: false, done: true, stage: "Saved to market-data/raw", status: "Done", candleCountResult: candles.length, duplicates: merged.duplicates, conflicts: merged.conflicts, gaps, fileName: filename, savedPath: `market-data/raw/${filename}`, finalFrom: candles[0].time, finalTo: candles.at(-1).time });
     log(job, "success", `${candles.length} candles were saved to market-data/raw/${filename}.`);
@@ -645,7 +804,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
     runJob(job).catch((error) => {
       Object.assign(job, { running: false, done: false, stage: error.message === "Extraction cancelled." ? "Cancelled" : "Error", status: "Failed", error: error.message });
       log(job, error.message === "Extraction cancelled." ? "warn" : "error", error.message);
-    }).finally(() => { job.page = null; });
+    }).finally(() => { job.requestController = null; });
     return publicJob(job);
   }
 
@@ -694,9 +853,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
           if (!job) return json(res, 404, { error: "Extraction was not found." });
           job.abort.cancelled = true;
           job.cancelRequested = true;
-          if (job.page && !job.page.isClosed()) {
-            await job.page.evaluate((jobId) => window.__qgFarazAbortControllers?.get(jobId)?.abort(), job.id).catch(() => {});
-          }
+          job.requestController?.abort();
           json(res, 200, { ok: true });
         } catch (error) { json(res, 400, { error: error.message }); }
       });

@@ -1,9 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync, existsSync } from "node:fs";
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { buildCandleFilename, createFarazCandleApi, mergeCandles, normalizeClearTextSession, normalizeHistoryPayload, parseResolutionToSeconds, verifySavedCandles } from "../plugins/faraz-candle-api.js";
+import { EventEmitter } from "node:events";
+import { Readable } from "node:stream";
+import { buildCandleFilename, createFarazCandleApi, mergeCandles, normalizeClearTextSession, normalizeHistoryPayload, normalizeHistoryPayloadDetails, parseResolutionToSeconds, verifySavedCandles } from "../plugins/faraz-candle-api.js";
 
 test("FARAZ resolution parser accepts extension-compatible values", () => {
   assert.equal(parseResolutionToSeconds("1S"), 1);
@@ -24,6 +26,8 @@ test("history payload normalization keeps only finite OHLC-valid candles", () =>
   } });
   assert.deepEqual(candles, [{ time: 100, open: 10, high: 12, low: 9, close: 11 }]);
   assert.deepEqual(normalizeHistoryPayload({ result: { t: [], o: [], h: [], l: [], c: [] } }), []);
+  assert.equal(normalizeHistoryPayloadDetails({ result: { t: [100, 101], o: [10], h: [12], l: [9], c: [11] } }).rejectedRows, 1);
+  assert.throws(() => normalizeHistoryPayloadDetails({ result: { unexpected: true } }), /candle arrays/);
 });
 
 test("merge is chronological, range-bounded, unique, and reports conflicts", () => {
@@ -73,7 +77,7 @@ test("clear-text FARAZ session accepts manually supplied token and cookie", () =
   assert.equal(normalizeClearTextSession({ version: 2 }), null);
 });
 
-test("status and logout do not launch a browser, and logout removes the clear-text session", async () => {
+test("status validates without a browser, migrates clear text to DPAPI, and logout removes the session", async () => {
   const workspaceRoot = mkdtempSync(join(tmpdir(), "faraz-session-"));
   const secretDir = join(workspaceRoot, "primary-cache", "secret");
   const secretPath = join(secretDir, "faraz-session.dpapi.json");
@@ -81,7 +85,8 @@ test("status and logout do not launch a browser, and logout removes the clear-te
   writeFileSync(secretPath, JSON.stringify({ version: 2, format: "clear-text", "x-access-token": "manual-token", farazSession: "manual-cookie" }));
   const routes = new Map();
   let browserLaunches = 0;
-  createFarazCandleApi({ workspaceRoot, launchBrowser: async () => { browserLaunches++; throw new Error("Browser launch is not allowed for status or logout."); } })
+  const fetchImpl = async () => ({ ok: true, status: 200, headers: { get: () => "application/json" } });
+  createFarazCandleApi({ workspaceRoot, fetchImpl, launchBrowser: async () => { browserLaunches++; throw new Error("Browser launch is not allowed for status or logout."); } })
     .configureServer({ middlewares: { use(route, handler) { routes.set(route, handler); } } });
   const call = async (route, method = "GET") => {
     const response = { headers: {}, setHeader(name, value) { this.headers[name] = value; }, end(body) { this.body = JSON.parse(body); } };
@@ -90,9 +95,105 @@ test("status and logout do not launch a browser, and logout removes the clear-te
   };
   assert.equal((await call("/api/faraz/auth/status")).connected, true);
   assert.equal(browserLaunches, 0);
+  const migrated = JSON.parse(readFileSync(secretPath, "utf8"));
+  assert.equal(migrated.protection, "windows-dpapi-current-user");
+  assert.equal(typeof migrated.payload, "string");
+  assert.equal(Object.hasOwn(migrated, "farazSession"), false);
   assert.equal((await call("/api/faraz/auth/logout", "POST")).ok, true);
   assert.equal(existsSync(secretPath), false);
   assert.equal((await call("/api/faraz/auth/status")).connected, false);
   assert.equal(browserLaunches, 0);
+  rmSync(workspaceRoot, { recursive: true, force: true });
+});
+
+test("a successful interactive capture closes and kills its one owned browser server", async () => {
+  const workspaceRoot = mkdtempSync(join(tmpdir(), "faraz-browser-lifecycle-"));
+  const routes = new Map();
+  const page = new EventEmitter();
+  page.url = () => "https://faraz.io/account/login";
+  page.isClosed = () => false;
+  page.goto = async () => {};
+  page.bringToFront = async () => {};
+  page.evaluate = async () => ({ status: 200, ok: true, contentType: "application/json", redirectedToLogin: false });
+  const context = new EventEmitter();
+  context.pages = () => [page];
+  context.cookies = async () => [{ name: "farazSession", value: "cookie", domain: ".faraz.io", path: "/", expires: -1 }];
+  context.storageState = async () => ({ cookies: [{ name: "farazSession", value: "cookie", domain: ".faraz.io", path: "/", expires: -1 }], origins: [] });
+  context.setExtraHTTPHeaders = async () => {};
+  const browser = new EventEmitter();
+  let connected = true, browserCloses = 0, serverCloses = 0, serverKills = 0, launches = 0;
+  browser.isConnected = () => connected;
+  browser.close = async () => { connected = false; browserCloses++; };
+  const browserServer = { close: async () => { serverCloses++; }, kill: async () => { serverKills++; } };
+  const fetchImpl = async () => ({ ok: true, status: 200, headers: { get: () => "application/json" } });
+  createFarazCandleApi({ workspaceRoot, fetchImpl, launchBrowser: async () => { launches++; return { browser, context, browserServer }; } })
+    .configureServer({ middlewares: { use(route, handler) { routes.set(route, handler); } } });
+  const call = async (route, method = "GET") => {
+    const response = { setHeader() {}, end(body) { this.body = JSON.parse(body); } };
+    await routes.get(route)({ method, url: "" }, response);
+    return response.body;
+  };
+  assert.equal((await call("/api/faraz/auth/open", "POST")).ok, true);
+  assert.equal(launches, 1);
+  assert.equal((await call("/api/faraz/auth/status")).connected, true);
+  assert.equal(browserCloses, 1);
+  assert.equal(serverCloses, 1);
+  assert.equal(serverKills, 1);
+  const savedEnvelope = JSON.parse(readFileSync(join(workspaceRoot, "primary-cache", "secret", "faraz-session.dpapi.json"), "utf8"));
+  assert.equal(savedEnvelope.protection, "windows-dpapi-current-user");
+  assert.equal((await call("/api/faraz/auth/status")).connected, true);
+  assert.equal(launches, 1);
+  rmSync(workspaceRoot, { recursive: true, force: true });
+});
+
+test("range extraction independently reproduces every candle before atomic publication", async () => {
+  const workspaceRoot = mkdtempSync(join(tmpdir(), "faraz-complete-range-"));
+  const secretDir = join(workspaceRoot, "primary-cache", "secret");
+  mkdirSync(secretDir, { recursive: true });
+  writeFileSync(join(secretDir, "faraz-session.dpapi.json"), JSON.stringify({ version: 2, format: "clear-text", "x-access-token": "token", farazSession: "cookie" }));
+  const candles = [
+    { time: 1_788_213_600, open: 10, high: 12, low: 9, close: 11 },
+    { time: 1_788_213_630, open: 11, high: 13, low: 10, close: 12 },
+    { time: 1_788_213_660, open: 12, high: 14, low: 11, close: 13 },
+    { time: 1_788_213_690, open: 13, high: 15, low: 12, close: 14 },
+  ];
+  let historyRequests = 0;
+  const fetchImpl = async (input) => {
+    historyRequests++;
+    const url = new URL(input);
+    const from = Number(url.searchParams.get("from")), to = Number(url.searchParams.get("to"));
+    const rows = candles.filter((candle) => candle.time >= from && candle.time <= to);
+    const result = rows.length ? {
+      t: rows.map((row) => row.time), o: rows.map((row) => row.open), h: rows.map((row) => row.high),
+      l: rows.map((row) => row.low), c: rows.map((row) => row.close),
+    } : { s: "no_data" };
+    return { ok: true, status: 200, headers: { get: () => "application/json" }, text: async () => JSON.stringify({ result }) };
+  };
+  const routes = new Map();
+  createFarazCandleApi({ workspaceRoot, fetchImpl }).configureServer({ middlewares: { use(route, handler) { routes.set(route, handler); } } });
+  const call = async (route, { method = "GET", url = "", body = null } = {}) => {
+    const request = body == null ? new EventEmitter() : Readable.from([JSON.stringify(body)]);
+    request.method = method; request.url = url;
+    const response = { setHeader() {}, end(value) { this.body = JSON.parse(value); } };
+    await routes.get(route)(request, response);
+    return response.body;
+  };
+  const started = await call("/api/faraz/candles/start", { method: "POST", body: {
+    mode: "range", symbolName: "FOREXCOM:XAUUSD", resolution: "30S", from: candles[0].time,
+    to: candles.at(-1).time, packetSize: 2, rateLimitMs: 30, host: "faraz.io",
+  } });
+  let job;
+  for (let attempt = 0; attempt < 100; attempt++) {
+    job = await call("/api/faraz/candles/status", { url: `?id=${started.id}` });
+    if (!job.running) break;
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  }
+  assert.equal(job.done, true, job.error);
+  assert.equal(job.candleCountResult, candles.length);
+  assert.equal(job.validation.every((check) => check.passed), true);
+  assert.ok(historyRequests >= 5, "status probe plus primary and shifted verification packets must all run");
+  const savedFiles = readdirSync(join(workspaceRoot, "market-data", "raw")).filter((name) => name.endsWith(".json"));
+  assert.equal(savedFiles.length, 1);
+  assert.deepEqual(JSON.parse(readFileSync(join(workspaceRoot, "market-data", "raw", savedFiles[0]), "utf8")), candles);
   rmSync(workspaceRoot, { recursive: true, force: true });
 });
