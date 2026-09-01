@@ -1,0 +1,348 @@
+/* Object Tree side inspector. */
+.workspace.has-pinned-panel {
+  grid-template-columns: var(--ui-rail-width) minmax(0, 1fr) var(--qg-panel-width, 288px);
+}
+
+.object-tree {
+  position: fixed;
+  z-index: var(--ui-z-panel);
+  top: calc(var(--ui-topbar-height) + 8px);
+  right: 8px;
+  bottom: calc(var(--ui-statusbar-height) + 8px);
+  width: min(340px, calc(100vw - var(--ui-rail-width) - 16px));
+  min-width: 270px;
+  display: grid;
+  grid-template-rows: 50px 42px minmax(0, 1fr) 46px;
+  overflow: hidden;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-md);
+  background: var(--ui-bg-surface);
+  box-shadow: var(--ui-shadow-panel);
+  color: var(--ui-text-primary);
+}
+
+.object-tree.is-pinned {
+  position: relative;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  grid-column: 3;
+  grid-row: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  max-height: 100%;
+  align-self: stretch;
+  border-width: 0 0 0 1px;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.object-tree > header,
+.object-tree > footer {
+  display: flex;
+  align-items: center;
+  gap: var(--ui-space-2);
+  padding: 0 var(--ui-space-3);
+  background: var(--ui-bg-surface);
+}
+
+.object-tree > header {
+  justify-content: space-between;
+  border-bottom: 1px solid var(--ui-border);
+}
+
+.object-tree > header strong,
+.object-tree > header small {
+  display: block;
+}
+
+.object-tree > header strong {
+  font-size: var(--ui-text-md);
+  font-weight: var(--ui-weight-semibold);
+}
+
+.object-tree > header small {
+  margin-top: 2px;
+  color: var(--ui-text-muted);
+  font-size: var(--ui-text-xs);
+}
+
+.tree-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.tree-header-actions button {
+  position: relative;
+  width: var(--ui-control-md);
+  height: var(--ui-control-md);
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--ui-radius-sm);
+  background: transparent;
+  color: var(--ui-text-secondary);
+}
+
+.tree-header-actions button:hover {
+  background: var(--ui-bg-hover);
+  color: var(--ui-text-primary);
+}
+
+.tree-header-actions button.active {
+  border-color: #d9e3ff;
+  background: var(--ui-accent-soft);
+  color: var(--ui-accent);
+}
+
+.tree-header-actions button:first-child svg:last-child {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 11px;
+  height: 11px;
+  padding: 1px;
+  border-radius: 50%;
+  background: var(--ui-bg-surface);
+  color: var(--ui-accent);
+}
+
+.object-search {
+  align-self: center;
+  margin: 6px var(--ui-space-3);
+  padding: 0 var(--ui-space-2);
+}
+
+.object-list {
+  min-height: 0;
+  overflow: auto;
+  padding: var(--ui-space-1) var(--ui-space-2) var(--ui-space-3);
+}
+
+.object-empty,
+.folder-empty {
+  padding: var(--ui-space-4) var(--ui-space-3);
+  color: var(--ui-text-muted);
+  font-size: var(--ui-text-xs);
+  line-height: var(--ui-leading-normal);
+  text-align: center;
+}
+
+.folder-empty {
+  margin: 2px 4px 6px 28px;
+  padding: var(--ui-space-2);
+  border: 1px dashed var(--ui-border);
+  border-radius: var(--ui-radius-sm);
+}
+
+.object-group-title {
+  padding: 10px 8px 6px;
+  color: var(--ui-text-muted);
+  font-size: var(--ui-text-2xs);
+  font-weight: var(--ui-weight-semibold);
+  letter-spacing: .045em;
+  text-transform: uppercase;
+}
+
+.tree-folder {
+  margin-bottom: 2px;
+  border: 1px solid transparent;
+  border-radius: var(--ui-radius-sm);
+}
+
+.tree-folder:has(.object-row.is-dragging) { border-color: #b9cbff; }
+.tree-folder-heading { position: relative; display: flex; align-items: center; }
+.tree-folder-heading .tree-folder-row { flex: 1; padding-right: 32px; }
+
+.tree-folder-row {
+  min-width: 0;
+  min-height: 32px;
+  display: grid;
+  grid-template-columns: 16px 17px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 5px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: var(--ui-radius-sm);
+  background: transparent;
+  color: var(--ui-text-secondary);
+  text-align: left;
+}
+
+.tree-folder-row:hover {
+  background: var(--ui-bg-hover);
+  color: var(--ui-text-primary);
+}
+
+.tree-folder-row.nested { padding-left: var(--ui-space-5); }
+.tree-chevron { display: grid; place-items: center; transition: transform var(--ui-duration-base) var(--ui-ease-standard); }
+.tree-folder-row[aria-expanded="false"] .tree-chevron { transform: rotate(-90deg); }
+.tree-folder-row strong { overflow: hidden; font-size: var(--ui-text-xs); font-weight: var(--ui-weight-medium); text-overflow: ellipsis; white-space: nowrap; }
+.tree-folder-row small { min-width: 18px; color: var(--ui-text-muted); font-size: var(--ui-text-2xs); text-align: right; }
+
+.tree-folder-delete {
+  position: absolute;
+  right: 5px;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--ui-radius-xs);
+  background: transparent;
+  color: var(--ui-text-muted);
+  opacity: 0;
+  transition: opacity var(--ui-duration-fast) var(--ui-ease-standard),
+    background var(--ui-duration-fast) var(--ui-ease-standard),
+    color var(--ui-duration-fast) var(--ui-ease-standard);
+}
+
+.tree-folder-heading:hover .tree-folder-delete,
+.tree-folder-delete:focus-visible { opacity: 1; }
+.tree-folder-delete:hover { background: var(--ui-danger-soft); color: var(--ui-danger); }
+
+.nested-items {
+  margin-left: 10px;
+  padding-left: 6px;
+  border-left: 1px solid var(--ui-border-subtle);
+}
+
+.object-row {
+  min-width: 0;
+  min-height: 36px;
+  display: grid;
+  grid-template-columns: 4px minmax(0, 1fr) repeat(4, 28px);
+  align-items: center;
+  gap: 2px;
+  margin: 1px 0;
+  padding: 4px;
+  border: 1px solid transparent;
+  border-radius: var(--ui-radius-sm);
+  background: transparent;
+}
+
+.object-row:hover { background: var(--ui-bg-hover); }
+.object-row.selected { border-color: #bfd0ff; background: var(--ui-bg-selected); }
+.object-row.muted { opacity: .58; }
+.object-row[draggable="true"] { cursor: grab; }
+.object-row.is-dragging { opacity: .42; cursor: grabbing; }
+
+.object-color {
+  width: 3px;
+  height: 26px;
+  border-radius: 3px;
+}
+
+.object-name {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 4px;
+}
+
+.object-name strong,
+.object-name small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.object-name strong { font-size: var(--ui-text-xs); font-weight: var(--ui-weight-medium); }
+.object-name small { color: var(--ui-text-muted); font-family: var(--ui-font-mono); font-size: var(--ui-text-2xs); }
+
+.object-row button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--ui-radius-xs);
+  background: transparent;
+  color: var(--ui-text-muted);
+}
+
+.object-row button:hover { background: var(--ui-bg-active); color: var(--ui-text-primary); }
+.object-row button.danger:hover { background: var(--ui-danger-soft); color: var(--ui-danger); }
+
+.object-tree > footer {
+  border-top: 1px solid var(--ui-border);
+  background: var(--ui-bg-subtle);
+}
+
+.object-tree > footer button {
+  min-width: 0;
+  min-height: var(--ui-control-lg);
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-sm);
+  background: var(--ui-bg-surface);
+  color: var(--ui-text-secondary);
+  font-size: var(--ui-text-xs);
+  font-weight: var(--ui-weight-medium);
+}
+
+.object-tree > footer .danger { color: var(--ui-text-secondary); }
+.object-tree > footer .danger:hover { border-color: #f4c5ca; background: var(--ui-danger-soft); color: var(--ui-danger); }
+
+.panel-resize-handle {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  bottom: 0;
+  left: -4px;
+  width: 8px;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+.panel-resize-handle::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 3px;
+  width: 1px;
+  background: transparent;
+}
+
+.panel-resize-handle:hover::after,
+.panel-resize-handle:focus-visible::after { background: var(--ui-accent); }
+
+@media (max-width: 760px) {
+  .object-tree,
+  .object-tree.is-pinned {
+    position: fixed;
+    top: calc(var(--ui-topbar-height) + var(--ui-shell-gap));
+    right: 0;
+    bottom: calc(var(--ui-statusbar-height) + var(--ui-shell-gap));
+    width: min(380px, calc(100vw - var(--ui-rail-width)));
+    height: auto;
+    border: 0;
+    border-left: 1px solid var(--ui-border);
+    border-radius: 0;
+    box-shadow: var(--ui-shadow-panel);
+  }
+
+  .panel-resize-handle { display: none; }
+}
+
+@media (max-width: 520px) {
+  .object-tree,
+  .object-tree.is-pinned {
+    width: calc(100vw - var(--ui-rail-width));
+    min-width: 0;
+  }
+
+  .object-row { grid-template-columns: 4px minmax(0, 1fr) repeat(4, 30px); }
+}
