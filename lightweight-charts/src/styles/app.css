@@ -80,13 +80,14 @@ button:disabled, select:disabled, input:disabled { cursor: not-allowed; opacity:
 }
 .timeframe-menu-button { display: grid; place-items: center; }
 .top-drawing-tools {
-  justify-self: center; gap: 1px; padding: 2px; overflow-x: auto; overflow-y: hidden;
+  position: absolute; left: 50%; transform: translateX(-50%); gap: 1px; padding: 2px; overflow-x: auto; overflow-y: hidden;
   border: 1px solid var(--ui-border-subtle); border-radius: var(--ui-radius-md);
   background: var(--ui-bg-surface);
   scrollbar-width: none; overscroll-behavior-inline: contain;
 }
 .top-drawing-tools::-webkit-scrollbar { display: none; }
-.top-actions { justify-self: end; gap: 1px; }
+.top-drawing-tools.hidden { display: flex; visibility: hidden; pointer-events: none; }
+.top-actions { position: absolute; right: 6px; gap: 1px; }
 .icon-btn {
   width: var(--ui-control-md); min-width: var(--ui-control-md); height: var(--ui-control-md);
   padding: 0; display: grid; place-items: center;
@@ -285,6 +286,7 @@ button:disabled, select:disabled, input:disabled { cursor: not-allowed; opacity:
 .status-health[data-state="error"] .dot { animation: status-error-pulse 1.15s ease-in-out infinite; }
 .status-state[data-state="active"] .dot, .status-cache[data-state="cold"] .dot { background: var(--ui-positive); box-shadow: 0 0 0 2px var(--ui-positive-soft); }
 .status-state[data-state="inactive"] .dot, .status-cache[data-state="idle"] .dot { background: var(--ui-text-disabled); box-shadow: 0 0 0 2px var(--ui-bg-active); }
+.status-faraz[data-state="inactive"] .dot { background: var(--ui-danger); box-shadow: 0 0 0 2px var(--ui-danger-soft); }
 .status-cache[data-state="cache"] .dot { background: #ffb424; box-shadow: 0 0 0 2px rgb(255 180 36 / .26); }
 .status-range { gap: 10px; font-family: var(--ui-font-mono); }
 .status-range span { display: inline-flex; gap: 4px; }
@@ -485,6 +487,8 @@ input[type="color"].color-value-input { display: none; }
     gap: var(--ui-space-2);
     padding: 0 6px;
   }
+  .topbar-scroll .top-drawing-tools,
+  .topbar-scroll .top-actions { position: static; transform: none; }
   .topbar-scroll .top-actions .divider,
   .topbar-scroll .divider { display: block; }
   .topbar-scroll .timeframes .tf:not(.active) { display: inline-block; }

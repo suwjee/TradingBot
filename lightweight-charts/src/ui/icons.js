@@ -12,4 +12,21 @@ paths.profile = 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0';
 paths.pin = 'M8 4h8l-1 6 3 3v1H6v-1l3-3-1-6zm4 10v6';
 paths.folder = 'M3 6h7l2 2h9v10H3zM3 6v12';
 paths.target = 'M12 3v4m0 10v4M3 12h4m10 0h4M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z';
+paths.database = 'M4 6c0-2 3.6-3 8-3s8 1 8 3-3.6 3-8 3-8-1-8-3zm0 0v6c0 2 3.6 3 8 3s8-1 8-3V6M4 12v6c0 2 3.6 3 8 3s8-1 8-3v-6';
+paths.shield = 'M12 3l7 3v5c0 4.6-2.8 7.8-7 10-4.2-2.2-7-5.4-7-10V6l7-3zm-3 9 2 2 4-5';
+paths.candles = 'M6 4v16m-2-5h4v-6H4v6zm8-12v18m-2-7h4V7h-4v6zm8-7v14m-2-3h4V9h-4v8z';
+paths.activity = 'M3 12h4l2-6 4 12 2-6h6';
+paths.login = 'M10 5H5v14h5m4-4 4-3-4-3m4 3H9';
+paths.restart = 'M19 8a7 7 0 1 0 1 7M19 4v4h-4';
+paths.play = 'M8 5l11 7-11 7V5z';
+paths.download = 'M12 4v11m-4-4 4 4 4-4M5 20h14';
+paths.exportCandles = 'M6 3h8l4 4v14H6zM14 3v5h4M9 17v-5m3 5V9m3 8v-3';
+paths.logout = 'M14 5h5v14h-5m-4-4 4-3-4-3m4 3H5';
+paths.server = 'M5 5h14v5H5zm0 9h14v5H5zm3-6h.01M8 17h.01';
+paths.language = 'M4 5h10M9 3c2 2.2 3 4.7 3 7s-1 4.8-3 7m-2 1 2 2 2-2M14 19h6m-3-2c-1.7-2.5-2.6-5.3-2.6-8S15.3 3.5 17 1m-3 18h6';
+// Deliberately reads as a familiar WWW globe at toolbar sizes, matching the
+// browser action rather than the generic language selector glyph.
+paths.web = 'M3 12a9 9 0 1 0 18 0A9 9 0 0 0 3 12zm1.2 0h15.6M12 3c2.2 2.4 3.3 5.4 3.3 9S14.2 18.6 12 21M12 3C9.8 5.4 8.7 8.4 8.7 12s1.1 6.6 3.3 9M6 7.1h12M6 16.9h12M5.6 9.1l1.1 4 1.2-4 1.2 4 1.1-4M11.1 9.1l1.1 4 1.2-4 1.2 4 1.1-4';
+paths.check = 'm5 12 4 4L19 6';
+paths.cross = 'M6 6l12 12M18 6 6 18';
 export function icon(name, size=20){return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[name] || paths.info}"/></svg>`}

@@ -134,7 +134,16 @@ function Ensure-Dependencies {
 
 function Ensure-NpmPackages {
     param([string]$Npm)
-    if (Test-Path -LiteralPath (Join-Path $ChartRoot 'node_modules')) { Add-Log OK 'Node packages are ready.'; return }
+    $requiredPackages = @(
+        (Join-Path $ChartRoot 'node_modules\vite'),
+        (Join-Path $ChartRoot 'node_modules\playwright-core')
+    )
+    if ($requiredPackages | ForEach-Object { Test-Path -LiteralPath $_ } | Where-Object { -not $_ }) {
+        Add-Log WARN 'Node packages are incomplete; restoring the locked dependencies.'
+    } elseif (Test-Path -LiteralPath (Join-Path $ChartRoot 'node_modules')) {
+        Add-Log OK 'Node packages are ready.'
+        return
+    }
     Add-Log INFO 'Installing Node packages…'
     Render-Dashboard
     Push-Location $ChartRoot

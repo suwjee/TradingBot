@@ -8,12 +8,25 @@ import { drawingArray, normalizeHistorySnapshot, CHART_TIMEFRAME_KEY, restoredTi
 import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart-lod.js";
 import { updateStageAggregate } from "./calculation-progress.js";
 import { saveManualReview } from "./manual-review.js";
+import { initCandleExport } from "./candle-export.js";
 import "./styles/tokens.css";
 import "./styles/app.css";
 import "./drawings/drawing.css";
 import "./drawings/object-tree.css";
 import "../../indicator/indicator-settings/frontend/reaction-detector.css";
 import "./styles/qg-modern.css";
+
+// Checkboxes remain keyboard-accessible, but a broad label/row click must not
+// change their value.  Only the native checkbox hit target can toggle it.
+document.addEventListener("click", (event) => {
+  const target = event.target instanceof Element ? event.target : null;
+  if (!target || target.matches('input[type="checkbox"]')) return;
+  const checkboxLabel = target.closest('label:has(input[type="checkbox"])');
+  // The compact indicator power switch intentionally exposes its styled span
+  // as the click target.  Other setting rows remain non-toggleable by label.
+  if (checkboxLabel?.classList.contains("master-switch")) return;
+  if (checkboxLabel) event.preventDefault();
+}, true);
 
 function humanizeEvent(event) {
   return String(event || "")
@@ -175,13 +188,14 @@ const pinnedTimeframes = (() => {
       const valid = [...new Set(saved.map(Number))].filter((seconds) =>
         TF.some((item) => item.s === seconds),
       );
-      if (valid.length && valid.length <= 3) return valid;
+      if (valid.length) return valid;
     }
   } catch {}
   return [5, 30, 60];
 })();
 const navigationItems = [
   ["dashboard", "Dashboard", "dashboardBtn"],
+  ["exportCandles", "FARAZ Exporter", "candleExportBtn"],
   ["candlestick_chart", "Chart", "chartNavBtn"],
   ["tune", "Indicator settings", "indicatorBtn"],
   ["layers", "Object tree", "objectTreeBtn"],
@@ -312,9 +326,9 @@ document.querySelector("#app").innerHTML = `<main class="app">
  <div class="topbar-left"><button class="control symbol-control" id="symbolBtn" aria-label="Select symbol">FXCM:USOIL ${materialIcon("expand_more")}</button><div class="divider"></div><div class="timeframes" aria-label="Pinned timeframes"></div></div>
  <div class="top-drawing-tools" aria-label="Drawing tools. Drag to reorder, or use Alt plus Left or Right Arrow."></div>
  <div class="top-actions"><button class="icon-btn" id="undoBtn" title="Undo" aria-label="Undo">${materialIcon("undo")}</button><button class="icon-btn" id="redoBtn" title="Redo" aria-label="Redo">${materialIcon("redo")}</button><button class="icon-btn" id="hideAllBtn" title="Hide drawings" aria-label="Hide drawings" aria-pressed="false">${materialIcon("visibility")}</button><div class="divider"></div><button class="icon-btn" id="fullscreenBtn" title="Full screen" aria-label="Full screen">${materialIcon("fullscreen")}</button><button class="icon-btn" id="reloadIndicatorBtn" title="Reload indicator cache" aria-label="Reload indicator cache">${materialIcon("refresh")}</button><button class="icon-btn" id="exportDataBtn" title="Export data" aria-label="Export data">${materialIcon("download")}</button><button class="icon-btn" id="gotoBtn" title="Go to date" aria-label="Go to date">${materialIcon("event")}</button></div></div></header>
- <section class="workspace"><aside class="leftbar" aria-label="Workspace navigation">${navigationItems.map(([name, label, id]) => `<button class="tool nav-item ${id === "chartNavBtn" ? "active" : ""}" id="${id}" data-label="${label}" title="${label}" aria-label="${label}">${materialIcon(name)}</button>`).join("")}</aside>
+ <section class="workspace"><aside class="leftbar" aria-label="Workspace navigation">${navigationItems.map(([name, label, id]) => `<button class="tool nav-item ${id === "chartNavBtn" ? "active" : ""}" id="${id}" data-label="${label}" title="${label}" aria-label="${label}">${id === "candleExportBtn" ? icon(name, 18) : materialIcon(name)}</button>`).join("")}</aside>
  <div class="chart-shell"><div id="chart" class="chart"></div><canvas id="draw" class="drawing-layer"></canvas><div class="chart-head"><div class="instrument"><span id="chartSymbol">—</span><span class="badge" id="chartTf">1m</span></div><div class="ohlc" aria-label="Open high low close"><span>O <b id="o">—</b></span><span>H <b id="h">—</b></span><span>L <b id="l">—</b></span><span>C <b id="c">—</b></span></div></div><div id="loading" class="loading"><div class="loader-card"><div class="spinner"></div><div class="progress" id="progress">Loading market data...</div></div></div></div></section>
- <footer class="statusbar" aria-label="Workstation status"><div class="status-cluster status-runtime" aria-label="Runtime status"><button class="status-group status-health" id="healthStatus" type="button" data-state="healthy" title="Application health"><i class="dot" aria-hidden="true"></i><b id="healthLabel">Healthy</b></button><button class="status-group status-state status-indicator" id="indicatorStatusFooter" type="button" data-state="inactive" title="Open indicator settings" aria-label="Open indicator settings"><i class="dot" aria-hidden="true"></i><b>Indicator</b></button><span class="status-group status-state status-cache" id="cacheStatusFooter" data-state="idle" title="No indicator calculation source yet"><i class="dot" aria-hidden="true"></i><b>Cache</b></span></div><span class="status-separator" aria-hidden="true"></span><div class="status-cluster status-market" aria-label="Visible chart range"><span class="status-group status-data" title="Candle count for the selected chart timeframe"><span id="candleCount">0 candles</span></span><span class="status-group status-range" title="First and last candle in local system time"><span>From <time id="chartFrom">—</time></span><span>To <time id="chartTo">—</time></span></span></div><span class="status-separator" aria-hidden="true"></span><time class="status-clock" id="clock" title="Local workstation time"></time></footer></main>
+ <footer class="statusbar" aria-label="Workstation status"><div class="status-cluster status-runtime" aria-label="Runtime status"><button class="status-group status-health" id="healthStatus" type="button" data-state="healthy" title="Application health"><i class="dot" aria-hidden="true"></i><b id="healthLabel">Healthy</b></button><button class="status-group status-state status-indicator" id="indicatorStatusFooter" type="button" data-state="inactive" title="Open indicator settings" aria-label="Open indicator settings"><i class="dot" aria-hidden="true"></i><b>Indicator</b></button><span class="status-group status-state status-cache" id="cacheStatusFooter" data-state="idle" title="No indicator calculation source yet"><i class="dot" aria-hidden="true"></i><b>Cache</b></span><span class="status-group status-state status-faraz" id="farazStatusFooter" data-state="inactive" title="FARAZ session is not configured"><i class="dot" aria-hidden="true"></i><b>FARAZ</b></span></div><span class="status-separator" aria-hidden="true"></span><div class="status-cluster status-market" aria-label="Visible chart range"><span class="status-group status-data" title="Candle count for the selected chart timeframe"><span id="candleCount">0 candles</span></span><span class="status-group status-range" title="First and last candle in local system time"><span>From <time id="chartFrom">—</time></span><span>To <time id="chartTo">—</time></span></span></div><span class="status-separator" aria-hidden="true"></span><time class="status-clock" id="clock" title="Local workstation time"></time></footer></main>
  <div id="symbolMenu" class="popover symbol-menu hidden"><div class="searchbox">${icon("search", 17)}<input id="symbolSearch" placeholder="Search local symbols"></div><div id="symbolList"></div></div>
  <div id="gotoModal" class="modal-backdrop hidden"><div class="modal goto-dialog" role="dialog" aria-modal="true" aria-labelledby="gotoTitle"><div class="modal-title"><span id="gotoTitle">Go to date and time</span><button class="icon-btn modal-close" aria-label="Close">${icon("close")}</button></div><p>Jump to an exact candle in Tehran time.</p><div class="field"><label>Tehran date & time</label><button class="date-field" id="gotoPickerButton"><b id="gotoInputDisplay">Select date & time</b>${icon("calendar",16)}</button><input type="hidden" id="gotoInput"></div><div class="modal-actions"><button class="btn modal-close">Cancel</button><button class="btn primary" id="gotoApply">Go to candle</button></div></div></div>
  <div id="chartSettings" class="settings-backdrop hidden"><section class="settings-panel modern-chart-settings" role="dialog" aria-modal="true" aria-labelledby="chartSettingsTitle"><header><div class="settings-title-icon">${icon("chartSettings",20)}</div><div><strong id="chartSettingsTitle">Chart settings</strong><small>Display, scales and interaction</small></div><button id="closeSettings" aria-label="Close">${icon("close",18)}</button></header><div class="settings-body"><div class="settings-section"><h3>Canvas</h3><div class="color-grid"><label>Background<input id="backgroundColor" type="color" value="#ffffff"></label><label>Axis text<input id="axisTextColor" type="color" value="#5f636e"></label></div></div><div class="settings-section"><h3>Candles</h3><div class="color-grid"><label>Bullish<input id="upColor" type="color" value="#089981"></label><label>Bearish<input id="downColor" type="color" value="#f23645"></label><label>Wick up<input id="wickUpColor" type="color" value="#089981"></label><label>Wick down<input id="wickDownColor" type="color" value="#f23645"></label></div></div><div class="settings-section"><h3>Time and scales</h3><label class="settings-select"><span><b>Time format</b><small>Applied to the bottom chart axis</small></span><select id="timeFormat"><option value="compact">DD MMM HH:mm</option><option value="numeric">DD/MM HH:mm</option><option value="time">HH:mm:ss</option><option value="full">YYYY-MM-DD HH:mm:ss</option></select></label><label class="settings-toggle"><span><b>Price scale border</b><small>Right axis divider</small></span><input id="priceBorderEnabled" type="checkbox" checked></label><label class="settings-toggle"><span><b>Time scale border</b><small>Bottom axis divider</small></span><input id="timeBorderEnabled" type="checkbox" checked></label></div><div class="settings-section"><h3>Interaction</h3><label class="settings-toggle"><span><b>Crosshair</b><small>Show precise tracking guides</small></span><input id="crosshairEnabled" type="checkbox" checked></label><label class="settings-toggle"><span><b>Unlimited zoom out</b><small>Compress the full available history</small></span><input id="unlimitedZoom" type="checkbox" checked></label><button id="resetChartSettings" class="settings-reset">Restore defaults</button></div></div></section></div><div id="toast" class="toast hidden"><span id="toastMessage"></span><button id="toastClose" type="button" aria-label="Close notification">${icon("close", 16)}</button></div><div id="errorLogModal" class="modal-backdrop error-log-backdrop hidden"><section class="modal error-log-dialog" role="dialog" aria-modal="true" aria-labelledby="errorLogTitle"><header class="modal-title"><div><strong id="errorLogTitle">Error log</strong><small id="errorLogSummary">No errors recorded</small></div><button id="closeErrorLog" class="icon-btn" type="button" aria-label="Close error log">${icon("close", 18)}</button></header><div id="errorLogList" class="error-log-list"></div><footer class="modal-actions"><button id="copyErrorLogs" class="btn primary" type="button">Copy all errors</button></footer></section></div>`;
@@ -612,6 +626,46 @@ $("#objectTree").setAttribute("role", "dialog");
 $("#objectTree").setAttribute("aria-label", "Object tree");
 $("#objectTree").setAttribute("aria-modal", "true");
 $(".workspace").append($("#objectTree"), $("#indicatorModal"));
+let candleExportController = null;
+function selectWorkspaceNavigation(activeId) {
+  $$(".leftbar .nav-item").forEach((button) => {
+    const active = button.id === activeId;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+}
+function showChartWorkspace() {
+  candleExportController?.close();
+  selectWorkspaceNavigation("chartNavBtn");
+  setDrawingToolsActive(true);
+  requestAnimationFrame(resize);
+}
+function chartWorkspaceActive() {
+  return !$(".chart-shell").classList.contains("candle-export-active");
+}
+candleExportController = initCandleExport({
+  root: $(".chart-shell"),
+  icon,
+  toast,
+  getDefaults: () => ({ symbol: state.file?.symbol || "", timeframeSeconds: state.tf }),
+  inputFromTehran,
+  parseTehranInput,
+  setDateTimeValue,
+  openDateTimePicker,
+  onConnectionChange: (connected, status) => {
+    const footer = $("#farazStatusFooter");
+    footer.dataset.state = connected ? "active" : "inactive";
+    footer.title = connected ? `FARAZ session active · ${status.host || "faraz.io"}` : "FARAZ session is not configured";
+  },
+});
+$("#candleExportBtn").onclick = () => {
+  closeSidePanel($("#objectTree"));
+  closeSidePanel($("#indicatorModal"));
+  selectWorkspaceNavigation("candleExportBtn");
+  setDrawingToolsActive(false);
+  candleExportController.open();
+};
+$("#chartNavBtn").onclick = showChartWorkspace;
 $(".indicator-body").innerHTML = `
   <div class="indicator-tab active" data-indicator-page="inputs">
     <section class="tv-section"><h3>Detection</h3>
@@ -1270,9 +1324,23 @@ function toast(msg, type = "auto") {
   el.className = `toast toast-${resolvedType}`;
   el.setAttribute("role", resolvedType === "error" ? "alert" : "status");
   el.classList.remove("hidden");
+  toast.remaining = 3000;
+  toast.deadline = Date.now() + toast.remaining;
   clearTimeout(toast.t);
-  toast.t = setTimeout(() => el.classList.add("hidden"), 3000);
+  toast.t = setTimeout(() => el.classList.add("hidden"), toast.remaining);
 }
+$("#toast").addEventListener("mouseenter", () => {
+  if ($("#toast").classList.contains("hidden")) return;
+  toast.remaining = Math.max(0, (toast.deadline || Date.now()) - Date.now());
+  clearTimeout(toast.t);
+});
+$("#toast").addEventListener("mouseleave", () => {
+  if ($("#toast").classList.contains("hidden")) return;
+  toast.remaining = Math.max(750, toast.remaining || 3000);
+  toast.deadline = Date.now() + toast.remaining;
+  clearTimeout(toast.t);
+  toast.t = setTimeout(() => $("#toast").classList.add("hidden"), toast.remaining);
+});
 $("#toastClose").onclick = () => {
   clearTimeout(toast.t);
   $("#toast").classList.add("hidden");
@@ -1319,10 +1387,7 @@ $(".timeframes").onclick = (event) => {
     const seconds = Number(star.dataset.timeframePin);
     const index = pinnedTimeframes.indexOf(seconds);
     if (index >= 0) pinnedTimeframes.splice(index, 1);
-    else if (pinnedTimeframes.length >= 3) {
-      toast("Only three timeframes can be pinned", "error");
-      return;
-    } else pinnedTimeframes.push(seconds);
+    else pinnedTimeframes.push(seconds);
     pinnedTimeframes.sort((left, right) => left - right);
     localStorage.setItem(TIMEFRAME_PIN_KEY, JSON.stringify(pinnedTimeframes));
     renderTimeframeControls(true);
@@ -2190,7 +2255,6 @@ function drawIndicator() {
       }
     }
     for (const [zoneIndex, zone] of (group.aZones || []).entries()) {
-      if (!isTimeVisible(zone.sourceTime)) continue;
       const labelObject = indicatorObject(`indicator:${direction}:a:${zoneIndex}`);
       if (!settings.aVisible) continue;
       if (labelObject?.hidden) continue;
@@ -2218,10 +2282,7 @@ function drawIndicator() {
       ctx.restore();
     }
     for (const [zoneIndex, zone] of (group.sZones || []).entries()) {
-      const labelInView = isTimeVisible(zone.sourceTime),
-        hasOrder = zone.orderFirstTime != null,
-        orderInView = hasOrder && isTimeRangeVisible(zone.orderFirstTime, zone.orderBreakTime ?? zone.decisionTime);
-      if (!labelInView && !orderInView) continue;
+      const hasOrder = zone.orderFirstTime != null;
       const orderObject = indicatorObject(`indicator:${direction}:s-order:${zoneIndex}`),
         labelObject = indicatorObject(`indicator:${direction}:s:${zoneIndex}`);
       const orderBullish = zone.orderDirection === "bullish",
@@ -2254,7 +2315,7 @@ function drawIndicator() {
         ctx.stroke();
         ctx.restore();
       }
-      const x = labelInView ? chart.timeScale().timeToCoordinate(zone.sourceTime) : null,
+      const x = chart.timeScale().timeToCoordinate(zone.sourceTime),
         y = series.priceToCoordinate(+zone.price);
       if (x == null || y == null) continue;
       const shiftedLabel = offsetIndicatorPoint(labelObject, x, bullish ? y + settings.sGap : y - settings.sGap);
@@ -2277,9 +2338,6 @@ function drawIndicator() {
       ctx.restore();
     }
     for (const [zoneIndex, zone] of (group.eZones || []).entries()) {
-      const labelInView = isTimeVisible(zone.sourceTime),
-        orderInView = isTimeRangeVisible(zone.orderFirstTime, zone.orderBreakTime ?? zone.decisionTime);
-      if (!labelInView && !orderInView) continue;
       const orderObject = indicatorObject(`indicator:${direction}:e-order:${zoneIndex}`),
         labelObject = indicatorObject(`indicator:${direction}:e:${zoneIndex}`);
       const orderBullish = zone.orderDirection === "bullish",
@@ -2312,7 +2370,7 @@ function drawIndicator() {
         ctx.stroke();
         ctx.restore();
       }
-      const x = labelInView ? chart.timeScale().timeToCoordinate(zone.sourceTime) : null,
+      const x = chart.timeScale().timeToCoordinate(zone.sourceTime),
         y = series.priceToCoordinate(+zone.price);
       if (x == null || y == null) continue;
       const shiftedLabel = offsetIndicatorPoint(labelObject, x, bullish ? y + settings.eGap : y - settings.eGap);
@@ -2334,9 +2392,6 @@ function drawIndicator() {
       ctx.restore();
     }
     for (const [zoneIndex, zone] of (group.stopAlls || []).entries()) {
-      const labelInView = isTimeVisible(zone.sourceTime),
-        orderInView = isTimeRangeVisible(zone.orderFirstTime, zone.orderBreakTime ?? zone.decisionTime);
-      if (!labelInView && !orderInView) continue;
       const objectId = `indicator:${direction}:stopall:${zoneIndex}`,
         object = indicatorObject(objectId),
         orderObject = indicatorObject(`indicator:${direction}:stopall-order:${zoneIndex}`),
@@ -2348,7 +2403,7 @@ function drawIndicator() {
         boxX2 = chart.timeScale().timeToCoordinate(zone.orderBreakTime),
         boxYTop = series.priceToCoordinate(+zone.orderBoxTop),
         boxYBottom = series.priceToCoordinate(+zone.orderBoxBottom),
-        x = labelInView ? chart.timeScale().timeToCoordinate(zone.sourceTime) : null,
+        x = chart.timeScale().timeToCoordinate(zone.sourceTime),
         y = series.priceToCoordinate(+zone.price);
       if (settings.orderVisible && !orderObject?.hidden && ![boxX1, boxX2, boxYTop, boxYBottom].some((value) => value == null)) {
         const shifted = offsetIndicatorRect(orderObject, boxX1, boxYTop, boxX2, boxYBottom),
@@ -2414,7 +2469,6 @@ function drawIndicator() {
           visibleEndTime = Number.isFinite(+zone.decisionTime)
             ? Math.min(+zone.decisionTime, endTime)
             : endTime;
-        if (!isTimeRangeVisible(startTime, visibleEndTime)) continue;
         const
           x1 = chart.timeScale().timeToCoordinate(startTime),
           x2 = chart.timeScale().timeToCoordinate(visibleEndTime),
@@ -2448,8 +2502,7 @@ function drawIndicator() {
           String(zone.parentType).toUpperCase() !== "E" ||
           !Number.isFinite(parentStopIndex) ||
           !Number.isFinite(parentSourceIndex) ||
-          parentStopIndex - parentSourceIndex <= 350 ||
-          !isTimeRangeVisible(zone.parentSourceTime, zone.parentStopTime)
+          parentStopIndex - parentSourceIndex <= 350
         )
           continue;
         const objectId = `indicator:${direction}:e-stop:${zoneIndex}`,
@@ -2971,6 +3024,7 @@ function moveDrawing(d, dt, dp, logicalDelta = 0) {
   return true;
 }
 function selectDrawingTool(tool) {
+  if (tool !== "cursor" && !chartWorkspaceActive()) return;
   state.tool = tool;
   $$("[data-tool]").forEach((item) =>
     item.classList.toggle("active", item.dataset.tool === tool),
@@ -2978,6 +3032,22 @@ function selectDrawingTool(tool) {
   canvas.classList.toggle("draw-mode", state.tool !== "cursor");
   if (state.tool !== "cursor") selectDrawing(null);
   log.chart.info("DRAWING_TOOL_SELECTED", { tool: state.tool });
+}
+function setDrawingToolsActive(active) {
+  const toolbar = $(".top-drawing-tools");
+  if (!toolbar) return;
+  toolbar.classList.toggle("hidden", !active);
+  toolbar.setAttribute("aria-hidden", String(!active));
+  ["#undoBtn", "#redoBtn", "#hideAllBtn"].forEach((selector) => {
+    const control = $(selector);
+    if (control) control.disabled = !active;
+  });
+  if (!active && (state.tool !== "cursor" || state.draft)) {
+    state.draft = null;
+    state.interaction = null;
+    selectDrawingTool("cursor");
+    drawAll();
+  }
 }
 function cancelDrawingTool(reason, { preservePath = false } = {}) {
   if (preservePath && state.draft?.type === "path" && state.draft.points.length > 1) {
@@ -2998,6 +3068,7 @@ function cancelDrawingTool(reason, { preservePath = false } = {}) {
   }
 }
 $(".top-drawing-tools").onclick = (event) => {
+  if (!chartWorkspaceActive()) return;
   const button = event.target.closest("[data-drawing-tool]");
   if (button) selectDrawingTool(button.dataset.drawingTool);
 };
@@ -3089,6 +3160,7 @@ function startGroupSelection(event) {
   return true;
 }
 canvas.onpointerdown = (e) => {
+  if (!chartWorkspaceActive()) return;
   if (e.button === 2) {
     return;
   }
@@ -3177,6 +3249,7 @@ canvas.onpointerup = () => {
 shell.addEventListener(
   "pointerdown",
   (event) => {
+    if (!chartWorkspaceActive()) return;
     if (state.tool === "cursor") return;
     if (event.button === 2) {
       event.preventDefault();
@@ -3461,6 +3534,7 @@ $("#deleteDrawing").onclick = () => {
 };
 let latestRightClickAt = 0;
 shell.addEventListener("contextmenu", (event) => {
+  if (shell.classList.contains("candle-export-active")) return;
   event.preventDefault();
   const now = performance.now();
   const isDoubleRightClick = now - latestRightClickAt <= 360;
@@ -3648,6 +3722,7 @@ $("#pinIndicatorPanel").onclick = () =>
 $("#pinObjectTree").onclick = () =>
   setPanelPinned($("#objectTree"), !$("#objectTree").classList.contains("is-pinned"));
 objectTreeBtn.onclick = () => {
+  if (!chartWorkspaceActive()) return;
   if (!$("#objectTree").classList.contains("hidden")) {
     closeSidePanel($("#objectTree"));
     return;
@@ -4432,7 +4507,7 @@ function openDateTimePicker(target, applyAfterSave = false) {
   $("#pickerMinute").value = String(parts[4]).padStart(2, "0");
   $("#pickerSecond").value = String(parts[5]).padStart(2, "0");
   $("#pickerTitle").textContent =
-    target === "#indicatorFrom"
+    target === "#indicatorFrom" || target === "#candleRangeFrom"
       ? "Select start date & time"
       : target === "#gotoInput"
         ? "Go to date & time"
@@ -4468,6 +4543,7 @@ function movePickerMonth(delta) {
   renderPickerCalendar();
 }
 function openIndicator() {
+  if (!chartWorkspaceActive()) return;
   setPanelPinned($("#objectTree"), false);
   $("#objectTree").classList.add("hidden");
   $("#indicatorModal").classList.add("side-panel");

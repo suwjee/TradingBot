@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Manual review presentation test</title></head>
+<body><p>Synthetic presentation fixture. No trading calculation or API calls.</p>
+<iframe title="Indicator review" style="width:100%;height:90vh;border:0"></iframe>
+<script type="module">
+import { renderManualReview } from '../src/manual-review.js';
+import { reviewFixture } from './manual-review-fixture.mjs';
+document.querySelector('iframe').srcdoc = await renderManualReview(reviewFixture, { fixture: true });
+</script></body></html>

@@ -4,9 +4,10 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { performance } from 'node:perf_hooks';
 import { createHash } from 'node:crypto';
+import { createFarazCandleApi } from './plugins/faraz-candle-api.js';
 
 const inputDir = path.resolve(process.cwd(), '..', 'market-data', 'raw');
-const pattern = /^candle-history\s+(.+?)\s+(\d+[SMHD])\s+from\s+(.+?)\s+to\s+(.+?)\s*\.json$/i;
+const pattern = /^(?:candle-history\s+(.+?)\s+(\d+[SMHD])\s+from\s+(.+?)\s+to\s+(.+?)\s*|RAW\s+(.+?)\s+(\d+[SMHD])\s+FROM\s+(.+?)\s+TO\s+(.+?))\.json$/i;
 const bridgePath = path.resolve(process.cwd(), '..', 'indicator', 'indicator-settings', 'backend', 'reaction_bridge.py');
 const moduleRoot = path.resolve(process.cwd(), '..', 'indicator', 'Modules');
 const enginePath = path.join(moduleRoot, '1_reaction-detector', 'app', 'Reaction-detection-new.py');
@@ -106,8 +107,7 @@ function readBody(req) {
 
 function runDetector(args, onProgress = () => {}) {
   return new Promise((resolve, reject) => {
-    const pythonExecutable = process.env.TRADINGBOT_PYTHON || 'python';
-    const child = spawn(pythonExecutable, [bridgePath, '--engine', enginePath, '--blue-engine', blueEnginePath, '--a-engine', aEnginePath, '--s-engine', sEnginePath, '--e-engine', eEnginePath, '--stopall-engine', stopAllEnginePath, ...args], { windowsHide: true });
+    const child = spawn('python', [bridgePath, '--engine', enginePath, '--blue-engine', blueEnginePath, '--a-engine', aEnginePath, '--s-engine', sEnginePath, '--e-engine', eEnginePath, '--stopall-engine', stopAllEnginePath, ...args], { windowsHide: true });
     let stdout = '', stderr = '', stderrBuffer = '';
     child.stdout.on('data', (part) => { stdout += part; });
     child.stderr.on('data', (part) => {
@@ -143,7 +143,7 @@ function inferredTimeframe(rows) {
 }
 
 function fallbackSymbol(filename) {
-  const stem = path.basename(filename, ".json").replace(/^candle-history\s+/i, "").trim();
+  const stem = path.basename(filename, ".json").replace(/^(?:candle-history|RAW)\s+/i, "").trim();
   const symbol = stem.match(/(?:^|[\s_-])([A-Z]{3,12}(?:[:_][A-Z]{3,12})?)(?:[\s_-]|$)/)?.[1];
   return (symbol || stem || "Unnamed dataset").replace(/_/g, ":");
 }
@@ -184,10 +184,10 @@ function inventory() {
       }
       return {
         id: entry.name,
-        symbol: match?.[1]?.replace(/_/g, ":") || fallbackSymbol(entry.name),
-        timeframe: match?.[2]?.toUpperCase() || meta.timeframe,
-        from: match?.[3] || meta.from,
-        to: match?.[4] || meta.to,
+        symbol: (match?.[1] || match?.[5])?.replace(/_/g, ":") || fallbackSymbol(entry.name),
+        timeframe: (match?.[2] || match?.[6])?.toUpperCase() || meta.timeframe,
+        from: match?.[3] || match?.[7] || meta.from,
+        to: match?.[4] || match?.[8] || meta.to,
         bytes: stat.size,
         count: meta.count,
       };
@@ -337,4 +337,4 @@ function localDataApi() {
   };
 }
 
-export default defineConfig({ plugins: [localDataApi()], server: { port: 5173, strictPort: false, watch: { usePolling: true, interval: 500 } }, build: { target: 'es2022' } });
+export default defineConfig({ plugins: [localDataApi(), createFarazCandleApi()], server: { port: 5173, strictPort: false, watch: { usePolling: true, interval: 500 } }, build: { target: 'es2022' } });
