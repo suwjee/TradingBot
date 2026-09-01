@@ -1,15 +1,17 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param()
 
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
+[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+$Host.UI.RawUI.WindowTitle = 'TradingBot | Local Workstation'
 
 $Root = $PSScriptRoot
 $ChartRoot = Join-Path $Root 'lightweight-charts'
 $Esc = [char]27
 $State = [hashtable]::Synchronized(@{
     Logs = [System.Collections.Generic.List[object]]::new()
-    Endpoints = [System.Collections.Generic.List[string]]::new()
+    Endpoints = [System.Collections.Generic.List[object]]::new()
     Dirty = $true
     ServerState = 'Preparing'
 })
@@ -35,17 +37,21 @@ function Render-Dashboard {
         $consoleWidth = 120
         $consoleHeight = 40
     }
-    $width = [Math]::Max(70, $consoleWidth - 1)
+    $width = [Math]::Min(110, [Math]::Max(72, $consoleWidth - 4))
     $line = ('─' * $width)
     Write-Host "$Esc[2J$Esc[H" -NoNewline
-    Write-Host ('  TRADINGBOT  ' + ('LOCAL WORKSTATION'.PadRight([Math]::Max(1, $width - 22)))) -ForegroundColor Cyan
+    Write-Host ('  TRADINGBOT  •  LOCAL WORKSTATION') -ForegroundColor Cyan
     Write-Host $line -ForegroundColor DarkGray
     Write-ColorLine '  STATUS     ' $State.ServerState $(if ($State.ServerState -eq 'Online') { 'Green' } elseif ($State.ServerState -eq 'Preparing') { 'Yellow' } else { 'Red' })
-    Write-Host '  CONNECT     ' -NoNewline -ForegroundColor DarkGray
+    Write-Host '  CONNECTIONS' -ForegroundColor White
     if ($State.Endpoints.Count -eq 0) {
-        Write-Host 'Waiting for Vite to publish its address…' -ForegroundColor DarkGray
+        Write-Host '    Waiting for Vite to publish its address…' -ForegroundColor DarkGray
     } else {
-        Write-Host (($State.Endpoints -join '   ') ) -ForegroundColor Green
+        foreach ($endpoint in $State.Endpoints) {
+            $label = if ($endpoint.Kind -eq 'Local') { 'Local:   ' } else { 'Network: ' }
+            $suffix = if ($endpoint.Adapter) { "     $($endpoint.Adapter)" } else { '' }
+            Write-Host ("    ➜  {0}{1}{2}" -f $label, $endpoint.Url, $suffix) -ForegroundColor Green
+        }
     }
     Write-Host '  PROJECT     ' -NoNewline -ForegroundColor DarkGray
     Write-Host $Root -ForegroundColor Gray
@@ -92,9 +98,9 @@ function Install-WingetPackage {
 
 function Ensure-Directories {
     $directories = @(
-        (Join-Path $Root 'market-data\\raw'),
-        (Join-Path $Root 'primary-cache\\drawings'),
-        (Join-Path $Root 'primary-cache\\indicator-calculations')
+        (Join-Path $Root 'market-data\raw'),
+        (Join-Path $Root 'primary-cache\drawings'),
+        (Join-Path $Root 'primary-cache\indicator-calculations')
     )
     foreach ($directory in $directories) {
         if (-not (Test-Path -LiteralPath $directory)) { New-Item -ItemType Directory -Force -Path $directory | Out-Null; Add-Log OK "Created required folder: $directory" }
@@ -140,39 +146,70 @@ function Ensure-NpmPackages {
 }
 
 function Add-Endpoint {
-    param([string]$Value)
-    if ($Value -and -not $State.Endpoints.Contains($Value)) { $State.Endpoints.Add($Value); $State.Dirty = $true }
+    param([ValidateSet('Local', 'Network')][string]$Kind, [string]$Address, [string]$Adapter)
+    if (-not $Address) { return }
+    $url = $Address.TrimEnd('/') + '/'
+    if (-not ($State.Endpoints | Where-Object { $_.Url -eq $url })) {
+        $State.Endpoints.Add([pscustomobject]@{ Kind = $Kind; Url = $url; Adapter = $Adapter })
+        $State.Dirty = $true
+    }
+}
+
+function Stop-ProcessTree {
+    param([System.Diagnostics.Process]$Process)
+    if (-not $Process) { return }
+    if (-not $Process.HasExited) {
+        & taskkill.exe /PID $Process.Id /T /F 2>$null | Out-Null
+    }
 }
 
 function Start-Server {
     param([string]$Npm, [string]$Python)
     $env:TRADINGBOT_PYTHON = $Python
-    Add-Endpoint 'http://localhost:5173'
-    Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue | Where-Object { $_.IPAddress -notmatch '^(127\\.|169\\.254\\.)' -and $_.AddressState -eq 'Preferred' } | ForEach-Object { Add-Endpoint ("http://{0}:5173" -f $_.IPAddress) }
+    $portsBeforeStart = @(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue |
+        Where-Object { $_.LocalPort -ge 5173 -and $_.LocalPort -le 5273 } |
+        Select-Object -ExpandProperty LocalPort -Unique)
     $psi = [System.Diagnostics.ProcessStartInfo]::new()
     $psi.FileName = $Npm
     $psi.Arguments = 'run dev -- --host 0.0.0.0'
     $psi.WorkingDirectory = $ChartRoot
     $psi.UseShellExecute = $false
-    $psi.RedirectStandardOutput = $true
-    $psi.RedirectStandardError = $true
     $psi.CreateNoWindow = $true
     $psi.Environment['TRADINGBOT_PYTHON'] = $Python
     $process = [System.Diagnostics.Process]::new()
     $process.StartInfo = $psi
-    $outputHandler = [System.Diagnostics.DataReceivedEventHandler]{ param($sender, $event) if ($event.Data) { Add-Log APP $event.Data; if ($event.Data -match 'https?://[^\\s]+') { Add-Endpoint $Matches[0] } } }
-    $errorHandler = [System.Diagnostics.DataReceivedEventHandler]{ param($sender, $event) if ($event.Data) { Add-Log WARN $event.Data } }
-    $process.add_OutputDataReceived($outputHandler)
-    $process.add_ErrorDataReceived($errorHandler)
     if (-not $process.Start()) { throw 'Unable to start the Vite server.' }
-    $process.BeginOutputReadLine(); $process.BeginErrorReadLine()
-    $State.ServerState = 'Online'; Add-Log OK 'Vite server started. Keep this window open while using TradingBot.'
+    Add-Log APP 'npm run dev started; waiting for Vite to bind its actual port…'
+    $boundPort = $null
+    for ($attempt = 0; $attempt -lt 40 -and -not $process.HasExited; $attempt++) {
+        $newPort = Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue |
+            Where-Object { $_.LocalPort -ge 5173 -and $_.LocalPort -le 5273 -and $portsBeforeStart -notcontains $_.LocalPort } |
+            Select-Object -ExpandProperty LocalPort -Unique |
+            Sort-Object | Select-Object -First 1
+        if ($newPort) { $boundPort = [int]$newPort; break }
+        Start-Sleep -Milliseconds 250
+    }
+    if (-not $boundPort) {
+        if ($process.HasExited) { throw "Vite stopped unexpectedly (exit code $($process.ExitCode))." }
+        throw 'Vite did not publish a listening port between 5173 and 5273.'
+    }
+    Add-Endpoint -Kind Local -Address ("http://localhost:{0}" -f $boundPort)
+    Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue |
+        Where-Object { $_.IPAddress -notmatch '^(127\.|169\.254\.)' -and $_.AddressState -eq 'Preferred' } |
+        ForEach-Object { Add-Endpoint -Kind Network -Address ("http://{0}:{1}" -f $_.IPAddress, $boundPort) -Adapter $_.InterfaceAlias }
+    $State.ServerState = 'Online'; Add-Log OK ("Vite is listening on port {0}; addresses below use the live bound port." -f $boundPort)
     Render-Dashboard
     try {
         while (-not $process.HasExited) { if ($State.Dirty) { Render-Dashboard }; Start-Sleep -Milliseconds 150 }
         throw "Vite server stopped unexpectedly (exit code $($process.ExitCode))."
     } finally {
-        if (-not $process.HasExited) { Stop-Process -Id $process.Id -Force }
+        Stop-ProcessTree -Process $process
+        if ($boundPort) {
+            Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue |
+                Where-Object { $_.LocalPort -eq $boundPort } |
+                Select-Object -ExpandProperty OwningProcess -Unique |
+                ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }
+        }
     }
 }
 
