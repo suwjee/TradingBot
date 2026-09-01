@@ -363,7 +363,18 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
     if (context && (showLogin || showBrowser) && contextHeadless) await closeBrowserContext();
     if (!context) {
       const executablePath = browserExecutable();
-      const storageState = loadStoredSession();
+      let storageState;
+      try {
+        storageState = loadStoredSession();
+      } catch {
+        // Only an explicit browser action may discard an obsolete encrypted
+        // file.  Passive status checks must never recreate or alter it.
+        if (!showLogin && !showBrowser) throw error;
+        if (fs.existsSync(secretPath)) fs.unlinkSync(secretPath);
+        historyAuth = null;
+        credentials = { xAccessToken: "", farazSession: "" };
+        storageState = null;
+      }
       const headless = !showLogin && !showBrowser;
       const launch = launchBrowser || (async ({ executablePath }) => {
         const launchedBrowser = await chromium.launch({
