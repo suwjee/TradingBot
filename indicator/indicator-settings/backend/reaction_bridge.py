@@ -198,13 +198,10 @@ def serialize_blue_lines(items):
         "sourceIndex": item.source_index,
         "sourceTime": epoch(item.source_time),
         "sourceExtreme": str(item.source_extreme),
-        "formationIndex": item.formation_index,
-        "formationTime": epoch(item.formation_time),
         "brokenLevel": str(item.broken_level) if item.broken_level is not None else None,
         "linePrice": str(item.line_price),
         "startTime": epoch(item.start_time),
         "endTime": epoch(item.end_time),
-        "calculationValid": bool(getattr(item, "calculation_valid", True)),
     } for item in items]
 
 
@@ -885,7 +882,7 @@ def main() -> int:
                 for key, value in full_s_detector.order_audit.items()
                 if value["a_source_time"] in accepted_a_sources
             }
-    payload = {"engine": "reaction-detector/Reaction-detection-new.py", "version": engine.ENGINE_VERSION, "blueLineVersion": blue_engine.BLUE_VERSION, "aVersion": a_engine.A_VERSION, "sVersion": s_engine.S_VERSION, "eVersion": e_engine.E_VERSION if e_engine else None, "stopAllVersion": stopall_engine.STOPALL_VERSION if stopall_engine else None, "blueLinesEnabled": args.blue_lines == "enabled", "aEnabled": args.a_zones == "enabled", "sEnabled": args.s_zones == "enabled", "eEnabled": e_engine is not None and args.s_zones == "enabled", "stopAllEnabled": stopall_engine is not None and e_engine is not None and args.s_zones == "enabled", "timeframe": args.timeframe, "actualFrom": epoch(candles[start_index].timestamp), "actualTo": epoch(candles[end_index].timestamp), "directions": {}}
+    payload = {"engine": "reaction-detector/Reaction-detection-new.py", "version": engine.ENGINE_VERSION, "blueLineVersion": "2.0.1", "aVersion": a_engine.A_VERSION, "sVersion": s_engine.S_VERSION, "eVersion": e_engine.E_VERSION if e_engine else None, "stopAllVersion": stopall_engine.STOPALL_VERSION if stopall_engine else None, "blueLinesEnabled": args.blue_lines == "enabled", "aEnabled": args.a_zones == "enabled", "sEnabled": args.s_zones == "enabled", "eEnabled": e_engine is not None and args.s_zones == "enabled", "stopAllEnabled": stopall_engine is not None and e_engine is not None and args.s_zones == "enabled", "timeframe": args.timeframe, "actualFrom": epoch(candles[start_index].timestamp), "actualTo": epoch(candles[end_index].timestamp), "directions": {}}
     for direction in directions:
         result = results[direction]
         reactions, resets = timed(

@@ -9,7 +9,7 @@ from decimal import Decimal
 from typing import Sequence
 
 
-A_VERSION = "3.0.0"
+A_VERSION = "1.2.0"
 
 
 @dataclass(frozen=True)
@@ -171,12 +171,6 @@ class ADetector:
         return value, int(getattr(source, "index")), getattr(source, "timestamp")
 
     def _formation(self, line: object) -> tuple[int, datetime, datetime]:
-        explicit_index = getattr(line, "formation_index", None)
-        explicit_time = getattr(line, "formation_time", None)
-        if explicit_index is not None and explicit_time is not None:
-            index = int(explicit_index)
-            event_time = explicit_time
-            return index, event_time, event_time
         reaction_number = int(getattr(line, "reaction_number"))
         if reaction_number < 1 or reaction_number > len(self.reactions):
             raise ValueError("Blue Line refers to a missing reaction.")
@@ -208,8 +202,6 @@ class ADetector:
     def _build_blue_states(self) -> list[BlueState]:
         states: list[BlueState] = []
         for ordinal, line in enumerate(self.blue_lines, start=1):
-            if not bool(getattr(line, "calculation_valid", True)):
-                continue
             formation_index, formation_time, stop_scan_time = self._formation(line)
             stop_level = _decimal(getattr(line, "source_extreme"))
             stop = self._first_crossing(
@@ -233,86 +225,6 @@ class ADetector:
                 )
             )
         return states
-
-    def _special_visual_a_candidates(
-        self,
-    ) -> list[tuple[AZone, set[int], int]]:
-        """Build A from a visual-only Blue that invalidates the prior Blue.
-
-        The visual line is excluded from ordinary Blue pairing. It is consumed
-        only here, together with the immediately preceding calculation-valid
-        Blue and the first healthy trend reaction after their same-candle stop.
-        """
-        result: list[tuple[AZone, set[int], int]] = []
-        previous_valid: tuple[int, object] | None = None
-        cycle_after_index = -1
-        for ordinal, line in enumerate(self.blue_lines, start=1):
-            if bool(getattr(line, "calculation_valid", True)):
-                formation_index, _, _ = self._formation(line)
-                if formation_index > cycle_after_index:
-                    previous_valid = (ordinal, line)
-                continue
-            if previous_valid is None:
-                continue
-            previous_ordinal, previous_line = previous_valid
-            formation_index, formation_time, _ = self._formation(line)
-            if formation_index <= cycle_after_index:
-                continue
-            source_time = getattr(self.candles[formation_index], "timestamp")
-            crossing = self._first_crossing(
-                _decimal(getattr(previous_line, "source_extreme")),
-                formation_time,
-                source_time + self.timeframe,
-            )
-            if crossing is None or crossing[0] != formation_index:
-                continue
-            trigger_index, trigger_event_time, _ = crossing
-            match = self._first_reaction_after(trigger_event_time)
-            if match is None:
-                continue
-            reaction_number, reaction = match
-            reaction_break_index = int(getattr(reaction, "break_idx"))
-            reaction_first_index = int(getattr(reaction, "first_idx"))
-            result.append((
-                AZone(
-                    direction=self.direction,
-                    blue_1_ordinal=previous_ordinal,
-                    blue_2_ordinal=ordinal,
-                    blue_1_source_time=getattr(previous_line, "source_time"),
-                    blue_2_source_time=getattr(line, "source_time"),
-                    blue_1_stop_time=source_time,
-                    blue_2_stop_time=source_time,
-                    blue_1_stop_level=_decimal(
-                        getattr(previous_line, "source_extreme")
-                    ),
-                    blue_2_stop_level=_decimal(getattr(line, "source_extreme")),
-                    continuation_level=_decimal(
-                        getattr(previous_line, "source_extreme")
-                    ),
-                    continuation_source_index=int(
-                        getattr(previous_line, "source_index")
-                    ),
-                    continuation_source_time=getattr(previous_line, "source_time"),
-                    trigger_index=trigger_index,
-                    trigger_time=getattr(self.candles[trigger_index], "timestamp"),
-                    trigger_event_time=trigger_event_time,
-                    reaction_number=reaction_number,
-                    reaction_first_time=getattr(
-                        self.candles[reaction_first_index], "timestamp"
-                    ),
-                    reaction_break_time=getattr(
-                        self.candles[reaction_break_index], "timestamp"
-                    ),
-                    source_index=formation_index,
-                    source_time=source_time,
-                    price=_decimal(getattr(line, "source_extreme")),
-                ),
-                {previous_ordinal, ordinal},
-                reaction_break_index,
-            ))
-            cycle_after_index = reaction_break_index
-            previous_valid = None
-        return result
 
     def _pair_trigger(
         self,
@@ -499,24 +411,7 @@ class ADetector:
         return int(getattr(source, "index")), getattr(source, "timestamp"), value
 
     def detect(self) -> list[AZone]:
-        special_candidates = self._special_visual_a_candidates()
-        consumed_ordinals = {
-            ordinal
-            for _, ordinals, _ in special_candidates
-            for ordinal in ordinals
-        }
-        consumed_windows = [
-            (zone.trigger_index, reaction_break_index)
-            for zone, _, reaction_break_index in special_candidates
-        ]
-        states = [
-            state for state in self._build_blue_states()
-            if state.ordinal not in consumed_ordinals
-            and not any(
-                start <= state.formation_index <= end
-                for start, end in consumed_windows
-            )
-        ]
+        states = self._build_blue_states()
         output: list[AZone] = []
         cycle_after_index = -1
         index = 0
@@ -610,11 +505,7 @@ class ADetector:
             ):
                 index += 1
 
-        output.extend(zone for zone, _, _ in special_candidates)
-        return sorted(
-            output,
-            key=lambda item: (item.source_time, item.trigger_event_time),
-        )
+        return output
 
 
 def detect_a_zones(

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from bisect import bisect_left, bisect_right
+from bisect import bisect_left
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -10,7 +10,6 @@ from typing import Sequence
 
 
 FIBONACCI_RATIO = Decimal("0.618")
-BLUE_VERSION = "4.0.0"
 
 
 @dataclass(frozen=True)
@@ -31,121 +30,10 @@ class BlueLine:
     source_index: int
     source_time: datetime
     source_extreme: Decimal
-    formation_index: int
-    formation_time: datetime
     broken_level: Decimal | None
     line_price: Decimal
     start_time: datetime
     end_time: datetime
-    calculation_valid: bool
-
-
-def _strict_cross(direction: str, value: Decimal, level: Decimal) -> bool:
-    return value < level if direction == "bullish" else value > level
-
-
-def _directional_extreme(direction: str, candle: object) -> Decimal:
-    return Decimal(getattr(candle, "low" if direction == "bullish" else "high"))
-
-
-def _better_extreme(direction: str, value: Decimal, current: Decimal) -> bool:
-    return value < current if direction == "bullish" else value > current
-
-
-def _reset_event_time(reset: object, fallback: datetime) -> datetime:
-    second_time = getattr(reset, "second_time", None)
-    if second_time:
-        return datetime.strptime(str(second_time), "%Y-%m-%d %H:%M:%S")
-    return fallback
-
-
-def _reset_source_and_formation(
-    direction: str,
-    reset: object,
-    candles: Sequence[object],
-) -> tuple[object, int, datetime] | None:
-    """Close the Reset source window on the first trend-color candle."""
-    reset_index = int(getattr(reset, "index"))
-    confirming_color = "GREEN" if direction == "bullish" else "RED"
-    confirmation_index = next(
-        (
-            index
-            for index in range(reset_index, len(candles))
-            if _is_color(candles[index], confirming_color)
-        ),
-        None,
-    )
-    if confirmation_index is None:
-        return None
-
-    source = candles[reset_index]
-    source_extreme = _directional_extreme(direction, source)
-    for candle in candles[reset_index + 1 : confirmation_index + 1]:
-        candidate = _directional_extreme(direction, candle)
-        if _better_extreme(direction, candidate, source_extreme):
-            source = candle
-            source_extreme = candidate
-
-    confirmation_time = getattr(candles[confirmation_index], "timestamp")
-    if confirmation_index == reset_index:
-        confirmation_time = _reset_event_time(reset, confirmation_time)
-    return source, confirmation_index, confirmation_time
-
-
-def _reaction_formation_time(
-    direction: str,
-    reaction: object,
-    candles_by_index: dict[int, object],
-    lower_candles: Sequence[object],
-    timeframe_seconds: int,
-) -> datetime:
-    break_index = int(getattr(reaction, "break_idx"))
-    break_candle = _main_candle(candles_by_index, break_index)
-    start = getattr(break_candle, "timestamp")
-    if break_index + 1 in candles_by_index:
-        end = getattr(candles_by_index[break_index + 1], "timestamp")
-    else:
-        end = start + timedelta(seconds=timeframe_seconds)
-    level = Decimal(
-        getattr(reaction, "box_top" if direction == "bullish" else "box_bottom")
-    )
-    lower_times = [getattr(item, "timestamp") for item in lower_candles]
-    left = bisect_left(lower_times, start)
-    right = bisect_left(lower_times, end)
-    for item in lower_candles[left:right]:
-        value = Decimal(getattr(item, "high" if direction == "bullish" else "low"))
-        confirms = value > level if direction == "bullish" else value < level
-        if confirms:
-            return getattr(item, "timestamp")
-    return start
-
-
-def _first_line_stop_time(
-    direction: str,
-    line: BlueLine,
-    candles: Sequence[object],
-    lower_candles: Sequence[object],
-    start_time: datetime,
-    end_time: datetime,
-) -> datetime | None:
-    """Return a strict stop inside the candidate's open formation gate."""
-    level = line.source_extreme
-    lower_times = [getattr(item, "timestamp") for item in lower_candles]
-    left = bisect_left(lower_times, start_time)
-    right = bisect_right(lower_times, end_time)
-    if right > left:
-        for item in lower_candles[left:right]:
-            if _strict_cross(direction, _directional_extreme(direction, item), level):
-                return getattr(item, "timestamp")
-        return None
-
-    candle_times = [getattr(item, "timestamp") for item in candles]
-    left = bisect_left(candle_times, start_time)
-    right = bisect_right(candle_times, end_time)
-    for item in candles[left:right]:
-        if _strict_cross(direction, _directional_extreme(direction, item), level):
-            return getattr(item, "timestamp")
-    return None
 
 
 def _is_color(candle: object, color: str) -> bool:
@@ -398,21 +286,12 @@ def detect_blue_lines(
                     source_index=decisive.source_index,
                     source_time=decisive.source_time,
                     source_extreme=decisive.extreme,
-                    formation_index=int(getattr(reaction, "break_idx")),
-                    formation_time=_reaction_formation_time(
-                        direction,
-                        reaction,
-                        candles_by_index,
-                        one_second_candles,
-                        timeframe_seconds,
-                    ),
                     broken_level=None,
                     line_price=line_price,
                     start_time=decisive.source_time
                     - timedelta(seconds=timeframe_seconds),
                     end_time=decisive.source_time
                     + timedelta(seconds=timeframe_seconds),
-                    calculation_valid=True,
                 )
             )
             has_blue_line = True
@@ -428,12 +307,8 @@ def detect_blue_lines(
         for reset in resets_by_first.get(int(getattr(reaction, "first_idx")), []):
             if has_blue_line and healthy_reactions_since_blue < 1:
                 continue
-            candidate = _reset_source_and_formation(direction, reset, candles)
-            if candidate is None:
-                continue
-            source, formation_index, formation_time = candidate
             reset_index = int(getattr(reset, "index"))
-            source_index = int(getattr(source, "index"))
+            source = _main_candle(candles_by_index, reset_index)
             high = Decimal(getattr(source, "high"))
             low = Decimal(getattr(source, "low"))
             line_price = (
@@ -442,43 +317,6 @@ def detect_blue_lines(
                 else high - (high - low) / Decimal(5)
             )
             source_time = getattr(source, "timestamp")
-            source_extreme = low if direction == "bullish" else high
-            previous_valid = next(
-                (
-                    item for item in reversed(output)
-                    if bool(getattr(item, "calculation_valid", True))
-                ),
-                None,
-            )
-            reset_time = _reset_event_time(
-                reset,
-                getattr(_main_candle(candles_by_index, reset_index), "timestamp"),
-            )
-            if previous_valid is not None:
-                previous_stop = _first_line_stop_time(
-                    direction,
-                    previous_valid,
-                    candles,
-                    one_second_candles,
-                    reset_time,
-                    formation_time,
-                )
-                if previous_stop is not None and previous_stop <= formation_time:
-                    continue
-            broken_level = Decimal(getattr(reset, "broken_level"))
-            stops_previous = previous_valid is not None and (
-                source_extreme < Decimal(getattr(previous_valid, "source_extreme"))
-                if direction == "bullish"
-                else source_extreme > Decimal(getattr(previous_valid, "source_extreme"))
-            )
-            forms_before_previous_stop = previous_valid is not None and (
-                broken_level > Decimal(getattr(previous_valid, "source_extreme"))
-                if direction == "bullish"
-                else broken_level < Decimal(getattr(previous_valid, "source_extreme"))
-            )
-            calculation_valid = not (
-                stops_previous and forms_before_previous_stop
-            )
             output.append(
                 BlueLine(
                     direction=direction,
@@ -487,21 +325,17 @@ def detect_blue_lines(
                     previous_strike_count=None,
                     strike_count=None,
                     fibonacci_level=None,
-                    source_index=source_index,
+                    source_index=reset_index,
                     source_time=source_time,
-                    source_extreme=source_extreme,
-                    formation_index=formation_index,
-                    formation_time=formation_time,
-                    broken_level=broken_level,
+                    source_extreme=low if direction == "bullish" else high,
+                    broken_level=Decimal(getattr(reset, "broken_level")),
                     line_price=line_price,
                     start_time=source_time - timedelta(seconds=timeframe_seconds),
                     end_time=source_time + timedelta(seconds=timeframe_seconds),
-                    calculation_valid=calculation_valid,
                 )
             )
-            if calculation_valid:
-                has_blue_line = True
-                healthy_reactions_since_blue = 0
+            has_blue_line = True
+            healthy_reactions_since_blue = 0
         previous_reaction = reaction
         previous_count = len(strikes)
 
