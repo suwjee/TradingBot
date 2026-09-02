@@ -563,6 +563,21 @@ class ADetector:
             ):
                 index += 1
 
+        # A double-stop candidate consumes the first reaction that confirms the
+        # transition into A.  The ordinary pair walk can otherwise consume the
+        # same reaction a second time through the still-valid Blue states,
+        # producing two A zones for one lifecycle (the special A plus a later
+        # duplicate).  Keep the special candidate as the authoritative owner.
+        special_reactions = {
+            item.reaction_number
+            for item in special
+            if item.reaction_number is not None
+        }
+        output = [
+            item
+            for item in output
+            if item.reaction_number not in special_reactions
+        ]
         return sorted(output + special, key=lambda item: (item.source_time, item.trigger_event_time))
 
 
