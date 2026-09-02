@@ -4,13 +4,18 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { performance } from 'node:perf_hooks';
 import { createHash } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
 import { createFarazCandleApi } from './plugins/faraz-candle-api.js';
 
-const inputDir = path.resolve(process.cwd(), '..', 'market-data', 'raw');
+// Keep local data, caches, and Python engines anchored to this config file.
+// Vite may be launched from either TradingBot or lightweight-charts.
+const chartRoot = path.dirname(fileURLToPath(import.meta.url));
+const workspaceRoot = path.resolve(chartRoot, '..');
+const inputDir = path.join(workspaceRoot, 'market-data', 'raw');
 const pattern = /^(?:candle-history\s+(.+?)\s+(\d+[SMHD])\s+from\s+(.+?)\s+to\s+(.+?)\s*|RAW\s+(.+?)\s+(\d+[SMHD])\s+FROM\s+(.+?)\s+TO\s+(.+?))\.json$/i;
 const rawPrefixPattern = /^RAW(?:\s+|_)(.+?)(?:\s+|_)(\d+[SMHD])(?:\s+|_)FROM(?:\s+|_)/i;
-const bridgePath = path.resolve(process.cwd(), '..', 'indicator', 'indicator-settings', 'backend', 'reaction_bridge.py');
-const moduleRoot = path.resolve(process.cwd(), '..', 'indicator', 'Modules');
+const bridgePath = path.join(workspaceRoot, 'indicator', 'indicator-settings', 'backend', 'reaction_bridge.py');
+const moduleRoot = path.join(workspaceRoot, 'indicator', 'Modules');
 const enginePath = path.join(moduleRoot, '1_reaction-detector', 'app', 'Reaction-detection-new.py');
 const blueEnginePath = path.join(moduleRoot, '2_blue-line', 'app', 'blue_line.py');
 const aEnginePath = path.join(moduleRoot, '3_A-zone', 'app', 'a_detector.py');
@@ -36,7 +41,7 @@ const inventoryMeta = new Map();
 // Durable, human-navigable cache root.  Calculation results must never rely on
 // Vite's process memory: restarting the dev server must preserve the exact
 // serialized payload and each chart source gets an independent drawing file.
-const primaryCacheRoot = path.resolve(process.cwd(), '..', 'primary-cache');
+const primaryCacheRoot = path.join(workspaceRoot, 'primary-cache');
 const drawingsDir = path.join(primaryCacheRoot, 'drawings');
 const calculationsDir = path.join(primaryCacheRoot, 'indicator-calculations');
 const progressChannels = new Map();

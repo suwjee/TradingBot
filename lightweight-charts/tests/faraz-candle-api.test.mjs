@@ -197,3 +197,49 @@ test("range extraction independently reproduces every candle before atomic publi
   assert.deepEqual(JSON.parse(readFileSync(join(workspaceRoot, "market-data", "raw", savedFiles[0]), "utf8")), candles);
   rmSync(workspaceRoot, { recursive: true, force: true });
 });
+
+test("shifted verification recovers candles omitted by a primary FARAZ packet", async () => {
+  const workspaceRoot = mkdtempSync(join(tmpdir(), "faraz-shifted-recovery-"));
+  const secretDir = join(workspaceRoot, "primary-cache", "secret");
+  mkdirSync(secretDir, { recursive: true });
+  writeFileSync(join(secretDir, "faraz-session.dpapi.json"), JSON.stringify({ version: 2, format: "clear-text", "x-access-token": "token", farazSession: "cookie" }));
+  const candles = [100, 130, 160, 190].map((time, index) => ({ time, open: 10 + index, high: 12 + index, low: 9 + index, close: 11 + index }));
+  const fetchImpl = async (input) => {
+    const url = new URL(input);
+    const from = Number(url.searchParams.get("from")), to = Number(url.searchParams.get("to"));
+    // Reproduce the remote inconsistency: primary packet one says no_data,
+    // while the shifted verification request returns candles in that interval.
+    const rows = from === 100 ? [] : candles.filter((candle) => candle.time >= from && candle.time <= to);
+    const result = rows.length ? {
+      t: rows.map((row) => row.time), o: rows.map((row) => row.open), h: rows.map((row) => row.high),
+      l: rows.map((row) => row.low), c: rows.map((row) => row.close),
+    } : { s: "no_data" };
+    return { ok: true, status: 200, headers: { get: () => "application/json" }, text: async () => JSON.stringify({ result }) };
+  };
+  const routes = new Map();
+  createFarazCandleApi({ workspaceRoot, fetchImpl }).configureServer({ middlewares: { use(route, handler) { routes.set(route, handler); } } });
+  const call = async (route, { method = "GET", url = "", body = null } = {}) => {
+    const request = body == null ? new EventEmitter() : Readable.from([JSON.stringify(body)]);
+    request.method = method; request.url = url;
+    const response = { setHeader() {}, end(value) { this.body = JSON.parse(value); } };
+    await routes.get(route)(request, response);
+    return response.body;
+  };
+  const started = await call("/api/faraz/candles/start", { method: "POST", body: {
+    mode: "range", symbolName: "FOREXCOM:XAUUSD", resolution: "30S", from: 100, to: 190,
+    packetSize: 2, rateLimitMs: 30, host: "faraz.io",
+  } });
+  let job;
+  for (let attempt = 0; attempt < 100; attempt++) {
+    job = await call("/api/faraz/candles/status", { url: `?id=${started.id}` });
+    if (!job.running) break;
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  }
+  assert.equal(job.done, true, job.error);
+  assert.equal(job.candleCountResult, candles.length);
+  assert.match(job.logs.map((entry) => entry.message).join("\n"), /recovered 2 candle\(s\)/);
+  const savedFiles = readdirSync(join(workspaceRoot, "market-data", "raw")).filter((name) => name.endsWith(".json"));
+  assert.equal(savedFiles.length, 1);
+  assert.deepEqual(JSON.parse(readFileSync(join(workspaceRoot, "market-data", "raw", savedFiles[0]), "utf8")), candles);
+  rmSync(workspaceRoot, { recursive: true, force: true });
+});

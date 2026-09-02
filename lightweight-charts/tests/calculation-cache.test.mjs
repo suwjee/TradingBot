@@ -8,6 +8,7 @@ import vm from "node:vm";
 
 const config = readFileSync(new URL("../vite.config.js", import.meta.url), "utf8")
   .replace(/^import .*;\r?\n/gm, "")
+  .replace(/const chartRoot = .*\r?\nconst workspaceRoot = .*\r?\n/, 'const chartRoot = "C:\\\\test-workspace\\\\lightweight-charts";\nconst workspaceRoot = path.resolve(chartRoot, "..");\n')
   .replace("export default defineConfig(", "const config = defineConfig(");
 const id = "candle-history TEST 5S from 2026-01-01 00-00-00 to 2026-01-01 00-01-00 .json";
 const request = { id, timeframe: 30, from: 1, to: 30, direction: "bullish", blueLines: true };
@@ -16,6 +17,13 @@ const files = ["reaction_bridge.py", "Reaction-detection-new.py", "blue_line.py"
 test("detector uses the Python executable selected by the launcher", () => {
   assert.match(config, /const pythonCommand = process\.env\.TRADINGBOT_PYTHON \|\| 'python'/);
   assert.match(config, /spawn\(pythonCommand,/);
+});
+
+test("local runtime paths are anchored to the Vite config, not the shell working directory", () => {
+  const source = readFileSync(new URL("../vite.config.js", import.meta.url), "utf8");
+  assert.match(source, /const chartRoot = path\.dirname\(fileURLToPath\(import\.meta\.url\)\)/);
+  assert.match(source, /const inputDir = path\.join\(workspaceRoot, 'market-data', 'raw'\)/);
+  assert.doesNotMatch(source, /path\.resolve\(process\.cwd\(\), '\.\.', 'market-data', 'raw'\)/);
 });
 
 function server(disk = new Map(), sources = new Map(files.map((name) => [name, "version-1"])), entries = [id], rawSources = new Map()) {

@@ -672,6 +672,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
     const shiftedFrom = from - Math.max(job.timeframeSeconds, Math.floor(span / 2));
     const verificationChunks = chunkRange(shiftedFrom, job.requestedTo, job.timeframeSeconds, job.packetSize);
     const seen = new Uint8Array(candles.length);
+    const supplemental = [];
     log(job, "info", `Completeness verification started with ${verificationChunks.length} independent packet(s).`);
     for (let index = 0; index < verificationChunks.length; index++) {
       if (job.abort.cancelled) throw new Error("Extraction cancelled.");
@@ -679,7 +680,13 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
       for (const candle of rows) {
         if (candle.time < from || candle.time > job.requestedTo) continue;
         const candleIndex = candleIndexAt(candles, candle.time);
-        if (candleIndex < 0) throw new Error(`Completeness verification found a missing primary candle at ${candle.time}.`);
+        // FARAZ can omit a complete packet once and return its candles when the
+        // same interval is requested with shifted boundaries. Those are remote,
+        // independently validated candles, so retain them for the final merge.
+        if (candleIndex < 0) {
+          supplemental.push(candle);
+          continue;
+        }
         const expected = candles[candleIndex];
         if (expected.open !== candle.open || expected.high !== candle.high || expected.low !== candle.low || expected.close !== candle.close) {
           throw new Error(`Completeness verification found conflicting OHLC at ${candle.time}.`);
@@ -690,7 +697,13 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
     }
     const missingIndex = seen.indexOf(0);
     if (missingIndex >= 0) throw new Error(`Completeness verification could not reproduce candle ${candles[missingIndex].time}.`);
+    const recovered = mergeCandles([candles, supplemental], from, job.requestedTo);
+    if (recovered.conflicts) throw new Error(`Completeness verification found ${recovered.conflicts} conflicting supplemental candle(s).`);
+    if (recovered.candles.length > candles.length) {
+      log(job, "warn", `Completeness verification recovered ${recovered.candles.length - candles.length} candle(s) omitted by the primary packet boundaries.`);
+    }
     log(job, "success", `Completeness verification reproduced all ${candles.length} candle(s) with shifted packet boundaries.`);
+    return recovered.candles;
   }
 
   async function runJob(job) {
@@ -735,7 +748,8 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
     if (job.mode === "count" && candles.length !== job.candleCount) throw new Error(`Only ${candles.length}/${job.candleCount} candles were available.`);
     if (merged.conflicts) throw new Error(`Extraction found ${merged.conflicts} conflicting duplicate candle(s); nothing was saved.`);
     job.stage = "Verifying completeness";
-    await verifyRemoteCandles(job, candles);
+    candles = await verifyRemoteCandles(job, candles);
+    if (job.mode === "count") candles = candles.slice(-job.candleCount);
     let gaps = 0;
     for (let index = 1; index < candles.length; index++) if (candles[index].time - candles[index - 1].time > job.timeframeSeconds) gaps++;
     fs.mkdirSync(outputDir, { recursive: true });
