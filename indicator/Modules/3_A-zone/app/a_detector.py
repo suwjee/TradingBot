@@ -9,7 +9,7 @@ from decimal import Decimal
 from typing import Sequence
 
 
-A_VERSION = "1.2.0"
+A_VERSION = "1.3.0"
 
 
 @dataclass(frozen=True)
@@ -249,7 +249,10 @@ class ADetector:
             if crossing is None or crossing[0] != formation_index:
                 continue
             trigger_index, trigger_event_time, _ = crossing
-            match = self._first_reaction_after(trigger_event_time)
+            match = self._first_reaction_after(
+                trigger_event_time,
+                not_before=formation_time,
+            )
             if match is None:
                 continue
             reaction_number, reaction = match
@@ -437,10 +440,20 @@ class ADetector:
         return start
 
     def _first_reaction_after(
-        self, trigger_event_time: datetime
+        self,
+        trigger_event_time: datetime,
+        *,
+        not_before: datetime | None = None,
     ) -> tuple[int, object] | None:
         for number, reaction in enumerate(self.reactions, start=1):
-            if self._reaction_confirmation_time(reaction) >= trigger_event_time:
+            first_time = getattr(
+                self.candles[int(getattr(reaction, "first_idx"))],
+                "timestamp",
+            )
+            if (
+                self._reaction_confirmation_time(reaction) >= trigger_event_time
+                and (not_before is None or first_time >= not_before)
+            ):
                 return number, reaction
         return None
 
@@ -504,7 +517,10 @@ class ADetector:
                 blue_1_stop_time,
                 blue_2_stop_time,
             ) = trigger
-            match = self._first_reaction_after(trigger_event_time)
+            match = self._first_reaction_after(
+                trigger_event_time,
+                not_before=max(blue_1_stop_time, blue_2_stop_time),
+            )
             if match is None:
                 break
             reaction_number, reaction = match
@@ -578,7 +594,35 @@ class ADetector:
             for item in output
             if item.reaction_number not in special_reactions
         ]
+        # If the double-stop candle also stops an already active A, the
+        # lifecycle enters S.  A later same-direction Reaction belongs to that
+        # S lifecycle and cannot retroactively validate a new A on the
+        # double-stop candle.
+        special = [
+            item
+            for item in special
+            if not any(
+                prior.source_time < item.source_time
+                and self._a_was_stopped_before(prior, item.reaction_first_time)
+                for prior in output
+            )
+        ]
         return sorted(output + special, key=lambda item: (item.source_time, item.trigger_event_time))
+
+    def _a_was_stopped_before(
+        self,
+        zone: AZone,
+        end_time: datetime,
+    ) -> bool:
+        """Return whether a later main candle strictly stopped an earlier A."""
+        start = int(getattr(self.candles[zone.source_index], "index")) + 1
+        end = bisect_left(self.candle_times, end_time)
+        level = zone.price
+        for candle in self.candles[start:end]:
+            value = _decimal(getattr(candle, self.extreme_name))
+            if self._strict_cross(value, level):
+                return True
+        return False
 
 
 def detect_a_zones(
