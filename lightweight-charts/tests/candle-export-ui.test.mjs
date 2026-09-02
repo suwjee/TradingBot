@@ -7,6 +7,7 @@ const main = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
 const ui = readFileSync(new URL("../src/candle-export.js", import.meta.url), "utf8");
 const api = readFileSync(new URL("../plugins/faraz-candle-api.js", import.meta.url), "utf8");
 const appCss = readFileSync(new URL("../src/styles/app.css", import.meta.url), "utf8");
+const vite = readFileSync(new URL("../vite.config.js", import.meta.url), "utf8");
 
 test("FARAZ Exporter is directly below Dashboard and replaces the chart surface", () => {
   const dashboard = main.indexOf('["dashboard", "Dashboard", "dashboardBtn"]');
@@ -81,9 +82,16 @@ test("FARAZ failures stay in the complete log, not the status heading", () => {
   assert.doesNotMatch(ui, /logs\.slice\(-100\)/);
   assert.doesNotMatch(ui, /candleStatusMessage/);
   assert.match(api, /Packet \$\{chunk\.index \+ 1\}/);
-  assert.match(api, /const retryable = true/);
-  assert.match(api, /Completeness verification reproduced all/);
+  assert.match(api, /const retryableHttp = Number\.isInteger\(error\?\.status\) && error\.status !== 200/);
+  assert.match(api, /Primary packet integrity verification passed/);
   assert.match(api, /conflicting duplicate candle/);
+  assert.match(api, /PRIMARY_CONCURRENCY = 6/);
+  assert.match(api, /async function paceRequest\(job\)/);
+  assert.match(api, /candle\.time >= chunk\.from && candle\.time <= chunk\.to/);
+  assert.match(api, /retained without retry because the packet returned HTTP 200/);
+  assert.match(api, /requestControllers: new Set\(\)/);
+  assert.match(api, /No second HTTP-200 replay was sent/);
+  assert.match(api, /requestedRange=/);
 });
 
 test("FARAZ request context follows the last real FARAZ history request but is not required for manual credentials", () => {
@@ -114,6 +122,70 @@ test("Exporter clears stale extraction state and limits checkbox activation to i
   assert.doesNotMatch(ui, /Download JSON/);
   assert.match(api, /verifySavedCandles/);
   assert.match(api, /candles\/open/);
+});
+
+test("saved-file checks are visible from the start and the live log follows the latest entry until manually scrolled", () => {
+  assert.match(ui, /const VALIDATION_CHECKS/);
+  assert.match(ui, /"Timestamp order"/);
+  assert.match(ui, /"Saved OHLC integrity"/);
+  assert.match(ui, /item\.dataset\.state = check \? \(passed \? "pass" : "fail"\) : "pending"/);
+  assert.match(ui, /Awaiting saved-file validation/);
+  assert.match(ui, /let followLogTail = true/);
+  assert.match(ui, /if \(followLogTail\) box\.scrollTop = box\.scrollHeight/);
+  assert.match(ui, /candlePacketLog"\)\.addEventListener\("scroll"/);
+});
+
+test("Detailed log has a compact report-copy action and distinct retry/error treatment", () => {
+  const exportCss = readFileSync(new URL("../src/styles/candle-export.css", import.meta.url), "utf8");
+  assert.match(ui, /id="candleCopyLog"/);
+  assert.match(ui, /function buildLogSummary\(job\)/);
+  assert.match(ui, /navigator\.clipboard\?\.writeText/);
+  assert.match(ui, /HTTP retry events/);
+  assert.match(exportCss, /data-level="retry"/);
+  assert.match(exportCss, /data-level="error"[^}]*background: var\(--ui-danger-soft\)/);
+  assert.match(api, /function logPacketProgress\(job, packetNumber, rows\)/);
+  assert.match(api, /at most 26 lines/);
+});
+
+test("source and range cards share a compact layout and status exposes elapsed time", () => {
+  const exportCss = readFileSync(new URL("../src/styles/candle-export.css", import.meta.url), "utf8");
+  assert.match(ui, /id="candleStatusElapsed">0s/);
+  assert.match(ui, /function elapsedLabel\(job\)/);
+  assert.match(ui, /candleStatusElapsed"\)\.textContent = elapsedLabel\(job\)/);
+  assert.match(exportCss, /grid-template-columns: repeat\(12, minmax\(0, 1fr\)\)/);
+  assert.match(exportCss, /nth-child\(1\) \{ grid-column: 1 \/ 5/);
+  assert.match(exportCss, /nth-child\(2\) \{ grid-column: 5 \/ 9/);
+  assert.match(exportCss, /candle-form-grid label:first-child \{ grid-column: 1 \/ -1/);
+  assert.match(exportCss, /candle-status-metrics > div:nth-child\(1\), .candle-status-metrics > div:nth-child\(2\) \{ grid-column: span 3/);
+  assert.match(api, /completedAt: Date\.now\(\)/);
+});
+
+test("connection info shows a sanitized FARAZ profile and a real ping state", () => {
+  const exportCss = readFileSync(new URL("../src/styles/candle-export.css", import.meta.url), "utf8");
+  assert.match(ui, /id="candleInfoUser"/);
+  assert.match(ui, /id="candleInfoUserName"/);
+  assert.match(ui, /id="candleInfoPhone"/);
+  assert.match(ui, /id="candleInfoPing" data-state="unavailable"/);
+  assert.match(ui, /const pingAvailable = connected && Number\.isFinite\(Number\(status\.pingMs\)\)/);
+  assert.match(api, /AUTH_PROFILE_PATH = "\/api\/public\/authentication\/me"/);
+  assert.match(api, /async function readAuthenticatedProfile\(\)/);
+  assert.match(api, /userId: typeof payload\?\._id === "string" \? payload\._id : null/);
+  assert.match(api, /userName: typeof payload\?\.name === "string" \? payload\.name : null/);
+  assert.match(api, /phone: typeof payload\?\.phone === "string" \? payload\.phone : null/);
+  assert.match(exportCss, /#candleInfoPing\[data-state="active"\] i/);
+  assert.match(exportCss, /#candleInfoPing\[data-state="unavailable"\] i \{ animation: status-error-pulse/);
+  assert.match(exportCss, /\.candle-info-list div:first-child, \.candle-info-list div:last-child \{ grid-column: 1 \/ -1;/);
+});
+
+test("raw inventory refreshes live, orders recent files first, and deletion is explicitly confirmed", () => {
+  assert.match(main, /setInterval\(\(\) => \{\s*void refreshSymbolInventory/);
+  assert.match(main, /onInventoryChanged: \(\) => \{ void refreshSymbolInventory\(\); \}/);
+  assert.match(main, /window\.confirm\(`Permanently delete this candle file/);
+  assert.match(main, /\/api\/candle-files\/delete/);
+  assert.match(main, /class="symbol-delete"/);
+  assert.match(appCss, /\.symbol-delete:hover/);
+  assert.match(vite, /b\.savedAt - a\.savedAt/);
+  assert.match(vite, /api\/candle-files\/delete/);
 });
 
 test("header actions remain at fixed positions and timeframe pinning has no cap", () => {
@@ -157,10 +229,11 @@ test("zoom never culls indicator objects", () => {
   assert.match(drawIndicator, /indicatorTimeToCoordinate\(zone\.sourceTime\)/);
 });
 
-test("unlimited zoom out is retired and cannot reintroduce annotation failures", () => {
+test("safe maximum zoom out remains bounded and cannot reintroduce annotation failures", () => {
   assert.doesNotMatch(main, /unlimitedZoom|Unlimited zoom out|Compress the full available history/);
   assert.doesNotMatch(main, /minBarSpacing: 0\.01/);
-  assert.equal((main.match(/minBarSpacing: 2/g) || []).length, 2);
+  assert.match(main, /const MIN_SAFE_BAR_SPACING = 0\.5/);
+  assert.equal((main.match(/minBarSpacing: MIN_SAFE_BAR_SPACING/g) || []).length, 2);
 });
 
 test("moderate candle files keep one stable series during pan instead of swapping LOD data", () => {

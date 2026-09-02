@@ -85,7 +85,18 @@ test("status validates without a browser, migrates clear text to DPAPI, and logo
   writeFileSync(secretPath, JSON.stringify({ version: 2, format: "clear-text", "x-access-token": "manual-token", farazSession: "manual-cookie" }));
   const routes = new Map();
   let browserLaunches = 0;
-  const fetchImpl = async () => ({ ok: true, status: 200, headers: { get: () => "application/json" } });
+  const fetchImpl = async (input) => {
+    const url = new URL(input);
+    if (url.pathname === "/api/public/authentication/me") {
+      return {
+        ok: true,
+        status: 200,
+        headers: { get: () => "application/json" },
+        text: async () => JSON.stringify({ _id: "user-example-42", name: "Example User", phone: "+10000000000", token: "must-not-leak" }),
+      };
+    }
+    return { ok: true, status: 200, headers: { get: () => "application/json" } };
+  };
   createFarazCandleApi({ workspaceRoot, fetchImpl, launchBrowser: async () => { browserLaunches++; throw new Error("Browser launch is not allowed for status or logout."); } })
     .configureServer({ middlewares: { use(route, handler) { routes.set(route, handler); } } });
   const call = async (route, method = "GET") => {
@@ -93,7 +104,12 @@ test("status validates without a browser, migrates clear text to DPAPI, and logo
     await routes.get(route)({ method, url: "" }, response);
     return response.body;
   };
-  assert.equal((await call("/api/faraz/auth/status")).connected, true);
+  const status = await call("/api/faraz/auth/status");
+  assert.equal(status.connected, true);
+  assert.equal(status.userId, "user-example-42");
+  assert.equal(status.userName, "Example User");
+  assert.equal(status.phone, "+10000000000");
+  assert.equal(Object.hasOwn(status, "token"), false);
   assert.equal(browserLaunches, 0);
   const migrated = JSON.parse(readFileSync(secretPath, "utf8"));
   assert.equal(migrated.protection, "windows-dpapi-current-user");
@@ -146,7 +162,7 @@ test("a successful interactive capture closes and kills its one owned browser se
   rmSync(workspaceRoot, { recursive: true, force: true });
 });
 
-test("range extraction independently reproduces every candle before atomic publication", async () => {
+test("range extraction validates primary packets before atomic publication", async () => {
   const workspaceRoot = mkdtempSync(join(tmpdir(), "faraz-complete-range-"));
   const secretDir = join(workspaceRoot, "primary-cache", "secret");
   mkdirSync(secretDir, { recursive: true });
@@ -189,16 +205,17 @@ test("range extraction independently reproduces every candle before atomic publi
     await new Promise((resolve) => setTimeout(resolve, 20));
   }
   assert.equal(job.done, true, job.error);
+  assert.ok(Number.isFinite(job.receivedRows) && job.receivedRows >= candles.length, "primary received rows are counted without NaN");
   assert.equal(job.candleCountResult, candles.length);
   assert.equal(job.validation.every((check) => check.passed), true);
-  assert.ok(historyRequests >= 5, "status probe plus primary and shifted verification packets must all run");
+  assert.ok(historyRequests >= 3, "status probe and primary packets must both run");
   const savedFiles = readdirSync(join(workspaceRoot, "market-data", "raw")).filter((name) => name.endsWith(".json"));
   assert.equal(savedFiles.length, 1);
   assert.deepEqual(JSON.parse(readFileSync(join(workspaceRoot, "market-data", "raw", savedFiles[0]), "utf8")), candles);
   rmSync(workspaceRoot, { recursive: true, force: true });
 });
 
-test("shifted verification recovers candles omitted by a primary FARAZ packet", async () => {
+test("a HTTP-200 primary omission is retained without a second replay", async () => {
   const workspaceRoot = mkdtempSync(join(tmpdir(), "faraz-shifted-recovery-"));
   const secretDir = join(workspaceRoot, "primary-cache", "secret");
   mkdirSync(secretDir, { recursive: true });
@@ -207,8 +224,8 @@ test("shifted verification recovers candles omitted by a primary FARAZ packet", 
   const fetchImpl = async (input) => {
     const url = new URL(input);
     const from = Number(url.searchParams.get("from")), to = Number(url.searchParams.get("to"));
-    // Reproduce the remote inconsistency: primary packet one says no_data,
-    // while the shifted verification request returns candles in that interval.
+    // Reproduce a valid HTTP-200 primary response with no rows for its first
+    // interval.  The exporter must not create or fetch data a second time.
     const rows = from === 100 ? [] : candles.filter((candle) => candle.time >= from && candle.time <= to);
     const result = rows.length ? {
       t: rows.map((row) => row.time), o: rows.map((row) => row.open), h: rows.map((row) => row.high),
@@ -236,10 +253,59 @@ test("shifted verification recovers candles omitted by a primary FARAZ packet", 
     await new Promise((resolve) => setTimeout(resolve, 20));
   }
   assert.equal(job.done, true, job.error);
-  assert.equal(job.candleCountResult, candles.length);
-  assert.match(job.logs.map((entry) => entry.message).join("\n"), /recovered 2 candle\(s\)/);
+  assert.equal(job.candleCountResult, 2);
+  assert.match(job.logs.map((entry) => entry.message).join("\n"), /No second HTTP-200 replay was sent/);
   const savedFiles = readdirSync(join(workspaceRoot, "market-data", "raw")).filter((name) => name.endsWith(".json"));
   assert.equal(savedFiles.length, 1);
-  assert.deepEqual(JSON.parse(readFileSync(join(workspaceRoot, "market-data", "raw", savedFiles[0]), "utf8")), candles);
+  assert.deepEqual(JSON.parse(readFileSync(join(workspaceRoot, "market-data", "raw", savedFiles[0]), "utf8")), candles.slice(2));
+  rmSync(workspaceRoot, { recursive: true, force: true });
+});
+
+test("a persistent HTTP-200 suspicious gap is recorded without retry and does not fail extraction", async () => {
+  const workspaceRoot = mkdtempSync(join(tmpdir(), "faraz-retained-gap-"));
+  const secretDir = join(workspaceRoot, "primary-cache", "secret");
+  mkdirSync(secretDir, { recursive: true });
+  writeFileSync(join(secretDir, "faraz-session.dpapi.json"), JSON.stringify({ version: 2, format: "clear-text", "x-access-token": "token", farazSession: "cookie" }));
+  // FARAZ never has the 160-second candle: this must remain a reported gap,
+  // rather than converting a successfully validated export into an error.
+  const candles = [100, 130, 190].map((time, index) => ({ time, open: 10 + index, high: 12 + index, low: 9 + index, close: 11 + index }));
+  let historyRequests = 0;
+  const fetchImpl = async (input) => {
+    historyRequests++;
+    const url = new URL(input);
+    const from = Number(url.searchParams.get("from")), to = Number(url.searchParams.get("to"));
+    const rows = candles.filter((candle) => candle.time >= from && candle.time <= to);
+    const result = rows.length ? {
+      t: rows.map((row) => row.time), o: rows.map((row) => row.open), h: rows.map((row) => row.high),
+      l: rows.map((row) => row.low), c: rows.map((row) => row.close),
+    } : { s: "no_data" };
+    return { ok: true, status: 200, headers: { get: () => "application/json" }, text: async () => JSON.stringify({ result }) };
+  };
+  const routes = new Map();
+  createFarazCandleApi({ workspaceRoot, fetchImpl }).configureServer({ middlewares: { use(route, handler) { routes.set(route, handler); } } });
+  const call = async (route, { method = "GET", url = "", body = null } = {}) => {
+    const request = body == null ? new EventEmitter() : Readable.from([JSON.stringify(body)]);
+    request.method = method; request.url = url;
+    const response = { setHeader() {}, end(value) { this.body = JSON.parse(value); } };
+    await routes.get(route)(request, response);
+    return response.body;
+  };
+  const started = await call("/api/faraz/candles/start", { method: "POST", body: {
+    mode: "range", symbolName: "FOREXCOM:XAUUSD", resolution: "30S", from: 100, to: 190,
+    packetSize: 10, rateLimitMs: 30, host: "faraz.io",
+  } });
+  let job;
+  for (let attempt = 0; attempt < 100; attempt++) {
+    job = await call("/api/faraz/candles/status", { url: `?id=${started.id}` });
+    if (!job.running) break;
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  }
+  assert.equal(job.done, true, job.error);
+  assert.equal(job.candleCountResult, candles.length);
+  assert.deepEqual(job.suspiciousGaps.map((gap) => ({ remainingCandles: gap.remainingCandles, status: gap.status })), [{ remainingCandles: 1, status: "retained" }]);
+  const messages = job.logs.map((entry) => entry.message).join("\n");
+  assert.doesNotMatch(messages, /Suspicious-gap retry/);
+  assert.match(messages, /retained without retry because the packet returned HTTP 200/);
+  assert.ok(historyRequests >= 2, "primary collection and independent verification must both run");
   rmSync(workspaceRoot, { recursive: true, force: true });
 });

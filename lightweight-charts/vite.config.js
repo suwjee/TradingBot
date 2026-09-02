@@ -112,6 +112,14 @@ function readBody(req) {
   });
 }
 
+async function readJson(req) {
+  let body;
+  try { body = JSON.parse(await readBody(req)); }
+  catch { throw new Error('Request body must be valid JSON.'); }
+  if (!body || typeof body !== 'object' || Array.isArray(body)) throw new Error('Request body must be a JSON object.');
+  return body;
+}
+
 function runDetector(args, onProgress = () => {}) {
   return new Promise((resolve, reject) => {
     const child = spawn(pythonCommand, [bridgePath, '--engine', enginePath, '--blue-engine', blueEnginePath, '--a-engine', aEnginePath, '--s-engine', sEnginePath, '--e-engine', eEnginePath, '--stopall-engine', stopAllEnginePath, ...args], { windowsHide: true });
@@ -207,10 +215,11 @@ function inventory() {
         to: match?.[4] || match?.[8] || meta.to,
         bytes: stat.size,
         count: meta.count,
+        savedAt: stat.mtimeMs,
       };
     })
     .filter(Boolean)
-    .sort((a, b) => a.symbol.localeCompare(b.symbol) || a.id.localeCompare(b.id));
+    .sort((a, b) => a.symbol.localeCompare(b.symbol) || b.savedAt - a.savedAt || a.id.localeCompare(b.id));
 }
 
 function localDataApi() {
@@ -236,6 +245,23 @@ function localDataApi() {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         res.end(JSON.stringify(inventory()));
+      });
+      server.middlewares.use('/api/candle-files/delete', async (req, res) => {
+        if (req.method !== 'POST') { res.statusCode = 405; res.end(JSON.stringify({ error: 'POST is required.' })); return; }
+        try {
+          const { id } = await readJson(req);
+          const valid = inventory().find((item) => item.id === id);
+          if (!valid) { res.statusCode = 404; res.end(JSON.stringify({ error: 'Candle file was not found.' })); return; }
+          fs.unlinkSync(path.join(inputDir, valid.id));
+          inventoryMeta.delete(valid.id);
+          res.setHeader('Content-Type', 'application/json; charset=utf-8');
+          res.setHeader('Cache-Control', 'no-store');
+          res.end(JSON.stringify({ ok: true, deleted: valid.id }));
+        } catch (error) {
+          res.statusCode = 400;
+          res.setHeader('Content-Type', 'application/json; charset=utf-8');
+          res.end(JSON.stringify({ error: error.message }));
+        }
       });
       server.middlewares.use('/api/candles', (req, res) => {
         const url = new URL(req.url ?? '', 'http://localhost');
@@ -354,4 +380,20 @@ function localDataApi() {
   };
 }
 
-export default defineConfig({ plugins: [localDataApi(), createFarazCandleApi()], server: { port: 5173, strictPort: false, watch: { usePolling: true, interval: 500 } }, build: { target: 'es2022' } });
+function manualTestPage() {
+  // Serve the runtime review shell without requiring an .html extension.
+  const pagePath = path.resolve(process.cwd(), 'manual-test.html');
+  return {
+    name: 'manual-test-page',
+    configureServer(server) {
+      server.middlewares.use('/manual-test', (req, res, next) => {
+        if (req.method !== 'GET' || req.url === '/' || (req.url ?? '').includes('.')) { next(); return; }
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-store');
+        res.end(fs.readFileSync(pagePath, 'utf8'));
+      });
+    },
+  };
+}
+
+export default defineConfig({ plugins: [localDataApi(), createFarazCandleApi(), manualTestPage()], server: { port: 5173, strictPort: false, watch: { usePolling: true, interval: 500 } }, build: { target: 'es2022' } });

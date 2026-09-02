@@ -1,5 +1,7 @@
-// Presentation-only offline review. Behavior identities, prices and orders
-// come exclusively from the supplied bridge payload, never chart inference.
+// Presentation-only review pieces for the served /manual-test page. Behavior
+// identities, prices and orders come exclusively from the supplied bridge
+// payload, never chart inference. The page is generated fresh per export;
+// no file is written and no candle cache is serialized.
 const collections = {
   reactions: ["Reaction", "firstTime"], resets: ["Reset", "time"],
   blueLines: ["Blue Line", "sourceTime"], aZones: ["A", "sourceTime"],
@@ -9,7 +11,6 @@ const collections = {
 };
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g,
   (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
-const jsonScript = (value) => JSON.stringify(value).replace(/</g, "\\u003c").replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029");
 const tehran = new Intl.DateTimeFormat("en-CA", {
   timeZone: "Asia/Tehran", year: "numeric", month: "2-digit", day: "2-digit",
   hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23",
@@ -55,7 +56,7 @@ export function reviewLabelColor(record, chartColor) {
   return ["reactions", "orderReactions", "orderAudit"].includes(record.group)
     ? "#111827" : chartColor;
 }
-export function manualReviewFilename(date = new Date(), extension = "html") {
+export function manualReviewFilename(date = new Date(), extension = "txt") {
   const two = (value) => String(value).padStart(2, "0");
   return `manualTest-${date.getFullYear()}_${two(date.getMonth() + 1)}_${two(date.getDate())} ${two(date.getHours())}_${two(date.getMinutes())}_${two(date.getSeconds())}.${extension}`;
 }
@@ -92,8 +93,9 @@ function eventCard(record) {
     <details class="bridge-output"><summary>Bridge output</summary>${detail(row)}</details></article>`;
 }
 
-// Self-contained review behavior is embedded in the saved file; it makes no requests.
-function reviewRuntime() {
+// Review behavior for the served page; it runs same-origin and stores verdicts
+// in localStorage. It still makes no requests and stays entirely in the page.
+export function reviewRuntime() {
   const q = (selector) => document.querySelector(selector);
   const events = [...document.querySelectorAll(".event")];
   const references = [...document.querySelectorAll(".reference-row")];
@@ -196,7 +198,10 @@ body{background:var(--bg);font-size:14px;color:var(--ink)}header,main{width:min(
 @media print{header{padding:16px 0}.feature{border:1px solid #ddd}}
 `;
 
-export async function renderManualReview(payload, snapshot = {}, cryptoApi = globalThis.crypto) {
+// Build the review page body: same presentation as the retired standalone
+// export, minus the heavyweight duplication. The payload is embedded once as
+// the <pre> reference copy; candle caches are never serialized here.
+export async function buildReviewBody(payload, snapshot = {}, cryptoApi = globalThis.crypto) {
   if (!payload || !payload.directions || typeof payload.directions !== "object") throw new Error("Invalid indicator payload");
   const raw = JSON.stringify(payload);
   const digest = await cryptoApi.subtle.digest("SHA-256", new TextEncoder().encode(raw));
@@ -221,41 +226,9 @@ export async function renderManualReview(payload, snapshot = {}, cryptoApi = glo
   const categoryOrder = Object.keys(colorSpec);
   const filterControls = [...categories.values()].sort((a, b) => (categoryOrder.indexOf(a.key) < 0 ? 99 : categoryOrder.indexOf(a.key)) - (categoryOrder.indexOf(b.key) < 0 ? 99 : categoryOrder.indexOf(b.key)))
     .map((category) => `<label class="category-choice"><input class="category-filter" type="checkbox" value="${escapeHtml(category.key)}" checked><i class="swatch" style="background:${category.color}" aria-hidden="true"></i><span>${escapeHtml(category.label)}</span><small>${category.count.toLocaleString()}</small></label>`).join("");
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Indicator Timeline Review</title><style>${styles}</style></head><body data-payload-hash="${hash}" data-review-id="${escapeHtml(snapshot.exportedAt || "standalone")}">
-<a class="skip-link" href="#timeline">Skip to timeline</a><header><span class="eyebrow">MANUAL BRIDGE REVIEW · ASIA/TEHRAN</span><h1>Indicator timeline review</h1><p class="subtitle">A chronological manual comparison workspace. The timeline is the primary review surface; the full A, S, E and audit lists remain available below as reference features.</p><div class="metrics">${metrics.map(([k,v]) => `<div class="metric"><span>${k}</span><strong>${escapeHtml(v)}</strong></div>`).join("")}</div></header>
+  const body = `<a class="skip-link" href="#timeline">Skip to timeline</a><header><span class="eyebrow">MANUAL BRIDGE REVIEW · ASIA/TEHRAN</span><h1>Indicator timeline review</h1><p class="subtitle">A chronological manual comparison workspace. The timeline is the primary review surface; the full A, S, E and audit lists remain available below as reference features.</p><div class="metrics">${metrics.map(([k,v]) => `<div class="metric"><span>${k}</span><strong>${escapeHtml(v)}</strong></div>`).join("")}</div></header>
 <main><section class="filters" aria-labelledby="filter-title"><div><span class="eyebrow">TIMELINE FILTER</span><h2 id="filter-title">Show a precise review window</h2></div><div class="filter-fields"><label>From<input id="from" type="datetime-local" step="1" aria-describedby="range-hint"></label><label>To<input id="to" type="datetime-local" step="1" aria-describedby="range-hint range-error"></label><button id="reset" type="button">Reset</button></div><fieldset><legend>Behavior filters</legend><div class="category-options">${filterControls}</div></fieldset><p id="range-hint"><small>Leave dates blank for the full range. Filters hide records; they never remove exported data or reviews.</small></p><p class="error" id="range-error" role="alert" hidden>From must not be later than To.</p><p id="filter-note" role="status" aria-live="polite"></p></section><section id="timeline" aria-labelledby="timeline-title"><span class="eyebrow">PRIMARY REVIEW SURFACE</span><h2 id="timeline-title">Chronological timeline</h2><p class="subtitle">Events are grouped by Tehran calendar day and ordered by time. Check only the item you have verified against the chart.</p><p class="empty" id="empty" hidden>No matching events. Select one or more behavior filters.</p>${timeline || "<p>No events in the cached payload.</p>"}</section>
 <section class="report" id="review-report" aria-labelledby="report-title"><div><span class="eyebrow">AI HANDOFF</span><h2 id="report-title">Live review report</h2><p>Every selected item is written on its own line. Use the selector to export all selected items or only one status.</p><p id="storage-note"><small>Reviews are saved in this browser for this export. Download TXT to keep or share your findings.</small></p></div><div class="report-controls"><label>Include <select id="mode"><option value="all">All selected</option><option value="true">True only</option><option value="false">False only</option></select></label><button id="copy">Copy report</button><button id="download">Download TXT</button></div><textarea id="report-text" readonly aria-label="Review report"></textarea></section>
-<h2>Complete record collections</h2><p><small>Collection rows follow your filters. The original payload and chart snapshot below always contain all data.</small></p>${features}<details class="feature"><summary>Original cached Bridge payload · SHA-256 ${hash}</summary><pre>${escapeHtml(raw)}</pre></details><details class="feature"><summary>Export metadata, candles, drawings and settings</summary>${detail(snapshot)}</details></main>
-<script type="application/json" id="indicator-payload">${jsonScript(payload)}</script><script type="application/json" id="chart-snapshot">${jsonScript(snapshot)}</script><script>(${reviewRuntime.toString()})();</script></body></html>`;
-}
-
-export async function saveManualReview(payload, snapshot, host = window, notify = () => {}) {
-  // Copy before the picker yields: a later calculation must not change this export.
-  const captured = structuredClone(payload), extra = structuredClone(snapshot || {});
-  const now = new Date(), filename = manualReviewFilename(now);
-  extra.exportedAt = now.toISOString();
-  let handle;
-  if (typeof host.showSaveFilePicker === "function") {
-    try {
-      handle = await host.showSaveFilePicker({ suggestedName: filename, types: [{ description: "Indicator review HTML", accept: { "text/html": [".html"] } }] });
-    } catch (error) {
-      if (error.name === "AbortError") return "cancelled";
-      if (!["SecurityError", "NotAllowedError", "NotSupportedError"].includes(error.name)) throw error;
-    }
-  }
-  const html = await renderManualReview(captured, extra, host.crypto);
-  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
-  if (handle) {
-    const writable = await handle.createWritable();
-    try { await writable.write(blob); await writable.close(); }
-    catch (error) { try { await writable.abort(); } catch {} throw error; }
-    return "saved";
-  }
-  // No server write endpoint or additional filesystem permission is needed.
-  notify(`Save As is unavailable in this browser. Downloading ${filename} to its download location; enable 'Ask where to save each file' in browser settings to choose a path.`);
-  const url = host.URL.createObjectURL(blob), a = host.document.createElement("a");
-  a.href = url; a.download = filename;
-  host.document.body.append(a); a.click(); a.remove();
-  host.setTimeout(() => host.URL.revokeObjectURL(url), 1000);
-  return "downloaded";
+<h2>Complete record collections</h2><p><small>Collection rows follow your filters. The cached payload below always contains all data.</small></p>${features}<details class="feature"><summary>Cached Bridge payload · SHA-256 ${hash}</summary><pre>${escapeHtml(raw)}</pre></details></main>`;
+  return { hash, reviewId: snapshot.exportedAt || "standalone", styles, runtime: reviewRuntime.toString(), body };
 }

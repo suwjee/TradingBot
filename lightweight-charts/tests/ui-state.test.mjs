@@ -108,30 +108,47 @@ test("saved indicator timeframe maps to the real form control, not an absent tim
   assert.match(source, /tf: restoredTimeframe\(localStorage, TF\)/);
 });
 
-test("Export button passes the cached payload and never fetches or recalculates", async () => {
+test("Export opens the review tab with the cached payload and never fetches or recalculates", async () => {
   const h = harness(); const payload = { directions: { bullish: { stopAlls: [] } }, timeframe: 30 };
   h.state.tf = 60;
   h.state.raw = [{ time: 1780000000, open: 12.3, high: 12.4, low: 12.1, close: 12.2 }];
   h.state.data = [{ time: 1779999960, open: 12.3, high: 12.4, low: 12.1, close: 12.2 }];
   h.state.indicator.results = payload; h.state.indicator.settings = { timeframe: "follow" };
   h.state.indicator.resultContext = { from: 1780000000, to: 1780000000 };
-  let captured, notices = [];
+  let opened, handoff, notices = [];
   Object.assign(h.context, { window: {}, chartSettings: {},
-    saveManualReview: async (...args) => { captured = args; return "saved"; },
+    openManualReviewTab: (host) => { opened = host; return { focus() {} }; },
+    startManualReviewHandoff: (payloadArg, snapshotArg, host, notify) => { handoff = { payloadArg, snapshotArg, host, notify }; },
     fetch() { assert.fail("Export must never fetch"); }, calculateIndicator() { assert.fail("Export must never calculate"); },
     aggregate() { assert.fail("Export must never reaggregate cached candles"); },
     toast(message) { notices.push(message); } });
   h.context.log.chart.info = () => {};
   vm.runInContext(section("async function exportChartData()", '$("#exportDataBtn").onclick'), h.context);
   await h.context.exportChartData();
-  assert.equal(captured[0], payload); assert.deepEqual(captured[1].drawings, [drawing]);
-  assert.equal(captured[1].settings, h.state.indicator.settings);
-  assert.equal(captured[1].currentChart.sourceCandles, h.state.raw);
-  assert.equal(captured[1].currentChart.candles, h.state.data);
-  assert.deepEqual(captured[1].currentChart.calculationRangeCandles, h.state.raw);
-  assert.equal(captured[1].currentChart.timeframe, 60);
-  assert.equal(captured[0].timeframe, 30); // Chart and indicator intervals remain distinct.
-  h.state.indicator.results = null; captured = undefined;
-  await h.context.exportChartData(); assert.equal(captured, undefined);
+  assert.equal(opened, h.context.window);
+  assert.deepEqual(handoff.payloadArg, payload);
+  assert.deepEqual(handoff.snapshotArg.drawings, [drawing]);
+  assert.equal(handoff.snapshotArg.settings, h.state.indicator.settings);
+  assert.equal(handoff.snapshotArg.currentChart.source, h.state.file);
+  assert.equal(handoff.snapshotArg.currentChart.timeframe, 60);
+  assert.equal(Object.keys(handoff.snapshotArg.currentChart).length, 2);
+  assert.equal(handoff.payloadArg.timeframe, 30);
+  h.state.indicator.results = null; opened = undefined; handoff = undefined;
+  await h.context.exportChartData(); assert.equal(opened, undefined); assert.equal(handoff, undefined);
   assert.match(notices.at(-1), /No calculated indicator results/);
+});
+
+test("Export reports a blocked review tab and posts nothing", async () => {
+  const h = harness(); const payload = { directions: { bullish: { stopAlls: [] } }, timeframe: 30 };
+  h.state.indicator.results = payload;
+  const notices = [], errors = [];
+  Object.assign(h.context, { window: {}, chartSettings: {},
+    openManualReviewTab: () => null,
+    startManualReviewHandoff: () => { throw new Error("must not be called"); },
+    toast(message) { notices.push(message); } });
+  h.context.log.chart.error = (event, error) => { errors.push([event, error]); };
+  vm.runInContext(section("async function exportChartData()", '$("#exportDataBtn").onclick'), h.context);
+  await h.context.exportChartData();
+  assert.match(notices.at(-1), /blocked/);
+  assert.equal(errors.length, 1); assert.equal(errors[0][0], "INDICATOR_REVIEW_TAB_BLOCKED");
 });

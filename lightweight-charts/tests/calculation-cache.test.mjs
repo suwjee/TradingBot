@@ -27,7 +27,7 @@ test("local runtime paths are anchored to the Vite config, not the shell working
 });
 
 function server(disk = new Map(), sources = new Map(files.map((name) => [name, "version-1"])), entries = [id], rawSources = new Map()) {
-  const routes = new Map(); let runs = 0;
+  const routes = new Map(); let runs = 0, unlinkCalls = 0;
   const directoryEntries = (directory) => {
     const prefix = `${path.resolve(directory)}${path.sep}`;
     const children = new Map();
@@ -56,7 +56,7 @@ function server(disk = new Map(), sources = new Map(files.map((name) => [name, "
     },
     writeFileSync(file, value) { disk.set(file, value); },
     rmSync(directory) { const prefix = `${path.resolve(directory)}${path.sep}`; for (const file of [...disk.keys()]) if (file.startsWith(prefix)) disk.delete(file); },
-    unlinkSync() { assert.fail("correctness invalidation must not delete cache files"); },
+    unlinkSync(file) { unlinkCalls++; rawSources.delete(path.basename(file)); },
   };
   const context = vm.createContext({ fs, path, createHash, performance, process, URL, Buffer,
     defineConfig: (value) => value,
@@ -78,8 +78,24 @@ function server(disk = new Map(), sources = new Map(files.map((name) => [name, "
     await routes.get("/api/reactions/cache")(req, result);
     return result;
   }
-  return { context, disk, sources, post, clearCache, runs: () => runs };
+  async function deleteCandle(candleId) {
+    const req = new EventEmitter(); req.method = "POST"; req.setEncoding = () => {};
+    const headers = {}, result = { statusCode: 200, headers, setHeader(key, value) { headers[key] = value; }, end(body) { this.body = body; } };
+    const done = routes.get("/api/candle-files/delete")(req, result);
+    req.emit("data", JSON.stringify({ id: candleId })); req.emit("end"); await done;
+    return result;
+  }
+  return { context, disk, sources, post, clearCache, deleteCandle, runs: () => runs, unlinkCalls: () => unlinkCalls };
 }
+
+test("candle deletion parses its JSON request and removes only the validated raw inventory item", async () => {
+  const raw = "RAW FXCM_USOIL 1S FROM 2026-09-02 20-10-14 TO 2026-09-02 20-36-30.json";
+  const s = server(new Map(), new Map(files.map((name) => [name, "version-1"])), [raw]);
+  const response = await s.deleteCandle(raw);
+  assert.equal(response.statusCode, 200);
+  assert.deepEqual(JSON.parse(response.body), { ok: true, deleted: raw });
+  assert.equal(s.unlinkCalls(), 1);
+});
 
 test("inventory accepts every valid raw JSON filename and infers metadata when its name is nonstandard", () => {
   const arbitrary = "broker-export XAUUSD range A.json";

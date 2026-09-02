@@ -7,7 +7,7 @@ import { icon } from "./ui/icons.js";
 import { drawingArray, normalizeHistorySnapshot, CHART_TIMEFRAME_KEY, restoredTimeframe, indicatorControlId } from "./chart-state.js";
 import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart-lod.js";
 import { updateStageAggregate } from "./calculation-progress.js";
-import { saveManualReview } from "./manual-review.js";
+import { openManualReviewTab, startManualReviewHandoff } from "./manual-test.js";
 import { initCandleExport } from "./candle-export.js";
 import "./styles/tokens.css";
 import "./styles/app.css";
@@ -124,6 +124,10 @@ const TF = [
   { l: "4H", s: 14400 },
   { l: "1D", s: 86400 },
 ];
+// Keep a finite lower bound: 0.5px exposes substantially more history than
+// the former 2px limit without the pathological 0.01px scale that caused
+// redraw churn and unstable annotation coordinates on very large datasets.
+const MIN_SAFE_BAR_SPACING = 0.5;
 const DRAWING_TOOL_ORDER_KEY = "qg:drawing-tool-order:v1";
 const drawingToolDefinitions = [
   ["cursor", "Cursor"],
@@ -479,7 +483,7 @@ const chart = createChart($("#chart"), {
     secondsVisible: true,
     rightOffset: 8,
     barSpacing: 8,
-    minBarSpacing: 2,
+    minBarSpacing: MIN_SAFE_BAR_SPACING,
   },
   handleScroll: {
     mouseWheel: true,
@@ -553,7 +557,7 @@ function applyChartSettings(persist = true) {
     timeScale: {
       borderVisible: chartSettings.timeBorder,
       borderColor: "#e4e7ed",
-      minBarSpacing: 2,
+      minBarSpacing: MIN_SAFE_BAR_SPACING,
       tickMarkFormatter: (time) => formatChartAxisTime(time),
     },
   });
@@ -662,6 +666,7 @@ candleExportController = initCandleExport({
       : hasError ? `FARAZ error · ${status.error}` : "FARAZ session is not configured";
     footer.setAttribute("aria-label", footer.title);
   },
+  onInventoryChanged: () => { void refreshSymbolInventory(); },
 });
 $("#candleExportBtn").onclick = () => {
   closeSidePanel($("#objectTree"));
@@ -1235,28 +1240,47 @@ function updateTimeframeAvailability() {
 }
 async function loadInventory() {
   log.chart.info("SYMBOL_INVENTORY_REQUESTED");
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 12000);
-  let r;
-  try {
-    r = await fetch("/api/symbols", { signal: controller.signal, cache: "no-store" });
-  } finally {
-    clearTimeout(timeout);
-  }
-  if (!r.ok) {
-    const error = new Error(`Symbol inventory request failed with HTTP ${r.status}`);
-    log.chart.error("SYMBOL_INVENTORY_FAILED", error, { status: r.status });
-    throw error;
-  }
-  state.inventory = await r.json();
-  if (!state.inventory.length)
-    throw new Error("No valid candle-history JSON files found in input.");
-  renderSymbolList();
+  await refreshSymbolInventory({ initial: true });
   log.chart.info("SYMBOL_INVENTORY_LOADED", { symbols: state.inventory.length });
   const remembered = localStorage.getItem("qg:last-symbol");
   await loadFile(
     state.inventory.find((item) => item.id === remembered) || state.inventory[0],
   );
+}
+let inventoryRefreshRunning = false;
+function inventorySignature(items) {
+  return items.map((item) => `${item.id}|${item.bytes}|${item.savedAt}`).join("\n");
+}
+async function refreshSymbolInventory({ initial = false } = {}) {
+  if (inventoryRefreshRunning) return false;
+  inventoryRefreshRunning = true;
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    let r;
+    try {
+      r = await fetch("/api/symbols", { signal: controller.signal, cache: "no-store" });
+    } finally {
+      clearTimeout(timeout);
+    }
+    if (!r.ok) {
+      const error = new Error(`Symbol inventory request failed with HTTP ${r.status}`);
+      log.chart.error("SYMBOL_INVENTORY_FAILED", error, { status: r.status });
+      throw error;
+    }
+    const nextInventory = await r.json();
+    if (initial && !nextInventory.length)
+      throw new Error("No valid candle-history JSON files found in input.");
+    const changed = inventorySignature(state.inventory) !== inventorySignature(nextInventory);
+    state.inventory = nextInventory;
+    if (changed) {
+      renderSymbolList($("#symbolSearch")?.value || "");
+      log.chart.info("SYMBOL_INVENTORY_UPDATED", { symbols: state.inventory.length, initial });
+    }
+    return changed;
+  } finally {
+    inventoryRefreshRunning = false;
+  }
 }
 async function loadFile(item) {
   const started = performance.now();
@@ -1325,7 +1349,8 @@ function renderSymbolList(filter = "") {
   const itemRow = (item) => {
     const selected = state.file?.id === item.id;
     const displayName = parseName(item);
-    return `<button class="symbol-row ${selected ? "selected" : ""}" type="button" data-id="${encodeURIComponent(item.id)}" aria-pressed="${selected}"><span class="symbol-avatar" aria-hidden="true">${escapeHtml(displayName.split(":").at(-1).slice(0, 2))}</span><span class="symbol-meta"><span class="symbol-title"><strong>${escapeHtml(displayName)}</strong><em>${escapeHtml(item.timeframe)}</em></span><span class="symbol-range"><small><b>FROM</b>${escapeHtml(item.from)}</small><i>→</i><small><b>TO</b>${escapeHtml(item.to)}</small></span><span class="symbol-stats"><span>${Number(item.count || 0).toLocaleString()} candles</span><span>${(item.bytes / 1048576).toFixed(1)} MB</span></span></span>${selected ? `<span class="symbol-selected" aria-label="Selected">${materialIcon("check")}</span>` : ""}</button>`;
+    const encodedId = encodeURIComponent(item.id);
+    return `<div class="symbol-row ${selected ? "selected" : ""}"><button class="symbol-select" type="button" data-id="${encodedId}" aria-pressed="${selected}"><span class="symbol-avatar" aria-hidden="true">${escapeHtml(displayName.split(":").at(-1).slice(0, 2))}</span><span class="symbol-meta"><span class="symbol-title"><strong>${escapeHtml(displayName)}</strong><em>${escapeHtml(item.timeframe)}</em></span><span class="symbol-range"><small><b>FROM</b>${escapeHtml(item.from)}</small><i>→</i><small><b>TO</b>${escapeHtml(item.to)}</small></span><span class="symbol-stats"><span>${Number(item.count || 0).toLocaleString()} candles</span><span>${(item.bytes / 1048576).toFixed(1)} MB</span></span></span>${selected ? `<span class="symbol-selected" aria-label="Selected">${materialIcon("check")}</span>` : ""}</button><button class="symbol-delete" type="button" data-delete-id="${encodedId}" aria-label="Permanently delete ${escapeHtml(item.id)}" title="Permanently delete file">${materialIcon("delete")}</button></div>`;
   };
   $("#symbolList").innerHTML = [...groups.entries()].map(([symbol, items]) =>
     `<section class="symbol-group"><h3>${escapeHtml(symbol)}<small>${items.length} file${items.length === 1 ? "" : "s"}</small></h3>${items.map(itemRow).join("")}</section>`,
@@ -1431,6 +1456,25 @@ document.addEventListener("click", (e) => {
 });
 $("#symbolSearch").oninput = (e) => renderSymbolList(e.target.value);
 $("#symbolList").onclick = async (e) => {
+  const deleteButton = e.target.closest("[data-delete-id]");
+  if (deleteButton) {
+    const item = state.inventory.find((entry) => encodeURIComponent(entry.id) === deleteButton.dataset.deleteId);
+    if (!item || !window.confirm(`Permanently delete this candle file?\n\n${item.id}\n\nThis cannot be undone.`)) return;
+    deleteButton.disabled = true;
+    try {
+      const response = await fetch("/api/candle-files/delete", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: item.id }) });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.error || `Delete failed with HTTP ${response.status}.`);
+      await refreshSymbolInventory();
+      toast(`${item.id} was permanently deleted`, "success");
+    } catch (error) {
+      log.chart.error("CANDLE_FILE_DELETE_FAILED", error, { id: item.id });
+      toast(error.message, "error");
+    } finally {
+      deleteButton.disabled = false;
+    }
+    return;
+  }
   const row = e.target.closest("[data-id]");
   if (!row) return;
   $("#symbolMenu").classList.add("hidden");
@@ -1461,35 +1505,34 @@ async function exportChartData() {
     toast("No calculated indicator results are available to export", "error");
     return;
   }
+  // Open before any await so the browser accepts the popup. The page is
+  // ephemeral: it renders fresh from this click's cached results only.
+  const tab = openManualReviewTab(window);
+  if (!tab) {
+    toast("The review tab was blocked. Allow pop-ups for this page and export again", "error");
+    log.chart.error("INDICATOR_REVIEW_TAB_BLOCKED", new Error("window.open returned null"));
+    return;
+  }
   try {
     const context = state.indicator.resultContext || {};
-    const calculationRangeCandles = state.raw.filter((candle) =>
-      Number.isFinite(context.from) && Number.isFinite(context.to)
-        ? candle.time >= context.from && candle.time <= context.to
-        : true,
-    );
-    const outcome = await saveManualReview(state.indicator.results, {
+    // Copy before the handoff yields: a later calculation must not change
+    // this export. Candle caches are never serialized; the live chart keeps
+    // them and the review page renders only indicator records.
+    const captured = structuredClone(state.indicator.results);
+    const snapshot = {
       exportedAt: new Date().toISOString(),
       timezone: "Asia/Tehran",
       calculation: context,
-      currentChart: {
-        source: state.file,
-        timeframe: state.tf,
-        // Export both existing candle caches as-is; never fetch or aggregate here.
-        sourceCandles: state.raw,
-        candles: state.data,
-        calculationRangeCandles,
-      },
+      currentChart: { source: state.file, timeframe: state.tf },
       settings: state.indicator.settings,
       chartSettings,
       ...historySnapshot(),
-    }, window, (message) => toast(message, "info"));
-    if (outcome === "cancelled") return;
-    log.chart.info("INDICATOR_REVIEW_EXPORTED", { outcome });
-    if (outcome === "saved") toast("Indicator review HTML saved", "success");
+    };
+    startManualReviewHandoff(captured, snapshot, window, (message) => toast(message, "error"));
+    log.chart.info("INDICATOR_REVIEW_OPENED", { source: snapshot.currentChart.source, timeframe: snapshot.currentChart.timeframe });
   } catch (error) {
     log.chart.error("INDICATOR_REVIEW_EXPORT_FAILED", error);
-    toast(`Could not export indicator review: ${error.message}`, "error");
+    toast(`Could not open the indicator review: ${error.message}`, "error");
   }
 }
 $("#exportDataBtn").onclick = exportChartData;
@@ -1500,6 +1543,9 @@ $("#gotoBtn").onclick = () => {
   );
   openDateTimePicker("#gotoInput", true);
 };
+setInterval(() => {
+  void refreshSymbolInventory().catch((error) => log.chart.warn("SYMBOL_INVENTORY_REFRESH_FAILED", { message: error.message }));
+}, 2500);
 $("#gotoPickerButton").onclick = () => openDateTimePicker("#gotoInput");
 $$(".modal-close").forEach(
   (x) => (x.onclick = () => $("#gotoModal").classList.add("hidden")),

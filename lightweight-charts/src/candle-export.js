@@ -2,6 +2,14 @@ import "./styles/candle-export.css";
 
 const $id = (root, id) => root.querySelector(`#${id}`);
 const CANDLE_EXPORT_STATE_KEY = "qg:candle-export:v1";
+const DEFAULT_ACTION_HINT = "Completed JSON is saved automatically to market-data/raw with time, open, high, low, and close.";
+const VALIDATION_CHECKS = [
+  ["chronology", "Timestamp order"],
+  ["firstLast", "First and last candle"],
+  ["range", "Requested range"],
+  ["integrity", "Saved OHLC integrity"],
+  ["timeframe", "Requested timeframe"],
+];
 
 async function request(url, options) {
   const response = await fetch(url, { cache: "no-store", ...options });
@@ -71,15 +79,16 @@ function markup(icon) {
             <div class="candle-section-title"><span id="candleStatusIcon" class="candle-status-icon" data-state="idle">${icon("activity", 18)}</span><div><h2 id="candleStatusTitle">Extraction status</h2></div></div>
             <div class="candle-status-metrics">
               <div><span>Stage</span><b id="candleStatusStage">Locked</b></div>
+              <div><span>Elapsed</span><b id="candleStatusElapsed">0s</b></div>
               <div><span>Packets</span><b id="candleStatusPackets">0 / 0</b></div>
               <div><span>Rows</span><b id="candleStatusRows">0</b></div>
               <div><span>Candles</span><b id="candleStatusCandles">0</b></div>
             </div>
             <div class="candle-progress-caption"><span id="candleProgressText">0 / 0 packets</span><b id="candleProgressPercent">0%</b></div>
             <div class="candle-progress-track" role="progressbar" aria-label="Candle extraction progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="candleProgressFill"></i></div>
-          </section><section class="candle-export-card candle-info-card" aria-labelledby="candleInfoTitle"><div class="candle-section-title"><span>${icon("server", 18)}</span><div><h2 id="candleInfoTitle">Connection info</h2></div></div><dl class="candle-info-list"><div><dt>Endpoint</dt><dd id="candleInfoEndpoint">—</dd></div><div><dt>Site</dt><dd id="candleInfoSite">Unavailable</dd></div><div><dt>Ping</dt><dd id="candleInfoPing">—</dd></div><div><dt>User ID</dt><dd id="candleInfoUser">—</dd></div></dl></section><section class="candle-export-card candle-validation-card" aria-labelledby="candleValidationTitle"><div class="candle-section-title"><span>${icon("shield", 18)}</span><div><h2 id="candleValidationTitle">Saved file check</h2></div></div><div id="candleValidationList" class="candle-validation-list" aria-live="polite"><p class="candle-validation-empty">Awaiting a saved RAW file.</p></div></section></aside>
+          </section><section class="candle-export-card candle-info-card" aria-labelledby="candleInfoTitle"><div class="candle-section-title"><span>${icon("server", 18)}</span><div><h2 id="candleInfoTitle">Connection info</h2></div></div><dl class="candle-info-list"><div><dt>Endpoint</dt><dd id="candleInfoEndpoint">—</dd></div><div><dt>Site</dt><dd id="candleInfoSite">Unavailable</dd></div><div><dt>Ping</dt><dd id="candleInfoPing" data-state="unavailable"><i aria-hidden="true"></i><span>Unavailable</span></dd></div><div><dt>User ID</dt><dd id="candleInfoUser">—</dd></div><div><dt>User name</dt><dd id="candleInfoUserName">—</dd></div><div><dt>Phone</dt><dd id="candleInfoPhone">—</dd></div></dl></section><section class="candle-export-card candle-validation-card" aria-labelledby="candleValidationTitle"><div class="candle-section-title"><span>${icon("shield", 18)}</span><div><h2 id="candleValidationTitle">Saved file check</h2></div></div><div id="candleValidationList" class="candle-validation-list" aria-live="polite"></div></section></aside>
         </div>
-        <section class="candle-export-card candle-log-card" aria-labelledby="candleLogTitle"><div class="candle-section-title"><span>${icon("history", 18)}</span><div><h2 id="candleLogTitle">Detailed log</h2></div></div><div id="candlePacketLog" class="candle-packet-log" aria-live="polite"><p>No packet activity yet.</p></div></section>
+        <section class="candle-export-card candle-log-card" aria-labelledby="candleLogTitle"><div class="candle-section-title"><span>${icon("history", 18)}</span><div><h2 id="candleLogTitle">Detailed log</h2></div><button id="candleCopyLog" class="candle-log-copy" type="button" title="Copy extraction report" aria-label="Copy extraction report">${icon("copy", 17)}</button></div><div id="candlePacketLog" class="candle-packet-log" aria-live="polite"><p>No packet activity yet.</p></div></section>
         <div class="candle-action-bar">
           <p id="candleActionHint">Completed JSON is saved automatically to market-data/raw with time, open, high, low, and close.</p>
           <div><button id="candleReset" class="candle-button" type="button">${icon("restart", 17)}<span>Reset</span></button><button id="candleCancel" class="candle-button danger" type="button" disabled>${icon("close", 17)}<span>Cancel</span></button><button id="candleOpenFile" class="candle-button success hidden" type="button">${icon("folder", 17)}<span>Open file</span></button><button id="candleStart" class="candle-button primary" type="button">${icon("play", 17)}<span>Start extraction</span></button></div>
@@ -89,7 +98,7 @@ function markup(icon) {
   </section>`;
 }
 
-export function initCandleExport({ root, icon, toast, getDefaults, inputFromTehran, parseTehranInput, setDateTimeValue, openDateTimePicker, onConnectionChange }) {
+export function initCandleExport({ root, icon, toast, getDefaults, inputFromTehran, parseTehranInput, setDateTimeValue, openDateTimePicker, onConnectionChange, onInventoryChanged }) {
   root.insertAdjacentHTML("beforeend", markup(icon));
   const view = $id(root, "candleExportView");
   const controls = $id(view, "candleExportControls");
@@ -106,6 +115,8 @@ export function initCandleExport({ root, icon, toast, getDefaults, inputFromTehr
   let authTimer = null;
   let jobTimer = null;
   let hostInitialized = false;
+  let followLogTail = true;
+  let lastRenderedJob = null;
 
   function persistedState() {
     return {
@@ -204,8 +215,13 @@ export function initCandleExport({ root, icon, toast, getDefaults, inputFromTehr
     signIn.innerHTML = icon(connected ? "logout" : "login", 18);
     $id(view, "candleStatusStage").textContent = connected ? "Ready" : "Locked";
     $id(view, "candleInfoSite").textContent = connected ? `${status.host || "faraz.io"} active` : "Unavailable";
-    $id(view, "candleInfoPing").textContent = Number.isFinite(Number(status.pingMs)) ? `${Math.round(status.pingMs)} ms` : "—";
-    $id(view, "candleInfoUser").textContent = status.userId || "Not exposed by FARAZ";
+    const ping = $id(view, "candleInfoPing");
+    const pingAvailable = connected && Number.isFinite(Number(status.pingMs));
+    ping.dataset.state = pingAvailable ? "active" : "unavailable";
+    ping.querySelector("span").textContent = pingAvailable ? `${Math.round(status.pingMs)} ms` : "Unavailable";
+    $id(view, "candleInfoUser").textContent = status.userId || "—";
+    $id(view, "candleInfoUserName").textContent = status.userName || "—";
+    $id(view, "candleInfoPhone").textContent = status.phone || "—";
     if (status.endpoint) $id(view, "candleInfoEndpoint").textContent = status.endpoint;
     if (connected && status.historyHost && !hostInitialized) {
       $id(view, "candleExportHost").value = status.historyHost;
@@ -222,6 +238,7 @@ export function initCandleExport({ root, icon, toast, getDefaults, inputFromTehr
 
   function clearExtractionStatus() {
     setExtractionState("idle");
+    $id(view, "candleActionHint").textContent = DEFAULT_ACTION_HINT;
     renderJob({ stage: connected ? "Waiting" : "Locked", totalPackets: 0, receivedPackets: 0, receivedRows: 0, candleCountResult: 0, logs: [] });
   }
 
@@ -310,6 +327,7 @@ export function initCandleExport({ root, icon, toast, getDefaults, inputFromTehr
       const empty = document.createElement("p");
       empty.textContent = "No packet activity yet.";
       box.append(empty);
+      followLogTail = true;
       return;
     }
     for (const entry of logs) {
@@ -319,34 +337,98 @@ export function initCandleExport({ root, icon, toast, getDefaults, inputFromTehr
       row.textContent = `[${time} UTC+3.5 Tehran] ${entry.message || ""}`;
       box.append(row);
     }
-    box.scrollTop = box.scrollHeight;
+    // Start at the latest activity, but never steal the reader's place after
+    // they deliberately scroll upward.
+    if (followLogTail) box.scrollTop = box.scrollHeight;
+  }
+
+  function buildLogSummary(job) {
+    const logs = Array.isArray(job?.logs) ? job.logs : [];
+    const count = (level) => logs.filter((entry) => entry.level === level).length;
+    const unique = (level) => [...new Set(logs.filter((entry) => entry.level === level).map((entry) => entry.message).filter(Boolean))];
+    const errorMessages = unique("error");
+    const retryMessages = unique("retry");
+    const gaps = Array.isArray(job?.suspiciousGaps) ? job.suspiciousGaps : [];
+    const retained = gaps.filter((gap) => gap.status === "retained");
+    const lines = [
+      "FARAZ extraction report",
+      `Generated: ${new Date().toLocaleString("en-GB", { timeZone: "Asia/Tehran", hour12: false })} UTC+3.5 Tehran`,
+      `Status: ${job?.done ? "completed" : (job?.error ? "failed" : (job?.running ? "running" : "idle"))}`,
+      `Stage: ${job?.stage || "—"}`,
+      `Symbol / resolution: ${job?.symbolName || "—"} / ${job?.resolution || "—"}`,
+      `Requested range: ${job?.requestedFrom ?? "—"} → ${job?.requestedTo ?? "—"}`,
+      `Packets: ${job?.receivedPackets || 0}/${job?.totalPackets || 0}; valid rows: ${Number(job?.receivedRows || 0).toLocaleString("en-US")}; saved candles: ${Number(job?.candleCountResult || 0).toLocaleString("en-US")}`,
+      `Log events: ${logs.length}; errors: ${count("error")}; HTTP retry events: ${count("retry")}; warnings: ${count("warn")}.`,
+    ];
+    if (job?.outsideRangeRows) lines.push(`Excluded countback rows outside request bounds: ${job.outsideRangeRows} across ${job.outsideRangePackets} packet(s).`);
+    if (errorMessages.length) lines.push("", "Errors:", ...errorMessages.map((message, index) => `${index + 1}. ${message}`));
+    if (retryMessages.length) lines.push("", "HTTP retries:", ...retryMessages.map((message, index) => `${index + 1}. ${message}`));
+    if (retained.length) {
+      lines.push("", `Retained suspicious gaps: ${retained.length} interval(s), ${retained.reduce((sum, gap) => sum + Number(gap.remainingCandles || 0), 0)} missing candle(s).`);
+      lines.push(...retained.slice(0, 24).map((gap) => `- ${gap.from} → ${gap.to}: ${gap.remainingCandles} candle(s), HTTP-200 response retained.`));
+      if (retained.length > 24) lines.push(`- ${retained.length - 24} additional retained interval(s) are included in the count above.`);
+    }
+    if (job?.error && !errorMessages.includes(job.error)) lines.push("", `Failure detail: ${job.error}`);
+    return lines.join("\n");
+  }
+
+  async function copyLogSummary() {
+    const report = buildLogSummary(lastRenderedJob);
+    try {
+      if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(report);
+      else {
+        const input = document.createElement("textarea");
+        input.value = report;
+        input.setAttribute("readonly", "");
+        input.className = "sr-only";
+        document.body.append(input);
+        input.select();
+        if (!document.execCommand("copy")) throw new Error("Clipboard copy was rejected.");
+        input.remove();
+      }
+      toast("Extraction report copied", "success");
+    } catch (error) {
+      toast(`Unable to copy extraction report: ${error.message}`, "error");
+    }
   }
 
   function renderValidation(checks = []) {
     const list = $id(view, "candleValidationList");
     list.replaceChildren();
-    if (!checks.length) {
-      const empty = document.createElement("p");
-      empty.className = "candle-validation-empty";
-      empty.textContent = "Awaiting a saved RAW file.";
-      list.append(empty);
-      return;
-    }
-    for (const check of checks) {
+    const received = new Map(checks.map((check) => [check.key, check]));
+    for (const [key, label] of VALIDATION_CHECKS) {
+      const check = received.get(key);
       const item = document.createElement("div");
-      const passed = Boolean(check.passed);
+      const passed = Boolean(check?.passed);
       item.className = "candle-validation-item";
-      item.dataset.state = passed ? "pass" : "fail";
-      item.innerHTML = `${icon(passed ? "check" : "cross", 17)}<span><b>${check.label || "Validation"}</b><small>${check.detail || "—"}</small></span>`;
+      item.dataset.state = check ? (passed ? "pass" : "fail") : "pending";
+      const stateIcon = check ? (passed ? "check" : "cross") : "activity";
+      const detail = check?.detail || "Awaiting saved-file validation.";
+      item.innerHTML = `${icon(stateIcon, 17)}<span><b>${check?.label || label}</b><small>${detail}</small></span>`;
       list.append(item);
     }
   }
 
+  function elapsedLabel(job) {
+    const started = Number(job.createdAt);
+    if (!Number.isFinite(started)) return "0s";
+    const finished = Number(job.completedAt || job.failedAt);
+    const elapsedSeconds = Math.max(0, Math.floor(((Number.isFinite(finished) ? finished : Date.now()) - started) / 1000));
+    const hours = Math.floor(elapsedSeconds / 3600);
+    const minutes = Math.floor((elapsedSeconds % 3600) / 60);
+    const seconds = elapsedSeconds % 60;
+    if (hours) return `${hours}h ${minutes}m ${seconds}s`;
+    if (minutes) return `${minutes}m ${seconds}s`;
+    return `${seconds}s`;
+  }
+
   function renderJob(job) {
+    lastRenderedJob = job;
     const total = Number(job.totalPackets || 0);
     const received = Number(job.receivedPackets || 0);
     const percent = total ? Math.min(100, Math.round(received / total * 100)) : 0;
     $id(view, "candleStatusStage").textContent = job.stage || "—";
+    $id(view, "candleStatusElapsed").textContent = elapsedLabel(job);
     $id(view, "candleStatusPackets").textContent = `${received} / ${total}`;
     $id(view, "candleStatusRows").textContent = Number(job.receivedRows || 0).toLocaleString("en-US");
     $id(view, "candleStatusCandles").textContent = Number(job.candleCountResult || 0).toLocaleString("en-US");
@@ -376,6 +458,7 @@ export function initCandleExport({ root, icon, toast, getDefaults, inputFromTehr
         jobTimer = null;
         currentJobId = null;
         persistState();
+        if (job.done) onInventoryChanged?.();
         toast(job.done ? `${job.candleCountResult} candles are ready` : job.error || "Extraction stopped", job.done ? "success" : "error");
       }
     } catch (error) {
@@ -431,6 +514,12 @@ export function initCandleExport({ root, icon, toast, getDefaults, inputFromTehr
   }
 
   restoreState();
+  renderValidation();
+  $id(view, "candlePacketLog").addEventListener("scroll", (event) => {
+    const box = event.currentTarget;
+    followLogTail = box.scrollTop + box.clientHeight >= box.scrollHeight - 8;
+  });
+  $id(view, "candleCopyLog").onclick = copyLogSummary;
   signIn.onclick = openLogin;
   checkSession.onclick = async () => {
     toast("Refreshing FARAZ session", "info");

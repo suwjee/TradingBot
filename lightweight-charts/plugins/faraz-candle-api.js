@@ -6,6 +6,7 @@ import { chromium } from "playwright-core";
 
 const HISTORY_PATH = "/api/customer/trading-view/history";
 const CHART_LIST_PATH = "/api/customer/chart-layout-v2/";
+const AUTH_PROFILE_PATH = "/api/public/authentication/me";
 const FARAZ_ORIGIN = "https://faraz.io";
 const ALLOWED_HOSTS = new Set(["faraz.io", "ir3.faraz.io", "ir4.faraz.io"]);
 const UNIT_SECONDS = { S: 1, M: 60, H: 3600, D: 86400, W: 604800 };
@@ -15,6 +16,7 @@ const MAX_RATE_LIMIT_MS = 60_000;
 const MAX_RETRIES = 5;
 const RETRY_BASE_DELAY_MS = 600;
 const REQUEST_TIMEOUT_MS = 15_000;
+const PRIMARY_CONCURRENCY = 6;
 const SESSION_FILE_VERSION = 2;
 
 export function parseResolutionToSeconds(value) {
@@ -414,6 +416,23 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
     };
   }
 
+  async function readAuthenticatedProfile() {
+    const response = await directRequest(new URL(`${FARAZ_ORIGIN}${AUTH_PROFILE_PATH}`));
+    if (!response.ok) {
+      const error = new Error(`FARAZ profile request failed with HTTP ${response.status}.`);
+      error.status = response.status;
+      throw error;
+    }
+    let payload;
+    try { payload = JSON.parse(await response.text()); }
+    catch { throw new Error("FARAZ profile response was not valid JSON."); }
+    return {
+      userId: typeof payload?._id === "string" ? payload._id : null,
+      userName: typeof payload?.name === "string" ? payload.name : null,
+      phone: typeof payload?.phone === "string" ? payload.phone : null,
+    };
+  }
+
   function captureHistoryRequest(request) {
     try {
       const url = new URL(request.url());
@@ -526,6 +545,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
         if (!fs.existsSync(secretPath)) return { connected: false, state: "not_connected" };
         const storageState = loadStoredSession();
         const probe = await probeStoredSession(symbolName);
+        const profile = probe.connected ? await readAuthenticatedProfile().catch(() => ({})) : {};
         return {
           connected: probe.connected,
           state: probe.connected ? "saved_session" : "expired_session",
@@ -534,6 +554,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
           endpoint: historyAuth?.endpoint || null,
           httpStatus: probe.status,
           pingMs: probe.pingMs,
+          ...profile,
           credentialStorage: "Windows-encrypted primary cache",
           savedCookies: storageState.cookies.filter((cookie) => /(^|\.)faraz\.io$/i.test(cookie?.domain || "")).length,
         };
@@ -557,7 +578,22 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
       if (connected) {
         await persistSession();
         const storedProbe = await probeStoredSession(symbolName);
+        const profile = storedProbe.connected ? await readAuthenticatedProfile().catch(() => ({})) : {};
         if (storedProbe.connected) await closeBrowserContext({ forceKill: true });
+        return {
+          connected,
+          state: connected ? "connected" : "waiting_for_login",
+          checkedAt: Date.now(),
+          host: historyAuth?.host || pageHost,
+          historyHost: historyAuth?.host || null,
+          endpoint: historyAuth?.endpoint || null,
+          adjustType: historyAuth?.adjustType || null,
+          historyCapturedAt: historyAuth?.capturedAt || null,
+          httpStatus: probe.status,
+          pingMs: storedProbe.pingMs,
+          credentialStorage: "Windows-encrypted primary cache",
+          ...profile,
+        };
       }
       return {
         connected,
@@ -579,7 +615,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
 
   function publicJob(job) {
     if (!job) return null;
-    const { outputPath, abort, chunks, page, requestController, ...safe } = job;
+    const { outputPath, abort, chunks, page, requestController, requestControllers, nextRequestAt, retryCooldownUntil, ...safe } = job;
     return { ...safe, totalPackets: chunks?.length || safe.totalPackets || 0, openUrl: job.done && outputPath ? `/api/faraz/candles/open?id=${encodeURIComponent(job.id)}` : null };
   }
 
@@ -588,12 +624,84 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
     job.updatedAt = Date.now();
   }
 
+  function captureHistoryResponse(job, chunk, response, text) {
+    if (!job.responseAuditPath) return;
+    try {
+      const record = {
+        capturedAt: new Date().toISOString(),
+        stage: job.stage,
+        request: {
+          from: chunk.from,
+          to: chunk.to,
+          countback: chunk.countback,
+          firstDataRequest: Boolean(chunk.firstDataRequest),
+          latest: Boolean(chunk.latest),
+        },
+        response: { status: response.status, ok: response.ok, body: text },
+      };
+      fs.appendFileSync(job.responseAuditPath, `${JSON.stringify(record)}\n`, "utf8");
+      job.capturedResponseCount = (job.capturedResponseCount || 0) + 1;
+    } catch (error) {
+      // Diagnostics must never turn an otherwise valid export into a failure.
+      if (!job.responseAuditWriteFailed) {
+        job.responseAuditWriteFailed = true;
+        log(job, "warn", `Response audit could not be written: ${describeError(error)}.`);
+      }
+    }
+  }
+
+  function logPacketProgress(job, packetNumber, rows) {
+    // Keep the browser responsive for long exports.  Packet-level successes
+    // are sampled to at most 26 lines; failures and HTTP retries are never
+    // sampled and retain their full diagnostic context.
+    const total = job.chunks.length;
+    const step = Math.max(1, Math.ceil(total / 24));
+    if (packetNumber !== 1 && packetNumber !== total && packetNumber % step) return;
+    const percent = total ? Math.round(packetNumber / total * 100) : 0;
+    log(job, "success", `Primary progress ${Math.min(packetNumber, total)}/${total} (${percent}%): latest packet returned ${rows.length} in-range valid candle(s); total rows received ${job.receivedRows.toLocaleString("en-US")}.`);
+  }
+
+  function describeJobRequest(job, chunk) {
+    return `stage=${job.stage}; endpoint=${job.endpoint}; symbol=${job.endpointSymbolName}; resolution=${job.resolution}; adjustType=${job.adjustType}; range=${chunk.from}→${chunk.to}`;
+  }
+
+  function describeError(error) {
+    const cause = error?.cause?.message ? `; cause=${error.cause.message}` : "";
+    const status = Number.isFinite(error?.status) ? `; httpStatus=${error.status}` : "";
+    return `${error?.name || "Error"}: ${error?.message || "Unknown failure"}${status}${cause}`;
+  }
+
   async function cancellableDelay(job, delayMs) {
     const deadline = Date.now() + delayMs;
     while (Date.now() < deadline) {
       if (job.abort.cancelled) throw new Error("Extraction cancelled.");
       await new Promise((resolve) => setTimeout(resolve, Math.min(100, deadline - Date.now())));
     }
+  }
+
+  async function paceRequest(job) {
+    const now = Date.now();
+    // The scheduler is shared by all workers: requests stay concurrent in
+    // flight, while starts are smooth and a server-protection cooldown applies
+    // globally instead of causing a retry burst.
+    const scheduledAt = Math.max(now, Number(job.nextRequestAt) || now, Number(job.retryCooldownUntil) || now);
+    job.nextRequestAt = scheduledAt + job.rateLimitMs;
+    if (scheduledAt > now) await cancellableDelay(job, scheduledAt - now);
+  }
+
+  async function runConcurrent(job, entries, concurrency, worker) {
+    const results = new Array(entries.length);
+    let cursor = 0;
+    const workers = Array.from({ length: Math.min(Math.max(1, concurrency), entries.length) }, async () => {
+      while (!job.abort.cancelled) {
+        const index = cursor++;
+        if (index >= entries.length) return;
+        results[index] = await worker(entries[index], index);
+      }
+      throw new Error("Extraction cancelled.");
+    });
+    await Promise.all(workers);
+    return results;
   }
 
   async function fetchChunkOnce(job, chunk) {
@@ -606,7 +714,9 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
     let response;
     const requestController = new AbortController();
     job.requestController = requestController;
+    job.requestControllers?.add(requestController);
     try {
+      await paceRequest(job);
       response = await directRequest(url, { controller: requestController });
     } catch (cause) {
       if (job.abort.cancelled) throw new Error("Extraction cancelled.");
@@ -615,8 +725,10 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
       throw error;
     } finally {
       if (job.requestController === requestController) job.requestController = null;
+      job.requestControllers?.delete(requestController);
     }
     const text = await response.text();
+    captureHistoryResponse(job, chunk, response, text);
     if (!response.ok) {
       const error = new Error(`FARAZ history request failed with HTTP ${response.status}: ${text}`);
       error.status = response.status;
@@ -633,7 +745,17 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
     if (normalized.rejectedRows) {
       throw new Error(`FARAZ packet ${chunk.index + 1} contained ${normalized.rejectedRows} malformed or invalid candle row(s).`);
     }
-    return normalized.candles.filter((candle) => candle.time <= chunk.to);
+    const inRange = normalized.candles.filter((candle) => candle.time >= chunk.from && candle.time <= chunk.to);
+    const outsideRange = normalized.candles.length - inRange.length;
+    if (outsideRange) {
+      job.outsideRangePackets = (job.outsideRangePackets || 0) + 1;
+      job.outsideRangeRows = (job.outsideRangeRows || 0) + outsideRange;
+      const sampleStep = Math.max(1, Math.ceil(job.chunks.length / 12));
+      if (job.outsideRangePackets <= 2 || job.outsideRangePackets % sampleStep === 0) {
+        log(job, "warn", `${chunk.label || `Packet ${chunk.index + 1}/${job.chunks.length}`} returned ${outsideRange} countback candle(s) outside its requested range; they were excluded from validation and storage. Total excluded so far: ${job.outsideRangeRows}.`);
+      }
+    }
+    return inRange;
   }
 
   async function fetchChunk(job, chunk) {
@@ -642,68 +764,68 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
         return await fetchChunkOnce(job, chunk);
       } catch (error) {
         if (job.abort.cancelled || error?.name === "AbortError") throw new Error("Extraction cancelled.");
-        // A 200 response with an empty normalized array is a valid, complete
-        // answer: the requested market interval simply has no candles. Every
-        // non-200 response, timeout, network error, or malformed body is retried.
-        const retryable = true;
-        if (!retryable || attempt === MAX_RETRIES) throw error;
+        // A received HTTP 200 is authoritative, including an empty interval.
+        // Retry traffic is reserved strictly for a concrete non-200 response.
+        const retryableHttp = Number.isInteger(error?.status) && error.status !== 200;
+        if (!retryableHttp || attempt === MAX_RETRIES) throw error;
         const delay = RETRY_BASE_DELAY_MS * 2 ** (attempt - 1) + Math.floor(Math.random() * RETRY_BASE_DELAY_MS);
-        const status = Number.isFinite(error.status) ? `HTTP ${error.status}` : "network/timeout";
-        log(job, "warn", `Packet ${chunk.index + 1}/${job.chunks.length} failed (${status}): ${error.message} Retry ${attempt}/${MAX_RETRIES - 1} in ${delay} ms.`);
-        await cancellableDelay(job, delay);
+        const label = chunk.label || `Packet ${chunk.index + 1}/${job.chunks.length}`;
+        job.retryCooldownUntil = Math.max(Number(job.retryCooldownUntil) || 0, Date.now() + delay);
+        log(job, "retry", `${label} received HTTP ${error.status}: ${describeError(error)}; ${describeJobRequest(job, chunk)}. HTTP retry ${attempt}/${MAX_RETRIES - 1} is queued after a shared ${delay} ms cooldown.`);
       }
     }
     throw new Error("FARAZ history request failed.");
   }
 
-  function candleIndexAt(candles, time) {
-    let low = 0, high = candles.length;
-    while (low < high) {
-      const middle = low + Math.floor((high - low) / 2);
-      if (candles[middle].time < time) low = middle + 1;
-      else high = middle;
+  function suspiciousGaps(candles, timeframeSeconds) {
+    const gaps = [];
+    for (let index = 1; index < candles.length; index++) {
+      const previous = candles[index - 1];
+      const next = candles[index];
+      const difference = next.time - previous.time;
+      if (difference <= timeframeSeconds || difference % timeframeSeconds !== 0) continue;
+      gaps.push({
+        key: `${previous.time}:${next.time}:${timeframeSeconds}`,
+        previousTime: previous.time,
+        nextTime: next.time,
+        from: previous.time + timeframeSeconds,
+        to: next.time - timeframeSeconds,
+        missingCandles: difference / timeframeSeconds - 1,
+      });
     }
-    return low < candles.length && candles[low].time === time ? low : -1;
+    return gaps;
   }
 
-  async function verifyRemoteCandles(job, candles) {
-    const from = job.mode === "count" ? candles[0].time : job.requestedFrom;
-    const span = job.timeframeSeconds * job.packetSize;
-    const shiftedFrom = from - Math.max(job.timeframeSeconds, Math.floor(span / 2));
-    const verificationChunks = chunkRange(shiftedFrom, job.requestedTo, job.timeframeSeconds, job.packetSize);
-    const seen = new Uint8Array(candles.length);
-    const supplemental = [];
-    log(job, "info", `Completeness verification started with ${verificationChunks.length} independent packet(s).`);
-    for (let index = 0; index < verificationChunks.length; index++) {
-      if (job.abort.cancelled) throw new Error("Extraction cancelled.");
-      const rows = await fetchChunk(job, verificationChunks[index]);
-      for (const candle of rows) {
-        if (candle.time < from || candle.time > job.requestedTo) continue;
-        const candleIndex = candleIndexAt(candles, candle.time);
-        // FARAZ can omit a complete packet once and return its candles when the
-        // same interval is requested with shifted boundaries. Those are remote,
-        // independently validated candles, so retain them for the final merge.
-        if (candleIndex < 0) {
-          supplemental.push(candle);
-          continue;
-        }
-        const expected = candles[candleIndex];
-        if (expected.open !== candle.open || expected.high !== candle.high || expected.low !== candle.low || expected.close !== candle.close) {
-          throw new Error(`Completeness verification found conflicting OHLC at ${candle.time}.`);
-        }
-        seen[candleIndex] = 1;
+  function recordSuspiciousGaps(job, initialCandles, attemptedGaps) {
+    const gaps = suspiciousGaps(initialCandles, job.timeframeSeconds).filter((gap) => {
+      if (attemptedGaps.has(gap.key)) return false;
+      attemptedGaps.add(gap.key);
+      return true;
+    });
+    if (!gaps.length) return { candles: initialCandles, supplemental: [], records: [] };
+    const logStep = Math.max(1, Math.ceil(gaps.length / 24));
+    log(job, "warn", `${gaps.length} suspicious gap interval(s) were detected. The detailed report retains every interval; this live log shows a compact sample.`);
+    const records = gaps.map((gap, index) => {
+      if (index < 2 || index === gaps.length - 1 || index % logStep === 0) {
+        log(job, "warn", `Suspicious gap detected: ${gap.missingCandles} missing ${job.timeframeSeconds}s candle(s) from ${gap.from} (${tehranDisplayTime(gap.from)}) to ${gap.to} (${tehranDisplayTime(gap.to)}); retained without retry because the packet returned HTTP 200.`);
       }
-      if (index + 1 < verificationChunks.length && job.rateLimitMs) await cancellableDelay(job, job.rateLimitMs);
+      return { ...gap, attempts: 0, recoveredCandles: 0, remainingCandles: gap.missingCandles, status: "retained" };
+    });
+    return { candles: initialCandles, supplemental: [], records };
+  }
+
+  function verifyCollectedCandles(job, candles) {
+    const verification = verifySavedCandles(candles, {
+      from: job.mode === "count" ? candles[0]?.time : job.requestedFrom,
+      to: job.requestedTo,
+      timeframeSeconds: job.timeframeSeconds,
+    });
+    if (!verification.valid) {
+      const failed = verification.checks.filter((check) => !check.passed).map((check) => `${check.label}: ${check.detail}`).join("; ");
+      throw new Error(`Primary packet integrity verification failed: ${failed}`);
     }
-    const missingIndex = seen.indexOf(0);
-    if (missingIndex >= 0) throw new Error(`Completeness verification could not reproduce candle ${candles[missingIndex].time}.`);
-    const recovered = mergeCandles([candles, supplemental], from, job.requestedTo);
-    if (recovered.conflicts) throw new Error(`Completeness verification found ${recovered.conflicts} conflicting supplemental candle(s).`);
-    if (recovered.candles.length > candles.length) {
-      log(job, "warn", `Completeness verification recovered ${recovered.candles.length - candles.length} candle(s) omitted by the primary packet boundaries.`);
-    }
-    log(job, "success", `Completeness verification reproduced all ${candles.length} candle(s) with shifted packet boundaries.`);
-    return recovered.candles;
+    log(job, "success", `Primary packet integrity verification passed for ${candles.length.toLocaleString("en-US")} candle(s). No second HTTP-200 replay was sent.`);
+    return candles;
   }
 
   async function runJob(job) {
@@ -711,22 +833,31 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
     const status = await authStatus(job.symbolName);
     if (!status.connected) throw new Error("FARAZ authentication is required.");
     const collected = [];
+    const gapSupplemental = [];
+    const attemptedGaps = new Set();
+    const suspiciousGapRecords = [];
     let cursor = 0;
     while (cursor < job.chunks.length) {
       if (job.abort.cancelled) throw new Error("Extraction cancelled.");
-      const chunk = job.chunks[cursor];
       job.stage = "Fetching candles";
-      job.sentPackets++;
-      log(job, "info", `Packet ${cursor + 1}/${job.chunks.length} sent for ${chunk.from} → ${chunk.to}.`);
-      const rows = await fetchChunk(job, chunk);
-      collected.push(rows);
-      job.receivedPackets++;
-      job.receivedRows += rows.length;
-      log(job, "success", `Packet ${cursor + 1}/${job.chunks.length} received ${rows.length} valid candle(s).`);
-      cursor++;
-      if (cursor < job.chunks.length && job.rateLimitMs) await new Promise((resolve) => setTimeout(resolve, job.rateLimitMs));
+      const batchStart = cursor;
+      const batch = job.chunks.slice(cursor);
+      log(job, "info", `Primary collection started for ${batch.length} packet(s) using ${PRIMARY_CONCURRENCY} concurrent worker(s); request starts are paced every ${job.rateLimitMs} ms.`);
+      const rowsByChunk = await runConcurrent(job, batch, PRIMARY_CONCURRENCY, async (chunk, index) => {
+        const packetNumber = batchStart + index + 1;
+        job.sentPackets++;
+        const rows = await fetchChunk(job, chunk);
+        job.receivedPackets++;
+        job.receivedRows += rows.length;
+        logPacketProgress(job, packetNumber, rows);
+        return rows;
+      });
+      collected.push(...rowsByChunk);
+      cursor += batch.length;
+      const primarySoFar = mergeCandles(collected, job.requestedFrom, job.requestedTo);
+      if (primarySoFar.conflicts) throw new Error(`Extraction found ${primarySoFar.conflicts} conflicting duplicate candle(s); nothing was saved.`);
       if (cursor === job.chunks.length && job.mode === "count") {
-        const merged = mergeCandles(collected, job.requestedFrom, job.requestedTo);
+        const merged = primarySoFar;
         if (merged.candles.length < job.candleCount) {
           const missing = job.candleCount - merged.candles.length;
           const currentSlots = Math.max(1, (job.requestedTo - job.requestedFrom) / job.timeframeSeconds);
@@ -741,14 +872,18 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
         }
       }
     }
-    const merged = mergeCandles(collected, job.requestedFrom, job.requestedTo);
+    const primaryMerged = mergeCandles(collected, job.requestedFrom, job.requestedTo);
+    const gapRecovery = recordSuspiciousGaps(job, primaryMerged.candles, attemptedGaps);
+    if (gapRecovery.supplemental.length) gapSupplemental.push(...gapRecovery.supplemental);
+    suspiciousGapRecords.push(...gapRecovery.records);
+    const merged = mergeCandles([...collected, ...gapSupplemental], job.requestedFrom, job.requestedTo);
     let candles = merged.candles;
     if (job.mode === "count") candles = candles.slice(-job.candleCount);
     if (!candles.length) throw new Error("No valid candles were returned for the requested range.");
     if (job.mode === "count" && candles.length !== job.candleCount) throw new Error(`Only ${candles.length}/${job.candleCount} candles were available.`);
     if (merged.conflicts) throw new Error(`Extraction found ${merged.conflicts} conflicting duplicate candle(s); nothing was saved.`);
     job.stage = "Verifying completeness";
-    candles = await verifyRemoteCandles(job, candles);
+    candles = verifyCollectedCandles(job, candles);
     if (job.mode === "count") candles = candles.slice(-job.candleCount);
     let gaps = 0;
     for (let index = 1; index < candles.length; index++) if (candles[index].time - candles[index - 1].time > job.timeframeSeconds) gaps++;
@@ -790,7 +925,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
         if (!published && fs.existsSync(temporaryPath)) fs.unlinkSync(temporaryPath);
       }
     }
-    Object.assign(job, { running: false, done: true, stage: "Saved to market-data/raw", status: "Done", candleCountResult: candles.length, duplicates: merged.duplicates, conflicts: merged.conflicts, gaps, fileName: filename, savedPath: `market-data/raw/${filename}`, finalFrom: candles[0].time, finalTo: candles.at(-1).time });
+    Object.assign(job, { running: false, done: true, completedAt: Date.now(), stage: "Saved to market-data/raw", status: "Done", candleCountResult: candles.length, duplicates: merged.duplicates, conflicts: merged.conflicts, gaps, suspiciousGaps: suspiciousGapRecords, fileName: filename, savedPath: `market-data/raw/${filename}`, finalFrom: candles[0].time, finalTo: candles.at(-1).time });
     log(job, "success", `${candles.length} candles were saved to market-data/raw/${filename}.`);
   }
 
@@ -812,13 +947,16 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
     if (mode === "range" && (!Number.isFinite(requestedFrom) || requestedFrom >= requestedTo)) throw new Error("From timestamp must be earlier than To.");
     const host = safeHost(params.host || historyAuth?.host);
     const capturedEndpoint = historyAuth?.endpoint && new URL(historyAuth.endpoint).host === host ? historyAuth.endpoint : null;
-    const job = { id, running: true, done: false, error: null, stage: "Preparing", status: "Starting", mode, symbolName, endpointSymbolName: endpointSymbolName(symbolName), resolution, timeframeSeconds, packetSize, rateLimitMs, candleCount, requestedFrom, originalRequestedFrom: requestedFrom, requestedTo, host, endpoint: capturedEndpoint || `https://${host}${HISTORY_PATH}`, adjustType: historyAuth?.adjustType || "2", sentPackets: 0, receivedPackets: 0, createdAt: Date.now(), updatedAt: Date.now(), chunks, logs: [], validation: [], abort: { cancelled: false }, cancelRequested: false };
+    const captureResponses = Boolean(params.captureResponses);
+    const responseAuditPath = captureResponses ? path.join(temporaryOutputDir, `${id}.faraz-responses.ndjson`) : null;
+    if (responseAuditPath) fs.mkdirSync(temporaryOutputDir, { recursive: true });
+    const job = { id, running: true, done: false, error: null, stage: "Preparing", status: "Starting", mode, symbolName, endpointSymbolName: endpointSymbolName(symbolName), resolution, timeframeSeconds, packetSize, rateLimitMs, candleCount, requestedFrom, originalRequestedFrom: requestedFrom, requestedTo, host, endpoint: capturedEndpoint || `https://${host}${HISTORY_PATH}`, adjustType: historyAuth?.adjustType || "2", primaryConcurrency: PRIMARY_CONCURRENCY, retryConcurrency: PRIMARY_CONCURRENCY, sentPackets: 0, receivedPackets: 0, receivedRows: 0, outsideRangePackets: 0, outsideRangeRows: 0, captureResponses, responseAuditPath, capturedResponseCount: 0, createdAt: Date.now(), updatedAt: Date.now(), chunks, logs: [], validation: [], abort: { cancelled: false }, cancelRequested: false, requestControllers: new Set(), nextRequestAt: Date.now(), retryCooldownUntil: 0 };
     jobs.set(id, job);
     log(job, "info", `Extraction prepared with ${chunks.length} packet(s).`);
     runJob(job).catch((error) => {
-      Object.assign(job, { running: false, done: false, stage: error.message === "Extraction cancelled." ? "Cancelled" : "Error", status: "Failed", error: error.message });
-      log(job, error.message === "Extraction cancelled." ? "warn" : "error", error.message);
-    }).finally(() => { job.requestController = null; });
+      Object.assign(job, { running: false, done: false, failedAt: Date.now(), stage: error.message === "Extraction cancelled." ? "Cancelled" : "Error", status: "Failed", error: error.message });
+      log(job, error.message === "Extraction cancelled." ? "warn" : "error", `${describeError(error)}; jobId=${job.id}; symbol=${job.endpointSymbolName}; resolution=${job.resolution}; endpoint=${job.endpoint}; requestedRange=${job.requestedFrom}→${job.requestedTo}; sentPackets=${job.sentPackets}; receivedPackets=${job.receivedPackets}; receivedRows=${job.receivedRows}.`);
+    }).finally(() => { job.requestController = null; job.requestControllers?.clear(); });
     return publicJob(job);
   }
 
@@ -868,6 +1006,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
           job.abort.cancelled = true;
           job.cancelRequested = true;
           job.requestController?.abort();
+          for (const controller of job.requestControllers || []) controller.abort();
           json(res, 200, { ok: true });
         } catch (error) { json(res, 400, { error: error.message }); }
       });

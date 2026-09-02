@@ -118,13 +118,18 @@ button:disabled, select:disabled, input:disabled { cursor: not-allowed; opacity:
 .symbol-group h3 { display: flex; align-items: center; justify-content: space-between; gap: var(--ui-space-2); margin: 0; padding: 0 var(--ui-space-2) var(--ui-space-1); color: var(--ui-text-secondary); font-size: var(--ui-text-xs); font-weight: var(--ui-weight-semibold); }
 .symbol-group h3 small { color: var(--ui-text-muted); font-size: var(--ui-text-2xs); font-weight: var(--ui-weight-medium); }
 .symbol-row {
-  width: 100%; min-height: 58px; display: grid; grid-template-columns: 34px minmax(0, 1fr) auto;
-  align-items: center; gap: var(--ui-space-3); padding: var(--ui-space-2);
+  width: 100%; min-height: 58px; display: grid; grid-template-columns: minmax(0, 1fr) var(--ui-control-lg);
+  align-items: stretch; gap: var(--ui-space-1); padding: var(--ui-space-2);
   border: 1px solid transparent; border-radius: var(--ui-radius-sm); background: transparent; text-align: left;
 }
 .symbol-row:hover { background: var(--ui-bg-hover); }
 .symbol-row.selected { border-color: var(--ui-accent); background: var(--ui-bg-selected); box-shadow: 0 0 0 1px color-mix(in srgb, var(--ui-accent) 42%, transparent); }
-.symbol-row:focus-visible { outline: 3px solid var(--ui-focus); outline-offset: 2px; }
+.symbol-select { min-width: 0; display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: var(--ui-space-3); border: 0; padding: 0; background: transparent; color: inherit; text-align: left; }
+.symbol-select:focus-visible, .symbol-delete:focus-visible { outline: 3px solid var(--ui-focus); outline-offset: 2px; }
+.symbol-delete { width: var(--ui-control-lg); min-height: var(--ui-control-lg); align-self: center; display: grid; place-items: center; border: 1px solid transparent; border-radius: var(--ui-radius-sm); background: transparent; color: var(--ui-text-muted); }
+.symbol-delete:hover { border-color: color-mix(in srgb, var(--ui-danger) 28%, var(--ui-border)); background: var(--ui-danger-soft); color: var(--ui-danger); }
+.symbol-delete:disabled { opacity: .5; cursor: wait; }
+.symbol-delete .material-symbols-outlined { font-size: 18px; }
 .symbol-avatar {
   width: 34px; height: 34px; display: grid; place-items: center;
   border-radius: var(--ui-radius-sm); background: var(--ui-bg-active);

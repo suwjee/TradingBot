@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { webcrypto } from "node:crypto";
 import vm from "node:vm";
-import { renderManualReview, reviewRecords, reviewColor, reviewColorSurface, reviewLabelColor, manualReviewFilename } from "../src/manual-review.js";
+import { buildReviewBody, reviewRecords, reviewColor, reviewColorSurface, reviewLabelColor, manualReviewFilename } from "../src/manual-review.js";
 import { reviewFixture } from "./manual-review-fixture.mjs";
 
 // Execute the exact embedded runtime with isolated DOM/storage doubles. No
@@ -10,7 +10,7 @@ import { reviewFixture } from "./manual-review-fixture.mjs";
 async function harness(storage = new Map(), exportedAt = "test-export", denyStorage = false) {
   const payload = structuredClone(reviewFixture);
   payload.directions.bullish.sZones.push({ sourceTime: 1780086600, color: "blue", price: "12.0000" });
-  const html = await renderManualReview(payload, { exportedAt }, webcrypto);
+  const page = await buildReviewBody(payload, { exportedAt }, webcrypto);
   const records = reviewRecords(payload), nodes = new Map();
   const node = (values = {}) => ({ value: "", checked: false, hidden: false, textContent: "", attributes: {},
     setAttribute(key, value) { this.attributes[key] = value; }, ...values });
@@ -44,9 +44,9 @@ async function harness(storage = new Map(), exportedAt = "test-export", denyStor
       removeItem(key) { if (denyStorage) throw Error("blocked"); storage.delete(key); } },
     window: {},
   });
-  const script = html.match(/<script>\(([\s\S]*)\)\(\);<\/script>/)[1];
+  const script = page.runtime;
   vm.runInContext(`(${script})();`, context);
-  return { html, payload, events, filters, references, days, collection, nodes, storage,
+  return { html: page.body, payload, events, filters, references, days, collection, nodes, storage,
     mark(event, status) { event.inputs.forEach((input) => { input.checked = input.value === status; }); event.inputs[0].onchange(); } };
 }
 
@@ -59,7 +59,8 @@ test("A plus S blue filters both timeline and collections without deleting any p
   assert.deepEqual(h.events.filter((event) => !event.hidden).map((event) => event.dataset.filter), ["aZones", "aZones", "sZones:blue"]);
   assert.equal(h.references.filter((row) => !row.hidden).length, 3);
   assert.equal(h.events.length, 19);
-  const embedded = JSON.parse(h.html.match(/id="indicator-payload">([\s\S]*?)<\/script>/)[1]);
+  const encoded = h.html.match(/SHA-256 [0-9a-f]+<\/summary><pre>([\s\S]*?)<\/pre><\/details>/)[1];
+  const embedded = JSON.parse(encoded.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&"));
   assert.deepEqual(embedded, h.payload);
 });
 
@@ -119,6 +120,6 @@ test("exact chart colors, current settings and customized object colors are resp
 
 test("filename uses system wall time, zero padding and the requested separator format", () => {
   const date = new Date(2026, 6, 29, 11, 12, 9);
-  assert.equal(manualReviewFilename(date), "manualTest-2026_07_29 11_12_09.html");
+  assert.equal(manualReviewFilename(date), "manualTest-2026_07_29 11_12_09.txt");
   assert.equal(manualReviewFilename(date, "txt"), "manualTest-2026_07_29 11_12_09.txt");
 });
