@@ -34,6 +34,7 @@ class BlueLine:
     line_price: Decimal
     start_time: datetime
     end_time: datetime
+    calculation_valid: bool = True
 
 
 def _is_color(candle: object, color: str) -> bool:
@@ -45,6 +46,25 @@ def _main_candle(candles_by_index: dict[int, object], index: int) -> object:
         return candles_by_index[index]
     except KeyError as exc:
         raise ValueError(f"Missing main candle index {index}.") from exc
+
+
+def _stops_on_index(
+    direction: str,
+    line: object,
+    candles: Sequence[object],
+    start_index: int,
+    end_index: int,
+) -> bool:
+    level = Decimal(getattr(line, "source_extreme"))
+    for candle in candles[max(0, start_index) : end_index + 1]:
+        extreme = Decimal(getattr(candle, "low" if direction == "bullish" else "high"))
+        if (
+            extreme < level
+            if direction == "bullish"
+            else extreme > level
+        ):
+            return int(getattr(candle, "index")) == end_index
+    return False
 
 
 def fibonacci_level(direction: str, reaction: object, reference: Decimal) -> Decimal:
@@ -332,6 +352,23 @@ def detect_blue_lines(
                     line_price=line_price,
                     start_time=source_time - timedelta(seconds=timeframe_seconds),
                     end_time=source_time + timedelta(seconds=timeframe_seconds),
+                    calculation_valid=(
+                        not output
+                        or not (
+                            _stops_on_index(
+                                direction,
+                                output[-1],
+                                candles,
+                                int(getattr(output[-1], "source_index")) + 1,
+                                reset_index,
+                            )
+                            and (
+                                low < Decimal(getattr(output[-1], "source_extreme"))
+                                if direction == "bullish"
+                                else high > Decimal(getattr(output[-1], "source_extreme"))
+                            )
+                        )
+                    ),
                 )
             )
             has_blue_line = True

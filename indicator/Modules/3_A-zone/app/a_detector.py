@@ -202,6 +202,8 @@ class ADetector:
     def _build_blue_states(self) -> list[BlueState]:
         states: list[BlueState] = []
         for ordinal, line in enumerate(self.blue_lines, start=1):
+            if not bool(getattr(line, "calculation_valid", True)):
+                continue
             formation_index, formation_time, stop_scan_time = self._formation(line)
             stop_level = _decimal(getattr(line, "source_extreme"))
             stop = self._first_crossing(
@@ -225,6 +227,61 @@ class ADetector:
                 )
             )
         return states
+
+    def _double_stop_a_candidates(self) -> list[AZone]:
+        result: list[AZone] = []
+        previous: tuple[int, object] | None = None
+        for ordinal, line in enumerate(self.blue_lines, start=1):
+            if bool(getattr(line, "calculation_valid", True)):
+                previous = (ordinal, line)
+                continue
+            if previous is None:
+                continue
+            previous_ordinal, previous_line = previous
+            formation_index = int(getattr(line, "source_index"))
+            formation_time = getattr(line, "source_time")
+            source_time = getattr(self.candles[formation_index], "timestamp")
+            crossing = self._first_crossing(
+                _decimal(getattr(previous_line, "source_extreme")),
+                formation_time,
+                source_time + self.timeframe,
+            )
+            if crossing is None or crossing[0] != formation_index:
+                continue
+            trigger_index, trigger_event_time, _ = crossing
+            match = self._first_reaction_after(trigger_event_time)
+            if match is None:
+                continue
+            reaction_number, reaction = match
+            first_index = int(getattr(reaction, "first_idx"))
+            break_index = int(getattr(reaction, "break_idx"))
+            result.append(
+                AZone(
+                    direction=self.direction,
+                    blue_1_ordinal=previous_ordinal,
+                    blue_2_ordinal=ordinal,
+                    blue_1_source_time=getattr(previous_line, "source_time"),
+                    blue_2_source_time=getattr(line, "source_time"),
+                    blue_1_stop_time=source_time,
+                    blue_2_stop_time=source_time,
+                    blue_1_stop_level=_decimal(getattr(previous_line, "source_extreme")),
+                    blue_2_stop_level=_decimal(getattr(line, "source_extreme")),
+                    continuation_level=_decimal(getattr(previous_line, "source_extreme")),
+                    continuation_source_index=int(getattr(previous_line, "source_index")),
+                    continuation_source_time=getattr(previous_line, "source_time"),
+                    trigger_index=trigger_index,
+                    trigger_time=getattr(self.candles[trigger_index], "timestamp"),
+                    trigger_event_time=trigger_event_time,
+                    reaction_number=reaction_number,
+                    reaction_first_time=getattr(self.candles[first_index], "timestamp"),
+                    reaction_break_time=getattr(self.candles[break_index], "timestamp"),
+                    source_index=formation_index,
+                    source_time=source_time,
+                    price=_decimal(getattr(line, "source_extreme")),
+                )
+            )
+            previous = None
+        return result
 
     def _pair_trigger(
         self,
@@ -411,6 +468,7 @@ class ADetector:
         return int(getattr(source, "index")), getattr(source, "timestamp"), value
 
     def detect(self) -> list[AZone]:
+        special = self._double_stop_a_candidates()
         states = self._build_blue_states()
         output: list[AZone] = []
         cycle_after_index = -1
@@ -505,7 +563,7 @@ class ADetector:
             ):
                 index += 1
 
-        return output
+        return sorted(output + special, key=lambda item: (item.source_time, item.trigger_event_time))
 
 
 def detect_a_zones(

@@ -202,7 +202,7 @@ def serialize_blue_lines(items):
         "linePrice": str(item.line_price),
         "startTime": epoch(item.start_time),
         "endTime": epoch(item.end_time),
-    } for item in items]
+    } for item in items if bool(getattr(item, "calculation_valid", True))]
 
 
 def serialize_a_zones(items):
