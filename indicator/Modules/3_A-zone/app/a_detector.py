@@ -9,7 +9,7 @@ from decimal import Decimal
 from typing import Sequence
 
 
-A_VERSION = "1.3.0"
+A_VERSION = "1.4.0"
 
 
 @dataclass(frozen=True)
@@ -258,6 +258,10 @@ class ADetector:
             reaction_number, reaction = match
             first_index = int(getattr(reaction, "first_idx"))
             break_index = int(getattr(reaction, "break_idx"))
+            source = self._a_source(trigger_index, reaction)
+            if source is None:
+                continue
+            source_index, a_source_time, price = source
             result.append(
                 AZone(
                     direction=self.direction,
@@ -278,9 +282,9 @@ class ADetector:
                     reaction_number=reaction_number,
                     reaction_first_time=getattr(self.candles[first_index], "timestamp"),
                     reaction_break_time=getattr(self.candles[break_index], "timestamp"),
-                    source_index=formation_index,
-                    source_time=source_time,
-                    price=_decimal(getattr(line, "source_extreme")),
+                    source_index=source_index,
+                    source_time=a_source_time,
+                    price=price,
                 )
             )
             previous = None
@@ -460,15 +464,13 @@ class ADetector:
     def _a_source(
         self,
         trigger_index: int,
-        pair_start_index: int,
         reaction: object,
     ) -> tuple[int, datetime, Decimal] | None:
-        end_index = int(getattr(reaction, "first_idx")) - 1
-        if end_index < 0:
-            return None
+        # The A candle is the directional extreme from the candle that stops
+        # the required Blue Lines through the confirming Reaction breakout
+        # candle, inclusive.
+        end_index = int(getattr(reaction, "break_idx"))
         start_index = trigger_index
-        if start_index > end_index:
-            start_index = min(pair_start_index, end_index)
         if start_index > end_index:
             return None
         source = self.candles[start_index]
@@ -524,18 +526,8 @@ class ADetector:
             if match is None:
                 break
             reaction_number, reaction = match
-            pair_start_index = min(
-                int(item)
-                for item in (
-                    previous.stop_index,
-                    current.stop_index,
-                    trigger_index,
-                )
-                if item is not None
-            )
             source = self._a_source(
                 trigger_index,
-                pair_start_index,
                 reaction,
             )
             if source is None:
@@ -579,20 +571,19 @@ class ADetector:
             ):
                 index += 1
 
-        # A double-stop candidate consumes the first reaction that confirms the
-        # transition into A.  The ordinary pair walk can otherwise consume the
-        # same reaction a second time through the still-valid Blue states,
-        # producing two A zones for one lifecycle (the special A plus a later
-        # duplicate).  Keep the special candidate as the authoritative owner.
-        special_reactions = {
+        # A valid pair of already-formed Blue Lines owns the ordinary A
+        # lifecycle.  An invalid would-be Blue may also notice the same
+        # double-stop event, but it must not replace the ordinary pair or
+        # create a duplicate A for the same confirming Reaction.
+        ordinary_reactions = {
             item.reaction_number
-            for item in special
+            for item in output
             if item.reaction_number is not None
         }
-        output = [
+        special = [
             item
-            for item in output
-            if item.reaction_number not in special_reactions
+            for item in special
+            if item.reaction_number not in ordinary_reactions
         ]
         # If the double-stop candle also stops an already active A, the
         # lifecycle enters S.  A later same-direction Reaction belongs to that
