@@ -55,7 +55,7 @@ function refreshRuntimeHealth() {
 }
 function recordRuntimeError(scope, payload) {
   runtimeErrors.unshift({ scope, ...payload, recordedAt: Date.now() });
-  if (runtimeErrors.length > 100) runtimeErrors.length = 100;
+
   refreshRuntimeHealth();
 }
 function createLogger(scope) {
@@ -232,6 +232,7 @@ const state = {
   treeSelectedIds: [],
   objectFolders: [],
   collapsedObjectFolders: [],
+  indicatorRange: { from: null, to: null, dragging: null, preview: false },
     indicator: {
     enabled: false,
     results: null,
@@ -331,16 +332,17 @@ document.querySelector("#app").innerHTML = `<main class="app">
  <div class="topbar-scroll">
  <div class="topbar-left"><button class="control symbol-control" id="symbolBtn" aria-label="Select symbol">FXCM:USOIL ${materialIcon("expand_more")}</button><div class="divider"></div><div class="timeframes" aria-label="Pinned timeframes"></div></div>
  <div class="top-drawing-tools" aria-label="Drawing tools. Drag to reorder, or use Alt plus Left or Right Arrow."></div>
- <div class="top-actions"><button class="icon-btn" id="undoBtn" title="Undo" aria-label="Undo">${materialIcon("undo")}</button><button class="icon-btn" id="redoBtn" title="Redo" aria-label="Redo">${materialIcon("redo")}</button><button class="icon-btn" id="hideAllBtn" title="Hide drawings" aria-label="Hide drawings" aria-pressed="false">${materialIcon("visibility")}</button><div class="divider"></div><button class="icon-btn" id="fullscreenBtn" title="Full screen" aria-label="Full screen">${materialIcon("fullscreen")}</button><button class="icon-btn" id="reloadIndicatorBtn" title="Reload indicator cache" aria-label="Reload indicator cache">${materialIcon("refresh")}</button><button class="icon-btn" id="exportDataBtn" title="Export data" aria-label="Export data">${materialIcon("download")}</button><button class="icon-btn" id="gotoBtn" title="Go to date" aria-label="Go to date">${materialIcon("event")}</button></div></div></header>
+ <div class="top-actions"><button class="icon-btn" id="updateDataBtn" title="Update chart data" aria-label="Update chart data" data-update-state="idle"><span class="ud-wrap"><svg class="ud-icon ud-idle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6v5h-5"/><path d="M4 18v-5h5"/><path d="M18.4 9A7 7 0 0 0 6.2 6.4L4 9"/><path d="M5.6 15A7 7 0 0 0 17.8 17.6L20 15"/></svg><svg class="ud-icon ud-load" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8" opacity="0.16"/><path d="M12 4a8 8 0 0 1 8 8" stroke-linecap="round"/></svg><svg class="ud-icon ud-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 12.3L9.6 16.3L18.5 7.5"/></svg><svg class="ud-icon ud-err" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 7L17 17"/><path d="M17 7L7 17"/></svg></span></button><button class="icon-btn" id="undoBtn" title="Undo" aria-label="Undo">${materialIcon("undo")}</button><button class="icon-btn" id="redoBtn" title="Redo" aria-label="Redo">${materialIcon("redo")}</button><button class="icon-btn" id="hideAllBtn" title="Hide drawings" aria-label="Hide drawings" aria-pressed="false">${materialIcon("visibility")}</button><div class="divider"></div><button class="icon-btn" id="screenshotBtn" title="Screenshot chart" aria-label="Screenshot chart"><span class="material-symbols-outlined">photo_camera</span></button><button class="icon-btn" id="fullscreenBtn" title="Full screen" aria-label="Full screen">${materialIcon("fullscreen")}</button><button class="icon-btn" id="reloadIndicatorBtn" title="Reload indicator cache" aria-label="Reload indicator cache">${materialIcon("refresh")}</button><button class="icon-btn" id="exportDataBtn" title="Export data" aria-label="Export data">${materialIcon("download")}</button><button class="icon-btn" id="gotoBtn" title="Go to date" aria-label="Go to date">${materialIcon("event")}</button></div></div></header>
  <section class="workspace"><aside class="leftbar" aria-label="Workspace navigation">${navigationItems.map(([name, label, id]) => `<button class="tool nav-item ${id === "chartNavBtn" ? "active" : ""}" id="${id}" data-label="${label}" title="${label}" aria-label="${label}">${id === "candleExportBtn" ? icon(name, 18) : materialIcon(name)}</button>`).join("")}</aside>
- <div class="chart-shell"><div id="chart" class="chart"></div><canvas id="draw" class="drawing-layer"></canvas><div class="chart-head"><div class="instrument"><span id="chartSymbol">—</span><span class="badge" id="chartTf">1m</span></div><div class="ohlc" aria-label="Open high low close"><span>O <b id="o">—</b></span><span>H <b id="h">—</b></span><span>L <b id="l">—</b></span><span>C <b id="c">—</b></span></div></div><div id="loading" class="loading"><div class="loader-card"><div class="spinner"></div><div class="progress" id="progress">Loading market data...</div></div></div></div></section>
+ <div class="chart-shell"><div id="chart" class="chart"></div><canvas id="draw" class="drawing-layer"></canvas><div class="chart-head"><div class="instrument"><span id="chartSymbol">—</span><span class="badge" id="chartTf">1m</span></div><div class="ohlc" aria-label="Open high low close"><span>O <b id="o">—</b></span><span>H <b id="h">—</b></span><span>L <b id="l">—</b></span><span>C <b id="c">—</b></span></div></div><div id="indicatorRangeHandles" class="indicator-range-handles hidden" aria-hidden="true"><div id="rangeFromGuide" class="range-guide from"></div><div id="rangeToGuide" class="range-guide to"></div><button id="rangeFromHandle" class="range-handle from" type="button" aria-label="Indicator range From"><span class="material-symbols-outlined range-handle-mark" aria-hidden="true">drag_handle</span><span class="range-handle-tip"></span></button><button id="rangeToHandle" class="range-handle to" type="button" aria-label="Indicator range To"><span class="material-symbols-outlined range-handle-mark" aria-hidden="true">drag_handle</span><span class="range-handle-tip"></span></button></div><div class="chart-nav-wrap"><button class="chart-nav-btn" id="navGoFirst" title="First candle" aria-label="First candle"><span class="material-symbols-outlined">keyboard_double_arrow_left</span></button><button class="chart-nav-btn" id="navGoLast" title="Last candle" aria-label="Last candle"><span class="material-symbols-outlined">keyboard_double_arrow_right</span></button></div><div id="loading" class="loading"><div class="loader-card"><div class="spinner"></div><div class="progress" id="progress">Loading market data...</div></div></div></div></section>
  <footer class="statusbar" aria-label="Workstation status"><div class="status-cluster status-runtime" aria-label="Runtime status"><button class="status-group status-health" id="healthStatus" type="button" data-state="healthy" title="Application health"><i class="dot" aria-hidden="true"></i><b id="healthLabel">Healthy</b></button><button class="status-group status-state status-indicator" id="indicatorStatusFooter" type="button" data-state="inactive" title="Open indicator settings" aria-label="Open indicator settings"><i class="dot" aria-hidden="true"></i><b>Indicator</b></button><span class="status-group status-state status-cache" id="cacheStatusFooter" data-state="idle" title="No indicator calculation source yet"><i class="dot" aria-hidden="true"></i><b>Cache</b></span><span class="status-group status-state status-faraz" id="farazStatusFooter" data-state="inactive" title="FARAZ session is not configured"><i class="dot" aria-hidden="true"></i><b>FARAZ</b></span></div><span class="status-separator" aria-hidden="true"></span><div class="status-cluster status-market" aria-label="Visible chart range"><span class="status-group status-data" title="Candle count for the selected chart timeframe"><span id="candleCount">0 candles</span></span><span class="status-group status-range" title="First and last candle in local system time"><span>From <time id="chartFrom">—</time></span><span>To <time id="chartTo">—</time></span></span></div><span class="status-separator" aria-hidden="true"></span><time class="status-clock" id="clock" title="Local workstation time"></time></footer></main>
  <div id="symbolMenu" class="popover symbol-menu hidden"><div class="searchbox">${icon("search", 17)}<input id="symbolSearch" placeholder="Search local symbols"></div><div id="symbolList"></div></div>
  <div id="gotoModal" class="modal-backdrop hidden"><div class="modal goto-dialog" role="dialog" aria-modal="true" aria-labelledby="gotoTitle"><div class="modal-title"><span id="gotoTitle">Go to date and time</span><button class="icon-btn modal-close" aria-label="Close">${icon("close")}</button></div><p>Jump to an exact candle in Tehran time.</p><div class="field"><label>Tehran date & time</label><button class="date-field" id="gotoPickerButton"><b id="gotoInputDisplay">Select date & time</b>${icon("calendar",16)}</button><input type="hidden" id="gotoInput"></div><div class="modal-actions"><button class="btn modal-close">Cancel</button><button class="btn primary" id="gotoApply">Go to candle</button></div></div></div>
- <div id="chartSettings" class="settings-backdrop hidden"><section class="settings-panel modern-chart-settings" role="dialog" aria-modal="true" aria-labelledby="chartSettingsTitle"><header><div class="settings-title-icon">${icon("chartSettings",20)}</div><div><strong id="chartSettingsTitle">Chart settings</strong><small>Display, scales and interaction</small></div><button id="closeSettings" aria-label="Close">${icon("close",18)}</button></header><div class="settings-body"><div class="settings-section"><h3>Canvas</h3><div class="color-grid"><label>Background<input id="backgroundColor" type="color" value="#ffffff"></label><label>Axis text<input id="axisTextColor" type="color" value="#5f636e"></label></div></div><div class="settings-section"><h3>Candles</h3><div class="color-grid"><label>Bullish<input id="upColor" type="color" value="#089981"></label><label>Bearish<input id="downColor" type="color" value="#f23645"></label><label>Wick up<input id="wickUpColor" type="color" value="#089981"></label><label>Wick down<input id="wickDownColor" type="color" value="#f23645"></label></div></div><div class="settings-section"><h3>Time and scales</h3><label class="settings-select"><span><b>Time format</b><small>Applied to the bottom chart axis</small></span><select id="timeFormat"><option value="compact">DD MMM HH:mm</option><option value="numeric">DD/MM HH:mm</option><option value="time">HH:mm:ss</option><option value="full">YYYY-MM-DD HH:mm:ss</option></select></label><label class="settings-toggle"><span><b>Price scale border</b><small>Right axis divider</small></span><input id="priceBorderEnabled" type="checkbox" checked></label><label class="settings-toggle"><span><b>Time scale border</b><small>Bottom axis divider</small></span><input id="timeBorderEnabled" type="checkbox" checked></label></div><div class="settings-section"><h3>Interaction</h3><label class="settings-toggle"><span><b>Crosshair</b><small>Show precise tracking guides</small></span><input id="crosshairEnabled" type="checkbox" checked></label><button id="resetChartSettings" class="settings-reset">Restore defaults</button></div></div></section></div><div id="toast" class="toast hidden"><span id="toastMessage"></span><button id="toastClose" type="button" aria-label="Close notification">${icon("close", 16)}</button></div><div id="errorLogModal" class="modal-backdrop error-log-backdrop hidden"><section class="modal error-log-dialog" role="dialog" aria-modal="true" aria-labelledby="errorLogTitle"><header class="modal-title"><div><strong id="errorLogTitle">Error log</strong><small id="errorLogSummary">No errors recorded</small></div><button id="closeErrorLog" class="icon-btn" type="button" aria-label="Close error log">${icon("close", 18)}</button></header><div id="errorLogList" class="error-log-list"></div><footer class="modal-actions"><button id="copyErrorLogs" class="btn primary" type="button">Copy all errors</button></footer></section></div>`;
+ <div id="chartSettings" class="settings-backdrop hidden"><section class="settings-panel modern-chart-settings" role="dialog" aria-modal="true" aria-labelledby="chartSettingsTitle"><header><div class="settings-title-icon">${icon("chartSettings",20)}</div><div><strong id="chartSettingsTitle">Chart settings</strong><small>Display, scales and interaction</small></div><button id="closeSettings" aria-label="Close">${icon("close",18)}</button></header><div class="settings-body"><div class="settings-section"><h3>Canvas</h3><div class="color-grid"><label>Background<input id="backgroundColor" type="color" value="#ffffff"></label><label>Axis text<input id="axisTextColor" type="color" value="#5f636e"></label></div></div><div class="settings-section"><h3>Candles</h3><div class="color-grid"><label>Bullish<input id="upColor" type="color" value="#089981"></label><label>Bearish<input id="downColor" type="color" value="#f23645"></label><label>Wick up<input id="wickUpColor" type="color" value="#089981"></label><label>Wick down<input id="wickDownColor" type="color" value="#f23645"></label></div></div><div class="settings-section"><h3>Time and scales</h3><label class="settings-select"><span><b>Time format</b><small>Applied to the bottom chart axis</small></span><select id="timeFormat"><option value="compact">DD MMM HH:mm</option><option value="numeric">DD/MM HH:mm</option><option value="time">HH:mm:ss</option><option value="full">YYYY-MM-DD HH:mm:ss</option></select></label><label class="settings-toggle"><span><b>Price scale border</b><small>Right axis divider</small></span><input id="priceBorderEnabled" type="checkbox" checked></label><label class="settings-toggle"><span><b>Time scale border</b><small>Bottom axis divider</small></span><input id="timeBorderEnabled" type="checkbox" checked></label></div><div class="settings-section"><h3>Interaction</h3><label class="settings-toggle"><span><b>Crosshair</b><small>Show precise tracking guides</small></span><input id="crosshairEnabled" type="checkbox" checked></label><button id="resetChartSettings" class="settings-reset">Restore defaults</button></div></div></section></div><div id="toast" class="toast hidden"><span id="toastMessage"></span><button id="toastClose" type="button" aria-label="Close notification">${icon("close", 16)}</button></div><div id="errorLogModal" class="modal-backdrop error-log-backdrop hidden"><section class="modal error-log-dialog" role="dialog" aria-modal="true" aria-labelledby="errorLogTitle"><header class="modal-title"><div><strong id="errorLogTitle">Error log</strong><small id="errorLogSummary">No errors recorded</small></div><button id="closeErrorLog" class="icon-btn" type="button" aria-label="Close error log">${icon("close", 18)}</button></header><div id="errorLogList" class="error-log-list"></div><footer class="modal-actions"><button id="clearErrorLogs" class="icon-btn" type="button" title="Clear all errors" aria-label="Clear all errors"><span class="material-symbols-outlined">delete_sweep</span></button><button id="copyErrorLogs" class="icon-btn" type="button" title="Copy all errors" aria-label="Copy all errors"><span class="material-symbols-outlined">content_copy</span></button></footer></section></div>`;
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
+$(".top-actions")?.insertAdjacentHTML("afterbegin", `<button class="icon-btn" id="applyIndicatorRangeBtn" title="Calculate indicator for selected range" aria-label="Calculate indicator for selected range">${materialIcon("play_arrow")}</button>`);
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
 })[character]);
@@ -370,6 +372,13 @@ function closeErrorLog() { $("#errorLogModal").classList.add("hidden"); }
 $("#healthStatus").onclick = () => { renderErrorLog(); $("#errorLogModal").classList.remove("hidden"); };
 $("#closeErrorLog").onclick = closeErrorLog;
 $("#errorLogModal").onclick = (event) => { if (event.target === $("#errorLogModal")) closeErrorLog(); };
+$("#clearErrorLogs").onclick = () => {
+  if (!runtimeErrors.length) return toast("No errors to clear", "info");
+  runtimeErrors.length = 0;
+  renderErrorLog();
+  refreshRuntimeHealth();
+  toast("Error log cleared", "success");
+};
 $("#copyErrorLogs").onclick = async () => {
   const text = errorLogText();
   if (!text) return toast("No errors to copy", "info");
@@ -1045,7 +1054,7 @@ $$("[data-style-reset]").forEach((button) => {
     }
   });
 });
-$(".indicator-panel > footer").insertAdjacentHTML("afterbegin", `<div class="template-wrap"><button id="templateBtn" type="button">Templates</button><div id="templateMenu" class="template-menu hidden"><button data-template-action="save">Save as…</button><button data-template-action="default">Reset to default</button><div id="savedTemplates"></div></div></div>`);
+$(".indicator-panel > footer").insertAdjacentHTML("afterbegin", `<div class="tpl-bar"><button id="templateBtn" class="tpl-bar-btn" type="button" aria-haspopup="menu" aria-expanded="false"><span class="material-symbols-outlined" aria-hidden="true">bookmark</span><span>Templates</span><span class="material-symbols-outlined tpl-chevron" aria-hidden="true">expand_more</span></button><div id="templateMenu" class="tpl-dropdown hidden" role="menu" aria-label="Indicator templates"><div class="tpl-dropdown-title"><b>Templates</b><small>Indicator styles</small></div><div class="tpl-dropdown-head"><button class="tpl-action" data-template-action="save" role="menuitem"><span class="material-symbols-outlined" aria-hidden="true">add</span><span>Save current</span></button><button class="tpl-action" data-template-action="default" role="menuitem"><span class="material-symbols-outlined" aria-hidden="true">restart_alt</span><span>Reset defaults</span></button></div><div class="tpl-dropdown-sep"></div><div id="savedTemplates" class="tpl-list"></div></div></div>`);
 const objectTreeBtn = $("#objectTreeBtn");
 chart.applyOptions({
   localization: {
@@ -1665,6 +1674,43 @@ const clone = (v) => JSON.parse(JSON.stringify(v));
 function storageKey() {
   return `market-canvas:${state.file?.id || "none"}:drawings`;
 }
+function indicatorOverrideKey() {
+  return `market-canvas:${state.file?.id || "none"}:indicator-overrides:v1`;
+}
+function readIndicatorOverrides() {
+  try {
+    const value = JSON.parse(localStorage.getItem(indicatorOverrideKey()) || "{}");
+    return value && typeof value === "object" ? value : {};
+  } catch {
+    return {};
+  }
+}
+function saveIndicatorObjectOverrides() {
+  if (!state.file) return;
+  const overrides = {};
+  state.indicator.objects.forEach((item) => {
+    if (!item.customized && !item.hidden) return;
+    overrides[item.id] = {
+      offsetTime: Number(item.offsetTime) || 0,
+      offsetPrice: Number(item.offsetPrice) || 0,
+      color: item.color,
+      fill: item.fill,
+      width: item.width,
+      lineStyle: item.lineStyle,
+      opacity: item.opacity,
+      text: item.text,
+      size: item.size,
+      weight: item.weight,
+      customized: Boolean(item.customized),
+      hidden: Boolean(item.hidden),
+    };
+  });
+  try {
+    localStorage.setItem(indicatorOverrideKey(), JSON.stringify(overrides));
+  } catch (error) {
+    log.chart.warn("INDICATOR_OVERRIDE_STORAGE_FAILED", { message: error.message });
+  }
+}
 let drawingSaveQueue = Promise.resolve();
 function saveDrawings() {
   state.drawings = drawingArray(state.drawings);
@@ -1780,6 +1826,7 @@ function restoreHistorySnapshot(snapshot) {
   state.draft = null;
   state.interaction = null;
   saveDrawings();
+  if (typeof saveIndicatorObjectOverrides === "function") saveIndicatorObjectOverrides();
   updateToolbar();
   renderObjectTree();
   drawAll();
@@ -2110,7 +2157,28 @@ function rebuildIndicatorObjects() {
     renderObjectTree();
     return;
   }
-  const add = (item) => output.push({ locked: true, hidden: false, ...item });
+  const previous = state.indicator.objectMap || new Map();
+  const storedOverrides = readIndicatorOverrides();
+  const add = (item) => {
+    const old = previous.get(item.id);
+    const stored = storedOverrides[item.id];
+    const source = old?.customized || old?.hidden ? old : stored;
+    const preserved = source ? {
+      offsetTime: source.offsetTime,
+      offsetPrice: source.offsetPrice,
+      color: source.color,
+      fill: source.fill,
+      width: source.width,
+      lineStyle: source.lineStyle,
+      opacity: source.opacity,
+      text: source.text,
+      size: source.size,
+      weight: source.weight,
+      customized: Boolean(source.customized || source.offsetTime || source.offsetPrice),
+      hidden: Boolean(source.hidden),
+    } : {};
+    output.push({ locked: true, hidden: false, ...item, ...preserved });
+  };
   for (const [direction, group] of Object.entries(state.indicator.results.directions)) {
     (group.reactions || []).forEach((item, index) => add({ id: `indicator:${direction}:reaction:${index}`, type: "indicator-reaction", name: `${direction} Reaction ${index + 1}`, time: item.firstTime, price: item.boxTop, color: direction === "bullish" ? state.indicator.settings.bullBorder : state.indicator.settings.bearBorder }));
     (group.blueLines || []).forEach((item, index) => add({ id: `indicator:${direction}:blue:${index}`, type: "indicator-blue", name: `Blue Line ${index + 1}`, time: item.sourceTime, price: item.linePrice, color: state.indicator.settings.blueColor }));
@@ -2149,22 +2217,136 @@ function rebuildIndicatorObjects() {
   state.indicator.objects = output;
   state.indicator.objectMap = new Map(output.map((item) => [item.id, item]));
   state.indicator.selectedObjectId = null;
+  saveIndicatorObjectOverrides();
   renderObjectTree();
 }
 function indicatorOffset(item) {
   return {
-    x: Number.isFinite(Number(item?.offsetX)) ? Number(item.offsetX) : 0,
-    y: Number.isFinite(Number(item?.offsetY)) ? Number(item.offsetY) : 0,
+    time: Number.isFinite(Number(item?.offsetTime)) ? Number(item.offsetTime) : 0,
+    price: Number.isFinite(Number(item?.offsetPrice)) ? Number(item.offsetPrice) : 0,
+  };
+}
+function indicatorOffsetPixels(item) {
+  const offset = indicatorOffset(item);
+  if ((!offset.time && !offset.price) || !Number.isFinite(Number(item?.time)) || !Number.isFinite(Number(item?.price))) {
+    return { x: 0, y: 0 };
+  }
+  const baseX = indicatorTimeToCoordinate(Number(item.time));
+  const nextX = indicatorTimeToCoordinate(Number(item.time) + offset.time);
+  const baseY = series.priceToCoordinate(Number(item.price));
+  const nextY = series.priceToCoordinate(Number(item.price) + offset.price);
+  return {
+    x: Number.isFinite(baseX) && Number.isFinite(nextX) ? nextX - baseX : 0,
+    y: Number.isFinite(baseY) && Number.isFinite(nextY) ? nextY - baseY : 0,
   };
 }
 function offsetIndicatorPoint(item, x, y) {
-  const offset = indicatorOffset(item);
+  const offset = indicatorOffsetPixels(item);
   return { x: x + offset.x, y: y + offset.y };
 }
 function offsetIndicatorRect(item, x1, y1, x2, y2) {
-  const offset = indicatorOffset(item);
+  const offset = indicatorOffsetPixels(item);
   return { x1: x1 + offset.x, y1: y1 + offset.y, x2: x2 + offset.x, y2: y2 + offset.y };
 }
+function nearestRangeCandle(clientX) {
+  if (!state.data.length) return null;
+  const rect = chartElement.getBoundingClientRect();
+  const x = Math.max(0, Math.min(rect.width, clientX - rect.left));
+  const target = chart.timeScale().coordinateToTime(x);
+  if (target == null) return state.data[Math.max(0, Math.min(state.data.length - 1, Math.round((x / Math.max(1, rect.width)) * (state.data.length - 1))))];
+  let low = 0, high = state.data.length - 1;
+  while (low < high) {
+    const mid = (low + high) >> 1;
+    if (Number(state.data[mid].time) < Number(target)) low = mid + 1;
+    else high = mid;
+  }
+  const next = state.data[low], previous = state.data[low - 1];
+  return previous && Math.abs(Number(previous.time) - target) <= Math.abs(Number(next.time) - target) ? previous : next;
+}
+function syncIndicatorRangeHandles() {
+  const root = $("#indicatorRangeHandles");
+  if (!root) return;
+  const active = chartWorkspaceActive() && state.data.length > 1;
+  root.classList.toggle("hidden", !active);
+  root.setAttribute("aria-hidden", String(!active));
+  if (!active) return;
+  const first = Number(state.data[0].time), last = Number(state.data.at(-1).time);
+  const fallbackFrom = parseTehranInput($("#indicatorFrom")?.value || "") || first;
+  const fallbackTo = parseTehranInput($("#indicatorTo")?.value || "") || last;
+  if (!Number.isFinite(state.indicatorRange.from)) state.indicatorRange.from = fallbackFrom;
+  if (!Number.isFinite(state.indicatorRange.to)) state.indicatorRange.to = fallbackTo;
+  state.indicatorRange.from = Math.max(first, Math.min(state.indicatorRange.from, last));
+  state.indicatorRange.to = Math.max(state.indicatorRange.from, Math.min(state.indicatorRange.to, last));
+  for (const side of ["from", "to"]) {
+    const time = Number(state.indicatorRange[side]);
+    const rawX = chart.timeScale().timeToCoordinate(time);
+    const handleInset = 14;
+    const x = Number.isFinite(rawX)
+      ? Math.max(handleInset, Math.min(Math.max(handleInset, chartElement.clientWidth - handleInset), rawX))
+      : null;
+    const handle = $(`#range${side === "from" ? "From" : "To"}Handle`);
+    const guide = $(`#range${side === "from" ? "From" : "To"}Guide`);
+    if (!Number.isFinite(x) || !handle || !guide) continue;
+    handle.style.left = `${x}px`;
+    guide.style.left = `${x}px`;
+    const label = `${side.toUpperCase()}  ${formatTehran(time, false)}`;
+    handle.querySelector(".range-handle-tip").textContent = label;
+    handle.setAttribute("aria-label", label);
+    const guideLabel = guide.querySelector("span");
+    if (guideLabel) guideLabel.textContent = label;
+  }
+}
+function commitIndicatorRangeInputs() {
+  if (!Number.isFinite(state.indicatorRange.from) || !Number.isFinite(state.indicatorRange.to)) return;
+  setDateTimeValue("#indicatorFrom", inputFromTehran(state.indicatorRange.from));
+  setDateTimeValue("#indicatorTo", inputFromTehran(state.indicatorRange.to));
+}
+for (const target of ["#indicatorFrom", "#indicatorTo"]) {
+  $(target)?.addEventListener("change", () => {
+    syncIndicatorRangeHandles();
+  });
+}
+for (const side of ["from", "to"]) {
+  const handle = $(`#range${side === "from" ? "From" : "To"}Handle`);
+  if (!handle) continue;
+  const finishRangeDrag = () => {
+    if (state.indicatorRange.dragging !== side) return;
+    state.indicatorRange.dragging = null;
+    state.indicatorRange.preview = false;
+    handle.classList.remove("is-dragging");
+    $("#indicatorRangeHandles").classList.remove("is-preview");
+    commitIndicatorRangeInputs();
+    syncIndicatorRangeHandles();
+  };
+  handle.addEventListener("pointerdown", (event) => {
+    if (!chartWorkspaceActive()) return;
+    event.preventDefault();
+    event.stopPropagation();
+    state.indicatorRange.dragging = side;
+    state.indicatorRange.preview = true;
+    handle.classList.add("is-dragging");
+    handle.setPointerCapture?.(event.pointerId);
+    $("#indicatorRangeHandles").classList.add("is-preview");
+    syncIndicatorRangeHandles();
+  });
+  handle.addEventListener("pointermove", (event) => {
+    if (state.indicatorRange.dragging !== side) return;
+    event.preventDefault();
+    const candle = nearestRangeCandle(event.clientX);
+    if (!candle) return;
+    const time = Number(candle.time);
+    if (side === "from") state.indicatorRange.from = Math.min(time, Number(state.indicatorRange.to));
+    else state.indicatorRange.to = Math.max(time, Number(state.indicatorRange.from));
+    syncIndicatorRangeHandles();
+  });
+  handle.addEventListener("pointerup", finishRangeDrag);
+  handle.addEventListener("pointercancel", finishRangeDrag);
+}
+$("#applyIndicatorRangeBtn").onclick = () => {
+  if (!chartWorkspaceActive()) return;
+  commitIndicatorRangeInputs();
+  void calculateIndicator();
+};
 function indicatorTimeToCoordinate(time) {
   const target = Number(time);
   if (!Number.isFinite(target)) return null;
@@ -2653,6 +2835,7 @@ function drawIndicatorSelection() {
   ctx.restore();
 }
 function drawAll() {
+  syncIndicatorRangeHandles();
   ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
   drawIndicator();
   drawIndicatorSelection();
@@ -3448,8 +3631,18 @@ shell.addEventListener(
     if (state.interaction.mode === "indicator-move") {
       const indicatorItem = indicatorObject(state.interaction.indicatorId);
       if (!indicatorItem || indicatorItem.locked) return;
-      indicatorItem.offsetX = (Number(indicatorItem.offsetX) || 0) + p.x - state.interaction.last.x;
-      indicatorItem.offsetY = (Number(indicatorItem.offsetY) || 0) + p.y - state.interaction.last.y;
+      const deltaTime = Number.isFinite(Number(p.time)) && Number.isFinite(Number(state.interaction.last.time))
+        ? Number(p.time) - Number(state.interaction.last.time)
+        : 0;
+      const deltaPrice = Number.isFinite(Number(p.price)) && Number.isFinite(Number(state.interaction.last.price))
+        ? Number(p.price) - Number(state.interaction.last.price)
+        : 0;
+      indicatorItem.offsetTime = (Number(indicatorItem.offsetTime) || 0) + deltaTime;
+      indicatorItem.offsetPrice = (Number(indicatorItem.offsetPrice) || 0) + deltaPrice;
+      // Drop the old pixel offsets written by the incomplete implementation;
+      // time/price anchors remain stable through every zoom and resize.
+      delete indicatorItem.offsetX;
+      delete indicatorItem.offsetY;
       indicatorItem.customized = true;
       state.interaction.last = p;
       drawAll();
@@ -3514,6 +3707,7 @@ shell.addEventListener(
     state.interaction = null;
     canvas.classList.remove("selection-active");
     saveDrawings();
+    saveIndicatorObjectOverrides();
     drawAll();
   },
   true,
@@ -3530,6 +3724,7 @@ function changeStyle(persist = true) {
     indicatorItem.customized = true;
     if (indicatorItem.type === "indicator-label") indicatorItem.text = $("#objectText").value;
     if (indicatorItem.type === "indicator-label") indicatorItem.size = +$("#objectSize").value;
+    saveIndicatorObjectOverrides();
     if (persist) renderObjectTree();
     drawAll();
     return;
@@ -3916,6 +4111,7 @@ $("#objectList").addEventListener("click", (event) => {
     return;
   }
   saveDrawings();
+  if (state.indicator.objects.includes(item)) saveIndicatorObjectOverrides();
   updateToolbar();
   renderObjectTree();
   drawAll();
@@ -3947,6 +4143,7 @@ $("#lockAllObjects").onclick = () => {
   const lock = targets.some((item) => !item.locked);
   targets.forEach((item) => { item.locked = lock; });
   saveDrawings();
+  saveIndicatorObjectOverrides();
   updateToolbar();
   renderObjectTree();
   drawAll();
@@ -3967,6 +4164,7 @@ $("#deleteAllObjects").addEventListener("click", (event) => {
   state.selected = null;
   state.indicator.selectedObjectId = null;
   saveDrawings();
+  saveIndicatorObjectOverrides();
   updateToolbar();
   renderObjectTree();
   drawAll();
@@ -3985,6 +4183,7 @@ $("#objectList").onclick = (e) => {
       state.selectedIds = [];
       state.indicator.selectedObjectId = item.id;
     }
+    saveIndicatorObjectOverrides();
     updateToolbar();
     renderObjectTree();
     drawAll();
@@ -4520,6 +4719,12 @@ function setDateTimeValue(target, value) {
   field.value = value || "";
   if (display) display.textContent = displayPickerValue(value);
   else log.chart.debug("DATE_DISPLAY_NOT_PRESENT", { target });
+  if (target === "#indicatorFrom" || target === "#indicatorTo") {
+    const parsed = parseTehranInput(field.value);
+    if (Number.isFinite(parsed) && state.indicatorRange) {
+      state.indicatorRange[target === "#indicatorFrom" ? "from" : "to"] = parsed;
+    }
+  }
   return true;
 }
 function pickerValueParts(value) {
@@ -4691,6 +4896,10 @@ function openIndicator() {
   }
   renderIndicatorActivity();
   $("#indicatorModal").classList.remove("hidden");
+  requestAnimationFrame(() => {
+    resize();
+    syncIndicatorRangeHandles();
+  });
 }
 async function calculateIndicator() {
   if (state.indicator.loading || !state.file) return;
@@ -4923,6 +5132,154 @@ async function calculateIndicator() {
 }
 $("#indicatorBtn").onclick = openIndicator;
 $("#indicatorStatusFooter").onclick = openIndicator;
+
+// ---- Update Data Button ----
+$("#updateDataBtn").onclick = async () => {
+  const btn = $("#updateDataBtn");
+  if (btn.dataset.updateState === "loading") return;
+  if (!state.file) { toast("No data file loaded", "error"); return; }
+  btn.dataset.updateState = "loading";
+  try {
+    const symbol = state.file.symbol || "";
+    const tfMatch = state.file.timeframe ? state.file.timeframe.match(/(\d+)([smhdSMHD])/i) : state.file.id.match(/(\d+)([smhdSMHD])/i);
+    const rawTf = tfMatch ? tfMatch[1].toUpperCase() + tfMatch[2].toUpperCase() : "1S";
+    const rawTimeframeSeconds = sourceTimeframeSeconds();
+    const lastTime = state.raw.length ? state.raw.at(-1).time : 0;
+    const fromTime = lastTime + rawTimeframeSeconds;
+    const now = Math.floor(Date.now() / 1000);
+    if (fromTime >= now) { toast("Chart data is already up to date", "success"); btn.dataset.updateState = "ok"; setTimeout(() => btn.dataset.updateState = "idle", 1400); return; }
+    const histResp = await fetch("/api/faraz/history", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ symbolName: symbol, resolution: rawTf, from: fromTime, to: now }),
+    });
+    if (!histResp.ok) {
+      const histErr = await histResp.json().catch(() => ({}));
+      if (histResp.status === 401) { toast(histErr.error || "Sign in to FARAZ first", "error"); btn.dataset.updateState = "err"; setTimeout(() => btn.dataset.updateState = "idle", 2000); return; }
+      throw new Error(histErr.error || "FARAZ request failed: " + histResp.status);
+    }
+    const data = await histResp.json();
+    let candles = [];
+    if (Array.isArray(data)) candles = data;
+    else if (data && Array.isArray(data.c)) {
+      candles = data.c.map((c, i) => ({
+        time: data.t ? data.t[i] : 0,
+        open: data.o ? data.o[i] : 0,
+        high: data.h ? data.h[i] : 0,
+        low: data.l ? data.l[i] : 0,
+        close: data.c[i],
+      }));
+    } else if (data && Array.isArray(data.s)) {
+      candles = data.s.map((s, i) => ({
+        time: data.t ? data.t[i] : 0,
+        open: data.o ? data.o[i] : 0,
+        high: data.h ? data.h[i] : 0,
+        low: data.l ? data.l[i] : 0,
+        close: data.c[i],
+      }));
+    } else if (data && typeof data === "object" && data.candles) {
+      candles = data.candles;
+    }
+    if (!candles.length) { toast("No new candles found", "info"); btn.dataset.updateState = "ok"; setTimeout(() => btn.dataset.updateState = "idle", 1400); return; }
+    const existingTimes = new Set(state.raw.map((c) => c.time));
+    const uniqueNew = candles
+      .filter((c) => !existingTimes.has(c.time) && c.time > lastTime)
+      .map((c) => ({ time: +c.time, open: +c.open, high: +c.high, low: +c.low, close: +c.close }))
+      .filter((c) => Number.isFinite(c.time) && c.time > 0);
+    if (!uniqueNew.length) { toast("Chart data is already up to date", "success"); btn.dataset.updateState = "ok"; setTimeout(() => btn.dataset.updateState = "idle", 1400); return; }
+    uniqueNew.sort((a, b) => a.time - b.time);
+    const merged = [...state.raw, ...uniqueNew];
+    const fileId = state.file.id;
+    const saveResp = await fetch("/api/candle-files/update", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: fileId, newCandles: uniqueNew, lastCandleTime: uniqueNew.at(-1).time }) });
+    const saveResult = await saveResp.json().catch(() => ({}));
+    if (!saveResp.ok) throw new Error(saveResult.error || `Saving updated candle file failed with HTTP ${saveResp.status}.`);
+    if (saveResult.newId) state.file.id = saveResult.newId;
+    state.file.count = merged.length;
+    state.file.to = new Date(uniqueNew.at(-1).time * 1000).toISOString();
+    state.raw = merged;
+    state.data = state.tf === sourceTimeframeSeconds() ? state.raw : aggregate(state.raw, state.tf);
+    series.setData(state.data);
+    state.chartRender = null;
+    renderChartViewport(null, { force: true });
+    $("#candleCount").textContent = `${new Intl.NumberFormat("en-US").format(state.data.length)} candles`;
+    const lastCandle = state.data.at(-1);
+    if (lastCandle) {
+      $("#chartFrom").textContent = formatSystemDateTime(state.data.at(0).time * 1000);
+      $("#chartTo").textContent = formatSystemDateTime(lastCandle.time * 1000);
+    }
+    setOHLC(state.data.at(-1));
+    drawAll();
+    toast(`Chart updated with ${uniqueNew.length} new candles`, "success");
+    btn.dataset.updateState = "ok";
+    log.chart.info("CHART_DATA_UPDATED", { added: uniqueNew.length, symbol, timeframe: rawTf, from: fromTime, to: now });
+  } catch (e) {
+    log.chart.error("UPDATE_DATA_FAILED", e);
+    toast(e.message || "Failed to update chart data", "error");
+    btn.dataset.updateState = "err";
+  }
+  setTimeout(() => btn.dataset.updateState = "idle", 2000);
+};
+// ---- Screenshot Button ----
+$("#screenshotBtn").onclick = async () => {
+  try {
+    const w = chartElement.clientWidth;
+    const h = chartElement.clientHeight;
+    const ssDpr = Math.max(window.devicePixelRatio || 1, 2);
+    const offscreen = document.createElement("canvas");
+    offscreen.width = Math.round(w * ssDpr);
+    offscreen.height = Math.round(h * ssDpr);
+    const offCtx = offscreen.getContext("2d");
+    offCtx.scale(ssDpr, ssDpr);
+    const chartImg = chart.takeScreenshot();
+    offCtx.drawImage(chartImg, 0, 0, w, h);
+    const drawDpr = window.devicePixelRatio || 1;
+    if (canvas.width && canvas.height) {
+      offCtx.drawImage(canvas, 0, 0, canvas.width / drawDpr, canvas.height / drawDpr);
+    }
+    offscreen.toBlob(async (blob) => {
+      if (!blob) { toast("Failed to capture chart", "error"); return; }
+      try {
+        await navigator.clipboard.write([new ClipboardItem({"image/png": blob})]);
+        toast("Screenshot copied to clipboard", "success");
+      } catch (clipErr) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = (state.file?.symbol || "chart") + "-" + (TF.find((x) => x.s === state.tf)?.l || "") + ".png";
+        a.click();
+        URL.revokeObjectURL(url);
+        toast("Screenshot downloaded", "success");
+      }
+    }, "image/png");
+  } catch (e) {
+    log.chart.error("SCREENSHOT_FAILED", e);
+    toast("Screenshot not available: " + e.message, "error");
+  }
+};
+// ---- Chart Navigation Arrows ----
+if ($("#navGoFirst")) {
+  $("#navGoFirst").onclick = () => {
+  if (!state.data.length) return;
+  const range = chart.timeScale().getVisibleLogicalRange();
+  if (!range) return;
+  const span = range.to - range.from;
+  const half = span / 2;
+  chart.timeScale().setVisibleLogicalRange({ from: -half, to: half });
+};
+}
+if ($("#navGoLast")) {
+  $("#navGoLast").onclick = () => {
+  if (!state.data.length) return;
+  const range = chart.timeScale().getVisibleLogicalRange();
+  if (!range) return;
+  const span = range.to - range.from;
+  const last = state.data.length - 1;
+  const half = span / 2;
+  chart.timeScale().setVisibleLogicalRange({ from: last - half, to: last + half });
+};
+}
+
+// ---- Symbol switch: clear drawings ----
 $("#reloadIndicatorBtn").onclick = async () => {
   if (state.indicator.loading || !state.file) return;
   $("#reloadIndicatorBtn").classList.add("is-loading");
@@ -5156,10 +5513,18 @@ function readTemplates() {
   try { return JSON.parse(localStorage.getItem(TEMPLATE_KEY) || "{}"); }
   catch { return {}; }
 }
+function escapeTemplateText(value) {
+  return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+}
 function renderTemplates() {
-  $("#savedTemplates").innerHTML = Object.keys(readTemplates())
-    .map((name) => `<button data-template-name="${name.replaceAll('"', "&quot;")}">${name}</button>`)
-    .join("") || "<small>No saved templates</small>";
+  const tpls = readTemplates();
+  const names = Object.keys(tpls);
+  $("#savedTemplates").innerHTML = names.length
+    ? names.map((name) => {
+        const safe = escapeTemplateText(name);
+        return `<div class="tpl-item"><button class="tpl-load" data-template-name="${safe}" role="menuitem">${safe}</button><button class="tpl-item-del" data-template-delete="${safe}" title="Delete “${safe}”" aria-label="Delete template ${safe}" type="button"><span class="material-symbols-outlined" aria-hidden="true">delete</span></button></div>`;
+      }).join("")
+    : `<div class="tpl-empty">No saved templates</div>`;
 }
 function updateStyleAvailability() {
   const map = [
@@ -5176,14 +5541,44 @@ function updateStyleAvailability() {
   for (const [toggle, ids] of map)
     ids.forEach((id) => $("#" + id).disabled = !$("#" + toggle).checked);
 }
-$("#templateBtn").onclick = () => {
+$("#templateBtn").onclick = (e) => {
+  e.stopPropagation();
   renderTemplates();
-  $("#templateMenu").classList.toggle("hidden");
+  const m = $("#templateMenu");
+  m.classList.toggle("hidden");
+  $("#templateBtn").setAttribute("aria-expanded", String(!m.classList.contains("hidden")));
+  if (!m.classList.contains("hidden")) {
+    const rect = m.getBoundingClientRect();
+    if (rect.bottom > window.innerHeight) m.style.top = "auto";
+  }
 };
+document.addEventListener("click", (e) => {
+  const m = $("#templateMenu");
+  if (!m || m.classList.contains("hidden")) return;
+  if (!e.target.closest("#templateMenu") && !e.target.closest("#templateBtn")) {
+    m.classList.add("hidden");
+    $("#templateBtn").setAttribute("aria-expanded", "false");
+  }
+});
 $("#templateMenu").onclick = (event) => {
+  const delEl = event.target.closest("[data-template-delete]");
+  if (delEl) {
+    event.stopPropagation();
+    const dName = delEl.dataset.templateDelete;
+    if (dName && window.confirm("Delete template \"" + dName + "\"?")) {
+      const t = readTemplates();
+      delete t[dName];
+      localStorage.setItem(TEMPLATE_KEY, JSON.stringify(t));
+      renderTemplates();
+      toast("Template deleted");
+    }
+    return;
+  }
   const action = event.target.closest("[data-template-action]")?.dataset.templateAction;
-  const name = event.target.closest("[data-template-name]")?.dataset.templateName;
+  const item = event.target.closest("[data-template-name]");
+  const name = item?.dataset.templateName;
   if (action === "save") {
+    event.stopPropagation();
     const nextName = prompt("Template name");
     if (nextName?.trim()) {
       const templates = readTemplates();
@@ -5193,11 +5588,13 @@ $("#templateMenu").onclick = (event) => {
       toast("Template saved");
     }
   } else if (action === "default") {
+    event.stopPropagation();
     applyIndicatorForm(indicatorDefaults);
     toast("Default settings restored");
   } else if (name) {
     applyIndicatorForm(readTemplates()[name]);
     $("#templateMenu").classList.add("hidden");
+    $("#templateBtn").setAttribute("aria-expanded", "false");
     toast(`Template "${name}" applied`);
   }
 };

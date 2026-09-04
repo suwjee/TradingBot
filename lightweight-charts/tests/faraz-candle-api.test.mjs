@@ -16,6 +16,34 @@ test("FARAZ resolution parser accepts extension-compatible values", () => {
   assert.throws(() => parseResolutionToSeconds("tick"), /Timeframe/);
 });
 
+test("chart update accepts a large candle batch, appends it, and renames the RAW file", async () => {
+  const workspaceRoot = mkdtempSync(join(tmpdir(), "faraz-chart-update-"));
+  const rawDir = join(workspaceRoot, "market-data", "raw");
+  mkdirSync(rawDir, { recursive: true });
+  const start = 1_780_000_000;
+  const existing = Array.from({ length: 2 }, (_, index) => ({ time: start + index, open: 10, high: 11, low: 9, close: 10 }));
+  const additions = Array.from({ length: 3_000 }, (_, index) => {
+    const value = 10 + (index % 10) / 100;
+    return { time: start + 2 + index, open: value, high: value + 1, low: value - 1, close: value };
+  });
+  const oldId = "RAW TEST_SYMBOL 1S FROM 2026-09-04 00-00-00 TO 2026-09-04 00-00-01.json";
+  writeFileSync(join(rawDir, oldId), JSON.stringify(existing));
+  const routes = new Map();
+  createFarazCandleApi({ workspaceRoot }).configureServer({ middlewares: { use(route, handler) { routes.set(route, handler); } } });
+  const request = Readable.from([JSON.stringify({ id: oldId, newCandles: additions, lastCandleTime: additions.at(-1).time })]);
+  request.method = "POST";
+  request.url = "";
+  const response = { headers: {}, setHeader(name, value) { this.headers[name] = value; }, end(body) { this.body = JSON.parse(body); } };
+  await routes.get("/api/candle-files/update")(request, response);
+  assert.equal(response.body.ok, true, JSON.stringify(response.body));
+  assert.equal(response.body.added, additions.length);
+  assert.equal(readdirSync(rawDir).length, 1);
+  const newId = response.body.newId;
+  assert.match(newId, /TO \d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2}\.json$/);
+  assert.equal(JSON.parse(readFileSync(join(rawDir, newId), "utf8")).length, existing.length + additions.length);
+  rmSync(workspaceRoot, { recursive: true, force: true });
+});
+
 test("history payload normalization keeps only finite OHLC-valid candles", () => {
   const candles = normalizeHistoryPayload({ result: {
     t: [100, 101, 102],

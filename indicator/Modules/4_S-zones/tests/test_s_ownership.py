@@ -145,6 +145,190 @@ def test_simple_candidate_is_inclusive_break_to_break_and_last_wins_ties(directi
 
 
 @pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_pre_order_candidate_uses_first_tied_extreme_after_exact_a_stop(direction):
+    main = [
+        candle(i, high, low, direction=direction)
+        for i, (high, low) in enumerate([
+            (12, 5), (12, 5), (14, 7),
+        ])
+    ]
+    lower = [
+        candle(0, 12, 4, second=2, direction=direction),
+        candle(1, 12, 5, second=8, direction=direction),
+        candle(2, 12, 5, second=35, direction=direction),
+    ]
+    order = SimpleNamespace(first_idx=1)
+    detector = S.SDetector(direction, [], [], [], [], main, lower, 30)
+    result = detector._candidate_before_order(
+        0, order, a_stop_event_time=BASE + timedelta(seconds=5)
+    )
+    assert result[:2] == (0, main[0].timestamp)
+    assert result[2] == detector._trend_extreme(main[0])
+    assert detector._candidate_event_time(
+        result[0], result[2], BASE + timedelta(seconds=5)
+    ) == BASE + timedelta(seconds=8)
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_pre_order_candidate_blue_accepts_valid_reaction_before_order(direction):
+    main = [
+        candle(i, high, low, direction=direction)
+        for i, (high, low) in enumerate([
+            (12, 8), (13, 7), (14, 9), (15, 6),
+        ])
+    ]
+    lower = [
+        candle(0, 12, 8, second=5, direction=direction),
+        candle(1, 13, 7, second=35, direction=direction),
+        candle(2, 14, 9, second=65, direction=direction),
+        candle(3, 15, 6, second=95, direction=direction),
+    ]
+    reaction = SimpleNamespace(
+        break_idx=2,
+        box_top=main[2].high - Decimal(1),
+        box_bottom=main[2].low + Decimal(1),
+        intrabar_start=None,
+    )
+    detector = S.SDetector(
+        direction, [reaction], [], [], [], main, lower, 30
+    )
+    candidate_level = main[1].low if direction == "bullish" else main[1].high
+    order_stop = Decimal(30) if direction == "bullish" else Decimal(0)
+    result = detector._decision(
+        candidate_level,
+        order_stop,
+        BASE + timedelta(seconds=80),
+        0,
+        BASE + timedelta(seconds=35),
+        BASE + timedelta(seconds=35),
+    )
+    assert result is not None
+    assert result[0] == "blue"
+    assert result[3] == BASE + timedelta(seconds=95)
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_pre_order_order_stop_creates_red_before_candidate_cross(direction):
+    main = [
+        SimpleNamespace(
+            index=index,
+            timestamp=BASE + timedelta(seconds=index * 30),
+            high=Decimal(40),
+            low=Decimal(-10),
+        )
+        for index in range(4)
+    ]
+    if direction == "bullish":
+        lower = [
+            SimpleNamespace(
+                timestamp=BASE + timedelta(seconds=85),
+                high=Decimal(31),
+                low=Decimal(18),
+            ),
+            SimpleNamespace(
+                timestamp=BASE + timedelta(seconds=95),
+                high=Decimal(20),
+                low=Decimal(16),
+            ),
+        ]
+        candidate_level = Decimal(17)
+        order_stop = Decimal(30)
+    else:
+        lower = [
+            SimpleNamespace(
+                timestamp=BASE + timedelta(seconds=85),
+                high=Decimal(12),
+                low=Decimal(-1),
+            ),
+            SimpleNamespace(
+                timestamp=BASE + timedelta(seconds=95),
+                high=Decimal(14),
+                low=Decimal(5),
+            ),
+        ]
+        candidate_level = Decimal(13)
+        order_stop = Decimal(0)
+    detector = S.SDetector(
+        direction, [], [], [], [], main, lower, 30
+    )
+    result = detector._decision(
+        candidate_level,
+        order_stop,
+        BASE + timedelta(seconds=80),
+        0,
+        BASE + timedelta(seconds=35),
+        BASE + timedelta(seconds=35),
+    )
+    assert result is not None
+    assert result[0] == "red"
+    assert result[3] == BASE + timedelta(seconds=85)
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_pre_order_first_candidate_cross_without_reaction_is_rejected(direction):
+    main = [
+        SimpleNamespace(
+            index=index,
+            timestamp=BASE + timedelta(seconds=index * 30),
+            high=Decimal(40),
+            low=Decimal(-10),
+        )
+        for index in range(5)
+    ]
+    if direction == "bullish":
+        lower = [
+            SimpleNamespace(
+                timestamp=BASE + timedelta(seconds=85),
+                high=Decimal(20),
+                low=Decimal(16),
+            ),
+            SimpleNamespace(
+                timestamp=BASE + timedelta(seconds=125),
+                high=Decimal(20),
+                low=Decimal(15),
+            ),
+        ]
+        candidate_level = Decimal(17)
+        order_stop = Decimal(30)
+    else:
+        lower = [
+            SimpleNamespace(
+                timestamp=BASE + timedelta(seconds=85),
+                high=Decimal(14),
+                low=Decimal(5),
+            ),
+            SimpleNamespace(
+                timestamp=BASE + timedelta(seconds=125),
+                high=Decimal(15),
+                low=Decimal(5),
+            ),
+        ]
+        candidate_level = Decimal(13)
+        order_stop = Decimal(0)
+    late_reaction = SimpleNamespace(
+        break_idx=4,
+        box_top=Decimal(19),
+        box_bottom=Decimal(6),
+        intrabar_start=None,
+    )
+    detector = S.SDetector(
+        direction, [late_reaction], [], [], [], main, lower, 30
+    )
+    result = detector._decision(
+        candidate_level,
+        order_stop,
+        BASE + timedelta(seconds=80),
+        0,
+        BASE + timedelta(seconds=35),
+        BASE + timedelta(seconds=35),
+        fallback_on_unqualified_cross=True,
+    )
+    assert result is not None
+    assert result[0] == "fallback"
+    assert result[3] == BASE + timedelta(seconds=85)
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
 def test_advanced_reaction_must_be_wholly_inside_order_detail(direction):
     main = [candle(i, 14, 7, direction=direction) for i in range(6)]
     order_top, order_bottom = (

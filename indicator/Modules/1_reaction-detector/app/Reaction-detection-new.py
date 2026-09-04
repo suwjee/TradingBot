@@ -51,7 +51,7 @@ class Style:
         return f"{''.join(codes)}{text}{cls.RESET}"
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class Candle:
     index: int
     timestamp: datetime
@@ -299,16 +299,18 @@ class DetectorBase:
 
     def minimum_low(self, start_index: int, end_index: int) -> tuple[Decimal, Candle]:
         source = self.candles[start_index]
+        candles = self.candles
         for index in range(start_index + 1, end_index + 1):
-            candle = self.candles[index]
+            candle = candles[index]
             if candle.low < source.low:
                 source = candle
         return source.low, source
 
     def maximum_high(self, start_index: int, end_index: int) -> tuple[Decimal, Candle]:
         source = self.candles[start_index]
+        candles = self.candles
         for index in range(start_index + 1, end_index + 1):
-            candle = self.candles[index]
+            candle = candles[index]
             if candle.high > source.high:
                 source = candle
         return source.high, source
@@ -732,18 +734,28 @@ def mirror_analysis(analysis: IntrabarAnalysis | None) -> IntrabarAnalysis | Non
 
 
 class _ReflectedCandles(Sequence[Candle]):
-    """Read-only coordinate view; allocate only candles used by the scan."""
+    """Read-only coordinate view with one-time mirror caching.
+
+    Each source candle is mirrored at most once (on first access) and the
+    result is cached, so repeated scans reuse the same object instead of
+    allocating a fresh mirrored Candle on every access.
+    """
 
     def __init__(self, source: Sequence[Candle]) -> None:
         self.source = source
+        self._cache: list[Candle | None] = [None] * len(source)
 
     def __len__(self) -> int:
         return len(self.source)
 
     def __getitem__(self, index):
         if isinstance(index, slice):
-            return [mirror_candle(candle) for candle in self.source[index]]
-        return mirror_candle(self.source[index])
+            return [self[i] for i in range(*index.indices(len(self.source)))]
+        cached = self._cache[index]
+        if cached is None:
+            cached = mirror_candle(self.source[index])
+            self._cache[index] = cached
+        return cached
 
 
 class BearishDetector(DetectorBase):
@@ -761,6 +773,9 @@ class BearishDetector(DetectorBase):
         )
         # Time indexes are invariant under price reflection. Construct them
         # from the original rows; lazily transform OHLC only when consumed.
+        # _ReflectedCandles caches each mirrored candle so repeated scans do
+        # not re-allocate, while construction stays cheap (important because
+        # _append_reaction builds a fresh BearishDetector per reaction).
         self.reference.candles = _ReflectedCandles(candles)
         self.reference.seconds = _ReflectedCandles(one_second_candles)
 
@@ -831,12 +846,10 @@ class UnifiedReactionDetector(DetectorBase):
     ) -> None:
         super().__init__(candles, one_second_candles, start_index, end_index)
         self.output_direction = output_direction
-        self.bull = BullishDetector(
-            candles, one_second_candles, start_index, end_index
-        )
-        self.bear = BearishDetector(
-            candles, one_second_candles, start_index, end_index
-        )
+        # Directional helpers are created lazily: a bullish-only run must not
+        # pay the BearishDetector mirroring cost and vice versa.
+        self._bull: BullishDetector | None = None
+        self._bear: BearishDetector | None = None
         self.all_reactions: dict[str, list[Candidate]] = {
             "bullish": [],
             "bearish": [],
@@ -845,6 +858,24 @@ class UnifiedReactionDetector(DetectorBase):
             "bullish": [],
             "bearish": [],
         }
+        self._geometry_after_reset_cache: dict[tuple, Candidate | None] = {}
+        self._simple_geometry_gate_cache: dict[tuple, Candidate | None] = {}
+
+    @property
+    def bull(self) -> BullishDetector:
+        if self._bull is None:
+            self._bull = BullishDetector(
+                self.candles, self.seconds, self.start_index, self.end_index
+            )
+        return self._bull
+
+    @property
+    def bear(self) -> BearishDetector:
+        if self._bear is None:
+            self._bear = BearishDetector(
+                self.candles, self.seconds, self.start_index, self.end_index
+            )
+        return self._bear
 
     def _append_reaction(self, direction: str, candidate: Candidate) -> bool:
         # A confirmed adjacent opposite-direction Anchor may extend the outer
@@ -1130,6 +1161,11 @@ class UnifiedReactionDetector(DetectorBase):
         gate.  In an E space, the reset-leg rule only requires the geometric
         Top-Bottom-Top / Bottom-Top-Bottom structure.
         """
+        _lim = self.end_index if end_index is None else min(end_index, self.end_index)
+        _ck = (direction, reset_index, _lim)
+        if _ck in self._geometry_after_reset_cache:
+            _cached = self._geometry_after_reset_cache[_ck]
+            return replace(_cached) if _cached is not None else None
         first_tag = "RED" if direction == "bullish" else "GREEN"
         context_tag = "GREEN" if direction == "bullish" else "RED"
         limit = self.end_index if end_index is None else min(end_index, self.end_index)
@@ -1184,6 +1220,11 @@ class UnifiedReactionDetector(DetectorBase):
         authoritative reaction.  This bounded helper preserves the real Reset
         while restricting First to the gate candle or later.
         """
+        _lim = self.end_index if end_index is None else min(end_index, self.end_index)
+        _ck = (direction, reset_index, gate_index, _lim)
+        if _ck in self._simple_geometry_gate_cache:
+            _cached = self._simple_geometry_gate_cache[_ck]
+            return replace(_cached) if _cached is not None else None
         first_tag = "RED" if direction == "bullish" else "GREEN"
         context_tag = "GREEN" if direction == "bullish" else "RED"
         limit = self.end_index if end_index is None else min(end_index, self.end_index)
@@ -1206,7 +1247,9 @@ class UnifiedReactionDetector(DetectorBase):
             confirmed, _ = self._scan_direct_candidate(
                 direction, candidate, limit
             )
+            self._simple_geometry_gate_cache[_ck] = confirmed
             return confirmed
+        self._simple_geometry_gate_cache[_ck] = None
         return None
 
     def _reaction_break_indices(self, direction: str) -> list[int]:

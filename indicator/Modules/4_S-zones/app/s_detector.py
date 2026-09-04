@@ -9,7 +9,7 @@ from decimal import Decimal
 from typing import Sequence
 
 
-S_VERSION = "4.0.0"
+S_VERSION = "4.1.0"
 
 
 @dataclass(frozen=True)
@@ -112,6 +112,7 @@ class SDetector:
             int(getattr(item, "first_idx")): (number, item)
             for number, item in enumerate(self.opposite_reactions, start=1)
         }
+
         for line in self.trend_blue_lines:
             if not bool(getattr(line, "calculation_valid", True)):
                 continue
@@ -539,10 +540,60 @@ class SDetector:
         self,
         a_stop_index: int,
         order: object,
+        a_stop_event_time: datetime | None = None,
     ) -> tuple[int, datetime, Decimal]:
         """Use the lowest/highest leg extreme from A-stop through order First."""
+        if a_stop_event_time is None:
+            a_stop_event_time = self.candle_times[a_stop_index]
         first_index = int(getattr(order, "first_idx"))
-        return self._candidate_source(a_stop_index, first_index)
+        candidate = self._candidate_source(a_stop_index, first_index)
+        stop_candle_end = self.candle_times[a_stop_index] + self.timeframe
+        eligible_stop_remainder = self._lower_window(
+            a_stop_event_time, stop_candle_end
+        )
+        if not eligible_stop_remainder:
+            return candidate
+        source = eligible_stop_remainder[0]
+        value = self._trend_extreme(source)
+        for item in eligible_stop_remainder[1:]:
+            item_value = self._trend_extreme(item)
+            better = (
+                item_value < value
+                if self.direction == "bullish"
+                else item_value > value
+            )
+            if better:
+                source = item
+                value = item_value
+        later_candidate = (
+            self._candidate_source(a_stop_index + 1, first_index)
+            if first_index > a_stop_index
+            else None
+        )
+        if later_candidate is not None:
+            better = (
+                later_candidate[2] < value
+                if self.direction == "bullish"
+                else later_candidate[2] > value
+            )
+            if better:
+                return later_candidate
+        return a_stop_index, self.candle_times[a_stop_index], value
+
+    def _candidate_event_time(
+        self,
+        source_index: int,
+        level: Decimal,
+        not_before: datetime,
+    ) -> datetime:
+        """Return the first lower-timeframe event that forms the candidate."""
+        source_time = self.candle_times[source_index]
+        for item in self._lower_window(
+            max(source_time, not_before), source_time + self.timeframe
+        ):
+            if self._trend_extreme(item) == level:
+                return getattr(item, "timestamp")
+        return max(source_time, not_before)
 
     def _blue_formation_time(self, line: object) -> datetime:
         explicit = getattr(line, "formation_time", None)
@@ -677,6 +728,7 @@ class SDetector:
         trend_reaction_number: int,
         behavior_start: datetime,
         candidate_start: datetime | None = None,
+        fallback_on_unqualified_cross: bool = False,
     ) -> tuple[str, int, datetime, datetime] | None:
         lower_items = self._lower_window(max(start, self.range_start), self.range_end)
         for item in lower_items:
@@ -706,6 +758,14 @@ class SDetector:
                 index = self._main_index(event_time)
                 return (
                     "blue",
+                    index,
+                    getattr(self.candles[index], "timestamp"),
+                    event_time,
+                )
+            if candidate_cross and fallback_on_unqualified_cross:
+                index = self._main_index(event_time)
+                return (
+                    "fallback",
                     index,
                     getattr(self.candles[index], "timestamp"),
                     event_time,
@@ -741,6 +801,13 @@ class SDetector:
             ):
                 return (
                     "blue",
+                    int(getattr(item, "index")),
+                    event_time,
+                    event_time,
+                )
+            if candidate_cross and fallback_on_unqualified_cross:
+                return (
+                    "fallback",
                     int(getattr(item, "index")),
                     event_time,
                     event_time,
@@ -863,15 +930,49 @@ class SDetector:
                 a_stop_index, order, order_confirmation_time
             )
             pre_order_candidate = (
-                self._candidate_before_order(a_stop_index, order)
+                self._candidate_before_order(
+                    a_stop_index,
+                    order,
+                    a_stop_event_time=a_stop_event_time,
+                )
                 if candidate_timing == "before"
                 else None
             )
-            nested_match = self._nested_trend_reaction(
-                order, order_confirmation_time
-            )
-            advanced_blue = nested_match is not None
-            if advanced_blue:
+            decision_behavior_start = a_stop_event_time
+            decision = None
+            use_pre_order_candidate = False
+            if pre_order_candidate is not None:
+                formation_type = "simple"
+                source_index, source_time, price = pre_order_candidate
+                red_source = pre_order_candidate
+                trend_reaction_number = 0
+                candidate_event_time = self._candidate_event_time(
+                    source_index, price, a_stop_event_time
+                )
+                decision_behavior_start = candidate_event_time
+                decision_candidate_start = candidate_event_time
+                decision = self._decision(
+                    price,
+                    order_stop_level,
+                    order_confirmation_time,
+                    trend_reaction_number,
+                    decision_behavior_start,
+                    decision_candidate_start,
+                    fallback_on_unqualified_cross=True,
+                )
+                if decision is None:
+                    continue
+                if decision[0] != "fallback":
+                    use_pre_order_candidate = True
+                else:
+                    decision = None
+            if not use_pre_order_candidate:
+                decision_behavior_start = a_stop_event_time
+                nested_match = self._nested_trend_reaction(
+                    order, order_confirmation_time
+                )
+                advanced_blue = nested_match is not None
+            if not use_pre_order_candidate and advanced_blue:
                 formation_type = "advanced"
                 red_source = None
                 trend_reaction_number, trend_reaction, trend_confirmation_time = (
@@ -887,7 +988,8 @@ class SDetector:
                 )
                 source_time = getattr(self.candles[source_index], "timestamp")
                 price = self._trend_extreme(self.candles[source_index])
-            else:
+                decision_candidate_start = trend_confirmation_time
+            elif not use_pre_order_candidate:
                 formation_type = "simple"
                 trend_match = self._first_trend_reaction_after_order(
                     order_confirmation_time
@@ -907,16 +1009,17 @@ class SDetector:
                         order_confirmation_time, trend_reaction
                     )
                 )
+                decision_candidate_start = trend_confirmation_time
             order_first_index = int(getattr(order, "first_idx"))
-            decision_start = order_confirmation_time
-            decision = self._decision(
-                price,
-                order_stop_level,
-                decision_start,
-                trend_reaction_number,
-                a_stop_event_time,
-                trend_confirmation_time,
-            )
+            if decision is None:
+                decision = self._decision(
+                    price,
+                    order_stop_level,
+                    order_confirmation_time,
+                    trend_reaction_number,
+                    decision_behavior_start,
+                    decision_candidate_start,
+                )
             if decision is None:
                 continue
             color, decision_index, decision_time, decision_event_time = decision

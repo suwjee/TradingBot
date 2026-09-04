@@ -313,6 +313,32 @@ class ADetector:
         ):
             return None
 
+        # A following Blue Line inherits the stop level established by the
+        # previous line's first aligned Reaction.  The level is the
+        # directional extreme from the previous Blue candle through that
+        # Reaction breakout, not the following line's own source extreme.
+        inherited = self._inherited_stop(previous, current)
+        if inherited is not None:
+            level, level_index, level_time, reaction_break_time = inherited
+            crossing = self._first_crossing(
+                level,
+                current.formation_time,
+                expires_at,
+            )
+            if crossing is None:
+                return None
+            trigger_index, trigger_event_time, _ = crossing
+            return (
+                level,
+                level_index,
+                level_time,
+                trigger_index,
+                getattr(self.candles[trigger_index], "timestamp"),
+                trigger_event_time,
+                level_time,
+                getattr(self.candles[trigger_index], "timestamp"),
+            )
+
         if previous.stop_event_time < current.formation_time:
             current_source_time = getattr(
                 self.candles[current.formation_index], "timestamp"
@@ -461,6 +487,33 @@ class ADetector:
                 return number, reaction
         return None
 
+    def _inherited_stop(
+        self,
+        previous: BlueState,
+        current: BlueState,
+    ) -> tuple[Decimal, int, datetime, datetime] | None:
+        if previous.formation_time >= current.formation_time:
+            return None
+        for reaction in self.reactions:
+            first_time = getattr(
+                self.candles[int(getattr(reaction, "first_idx"))],
+                "timestamp",
+            )
+            break_time = getattr(
+                self.candles[int(getattr(reaction, "break_idx"))],
+                "timestamp",
+            )
+            if first_time <= previous.formation_time:
+                continue
+            if break_time >= current.formation_time:
+                continue
+            level, level_index, level_time = self._range_extreme(
+                previous.formation_time,
+                break_time,
+            )
+            return level, level_index, level_time, break_time
+        return None
+
     def _a_source(
         self,
         trigger_index: int,
@@ -589,24 +642,45 @@ class ADetector:
         # lifecycle enters S.  A later same-direction Reaction belongs to that
         # S lifecycle and cannot retroactively validate a new A on the
         # double-stop candle.
-        special = [
-            item
-            for item in special
-            if not any(
-                prior.source_time < item.source_time
-                and self._a_was_stopped_before(prior, item.reaction_first_time)
-                for prior in output
-            )
-        ]
+        filtered_special: list[AZone] = []
+        for item in special:
+            # Only the latest earlier A can own the lifecycle immediately
+            # preceding this double-stop event.  Older A zones may have
+            # stopped long before the new Blue pair was formed and must not
+            # suppress a valid special A.
+            prior_candidates = [
+                prior for prior in output if prior.source_time < item.source_time
+            ]
+            prior = max(prior_candidates, key=lambda zone: zone.source_time, default=None)
+            if prior is not None and self._a_was_stopped_before(
+                prior,
+                item.reaction_first_time,
+                not_before=item.blue_1_source_time,
+            ):
+                # The earlier A was stopped as part of this same Blue-line
+                # lifecycle.  The following reaction belongs to S, not to a
+                # new A.  A stop that happened before blue_1 was formed is a
+                # completed prior cycle and does not block this special A.
+                continue
+            filtered_special.append(item)
+        special = filtered_special
         return sorted(output + special, key=lambda item: (item.source_time, item.trigger_event_time))
 
     def _a_was_stopped_before(
         self,
         zone: AZone,
         end_time: datetime,
+        *,
+        not_before: datetime | None = None,
     ) -> bool:
         """Return whether a later main candle strictly stopped an earlier A."""
         start = int(getattr(self.candles[zone.source_index], "index")) + 1
+        if not_before is not None:
+            while (
+                start < len(self.candles)
+                and getattr(self.candles[start], "timestamp") < not_before
+            ):
+                start += 1
         end = bisect_left(self.candle_times, end_time)
         level = zone.price
         for candle in self.candles[start:end]:

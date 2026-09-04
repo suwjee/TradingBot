@@ -4,12 +4,15 @@ import argparse
 import importlib.util
 import json
 import sys
+import orjson
 from bisect import bisect_left
 from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
 from time import perf_counter
 from zoneinfo import ZoneInfo
+import calendar
+_DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
 TEHRAN = ZoneInfo("Asia/Tehran")
@@ -53,12 +56,28 @@ def decimal(value: object) -> Decimal:
     return Decimal(str(value))
 
 
+_local_dt_cache: dict[int, datetime] = {}
+
+
 def local_datetime(epoch: int) -> datetime:
-    return datetime.fromtimestamp(epoch, TEHRAN).replace(tzinfo=None)
+    cached = _local_dt_cache.get(epoch)
+    if cached is not None:
+        return cached
+    result = datetime.fromtimestamp(epoch, TEHRAN).replace(tzinfo=None)
+    _local_dt_cache[epoch] = result
+    return result
+
+
+_epoch_cache: dict[datetime, int] = {}
 
 
 def epoch(local: datetime) -> int:
-    return int(local.replace(tzinfo=TEHRAN).timestamp())
+    cached = _epoch_cache.get(local)
+    if cached is not None:
+        return cached
+    result = int(local.replace(tzinfo=TEHRAN).timestamp())
+    _epoch_cache[local] = result
+    return result
 
 
 def build_candles(engine, rows: list[dict], timeframe: int):
@@ -94,11 +113,13 @@ def build_candle_buckets(rows: list[dict], timeframe: int):
     current_second = None
     buckets: list[dict] = []
     current = None
+    to_decimal = decimal
     for row in rows:
         timestamp = int(row["time"])
-        o, high, low, close = map(
-            decimal, (row["open"], row["high"], row["low"], row["close"])
-        )
+        o = to_decimal(row["open"])
+        high = to_decimal(row["high"])
+        low = to_decimal(row["low"])
+        close = to_decimal(row["close"])
         if current_second is None or current_second["time"] != timestamp:
             current_second = {
                 "time": timestamp,
@@ -132,13 +153,18 @@ def build_candle_buckets(rows: list[dict], timeframe: int):
 def build_candle_objects(engine, buckets: list[dict]):
     """Create maintained engine candles from already-normalized buckets."""
     candles = []
+    append = candles.append
+    candle_type = engine.Candle
+    classify = engine.classify_candle_color
+    local = local_datetime
+    fmt = _DTFMT.format
     for index, item in enumerate(buckets):
-        stamp = local_datetime(item["time"])
-        candles.append(engine.Candle(
+        stamp = local(item["time"])
+        append(candle_type(
             index=index,
             timestamp=stamp,
-            display_time=stamp.strftime("%Y-%m-%d %H:%M:%S"),
-            tag=engine.classify_candle_color(item["open"], item["close"]),
+            display_time=fmt(stamp.year, stamp.month, stamp.day, stamp.hour, stamp.minute, stamp.second),
+            tag=classify(item["open"], item["close"]),
             open=item["open"],
             high=item["high"],
             low=item["low"],
@@ -601,7 +627,7 @@ def main() -> int:
     source_text = timed(
         timings, "Read source file", lambda: args.data.read_text(encoding="utf-8-sig")
     )
-    source_rows = timed(timings, "Parse source JSON", lambda: json.loads(source_text))
+    source_rows = timed(timings, "Parse source JSON", lambda: orjson.loads(source_text))
     range_end_exclusive = args.to_time + args.timeframe
     rows = timed(timings, "Filter raw range", lambda: [
         row for row in source_rows
@@ -651,7 +677,6 @@ def main() -> int:
     reusable_full_context = (
         e_engine is not None
         and args.s_zones == "enabled"
-        and start_index == 0
         and end_index == len(candles) - 1
     )
     results = {} if reusable_full_context else {
@@ -684,7 +709,36 @@ def main() -> int:
             for direction, detector in geometry_detectors.items()
         }
         if reusable_full_context:
-            results = full_results
+            _has_extra = False
+            for _dir in required_directions:
+                for _r in full_results[_dir].reactions:
+                    if int(getattr(_r, "first_idx")) < start_index:
+                        _has_extra = True
+                        break
+                if _has_extra:
+                    break
+            if not _has_extra:
+                for _dir in required_directions:
+                    for _r in full_results[_dir].resets:
+                        if int(getattr(_r, "from_first_idx")) < start_index:
+                            _has_extra = True
+                            break
+                    if _has_extra:
+                        break
+            if _has_extra:
+                reusable_full_context = False
+                results = {
+                    direction: timed(
+                        timings,
+                        f"Reaction • {direction.title()}",
+                        lambda direction=direction: engine.UnifiedReactionDetector(
+                            candles, seconds, start_index, end_index, direction
+                        ).detect(),
+                    )
+                    for direction in required_directions
+                }
+            else:
+                results = full_results
         for direction in directions:
             opposite = "bearish" if direction == "bullish" else "bullish"
             full_lines = timed(timings, f"Blue Line • {direction.title()}", lambda: blue_engine.detect_blue_lines(

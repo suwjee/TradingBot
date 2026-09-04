@@ -1,4 +1,4 @@
-"""Regression coverage for ordinary and special two-Blue-stop A ownership."""
+"""Regression for the user-confirmed XAUUSD pre-order Blue S."""
 
 from __future__ import annotations
 
@@ -28,9 +28,11 @@ def epoch(value: str) -> int:
 
 
 @pytest.mark.skipif(not SOURCE.is_file(), reason="The selected XAUUSD history is unavailable")
-def test_bullish_two_stop_a_ownership_and_source_range(monkeypatch):
+def test_bullish_pre_order_candidate_becomes_blue_s(monkeypatch):
     bridge_path = ROOT / "indicator/indicator-settings/backend/reaction_bridge.py"
-    spec = importlib.util.spec_from_file_location("xau_two_stop_a_bridge", bridge_path)
+    spec = importlib.util.spec_from_file_location(
+        "xau_pre_order_blue_s_bridge", bridge_path
+    )
     assert spec is not None and spec.loader is not None
     bridge = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = bridge
@@ -45,7 +47,9 @@ def test_bullish_two_stop_a_ownership_and_source_range(monkeypatch):
         ("e-engine", "5_E-zones/app/e_detector.py"),
         ("stopall-engine", "6_StopAll/app/stopall_detector.py"),
     ]:
-        arguments.extend(["--" + flag, str(ROOT / "indicator/Modules" / module)])
+        arguments.extend(
+            ["--" + flag, str(ROOT / "indicator/Modules" / module)]
+        )
     arguments.extend(
         [
             "--data",
@@ -53,9 +57,9 @@ def test_bullish_two_stop_a_ownership_and_source_range(monkeypatch):
             "--timeframe",
             "30",
             "--from-time",
-            str(epoch("2026-08-18 04:44:40")),
+            str(epoch("2026-08-19 22:00:00")),
             "--to-time",
-            str(epoch("2026-08-21 20:43:00")),
+            str(epoch("2026-08-20 04:00:00")),
             "--direction",
             "bullish",
         ]
@@ -65,24 +69,19 @@ def test_bullish_two_stop_a_ownership_and_source_range(monkeypatch):
     with redirect_stdout(output):
         assert bridge.main() == 0
 
-    zones = json.loads(output.getvalue())["directions"]["bullish"]["aZones"]
-    by_source = {item["sourceTime"]: item for item in zones}
+    bullish = json.loads(output.getvalue())["directions"]["bullish"]
+    a_by_source = {item["sourceTime"]: item for item in bullish["aZones"]}
+    assert epoch("2026-08-20 02:09:30") in a_by_source
 
-    ordinary = by_source[epoch("2026-08-19 23:44:30")]
-    assert ordinary["blue1SourceTime"] == epoch("2026-08-19 23:23:00")
-    assert ordinary["blue2SourceTime"] == epoch("2026-08-19 23:39:00")
-    assert ordinary["triggerTime"] == epoch("2026-08-19 23:42:30")
-    assert ordinary["reactionFirstTime"] == epoch("2026-08-19 23:45:30")
-    assert ordinary["reactionBreakTime"] == epoch("2026-08-19 23:46:00")
-    assert ordinary["price"] == "4505.28"
-
-    assert epoch("2026-08-19 23:42:00") not in by_source
-    assert epoch("2026-08-20 02:02:00") not in by_source
-    assert epoch("2026-08-20 02:09:30") in by_source
-    assert epoch("2026-08-20 15:56:00") in by_source
-    assert epoch("2026-08-20 16:00:00") not in by_source
-    assert epoch("2026-08-18 13:26:30") in by_source
-    assert epoch("2026-08-20 16:04:30") not in by_source
-
-    reaction_times = [item["reactionFirstTime"] for item in zones]
-    assert len(reaction_times) == len(set(reaction_times))
+    s_by_source = {item["sourceTime"]: item for item in bullish["sZones"]}
+    target = s_by_source[epoch("2026-08-20 02:29:00")]
+    assert target["color"] == "blue"
+    assert target["price"] == "4516.63"
+    assert target["aSourceTime"] == epoch("2026-08-20 02:09:30")
+    assert target["aStopEventTime"] == epoch("2026-08-20 02:29:02")
+    assert target["orderFirstTime"] == epoch("2026-08-20 02:37:30")
+    assert target["orderStopLevel"] == "4523.715"
+    assert target["orderStopSourceTime"] == epoch("2026-08-20 02:36:30")
+    assert target["decisionTime"] == epoch("2026-08-20 02:53:30")
+    assert target["decisionEventTime"] == epoch("2026-08-20 02:53:30")
+    assert epoch("2026-08-20 03:05:00") not in s_by_source

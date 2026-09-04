@@ -187,6 +187,8 @@ class EDetector:
         self._cross_order_cache: dict[
             tuple[datetime, Decimal], tuple[int, datetime, datetime] | None
         ] = {}
+        self._trigger_cross_cache: dict[tuple[datetime, Decimal], datetime | None] = {}
+        self._reset_leg_geometry_cache: dict[tuple[int, datetime], tuple[datetime, Decimal] | None] = {}
         self.order_audit: dict[tuple[int, int], dict[str, object]] = {}
         self._synthetic_order_cache: list[
             tuple[int, object, datetime, datetime, datetime]
@@ -312,6 +314,10 @@ class EDetector:
         return getattr(self.candles[int(getattr(reaction, "first_idx"))], "timestamp")
 
     def _strict_trigger_cross(self, start: datetime, level: Decimal) -> datetime | None:
+        cache_key = (start, level)
+        cached = self._trigger_cross_cache.get(cache_key)
+        if cached is not None:
+            return cached
         left = bisect_left(self.lower_times, start)
         right = bisect_left(self.lower_times, self.range_end)
         position = (
@@ -319,20 +325,28 @@ class EDetector:
             if self.direction == "bullish"
             else self._lower_cross_index.first_greater(left, right, level)
         )
-        return None if position is None else self.lower_times[position]
+        result = None if position is None else self.lower_times[position]
+        self._trigger_cross_cache[cache_key] = result
+        return result
 
     def _reset_leg_geometry(
         self, reset: object, reset_time: datetime,
     ) -> tuple[datetime, Decimal] | None:
         """Return the inclusive Break-to-Reset leg start and outer boundary."""
+        cache_key = (int(getattr(reset, "from_first_idx")), reset_time)
+        cached = self._reset_leg_geometry_cache.get(cache_key)
+        if cached is not None:
+            return cached
         owner = self._opposite_by_first_index.get(
             int(getattr(reset, "from_first_idx"))
         )
         if owner is None:
+            self._reset_leg_geometry_cache[cache_key] = None
             return None
         start_index = int(getattr(owner, "break_idx"))
         end_index = self._main_index(reset_time)
         if end_index < start_index:
+            self._reset_leg_geometry_cache[cache_key] = None
             return None
         boundary = self._stop_value(self.candles[start_index])
         for candle in self.candles[start_index + 1 : end_index + 1]:
@@ -340,7 +354,9 @@ class EDetector:
             better = value < boundary if self.direction == "bullish" else value > boundary
             if better:
                 boundary = value
-        return self.times[start_index], boundary
+        result = self.times[start_index], boundary
+        self._reset_leg_geometry_cache[cache_key] = result
+        return result
 
     def _reset_leg_has_simple_trend_reaction(
         self, leg_start: datetime, boundary_cross: datetime,

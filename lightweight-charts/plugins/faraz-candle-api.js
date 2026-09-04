@@ -145,6 +145,58 @@ function readJson(req, limit = 100_000) {
   });
 }
 
+function replaceFileWithRetry(sourcePath, targetPath) {
+  let lastError;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      fs.renameSync(sourcePath, targetPath);
+      return;
+    } catch (error) {
+      lastError = error;
+      if (!["EPERM", "EACCES", "EEXIST", "ENOTEMPTY"].includes(error?.code)) throw error;
+      try {
+        // Windows cannot atomically rename over an existing file. copyFile
+        // performs the replacement while preserving the destination path.
+        fs.copyFileSync(sourcePath, targetPath);
+        fs.unlinkSync(sourcePath);
+        return;
+      } catch (copyError) {
+        lastError = copyError;
+      }
+      if (attempt < 4) {
+        const waitUntil = Date.now() + 80 * (attempt + 1);
+        while (Date.now() < waitUntil) {}
+      }
+    }
+  }
+  throw lastError;
+}
+
+function moveFileWithRetry(sourcePath, targetPath) {
+  let lastError;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      fs.renameSync(sourcePath, targetPath);
+      return;
+    } catch (error) {
+      lastError = error;
+      if (!["EPERM", "EACCES", "EEXIST", "ENOTEMPTY"].includes(error?.code)) throw error;
+      try {
+        fs.copyFileSync(sourcePath, targetPath);
+        fs.unlinkSync(sourcePath);
+        return;
+      } catch (copyError) {
+        lastError = copyError;
+      }
+      if (attempt < 4) {
+        const waitUntil = Date.now() + 80 * (attempt + 1);
+        while (Date.now() < waitUntil) {}
+      }
+    }
+  }
+  throw lastError;
+}
+
 function registryDefaultBrowserExecutable() {
   if (process.platform !== "win32") return null;
   try {
@@ -263,6 +315,7 @@ export function normalizeClearTextSession(value) {
 export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(), ".."), launchBrowser, fetchImpl = globalThis.fetch } = {}) {
   const secretDir = path.join(workspaceRoot, "primary-cache", "secret");
   const secretPath = path.join(secretDir, "faraz-session.dpapi.json");
+  const inputDir = path.join(workspaceRoot, "market-data", "raw");
   const outputDir = path.join(workspaceRoot, "market-data", "raw");
   const temporaryOutputDir = path.join(workspaceRoot, "tmp", "faraz-candle-exports");
   const jobs = new Map();
@@ -458,7 +511,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
   function captureHistoryResponse(response) {
     try {
       const url = new URL(response.url());
-      if (!ALLOWED_HOSTS.has(url.host) || url.pathname !== HISTORY_PATH || !response.ok()) return;
+      if (!ALLOWED_HOSTS.has(url.host) || url.pathname !== HISTORY_PATH || !response.ok) return;
       if (sessionCapturePending) return;
       sessionCapturePending = (async () => {
         await persistSession();
@@ -1029,6 +1082,156 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(
         res.setHeader("Cache-Control", "no-store");
         fs.createReadStream(job.outputPath).pipe(res);
       });
+
+      // ---- Update Chart Data Endpoint ----
+      // Appends new candles to an existing file and renames it with updated TO timestamp.
+      server.middlewares.use("/api/candle-files/update", async (req, res) => {
+        if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
+        try {
+          // A multi-hour 1S update can legitimately contain thousands of
+          // candles. Keep the normal API body limit small, but allow this
+          // validated endpoint enough room for a bounded candle batch.
+          const params = await readJson(req, 25_000_000);
+          const fileId = String(params.id || "").trim();
+          const newCandles = Array.isArray(params.newCandles) ? params.newCandles.map((row) => ({
+            time: Math.trunc(Number(row?.time)),
+            open: Number(row?.open),
+            high: Number(row?.high),
+            low: Number(row?.low),
+            close: Number(row?.close),
+          })) : [];
+          const lastCandleTime = Math.trunc(Number(params.lastCandleTime));
+
+          if (!fileId) return json(res, 400, { error: "File ID is required." });
+          if (!Array.isArray(newCandles) || !newCandles.length) return json(res, 400, { error: "No new candles provided." });
+          if (!Number.isFinite(lastCandleTime) || lastCandleTime <= 0) return json(res, 400, { error: "Invalid lastCandleTime." });
+
+          // The FARAZ plugin is mounted independently from Vite's inventory
+          // helper, so validate the requested basename locally.
+          if (path.basename(fileId) !== fileId || !fileId.toLowerCase().endsWith(".json")) {
+            return json(res, 400, { error: "Invalid candle file ID." });
+          }
+          const filePath = path.join(inputDir, fileId);
+          if (!fs.existsSync(filePath)) return json(res, 404, { error: "Candle file not found." });
+          const oldName = path.basename(fileId, ".json");
+          const newTo = tehranFilenameTime(lastCandleTime);
+          const newName = oldName.replace(/TO \d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2}/, `TO ${newTo}`);
+          const newFileId = newName + ".json";
+          const newFilePath = path.join(inputDir, newFileId);
+          if (newFileId !== fileId && fs.existsSync(newFilePath)) return json(res, 409, { error: "A candle file with the updated name already exists." });
+
+          const existingCandles = JSON.parse(fs.readFileSync(filePath, "utf8"));
+          if (!Array.isArray(existingCandles) || !existingCandles.length) return json(res, 400, { error: "Invalid candle file format." });
+          const timeframeMatch = fileId.match(/(?:^|[\s_])(\d+[SMHD])(?:[\s_]|FROM|$)/i);
+          if (!timeframeMatch) return json(res, 400, { error: "The candle file timeframe could not be determined." });
+          const timeframeSeconds = parseResolutionToSeconds(timeframeMatch[1]);
+          const validCandle = (row) => Number.isSafeInteger(row.time) && row.time > 0
+            && [row.open, row.high, row.low, row.close].every(Number.isFinite)
+            && row.high >= Math.max(row.open, row.close, row.low)
+            && row.low <= Math.min(row.open, row.close, row.high);
+          if (!newCandles.every(validCandle)) return json(res, 400, { error: "One or more new candles are invalid." });
+          const lastExistingTime = Number(existingCandles.at(-1)?.time);
+          if (!Number.isSafeInteger(lastExistingTime) || newCandles.some((row) => row.time <= lastExistingTime)
+            || (newCandles[0].time - lastExistingTime) % timeframeSeconds !== 0) {
+            return json(res, 409, { error: "New candles must be strictly after the last saved candle." });
+          }
+          if (newCandles.some((row, index) => index && row.time <= newCandles[index - 1].time
+            || index && (row.time - newCandles[index - 1].time) % timeframeSeconds !== 0)) {
+            return json(res, 400, { error: "New candles are not chronological at the source timeframe." });
+          }
+          if (lastCandleTime !== newCandles.at(-1).time) return json(res, 400, { error: "lastCandleTime must match the final new candle." });
+
+          const merged = [...existingCandles, ...newCandles];
+          const serialized = JSON.stringify(merged);
+          const temporaryPath = path.join(temporaryOutputDir, `update-${randomUUID()}.json.tmp`);
+          fs.mkdirSync(temporaryOutputDir, { recursive: true });
+          fs.writeFileSync(temporaryPath, serialized, { encoding: "utf8", flag: "wx" });
+          try {
+            const validation = verifySavedCandles(merged, {
+              from: Number(existingCandles[0]?.time), to: lastCandleTime, timeframeSeconds,
+            });
+            if (!validation.valid) throw new Error("Merged candle validation failed.");
+            replaceFileWithRetry(temporaryPath, filePath);
+          } finally {
+            if (fs.existsSync(temporaryPath)) fs.unlinkSync(temporaryPath);
+          }
+
+          if (newFileId !== fileId) {
+            moveFileWithRetry(filePath, newFilePath);
+          }
+
+          json(res, 200, {
+            ok: true,
+            message: `Chart updated with ${newCandles.length} new candles.`,
+            added: newCandles.length,
+            total: merged.length,
+            newId: newFileId !== fileId ? newFileId : undefined,
+          });
+        } catch (error) {
+          json(res, 500, { error: error.message });
+        }
+      });
+      // ---- Faraz History Proxy ----
+      // Server-side proxy to faraz.io history endpoint (avoids CORS).
+      // Accepts POST { symbolName, resolution, from, to } and returns raw candle data.
+      server.middlewares.use("/api/faraz/history", async (req, res) => {
+        if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
+        try {
+          const params = await readJson(req);
+          const symbolName = String(params.symbolName || "").trim();
+          const resolution = String(params.resolution || "1S").trim().toUpperCase();
+          const timeframeSeconds = parseResolutionToSeconds(resolution);
+          const from = Math.trunc(Number(params.from));
+          const to = Math.trunc(Number(params.to));
+
+          if (!symbolName) return json(res, 400, { error: "symbolName is required." });
+          if (!Number.isFinite(from) || from <= 0) return json(res, 400, { error: "Invalid from." });
+          if (!Number.isFinite(to) || to <= from) return json(res, 400, { error: "Invalid to." });
+
+          const status = await authStatus();
+          if (!status.connected) return json(res, 401, { error: "Sign in to FARAZ first.", needAuth: true });
+
+          const host = safeHost(historyAuth?.host || "ir4.faraz.io");
+          const endpoint = historyAuth?.endpoint && new URL(historyAuth.endpoint).host === host
+            ? historyAuth.endpoint
+            : `https://${host}${HISTORY_PATH}`;
+
+          // Update ranges are split into bounded requests so the FARAZ server
+          // receives the same packet shape as the exporter instead of one
+          // unbounded history request.
+          const packets = chunkRange(from, to, timeframeSeconds, 1000);
+          const collected = [];
+          for (const packet of packets) {
+            const url = new URL(endpoint);
+            for (const [key, value] of Object.entries({
+              symbolName: endpointSymbolName(symbolName),
+              resolution, from: packet.from, to: packet.to,
+              countback: packet.countback,
+              firstDataRequest: packet.firstDataRequest,
+              latest: packet.latest,
+              adjustType: historyAuth?.adjustType || "2",
+              json: true,
+            })) url.searchParams.set(key, String(value));
+            let response;
+            try {
+              response = await directRequest(url, { timeoutMs: 30_000 });
+            } catch (error) {
+              return json(res, 502, { error: error.message });
+            }
+            if (!response.ok) return json(res, 502, { error: `FARAZ returned HTTP ${response.status}.` });
+            let payload;
+            try { payload = JSON.parse(await response.text()); }
+            catch { return json(res, 502, { error: "FARAZ returned invalid JSON." }); }
+            const normalized = normalizeHistoryPayloadDetails(payload);
+            if (normalized.rejectedRows) return json(res, 502, { error: "FARAZ returned malformed candle rows." });
+            collected.push(normalized.candles);
+          }
+          json(res, 200, mergeCandles(collected, from, to).candles);
+        } catch (error) {
+          json(res, error.status === 401 ? 401 : 400, { error: error.message });
+        }
+      });
+
     },
   };
 }
