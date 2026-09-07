@@ -44,6 +44,8 @@ const inventoryMeta = new Map();
 const primaryCacheRoot = path.join(workspaceRoot, 'primary-cache');
 const drawingsDir = path.join(primaryCacheRoot, 'drawings');
 const calculationsDir = path.join(primaryCacheRoot, 'indicator-calculations');
+const templatesDir = path.join(primaryCacheRoot, 'indicator-templates');
+const templatesPath = path.join(templatesDir, 'templates.json');
 const progressChannels = new Map();
 
 function publishProgress(requestId, event) {
@@ -86,9 +88,38 @@ function calculationPath(item, request, cacheKey) {
   return path.join(calculationsDir, symbol, timeframe, direction, filename);
 }
 
+function calculationMetadataPath(calculationFile) {
+  return `${calculationFile}.info.json`;
+}
+
+function calculationId(calculationFile) {
+  return path.relative(calculationsDir, calculationFile).split(path.sep).join('/');
+}
+
+function calculationMetadata(item, request, calculationFile) {
+  return {
+    calculationId: calculationId(calculationFile),
+    symbol: item.symbol,
+    sourceFile: item.id,
+    timeframe: request.timeframe,
+    direction: request.direction,
+    from: request.from,
+    to: request.to,
+  };
+}
+
 function ensureStateDirectories() {
   fs.mkdirSync(drawingsDir, { recursive: true });
   fs.mkdirSync(calculationsDir, { recursive: true });
+  fs.mkdirSync(templatesDir, { recursive: true });
+}
+
+function readTemplates() {
+  if (!fs.existsSync(templatesPath)) return {};
+  try {
+    const value = JSON.parse(fs.readFileSync(templatesPath, 'utf8'));
+    return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  } catch { return {}; }
 }
 
 function cacheFileCount(directory) {
@@ -97,7 +128,7 @@ function cacheFileCount(directory) {
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
     const child = path.join(directory, entry.name);
     if (entry.isDirectory()) count += cacheFileCount(child);
-    else if (entry.isFile() && entry.name.endsWith('.json')) count++;
+    else if (entry.isFile() && entry.name.endsWith('.json') && !entry.name.endsWith('.info.json')) count++;
   }
   return count;
 }
@@ -246,6 +277,33 @@ function localDataApi() {
         res.setHeader('Cache-Control', 'no-store');
         res.end(JSON.stringify(inventory()));
       });
+      server.middlewares.use('/api/info', (req, res) => {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-store');
+        try {
+          if (req.method !== 'GET') throw new Error('GET is required');
+          const route = decodeURIComponent(new URL(req.url ?? '/', 'http://localhost').pathname).replace(/^\/+/, '');
+          const parts = route.split('/');
+          if (parts.length !== 4) throw new Error('Calculation report was not found');
+          const [symbol, timeframe, direction, filename] = parts;
+          if (!/^[a-zA-Z0-9._-]{1,72}$/.test(symbol) || !/^\d+s$/.test(timeframe)
+            || !/^(bullish|bearish)$/.test(direction) || !/^\d+-\d+--[a-f0-9]{16}\.json$/.test(filename)) {
+            throw new Error('Calculation report was not found');
+          }
+          const calculationFile = path.resolve(calculationsDir, symbol, timeframe, direction, filename);
+          const calculationRoot = `${path.resolve(calculationsDir)}${path.sep}`;
+          if (!calculationFile.startsWith(calculationRoot) || !fs.existsSync(calculationFile)) throw new Error('Calculation report was not found');
+          const payload = JSON.parse(fs.readFileSync(calculationFile, 'utf8'));
+          const metadataFile = calculationMetadataPath(calculationFile);
+          const metadata = fs.existsSync(metadataFile)
+            ? JSON.parse(fs.readFileSync(metadataFile, 'utf8'))
+            : { calculationId: route, symbol, sourceFile: 'Legacy cache file', timeframe: Number(timeframe.slice(0, -1)), direction, from: Number(filename.split('--')[0].split('-')[0]), to: Number(filename.split('--')[0].split('-')[1]) };
+          res.end(JSON.stringify({ payload, snapshot: { timezone: 'Asia/Tehran', calculation: metadata } }));
+        } catch (error) {
+          res.statusCode = 404;
+          res.end(JSON.stringify({ error: error.message }));
+        }
+      });
       server.middlewares.use('/api/candle-files/delete', async (req, res) => {
         if (req.method !== 'POST') { res.statusCode = 405; res.end(JSON.stringify({ error: 'POST is required.' })); return; }
         try {
@@ -320,6 +378,24 @@ function localDataApi() {
           res.end(JSON.stringify({ error: error.message }));
         }
       });
+      server.middlewares.use('/api/indicator-templates', async (req, res) => {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-store');
+        try {
+          if (req.method === 'GET') { res.end(JSON.stringify(readTemplates())); return; }
+          if (req.method !== 'PUT') { res.statusCode = 405; res.end(JSON.stringify({ error: 'GET or PUT is required' })); return; }
+          const { templates } = await readJson(req);
+          if (!templates || typeof templates !== 'object' || Array.isArray(templates)) throw new Error('Templates must be an object');
+          const names = Object.keys(templates);
+          if (names.length > 100 || names.some((name) => !name.trim() || name.length > 80)) throw new Error('Invalid template name');
+          fs.mkdirSync(templatesDir, { recursive: true });
+          fs.writeFileSync(templatesPath, JSON.stringify(templates, null, 2), 'utf8');
+          res.end(JSON.stringify({ saved: names.length }));
+        } catch (error) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ error: error.message }));
+        }
+      });
       server.middlewares.use('/api/reactions', async (req, res) => {
         const requestStarted = performance.now();
         let requestId = null;
@@ -338,7 +414,7 @@ function localDataApi() {
           const dataStat = fs.statSync(path.join(inputDir, valid.id));
           const sourceFingerprint = calculationSourceFingerprint();
           const cacheKey = JSON.stringify(['engine-content-v1', sourceFingerprint, valid.id, dataStat.mtimeMs, timeframe, from, to, body.direction, body.blueLines]);
-          const persistedCalculationPath = calculationPath(valid, { timeframe, from, to, direction: body.direction, blueLines: body.blueLines }, cacheKey);
+           const persistedCalculationPath = calculationPath(valid, { timeframe, from, to, direction: body.direction, blueLines: body.blueLines }, cacheKey);
           let output = null;
           let cacheSource = null;
           const cacheReadStarted = performance.now();
@@ -361,8 +437,13 @@ function localDataApi() {
             fs.mkdirSync(path.dirname(persistedCalculationPath), { recursive: true });
             fs.writeFileSync(persistedCalculationPath, output, 'utf8');
           }
-          else publishProgress(requestId, { status: 'completed', label: `Cached result (${cacheSource})` });
-          res.setHeader('X-QG-Cache', cacheHit ? cacheSource : 'miss');
+           else publishProgress(requestId, { status: 'completed', label: `Cached result (${cacheSource})` });
+           const metadataFile = calculationMetadataPath(persistedCalculationPath);
+           if (!fs.existsSync(metadataFile)) fs.writeFileSync(metadataFile, JSON.stringify(
+             calculationMetadata(valid, { timeframe, from, to, direction: body.direction }, persistedCalculationPath),
+           ), 'utf8');
+           res.setHeader('X-QG-Cache', cacheHit ? cacheSource : 'miss');
+           res.setHeader('X-QG-Calculation-Id', calculationId(persistedCalculationPath));
           res.setHeader('X-QG-Source-Fingerprint', sourceFingerprint);
           res.setHeader('X-QG-Detector-Ms', detectorMs.toFixed(2));
           res.setHeader('X-QG-Cache-Read-Ms', cacheReadMs.toFixed(2));
@@ -380,14 +461,16 @@ function localDataApi() {
   };
 }
 
-function manualTestPage() {
+function infoPage() {
   // Serve the runtime review shell without requiring an .html extension.
   const pagePath = path.resolve(process.cwd(), 'manual-test.html');
   return {
-    name: 'manual-test-page',
+    name: 'info-page',
     configureServer(server) {
-      server.middlewares.use('/manual-test', (req, res, next) => {
-        if (req.method !== 'GET' || req.url === '/' || (req.url ?? '').includes('.')) { next(); return; }
+      server.middlewares.use('/info', (req, res, next) => {
+        const route = req.url ?? '';
+        const calculationRoute = /^\/[a-zA-Z0-9._-]+\/\d+s\/(bullish|bearish)\/\d+-\d+--[a-f0-9]{16}\.json(?:\?.*)?$/.test(route);
+        if (req.method !== 'GET' || (route.includes('.') && !calculationRoute)) { next(); return; }
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         res.end(fs.readFileSync(pagePath, 'utf8'));
@@ -396,4 +479,4 @@ function manualTestPage() {
   };
 }
 
-export default defineConfig({ plugins: [localDataApi(), createFarazCandleApi(), manualTestPage()], server: { port: 5173, strictPort: false, watch: { usePolling: true, interval: 500 } }, build: { target: 'es2022' } });
+export default defineConfig({ plugins: [localDataApi(), createFarazCandleApi(), infoPage()], server: { port: 5173, strictPort: false, watch: { usePolling: true, interval: 500 } }, build: { target: 'chrome89' } });

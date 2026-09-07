@@ -5,7 +5,7 @@ import importlib.util
 import json
 import sys
 import orjson
-from bisect import bisect_left
+from bisect import bisect_left, bisect_right
 from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
@@ -183,6 +183,42 @@ def build_candle_views(engine, rows: list[dict], timeframe: int):
     return seconds, candles
 
 
+def bullish_a_stop_order_finder(engine, candles, seconds):
+    """Reuse ordinary Reaction discovery for a bullish A-stop continuation.
+
+    The pre-First context remains inside the already selected input. Reaction
+    owns all geometry and stop-boundary calculations; no prices are rebuilt here.
+    Only S's exact same-candle ownership path calls this resolver.
+    """
+    cache = {}
+
+    def find(gate_index, gate_event, end_index):
+        key = (gate_index, gate_event, end_index)
+        if key in cache:
+            return cache[key]
+        first = next((
+            index for index in range(max(1, gate_index), end_index + 1)
+            if candles[index].tag == "GREEN" and candles[index - 1].tag == "RED"
+        ), None)
+        if first is None:
+            cache[key] = None
+            return None
+        context = first - 1
+        while context > 0 and candles[context - 1].tag == "RED":
+            context -= 1
+        result = engine.UnifiedReactionDetector(
+            candles, seconds, context, end_index, "bearish"
+        ).detect()
+        order = next((
+            reaction for reaction in result.reactions
+            if int(getattr(reaction, "first_idx")) >= gate_index
+        ), None)
+        cache[key] = order
+        return order
+
+    return find
+
+
 def serialize(result):
     resets = [{
         "index": item.index,
@@ -231,7 +267,8 @@ def serialize_blue_lines(items):
     } for item in items if bool(getattr(item, "calculation_valid", True))]
 
 
-def serialize_a_zones(items):
+def serialize_a_zones(items, invalid_identities=None):
+    invalid = invalid_identities or set()
     return [{
         "direction": item.direction,
         "blue1Ordinal": item.blue_1_ordinal,
@@ -254,10 +291,14 @@ def serialize_a_zones(items):
         "sourceIndex": item.source_index,
         "sourceTime": epoch(item.source_time),
         "price": str(item.price),
-    } for item in items]
+        "calculationValid": True,
+    } for item in items if (
+        getattr(item, "source_time"), int(getattr(item, "source_index"))
+    ) not in invalid]
 
 
-def serialize_s_zones(items):
+def serialize_s_zones(items, invalid_identities=None):
+    invalid = invalid_identities or set()
     return [{
         "direction": item.direction,
         "color": item.color,
@@ -294,7 +335,10 @@ def serialize_s_zones(items):
         "decisionIndex": item.decision_index,
         "decisionTime": epoch(item.decision_time),
         "decisionEventTime": epoch(item.decision_event_time),
-    } for item in items]
+        "calculationValid": True,
+    } for item in items if (
+        getattr(item, "source_time"), int(getattr(item, "source_index"))
+    ) not in invalid]
 
 
 def serialize_e_zones(items):
@@ -459,6 +503,16 @@ def serialize_order_audit(
             "reactionMode": str(getattr(reaction, "mode")),
             "firstIndex": first_index,
             "firstTime": epoch(detector.candles[first_index].timestamp),
+            "boxTopSourceIndex": int(getattr(reaction, "box_top_source_idx")),
+            "boxTopSourceTime": epoch(datetime.strptime(
+                getattr(reaction, "box_top_source_time"), "%Y-%m-%d %H:%M:%S"
+            )),
+            "boxTop": str(getattr(reaction, "box_top")),
+            "boxBottomSourceIndex": int(getattr(reaction, "box_bottom_source_idx")),
+            "boxBottomSourceTime": epoch(datetime.strptime(
+                getattr(reaction, "box_bottom_source_time"), "%Y-%m-%d %H:%M:%S"
+            )),
+            "boxBottom": str(getattr(reaction, "box_bottom")),
             "breakIndex": int(getattr(reaction, "break_idx")),
             "breakTime": epoch(
                 detector.candles[int(getattr(reaction, "break_idx"))].timestamp
@@ -493,12 +547,213 @@ def visible_a_zones_after_s_stops(a_zones, s_zones, candles):
     ]
 
 
+def _module_priority(item):
+    """Return the confirmed behavioral ownership priority.
+
+    StopAll > E red > S red > E blue > S blue.  A is intentionally absent:
+    this helper is used only after A has become an S candidate.
+    """
+    if hasattr(item, "stopped_behavior_type"):
+        return 5
+    if hasattr(item, "family"):
+        return 4 if str(getattr(item, "family")).lower() == "red" else 2
+    if hasattr(item, "a_source_time"):
+        return 3 if str(getattr(item, "color")).lower() == "red" else 1
+    return 0
+
+
+def _module_identity(item):
+    return (
+        type(item).__name__,
+        getattr(item, "family", getattr(item, "color", None)),
+        getattr(item, "number", None),
+        getattr(item, "source_time"),
+        getattr(item, "source_index", None),
+    )
+
+
+def _module_stop_event(item, stop_event_finder=None):
+    """Resolve the strict one-second stop event of an S/E/StopAll object."""
+    explicit = getattr(item, "stop_event_time", None)
+    if explicit is not None:
+        return explicit
+    if stop_event_finder is None:
+        return None
+    found = stop_event_finder(item)
+    if found is None:
+        return None
+    if isinstance(found, tuple):
+        return found[-1]
+    return found
+
+
 def _strictly_beyond_boundary(price, boundary, direction):
     return price < boundary if direction == "bullish" else price > boundary
 
 
-def visible_s_zones_after_module_resets(s_zones, e_zones, direction):
-    """Require every S to rebuild from the latest accepted S/E reset."""
+def _dominant_module(modules):
+    return max(
+        modules,
+        key=lambda item: (
+            _module_priority(item),
+            int(getattr(item, "number", 0)),
+            getattr(item, "source_time"),
+            int(getattr(item, "source_index", -1)),
+        ),
+    )
+
+
+def split_a_zones_by_dominant_stops(
+    a_zones, s_zones, e_zones, stopalls, candles, direction,
+    stop_event_finder=None, trend_reactions=None, confirmation_finder=None,
+):
+    """Separate visible A labels from A objects allowed into downstream math.
+
+    A/Reaction/Blue discovery remains independent inside every half-leg.  Once
+    an accepted S/E/StopAll is strictly stopped, however, the main candle that
+    contains that stop begins the next leg comparison.  An A whose source
+    extreme is strictly beyond the highest-priority stopped owner is the
+    leg-start candidate, but it cannot re-enter calculation as an equal or
+    smaller behavior. That candidate consumes the closed owner for subsequent
+    half-leg A discovery while remaining absent from the public output.
+
+    Equality is deliberately valid.  Stop chronology is exact at one second,
+    while leg ownership is assigned to the containing main candle.
+    """
+    if direction not in {"bullish", "bearish"}:
+        raise ValueError("Direction must be 'bullish' or 'bearish'.")
+    candle_times = [getattr(item, "timestamp") for item in candles]
+    modules = sorted(
+        [*s_zones, *e_zones, *stopalls],
+        key=lambda item: (
+            getattr(item, "source_time"),
+            int(getattr(item, "source_index", -1)),
+        ),
+    )
+    stopped = []
+    for module in modules:
+        stop_event = _module_stop_event(module, stop_event_finder)
+        if stop_event is None:
+            continue
+        stop_index = bisect_right(candle_times, stop_event) - 1
+        if stop_index < 0:
+            continue
+        stopped.append((module, stop_index, stop_event))
+
+    valid = []
+    invalid = []
+    consumed = set()
+    for a_zone in sorted(
+        a_zones,
+        key=lambda item: (
+            getattr(item, "source_time"),
+            int(getattr(item, "source_index")),
+        ),
+    ):
+        source_index = int(getattr(a_zone, "source_index"))
+        eligible = [
+            module for module, stop_index, _stop_event in stopped
+            if getattr(module, "source_time") < getattr(a_zone, "source_time")
+            and stop_index <= source_index
+            and _module_identity(module) not in consumed
+        ]
+        if not eligible:
+            valid.append(a_zone)
+            continue
+        dominant = _dominant_module(eligible)
+        crosses_dominant = _strictly_beyond_boundary(
+            Decimal(str(getattr(a_zone, "price"))),
+            Decimal(str(getattr(dominant, "price"))),
+            direction,
+        )
+        if not crosses_dominant:
+            valid.append(a_zone)
+            continue
+
+        # A confirmed bullish Reaction may establish a lower leg head inside
+        # the closed owner's range before this A. Preserve that A as an
+        # interior-leg behavior, while retaining the existing owner
+        # consumption below. This is provenance-based and uses no fixture data.
+        interior = False
+        if (
+            direction == "bullish"
+            and trend_reactions is not None
+            and confirmation_finder is not None
+            and source_index > 0
+            and getattr(a_zone, "reaction_first_time", None) is not None
+        ):
+            owner_stop = next(
+                stop_event for module, stop_index, stop_event in stopped
+                if _module_identity(module) == _module_identity(dominant)
+            )
+            owner_stop_index = bisect_right(candle_times, owner_stop) - 1
+            first_red_index = bisect_right(
+                candle_times, getattr(a_zone, "reaction_first_time")
+            ) - 1
+            if 0 <= owner_stop_index <= first_red_index < len(candles):
+                head = min(
+                    candles[owner_stop_index:first_red_index + 1],
+                    key=lambda candle: Decimal(str(getattr(candle, "low"))),
+                )
+                if (
+                    int(getattr(head, "index", -1)) < source_index
+                    and Decimal(str(getattr(head, "low")))
+                    < Decimal(str(getattr(a_zone, "price")))
+                ):
+                    interior = any(
+                        int(getattr(reaction, "first_idx"))
+                        >= int(getattr(head, "index"))
+                        and int(getattr(reaction, "first_idx"))
+                        <= first_red_index
+                        and int(getattr(reaction, "break_idx")) < source_index
+                        and confirmation_finder(reaction, direction)
+                        < getattr(a_zone, "source_time")
+                        for reaction in trend_reactions
+                    )
+        if interior:
+            valid.append(a_zone)
+            # Continue into the common consumption logic below.
+            dominant_priority = _module_priority(dominant)
+            for module in eligible:
+                if _module_priority(module) <= dominant_priority:
+                    consumed.add(_module_identity(module))
+            continue
+
+        invalid.append(a_zone)
+        dominant_priority = _module_priority(dominant)
+        for module in eligible:
+            if _module_priority(module) <= dominant_priority:
+                consumed.add(_module_identity(module))
+    return valid, invalid
+
+
+def blocked_orders_while_invalid_leg_heads_are_live(
+    invalid_a_zones, opposite_reactions, candles, direction, stop_finder,
+):
+    """Return order First times owned by a still-live invalid leg head.
+
+    A strict dominant-boundary crossing can expose a new leg head without
+    making its A calculation-valid. Until that head itself stops, an internal
+    opposite Reaction cannot take over the larger owner's resumed E space.
+    """
+    if direction != "bullish":
+        return set()
+    blocked = set()
+    for a_zone in invalid_a_zones:
+        stop = stop_finder(a_zone)
+        if stop is None:
+            continue
+        stop_event = stop[2]
+        source_time = getattr(a_zone, "source_time")
+        for reaction in opposite_reactions:
+            first_time = getattr(candles[int(getattr(reaction, "first_idx"))], "timestamp")
+            if source_time <= first_time < stop_event:
+                blocked.add(first_time)
+    return blocked
+
+
+def _s_zones_for_module_engines(s_zones, e_zones, direction):
+    """Preserve the established S eligibility contract consumed by E/StopAll."""
     ordered_e = sorted(e_zones, key=lambda item: getattr(item, "source_time"))
     visible = []
     for s_zone in sorted(s_zones, key=lambda item: getattr(item, "source_time")):
@@ -508,18 +763,140 @@ def visible_s_zones_after_module_resets(s_zones, e_zones, direction):
         ]
         if prior_modules:
             prior = max(prior_modules, key=lambda item: getattr(item, "source_time"))
-            reset_origin = getattr(prior, "source_time")
-            if getattr(s_zone, "a_source_time") < reset_origin:
+            if getattr(s_zone, "a_source_time") < getattr(prior, "source_time"):
                 continue
             boundary = Decimal(str(getattr(prior, "price")))
-            a_price = Decimal(str(getattr(s_zone, "a_price")))
-            s_price = Decimal(str(getattr(s_zone, "price")))
-            if _strictly_beyond_boundary(a_price, boundary, direction):
+            if _strictly_beyond_boundary(
+                Decimal(str(getattr(s_zone, "a_price"))), boundary, direction
+            ):
                 continue
-            if _strictly_beyond_boundary(s_price, boundary, direction):
+            if _strictly_beyond_boundary(
+                Decimal(str(getattr(s_zone, "price"))), boundary, direction
+            ):
                 continue
         visible.append(s_zone)
     return visible
+
+
+def visible_s_zones_after_module_resets(
+    s_zones, e_zones, direction, stop_event_finder=None, source_event_finder=None,
+):
+    """Apply dominant-behavior ownership to successive S candidates.
+
+    Bullish/bearish half-leg calculations remain active under a larger
+    behavior.  But once the currently dominant S/E/StopAll and the candidate
+    S's parent A have both stopped, that A belongs to the next larger module
+    lifecycle.  The would-be S is therefore consumed, while its historical
+    inputs remain available for chart rendering and audits.
+    """
+    if direction not in {"bullish", "bearish"}:
+        raise ValueError("Direction must be 'bullish' or 'bearish'.")
+    ordered_external = sorted(
+        e_zones,
+        key=lambda item: (
+            getattr(item, "source_time"),
+            int(getattr(item, "source_index", -1)),
+        ),
+    )
+    visible = []
+    consumed = set()
+    for s_zone in sorted(
+        s_zones,
+        key=lambda item: (
+            getattr(item, "source_time"),
+            int(getattr(item, "source_index", -1)),
+        ),
+    ):
+        a_stop_event = getattr(s_zone, "a_stop_event_time", None)
+        ownership_event = a_stop_event
+        if direction == "bullish":
+            # The larger head may stop while the internal S search is open,
+            # after A stops but before the candidate's own extreme forms.
+            # A later stop after that extreme must not rewrite its ownership.
+            ownership_event = (
+                source_event_finder(s_zone) if source_event_finder is not None
+                else getattr(s_zone, "source_time")
+            )
+        prior_modules = [
+            item for item in [*ordered_external, *visible]
+            if getattr(item, "source_time") < getattr(s_zone, "source_time")
+            and _module_identity(item) not in consumed
+        ]
+        if prior_modules and ownership_event is not None:
+            stopped_prior = [
+                module for module in prior_modules
+                if (
+                    module_stop := _module_stop_event(module, stop_event_finder)
+                ) is not None
+                and module_stop <= ownership_event
+            ]
+            if stopped_prior:
+                dominant = _dominant_module(stopped_prior)
+                # A stopped owner advances the lifecycle only when the new S
+                # is itself the strict directional extreme of that leg.
+                # Equality belongs to the earlier owner and remains valid.
+                if not _strictly_beyond_boundary(
+                    Decimal(str(getattr(s_zone, "price"))),
+                    Decimal(str(getattr(dominant, "price"))),
+                    direction,
+                ):
+                    visible.append(s_zone)
+                    continue
+                # All lower/equal stopped owners involved in this transition
+                # leave subsequent calculation ownership together.  The
+                # highest-priority object determines the next module number.
+                dominant_priority = _module_priority(dominant)
+                for module in stopped_prior:
+                    module_stop = _module_stop_event(module, stop_event_finder)
+                    if (
+                        _module_priority(module) <= dominant_priority
+                    ):
+                        consumed.add(_module_identity(module))
+                continue
+        # An active larger behavior does not disable the independent A/S
+        # lifecycle inside the current half-leg.
+        visible.append(s_zone)
+    return visible
+
+
+def _a_zones_for_module_engines(a_zones, s_zones, e_zones, direction):
+    """Preserve established A eligibility for S/E order-ledger ownership."""
+    modules = sorted(
+        [*s_zones, *e_zones],
+        key=lambda item: (
+            getattr(item, "source_time"), int(getattr(item, "source_index")),
+        ),
+    )
+    valid = []
+    for a_zone in sorted(
+        a_zones,
+        key=lambda item: (
+            getattr(item, "source_time"), int(getattr(item, "source_index")),
+        ),
+    ):
+        prior = None
+        for module in modules:
+            if getattr(module, "source_time") <= getattr(a_zone, "source_time"):
+                prior = module
+            else:
+                break
+        if prior is not None:
+            provenance_times = (
+                getattr(a_zone, "blue_1_source_time"),
+                getattr(a_zone, "blue_2_source_time"),
+                getattr(a_zone, "continuation_source_time"),
+                getattr(a_zone, "reaction_first_time"),
+            )
+            if min(provenance_times) < getattr(prior, "source_time"):
+                continue
+            if _strictly_beyond_boundary(
+                Decimal(str(getattr(a_zone, "price"))),
+                Decimal(str(getattr(prior, "price"))),
+                direction,
+            ):
+                continue
+        valid.append(a_zone)
+    return valid
 
 
 def reconcile_stopall_lifecycle(detector, stopall_engine, s_zones, e_zones,
@@ -535,7 +912,7 @@ def reconcile_stopall_lifecycle(detector, stopall_engine, s_zones, e_zones,
     while True:
         visible_s = measure(
             f"Reconcile S visibility - {direction.title()} - pass {pass_number}",
-            lambda: visible_s_zones_after_module_resets(s_zones, e_zones, direction),
+            lambda: _s_zones_for_module_engines(s_zones, e_zones, direction),
         )
         stopalls = measure(
             f"StopAll - {direction.title()} - pass {pass_number}",
@@ -558,8 +935,16 @@ def reconcile_stopall_lifecycle(detector, stopall_engine, s_zones, e_zones,
         pass_number += 1
 
 
-def visible_a_zones_after_module_boundaries(a_zones, s_zones, e_zones, direction):
-    """Require A to rebuild fully from the latest S/E behavioral reset."""
+def visible_a_zones_after_module_boundaries(
+    a_zones, s_zones, e_zones, direction, stop_event_finder=None,
+):
+    """Require A provenance to rebuild after the dominant strict stop.
+
+    A price is deliberately not compared with the old module price.  Reactions
+    and Blue Lines remain valid inside every half-leg; only provenance that
+    straddles the dominant stop belongs to the closed lifecycle.
+    """
+    del direction  # Exact-stop ownership is directionally mirrored.
     modules = sorted(
         [*s_zones, *e_zones],
         key=lambda item: (
@@ -575,24 +960,24 @@ def visible_a_zones_after_module_boundaries(a_zones, s_zones, e_zones, direction
             int(getattr(item, "source_index")),
         ),
     ):
-        prior = None
-        for module in modules:
-            if getattr(module, "source_time") <= getattr(a_zone, "source_time"):
-                prior = module
-            else:
-                break
-        if prior is not None:
-            a_price = Decimal(str(getattr(a_zone, "price")))
-            boundary = Decimal(str(getattr(prior, "price")))
+        stopped_prior = [
+            module for module in modules
+            if getattr(module, "source_time") <= getattr(a_zone, "source_time")
+            and (
+                stop_event := _module_stop_event(module, stop_event_finder)
+            ) is not None
+            and stop_event <= getattr(a_zone, "source_time")
+        ]
+        if stopped_prior:
+            dominant = _dominant_module(stopped_prior)
+            boundary_event = _module_stop_event(dominant, stop_event_finder)
             provenance_times = (
                 getattr(a_zone, "blue_1_source_time"),
                 getattr(a_zone, "blue_2_source_time"),
                 getattr(a_zone, "continuation_source_time"),
                 getattr(a_zone, "reaction_first_time"),
             )
-            if min(provenance_times) < getattr(prior, "source_time"):
-                continue
-            if _strictly_beyond_boundary(a_price, boundary, direction):
+            if min(provenance_times) < boundary_event:
                 continue
         valid.append(a_zone)
     return valid
@@ -664,6 +1049,7 @@ def main() -> int:
     if not eligible:
         raise ValueError("The selected range contains no candles at this timeframe.")
     start_index, end_index = eligible[0], eligible[-1]
+    initial_bullish_order_geometry = bullish_a_stop_order_finder(engine, candles, seconds)
     directions = ("bullish", "bearish") if args.direction == "both" else (args.direction,)
     required_directions = (
         ("bullish", "bearish")
@@ -694,7 +1080,10 @@ def main() -> int:
     full_s_detectors = {}
     full_lines_by_direction = {}
     full_a_by_direction = {}
+    invalid_a_identities_by_direction = {}
+    invalid_s_identities_by_direction = {}
     full_s_by_direction = {}
+    full_s_candidates_by_direction = {}
     if e_engine is not None and args.s_zones == "enabled":
         geometry_detectors = {
             direction: engine.UnifiedReactionDetector(
@@ -771,8 +1160,12 @@ def main() -> int:
                 0,
                 len(candles) - 1,
                 full_results[opposite].resets,
+                initial_order_geometry=(
+                    initial_bullish_order_geometry if direction == "bullish" else None
+                ),
             )
             full_s = timed(timings, f"S • {direction.title()}", full_s_detector.detect)
+            full_s_candidates_by_direction[direction] = list(full_s)
             full_s_detectors[direction] = full_s_detector
             full_e_detector = e_engine.EDetector(
                 direction,
@@ -814,7 +1207,7 @@ def main() -> int:
                 ),
             )
             preliminary_e = timed(timings, f"E • {direction.title()} • initial", full_e_detector.detect)
-            valid_full_s = visible_s_zones_after_module_resets(
+            valid_full_s = _s_zones_for_module_engines(
                 full_s, preliminary_e, direction
             )
             if len(valid_full_s) != len(full_s):
@@ -863,9 +1256,50 @@ def main() -> int:
                 )
                 preliminary_e = timed(timings, f"E • {direction.title()} • S reconciliation", full_e_detector.detect)
                 full_s = valid_full_s
+            leg_candidate_a = s_engine.visible_a_zones(
+                full_s_detector.eligible_a_zones, full_s
+            )
+            leg_candidate_a = visible_a_zones_after_s_stops(
+                leg_candidate_a, full_s, candles
+            )
+            calculation_a, invalid_a = split_a_zones_by_dominant_stops(
+                leg_candidate_a,
+                full_s_candidates_by_direction[direction],
+                preliminary_e,
+                [],
+                candles,
+                direction,
+                lambda item: full_e_detector._parent_stop(
+                    "S" if hasattr(item, "a_source_time") else "E", item
+                ),
+                trend_reactions=(
+                    full_s_detector.trend_reactions if direction == "bullish" else None
+                ),
+                confirmation_finder=(
+                    full_s_detector._reaction_confirmation_time
+                    if direction == "bullish" else None
+                ),
+            )
+            invalid_a_identities = {
+                (getattr(item, "source_time"), int(getattr(item, "source_index")))
+                for item in invalid_a
+            }
+            invalid_a_identities_by_direction[direction] = invalid_a_identities
+            invalid_a_source_times = {
+                source_time for source_time, _source_index in invalid_a_identities
+            }
+            invalid_s = [
+                item for item in full_s_candidates_by_direction[direction]
+                if getattr(item, "a_source_time") in invalid_a_source_times
+            ]
+            invalid_s_identities = {
+                (getattr(item, "source_time"), int(getattr(item, "source_index")))
+                for item in invalid_s
+            }
+            invalid_s_identities_by_direction[direction] = invalid_s_identities
             accepted_a_sources = {
                 getattr(item, "source_time")
-                for item in visible_a_zones_after_module_boundaries(
+                for item in _a_zones_for_module_engines(
                     full_s_detector.eligible_a_zones, full_s, preliminary_e, direction
                 )
             }
@@ -876,6 +1310,25 @@ def main() -> int:
             }
             blocked_order_first_times = set(
                 getattr(full_e_detector, "blocked_order_first_times", set())
+            )
+            pending_s_a_sources = {
+                getattr(item, "a_source_time")
+                for item in full_s_candidates_by_direction[direction]
+            }
+            blocked_order_first_times.update(
+                blocked_orders_while_invalid_leg_heads_are_live(
+                    [
+                        item for item in invalid_a
+                        if getattr(item, "source_time") in pending_s_a_sources
+                    ],
+                    full_results[opposite].reactions,
+                    candles,
+                    direction,
+                    lambda item: full_s_detector._first_a_stop(
+                        Decimal(str(getattr(item, "price"))),
+                        getattr(item, "source_time"),
+                    ),
+                )
             )
             full_e_detector = e_engine.EDetector(
                 direction,
@@ -918,6 +1371,12 @@ def main() -> int:
                 ),
             )
             preliminary_e = timed(timings, f"E • {direction.title()} • final audit", full_e_detector.detect)
+            full_s = [
+                item for item in full_s
+                if (
+                    getattr(item, "source_time"), int(getattr(item, "source_index"))
+                ) not in invalid_s_identities
+            ]
             full_e_zones[direction] = preliminary_e
             full_e_detectors[direction] = full_e_detector
             # For a full-window request E's upstream S pass is also the
@@ -927,10 +1386,10 @@ def main() -> int:
             full_s_by_direction[direction] = full_s
             accepted_a_sources = {
                 getattr(item, "source_time")
-                for item in visible_a_zones_after_module_boundaries(
+                for item in _a_zones_for_module_engines(
                     full_s_detector.eligible_a_zones, full_s, preliminary_e, direction
                 )
-            }
+            } - invalid_a_source_times
             full_s_detector.order_audit = {
                 key: value
                 for key, value in full_s_detector.order_audit.items()
@@ -970,12 +1429,14 @@ def main() -> int:
         )
         opposite = "bearish" if direction == "bullish" else "bullish"
         s_zones = []
+        accepted_s_zones = []
         if args.s_zones == "enabled":
             if reusable_full_context:
-                # These are exactly the full-context objects consumed by E.
-                # Their order and eligibility are retained; only the existing
-                # downstream visibility filters below may alter presentation.
-                s_zones = full_s_by_direction[direction]
+                # Preserve all candidates so ownership filtering is idempotent
+                # across the E/StopAll reconciliation passes. E consumes the
+                # already accepted subset kept separately below.
+                s_zones = full_s_candidates_by_direction[direction]
+                accepted_s_zones = full_s_by_direction[direction]
                 all_a_zones = full_s_detectors[direction].eligible_a_zones
             else:
                 s_detector = s_engine.SDetector(
@@ -990,12 +1451,16 @@ def main() -> int:
                     start_index,
                     end_index,
                     results[opposite].resets,
+                    initial_order_geometry=(
+                        initial_bullish_order_geometry if direction == "bullish" else None
+                    ),
                 )
                 s_zones = timed(timings, f"S - {direction.title()}", s_detector.detect)
+                accepted_s_zones = s_zones
                 all_a_zones = s_detector.eligible_a_zones
-        visible_a_zones = s_engine.visible_a_zones(all_a_zones, s_zones)
+        visible_a_zones = s_engine.visible_a_zones(all_a_zones, accepted_s_zones)
         visible_a_zones = visible_a_zones_after_s_stops(
-            visible_a_zones, s_zones, candles
+            visible_a_zones, accepted_s_zones, candles
         )
         e_zones = [
             item for item in full_e_zones.get(direction, [])
@@ -1004,7 +1469,7 @@ def main() -> int:
         stopalls = []
         if stopall_engine is not None and direction in full_e_detectors:
             e_zones, stopalls = reconcile_stopall_lifecycle(
-                full_e_detectors[direction], stopall_engine, s_zones, e_zones,
+                full_e_detectors[direction], stopall_engine, accepted_s_zones, e_zones,
                 candles, seconds, args.timeframe, direction,
                 lambda label, work: timed(timings, label, work),
             )
@@ -1018,11 +1483,58 @@ def main() -> int:
                 int(getattr(item, "source_index")) for item in final_e_zones
             }
             final_s_zones = visible_s_zones_after_module_resets(
-                s_zones, [*final_e_zones, *stopalls], direction
+                s_zones, [*final_e_zones, *stopalls], direction,
+                lambda item: full_e_detectors[direction]._parent_stop(
+                    "S" if hasattr(item, "a_source_time") else "E", item
+                ),
+                source_event_finder=(
+                    lambda item: full_s_detectors[direction]._candidate_event_time(
+                        item.source_index, item.price, item.source_time
+                    )
+                ) if direction == "bullish" else None,
             )
+            # Presentation is a lineage closure over accepted calculations.
+            # If a final E explicitly references an S parent, that historical
+            # S must remain available to the chart even when it no longer owns
+            # downstream lifecycle calculation. Transition-only S candidates
+            # have no final child reference and remain filtered.
+            referenced_s_sources = {
+                getattr(item, "parent_source_time")
+                for item in final_e_zones
+                if str(getattr(item, "parent_type", "")).upper() == "S"
+            }
+            final_s_identities = {_module_identity(item) for item in final_s_zones}
+            final_s_zones.extend(
+                item for item in s_zones
+                if getattr(item, "source_time") in referenced_s_sources
+                and _module_identity(item) not in final_s_identities
+            )
+            final_s_zones.sort(key=lambda item: (
+                getattr(item, "source_time"), int(getattr(item, "source_index"))
+            ))
             final_a_zones = visible_a_zones_after_module_boundaries(
-                visible_a_zones, final_s_zones, [*final_e_zones, *stopalls], direction
+                visible_a_zones, final_s_zones, [*final_e_zones, *stopalls], direction,
+                lambda item: full_e_detectors[direction]._parent_stop(
+                    "S" if hasattr(item, "a_source_time") else "E", item
+                ),
             )
+            referenced_a_sources = {
+                getattr(item, "a_source_time") for item in final_s_zones
+            }
+            final_a_identities = {
+                (getattr(item, "source_time"), int(getattr(item, "source_index")))
+                for item in final_a_zones
+            }
+            final_a_zones.extend(
+                item for item in all_a_zones
+                if getattr(item, "source_time") in referenced_a_sources
+                and (
+                    getattr(item, "source_time"), int(getattr(item, "source_index"))
+                ) not in final_a_identities
+            )
+            final_a_zones.sort(key=lambda item: (
+                getattr(item, "source_time"), int(getattr(item, "source_index"))
+            ))
             final_a_zones = [
                 item for item in final_a_zones
                 if int(getattr(item, "source_index")) not in e_source_indices | stopall_source_indices
@@ -1030,12 +1542,29 @@ def main() -> int:
             final_s_zones = [
                 item for item in final_s_zones
                 if int(getattr(item, "source_index")) not in e_source_indices | stopall_source_indices
+                and (
+                    getattr(item, "source_time"), int(getattr(item, "source_index"))
+                ) not in invalid_s_identities_by_direction.get(direction, set())
             ]
             return final_e_zones, final_s_zones, final_a_zones
 
         e_zones, visible_s_zones, visible_a_zones = timed(
             timings, f"Apply visibility filters - {direction.title()}", finalize_visibility
         )
+        invalid_a_identities = invalid_a_identities_by_direction.get(direction, set())
+        display_a_zones = [
+            item for item in visible_a_zones
+            if (
+                getattr(item, "source_time"), int(getattr(item, "source_index"))
+            ) not in invalid_a_identities
+        ]
+        invalid_s_identities = invalid_s_identities_by_direction.get(direction, set())
+        display_s_zones = [
+            item for item in visible_s_zones
+            if (
+                getattr(item, "source_time"), int(getattr(item, "source_index"))
+            ) not in invalid_s_identities
+        ]
         def serialize_direction():
             return {
                 "reactions": reactions,
@@ -1044,9 +1573,10 @@ def main() -> int:
                     all_blue_lines if args.blue_lines == "enabled" else []
                 ),
                 "aZones": serialize_a_zones(
-                    visible_a_zones if args.a_zones == "enabled" else []
+                    display_a_zones if args.a_zones == "enabled" else [],
+                    invalid_a_identities,
                 ),
-                "sZones": serialize_s_zones(visible_s_zones),
+                "sZones": serialize_s_zones(display_s_zones, invalid_s_identities),
                 "eZones": serialize_e_zones(e_zones),
                 "stopAlls": serialize_stopalls(stopalls),
                 "orderAudit": (

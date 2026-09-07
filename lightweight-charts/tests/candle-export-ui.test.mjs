@@ -11,7 +11,7 @@ const vite = readFileSync(new URL("../vite.config.js", import.meta.url), "utf8")
 
 test("FARAZ Exporter is directly below Dashboard and replaces the chart surface", () => {
   const dashboard = main.indexOf('["dashboard", "Dashboard", "dashboardBtn"]');
-  const candle = main.indexOf('["exportCandles", "FARAZ Exporter", "candleExportBtn"]');
+  const candle = main.indexOf('["sendReceive", "FARAZ Exporter", "candleExportBtn"]');
   const chart = main.indexOf('["candlestick_chart", "Chart", "chartNavBtn"]');
   assert.ok(dashboard >= 0 && dashboard < candle && candle < chart);
   assert.match(main, /root: \$\("\.chart-shell"\)/);
@@ -114,7 +114,9 @@ test("Exporter clears stale extraction state and limits checkbox activation to i
   assert.match(ui, /if \(visible\) refreshAuth\(\)/);
   assert.match(ui, /candleOpenFaraz/);
   assert.match(main, /Export controls keep their checkbox-only hit target/);
-  assert.match(main, /label:has\(input\[type="checkbox"\]\)/);
+  assert.match(main, /target\.closest\("label"\)/);
+  assert.match(main, /checkboxLabel\?\.querySelector\('input\[type="checkbox"\]'\)/);
+  assert.doesNotMatch(main, /label:has\(/);
   assert.match(main, /allowsCheckboxLabelToggle\(checkboxLabel\)/);
   assert.match(ui, /candleValidationList/);
   assert.match(ui, /Saved file check/);

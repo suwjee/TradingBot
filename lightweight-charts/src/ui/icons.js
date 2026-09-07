@@ -21,6 +21,7 @@ paths.restart = 'M19 8a7 7 0 1 0 1 7M19 4v4h-4';
 paths.play = 'M8 5l11 7-11 7V5z';
 paths.download = 'M12 4v11m-4-4 4 4 4-4M5 20h14';
 paths.exportCandles = 'M6 3h8l4 4v14H6zM14 3v5h4M9 17v-5m3 5V9m3 8v-3';
+paths.sendReceive = 'M8 4v12m0-12-3 3m3-3 3 3M16 20V8m0 12-3-3m3 3 3-3';
 paths.logout = 'M14 5h5v14h-5m-4-4 4-3-4-3m4 3H5';
 paths.server = 'M5 5h14v5H5zm0 9h14v5H5zm3-6h.01M8 17h.01';
 paths.language = 'M4 5h10M9 3c2 2.2 3 4.7 3 7s-1 4.8-3 7m-2 1 2 2 2-2M14 19h6m-3-2c-1.7-2.5-2.6-5.3-2.6-8S15.3 3.5 17 1m-3 18h6';

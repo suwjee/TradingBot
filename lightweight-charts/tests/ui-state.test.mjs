@@ -108,47 +108,86 @@ test("saved indicator timeframe maps to the real form control, not an absent tim
   assert.match(source, /tf: restoredTimeframe\(localStorage, TF\)/);
 });
 
-test("Export opens the review tab with the cached payload and never fetches or recalculates", async () => {
+test("Reset labels and audit-only stop lines stay hidden while audit order boxes render", () => {
+  const objectSection = section("function rebuildIndicatorObjects()", "function indicatorOffset(");
+  const drawSection = section("function drawIndicator()", "function renderObjectTree()");
+  const stopSection = section("if (settings.orderStopVisible)", "const representedOrderKeys");
+  assert.doesNotMatch(objectSection, /indicator:\$\{direction\}:reset:/);
+  assert.doesNotMatch(drawSection, /for \(const \[resetIndex, reset\]/);
+  assert.match(objectSection, /group\.orderAudit \|\| \[\]/);
+  assert.match(objectSection, /indicator:\$\{direction\}:audit-order:/);
+  assert.match(drawSection, /for \(const \[auditIndex, order\] of \(group\.orderAudit \|\| \[\]\)\.entries\(\)\)/);
+  assert.match(drawSection, /representedOrderKeys\.has\(key\)/);
+  assert.doesNotMatch(stopSection, /group\.orderAudit/);
+  assert.match(stopSection, /group\.sZones/);
+  assert.match(stopSection, /group\.eZones/);
+  assert.match(stopSection, /group\.stopAlls/);
+});
+
+test("Calculation report opens the exact persisted cache identity without fetching or recalculating", async () => {
   const h = harness(); const payload = { directions: { bullish: { stopAlls: [] } }, timeframe: 30 };
   h.state.tf = 60;
   h.state.raw = [{ time: 1780000000, open: 12.3, high: 12.4, low: 12.1, close: 12.2 }];
   h.state.data = [{ time: 1779999960, open: 12.3, high: 12.4, low: 12.1, close: 12.2 }];
   h.state.indicator.results = payload; h.state.indicator.settings = { timeframe: "follow" };
-  h.state.indicator.resultContext = { from: 1780000000, to: 1780000000 };
-  let opened, handoff, notices = [];
+  h.state.indicator.resultContext = { from: 1780000000, to: 1780000000, calculationId: "TEST/30s/bullish/1-30--0123456789abcdef.json" };
+  let opened, notices = [];
   Object.assign(h.context, { window: {}, chartSettings: {},
-    openManualReviewTab: (host) => { opened = host; return { focus() {} }; },
-    startManualReviewHandoff: (payloadArg, snapshotArg, host, notify) => { handoff = { payloadArg, snapshotArg, host, notify }; },
+    openManualReviewTab: (context, host) => { opened = { context, host }; return { focus() {} }; },
     fetch() { assert.fail("Export must never fetch"); }, calculateIndicator() { assert.fail("Export must never calculate"); },
     aggregate() { assert.fail("Export must never reaggregate cached candles"); },
     toast(message) { notices.push(message); } });
   h.context.log.chart.info = () => {};
-  vm.runInContext(section("async function exportChartData()", '$("#exportDataBtn").onclick'), h.context);
+  vm.runInContext(section("async function exportChartData()", '$("#reportBtn").onclick'), h.context);
   await h.context.exportChartData();
-  assert.equal(opened, h.context.window);
-  assert.deepEqual(handoff.payloadArg, payload);
-  assert.deepEqual(handoff.snapshotArg.drawings, [drawing]);
-  assert.equal(handoff.snapshotArg.settings, h.state.indicator.settings);
-  assert.equal(handoff.snapshotArg.currentChart.source, h.state.file);
-  assert.equal(handoff.snapshotArg.currentChart.timeframe, 60);
-  assert.equal(Object.keys(handoff.snapshotArg.currentChart).length, 2);
-  assert.equal(handoff.payloadArg.timeframe, 30);
-  h.state.indicator.results = null; opened = undefined; handoff = undefined;
-  await h.context.exportChartData(); assert.equal(opened, undefined); assert.equal(handoff, undefined);
-  assert.match(notices.at(-1), /No calculated indicator results/);
+  assert.equal(opened.host, h.context.window);
+  assert.equal(opened.context.calculationId, "TEST/30s/bullish/1-30--0123456789abcdef.json");
+  h.state.indicator.results = null; opened = undefined;
+  await h.context.exportChartData(); assert.equal(opened, undefined);
+  assert.match(notices.at(-1), /Calculate the indicator/);
 });
 
-test("Export reports a blocked review tab and posts nothing", async () => {
+test("Calculation report reports a blocked tab", async () => {
   const h = harness(); const payload = { directions: { bullish: { stopAlls: [] } }, timeframe: 30 };
-  h.state.indicator.results = payload;
+  h.state.indicator.results = payload; h.state.indicator.resultContext = { calculationId: "TEST/30s/bullish/1-30--0123456789abcdef.json" };
   const notices = [], errors = [];
   Object.assign(h.context, { window: {}, chartSettings: {},
     openManualReviewTab: () => null,
-    startManualReviewHandoff: () => { throw new Error("must not be called"); },
     toast(message) { notices.push(message); } });
   h.context.log.chart.error = (event, error) => { errors.push([event, error]); };
-  vm.runInContext(section("async function exportChartData()", '$("#exportDataBtn").onclick'), h.context);
+  vm.runInContext(section("async function exportChartData()", '$("#reportBtn").onclick'), h.context);
   await h.context.exportChartData();
-  assert.match(notices.at(-1), /blocked/);
-  assert.equal(errors.length, 1); assert.equal(errors[0][0], "INDICATOR_REVIEW_TAB_BLOCKED");
+  assert.match(notices.at(-1), /Could not open the calculation report/);
+  assert.equal(errors.length, 1); assert.equal(errors[0][0], "CALCULATION_REPORT_OPEN_FAILED");
+});
+
+test("indicator From handle follows its selected time after the chart viewport pans", () => {
+  const handles = {
+    "#indicatorRangeHandles": { classList: { toggle() {} }, setAttribute() {} },
+    "#rangeFromHandle": { style: {}, querySelector: () => ({ textContent: "" }), setAttribute() {} },
+    "#rangeToHandle": { style: {}, querySelector: () => ({ textContent: "" }), setAttribute() {} },
+    "#rangeFromGuide": { style: {}, querySelector: () => null },
+    "#rangeToGuide": { style: {}, querySelector: () => null },
+    "#indicatorFrom": { value: "" },
+    "#indicatorTo": { value: "" },
+  };
+  let fromX = 200;
+  const context = vm.createContext({
+    $: (selector) => handles[selector],
+    chartWorkspaceActive: () => true,
+    chartElement: { clientWidth: 400 },
+    state: {
+      data: Array.from({ length: 10 }, (_, index) => ({ time: 100 + index * 10 })),
+      indicatorRange: { from: 120, to: 180, dragging: null, preview: false },
+    },
+    chart: { timeScale: () => ({ timeToCoordinate: (time) => time === 120 ? fromX : 320 }) },
+    parseTehranInput: () => NaN,
+    formatTehran: (time) => String(time),
+  });
+  vm.runInContext(section("function syncIndicatorRangeHandles()", "function commitIndicatorRangeInputs()"), context);
+  context.syncIndicatorRangeHandles();
+  assert.equal(handles["#rangeFromHandle"].style.left, "200px");
+  fromX = 120;
+  context.syncIndicatorRangeHandles();
+  assert.equal(handles["#rangeFromHandle"].style.left, "120px");
 });

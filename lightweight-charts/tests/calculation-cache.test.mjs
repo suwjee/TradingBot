@@ -78,6 +78,12 @@ function server(disk = new Map(), sources = new Map(files.map((name) => [name, "
     await routes.get("/api/reactions/cache")(req, result);
     return result;
   }
+  async function info(calculationId) {
+    const req = new EventEmitter(); req.method = "GET"; req.url = `/${calculationId}`;
+    const headers = {}, result = { statusCode: 200, headers, setHeader(key, value) { headers[key] = value; }, end(body) { this.body = body; } };
+    await routes.get("/api/info")(req, result);
+    return result;
+  }
   async function deleteCandle(candleId) {
     const req = new EventEmitter(); req.method = "POST"; req.setEncoding = () => {};
     const headers = {}, result = { statusCode: 200, headers, setHeader(key, value) { headers[key] = value; }, end(body) { this.body = body; } };
@@ -85,7 +91,7 @@ function server(disk = new Map(), sources = new Map(files.map((name) => [name, "
     req.emit("data", JSON.stringify({ id: candleId })); req.emit("end"); await done;
     return result;
   }
-  return { context, disk, sources, post, clearCache, deleteCandle, runs: () => runs, unlinkCalls: () => unlinkCalls };
+  return { context, disk, sources, post, clearCache, deleteCandle, info, runs: () => runs, unlinkCalls: () => unlinkCalls };
 }
 
 test("candle deletion parses its JSON request and removes only the validated raw inventory item", async () => {
@@ -141,6 +147,19 @@ test("same-source requests reuse only the persisted primary-cache JSON", async (
   const third = await restarted.post(); assert.equal(third.headers["X-QG-Cache"], "file");
   assert.equal(third.body, first.body); assert.equal(restarted.runs(), 0);
   assert.match(third.headers["X-QG-Source-Fingerprint"], /^[a-f0-9]{64}$/);
+  assert.match(third.headers["X-QG-Calculation-Id"], /^TEST\/30s\/bullish\/1-30--[a-f0-9]{16}\.json$/);
+});
+
+test("calculation report reads one exact persisted cache entry with its source metadata", async () => {
+  const s = server(); const response = await s.post();
+  const report = await s.info(response.headers["X-QG-Calculation-Id"]);
+  assert.equal(report.statusCode, 200);
+  const value = JSON.parse(report.body);
+  assert.deepEqual(value.payload, JSON.parse(response.body));
+  assert.equal(value.snapshot.calculation.sourceFile, id);
+  assert.equal(value.snapshot.calculation.symbol, "TEST");
+  assert.equal(value.snapshot.calculation.timeframe, 30);
+  assert.equal(value.snapshot.calculation.direction, "bullish");
 });
 
 test("each maintained source invalidates cache even for same-size content edits and unchanged mtimes", async () => {
@@ -153,7 +172,7 @@ test("each maintained source invalidates cache even for same-size content edits 
     assert.notEqual(changed.headers["X-QG-Source-Fingerprint"], previous, file);
     previous = changed.headers["X-QG-Source-Fingerprint"];
   }
-  assert.equal(s.disk.size, 8); // all superseded cache files remain intact
+  assert.equal([...s.disk.keys()].filter((file) => !file.endsWith('.info.json')).length, 8); // all superseded calculation files remain intact
   assert.equal(s.runs(), 8);
 });
 

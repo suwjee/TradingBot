@@ -6,10 +6,10 @@ from bisect import bisect_left, bisect_right
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import Sequence
+from typing import Callable, Sequence
 
 
-S_VERSION = "4.1.0"
+S_VERSION = "4.1.2"
 
 
 @dataclass(frozen=True)
@@ -69,6 +69,7 @@ class SDetector:
         start_index: int | None = None,
         end_index: int | None = None,
         opposite_resets: Sequence[object] = (),
+        initial_order_geometry: Callable[[int, datetime, int], object | None] | None = None,
     ) -> None:
         if direction not in {"bullish", "bearish"}:
             raise ValueError("Direction must be 'bullish' or 'bearish'.")
@@ -79,6 +80,7 @@ class SDetector:
         self.trend_reactions = list(trend_reactions)
         self.opposite_reactions = list(opposite_reactions)
         self.opposite_resets = list(opposite_resets)
+        self.initial_order_geometry = initial_order_geometry
         self.trend_blue_lines = list(trend_blue_lines)
         self.a_zones = sorted(
             a_zones,
@@ -222,6 +224,34 @@ class SDetector:
             first_index = int(getattr(reaction, "first_idx"))
             first_time = getattr(self.candles[first_index], "timestamp")
             if first_time <= a_stop_event_time:
+                # A canonical continuation can reuse the candle whose prior
+                # confirmation stopped A. Its ordinary order starts a fresh
+                # behavioral context; the global predecessor is not its order.
+                if (
+                    self.initial_order_geometry is not None
+                    and number > 1
+                    and first_index == self._main_index(a_stop_event_time)
+                    and getattr(reaction, "intrabar_start", None) is not None
+                    and int(getattr(self.opposite_reactions[number - 2], "break_idx"))
+                    == first_index
+                    and self._reaction_confirmation_time(
+                        self.opposite_reactions[number - 2], self.order_direction
+                    ) == a_stop_event_time
+                ):
+                    order = self.initial_order_geometry(
+                        first_index, a_stop_event_time, self.end_index
+                    )
+                    if order is None:
+                        return None
+                    confirmation = self._reaction_confirmation_time(order, self.order_direction)
+                    if confirmation <= a_stop_event_time:
+                        raise ValueError("Initial order must confirm after the exact A stop.")
+                    ordinal = next((
+                        ordinal for ordinal, item in enumerate(self.opposite_reactions, 1)
+                        if (int(getattr(item, "first_idx")), int(getattr(item, "break_idx")))
+                        == (int(getattr(order, "first_idx")), int(getattr(order, "break_idx")))
+                    ), 0)
+                    return ordinal, order, confirmation
                 continue
             confirmation = self._reaction_confirmation_time(
                 reaction, self.order_direction
@@ -866,7 +896,10 @@ class SDetector:
                 output.append(
                     SZone(
                         direction=self.direction,
-                        color="blue" if self.direction == "bullish" else "red",
+                        # Type-3 is the same Blue behavior in either price
+                        # direction. Family colors encode S/E priority, so
+                        # reflecting prices must not promote it to Red.
+                        color="blue",
                         formation_type="type3",
                         a_ordinal=a_ordinal,
                         a_source_index=int(getattr(zone, "source_index")),

@@ -3,11 +3,12 @@
   CandlestickSeries,
   CrosshairMode,
 } from "lightweight-charts";
+import "./browser-compat.js";
 import { icon } from "./ui/icons.js";
 import { drawingArray, normalizeHistorySnapshot, CHART_TIMEFRAME_KEY, restoredTimeframe, indicatorControlId } from "./chart-state.js";
 import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart-lod.js";
 import { updateStageAggregate } from "./calculation-progress.js";
-import { openManualReviewTab, startManualReviewHandoff } from "./manual-test.js";
+import { openManualReviewTab } from "./manual-test.js";
 import { initCandleExport } from "./candle-export.js";
 import "./styles/tokens.css";
 import "./styles/app.css";
@@ -25,7 +26,8 @@ function allowsCheckboxLabelToggle(label) {
 document.addEventListener("click", (event) => {
   const target = event.target instanceof Element ? event.target : null;
   if (!target || target.matches('input[type="checkbox"]')) return;
-  const checkboxLabel = target.closest('label:has(input[type="checkbox"])');
+  const checkboxLabel = target.closest("label");
+  if (!checkboxLabel?.querySelector('input[type="checkbox"]')) return;
   if (allowsCheckboxLabelToggle(checkboxLabel)) return;
   if (checkboxLabel) event.preventDefault();
 }, true);
@@ -91,6 +93,29 @@ const log = {
   chart: createLogger("CHART"),
   indicator: createLogger("INDICATOR"),
 };
+
+// `crypto.randomUUID` is absent in some browsers that otherwise expose the
+// Web Crypto API. IDs here are client-side correlation and drawing IDs, so use
+// secure random bytes when available and retain a UUID v4-compatible fallback.
+function createUniqueId() {
+  if (typeof globalThis.crypto?.randomUUID === "function") {
+    return globalThis.crypto.randomUUID();
+  }
+
+  const bytes = new Uint8Array(16);
+  if (typeof globalThis.crypto?.getRandomValues === "function") {
+    globalThis.crypto.getRandomValues(bytes);
+  } else {
+    for (let index = 0; index < bytes.length; index += 1) {
+      bytes[index] = Math.floor(Math.random() * 256);
+    }
+  }
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
 window.addEventListener("error", (event) => {
   const signature = `${event.filename || ""} ${event.message || ""} ${event.error?.stack || ""}`;
   const scope = /indicator|reaction/i.test(signature) ? log.indicator : log.chart;
@@ -201,7 +226,7 @@ const pinnedTimeframes = (() => {
 })();
 const navigationItems = [
   ["dashboard", "Dashboard", "dashboardBtn"],
-  ["exportCandles", "FARAZ Exporter", "candleExportBtn"],
+  ["sendReceive", "FARAZ Exporter", "candleExportBtn"],
   ["candlestick_chart", "Chart", "chartNavBtn"],
   ["tune", "Indicator settings", "indicatorBtn"],
   ["layers", "Object tree", "objectTreeBtn"],
@@ -332,7 +357,7 @@ document.querySelector("#app").innerHTML = `<main class="app">
  <div class="topbar-scroll">
  <div class="topbar-left"><button class="control symbol-control" id="symbolBtn" aria-label="Select symbol">FXCM:USOIL ${materialIcon("expand_more")}</button><div class="divider"></div><div class="timeframes" aria-label="Pinned timeframes"></div></div>
  <div class="top-drawing-tools" aria-label="Drawing tools. Drag to reorder, or use Alt plus Left or Right Arrow."></div>
- <div class="top-actions"><button class="icon-btn" id="updateDataBtn" title="Update chart data" aria-label="Update chart data" data-update-state="idle"><span class="ud-wrap"><svg class="ud-icon ud-idle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6v5h-5"/><path d="M4 18v-5h5"/><path d="M18.4 9A7 7 0 0 0 6.2 6.4L4 9"/><path d="M5.6 15A7 7 0 0 0 17.8 17.6L20 15"/></svg><svg class="ud-icon ud-load" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8" opacity="0.16"/><path d="M12 4a8 8 0 0 1 8 8" stroke-linecap="round"/></svg><svg class="ud-icon ud-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 12.3L9.6 16.3L18.5 7.5"/></svg><svg class="ud-icon ud-err" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 7L17 17"/><path d="M17 7L7 17"/></svg></span></button><button class="icon-btn" id="undoBtn" title="Undo" aria-label="Undo">${materialIcon("undo")}</button><button class="icon-btn" id="redoBtn" title="Redo" aria-label="Redo">${materialIcon("redo")}</button><button class="icon-btn" id="hideAllBtn" title="Hide drawings" aria-label="Hide drawings" aria-pressed="false">${materialIcon("visibility")}</button><div class="divider"></div><button class="icon-btn" id="screenshotBtn" title="Screenshot chart" aria-label="Screenshot chart"><span class="material-symbols-outlined">photo_camera</span></button><button class="icon-btn" id="fullscreenBtn" title="Full screen" aria-label="Full screen">${materialIcon("fullscreen")}</button><button class="icon-btn" id="reloadIndicatorBtn" title="Reload indicator cache" aria-label="Reload indicator cache">${materialIcon("refresh")}</button><button class="icon-btn" id="exportDataBtn" title="Export data" aria-label="Export data">${materialIcon("download")}</button><button class="icon-btn" id="gotoBtn" title="Go to date" aria-label="Go to date">${materialIcon("event")}</button></div></div></header>
+ <div class="top-actions"><button class="icon-btn" id="updateDataBtn" title="Update chart data" aria-label="Update chart data" data-update-state="idle"><span class="ud-wrap"><svg class="ud-icon ud-idle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6v5h-5"/><path d="M4 18v-5h5"/><path d="M18.4 9A7 7 0 0 0 6.2 6.4L4 9"/><path d="M5.6 15A7 7 0 0 0 17.8 17.6L20 15"/></svg><svg class="ud-icon ud-load" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8" opacity="0.16"/><path d="M12 4a8 8 0 0 1 8 8" stroke-linecap="round"/></svg><svg class="ud-icon ud-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 12.3L9.6 16.3L18.5 7.5"/></svg><svg class="ud-icon ud-err" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 7L17 17"/><path d="M17 7L7 17"/></svg></span></button><button class="icon-btn" id="undoBtn" title="Undo" aria-label="Undo">${materialIcon("undo")}</button><button class="icon-btn" id="redoBtn" title="Redo" aria-label="Redo">${materialIcon("redo")}</button><button class="icon-btn" id="hideAllBtn" title="Hide drawings" aria-label="Hide drawings" aria-pressed="false">${materialIcon("visibility")}</button><div class="divider"></div><button class="icon-btn" id="screenshotBtn" title="Screenshot chart" aria-label="Screenshot chart"><span class="material-symbols-outlined">photo_camera</span></button><button class="icon-btn" id="reportBtn" title="Calculation report" aria-label="Calculation report">${icon("exportCandles", 17)}</button><button class="icon-btn" id="fullscreenBtn" title="Full screen" aria-label="Full screen">${materialIcon("fullscreen")}</button><button class="icon-btn" id="reloadIndicatorBtn" title="Reload indicator cache" aria-label="Reload indicator cache">${materialIcon("refresh")}</button><button class="icon-btn" id="gotoBtn" title="Go to date" aria-label="Go to date">${materialIcon("event")}</button></div></div></header>
  <section class="workspace"><aside class="leftbar" aria-label="Workspace navigation">${navigationItems.map(([name, label, id]) => `<button class="tool nav-item ${id === "chartNavBtn" ? "active" : ""}" id="${id}" data-label="${label}" title="${label}" aria-label="${label}">${id === "candleExportBtn" ? icon(name, 18) : materialIcon(name)}</button>`).join("")}</aside>
  <div class="chart-shell"><div id="chart" class="chart"></div><canvas id="draw" class="drawing-layer"></canvas><div class="chart-head"><div class="instrument"><span id="chartSymbol">—</span><span class="badge" id="chartTf">1m</span></div><div class="ohlc" aria-label="Open high low close"><span>O <b id="o">—</b></span><span>H <b id="h">—</b></span><span>L <b id="l">—</b></span><span>C <b id="c">—</b></span></div></div><div id="indicatorRangeHandles" class="indicator-range-handles hidden" aria-hidden="true"><div id="rangeFromGuide" class="range-guide from"></div><div id="rangeToGuide" class="range-guide to"></div><button id="rangeFromHandle" class="range-handle from" type="button" aria-label="Indicator range From"><span class="material-symbols-outlined range-handle-mark" aria-hidden="true">drag_handle</span><span class="range-handle-tip"></span></button><button id="rangeToHandle" class="range-handle to" type="button" aria-label="Indicator range To"><span class="material-symbols-outlined range-handle-mark" aria-hidden="true">drag_handle</span><span class="range-handle-tip"></span></button></div><div class="chart-nav-wrap"><button class="chart-nav-btn" id="navGoFirst" title="First candle" aria-label="First candle"><span class="material-symbols-outlined">keyboard_double_arrow_left</span></button><button class="chart-nav-btn" id="navGoLast" title="Last candle" aria-label="Last candle"><span class="material-symbols-outlined">keyboard_double_arrow_right</span></button></div><div id="loading" class="loading"><div class="loader-card"><div class="spinner"></div><div class="progress" id="progress">Loading market data...</div></div></div></div></section>
  <footer class="statusbar" aria-label="Workstation status"><div class="status-cluster status-runtime" aria-label="Runtime status"><button class="status-group status-health" id="healthStatus" type="button" data-state="healthy" title="Application health"><i class="dot" aria-hidden="true"></i><b id="healthLabel">Healthy</b></button><button class="status-group status-state status-indicator" id="indicatorStatusFooter" type="button" data-state="inactive" title="Open indicator settings" aria-label="Open indicator settings"><i class="dot" aria-hidden="true"></i><b>Indicator</b></button><span class="status-group status-state status-cache" id="cacheStatusFooter" data-state="idle" title="No indicator calculation source yet"><i class="dot" aria-hidden="true"></i><b>Cache</b></span><span class="status-group status-state status-faraz" id="farazStatusFooter" data-state="inactive" title="FARAZ session is not configured"><i class="dot" aria-hidden="true"></i><b>FARAZ</b></span></div><span class="status-separator" aria-hidden="true"></span><div class="status-cluster status-market" aria-label="Visible chart range"><span class="status-group status-data" title="Candle count for the selected chart timeframe"><span id="candleCount">0 candles</span></span><span class="status-group status-range" title="First and last candle in local system time"><span>From <time id="chartFrom">—</time></span><span>To <time id="chartTo">—</time></span></span></div><span class="status-separator" aria-hidden="true"></span><time class="status-clock" id="clock" title="Local workstation time"></time></footer></main>
@@ -689,7 +714,7 @@ $(".indicator-body").innerHTML = `
   <div class="indicator-tab active" data-indicator-page="inputs">
     <section class="tv-section"><h3>Detection</h3>
       <div class="setting-row trend-row"><label>Trend <small>Required</small></label><div class="segment compact trend-segment"><button aria-pressed="false" data-direction="bullish">Bullish</button><button aria-pressed="false" data-direction="bearish">Bearish</button></div></div>
-      <div class="setting-row"><label>Analysis timeframe</label><select id="indicatorTf"><option value="follow">Follow chart timeframe</option>${TF.map((t) => `<option value="${t.s}">${t.l}</option>`).join("")}</select></div>
+      <div class="setting-row timeframe-row"><label>Analysis timeframe</label><select id="indicatorTf"><option value="follow">Follow chart timeframe</option>${TF.map((t) => `<option value="${t.s}">${t.l}</option>`).join("")}</select></div>
     </section>
     <section class="tv-section"><h3>Range</h3>
       <div class="range-dates"><label><span>From • Asia/Tehran</span><button class="date-field" id="indicatorFromButton"><b id="indicatorFromDisplay">Select start</b>${icon("calendar", 16)}</button><input id="indicatorFrom" type="hidden"></label><label><span>To • Asia/Tehran</span><button class="date-field" id="indicatorToButton"><b id="indicatorToDisplay">Select end</b>${icon("calendar", 16)}</button><input id="indicatorTo" type="hidden"></label></div>
@@ -1054,7 +1079,7 @@ $$("[data-style-reset]").forEach((button) => {
     }
   });
 });
-$(".indicator-panel > footer").insertAdjacentHTML("afterbegin", `<div class="tpl-bar"><button id="templateBtn" class="tpl-bar-btn" type="button" aria-haspopup="menu" aria-expanded="false"><span class="material-symbols-outlined" aria-hidden="true">bookmark</span><span>Templates</span><span class="material-symbols-outlined tpl-chevron" aria-hidden="true">expand_more</span></button><div id="templateMenu" class="tpl-dropdown hidden" role="menu" aria-label="Indicator templates"><div class="tpl-dropdown-title"><b>Templates</b><small>Indicator styles</small></div><div class="tpl-dropdown-head"><button class="tpl-action" data-template-action="save" role="menuitem"><span class="material-symbols-outlined" aria-hidden="true">add</span><span>Save current</span></button><button class="tpl-action" data-template-action="default" role="menuitem"><span class="material-symbols-outlined" aria-hidden="true">restart_alt</span><span>Reset defaults</span></button></div><div class="tpl-dropdown-sep"></div><div id="savedTemplates" class="tpl-list"></div></div></div>`);
+$(".indicator-panel > footer").insertAdjacentHTML("afterbegin", `<div class="tpl-bar"><button id="templateBtn" class="tpl-bar-btn" type="button" aria-haspopup="menu" aria-expanded="false"><span class="material-symbols-outlined" aria-hidden="true">bookmark</span><span>Templates</span><span class="material-symbols-outlined tpl-chevron" aria-hidden="true">expand_more</span></button><div id="templateMenu" class="tpl-dropdown hidden" role="menu" aria-label="Indicator templates"><header class="tpl-dropdown-title"><span class="material-symbols-outlined" aria-hidden="true">bookmark</span><b>Templates</b><small>Indicator styles</small><button id="templateClose" type="button" aria-label="Close templates"><span class="material-symbols-outlined" aria-hidden="true">close</span></button></header><label class="tpl-search"><span class="material-symbols-outlined" aria-hidden="true">search</span><input id="templateSearch" type="search" placeholder="Search templates" autocomplete="off" aria-label="Search templates"></label><div id="savedTemplates" class="tpl-list"></div><footer class="tpl-dropdown-actions"><button class="tpl-action" data-template-action="save" role="menuitem"><span class="material-symbols-outlined" aria-hidden="true">add</span><span>Save current</span></button><button class="tpl-action" data-template-action="default" role="menuitem"><span class="material-symbols-outlined" aria-hidden="true">restart_alt</span><span>Reset defaults</span></button></footer></div></div>`);
 const objectTreeBtn = $("#objectTreeBtn");
 chart.applyOptions({
   localization: {
@@ -1296,6 +1321,7 @@ async function loadFile(item) {
   log.chart.info("SYMBOL_LOAD_STARTED", { id: item.id, symbol: item.symbol });
   $("#loading").classList.remove("hidden");
   $("#progress").textContent = `Loading ${item.symbol}…`;
+  if (typeof saveChartIndicatorContext === "function") saveChartIndicatorContext();
   state.file = item;
   localStorage.setItem("qg:last-symbol", item.id);
   const r = await fetch(`/api/candles?id=${encodeURIComponent(item.id)}`);
@@ -1326,9 +1352,7 @@ async function loadFile(item) {
   state.history = [];
   state.redo = [];
   state.drawings = [];
-  state.indicator.objects = [];
-  state.indicator.objectMap = new Map();
-  state.indicator.selectedObjectId = null;
+  restoreChartIndicatorContext(item.id);
   loadDrawings();
   updateTimeframeAvailability();
   $("#symbolBtn").innerHTML = `${parseName(item)} ${materialIcon("expand_more")}`;
@@ -1510,41 +1534,21 @@ document.addEventListener("fullscreenchange", () => {
     : "Full screen";
 });
 async function exportChartData() {
-  if (!state.indicator.results) {
-    toast("No calculated indicator results are available to export", "error");
-    return;
-  }
-  // Open before any await so the browser accepts the popup. The page is
-  // ephemeral: it renders fresh from this click's cached results only.
-  const tab = openManualReviewTab(window);
-  if (!tab) {
-    toast("The review tab was blocked. Allow pop-ups for this page and export again", "error");
-    log.chart.error("INDICATOR_REVIEW_TAB_BLOCKED", new Error("window.open returned null"));
+  const context = state.indicator.resultContext;
+  if (!state.indicator.results || !context?.calculationId) {
+    toast("Calculate the indicator before opening its report", "error");
     return;
   }
   try {
-    const context = state.indicator.resultContext || {};
-    // Copy before the handoff yields: a later calculation must not change
-    // this export. Candle caches are never serialized; the live chart keeps
-    // them and the review page renders only indicator records.
-    const captured = structuredClone(state.indicator.results);
-    const snapshot = {
-      exportedAt: new Date().toISOString(),
-      timezone: "Asia/Tehran",
-      calculation: context,
-      currentChart: { source: state.file, timeframe: state.tf },
-      settings: state.indicator.settings,
-      chartSettings,
-      ...historySnapshot(),
-    };
-    startManualReviewHandoff(captured, snapshot, window, (message) => toast(message, "error"));
-    log.chart.info("INDICATOR_REVIEW_OPENED", { source: snapshot.currentChart.source, timeframe: snapshot.currentChart.timeframe });
+    const tab = openManualReviewTab(context, window);
+    if (!tab) throw new Error("Allow pop-ups for this page and open the report again.");
+    log.chart.info("CALCULATION_REPORT_OPENED", { calculationId: context.calculationId });
   } catch (error) {
-    log.chart.error("INDICATOR_REVIEW_EXPORT_FAILED", error);
-    toast(`Could not open the indicator review: ${error.message}`, "error");
+    log.chart.error("CALCULATION_REPORT_OPEN_FAILED", error);
+    toast(`Could not open the calculation report: ${error.message}`, "error");
   }
 }
-$("#exportDataBtn").onclick = exportChartData;
+$("#reportBtn").onclick = exportChartData;
 $("#gotoBtn").onclick = () => {
   setDateTimeValue(
     "#gotoInput",
@@ -1676,6 +1680,41 @@ function storageKey() {
 }
 function indicatorOverrideKey() {
   return `market-canvas:${state.file?.id || "none"}:indicator-overrides:v1`;
+}
+function indicatorStateKey(fileId = state.file?.id) {
+  return `market-canvas:${fileId || "none"}:indicator-settings:v1`;
+}
+const indicatorContexts = new Map();
+function saveChartIndicatorContext() {
+  if (!state.file) return;
+  const snapshot = {
+    enabled: Boolean(state.indicator.enabled), results: state.indicator.results,
+    settings: state.indicator.settings, calculationKey: state.indicator.calculationKey,
+    resultContext: state.indicator.resultContext, lastCalculation: state.indicator.lastCalculation,
+  };
+  indicatorContexts.set(state.file.id, structuredClone(snapshot));
+  try {
+    localStorage.setItem(indicatorStateKey(), JSON.stringify({
+      form: captureIndicatorForm(), from: $("#indicatorFrom")?.value || "", to: $("#indicatorTo")?.value || "",
+      enabled: snapshot.enabled,
+    }));
+  } catch (error) { log.chart.warn("INDICATOR_STATE_STORAGE_FAILED", { message: error.message }); }
+}
+function restoreChartIndicatorContext(fileId) {
+  const context = indicatorContexts.get(fileId);
+  state.indicator.results = context?.results
+    ? removeInvalidIndicatorCalculations(context.results)
+    : null;
+  state.indicator.settings = context?.settings || null;
+  state.indicator.calculationKey = context?.calculationKey || null;
+  state.indicator.resultContext = context?.resultContext || null;
+  state.indicator.lastCalculation = context?.lastCalculation || null;
+  state.indicator.enabled = Boolean(context?.enabled && context?.results);
+  state.indicator.objects = [];
+  state.indicator.objectMap = new Map();
+  state.indicator.selectedObjectId = null;
+  state.indicatorRange = { from: null, to: null, dragging: null, preview: false };
+  if (state.indicator.results) rebuildIndicatorObjects();
 }
 function readIndicatorOverrides() {
   try {
@@ -1841,7 +1880,11 @@ function resize() {
   ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
   drawAll();
 }
-new ResizeObserver(resize).observe(chartElement);
+if (typeof ResizeObserver === "function") {
+  new ResizeObserver(resize).observe(chartElement);
+} else {
+  window.addEventListener("resize", resize);
+}
 function point(e) {
   // Coordinate conversion must use the actual Lightweight Charts surface.
   // The shell may have additional chrome or change its geometry when panels
@@ -2145,6 +2188,15 @@ function indicatorObjectVisible(id) {
   const item = indicatorObject(id);
   return !item || !item.hidden;
 }
+function removeInvalidIndicatorCalculations(payload) {
+  for (const group of Object.values(payload?.directions || {})) {
+    for (const key of ["blueLines", "aZones", "sZones", "eZones", "stopAlls", "orderAudit"]) {
+      if (Array.isArray(group[key]))
+        group[key] = group[key].filter((item) => item.calculationValid !== false);
+    }
+  }
+  return payload;
+}
 const INDICATOR_LABEL_MEDIUM_SIZE = 12,
   INDICATOR_LABEL_SMALL_SIZE = 12,
   INDICATOR_LABEL_LARGE_SIZE = 15,
@@ -2180,12 +2232,22 @@ function rebuildIndicatorObjects() {
     output.push({ locked: true, hidden: false, ...item, ...preserved });
   };
   for (const [direction, group] of Object.entries(state.indicator.results.directions)) {
+    const behaviorOrders = [
+      ...(group.sZones || []),
+      ...(group.eZones || []),
+      ...(group.stopAlls || []),
+    ].filter((item) => item.calculationValid !== false);
+    const representedOrderKeys = new Set(
+      behaviorOrders
+        .filter((item) => item.orderFirstIndex != null && item.orderBreakIndex != null)
+        .map((item) => `${item.orderFirstIndex}:${item.orderBreakIndex}`),
+    );
     (group.reactions || []).forEach((item, index) => add({ id: `indicator:${direction}:reaction:${index}`, type: "indicator-reaction", name: `${direction} Reaction ${index + 1}`, time: item.firstTime, price: item.boxTop, color: direction === "bullish" ? state.indicator.settings.bullBorder : state.indicator.settings.bearBorder }));
     (group.blueLines || []).forEach((item, index) => add({ id: `indicator:${direction}:blue:${index}`, type: "indicator-blue", name: `Blue Line ${index + 1}`, time: item.sourceTime, price: item.linePrice, color: state.indicator.settings.blueColor }));
-    (group.aZones || []).forEach((item, index) => add({ id: `indicator:${direction}:a:${index}`, type: "indicator-label", name: `A ${index + 1}`, text: "A", size: INDICATOR_LABEL_SMALL_SIZE, weight: 500, time: item.sourceTime, price: item.price, color: "#7c3aed" }));
-    (group.sZones || []).forEach((item, index) => {
+    (group.aZones || []).filter((item) => item.calculationValid !== false).forEach((item, index) => add({ id: `indicator:${direction}:a:${index}`, type: "indicator-label", name: `A ${index + 1}`, text: "A", size: INDICATOR_LABEL_SMALL_SIZE, weight: 500, time: item.sourceTime, price: item.price, color: "#7c3aed" }));
+    (group.sZones || []).filter((item) => item.calculationValid !== false).forEach((item, index) => {
       add({ id: `indicator:${direction}:s:${index}`, type: "indicator-label", name: `S ${index + 1}`, text: "S", size: INDICATOR_LABEL_MEDIUM_SIZE, weight: 500, time: item.sourceTime, price: item.price, color: item.color === "red" ? "#f23645" : "#2563eb" });
-      if (item.orderFirstTime != null)
+      if (item.calculationValid !== false && item.orderFirstTime != null)
         add({ id: `indicator:${direction}:s-order:${index}`, type: "indicator-order", name: `S order ${index + 1}`, time: item.orderFirstTime, price: item.orderStopLevel, color: state.indicator.settings.orderColor });
     });
     (group.eZones || []).forEach((item, index) => {
@@ -2205,8 +2267,14 @@ function rebuildIndicatorObjects() {
       add({ id: `indicator:${direction}:stopall:${index}`, type: "indicator-label", name, text: String(item.number), size: INDICATOR_LABEL_LARGE_SIZE, weight: 600, time: item.sourceTime, price: item.price, color: "#ff9800" });
       add({ id: `indicator:${direction}:stopall-order:${index}`, type: "indicator-order", name: `${name} order`, time: item.orderFirstTime, price: item.orderStopLevel, color: state.indicator.settings.orderColor });
     });
+    (group.orderAudit || []).forEach((item, index) => {
+      const key = `${item.firstIndex}:${item.breakIndex}`;
+      if (representedOrderKeys.has(key)) return;
+      if (item.boxTop == null || item.boxBottom == null || item.boxTopSourceTime == null || item.boxBottomSourceTime == null) return;
+      add({ id: `indicator:${direction}:audit-order:${item.firstIndex}:${item.breakIndex}`, type: "indicator-order", name: `Order audit ${index + 1}`, time: item.firstTime, price: item.stopLevel, color: state.indicator.settings.orderColor });
+    });
     const seenStops = new Set();
-    [...(group.sZones || []), ...(group.eZones || []), ...(group.stopAlls || [])].forEach((item) => {
+    behaviorOrders.forEach((item) => {
       if (item.orderStopSourceIndex == null || item.orderStopLevel == null) return;
       const key = [item.orderDirection, item.orderFirstIndex, item.orderStopSourceIndex].join(":");
       if (seenStops.has(key)) return;
@@ -2275,15 +2343,26 @@ function syncIndicatorRangeHandles() {
   const fallbackTo = parseTehranInput($("#indicatorTo")?.value || "") || last;
   if (!Number.isFinite(state.indicatorRange.from)) state.indicatorRange.from = fallbackFrom;
   if (!Number.isFinite(state.indicatorRange.to)) state.indicatorRange.to = fallbackTo;
-  state.indicatorRange.from = Math.max(first, Math.min(state.indicatorRange.from, last));
-  state.indicatorRange.to = Math.max(state.indicatorRange.from, Math.min(state.indicatorRange.to, last));
+  // Keep the two range grips visibly and semantically distinct: at least five
+  // complete candles must remain between their selected anchors.
+  const minimumCandles = Math.min(5, state.data.length - 1);
+  const minTo = Number(state.data[minimumCandles]?.time ?? first);
+  const maxFrom = Number(state.data.at(-(minimumCandles + 1))?.time ?? last);
+  state.indicatorRange.from = Math.max(first, Math.min(state.indicatorRange.from, maxFrom));
+  state.indicatorRange.to = Math.max(minTo, Math.min(state.indicatorRange.to, last));
+  if (state.indicatorRange.to < state.indicatorRange.from) {
+    state.indicatorRange.from = first;
+    state.indicatorRange.to = minTo;
+  }
   for (const side of ["from", "to"]) {
     const time = Number(state.indicatorRange[side]);
     const rawX = chart.timeScale().timeToCoordinate(time);
     const handleInset = 14;
-    const x = Number.isFinite(rawX)
-      ? Math.max(handleInset, Math.min(Math.max(handleInset, chartElement.clientWidth - handleInset), rawX))
-      : null;
+    const clampHandleX = (value) => Math.max(handleInset, Math.min(Math.max(handleInset, chartElement.clientWidth - handleInset), value));
+    const calculatedX = Number.isFinite(rawX) ? clampHandleX(rawX) : null;
+    // Range grips stay attached to their selected candle time. A cached screen
+    // coordinate becomes stale after pan or zoom and detaches the grip.
+    const x = calculatedX;
     const handle = $(`#range${side === "from" ? "From" : "To"}Handle`);
     const guide = $(`#range${side === "from" ? "From" : "To"}Guide`);
     if (!Number.isFinite(x) || !handle || !guide) continue;
@@ -2311,11 +2390,11 @@ for (const side of ["from", "to"]) {
   if (!handle) continue;
   const finishRangeDrag = () => {
     if (state.indicatorRange.dragging !== side) return;
+    commitIndicatorRangeInputs();
     state.indicatorRange.dragging = null;
     state.indicatorRange.preview = false;
     handle.classList.remove("is-dragging");
     $("#indicatorRangeHandles").classList.remove("is-preview");
-    commitIndicatorRangeInputs();
     syncIndicatorRangeHandles();
   };
   handle.addEventListener("pointerdown", (event) => {
@@ -2335,8 +2414,13 @@ for (const side of ["from", "to"]) {
     const candle = nearestRangeCandle(event.clientX);
     if (!candle) return;
     const time = Number(candle.time);
-    if (side === "from") state.indicatorRange.from = Math.min(time, Number(state.indicatorRange.to));
-    else state.indicatorRange.to = Math.max(time, Number(state.indicatorRange.from));
+    const index = state.data.findIndex((row) => Number(row.time) === time);
+    if (index < 0) return;
+    const minimumCandles = Math.min(5, state.data.length - 1);
+    if (side === "from") {
+      state.indicatorRange.from = Number(state.data[Math.min(index, state.data.length - 1 - minimumCandles)].time);
+    } else
+      state.indicatorRange.to = Number(state.data[Math.max(index, minimumCandles)].time);
     syncIndicatorRangeHandles();
   });
   handle.addEventListener("pointerup", finishRangeDrag);
@@ -2396,7 +2480,9 @@ function drawIndicator() {
         (group.stopAlls || []).map((zone) => Number(zone.sourceIndex)),
       ),
       sSourceIndices = group.__sSourceIndices ||= new Set(
-        (group.sZones || []).map((zone) => Number(zone.sourceIndex)),
+        (group.sZones || [])
+          .filter((zone) => zone.calculationValid !== false)
+          .map((zone) => Number(zone.sourceIndex)),
       ),
       fill = bullish ? settings.bullFill : settings.bearFill,
       border = bullish ? settings.bullBorder : settings.bearBorder,
@@ -2410,7 +2496,9 @@ function drawIndicator() {
         ? (group.__sortedResets ||= [...group.resets].sort((a, b) => a.index - b.index))
         : [],
       aZones = settings.numberEnabled && settings.numberMode === "a"
-        ? (group.__sortedAZones ||= [...(group.aZones || [])].sort((a, b) => Number(a.sourceIndex) - Number(b.sourceIndex)))
+        ? (group.__sortedAZones ||= [...(group.aZones || [])]
+          .filter((zone) => zone.calculationValid !== false)
+          .sort((a, b) => Number(a.sourceIndex) - Number(b.sourceIndex)))
         : [];
     for (const [reactionIndex, reaction] of group.reactions.entries()) {
       if (settings.numberMode === "reset") {
@@ -2547,7 +2635,7 @@ function drawIndicator() {
       ctx.restore();
     }
     for (const [zoneIndex, zone] of (group.sZones || []).entries()) {
-      const hasOrder = zone.orderFirstTime != null;
+      const hasOrder = zone.calculationValid !== false && zone.orderFirstTime != null;
       const orderObject = indicatorObject(`indicator:${direction}:s-order:${zoneIndex}`),
         labelObject = indicatorObject(`indicator:${direction}:s:${zoneIndex}`);
       const orderBullish = zone.orderDirection === "bullish",
@@ -2715,6 +2803,7 @@ function drawIndicator() {
     if (settings.orderStopVisible) {
       const seen = new Set();
       for (const zone of [...(group.sZones || []), ...(group.eZones || []), ...(group.stopAlls || [])]) {
+        if (zone.calculationValid === false) continue;
         if (zone.orderStopSourceIndex == null || zone.orderStopLevel == null) continue;
         const key = [zone.orderDirection, zone.orderFirstIndex, zone.orderStopSourceIndex].join(":");
         if (seen.has(key)) continue;
@@ -2758,6 +2847,40 @@ function drawIndicator() {
         ctx.stroke();
         ctx.restore();
       }
+    }
+    const representedOrderKeys = new Set(
+      [...(group.sZones || []), ...(group.eZones || []), ...(group.stopAlls || [])]
+        .filter((item) => item.calculationValid !== false && item.orderFirstIndex != null && item.orderBreakIndex != null)
+        .map((item) => `${item.orderFirstIndex}:${item.orderBreakIndex}`),
+    );
+    for (const [auditIndex, order] of (group.orderAudit || []).entries()) {
+      const key = `${order.firstIndex}:${order.breakIndex}`;
+      if (representedOrderKeys.has(key)) continue;
+      const objectId = `indicator:${direction}:audit-order:${order.firstIndex}:${order.breakIndex}`,
+        object = indicatorObject(objectId),
+        orderBullish = order.direction === "bullish",
+        startTime = orderBullish ? order.boxTopSourceTime : order.boxBottomSourceTime,
+        x1 = indicatorTimeToCoordinate(startTime),
+        x2 = indicatorTimeToCoordinate(order.breakTime),
+        yTop = series.priceToCoordinate(+order.boxTop),
+        yBottom = series.priceToCoordinate(+order.boxBottom);
+      if (!settings.orderVisible || object?.hidden || [x1, x2, yTop, yBottom].some((value) => !Number.isFinite(value))) continue;
+      const shifted = offsetIndicatorRect(object, x1, yTop, x2, yBottom),
+        left = Math.min(shifted.x1, shifted.x2),
+        right = Math.max(shifted.x1, shifted.x2),
+        top = Math.min(shifted.y1, shifted.y2),
+        bottom = Math.max(shifted.y1, shifted.y2);
+      state.indicator.hitBoxes.push({ objectId, shape: "rect", left, right, top, bottom });
+      ctx.save();
+      ctx.fillStyle = rgba(object?.customized ? object.fill : settings.orderFill, object?.customized ? object.opacity : settings.orderOpacity / 100);
+      ctx.strokeStyle = object?.customized ? object.color : settings.orderColor;
+      ctx.lineWidth = object?.customized ? object.width : settings.orderWidth;
+      ctx.setLineDash(object?.customized ? dash(object.lineStyle) : dash(settings.orderLineStyle));
+      ctx.beginPath();
+      ctx.rect(left, top, Math.max(1, right - left), Math.max(1, bottom - top));
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
     }
     if (settings.eStopVisible) {
       for (const [zoneIndex, zone] of (group.eZones || []).entries()) {
@@ -3208,7 +3331,7 @@ function selectIndicatorObject(id) {
 }
 function newDrawing(type, p) {
   return {
-    id: crypto.randomUUID(),
+    id: createUniqueId(),
     type,
     a: p,
     b: p,
@@ -3775,7 +3898,7 @@ $("#copyDrawing").onclick = () => {
   if (!d) return;
   checkpoint();
   const copy = clone(d);
-  copy.id = crypto.randomUUID();
+  copy.id = createUniqueId();
   moveDrawing(copy, state.tf * 3, (state.data.at(-1)?.close || 1) * 0.001);
   state.drawings.push(copy);
   selectDrawing(copy.id);
@@ -4057,7 +4180,7 @@ function selectedTreeObjects({ fallbackToAll = true } = {}) {
 $("#newObjectFolder").onclick = () => {
   const name = prompt("Folder name");
   if (!name?.trim()) return;
-  state.objectFolders.push({ id: crypto.randomUUID(), name: name.trim().slice(0, 36) });
+  state.objectFolders.push({ id: createUniqueId(), name: name.trim().slice(0, 36) });
   saveObjectTreePreferences();
   renderObjectTree();
 };
@@ -4316,15 +4439,7 @@ function calculationKey(settings, from, to, timeframe) {
 function applyVisualSettings(settings = indicatorSettings()) {
   state.indicator.settings = settings;
   if (state.indicator.results) {
-    localStorage.setItem(
-      "market-canvas:reaction-indicator",
-      JSON.stringify({
-        settings,
-        from: $("#indicatorFrom").value,
-        to: $("#indicatorTo").value,
-        enabled: state.indicator.enabled,
-      }),
-    );
+    if (typeof saveChartIndicatorContext === "function") saveChartIndicatorContext();
     drawAll();
   }
 }
@@ -4560,6 +4675,7 @@ function eventDetails(direction, group, type) {
 }
 function setIndicatorVisibility(enabled) {
   state.indicator.enabled = Boolean(enabled && state.indicator.results);
+  if (typeof saveChartIndicatorContext === "function") saveChartIndicatorContext();
   $("#indicatorBtn").classList.toggle("active", state.indicator.enabled);
   const footer = $("#indicatorStatusFooter");
   if (footer) {
@@ -4838,12 +4954,17 @@ function openIndicator() {
     chartTimeframeSeconds: state.tf,
     hasResults: Boolean(state.indicator.results),
   });
-  if (!openIndicator.restored) {
+  if (openIndicator.restoredFor !== state.file?.id) {
     try {
       const saved = JSON.parse(
-        localStorage.getItem("market-canvas:reaction-indicator") || "null",
+        localStorage.getItem(indicatorStateKey()) || "null",
       );
-      if (saved?.settings) {
+      if (saved?.form) {
+        applyIndicatorForm(saved.form);
+        if (saved.from) setDateTimeValue("#indicatorFrom", saved.from);
+        if (saved.to) setDateTimeValue("#indicatorTo", saved.to);
+        $("#indicatorEnabled").checked = Boolean(saved.enabled && state.indicator.results);
+      } else if (saved?.settings) {
         const savedDirection = ["bullish", "bearish"].includes(
           saved.settings.direction,
         )
@@ -4883,9 +5004,9 @@ function openIndicator() {
         $("#indicatorEnabled").checked = Boolean(saved.enabled);
       }
     } catch {
-      localStorage.removeItem("market-canvas:reaction-indicator");
+      localStorage.removeItem(indicatorStateKey());
     }
-    openIndicator.restored = true;
+    openIndicator.restoredFor = state.file?.id;
     updateStyleAvailability();
   }
   if (state.raw.length) {
@@ -4955,7 +5076,7 @@ async function calculateIndicator() {
   state.indicator.loading = true;
   indicatorStatus("Calculation progress is open", "loading");
   $("#applyIndicator").disabled = true;
-  const progressRequestId = crypto.randomUUID();
+  const progressRequestId = createUniqueId();
   const progressTimer = startCalculationProgress(progressRequestId, settings.direction);
   pushIndicatorActivity("INFO", "Calculation started");
   pushIndicatorActivity("DATA", `Validated ${formatTehran(from, false)} → ${formatTehran(to, false)}`);
@@ -5017,11 +5138,12 @@ async function calculateIndicator() {
     if (!r.ok) throw new Error(payload.error || "Calculation failed");
     state.indicator.enabled = $("#indicatorEnabled").checked;
     state.indicator.settings = settings;
-    state.indicator.results = payload;
-    state.indicator.resultContext = { source: calculationSource, timeframe, from, to, direction, calculationKey: nextKey, sourceFingerprint: r.headers.get("X-QG-Source-Fingerprint") };
+    state.indicator.results = removeInvalidIndicatorCalculations(payload);
+    state.indicator.resultContext = { source: calculationSource, timeframe, from, to, direction, calculationKey: nextKey, calculationId: r.headers.get("X-QG-Calculation-Id"), sourceFingerprint: r.headers.get("X-QG-Source-Fingerprint") };
     state.indicator.calculationKey = nextKey;
     const objectPreparationStarted = performance.now();
     rebuildIndicatorObjects();
+    if (typeof saveChartIndicatorContext === "function") saveChartIndicatorContext();
     const objectPreparationCompleted = performance.now();
     progressTimer.recordEvent({
       status: "completed",
@@ -5464,7 +5586,28 @@ for (const id of visualSettingIds) {
   };
   $("#" + id).onchange = $("#" + id).oninput;
 }
-const TEMPLATE_KEY = "qg:indicator-templates:v1";
+let templates = {};
+let templatesLoaded = false;
+let activeTemplateName = null;
+async function loadTemplates() {
+  try {
+    const response = await fetch("/api/indicator-templates", { cache: "no-store" });
+    if (!response.ok) throw new Error(await response.text());
+    const value = await response.json();
+    templates = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  } catch (error) {
+    log.chart.warn("TEMPLATE_STORAGE_READ_FAILED", { message: error.message });
+    templates = {};
+  }
+  templatesLoaded = true;
+  renderTemplates();
+}
+async function persistTemplates() {
+  const response = await fetch("/api/indicator-templates", {
+    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ templates }),
+  });
+  if (!response.ok) throw new Error(await response.text());
+}
 const indicatorControlIds = [
   "indicatorTf", ...visualSettingIds,
 ];
@@ -5510,21 +5653,22 @@ function applyIndicatorForm(snapshot) {
   if (state.indicator.results) applyVisualSettings();
 }
 function readTemplates() {
-  try { return JSON.parse(localStorage.getItem(TEMPLATE_KEY) || "{}"); }
-  catch { return {}; }
+  return templates;
 }
 function escapeTemplateText(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
 }
 function renderTemplates() {
   const tpls = readTemplates();
-  const names = Object.keys(tpls);
+  const search = $("#templateSearch")?.value.trim().toLocaleLowerCase() || "";
+  const names = Object.keys(tpls).filter((name) => name.toLocaleLowerCase().includes(search));
   $("#savedTemplates").innerHTML = names.length
     ? names.map((name) => {
         const safe = escapeTemplateText(name);
-        return `<div class="tpl-item"><button class="tpl-load" data-template-name="${safe}" role="menuitem">${safe}</button><button class="tpl-item-del" data-template-delete="${safe}" title="Delete “${safe}”" aria-label="Delete template ${safe}" type="button"><span class="material-symbols-outlined" aria-hidden="true">delete</span></button></div>`;
+        const isCurrent = name === activeTemplateName;
+        return `<div class="tpl-item${isCurrent ? " is-current" : ""}"><button class="tpl-load" data-template-name="${safe}" role="menuitem"><i aria-hidden="true"></i><span>${safe}</span>${isCurrent ? '<em>Current</em>' : ""}</button><button class="tpl-item-del" data-template-delete="${safe}" title="Delete “${safe}”" aria-label="Delete template ${safe}" type="button"><span class="material-symbols-outlined" aria-hidden="true">more_vert</span></button></div>`;
       }).join("")
-    : `<div class="tpl-empty">No saved templates</div>`;
+    : `<div class="tpl-empty">${templatesLoaded ? (search ? "No matching templates" : "No saved templates") : "Loading templates…"}</div>`;
 }
 function updateStyleAvailability() {
   const map = [
@@ -5543,6 +5687,7 @@ function updateStyleAvailability() {
 }
 $("#templateBtn").onclick = (e) => {
   e.stopPropagation();
+  if (!templatesLoaded) void loadTemplates();
   renderTemplates();
   const m = $("#templateMenu");
   m.classList.toggle("hidden");
@@ -5552,6 +5697,12 @@ $("#templateBtn").onclick = (e) => {
     if (rect.bottom > window.innerHeight) m.style.top = "auto";
   }
 };
+$("#templateClose").onclick = () => {
+  $("#templateMenu").classList.add("hidden");
+  $("#templateBtn").setAttribute("aria-expanded", "false");
+  $("#templateBtn").focus();
+};
+$("#templateSearch").oninput = () => renderTemplates();
 document.addEventListener("click", (e) => {
   const m = $("#templateMenu");
   if (!m || m.classList.contains("hidden")) return;
@@ -5560,17 +5711,15 @@ document.addEventListener("click", (e) => {
     $("#templateBtn").setAttribute("aria-expanded", "false");
   }
 });
-$("#templateMenu").onclick = (event) => {
+$("#templateMenu").onclick = async (event) => {
   const delEl = event.target.closest("[data-template-delete]");
   if (delEl) {
     event.stopPropagation();
     const dName = delEl.dataset.templateDelete;
     if (dName && window.confirm("Delete template \"" + dName + "\"?")) {
-      const t = readTemplates();
-      delete t[dName];
-      localStorage.setItem(TEMPLATE_KEY, JSON.stringify(t));
-      renderTemplates();
-      toast("Template deleted");
+      delete templates[dName];
+      try { await persistTemplates(); renderTemplates(); toast("Template deleted"); }
+      catch (error) { toast(`Unable to delete template: ${error.message}`, "error"); void loadTemplates(); }
     }
     return;
   }
@@ -5581,11 +5730,11 @@ $("#templateMenu").onclick = (event) => {
     event.stopPropagation();
     const nextName = prompt("Template name");
     if (nextName?.trim()) {
-      const templates = readTemplates();
-      templates[nextName.trim()] = captureIndicatorForm();
-      localStorage.setItem(TEMPLATE_KEY, JSON.stringify(templates));
-      renderTemplates();
-      toast("Template saved");
+      const savedName = nextName.trim();
+      templates[savedName] = captureIndicatorForm();
+      activeTemplateName = savedName;
+      try { await persistTemplates(); renderTemplates(); toast("Template saved"); }
+      catch (error) { delete templates[nextName.trim()]; toast(`Unable to save template: ${error.message}`, "error"); }
     }
   } else if (action === "default") {
     event.stopPropagation();
@@ -5593,6 +5742,7 @@ $("#templateMenu").onclick = (event) => {
     toast("Default settings restored");
   } else if (name) {
     applyIndicatorForm(readTemplates()[name]);
+    activeTemplateName = name;
     $("#templateMenu").classList.add("hidden");
     $("#templateBtn").setAttribute("aria-expanded", "false");
     toast(`Template "${name}" applied`);

@@ -1,4 +1,4 @@
-// Presentation-only review pieces for the served /manual-test page. Behavior
+// Presentation-only review pieces for the served /info page. Behavior
 // identities, prices and orders come exclusively from the supplied bridge
 // payload, never chart inference. The page is generated fresh per export;
 // no file is written and no candle cache is serialized.
@@ -58,7 +58,7 @@ export function reviewLabelColor(record, chartColor) {
 }
 export function manualReviewFilename(date = new Date(), extension = "txt") {
   const two = (value) => String(value).padStart(2, "0");
-  return `manualTest-${date.getFullYear()}_${two(date.getMonth() + 1)}_${two(date.getDate())} ${two(date.getHours())}_${two(date.getMinutes())}_${two(date.getSeconds())}.${extension}`;
+  return `info-${date.getFullYear()}_${two(date.getMonth() + 1)}_${two(date.getDate())} ${two(date.getHours())}_${two(date.getMinutes())}_${two(date.getSeconds())}.${extension}`;
 }
 export function reviewRecords(payload) {
   const records = [];
@@ -67,7 +67,7 @@ export function reviewRecords(payload) {
       if (!Array.isArray(rows)) continue;
       rows.forEach((row, index) => {
         const epoch = row?.[collections[group]?.[1] || "sourceTime"];
-        records.push({ id: `${direction}:${group}:${index}`, direction, group, row, index,
+        records.push({ id: `${direction}:${group}:${index}`, direction, group, row, index, groups,
           category: reviewCategory(group, row, direction),
           epoch, time: reviewTime(epoch), label: labelFor(group, row || {}) });
       });
@@ -75,14 +75,287 @@ export function reviewRecords(payload) {
   }
   return records.sort((a, b) => (a.epoch ?? Infinity) - (b.epoch ?? Infinity));
 }
-function human(value, key = "") {
-  if (Array.isArray(value)) return value.map((item) => human(item, key));
-  if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, human(v, k)]));
-  if (typeof value === "number" && (key.endsWith("Time") || ["time", "actualFrom", "actualTo"].includes(key)))
-    return { epoch: value, Tehran: reviewTime(value) };
-  return value;
+
+const readableDirection = (value) => value === "bullish" ? "Bullish" : value === "bearish" ? "Bearish" : value;
+const readableMode = (value) => value === "A" ? "Leg start" : value === "B" ? "Normal" : value;
+const readableKind = (value) => ({
+  scale: "Scale", reset: "Reset", simple: "Simple", advanced: "Advanced", type3: "Type 3",
+  "parent-stop": "Parent stop", "reset-leg": "Reset leg", "carried-live": "Carried live",
+  "sequence-group-stop": "Sequence group stop", "stopall-stop": "StopAll stop",
+  Order_A: "Parent stop", Order_B: "Reset leg",
+})[value] || value;
+const timeValue = (value) => typeof value === "number" && Number.isFinite(value)
+  ? { time: reviewTime(value) }
+  : undefined;
+const removeUndefined = (value) => {
+  const output = {};
+  for (const [key, item] of Object.entries(value)) {
+    if (item === undefined) continue;
+    if (Array.isArray(item)) {
+      const values = item.map((entry) => entry && typeof entry === "object" && !Array.isArray(entry) ? removeUndefined(entry) : entry)
+        .filter((entry) => entry !== undefined);
+      if (values.length) output[key] = values;
+      continue;
+    }
+    if (item && typeof item === "object") {
+      const nested = removeUndefined(item);
+      if (Object.keys(nested).length) output[key] = nested;
+      continue;
+    }
+    output[key] = item;
+  }
+  return output;
+};
+const pricePoint = (price, time) => removeUndefined({
+  time: typeof time === "number" && Number.isFinite(time) ? reviewTime(time) : undefined,
+  price,
+});
+const stopPoint = (price, time) => typeof time === "number" && Number.isFinite(time)
+  ? pricePoint(price, time)
+  : undefined;
+const causeObject = (cause) => {
+  if (typeof cause === "string") return readableKind(cause);
+  if (!cause || typeof cause !== "object") return cause;
+  if (cause.kind === "parent-stop") return removeUndefined({
+    kind: readableKind(cause.kind),
+    parentType: cause.parentType,
+    parentFamily: cause.parentFamily,
+    parentFormedAt: timeValue(cause.parentSourceTime),
+    parentStoppedAt: timeValue(cause.eventTime),
+  });
+  if (cause.kind === "reset-leg") return removeUndefined({
+    kind: readableKind(cause.kind),
+    resetAt: timeValue(cause.resetTime),
+    boundaryBrokenAt: timeValue(cause.boundaryBreakTime),
+  });
+  return removeUndefined({ kind: readableKind(cause.kind) });
+};
+function orderObject(row) {
+  if (row.orderFirstTime == null && row.orderBreakTime == null && row.orderStopLevel == null) return undefined;
+  const causes = Array.isArray(row.orderCauses) ? row.orderCauses.map(causeObject) : undefined;
+  return removeUndefined({
+    direction: readableDirection(row.orderDirection),
+    mode: readableMode(row.orderMode),
+    causes,
+    startedAt: timeValue(row.orderFirstTime),
+    confirmedAt: timeValue(row.orderConfirmationTime ?? row.orderBreakTime),
+    structure: removeUndefined({
+      boxTop: pricePoint(row.orderBoxTop, row.orderBoxTopSourceTime),
+      boxBottom: pricePoint(row.orderBoxBottom, row.orderBoxBottomSourceTime),
+    }),
+    stop: pricePoint(row.orderStopLevel, row.orderStopSourceTime),
+    causeEvidence: removeUndefined({
+      parentStoppedAt: timeValue(row.orderParentStopCauseTime),
+      resetAt: timeValue(row.orderResetLegResetTime),
+      boundaryBrokenAt: timeValue(row.orderResetLegBreakTime),
+    }),
+  });
 }
-const detail = (value) => `<pre>${escapeHtml(JSON.stringify(human(value), null, 2))}</pre>`;
+
+// Create a human-readable, review-only projection. The supplied bridge row is
+// never mutated and remains authoritative for chart rendering/calculation.
+export function manualInfoObject(record) {
+  const { group, row = {}, direction, groups = {} } = record;
+  const base = { type: collections[group]?.[0] || group, direction: readableDirection(direction), timezone: "Asia/Tehran" };
+  if (group === "reactions") return removeUndefined({
+    ...base,
+    mode: readableMode(row.mode),
+    startedAt: timeValue(row.firstTime),
+    structure: {
+      boxTop: pricePoint(row.boxTop, row.boxTopSourceTime),
+      boxBottom: pricePoint(row.boxBottom, row.boxBottomSourceTime),
+    },
+    confirmedAt: timeValue(row.breakTime),
+  });
+  if (group === "resets") {
+    const owner = (groups.reactions || []).find((reaction) => reaction.firstIndex === row.fromFirstIndex);
+    return removeUndefined({
+      ...base,
+      occurredAt: timeValue(row.secondTime ?? row.time),
+      mainCandleAt: timeValue(row.time),
+      brokenLevel: row.brokenLevel,
+      reactionStartedAt: timeValue(owner?.firstTime),
+    });
+  }
+  if (group === "blueLines") return removeUndefined({
+    ...base,
+    formation: readableKind(row.kind),
+    formedAt: timeValue(row.sourceTime),
+    line: removeUndefined({ price: row.linePrice, sourceExtreme: row.sourceExtreme }),
+    stop: pricePoint(row.sourceExtreme, row.endTime),
+  });
+  if (group === "aZones") return removeUndefined({
+    ...base,
+    formedAt: timeValue(row.sourceTime),
+    price: row.price,
+    blueLines: {
+      first: removeUndefined({ formedAt: timeValue(row.blue1SourceTime), stoppedAt: timeValue(row.blue1StopTime), stopLevel: row.blue1StopLevel }),
+      second: removeUndefined({ formedAt: timeValue(row.blue2SourceTime), stoppedAt: timeValue(row.blue2StopTime), stopLevel: row.blue2StopLevel }),
+    },
+    continuation: pricePoint(row.continuationLevel, row.continuationSourceTime),
+    triggeredAt: timeValue(row.triggerEventTime ?? row.triggerTime),
+    reaction: removeUndefined({
+      startedAt: timeValue(row.reactionFirstTime),
+      confirmedAt: timeValue(row.reactionBreakTime),
+    }),
+    stop: stopPoint(row.price, (groups.sZones || []).find((item) => item.aSourceTime === row.sourceTime)?.aStopEventTime),
+  });
+  if (group === "sZones") return removeUndefined({
+    ...base,
+    color: row.color === "blue" ? "Blue" : row.color === "red" ? "Red" : row.color,
+    formation: readableKind(row.formationType),
+    formedAt: timeValue(row.sourceTime),
+    price: row.price,
+    parentA: removeUndefined({
+      formedAt: timeValue(row.aSourceTime),
+      price: row.aPrice,
+      stoppedAt: timeValue(row.aStopEventTime ?? row.aStopTime),
+    }),
+    reset: row.formationType === "type3" ? timeValue(row.resetTime) : undefined,
+    order: orderObject(row),
+    decisionAt: timeValue(row.decisionEventTime ?? row.decisionTime),
+    stop: stopPoint(row.price, (groups.eZones || []).find((item) => item.parentSourceTime === row.sourceTime)?.parentStopEventTime),
+  });
+  if (group === "eZones") return removeUndefined({
+    ...base,
+    family: row.family === "blue" ? "Blue" : row.family === "red" ? "Red" : row.family,
+    formedAt: timeValue(row.sourceTime),
+    price: row.price,
+    parent: removeUndefined({
+      type: row.parentType,
+      formedAt: timeValue(row.parentSourceTime),
+      price: row.parentPrice,
+      stoppedAt: timeValue(row.parentStopEventTime ?? row.parentStopTime),
+    }),
+    order: orderObject(row),
+    decisionAt: timeValue(row.decisionEventTime ?? row.decisionTime),
+    stop: stopPoint(row.price, (groups.stopAlls || []).find((item) => item.underlyingEFamily === row.family && item.underlyingENumber === row.number)?.gateEventTime),
+  });
+  if (group === "stopAlls") return removeUndefined({
+    ...base,
+    formedAt: timeValue(row.sourceTime),
+    price: row.price,
+    gate: removeUndefined({
+      type: readableKind(row.gateType),
+      time: timeValue(row.gateEventTime),
+      stopped: removeUndefined({
+        type: row.stoppedBehaviorType,
+        group: row.stoppedBehaviorKey,
+        count: row.stoppedBehaviorCount,
+      }),
+    }),
+    sourceE: removeUndefined({ family: row.underlyingEFamily }),
+    order: orderObject(row),
+    decisionAt: timeValue(row.decisionEventTime ?? row.decisionTime),
+    stop: timeValue(row.stopEventTime ?? row.stopTime),
+  });
+  if (group === "orderAudit") return removeUndefined({
+    ...base,
+    mode: readableMode(row.reactionMode),
+    startedAt: timeValue(row.firstTime),
+    confirmedAt: timeValue(row.breakTime),
+    stop: removeUndefined({
+      level: row.stopLevel,
+      sourceAt: timeValue(row.stopSourceTime),
+      hitAt: timeValue(row.stopHitEventTime ?? row.stopHitTime),
+    }),
+    causes: Array.isArray(row.causes) ? row.causes.map(causeObject) : undefined,
+  });
+  if (group === "orderReactions") return removeUndefined({
+    ...base,
+    mode: readableMode(row.mode ?? row.reactionMode),
+    startedAt: timeValue(row.firstTime),
+    confirmedAt: timeValue(row.breakTime),
+    consumed: row.consumed,
+    stopHitAt: timeValue(row.stopHitEventTime ?? row.stopHitTime),
+  });
+  return removeUndefined({ ...base, occurredAt: timeValue(record.epoch), note: "No manual-review projection is defined for this collection." });
+}
+
+const infoCollectionNames = {
+  reactions: "reactions", resets: "resets", blueLines: "blueLines",
+  aZones: "aStructures", sZones: "sStructures", eZones: "eStructures",
+  stopAlls: "stopAllEvents", orderReactions: "orderReactions", orderAudit: "orderAudit",
+};
+export function buildInfoPayload(payload) {
+  const directions = {};
+  for (const [direction, groups] of Object.entries(payload.directions || {})) {
+    directions[direction] = {};
+    for (const [group, rows] of Object.entries(groups)) {
+      if (!Array.isArray(rows)) continue;
+      const outputName = infoCollectionNames[group] || group;
+      directions[direction][outputName] = rows.map((row, index) => manualInfoObject({
+        direction, group, row, index, groups,
+      }));
+    }
+  }
+  return removeUndefined({
+    source: removeUndefined({
+      timezone: "Asia/Tehran",
+      timeframeSeconds: payload.timeframe,
+      range: removeUndefined({ from: timeValue(payload.actualFrom), to: timeValue(payload.actualTo) }),
+    }),
+    directions,
+  });
+}
+
+const yamlScalar = (value) => {
+  if (value === null) return "null";
+  if (typeof value === "boolean" || typeof value === "number") return String(value);
+  return JSON.stringify(String(value));
+};
+const isObject = (value) => value && typeof value === "object" && !Array.isArray(value);
+function yamlLines(value, depth = 0) {
+  const lines = [];
+  const stack = [{ type: "value", value, depth }];
+  while (stack.length) {
+    const task = stack.pop();
+    if (task.type === "line") { lines.push(task.value); continue; }
+    if (task.type === "blank") { lines.push(""); continue; }
+    const current = task.value;
+    if (Array.isArray(current)) {
+      for (let index = current.length - 1; index >= 0; index--) {
+        const item = current[index];
+        if (isObject(item) || Array.isArray(item)) {
+          stack.push({ type: "value", value: item, depth: task.depth + 1 });
+          stack.push({ type: "line", value: `${" ".repeat(task.depth * 4)}-` });
+        } else stack.push({ type: "line", value: `${" ".repeat(task.depth * 4)}- ${yamlScalar(item)}` });
+        if (index) stack.push({ type: "blank" });
+      }
+      continue;
+    }
+    const entries = Object.entries(current || {});
+    const blankBefore = new Set();
+    let previousComplex = false;
+    entries.forEach(([, item], index) => {
+      const complex = isObject(item) || Array.isArray(item);
+      if (index && (complex || previousComplex)) blankBefore.add(index);
+      previousComplex = complex;
+    });
+    for (let index = entries.length - 1; index >= 0; index--) {
+      const [key, item] = entries[index];
+      const complex = isObject(item) || Array.isArray(item);
+      const prefix = " ".repeat(task.depth * 4);
+      if (complex) {
+        stack.push({ type: "value", value: item, depth: task.depth + 1 });
+        stack.push({ type: "line", value: `${prefix}${key}:` });
+      } else stack.push({ type: "line", value: `${prefix}${key}: ${yamlScalar(item)}` });
+      if (blankBefore.has(index)) stack.push({ type: "blank" });
+    }
+  }
+  return lines;
+}
+export const formatInfoYaml = (value) => yamlLines(value).join("\n");
+const copyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>';
+const detail = (value) => {
+  const lines = formatInfoYaml(value).split("\n").map((line) => {
+    if (!line) return '<span class="yaml-line yaml-gap" aria-hidden="true"></span>';
+    const depth = Math.min(5, Math.floor((line.match(/^ */)?.[0].length || 0) / 4));
+    return `<span class="yaml-line yaml-depth-${depth}">${escapeHtml(line)}</span>`;
+  }).join("\n");
+  return `<div class="yaml-tools"><button class="yaml-copy" type="button" data-copy-yaml title="Copy Bridge output" aria-label="Copy Bridge output">${copyIcon}</button></div><pre class="bridge-yaml" aria-label="Bridge output in YAML">${lines}</pre>`;
+};
+const lazyDetail = (record) => `<details class="bridge-output" data-bridge-id="${escapeHtml(record.id)}"><summary>Bridge output</summary><div class="bridge-placeholder"></div></details>`;
 function eventCard(record) {
   const { id, direction, row, time, label } = record;
   const visibleTime = time === "Undated" ? time : time.slice(11);
@@ -90,13 +363,59 @@ function eventCard(record) {
     <div class="state-control" role="group" aria-label="Review status">${["true", "false"].map((status) => `<label class="${status}-choice" title="Mark as ${status}"><input class="state" type="radio" name="${escapeHtml(id)}" value="${status}" aria-label="Mark ${escapeHtml(`${direction} ${label} ${time}`)} as ${status}"><span class="sr-only">Mark as ${status}</span></label>`).join("")}</div>
     <button class="event-time copy-line" type="button" title="Copy full timestamp and review status"><time datetime="${time === "Undated" ? "" : time.replace(" ", "T")}">${visibleTime}</time></button>
     <div><span class="chip" style="color:${reviewLabelColor(record, record.color)};background:${reviewColorSurface()}">${escapeHtml(label)}</span><small>${escapeHtml(direction)}</small></div>
-    <details class="bridge-output"><summary>Bridge output</summary>${detail(row)}</details></article>`;
+    ${lazyDetail(record)}</article>`;
 }
 
 // Review behavior for the served page; it runs same-origin and stores verdicts
 // in localStorage. It still makes no requests and stays entirely in the page.
-export function reviewRuntime() {
+export function reviewRuntime(initialBridgeData = null) {
   const q = (selector) => document.querySelector(selector);
+  let bridgeData = initialBridgeData && typeof initialBridgeData === "object" ? initialBridgeData : {};
+  if (!initialBridgeData) {
+    try { bridgeData = JSON.parse(q("#bridge-data")?.value || "{}") || {}; } catch {}
+  }
+  q("#bridge-data")?.remove();
+  const escapeBridgeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+  const bridgeScalar = (value) => value === null ? "null" : typeof value === "boolean" || typeof value === "number" ? String(value) : JSON.stringify(String(value));
+  const bridgeObject = (value) => value && typeof value === "object" && !Array.isArray(value);
+  const bridgeYaml = (value) => {
+    const lines = [], stack = [{ type: "value", value, depth: 0 }];
+    while (stack.length) {
+      const task = stack.pop();
+      if (task.type === "line") { lines.push(task.value); continue; }
+      if (task.type === "blank") { lines.push(""); continue; }
+      if (Array.isArray(task.value)) {
+        for (let index = task.value.length - 1; index >= 0; index--) {
+          const item = task.value[index], prefix = " ".repeat(task.depth * 4);
+          if (bridgeObject(item) || Array.isArray(item)) { stack.push({ type: "value", value: item, depth: task.depth + 1 }); stack.push({ type: "line", value: `${prefix}-` }); }
+          else stack.push({ type: "line", value: `${prefix}- ${bridgeScalar(item)}` });
+          if (index) stack.push({ type: "blank" });
+        }
+        continue;
+      }
+      const entries = Object.entries(task.value || {}), blankBefore = new Set();
+      let previousComplex = false;
+      entries.forEach(([, item], index) => { const complex = bridgeObject(item) || Array.isArray(item); if (index && (complex || previousComplex)) blankBefore.add(index); previousComplex = complex; });
+      for (let index = entries.length - 1; index >= 0; index--) {
+        const [key, item] = entries[index], complex = bridgeObject(item) || Array.isArray(item), prefix = " ".repeat(task.depth * 4);
+        if (complex) { stack.push({ type: "value", value: item, depth: task.depth + 1 }); stack.push({ type: "line", value: `${prefix}${key}:` }); }
+        else stack.push({ type: "line", value: `${prefix}${key}: ${bridgeScalar(item)}` });
+        if (blankBefore.has(index)) stack.push({ type: "blank" });
+      }
+    }
+    return lines;
+  };
+  const renderBridgeOutput = (details) => {
+    const target = details.querySelector(".bridge-placeholder"), value = bridgeData[details.dataset.bridgeId];
+    if (!target || !value) return;
+    const lines = bridgeYaml(value).map((line) => {
+      if (!line) return '<span class="yaml-line yaml-gap" aria-hidden="true"></span>';
+      const depth = Math.min(5, Math.floor((line.match(/^ */)?.[0].length || 0) / 4));
+      return `<span class="yaml-line yaml-depth-${depth}">${escapeBridgeHtml(line)}</span>`;
+    }).join("\n");
+    target.innerHTML = `<div class="yaml-tools"><button class="yaml-copy" type="button" data-copy-yaml title="Copy Bridge output" aria-label="Copy Bridge output"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button></div><pre class="bridge-yaml" aria-label="Bridge output in YAML">${lines}</pre>`;
+    delete bridgeData[details.dataset.bridgeId];
+  };
   const events = [...document.querySelectorAll(".event")];
   const references = [...document.querySelectorAll(".reference-row")];
   const filters = [...document.querySelectorAll(".category-filter")];
@@ -119,7 +438,7 @@ export function reviewRuntime() {
     q("#to").setAttribute("aria-invalid", String(invalid));
     const hidden = (event) => invalid || !selected.has(event.dataset.filter) ||
       !!((from && event.dataset.time < from) || (to && event.dataset.time > to));
-    const output = ["Indicator timeline manual review", "Timezone: Asia/Tehran", ""];
+    const output = ["Indicator information review", "Timezone: Asia/Tehran", ""];
     const statuses = {};
     for (const event of events) {
       const status = statusOf(event);
@@ -152,6 +471,28 @@ export function reviewRuntime() {
       document.body.append(input); input.select(); document.execCommand("copy"); input.remove();
     }
   }
+  if (typeof document.addEventListener === "function") {
+    document.addEventListener("toggle", (event) => {
+      const details = event.target;
+      if (details instanceof HTMLDetailsElement && details.open && details.matches("[data-bridge-id]")) renderBridgeOutput(details);
+    }, true);
+    document.addEventListener("click", async (event) => {
+      const button = event.target.closest?.("[data-copy-yaml]");
+      if (button) {
+        const text = button.closest("details")?.querySelector(".bridge-yaml")?.textContent?.trimEnd();
+        if (!text) return;
+        await copy(text);
+        button.dataset.copied = "true";
+        button.title = "Copied Bridge output";
+        button.setAttribute("aria-label", "Bridge output copied");
+        setTimeout(() => {
+          button.dataset.copied = "";
+          button.title = "Copy Bridge output";
+          button.setAttribute("aria-label", "Copy Bridge output");
+        }, 1200);
+      }
+    });
+  }
   events.forEach((event) => {
     event.querySelectorAll("input").forEach((input) => { input.onchange = update; });
     event.querySelector(".copy-line").onclick = () => copy(line(event));
@@ -164,7 +505,7 @@ export function reviewRuntime() {
     const url = URL.createObjectURL(new Blob([q("#report-text").value], { type: "text/plain;charset=utf-8" }));
     const a = document.createElement("a"); a.href = url;
     const date = new Date(), two = (value) => String(value).padStart(2, "0");
-    a.download = `manualTest-${date.getFullYear()}_${two(date.getMonth() + 1)}_${two(date.getDate())} ${two(date.getHours())}_${two(date.getMinutes())}_${two(date.getSeconds())}.txt`;
+    a.download = `info-${date.getFullYear()}_${two(date.getMonth() + 1)}_${two(date.getDate())} ${two(date.getHours())}_${two(date.getMinutes())}_${two(date.getSeconds())}.txt`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
@@ -194,7 +535,9 @@ pre,#report-text{background:#f8fafc;border:1px solid var(--line);border-radius:8
 :root{--bg:#fbfcfe;--surface:#fff;--line:#e3e8ef;--ink:#17212e;--muted:#6c7786;--true:#effaf2;--false:#fff1f3}
 body{background:var(--bg);font-size:14px;color:var(--ink)}header,main{width:min(1080px,calc(100% - 32px))}header{padding:34px 0 18px;background:var(--bg);border:0}h1{font-size:2rem;margin:6px 0}.subtitle{max-width:760px;color:var(--muted);font-size:.92rem;margin-bottom:0}.eyebrow{font-size:10px;color:#1769aa}.metrics{grid-template-columns:repeat(4,1fr);gap:0;margin-top:20px;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--surface)}.metric{min-height:58px;padding:10px 12px;border:0;border-left:1px solid var(--line);box-shadow:none;border-radius:0}.metric strong{font:500 12px/1.25 "SF Mono",Consolas,ui-monospace,monospace}.filters,.report{margin:14px 0 22px;padding:14px 0;background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none}.filters{display:grid;grid-template-columns:1fr auto;gap:12px 20px;align-items:end}.filters fieldset,.filters>p{grid-column:1/-1}.filter-fields,.report-controls{gap:7px}.filter-fields label,.report-controls label{font-size:.76rem;color:var(--muted)}fieldset{margin:0}.filters legend{font-size:11px;color:var(--muted);margin-bottom:7px}.category-options{gap:6px}.category-choice{min-height:34px;padding:5px 8px;border-color:var(--line);border-radius:7px;font-size:11px;background:#fff}.category-choice:has(:checked){border-color:#b9c7d7;background:#f8fafc}.category-choice input{width:14px;height:14px;accent-color:#1769aa}.swatch{width:8px;height:8px;border-radius:50%}.filter-fields{margin:0}.filter-fields input,button,input,select{min-height:34px;font-size:12px;border-radius:8px}.filter-fields input{width:174px}.filters button,button{background:#1769aa;border-color:#1769aa;color:#fff}.filters button:hover,button:hover{background:#115889}.day{margin:0;border:0;border-radius:0;border-bottom:1px solid var(--line);box-shadow:none;background:var(--surface);overflow:visible}.day-head{padding:18px 0 9px;border:0;background:transparent;color:var(--ink);font-weight:400}.day-head:before{display:none}.day-head h2{margin:0;font:500 16px "SF Mono",Consolas,ui-monospace,monospace}.events{padding:0}.event{grid-template-columns:58px 88px 96px 1fr;gap:10px;align-items:center;padding:11px 0;border:0;border-bottom:1px solid var(--line);box-shadow:none;background:transparent}.event:nth-child(2n),.event:hover,.event:focus-within{background:transparent;box-shadow:none}.event[data-status=true],.event[data-status=false]{margin:0;padding:11px 8px;border-left:0}.event[data-status=true]{background:var(--true)}.event[data-status=false]{background:var(--false)}.state-control{gap:8px}.state-control label{width:18px;min-width:18px;height:18px;min-height:18px;padding:0;border-radius:50%;border:2px solid currentColor;position:relative}.state-control .state{position:absolute;opacity:0}.state-control .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.state-control label:has(.state:checked)::after{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;position:absolute;inset:3px}.true-choice{color:#259b57}.false-choice{color:#df4760}.state-control label:focus-within{outline:2px solid #1769aa;outline-offset:3px}.event-time{padding:0;color:#0c4d81;font:500 12px "SF Mono",Consolas,ui-monospace,monospace}.chip{border:0;border-radius:999px;padding:3px 7px;font:500 11px "SF Mono",Consolas,ui-monospace,monospace}.event small{display:none}.event details summary{display:list-item;min-height:0;padding:0;color:#1769aa;font-size:12px;list-style-position:inside}.event>details{min-width:0}.event>details[open]{grid-column:4}.event>details[open] pre{width:100%;margin-top:10px}.feature{margin:10px 0;border-radius:8px;box-shadow:none}.feature>summary{padding:13px 14px}.report{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px 20px;align-items:end}.report>div:first-child{flex:1 1 430px}.report h2{font-size:1.1rem}.report-controls{flex:0 1 380px;justify-content:flex-end}pre,#report-text{background:#f8fafc;color:#1f3045;border-color:#d7e1ed}#report-text{min-height:250px;font-size:11px}.empty{padding:16px;border-radius:8px}.day-count{font-size:.8rem;color:var(--muted)}
 .chip{border:1px solid #d7dce3;font-size:12px;font-weight:700;line-height:1.35}.day-head{cursor:pointer;user-select:none}.day-head:before{display:block;transition:transform 120ms ease}.day-head:hover{background:#f8fafc}.event-time{margin-left:-4px;padding:2px 4px;border-radius:5px;transition:background-color 120ms ease,color 120ms ease}.event-time:hover{background:#f3f6f9;color:#0b4a78;text-decoration:none}.event-time:active{background:#eaf0f5}.event-time:focus-visible{background:#f3f6f9}
-@media(max-width:720px){.metrics{grid-template-columns:repeat(2,1fr)}.metric:nth-child(even){border-left:0}.filters{grid-template-columns:1fr}.filter-fields{grid-column:1}.filter-fields input{width:100%}.event{grid-template-columns:54px 78px 1fr}.event details{grid-column:1/-1}.report{display:block}.report-controls{margin-top:12px;justify-content:flex-start}}
+.bridge-yaml{--yaml-guide:#d5dee9;margin:4px 0 2px;padding:10px 12px;white-space:pre;overflow:auto;tab-size:4;font-size:11px;line-height:1.42;background:#f8fafc;color:#1d3048}.yaml-line{display:block;min-width:max-content}.yaml-gap{height:.35em;min-height:.35em}.yaml-depth-1{background:linear-gradient(var(--yaml-guide),var(--yaml-guide)) 2ch 0/1px 100% no-repeat}.yaml-depth-2{background:linear-gradient(var(--yaml-guide),var(--yaml-guide)) 2ch 0/1px 100% no-repeat,linear-gradient(var(--yaml-guide),var(--yaml-guide)) 6ch 0/1px 100% no-repeat}.yaml-depth-3{background:linear-gradient(var(--yaml-guide),var(--yaml-guide)) 2ch 0/1px 100% no-repeat,linear-gradient(var(--yaml-guide),var(--yaml-guide)) 6ch 0/1px 100% no-repeat,linear-gradient(var(--yaml-guide),var(--yaml-guide)) 10ch 0/1px 100% no-repeat}.yaml-depth-4{background:linear-gradient(var(--yaml-guide),var(--yaml-guide)) 2ch 0/1px 100% no-repeat,linear-gradient(var(--yaml-guide),var(--yaml-guide)) 6ch 0/1px 100% no-repeat,linear-gradient(var(--yaml-guide),var(--yaml-guide)) 10ch 0/1px 100% no-repeat,linear-gradient(var(--yaml-guide),var(--yaml-guide)) 14ch 0/1px 100% no-repeat}.yaml-depth-5{background:linear-gradient(var(--yaml-guide),var(--yaml-guide)) 2ch 0/1px 100% no-repeat,linear-gradient(var(--yaml-guide),var(--yaml-guide)) 6ch 0/1px 100% no-repeat,linear-gradient(var(--yaml-guide),var(--yaml-guide)) 10ch 0/1px 100% no-repeat,linear-gradient(var(--yaml-guide),var(--yaml-guide)) 14ch 0/1px 100% no-repeat,linear-gradient(var(--yaml-guide),var(--yaml-guide)) 18ch 0/1px 100% no-repeat}
+.calculation-meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:18px 0 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.calculation-meta>div{min-width:0;padding:11px 12px;border-left:1px solid var(--line)}.calculation-meta>div:first-child{border-left:0}.calculation-meta>div:last-child{grid-column:span 2}.calculation-meta dt{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}.calculation-meta dd{margin:3px 0 0;font:500 11px/1.45 "SF Mono",Consolas,ui-monospace,monospace;color:var(--ink);overflow-wrap:anywhere}.yaml-tools{display:flex;justify-content:flex-end;margin:6px 0 -1px}.yaml-copy{display:grid;place-items:center;width:28px;min-height:28px;padding:5px;border:1px solid #cbd7e4;border-radius:6px;background:#fff;color:#1769aa}.yaml-copy svg{width:15px;height:15px}.yaml-copy:hover,.yaml-copy[data-copied="true"]{background:#eaf2fb;color:#0b4a78}.yaml-copy:focus-visible{outline:2px solid #1769aa;outline-offset:2px}
+@media(max-width:720px){.metrics{grid-template-columns:repeat(2,1fr)}.metric:nth-child(even){border-left:0}.filters{grid-template-columns:1fr}.filter-fields{grid-column:1}.filter-fields input{width:100%}.event{grid-template-columns:54px 78px 1fr}.event details{grid-column:1/-1}.report{display:block}.report-controls{margin-top:12px;justify-content:flex-start}.calculation-meta{grid-template-columns:repeat(2,minmax(0,1fr))}.calculation-meta>div:nth-child(odd){border-left:0}.calculation-meta>div:last-child{grid-column:span 2;border-left:0;border-top:1px solid var(--line)}}
 @media print{header{padding:16px 0}.feature{border:1px solid #ddd}}
 `;
 
@@ -207,8 +550,10 @@ export async function buildReviewBody(payload, snapshot = {}, cryptoApi = global
   const digest = await cryptoApi.subtle.digest("SHA-256", new TextEncoder().encode(raw));
   const hash = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
   const records = reviewRecords(payload), days = new Map(), groups = new Map(), categories = new Map();
+  const bridgeData = Object.create(null);
   const objects = new Map((snapshot.indicatorObjects || []).map((item) => [item.id, item]));
   for (const record of records) {
+    bridgeData[record.id] = manualInfoObject(record);
     record.color = reviewColor(record, snapshot, objects);
     if (!categories.has(record.category.key)) categories.set(record.category.key, { ...record.category, color: record.color, count: 0 });
     categories.get(record.category.key).count++;
@@ -219,16 +564,27 @@ export async function buildReviewBody(payload, snapshot = {}, cryptoApi = global
     if (!groups.has(group)) groups.set(group, []);
     groups.get(group).push(record);
   }
-  const count = (group, predicate = () => true) => records.filter((record) => record.group === group && predicate(record.row)).length;
-  const metrics = [["Timeframe", `${payload.timeframe ?? "—"} seconds`], ["Direction", Object.keys(payload.directions).join(", ")], ["Fresh payload", snapshot.source || "Cached chart payload"], ["A", count("aZones")], ["S blue", count("sZones", (row) => row.color === "blue")], ["S red", count("sZones", (row) => row.color === "red")], ["E", count("eZones")], ["Order audit", count("orderAudit")]];
-  const timeline = [...days].map(([day, rows]) => `<details class="day" open><summary class="day-head"><h2>${day}</h2><span class="day-count">${rows.length.toLocaleString()} events</span></summary><div class="events">${rows.map(eventCard).join("")}</div></details>`).join("");
-  const features = [...groups].map(([group, rows]) => `<details class="feature collection"><summary><span>${escapeHtml(group)}</span><small>${rows.length.toLocaleString()} total records</small></summary>${rows.map((r) => `<div class="reference-row" data-filter="${escapeHtml(r.category.key)}" data-time="${r.time}">${escapeHtml(`${r.time} | ${r.label}`)}<details><summary>Bridge output</summary>${detail(r.row)}</details></div>`).join("")}</details>`).join("");
+  const calculation = snapshot.calculation || {};
+  const rangeTime = (value) => typeof value === "number" && Number.isFinite(value) ? reviewTime(value) : "—";
+  const reportMeta = [
+    ["Symbol", calculation.symbol || calculation.source?.symbol || "—"],
+    ["Source file", calculation.sourceFile || calculation.source?.id || "—"],
+    ["Calculation timeframe", `${calculation.timeframe ?? payload.timeframe ?? "—"} seconds`],
+    ["Direction", readableDirection(calculation.direction || Object.keys(payload.directions || {}).join(", "))],
+    ["Range", `${rangeTime(calculation.from ?? payload.actualFrom)} → ${rangeTime(calculation.to ?? payload.actualTo)}`],
+  ];
+  const timeline = [...days].map(([day, rows]) => `<details class="day"><summary class="day-head"><h2>${day}</h2><span class="day-count">${rows.length.toLocaleString()} events</span></summary><div class="events">${rows.map(eventCard).join("")}</div></details>`).join("");
+  const features = [...groups].map(([group, rows]) => `<section class="feature"><strong>${escapeHtml(group)}</strong><small>${rows.length.toLocaleString()} total records · Open its chronological day above to inspect each Bridge output.</small></section>`).join("");
   const categoryOrder = Object.keys(colorSpec);
   const filterControls = [...categories.values()].sort((a, b) => (categoryOrder.indexOf(a.key) < 0 ? 99 : categoryOrder.indexOf(a.key)) - (categoryOrder.indexOf(b.key) < 0 ? 99 : categoryOrder.indexOf(b.key)))
     .map((category) => `<label class="category-choice"><input class="category-filter" type="checkbox" value="${escapeHtml(category.key)}" checked><i class="swatch" style="background:${category.color}" aria-hidden="true"></i><span>${escapeHtml(category.label)}</span><small>${category.count.toLocaleString()}</small></label>`).join("");
-  const body = `<a class="skip-link" href="#timeline">Skip to timeline</a><header><span class="eyebrow">MANUAL BRIDGE REVIEW · ASIA/TEHRAN</span><h1>Indicator timeline review</h1><p class="subtitle">A chronological manual comparison workspace. The timeline is the primary review surface; the full A, S, E and audit lists remain available below as reference features.</p><div class="metrics">${metrics.map(([k,v]) => `<div class="metric"><span>${k}</span><strong>${escapeHtml(v)}</strong></div>`).join("")}</div></header>
+  // Keep the legacy template tail inexpensive; the returned body below replaces
+  // it with the lazy bridge-data store before it reaches the browser.
+  const infoPayload = {};
+  const body = `<a class="skip-link" href="#timeline">Skip to timeline</a><header><span class="eyebrow">INDICATOR INFO · ASIA/TEHRAN</span><h1>Indicator information</h1><dl class="calculation-meta" aria-label="Calculation details">${reportMeta.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}</dl></header>
 <main><section class="filters" aria-labelledby="filter-title"><div><span class="eyebrow">TIMELINE FILTER</span><h2 id="filter-title">Show a precise review window</h2></div><div class="filter-fields"><label>From<input id="from" type="datetime-local" step="1" aria-describedby="range-hint"></label><label>To<input id="to" type="datetime-local" step="1" aria-describedby="range-hint range-error"></label><button id="reset" type="button">Reset</button></div><fieldset><legend>Behavior filters</legend><div class="category-options">${filterControls}</div></fieldset><p id="range-hint"><small>Leave dates blank for the full range. Filters hide records; they never remove exported data or reviews.</small></p><p class="error" id="range-error" role="alert" hidden>From must not be later than To.</p><p id="filter-note" role="status" aria-live="polite"></p></section><section id="timeline" aria-labelledby="timeline-title"><span class="eyebrow">PRIMARY REVIEW SURFACE</span><h2 id="timeline-title">Chronological timeline</h2><p class="subtitle">Events are grouped by Tehran calendar day and ordered by time. Check only the item you have verified against the chart.</p><p class="empty" id="empty" hidden>No matching events. Select one or more behavior filters.</p>${timeline || "<p>No events in the cached payload.</p>"}</section>
 <section class="report" id="review-report" aria-labelledby="report-title"><div><span class="eyebrow">AI HANDOFF</span><h2 id="report-title">Live review report</h2><p>Every selected item is written on its own line. Use the selector to export all selected items or only one status.</p><p id="storage-note"><small>Reviews are saved in this browser for this export. Download TXT to keep or share your findings.</small></p></div><div class="report-controls"><label>Include <select id="mode"><option value="all">All selected</option><option value="true">True only</option><option value="false">False only</option></select></label><button id="copy">Copy report</button><button id="download">Download TXT</button></div><textarea id="report-text" readonly aria-label="Review report"></textarea></section>
-<h2>Complete record collections</h2><p><small>Collection rows follow your filters. The cached payload below always contains all data.</small></p>${features}<details class="feature"><summary>Cached Bridge payload · SHA-256 ${hash}</summary><pre>${escapeHtml(raw)}</pre></details></main>`;
-  return { hash, reviewId: snapshot.exportedAt || "standalone", styles, runtime: reviewRuntime.toString(), body };
+<h2>Complete record collections</h2><p><small>Collection rows follow your filters. Bridge output is a review-only projection and never changes the cached calculation payload.</small></p>${features}<details class="feature"><summary>Complete Info YAML · source SHA-256 ${hash}</summary>${detail(infoPayload)}</details></main>`;
+  const optimizedBody = body.replace(/<h2>Complete record collections[\s\S]*?<\/main>$/, `<h2>Record collections</h2><p><small>Source SHA-256 ${hash}. Every record is available once in the chronological timeline. Bridge output is created only when that record is opened; the cached calculation payload is never changed.</small></p>${features}</main>`);
+  return { hash, reviewId: snapshot.exportedAt || "standalone", styles, runtime: reviewRuntime.toString(), body: optimizedBody, bridgeData };
 }

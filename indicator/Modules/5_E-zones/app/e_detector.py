@@ -10,7 +10,7 @@ from types import SimpleNamespace
 from typing import Callable, Sequence
 
 
-E_VERSION = "6.1.0"
+E_VERSION = "6.1.2"
 
 
 @dataclass(frozen=True)
@@ -437,6 +437,20 @@ class EDetector:
                 break
 
             geometry_first = self._reaction_first_time(geometry)
+            if (
+                self.direction == "bullish"
+                and geometry_first in self.blocked_order_first_times
+            ):
+                # The leg context may keep an internal head alive after the
+                # Reset boundary has crossed. Geometry whose First opens in
+                # that closed interval cannot own the resumed outer E space.
+                next_index = max(
+                    gate_index, int(getattr(geometry, "first_idx"))
+                ) + 1
+                if next_index > end_index:
+                    break
+                gate_event = self.times[next_index]
+                continue
             owner_position = bisect_right(
                 self._opposite_first_times, geometry_first
             ) - 1
@@ -976,6 +990,8 @@ class EDetector:
             if item[6] is not None
         ]
         provisional_deadline = min(known_stops) if known_stops else self.range_end
+        if self.direction == "bullish" and continuous_deadline is not None:
+            provisional_deadline = min(provisional_deadline, continuous_deadline)
         for position, reaction in enumerate(self.opposite_reactions):
             confirmation = self._opposite_confirmations[position]
             if confirmation < start:
@@ -1012,6 +1028,11 @@ class EDetector:
 
         stopped = [item[6][2] for item in by_geometry.values() if item[6] is not None]
         decision_deadline = min(stopped) if stopped else self.range_end
+        # An inherited live S order can decide this E before any newly
+        # discovered order confirms. Such later geometry belongs to a later
+        # lifecycle and must not enter this parent's eligibility ledger.
+        if self.direction == "bullish" and continuous_deadline is not None:
+            decision_deadline = min(decision_deadline, continuous_deadline)
         eligible = [
             item for item in by_geometry.values()
             if item[2] <= decision_deadline
@@ -1033,11 +1054,28 @@ class EDetector:
         ]
         return candidates[0] if candidates else None
 
+    def _blue_parent_superseded(self, parent: object, parent_stop: datetime) -> bool:
+        """A confirmed later Red S closes an older Blue-E order lifecycle."""
+        return str(getattr(parent, "family")) == "blue" and any(
+            str(getattr(item, "color")) == "red"
+            and getattr(item, "source_time") > getattr(parent, "source_time")
+            and getattr(item, "decision_event_time") < parent_stop
+            for item in self.s_zones
+        )
+
     def _register_order_audit(
         self, parent_type: str, parent: object, parent_stop: datetime,
     ) -> None:
         if any(parent.source_time < reset <= parent_stop
                for reset in self.sequence_resets):
+            return
+        if (
+            self.direction == "bullish" and parent_type == "E"
+            and self._blue_parent_superseded(parent, parent_stop)
+        ):
+            # Enforce the same ownership rule during provisional discovery
+            # and final audit. Otherwise a closed branch can seed a carried
+            # order into another parent before final reconciliation.
             return
         inherited_owner = None
         if parent_type == "S":
@@ -1935,17 +1973,11 @@ class EDetector:
             stop = self._parent_stop(parent_type, parent)
             if stop is None:
                 continue
-            if parent_type == "E" and str(getattr(parent, "family")) == "blue":
+            if parent_type == "E":
                 # A later accepted Red S owns the behavioral color and closes
                 # older Blue-E continuation state. The historical E remains
                 # visible, but its later price crossing cannot open an order.
-                superseding_red_s = any(
-                    str(getattr(item, "color")) == "red"
-                    and getattr(item, "source_time") > getattr(parent, "source_time")
-                    and getattr(item, "decision_event_time") < stop[1]
-                    for item in self.s_zones
-                )
-                if superseding_red_s:
+                if self._blue_parent_superseded(parent, stop[1]):
                     continue
             self._register_order_audit(parent_type, parent, stop[1])
 

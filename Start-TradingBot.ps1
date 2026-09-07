@@ -6,7 +6,9 @@ $ProgressPreference = 'SilentlyContinue'
 [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
 $Root = [IO.Path]::GetFullPath($PSScriptRoot)
 $ChartRoot = Join-Path $Root 'lightweight-charts'
-$PythonPackages = @('orjson', 'numpy', 'tzdata')
+# These are the only third-party imports used by the maintained Python runtime.
+# Keep the list explicit so a clean machine is repaired deterministically.
+$PythonPackages = @('orjson', 'tzdata')
 
 function Write-Step([string]$Text, [ConsoleColor]$Color = 'Gray') {
   Write-Host ("[{0}] {1}" -f (Get-Date -Format 'HH:mm:ss'), $Text) -ForegroundColor $Color
@@ -50,12 +52,26 @@ function Ensure-Runtimes {
   if (-not $python) { Install-Winget 'Python.Python.3.12' 'Python 3.12'; $python = Find-Command @('python.exe','python','py.exe','py') }
   if (-not $python) { throw 'Python is unavailable after installation.' }
   foreach ($package in $PythonPackages) {
-    & $python -c "import $package" 2>$null
+    & $python -c "import importlib.util,sys; sys.exit(0 if importlib.util.find_spec('$package') else 1)" 2>$null
     if ($LASTEXITCODE -ne 0) {
       Write-Step "Installing Python package $package..." Yellow
       & $python -m pip install --disable-pip-version-check --quiet $package
       if ($LASTEXITCODE -ne 0) { throw "Failed to install Python package $package." }
     }
+  }
+  $engineFiles = @(
+    'indicator\indicator-settings\backend\reaction_bridge.py',
+    'indicator\Modules\1_reaction-detector\app\Reaction-detection-new.py',
+    'indicator\Modules\2_blue-line\app\blue_line.py',
+    'indicator\Modules\3_A-zone\app\a_detector.py',
+    'indicator\Modules\4_S-zones\app\s_detector.py',
+    'indicator\Modules\5_E-zones\app\e_detector.py',
+    'indicator\Modules\6_StopAll\app\stopall_detector.py'
+  )
+  foreach ($relative in $engineFiles) {
+    $path = Join-Path $Root $relative
+    & $python -m py_compile $path
+    if ($LASTEXITCODE -ne 0) { throw "Python syntax validation failed: $relative" }
   }
   Write-Step ("Node {0}; npm {1}; {2}" -f (& $node --version).Trim(), (& $npm --version).Trim(), (& $python --version 2>&1).ToString().Trim()) Green
   return [pscustomobject]@{ Node=$node; Npm=$npm; Python=$python }
@@ -64,12 +80,17 @@ function Ensure-NpmDependencies([string]$Npm) {
   Ensure-Path (Join-Path $ChartRoot 'package.json') 'package manifest'
   Push-Location $ChartRoot
   try {
-    $hasVite = Test-Path -LiteralPath (Join-Path $ChartRoot 'node_modules\vite')
-    $hasCharts = Test-Path -LiteralPath (Join-Path $ChartRoot 'node_modules\lightweight-charts')
-    if (-not $hasVite -or -not $hasCharts) {
+    $requiredNodeModules = @('vite', 'lightweight-charts', 'playwright-core')
+    $missing = @($requiredNodeModules | Where-Object { -not (Test-Path -LiteralPath (Join-Path $ChartRoot ("node_modules\{0}" -f $_))) })
+    if ($missing.Count -gt 0) {
       Write-Step 'Installing npm dependencies...' Yellow
       if (Test-Path -LiteralPath (Join-Path $ChartRoot 'package-lock.json')) { & $Npm ci } else { & $Npm install }
       if ($LASTEXITCODE -ne 0) { throw "npm dependency installation failed (exit code $LASTEXITCODE)." }
+    }
+    foreach ($module in $requiredNodeModules) {
+      if (-not (Test-Path -LiteralPath (Join-Path $ChartRoot ("node_modules\{0}" -f $module)))) {
+        throw "npm dependency is still missing after installation: $module"
+      }
     }
   } finally { Pop-Location }
   Write-Step 'npm dependencies are ready.' Green

@@ -1,41 +1,30 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { openManualReviewTab, startManualReviewHandoff } from "../src/manual-test.js";
+import { calculationInfoPath, openManualReviewTab } from "../src/manual-test.js";
 
 const entrySource = readFileSync(new URL("../src/manual-test-entry.js", import.meta.url), "utf8");
+const viteSource = readFileSync(new URL("../vite.config.js", import.meta.url), "utf8");
 
-function hostDouble() {
-  const timers = [], posted = [], listeners = [];
-  const channel = { closed: false, postMessage(message) { if (!this.closed) posted.push(message); }, close() { this.closed = true; }, set onmessage(handler) { listeners.push(handler); } };
-  const host = { open: (...args) => ({ args }), BroadcastChannel: function () { return channel; }, setTimeout: (fn, delay) => { timers.push({ fn, delay }); return timers.length; }, clearTimeout: (id) => { timers.splice(id - 1, 1); } };
-  return { host, timers, posted, listeners, channel };
-}
+const calculation = { calculationId: "FOREXCOM-XAUUSD/30s/bullish/1788320800-1788449367--230da30e6e9508b3.json" };
 
-test("openManualReviewTab keeps the popup reference so a real blocker is detectable", () => {
+test("calculation report URL is stable, cache-specific and popup-safe", () => {
   const opened = [], host = { open: (...args) => { opened.push(args); return {}; } };
-  openManualReviewTab(host);
-  assert.deepEqual(opened, [["/manual-test", "_blank"]]);
+  assert.equal(calculationInfoPath(calculation), "/info/FOREXCOM-XAUUSD/30s/bullish/1788320800-1788449367--230da30e6e9508b3.json");
+  openManualReviewTab(calculation, host);
+  assert.deepEqual(opened, [[calculationInfoPath(calculation), "_blank"]]);
+  assert.throws(() => calculationInfoPath({}), /no persisted report identity/);
 });
 
-test("handoff posts the exact payload after the page announces ready", () => {
-  const { host, posted, listeners } = hostDouble();
-  const payload = { directions: { bullish: { stopAlls: [{ sourceTime: 1 }] } }, timeframe: 30 }, snapshot = { exportedAt: "now" };
-  startManualReviewHandoff(payload, snapshot, host);
-  listeners.at(-1)({ data: { type: "review-ready" } });
-  assert.deepEqual(posted, [{ type: "review-payload", payload, snapshot }]);
+test("the served review route accepts the cache identity and exposes a cache-only API", () => {
+  assert.match(viteSource, /middlewares\.use\('\/info'/);
+  assert.match(viteSource, /middlewares\.use\('\/api\/info'/);
+  assert.doesNotMatch(viteSource, /middlewares\.use\('\/manual-test'/);
 });
 
-test("a missing page times out with a notice and no delivery", () => {
-  const { host, timers, posted, channel } = hostDouble(), notices = [];
-  startManualReviewHandoff({ directions: {} }, {}, host, (message) => notices.push(message));
-  timers[0].fn();
-  assert.match(notices.at(-1), /did not respond/); assert.equal(posted.length, 0); assert.equal(channel.closed, true);
-});
-
-test("the page entry uses the same channel and never fetches", () => {
-  assert.match(entrySource, /new BroadcastChannel\("qg-manual-test"\)/);
-  assert.match(entrySource, /"review-ready"/); assert.match(entrySource, /"review-payload"/);
-  assert.doesNotMatch(entrySource, /fetch\(/); assert.match(entrySource, /buildReviewBody/);
-  assert.match(entrySource, /window\.opener = null/);
+test("the page entry fetches only the calculation identified in its URL", () => {
+  assert.match(entrySource, /fetch\(`\/api\/info\/\$\{identity\}`/);
+  assert.match(entrySource, /location\.pathname/);
+  assert.doesNotMatch(entrySource, /BroadcastChannel/);
+  assert.match(entrySource, /buildReviewBody/);
 });

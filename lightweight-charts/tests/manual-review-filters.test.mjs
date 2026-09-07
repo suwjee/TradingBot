@@ -59,9 +59,10 @@ test("A plus S blue filters both timeline and collections without deleting any p
   assert.deepEqual(h.events.filter((event) => !event.hidden).map((event) => event.dataset.filter), ["aZones", "aZones", "sZones:blue"]);
   assert.equal(h.references.filter((row) => !row.hidden).length, 3);
   assert.equal(h.events.length, 19);
-  const encoded = h.html.match(/SHA-256 [0-9a-f]+<\/summary><pre>([\s\S]*?)<\/pre><\/details>/)[1];
-  const embedded = JSON.parse(encoded.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&"));
-  assert.deepEqual(embedded, h.payload);
+  assert.match(h.html, /Record collections/);
+  assert.match(h.html, /data-bridge-id="bullish:reactions:0"/);
+  assert.equal(h.html.includes('<pre class="bridge-yaml" aria-label="Bridge output in YAML">'), false);
+  assert.doesNotMatch(h.html, /epoch:/);
 });
 
 test("True and False counts include all reviewed records and preserve unrelated storage", async () => {
@@ -79,7 +80,7 @@ test("True and False counts include all reviewed records and preserve unrelated 
 test("reference day groups, time boundaries and status report compose with filters", async () => {
   const h = await harness();
   assert.equal(h.days.length, 3); // Original records cross Tehran midnight.
-  assert.equal((h.html.match(/<details class="day" open>/g) || []).length, 3);
+  assert.equal((h.html.match(/<details class="day">/g) || []).length, 3);
   h.mark(h.events[0], "true"); h.mark(h.events.at(-1), "false");
   h.nodes.get("#from").value = h.events.at(-1).dataset.time;
   h.nodes.get("#from").oninput();
@@ -120,6 +121,6 @@ test("exact chart colors, current settings and customized object colors are resp
 
 test("filename uses system wall time, zero padding and the requested separator format", () => {
   const date = new Date(2026, 6, 29, 11, 12, 9);
-  assert.equal(manualReviewFilename(date), "manualTest-2026_07_29 11_12_09.txt");
-  assert.equal(manualReviewFilename(date, "txt"), "manualTest-2026_07_29 11_12_09.txt");
+  assert.equal(manualReviewFilename(date), "info-2026_07_29 11_12_09.txt");
+  assert.equal(manualReviewFilename(date, "txt"), "info-2026_07_29 11_12_09.txt");
 });

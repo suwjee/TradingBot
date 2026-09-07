@@ -6,6 +6,23 @@ import vm from "node:vm";
 const source = readFileSync(new URL("../src/main.js", import.meta.url), "utf8").replaceAll("\r\n", "\n");
 const section = (from, to) => source.slice(source.indexOf(from), source.indexOf(to, source.indexOf(from)));
 
+test("client IDs work when Web Crypto lacks randomUUID", () => {
+  const context = vm.createContext({
+    crypto: { getRandomValues(bytes) { bytes.forEach((_, index) => { bytes[index] = index; }); } },
+  });
+  vm.runInContext(section("function createUniqueId()", 'window.addEventListener("error"'), context);
+  assert.equal(
+    context.createUniqueId(),
+    "00010203-0405-4607-8809-0a0b0c0d0e0f",
+  );
+});
+
+test("client IDs prefer the browser randomUUID implementation", () => {
+  const context = vm.createContext({ crypto: { randomUUID: () => "browser-provided-id" } });
+  vm.runInContext(section("function createUniqueId()", 'window.addEventListener("error"'), context);
+  assert.equal(context.createUniqueId(), "browser-provided-id");
+});
+
 function visibilityHarness() {
   const payload = { timeframe: 30, directions: { bearish: { reactions: [], stopAlls: [{ number: 1, price: "82.4090" }] } } };
   const objects = [{ id: "indicator:bearish:stopall:0", hidden: true, color: "#123456" }];

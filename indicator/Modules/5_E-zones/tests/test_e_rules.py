@@ -161,6 +161,62 @@ def test_order_b_waits_for_active_canonical_owner_then_restarts_in_both_directio
         assert confirmation == candles[7].timestamp
 
 
+def test_order_b_skips_a_first_owned_by_a_live_invalid_leg_head():
+    engine = load_engine()
+    base = datetime(2026, 7, 16, 17, 0)
+    candles = [SimpleNamespace(
+        index=index, timestamp=base + timedelta(minutes=index),
+        high=Decimal("11"), low=Decimal("9"),
+    ) for index in range(9)]
+    blocked = reaction(3, 4, 8, 12)
+    resumed = reaction(6, 7, 8, 12)
+
+    def geometry_finder(_direction, start_index, _end_index):
+        return blocked if start_index < 5 else resumed
+
+    detector = engine.EDetector(
+        "bullish", [], [blocked, resumed], [], [], [], candles, candles, 60,
+        geometry_finder=geometry_finder,
+        blocked_order_first_times={candles[3].timestamp},
+    )
+    number, selected, confirmation = detector._first_order_b_geometry(
+        candles[0].timestamp, candles[3].timestamp, candles[8].timestamp,
+    )
+    assert number == 2
+    assert selected is resumed
+    assert confirmation == candles[7].timestamp
+
+    bearish = engine.EDetector(
+        "bearish", [], [blocked, resumed], [], [], [], candles, candles, 60,
+        geometry_finder=geometry_finder,
+        blocked_order_first_times={candles[3].timestamp},
+    )
+    number, selected, confirmation = bearish._first_order_b_geometry(
+        candles[0].timestamp, candles[3].timestamp, candles[8].timestamp,
+    )
+    assert number == 1
+    assert selected is blocked
+    assert confirmation == candles[4].timestamp
+
+
+def test_only_bullish_orders_are_blocked_during_an_invalid_head_lifetime():
+    bridge = load_bridge()
+    base = datetime(2026, 7, 16, 17, 0)
+    candles = [SimpleNamespace(timestamp=base + timedelta(minutes=index))
+               for index in range(7)]
+    head = SimpleNamespace(source_time=candles[1].timestamp)
+    reactions = [reaction(0, 1, 8, 12), reaction(2, 3, 8, 12),
+                 reaction(5, 6, 8, 12)]
+    stop = (4, candles[4].timestamp, candles[4].timestamp)
+
+    assert bridge.blocked_orders_while_invalid_leg_heads_are_live(
+        [head], reactions, candles, "bullish", lambda _item: stop,
+    ) == {candles[2].timestamp}
+    assert bridge.blocked_orders_while_invalid_leg_heads_are_live(
+        [head], reactions, candles, "bearish", lambda _item: stop,
+    ) == set()
+
+
 def test_order_b_keeps_pre_gate_owner_across_trend_reset_in_both_directions():
     """A trend-direction Reset cannot release an opposite Reaction owner."""
     engine = load_engine()
@@ -510,12 +566,167 @@ def test_post_e_s_requires_fresh_origin_and_unbroken_boundary_in_both_directions
         source_time=base + timedelta(minutes=4), a_source_time=base + timedelta(minutes=1),
         a_price=Decimal("9"), price=Decimal("9.5"),
     )
-    assert bridge.visible_s_zones_after_module_resets(
+    assert bridge._s_zones_for_module_engines(
         [stale, bullish_broken, bullish_valid], [bullish_e], "bullish"
     ) == [bullish_valid]
-    assert bridge.visible_s_zones_after_module_resets(
+    assert bridge._s_zones_for_module_engines(
         [stale, bearish_broken, bearish_valid], [bearish_e], "bearish"
     ) == [bearish_valid]
+
+
+def test_stopped_dominant_consumes_one_s_transition_in_both_directions():
+    bridge = load_bridge()
+    base = datetime(2026, 7, 14, 5, 0)
+    dominant = SimpleNamespace(
+        source_time=base, source_index=0, price=Decimal("10"),
+        family="red", number=2, stop_event_time=base + timedelta(minutes=2),
+    )
+    for direction in ("bullish", "bearish"):
+        transition_price = "9" if direction == "bullish" else "11"
+        rebuilt_price = "8" if direction == "bullish" else "12"
+        transition = SimpleNamespace(
+            source_time=base + timedelta(minutes=3), source_index=3,
+            a_source_time=base + timedelta(minutes=1),
+            a_stop_event_time=base + timedelta(minutes=2, seconds=30),
+            a_price=Decimal("11"), price=Decimal(transition_price), color="blue",
+        )
+        rebuilt = SimpleNamespace(
+            source_time=base + timedelta(minutes=4), source_index=4,
+            a_source_time=base + timedelta(minutes=3, seconds=1),
+            a_stop_event_time=base + timedelta(minutes=3, seconds=30),
+            a_price=Decimal("11"), price=Decimal(rebuilt_price), color="blue",
+        )
+        assert bridge.visible_s_zones_after_module_resets(
+            [transition, rebuilt], [dominant], direction
+        ) == [rebuilt]
+
+
+def test_a_rebuild_uses_dominant_stop_chronology_not_old_price_boundary():
+    bridge = load_bridge()
+    base = datetime(2026, 7, 14, 5, 0)
+    dominant = SimpleNamespace(
+        source_time=base, source_index=0, price=Decimal("10"), color="blue",
+        a_source_time=base, stop_event_time=base + timedelta(minutes=2),
+    )
+
+    def a(source_minute, provenance_minute, price):
+        provenance = base + timedelta(minutes=provenance_minute)
+        return SimpleNamespace(
+            source_time=base + timedelta(minutes=source_minute),
+            source_index=source_minute, price=Decimal(price),
+            blue_1_source_time=provenance,
+            blue_2_source_time=provenance + timedelta(seconds=5),
+            continuation_source_time=provenance + timedelta(seconds=10),
+            reaction_first_time=provenance + timedelta(seconds=15),
+        )
+
+    straddles_stop = a(3, 1, "9")
+    rebuilt_beyond_old_price = a(4, 2.1, "8")
+    assert bridge.visible_a_zones_after_module_boundaries(
+        [straddles_stop, rebuilt_beyond_old_price], [dominant], [], "bullish"
+    ) == [rebuilt_beyond_old_price]
+
+
+def test_leg_start_a_is_visible_but_not_calculation_valid_after_strict_stop():
+    bridge = load_bridge()
+    base = datetime(2026, 8, 18, 20, 2)
+    candles = [
+        SimpleNamespace(timestamp=base + timedelta(seconds=30 * index))
+        for index in range(14)
+    ]
+    stopped_s = SimpleNamespace(
+        source_time=base,
+        source_index=0,
+        price=Decimal("10"),
+        color="blue",
+        a_source_time=base - timedelta(minutes=1),
+        stop_event_time=base + timedelta(minutes=5, seconds=9),
+    )
+
+    def a(index, price):
+        return SimpleNamespace(
+            source_time=candles[index].timestamp,
+            source_index=index,
+            price=Decimal(price),
+        )
+
+    equal = a(10, "10")
+    strict_leg_start = a(11, "9.99")
+    rebuilt_half_leg = a(12, "10.25")
+    valid, invalid = bridge.split_a_zones_by_dominant_stops(
+        [equal, strict_leg_start, rebuilt_half_leg],
+        [stopped_s],
+        [],
+        [],
+        candles,
+        "bullish",
+    )
+
+    assert valid == [equal, rebuilt_half_leg]
+    assert invalid == [strict_leg_start]
+
+
+def test_dominant_stop_leg_gate_is_an_exact_bearish_mirror():
+    bridge = load_bridge()
+    base = datetime(2026, 8, 18, 20, 2)
+    candles = [
+        SimpleNamespace(timestamp=base + timedelta(seconds=30 * index))
+        for index in range(12)
+    ]
+    stopped_s = SimpleNamespace(
+        source_time=base,
+        source_index=0,
+        price=Decimal("10"),
+        color="blue",
+        a_source_time=base - timedelta(minutes=1),
+        stop_event_time=base + timedelta(minutes=5, seconds=9),
+    )
+    equal = SimpleNamespace(
+        source_time=candles[10].timestamp, source_index=10,
+        price=Decimal("10"),
+    )
+    strict_leg_start = SimpleNamespace(
+        source_time=candles[11].timestamp, source_index=11,
+        price=Decimal("10.01"),
+    )
+
+    valid, invalid = bridge.split_a_zones_by_dominant_stops(
+        [equal, strict_leg_start], [stopped_s], [], [], candles, "bearish"
+    )
+
+    assert valid == [equal]
+    assert invalid == [strict_leg_start]
+
+
+def test_active_larger_behavior_does_not_hide_half_leg_a_or_s():
+    bridge = load_bridge()
+    base = datetime(2026, 7, 14, 5, 0)
+    active_e = SimpleNamespace(
+        source_time=base, source_index=0, price=Decimal("10"),
+        family="red", number=2,
+        stop_event_time=base + timedelta(minutes=10),
+    )
+    provenance = base + timedelta(minutes=1)
+    a_zone = SimpleNamespace(
+        source_time=base + timedelta(minutes=2), source_index=2,
+        price=Decimal("8"),
+        blue_1_source_time=provenance,
+        blue_2_source_time=provenance + timedelta(seconds=5),
+        continuation_source_time=provenance + timedelta(seconds=10),
+        reaction_first_time=provenance + timedelta(seconds=15),
+    )
+    s_zone = SimpleNamespace(
+        source_time=base + timedelta(minutes=3), source_index=3,
+        a_source_time=a_zone.source_time,
+        a_stop_event_time=base + timedelta(minutes=2, seconds=30),
+        a_price=Decimal("8"), price=Decimal("7"), color="blue",
+    )
+    assert bridge.visible_a_zones_after_module_boundaries(
+        [a_zone], [], [active_e], "bullish"
+    ) == [a_zone]
+    assert bridge.visible_s_zones_after_module_resets(
+        [s_zone], [active_e], "bullish"
+    ) == [s_zone]
 
 
 def test_fxcm_s_to_e_chain_reclassifies_invalid_a():

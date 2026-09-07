@@ -1,14 +1,7 @@
-// /manual-test page runtime. The opener tab posts the cached indicator
-// payload over the BroadcastChannel; this page renders the review body from
-// src/manual-review.js into the document. It makes no other requests and
-// persists only review verdicts in localStorage.
+// /info page runtime. The URL identifies one immutable calculation cache entry;
+// this page reads only that entry, so reports from different calculations stay
+// independent even when several tabs are open.
 import { buildReviewBody, reviewRuntime } from "./manual-review.js";
-
-// The opener is not needed for the handoff (BroadcastChannel is same-origin),
-// so sever it as soon as this controlled page starts.
-try { window.opener = null; } catch {}
-
-const channel = new BroadcastChannel("qg-manual-test");
 const loading = document.getElementById("review-loading");
 const app = document.getElementById("app");
 
@@ -24,8 +17,8 @@ function renderReview(payload, snapshot) {
     return;
   }
   buildReviewBody(payload, snapshot)
-    .then(({ hash, reviewId, styles, runtime, body }) => {
-      document.title = `Indicator Timeline Review · ${reviewId}`;
+    .then(({ hash, reviewId, styles, body, bridgeData }) => {
+      document.title = `Indicator Info · ${reviewId}`;
       const style = document.createElement("style");
       style.textContent = styles;
       document.head.append(style);
@@ -33,14 +26,21 @@ function renderReview(payload, snapshot) {
       document.body.dataset.reviewId = reviewId;
       app.innerHTML = body;
       loading.remove();
-      (0, eval)(`(${runtime})()`);
+      reviewRuntime(bridgeData);
     })
     .catch((error) => fail(`Could not render the review page: ${error.message}`));
 }
 
-channel.onmessage = (event) => {
-  if (event.data?.type !== "review-payload") return;
-  channel.close();
-  renderReview(event.data.payload, event.data.snapshot);
-};
-channel.postMessage({ type: "review-ready" });
+async function loadCalculationReport() {
+  const identity = location.pathname.replace(/^\/info\/?/, "");
+  if (!identity) { fail("This report has no calculation identity."); return; }
+  try {
+    const response = await fetch(`/api/info/${identity}`, { cache: "no-store" });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Calculation report was not found");
+    renderReview(result.payload, result.snapshot);
+  } catch (error) {
+    fail(`Could not load this calculation report: ${error.message}`);
+  }
+}
+loadCalculationReport();
