@@ -4,7 +4,9 @@
 
 `lightweight-charts/` is the browser workstation and dev-server boundary.
 `indicator/indicator-settings/backend/reaction_bridge.py` validates inputs,
-aggregates candles, orchestrates the Python pipeline, and serializes results.
+keeps causal raw context through `to + timeframe`, aggregates candles,
+orchestrates the Python pipeline, and serializes only the selected presentation
+range. History before `from` is calculation warm-up and must not be discarded.
 The maintained calculation modules live under `indicator/Modules/` in order:
 Reaction, Blue Line, A, S, E, and StopAll. `market-data/raw/` holds selectable
 raw candles; `primary-cache/` holds disposable cache data.
@@ -12,7 +14,7 @@ raw candles; `primary-cache/` holds disposable cache data.
 ## Current authority
 
 `docs/algorithms/BULLISH_INDICATOR_ALGORITHM.md` documents the current
-code-derived bullish behavior as of 2026-09-05. It explicitly says that source
+code-derived bullish behavior as of 2026-09-07. It explicitly says that source
 in this repository outranks the prior Prj-1 snapshot. The document records
 current known test limitations; do not infer unrecorded production correctness.
 
@@ -27,6 +29,11 @@ The CSV is not an exhaustive whitelist; additional outputs produced by general
 calculation rules are allowed. Do not force historical outputs or infer rules
 from timestamps. Bearish changes await separate user approval. All persisted
 records must be in English.
+
+The bridge must produce the same common-window result when only `from-time`
+changes. `to-time + timeframe` is the exclusive raw-data boundary; `[from, to]`
+is applied after the full Reaction -> Blue -> A -> S -> E -> StopAll fixed
+point, during serialization and visibility filtering.
 
 The public indicator payload contains accepted calculations only. Rejected A/S
 candidates may remain in internal lifecycle state when later ownership depends
@@ -50,7 +57,8 @@ not a calculation input or a substitute for maintained source and tests.
 
 ## Publication verification on 2026-09-07
 
-The exact reviewed-range suite returns 136 passed. The chart suite returns 99
+The exact reviewed-range suite returns 136 passed and the causal viewport-start
+invariance test also passes. The chart suite returns 99
 passed and the Vite production build succeeds. The complete maintained Python
 test inventory, excluding backup copies, returns 339 passed, 22 failed, 6
 skipped, and 1 strict xfail. The 22 failures are the existing unresolved

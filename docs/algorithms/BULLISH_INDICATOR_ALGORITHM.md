@@ -1,7 +1,7 @@
 # مرجع جامع الگوریتم محاسبات اندیکاتور — روند صعودی
 
 > وضعیت سند: توصیف کدمحورِ رفتار موجود در `D:\My-Projects\TradingBot`
-> تاریخ بررسی: 2026-09-05
+> تاریخ بررسی: 2026-09-07
 > منطقهٔ زمانی محاسبات و نمایش زمان: `Asia/Tehran`
 > دامنه: فقط خروجی `direction = "bullish"`؛ Reactionهای نزولی فقط تا حدی توضیح داده می‌شوند که نقش Order ورودی برای S و E صعودی دارند.
 
@@ -41,8 +41,8 @@
 - Reaction: `9.3.0`
 - Blue Line: bridge مقدار `2.0.1` را در payload می‌گذارد؛ فایل Blue ثابت نسخهٔ مستقل ندارد.
 - A: `1.4.0`
-- S: `4.1.1`
-- E: `6.1.0`
+- S: `4.1.2`
+- E: `6.1.2`
 - StopAll: `1.3.0`
 
 SHA-256 فایل‌های محاسباتی در لحظهٔ بررسی:
@@ -51,11 +51,11 @@ SHA-256 فایل‌های محاسباتی در لحظهٔ بررسی:
 Reaction  6D7FC7F870BF59F0437536B212FEEC2D0FEF3A8B45CA9E7A535FCB5502FF01D3
 Blue      8227E3464C66B5580823342296B1E904DBBCAA5D47CFD3537FA7C5786090FC0F
 A         023450E0EDB848990CC031F683EF56761F88CF43C9402902031456B9E6DE8675
-S         CE48E941188551D496DCEF6BAF9E43D380CB1F7B62794AD0D299EA53732C146B
-E         AFF8E9F61FAD8D3B7E011AFC9B939570EBF21AE7F509A0A1D8B4172C9F35F24D
+S         1A3821BF2AD05071194E44E74D6C7F119D1AD46634966669D4000D52DE8200AD
+E         D03063E5B72D0A5EF124DD277EF5B030D204426101E99E403B482060F5645997
 StopAll   404EF8B5DC17A380C7A9A7F0969944467F6024B2FB78E6BA6BE39C0C391B455D
-Bridge    2F4EB33A332E9F59D56825E981107938D1E5640C1653943C8A16AEAB484208EC
-Vite      BF943CCDABF1CF0E4CAC108985D122CB78C6A929464932612F36D6CB58E1D190
+Bridge    FD74857C50D06716C2F801088B392E084DE169E8E08B436FD753A2736C8C40B0
+Vite      514055B07197A051C3A95C89B3F8D72B619AEE3A93E048C7475E15F0CBE76F2E
 ```
 
 هش‌ها برای اثبات snapshot هستند. اگر یکی از آن‌ها تغییر کند، این سند باید دوباره با کد تطبیق داده شود.
@@ -167,10 +167,14 @@ Open > Close   => RED
 فیلتر raw در bridge چنین است:
 
 ```text
-from <= raw.time < to + timeframe
+raw.time < to + timeframe
 ```
 
-دلیل انتهای بازشده این است که bucket نهایی تا `to` بتواند با secondهای باقی‌ماندهٔ همان timeframe کامل شود. بنابراین دادهٔ بعد از `to` تا پیش از `to + timeframe` ممکن است در OHLC bucket نهایی اثر بگذارد.
+تمام rowهای پیش از این مرز، از جمله تاریخچهٔ قبل از `from`، برای warm-up
+علّی و مالکیت stateful حفظ می‌شوند. دلیل انتهای بازشده این است که bucket
+نهایی تا `to` بتواند با secondهای باقی‌ماندهٔ همان timeframe کامل شود. بنابراین
+دادهٔ بعد از `to` تا پیش از `to + timeframe` ممکن است در OHLC bucket نهایی اثر
+بگذارد، اما هیچ داده‌ای بعد از این مرز وارد محاسبه نمی‌شود.
 
 ### 5.3. تبدیل منطقهٔ زمانی
 
@@ -199,7 +203,7 @@ Close = Close آخرین row
 
 بعد از aggregation، کندل‌های main قابل‌ارائه آن‌هایی هستند که زمان شروعشان در بازهٔ بستهٔ `[from, to]` باشد.
 
-نکتهٔ مرزی مهم: اگر `from` دقیقاً با مرز timeframe هم‌تراز نباشد، raw filter ممکن است داده‌ای از بخش میانی یک bucket را بگیرد که floor آن پیش از `from` است. آن bucket از presentation range کنار گذاشته می‌شود؛ اما full-context محاسبه روی لیست bucketهای ساخته‌شده از همین raw subset انجام می‌شود. بنابراین این پیاده‌سازی را نباید معادل دریافت تاریخچهٔ نامحدود قبل از `from` دانست.
+نکتهٔ مرزی مهم: `from` فقط مرز presentation است و نباید تاریخچهٔ قبل از آن را از محاسبه حذف کند. bridge تمام raw rows قبل از `to + timeframe` را برای warm-up و مالکیت stateful نگه می‌دارد؛ فقط bucketهایی که زمانشان در `[from, to]` نیستند از payload نهایی حذف می‌شوند. دادهٔ بعد از `to + timeframe` وارد همان درخواست نمی‌شود تا رفتار داخل بازه با آینده تغییر نکند.
 
 ### 5.5. cache و source fingerprint
 
@@ -1366,7 +1370,8 @@ VALIDATE:
     strictly increasing chronology
 
 FILTER RAW:
-    keep fromEpoch <= time < toEpoch + timeframe
+    keep time < toEpoch + timeframe
+    retain all earlier rows as causal warm-up history
 
 NORMALIZE:
     convert epoch -> Asia/Tehran local datetime
@@ -1377,6 +1382,7 @@ AGGREGATE:
     build 1-second candles
     build timeframe candles
     eligible presentation indices have bucket time in [fromEpoch, toEpoch]
+    apply this range only while serializing/displaying the fixed-point result
 
 REACTION GEOMETRY:
     bullishReactions, bullishResets = UnifiedReactionDetector(bullish)

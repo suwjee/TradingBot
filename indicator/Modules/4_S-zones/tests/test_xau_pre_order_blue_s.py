@@ -154,10 +154,15 @@ def test_strict_leg_start_dominance_hides_invalid_labels_and_blocks_downstream(m
         epoch("2026-08-18 21:53:30"),
         epoch("2026-08-18 23:07:00"),
     }
+    # Causal context keeps the E4 source at the presentation boundary.  A
+    # viewport starting at 18:54 must not erase an otherwise valid in-range E.
     assert [
         (item["sourceTime"], item["family"], item["number"])
         for item in bullish["eZones"]
-    ] == [(epoch("2026-08-18 20:20:00"), "blue", 1)]
+    ] == [
+        (epoch("2026-08-18 18:54:00"), "red", 4),
+        (epoch("2026-08-18 20:20:00"), "blue", 1),
+    ]
 
 
 @pytest.mark.skipif(not SOURCE.is_file(), reason="The selected XAUUSD history is unavailable")

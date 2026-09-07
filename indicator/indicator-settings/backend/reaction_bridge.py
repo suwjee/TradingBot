@@ -219,7 +219,14 @@ def bullish_a_stop_order_finder(engine, candles, seconds):
     return find
 
 
-def serialize(result):
+def serialize(result, start_index=None, end_index=None):
+    def selected(index):
+        return (
+            start_index is None
+            or end_index is None
+            or start_index <= int(index) <= end_index
+        )
+
     resets = [{
         "index": item.index,
         "time": epoch(datetime.strptime(item.display_time, "%Y-%m-%d %H:%M:%S")),
@@ -230,9 +237,11 @@ def serialize(result):
         ),
         "brokenLevel": str(item.broken_level),
         "fromFirstIndex": item.from_first_idx,
-    } for item in result.resets]
+    } for item in result.resets if selected(item.index)]
     reactions = []
     for item in result.reactions:
+        if not selected(item.first_idx):
+            continue
         reactions.append({
             "firstIndex": item.first_idx,
             "firstTime": epoch(datetime.strptime(item.first_time, "%Y-%m-%d %H:%M:%S")),
@@ -249,7 +258,14 @@ def serialize(result):
     return reactions, resets
 
 
-def serialize_blue_lines(items):
+def serialize_blue_lines(items, start_index=None, end_index=None):
+    def selected(index):
+        return (
+            start_index is None
+            or end_index is None
+            or start_index <= int(index) <= end_index
+        )
+
     return [{
         "direction": item.direction,
         "kind": item.kind,
@@ -264,7 +280,10 @@ def serialize_blue_lines(items):
         "linePrice": str(item.line_price),
         "startTime": epoch(item.start_time),
         "endTime": epoch(item.end_time),
-    } for item in items if bool(getattr(item, "calculation_valid", True))]
+    } for item in items if (
+        bool(getattr(item, "calculation_valid", True))
+        and selected(getattr(item, "source_index"))
+    )]
 
 
 def serialize_a_zones(items, invalid_identities=None):
@@ -1013,10 +1032,14 @@ def main() -> int:
         timings, "Read source file", lambda: args.data.read_text(encoding="utf-8-sig")
     )
     source_rows = timed(timings, "Parse source JSON", lambda: orjson.loads(source_text))
+    # Stateful calculations require all history before the requested window.
+    # Keep the causal future only through the selected final candle so later
+    # events cannot retroactively remove an object inside the window.  Applying
+    # a lower bound here would make labels depend on the viewport start.
     range_end_exclusive = args.to_time + args.timeframe
-    rows = timed(timings, "Filter raw range", lambda: [
+    rows = timed(timings, "Use causal raw context", lambda: [
         row for row in source_rows
-        if args.from_time <= int(row["time"]) < range_end_exclusive
+        if int(row["time"]) < range_end_exclusive
     ])
     if not rows:
         raise ValueError("The selected range contains no raw candles.")
@@ -1056,21 +1079,20 @@ def main() -> int:
         if args.s_zones == "enabled"
         else directions
     )
-    # E already builds a full-range geometry pipeline. When the selected output
-    # covers that exact same candle window, its Reaction/Blue/A values are the
-    # same objects the presentation pass would otherwise calculate again.
-    # Preserve the independent legacy path for every partial-window request.
+    # Every stateful module must see the complete source history.  The selected
+    # range is a presentation filter applied after Reaction/Blue/A/S/E/StopAll
+    # ownership has reached its fixed point.  Re-running upstream modules from
+    # start_index would discard parents and make labels depend on the viewport.
     reusable_full_context = (
         e_engine is not None
         and args.s_zones == "enabled"
-        and end_index == len(candles) - 1
     )
-    results = {} if reusable_full_context else {
+    results = {
         direction: timed(
             timings,
             f"Reaction • {direction.title()}",
             lambda direction=direction: engine.UnifiedReactionDetector(
-                candles, seconds, start_index, end_index, direction
+                candles, seconds, 0, len(candles) - 1, direction
             ).detect(),
         )
         for direction in required_directions
@@ -1098,36 +1120,7 @@ def main() -> int:
             for direction, detector in geometry_detectors.items()
         }
         if reusable_full_context:
-            _has_extra = False
-            for _dir in required_directions:
-                for _r in full_results[_dir].reactions:
-                    if int(getattr(_r, "first_idx")) < start_index:
-                        _has_extra = True
-                        break
-                if _has_extra:
-                    break
-            if not _has_extra:
-                for _dir in required_directions:
-                    for _r in full_results[_dir].resets:
-                        if int(getattr(_r, "from_first_idx")) < start_index:
-                            _has_extra = True
-                            break
-                    if _has_extra:
-                        break
-            if _has_extra:
-                reusable_full_context = False
-                results = {
-                    direction: timed(
-                        timings,
-                        f"Reaction • {direction.title()}",
-                        lambda direction=direction: engine.UnifiedReactionDetector(
-                            candles, seconds, start_index, end_index, direction
-                        ).detect(),
-                    )
-                    for direction in required_directions
-                }
-            else:
-                results = full_results
+            results = full_results
         for direction in directions:
             opposite = "bearish" if direction == "bullish" else "bullish"
             full_lines = timed(timings, f"Blue Line • {direction.title()}", lambda: blue_engine.detect_blue_lines(
@@ -1399,7 +1392,9 @@ def main() -> int:
     for direction in directions:
         result = results[direction]
         reactions, resets = timed(
-            timings, f"Serialize Reaction - {direction.title()}", lambda: serialize(result)
+            timings, f"Serialize Reaction - {direction.title()}", lambda: serialize(
+                result, start_index, end_index
+            )
         )
         requires_blue_lines = (
             args.blue_lines == "enabled"
@@ -1407,7 +1402,10 @@ def main() -> int:
             or args.s_zones == "enabled"
         )
         all_blue_lines = (
-            full_lines_by_direction[direction]
+            [
+                item for item in full_lines_by_direction[direction]
+                if start_index <= int(getattr(item, "source_index")) <= end_index
+            ]
             if reusable_full_context and requires_blue_lines
             else timed(timings, f"Blue Line - {direction.title()}", lambda: blue_engine.detect_blue_lines(
                 direction, result.reactions, candles, seconds, args.timeframe,
@@ -1416,7 +1414,10 @@ def main() -> int:
         )
         requires_a_zones = args.a_zones == "enabled" or args.s_zones == "enabled"
         all_a_zones = (
-            full_a_by_direction[direction]
+            [
+                item for item in full_a_by_direction[direction]
+                if start_index <= int(getattr(item, "source_index")) <= end_index
+            ]
             if reusable_full_context and requires_a_zones
             else timed(timings, f"A - {direction.title()}", lambda: a_engine.detect_a_zones(
                 direction,
@@ -1448,8 +1449,8 @@ def main() -> int:
                     candles,
                     seconds,
                     args.timeframe,
-                    start_index,
-                    end_index,
+                    0,
+                    len(candles) - 1,
                     results[opposite].resets,
                     initial_order_geometry=(
                         initial_bullish_order_geometry if direction == "bullish" else None
@@ -1462,10 +1463,9 @@ def main() -> int:
         visible_a_zones = visible_a_zones_after_s_stops(
             visible_a_zones, accepted_s_zones, candles
         )
-        e_zones = [
-            item for item in full_e_zones.get(direction, [])
-            if start_index <= int(getattr(item, "source_index")) <= end_index
-        ]
+        # Keep the complete E/StopAll lifecycle through reconciliation.  Range
+        # filtering here would remove a parent that owns a later event.
+        e_zones = list(full_e_zones.get(direction, []))
         stopalls = []
         if stopall_engine is not None and direction in full_e_detectors:
             e_zones, stopalls = reconcile_stopall_lifecycle(
@@ -1551,6 +1551,22 @@ def main() -> int:
         e_zones, visible_s_zones, visible_a_zones = timed(
             timings, f"Apply visibility filters - {direction.title()}", finalize_visibility
         )
+        visible_s_zones = [
+            item for item in visible_s_zones
+            if start_index <= int(getattr(item, "source_index")) <= end_index
+        ]
+        visible_a_zones = [
+            item for item in visible_a_zones
+            if start_index <= int(getattr(item, "source_index")) <= end_index
+        ]
+        e_zones = [
+            item for item in e_zones
+            if start_index <= int(getattr(item, "source_index")) <= end_index
+        ]
+        stopalls = [
+            item for item in stopalls
+            if start_index <= int(getattr(item, "source_index")) <= end_index
+        ]
         invalid_a_identities = invalid_a_identities_by_direction.get(direction, set())
         display_a_zones = [
             item for item in visible_a_zones
@@ -1570,7 +1586,9 @@ def main() -> int:
                 "reactions": reactions,
                 "resets": resets,
                 "blueLines": serialize_blue_lines(
-                    all_blue_lines if args.blue_lines == "enabled" else []
+                    all_blue_lines if args.blue_lines == "enabled" else [],
+                    start_index,
+                    end_index,
                 ),
                 "aZones": serialize_a_zones(
                     display_a_zones if args.a_zones == "enabled" else [],

@@ -15,6 +15,10 @@ working notes.
   `market-data/raw/RAW FOREXCOM_XAUUSD 1S FROM 2026-08-18 04-44-40 TO 2026-09-05 00-29-39.json`.
 - Acceptance range: file start through the complete candle
   `2026-08-19 05:54:00`.
+- Range semantics: every request calculates from the source start through the
+  complete candle ending at `to + timeframe`; rows before `from` are causal
+  warm-up context, and `[from, to]` is applied only to the serialized payload.
+  A shared output window must be invariant to its viewport start.
 - User corrections in the latest message outrank earlier examples.
 - Implement bullish behavior only. Do not write or implement the bearish
   mirror until the user explicitly approves it.

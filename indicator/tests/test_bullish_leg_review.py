@@ -54,7 +54,13 @@ def bullish():
         "--from-time", str(epoch("2026-08-18 04:44:40")),
         "--to-time", str(epoch("2026-08-19 05:54:00")),
     ])
-    completed = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
+    completed = subprocess.run(
+        command,
+        stdin=subprocess.DEVNULL,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
     assert completed.returncode == 0, completed.stderr
     payload = json.loads(completed.stdout)
     assert payload["timeframe"] == 30
