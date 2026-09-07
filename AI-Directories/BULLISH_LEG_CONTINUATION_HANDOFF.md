@@ -12,13 +12,13 @@ working notes.
 - Analytical timeframe: 30 seconds.
 - Timezone: `Asia/Tehran`.
 - Source:
-  `market-data/raw/RAW FOREXCOM_XAUUSD 1S FROM 2026-08-18 04-44-40 TO 2026-09-05 00-29-39.json`.
+  `market-data/raw/RAW_FOREXCOM_XAUUSD_1S_FROM_2026_08_18_04_44_40_TO_2026_09_05_00.json`.
 - Acceptance range: file start through the complete candle
   `2026-08-19 05:54:00`.
-- Range semantics: every request calculates from the source start through the
-  complete candle ending at `to + timeframe`; rows before `from` are causal
-  warm-up context, and `[from, to]` is applied only to the serialized payload.
-  A shared output window must be invariant to its viewport start.
+- Range semantics: every request first isolates raw rows to
+  `[from, to + timeframe)`, then aggregates and indexes that selection from
+  zero. It behaves exactly like a separate source file containing only the
+  selected rows. Earlier and later source rows cannot affect any module.
 - User corrections in the latest message outrank earlier examples.
 - Implement bullish behavior only. Do not write or implement the bearish
   mirror until the user explicitly approves it.
@@ -95,10 +95,12 @@ price, fixture, source filename, or output override is used.
 The later full-file review identified a stale dominant-owner defect. Ownership
 now selects the latest stop-containing main candle before applying same-candle
 module priority and sequence number. The public A candidates at
-`2026-08-20 08:44:00`, `09:08:00`, and `10:25:30` are rejected by this rule;
-`09:49:00 A` remains valid. The initial A detector may retain the rejected
-candidates as internal evidence, but they are absent from `aZones`, downstream
-S eligibility, counts, lists, and chart labels.
+`2026-08-20 08:44:00`, `09:08:00`, and `10:25:30` are rejected by this rule in
+the full-file run; `09:49:00 A` remains valid. In an independent range starting
+at `08:08:00`, the prior owner does not exist and `08:44:00 A` is consequently
+valid. The initial A detector may retain rejected candidates as internal
+evidence, but they are absent from `aZones`, downstream S eligibility, counts,
+lists, and chart labels for that calculation universe.
 
 ## Current acceptance state
 
@@ -112,8 +114,9 @@ The user confirmed that Order audit `16:38:00` and S blue `23:45:30` are valid
 additional calculations. Both are recorded as positive review rows. The CSV is
 a minimum required set; general calculations may produce additional outputs.
 
-The latest run after these additions has **136 passed and 0 failed**. All 132
-review rows and four exact parent/order assertions pass.
+The latest authoritative run has **144 passed and 0 failed**. It combines all
+132 review rows, four exact parent/order assertions, two independent-range
+regressions, and six XAUUSD range/full-file regressions.
 
 Focused verification already passes:
 
@@ -135,13 +138,11 @@ python -m py_compile `
   indicator/indicator-settings/backend/reaction_bridge.py
 ```
 
-The 2026-09-07 publication regression over all maintained Python test files,
-excluding backup copies, returned 340 passed, 22 failed, 6 skipped, and 1
-strict xfail. The remaining failures are 16 deferred Bearish symmetry E-audit
-cases, three legacy StopAll ranges, and three legacy FXCM E/order regressions.
-The Blue Line module separately returned 12 passed and two known reset-window
-failures. Do not change expectations or implement the unapproved Bearish mirror
-to make these unrelated suites green.
+Only the canonical source
+`RAW_FOREXCOM_XAUUSD_1S_FROM_2026_08_18_04_44_40_TO_2026_09_05_00.json`
+is an acceptance input for this work. FXCM, Bearish, and other datasets may be
+used for diagnostics, but their historical tests do not approve or reject the
+canonical XAUUSD calculation and must not drive output changes.
 
 Run the bridge only with the exact source/range when inspecting payloads:
 
@@ -153,7 +154,7 @@ python indicator/indicator-settings/backend/reaction_bridge.py `
   --s-engine indicator/Modules/4_S-zones/app/s_detector.py `
   --e-engine indicator/Modules/5_E-zones/app/e_detector.py `
   --stopall-engine indicator/Modules/6_StopAll/app/stopall_detector.py `
-  --data "market-data/raw/RAW FOREXCOM_XAUUSD 1S FROM 2026-08-18 04-44-40 TO 2026-09-05 00-29-39.json" `
+  --data "market-data/raw/RAW_FOREXCOM_XAUUSD_1S_FROM_2026_08_18_04_44_40_TO_2026_09_05_00.json" `
   --timeframe 30 --direction bullish `
   --from-time 1787015680 --to-time 1787106240
 ```

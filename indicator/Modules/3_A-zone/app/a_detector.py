@@ -85,6 +85,7 @@ class ADetector:
         self.timeframe = timedelta(seconds=timeframe_seconds)
         self.candle_times = [getattr(item, "timestamp") for item in self.candles]
         self.lower_times = [getattr(item, "timestamp") for item in self.lower]
+        self._confirmation_cache: dict[int, datetime] = {}
 
     @property
     def extreme_name(self) -> str:
@@ -451,6 +452,10 @@ class ADetector:
         )
 
     def _reaction_confirmation_time(self, reaction: object) -> datetime:
+        cache_key = id(reaction)
+        cached = self._confirmation_cache.get(cache_key)
+        if cached is not None:
+            return cached
         break_index = int(getattr(reaction, "break_idx"))
         break_candle = self.candles[break_index]
         start = getattr(break_candle, "timestamp")
@@ -466,7 +471,10 @@ class ADetector:
                 value > level if self.direction == "bullish" else value < level
             )
             if confirms:
-                return getattr(item, "timestamp")
+                result = getattr(item, "timestamp")
+                self._confirmation_cache[cache_key] = result
+                return result
+        self._confirmation_cache[cache_key] = start
         return start
 
     def _first_reaction_after(

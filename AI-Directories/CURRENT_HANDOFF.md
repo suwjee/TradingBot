@@ -4,9 +4,10 @@
 
 `lightweight-charts/` is the browser workstation and dev-server boundary.
 `indicator/indicator-settings/backend/reaction_bridge.py` validates inputs,
-keeps causal raw context through `to + timeframe`, aggregates candles,
-orchestrates the Python pipeline, and serializes only the selected presentation
-range. History before `from` is calculation warm-up and must not be discarded.
+isolates raw rows to `[from, to + timeframe)`, aggregates and indexes that
+selection as an independent virtual source file, orchestrates the Python
+pipeline, and serializes its accepted calculations. No candle before `from` or
+after the selected final candle participates in module state.
 The maintained calculation modules live under `indicator/Modules/` in order:
 Reaction, Blue Line, A, S, E, and StopAll. `market-data/raw/` holds selectable
 raw candles; `primary-cache/` holds disposable cache data.
@@ -30,10 +31,11 @@ calculation rules are allowed. Do not force historical outputs or infer rules
 from timestamps. Bearish changes await separate user approval. All persisted
 records must be in English.
 
-The bridge must produce the same common-window result when only `from-time`
-changes. `to-time + timeframe` is the exclusive raw-data boundary; `[from, to]`
-is applied after the full Reaction -> Blue -> A -> S -> E -> StopAll fixed
-point, during serialization and visibility filtering.
+Every selected range is a fresh calculation universe. The bridge filters raw
+rows before aggregation, gives every module indexes `0..n-1`, and runs the full
+Reaction -> Blue -> A -> S -> E -> StopAll fixed point only on those rows.
+Changing `from-time` may therefore change valid labels and numbering in a
+shared clock window; state outside the selected range is intentionally absent.
 
 The public indicator payload contains accepted calculations only. Rejected A/S
 candidates may remain in internal lifecycle state when later ownership depends
@@ -45,8 +47,11 @@ Read `AI-Directories/BULLISH_LEG_CONTINUATION_HANDOFF.md` and
 live-invalid-head Order_B ownership rule and current verification evidence.
 Bullish dominant-stop selection is chronological before it is hierarchical:
 the latest stop-containing main candle wins, then same-candle module priority
-and sequence number resolve ties. This removes the user-rejected A candidates
-at `2026-08-20 08:44:00`, `09:08:00`, and `10:25:30` without timestamp rules.
+and sequence number resolve ties. In the full-file run this removes the
+user-rejected A candidates at `2026-08-20 08:44:00`, `09:08:00`, and
+`10:25:30` without timestamp rules. A separately selected range beginning at
+`08:08:00` has no earlier owner state, so `08:44:00 A` is valid in that
+independent calculation universe.
 
 ## Publication state
 
@@ -61,13 +66,11 @@ not a calculation input or a substitute for maintained source and tests.
 
 ## Publication verification on 2026-09-07
 
-The exact reviewed-range suite returns 136 passed and the causal viewport-start
-invariance test also passes. The chart suite returns 99
-passed and the Vite production build succeeds. The complete maintained Python
-test inventory, excluding backup copies, returns 340 passed, 22 failed, 6
-skipped, and 1 strict xfail. The 22 failures are the existing unresolved
-non-acceptance groups: 16 deferred Bearish symmetry E-audit cases, three legacy
-StopAll ranges, and three legacy FXCM E/order regressions. The Blue Line module
-returns 12 passed and its two separately documented reset-window cases fail.
-These failures do not change the verified Bullish review result and must not be
-silenced by changing expectations without a confirmed rule.
+The authoritative XAUUSD suite returns 144 passed: 132 CSV rows, four exact
+parent/order assertions, two range-isolation regressions, and six focused
+range/full-file regressions. A selected six-hour range is byte-equivalent to a
+physical source file containing only those raw rows. Per the user's latest
+instruction, only
+`RAW_FOREXCOM_XAUUSD_1S_FROM_2026_08_18_04_44_40_TO_2026_09_05_00.json`
+determines acceptance. FXCM, Bearish, and other datasets are outside this
+success criterion and must not be used to alter the canonical XAUUSD result.

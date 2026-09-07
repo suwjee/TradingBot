@@ -1,4 +1,4 @@
-"""The calculation result must not depend on the selected viewport start."""
+"""A selected calculation range behaves as an independent virtual file."""
 
 from __future__ import annotations
 
@@ -11,9 +11,11 @@ from pathlib import Path
 import sys
 from zoneinfo import ZoneInfo
 
+import orjson
+
 
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE = ROOT / "market-data/raw/RAW FOREXCOM_XAUUSD 1S FROM 2026-08-18 04-44-40 TO 2026-09-05 00-29-39.json"
+SOURCE = ROOT / "market-data/raw/RAW_FOREXCOM_XAUUSD_1S_FROM_2026_08_18_04_44_40_TO_2026_09_05_00.json"
 TEHRAN = ZoneInfo("Asia/Tehran")
 MODULES = ROOT / "indicator/Modules"
 
@@ -22,7 +24,7 @@ def epoch(value: str) -> int:
     return int(datetime.fromisoformat(value).replace(tzinfo=TEHRAN).timestamp())
 
 
-def run_bridge(from_time: int, to_time: int) -> dict:
+def run_bridge(from_time: int, to_time: int, source: Path = SOURCE) -> dict:
     bridge_path = ROOT / "indicator/indicator-settings/backend/reaction_bridge.py"
     name = f"range_context_bridge_{from_time}_{to_time}"
     spec = importlib.util.spec_from_file_location(name, bridge_path)
@@ -32,7 +34,7 @@ def run_bridge(from_time: int, to_time: int) -> dict:
     spec.loader.exec_module(bridge)
     arguments = [
         str(bridge_path),
-        "--data", str(SOURCE),
+        "--data", str(source),
         "--timeframe", "30",
         "--direction", "bullish",
         "--from-time", str(from_time),
@@ -58,13 +60,23 @@ def run_bridge(from_time: int, to_time: int) -> dict:
     return json.loads(output.getvalue())["directions"]["bullish"]
 
 
-def test_common_output_is_invariant_to_viewport_start():
-    early_from = epoch("2026-08-18 04:44:40")
-    late_from = epoch("2026-08-20 00:00:00")
-    common_to = epoch("2026-08-21 00:00:00")
-    early = run_bridge(early_from, common_to)
-    late = run_bridge(late_from, common_to)
-    fields = {
+def test_selected_range_matches_a_physical_file_with_only_that_range(tmp_path):
+    from_time = epoch("2026-08-20 00:00:00")
+    to_time = epoch("2026-08-20 06:00:00")
+    end_exclusive = to_time + 30
+    source_rows = orjson.loads(SOURCE.read_bytes())
+    isolated_rows = [
+        row for row in source_rows
+        if from_time <= int(row["time"]) < end_exclusive
+    ]
+    isolated_source = tmp_path / "isolated-range.json"
+    isolated_source.write_bytes(orjson.dumps(isolated_rows))
+
+    selected = run_bridge(from_time, to_time)
+    physical = run_bridge(from_time, to_time, isolated_source)
+    assert selected == physical
+
+    time_fields = {
         "reactions": "firstTime",
         "resets": "time",
         "blueLines": "sourceTime",
@@ -74,9 +86,14 @@ def test_common_output_is_invariant_to_viewport_start():
         "stopAlls": "sourceTime",
         "orderAudit": "firstTime",
     }
-    for collection, time_field in fields.items():
-        early_common = [
-            item for item in early[collection]
-            if late_from <= item[time_field] <= common_to
-        ]
-        assert early_common == late[collection], collection
+    for collection, time_field in time_fields.items():
+        assert all(
+            from_time <= item[time_field] <= to_time
+            for item in selected[collection]
+        ), collection
+
+
+def test_repeated_selected_range_is_deterministic():
+    from_time = epoch("2026-08-20 00:00:00")
+    to_time = epoch("2026-08-20 06:00:00")
+    assert run_bridge(from_time, to_time) == run_bridge(from_time, to_time)

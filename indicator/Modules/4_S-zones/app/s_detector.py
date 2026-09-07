@@ -110,6 +110,7 @@ class SDetector:
         self.a_ownership_windows: list[tuple[datetime, datetime | None]] = []
         self._reset_blue_formation_by_reaction: dict[int, datetime] = {}
         self._reset_time_cache: dict[int, datetime] = {}
+        self._confirmation_cache: dict[tuple[int, str], datetime] = {}
         self._opposite_by_first_index = {
             int(getattr(item, "first_idx")): (number, item)
             for number, item in enumerate(self.opposite_reactions, start=1)
@@ -142,6 +143,10 @@ class SDetector:
     def _reaction_confirmation_time(
         self, reaction: object, direction: str
     ) -> datetime:
+        cache_key = (id(reaction), direction)
+        cached = self._confirmation_cache.get(cache_key)
+        if cached is not None:
+            return cached
         break_index = int(getattr(reaction, "break_idx"))
         break_candle = self.candles[break_index]
         candle_start = getattr(break_candle, "timestamp")
@@ -159,7 +164,10 @@ class SDetector:
             if (direction == "bullish" and value > level) or (
                 direction == "bearish" and value < level
             ):
-                return getattr(item, "timestamp")
+                result = getattr(item, "timestamp")
+                self._confirmation_cache[cache_key] = result
+                return result
+        self._confirmation_cache[cache_key] = candle_start
         return candle_start
 
     def _reset_time(self, reset: object) -> datetime:

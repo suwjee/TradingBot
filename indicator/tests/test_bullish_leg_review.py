@@ -21,7 +21,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 REVIEW = ROOT / "docs/algorithms/examples/2026-09-06-bullish-leg-user-review.csv"
 SOURCE = ROOT / "market-data/raw" / (
-    "RAW FOREXCOM_XAUUSD 1S FROM 2026-08-18 04-44-40 TO 2026-09-05 00-29-39.json"
+    "RAW_FOREXCOM_XAUUSD_1S_FROM_2026_08_18_04_44_40_TO_2026_09_05_00.json"
 )
 TEHRAN = ZoneInfo("Asia/Tehran")
 with REVIEW.open(encoding="utf-8", newline="") as review_file:

@@ -116,6 +116,27 @@ class _CrossIndex:
         )
 
 
+_LOWER_INDEX_CACHE: dict[
+    int,
+    tuple[Sequence[object], list[object], list[datetime], _CrossIndex],
+] = {}
+
+
+def _shared_lower_index(
+    candles: Sequence[object],
+) -> tuple[list[object], list[datetime], _CrossIndex]:
+    """Reuse the immutable lower-candle search index within one bridge run."""
+    key = id(candles)
+    cached = _LOWER_INDEX_CACHE.get(key)
+    if cached is not None and cached[0] is candles:
+        return cached[1], cached[2], cached[3]
+    ordered = sorted(candles, key=lambda item: getattr(item, "timestamp"))
+    times = [getattr(item, "timestamp") for item in ordered]
+    cross_index = _CrossIndex(ordered)
+    _LOWER_INDEX_CACHE[key] = (candles, ordered, times, cross_index)
+    return ordered, times, cross_index
+
+
 class EDetector:
     _SEQUENCE_PRIORITY = {
         ("E", "red"): 4, ("S", "red"): 3,
@@ -164,11 +185,11 @@ class EDetector:
         )
         self.opposite_resets = sorted(opposite_resets, key=self._reset_time)
         self.candles = list(candles)
-        self.lower = sorted(lower_candles, key=lambda item: getattr(item, "timestamp"))
+        self.lower, self.lower_times, self._lower_cross_index = (
+            _shared_lower_index(lower_candles)
+        )
         self.timeframe = timedelta(seconds=timeframe_seconds)
         self.times = [getattr(item, "timestamp") for item in self.candles]
-        self.lower_times = [getattr(item, "timestamp") for item in self.lower]
-        self._lower_cross_index = _CrossIndex(self.lower)
         self.start_index = int(start_index)
         self.end_index = len(self.candles) - 1 if end_index is None else int(end_index)
         self.range_start = self.times[self.start_index]
@@ -189,6 +210,9 @@ class EDetector:
         ] = {}
         self._trigger_cross_cache: dict[tuple[datetime, Decimal], datetime | None] = {}
         self._reset_leg_geometry_cache: dict[tuple[int, datetime], tuple[datetime, Decimal] | None] = {}
+        self._order_candidates_cache: dict[
+            tuple[datetime, datetime | None, bool], tuple[OrderMatch, ...]
+        ] = {}
         self.order_audit: dict[tuple[int, int], dict[str, object]] = {}
         self._synthetic_order_cache: list[
             tuple[int, object, datetime, datetime, datetime]
@@ -825,6 +849,11 @@ class EDetector:
         Resetting a valid order never erases it.  If one reaction satisfies
         both creation paths it is returned once with both causes.
         """
+        cache_key = (start, continuous_deadline, audit_legacy)
+        cached = self._order_candidates_cache.get(cache_key)
+        if cached is not None:
+            return list(cached)
+
         by_geometry: dict[tuple[int, int], OrderMatch] = {}
         gate_time = self.times[self._main_index(start)]
         synthetic: list[tuple[int, object, datetime, datetime, datetime]] = []
@@ -1037,13 +1066,15 @@ class EDetector:
             item for item in by_geometry.values()
             if item[2] <= decision_deadline
         ]
-        return sorted(
+        result = sorted(
             eligible,
             key=lambda item: (
                 item[6][2] if item[6] is not None else self.range_end,
                 self._reaction_first_time(item[1]),
             ),
         )
+        self._order_candidates_cache[cache_key] = tuple(result)
+        return result
 
     def _first_order(
         self, start: datetime, continuous_deadline: datetime | None = None,

@@ -15,14 +15,9 @@ import pytest
 
 
 ROOT = Path(__file__).resolve().parents[4]
-SOURCE_CANDIDATES = [
-    ROOT / "market-data/raw" / name
-    for name in (
-        "RAW FOREXCOM_XAUUSD 1S FROM 2026-08-18 04-44-40 TO 2026-09-05 00-29-39.json",
-        "RAW FOREXCOM_XAUUSD 1S FROM 2026-08-18 04-44-40 TO 2026-09-03 00-29-39.json",
-    )
-]
-SOURCE = next((path for path in SOURCE_CANDIDATES if path.is_file()), SOURCE_CANDIDATES[0])
+SOURCE = ROOT / "market-data/raw" / (
+    "RAW_FOREXCOM_XAUUSD_1S_FROM_2026_08_18_04_44_40_TO_2026_09_05_00.json"
+)
 TEHRAN = ZoneInfo("Asia/Tehran")
 
 
@@ -154,30 +149,27 @@ def test_strict_leg_start_dominance_hides_invalid_labels_and_blocks_downstream(m
         epoch("2026-08-18 21:53:30"),
         epoch("2026-08-18 23:07:00"),
     }
-    # Causal context keeps the E4 source at the presentation boundary.  A
-    # viewport starting at 18:54 must not erase an otherwise valid in-range E.
+    # E4 was formed by state before this independent range and must disappear.
+    # The Blue E formed entirely inside the selected virtual file remains.
     assert [
         (item["sourceTime"], item["family"], item["number"])
         for item in bullish["eZones"]
     ] == [
-        (epoch("2026-08-18 18:54:00"), "red", 4),
         (epoch("2026-08-18 20:20:00"), "blue", 1),
     ]
 
 
 @pytest.mark.skipif(not SOURCE.is_file(), reason="The selected XAUUSD history is unavailable")
-def test_latest_stopped_owner_rejects_internal_a_until_the_next_valid_leg(monkeypatch):
+def test_isolated_range_does_not_inherit_the_prior_stopped_owner(monkeypatch):
     bullish = run_bullish_window(
         monkeypatch, "2026-08-20 08:08:00", "2026-08-20 11:01:00"
     )
     a_sources = {item["sourceTime"] for item in bullish["aZones"]}
 
-    assert {
+    assert a_sources == {
         epoch("2026-08-20 08:44:00"),
-        epoch("2026-08-20 09:08:00"),
-        epoch("2026-08-20 10:25:30"),
-    }.isdisjoint(a_sources)
-    assert epoch("2026-08-20 09:49:00") in a_sources
+        epoch("2026-08-20 09:49:00"),
+    }
 
 
 @pytest.mark.skipif(not SOURCE.is_file(), reason="The selected XAUUSD history is unavailable")

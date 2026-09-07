@@ -26,6 +26,8 @@ CANDLE_PATTERN = re.compile(
     r"O=([\d.]+)\s+H=([\d.]+)\s+L=([\d.]+)\s+C=([\d.]+)"
 )
 
+_SEQUENCE_TIME_INDEXES: dict[int, tuple[Sequence[Candle], list[datetime]]] = {}
+
 def trace(message: str, *args: object) -> None:
     return None
 
@@ -240,8 +242,8 @@ class DetectorBase:
         self.seconds = one_second_candles
         self.start_index = start_index
         self.end_index = end_index
-        self.main_times = [candle.timestamp for candle in candles]
-        self.second_times = [candle.timestamp for candle in one_second_candles]
+        self.main_times = self._shared_time_index(candles)
+        self.second_times = self._shared_time_index(one_second_candles)
         self._reaction_break_index_cache: dict[str, tuple[int, list[int]]] = {}
 
         if len(candles) > 1:
@@ -251,6 +253,17 @@ class DetectorBase:
 
         if self.timeframe.total_seconds() <= 0:
             raise ValueError("Main timeframe must be positive.")
+
+    @staticmethod
+    def _shared_time_index(candles: Sequence[Candle]) -> list[datetime]:
+        """Build one immutable-source timestamp index per calculation process."""
+        key = id(candles)
+        cached = _SEQUENCE_TIME_INDEXES.get(key)
+        if cached is not None and cached[0] is candles:
+            return cached[1]
+        times = [candle.timestamp for candle in candles]
+        _SEQUENCE_TIME_INDEXES[key] = (candles, times)
+        return times
 
     def trace_state(
         self,
@@ -758,6 +771,19 @@ class _ReflectedCandles(Sequence[Candle]):
         return cached
 
 
+_REFLECTED_VIEWS: dict[int, tuple[Sequence[Candle], _ReflectedCandles]] = {}
+
+
+def _reflected_view(source: Sequence[Candle]) -> _ReflectedCandles:
+    key = id(source)
+    cached = _REFLECTED_VIEWS.get(key)
+    if cached is not None and cached[0] is source:
+        return cached[1]
+    view = _ReflectedCandles(source)
+    _REFLECTED_VIEWS[key] = (source, view)
+    return view
+
+
 class BearishDetector(DetectorBase):
     """Execute the Bullish reference state machine in reflected coordinates.
 
@@ -776,8 +802,8 @@ class BearishDetector(DetectorBase):
         # _ReflectedCandles caches each mirrored candle so repeated scans do
         # not re-allocate, while construction stays cheap (important because
         # _append_reaction builds a fresh BearishDetector per reaction).
-        self.reference.candles = _ReflectedCandles(candles)
-        self.reference.seconds = _ReflectedCandles(one_second_candles)
+        self.reference.candles = _reflected_view(candles)
+        self.reference.seconds = _reflected_view(one_second_candles)
 
     def red_run_bottom_before(self, first_green_index):
         value, source = self.reference.green_run_peak_before(first_green_index)

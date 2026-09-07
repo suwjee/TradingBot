@@ -20,7 +20,7 @@ and generated artifacts are not authoritative.
 
 - Analytical timeframe: 30 seconds.
 - Local timezone: `Asia/Tehran`.
-- Reviewed source: `market-data/raw/RAW FOREXCOM_XAUUSD 1S FROM 2026-08-18 04-44-40 TO 2026-09-05 00-29-39.json`.
+- Reviewed source: `market-data/raw/RAW_FOREXCOM_XAUUSD_1S_FROM_2026_08_18_04_44_40_TO_2026_09_05_00.json`.
 - Acceptance range: source-file start through the complete
   `2026-08-19 05:54:00` candle.
 - Review inventory: `examples/2026-09-06-bullish-leg-user-review.csv`.
@@ -73,7 +73,8 @@ and generated artifacts are not authoritative.
 ## Verification contract
 
 `indicator/tests/test_bullish_leg_review.py` checks 132 review rows and four
-exact order/parent assertions. The verified run returns 136 passing tests.
+exact order/parent assertions. Together with two range-isolation tests and six
+focused XAUUSD range/full-file tests, the verified run returns 144 passing tests.
 Every `True` behavior is present, every `False` behavior is absent, and the
 `not_computed` S blue at `02:10:30` is present through the general calculation
 and verified parent lineage. Output may include other valid calculations when
@@ -82,10 +83,7 @@ the maintained general rules produce them.
 The live-invalid-head behavior is approved for Bullish only. A Bearish mirror
 requires separate explicit user approval.
 
-The 2026-09-07 publication audit also ran every maintained Python test file.
-It returned 340 passed, 22 failed, 6 skipped, and 1 strict xfail. The remaining
-failures are outside this reviewed acceptance contract: 16 deferred Bearish
-symmetry E-audit cases, three legacy StopAll ranges, and three legacy FXCM
-E/order regressions. The Blue Line module has two separately recorded legacy
-reset-window failures. These results are retained as limits, not hidden by
-altering expected output.
+The user's final acceptance source is exclusively
+`RAW_FOREXCOM_XAUUSD_1S_FROM_2026_08_18_04_44_40_TO_2026_09_05_00.json`.
+Results from FXCM, Bearish, or other datasets are not success criteria for this
+verified Bullish XAUUSD contract.

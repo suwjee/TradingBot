@@ -80,6 +80,16 @@ def epoch(local: datetime) -> int:
     return result
 
 
+def isolate_raw_range(
+    source_rows: list[dict], from_time: int, end_exclusive: int,
+) -> list[dict]:
+    """Slice validated chronological rows without scanning the full source."""
+    row_time = lambda row: int(row["time"])
+    first = bisect_left(source_rows, from_time, key=row_time)
+    last = bisect_left(source_rows, end_exclusive, lo=first, key=row_time)
+    return source_rows[first:last]
+
+
 def build_candles(engine, rows: list[dict], timeframe: int):
     buckets: list[dict] = []
     current = None
@@ -1052,15 +1062,18 @@ def main() -> int:
         timings, "Read source file", lambda: args.data.read_text(encoding="utf-8-sig")
     )
     source_rows = timed(timings, "Parse source JSON", lambda: orjson.loads(source_text))
-    # Stateful calculations require all history before the requested window.
-    # Keep the causal future only through the selected final candle so later
-    # events cannot retroactively remove an object inside the window.  Applying
-    # a lower bound here would make labels depend on the viewport start.
+    # Treat the selected range as an independent virtual source file.  The
+    # final timestamp names the last main candle, so keep its lower-timeframe
+    # rows but exclude every row before the requested start and every later
+    # candle before aggregation or module execution.
     range_end_exclusive = args.to_time + args.timeframe
-    rows = timed(timings, "Use causal raw context", lambda: [
-        row for row in source_rows
-        if int(row["time"]) < range_end_exclusive
-    ])
+    rows = timed(
+        timings,
+        "Isolate raw range",
+        lambda: isolate_raw_range(
+            source_rows, args.from_time, range_end_exclusive,
+        ),
+    )
     if not rows:
         raise ValueError("The selected range contains no raw candles.")
     engine = timed(timings, "Load Reaction engine", lambda: load_engine(args.engine))
@@ -1085,13 +1098,7 @@ def main() -> int:
     candles = seconds if args.timeframe == 1 else timed(
         timings, "Build timeframe candle views", lambda: build_candle_objects(engine, timeframe_buckets)
     )
-    eligible = timed(timings, "Select candle range", lambda: [
-        i for i, c in enumerate(candles)
-        if args.from_time <= epoch(c.timestamp) <= args.to_time
-    ])
-    if not eligible:
-        raise ValueError("The selected range contains no candles at this timeframe.")
-    start_index, end_index = eligible[0], eligible[-1]
+    start_index, end_index = 0, len(candles) - 1
     initial_bullish_order_geometry = bullish_a_stop_order_finder(engine, candles, seconds)
     directions = ("bullish", "bearish") if args.direction == "both" else (args.direction,)
     required_directions = (
@@ -1099,24 +1106,14 @@ def main() -> int:
         if args.s_zones == "enabled"
         else directions
     )
-    # Every stateful module must see the complete source history.  The selected
-    # range is a presentation filter applied after Reaction/Blue/A/S/E/StopAll
-    # ownership has reached its fixed point.  Re-running upstream modules from
-    # start_index would discard parents and make labels depend on the viewport.
+    # Every module sees the complete isolated virtual file.  Reuse those exact
+    # Reaction objects for geometry and serialization instead of calculating
+    # the same range twice.
     reusable_full_context = (
         e_engine is not None
         and args.s_zones == "enabled"
     )
-    results = {
-        direction: timed(
-            timings,
-            f"Reaction • {direction.title()}",
-            lambda direction=direction: engine.UnifiedReactionDetector(
-                candles, seconds, 0, len(candles) - 1, direction
-            ).detect(),
-        )
-        for direction in required_directions
-    }
+    results = {}
     full_e_zones = {}
     full_e_detectors = {}
     full_s_detectors = {}
@@ -1139,8 +1136,7 @@ def main() -> int:
             )
             for direction, detector in geometry_detectors.items()
         }
-        if reusable_full_context:
-            results = full_results
+        results = full_results
         for direction in directions:
             opposite = "bearish" if direction == "bullish" else "bullish"
             full_lines = timed(timings, f"Blue Line • {direction.title()}", lambda: blue_engine.detect_blue_lines(
@@ -1408,6 +1404,17 @@ def main() -> int:
                 for key, value in full_s_detector.order_audit.items()
                 if value["a_source_time"] in accepted_a_sources
             }
+    else:
+        results = {
+            direction: timed(
+                timings,
+                f"Reaction • {direction.title()}",
+                lambda direction=direction: engine.UnifiedReactionDetector(
+                    candles, seconds, 0, len(candles) - 1, direction
+                ).detect(),
+            )
+            for direction in required_directions
+        }
     payload = {"engine": "reaction-detector/Reaction-detection-new.py", "version": engine.ENGINE_VERSION, "blueLineVersion": "2.0.1", "aVersion": a_engine.A_VERSION, "sVersion": s_engine.S_VERSION, "eVersion": e_engine.E_VERSION if e_engine else None, "stopAllVersion": stopall_engine.STOPALL_VERSION if stopall_engine else None, "blueLinesEnabled": args.blue_lines == "enabled", "aEnabled": args.a_zones == "enabled", "sEnabled": args.s_zones == "enabled", "eEnabled": e_engine is not None and args.s_zones == "enabled", "stopAllEnabled": stopall_engine is not None and e_engine is not None and args.s_zones == "enabled", "timeframe": args.timeframe, "actualFrom": epoch(candles[start_index].timestamp), "actualTo": epoch(candles[end_index].timestamp), "directions": {}}
     for direction in directions:
         result = results[direction]

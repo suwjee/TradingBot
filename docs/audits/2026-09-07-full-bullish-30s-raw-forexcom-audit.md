@@ -3,7 +3,7 @@
 تاریخ ممیزی: `2026-09-07`
 
 ورودی خام:
-`market-data/raw/RAW FOREXCOM_XAUUSD 1S FROM 2026-08-18 04-44-40 TO 2026-09-05 00-29-39.json`
+`market-data/raw/RAW_FOREXCOM_XAUUSD_1S_FROM_2026_08_18_04_44_40_TO_2026_09_05_00.json`
 
 مسیر اجرای واقعی:
 `indicator/indicator-settings/backend/reaction_bridge.py`
@@ -60,8 +60,9 @@ Audit اولیه ۴۷ مورد chronology violation گزارش کرده بود. 
 strict stop ابتدا انتخاب می‌شود؛ priority و شماره فقط stopهای همان candle را
 حل می‌کنند.
 
-پس از این اصلاح، candidateهای A در `2026-08-20 08:44:00`، `09:08:00` و
-`10:25:30` داخل engine باقی می‌مانند ولی calculation-valid عمومی نیستند و در
+پس از این اصلاح، در اجرای کامل فایل candidateهای A در
+`2026-08-20 08:44:00`، `09:08:00` و `10:25:30` داخل engine باقی می‌مانند ولی
+calculation-valid عمومی نیستند و در
 `aZones` یا chart ظاهر نمی‌شوند. A صحیح `09:49:00` حفظ شده است. هیچ timestamp
 یا مقدار داده در runtime استفاده نشده است.
 

@@ -1,41 +1,63 @@
 # TradingBot Performance Optimization Summary
 
-## Final Result
-- **Baseline**: 14,671ms (file: RAW FOREXCOM_XAUUSD 1S FROM 2026-09-02 07-16-40 TO 2026-09-03 18-59-27.json)
-- **Optimized**: ~4,370ms under normal system conditions
-- **Speedup**: ~3.36x
-- **Calculation output**: byte-for-byte identical ✅
+## Verified result
 
-## Modified Files
+- Source: `RAW_FOREXCOM_XAUUSD_1S_FROM_2026_08_18_04_44_40_TO_2026_09_05_00.json`.
+- Workload: Bullish, 30 seconds, `2026-08-18 04:44:40` through the complete
+  `2026-09-05 00:29:30` candle.
+- Profile baseline: `735,381.74 ms` and `671,408,443` calls.
+- First optimized pass: `362,162.26 ms` (`2.03x`).
+- Final optimized passes: `137,230.39 ms` under load, a best observed
+  `79,007.34 ms`, and `105,156.91 ms` in the final post-`bisect` publication
+  rerun (`5.36x` conservative, `9.31x` best observed, `6.99x` final rerun).
+- The final calculation payload is exactly equal to both the first optimized
+  output and the golden baseline after removing runtime timings. The only
+  metadata difference from the old baseline is `actualFrom`: the isolated
+  source builds the partial first bucket at `04:44:30` from raw rows beginning
+  at `04:44:40`; no earlier raw data enters that bucket.
 
-### 1. reaction_bridge.py (main bridge)
-- **orjson**: replaced json for faster parsing
-- **epoch() cached**: cached datetime -> int conversion
-- **local_datetime() cached**: cached int -> datetime conversion
-- **reusable_full_context**: enabled when start_index > 0 (with fallback check)
-- **build_candle_objects**: fast display_time formatting (string format instead of strftime)
+## Range contract
 
-### 2. Reaction-detection-new.py (reaction detector)
-- **Candle slots=True**: added __slots__ to Candle dataclass
-- **_first_geometry_after_reset cached**: cached geometry search results
-- **first_simple_geometry_after_gate cached**: cached gate search results
+The bridge filters raw rows to `[from, to + timeframe)` before aggregation.
+Main-candle indexes start at zero and every engine sees only that virtual file.
+A selected range can legitimately differ from the same clock window in a
+longer run because prior state is intentionally absent. A six-hour regression
+proves that selecting a range from the full JSON is byte-equivalent to running
+the bridge on a physical JSON file containing only those selected raw rows.
 
-### 3. e_detector.py (E detector)
-- No changes (original backup retained)
+## Optimizations
 
-## New Files Created
-- **SPEED_CODING_RULES.md**: coding rules for maximum calculation speed
-- **OPTIMIZATION_SUMMARY.md**: this summary
+### Bridge
 
-## Benchmark Files
-- **tmp/baseline_output.json**: original output (before optimization)
-- **tmp/optimized_output.json**: optimized output (after optimization)
-- **tmp/verify_optimized.py**: output comparison and speed measurement script
-- **tmp/benchmark_baseline.py**: baseline benchmark script
+- Eliminated duplicate Reaction detection and reused the geometry result for
+  serialization and downstream modules.
+- Kept one-pass raw normalization for one-second and main-timeframe buckets.
+- Retained `orjson`, cached epoch conversions, and fast display-time formatting.
 
-## Key Notes
-- Calculation output must not change (verified ✅)
-- Real speedup is ~3.36x under normal system conditions
-- Under heavy system load, timings are ~2x higher (due to background processes)
-- Fastest optimization: eliminating duplicate computation (reusable_full_context)
-- Cache optimizations: epoch, local_datetime, geometry methods
+### Reaction
+
+- Shares timestamp indexes for identical immutable candle sequences.
+- Shares lazy reflected candle views used by Bearish geometry.
+
+### A and S
+
+- Caches repeated Reaction confirmation-time lookups within each detector.
+
+### E
+
+- Shares the sorted lower-candle list, timestamp index, and strict-cross index
+  between E detector instances in one bridge process.
+- Caches order-candidate searches by start, deadline, and audit mode. This
+  reduced the four dominant E phases from about `257.7 s` to `62.7 s` while
+  preserving every returned object.
+
+## Verification artifacts
+
+- `tmp/baseline-profile-output.json`
+- `tmp/baseline-full.prof`
+- `tmp/optimized-full-v1.json`
+- `tmp/optimized-full-v2.json`
+
+Generated benchmark files are diagnostic evidence only. Maintained code,
+algorithm documents, and tests remain authoritative. Production calculation
+code contains no timestamp, price, filename, CSV, or output hardcoding.

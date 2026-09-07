@@ -167,14 +167,13 @@ Open > Close   => RED
 فیلتر raw در bridge چنین است:
 
 ```text
-raw.time < to + timeframe
+from <= raw.time < to + timeframe
 ```
 
-تمام rowهای پیش از این مرز، از جمله تاریخچهٔ قبل از `from`، برای warm-up
-علّی و مالکیت stateful حفظ می‌شوند. دلیل انتهای بازشده این است که bucket
-نهایی تا `to` بتواند با secondهای باقی‌ماندهٔ همان timeframe کامل شود. بنابراین
-دادهٔ بعد از `to` تا پیش از `to + timeframe` ممکن است در OHLC bucket نهایی اثر
-بگذارد، اما هیچ داده‌ای بعد از این مرز وارد محاسبه نمی‌شود.
+تمام rowهای قبل از `from` و از `to + timeframe` به بعد پیش از aggregation حذف
+می‌شوند. دلیل انتهای بازشده این است که `to` زمان شروع آخرین main candle است و
+همهٔ secondهای باقی‌ماندهٔ همان candle باید در OHLC و تصمیم‌های intrabar آن
+حضور داشته باشند. هیچ state خارج از این virtual file وارد هیچ ماژولی نمی‌شود.
 
 ### 5.3. تبدیل منطقهٔ زمانی
 
@@ -201,9 +200,16 @@ Low   = کمینهٔ Lowها
 Close = Close آخرین row
 ```
 
-بعد از aggregation، کندل‌های main قابل‌ارائه آن‌هایی هستند که زمان شروعشان در بازهٔ بستهٔ `[from, to]` باشد.
+bridge پیش از aggregation فقط raw rowهای بازهٔ نیمه‌باز
+`[from, to + timeframe)` را نگه می‌دارد. سپس کندل‌های one-second و main را فقط
+از همین rows می‌سازد و indexهای main را از صفر آغاز می‌کند. بنابراین بازهٔ
+انتخابی دقیقاً مانند یک فایل مستقل است: هیچ row، state، parent یا ownership از
+قبل `from` یا بعد از آخرین کندل انتخابی وارد محاسبات نمی‌شود.
 
-نکتهٔ مرزی مهم: `from` فقط مرز presentation است و نباید تاریخچهٔ قبل از آن را از محاسبه حذف کند. bridge تمام raw rows قبل از `to + timeframe` را برای warm-up و مالکیت stateful نگه می‌دارد؛ فقط bucketهایی که زمانشان در `[from, to]` نیستند از payload نهایی حذف می‌شوند. دادهٔ بعد از `to + timeframe` وارد همان درخواست نمی‌شود تا رفتار داخل بازه با آینده تغییر نکند.
+`to` زمان شروع آخرین main candle است؛ به همین دلیل raw rowهای داخل همان کندل تا
+مرز انحصاری `to + timeframe` نگه داشته می‌شوند. اگر نخستین raw row وسط یک bucket
+باشد، timestamp آن bucket همچنان از floor زمانی استاندارد می‌آید، اما OHLC آن
+فقط از raw rowهای داخل بازه ساخته می‌شود و هیچ دادهٔ قبلی ندارد.
 
 ### 5.5. cache و source fingerprint
 
@@ -1082,7 +1088,10 @@ actualTo
 directions
 ```
 
-خروجی این سند داخل `directions.bullish` قرار می‌گیرد. `actualFrom` و `actualTo` زمان اولین و آخرین main candle واقعاً انتخاب‌شده‌اند و ممکن است برای تشخیص دقیق بازه از from/to درخواستی مفیدتر باشند.
+خروجی این سند داخل `directions.bullish` قرار می‌گیرد. `actualFrom` و `actualTo`
+زمان bucket اولین و آخرین main candle ساخته‌شده از virtual file هستند. در شروع
+غیرهم‌تراز، `actualFrom` ممکن است floor همان bucket باشد، ولی هیچ raw row قبل از
+`from` در OHLC یا state آن وجود ندارد.
 
 ### 23.2. فیلدهای دقیق `reactions`
 
@@ -1383,8 +1392,8 @@ VALIDATE:
     strictly increasing chronology
 
 FILTER RAW:
-    keep time < toEpoch + timeframe
-    retain all earlier rows as causal warm-up history
+    keep fromEpoch <= time < toEpoch + timeframe
+    discard every earlier and later source row
 
 NORMALIZE:
     convert epoch -> Asia/Tehran local datetime
@@ -1394,8 +1403,8 @@ NORMALIZE:
 AGGREGATE:
     build 1-second candles
     build timeframe candles
-    eligible presentation indices have bucket time in [fromEpoch, toEpoch]
-    apply this range only while serializing/displaying the fixed-point result
+    index the isolated main candles from 0 through n-1
+    run every module only on this isolated virtual file
 
 REACTION GEOMETRY:
     bullishReactions, bullishResets = UnifiedReactionDetector(bullish)
