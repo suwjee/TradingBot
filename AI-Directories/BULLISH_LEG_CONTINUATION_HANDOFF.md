@@ -92,6 +92,14 @@ the blocked First set from invalid head ownership and exact A-stop chronology;
 the E engine skips those Firsts only for bullish Order_B selection. No timestamp,
 price, fixture, source filename, or output override is used.
 
+The later full-file review identified a stale dominant-owner defect. Ownership
+now selects the latest stop-containing main candle before applying same-candle
+module priority and sequence number. The public A candidates at
+`2026-08-20 08:44:00`, `09:08:00`, and `10:25:30` are rejected by this rule;
+`09:49:00 A` remains valid. The initial A detector may retain the rejected
+candidates as internal evidence, but they are absent from `aZones`, downstream
+S eligibility, counts, lists, and chart labels.
+
 ## Current acceptance state
 
 Run from `D:\My-Projects\TradingBot`:
@@ -128,7 +136,7 @@ python -m py_compile `
 ```
 
 The 2026-09-07 publication regression over all maintained Python test files,
-excluding backup copies, returned 339 passed, 22 failed, 6 skipped, and 1
+excluding backup copies, returned 340 passed, 22 failed, 6 skipped, and 1
 strict xfail. The remaining failures are 16 deferred Bearish symmetry E-audit
 cases, three legacy StopAll ranges, and three legacy FXCM E/order regressions.
 The Blue Line module separately returned 12 passed and two known reset-window

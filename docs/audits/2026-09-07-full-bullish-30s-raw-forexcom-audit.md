@@ -36,11 +36,11 @@
 | reactions | 3189 |
 | resets | 1577 |
 | blueLines | 1742 |
-| aZones | 321 |
-| sZones | 159 |
+| aZones | 281 |
+| sZones | 145 |
 | eZones | 147 |
 | stopAlls | 22 |
-| orderAudit | 466 |
+| orderAudit | 464 |
 
 ## مواردی که audit اولیه اشتباه گزارش کرده بود
 
@@ -52,15 +52,23 @@ Audit اولیه ۴۷ مورد chronology violation گزارش کرده بود. 
 
 پس از اصلاح audit با همین قرارداد، تعداد violation برابر صفر شد.
 
-## سه مورد lineage که نیاز به توجه دارند
+## اصلاح مالک dominant و سه A نارنجی
 
-### S در 2026-08-26 07:15:30
+نسخهٔ قبلی انتخاب dominant، priority و شمارهٔ E را پیش از chronology stop
+مقایسه می‌کرد. در نتیجه `E6 red` قدیمی می‌توانست پس از پایان lifecycle خود نیز
+مرز Aهای جدید را کنترل کند. قاعدهٔ عمومی اصلاح شد: جدیدترین main candle حاوی
+strict stop ابتدا انتخاب می‌شود؛ priority و شماره فقط stopهای همان candle را
+حل می‌کنند.
 
-`aSourceIndex=16802` همان source index مربوط به E1 نهایی است. طبق اولویت مالکیت `StopAll > E > S > A`، A در payload عمومی حذف و E مالک source شده است. این نقص محاسبه نیست؛ یک رفتار مورد انتظار visibility است.
+پس از این اصلاح، candidateهای A در `2026-08-20 08:44:00`، `09:08:00` و
+`10:25:30` داخل engine باقی می‌مانند ولی calculation-valid عمومی نیستند و در
+`aZones` یا chart ظاهر نمی‌شوند. A صحیح `09:49:00` حفظ شده است. هیچ timestamp
+یا مقدار داده در runtime استفاده نشده است.
 
-### S در 2026-08-28 15:11:00
+این اصلاح دو missing A parent قبلی را نیز حذف کرد؛ Sهای وابسته به آن Aهای
+نامعتبر دیگر وارد payload عمومی نمی‌شوند.
 
-`aSourceIndex=23256` نیز با E2 نهایی collision مالکیتی دارد و به همان دلیل A جداگانه در payload عمومی دیده نمی‌شود. این مورد هم خطای محاسباتی نیست.
+## lineage باقی‌مانده
 
 ### E2 blue در 2026-08-28 00:06:30
 
@@ -68,22 +76,22 @@ Audit اولیه ۴۷ مورد chronology violation گزارش کرده بود. 
 
 قابل رفع است، اما فقط با trace داخلیِ E قبل از visibility filtering باید تعیین شود که parent واقعاً accepted بوده یا صرفاً candidate انتقالی. اگر accepted بوده، closure باید برای parentهای E نیز مانند parentهای S بازگردانی شود؛ اگر superseded بوده، باید در گزارش به‌عنوان expected internal lineage ثبت شود و خروجی عمومی تغییری نکند.
 
-## سیزده Order بدون رکورد مستقل در orderAudit
+## شش Order بدون رکورد مستقل در orderAudit
 
-برای ۱۳ S، هندسهٔ Order در خود S کامل است اما همان `(orderFirstIndex, orderBreakIndex)` رکورد جداگانه‌ای در `orderAudit` ندارد. این با قرارداد فعلی سازگار است:
+برای ۶ S، هندسهٔ Order در خود S کامل است اما همان `(orderFirstIndex, orderBreakIndex)` رکورد جداگانه‌ای در `orderAudit` ندارد. این با قرارداد فعلی سازگار است:
 
 - `orderAudit` یک ledger مستقل است.
 - frontend ابتدا Orderهای متصل به S/E/StopAll را رسم می‌کند.
 - با `representedOrderKeys` از رسم دوبارهٔ همان Order جلوگیری می‌شود.
 
-بنابراین این ۱۳ مورد فقدان محاسبه نیستند و نباید با افزودن رکورد تکراری اصلاح شوند.
+بنابراین این ۶ مورد فقدان محاسبه نیستند و نباید با افزودن رکورد تکراری اصلاح شوند.
 
 ## قابلیت اصلاح و اقدام پیشنهادی
 
 - خطای قطعی محاسباتی: در این اجرای کامل پیدا نشد؛ اصلاح الگوریتمی بدون شاهد جدید نباید انجام شود.
-- دو missing A parent: قابل اصلاح نیستند چون حذف عمومی نتیجهٔ مالکیت صحیح E است؛ فقط مستندسازی لازم است.
+- سه A نارنجی: با انتخاب chronological مالک dominant اصلاح شدند؛ candidate
+  داخلی‌اند و خروجی معتبر عمومی نیستند.
 - parent E با index `21581`: نیازمند یک تست trace داخلی و تصمیم دربارهٔ accepted/superseded بودن parent است. تغییر عمومی قبل از این تست می‌تواند خروجی معتبر را خراب کند.
-- ۱۳ Order audit: نیاز به اصلاح ندارد؛ geometry در S موجود و frontend deduplicate می‌کند.
+- ۶ Order audit: نیاز به اصلاح ندارد؛ geometry در S موجود و frontend deduplicate می‌کند.
 
-خروجی خام اجرای کامل در `tmp/full-bullish-20260818-0905.json` و گزارش ماشینی در `tmp/full-bullish-audit.json` نگهداری شده‌اند. اسکریپت audit در `tmp/audit_full_bullish.py` قرارداد زمانی بالا را اعمال می‌کند.
-
+خروجی خام اجرای کامل پس از اصلاح در `tmp/full-bullish-dominant-stop-fix.json` و گزارش ماشینی در `tmp/full-bullish-audit.json` نگهداری شده‌اند. اسکریپت audit در `tmp/audit_full_bullish.py` قرارداد زمانی بالا را اعمال می‌کند.

@@ -83,7 +83,7 @@ The live-invalid-head behavior is approved for Bullish only. A Bearish mirror
 requires separate explicit user approval.
 
 The 2026-09-07 publication audit also ran every maintained Python test file.
-It returned 339 passed, 22 failed, 6 skipped, and 1 strict xfail. The remaining
+It returned 340 passed, 22 failed, 6 skipped, and 1 strict xfail. The remaining
 failures are outside this reviewed acceptance contract: 16 deferred Bearish
 symmetry E-audit cases, three legacy StopAll ranges, and three legacy FXCM
 E/order regressions. The Blue Line module has two separately recorded legacy

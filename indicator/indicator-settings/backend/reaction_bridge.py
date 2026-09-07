@@ -658,6 +658,10 @@ def split_a_zones_by_dominant_stops(
         if stop_index < 0:
             continue
         stopped.append((module, stop_index, stop_event))
+    stop_indices = {
+        _module_identity(module): stop_index
+        for module, stop_index, _stop_event in stopped
+    }
 
     valid = []
     invalid = []
@@ -679,7 +683,23 @@ def split_a_zones_by_dominant_stops(
         if not eligible:
             valid.append(a_zone)
             continue
-        dominant = _dominant_module(eligible)
+        # A historical high-priority E cannot own every later leg forever.
+        # The newest main candle containing a strict stop owns the transition;
+        # priority and numbering resolve only owners stopped in that candle.
+        dominant = (
+            max(
+                eligible,
+                key=lambda item: (
+                    stop_indices[_module_identity(item)],
+                    _module_priority(item),
+                    int(getattr(item, "number", 0)),
+                    getattr(item, "source_time"),
+                    int(getattr(item, "source_index", -1)),
+                ),
+            )
+            if direction == "bullish"
+            else _dominant_module(eligible)
+        )
         crosses_dominant = _strictly_beyond_boundary(
             Decimal(str(getattr(a_zone, "price"))),
             Decimal(str(getattr(dominant, "price"))),

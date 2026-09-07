@@ -15,7 +15,7 @@ All persisted records remain English; the chat language is independent.
 The user corrected `2026-08-18 22:55:00 S blue`: it is invalid. The review
 CSV therefore records `False`, and final visibility must suppress that S.
 
-The maintained implementation now contains six narrow changes:
+The maintained implementation now contains seven narrow changes:
 
 1. Bullish S can resolve a canonical same-candle continuation after the exact
    A stop in the continuation's own ordinary Reaction context.
@@ -32,7 +32,13 @@ The maintained implementation now contains six narrow changes:
    pending S candidate does not block unrelated orders. This makes `06:01:30`
    invalid and selects `06:05:30` as the first eligible Order_B after the
    `05:41:30` head stops at `06:03:58`.
-6. Rejected A/S candidates remain internal lifecycle evidence and are omitted
+6. Bullish leg ownership selects the owner whose strict stop belongs to the
+   latest main candle. Only stops in that same candle are resolved by module
+   priority and sequence number. This prevents an older high-number E from
+   remaining dominant across later lifecycles. The A candidates at
+   `2026-08-20 08:44:00`, `09:08:00`, and `10:25:30` are therefore rejected,
+   while the independently valid `09:49:00 A` remains public.
+7. Rejected A/S candidates remain internal lifecycle evidence and are omitted
    from the public payload. The chart defensively removes legacy invalid
    objects, so they cannot create labels, counts, list entries, or order shapes.
 
@@ -41,7 +47,8 @@ correct calculated outputs. They are now durable positive rows in the review
 CSV. The CSV defines the minimum required behaviors; additional outputs are
 allowed when they arise from the unmodified general calculation rules.
 
-The exact-range acceptance command returns 136 passed and 0 failed. The
+The exact-range acceptance command returns 136 passed and 0 failed, and the
+viewport-start invariance regression passes. The
 `06:13:30 E1 blue` has parent S=`05:18:30`, orderFirst=`06:05:30`,
 orderMode=`B`, cause=`reset-leg`, confirmation=`06:10:42`, Stop source
 `06:02:30`, Stop=`4401.800`, and strict stop event=`06:30:56`. No

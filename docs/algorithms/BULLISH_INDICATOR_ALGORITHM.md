@@ -54,7 +54,7 @@ A         023450E0EDB848990CC031F683EF56761F88CF43C9402902031456B9E6DE8675
 S         1A3821BF2AD05071194E44E74D6C7F119D1AD46634966669D4000D52DE8200AD
 E         D03063E5B72D0A5EF124DD277EF5B030D204426101E99E403B482060F5645997
 StopAll   404EF8B5DC17A380C7A9A7F0969944467F6024B2FB78E6BA6BE39C0C391B455D
-Bridge    FD74857C50D06716C2F801088B392E084DE169E8E08B436FD753A2736C8C40B0
+Bridge    9A2F4C94C151AA9013005FFF65F6B4C5D9B56787BC6C4326BD7A6D326111B877
 Vite      514055B07197A051C3A95C89B3F8D72B619AEE3A93E048C7475E15F0CBE76F2E
 ```
 
@@ -587,6 +587,19 @@ AStop = اولین lower second بعد از confirmation دقیق A با Low < A
 
 هر A stop‌شده فوراً یک ownership window می‌سازد، حتی اگر هیچ Order یا S بعداً پیدا نشود. Aهای بعدی که source event آن‌ها داخل window باز باشد برای همان مالکیت واجد شرایط نیستند. window پس از source یک S موفق به‌اندازهٔ یک timeframe بسته می‌شود؛ اگر S ساخته نشود، pending ownership باز می‌ماند.
 
+### 14.1. انتخاب مالک leg پس از stop ماژول
+
+برای ownership صعودی، ابتدا stopی انتخاب می‌شود که در جدیدترین main candle
+رخ داده است. فقط اگر چند S/E/StopAll در همان candle متوقف شده باشند، ترتیب
+`StopAll > E red > S red > E blue > S blue` و سپس شمارهٔ sequence مالک غالب
+را تعیین می‌کند. بنابراین یک E قدیمی فقط به‌دلیل شمارهٔ بزرگ‌تر نمی‌تواند در
+چرخه‌های بعدی dominant باقی بماند.
+
+Aهای ساخته‌شده توسط Blue/Reaction می‌توانند به‌عنوان candidate داخلی باقی
+بمانند، اما اگر مرز strict همین مالک جدید را بشکنند و شرط مستقل interior-leg
+را نداشته باشند، از payload عمومی و تمام محاسبات downstream حذف می‌شوند. این
+قاعده فقط برای Bullish تأیید شده است؛ Bearish رفتار قبلی را حفظ می‌کند.
+
 ## 15. Order در روند صعودی
 
 در روند صعودی:
@@ -731,7 +744,7 @@ Type 3 از A-stop تا قبل از confirmation اولین Order نزولی ب�
 
 - Order metadata مصنوعی ساخته نمی‌شود.
 - `formation_type = "type3"`.
-- در کد فعلی S نسخه 4.1.1 رنگ Type 3 همیشه blue است؛ برای روند صعودی نیز Blue است.
+- در کد فعلی S نسخه 4.1.2 رنگ Type 3 همیشه blue است؛ برای روند صعودی نیز Blue است.
 - UI هم Type 3 را بدون اختراع Order geometry یا stop آن رسم می‌کند.
 
 ## 18. ماژول E صعودی

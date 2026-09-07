@@ -166,6 +166,21 @@ def test_strict_leg_start_dominance_hides_invalid_labels_and_blocks_downstream(m
 
 
 @pytest.mark.skipif(not SOURCE.is_file(), reason="The selected XAUUSD history is unavailable")
+def test_latest_stopped_owner_rejects_internal_a_until_the_next_valid_leg(monkeypatch):
+    bullish = run_bullish_window(
+        monkeypatch, "2026-08-20 08:08:00", "2026-08-20 11:01:00"
+    )
+    a_sources = {item["sourceTime"] for item in bullish["aZones"]}
+
+    assert {
+        epoch("2026-08-20 08:44:00"),
+        epoch("2026-08-20 09:08:00"),
+        epoch("2026-08-20 10:25:30"),
+    }.isdisjoint(a_sources)
+    assert epoch("2026-08-20 09:49:00") in a_sources
+
+
+@pytest.mark.skipif(not SOURCE.is_file(), reason="The selected XAUUSD history is unavailable")
 def test_full_file_preserves_verified_half_leg_behaviors(monkeypatch):
     bullish = run_bullish_window(
         monkeypatch, "2026-08-18 04:44:40", "2026-09-03 00:29:39"

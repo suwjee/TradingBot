@@ -43,6 +43,10 @@ also removes any legacy `calculationValid=false` objects defensively.
 Read `AI-Directories/BULLISH_LEG_CONTINUATION_HANDOFF.md` and
 `docs/algorithms/BULLISH_LEG_RULE_AMENDMENT_20260907.md` for the completed
 live-invalid-head Order_B ownership rule and current verification evidence.
+Bullish dominant-stop selection is chronological before it is hierarchical:
+the latest stop-containing main candle wins, then same-candle module priority
+and sequence number resolve ties. This removes the user-rejected A candidates
+at `2026-08-20 08:44:00`, `09:08:00`, and `10:25:30` without timestamp rules.
 
 ## Publication state
 
@@ -60,7 +64,7 @@ not a calculation input or a substitute for maintained source and tests.
 The exact reviewed-range suite returns 136 passed and the causal viewport-start
 invariance test also passes. The chart suite returns 99
 passed and the Vite production build succeeds. The complete maintained Python
-test inventory, excluding backup copies, returns 339 passed, 22 failed, 6
+test inventory, excluding backup copies, returns 340 passed, 22 failed, 6
 skipped, and 1 strict xfail. The 22 failures are the existing unresolved
 non-acceptance groups: 16 deferred Bearish symmetry E-audit cases, three legacy
 StopAll ranges, and three legacy FXCM E/order regressions. The Blue Line module
