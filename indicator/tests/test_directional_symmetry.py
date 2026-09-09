@@ -212,20 +212,7 @@ def reflect_payload(value, key=""):
     return value
 
 
-@pytest.mark.parametrize("seed", (
-    1,
-    pytest.param(
-        17,
-        marks=pytest.mark.xfail(
-            strict=True,
-            reason=(
-                "The confirmed live-invalid-head ownership rule is bullish-only; "
-                "its bearish mirror requires separate user approval."
-            ),
-        ),
-    ),
-    25,
-))
+@pytest.mark.parametrize("seed", range(40))
 def test_complete_bridge_reflection_and_both_mode(seed, tmp_path):
     _, seconds = sample(seed)
     data = tmp_path / "candles.json"

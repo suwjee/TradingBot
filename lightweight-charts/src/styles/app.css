@@ -105,7 +105,7 @@ button:disabled, select:disabled, input:disabled { cursor: not-allowed; opacity:
 
 .symbol-menu {
   top: calc(var(--ui-topbar-height) + 6px); left: 8px;
-  width: min(380px, calc(100vw - 16px)); max-height: min(620px, calc(100vh - 90px)); overflow: hidden;
+  width: min(520px, calc(100vw - 16px)); max-height: min(620px, calc(100vh - 90px)); overflow: hidden;
 }
 .searchbox {
   min-height: var(--ui-control-lg); display: flex; align-items: center; gap: var(--ui-space-2);
@@ -144,7 +144,9 @@ button:disabled, select:disabled, input:disabled { cursor: not-allowed; opacity:
 .symbol-title strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--ui-text-sm); }
 .symbol-title em { color: var(--ui-text-muted); font-size: var(--ui-text-2xs); font-style: normal; }
 .symbol-range, .symbol-stats { gap: var(--ui-space-2); margin-top: 3px; color: var(--ui-text-muted); font-size: var(--ui-text-2xs); }
-.symbol-range small, .symbol-range i { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-style: normal; }
+.symbol-range { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: var(--ui-space-1); }
+.symbol-range small { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.symbol-range i { font-style: normal; }
 .symbol-range b { margin-right: 4px; color: var(--ui-text-secondary); }
 .symbol-stats span + span::before { content: "·"; margin-right: var(--ui-space-2); }
 .symbol-empty { padding: var(--ui-space-6); color: var(--ui-text-muted); text-align: center; }
@@ -328,6 +330,20 @@ button:disabled, select:disabled, input:disabled { cursor: not-allowed; opacity:
 .modal > p { margin: var(--ui-space-2) 0 var(--ui-space-5); color: var(--ui-text-secondary); line-height: var(--ui-leading-normal); }
 .field > label { display: block; margin-bottom: var(--ui-space-2); color: var(--ui-text-secondary); font-size: var(--ui-text-sm); font-weight: var(--ui-weight-medium); }
 .modal-actions { display: flex; justify-content: flex-end; gap: var(--ui-space-2); margin-top: var(--ui-space-5); }
+.cache-clear-dialog { width: min(500px, calc(100vw - 32px)); }
+.cache-clear-options { display: grid; gap: var(--ui-space-2); }
+.cache-clear-option {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--ui-space-3); min-height: calc(var(--ui-control-lg) + var(--ui-space-6));
+  padding: var(--ui-space-3); border: 1px solid var(--ui-border); border-radius: var(--ui-radius-sm);
+  background: var(--ui-bg-surface); color: var(--ui-text-primary); text-align: left;
+}
+.cache-clear-option:hover { border-color: var(--ui-border-strong); background: var(--ui-bg-hover); }
+.cache-clear-option > span { min-width: 0; display: grid; gap: var(--ui-space-1); }
+.cache-clear-option strong, .cache-clear-option small { display: block; }
+.cache-clear-option strong { font-size: var(--ui-text-sm); font-weight: var(--ui-weight-semibold); }
+.cache-clear-option small { overflow: hidden; color: var(--ui-text-secondary); font-size: var(--ui-text-xs); text-overflow: ellipsis; white-space: nowrap; }
+.cache-clear-option.danger { border-color: color-mix(in srgb, var(--ui-danger) 28%, var(--ui-border)); color: var(--ui-danger); }
+.cache-clear-option.danger small { color: var(--ui-text-secondary); }
 .settings-panel { width: min(560px, calc(100vw - 32px)); display: grid; grid-template-rows: 60px minmax(0,1fr); }
 .settings-panel > header {
   display: grid; grid-template-columns: minmax(0,1fr) var(--ui-control-md); align-items: center;
@@ -519,7 +535,7 @@ input[type="color"].color-value-input { display: none; }
   .symbol-menu {
     top: calc(var(--ui-topbar-height) + var(--ui-space-2));
     bottom: var(--ui-space-2);
-    width: min(380px, calc(100vw - 16px));
+    width: min(520px, calc(100vw - 16px));
     max-height: none;
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
@@ -541,6 +557,10 @@ input[type="color"].color-value-input { display: none; }
   .settings-panel { width: min(500px, calc(100vw - 16px)); max-height: calc(100dvh - 16px); }
 }
 @media (max-width: 520px) {
+  .symbol-range { grid-template-columns: minmax(0, 1fr); gap: var(--ui-space-1); }
+  .symbol-range i { display: none; }
+  .symbol-range small { overflow: visible; text-overflow: clip; }
+  .symbol-row { min-height: calc(var(--ui-control-lg) + var(--ui-space-4) + var(--ui-space-5)); }
   .chart-head { max-width: calc(100% - 18px); }
   .status-group { padding-inline: 5px; }
   .status-data { max-width: none; }

@@ -9,7 +9,7 @@ from decimal import Decimal
 from typing import Callable, Sequence
 
 
-S_VERSION = "4.1.2"
+S_VERSION = "4.1.3"
 
 
 @dataclass(frozen=True)
@@ -228,38 +228,40 @@ class SDetector:
     def _first_order_after(
         self, a_stop_event_time: datetime
     ) -> tuple[int, object, datetime] | None:
+        # Every stopped A starts a fresh order-gender search at the exact stop
+        # event.  Its geometry is local to that new lifecycle; selecting the
+        # next item from the file-wide opposite-Reaction stream can reuse a
+        # structure whose anchor/context belongs to the preceding lifecycle.
+        if self.initial_order_geometry is not None:
+            gate_index = self._main_index(a_stop_event_time)
+            order = self.initial_order_geometry(
+                gate_index, a_stop_event_time, self.end_index
+            )
+            if order is not None:
+                confirmation = self._reaction_confirmation_time(
+                    order, self.order_direction
+                )
+                if confirmation <= a_stop_event_time:
+                    raise ValueError(
+                        "Initial order must confirm after the exact A stop."
+                    )
+                ordinal = next((
+                    ordinal
+                    for ordinal, item in enumerate(self.opposite_reactions, 1)
+                    if (
+                        int(getattr(item, "first_idx")),
+                        int(getattr(item, "break_idx")),
+                    ) == (
+                        int(getattr(order, "first_idx")),
+                        int(getattr(order, "break_idx")),
+                    )
+                ), 0)
+                return ordinal, order, confirmation
+
         for number, reaction in enumerate(self.opposite_reactions, start=1):
             first_index = int(getattr(reaction, "first_idx"))
             first_time = getattr(self.candles[first_index], "timestamp")
             if first_time <= a_stop_event_time:
-                # A canonical continuation can reuse the candle whose prior
-                # confirmation stopped A. Its ordinary order starts a fresh
-                # behavioral context; the global predecessor is not its order.
-                if (
-                    self.initial_order_geometry is not None
-                    and number > 1
-                    and first_index == self._main_index(a_stop_event_time)
-                    and getattr(reaction, "intrabar_start", None) is not None
-                    and int(getattr(self.opposite_reactions[number - 2], "break_idx"))
-                    == first_index
-                    and self._reaction_confirmation_time(
-                        self.opposite_reactions[number - 2], self.order_direction
-                    ) == a_stop_event_time
-                ):
-                    order = self.initial_order_geometry(
-                        first_index, a_stop_event_time, self.end_index
-                    )
-                    if order is None:
-                        return None
-                    confirmation = self._reaction_confirmation_time(order, self.order_direction)
-                    if confirmation <= a_stop_event_time:
-                        raise ValueError("Initial order must confirm after the exact A stop.")
-                    ordinal = next((
-                        ordinal for ordinal, item in enumerate(self.opposite_reactions, 1)
-                        if (int(getattr(item, "first_idx")), int(getattr(item, "break_idx")))
-                        == (int(getattr(order, "first_idx")), int(getattr(order, "break_idx")))
-                    ), 0)
-                    return ordinal, order, confirmation
                 continue
             confirmation = self._reaction_confirmation_time(
                 reaction, self.order_direction
@@ -267,6 +269,48 @@ class SDetector:
             if confirmation > a_stop_event_time:
                 return number, reaction, confirmation
         return None
+
+    def _audit_stopped_a(self, zone: object) -> None:
+        """Record the independent order gender created by one stopped A."""
+        source_time = getattr(zone, "source_time")
+        a_price = _decimal(getattr(zone, "price"))
+        a_stop = self._first_a_stop(a_price, self._a_confirmation_time(zone))
+        if a_stop is None:
+            return
+        _, _, a_stop_event_time = a_stop
+        order_match = self._first_order_after(a_stop_event_time)
+        if order_match is None:
+            return
+        order_number, order, order_confirmation_time = order_match
+        (
+            order_stop_level,
+            order_stop_source_index,
+            order_stop_source_time,
+        ) = self._order_stop(order_number, order)
+        identity = (
+            int(getattr(order, "first_idx")),
+            int(getattr(order, "break_idx")),
+        )
+        entry = self.order_audit.get(identity)
+        if entry is None:
+            entry = {
+                "reaction_number": order_number,
+                "reaction": order,
+                "confirmation_time": order_confirmation_time,
+                "stop_level": order_stop_level,
+                "stop_source_index": order_stop_source_index,
+                "stop_source_time": order_stop_source_time,
+                # Keep the original scalar fields for E compatibility.  The
+                # complete A-stop provenance is retained below.
+                "a_source_time": source_time,
+                "a_stop_event_time": a_stop_event_time,
+                "a_causes": [],
+            }
+            self.order_audit[identity] = entry
+        a_causes = entry.setdefault("a_causes", [])
+        cause = (source_time, a_stop_event_time)
+        if cause not in a_causes:
+            a_causes.append(cause)
 
     def _candidate_source(
         self, start_index: int, end_index: int
@@ -708,25 +752,55 @@ class SDetector:
                 return int(getattr(item, "index")), getattr(item, "timestamp")
         raise ValueError("Cannot locate the Mode-A order leg-head source.")
 
+    def _mode_a_order_leg_start(
+        self, reaction: object
+    ) -> tuple[Decimal, int, datetime]:
+        """Return the order leg head from the Mode-A anchor through Break.
+
+        The Reaction anchor is the first candle of the order leg.  Extend it
+        backward across the contiguous same-color leg context, then include
+        every candle through the order Break.  This preserves the full leg
+        extreme instead of restarting at ``First - 1`` and losing an earlier
+        high/low in the anchor candle's leg.
+        """
+        first_index = int(getattr(reaction, "first_idx"))
+        break_index = int(getattr(reaction, "break_idx"))
+        context_tag = "GREEN" if self.order_direction == "bearish" else "RED"
+        anchor_index = getattr(reaction, "anchor_idx", None)
+        start_index = (
+            max(self.start_index, int(anchor_index))
+            if anchor_index is not None
+            else max(self.start_index, first_index - 1)
+        )
+        while (
+            start_index > self.start_index
+            and getattr(self.candles[start_index - 1], "tag") == context_tag
+        ):
+            start_index -= 1
+
+        source = self.candles[start_index]
+        level = _decimal(
+            getattr(source, "high" if self.order_direction == "bearish" else "low")
+        )
+        for candle in self.candles[start_index + 1 : break_index + 1]:
+            value = _decimal(
+                getattr(candle, "high" if self.order_direction == "bearish" else "low")
+            )
+            better = (
+                value > level
+                if self.order_direction == "bearish"
+                else value < level
+            )
+            if better:
+                source, level = candle, value
+        source_index = int(getattr(source, "index"))
+        return level, source_index, getattr(source, "timestamp")
+
     def _order_stop(
         self, order_number: int, reaction: object
     ) -> tuple[Decimal, int, datetime]:
         if str(getattr(reaction, "mode")) == "A":
-            raw_level = getattr(reaction, "anchor_value", None)
-            if raw_level is None:
-                raw_level = getattr(reaction, "leg_boundary_value", None)
-            if raw_level is None:
-                raise ValueError("Mode-A order reaction has no leg-head boundary.")
-            level = _decimal(raw_level)
-            source_index = getattr(reaction, "anchor_idx", None)
-            if source_index is None:
-                source_index, source_time = self._find_boundary_source(
-                    level, int(getattr(reaction, "first_idx"))
-                )
-            else:
-                source_index = int(source_index)
-                source_time = getattr(self.candles[source_index], "timestamp")
-            return level, source_index, source_time
+            return self._mode_a_order_leg_start(reaction)
 
         if order_number <= 1:
             raise ValueError("Mode-B order reaction has no previous healthy reaction.")
@@ -856,6 +930,10 @@ class SDetector:
         output: list[SZone] = []
         self.a_ownership_windows.clear()
         self.order_audit.clear()
+        # Order_A audit is an independent lifecycle ledger.  Populate it for
+        # every stopped A before S ownership/cycle filters can skip candidates.
+        for zone in self.a_zones:
+            self._audit_stopped_a(zone)
         cycle_start_time = self.range_start
         for zone_offset, zone in enumerate(self.a_zones):
             a_ordinal = zone_offset + 1
@@ -876,16 +954,16 @@ class SDetector:
             if a_stop is None:
                 continue
             a_stop_index, a_stop_time, a_stop_event_time = a_stop
+            order_match = self._first_order_after(a_stop_event_time)
             # A newer A confirmed before this A ever stops owns the unopened
-            # lifecycle. Once the strict A stop occurs first, however, this
-            # cycle is locked and must reach its S decision independently.
+            # S lifecycle, but it does not erase the new order gender that the
+            # older A's strict stop already created.
             if (
                 next_a_confirmation is not None
                 and a_stop_event_time >= next_a_confirmation
             ):
                 continue
             self.a_ownership_windows.append((a_stop_event_time, None))
-            order_match = self._first_order_after(a_stop_event_time)
             type3_deadline = (
                 order_match[2] if order_match is not None else self.range_end
             )
@@ -955,18 +1033,6 @@ class SDetector:
             order_stop_level, order_stop_source_index, order_stop_source_time = (
                 self._order_stop(order_number, order)
             )
-            self.order_audit[
-                (int(getattr(order, "first_idx")), int(getattr(order, "break_idx")))
-            ] = {
-                "reaction_number": order_number,
-                "reaction": order,
-                "confirmation_time": order_confirmation_time,
-                "stop_level": order_stop_level,
-                "stop_source_index": order_stop_source_index,
-                "stop_source_time": order_stop_source_time,
-                "a_source_time": source_time,
-                "a_stop_event_time": a_stop_event_time,
-            }
             candidate_timing = self._candidate_timing(
                 a_stop_index, order, order_confirmation_time
             )

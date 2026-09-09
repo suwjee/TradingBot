@@ -193,13 +193,20 @@ def build_candle_views(engine, rows: list[dict], timeframe: int):
     return seconds, candles
 
 
-def bullish_a_stop_order_finder(engine, candles, seconds):
-    """Reuse ordinary Reaction discovery for a bullish A-stop continuation.
+def directional_a_stop_order_finder(engine, candles, seconds, direction):
+    """Reuse ordinary Reaction discovery for an A-stop continuation.
 
     The pre-First context remains inside the already selected input. Reaction
     owns all geometry and stop-boundary calculations; no prices are rebuilt here.
-    Only S's exact same-candle ownership path calls this resolver.
+    Only S's exact same-candle ownership path calls this resolver. The requested
+    trend direction selects the opposite Reaction geometry while preserving one
+    state-machine contract for both coordinate systems.
     """
+    if direction not in {"bullish", "bearish"}:
+        raise ValueError("Direction must be 'bullish' or 'bearish'.")
+    order_direction = "bearish" if direction == "bullish" else "bullish"
+    first_tag = "GREEN" if order_direction == "bearish" else "RED"
+    context_tag = "RED" if order_direction == "bearish" else "GREEN"
     cache = {}
 
     def find(gate_index, gate_event, end_index):
@@ -208,16 +215,17 @@ def bullish_a_stop_order_finder(engine, candles, seconds):
             return cache[key]
         first = next((
             index for index in range(max(1, gate_index), end_index + 1)
-            if candles[index].tag == "GREEN" and candles[index - 1].tag == "RED"
+            if candles[index].tag == first_tag
+            and candles[index - 1].tag == context_tag
         ), None)
         if first is None:
             cache[key] = None
             return None
         context = first - 1
-        while context > 0 and candles[context - 1].tag == "RED":
+        while context > 0 and candles[context - 1].tag == context_tag:
             context -= 1
         result = engine.UnifiedReactionDetector(
-            candles, seconds, context, end_index, "bearish"
+            candles, seconds, context, end_index, order_direction
         ).detect()
         order = next((
             reaction for reaction in result.reactions
@@ -227,6 +235,11 @@ def bullish_a_stop_order_finder(engine, candles, seconds):
         return order
 
     return find
+
+
+def bullish_a_stop_order_finder(engine, candles, seconds):
+    """Backward-compatible bullish facade for the directional resolver."""
+    return directional_a_stop_order_finder(engine, candles, seconds, "bullish")
 
 
 def serialize(result, start_index=None, end_index=None):
@@ -476,19 +489,33 @@ def serialize_stopalls(items):
 
 def serialize_order_audit(
     detector, start_index: int, end_index: int, s_detector=None,
+    accepted_a_sources: set[datetime] | None = None,
 ):
     """Serialize valid order genders for audit without changing chart drawing."""
     output = []
     combined = []
     if s_detector is not None:
         for entry in s_detector.order_audit.values():
-            combined.append((entry, [{
-                "kind": "parent-stop",
-                "parentType": "A",
-                "parentFamily": None,
-                "eventTime": epoch(entry["a_stop_event_time"]),
-                "parentSourceTime": epoch(entry["a_source_time"]),
-            }]))
+            a_causes = entry.get("a_causes") or [(
+                entry["a_source_time"], entry["a_stop_event_time"]
+            )]
+            if accepted_a_sources is not None:
+                a_causes = [
+                    cause for cause in a_causes
+                    if cause[0] in accepted_a_sources
+                ]
+            if not a_causes:
+                continue
+            combined.append((entry, [
+                {
+                    "kind": "parent-stop",
+                    "parentType": "A",
+                    "parentFamily": None,
+                    "eventTime": epoch(stop_time),
+                    "parentSourceTime": epoch(source_time),
+                }
+                for source_time, stop_time in a_causes
+            ]))
     for entry in detector.order_audit.values():
         causes = []
         for cause in sorted(entry["causes"], key=str):
@@ -557,6 +584,34 @@ def serialize_order_audit(
         merged[identity] = serialized
         output.append(serialized)
     return sorted(output, key=lambda item: (item["firstTime"], item["breakTime"]))
+
+
+def _accepted_audit_entry(entry: dict[str, object], accepted_sources: set) -> dict[str, object] | None:
+    """Return an E-facing A audit entry for one accepted A provenance.
+
+    A physical order may be opened by more than one stopped A.  E still
+    consumes one identity-keyed entry, so select the first accepted cause
+    while retaining the complete cause list for presentation serialization.
+    """
+    causes = entry.get("a_causes") or [
+        (entry["a_source_time"], entry["a_stop_event_time"])
+    ]
+    selected = next(
+        ((source_time, stop_time) for source_time, stop_time in causes
+         if source_time in accepted_sources),
+        None,
+    )
+    if selected is None:
+        return None
+    if (
+        selected[0] == entry.get("a_source_time")
+        and selected[1] == entry.get("a_stop_event_time")
+    ):
+        return entry
+    adjusted = dict(entry)
+    adjusted["a_source_time"] = selected[0]
+    adjusted["a_stop_event_time"] = selected[1]
+    return adjusted
 
 
 def visible_a_zones_after_s_stops(a_zones, s_zones, candles):
@@ -696,19 +751,15 @@ def split_a_zones_by_dominant_stops(
         # A historical high-priority E cannot own every later leg forever.
         # The newest main candle containing a strict stop owns the transition;
         # priority and numbering resolve only owners stopped in that candle.
-        dominant = (
-            max(
-                eligible,
-                key=lambda item: (
-                    stop_indices[_module_identity(item)],
-                    _module_priority(item),
-                    int(getattr(item, "number", 0)),
-                    getattr(item, "source_time"),
-                    int(getattr(item, "source_index", -1)),
-                ),
-            )
-            if direction == "bullish"
-            else _dominant_module(eligible)
+        dominant = max(
+            eligible,
+            key=lambda item: (
+                stop_indices[_module_identity(item)],
+                _module_priority(item),
+                int(getattr(item, "number", 0)),
+                getattr(item, "source_time"),
+                int(getattr(item, "source_index", -1)),
+            ),
         )
         crosses_dominant = _strictly_beyond_boundary(
             Decimal(str(getattr(a_zone, "price"))),
@@ -719,14 +770,13 @@ def split_a_zones_by_dominant_stops(
             valid.append(a_zone)
             continue
 
-        # A confirmed bullish Reaction may establish a lower leg head inside
-        # the closed owner's range before this A. Preserve that A as an
+        # A confirmed trend Reaction may establish a directional leg head
+        # inside the closed owner's range before this A. Preserve that A as an
         # interior-leg behavior, while retaining the existing owner
         # consumption below. This is provenance-based and uses no fixture data.
         interior = False
         if (
-            direction == "bullish"
-            and trend_reactions is not None
+            trend_reactions is not None
             and confirmation_finder is not None
             and source_index > 0
             and getattr(a_zone, "reaction_first_time", None) is not None
@@ -736,24 +786,37 @@ def split_a_zones_by_dominant_stops(
                 if _module_identity(module) == _module_identity(dominant)
             )
             owner_stop_index = bisect_right(candle_times, owner_stop) - 1
-            first_red_index = bisect_right(
+            first_trend_index = bisect_right(
                 candle_times, getattr(a_zone, "reaction_first_time")
             ) - 1
-            if 0 <= owner_stop_index <= first_red_index < len(candles):
-                head = min(
-                    candles[owner_stop_index:first_red_index + 1],
-                    key=lambda candle: Decimal(str(getattr(candle, "low"))),
+            if 0 <= owner_stop_index <= first_trend_index < len(candles):
+                extreme_name = "low" if direction == "bullish" else "high"
+                head = (
+                    min(
+                        candles[owner_stop_index:first_trend_index + 1],
+                        key=lambda candle: Decimal(str(getattr(candle, extreme_name))),
+                    )
+                    if direction == "bullish"
+                    else max(
+                        candles[owner_stop_index:first_trend_index + 1],
+                        key=lambda candle: Decimal(str(getattr(candle, extreme_name))),
+                    )
                 )
+                head_extreme = Decimal(str(getattr(head, extreme_name)))
+                a_extreme = Decimal(str(getattr(a_zone, "price")))
                 if (
                     int(getattr(head, "index", -1)) < source_index
-                    and Decimal(str(getattr(head, "low")))
-                    < Decimal(str(getattr(a_zone, "price")))
+                    and (
+                        head_extreme < a_extreme
+                        if direction == "bullish"
+                        else head_extreme > a_extreme
+                    )
                 ):
                     interior = any(
                         int(getattr(reaction, "first_idx"))
                         >= int(getattr(head, "index"))
                         and int(getattr(reaction, "first_idx"))
-                        <= first_red_index
+                        <= first_trend_index
                         and int(getattr(reaction, "break_idx")) < source_index
                         and confirmation_finder(reaction, direction)
                         < getattr(a_zone, "source_time")
@@ -785,8 +848,6 @@ def blocked_orders_while_invalid_leg_heads_are_live(
     making its A calculation-valid. Until that head itself stops, an internal
     opposite Reaction cannot take over the larger owner's resumed E space.
     """
-    if direction != "bullish":
-        return set()
     blocked = set()
     for a_zone in invalid_a_zones:
         stop = stop_finder(a_zone)
@@ -858,7 +919,7 @@ def visible_s_zones_after_module_resets(
     ):
         a_stop_event = getattr(s_zone, "a_stop_event_time", None)
         ownership_event = a_stop_event
-        if direction == "bullish":
+        if direction in {"bullish", "bearish"}:
             # The larger head may stop while the internal S search is open,
             # after A stops but before the candidate's own extreme forms.
             # A later stop after that extreme must not rewrite its ownership.
@@ -881,6 +942,19 @@ def visible_s_zones_after_module_resets(
             ]
             if stopped_prior:
                 dominant = _dominant_module(stopped_prior)
+                # A newly confirmed higher-priority S family supersedes a
+                # stopped lower-priority owner.  In particular, a Red S must
+                # remain visible after a stopped Blue S when its own strict
+                # directional extreme is reached.  The existing price/stop
+                # consumption rule still applies when the candidate priority
+                # is equal or lower, preserving the established lifecycle.
+                if (
+                    hasattr(s_zone, "a_source_time")
+                    and hasattr(dominant, "a_source_time")
+                    and _module_priority(s_zone) > _module_priority(dominant)
+                ):
+                    visible.append(s_zone)
+                    continue
                 # A stopped owner advances the lifecycle only when the new S
                 # is itself the strict directional extreme of that leg.
                 # Equality belongs to the earlier owner and remains valid.
@@ -1099,7 +1173,12 @@ def main() -> int:
         timings, "Build timeframe candle views", lambda: build_candle_objects(engine, timeframe_buckets)
     )
     start_index, end_index = 0, len(candles) - 1
-    initial_bullish_order_geometry = bullish_a_stop_order_finder(engine, candles, seconds)
+    initial_order_geometry = {
+        direction: directional_a_stop_order_finder(
+            engine, candles, seconds, direction
+        )
+        for direction in ("bullish", "bearish")
+    }
     directions = ("bullish", "bearish") if args.direction == "both" else (args.direction,)
     required_directions = (
         ("bullish", "bearish")
@@ -1169,9 +1248,7 @@ def main() -> int:
                 0,
                 len(candles) - 1,
                 full_results[opposite].resets,
-                initial_order_geometry=(
-                    initial_bullish_order_geometry if direction == "bullish" else None
-                ),
+                initial_order_geometry=initial_order_geometry[direction],
             )
             full_s = timed(timings, f"S • {direction.title()}", full_s_detector.detect)
             full_s_candidates_by_direction[direction] = list(full_s)
@@ -1281,13 +1358,8 @@ def main() -> int:
                 lambda item: full_e_detector._parent_stop(
                     "S" if hasattr(item, "a_source_time") else "E", item
                 ),
-                trend_reactions=(
-                    full_s_detector.trend_reactions if direction == "bullish" else None
-                ),
-                confirmation_finder=(
-                    full_s_detector._reaction_confirmation_time
-                    if direction == "bullish" else None
-                ),
+                trend_reactions=full_s_detector.trend_reactions,
+                confirmation_finder=full_s_detector._reaction_confirmation_time,
             )
             invalid_a_identities = {
                 (getattr(item, "source_time"), int(getattr(item, "source_index")))
@@ -1313,9 +1385,10 @@ def main() -> int:
                 )
             }
             accepted_initial_orders = {
-                key: value
+                key: accepted
                 for key, value in full_s_detector.order_audit.items()
-                if value["a_source_time"] in accepted_a_sources
+                for accepted in [_accepted_audit_entry(value, accepted_a_sources)]
+                if accepted is not None
             }
             blocked_order_first_times = set(
                 getattr(full_e_detector, "blocked_order_first_times", set())
@@ -1393,17 +1466,10 @@ def main() -> int:
             # the payload phase does not execute S (and its A eligibility
             # derivation) a second time.
             full_s_by_direction[direction] = full_s
-            accepted_a_sources = {
-                getattr(item, "source_time")
-                for item in _a_zones_for_module_engines(
-                    full_s_detector.eligible_a_zones, full_s, preliminary_e, direction
-                )
-            } - invalid_a_source_times
-            full_s_detector.order_audit = {
-                key: value
-                for key, value in full_s_detector.order_audit.items()
-                if value["a_source_time"] in accepted_a_sources
-            }
+            # Keep the complete stopped-A ledger for presentation.  The
+            # accepted subset was already isolated in ``accepted_initial_orders``
+            # for E calculation, so filtering this ledger here would hide a
+            # valid Order_A created by an A that is not an accepted S parent.
     else:
         results = {
             direction: timed(
@@ -1479,11 +1545,10 @@ def main() -> int:
                     0,
                     len(candles) - 1,
                     results[opposite].resets,
-                    initial_order_geometry=(
-                        initial_bullish_order_geometry if direction == "bullish" else None
-                    ),
+                    initial_order_geometry=initial_order_geometry[direction],
                 )
                 s_zones = timed(timings, f"S - {direction.title()}", s_detector.detect)
+                full_s_detectors[direction] = s_detector
                 accepted_s_zones = s_zones
                 all_a_zones = s_detector.eligible_a_zones
         visible_a_zones = s_engine.visible_a_zones(all_a_zones, accepted_s_zones)
@@ -1500,6 +1565,15 @@ def main() -> int:
                 candles, seconds, args.timeframe, direction,
                 lambda label, work: timed(timings, label, work),
             )
+        def visibility_stop(item):
+            if direction in full_e_detectors:
+                return full_e_detectors[direction]._parent_stop(
+                    "S" if hasattr(item, "a_source_time") else "E", item
+                )
+            return full_s_detectors[direction]._first_a_stop(
+                Decimal(str(item.price)), item.decision_event_time
+            )
+
         def finalize_visibility():
             stopall_source_indices = {item.source_index for item in stopalls}
             final_e_zones = [
@@ -1511,14 +1585,12 @@ def main() -> int:
             }
             final_s_zones = visible_s_zones_after_module_resets(
                 s_zones, [*final_e_zones, *stopalls], direction,
-                lambda item: full_e_detectors[direction]._parent_stop(
-                    "S" if hasattr(item, "a_source_time") else "E", item
-                ),
+                visibility_stop,
                 source_event_finder=(
                     lambda item: full_s_detectors[direction]._candidate_event_time(
                         item.source_index, item.price, item.source_time
                     )
-                ) if direction == "bullish" else None,
+                ),
             )
             # Presentation is a lineage closure over accepted calculations.
             # If a final E explicitly references an S parent, that historical
@@ -1541,9 +1613,7 @@ def main() -> int:
             ))
             final_a_zones = visible_a_zones_after_module_boundaries(
                 visible_a_zones, final_s_zones, [*final_e_zones, *stopalls], direction,
-                lambda item: full_e_detectors[direction]._parent_stop(
-                    "S" if hasattr(item, "a_source_time") else "E", item
-                ),
+                visibility_stop,
             )
             referenced_a_sources = {
                 getattr(item, "a_source_time") for item in final_s_zones
@@ -1628,6 +1698,10 @@ def main() -> int:
                     serialize_order_audit(
                         full_e_detectors[direction], start_index, end_index,
                         full_s_detectors.get(direction),
+                        {
+                            getattr(item, "source_time")
+                            for item in display_a_zones
+                        },
                     )
                     if direction in full_e_detectors else []
                 ),

@@ -57,5 +57,6 @@ timestamp-specific production exception is used.
 
 The user-confirmed `01:52:30 A` / `02:07:30 Order_B` / `02:10:30 S blue` /
 `02:30:00 E1 blue` chain is already covered by exact parent, Stop source,
-Stop level, cause, and chronology assertions. Bearish mirror implementation is
-deferred until explicit user approval.
+Stop level, cause, and chronology assertions. The user authorized the exact
+Bearish counterpart on 2026-09-08; its completed full-XAUUSD verification
+establishes logical symmetry, not independent Bearish historical validation.

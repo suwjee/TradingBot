@@ -55,6 +55,10 @@ and generated artifacts are not authoritative.
    absent from the public payload and cannot create labels, counts, list
    entries, or order geometry. The browser also filters legacy objects marked
    `calculationValid=false`.
+9. A confirmed Red S has higher S-family priority than a stopped Blue S. When
+   a Red S reaches its own source-extreme event after that Blue S stop, it
+   remains a public S candidate; equal/lower-priority candidates retain the
+   existing strict-stop consumption rule.
 
 ## Confirmed chronology
 
@@ -80,10 +84,13 @@ Every `True` behavior is present, every `False` behavior is absent, and the
 and verified parent lineage. Output may include other valid calculations when
 the maintained general rules produce them.
 
-The live-invalid-head behavior is approved for Bullish only. A Bearish mirror
-requires separate explicit user approval.
+The user authorized the exact Bearish mirror on 2026-09-08, including the
+live-invalid-head behavior. Full-file XAUUSD logical-symmetry verification
+completed with zero differing output fields. This is mirror verification, not
+an independently validated Bearish historical reference.
 
 The user's final acceptance source is exclusively
 `RAW_FOREXCOM_XAUUSD_1S_FROM_2026_08_18_04_44_40_TO_2026_09_05_00.json`.
-Results from FXCM, Bearish, or other datasets are not success criteria for this
-verified Bullish XAUUSD contract.
+Results from FXCM or other datasets are not success criteria for this verified
+Bullish XAUUSD contract. Bearish is accepted only as exact logical reflection
+of this Bullish reference on the selected XAUUSD input.

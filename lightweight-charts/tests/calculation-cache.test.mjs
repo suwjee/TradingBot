@@ -72,8 +72,8 @@ function server(disk = new Map(), sources = new Map(files.map((name) => [name, "
     req.emit("data", JSON.stringify(request)); req.emit("end"); await done;
     return result;
   }
-  async function clearCache() {
-    const req = new EventEmitter(); req.method = "DELETE";
+  async function clearCache(url = "") {
+    const req = new EventEmitter(); req.method = "DELETE"; req.url = url;
     const headers = {}, result = { statusCode: 200, headers, setHeader(key, value) { headers[key] = value; }, end(body) { this.body = body; } };
     await routes.get("/api/reactions/cache")(req, result);
     return result;
@@ -209,6 +209,18 @@ test("Reload clears every persisted indicator result but never touches drawing f
   const recalculated = await s.post();
   assert.equal(recalculated.headers["X-QG-Cache"], "miss");
   assert.equal(s.runs(), 2);
+});
+
+test("Reload can clear only the active symbol's persisted indicator results", async () => {
+  const s = server();
+  await s.post();
+  const other = path.resolve("..", "primary-cache", "indicator-calculations", "OTHER", "30s", "bullish", "1-30--1234567890abcdef.json");
+  s.disk.set(other, '{"other":true}');
+  const cleared = await s.clearCache("?scope=symbol&symbol=TEST");
+  assert.equal(cleared.statusCode, 200);
+  assert.deepEqual(JSON.parse(cleared.body), { filesCleared: 1, scope: "symbol", symbol: "TEST" });
+  assert.equal(s.disk.has(other), true);
+  assert.equal([...s.disk.keys()].some((file) => /indicator-calculations[\\/]TEST[\\/]/.test(file)), false);
 });
 
 test("changing an engine during calculation rejects the result without persisting it", async () => {

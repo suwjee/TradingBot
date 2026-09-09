@@ -491,7 +491,7 @@ Blue از نوع Reset روی main candle Reset و با broken level/provenance 
 
 یک Reset Blue ممکن است ساخته شود ولی `calculation_valid = false` بگیرد؛ از جمله وقتی Blue قبلی دقیقاً روی reset index stop شده و Reset Low از extreme منبع آن پایین‌تر است. این line ممکن است برای provenance داخلی وجود داشته باشد، اما A فقط Blueهای `calculation_valid` را مصرف می‌کند و serialization نیز نامعتبرها را کنار می‌گذارد.
 
-ordinal Blue پیش از حذف نامعتبرها تعیین می‌شود؛ بنابراین gap در ordinal خروجی ممکن است صحیح باشد.
+ordinal Blue پیش از حذف نامعتبرها تعیین می‌شود؛ بنابراین gap در ordinal خروجی ممکن است صحیح باشد. Blue نامعتبر فقط در مسیر special double-stop می‌تواند برای provenance داخلیِ ساخت A مصرف شود؛ در این حالت A مالک همان کندل است و Blue در خروجی عمومی نمی‌آید.
 
 ## 12. stop یک Blue Line
 
@@ -519,6 +519,12 @@ BlueStop = اولین lower second با Low < sourceExtreme
 ### 13.1. ورودی و اصل pairing
 
 A فقط Blue stateهای معتبر را به‌ترتیب formation مصرف می‌کند. مبنای عادی، pairهای مجاور Blue معتبر است. A با دیدن صرف دو Blue ساخته نمی‌شود؛ ابتدا trigger مربوط به توقف آن‌ها و سپس Reaction تأییدکننده لازم است.
+
+وقتی مسیر special double-stop یک A معتبر می‌سازد، هر دو Blueیی که آن
+چرخه را ساخته‌اند مصرف می‌شوند؛ یک pair عادیِ بعدی حق استفادهٔ دوباره از آن
+Blue را ندارد. اگر A روی همان کندلِ Blue نامعتبر ساخته شود، A مالک آن کندل
+است و Blue نامعتبر فقط برای provenance داخلی می‌ماند و در خروجی عمومی منتشر
+نمی‌شود.
 
 ### 13.2. سه مسیر trigger عادی
 
@@ -638,8 +644,9 @@ order.confirmation exact time > exact A-stop event
 
 برای Bearish Mode A:
 
-- اول `anchor_value` و در نبود آن `leg_boundary`.
-- source همان anchor است یا با جست‌وجوی boundary پیدا می‌شود.
+- stop ابتدای لگ نزولی است: از کندل Breakout همان Order به عقب تا
+  context پیوستهٔ پیش از First پیمایش می‌کنیم و بیشترین High را می‌گیریم.
+- source همان کندلی است که این بیشترین High را ساخته است.
 
 برای Bearish Mode B:
 
@@ -781,10 +788,26 @@ Identity فیزیکی عمدتاً با `(FirstIndex, BreakIndex)` تعیین م
 
 ### 18.4. Order_A مستقیم
 
+#### Stopped-A audit coverage
+
+Every strict stop of every final, calculation-valid A opens an independent
+Order_A audit search using the maintained directional geometry API. An
+internal A candidate removed by final ownership/visibility rules cannot create
+a public Order audit. Physical identity remains `(FirstIndex, BreakIndex)`: if
+several visible stopped A zones resolve to one order, geometry is emitted once
+and all accepted `parent-stop` A causes are retained. E continues to consume
+its accepted A view, so this presentation filter does not alter S/E calculation.
+
 - بعد از exact parent stop از API مستقیم Reaction گرفته می‌شود.
 - Firstی که پیش از exact event باز شده باشد نباید به stop جدید نسبت داده شود.
 - race gate/owner با lower seconds حل می‌شود.
 - Order هم‌main-candle که توسط A اولیه مالک شده است می‌تواند مسیرهای nested بعدی را block کند.
+
+When the next published ordinary opposite Reaction has no strict Order stop in
+the selected range, an earlier healthy geometry from the bounded directional
+API is the direct Order_A fallback. Earlier pre-gate history may change its
+Mode and stop provenance, but it must not hide the post-gate behavior. A
+published Reaction that completes its Order lifecycle remains canonical.
 
 ### 18.5. Order_B از reset-leg
 
@@ -1474,6 +1497,7 @@ FINAL OWNERSHIP:
     allow only a detected-behavior candle to become the next LegStart
     reject equal/lower A at a strict new directional extreme
     consume would-be S only when both stop chronology and strict price break hold
+    except that a higher-priority Red S remains visible over a stopped Blue S
     retain rejected candidates only in internal lifecycle state
     exclude rejected objects from S/E/StopAll and order-audit inputs
     apply StopAll > E > S > A collision ownership

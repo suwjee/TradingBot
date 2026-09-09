@@ -10,6 +10,8 @@ from decimal import Decimal
 from pathlib import Path
 from types import MethodType, SimpleNamespace
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[4]
 MODULES = ROOT / "indicator" / "Modules"
 ENGINE_PATH = MODULES / "5_E-zones" / "app" / "e_detector.py"
@@ -161,6 +163,38 @@ def test_order_b_waits_for_active_canonical_owner_then_restarts_in_both_directio
         assert confirmation == candles[7].timestamp
 
 
+def test_parent_stop_uses_bounded_fallback_only_for_incomplete_published_order():
+    """Pre-gate history cannot hide an otherwise valid post-stop Order_A."""
+    engine = load_engine()
+    candles = make_candles(engine)
+    bounded = reaction(1, 2, 8, 12)
+    published = reaction(3, 4, 8, 12)
+
+    for direction, published_crosses in (
+        (direction, published_crosses)
+        for direction in ("bullish", "bearish")
+        for published_crosses in (False, True)
+    ):
+        detector = engine.EDetector(
+            direction, [], [published], [], [], [], candles, candles, 60,
+        )
+        detector._first_healthy_direct_geometry = lambda _start: (
+            1, bounded, candles[2].timestamp,
+        )
+        detector._order_stop = lambda _number, _reaction: (
+            Decimal("12"), 0, candles[0].timestamp,
+        )
+        detector._cross_order = lambda confirmation, _level: (
+            (5, candles[5].timestamp, candles[5].timestamp)
+            if confirmation == candles[2].timestamp or published_crosses
+            else None
+        )
+
+        selected = detector.order_candidates(candles[0].timestamp)
+
+        assert selected[0][1] is (published if published_crosses else bounded)
+
+
 def test_order_b_skips_a_first_owned_by_a_live_invalid_leg_head():
     engine = load_engine()
     base = datetime(2026, 7, 16, 17, 0)
@@ -194,12 +228,12 @@ def test_order_b_skips_a_first_owned_by_a_live_invalid_leg_head():
     number, selected, confirmation = bearish._first_order_b_geometry(
         candles[0].timestamp, candles[3].timestamp, candles[8].timestamp,
     )
-    assert number == 1
-    assert selected is blocked
-    assert confirmation == candles[4].timestamp
+    assert number == 2
+    assert selected is resumed
+    assert confirmation == candles[7].timestamp
 
 
-def test_only_bullish_orders_are_blocked_during_an_invalid_head_lifetime():
+def test_orders_are_blocked_during_an_invalid_head_lifetime_in_both_directions():
     bridge = load_bridge()
     base = datetime(2026, 7, 16, 17, 0)
     candles = [SimpleNamespace(timestamp=base + timedelta(minutes=index))
@@ -214,7 +248,7 @@ def test_only_bullish_orders_are_blocked_during_an_invalid_head_lifetime():
     ) == {candles[2].timestamp}
     assert bridge.blocked_orders_while_invalid_leg_heads_are_live(
         [head], reactions, candles, "bearish", lambda _item: stop,
-    ) == set()
+    ) == {candles[2].timestamp}
 
 
 def test_order_b_keeps_pre_gate_owner_across_trend_reset_in_both_directions():
@@ -601,6 +635,31 @@ def test_stopped_dominant_consumes_one_s_transition_in_both_directions():
         ) == [rebuilt]
 
 
+def test_higher_priority_red_s_survives_stopped_blue_owner_in_both_directions():
+    bridge = load_bridge()
+    base = datetime(2026, 9, 4, 20, 39, 30)
+    dominant = SimpleNamespace(
+        source_time=base,
+        source_index=0,
+        price=Decimal("10"),
+        color="blue",
+        a_source_time=base - timedelta(minutes=1),
+        stop_event_time=base + timedelta(minutes=4, seconds=20),
+    )
+    for direction, candidate_price in (("bullish", "9"), ("bearish", "11")):
+        candidate = SimpleNamespace(
+            source_time=base + timedelta(minutes=51),
+            source_index=3,
+            a_source_time=base + timedelta(minutes=31),
+            a_stop_event_time=base + timedelta(minutes=50),
+            price=Decimal(candidate_price),
+            color="red",
+        )
+        assert bridge.visible_s_zones_after_module_resets(
+            [candidate], [dominant], direction
+        ) == [candidate]
+
+
 def test_a_rebuild_uses_dominant_stop_chronology_not_old_price_boundary():
     bridge = load_bridge()
     base = datetime(2026, 7, 14, 5, 0)
@@ -727,6 +786,107 @@ def test_active_larger_behavior_does_not_hide_half_leg_a_or_s():
     assert bridge.visible_s_zones_after_module_resets(
         [s_zone], [active_e], "bullish"
     ) == [s_zone]
+
+
+@pytest.mark.skipif(
+    not (ROOT / "market-data/raw/RAW FXCM_USOIL 1S FROM 2026-09-04 17-41-10 TO 2026-09-08 03-40-02.json").is_file(),
+    reason="The selected FXCM_USOIL one-second history is unavailable",
+)
+def test_fxcm_full_file_keeps_red_s_after_stopped_blue_owner():
+    data = ROOT / "market-data/raw/RAW FXCM_USOIL 1S FROM 2026-09-04 17-41-10 TO 2026-09-08 03-40-02.json"
+    paths = [
+        "--engine", str(MODULES / "1_reaction-detector/app/Reaction-detection-new.py"),
+        "--blue-engine", str(MODULES / "2_blue-line/app/blue_line.py"),
+        "--a-engine", str(MODULES / "3_A-zone/app/a_detector.py"),
+        "--s-engine", str(MODULES / "4_S-zones/app/s_detector.py"),
+        "--e-engine", str(MODULES / "5_E-zones/app/e_detector.py"),
+        "--stopall-engine", str(MODULES / "6_StopAll/app/stopall_detector.py"),
+        "--data", str(data), "--timeframe", "30",
+        "--from-time", "1788531060", "--to-time", "1788826200",
+        "--direction", "bullish",
+    ]
+    bullish = run_bridge(paths)["directions"]["bullish"]
+
+    a_sources = {item["sourceTime"] for item in bullish["aZones"]}
+    for source in (
+        1788534330,  # 2026-09-04 18:35:30
+        1788538710,  # 19:48:30
+        1788539490,  # 20:01:30
+        1788540330,  # 20:15:30
+        1788540960,  # 20:26:00
+        1788543660,  # 21:11:00
+        1788549120,  # 22:42:00
+    ):
+        assert source in a_sources
+
+    s_by_source = {item["sourceTime"]: item for item in bullish["sZones"]}
+    # The Mode-A order stop owns the full anchored bearish leg.  Its high is
+    # 92.792 at 09:44:00, so the candidate sourced at 09:50:00 is S blue;
+    # the earlier 09:42:30 S red must not be emitted.
+    assert 1788761550 not in s_by_source  # 2026-09-07 09:42:30
+    assert s_by_source[1788762000]["color"] == "blue"  # 09:50:00
+    order = next(
+        item for item in bullish["orderAudit"] if item["firstTime"] == 1788761730
+    )
+    assert order["stopLevel"] == "92.792"
+    assert order["stopSourceTime"] == 1788761640  # 09:44:00
+    assert s_by_source[1788541770]["color"] == "blue"  # 20:39:30
+    assert s_by_source[1788544830]["color"] == "red"  # 21:30:30
+
+    # Blue 107 is consumed by the special A on 18:01:30.  The invalid Reset
+    # Blue on that same candle is not public, and a later A may not reuse Blue
+    # 107 through a gap in valid Blue states.
+    assert 1788791490 in a_sources  # 18:01:30 A
+    assert 1788792240 not in a_sources  # 18:14:00 A
+    assert 1788791490 not in {item["sourceTime"] for item in bullish["blueLines"]}
+
+    e_by_source = {item["sourceTime"]: item for item in bullish["eZones"]}
+    assert (e_by_source[1788542370]["family"], e_by_source[1788542370]["number"]) == ("blue", 1)
+
+    order_first_times = {item["firstTime"] for item in bullish["orderAudit"]}
+    for source in (
+        1788541770,  # 20:39:30
+        1788542070,  # 20:44:30
+        1788544410,  # 21:23:30
+        1788550830,  # 23:10:30
+    ):
+        assert source in order_first_times
+
+
+@pytest.mark.skipif(
+    not (ROOT / "market-data/raw/RAW FXCM_USOIL 1S FROM 2026-09-04 17-41-10 TO 2026-09-08 03-40-02.json").is_file(),
+    reason="The selected FXCM_USOIL one-second history is unavailable",
+)
+def test_fxcm_larger_range_keeps_the_bounded_0234_red_e1():
+    data = ROOT / "market-data/raw/RAW FXCM_USOIL 1S FROM 2026-09-04 17-41-10 TO 2026-09-08 03-40-02.json"
+    common = [
+        "--engine", str(MODULES / "1_reaction-detector/app/Reaction-detection-new.py"),
+        "--blue-engine", str(MODULES / "2_blue-line/app/blue_line.py"),
+        "--a-engine", str(MODULES / "3_A-zone/app/a_detector.py"),
+        "--s-engine", str(MODULES / "4_S-zones/app/s_detector.py"),
+        "--e-engine", str(MODULES / "5_E-zones/app/e_detector.py"),
+        "--stopall-engine", str(MODULES / "6_StopAll/app/stopall_detector.py"),
+        "--data", str(data), "--timeframe", "30",
+        "--to-time", "1788826200", "--direction", "bullish",
+    ]
+    large = run_bridge([
+        *common, "--from-time", "1788800430",
+    ])["directions"]["bullish"]
+    short = run_bridge([
+        *common, "--from-time", "1788818460",
+    ])["directions"]["bullish"]
+
+    def behavior(group, source):
+        item = next(zone for zone in group["eZones"] if zone["sourceTime"] == source)
+        return (
+            item["family"], item["number"], item["price"],
+            item["decisionEventTime"], item["orderFirstTime"],
+        )
+
+    assert behavior(large, 1788822240) == behavior(short, 1788822240) == (
+        "red", 1, "92.537", 1788823005, 1788822420,
+    )
+    assert behavior(large, 1788825120)[:2] == ("red", 2)
 
 
 def test_fxcm_s_to_e_chain_reclassifies_invalid_a():

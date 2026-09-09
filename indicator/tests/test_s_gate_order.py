@@ -20,7 +20,8 @@ BASE = datetime(2026, 1, 1)
 
 
 @pytest.mark.parametrize("event_offset", [-1, 0, 1])
-def test_only_the_confirmation_that_stops_a_opens_the_new_order_context(event_offset):
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_only_the_confirmation_that_stops_a_opens_the_new_order_context(event_offset, direction):
     candles = [SimpleNamespace(timestamp=BASE + timedelta(seconds=30 * i)) for i in range(4)]
     stop = BASE + timedelta(seconds=34)
     previous = SimpleNamespace(first_idx=0, break_idx=1, confirmation=stop + timedelta(seconds=event_offset))
@@ -39,7 +40,7 @@ def test_only_the_confirmation_that_stops_a_opens_the_new_order_context(event_of
         return fresh_order
 
     detector = S.SDetector(
-        "bullish", [], [previous, continuation, later], [], [], candles, [], 30,
+        direction, [], [previous, continuation, later], [], [], candles, [], 30,
         initial_order_geometry=resolve,
     )
     detector._reaction_confirmation_time = lambda reaction, direction: reaction.confirmation

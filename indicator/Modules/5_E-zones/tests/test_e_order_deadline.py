@@ -26,8 +26,8 @@ def test_order_confirmation_is_bounded_by_the_inherited_decision(direction, offs
     detector._cross_order = lambda event, level: (4, candles[4].timestamp, candles[4].timestamp)
 
     bounded = detector.order_candidates(base, deadline)
-    # This lesson changes bullish behavior only; preserve the existing bearish path.
-    assert bool(bounded) == (offset <= 0 or direction == "bearish")
+    # The inherited decision closes the same lifecycle in either direction.
+    assert bool(bounded) == (offset <= 0)
     # The cutoff is contextual. It must not poison cached geometry for a later search.
     assert detector.order_candidates(base)
 
@@ -51,7 +51,7 @@ def test_superseding_red_s_cannot_seed_orders_from_a_closed_blue_e(direction, co
     calls = []
     detector.order_candidates = lambda *args: calls.append(args) or []
     detector._register_order_audit("E", parent, gate)
-    assert bool(calls) == (direction == "bearish" or confirmation_offset >= 0)
+    assert bool(calls) == (confirmation_offset >= 0)
     # A later S source is required; an older Red S does not supersede this E.
     red_s.source_time = base
     calls.clear()

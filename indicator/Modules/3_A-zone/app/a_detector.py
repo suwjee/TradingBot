@@ -672,6 +672,37 @@ class ADetector:
                 continue
             filtered_special.append(item)
         special = filtered_special
+
+        # A special double-stop A consumes the Blue pair that produced it.
+        # In particular, an invalid Reset Blue may be the second leg that
+        # reveals an A on its own candle; once that A exists, a later ordinary
+        # pair must not reuse the earlier valid Blue line.  The A source/trigger
+        # is the ownership boundary, so only ordinary As formed afterwards
+        # are suppressed; earlier ordinary As remain intact.
+        consumed_special = [
+            (
+                {
+                    int(getattr(item, "blue_1_ordinal")),
+                    int(getattr(item, "blue_2_ordinal")),
+                },
+                getattr(item, "trigger_event_time"),
+            )
+            for item in special
+        ]
+        if consumed_special:
+            output = [
+                item
+                for item in output
+                if not any(
+                    getattr(item, "trigger_event_time") > trigger_event_time
+                    and {
+                        int(getattr(item, "blue_1_ordinal")),
+                        int(getattr(item, "blue_2_ordinal")),
+                    }
+                    & consumed_ordinals
+                    for consumed_ordinals, trigger_event_time in consumed_special
+                )
+            ]
         return sorted(output + special, key=lambda item: (item.source_time, item.trigger_event_time))
 
     def _a_was_stopped_before(
@@ -681,21 +712,23 @@ class ADetector:
         *,
         not_before: datetime | None = None,
     ) -> bool:
-        """Return whether a later main candle strictly stopped an earlier A."""
+        """Return whether A's *first* strict stop belongs to this lifecycle.
+
+        A stop that happened before ``not_before`` completed the prior cycle.
+        A later recross of the same price must not be mistaken for a new stop
+        owned by the current Blue pair.
+        """
         start = int(getattr(self.candles[zone.source_index], "index")) + 1
-        if not_before is not None:
-            while (
-                start < len(self.candles)
-                and getattr(self.candles[start], "timestamp") < not_before
-            ):
-                start += 1
-        end = bisect_left(self.candle_times, end_time)
-        level = zone.price
-        for candle in self.candles[start:end]:
-            value = _decimal(getattr(candle, self.extreme_name))
-            if self._strict_cross(value, level):
-                return True
-        return False
+        if start >= len(self.candles):
+            return False
+        first_stop = self._first_crossing(
+            zone.price,
+            getattr(self.candles[start], "timestamp"),
+            end_time,
+        )
+        if first_stop is None:
+            return False
+        return not_before is None or first_stop[1] >= not_before
 
 
 def detect_a_zones(

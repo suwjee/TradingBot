@@ -362,6 +362,7 @@ document.querySelector("#app").innerHTML = `<main class="app">
  <div class="chart-shell"><div id="chart" class="chart"></div><canvas id="draw" class="drawing-layer"></canvas><div class="chart-head"><div class="instrument"><span id="chartSymbol">—</span><span class="badge" id="chartTf">1m</span></div><div class="ohlc" aria-label="Open high low close"><span>O <b id="o">—</b></span><span>H <b id="h">—</b></span><span>L <b id="l">—</b></span><span>C <b id="c">—</b></span></div></div><div id="indicatorRangeHandles" class="indicator-range-handles hidden" aria-hidden="true"><div id="rangeFromGuide" class="range-guide from"></div><div id="rangeToGuide" class="range-guide to"></div><button id="rangeFromHandle" class="range-handle from" type="button" aria-label="Indicator range From"><span class="material-symbols-outlined range-handle-mark" aria-hidden="true">drag_handle</span><span class="range-handle-tip"></span></button><button id="rangeToHandle" class="range-handle to" type="button" aria-label="Indicator range To"><span class="material-symbols-outlined range-handle-mark" aria-hidden="true">drag_handle</span><span class="range-handle-tip"></span></button></div><div class="chart-nav-wrap"><button class="chart-nav-btn" id="navGoFirst" title="First candle" aria-label="First candle"><span class="material-symbols-outlined">keyboard_double_arrow_left</span></button><button class="chart-nav-btn" id="navGoLast" title="Last candle" aria-label="Last candle"><span class="material-symbols-outlined">keyboard_double_arrow_right</span></button></div><div id="loading" class="loading"><div class="loader-card"><div class="spinner"></div><div class="progress" id="progress">Loading market data...</div></div></div></div></section>
  <footer class="statusbar" aria-label="Workstation status"><div class="status-cluster status-runtime" aria-label="Runtime status"><button class="status-group status-health" id="healthStatus" type="button" data-state="healthy" title="Application health"><i class="dot" aria-hidden="true"></i><b id="healthLabel">Healthy</b></button><button class="status-group status-state status-indicator" id="indicatorStatusFooter" type="button" data-state="inactive" title="Open indicator settings" aria-label="Open indicator settings"><i class="dot" aria-hidden="true"></i><b>Indicator</b></button><span class="status-group status-state status-cache" id="cacheStatusFooter" data-state="idle" title="No indicator calculation source yet"><i class="dot" aria-hidden="true"></i><b>Cache</b></span><span class="status-group status-state status-faraz" id="farazStatusFooter" data-state="inactive" title="FARAZ session is not configured"><i class="dot" aria-hidden="true"></i><b>FARAZ</b></span></div><span class="status-separator" aria-hidden="true"></span><div class="status-cluster status-market" aria-label="Visible chart range"><span class="status-group status-data" title="Candle count for the selected chart timeframe"><span id="candleCount">0 candles</span></span><span class="status-group status-range" title="First and last candle in local system time"><span>From <time id="chartFrom">—</time></span><span>To <time id="chartTo">—</time></span></span></div><span class="status-separator" aria-hidden="true"></span><time class="status-clock" id="clock" title="Local workstation time"></time></footer></main>
  <div id="symbolMenu" class="popover symbol-menu hidden"><div class="searchbox">${icon("search", 17)}<input id="symbolSearch" placeholder="Search local symbols"></div><div id="symbolList"></div></div>
+ <div id="cacheClearModal" class="modal-backdrop hidden"><section class="modal cache-clear-dialog" role="dialog" aria-modal="true" aria-labelledby="cacheClearTitle" aria-describedby="cacheClearDescription"><header class="modal-title"><span id="cacheClearTitle">Reload indicator cache</span><button id="closeCacheClear" class="icon-btn modal-close" type="button" aria-label="Close cache options">${icon("close", 18)}</button></header><p id="cacheClearDescription">Choose which saved indicator calculations to remove. Drawings and candle data will be kept.</p><div class="cache-clear-options"><button class="cache-clear-option" type="button" data-cache-scope="symbol"><span><strong>Current chart symbol</strong><small id="cacheClearSymbol">Current symbol</small></span>${icon("delete", 18)}</button><button class="cache-clear-option danger" type="button" data-cache-scope="all"><span><strong>All saved indicator caches</strong><small>Every symbol and calculation range</small></span>${icon("delete_sweep", 18)}</button></div><footer class="modal-actions"><button id="cancelCacheClear" class="btn" type="button">Cancel</button></footer></section></div>
  <div id="gotoModal" class="modal-backdrop hidden"><div class="modal goto-dialog" role="dialog" aria-modal="true" aria-labelledby="gotoTitle"><div class="modal-title"><span id="gotoTitle">Go to date and time</span><button class="icon-btn modal-close" aria-label="Close">${icon("close")}</button></div><p>Jump to an exact candle in Tehran time.</p><div class="field"><label>Tehran date & time</label><button class="date-field" id="gotoPickerButton"><b id="gotoInputDisplay">Select date & time</b>${icon("calendar",16)}</button><input type="hidden" id="gotoInput"></div><div class="modal-actions"><button class="btn modal-close">Cancel</button><button class="btn primary" id="gotoApply">Go to candle</button></div></div></div>
  <div id="chartSettings" class="settings-backdrop hidden"><section class="settings-panel modern-chart-settings" role="dialog" aria-modal="true" aria-labelledby="chartSettingsTitle"><header><div class="settings-title-icon">${icon("chartSettings",20)}</div><div><strong id="chartSettingsTitle">Chart settings</strong><small>Display, scales and interaction</small></div><button id="closeSettings" aria-label="Close">${icon("close",18)}</button></header><div class="settings-body"><div class="settings-section"><h3>Canvas</h3><div class="color-grid"><label>Background<input id="backgroundColor" type="color" value="#ffffff"></label><label>Axis text<input id="axisTextColor" type="color" value="#5f636e"></label></div></div><div class="settings-section"><h3>Candles</h3><div class="color-grid"><label>Bullish<input id="upColor" type="color" value="#089981"></label><label>Bearish<input id="downColor" type="color" value="#f23645"></label><label>Wick up<input id="wickUpColor" type="color" value="#089981"></label><label>Wick down<input id="wickDownColor" type="color" value="#f23645"></label></div></div><div class="settings-section"><h3>Time and scales</h3><label class="settings-select"><span><b>Time format</b><small>Applied to the bottom chart axis</small></span><select id="timeFormat"><option value="compact">DD MMM HH:mm</option><option value="numeric">DD/MM HH:mm</option><option value="time">HH:mm:ss</option><option value="full">YYYY-MM-DD HH:mm:ss</option></select></label><label class="settings-toggle"><span><b>Price scale border</b><small>Right axis divider</small></span><input id="priceBorderEnabled" type="checkbox" checked></label><label class="settings-toggle"><span><b>Time scale border</b><small>Bottom axis divider</small></span><input id="timeBorderEnabled" type="checkbox" checked></label></div><div class="settings-section"><h3>Interaction</h3><label class="settings-toggle"><span><b>Crosshair</b><small>Show precise tracking guides</small></span><input id="crosshairEnabled" type="checkbox" checked></label><button id="resetChartSettings" class="settings-reset">Restore defaults</button></div></div></section></div><div id="toast" class="toast hidden"><span id="toastMessage"></span><button id="toastClose" type="button" aria-label="Close notification">${icon("close", 16)}</button></div><div id="errorLogModal" class="modal-backdrop error-log-backdrop hidden"><section class="modal error-log-dialog" role="dialog" aria-modal="true" aria-labelledby="errorLogTitle"><header class="modal-title"><div><strong id="errorLogTitle">Error log</strong><small id="errorLogSummary">No errors recorded</small></div><button id="closeErrorLog" class="icon-btn" type="button" aria-label="Close error log">${icon("close", 18)}</button></header><div id="errorLogList" class="error-log-list"></div><footer class="modal-actions"><button id="clearErrorLogs" class="icon-btn" type="button" title="Clear all errors" aria-label="Clear all errors"><span class="material-symbols-outlined">delete_sweep</span></button><button id="copyErrorLogs" class="icon-btn" type="button" title="Copy all errors" aria-label="Copy all errors"><span class="material-symbols-outlined">content_copy</span></button></footer></section></div>`;
 
@@ -1383,7 +1384,7 @@ function renderSymbolList(filter = "") {
     const selected = state.file?.id === item.id;
     const displayName = parseName(item);
     const encodedId = encodeURIComponent(item.id);
-    return `<div class="symbol-row ${selected ? "selected" : ""}"><button class="symbol-select" type="button" data-id="${encodedId}" aria-pressed="${selected}"><span class="symbol-avatar" aria-hidden="true">${escapeHtml(displayName.split(":").at(-1).slice(0, 2))}</span><span class="symbol-meta"><span class="symbol-title"><strong>${escapeHtml(displayName)}</strong><em>${escapeHtml(item.timeframe)}</em></span><span class="symbol-range"><small><b>FROM</b>${escapeHtml(item.from)}</small><i>→</i><small><b>TO</b>${escapeHtml(item.to)}</small></span><span class="symbol-stats"><span>${Number(item.count || 0).toLocaleString()} candles</span><span>${(item.bytes / 1048576).toFixed(1)} MB</span></span></span>${selected ? `<span class="symbol-selected" aria-label="Selected">${materialIcon("check")}</span>` : ""}</button><button class="symbol-delete" type="button" data-delete-id="${encodedId}" aria-label="Permanently delete ${escapeHtml(item.id)}" title="Permanently delete file">${materialIcon("delete")}</button></div>`;
+    return `<div class="symbol-row ${selected ? "selected" : ""}"><button class="symbol-select" type="button" data-id="${encodedId}" aria-pressed="${selected}"><span class="symbol-avatar" aria-hidden="true">${escapeHtml(displayName.split(":").at(-1).slice(0, 2))}</span><span class="symbol-meta"><span class="symbol-title"><strong>${escapeHtml(displayName)}</strong><em>${escapeHtml(item.timeframe)}</em></span><span class="symbol-range"><small title="From ${escapeHtml(item.from)}"><b>FROM</b>${escapeHtml(item.from)}</small><i aria-hidden="true">→</i><small title="To ${escapeHtml(item.to)}"><b>TO</b>${escapeHtml(item.to)}</small></span><span class="symbol-stats"><span>${Number(item.count || 0).toLocaleString()} candles</span><span>${(item.bytes / 1048576).toFixed(1)} MB</span></span></span>${selected ? `<span class="symbol-selected" aria-label="Selected">${materialIcon("check")}</span>` : ""}</button><button class="symbol-delete" type="button" data-delete-id="${encodedId}" aria-label="Permanently delete ${escapeHtml(item.id)}" title="Permanently delete file">${materialIcon("delete")}</button></div>`;
   };
   $("#symbolList").innerHTML = [...groups.entries()].map(([symbol, items]) =>
     `<section class="symbol-group"><h3>${escapeHtml(symbol)}<small>${items.length} file${items.length === 1 ? "" : "s"}</small></h3>${items.map(itemRow).join("")}</section>`,
@@ -1547,6 +1548,11 @@ async function exportChartData() {
     log.chart.error("CALCULATION_REPORT_OPEN_FAILED", error);
     toast(`Could not open the calculation report: ${error.message}`, "error");
   }
+}
+function refreshCurrentFileMetadata() {
+  if (!state.file) return;
+  const refreshed = state.inventory.find((item) => item.id === state.file.id);
+  if (refreshed) state.file = refreshed;
 }
 $("#reportBtn").onclick = exportChartData;
 $("#gotoBtn").onclick = () => {
@@ -5316,19 +5322,15 @@ $("#updateDataBtn").onclick = async () => {
     const saveResult = await saveResp.json().catch(() => ({}));
     if (!saveResp.ok) throw new Error(saveResult.error || `Saving updated candle file failed with HTTP ${saveResp.status}.`);
     if (saveResult.newId) state.file.id = saveResult.newId;
-    state.file.count = merged.length;
-    state.file.to = new Date(uniqueNew.at(-1).time * 1000).toISOString();
     state.raw = merged;
     state.data = state.tf === sourceTimeframeSeconds() ? state.raw : aggregate(state.raw, state.tf);
     series.setData(state.data);
     state.chartRender = null;
     renderChartViewport(null, { force: true });
-    $("#candleCount").textContent = `${new Intl.NumberFormat("en-US").format(state.data.length)} candles`;
-    const lastCandle = state.data.at(-1);
-    if (lastCandle) {
-      $("#chartFrom").textContent = formatSystemDateTime(state.data.at(0).time * 1000);
-      $("#chartTo").textContent = formatSystemDateTime(lastCandle.time * 1000);
-    }
+    await refreshSymbolInventory();
+    refreshCurrentFileMetadata();
+    renderSymbolList($("#symbolSearch")?.value || "");
+    renderTf();
     setOHLC(state.data.at(-1));
     drawAll();
     toast(`Chart updated with ${uniqueNew.length} new candles`, "success");
@@ -5402,11 +5404,25 @@ if ($("#navGoLast")) {
 }
 
 // ---- Symbol switch: clear drawings ----
-$("#reloadIndicatorBtn").onclick = async () => {
+function closeCacheClearDialog({ restoreFocus = true } = {}) {
+  $("#cacheClearModal").classList.add("hidden");
+  if (restoreFocus) $("#reloadIndicatorBtn").focus();
+}
+function openCacheClearDialog() {
   if (state.indicator.loading || !state.file) return;
-  $("#reloadIndicatorBtn").classList.add("is-loading");
+  $("#cacheClearSymbol").textContent = `${parseName(state.file)} only`;
+  $("#cacheClearModal").classList.remove("hidden");
+  $("#cacheClearModal [data-cache-scope='symbol']").focus();
+}
+async function clearIndicatorCache(scope) {
+  const button = $("#reloadIndicatorBtn");
+  if (state.indicator.loading || !state.file) return;
+  button.classList.add("is-loading");
   try {
-    const response = await fetch("/api/reactions/cache", { method: "DELETE" });
+    const query = scope === "symbol"
+      ? `?scope=symbol&symbol=${encodeURIComponent(state.file.symbol || "")}`
+      : "?scope=all";
+    const response = await fetch(`/api/reactions/cache${query}`, { method: "DELETE" });
     if (!response.ok) throw new Error("Unable to clear the indicator cache");
     const result = await response.json();
     state.indicator.results = null;
@@ -5420,15 +5436,35 @@ $("#reloadIndicatorBtn").onclick = async () => {
     indicatorStatus("Cache cleared. Use Apply & calculate to run the indicator.");
     drawAll();
     log.indicator.info("CACHE_CLEARED", result);
-    toast("Indicator cache cleared. Calculation has not started.");
+    const description = scope === "symbol" ? `for ${parseName(state.file)}` : "for all symbols";
+    toast(`${result.filesCleared} indicator cache ${result.filesCleared === 1 ? "file" : "files"} cleared ${description}.`);
   } catch (error) {
     log.indicator.error("RELOAD_FAILED", error);
     setFooterCacheStatus("error");
     toast(error.message);
   } finally {
-    $("#reloadIndicatorBtn").classList.remove("is-loading");
+    button.classList.remove("is-loading");
   }
+}
+$("#reloadIndicatorBtn").onclick = () => openCacheClearDialog();
+$("#closeCacheClear").onclick = $("#cancelCacheClear").onclick = () => closeCacheClearDialog();
+$("#cacheClearModal").onclick = (event) => {
+  if (event.target === $("#cacheClearModal")) closeCacheClearDialog();
 };
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !$("#cacheClearModal").classList.contains("hidden")) {
+    event.preventDefault();
+    closeCacheClearDialog();
+  }
+});
+$$("[data-cache-scope]").forEach((choice) => {
+  choice.onclick = async () => {
+    const scope = choice.dataset.cacheScope;
+    closeCacheClearDialog({ restoreFocus: false });
+    await clearIndicatorCache(scope);
+    $("#reloadIndicatorBtn").focus();
+  };
+});
 $("#closeIndicator").onclick = $("#cancelIndicator").onclick = () =>
   closeSidePanel($("#indicatorModal"));
 $("#indicatorModal").onclick = (e) => {

@@ -10,7 +10,7 @@ from types import SimpleNamespace
 from typing import Callable, Sequence
 
 
-E_VERSION = "6.1.2"
+E_VERSION = "6.1.3"
 
 
 @dataclass(frozen=True)
@@ -461,10 +461,7 @@ class EDetector:
                 break
 
             geometry_first = self._reaction_first_time(geometry)
-            if (
-                self.direction == "bullish"
-                and geometry_first in self.blocked_order_first_times
-            ):
+            if geometry_first in self.blocked_order_first_times:
                 # The leg context may keep an internal head alive after the
                 # Reset boundary has crossed. Geometry whose First opens in
                 # that closed interval cannot own the resumed outer E space.
@@ -734,14 +731,40 @@ class EDetector:
         self, number: int, reaction: object, context_start: datetime | None = None,
     ) -> tuple[Decimal, int, datetime]:
         if str(getattr(reaction, "mode")) == "A":
-            value = getattr(reaction, "anchor_value", None)
-            if value is None:
-                value = getattr(reaction, "leg_boundary_value")
-            index = getattr(reaction, "anchor_idx", None)
-            if index is None:
-                index = int(getattr(reaction, "first_idx"))
-            index = int(index)
-            return _d(value), index, getattr(self.candles[index], "timestamp")
+            first_index = int(getattr(reaction, "first_idx"))
+            break_index = int(getattr(reaction, "break_idx"))
+            context_tag = "RED" if self.order_direction == "bearish" else "GREEN"
+            start_index = max(self.start_index, first_index - 1)
+            while (
+                start_index > self.start_index
+                and getattr(self.candles[start_index - 1], "tag") == context_tag
+            ):
+                start_index -= 1
+            index = start_index
+            attribute = "high" if self.order_direction == "bearish" else "low"
+            value = _d(getattr(self.candles[index], attribute))
+            for candle in self.candles[start_index + 1 : break_index + 1]:
+                candidate = _d(getattr(candle, attribute))
+                better = (
+                    candidate > value
+                    if self.order_direction == "bearish"
+                    else candidate < value
+                )
+                if better:
+                    index, value = int(getattr(candle, "index")), candidate
+            return value, index, getattr(self.candles[index], "timestamp")
+        # In a bullish lifecycle the order is bearish: Mode B always inherits
+        # the previous bearish Reaction's BoxTop, including its source candle.
+        if self.direction == "bullish":
+            if number <= 1:
+                raise ValueError("Mode-B order reaction has no previous reaction.")
+            previous = self.opposite_reactions[number - 2]
+            index = int(getattr(previous, "box_top_source_idx"))
+            return (
+                _d(getattr(previous, "box_top")),
+                index,
+                getattr(self.candles[index], "timestamp"),
+            )
         first = self._reaction_first_time(reaction)
         if context_start is not None and first == context_start:
             attribute = (
@@ -977,12 +1000,33 @@ class EDetector:
                 or continuous_deadline < geometric_direct[2]
             )
         )
+        independent_cross = None
+        if independent is not None:
+            independent_level, _, _ = self._order_stop(
+                independent[0], independent[1]
+            )
+            independent_cross = self._cross_order(
+                independent[2], independent_level
+            )
         if prefer_geometric:
+            direct_pool.append(geometric_direct)
+        elif (
+            geometric_direct is not None
+            and independent_cross is None
+            and (
+                independent is None
+                or self._reaction_first_time(geometric_direct[1])
+                < self._reaction_first_time(independent[1])
+            )
+        ):
+            # The bounded parent-stop geometry can legitimately start before
+            # a published ordinary Reaction whose order never strictly stops.
+            # Fall back to that earlier complete lifecycle so adding pre-gate
+            # history cannot hide an otherwise valid Order_A. A published
+            # Reaction with a complete lifecycle keeps canonical ownership.
             direct_pool.append(geometric_direct)
         elif independent is not None:
             direct_pool.append(independent)
-        elif geometric_direct is not None:
-            direct_pool.append(geometric_direct)
         if direct_pool:
             number, reaction, confirmation = min(
                 direct_pool,
@@ -1019,7 +1063,7 @@ class EDetector:
             if item[6] is not None
         ]
         provisional_deadline = min(known_stops) if known_stops else self.range_end
-        if self.direction == "bullish" and continuous_deadline is not None:
+        if continuous_deadline is not None:
             provisional_deadline = min(provisional_deadline, continuous_deadline)
         for position, reaction in enumerate(self.opposite_reactions):
             confirmation = self._opposite_confirmations[position]
@@ -1060,7 +1104,7 @@ class EDetector:
         # An inherited live S order can decide this E before any newly
         # discovered order confirms. Such later geometry belongs to a later
         # lifecycle and must not enter this parent's eligibility ledger.
-        if self.direction == "bullish" and continuous_deadline is not None:
+        if continuous_deadline is not None:
             decision_deadline = min(decision_deadline, continuous_deadline)
         eligible = [
             item for item in by_geometry.values()
@@ -1101,7 +1145,7 @@ class EDetector:
                for reset in self.sequence_resets):
             return
         if (
-            self.direction == "bullish" and parent_type == "E"
+            parent_type == "E"
             and self._blue_parent_superseded(parent, parent_stop)
         ):
             # Enforce the same ownership rule during provisional discovery
@@ -1119,9 +1163,18 @@ class EDetector:
                 if inherited_owner is not None and inherited_owner[6] is not None
                 else self.range_end
             )
-        matches = self.order_candidates(
-            parent_stop, continuous_deadline,
-        )
+        # A stopped parent still creates a new order gender, but an order
+        # already alive inside that parent's lifecycle owns price until its
+        # own strict stop.  Start the new search after that stop so a nested
+        # local geometry cannot be mislabeled as a fresh parent-stop order.
+        order_search_start = parent_stop
+        if (
+            parent_type == "S"
+            and carried_owner is not None
+            and carried_owner[6] is not None
+        ):
+            order_search_start = max(parent_stop, carried_owner[6][2])
+        matches = self.order_candidates(order_search_start, continuous_deadline)
         gate_owned = self._gate_owned_initial_order(parent_stop)
         if gate_owned is not None:
             gate_confirmation = gate_owned[2]
@@ -1484,6 +1537,22 @@ class EDetector:
                 reset_evidence[0] if reset_evidence is not None else None,
                 reset_evidence[1] if reset_evidence is not None else None,
             ))
+
+        # Orders created by stopped A zones arrive through the initial audit
+        # ledger.  They can become live during a later S lifecycle even when
+        # their creation cause predates that S's decision event.  Formation,
+        # confirmation and strict-stop chronology determine ownership here.
+        for entry in self.initial_order_audit.values():
+            reaction = entry["reaction"]
+            first = self._reaction_first_time(reaction)
+            confirmation = entry["confirmation_time"]
+            if first < lifecycle_start or confirmation > parent_stop:
+                continue
+            match = self._initial_order_match(entry, ("carried-live",))
+            crossed = match[6]
+            if crossed is None or crossed[2] < parent_stop:
+                continue
+            matches.append(match)
         return min(
             matches,
             key=lambda item: (item[6][2], -int(getattr(item[1], "first_idx"))),

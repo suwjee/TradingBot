@@ -338,14 +338,38 @@ function localDataApi() {
           res.end(JSON.stringify({ error: 'DELETE is required' }));
           return;
         }
-        const filesCleared = cacheFileCount(calculationsDir);
-        // The user explicitly requests a complete indicator-cache reload.
-        // This exact, bounded directory never contains drawings or source data.
-        fs.rmSync(calculationsDir, { recursive: true, force: true });
+        const url = new URL(req.url ?? '', 'http://localhost');
+        const scope = url.searchParams.get('scope') || 'all';
+        let target = calculationsDir;
+        if (scope === 'symbol') {
+          const symbol = url.searchParams.get('symbol') || '';
+          const segment = cacheSegment(symbol, '');
+          if (!symbol || !segment) {
+            res.statusCode = 400;
+            res.end(JSON.stringify({ error: 'A valid chart symbol is required.' }));
+            return;
+          }
+          target = path.resolve(calculationsDir, segment);
+          const cacheRoot = `${path.resolve(calculationsDir)}${path.sep}`;
+          if (!target.startsWith(cacheRoot)) {
+            res.statusCode = 400;
+            res.end(JSON.stringify({ error: 'Invalid cache target.' }));
+            return;
+          }
+        } else if (scope !== 'all') {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ error: 'Unknown cache clear scope.' }));
+          return;
+        }
+        const filesCleared = cacheFileCount(target);
+        // This bounded cache directory never contains drawings or source data.
+        fs.rmSync(target, { recursive: true, force: true });
         fs.mkdirSync(calculationsDir, { recursive: true });
-        // Keep the tracked placeholder; it is not cached indicator data.
-        fs.writeFileSync(path.join(calculationsDir, '.gitkeep'), '');
-        res.end(JSON.stringify({ filesCleared }));
+        if (scope === 'all') {
+          // Keep the tracked placeholder; it is not cached indicator data.
+          fs.writeFileSync(path.join(calculationsDir, '.gitkeep'), '');
+        }
+        res.end(JSON.stringify({ filesCleared, scope, symbol: scope === 'symbol' ? url.searchParams.get('symbol') : undefined }));
       });
       server.middlewares.use('/api/drawings', async (req, res) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
