@@ -1,0 +1,44 @@
+# Graphify Health Diagnostics
+
+```text
+[graphify] MultiDiGraph edge-collapse diagnostic
+input: <in-memory>
+input_stage: provided JSON (normal graph.json is post-build)
+effective_directed: <direct-call>
+nodes: 31574
+unverified_code_nodes: 0
+raw_edges: 77271
+valid_candidate_edges: 76464
+missing_endpoint_edges: 0
+dangling_endpoint_edges: 807
+self_loop_edges: 17
+exact_duplicate_edges: 0
+directed_unique_endpoint_pairs: 72115
+directed_same_endpoint_collapsed_edges: 4349
+undirected_unique_endpoint_pairs: 71731
+undirected_same_endpoint_collapsed_edges: 4733
+same_endpoint_group_count: 2492
+relation_variant_groups: 481
+source_file_variant_groups: 0
+source_location_variant_groups: 2066
+context_variant_groups: 2
+post_build_graph_type: DiGraph
+post_build_edges: 72134
+producer_suppression_sites: 11
+producer_suppression_examples:
+  - L1144 seen_ids arity=unknown
+  - L1410 seen_ids arity=unknown
+  - L1412 seen_doc_refs arity=unknown
+  - L1772 seen_ids arity=unknown
+  - L2262 seen_keys arity=unknown
+  - L2431 seen_keys arity=unknown
+  - L3837 seen_ids arity=unknown
+  - L3945 seen_ids arity=unknown
+examples:
+  - apps_chart_node_modules_vite_deps_lightweight_charts -> apps_chart_node_modules_vite_deps_lightweight_charts_constructor edges=119 relations=['contains'] locations=['L10028', 'L10103', 'L10129', 'L1043', 'L10439', 'L10486', 'L10612', 'L10626', 'L10775', 'L10954', 'L11380', 'L11498', 'L11535', 'L1159', 'L11608', 'L11710', 'L11833', 'L11880', 'L11898', 'L11916', 'L11928', 'L11937', 'L12048', 'L12064', 'L12171', 'L12234', 'L12267', 'L12308', 'L12422', 'L1244', 'L12471', 'L12559', 'L12605', 'L12637', 'L12710', 'L1272', 'L12749', 'L12819', 'L12854', 'L12896', 'L12971', 'L13091', 'L13258', 'L13355', 'L1341', 'L13512', 'L13560', 'L13617', 'L13660', 'L13686', 'L1390', 'L1439', 'L1646', 'L1768', 'L1812', 'L1820', 'L1851', 'L1900', 'L1917', 'L1942', 'L1974', 'L2001', 'L2021', 'L2090', 'L2199', 'L2217', 'L2269', 'L2323', 'L2370', 'L2390', 'L2426', 'L2464', 'L2733', 'L2800', 'L2855', 'L3015', 'L3026', 'L3046', 'L3076', 'L3087', 'L3118', 'L3132', 'L3152', 'L3229', 'L3719', 'L3777', 'L3816', 'L3846', 'L3930', 'L3979', 'L4138', 'L4684', 'L482', 'L5101', 'L5135', 'L5161', 'L5250', 'L5269', 'L578', 'L5854', 'L6473', 'L6482', 'L6496', 'L657', 'L6821', 'L719', 'L7276', 'L737', 'L7433', 'L7515', 'L7643', 'L789', 'L8022', 'L849', 'L8557', 'L8636', 'L878', 'L8981', 'L9699'] contexts=['']
+  - apps_chart_node_modules_playwright_core_lib_utilsbundle -> apps_chart_node_modules_playwright_core_lib_utilsbundle_constructor edges=69 relations=['contains'] locations=['L46559', 'L46654', 'L47756', 'L47997', 'L49259', 'L49777', 'L50419', 'L50428', 'L50488', 'L51776', 'L51790', 'L51807', 'L51929', 'L52526', 'L52747', 'L52906', 'L55204', 'L55376', 'L55994', 'L56405', 'L56456', 'L56486', 'L57182', 'L57260', 'L57418', 'L57631', 'L58449', 'L58502', 'L58507', 'L59212', 'L60152', 'L68246', 'L70266', 'L72595', 'L72841', 'L72913', 'L73149', 'L73891', 'L74123', 'L74492', 'L74507', 'L74687', 'L75585', 'L77869', 'L77889', 'L79212', 'L80198', 'L80233', 'L80466', 'L80942', 'L81158', 'L81535', 'L81718', 'L81801', 'L82242', 'L82337', 'L82878', 'L82885', 'L83105', 'L83312', 'L83447', 'L83512', 'L83525', 'L83715', 'L84129', 'L84731', 'L84833', 'L84864', 'L84870'] contexts=['']
+  - apps_chart_node_modules_vite_dist_node_chunks_node -> apps_chart_node_modules_vite_dist_node_chunks_node_constructor edges=58 relations=['contains'] locations=['L10213', 'L10260', 'L10325', 'L1116', 'L11836', 'L1191', 'L12091', 'L12177', 'L12235', 'L1227', 'L13752', 'L13943', 'L14026', 'L1418', 'L14552', 'L15000', 'L15489', 'L15527', 'L15570', 'L15604', 'L15882', 'L17045', 'L18763', 'L18957', 'L22240', 'L22298', 'L25773', 'L25940', 'L29952', 'L30262', 'L30635', 'L30896', 'L30934', 'L30966', 'L31139', 'L31148', 'L31163', 'L31227', 'L34093', 'L34700', 'L34723', 'L35044', 'L35371', 'L35576', 'L3578', 'L37151', 'L3840', 'L3882', 'L4215', 'L4226', 'L4361', 'L4439', 'L4544', 'L746', 'L7505', 'L765', 'L9540', 'L9936'] contexts=['']
+  - apps_chart_node_modules_playwright_core_lib_utilsbundle -> apps_chart_node_modules_playwright_core_lib_utilsbundle_getsizing edges=49 relations=['contains'] locations=['L62351', 'L62458', 'L62607', 'L62721', 'L62842', 'L62951', 'L63063', 'L63179', 'L63289', 'L63399', 'L63511', 'L63621', 'L63754', 'L63873', 'L63982', 'L64108', 'L64411', 'L64534', 'L64677', 'L64791', 'L64898', 'L65008', 'L65117', 'L65225', 'L65338', 'L65454', 'L65643', 'L65770', 'L65880', 'L65988', 'L66099', 'L66208', 'L66318', 'L66433', 'L66543', 'L66653', 'L66815', 'L66929', 'L67039', 'L67150', 'L67261', 'L67372', 'L67478', 'L67592', 'L67704', 'L67814', 'L67923', 'L68033', 'L68141'] contexts=['']
+  - apps_chart_node_modules_playwright_core_lib_utilsbundle -> apps_chart_node_modules_playwright_core_lib_utilsbundle_parse edges=39 relations=['contains'] locations=['L50997', 'L53797', 'L73014', 'L73337', 'L73897', 'L74128', 'L74295', 'L74320', 'L74429', 'L74450', 'L74471', 'L74496', 'L74511', 'L74522', 'L74539', 'L74560', 'L74701', 'L75025', 'L75147', 'L75261', 'L75314', 'L75387', 'L75440', 'L75500', 'L75589', 'L75693', 'L75707', 'L75738', 'L75803', 'L75844', 'L75877', 'L76010', 'L76029', 'L76048', 'L76073', 'L76126', 'L76147', 'L76161', 'L76216'] contexts=['']
+note: normal graph.json is post-build; raw producer loss must be measured earlier.
+```
