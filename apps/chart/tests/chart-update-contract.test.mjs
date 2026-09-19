@@ -63,3 +63,17 @@ test("chart import and export keep the source filenames in the transfer manifest
   assert.match(viteSource, /drawingFilename: path\.basename\(target\)/);
   assert.match(viteSource, /\/api\/chart-transfer\/import/);
 });
+
+test("deleting a chart removes its RAW file and durable chart artifacts", () => {
+  const deleteEndpoint = viteSource.split("server.middlewares.use('/api/candle-files/delete'")[1]
+    .split("server.middlewares.use('/api/candle-files/cut'")[0];
+  assert.match(deleteEndpoint, /rawStore\.remove\(valid\.id\)/);
+  assert.match(deleteEndpoint, /removeChartArtifacts\(valid\)/);
+  assert.match(mainSource, /market-canvas:\$\{item\.chartId \|\| item\.id\}:drawings/);
+});
+
+test("inventory refreshes coalesce while a symbols request is already running", () => {
+  assert.match(mainSource, /let inventoryRefreshPromise = null/);
+  assert.match(mainSource, /if \(inventoryRefreshPromise\) return inventoryRefreshPromise/);
+  assert.match(mainSource, /trackedRefresh = refresh\.finally/);
+});

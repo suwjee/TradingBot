@@ -1655,14 +1655,13 @@ async function loadInventory() {
     $("#progress").textContent = "No local RAW candle files";
   }
 }
-let inventoryRefreshRunning = false;
+let inventoryRefreshPromise = null;
 function inventorySignature(items) {
   return items.map((item) => `${item.id}|${item.chartId || ""}|${item.bytes}|${item.savedAt}`).join("\n");
 }
-async function refreshSymbolInventory({ initial = false } = {}) {
-  if (inventoryRefreshRunning) return false;
-  inventoryRefreshRunning = true;
-  try {
+function refreshSymbolInventory({ initial = false } = {}) {
+  if (inventoryRefreshPromise) return inventoryRefreshPromise;
+  const refresh = (async () => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
     let r;
@@ -1705,9 +1704,13 @@ async function refreshSymbolInventory({ initial = false } = {}) {
       log.chart.info("SYMBOL_INVENTORY_UPDATED", { symbols: state.inventory.length, initial });
     }
     return changed;
-  } finally {
-    inventoryRefreshRunning = false;
-  }
+  })();
+  let trackedRefresh;
+  trackedRefresh = refresh.finally(() => {
+    if (inventoryRefreshPromise === trackedRefresh) inventoryRefreshPromise = null;
+  });
+  inventoryRefreshPromise = trackedRefresh;
+  return trackedRefresh;
 }
 async function loadFile(item) {
   if (!item) return;
@@ -1993,6 +1996,12 @@ $("#symbolList").onclick = async (e) => {
       const response = await fetch("/api/candle-files/delete", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: item.id }) });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.error || `Delete failed with HTTP ${response.status}.`);
+      try {
+        for (const key of [
+          `market-canvas:${item.chartId || item.id}:drawings`,
+          `market-canvas:${item.id}:drawings`,
+        ]) localStorage.removeItem(key);
+      } catch {}
       await refreshSymbolInventory();
       toast(`${item.id} was permanently deleted`, "success");
     } catch (error) {
@@ -3077,7 +3086,21 @@ async function cutCurrentFile(mode) {
     if (!response.ok) throw new Error(result.error || `Cut failed with HTTP ${response.status}.`);
     closeCutCandlesModal();
     await refreshSymbolInventory();
-    const next = state.inventory.find((item) => item.id === result.newId) || state.inventory.find((item) => item.chartId === result.chartId);
+    let next = state.inventory.find((item) => item.id === result.newId) || state.inventory.find((item) => item.chartId === result.chartId);
+    if (!next) {
+      // A background inventory poll may have completed against the old snapshot
+      // while the cut request was writing. Force one authoritative read before
+      // reporting a false "created but unavailable" error.
+      const latestResponse = await fetch(`/api/symbols?refresh=${Date.now()}`, { cache: "no-store" });
+      if (latestResponse.ok) {
+        const latestInventory = await latestResponse.json();
+        state.inventory = latestInventory;
+        renderSymbolList();
+        candleExportController?.syncRawInventory(latestInventory);
+        next = latestInventory.find((item) => item.id === result.newId)
+          || latestInventory.find((item) => item.chartId === result.chartId);
+      }
+    }
     if (!next) throw new Error("The cut RAW file was created but is not available in inventory.");
     await loadFile(next);
     toast(mode === "replace" ? "The current RAW file was cut" : "A new cut RAW file was created", "success");

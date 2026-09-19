@@ -171,6 +171,39 @@ function storedFileCount(directory) {
   return count;
 }
 
+function removeChartArtifacts(item) {
+  let drawingsCleared = 0;
+  for (const target of new Set([drawingPath(item), legacyDrawingPath(item)])) {
+    if (!fs.existsSync(target) || !fs.statSync(target).isFile()) continue;
+    fs.unlinkSync(target);
+    drawingsCleared += 1;
+  }
+
+  let calculationFilesCleared = 0;
+  const calculationRoot = path.join(calculationsDir, cacheSegment(item.symbol, 'unnamed-symbol'));
+  const walk = (directory) => {
+    if (!fs.existsSync(directory)) return;
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const target = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        walk(target);
+        try { if (!fs.readdirSync(target).length) fs.rmdirSync(target); } catch {}
+        continue;
+      }
+      if (!entry.isFile() || !entry.name.endsWith('.info.json')) continue;
+      let metadata = null;
+      try { metadata = JSON.parse(fs.readFileSync(target, 'utf8')); } catch {}
+      if (metadata?.sourceFile !== item.id && (!item.chartId || metadata?.chartId !== item.chartId)) continue;
+      const calculationFile = target.slice(0, -'.info.json'.length);
+      if (fs.existsSync(calculationFile)) fs.unlinkSync(calculationFile);
+      fs.unlinkSync(target);
+      calculationFilesCleared += 1;
+    }
+  };
+  walk(calculationRoot);
+  return { drawingsCleared, calculationFilesCleared };
+}
+
 function readBody(req, maxBytes = 100_000) {
   return new Promise((resolve, reject) => {
     let body = '';
@@ -304,11 +337,12 @@ function localDataApi() {
           const { id } = await readJson(req);
           const valid = inventory().find((item) => item.id === id);
           if (!valid) { res.statusCode = 404; res.end(JSON.stringify({ error: 'Candle file was not found.' })); return; }
-          rawStore.remove(valid.id);
+          if (!rawStore.remove(valid.id)) { res.statusCode = 404; res.end(JSON.stringify({ error: 'Candle file was not found.' })); return; }
+          const artifacts = removeChartArtifacts(valid);
           inventoryMeta.delete(valid.id);
           res.setHeader('Content-Type', 'application/json; charset=utf-8');
           res.setHeader('Cache-Control', 'no-store');
-          res.end(JSON.stringify({ ok: true, deleted: valid.id }));
+          res.end(JSON.stringify({ ok: true, deleted: valid.id, ...artifacts }));
         } catch (error) {
           res.statusCode = 400;
           res.setHeader('Content-Type', 'application/json; charset=utf-8');

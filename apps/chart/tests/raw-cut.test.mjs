@@ -39,6 +39,21 @@ test("RAW cut creates a new chart identity without copying the original sidecar"
   assert.deepEqual(store.read(result.newId), candles().slice(1, 3));
 });
 
+test("each distinct new RAW cut receives its own chart identity", async (t) => {
+  const { createRawResourceStore } = await import("../server/raw-resource-store.js");
+  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "raw-cut-identities-"));
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+  const store = createRawResourceStore({ rootDir });
+  const original = store.write({ broker: "FXCM", symbol: "ABC", timeframe: "5S", candles: candles() });
+
+  const first = store.cut(original.id, { from: 100, to: 105, mode: "new" });
+  const second = store.cut(original.id, { from: 110, to: 115, mode: "new" });
+  assert.notEqual(first.newId, second.newId);
+  assert.notEqual(first.chartId, second.chartId);
+  assert.notEqual(first.chartId, original.chartId);
+  assert.notEqual(second.chartId, original.chartId);
+});
+
 test("RAW cut rejects an empty or reversed selection", async (t) => {
   const { createRawResourceStore } = await import("../server/raw-resource-store.js");
   const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "raw-cut-invalid-"));
