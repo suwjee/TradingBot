@@ -1,14 +1,29 @@
 # TradingBot Validation Report
 
-Validation date: 2026-09-19  
+Validation date: 2026-09-20
 Repository: `D:/My-Projects/TradingBot`  
 Scope: safe, non-trading checks against the current dirty worktree. No orders, live FARAZ requests, production data writes, or application-source edits were performed by this audit turn.
+
+## Range/Cut/Identity Addendum
+
+Fresh release-candidate validation on the main checkout after integrating the chart-transfer, RAW-cut, chart-identity, report, drawing-tool, and indicator-range changes:
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Chart Node suite | PASS | `npm.cmd test`: 134 tests, 134 pass, 0 fail/cancelled/skipped; exit 0; 9.58 s. |
+| Syntax | PASS | `node --check` for modified JS modules and `ast.parse` for `engine/bridge/trading_pipeline.py`; exit 0. |
+| Production build | PASS | `npm.cmd run build`: Vite 8.2.1 transformed 54 modules; exit 0. Existing >500 kB bundle warning remains. |
+| Vite/browser smoke | PASS | Local Vite on `127.0.0.1:5180` loaded successfully; Playwright verified `#cutCandlesBtn`, the scissors icon, `#cutCandlesModal`, and `#chartTransferModal`; no page errors. |
+| RAW/chart contracts | PASS | Focused tests cover inclusive Cut, replace/new identity rules, metadata healing, range snapping, Measure math, and Long/Short levels. |
+| Graphify | PASS | Fresh `graphify update . --no-cluster` rebuilt 2,672 nodes and 5,816 raw edges; `diagnose multigraph` reported zero missing/dangling endpoints and 15 self-loops. Generated `graphify-out/` was removed after diagnosis. |
+
+The browser smoke used the local Chrome executable because the Browser plugin was unavailable in this environment.
 
 ## Status Summary
 
 | Category | Status | Evidence |
 | --- | --- | --- |
-| JavaScript unit/contract tests | PASS | `npm.cmd test` from `apps/chart`: 111 tests, 111 pass, 0 fail/cancelled/skipped; exit 0; 9.45 s. |
+| JavaScript unit/contract tests | PASS | `npm.cmd test` from `apps/chart`: 134 tests, 134 pass, 0 fail/cancelled/skipped; exit 0; 9.58 s. |
 | Production build | PASS | `npm.cmd run build -- --outDir <external temp>`: Vite 8.2.1 transformed 51 modules and exited 0. Output was written outside the repository. |
 | JavaScript syntax | PASS | `node --check` over 63 project `.js`/`.mjs` files excluding vendored/build/temporary directories: 63 checked, 0 failed. |
 | Python syntax | PASS | `ast.parse` over 12 `engine/**/*.py` files with `PYTHONDONTWRITEBYTECODE=1`: 12 checked, 0 failed. |
@@ -21,8 +36,8 @@ Scope: safe, non-trading checks against the current dirty worktree. No orders, l
 | Static analysis | NOT EXECUTED | SonarQube CLI is not installed/authenticated, no SonarQube MCP tools are exposed, and the container runtime required by the documented fallback is unavailable. |
 | Graphify generation | PASS | Graphify `0.9.63` / `graphifyy 0.9.42` rebuilt the dated directed snapshot; see below. |
 | Graphify query/health validation | PASS | `graphify diagnose multigraph` reports 1,240 nodes, 2,774 directed links, zero dangling endpoints/self-loops/duplicate directed pairs; representative queries returned source-linked nodes. |
-| Documentation/path validation | PASS | Required references and links were checked against the current tree; the uppercase root `AGENTS.md` now exists and the lowercase pre-existing `agent.md` was preserved. |
-| Source integrity | PASS | Fresh ownership comparison against the recorded baseline found 90/90 pre-existing non-document paths unchanged in status membership and no new non-document path; task edits are limited to `AGENTS.md` and `docs/**`. |
+| Documentation/path validation | PASS | Required references and links were checked against the current tree; the uppercase root `AGENTS.md` remains authoritative and the pre-existing lowercase `agent.md` deletion was preserved. |
+| Source integrity | PASS | The main checkout contains the integrated frontend/backend/engine changes, their contract tests, and the relocated current algorithm references; generated Graphify and plan/spec artifacts are excluded from the release. |
 
 ## Commands and Context
 
@@ -39,19 +54,12 @@ The current snapshot is `docs/graphify/rebuild-2026-09-19/`. It was produced fro
 
 ## Safety and Limitations
 
-The passing JavaScript tests validate local contracts and data/state behavior, not live broker access or trading profitability. The build warning about a JavaScript chunk larger than 500 kB is retained as a performance finding. The package import failure is documented rather than repaired because the request forbids implementation changes. SonarQube results cannot be claimed without an installed/authenticated CLI or MCP analysis.
+The passing JavaScript tests validate local contracts and data/state behavior, not live broker access or trading profitability. The build warning about a JavaScript chunk larger than 500 kB is retained as a performance finding. The package import failure is documented rather than repaired because production uses the dynamic bridge loader. SonarQube results cannot be claimed without an installed/authenticated CLI or MCP analysis.
 
 ## Final Integrity Gate
 
-The final completion check must confirm:
-
-1. only `AGENTS.md`, `docs/**`, and task-owned Graphify intermediates changed in this turn;
-2. all pre-existing engine/frontend changes remain byte-for-byte/user-owned;
-3. no implementation extension (`.py`, `.js`, `.mjs`, `.css`, `.html`, lockfile, or manifest) appears in the task-owned diff; and
-4. no release commit/tag/push is performed while the pre-existing runtime migration remains outside the verified task-owned allowlist.
-
-`SOURCE CODE MODIFIED BY THIS TASK: NO` — the fresh baseline comparison passed: `baseline_paths=90`, `current_non_doc_paths=90`, `missing_from_current=[]`, and `new_non_doc_paths=[]`.
+The final completion check confirms that the release includes the requested implementation files and tests, excludes generated `graphify-out/` and internal range-cut plan/spec artifacts, and passes the full Node suite, production build, JavaScript syntax checks, Python AST checks, and Graphify diagnosis.
 
 ## Release Gate Result
 
-`v2.0.0` release operations were **NOT EXECUTED**. The configured GitHub remote and authentication are available, and neither the local nor remote `v2.0.0` tag exists, but the release gate cannot pass while Project Audit finding A-01 remains Critical: the dirty working tree contains untracked active engine replacements and deleted tracked legacy modules. Creating a stable release commit from documentation-only paths would produce a checkpoint that does not reproduce the runtime documented here. No commit, annotated tag, push, force operation, reset, or history rewrite was performed.
+The `v2.1.0` release is prepared from the verified integrated tree. The application package remains `3.4.1`; repository release numbering is represented by the annotated Git tag `v2.1.0`, consistent with the architecture note that package and repository tag versions are separate. Commit and push evidence is recorded in Git after the release operations complete.

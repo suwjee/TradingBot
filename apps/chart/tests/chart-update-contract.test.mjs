@@ -52,3 +52,14 @@ test("loading one chart resolves only its requested RAW file instead of scanning
   assert.match(candleEndpoint, /const resource = rawStore\.resolve\(id\);/);
   assert.doesNotMatch(candleEndpoint, /inventory\(\)\.find/);
 });
+
+test("chart import and export keep the source filenames in the transfer manifest", () => {
+  assert.match(mainSource, /chartTransferBtn/);
+  assert.match(mainSource, /showDirectoryPicker\(\{ mode: "readwrite" \}\)/);
+  assert.match(mainSource, /bundle\.manifest\.rawFile/);
+  assert.match(mainSource, /bundle\.manifest\.metadataFile/);
+  assert.match(mainSource, /bundle\.manifest\.drawingsFile/);
+  assert.match(viteSource, /\/api\/chart-transfer\/export/);
+  assert.match(viteSource, /drawingFilename: path\.basename\(target\)/);
+  assert.match(viteSource, /\/api\/chart-transfer\/import/);
+});

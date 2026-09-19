@@ -22,6 +22,7 @@ The main shell contains:
 - floating or pinned indicator/settings/object panels;
 - dialogs and date/time picker;
 - FARAZ candle export/update experience;
+- Import / Export chart-transfer action below Trading history, with a two-option modal for moving the current RAW resource and drawings;
 - template dropdown;
 - status bar, toast, and error-log dialog.
 
@@ -173,6 +174,8 @@ Local additions use `calc()` relative to these tokens. Examples include range ha
 Compact buttons use transparent or surface backgrounds, tokenized control heights/radii, and Material Symbols. Hover changes background/text; active uses the active surface; selected/expanded uses accent-soft; `:focus-visible` uses an explicit accent outline. Destructive actions switch to danger-soft/danger.
 
 Global disabled controls use `cursor: not-allowed` and `opacity: .46`. Context-specific busy controls can instead use `cursor: wait` and roughly `.5` to `.6` opacity. The update button exposes `data-update-state="loading"`, swaps idle/loading glyph opacity and runs `udSpin`; indicator actions use `.is-loading`; the global chart blocker uses `.loading`; manual review begins with fixed `#review-loading`. Code must restore disabled state and loading classes/attributes in `finally` paths.
+
+The chart-transfer dialog uses the same modal/scrim and focus-restoration contract. Export and import use the Chromium File System Access API on Windows; the export folder contains `manifest.json` plus the exact source RAW, RAW sidecar, and drawing filenames. Import rejects unsafe or malformed bundles before writing and refreshes the symbol inventory before loading the imported drawing state.
 
 ### Inputs and selects
 

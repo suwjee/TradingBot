@@ -240,6 +240,14 @@ def serialize(result, start_index=None, end_index=None, reaction_transform=None)
             "boxBottom": str(public_item.box_bottom),
             "breakIndex": public_item.break_idx,
             "breakTime": display_epoch(public_item.break_time),
+            # Keep the exact lower-timeframe confirmation available to the
+            # presentation serializer while preserving the legacy breakTime.
+            "breakEventTime": (
+                epoch(public_item.behavior_confirmation_time)
+                if getattr(public_item, "behavior_confirmation_time", None)
+                is not None
+                else display_epoch(public_item.break_time)
+            ),
             "mode": public_item.mode,
         })
     return reactions, resets
@@ -526,6 +534,7 @@ def serialize_order_audit(prepared_items, detector):
             "breakTime": epoch(
                 detector.candles[int(getattr(reaction, "break_idx"))].timestamp
             ),
+            "confirmationTime": epoch(entry["confirmation_time"]),
             "stopLevel": str(entry["stop_level"]),
             "stopSourceIndex": entry["stop_source_index"],
             "stopSourceTime": epoch(entry["stop_source_time"]),
@@ -535,6 +544,728 @@ def serialize_order_audit(prepared_items, detector):
             "causes": causes,
         })
     return sorted(output, key=lambda item: (item["firstTime"], item["breakTime"]))
+
+
+def _report_time(value):
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return _DTFMT.format(value.year, value.month, value.day, value.hour, value.minute, value.second)
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        stamp = local_datetime(int(value))
+        return _DTFMT.format(stamp.year, stamp.month, stamp.day, stamp.hour, stamp.minute, stamp.second)
+    text = str(value)
+    return text if text else None
+
+
+def _report_direction(value):
+    return {"bullish": "Bullish", "bearish": "Bearish"}.get(
+        str(value).lower(), value
+    )
+
+
+def _report_first_candle(direction):
+    return {"type": "First Red" if direction == "Bullish" else "First Green"}
+
+
+def _report_mode(value):
+    return {"A": "Leg Start", "B": "Normal"}.get(str(value), value)
+
+
+def _report_kind(value):
+    return {
+        "scale": "Scale",
+        "reset": "Reset",
+        "simple": "Simple",
+        "advanced": "Advanced",
+        "type3": "Type-3",
+    }.get(str(value), value)
+
+
+def _report_order_formation(causes=None, mode=None):
+    """Expose the engine's Order mode without deriving a new order type."""
+    normalized = str(mode or "").strip().upper()
+    kinds = {
+        str(item.get("kind")) if isinstance(item, dict) else str(item)
+        for item in causes or []
+    }
+    if {"parent-stop", "reset-leg"}.issubset(kinds):
+        return "Order_A | Order_B"
+    if normalized in {"A", "B"}:
+        return f"Order_{normalized}"
+    return "Order_A" if "parent-stop" in kinds else "Order_B"
+
+
+def _report_family(value):
+    return {"blue": "Blue", "red": "Red"}.get(str(value).lower(), value)
+
+
+def _report_trigger(value):
+    return {
+        "sequence-group-stop": "Behavior Group",
+        "opposite-s-group-stop": "Behavior Group",
+        "stopall-stop": "Previous StopAll",
+    }.get(str(value), _report_kind(value))
+
+
+def _report_behavior_key(value):
+    text = str(value or "")
+    if text.startswith("StopAll"):
+        return {"type": "StopAll", "number": text.split()[0]}
+    if text.startswith("E"):
+        parts = text.split()
+        return {
+            "type": "E",
+            "number": parts[0],
+            "color": _report_family(parts[1]) if len(parts) > 1 else None,
+        }
+    if text.startswith("S"):
+        parts = text.split()
+        return {
+            "type": "S Blue" if len(parts) > 1 and parts[1].lower() == "blue" else "S Red",
+            "color": _report_family(parts[1]) if len(parts) > 1 else None,
+        }
+    return {"type": text} if text else None
+
+
+def _report_clean(value):
+    if isinstance(value, dict):
+        cleaned = {}
+        for key, item in value.items():
+            item = _report_clean(item)
+            if item is None or item == {} or item == []:
+                continue
+            cleaned[key] = item
+        return cleaned
+    if isinstance(value, list):
+        return [item for item in (_report_clean(item) for item in value)
+                if item is not None and item != {} and item != []]
+    return value
+
+
+def _report_point(price, time):
+    stamp = _report_time(time)
+    if stamp is None or price is None:
+        return None
+    return {"time": stamp, "price": str(price)}
+
+
+def _report_reaction(reaction, direction):
+    readable = _report_direction(direction)
+    breakout_price = reaction.get("boxTop") if str(direction).lower() == "bullish" else reaction.get("boxBottom")
+    return _report_clean({
+        "type": "Reaction",
+        "direction": readable,
+        "mode": _report_mode(reaction.get("mode")),
+        "firstCandle": {
+            **_report_first_candle(readable),
+            "time": _report_time(reaction.get("firstTime")),
+        },
+        "structure": {
+            "boxTop": _report_point(
+                reaction.get("boxTop"), reaction.get("boxTopSourceTime")
+            ),
+            "boxBottom": _report_point(
+                reaction.get("boxBottom"), reaction.get("boxBottomSourceTime")
+            ),
+            "breakout": _report_point(
+                breakout_price, reaction.get("breakEventTime") or reaction.get("breakTime")
+            ),
+        },
+    })
+
+
+def _report_reaction_ref(reaction, direction):
+    if not reaction:
+        return None
+    breakout_price = reaction.get("boxTop") if str(direction).lower() == "bullish" else reaction.get("boxBottom")
+    return _report_clean({
+        "mode": _report_mode(reaction.get("mode")),
+        "firstCandle": {
+            **_report_first_candle(_report_direction(direction)),
+            "time": _report_time(reaction.get("firstTime")),
+        },
+        "structure": {
+            "boxTop": _report_point(
+                reaction.get("boxTop"), reaction.get("boxTopSourceTime")
+            ),
+            "boxBottom": _report_point(
+                reaction.get("boxBottom"), reaction.get("boxBottomSourceTime")
+            ),
+            "breakout": _report_point(
+                breakout_price, reaction.get("breakEventTime") or reaction.get("breakTime")
+            ),
+        },
+    })
+
+
+def _report_order_provenance(causes, details_by_ref):
+    parents = []
+    extra = []
+    for cause in causes or []:
+        if not isinstance(cause, dict):
+            continue
+        kind = cause.get("kind")
+        if kind == "parent-stop":
+            parent_type = str(cause.get("parentType") or "")
+            ref_kind = (
+                "A" if parent_type == "A" else
+                "S" if parent_type == "S" else
+                "E" if parent_type == "E" or parent_type.startswith("E") else
+                "StopAll" if parent_type == "StopAll" or parent_type.startswith("StopAll") else
+                parent_type
+            )
+            parent_time = _report_time(cause.get("parentSourceTime"))
+            source = details_by_ref.get((ref_kind, parent_time)) if details_by_ref else None
+            parents.append(_report_clean({
+                **_report_parent_summary(parent_type, parent_time, source, cause.get("eventTime")),
+                "orderRelation": "Created This Order",
+            }))
+        elif kind == "carried-live":
+            extra.append({"type": "Existing Active Order"})
+        elif kind == "reset-leg":
+            extra.append(_report_clean({
+                "type": "Reset Structure",
+                "resetAt": {"time": _report_time(cause.get("resetTime"))},
+                "brokenAt": {"time": _report_time(cause.get("boundaryBreakTime"))},
+            }))
+    return parents, extra
+
+
+def _report_order_from_row(
+    row, audits_by_identity, direction, parents=None, extra_reasons=None,
+    details_by_ref=None,
+):
+    first = row.get("orderFirstTime")
+    break_time = row.get("orderBreakTime")
+    if first is None and break_time is None:
+        return None
+    identity = (_report_time(first), _report_time(break_time))
+    audit = audits_by_identity.get(identity)
+    audit_causes = (audit or {}).get("causes") or []
+    row_causes = row.get("orderCauses") or []
+    causes = [*audit_causes]
+    for cause in row_causes:
+        if cause not in causes:
+            causes.append(cause)
+    derived_parents, derived_extra = _report_order_provenance(
+        audit_causes, details_by_ref
+    )
+    if parents is None:
+        parents = derived_parents
+    if extra_reasons is None:
+        extra_reasons = derived_extra
+    relations = []
+    for cause in causes:
+        kind = cause.get("kind") if isinstance(cause, dict) else str(cause)
+        relation = {
+            "parent-stop": "Created By Parent Stop",
+            "carried-live": "Existing Active Order",
+            "reset-leg": "Reset Structure",
+        }.get(kind)
+        if relation and relation not in relations:
+            relations.append(relation)
+    order = {
+        "type": "Order Audit",
+        "formation": _report_order_formation(
+            causes, row.get("orderMode") or (audit or {}).get("reactionMode")
+        ),
+        "direction": _report_direction(row.get("orderDirection") or direction),
+        "firstCandle": {
+            **_report_first_candle(
+                _report_direction(row.get("orderDirection") or direction)
+            ),
+            "time": _report_time(first),
+        },
+        "structure": {
+            "boxTop": _report_point(
+                row.get("orderBoxTop"), row.get("orderBoxTopSourceTime")
+            ),
+            "boxBottom": _report_point(
+                row.get("orderBoxBottom"), row.get("orderBoxBottomSourceTime")
+            ),
+            "breakout": _report_point(
+                row.get("orderBoxTop")
+                if str(row.get("orderDirection") or direction).lower() == "bullish"
+                else row.get("orderBoxBottom"),
+                row.get("orderConfirmationTime") or (audit or {}).get("confirmationTime") or break_time,
+            ),
+        },
+        "stop": _report_point(
+            row.get("orderStopLevel"),
+            row.get("orderStopSourceTime"),
+        ),
+    }
+    if parents:
+        order["parents"] = parents
+    if relations:
+        order["relation"] = relations if len(relations) > 1 else relations[0]
+    if extra_reasons:
+        order["extraReasons"] = extra_reasons
+    return _report_clean(order)
+
+
+def _report_blue_detail(line, raw_line=None, stop=None, direction="bullish"):
+    item = raw_line or {}
+    kind = getattr(line, "kind", None) if line is not None else item.get("kind")
+    source_time = (
+        getattr(line, "source_time", None) if line is not None
+        else item.get("sourceTime")
+    )
+    source_extreme = (
+        getattr(line, "source_extreme", None) if line is not None
+        else item.get("sourceExtreme")
+    )
+    line_price = (
+        getattr(line, "line_price", None) if line is not None
+        else item.get("linePrice")
+    )
+    result = {
+        "kind": _report_kind(kind),
+        "formedAt": {
+            "time": _report_time(source_time),
+            "linePrice": str(line_price) if line_price is not None else None,
+            "stopPrice": str(source_extreme) if source_extreme is not None else None,
+        },
+    }
+    if stop:
+        result["stoppedAt"] = _report_clean({
+            "time": _report_time(stop.get("time")),
+            "price": stop.get("price"),
+        })
+    if str(kind) == "scale":
+        result["scale"] = _report_clean({
+            "fibonacciPrice": (
+                str(getattr(line, "fibonacci_level", None))
+                if line is not None and getattr(line, "fibonacci_level", None) is not None
+                else item.get("fibonacciLevel")
+            ),
+            "previousStrikes": (
+                getattr(line, "previous_strike_count", None)
+                if line is not None else item.get("previousStrikeCount")
+            ),
+            "currentStrikes": (
+                getattr(line, "strike_count", None)
+                if line is not None else item.get("strikeCount")
+            ),
+        })
+    return _report_clean(result)
+
+
+def _report_category(group, row, direction):
+    readable = _report_direction(direction)
+    if group == "reactions":
+        return {"key": f"reaction:{str(direction).lower()}", "family": "Reaction",
+                "label": f"{readable} Reaction"}
+    if group == "resets":
+        return {"key": "reset", "family": "Reset", "label": "Reset"}
+    if group == "blueLines":
+        kind = str(row.get("kind") or "").lower()
+        label = _report_kind(kind) or "Blue Line"
+        return {"key": f"blue:{kind or 'unknown'}", "family": "Blue Line",
+                "label": f"Blue Line / {label}"}
+    if group == "aZones":
+        formation = "double-stop" if row.get("formation") == "Double Stop" else "normal"
+        return {"key": f"a:{formation}", "family": "A",
+                "label": f"A / {'Double Stop' if formation == 'double-stop' else 'Normal'}"}
+    if group == "sZones":
+        color = str(row.get("color") or "").lower()
+        if color == "red":
+            return {"key": "s:red", "family": "S Red", "label": "S Red"}
+        formation = str(row.get("formationType") or "unknown").lower()
+        return {"key": f"s:blue:{formation}", "family": "S Blue",
+                "label": f"S Blue / {_report_kind(formation)}"}
+    if group == "eZones":
+        family = str(row.get("family") or "").lower()
+        number = row.get("number")
+        family_label = _report_family(family)
+        return {"key": f"e:{family}:{number}", "family": f"E {family_label}",
+                "label": f"E {family_label} / E{number}"}
+    if group == "stopAlls":
+        number = row.get("number")
+        return {"key": f"stopall:{number}", "family": "StopAll",
+                "label": f"StopAll{number}"}
+    if group == "orderAudit":
+        formation = _report_order_formation(
+            row.get("causes"), row.get("reactionMode")
+        )
+        key_formation = formation.lower().replace(" | ", "|")
+        return {"key": f"order:{key_formation}", "family": "Order Audit",
+                "label": formation}
+    return {"key": group, "family": group, "label": group}
+
+
+def _report_parent_summary(kind, source_time, source, stop_time=None):
+    source_type = source.get("type") if source else None
+    result = {"type": source_type or ("E" if str(kind).startswith("E") else kind)}
+    if source:
+        result.update({
+            key: source[key] for key in (
+                "formation", "color", "number", "price", "formedAt"
+            ) if key in source
+        })
+    if stop_time is not None:
+        stopped = {"time": _report_time(stop_time)}
+        formed = source.get("formedAt") if source else None
+        if isinstance(formed, dict) and formed.get("price") is not None:
+            stopped["price"] = str(formed["price"])
+        result["stoppedAt"] = _report_clean(stopped)
+    return _report_clean(result)
+
+
+def serialize_human_report(direction, serialized, state, visibility):
+    """Build a presentation-only report from accepted, serialized state."""
+    readable = _report_direction(direction)
+    reactions = serialized["reactions"]
+    resets = serialized["resets"]
+    blue_rows = serialized["blueLines"]
+    a_rows = serialized["aZones"]
+    s_rows = serialized["sZones"]
+    e_rows = serialized["eZones"]
+    stop_rows = serialized["stopAlls"]
+    audits = serialized["orderAudit"]
+    reactions_by_first = {item.get("firstIndex"): item for item in reactions}
+    reactions_by_number = {}
+    serialized_by_first = {item.get("firstIndex"): item for item in reactions}
+    for number, native in enumerate(
+        state.results[direction].reactions, start=1
+    ):
+        item = serialized_by_first.get(int(getattr(native, "first_idx")))
+        if item is not None:
+            reactions_by_number[number] = item
+    blue_rows_by_ordinal = {
+        index + 1: item for index, item in enumerate(blue_rows)
+    }
+    full_lines = state.full_lines_by_direction.get(direction, [])
+    full_lines_by_time = {
+        _report_time(getattr(item, "source_time", None)): item
+        for item in full_lines
+    }
+    audits_by_identity = {
+        (_report_time(item.get("firstTime")), _report_time(item.get("breakTime"))): item
+        for item in audits
+    }
+    a_by_time = {_report_time(item.get("sourceTime")): item for item in a_rows}
+    s_by_time = {_report_time(item.get("sourceTime")): item for item in s_rows}
+    e_by_ref = {
+        (str(item.get("family")), item.get("number")): item for item in e_rows
+    }
+    e_by_time = {_report_time(item.get("sourceTime")): item for item in e_rows}
+    stop_by_number = {item.get("number"): item for item in stop_rows}
+    stop_by_time = {_report_time(item.get("sourceTime")): item for item in stop_rows}
+    s_stop_by_time = {
+        _report_time(item.get("parentSourceTime")): item
+        for item in e_rows if str(item.get("parentType")) == "S"
+    }
+    e_stop_by_time = {
+        _report_time(item.get("parentSourceTime")): item
+        for item in e_rows if str(item.get("parentType")) == "E"
+    }
+    stopall_stop_by_number = {
+        str(item.get("stoppedBehaviorKey")): item
+        for item in stop_rows
+        if str(item.get("stoppedBehaviorType")) == "StopAll"
+    }
+    report = []
+    details_by_ref = {}
+    created_by_ref = {}
+
+    def add(group, index, row, details, time):
+        category = _report_category(group, row, direction)
+        record = {
+            "id": f"{str(direction).lower()}:{group}:{index}",
+            "time": _report_time(time),
+            "direction": readable,
+            "label": category["label"],
+            "category": category,
+            "details": _report_clean(details),
+        }
+        report.append(_report_clean(record))
+        return record["details"]
+
+    for index, row in enumerate(reactions):
+        details = _report_reaction(row, direction)
+        details_by_ref[("Reaction", _report_time(row.get("firstTime")))] = details
+        add("reactions", index, row, details, row.get("firstTime"))
+
+    for index, row in enumerate(resets):
+        owner = reactions_by_first.get(row.get("fromFirstIndex"))
+        details = {
+            "type": "Reset",
+            "direction": readable,
+            "reset": {
+                "time": _report_time(row.get("secondTime") or row.get("time")),
+                "brokenPrice": str(row.get("brokenLevel"))
+                if row.get("brokenLevel") is not None else None,
+            },
+            "reaction": _report_reaction_ref(owner, direction),
+        }
+        details_by_ref[("Reset", _report_time(row.get("secondTime") or row.get("time")))] = details
+        add("resets", index, row, details, row.get("secondTime") or row.get("time"))
+
+    blue_stops = {}
+    for row in a_rows:
+        for prefix in ("blue1", "blue2"):
+            key = _report_time(row.get(f"{prefix}SourceTime"))
+            blue_stops.setdefault(key, {
+                "time": row.get(f"{prefix}StopTime"),
+                "price": row.get(f"{prefix}StopLevel"),
+            })
+    for index, row in enumerate(blue_rows):
+        native = next((line for line in full_lines
+                       if _report_time(getattr(line, "source_time", None)) == _report_time(row.get("sourceTime"))), None)
+        reaction = reactions_by_number.get(getattr(native, "reaction_number", None))
+        details = {
+            "type": "Blue Line",
+            "direction": readable,
+            "kind": _report_kind(row.get("kind")),
+            **_report_blue_detail(native, row, blue_stops.get(_report_time(row.get("sourceTime"))), direction),
+            "reaction": _report_reaction_ref(reaction, direction),
+        }
+        details_by_ref[("Blue Line", _report_time(row.get("sourceTime")))] = details
+        add("blueLines", index, row, details, row.get("sourceTime"))
+
+    for index, row in enumerate(a_rows):
+        formation = "Double Stop" if any(
+            int(getattr(line, "source_index", -1)) == int(row.get("sourceIndex", -2))
+            and not bool(getattr(line, "calculation_valid", True))
+            for line in full_lines
+        ) else "Normal"
+        stop = next((item for item in s_rows
+                     if _report_time(item.get("aSourceTime")) == _report_time(row.get("sourceTime"))), None)
+        formed_stops = []
+        for ordinal, prefix in ((row.get("blue1Ordinal"), "blue1"), (row.get("blue2Ordinal"), "blue2")):
+            source_time = _report_time(row.get(f"{prefix}SourceTime"))
+            native = full_lines_by_time.get(source_time)
+            raw_blue = next(
+                (
+                    item for item in blue_rows
+                    if _report_time(item.get("sourceTime")) == source_time
+                ),
+                None,
+            )
+            formed_stops.append(_report_blue_detail(native, raw_blue, {
+                "time": row.get(f"{prefix}StopTime"),
+                "price": row.get(f"{prefix}StopLevel"),
+            }, direction))
+        details = {
+            "type": "A",
+            "direction": readable,
+            "formation": formation,
+            "formedAt": _report_point(row.get("price"), row.get("sourceTime")),
+            "stoppedAt": _report_point(row.get("price"),
+                stop.get("aStopEventTime") if stop else None),
+            "formedFromStops": formed_stops,
+            "continuation": _report_point(row.get("continuationLevel"), row.get("continuationSourceTime")),
+            "trigger": _report_point(row.get("price"), row.get("triggerEventTime") or row.get("triggerTime")),
+            "confirmationReaction": _report_reaction_ref(
+                reactions_by_number.get(row.get("reactionNumber")), direction
+            ),
+        }
+        ref = ("A", _report_time(row.get("sourceTime")))
+        details_by_ref[ref] = details
+        add("aZones", index, {**row, "formation": formation}, details, row.get("sourceTime"))
+
+    for index, row in enumerate(s_rows):
+        color = str(row.get("color") or "").lower()
+        s_stop = s_stop_by_time.get(_report_time(row.get("sourceTime")))
+        parent_a = a_by_time.get(_report_time(row.get("aSourceTime")))
+        parent = {
+            "type": "A",
+            "formedAt": _report_point(
+                parent_a.get("price") if parent_a else row.get("aPrice"),
+                row.get("aSourceTime"),
+            ),
+            "stoppedAt": _report_point(
+                parent_a.get("price") if parent_a else row.get("aPrice"),
+                row.get("aStopEventTime") or row.get("aStopTime"),
+            ),
+        }
+        details = {
+            "type": "S Blue" if color == "blue" else "S Red",
+            "direction": readable,
+            "formation": _report_kind(row.get("formationType")) if color == "blue" else None,
+            "formedAt": _report_point(row.get("price"), row.get("sourceTime")),
+            "stoppedAt": _report_point(
+                row.get("price"),
+                s_stop.get("parentStopEventTime") if s_stop else None,
+            ),
+            "formedFromStop": parent,
+            "formationOrder": None if str(row.get("formationType")) == "type3" else _report_order_from_row(row, audits_by_identity, direction, details_by_ref=details_by_ref),
+            "nestedReaction": _report_reaction_ref(
+                reactions_by_number.get(row.get("resetReactionNumber")), direction
+            ) if color == "blue" and str(row.get("formationType")) == "advanced" else None,
+            "reset": {
+                "time": _report_time(row.get("resetTime")),
+                "reaction": _report_reaction_ref(
+                    reactions_by_number.get(row.get("resetReactionNumber")), direction
+                ),
+            } if str(row.get("formationType")) == "type3" else None,
+            "decision": {"time": _report_time(row.get("decisionEventTime") or row.get("decisionTime"))},
+        }
+        ref = ("S", _report_time(row.get("sourceTime")))
+        details_by_ref[ref] = details
+        add("sZones", index, row, details, row.get("sourceTime"))
+
+    for index, row in enumerate(e_rows):
+        family = str(row.get("family") or "").lower()
+        parent_type = str(row.get("parentType") or "")
+        parent_ref_kind = (
+            "S" if parent_type == "S" else
+            "E" if parent_type == "E" or parent_type.startswith("E") else
+            "StopAll" if parent_type == "StopAll" or parent_type.startswith("StopAll") else
+            parent_type
+        )
+        parent_key = (parent_ref_kind, _report_time(row.get("parentSourceTime")))
+        parent_source = details_by_ref.get(parent_key)
+        parent = _report_parent_summary(
+            "S Blue" if row.get("parentType") == "S" and str(row.get("parentFamily")) == "blue" else
+            "S Red" if row.get("parentType") == "S" else
+            f"E{row.get('number')}" if row.get("parentType") == "E" else
+            str(row.get("parentType")),
+            row.get("parentSourceTime"), parent_source,
+            row.get("parentStopEventTime") or row.get("parentStopTime"),
+        )
+        details = {
+            "type": "E",
+            "direction": readable,
+            "color": "Blue" if family == "blue" else "Red",
+            "number": f"E{row.get('number')}",
+            "formedAt": _report_point(row.get("price"), row.get("sourceTime")),
+            "stoppedAt": _report_point(
+                row.get("price"),
+                e_stop_by_time.get(_report_time(row.get("sourceTime")), {}).get("parentStopEventTime"),
+            ),
+            "formedFromStop": parent,
+            "formationOrder": _report_order_from_row(row, audits_by_identity, direction, details_by_ref=details_by_ref),
+            "decision": {"time": _report_time(row.get("decisionEventTime") or row.get("decisionTime"))},
+        }
+        ref = ("E", _report_time(row.get("sourceTime")))
+        details_by_ref[ref] = details
+        add("eZones", index, row, details, row.get("sourceTime"))
+
+    for index, row in enumerate(stop_rows):
+        source_e = e_by_ref.get((str(row.get("underlyingEFamily")), row.get("underlyingENumber")))
+        stopped_behavior = _report_behavior_key(row.get("stoppedBehaviorKey")) or {
+            "type": row.get("stoppedBehaviorType")
+        }
+        stopped_behavior["count"] = row.get("stoppedBehaviorCount")
+        details = {
+            "type": "StopAll",
+            "direction": readable,
+            "number": f"StopAll{row.get('number')}",
+            "formedAt": _report_point(row.get("price"), row.get("sourceTime")),
+            "trigger": _report_clean({
+                "type": _report_trigger(row.get("gateType")),
+                "time": _report_time(row.get("gateEventTime")),
+                "stopped": {
+                    **stopped_behavior,
+                },
+            }),
+            "formedFromStop": {
+                "type": _report_trigger(row.get("gateType")),
+                "stoppedBehavior": stopped_behavior,
+            },
+            "sourceE": _report_clean({
+                "color": _report_family(row.get("underlyingEFamily")),
+                "number": f"E{row.get('underlyingENumber')}" if row.get("underlyingENumber") is not None else None,
+                "formedAt": _report_point(
+                    source_e.get("price") if source_e else None,
+                    source_e.get("sourceTime") if source_e else None,
+                ),
+            }),
+            "formationOrder": _report_order_from_row(row, audits_by_identity, direction, details_by_ref=details_by_ref),
+            "decision": {"time": _report_time(row.get("decisionEventTime") or row.get("decisionTime"))},
+            "stoppedAt": _report_point(row.get("price"), row.get("stopEventTime") or row.get("stopTime")),
+        }
+        ref = ("StopAll", _report_time(row.get("sourceTime")))
+        details_by_ref[ref] = details
+        add("stopAlls", index, row, details, row.get("sourceTime"))
+
+    for index, row in enumerate(audits):
+        parents, extra = _report_order_provenance(
+            row.get("causes"), details_by_ref
+        )
+        order_direction = _report_direction(row.get("direction") or direction)
+        details = {
+            "type": "Order Audit",
+            "formation": _report_order_formation(
+                row.get("causes"), row.get("reactionMode")
+            ),
+            "direction": order_direction,
+            "firstCandle": {
+                **_report_first_candle(order_direction),
+                "time": _report_time(row.get("firstTime")),
+            },
+            "structure": {
+                "boxTop": _report_point(row.get("boxTop"), row.get("boxTopSourceTime")),
+                "boxBottom": _report_point(row.get("boxBottom"), row.get("boxBottomSourceTime")),
+                "breakout": _report_point(
+                    row.get("boxTop")
+                    if str(row.get("direction") or direction).lower() == "bullish"
+                    else row.get("boxBottom"),
+                    row.get("confirmationTime") or row.get("breakTime"),
+                ),
+                "stop": _report_point(row.get("stopLevel"), row.get("stopSourceTime")),
+            },
+            "stoppedAt": _report_clean({
+                "time": _report_time(row.get("stopHitEventTime") or row.get("stopHitTime")),
+                "price": row.get("stopLevel"),
+            }),
+            "parents": parents,
+            "extraReasons": extra,
+        }
+        add("orderAudit", index, row, details, row.get("firstTime"))
+
+    for item in report:
+        for cause in audits:
+            for raw_cause in cause.get("causes") or []:
+                if not isinstance(raw_cause, dict) or raw_cause.get("kind") != "parent-stop":
+                    continue
+                source_time = _report_time(raw_cause.get("parentSourceTime"))
+                parent_type = str(raw_cause.get("parentType") or "")
+                ref_kind = (
+                    "A" if parent_type == "A" else
+                    "S" if parent_type == "S" else
+                    "E" if parent_type == "E" or parent_type.startswith("E") else
+                    "StopAll" if parent_type == "StopAll" or parent_type.startswith("StopAll") else
+                    parent_type
+                )
+                if (ref_kind, source_time) in details_by_ref:
+                    identity = (
+                        _report_time(cause.get("firstTime")),
+                        _report_time(cause.get("breakTime")),
+                    )
+                    existing = created_by_ref.setdefault((ref_kind, source_time), [])
+                    if identity not in existing:
+                        existing.append(identity)
+
+    for item in report:
+        group = item["category"]["family"]
+        ref_kind = {"A": "A", "S Blue": "S", "S Red": "S", "E Blue": "E", "E Red": "E", "StopAll": "StopAll"}.get(group)
+        if not ref_kind:
+            continue
+        source_time = _report_time(item.get("time"))
+        created = []
+        for identity in created_by_ref.get((ref_kind, source_time), []):
+            audit = audits_by_identity.get(identity)
+            if audit:
+                created.append(_report_order_from_row({
+                    "orderFirstTime": audit.get("firstTime"),
+                    "orderBreakTime": audit.get("breakTime"),
+                    "orderDirection": audit.get("direction"),
+                    "orderBoxTop": audit.get("boxTop"),
+                    "orderBoxTopSourceTime": audit.get("boxTopSourceTime"),
+                    "orderBoxBottom": audit.get("boxBottom"),
+                    "orderBoxBottomSourceTime": audit.get("boxBottomSourceTime"),
+                    "orderStopLevel": audit.get("stopLevel"),
+                    "orderStopSourceTime": audit.get("stopSourceTime"),
+                    "orderCauses": audit.get("causes"),
+                }, audits_by_identity, direction))
+        if created:
+            item["details"]["createdOrder"] = created[0] if len(created) == 1 else created
+
+    return sorted(report, key=lambda item: (item.get("time") or "", item.get("id") or ""))
 
 
 @dataclass(frozen=True, slots=True)
@@ -671,15 +1402,17 @@ def prepare_market_context(
     source_rows = timed(
         timings, "Parse source JSON", lambda: orjson.loads(source_bytes)
     )
-    # A requested time range is a presentation window only.  Reaction state
-    # can remain open past ``to_time`` and be resolved by later RAW chronology;
-    # truncating calculation at the visible end manufactures provisional
-    # Reactions/Blue/A state that does not exist in a full-file run.  Calculate
-    # on the complete physical RAW and apply from/to only during serialization.
+    # The requested range is an execution boundary, not just a presentation
+    # window.  Excluding both sides before bucket construction prevents a
+    # reaction, reset, or dependent zone outside the selected interval from
+    # changing the result.  Higher-timeframe end buckets include their full
+    # source interval so the selected chart candle remains complete.
+    source_from = int(args.from_time)
+    source_to = int(args.to_time) if args.timeframe == 1 else int(args.to_time) + int(args.timeframe) - 1
     rows = timed(
         timings,
-        "Use full RAW calculation context",
-        lambda: source_rows,
+        "Filter raw range",
+        lambda: [row for row in source_rows if source_from <= int(row["time"]) <= source_to],
     )
     if not rows:
         raise ValueError("The selected range contains no raw candles.")
@@ -1654,7 +2387,7 @@ def serialize_direction_payload(
     )
 
     def build_payload():
-        return {
+        payload = {
             "reactions": reactions,
             "resets": resets,
             "blueLines": serialize_blue_lines(
@@ -1677,6 +2410,10 @@ def serialize_direction_payload(
                 else []
             ),
         }
+        payload["report"] = serialize_human_report(
+            direction, payload, state, visibility
+        )
+        return payload
 
     return timed(
         timings, f"Serialize output - {direction.title()}", build_payload
@@ -1742,6 +2479,13 @@ def build_response_payload(
         "eEnabled": e_enabled,
         "stopAllEnabled": stop_all_enabled,
         "timeframe": args.timeframe,
+        "calculationRange": {
+            "from": int(args.from_time),
+            "to": int(args.to_time),
+            "sourceFrom": int(args.from_time),
+            "sourceTo": int(args.to_time) if args.timeframe == 1 else int(args.to_time) + int(args.timeframe) - 1,
+            "isolated": True,
+        },
         "actualFrom": epoch(market.candles[market.start_index].timestamp),
         "actualTo": epoch(market.candles[market.end_index].timestamp),
         "directions": {},
@@ -1752,6 +2496,14 @@ def build_response_payload(
         direction_payloads[direction] = build_direction_output(
             direction, args, engines, market, state, timings
         )
+    payload["report"] = sorted(
+        [
+            item
+            for direction_payload in direction_payloads.values()
+            for item in direction_payload.get("report", [])
+        ],
+        key=lambda item: (item.get("time") or "", item.get("id") or ""),
+    )
     payload["timings"] = {
         "phasesMs": {
             label: round(duration, 2) for label, duration in timings.items()

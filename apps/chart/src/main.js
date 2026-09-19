@@ -34,6 +34,9 @@ import { resolveCanonicalChartPoint } from "./chart/drawing-coordinates.js";
 import { drawScreenshotOverlay } from "./features/screenshot-overlay.js";
 import { resolveWorkspaceRefreshState } from "./features/workspace-session.js";
 import { parseTehranMetadataTime } from "./features/raw-file-contract.js";
+import { moveIndicatorRange, normalizeIndicatorRange } from "./chart/indicator-range.js";
+import { calculateMeasureStats, calculatePositionLevels } from "./drawings/drawing-math.js";
+import { fullChartId, shortChartId } from "./ui/chart-identity.js";
 import "./styles/tokens.css";
 import "./styles/app.css";
 import "./drawings/drawing.css";
@@ -188,17 +191,19 @@ const drawingToolDefinitions = [
   ["short", "Short position"],
   ["text", "Text"],
   ["path", "Path"],
+  ["measure", "Measure"],
 ];
 const drawingToolById = new Map(drawingToolDefinitions);
 const drawingTools = (() => {
+  const pinMeasureLast = (ids) => [...ids.filter((id) => id !== "measure"), "measure"];
   try {
     const saved = JSON.parse(localStorage.getItem(DRAWING_TOOL_ORDER_KEY) || "null");
     if (Array.isArray(saved) && saved.length === drawingToolDefinitions.length) {
       const ids = saved.filter((id) => drawingToolById.has(id));
-      if (new Set(ids).size === drawingToolDefinitions.length) return ids;
+      if (new Set(ids).size === drawingToolDefinitions.length) return pinMeasureLast(ids);
     }
   } catch {}
-  return drawingToolDefinitions.map(([id]) => id);
+  return pinMeasureLast(drawingToolDefinitions.map(([id]) => id));
 })();
 const materialIcon = (name) => {
   const paths = {
@@ -230,6 +235,8 @@ const materialIcon = (name) => {
     drag_handle: '<path d="M8 9h8M8 15h8"/>',
     delete_sweep: '<path d="M5 7h10m-8 0 1 12h6l1-12M9 7V4h4v3m5 5h3m-3 4h2"/>',
     content_copy: '<path d="M8 8h11v12H8zM5 16H4V4h11v1"/>',
+    content_cut: '<circle cx="6.5" cy="6.5" r="2.5"/><circle cx="6.5" cy="17.5" r="2.5"/><path d="m8.6 8.1 12-5.1M8.6 15.9l12 5.1"/>',
+    importExport: '<path d="M7 3v8m0-8L4 6m3-3 3 3M17 21v-8m0 8-3-3m3 3 3-3M4 13h16"/>',
     bookmark: '<path d="M7 4h10v16l-5-3-5 3Z"/>',
     close: '<path d="m7 7 10 10M17 7 7 17"/>',
     search: '<circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/>',
@@ -298,6 +305,7 @@ const navigationItems = [
   ["account_tree", "Algorithm", "algorithmBtn"],
   ["notifications", "Alert", "alertBtn"],
   ["history", "Trading history", "historyBtn"],
+  ["importExport", "Import / Export", "chartTransferBtn"],
   ["terminal", "Logs", "navLogs"],
   ["settings", "Chart settings", "settingsNavBtn"],
   ["account_circle", "User profile", "profileBtn"],
@@ -325,6 +333,7 @@ const state = {
   treeSelectedIds: [],
   objectFolders: [],
   collapsedObjectFolders: [],
+  collapsedSymbolGroups: [],
   indicatorRange: { from: null, to: null, dragging: null, preview: false },
     indicator: {
     enabled: false,
@@ -436,8 +445,12 @@ document.querySelector("#app").innerHTML = `<main class="app">
  <div id="gotoModal" class="modal-backdrop hidden"><div class="modal goto-dialog" role="dialog" aria-modal="true" aria-labelledby="gotoTitle"><div class="modal-title"><span id="gotoTitle">Go to date and time</span><button class="icon-btn modal-close" aria-label="Close">${icon("close")}</button></div><p>Jump to an exact candle in Tehran time.</p><div class="field"><label>Tehran date & time</label><button class="date-field" id="gotoPickerButton"><b id="gotoInputDisplay">Select date & time</b>${icon("calendar",16)}</button><input type="hidden" id="gotoInput"></div><div class="modal-actions"><button class="btn modal-close">Cancel</button><button class="btn primary" id="gotoApply">Go to candle</button></div></div></div>
  <div id="chartSettings" class="settings-backdrop hidden"><section class="settings-panel modern-chart-settings" role="dialog" aria-modal="true" aria-labelledby="chartSettingsTitle"><header><div class="settings-title-icon">${icon("chartSettings",20)}</div><div><strong id="chartSettingsTitle">Chart settings</strong><small>Display, scales and interaction</small></div><button id="closeSettings" aria-label="Close">${icon("close",18)}</button></header><div class="settings-body"><div class="settings-section"><h3>Canvas</h3><div class="color-grid"><label>Background<input id="backgroundColor" type="color" value="#ffffff"></label><label>Axis text<input id="axisTextColor" type="color" value="#5f636e"></label></div></div><div class="settings-section"><h3>Candles</h3><div class="color-grid"><label>Bullish<input id="upColor" type="color" value="#089981"></label><label>Bearish<input id="downColor" type="color" value="#f23645"></label><label>Wick up<input id="wickUpColor" type="color" value="#089981"></label><label>Wick down<input id="wickDownColor" type="color" value="#f23645"></label></div></div><div class="settings-section"><h3>Time and scales</h3><label class="settings-select"><span><b>Time format</b><small>Applied to the bottom chart axis</small></span><select id="timeFormat"><option value="compact">DD MMM HH:mm</option><option value="numeric">DD/MM HH:mm</option><option value="time">HH:mm:ss</option><option value="full">YYYY-MM-DD HH:mm:ss</option></select></label><label class="settings-toggle"><span><b>Price scale border</b><small>Right axis divider</small></span><input id="priceBorderEnabled" type="checkbox" checked></label><label class="settings-toggle"><span><b>Time scale border</b><small>Bottom axis divider</small></span><input id="timeBorderEnabled" type="checkbox" checked></label></div><div class="settings-section"><h3>Interaction</h3><label class="settings-toggle"><span><b>Crosshair</b><small>Show precise tracking guides</small></span><input id="crosshairEnabled" type="checkbox" checked></label><button id="resetChartSettings" class="settings-reset">Restore defaults</button></div></div></section></div><div id="toast" class="toast hidden" aria-atomic="true"><span id="toastIcon" class="toast-icon" aria-hidden="true"></span><span class="toast-copy"><strong id="toastTitle"></strong><span id="toastMessage"></span></span><button id="toastClose" type="button" aria-label="Close notification">${icon("close", 16)}</button><i class="toast-progress" aria-hidden="true"></i></div><div id="errorLogModal" class="modal-backdrop error-log-backdrop hidden"><section class="modal error-log-dialog" role="dialog" aria-modal="true" aria-labelledby="errorLogTitle"><header class="modal-title"><div><strong id="errorLogTitle">Error log</strong><small id="errorLogSummary">No errors recorded</small></div><button id="closeErrorLog" class="icon-btn" type="button" aria-label="Close error log">${icon("close", 18)}</button></header><div id="errorLogList" class="error-log-list"></div><footer class="modal-actions"><button id="clearErrorLogs" class="icon-btn" type="button" title="Clear all errors" aria-label="Clear all errors"><span class="material-symbols-outlined">delete_sweep</span></button><button id="copyErrorLogs" class="icon-btn" type="button" title="Copy all errors" aria-label="Copy all errors"><span class="material-symbols-outlined">content_copy</span></button></footer></section></div>`;
 
+document.querySelector("#app").insertAdjacentHTML("afterend", `<div id="cutCandlesModal" class="modal-backdrop hidden"><section class="modal cut-candles-dialog" role="dialog" aria-modal="true" aria-labelledby="cutCandlesTitle"><header class="modal-title"><strong id="cutCandlesTitle">Cut candle range</strong><button id="closeCutCandles" class="icon-btn modal-close" type="button" aria-label="Close cut options">${icon("close", 18)}</button></header><p id="cutCandlesDescription">Choose how to persist the selected inclusive candle range.</p><div class="cut-candles-options" role="radiogroup" aria-label="Cut destination"><label class="cut-candles-option"><input type="radio" name="cutCandlesMode" value="replace" checked><span><strong>Cut current file</strong><small>Keep this chart ID and its drawings.</small></span></label><label class="cut-candles-option"><input type="radio" name="cutCandlesMode" value="new"><span><strong>Create a new file</strong><small>Use a new chart ID without copying drawings.</small></span></label></div><footer class="modal-actions"><button id="cancelCutCandles" class="btn" type="button">Cancel</button><button id="confirmCutCandles" class="btn primary" type="button">Cut range</button></footer></section></div>`);
+document.querySelector("#app").insertAdjacentHTML("afterend", `<div id="chartTransferModal" class="modal-backdrop hidden"><section class="modal chart-transfer-dialog" role="dialog" aria-modal="true" aria-labelledby="chartTransferTitle" aria-describedby="chartTransferDescription"><header class="modal-title"><div class="transfer-heading"><span class="transfer-heading-icon">${icon("importExport", 20)}</span><strong id="chartTransferTitle">Import / Export</strong></div><button id="closeChartTransfer" class="icon-btn modal-close" type="button" aria-label="Close Import / Export">${icon("close", 18)}</button></header><p id="chartTransferDescription">Move the current chart's RAW data and drawings between computers using one folder.</p><div class="chart-transfer-options"><button id="exportChartTransfer" class="chart-transfer-option" type="button"><span class="chart-transfer-option-icon">${icon("download", 21)}</span><span><strong>Export current chart</strong><small>Save RAW, metadata, and drawings to a new folder.</small></span>${icon("chevron", 17)}</button><button id="importChartTransfer" class="chart-transfer-option" type="button"><span class="chart-transfer-option-icon">${icon("folder", 21)}</span><span><strong>Import chart folder</strong><small>Add an exported chart to this workstation and load its drawings.</small></span>${icon("chevron", 17)}</button></div><p id="chartTransferStatus" class="chart-transfer-status" aria-live="polite"></p><footer class="modal-actions"><button id="cancelChartTransfer" class="btn" type="button">Cancel</button></footer></section></div>`);
+
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
+$(".status-market")?.insertAdjacentHTML("beforeend", `<span class="status-group status-chart-id" title="Stable chart ID">ID <b id="chartIdFooter">NULL</b></span>`);
 for (const [selector, label, iconName, variant] of [
   ["#clearErrorLogs", "Clear", "delete_sweep", "danger"],
   ["#copyErrorLogs", "Copy", "content_copy", "primary"],
@@ -480,6 +493,11 @@ for (const id of ["indicatorBtn", "objectTreeBtn", "settingsNavBtn", "alertBtn",
   const control = $(`#${id}`);
   if (control) control.dataset.workspaceGroup = "chart-actions";
 }
+const chartTransferTrigger = $("#chartTransferBtn");
+if (chartTransferTrigger) {
+  chartTransferTrigger.setAttribute("aria-haspopup", "dialog");
+  chartTransferTrigger.setAttribute("aria-expanded", "false");
+}
 function persistWorkspaceRefresh(workspace = appRoot.dataset.workspace || "chart") {
   try {
     localStorage.setItem(WORKSPACE_REFRESH_KEY, JSON.stringify({
@@ -505,6 +523,7 @@ $(".topbar").addEventListener("focusin", (event) => {
   }
 });
 $(".top-actions")?.insertAdjacentHTML("afterbegin", `<button class="icon-btn" id="applyIndicatorRangeBtn" title="Calculate indicator for selected range" aria-label="Calculate indicator for selected range">${materialIcon("play_arrow")}</button>`);
+$(".top-actions")?.insertAdjacentHTML("afterbegin", `<button class="icon-btn" id="cutCandlesBtn" title="Cut candles" aria-label="Cut candles">${materialIcon("content_cut")}</button>`);
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
 })[character]);
@@ -906,6 +925,135 @@ function restoreWorkspaceAfterRefresh() {
 $("#chartNavBtn").onclick = () => {
   showChartWorkspace();
 };
+let chartTransferLastTrigger = null;
+function setChartTransferStatus(message = "", state = "") {
+  const status = $("#chartTransferStatus");
+  if (!status) return;
+  status.textContent = message;
+  if (state) status.dataset.state = state;
+  else delete status.dataset.state;
+}
+function setChartTransferBusy(busy) {
+  $("#exportChartTransfer").disabled = busy;
+  $("#importChartTransfer").disabled = busy;
+  $("#cancelChartTransfer").disabled = busy;
+}
+function openChartTransfer(event) {
+  chartTransferLastTrigger = event?.currentTarget || chartTransferTrigger;
+  $("#chartTransferModal").classList.remove("hidden");
+  chartTransferTrigger?.setAttribute("aria-expanded", "true");
+  setChartTransferStatus();
+  $("#exportChartTransfer").focus();
+}
+function closeChartTransfer({ restoreFocus = true } = {}) {
+  $("#chartTransferModal").classList.add("hidden");
+  chartTransferTrigger?.setAttribute("aria-expanded", "false");
+  setChartTransferBusy(false);
+  if (restoreFocus) chartTransferLastTrigger?.focus();
+}
+function transferSegment(value, fallback = "chart") {
+  const cleaned = String(value || "").trim().replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 72);
+  return cleaned || fallback;
+}
+async function transferDirectoryHasFile(directory, name) {
+  try { await directory.getFileHandle(name, { create: false }); return true; }
+  catch { return false; }
+}
+async function resolveChartTransferDirectory(directory) {
+  if (await transferDirectoryHasFile(directory, "manifest.json")) return directory;
+  if (typeof directory.entries !== "function") throw new Error("Select the exported chart folder containing manifest.json.");
+  for await (const [, handle] of directory.entries()) {
+    if (handle.kind === "directory" && await transferDirectoryHasFile(handle, "manifest.json")) return handle;
+  }
+  throw new Error("Select the exported chart folder containing manifest.json.");
+}
+async function readTransferFile(directory, name) {
+  const handle = await directory.getFileHandle(name, { create: false });
+  return (await handle.getFile()).text();
+}
+async function writeTransferFile(directory, name, value) {
+  const handle = await directory.getFileHandle(name, { create: true });
+  const writable = await handle.createWritable();
+  try { await writable.write(value); }
+  finally { await writable.close(); }
+}
+async function exportCurrentChart() {
+  if (!state.file) throw new Error("Select a chart before exporting.");
+  if (typeof window.showDirectoryPicker !== "function") throw new Error("Folder export requires a Chromium browser with File System Access enabled.");
+  const response = await fetch(`/api/chart-transfer/export?id=${encodeURIComponent(state.file.id)}`, { cache: "no-store" });
+  if (!response.ok) throw new Error((await response.json().catch(() => ({}))).error || "Unable to prepare the chart export.");
+  const bundle = await response.json();
+  const root = await window.showDirectoryPicker({ mode: "readwrite" });
+  const folderName = `${transferSegment(bundle.manifest.symbol)}-${transferSegment(bundle.manifest.timeframe, "timeframe")}-${Date.now()}`;
+  const folder = await root.getDirectoryHandle(folderName, { create: true });
+  await writeTransferFile(folder, bundle.manifest.rawFile, JSON.stringify(bundle.raw));
+  await writeTransferFile(folder, bundle.manifest.metadataFile, `${JSON.stringify(bundle.metadata, null, 2)}\n`);
+  await writeTransferFile(folder, bundle.manifest.drawingsFile, `${JSON.stringify(bundle.drawings, null, 2)}\n`);
+  await writeTransferFile(folder, "manifest.json", `${JSON.stringify({ kind: bundle.kind, version: bundle.version, ...bundle.manifest }, null, 2)}\n`);
+  return { folderName, drawingCount: bundle.drawings.length, candleCount: bundle.raw.length };
+}
+async function importChartFolder() {
+  if (typeof window.showDirectoryPicker !== "function") throw new Error("Folder import requires a Chromium browser with File System Access enabled.");
+  const picked = await window.showDirectoryPicker({ mode: "read" });
+  const directory = await resolveChartTransferDirectory(picked);
+  const manifest = JSON.parse(await readTransferFile(directory, "manifest.json"));
+  const raw = JSON.parse(await readTransferFile(directory, manifest.rawFile || "raw.json"));
+  const metadata = JSON.parse(await readTransferFile(directory, manifest.metadataFile || "raw.meta.json"));
+  const drawings = JSON.parse(await readTransferFile(directory, manifest.drawingsFile || "drawings.json"));
+  const response = await fetch("/api/chart-transfer/import", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ kind: manifest.kind, version: manifest.version, manifest, raw, metadata, drawings }),
+  });
+  if (!response.ok) throw new Error((await response.json().catch(() => ({}))).error || "Unable to import the selected chart folder.");
+  const result = await response.json();
+  await refreshSymbolInventory();
+  const imported = state.inventory.find((item) => item.id === result.id);
+  if (!imported) throw new Error("The chart was imported but is missing from the symbol list.");
+  showChartWorkspace();
+  await loadFile(imported);
+  return { ...result, candleCount: raw.length };
+}
+chartTransferTrigger?.addEventListener("click", openChartTransfer);
+$("#closeChartTransfer").onclick = () => closeChartTransfer();
+$("#cancelChartTransfer").onclick = () => closeChartTransfer();
+$("#chartTransferModal").addEventListener("click", (event) => { if (event.target === $("#chartTransferModal")) closeChartTransfer(); });
+$("#exportChartTransfer").onclick = async () => {
+  setChartTransferBusy(true);
+  setChartTransferStatus("Preparing the current chart…");
+  try {
+    const result = await exportCurrentChart();
+    closeChartTransfer({ restoreFocus: false });
+    toast(`Chart exported to ${result.folderName} • ${result.candleCount.toLocaleString()} candles • ${result.drawingCount} drawings`, "success");
+  } catch (error) {
+    if (error?.name !== "AbortError") {
+      setChartTransferStatus(error.message, "error");
+      toast(error.message, "error");
+    }
+    setChartTransferBusy(false);
+  }
+};
+$("#importChartTransfer").onclick = async () => {
+  setChartTransferBusy(true);
+  setChartTransferStatus("Reading the exported chart folder…");
+  try {
+    const result = await importChartFolder();
+    closeChartTransfer({ restoreFocus: false });
+    toast(`${result.symbol} added to symbols • ${result.candleCount.toLocaleString()} candles • ${result.drawings} drawings restored`, "success");
+  } catch (error) {
+    if (error?.name !== "AbortError") {
+      setChartTransferStatus(error.message, "error");
+      toast(error.message, "error");
+    }
+    setChartTransferBusy(false);
+  }
+};
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !$("#chartTransferModal").classList.contains("hidden")) {
+    event.preventDefault();
+    closeChartTransfer();
+  }
+});
 $(".indicator-body").innerHTML = `
   <div class="indicator-tab active" data-indicator-page="inputs">
     <section class="tv-section"><h3>Detection</h3>
@@ -1445,6 +1593,16 @@ function renderTf(fit = true) {
 function parseName(item) {
   return formatSymbolWithBroker(item);
 }
+function renderChartIdentity(item = state.file) {
+  const id = fullChartId(item?.chartId);
+  const symbol = item ? parseName(item) : "NULL";
+  if ($("#chartIdFooter")) {
+    $("#chartIdFooter").textContent = shortChartId(id);
+    $("#chartIdFooter").title = id;
+  }
+  if ($("#chartSymbol")) $("#chartSymbol").textContent = symbol;
+  if ($("#symbolBtn")) $("#symbolBtn").innerHTML = `${escapeHtml(symbol)} ${materialIcon("expand_more")}`;
+}
 function sourceTimeframeSeconds(item = state.file) {
   const match = String(item?.timeframe || "").match(/^(\d+)([SMHD])$/i);
   if (!match) return 1;
@@ -1489,13 +1647,17 @@ async function loadInventory() {
   });
   if (refreshState.timeframe) state.tf = refreshState.timeframe;
   const remembered = refreshState.fileId || localStorage.getItem("qg:last-symbol");
-  await loadFile(
-    state.inventory.find((item) => item.id === remembered) || state.inventory[0],
-  );
+  const next = state.inventory.find((item) => item.id === remembered) || state.inventory[0];
+  await loadFile(next);
+  if (!next) {
+    renderChartIdentity(null);
+    $("#loading")?.classList.add("hidden");
+    $("#progress").textContent = "No local RAW candle files";
+  }
 }
 let inventoryRefreshRunning = false;
 function inventorySignature(items) {
-  return items.map((item) => `${item.id}|${item.bytes}|${item.savedAt}`).join("\n");
+  return items.map((item) => `${item.id}|${item.chartId || ""}|${item.bytes}|${item.savedAt}`).join("\n");
 }
 async function refreshSymbolInventory({ initial = false } = {}) {
   if (inventoryRefreshRunning) return false;
@@ -1515,13 +1677,31 @@ async function refreshSymbolInventory({ initial = false } = {}) {
       throw error;
     }
     const nextInventory = await r.json();
-    if (initial && !nextInventory.length)
-      throw new Error("No valid candle-history JSON files found in input.");
+    const previousFile = state.file;
     const changed = inventorySignature(state.inventory) !== inventorySignature(nextInventory);
     state.inventory = nextInventory;
     if (changed) {
       renderSymbolList();
       candleExportController?.syncRawInventory(nextInventory);
+      const active = state.file && (nextInventory.find((item) => item.chartId === state.file.chartId) || nextInventory.find((item) => item.id === state.file.id));
+      if (!active) {
+        state.file = null;
+        state.raw = [];
+        renderChartIdentity(null);
+      } else if (state.file?.id !== active.id) {
+        void loadFile(active);
+      } else {
+        state.file = active;
+        renderChartIdentity(active);
+        const dataChanged = previousFile && (
+          Number(previousFile.bytes) !== Number(active.bytes)
+          || Number(previousFile.count) !== Number(active.count)
+          || Number(previousFile.from) !== Number(active.from)
+          || Number(previousFile.to) !== Number(active.to)
+          || Number(previousFile.savedAt) !== Number(active.savedAt)
+        );
+        if (dataChanged && !symbolLoadController) void loadFile(active);
+      }
       log.chart.info("SYMBOL_INVENTORY_UPDATED", { symbols: state.inventory.length, initial });
     }
     return changed;
@@ -1564,6 +1744,7 @@ async function loadFile(item) {
     if (typeof saveChartIndicatorContext === "function") saveChartIndicatorContext();
     state.file = item;
     state.raw = normalizedRows;
+    renderChartIdentity(item);
     localStorage.setItem("qg:last-symbol", item.id);
     persistWorkspaceRefresh();
     const persistedIndicator = restoreIndicatorLifecycle(readPersistedIndicatorState(item.id));
@@ -1581,7 +1762,7 @@ async function loadFile(item) {
     restoreChartIndicatorContext(item.id);
     loadDrawings();
     updateTimeframeAvailability();
-    $("#symbolBtn").innerHTML = `${parseName(item)} ${materialIcon("expand_more")}`;
+    renderChartIdentity(item);
     renderSymbolList();
     $("#chartSymbol").textContent = parseName(item);
     renderTf();
@@ -1618,13 +1799,15 @@ function renderSymbolList(filter = "") {
     const selected = state.file?.id === item.id;
     const displayName = parseName(item);
     const encodedId = encodeURIComponent(item.id);
+    const fullId = fullChartId(item.chartId);
+    const displayId = shortChartId(item.chartId);
     const from = formatInventoryDateTime(item.from);
     const to = formatInventoryDateTime(item.to);
-    return `<div class="symbol-row ${selected ? "selected" : ""}" role="listitem"><button class="symbol-select" type="button" data-id="${encodedId}" aria-pressed="${selected}"><span class="symbol-avatar" aria-hidden="true">${escapeHtml(displayName.split(":").at(-1).slice(0, 2))}</span><span class="symbol-meta"><span class="symbol-title"><strong>${escapeHtml(displayName)}</strong><em>${escapeHtml(item.timeframe)}</em></span><span class="symbol-range"><small title="From ${escapeHtml(from)}"><b>FROM</b><span>${escapeHtml(from)}</span></small><i aria-hidden="true">→</i><small title="To ${escapeHtml(to)}"><b>TO</b><span>${escapeHtml(to)}</span></small></span><span class="symbol-stats"><span>${Number(item.count || 0).toLocaleString()} candles</span><span>${(item.bytes / 1048576).toFixed(1)} MB</span></span></span>${selected ? `<span class="symbol-selected" aria-label="Selected">${materialIcon("check")}</span>` : ""}</button><button class="symbol-delete" type="button" data-delete-id="${encodedId}" aria-label="Permanently delete ${escapeHtml(item.id)}" title="Permanently delete file">${materialIcon("delete")}</button></div>`;
+    return `<div class="symbol-row ${selected ? "selected" : ""}" role="listitem"><button class="symbol-select" type="button" data-id="${encodedId}" aria-pressed="${selected}"><span class="symbol-avatar" aria-hidden="true">${escapeHtml(displayName.split(":").at(-1).slice(0, 2))}</span><span class="symbol-meta"><span class="symbol-title"><strong>${escapeHtml(displayName)}</strong><span class="symbol-chart-id" title="Permanent chart ID: ${escapeHtml(fullId)}">ID: ${escapeHtml(displayId)}</span><em>${escapeHtml(item.timeframe)}</em></span><span class="symbol-range"><small title="From ${escapeHtml(from)}"><b>FROM</b><span>${escapeHtml(from)}</span></small><i aria-hidden="true">→</i><small title="To ${escapeHtml(to)}"><b>TO</b><span>${escapeHtml(to)}</span></small></span><span class="symbol-stats"><span>${Number(item.count || 0).toLocaleString()} candles</span><span>${(item.bytes / 1048576).toFixed(1)} MB</span></span></span>${selected ? `<span class="symbol-selected" aria-label="Selected">${materialIcon("check")}</span>` : ""}</button><button class="symbol-copy-id" type="button" data-copy-chart-id="${encodeURIComponent(fullId)}" aria-label="Copy complete chart ID ${escapeHtml(displayId)}" title="Copy complete chart ID">${materialIcon("content_copy")}</button><button class="symbol-delete" type="button" data-delete-id="${encodedId}" aria-label="Permanently delete ${escapeHtml(item.id)}" title="Permanently delete file">${materialIcon("delete")}</button></div>`;
   };
   $("#symbolList").innerHTML = [...groups.entries()].map(([symbol, items]) =>
-    `<section class="symbol-group"><h3>${escapeHtml(symbol)}<small>${items.length} file${items.length === 1 ? "" : "s"}</small></h3>${items.map(itemRow).join("")}</section>`,
-  ).join("") || '<div class="symbol-empty">No matching symbols</div>';
+    `<section class="symbol-group"><div class="symbol-group-heading"><button class="symbol-group-toggle" type="button" data-symbol-group="${encodeURIComponent(symbol)}" aria-expanded="${!state.collapsedSymbolGroups.includes(symbol)}" aria-label="${state.collapsedSymbolGroups.includes(symbol) ? "Expand" : "Collapse"} ${escapeHtml(symbol)}"><span class="symbol-group-chevron" aria-hidden="true">${materialIcon("expand_more")}</span><strong>${escapeHtml(symbol)}</strong></button><small>${items.length} file${items.length === 1 ? "" : "s"}</small></div><div class="symbol-group-items ${state.collapsedSymbolGroups.includes(symbol) ? "hidden" : ""}">${items.map(itemRow).join("")}</div></section>`,
+  ).join("") || (state.inventory.length ? '<div class="symbol-empty">No matching symbols</div>' : "");
 }
 function toast(msg, type = "auto") {
   const el = $("#toast");
@@ -1779,6 +1962,28 @@ document.addEventListener("keydown", (event) => {
   }
 });
 $("#symbolList").onclick = async (e) => {
+  const groupToggle = e.target.closest("[data-symbol-group]");
+  if (groupToggle) {
+    const symbol = decodeURIComponent(groupToggle.dataset.symbolGroup || "");
+    const collapsed = state.collapsedSymbolGroups.includes(symbol);
+    state.collapsedSymbolGroups = collapsed
+      ? state.collapsedSymbolGroups.filter((value) => value !== symbol)
+      : [...state.collapsedSymbolGroups, symbol];
+    renderSymbolList();
+    return;
+  }
+  const copyButton = e.target.closest("[data-copy-chart-id]");
+  if (copyButton) {
+    const fullId = decodeURIComponent(copyButton.dataset.copyChartId || "");
+    try {
+      await copyErrorLogText(fullId);
+      toast("Chart ID copied", "success");
+    } catch (error) {
+      log.chart.error("CHART_ID_COPY_FAILED", error);
+      toast("Unable to copy the chart ID", "error");
+    }
+    return;
+  }
   const deleteButton = e.target.closest("[data-delete-id]");
   if (deleteButton) {
     const item = state.inventory.find((entry) => encodeURIComponent(entry.id) === deleteButton.dataset.deleteId);
@@ -1985,6 +2190,9 @@ $("#chart").insertAdjacentHTML(
 applyChartSettings(false);
 const clone = (v) => JSON.parse(JSON.stringify(v));
 function storageKey() {
+  return `market-canvas:${state.file?.chartId || state.file?.id || "none"}:drawings`;
+}
+function legacyStorageKey() {
   return `market-canvas:${state.file?.id || "none"}:drawings`;
 }
 function indicatorOverrideKey() {
@@ -2078,6 +2286,7 @@ function saveDrawings() {
     catch (error) { log.chart.warn("DRAWING_BROWSER_STORAGE_FAILED", { message: error.message }); }
     const snapshot = clone(state.drawings);
     const fileId = state.file.id;
+    const chartId = state.file.chartId || "";
     // A single queue prevents a slow, older PUT from overwriting a later
     // interaction when the user edits a drawing several times in quick order.
     drawingSaveQueue = drawingSaveQueue
@@ -2086,7 +2295,7 @@ function saveDrawings() {
         const response = await fetch('/api/drawings', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: fileId, drawings: snapshot }),
+          body: JSON.stringify({ id: fileId, chartId, drawings: snapshot }),
         });
         if (!response.ok) throw new Error(await response.text());
       })
@@ -2117,12 +2326,14 @@ function validStoredDrawing(drawing) {
 }
 async function loadDrawings() {
   const fileId = state.file?.id || "";
+  const chartId = state.file?.chartId || "";
+  const fileIdentity = chartId || fileId;
   const key = storageKey();
   try {
     let stored;
     try {
       const response = await fetch(
-        `/api/drawings?id=${encodeURIComponent(fileId)}`,
+        `/api/drawings?chartId=${encodeURIComponent(chartId)}&id=${encodeURIComponent(fileId)}`,
       );
       if (!response.ok) throw new Error(await response.text());
       stored = await response.json();
@@ -2131,9 +2342,9 @@ async function loadDrawings() {
         id: state.file?.id,
         message: fileError.message,
       });
-      stored = JSON.parse(localStorage.getItem(key) || "[]");
+      stored = JSON.parse(localStorage.getItem(key) || localStorage.getItem(legacyStorageKey()) || "[]");
     }
-    if (state.file?.id !== fileId) return;
+    if ((state.file?.chartId || state.file?.id) !== fileIdentity) return;
     const candidates = drawingArray(stored, null);
     // Do not overwrite unknown storage formats with an empty array.
     if (!candidates) throw new Error("Unrecognized drawing storage format");
@@ -2154,7 +2365,7 @@ async function loadDrawings() {
       localStorage.setItem(key, JSON.stringify(state.drawings));
     } catch (error) { log.chart.warn("DRAWING_BROWSER_STORAGE_FAILED", { message: error.message }); }
   } catch (error) {
-    if (state.file?.id !== fileId) return;
+    if ((state.file?.chartId || state.file?.id) !== fileIdentity) return;
     state.drawings = drawingArray(state.drawings);
     log.chart.error("DRAWING_STORAGE_READ_FAILED", error, {
       key: storageKey(),
@@ -2414,14 +2625,16 @@ function drawOne(d, selected = false) {
     const left = Math.min(a.x, b.x);
     const right = Math.max(a.x + 48, b.x);
     const entry = a.y;
-    const distance = Math.max(12, Math.abs(b.y - a.y));
-    const target = d.type === "long" ? entry - distance : entry + distance;
-    const stop = d.type === "long" ? entry + distance : entry - distance;
+    const levels = calculatePositionLevels(d.type, d.a.price, d.b?.price);
+    const target = Number.isFinite(levels?.target) ? series.priceToCoordinate(levels.target) : b.y;
+    const stop = Number.isFinite(levels?.stop) ? series.priceToCoordinate(levels.stop) : entry + (d.type === "long" ? Math.abs(b.y - entry) : -Math.abs(b.y - entry));
     const targetTop = Math.min(entry, target);
     const stopTop = Math.min(entry, stop);
-    ctx.fillStyle = d.type === "long" ? "rgba(8, 153, 129, .18)" : "rgba(242, 54, 69, .18)";
+    const targetColor = d.type === "long" ? "rgba(8, 153, 129, .18)" : "rgba(242, 54, 69, .18)";
+    const stopColor = d.type === "long" ? "rgba(242, 54, 69, .16)" : "rgba(8, 153, 129, .16)";
+    ctx.fillStyle = targetColor;
     ctx.fillRect(left, targetTop, right - left, Math.abs(target - entry));
-    ctx.fillStyle = d.type === "long" ? "rgba(242, 54, 69, .16)" : "rgba(8, 153, 129, .16)";
+    ctx.fillStyle = stopColor;
     ctx.fillRect(left, stopTop, right - left, Math.abs(stop - entry));
     ctx.strokeStyle = s.stroke;
     ctx.setLineDash([4, 3]);
@@ -2430,6 +2643,22 @@ function drawOne(d, selected = false) {
     ctx.setLineDash([]);
     ctx.rect(left, targetTop, right - left, Math.abs(target - entry));
     ctx.rect(left, stopTop, right - left, Math.abs(stop - entry));
+    ctx.moveTo(left, target);
+    ctx.lineTo(right, target);
+    ctx.moveTo(left, stop);
+    ctx.lineTo(right, stop);
+    ctx.font = '600 10px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    const rewardLabel = levels ? `TP ${levels.target.toFixed(4)}` : "TP";
+    const stopLabel = levels ? `SL ${levels.stop.toFixed(4)}` : "SL";
+    const rrLabel = levels ? `R:R ${levels.riskReward.toFixed(2)}` : "R:R";
+    ctx.fillStyle = d.type === "long" ? "#087f6b" : "#b42332";
+    ctx.fillText(rewardLabel, right + 6, target);
+    ctx.fillStyle = d.type === "long" ? "#b42332" : "#087f6b";
+    ctx.fillText(stopLabel, right + 6, stop);
+    ctx.fillStyle = s.stroke;
+    ctx.fillText(rrLabel, right + 6, entry);
   } else if (d.type === "rect") {
     ctx.rect(a.x, a.y, b.x - a.x, b.y - a.y);
     ctx.fill();
@@ -2490,10 +2719,8 @@ function drawOne(d, selected = false) {
     ctx.rect(left,top,width,height); ctx.fill();
     ctx.moveTo(left,(a.y+b.y)/2); ctx.lineTo(left+width,(a.y+b.y)/2);
     ctx.moveTo((a.x+b.x)/2,top); ctx.lineTo((a.x+b.x)/2,top+height);
-    const bars = Math.round(Math.abs(Number(d.b.time)-Number(d.a.time))/state.tf);
-    const change = Number(d.b.price)-Number(d.a.price);
-    const pct = Number(d.a.price) ? change/Number(d.a.price)*100 : 0;
-    const label=`${change>=0?'+':''}${change.toFixed(3)} (${pct.toFixed(2)}%) • ${bars} bars`;
+    const stats = calculateMeasureStats(d.a, d.b, state.tf);
+    const label=`${stats.durationLabel} • ${stats.bars} bars • ${stats.priceDelta>=0?'+':''}${stats.priceDelta.toFixed(3)} (${stats.percentage.toFixed(2)}%)`;
     ctx.font='650 12px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
     const labelWidth=ctx.measureText(label).width+18, labelX=left+(width-labelWidth)/2, labelY=top+height+9;
     ctx.fillStyle="#eaf1ff"; ctx.fillRect(labelX,labelY,labelWidth,30);
@@ -2701,26 +2928,23 @@ function nearestRangeCandle(clientX) {
 function syncIndicatorRangeHandles() {
   const root = $("#indicatorRangeHandles");
   if (!root) return;
-  const active = chartWorkspaceActive() && state.data.length > 1;
+  const active = chartWorkspaceActive() && state.data.length > 0;
   root.classList.toggle("hidden", !active);
   root.setAttribute("aria-hidden", String(!active));
   if (!active) return;
   const first = Number(state.data[0].time), last = Number(state.data.at(-1).time);
   const fallbackFrom = parseTehranInput($("#indicatorFrom")?.value || "") || first;
   const fallbackTo = parseTehranInput($("#indicatorTo")?.value || "") || last;
-  if (!Number.isFinite(state.indicatorRange.from)) state.indicatorRange.from = fallbackFrom;
-  if (!Number.isFinite(state.indicatorRange.to)) state.indicatorRange.to = fallbackTo;
-  // Keep the two range grips visibly and semantically distinct: at least five
-  // complete candles must remain between their selected anchors.
-  const minimumCandles = Math.min(5, state.data.length - 1);
-  const minTo = Number(state.data[minimumCandles]?.time ?? first);
-  const maxFrom = Number(state.data.at(-(minimumCandles + 1))?.time ?? last);
-  state.indicatorRange.from = Math.max(first, Math.min(state.indicatorRange.from, maxFrom));
-  state.indicatorRange.to = Math.max(minTo, Math.min(state.indicatorRange.to, last));
-  if (state.indicatorRange.to < state.indicatorRange.from) {
-    state.indicatorRange.from = first;
-    state.indicatorRange.to = minTo;
-  }
+  const normalized = normalizeIndicatorRange(
+    Number.isFinite(state.indicatorRange.from) ? state.indicatorRange.from : fallbackFrom,
+    Number.isFinite(state.indicatorRange.to) ? state.indicatorRange.to : fallbackTo,
+    state.data,
+  );
+  if (!normalized) return;
+  state.indicatorRange.from = normalized.from;
+  state.indicatorRange.to = normalized.to;
+  state.indicatorRange.fromIndex = normalized.fromIndex;
+  state.indicatorRange.toIndex = normalized.toIndex;
   for (const side of ["from", "to"]) {
     const time = Number(state.indicatorRange[side]);
     const rawX = canonicalCoordinateAtTime(time);
@@ -2750,6 +2974,7 @@ function commitIndicatorRangeInputs() {
 for (const target of ["#indicatorFrom", "#indicatorTo"]) {
   $(target)?.addEventListener("change", () => {
     syncIndicatorRangeHandles();
+    commitIndicatorRangeInputs();
   });
 }
 for (const side of ["from", "to"]) {
@@ -2783,11 +3008,26 @@ for (const side of ["from", "to"]) {
     const time = Number(candle.time);
     const index = state.data.findIndex((row) => Number(row.time) === time);
     if (index < 0) return;
-    const minimumCandles = Math.min(5, state.data.length - 1);
-    if (side === "from") {
-      state.indicatorRange.from = Number(state.data[Math.min(index, state.data.length - 1 - minimumCandles)].time);
-    } else
-      state.indicatorRange.to = Number(state.data[Math.max(index, minimumCandles)].time);
+    const moved = moveIndicatorRange(state.indicatorRange, side, index, state.data);
+    if (!moved) return;
+    state.indicatorRange.fromIndex = moved.fromIndex;
+    state.indicatorRange.toIndex = moved.toIndex;
+    state.indicatorRange.from = Number(state.data[moved.fromIndex].time);
+    state.indicatorRange.to = Number(state.data[moved.toIndex].time);
+    syncIndicatorRangeHandles();
+  });
+  handle.addEventListener("keydown", (event) => {
+    if (!chartWorkspaceActive() || !["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+    event.preventDefault();
+    const currentIndex = side === "from" ? state.indicatorRange.fromIndex : state.indicatorRange.toIndex;
+    const target = currentIndex + (event.key === "ArrowLeft" ? -1 : 1);
+    const moved = moveIndicatorRange(state.indicatorRange, side, target, state.data);
+    if (!moved) return;
+    state.indicatorRange.fromIndex = moved.fromIndex;
+    state.indicatorRange.toIndex = moved.toIndex;
+    state.indicatorRange.from = Number(state.data[moved.fromIndex].time);
+    state.indicatorRange.to = Number(state.data[moved.toIndex].time);
+    commitIndicatorRangeInputs();
     syncIndicatorRangeHandles();
   });
   handle.addEventListener("pointerup", finishRangeDrag);
@@ -2798,6 +3038,60 @@ $("#applyIndicatorRangeBtn").onclick = () => {
   commitIndicatorRangeInputs();
   void calculateIndicator();
 };
+function selectedIndicatorRange() {
+  const from = Number(state.indicatorRange.from), to = Number(state.indicatorRange.to);
+  const normalized = normalizeIndicatorRange(from, to, state.data);
+  if (!normalized) return null;
+  state.indicatorRange.from = normalized.from;
+  state.indicatorRange.to = normalized.to;
+  state.indicatorRange.fromIndex = normalized.fromIndex;
+  state.indicatorRange.toIndex = normalized.toIndex;
+  commitIndicatorRangeInputs();
+  return { from: normalized.from, to: normalized.to };
+}
+function closeCutCandlesModal() {
+  $("#cutCandlesModal")?.classList.add("hidden");
+  $("#cutCandlesBtn")?.focus();
+}
+function openCutCandlesModal() {
+  if (!chartWorkspaceActive() || !state.file) return;
+  if (!selectedIndicatorRange()) {
+    toast("Select an indicator range before cutting candles", "error");
+    return;
+  }
+  $("#cutCandlesModal")?.classList.remove("hidden");
+  $("#confirmCutCandles")?.focus();
+}
+async function cutCurrentFile(mode) {
+  const range = selectedIndicatorRange();
+  if (!state.file || !range) return;
+  const button = $("#confirmCutCandles");
+  button.disabled = true;
+  try {
+    const response = await fetch("/api/candle-files/cut", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: state.file.id, ...range, mode }),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.error || `Cut failed with HTTP ${response.status}.`);
+    closeCutCandlesModal();
+    await refreshSymbolInventory();
+    const next = state.inventory.find((item) => item.id === result.newId) || state.inventory.find((item) => item.chartId === result.chartId);
+    if (!next) throw new Error("The cut RAW file was created but is not available in inventory.");
+    await loadFile(next);
+    toast(mode === "replace" ? "The current RAW file was cut" : "A new cut RAW file was created", "success");
+  } catch (error) {
+    log.chart.error("CANDLE_CUT_FAILED", error, { mode, from: range.from, to: range.to });
+    toast(error.message, "error");
+  } finally {
+    button.disabled = false;
+  }
+}
+$("#cutCandlesBtn").onclick = openCutCandlesModal;
+$("#closeCutCandles").onclick = closeCutCandlesModal;
+$("#cancelCutCandles").onclick = closeCutCandlesModal;
+$("#confirmCutCandles").onclick = () => cutCurrentFile($("input[name='cutCandlesMode']:checked")?.value || "replace");
 function indicatorTimeToCoordinate(time) {
   const target = Number(time);
   if (!Number.isFinite(target)) return null;
@@ -4768,6 +5062,7 @@ function indicatorStatus(text, type = "idle") {
 function calculationKey(settings, from, to, timeframe) {
   return JSON.stringify({
     id: state.file?.id,
+    chartId: state.file?.chartId || null,
     direction: settings.direction,
     timeframe,
     from,
@@ -5374,30 +5669,42 @@ async function calculateIndicator() {
     log.indicator.warn(!enabled ? "APPLY_WHILE_DISABLED" : "DIRECTION_REQUIRED");
     return;
   }
-  const from = parseTehranInput($("#indicatorFrom").value),
-    to = parseTehranInput($("#indicatorTo").value);
-  if (!Number.isFinite(from) || !Number.isFinite(to) || from > to) {
+  const requestedFrom = parseTehranInput($("#indicatorFrom").value),
+    requestedTo = parseTehranInput($("#indicatorTo").value),
+    requestedRangeValid = Number.isFinite(requestedFrom) && Number.isFinite(requestedTo) && requestedFrom <= requestedTo;
+  if (!requestedRangeValid) {
     indicatorStatus("Choose a valid Tehran time range", "error");
     indicatorToast("Invalid indicator time range", "error");
-    log.indicator.warn("INVALID_RANGE", { from, to });
+    log.indicator.warn("INVALID_RANGE", { from: requestedFrom, to: requestedTo });
     return;
   }
-  if (from < state.raw[0].time || to > state.raw.at(-1).time) {
+  if (requestedFrom < state.raw[0].time || requestedTo > state.raw.at(-1).time) {
     indicatorStatus("Range is outside available candles", "error");
     indicatorToast("Indicator range is outside available data", "error");
     log.indicator.warn("RANGE_OUTSIDE_SOURCE", {
-      from,
-      to,
+      from: requestedFrom,
+      to: requestedTo,
       sourceFrom: state.raw[0].time,
       sourceTo: state.raw.at(-1).time,
     });
     return;
+  }
+  const snappedRange = normalizeIndicatorRange(requestedFrom, requestedTo, state.data),
+    from = snappedRange?.from ?? requestedFrom,
+    to = snappedRange?.to ?? requestedTo;
+  if (snappedRange) {
+    state.indicatorRange.from = snappedRange.from;
+    state.indicatorRange.to = snappedRange.to;
+    state.indicatorRange.fromIndex = snappedRange.fromIndex;
+    state.indicatorRange.toIndex = snappedRange.toIndex;
+    commitIndicatorRangeInputs();
   }
   const settings = indicatorSettings(),
     timeframe = settings.timeframe === "follow" ? state.tf : +settings.timeframe,
     nextKey = calculationKey(settings, from, to, timeframe),
     nextContext = {
       fileId: state.file.id,
+      chartId: state.file.chartId || null,
       symbol: state.file.symbol,
       chartTimeframe: state.tf,
       analysisTimeframe: timeframe,
@@ -5451,6 +5758,7 @@ async function calculateIndicator() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: state.file.id,
+          chartId: state.file.chartId || null,
           timeframe,
           from,
           to,

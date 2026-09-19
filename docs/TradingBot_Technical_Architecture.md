@@ -52,7 +52,7 @@ flowchart LR
 | Communication | HTTP JSON, Server-Sent Events, Python stdout/stderr subprocess protocol |
 | Build | Vite build target `chrome89` |
 
-The chart package reports application version `3.4.1`. A `v2.0.0` Git tag was not present in the baseline audited state; any future repository/documentation tag would not renumber or replace the application package version.
+The chart package reports application version `3.4.1`. Repository release numbering is separate from the package version; the integrated release is published as Git tag `v2.1.0` without renumbering the chart package.
 
 No Python package manifest, CI workflow, linter configuration, or type-check configuration was found.
 
@@ -179,7 +179,7 @@ For more than 100,000 display candles, rendering uses `buildCandleLod()`, `choos
 |---|---|
 | Inventory/data | `/api/symbols`, `/api/candles`, `/api/info/...`, `/info/...` |
 | Calculation | `/api/reactions`, `/api/reactions/progress`, `/api/reactions/cache` |
-| Persistence | `/api/drawings`, `/api/indicator-templates`, `/api/candle-files/delete`, `/api/candle-files/migrate`, `/api/candle-files/update`, `/api/candle-files/verification` |
+| Persistence | `/api/drawings`, `/api/indicator-templates`, `/api/candle-files/delete`, `/api/candle-files/migrate`, `/api/candle-files/update`, `/api/candle-files/verification`, `/api/chart-transfer/export`, `/api/chart-transfer/import` |
 | FARAZ | `/api/faraz/auth/*`, `/api/faraz/candles/*`, `/api/faraz/history` |
 
 No application WebSocket was found. Calculation progress uses Server-Sent Events. Playwright may use an internal browser-server WebSocket.
@@ -284,6 +284,7 @@ The response contains engine/pipeline/module versions, actual calculated range, 
 | Active chart/application | `src/main.js` | In memory plus selected `localStorage` fields |
 | Workspace/panels/settings | browser helpers | `localStorage` |
 | Drawings | browser + `/api/drawings` | JSON files under `runtime/cache/drawings` |
+| Chart transfer | browser File System Access picker + `/api/chart-transfer/*` | Export folder preserves the source RAW filename, sidecar filename, and chart drawing filename; import validates the manifest before writing canonical RAW/drawing paths |
 | Indicator templates | browser + `/api/indicator-templates` | `runtime/cache/indicator-templates/templates.json` |
 | Calculation results | Vite middleware | `runtime/cache/indicator-calculations` |
 | FARAZ session | FARAZ server module | `runtime/cache/secret/faraz-session.dpapi.json` |

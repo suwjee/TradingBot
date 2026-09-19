@@ -42,6 +42,11 @@ function safeId(id) {
 
 function sidecarPath(dataPath) { return `${dataPath}.meta.json`; }
 
+function validChartId(value) {
+  const id = String(value || "").trim();
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id) ? id : null;
+}
+
 function readableRange(range) {
   if (!range || !Number.isSafeInteger(Number(range.from)) || !Number.isSafeInteger(Number(range.to))) return null;
   return { from: formatTehranMetadataTime(Number(range.from)), to: formatTehranMetadataTime(Number(range.to)) };
@@ -82,11 +87,12 @@ function runtimeMetadata(metadata) {
   return { ...metadata, actualRange, effectiveRange: actualRange, requestedRange: runtimeRange(metadata.requestedRange), farazCoverage: runtimeCoverage(metadata.farazCoverage) };
 }
 
-function persistedMetadata({ broker, symbol, timeframe, source, filename, candles, serialized, requestedRange = null, farazCoverage, createdAt, updatedAt, previousSha256 }) {
+function persistedMetadata({ broker, symbol, timeframe, source, filename, candles, serialized, requestedRange = null, farazCoverage, createdAt, updatedAt, previousSha256, chartId }) {
   const now = formatTehranMetadataTime(Math.floor(Date.now() / 1000));
   const dataSha256 = createHash("sha256").update(serialized).digest("hex");
   return {
     schemaVersion: 2,
+    chartId: validChartId(chartId) || randomUUID(),
     broker,
     symbol,
     timeframe,
@@ -115,7 +121,7 @@ export function createRawResourceStore({ rootDir }) {
     return { id: logicalId, dataPath, metaPath: sidecarPath(dataPath) };
   }
 
-  function write({ broker, symbol, timeframe, candles, requestedRange = null, source = "local" }) {
+  function write({ broker, symbol, timeframe, candles, requestedRange = null, source = "local", chartId = null, farazCoverage = undefined, createdAt = undefined }) {
     assertCandles(candles);
     const brokerSegment = segment(broker, "UNKNOWN").toUpperCase();
     const symbolSegment = segment(symbol, "UNNAMED").toUpperCase();
@@ -129,9 +135,18 @@ export function createRawResourceStore({ rootDir }) {
     } else {
       atomicWrite(dataPath, serialized);
     }
-    const metadata = persistedMetadata({ broker: brokerSegment, symbol: symbolSegment, timeframe: normalizedTimeframe, source, filename, candles, serialized, requestedRange });
+    let existing = {};
+    const metadataPath = sidecarPath(dataPath);
+    if (fs.existsSync(metadataPath)) {
+      try { existing = JSON.parse(fs.readFileSync(metadataPath, "utf8")) || {}; } catch { existing = {}; }
+    }
+    const metadata = persistedMetadata({
+      broker: brokerSegment, symbol: symbolSegment, timeframe: normalizedTimeframe, source, filename, candles, serialized, requestedRange,
+      farazCoverage: farazCoverage ?? existing.farazCoverage, chartId: chartId || existing.chartId, createdAt: createdAt || existing.createdAt,
+      updatedAt: existing.updatedAt, previousSha256: existing.dataSha256,
+    });
     atomicWrite(sidecarPath(dataPath), `${JSON.stringify(metadata, null, 2)}\n`);
-    return { id, dataPath, metaPath: sidecarPath(dataPath), ...runtimeMetadata(metadata), count: candles.length, bytes: Buffer.byteLength(serialized) };
+    return { id, dataPath, metaPath: sidecarPath(dataPath), ...runtimeMetadata(metadata), chartId: metadata.chartId, count: candles.length, bytes: Buffer.byteLength(serialized) };
   }
 
   function list() {
@@ -154,10 +169,10 @@ export function createRawResourceStore({ rootDir }) {
           try { previous = JSON.parse(fs.readFileSync(metaPath, "utf8")) || {}; } catch { previous = {}; }
         }
         const hydratedPrevious = runtimeMetadata(previous);
-        const metadata = persistedMetadata({ broker: identity.broker, symbol: identity.symbol, timeframe: identity.timeframe, source: previous.source || "import", filename: entry.name, candles, serialized, requestedRange: hydratedPrevious.requestedRange, farazCoverage: previous.farazCoverage, createdAt: typeof previous.createdAt === "string" ? previous.createdAt : undefined, updatedAt: previous.updatedAt, previousSha256: previous.dataSha256 });
+        const metadata = persistedMetadata({ broker: identity.broker, symbol: identity.symbol, timeframe: identity.timeframe, source: previous.source || "import", filename: entry.name, candles, serialized, requestedRange: hydratedPrevious.requestedRange, farazCoverage: previous.farazCoverage, chartId: previous.chartId, createdAt: typeof previous.createdAt === "string" ? previous.createdAt : undefined, updatedAt: previous.updatedAt, previousSha256: previous.dataSha256 });
         if (JSON.stringify(previous) !== JSON.stringify(metadata)) atomicWrite(metaPath, `${JSON.stringify(metadata, null, 2)}\n`);
         const stat = fs.statSync(target);
-        items.push({ id, dataPath: target, metaPath, broker: identity.broker, symbol: identity.symbol, timeframe: identity.timeframe, from: candles[0].time, to: candles.at(-1).time, count: candles.length, bytes: stat.size, savedAt: stat.mtimeMs, metadata: runtimeMetadata(metadata), createdAt: metadata.createdAt, updatedAt: metadata.updatedAt });
+        items.push({ id, dataPath: target, metaPath, broker: identity.broker, symbol: identity.symbol, timeframe: identity.timeframe, chartId: metadata.chartId, from: candles[0].time, to: candles.at(-1).time, count: candles.length, bytes: stat.size, savedAt: stat.mtimeMs, metadata: runtimeMetadata(metadata), createdAt: metadata.createdAt, updatedAt: metadata.updatedAt });
       } catch {}
     });
     walk(root);
@@ -170,6 +185,50 @@ export function createRawResourceStore({ rootDir }) {
     const candles = JSON.parse(fs.readFileSync(item.dataPath, "utf8"));
     assertCandles(candles);
     return candles;
+  }
+
+  function cut(id, { from, to, mode = "replace" } = {}) {
+    if (!Number.isSafeInteger(Number(from)) || !Number.isSafeInteger(Number(to)) || Number(from) > Number(to)) {
+      throw new Error("The cut range must be ordered and use valid candle times.");
+    }
+    if (!["replace", "new"].includes(mode)) throw new Error("The cut mode is invalid.");
+    const item = resolve(id);
+    if (!item) throw new Error("Candle file was not found.");
+    const identity = parseRawFilename(path.basename(item.dataPath));
+    if (!identity) throw new Error("The existing RAW filename does not follow the required contract.");
+    const candles = read(id);
+    const selected = candles.filter((candle) => candle.time >= Number(from) && candle.time <= Number(to));
+    if (!selected.length) throw new Error("The cut range contains no candles.");
+    const filename = buildRawFilename({
+      broker: identity.broker,
+      symbol: identity.symbol,
+      timeframe: identity.timeframe,
+      firstTime: selected[0].time,
+      lastTime: selected.at(-1).time,
+    });
+    const directoryId = path.posix.dirname(item.id);
+    const newId = directoryId === "." ? filename : `${directoryId}/${filename}`;
+    if (mode === "new" && newId === item.id) throw new Error("A new cut file must change the selected range.");
+    if (newId !== item.id && resolve(newId)) throw new Error("A candle file with the cut range already exists.");
+    let previous = {};
+    if (fs.existsSync(item.metaPath)) {
+      try { previous = JSON.parse(fs.readFileSync(item.metaPath, "utf8")) || {}; } catch { previous = {}; }
+    }
+    const written = write({
+      broker: identity.broker,
+      symbol: identity.symbol,
+      timeframe: identity.timeframe,
+      candles: selected,
+      source: previous.source || "cut",
+      chartId: mode === "replace" ? previous.chartId : null,
+      createdAt: mode === "replace" ? previous.createdAt : undefined,
+    });
+    if (mode === "replace" && newId !== item.id) {
+      if (fs.existsSync(item.dataPath)) fs.unlinkSync(item.dataPath);
+      if (fs.existsSync(item.metaPath)) fs.unlinkSync(item.metaPath);
+    }
+    const result = list().find((candidate) => candidate.id === written.id) || written;
+    return { oldId: item.id, newId: result.id, mode, chartId: result.chartId, count: result.count, metadata: result.metadata };
   }
 
   function recordFarazCoverage(id, { timeframeSeconds, retryCount = 0, ranges = [], effectiveRange = null, checkedThrough = null, mode = null } = {}) {
@@ -202,7 +261,7 @@ export function createRawResourceStore({ rootDir }) {
     const coverage = { schemaVersion: 2, timeframeSeconds: timeframe, chartUpToDate, status: chartUpToDate ? "faraz_checked" : "unchecked_ranges_remain", checkedFrom, checkedTo, checkedThrough: durableCheckpoint, lastMode: mode || hydrated.farazCoverage?.lastMode || null, retryCount: Math.max(0, Math.trunc(Number(retryCount) || 0)), ranges: mergedRanges };
     const identity = parseRawFilename(path.basename(item.dataPath));
     const serialized = fs.readFileSync(item.dataPath, "utf8");
-    const metadata = persistedMetadata({ broker: identity.broker, symbol: identity.symbol, timeframe: identity.timeframe, source: previous.source || "local", filename: path.basename(item.dataPath), candles, serialized, requestedRange: hydrated.requestedRange, farazCoverage: coverage, createdAt: previous.createdAt });
+    const metadata = persistedMetadata({ broker: identity.broker, symbol: identity.symbol, timeframe: identity.timeframe, source: previous.source || "local", filename: path.basename(item.dataPath), candles, serialized, requestedRange: hydrated.requestedRange, farazCoverage: coverage, chartId: previous.chartId, createdAt: previous.createdAt });
     atomicWrite(item.metaPath, `${JSON.stringify(metadata, null, 2)}\n`);
     return runtimeMetadata(metadata);
   }
@@ -214,5 +273,5 @@ export function createRawResourceStore({ rootDir }) {
     if (fs.existsSync(item.metaPath)) fs.unlinkSync(item.metaPath);
     return true;
   }
-  return { root, resolve, write, list, read, recordFarazCoverage, remove };
+  return { root, resolve, write, list, read, cut, recordFarazCoverage, remove };
 }

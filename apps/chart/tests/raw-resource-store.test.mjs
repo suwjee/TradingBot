@@ -30,6 +30,44 @@ test("RAW store writes compact candles with a broker and symbol metadata sidecar
   assert.equal(metadata.requestedRange.to, "1970-01-01 03:31:45 Asia/Tehran");
   assert.equal(Object.hasOwn(metadata, "dataMtimeMs"), false);
   assert.equal(JSON.stringify(metadata).includes('"from":100'), false);
+  assert.match(metadata.chartId, /^[0-9a-f-]{36}$/i);
+  assert.equal(item.chartId, metadata.chartId);
+});
+
+test("RAW store heals a missing sidecar with a stable chart ID", async (t) => {
+  const { createRawResourceStore } = await import("../server/raw-resource-store.js");
+  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "raw-chart-id-"));
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+  const store = createRawResourceStore({ rootDir });
+  const item = store.write({ broker: "FXCM", symbol: "ABC", timeframe: "5S", candles: [
+    { time: 100, open: 1, high: 1, low: 1, close: 1 },
+    { time: 105, open: 1, high: 1, low: 1, close: 1 },
+  ] });
+  fs.rmSync(item.metaPath);
+
+  const healed = store.list()[0];
+  assert.match(healed.chartId, /^[0-9a-f-]{36}$/i);
+  assert.equal(JSON.parse(fs.readFileSync(item.metaPath, "utf8")).chartId, healed.chartId);
+  assert.equal(store.list()[0].chartId, healed.chartId);
+});
+
+test("RAW store replaces an invalid chart ID and preserves an explicit chart ID", async (t) => {
+  const { createRawResourceStore } = await import("../server/raw-resource-store.js");
+  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "raw-chart-id-invalid-"));
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+  const store = createRawResourceStore({ rootDir });
+  const item = store.write({
+    broker: "FXCM", symbol: "ABC", timeframe: "5S",
+    chartId: "11111111-1111-4111-8111-111111111111",
+    candles: [{ time: 100, open: 1, high: 1, low: 1, close: 1 }],
+  });
+  assert.equal(item.chartId, "11111111-1111-4111-8111-111111111111");
+  const metadata = JSON.parse(fs.readFileSync(item.metaPath, "utf8"));
+  metadata.chartId = "not-a-uuid";
+  fs.writeFileSync(item.metaPath, JSON.stringify(metadata));
+  const healed = store.list()[0];
+  assert.match(healed.chartId, /^[0-9a-f-]{36}$/i);
+  assert.notEqual(healed.chartId, "not-a-uuid");
 });
 
 test("RAW store rejects traversal IDs and lists nested logical resources", async (t) => {

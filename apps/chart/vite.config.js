@@ -6,6 +6,7 @@ import { performance } from 'node:perf_hooks';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { createFarazCandleApi } from './server/faraz-candle-api.js';
+import { createChartTransferBundle, importChartTransferBundle } from './server/chart-transfer.js';
 import { migrateFlatRawFiles } from './server/migrate-raw-resources.js';
 import { createRawResourceStore } from './server/raw-resource-store.js';
 
@@ -82,8 +83,24 @@ function identityDigest(identity) {
 
 function drawingPath(item) {
   const symbol = cacheSegment(item.symbol, 'unnamed-symbol');
+  const identity = item.chartId || item.id;
+  return path.join(drawingsDir, symbol, `chart-${identityDigest(identity)}.json`);
+}
+
+function legacyDrawingPath(item) {
+  const symbol = cacheSegment(item.symbol, 'unnamed-symbol');
   const source = cacheSegment(path.basename(item.id, '.json'), 'source');
   return path.join(drawingsDir, symbol, `${source}--${identityDigest(item.id)}.json`);
+}
+
+function resolveDrawingPath(item) {
+  const target = drawingPath(item);
+  if (fs.existsSync(target)) return target;
+  const legacy = legacyDrawingPath(item);
+  if (!fs.existsSync(legacy)) return target;
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  fs.copyFileSync(legacy, target);
+  return target;
 }
 
 function calculationPath(item, request, cacheKey) {
@@ -108,6 +125,7 @@ function calculationId(calculationFile) {
 function calculationMetadata(item, request, calculationFile) {
   return {
     calculationId: calculationId(calculationFile),
+    chartId: item.chartId || null,
     symbol: item.symbol,
     sourceFile: item.id,
     timeframe: request.timeframe,
@@ -153,19 +171,19 @@ function storedFileCount(directory) {
   return count;
 }
 
-function readBody(req) {
+function readBody(req, maxBytes = 100_000) {
   return new Promise((resolve, reject) => {
     let body = '';
     req.setEncoding('utf8');
-    req.on('data', (chunk) => { body += chunk; if (body.length > 100_000) reject(new Error('Request is too large')); });
+    req.on('data', (chunk) => { body += chunk; if (body.length > maxBytes) reject(new Error('Request is too large')); });
     req.on('end', () => resolve(body));
     req.on('error', reject);
   });
 }
 
-async function readJson(req) {
+async function readJson(req, maxBytes = 100_000) {
   let body;
-  try { body = JSON.parse(await readBody(req)); }
+  try { body = JSON.parse(await readBody(req, maxBytes)); }
   catch { throw new Error('Request body must be valid JSON.'); }
   if (!body || typeof body !== 'object' || Array.isArray(body)) throw new Error('Request body must be a JSON object.');
   return body;
@@ -215,6 +233,7 @@ function inventory() {
   return rawStore.list().map((item) => {
     return {
       id: item.id,
+      chartId: item.chartId || item.metadata?.chartId || null,
       symbol: item.symbol,
       broker: item.broker,
       timeframe: item.timeframe,
@@ -293,6 +312,24 @@ function localDataApi() {
         } catch (error) {
           res.statusCode = 400;
           res.setHeader('Content-Type', 'application/json; charset=utf-8');
+          res.end(JSON.stringify({ error: error.message }));
+        }
+      });
+      server.middlewares.use('/api/candle-files/cut', async (req, res) => {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-store');
+        try {
+          if (req.method !== 'POST') throw new Error('POST is required.');
+          const body = await readJson(req);
+          const id = typeof body.id === 'string' ? body.id : '';
+          const from = Number(body.from), to = Number(body.to);
+          const mode = body.mode === 'new' ? 'new' : body.mode === 'replace' ? 'replace' : '';
+          if (!id || !mode || !Number.isSafeInteger(from) || !Number.isSafeInteger(to)) throw new Error('A valid file and inclusive candle range are required.');
+          const result = rawStore.cut(id, { from, to, mode });
+          inventoryMeta.clear();
+          res.end(JSON.stringify({ ok: true, ...result }));
+        } catch (error) {
+          res.statusCode = 400;
           res.end(JSON.stringify({ error: error.message }));
         }
       });
@@ -389,18 +426,20 @@ function localDataApi() {
         res.setHeader('Cache-Control', 'no-store');
         try {
           if (req.method === 'GET') {
-            const id = new URL(req.url ?? '', 'http://localhost').searchParams.get('id');
-            if (!id) throw new Error('Drawing file identity is required');
-            const item = inventory().find((candidate) => candidate.id === id);
+            const query = new URL(req.url ?? '', 'http://localhost').searchParams;
+            const id = query.get('id');
+            const chartId = query.get('chartId');
+            if (!id && !chartId) throw new Error('Drawing file identity is required');
+            const item = inventory().find((candidate) => (chartId ? candidate.chartId === chartId : candidate.id === id));
             if (!item) throw new Error('Candle file not found');
-            const target = drawingPath(item);
+            const target = resolveDrawingPath(item);
             res.end(fs.existsSync(target) ? fs.readFileSync(target, 'utf8') : '[]');
             return;
           }
           if (req.method === 'PUT') {
             const body = JSON.parse(await readBody(req));
-            if (typeof body.id !== 'string' || !Array.isArray(body.drawings)) throw new Error('Invalid drawings payload');
-            const item = inventory().find((candidate) => candidate.id === body.id);
+            if ((!body.id && !body.chartId) || !Array.isArray(body.drawings)) throw new Error('Invalid drawings payload');
+            const item = inventory().find((candidate) => body.chartId ? candidate.chartId === body.chartId : candidate.id === body.id);
             if (!item) throw new Error('Candle file not found');
             const target = drawingPath(item);
             fs.mkdirSync(path.dirname(target), { recursive: true });
@@ -410,6 +449,47 @@ function localDataApi() {
           }
           res.statusCode = 405;
           res.end(JSON.stringify({ error: 'GET or PUT is required' }));
+        } catch (error) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ error: error.message }));
+        }
+      });
+      server.middlewares.use('/api/chart-transfer/export', async (req, res) => {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-store');
+        try {
+          if (req.method !== 'GET') throw new Error('GET is required');
+          const id = new URL(req.url ?? '', 'http://localhost').searchParams.get('id');
+          const item = inventory().find((candidate) => candidate.id === id);
+          if (!item) throw new Error('Candle file not found');
+          const target = drawingPath(item);
+          let drawings = [];
+          if (fs.existsSync(target)) {
+            const stored = JSON.parse(fs.readFileSync(target, 'utf8'));
+            if (Array.isArray(stored)) drawings = stored;
+          }
+          res.end(JSON.stringify(createChartTransferBundle({ item, candles: rawStore.read(item.id), drawings, drawingFilename: path.basename(target) })));
+        } catch (error) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ error: error.message }));
+        }
+      });
+      server.middlewares.use('/api/chart-transfer/import', async (req, res) => {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-store');
+        try {
+          if (req.method !== 'POST') throw new Error('POST is required');
+          const { item, drawings } = importChartTransferBundle({
+            bundle: await readJson(req, 50_000_000),
+            rawStore,
+            saveDrawings: (importedItem, importedDrawings) => {
+              const target = drawingPath(importedItem);
+              fs.mkdirSync(path.dirname(target), { recursive: true });
+              fs.writeFileSync(target, JSON.stringify(importedDrawings, null, 2), 'utf8');
+            },
+          });
+          inventoryMeta.clear();
+          res.end(JSON.stringify({ ok: true, id: item.id, symbol: item.symbol, broker: item.broker, timeframe: item.timeframe, drawings }));
         } catch (error) {
           res.statusCode = 400;
           res.end(JSON.stringify({ error: error.message }));
@@ -444,13 +524,14 @@ function localDataApi() {
           requestId = typeof body.requestId === 'string' && /^[a-zA-Z0-9-]{8,80}$/.test(body.requestId) ? body.requestId : null;
           const valid = inventory().find((item) => item.id === body.id);
           if (!valid) throw new Error('Candle file not found');
+          if (body.chartId && body.chartId !== valid.chartId) throw new Error('Chart identity does not match the selected RAW file');
           const timeframe = Number(body.timeframe), from = Number(body.from), to = Number(body.to);
           if (!Number.isInteger(timeframe) || timeframe < 1 || !Number.isFinite(from) || !Number.isFinite(to) || from > to) throw new Error('Invalid indicator range or timeframe');
           if (!['bullish', 'bearish'].includes(body.direction)) throw new Error('Invalid reaction direction');
           if (typeof body.blueLines !== 'boolean') throw new Error('Invalid Blue Line setting');
           const dataStat = fs.statSync(path.join(inputDir, valid.id));
           const sourceFingerprint = calculationSourceFingerprint();
-          const cacheKey = JSON.stringify(['engine-content-v1', sourceFingerprint, valid.id, dataStat.mtimeMs, timeframe, from, to, body.direction, body.blueLines]);
+          const cacheKey = JSON.stringify(['engine-content-v2', sourceFingerprint, valid.chartId || valid.id, valid.id, dataStat.mtimeMs, timeframe, from, to, body.direction, body.blueLines]);
            const persistedCalculationPath = calculationPath(valid, { timeframe, from, to, direction: body.direction, blueLines: body.blueLines }, cacheKey);
           let output = null;
           let cacheSource = null;

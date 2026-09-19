@@ -5,6 +5,7 @@ import { mountWorkspaceHeader, restoreWorkspaceHeader } from "../ui/workspace-st
 import { rawInventoryPresentation, sortRawInventory } from "./raw-inventory.js";
 import { parseTehranMetadataTime } from "./raw-file-contract.js";
 import { isQualifiedFarazSymbol, normalizeFarazSymbol } from "./faraz-symbol.js";
+import { shortChartId } from "../ui/chart-identity.js";
 
 const $id = (root, id) => root.querySelector(`#${id}`);
 const CANDLE_EXPORT_STATE_KEY = "qg:candle-export:v1";
@@ -72,12 +73,12 @@ function markup(icon) {
             </div>
             <div id="candleCountMode" class="candle-mode-panel hidden">
               <label class="candle-inline-field"><span>Number of candles</span><input id="candleExportCount" type="number" min="1" value="1000"></label>
-              <div class="candle-toggle-row"><span><b>End at current time</b></span><input id="candleCountToNow" type="checkbox" checked aria-label="End at current time"></div>
+              <div class="candle-toggle-row"><span><b>End at current time</b><output class="candle-current-time" data-current-time-output="count" aria-live="off">—</output></span><input id="candleCountToNow" type="checkbox" checked aria-label="End at current time"></div>
               <div id="candleCountToRow" class="candle-date-row hidden"><span>End</span><span class="candle-date-control"><button id="candleCountToButton" class="candle-date-button" type="button"><b id="candleCountToDisplay">Select date & time</b>${icon("calendar", 16)}</button><output id="candleCountToReadable" class="candle-readable-time">—</output></span><input id="candleCountTo" type="hidden"></div>
             </div>
             <div id="candleRangeMode" class="candle-mode-panel hidden">
               <div class="candle-date-row"><span>From</span><span class="candle-date-control"><button id="candleRangeFromButton" class="candle-date-button" type="button"><b id="candleRangeFromDisplay">Select date & time</b>${icon("calendar", 16)}</button><output id="candleRangeFromReadable" class="candle-readable-time">—</output></span><input id="candleRangeFrom" type="hidden"></div>
-              <div class="candle-toggle-row"><span><b>End at current time</b></span><input id="candleRangeToNow" type="checkbox" checked aria-label="End at current time"></div>
+              <div class="candle-toggle-row"><span><b>End at current time</b><output class="candle-current-time" data-current-time-output="range" aria-live="off">—</output></span><input id="candleRangeToNow" type="checkbox" checked aria-label="End at current time"></div>
               <div id="candleRangeToRow" class="candle-date-row hidden"><span>To</span><span class="candle-date-control"><button id="candleRangeToButton" class="candle-date-button" type="button"><b id="candleRangeToDisplay">Select date & time</b>${icon("calendar", 16)}</button><output id="candleRangeToReadable" class="candle-readable-time">—</output></span><input id="candleRangeTo" type="hidden"></div>
             </div>
           </section>
@@ -104,7 +105,7 @@ function markup(icon) {
       <section class="candle-raw-inventory" aria-labelledby="candleRawInventoryTitle">
         <div class="candle-section-title"><span>${icon("folder", 18)}</span><div><h2 id="candleRawInventoryTitle">Local RAW files</h2></div><button id="candleRawRefresh" class="candle-log-copy" type="button" aria-label="Refresh local RAW files" title="Refresh local RAW files">${icon("refresh", 17)}</button></div>
         <p id="candleRawInventoryStatus" class="candle-raw-status">Checking local storage…</p>
-        <div class="candle-raw-table-wrap" tabindex="0"><table class="candle-raw-table"><thead><tr><th><button type="button" data-raw-sort-key="filename">File name</button></th><th><button type="button" data-raw-sort-key="symbol">Symbol</button></th><th><button type="button" data-raw-sort-key="broker">Broker</button></th><th><button type="button" data-raw-sort-key="timeframe">Timeframe</button></th><th><button type="button" data-raw-sort-key="from">From</button></th><th><button type="button" data-raw-sort-key="to">To</button></th><th><button type="button" data-raw-sort-key="createdAt">Created</button></th><th><button type="button" data-raw-sort-key="updatedAt">Updated</button></th><th><button type="button" data-raw-sort-key="count">Candles</button></th><th><button type="button" data-raw-sort-key="bytes">Size</button></th><th><span class="sr-only">Actions</span></th></tr></thead><tbody id="candleRawInventoryList" aria-live="polite"></tbody></table></div>
+        <div class="candle-raw-table-wrap" tabindex="0"><table class="candle-raw-table"><thead><tr><th><button type="button" data-raw-sort-key="filename">File name</button></th><th><button type="button" data-raw-sort-key="symbol">Symbol</button></th><th><button type="button" data-raw-sort-key="broker">Broker</button></th><th><button type="button" data-raw-sort-key="timeframe">Timeframe</button></th><th>Chart ID</th><th><button type="button" data-raw-sort-key="from">From</button></th><th><button type="button" data-raw-sort-key="to">To</button></th><th><button type="button" data-raw-sort-key="createdAt">Created</button></th><th><button type="button" data-raw-sort-key="updatedAt">Updated</button></th><th><button type="button" data-raw-sort-key="count">Candles</button></th><th><button type="button" data-raw-sort-key="bytes">Size</button></th><th><span class="sr-only">Actions</span></th></tr></thead><tbody id="candleRawInventoryList" aria-live="polite"></tbody></table></div>
       </section>
     </div>
     <div id="candleCoverageDecision" class="candle-decision-backdrop hidden">
@@ -186,10 +187,11 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
     for (const item of sortRawInventory(items, rawInventorySort)) {
       const row = rawInventoryPresentation(item, inventoryTime);
       const element = document.createElement("tr");
-      const cells = [row.filename, row.symbol, String(item.broker || "UNKNOWN"), String(item.timeframe || "—"), inventoryTime(item.from), inventoryTime(item.to), metadataTime(item.createdAt), metadataTime(item.updatedAt || item.savedAt), Number(item.count || 0).toLocaleString("en-US"), bytesLabel(item.bytes)];
-      for (const value of cells) {
+      const cells = [row.filename, row.symbol, String(item.broker || "UNKNOWN"), String(item.timeframe || "—"), shortChartId(row.chartId), inventoryTime(item.from), inventoryTime(item.to), metadataTime(item.createdAt), metadataTime(item.updatedAt || item.savedAt), Number(item.count || 0).toLocaleString("en-US"), bytesLabel(item.bytes)];
+      for (const [index, value] of cells.entries()) {
         const cell = document.createElement("td");
         cell.textContent = value;
+        if (index === 4) cell.title = row.chartId;
         element.append(cell);
       }
       const remove = document.createElement("button");
@@ -838,6 +840,8 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
       const value = toNow ? now : parseTehranInput($id(view, inputId).value);
       $id(view, outputId).textContent = readableJobTime(value);
     }
+    view.querySelector('[data-current-time-output="count"]').textContent = readableJobTime(now);
+    view.querySelector('[data-current-time-output="range"]').textContent = readableJobTime(now);
   }
   setInterval(renderReadableTimes, 1000);
   void refreshRawInventory();

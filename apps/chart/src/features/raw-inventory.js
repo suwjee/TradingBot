@@ -9,6 +9,7 @@ export function rawInventoryPresentation(item, formatTime) {
   const normalizedSymbol = symbol.replaceAll("_", ":");
   return {
     id,
+    chartId: String(item?.chartId || item?.metadata?.chartId || "NULL"),
     filename,
     symbol: normalizedSymbol.split(":").at(-1) || normalizedSymbol,
     title: normalizedSymbol.includes(":") ? normalizedSymbol : `${broker}:${normalizedSymbol}`,
