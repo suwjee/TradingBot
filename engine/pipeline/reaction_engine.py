@@ -18,7 +18,8 @@ from typing import Iterable, Sequence
 from direction_policy import policy_for
 
 
-REACTION_ENGINE_VERSION = "9.5.2"
+REACTION_ENGINE_VERSION = "9.6.0"
+REACTION_ENGINE_LAST_MODIFIED = "2026-09-20 03:48:27 +03:30"
 
 _SEQUENCE_TIME_INDEXES: dict[int, tuple[Sequence[Candle], list[datetime]]] = {}
 
@@ -1402,7 +1403,6 @@ class UnifiedReactionDetector(DetectorBase):
             "bearish": [],
         }
         self._geometry_after_reset_cache: dict[tuple, Candidate | None] = {}
-        self._simple_geometry_gate_cache: dict[tuple, Candidate | None] = {}
 
     @property
     def bull(self) -> BullishDetector:
@@ -1664,11 +1664,12 @@ class UnifiedReactionDetector(DetectorBase):
     def _first_geometry_after_reset(
         self, direction: str, reset_index: int, end_index: int | None = None,
     ) -> Candidate | None:
-        """Return the first complete same-direction geometry after Reset.
+        """Return the first complete raw Reaction geometry after a boundary.
 
-        This search intentionally does not apply the normal Reset/invalidation
-        gate.  In an E space, the reset-leg rule only requires the geometric
-        Top-Bottom-Top / Bottom-Top-Bottom structure.
+        This bounded search intentionally ignores normal Reset/invalidation
+        acceptance.  It is a geometry-only primitive: First/box/Break structure
+        may be used as evidence even when normal Reaction lifecycle rules would
+        later Reset or suppress that structure.
         """
         _lim = self.end_index if end_index is None else min(end_index, self.end_index)
         _ck = (direction, reset_index, _lim)
@@ -1719,66 +1720,6 @@ class UnifiedReactionDetector(DetectorBase):
         """Public lifecycle API for post-Reset geometry discovery."""
         return self._first_geometry_after_reset(direction, reset_index, end_index)
 
-
-    def first_simple_geometry_after_gate(
-        self,
-        direction: str,
-        reset_index: int,
-        gate_index: int,
-        end_index: int | None = None,
-    ) -> Candidate | None:
-        """Find the first E Order_B geometry from its actual Reset context.
-
-        The Order_B gate is opened later by a strict lower-timeframe boundary
-        crossing, but its simple geometry still belongs to the Reset that
-        created the leg.  Reconstructing it from ``gate_index - 1`` invents a
-        new Reset context and can promote a pattern that is not an
-        authoritative reaction.  This bounded helper preserves the real Reset
-        while restricting First to the gate candle or later.
-        """
-        _lim = self.end_index if end_index is None else min(end_index, self.end_index)
-        _ck = (direction, reset_index, gate_index, _lim)
-        if _ck in self._simple_geometry_gate_cache:
-            _cached = self._simple_geometry_gate_cache[_ck]
-            return replace(_cached) if _cached is not None else None
-        first_tag = "RED" if direction == "bullish" else "GREEN"
-        context_tag = "GREEN" if direction == "bullish" else "RED"
-        limit = self.end_index if end_index is None else min(end_index, self.end_index)
-        start = max(reset_index + 1, gate_index)
-        blocked_through = start - 1
-        for first_index in range(start, limit + 1):
-            if first_index <= blocked_through:
-                continue
-            if (
-                self.candles[first_index].tag != first_tag
-                or self.candles[first_index - 1].tag != context_tag
-            ):
-                continue
-            candidate = self._build_direct_candidate(
-                direction, reset_index, first_index
-            )
-            if candidate is None:
-                continue
-            # The earliest eligible post-gate candidate owns this Reset leg
-            # until it confirms or strictly loses its frozen owner boundary.
-            # An invalidated candidate is dead, but its invalidated interval
-            # must not prevent a later, genuinely new First from becoming the
-            # first valid Order_B geometry.
-            confirmed, invalidation_index = self._scan_direct_candidate(
-                direction, candidate, limit
-            )
-            if confirmed is not None:
-                self._simple_geometry_gate_cache[_ck] = confirmed
-                return confirmed
-            if invalidation_index is not None:
-                blocked_through = invalidation_index
-                continue
-            # No confirmation and no structural invalidation before the search
-            # deadline: this owner remains unresolved through the bounded leg,
-            # so no nested later First may replace it.
-            break
-        self._simple_geometry_gate_cache[_ck] = None
-        return None
 
     def _reaction_break_indices(self, direction: str) -> list[int]:
         """Cached ascending `break_idx` values mirroring `all_reactions[direction]`.

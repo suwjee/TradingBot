@@ -1,8 +1,9 @@
 """S-zone calculation from authoritative A, Reaction, Blue, and Order state.
 
 Owns A-to-S handoff, S Red/Blue Simple/Advanced/Type3 formation, S decision
-chronology, and the initial Order audit created by stopped A zones. Larger
-E/StopAll arbitration remains lifecycle-owned.
+chronology, shared accepted-Order stop reconciliation, and the initial Order
+audit created by stopped A zones. Larger E/StopAll arbitration remains
+lifecycle-owned.
 """
 
 from __future__ import annotations
@@ -17,7 +18,8 @@ from core_utils import as_decimal, reaction_identity
 from direction_policy import policy_for
 
 
-S_ZONE_VERSION = "4.13.1"
+S_ZONE_VERSION = "4.14.0"
+S_ZONE_LAST_MODIFIED = "2026-09-20 04:35:08 +03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -372,7 +374,7 @@ class SZoneDetector:
     def _type3_reset_leg(
         self, reset: object
     ) -> tuple[int, datetime, Decimal] | None:
-        """Return Order_B-equivalent inclusive Break-to-Reset geometry."""
+        """Return the independent Type-3 inclusive Break-to-Reset geometry."""
         owner_match = self._opposite_by_first_index.get(
             int(getattr(reset, "from_first_idx"))
         )
@@ -400,7 +402,7 @@ class SZoneDetector:
         a_stop_event: datetime,
         deadline: datetime,
     ) -> tuple[int, datetime, Decimal, int, datetime, int, datetime, datetime] | None:
-        """Find the first no-order Reset-leg S decision before a new order."""
+        """Find the first no-order Type-3 Reset-leg S decision before a new order."""
         reset_times_by_owner: dict[int, list[datetime]] = {}
         for reset in self.opposite_resets:
             reset_times_by_owner.setdefault(
@@ -1196,14 +1198,18 @@ class SZoneDetector:
         zones: Sequence[SZone],
         order_entries: Sequence[dict[str, object]],
     ) -> list[SZone]:
-        """Resolve an open S candidate with a later accepted physical Order stop.
+        """Resolve open S candidates with any accepted physical Order stop.
 
-        S owns one candidate through its current decision event, but the first
-        Order used to open that search is not permanently exclusive.  A later
-        calculation-accepted physical Order in the same chronology may strict-
-        stop before the candidate's current decision and therefore become the
-        decisive Red event.  The S source remains frozen; only Order provenance
-        and decision chronology move to the winning accepted Order.
+        Order confirmation is parent-neutral.  The decisive Order does not have
+        to originate from the A/S candidate currently being resolved.  Once a
+        physical Order is calculation-accepted, it may decide an S candidate if
+        the Order is live in that candidate window and its exact strict stop is
+        after the frozen S source but before the candidate's current strict
+        decision event.  Creation provenance remains attached to the Order and
+        is never rewritten to the S candidate.
+
+        This rule is direction invariant.  The strict Order stop itself is
+        resolved by the shared mirrored lower-timeframe chronology.
         """
         deduped: dict[tuple[int, int], dict[str, object]] = {}
         for entry in order_entries:
@@ -1215,8 +1221,9 @@ class SZoneDetector:
                 int(getattr(reaction, "break_idx")),
             )
             current = deduped.get(identity)
-            # Prefer the richer E-audit form when it already carries an exact
-            # stop crossing; otherwise either accepted ledger entry is enough.
+            # Prefer the richer accepted E-audit form when it already carries
+            # an exact stop crossing.  Physical identity, not parent identity,
+            # is authoritative.
             if current is None or (
                 current.get("stop_cross") is None
                 and entry.get("stop_cross") is not None
@@ -1225,52 +1232,15 @@ class SZoneDetector:
 
         output: list[SZone] = []
         for zone in zones:
-            # A later accepted Order may decide an already-open S only while
-            # both still belong to the same continuation.  The first accepted
-            # Order whose provenance is a parent-stop of an S marks the end of
-            # that shared-Order continuation.  Orders confirmed after that
-            # boundary (for example from a newer independent A) belong to a
-            # newer lifecycle and must not retroactively hijack this S.
-            terminal_s_order_confirmation: datetime | None = None
-            for entry in deduped.values():
-                causes = entry.get("causes", ())
-                has_s_parent = any(
-                    isinstance(cause, tuple)
-                    and len(cause) >= 2
-                    and str(cause[0]) == "parent-stop"
-                    and str(cause[1]).upper() == "S"
-                    for cause in causes
-                )
-                confirmation = entry.get("confirmation_time")
-                reaction = entry.get("reaction")
-                if not has_s_parent or not isinstance(confirmation, datetime) or reaction is None:
-                    continue
-                first_index = int(getattr(reaction, "first_idx"))
-                first_time = getattr(self.candles[first_index], "timestamp")
-                if first_time < zone.source_time or confirmation > zone.decision_event_time:
-                    continue
-                if (
-                    terminal_s_order_confirmation is None
-                    or confirmation < terminal_s_order_confirmation
-                ):
-                    terminal_s_order_confirmation = confirmation
-
-            winner: tuple[datetime, datetime, int, dict[str, object], tuple[int, datetime, datetime]] | None = None
-            for entry in deduped.values():
+            winner: tuple[
+                datetime, datetime, int, int, dict[str, object],
+                tuple[int, datetime, datetime]
+            ] | None = None
+            for identity, entry in deduped.items():
                 reaction = entry["reaction"]
                 first_index = int(getattr(reaction, "first_idx"))
-                first_time = getattr(self.candles[first_index], "timestamp")
                 confirmation = entry.get("confirmation_time")
                 if not isinstance(confirmation, datetime):
-                    continue
-                if first_time < zone.source_time:
-                    continue
-                if confirmation > zone.decision_event_time:
-                    continue
-                if (
-                    terminal_s_order_confirmation is not None
-                    and confirmation > terminal_s_order_confirmation
-                ):
                     continue
 
                 stop_level = as_decimal(entry["stop_level"])
@@ -1284,24 +1254,34 @@ class SZoneDetector:
                 if crossed is None:
                     continue
                 cross_event = crossed[2]
-                if not (zone.source_time <= cross_event < zone.decision_event_time):
+
+                # The accepted Order can have been confirmed before the S source
+                # and still be live, or it can be confirmed later.  Only its
+                # actual strict-stop chronology relative to the frozen candidate
+                # matters.  Equality with the current decision does not replace
+                # the existing owner.
+                if not (
+                    confirmation < cross_event
+                    and zone.source_time <= cross_event < zone.decision_event_time
+                ):
                     continue
 
                 candidate = (
                     cross_event,
                     confirmation,
                     first_index,
+                    identity[1],
                     entry,
                     crossed,
                 )
-                if winner is None or candidate[:3] < winner[:3]:
+                if winner is None or candidate[:4] < winner[:4]:
                     winner = candidate
 
             if winner is None:
                 output.append(zone)
                 continue
 
-            _, _, _, entry, crossed = winner
+            _, _, _, _, entry, crossed = winner
             reaction = entry["reaction"]
             first_index = int(getattr(reaction, "first_idx"))
             break_index = int(getattr(reaction, "break_idx"))
@@ -1333,6 +1313,7 @@ class SZoneDetector:
                 decision_event_time=crossed[2],
             ))
         return output
+
 
 
 def detect_s_zones(

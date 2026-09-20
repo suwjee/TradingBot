@@ -1,21 +1,31 @@
-# TradingBot Bearish Algorithm Reference — Comprehensive Standalone Rebuild & Exact Implementation Specification
+# TradingBot Bullish Algorithm Reference — Comprehensive Standalone Rebuild & Exact Implementation Specification
 
-**Document Version:** `5.1.1`  
-**Last Modified Date:** `2026-09-19`  
-**Status:** `Comprehensive standalone reconstruction specification with embedded exact production source; exact Bearish directional mirror`  
-**Target Direction:** `bearish`  
-**Opposite/Order Direction:** `bullish`  
+**Document Version:** `5.3.0`  
+**Last Modified Date & Time:** `2026-09-20 04:35:08 +03:30`  
+**Status:** `Comprehensive standalone reconstruction specification with embedded exact production source; canonical Bullish direction`  
+**Target Direction:** `bullish`  
+**Opposite/Order Direction:** `bearish`  
 **Primary computational example timeframe:** any integer timeframe >= 1 second; 30s is the project validation timeframe but is not hardcoded  
 **Internal timezone:** `Asia/Tehran`  
-**Mirror Contract:** `Bearish is not an independently drifting algorithm. It is the exact directional mirror of canonical Bullish: Low↔High, minimum↔maximum, <↔>, FirstRed↔FirstGreen, Bullish↔Bearish; invariant lifecycle/priority/serialization rules do not mirror.`  
+**Mirror Contract:** `Bullish is the canonical directional algorithm. Bearish must be produced by exact directional reflection of every directional price/color rule while invariant lifecycle/priority/serialization rules remain unchanged.`  
 
 > **Normative rule:** This document is written from the current production Source snapshot, not from older Algorithm Reference wording. If an older reference conflicts with this file, this file represents the Source behavior captured by the manifest below. The goal is implementation equivalence: a competent engineer must be able to reconstruct the calculation engine without having the original Source files.
 
 > **4.0.1 exact-mirror correction (2026-09-17):** chained Blue inherited-stop chronology is now identical in Bullish and Bearish. For a stopped Blue, the carried directional extreme is frozen from the stop main candle through the **complete** next same-direction Reaction Breakout main candle, inclusive. Bullish uses minimum Low; Bearish uses maximum High. No direction-specific time-window exception remains.
 
-> **5.0.1 historical-output preservation (2026-09-19):** E calculation ownership and all existing reconciliation winners remain unchanged. A presentation-only historical rescue now preserves an E-parented Blue `Order_B` behavior that was accepted in an earlier authoritative E pass but disappeared only during later reconciliation, provided it is not a hidden intermediate parent of a surviving final E and no higher-priority final E remains active through its decision. Rescued history is appended only after lifecycle/StopAll/OrderAudit decisions and therefore cannot renumber, recolor, re-parent, stop, or otherwise modify previously accepted behaviors.
+> **5.0.1 historical-output preservation (2026-09-19):** E calculation ownership and all existing reconciliation winners remain unchanged. A presentation-only historical rescue now preserves an E-parented Blue Order carrying `reset-leg` / `Order_B` provenance that was accepted in an earlier authoritative E pass but disappeared only during later reconciliation, provided it is not a hidden intermediate parent of a surviving final E and no higher-priority final E remains active through its decision. Rescued history is appended only after lifecycle/StopAll/OrderAudit decisions and therefore cannot renumber, recolor, re-parent, stop, or otherwise modify previously accepted behaviors.
 
 > **5.1.1 S-Red / dominant-Blue StopAll correction (2026-09-19):** The accepted-S reversal gate is family-invariant across market direction. In both Bullish and Bearish calculations, once the current lifecycle has accumulated at least two **dominant Blue behaviors**, the next accepted **S Red** is promoted at its own source to `StopAll1`. The Blue count is not restricted to one same-key label: a dominant progression such as `S Blue → E1 Blue`, `E1 Blue → E2 Blue`, or repeated `E3 Blue` all increases the same cycle count. Lower-priority Blue behaviors that never become the dominant owner do not increment it. Red/Blue family labels and their priority are invariants and therefore are not swapped by Bearish mirroring; only directional price/stop/Reaction geometry mirrors. The promoted S source is no longer published separately because StopAll owns that physical source, all S/E sequence counters reset, and subsequent StopAll numbering begins from this new hard boundary. Existing E-driven `sequence-group-stop` and `stopall-stop` gates remain intact.
+
+
+> **5.1.2 Order-ownership / Bridge-consistency correction (2026-09-20):** One exact `parent-stop` provenance can now influence E calculation through only one physical Order identity. E candidate construction enforces the same single-consumption rule already required by OrderAudit *before* Order-stop deadlines and E representatives are selected: the earliest Order ranked by `(confirmationTime, FirstIndex, BreakIndex)` owns the `parent-stop`; a later physical Order is removed unless it survives through an independent cause such as `reset-leg`. Carried-live provenance and accepted noncanonical bounded `Order_A` geometry (`reactionNumber=0`) are retained in the accepted Order ledger. Whenever later pipeline reconciliation replaces an E branch or restores an independent accepted E root, OrderAudit is synchronized to that final accepted history. Before Bridge serialization, every public S/E/StopAll Order identity must exist in canonical OrderAudit and one exact parent-stop provenance may not map to multiple physical Orders; violation is a hard invariant error rather than a silent inconsistent payload. StopAll calculation code is unchanged in this revision; Section 15F documentation is corrected to the existing direction-invariant `dominant Blue >= 2 + S Red -> StopAll1` implementation.
+
+> **5.2.0 canonical Order_B rebuild (2026-09-20):** The previous Order_B/reset-leg implementation is removed and superseded. Order_B is now an independent formation cause rather than a synonym for native Reaction Mode B. It starts from a Reset of the **same trend direction**, derives the primary trigger extreme from the owner Breakout main candle through the Reset main candle inclusive, waits for the exact lower-timeframe strict break of that extreme, requires only raw opposite-direction Reaction **geometry** inside the closed primary-extreme-source → strict-break-main-candle interval, derives the mirrored other edge on that same closed interval, and assigns the first canonical opposite Reaction after the gate as the physical Order_B. Normal Reset validity/lifecycle/public/Internal status is ignored only for the evidence geometry test. If several valid Order_B origins map to one physical Order, the latest valid Reset-leg cause is authoritative. Bullish/Bearish are exact directional mirrors. Bridge consistency is also presentation-range safe: a public S/E/StopAll may retain the canonical OrderAudit identity/cause it references even when that Order First or accepted A source lies before the requested presentation start.
+
+> **5.3.0 shared accepted Order-stop correction (2026-09-20):** Order confirmation is now explicitly parent-neutral across calculation-accepted behavior state. A physical Order accepted through A, S, E, StopAll, or Reset-leg/Order_B provenance may decide a different open S/E candidate when its exact strict Order stop falls inside that candidate's valid chronology; the creating parent does not have to equal the candidate parent. S reconciliation now uses only accepted physical identity + exact stop chronology and no longer blocks an otherwise-valid Order because it belongs to a newer independent parent. E adds a dedicated post-parent-stop `accepted-live` route for Orders confirmed after the candidate parent stopped, while preserving carried-live for Orders already active at the stop. `accepted-live`/`carried-live` are use provenance only: original parent-stop/reset-leg creation causes remain authoritative in OrderAudit. Hard StopAll/sequence resets remain absolute boundaries. Bullish/Bearish apply the same ownership/chronology rule with only strict price comparisons mirrored.
+
+
+
 
 
 ## 0. How to use this document / reconstruction guarantee
@@ -48,16 +58,15 @@ In project terminology, **only `A`, `S`, `E`, and `StopAll` are behaviors**. `Re
 
 | File | Lines | SHA-256 | Classes | Functions/methods |
 |---|---:|---|---:|---:|
-| `reaction_engine.py` | 2435 | `189bf417542fc7c329086bc3218f5ab5b587612136e67db2757198c65cc55584` | 13 | 78 |
+| `reaction_engine.py` | 2376 | `dfd38eff64de7cbf6ad90b9c981d58167f75ea1dd375fdf2ae503a4e85f720cb` | 13 | 77 |
 | `blue_line_detector.py` | 458 | `6fa01d94bc98060b62bc7e68db0ec24a0b0159727d44043affee7130a9c11448` | 2 | 13 |
 | `a_zone_detector.py` | 775 | `2f54b55e928ffc7016ce8d12d2a7dc0bfa6feb7416b1aeb4b3989391c5a61528` | 3 | 22 |
-| `s_zone_detector.py` | 1363 | `aa73c11a0d0f6c344a3c340e3cae72eecddcad756ec5094871e2c0ceb04bd82a` | 2 | 43 |
-| `e_zone_detector.py` | 2616 | `5e2fbea9b2685737b209fe45e630f746b0e316506e901b308b6bdb2e94425eb2` | 2 | 67 |
-| `lifecycle_engine.py` | 1629 | `ae80525bfbfad62a2ed21a7c0192b921a1301c239c8ca8795963e49df4b32d87` | 2 | 39 |
-| `trading_pipeline.py` | 1802 | `90e5219830948c49502b9fbf2f69a3bc3929d844e082cf7f9527dc2a240465a0` | 6 | 37 |
+| `s_zone_detector.py` | 1344 | `3b1440f6e776c143babd93d817ac7c3bc3adbb80900797e25d44342932698185` | 2 | 43 |
+| `e_zone_detector.py` | 2690 | `1d40da3c66235fd6abd88073bb8fb25a073d1f721872d19995f16237efb808d0` | 3 | 70 |
+| `lifecycle_engine.py` | 1634 | `253eb154443033b6fee5fc05644ff4348ee039201b0da857ad87a78414ac258c` | 2 | 39 |
+| `trading_pipeline.py` | 1895 | `5f4893ea973c0aaac35d28b376edc37c3dbddb5d9bcc861b5b6fec257675652c` | 6 | 37 |
 | `direction_policy.py` | 70 | `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea` | 1 | 6 |
 | `core_utils.py` | 29 | `3dae390ae77b72965f5799f7c132c4eba203775d5e72761fd7dd60c90f8578de` | 0 | 3 |
-
 
 The embedded source appendix reproduces these files byte-for-byte as UTF-8 text (excluding filesystem metadata). Section 27 provides an integrity/extraction procedure.
 
@@ -65,25 +74,25 @@ The embedded source appendix reproduces these files byte-for-byte as UTF-8 text 
 
 | Module | Source version | Lines | SHA-256 |
 |---|---:|---:|---|
-| `reaction_engine.py` | `9.5.2` | 2435 | `189bf417542fc7c329086bc3218f5ab5b587612136e67db2757198c65cc55584` |
+| `reaction_engine.py` | `9.6.0` | 2376 | `dfd38eff64de7cbf6ad90b9c981d58167f75ea1dd375fdf2ae503a4e85f720cb` |
 | `blue_line_detector.py` | `2.3.0` | 458 | `6fa01d94bc98060b62bc7e68db0ec24a0b0159727d44043affee7130a9c11448` |
 | `a_zone_detector.py` | `1.6.3` | 775 | `2f54b55e928ffc7016ce8d12d2a7dc0bfa6feb7416b1aeb4b3989391c5a61528` |
-| `s_zone_detector.py` | `4.13.1` | 1363 | `aa73c11a0d0f6c344a3c340e3cae72eecddcad756ec5094871e2c0ceb04bd82a` |
-| `e_zone_detector.py` | `6.6.3` | 2616 | `5e2fbea9b2685737b209fe45e630f746b0e316506e901b308b6bdb2e94425eb2` |
-| `lifecycle_engine.py` | `1.11.1` | 1629 | `ae80525bfbfad62a2ed21a7c0192b921a1301c239c8ca8795963e49df4b32d87` |
-| `trading_pipeline.py` | `1.2.5` | 1802 | `90e5219830948c49502b9fbf2f69a3bc3929d844e082cf7f9527dc2a240465a0` |
+| `s_zone_detector.py` | `4.14.0` | 1344 | `3b1440f6e776c143babd93d817ac7c3bc3adbb80900797e25d44342932698185` |
+| `e_zone_detector.py` | `6.8.0` | 2690 | `1d40da3c66235fd6abd88073bb8fb25a073d1f721872d19995f16237efb808d0` |
+| `lifecycle_engine.py` | `1.11.2` | 1634 | `253eb154443033b6fee5fc05644ff4348ee039201b0da857ad87a78414ac258c` |
+| `trading_pipeline.py` | `1.3.1` | 1895 | `5f4893ea973c0aaac35d28b376edc37c3dbddb5d9bcc861b5b6fec257675652c` |
 | `direction_policy.py` | `1.0.0` | 70 | `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea` |
 | `core_utils.py` | `1.0.0` | 29 | `3dae390ae77b72965f5799f7c132c4eba203775d5e72761fd7dd60c90f8578de` |
 
-A rebuild intended to reproduce this specification should preserve the semantics of this exact source snapshot. The SHA-256 values are audit identifiers only; they are not used at runtime.
+A rebuild intended to reproduce this specification must preserve the semantics of this exact source snapshot. The SHA-256 values are audit identifiers only; they are not used at runtime.
 
 ## 2. System architecture and authoritative stage order
 
 The engine is a deterministic multi-stage calculation pipeline. The stages are:
 
-`RAW normalization → both-direction Reaction/Reset geometry → Internal-Reaction ownership → Bearish Blue → Bearish A → Bearish S + stopped-A Order audit → Bearish E + Order reconciliation → lifecycle hierarchy → StopAll → final A/S/E visibility → public serialization`.
+`RAW normalization → both-direction Reaction/Reset geometry → Internal-Reaction ownership → Bullish Blue → Bullish A → Bullish S + stopped-A Order audit → Bullish E + Order reconciliation → lifecycle hierarchy → StopAll → final A/S/E visibility → public serialization`.
 
-Even when only `Bearish` output is requested, both Bullish and Bearish **Reaction** streams are required whenever behavior modules are active, because S/E Orders use the opposite direction's Reaction/Reset geometry. Do not replace this with a one-direction shortcut.
+Even when only `Bullish` output is requested, both Bullish and Bearish **Reaction** streams are required whenever behavior modules are active, because S/E Orders use the opposite direction's Reaction/Reset geometry. Do not replace this with a one-direction shortcut.
 
 When E is enabled and S is enabled, the pipeline first builds full-RAW geometry and full-range behavior state, performs S/E/lifecycle reconciliation, and only then filters objects to the requested presentation main-candle indexes.
 
@@ -119,19 +128,19 @@ Epoch timestamps are converted to `Asia/Tehran`, then held internally as naive d
 
 `GREEN` iff `close >= open`; otherwise `RED`. Equality/Doji is therefore always GREEN. This rule is global and must not be mirrored or changed.
 
-## 4. Direction policy for Bearish
+## 4. Direction policy for Bullish
 
-| Semantic | Bearish value |
+| Semantic | Bullish value |
 |---|---|
-| Trend extreme attribute | `high` (High) |
-| Opposite extreme attribute | `low` (Low) |
-| Strict stop/cross | `High > level` |
-| Better directional extreme | larger / maximum |
-| Reaction First color | `GREEN` |
-| Context color | `RED` |
-| Reaction confirmation | `Low < BoxBottom` |
-| Opposite Order direction | `bullish` |
-| Scale-strike confirming candle color | `RED` |
+| Trend extreme attribute | `low` (Low) |
+| Opposite extreme attribute | `high` (High) |
+| Strict stop/cross | `Low < level` |
+| Better directional extreme | smaller / minimum |
+| Reaction First color | `RED` |
+| Context color | `GREEN` |
+| Reaction confirmation | `High > BoxTop` |
+| Opposite Order direction | `bearish` |
+| Scale-strike confirming candle color | `GREEN` |
 
 A strict cross never accepts equality.
 
@@ -147,7 +156,7 @@ The canonical lower window is half-open `[start,end)`. Exact inclusive endpoints
 
 ### 5.3 Reaction confirmation time
 
-For Bearish, scan the Reaction Break main candle from `intrabar_start` when enabled, otherwise from Break candle open, and return the first lower event satisfying `Low < BoxBottom`. If no lower event is available/found, the Break main timestamp is the fallback.
+For Bullish, scan the Reaction Break main candle from `intrabar_start` when enabled, otherwise from Break candle open, and return the first lower event satisfying `High > BoxTop`. If no lower event is available/found, the Break main timestamp is the fallback.
 
 The A engine intentionally calls confirmation with `use_intrabar_start=False`; S/E/public Reaction chronology uses the exact intrabar start when present.
 
@@ -155,7 +164,7 @@ The A engine intentionally calls confirmation with `use_intrabar_start=False`; S
 
 If Reset has `secondTime`, that exact lower timestamp is authoritative; otherwise use its main display time/timestamp.
 
-## 6. Reaction and Reset engine — Bearish
+## 6. Reaction and Reset engine — Bullish
 
 ### 6.1 Core Reaction object
 
@@ -163,10 +172,10 @@ A Reaction Candidate stores First, BoxTop provenance/value, BoxBottom provenance
 
 ### 6.2 Initial Mode-A detection
 
-The first proven Leg-Start is discovered with the directional detector. For Bearish:
+The first proven Leg-Start is discovered with the directional detector. For Bullish:
 
-- First must be `GREEN` and is normally preceded by `RED` context.
-- The context run is extended backward across consecutive `RED` candles.
+- First must be `RED` and is normally preceded by `GREEN` context.
+- The context run is extended backward across consecutive `GREEN` candles.
 - Candidate outer confirmation edge and inner/opposite edge are derived from the complete local leg according to the formulas below.
 - A frozen leg boundary may invalidate Mode A before confirmation.
 
@@ -195,7 +204,7 @@ Public serialization uses a clone/frozen public Candidate. When the opposite edg
 
 Once a prior confirmed Reaction has an opposite boundary, a strict directional break of that boundary is a Reset. If Reset and a waiting candidate's confirmation are both possible in one main candle, compare exact lower events. Reset wins when its first strict event occurs before or at the confirmation event under the detector's ordering rule.
 
-For Bearish, Reset condition is `High > previous confirmed BoxTop`.
+For Bullish, Reset condition is `Low < previous confirmed BoxBottom`.
 
 ### 6.7 Post-confirmation same-Break Reset
 
@@ -209,11 +218,11 @@ If no post-confirmation Reset exists and the Break candle has the required new-F
 
 ### 6.9 Normal Mode-B search
 
-After a confirmed Bearish Reaction, keep a running trend-side outer extreme. When a `GREEN` candle becomes eligible:
+After a confirmed Bullish Reaction, keep a running trend-side outer extreme. When a `RED` candle becomes eligible:
 
-- Bearish: BoxBottom = min(running trough, FirstGreen Low); BoxTop = maximum High from the BoxBottom source (exclusive when earlier) through FirstGreen.
+- Bullish: BoxTop = max(running peak, FirstRed High); BoxBottom = minimum Low from the BoxTop source (exclusive when earlier) through FirstRed.
 - While waiting, update the opposite edge only if a new more-extreme value is made.
-- Confirm strictly with `Low < BoxBottom`.
+- Confirm strictly with `High > BoxTop`.
 
 ### 6.10 Direct same-direction recovery after Reset
 
@@ -221,11 +230,11 @@ A Reset reopens Mode A in the **same requested direction**. Opposite-direction p
 
 ### 6.11 Frozen owner boundary for direct/Order geometry
 
-Mode-A/direct post-Reset geometry is dead if the frozen owning leg boundary is strictly broken before confirmation. Bullish uses floor invalidation before `High > BoxTop`; Bearish uses ceiling invalidation before `Low < BoxBottom`. Same-finest-event tie is invalidation-first. This rule also applies to bounded parent-stop and Reset-leg Order geometry.
+Mode-A/direct post-Reset geometry is dead if the frozen owning leg boundary is strictly broken before confirmation. Bullish uses floor invalidation before `High > BoxTop`; Bearish uses ceiling invalidation before `Low < BoxBottom`. Same-finest-event tie is invalidation-first. This rule applies to canonical/direct parent-stop Order geometry. Order_B evidence geometry is deliberately geometry-only and therefore does not apply normal Reset/invalidation acceptance; the final physical Order_B must still be a canonical opposite Reaction.
 
 ### 6.12 Canonical Order stop geometry
 
-An Order is always an opposite-direction Reaction (`Bullish` for this Bearish behavior stream).
+An Order is always an opposite-direction Reaction (`Bearish` for this Bullish behavior stream).
 
 - Order Mode A: find the true leg outer boundary from its anchor/context through Break inclusive. For Bearish Order use maximum High; for Bullish Order use minimum Low. Context scan extends backward over the Order's context color.
 - Order Mode B: inherit the previous healthy opposite Reaction semantic outer edge: Bearish Order uses previous BoxTop; Bullish Order uses previous BoxBottom.
@@ -244,39 +253,39 @@ After both directional Reaction streams are calculated, build public box/confirm
 3. its published box is geometrically contained in the opposite published box; and
 4. every lower event from inner First through inner confirmation stays inside the outer public box.
 
-Internal Reaction evidence remains calculation-valid. The only explicit downstream prohibition is the scoped internal Reset-leg **Mode-B Order_B** rule described later.
+Internal Reaction evidence remains calculation-valid. Order_B evidence geometry explicitly ignores Internal/public status. A separate downstream lifecycle filter remains narrowly scoped to a **native Mode-B, behavior-internal physical Order whose surviving causes are all Reset-leg**; that filter occurs after formation/cause merging.
 
-## 7. Blue Line engine — Bearish
+## 7. Blue Line engine — Bullish
 
 ### 7.1 Fibonacci level
 
-`F = BoxBottom + 0.618*(reference-BoxBottom)`.
+`F = BoxTop - 0.618*(BoxTop-reference)`.
 
 ### 7.2 Scale strikes
 
-Process each Reaction from First through Break inclusive. The comparison extreme is the last confirmed strike extreme, or Fibonacci level if none. A new pending strike appears when the current High is strictly more directional (larger / maximum) than the comparison extreme. If a still more directional value appears before confirmation, replace the pending strike.
+Process each Reaction from First through Break inclusive. The comparison extreme is the last confirmed strike extreme, or Fibonacci level if none. A new pending strike appears when the current Low is strictly more directional (smaller / minimum) than the comparison extreme. If a still more directional value appears before confirmation, replace the pending strike.
 
-A pending strike confirms when a main candle is `RED`. If a pending strike remains at the Break, inspect lower events up to strict Reaction confirmation and confirm it intrabar only when eligible chronology supports it.
+A pending strike confirms when a main candle is `GREEN`. If a pending strike remains at the Break, inspect lower events up to strict Reaction confirmation and confirm it intrabar only when eligible chronology supports it.
 
 ### 7.3 Scale Blue emission
 
 A Scale Blue candidate exists when this Reaction's confirmed strike count is greater than the previous Reaction's strike count. Emit it only if there has never been a Blue, or at least one healthy Reaction has completed since the last Blue. Source = decisive last strike.
 
-Line drawing price: `High - (High-Low)/3`. `sourceExtreme` is the semantic stop extreme; drawing price does not own stops.
+Line drawing price: `Low + (High-Low)/3`. `sourceExtreme` is the semantic stop extreme; drawing price does not own stops.
 
 ### 7.4 Reset Blue
 
-A Reset belonging to a Reaction can create Reset Blue only under the same spacing rule: after an existing Blue there must be at least one healthy Reaction since the previous Blue. Source = Reset main candle. `sourceExtreme = High`. Line drawing price: `High - (High-Low)/5`. `brokenLevel = Reset.brokenLevel`.
+A Reset belonging to a Reaction can create Reset Blue only under the same spacing rule: after an existing Blue there must be at least one healthy Reaction since the previous Blue. Source = Reset main candle. `sourceExtreme = Low`. Line drawing price: `Low + (High-Low)/5`. `brokenLevel = Reset.brokenLevel`.
 
 ### 7.5 Reset Blue double-stop validity
 
-A Reset Blue is `calculation_valid=false` when all are true: a previous Blue exists; the previous Blue's first strict stop in the inspected interval occurs on this Reset's main index; and this Reset candle strictly crosses the previous Blue's semantic source extreme in the direction (`High > level`). Such an invalid Blue is hidden from normal public Blue output but retained as structural evidence for the special double-stop A route.
+A Reset Blue is `calculation_valid=false` when all are true: a previous Blue exists; the previous Blue's first strict stop in the inspected interval occurs on this Reset's main index; and this Reset candle strictly crosses the previous Blue's semantic source extreme in the direction (`Low < level`). Such an invalid Blue is hidden from normal public Blue output but retained as structural evidence for the special double-stop A route.
 
 ### 7.6 Internal Blue
 
 Blue is internal if its owning Reaction is internal, or if both its semantic `sourceExtreme` and rendered `linePrice` lie strictly inside the same protected healthy Reaction interior at the relevant time. Drawing offset alone never changes ownership. Internal Blue remains calculation evidence but is filtered from public Blue serialization.
 
-## 8. A engine — Bearish
+## 8. A engine — Bullish
 
 ### 8.1 Blue state and stop
 
@@ -284,7 +293,7 @@ Only calculation-valid Blue Lines enter ordinary Blue states. Blue ordinal is ba
 
 Scale Blue formation = its owning Reaction Break main index and exact Reaction confirmation event; stop scanning starts at that exact event. Reset Blue formation = Reset source index and the first exact strict lower event crossing its `brokenLevel`; its stop scanning starts at the next main-candle boundary (`source main time + timeframe`).
 
-A Blue stop is the first strict `High > level` against `sourceExtreme`.
+A Blue stop is the first strict `Low < level` against `sourceExtreme`.
 
 ### 8.2 Ordinary adjacent-Blue pair
 
@@ -293,23 +302,23 @@ Ordinary A pairs adjacent valid Blue states. A third Blue formation can expire a
 The pair's trigger is resolved by `_pair_trigger` semantics:
 
 1. Blue-1 must have a strict stop.
-2. Prefer an inherited/chained stop level when Blue-1 has an aligned valid Bearish Reaction before Blue-2 forms.
+2. Prefer an inherited/chained stop level when Blue-1 has an aligned valid Bullish Reaction before Blue-2 forms.
 3. Otherwise if Blue-1 stopped before Blue-2 formed, freeze the directional extreme between Blue-1 stop and Blue-2 source, then test crossing during Blue-2 formation; if not crossed, wait for Blue-2's own stop and then the continuation level crossing.
 4. If Blue stops overlap or occur after Blue-2 formation, order the two strict stop events. Exact-time tie is deterministically ordered by stop level (`higher` first in Bullish via `-level`, `lower` first in Bearish via `level` in the Source sort key), then trigger at the second stop event; otherwise wait after the second stop for a strict crossing of the first stop event extreme.
 
-The first validating Bearish Reaction must have confirmation `>= triggerEventTime` and First `>= max(Blue1StopTime, Blue2StopTime)`.
+The first validating Bullish Reaction must have confirmation `>= triggerEventTime` and First `>= max(Blue1StopTime, Blue2StopTime)`.
 
 ### 8.3 Inherited/chained Blue stop
 
-A prior Blue may carry a new continuation stop from the first aligned Bearish Reaction whose First is strictly after the applicable window start and whose Break is before the current Blue formation.
+A prior Blue may carry a new continuation stop from the first aligned Bullish Reaction whose First is strictly after the applicable window start and whose Break is before the current Blue formation.
 
-For a **chained** stopped Bearish Blue, the inherited-stop extreme range ends at the **end of the complete next Bearish Reaction Breakout main candle** (`breakTime + timeframe - 1 microsecond`). This exactly mirrors Bullish; the directional extreme is `maximum High` rather than `minimum Low`.
+For a **chained** stopped Bullish Blue, the inherited-stop extreme range ends at the **end of the complete next Bullish Reaction Breakout main candle** (`breakTime + timeframe - 1 microsecond`). This complete-Breakout-candle window is the canonical rule that Bearish mirrors exactly.
 
-The inherited level is `maximum High` over that exact source interval; its source index/time are preserved. If a chained/inherited level exists, the pair triggers only after Blue-2 formation strictly crosses that inherited level.
+The inherited level is `minimum Low` over that exact source interval; its source index/time are preserved. If a chained/inherited level exists, the pair triggers only after Blue-2 formation strictly crosses that inherited level.
 
 ### 8.4 A exact-confirmation source ownership
 
-The A candidate opens on the trigger main candle. The validating Reaction confirms the candidate, but prices after exact confirmation in that same Break candle belong to later chronology. Select A `price/source` as the `maximum High` from **trigger main-candle open through exact validating Reaction confirmation inclusive**. Do not use later remainder prices.
+The A candidate opens on the trigger main candle. The validating Reaction confirms the candidate, but prices after exact confirmation in that same Break candle belong to later chronology. Select A `price/source` as the `minimum Low` from **trigger main-candle open through exact validating Reaction confirmation inclusive**. Do not use later remainder prices.
 
 ### 8.5 Cycle and adjacent reuse
 
@@ -317,23 +326,23 @@ After A is accepted, its validating Reaction Break closes the current Blue pair 
 
 ### 8.6 Special double-stop A
 
-An invalid Reset Blue may pair with the most recent preceding valid Blue. On the invalid Blue's formation main candle, the previous valid Blue `sourceExtreme` must be strictly crossed within that candle. That exact crossing is the trigger. The first validating Bearish Reaction must confirm at/after trigger and have First at/after invalid Blue formation. A source is selected using the exact-confirmation rule above.
+An invalid Reset Blue may pair with the most recent preceding valid Blue. On the invalid Blue's formation main candle, the previous valid Blue `sourceExtreme` must be strictly crossed within that candle. That exact crossing is the trigger. The first validating Bullish Reaction must confirm at/after trigger and have First at/after invalid Blue formation. A source is selected using the exact-confirmation rule above.
 
 Special A is removed if it uses a validating Reaction already consumed by ordinary A. A special A can also suppress later ordinary A candidates that reuse its consumed Blue ordinals. A prior ordinary A whose first strict stop belongs to the current special lifecycle can invalidate the special candidate as defined by `_a_was_stopped_before`.
 
-## 9. S engine — Bearish
+## 9. S engine — Bullish
 
-S begins only after a calculation-eligible A strictly stops on `High > level` against A price. The exact lower event is `aStopEventTime`; its containing main candle is `aStopTime/index`.
+S begins only after a calculation-eligible A strictly stops on `Low < level` against A price. The exact lower event is `aStopEventTime`; its containing main candle is `aStopTime/index`.
 
 ### 9.1 First opposite Order after A stop
 
-Select the earliest canonical `Bullish` Reaction whose First main index is not before the A-stop main index and whose exact confirmation is strictly after `aStopEventTime`. Rank by `(confirmationTime, FirstIndex, BreakIndex)`. The canonical Reaction stream is authoritative; bounded reconstruction may not skip it.
+Select the earliest canonical `Bearish` Reaction whose First main index is not before the A-stop main index and whose exact confirmation is strictly after `aStopEventTime`. Rank by `(confirmationTime, FirstIndex, BreakIndex)`. The canonical Reaction stream is authoritative; bounded reconstruction may not skip it.
 
 The stopped-A Order is also written into OrderAudit with one or more A parent-stop causes.
 
 ### 9.2 Type-3 S (no new Order before decision)
 
-Before the newly selected opposite Order confirmation (or end of range if none), a pre-existing opposite Reaction may Reset after A stop. Use inclusive owner Break → Reset main geometry to select the directional `High` (last candle wins on equal extreme). Find first strict candidate crossing before the deadline. Type-3 is valid only if at least one Bearish Reaction confirms after A stop and no later than that crossing. Type-3 is always `S Blue`, `formationType=type3`, and carries Reset provenance but no Order geometry.
+Before the newly selected opposite Order confirmation (or end of range if none), a pre-existing opposite Reaction may Reset after A stop. Use inclusive owner Break → Reset main geometry to select the directional `Low` (last candle wins on equal extreme). Find first strict candidate crossing before the deadline. Type-3 is valid only if at least one Bullish Reaction confirms after A stop and no later than that crossing. Type-3 is always `S Blue`, `formationType=type3`, and carries Reset provenance but no Order geometry.
 
 ### 9.3 Pre-Order versus post-Order candidate ownership
 
@@ -342,18 +351,18 @@ The legacy geometry classifier compares A-stop candle directional extreme with t
 ### 9.4 Candidate geometry
 
 - Pre-Order Simple candidate: directional extreme from exact A-stop remainder through Order First inclusive; equal extremes in helper variants use the function's declared first/last ownership.
-- Post-Order Simple candidate: directional extreme from opposite Order Break through the aligned first subsequent Bearish Reaction Break inclusive; equal extreme is assigned to the **last** candle.
-- Advanced candidate: when a complete nested Bearish Reaction exists wholly inside the opposite Order before Order confirmation, source the candidate from the Order's opposite semantic box edge (`BoxBottom source` for Bullish trend, `BoxTop source` for Bearish trend); candidate may decide only from the nested trend confirmation onward.
+- Post-Order Simple candidate: directional extreme from opposite Order Break through the aligned first subsequent Bullish Reaction Break inclusive; equal extreme is assigned to the **last** candle.
+- Advanced candidate: when a complete nested Bullish Reaction exists wholly inside the opposite Order before Order confirmation, source the candidate from the Order's opposite semantic box edge (`BoxBottom source` for Bullish trend, `BoxTop source` for Bearish trend); candidate may decide only from the nested trend confirmation onward.
 
 ### 9.5 S decision race
 
-Start at Order confirmation and inspect lower events chronologically. Candidate strict cross uses the Bearish directional extreme (`High > level`). `Order is Bullish, so stop crosses on Low < orderStopLevel`.
+Start at Order confirmation and inspect lower events chronologically. Candidate strict cross uses the Bullish directional extreme (`Low < level`). `Order is Bearish, so stop crosses on High > orderStopLevel`.
 
 At each lower event:
 
 1. if candidate and Order stop both strictly cross in that same event: candidate is invalid, return no S;
 2. else if Order stop crosses first: `S Red`;
-3. else if candidate crosses and either its aligned Reset Blue has formed by that event **or** any ordinary Bearish Reaction confirmed after active behavior start and no later than the event: `S Blue`;
+3. else if candidate crosses and either its aligned Reset Blue has formed by that event **or** any ordinary Bullish Reaction confirmed after active behavior start and no later than the event: `S Blue`;
 4. in pre-Order Simple provisional mode only, an unqualified candidate cross returns `fallback`, abandoning the pre-Order ownership and re-evaluating the normal post-Order Simple/Advanced route.
 
 If no lower data is available, the same logic is applied on main candles, preserving strictness and branch order.
@@ -368,43 +377,70 @@ A special fresh Reset-Blue/Reset-Blue A pair can preempt an already-decided S ow
 
 ### 9.7 Shared accepted Order-stop reconciliation
 
-An already-open S may be decided Red by the first strict stop of a later **calculation-accepted physical Order** before S's current decision event. Arbitrary opposite Reactions are not promoted. Deduplicate accepted Orders by physical `(FirstIndex,BreakIndex)` identity; prefer the richer entry carrying exact stop-cross provenance.
+An already-open S candidate may be decided Red by **any calculation-accepted physical Order**, regardless of which A/S/E/StopAll/Order_B originally created that Order. Parent identity is not an eligibility requirement.
 
-The first accepted Order whose cause is an `S parent-stop` forms a terminal continuation boundary. Orders confirmed after that boundary belong to a newer lifecycle and cannot retroactively hijack the older S. If a winning accepted Order stop exists, freeze S source/price but replace its color with Red, Order provenance, and exact decision chronology.
+Deduplicate accepted Orders by physical `(FirstIndex,BreakIndex)` identity and prefer the richer accepted ledger entry when it already carries exact `stop_cross` chronology. For each S candidate:
 
-## 10. E engine — Bearish
+1. Resolve the accepted Order's exact confirmation and strict Order-stop event using the canonical mirrored Order stop rule.
+2. The Order may have confirmed **before** the S source and remained live, or it may confirm **after** the S source. Both are valid.
+3. Require `orderConfirmation < orderStopEvent` and `S.sourceTime <= orderStopEvent < S.currentDecisionEventTime`.
+4. Do **not** require the Order's creation parent to equal the S candidate's parent and do not impose a later parent-specific terminal confirmation boundary.
+5. Rank eligible Orders by `(orderStopEvent, confirmationTime, FirstIndex, BreakIndex)`; the earliest exact strict Order stop wins.
+6. Freeze the existing S source/time/price. Replace only the S family with Red, the winning Order provenance, and the exact decision chronology.
 
-E recursively consumes accepted S and E parents. E uses the same `high` directional stop semantics and opposite `Bullish` Order geometry.
+`accepted-live`/shared use never rewrites Order creation provenance. The physical Order keeps its original accepted `parent-stop` and/or `reset-leg` cause in OrderAudit. Arbitrary opposite Reactions that were never accepted as physical Orders are never promoted by this rule.
+
+## 10. E engine — Bullish
+
+E recursively consumes accepted S and E parents. E uses the same `low` directional stop semantics and opposite `Bearish` Order geometry.
 
 ### 10.1 Parent strict stop
 
-For an S/E parent, find the first strict `High > level` of its `price` starting from the parent's relevant source/decision chronology. The exact lower event and containing main index are parent-stop provenance.
+For an S/E parent, find the first strict `Low < level` of its `price` starting from the parent's relevant source/decision chronology. The exact lower event and containing main index are parent-stop provenance.
 
 ### 10.2 Order routes
 
-E order discovery can produce these structural routes, which must all converge on one physical Order identity/provenance model:
+E Order resolution is physical-Order based. Four use routes can participate in the same E decision race, all keyed by `(FirstIndex,BreakIndex)`:
 
-- **parent-stop/direct Order**: the first healthy opposite Order after the parent strict stop/gate;
-- **carried-live Order**: an already accepted physical Order remains live and may own the next E decision when chronology permits;
-- **Reset-leg Order_B**: opposite Reset geometry opens a bounded Mode-B Order route after its boundary crossing;
-- **direct fresh trend-leg exception**: after an E-parent stop, a newly confirmed non-internal same-direction trend Reaction can establish a fresh leg before direct opposite Order search as encoded by current E logic;
-- synthetic/local geometry is only a reconstruction/search aid and may not supersede an earlier canonical physical Order.
+- **parent-stop/direct Order_A cause** — a new opposite Bearish Order created directly because the current accepted parent strictly stopped;
+- **carried-live accepted Order** — an already accepted Order that confirmed before the current parent stop and is still live at that stop;
+- **post-stop accepted-live Order** — an already accepted physical Order whose exact confirmation occurs after the current parent stop. Its creation parent may be A, S, E, StopAll, or independent Reset-leg/Order_B structure; it does **not** have to equal the candidate parent;
+- **Reset-leg Order_B cause** — the canonical same-direction Bullish Reset-leg formation described below.
 
-All candidate Orders are merged by physical `(FirstIndex,BreakIndex)`. Cause sets are merged rather than creating duplicate physical Orders.
+`Order_A`/`Order_B` are creation causes, not native Reaction modes. `carried-live` and `accepted-live` are **use provenance only**. They never relabel the physical Order's original accepted creation cause in OrderAudit.
 
-### 10.3 Reset-leg geometry
+For a post-stop accepted-live Order to participate, its exact confirmation must be strictly after the current parent stop, its own strict Order stop must occur strictly after confirmation, and no hard sequence reset/StopAll boundary may lie in `(parentStopEvent, orderStopEvent]`. Bullish/Bearish use the same chronology rule; only the canonical strict Order-stop price comparison mirrors.
 
-A Reset leg uses the inclusive opposite owner Break → Reset main interval and the Bearish directional stop extreme. A boundary must be strictly crossed after the Reset to open the route. The first structurally healthy bounded opposite Order geometry after that gate wins. A non-canonical First already open in the main candle containing the lower gate belongs to pre-gate chronology; canonical ownership may begin on the gate candle as specified by the geometry resolver.
+All routes enter the same stop-event race. One exact parent-stop creation cause still belongs to only one physical Order; sharing an already accepted Order as confirmation does not consume or duplicate its creation provenance.
 
-Internal-Reaction prohibition is **not global**: reject only a Reset-leg **Mode-B** Order when its physical Order Reaction is internal and all accepted causes are Reset-leg. Parent-stop and carried-live Orders remain valid even if geometry is internal. Mode-A geometry with historical Reset provenance is not retroactively deleted.
+### 10.3 Canonical Order_B Reset-leg formation — Bullish
+
+Order_B is built from a **Bullish Reaction Reset**, not from a Bearish/opposite Reset:
+
+1. Take one Bullish Reset and resolve its owning Bullish Reaction through `from_first_idx`.
+2. From the owner Reaction's **Breakout main candle through the Reset main candle, inclusive**, find the **maximum High**. This is the Reset-leg ceiling / trigger level. The first main candle that owns that maximum is the ceiling-source candle.
+3. Starting at the exact Reset event, scan lower-timeframe data for the first strict `High > ceiling`. Equality does not qualify. Preserve both the exact lower event and its containing main candle.
+4. Define the evidence interval as the **closed main-candle range from the ceiling-source candle through the strict-break main candle, inclusive**.
+5. In that closed interval, require at least one **raw Bearish Reaction geometry**. Geometry alone is sufficient: normal Reset validity, lifecycle acceptance, public visibility and Internal-Reaction status are deliberately ignored for this evidence test.
+6. Over the same closed interval, compute the **minimum Low**. This is the Reset-leg floor. The first candle that owns the minimum is retained as its source.
+7. After the strict-break gate, select the **first canonical Bearish Reaction** whose First belongs to the gate main candle or a later main candle and whose exact confirmation is strictly after the exact lower-timeframe ceiling break. That canonical Reaction is the physical `Order_B`.
+8. Store Order_B cause provenance as `reset-leg(resetTime, boundaryBreakTime)`, where the legacy public field `boundaryBreakTime` now means the exact strict break of the Reset-leg **ceiling**. If the same physical Order has several valid Order_B origins, the latest valid `(resetTime, strictBreakEventTime)` is authoritative in final OrderAudit.
+
+The scoped lifecycle rule remains separate from formation: after cause merging, an internal native Mode-B Reaction whose only accepted causes are Reset-leg can be filtered from public Order ownership. That filter does **not** change the geometry-only evidence rule above, and a valid parent-stop cause on the same physical Order is not erased.
 
 ### 10.4 Canonical Order stop
 
 Use the shared Reaction chronology's canonical Order stop rule from §6.12. Never reimplement a different S/E stop rule.
 
-### 10.5 E source and decision
+### 10.5 E source, shared accepted Order confirmation, and decision
 
-For each parent-stop + accepted Order combination, the E candidate source is the directional `High` over the engine's inclusive parent-stop/Order interval as defined by `_zone` and `_extreme_between`; source index/time/price are frozen. E decision chronology is derived from the accepted Order stop/cross and parent/sequence gates. Parent, Order, source and decision provenance must all be retained.
+For each stopped parent, E may use a direct/inherited/carried Order or a parent-neutral accepted-live Order. An Order confirming the E does **not** need to have been created by the same parent.
+
+The accepted-live ledger is composed from calculation-accepted stopped-A Orders plus accepted S/E/StopAll/Order_B physical Orders already present in canonical OrderAudit. A post-stop accepted Order is eligible only when its confirmation is after the parent stop, its strict Order stop is later than both confirmation and parent stop, and no hard sequence reset occurs between the parent stop and that Order stop.
+
+Representatives with known strict Order stops compete by exact stop chronology; earliest Order stop wins, with deterministic First-index tie handling. The E source is then the directional `minimum Low` over the complete main-candle interval from the parent-stop main candle through the winning Order-stop main candle, inclusive. Lower-timeframe data decides **when** stops happen; it does not truncate either boundary main candle's OHLC.
+
+`accepted-live` is use provenance only. Final OrderAudit must restore/preserve the winner's original accepted creation cause from the prior accepted ledger or stopped-A ledger. If no original accepted creation cause can be proven, the system must not fabricate one.
 
 ### 10.6 Recursive chains
 
@@ -439,13 +475,20 @@ This rule prevents a provisional same-source S from retroactively recoloring a v
 
 ## 11. OrderAudit contract
 
-OrderAudit is identity-based, not cause-based. One physical Order `(FirstIndex,BreakIndex)` can have multiple accepted causes.
+OrderAudit is identity-based, not cause-based. One physical Order `(FirstIndex,BreakIndex)` can have multiple accepted causes, and `Order_A`/`Order_B` cause classification is independent of native Reaction `mode`.
 
 1. Merge stopped-A audit and E audit entries by physical identity.
 2. Filter A causes to calculation-accepted A sources.
-3. Resolve/retain exact strict Order stop crossing (`stopHit*`).
-4. One exact parent-stop provenance `(parentType,parentFamily,eventTime,parentSourceTime)` may be consumed by only one physical Order: the earliest ranked by `(confirmationTime,FirstIndex,BreakIndex)`. A later Order may remain only if it has another independent cause such as Reset-leg.
-5. After causes are merged, reject an internal Mode-B Order only when all its surviving causes are Reset-leg. Do not erase a valid parent-stop cause merely because the same physical Order also has internal Reset provenance.
+3. Resolve/retain exact strict Order stop crossing (`stopHit*`) from canonical Reaction stop geometry.
+4. One exact parent-stop provenance `(parentType,parentFamily,eventTime,parentSourceTime)` may be consumed by only one physical Order: the earliest ranked by `(confirmationTime,FirstIndex,BreakIndex)`. A later Order may remain only if it has another independent cause such as Reset-leg/Order_B.
+5. For Reset-leg/Order_B, only identities already relevant to accepted S/E/A Order state are enriched into final OrderAudit. If the same physical Order has several valid Order_B origins, keep the latest `(resetTime, strictBreakEventTime)` cause and remove older Reset-leg causes for that identity.
+6. After causes are merged, keep the existing narrow lifecycle filter: reject a behavior-internal physical Order with native `mode=B` only when every surviving cause is Reset-leg. A valid parent-stop cause on the same identity prevents this Reset-leg-only rejection.
+
+The public `boundaryBreakTime` field name is retained for compatibility. In V5.2.0 Reset-leg causes it is the exact lower-timeframe strict break of the primary Reset-leg trigger extreme (Bearish floor / Bullish ceiling), not the old opposite-Reset boundary semantics.
+
+`carried-live` and `accepted-live` are use provenance only and are never serialized as replacement creation causes in OrderAudit. Original accepted parent-stop/reset-leg causes are recovered from the accepted ledgers; if none can be proven, no cause is fabricated.
+
+OrderAudit uses full-RAW accepted A provenance. Presentation clipping cannot delete an Order identity required by a public S/E/StopAll inside the requested range: `prepare_order_audit(..., required_identities=...)` keeps those referenced identities even if their Order First lies before `start_index`.
 
 ## 12. Lifecycle hierarchy and calculation eligibility
 
@@ -457,7 +500,7 @@ A/S/E/StopAll native detection may proceed independently, but final calculation 
 
 ### 12.1 A after stopped behavior
 
-For each accepted S/E/StopAll strict stop, assign the transition to the containing main candle. When evaluating a later A, choose the most recent relevant stopped transition first; priority/number only resolve owners stopped on that same transition. If A price is not strictly beyond the dominant stopped owner's price in Bearish direction, A remains valid. If it is strictly beyond, it is the equal/lower leg-head candidate and is normally calculation-invalid while consuming the closed transition so later genuine legs may form.
+For each accepted S/E/StopAll strict stop, assign the transition to the containing main candle. When evaluating a later A, choose the most recent relevant stopped transition first; priority/number only resolve owners stopped on that same transition. If A price is not strictly beyond the dominant stopped owner's price in Bullish direction, A remains valid. If it is strictly beyond, it is the equal/lower leg-head candidate and is normally calculation-invalid while consuming the closed transition so later genuine legs may form.
 
 A is also treated as the smallest owner for A→A: if new A `triggerEventTime <= previous A strict-stop event`, it overlaps the old transition and is invalid; if trigger starts strictly after the stop, old A does not block it (other hierarchy rules still apply).
 
@@ -477,9 +520,9 @@ StopAll consumes lifecycle-visible S and reconciled E chronologically. The invar
 
 Maintain the existing dominant S key/count and E key/count plus a separate `blue_dominant_count` for the current lifecycle cycle. The existing same-key counters still own the legacy sequence-group rule. `blue_dominant_count` instead counts every accepted Blue behavior that actually becomes or extends the dominant Blue owner: for example `S Blue → E1 Blue` counts as two, `E1 Blue → E2 Blue` increments again, and a repeated dominant `E3 Blue` increments again. A lower-priority Blue behavior that remains nested under a stronger owner does not increment the count. If Red takes dominant ownership before the gate fires, the Blue dominant count resets.
 
-For **Bearish**, exactly as for Bullish, the reversal gate is: current dominant family is **Blue**, `blue_dominant_count >= 2`, then an accepted **S Red** arrives. Before ordinary S-priority replacement, promote that S itself to `StopAll1` with `gateType='opposite-s-group-stop'`. The StopAll source/price/decision are the accepted S source/price/decision. The stopped-group metadata records the current dominant Blue owner plus the cumulative dominant-Blue count. The promoted StopAll becomes the only active StopAll for the new lifecycle cycle; prior StopAll objects remain immutable history but cannot influence numbering in the new cycle. Clear S/E sequence counters and `blue_dominant_count` immediately.
+In **both Bullish and Bearish**, the reversal gate is: current dominant family is **Blue**, `blue_dominant_count >= 2`, then an accepted **S Red** arrives. Before ordinary S-priority replacement, promote that S itself to `StopAll1` with `gateType='opposite-s-group-stop'`. The StopAll source/price/decision are the accepted S source/price/decision. The stopped-group metadata records the current dominant Blue owner plus the cumulative dominant-Blue count. The promoted StopAll becomes the only active StopAll for the new lifecycle cycle; prior StopAll objects remain immutable history but cannot influence numbering in the new cycle. Clear S/E sequence counters and `blue_dominant_count` immediately.
 
-The Bearish mirror is only directional price geometry: Bearish strict stops use `High > level` where Bullish uses `Low < level`. Blue/Red family labels and the S-Red trigger are invariant.
+Bearish mirroring changes strict price geometry only (`High > level` versus Bullish `Low < level`); it does **not** change the family condition into Red-group/S-Blue.
 
 Before each new E decision:
 
@@ -490,7 +533,7 @@ Before each new E decision:
 
 After all E events, remaining S events are still ingested so an accepted terminal S can trigger the S-reversal StopAll even when no later E exists.
 
-Each emitted StopAll later receives its own first strict Bearish stop event. A StopAll is a hard historical lifecycle boundary: calculate the full StopAll sequence once from already reconciled E/S state; future sequence state must never retroactively delete/move an earlier StopAll. The resulting StopAll `sourceTime→number` map may inform downstream E audit semantics but must not trigger a fixed-point rebuild of the already-decided prefix.
+Each emitted StopAll later receives its own first strict Bullish stop event. A StopAll is a hard historical lifecycle boundary: calculate the full StopAll sequence once from already reconciled E/S state; future sequence state must never retroactively delete/move an earlier StopAll. The resulting StopAll `sourceTime→number` map may inform downstream E audit semantics but must not trigger a fixed-point rebuild of the already-decided prefix.
 
 For an S-promoted StopAll, Order fields are copied from the accepted S Red formation Order when available. Red/Blue family labels are invariant across directions, so the Bearish gate is still S Red after dominant Blue history.
 
@@ -504,7 +547,7 @@ For an S-promoted StopAll, Order fields are copied from the accepted S Red forma
 6. After all lifecycle, StopAll, Internal-Reaction, and OrderAudit ownership is fixed, append eligible presentation-only historical E rescues. These objects must not feed back into StopAll, active ownership, numbering, family/color reconciliation, S/A visibility, or OrderAudit provenance.
 6. Remove calculation-invalid S identities from final S.
 7. A provenance that straddles the strict stop of the dominant current module is removed unless it rebuilt entirely after the boundary according to `visible_a_zones_after_module_boundaries`.
-8. Internal-Reaction filtering hides **only** forbidden internal Reset-leg Mode-B E/StopAll Orders. A/S and other E/StopAll are not hidden merely because their source point lies inside a healthy Reaction interior.
+8. Internal-Reaction filtering hides **only** forbidden internal native-Mode-B E/StopAll Orders whose surviving Order causes are Reset-leg-only. A/S and other E/StopAll are not hidden merely because their source point lies inside a healthy Reaction interior.
 9. Public Blue output contains only `calculation_valid=true` and `behavior_internal=false` Blue Lines.
 
 ## 15. Direction-specific mirror table
@@ -523,7 +566,7 @@ For an S-promoted StopAll, Order fields are copied from the accepted S Red forma
 | Mode-B Order stop | previous BoxTop | previous BoxBottom |
 | Candidate/behavior stop | Low `<` price | High `>` price |
 
-**Exact mirror rule:** A chained stopped Bearish Blue uses the complete next Bearish Reaction Breakout main candle (`breakTime + timeframe - 1 microsecond`) and freezes the `maximum High`. Bullish uses the identical time window and freezes the `minimum Low`.
+**Exact mirror rule:** A chained stopped Bullish Blue uses the complete next Bullish Reaction Breakout main candle (`breakTime + timeframe - 1 microsecond`) and freezes the `minimum Low`. Bearish uses the identical time window and freezes the `maximum High`.
 
 
 
@@ -547,9 +590,9 @@ prepare_pipeline_state:
         for each requested output direction:
             calculate_full_direction_state(direction)
 
-calculate_full_direction_state(bearish):
-    Blue = detect_blue_lines(bearish, trend Reactions, trend Resets)
-    A = detect_a_zones(bearish, trend Reactions, Blue)
+calculate_full_direction_state(bullish):
+    Blue = detect_blue_lines(bullish, trend Reactions, trend Resets)
+    A = detect_a_zones(bullish, trend Reactions, Blue)
     S_detector = SZoneDetector(trend Reactions, opposite Reactions/Resets, Blue, A)
     S_candidates = S_detector.detect()
 
@@ -590,7 +633,7 @@ finalize_direction_visibility:
     restore independent S-owned E1 roots without rewriting StopAll history
     finalize A/S/E lineage visibility and same-source occupancy
     mark/hide public internal Blue
-    apply scoped internal Reset-leg Mode-B Order prohibition to E/StopAll
+    apply scoped internal native-Mode-B Reset-leg-only Order prohibition to E/StopAll
     prepare and deduplicate OrderAudit
     only now filter objects to requested presentation indexes
     serialize
@@ -600,100 +643,87 @@ finalize_direction_visibility:
 
 E depends on accepted S, accepted Order provenance, invalid A/S ownership, and shared Order-stop decisions. Each pass resolves one dependency. Do not collapse these passes into one speculative E run unless an alternative implementation proves the same fixed inputs and exact output. StopAll is deliberately **not** in a global E↔StopAll fixed-point loop; its accepted prefix is historical and immutable once formed.
 
-## 15B. E Order creation contract — function-level
+## 15B. E Order creation and shared accepted-Order confirmation — function-level
 
-### Parent stop
+### Parent stop / direct Order_A route
 
-For any S/E parent, strict parent stop is `first lower High > parent.price` from the applicable source/range start. The first lower event owns `parentStopEventTime`; map it to a main candle for `parentStopIndex/Time`.
+For any S/E parent, strict parent stop is the first lower-timeframe `Low < parent.price` from the applicable source/range start. The first lower event owns `parentStopEventTime`; map it to a main candle for `parentStopIndex/Time`.
 
-### Reset-leg boundary
+Direct parent-stop search remains separate from Order_B. `_direct_parent_stop_order` and the narrow fresh-trend continuation route may produce a `parent-stop` creation cause. One exact parent-stop provenance can be spent by only one physical Order; `_enforce_single_parent_stop_owner` keeps the earliest `(confirmationTime,FirstIndex,BreakIndex)` owner and strips that cause from later identities unless another independent cause survives.
 
-For an opposite Reset, find the owning opposite Reaction from `from_first_idx`. The Reset leg starts at that owner's Break main candle and ends at the main candle containing the exact Reset event, both inclusive. Boundary is the maximum High across those main candles. Then find the first strict `High > level` of this boundary at/after exact Reset time.
+### Carried-live accepted Orders
 
-A Reset-leg can unlock Order_B only if at least one **non-internal** same-direction trend Reaction confirms from leg start through the strict boundary crossing.
+`_carried_orders_for_parent(parent,parent_stop)` preserves accepted Orders already live inside the current parent lifecycle. Their original creation cause is retained in the ledger; `carried-live` is only use provenance.
 
-### First bounded Order_B after Reset gate
+### Post-stop parent-neutral accepted Orders
 
-Given `(resetTime, boundaryCross, deadline)`:
+`_post_stop_accepted_orders_for_parent(parent,parent_stop)` closes the systemic gap fixed in E `6.8.0`:
 
-1. End search at the last main candle strictly before `deadline`.
-2. Map the exact gate event to a main candle. If a canonical opposite Reaction First genuinely owns that gate candle, the bounded search may begin on that candle; a non-canonical First already open there belongs to pre-gate chronology, so search begins next main candle.
-3. Reject geometry confirming at/after deadline.
-4. Skip any First time in `blocked_order_first_times`.
-5. If a canonical opposite owner is still active, only that owner's own Reset can release it. Trend-side Reset cannot release opposite ownership.
-6. Return only geometry matching an exact published opposite Reaction identity `(FirstIndex,BreakIndex)`. Local Reset geometry is search evidence only and cannot itself create an Order.
+1. Parent identity is deliberately ignored for eligibility.
+2. Scan both accepted stopped-A `initial_order_audit` and the current accepted physical `order_audit` ledger.
+3. Deduplicate by physical Reaction identity `(FirstIndex,BreakIndex)`.
+4. Require exact `confirmationTime > parentStopEventTime`.
+5. Resolve canonical strict Order stop. Require `orderStopEvent > confirmationTime` and `orderStopEvent > parentStopEventTime`.
+6. Reject the shared use if a hard sequence reset/StopAll lies in `(parentStopEventTime, orderStopEvent]`.
+7. Rank physical Orders deterministically by `(orderStopEvent, confirmationTime, -FirstIndex)` for the representative list.
+8. Emit use provenance `accepted-live`; if the physical Order also has accepted Reset-leg provenance, retain `reset-leg` alongside the use marker.
+9. Never create a new parent-stop cause for the current candidate. Final audit recovers the physical Order's original creation provenance from the accepted ledgers.
 
-### Next outer Reset
+The implementation is direction invariant. `_cross_order` supplies the exact mirrored price rule for the opposite Bearish Order.
 
-A later Reset closes the current outer Reset-leg only when the later Reset owner's First is at/before the current Reset time. A Reaction starting after the current Reset is nested and cannot close the outer owner.
+### `OrderBFormation` — canonical Reset-leg state
 
-### Healthy direct geometry after a parent stop
+The E engine precomputes canonical Order_B formations with `_build_order_b_formations()`. Each formation stores Reset time/index, owning Bullish Reaction First/Break indexes, trigger level and source, exact strict-break chronology, the mirrored other-edge extreme/source, raw opposite-geometry identity, and the final canonical Bearish Order Reaction/confirmation.
 
-Search from the main candle containing the exact parent stop, but a First already opened before the lower stop cannot be attributed to the stop. If the active prior opposite Reaction resets before candidate confirmation, restart at that exact Reset and search again. A noncanonical bounded geometry is admissible only on the S→E parent-stop path when the shared gate decision is exactly `continue`; otherwise require canonical identity.
+### Order_B Step 1 — same-direction Reset owner and trigger extreme
 
-### Direct parent-stop Order choice
+`_order_b_reset_leg(reset, reset_time)` resolves the Reset's owning **Bullish Reaction** through `from_first_idx`. Over the closed main-candle interval `owner.break_idx .. reset.index`, `_main_range_extreme` takes the **maximum High**. This is the Reset-leg ceiling; equal extrema preserve the earliest owning main candle.
 
-Compare:
+### Order_B Step 2 — exact strict break
 
-- geometrically healthy direct post-stop candidate;
-- first independent canonical opposite Reaction at/after the gate main time;
-- special bounded `continue` candidate when allowed.
+`_order_b_strict_break(reset_time, level)` begins at the exact Reset chronology and finds the first strict `High > ceiling`. Equality never qualifies.
 
-Prefer a geometric `restart` candidate when a continuous deadline closes before its confirmation under the source condition. Prefer bounded `continue` only when it starts earlier than the independent canonical candidate. If an independent candidate has no strict Order-stop cross and an earlier geometric candidate exists, geometric may win. Otherwise canonical independent wins. Final direct pool is ranked by `(Reaction First time, confirmation time)`.
+### Order_B Step 3 — closed evidence interval and mirrored other edge
 
-### Fresh trend-leg direct Order after stopped E
+Evidence is exactly the closed main-candle range `primary-extreme source .. strict-break main candle`, both endpoints inclusive. `_order_b_opposite_extreme(...)` computes `minimum Low` over the same closed interval.
 
-Only for E-parent continuation: find the first later non-internal same-direction trend Reaction confirmation after parent stop. From that trend Break, bounded opposite geometry may become direct Order_A only if its gate decision is `continue` and its First is strictly after the trend confirmation. Use canonical opposite identity when one exists; otherwise retain the bounded geometry with reaction number 0. This is parent-stop/direct provenance, not Reset-leg Order_B.
+### Order_B Step 4 — raw opposite Reaction geometry only
 
-### Synthetic Reset-leg Orders
+`_order_b_geometry_evidence(...)` searches bounded raw Bearish Reaction geometry only. Normal Reset validity, lifecycle acceptance, public visibility and Internal-Reaction status are not required for this evidence test.
 
-For each eligible opposite Reset after lifecycle start:
+### Order_B Step 5 — physical Order_B after the gate
 
-- build Break→Reset boundary;
-- require strict boundary crossing before next outer Reset;
-- current calculation mode requires aligned non-internal trend Reaction evidence and first canonical bounded Order_B;
-- audit-legacy mode may rediscover only an exact existing canonical opposite identity; it cannot create a new identity.
+`_first_order_b_reaction_after_break(...)` selects the first canonical Bearish Reaction whose First belongs to the gate main candle or later and whose exact confirmation is strictly after the exact lower-timeframe gate event. That canonical Reaction is the physical Order_B; its native mode can be A or B.
 
-### Merging physical Order candidates
+### Order_B Step 6 — cause ownership and latest-cause rule
 
-Physical key is `(FirstIndex,BreakIndex)`. Merging another route adds a cause to the same identity. Canonical stop level/source is recomputed from shared Reaction chronology; exact strict Order-stop crossing is stored. Cause kinds are `parent-stop`, `reset-leg`, and carried-live representation downstream.
+`_order_b_orders(start)` exposes canonical Order_B physical Orders. `_order_b_evidence(...)` and `_enrich_order_audit_reset_causes()` retain only the latest valid `(resetTime,strictBreakEventTime)` Reset-leg cause on one physical Order.
 
-### `order_candidates` exact decision horizon
+### Shared E decision race
 
-```text
-by_geometry = {}
-merge direct parent-stop order if any
-merge fresh-trend direct order when E-parent path allows it
-merge synthetic reset-leg orders
+Direct, inherited, carried-live, post-stop accepted-live, and Reset-leg-capable physical Orders all reduce to Order matches with exact strict stop chronology. Only physical Orders accepted by their own creation path can enter shared accepted-live use; arbitrary opposite Reaction geometry cannot.
 
-provisional_deadline = earliest known strict Order-stop event, else range_end
-provisional_deadline = min(provisional_deadline, continuous_deadline if supplied)
-merge canonical Reset-leg orders whose confirmation <= provisional_deadline
-when a merged Reset-leg Order already has a stop, shrink provisional_deadline to that stop
+The winning Order is the eligible representative with the earliest exact strict Order-stop event under the current continuous/hard-reset deadline. Its parent does not have to match the E candidate parent. Sharing never consumes a second parent-stop creation cause and never rewrites the Order's original owner.
 
-decision_deadline = earliest strict stop across all merged Orders, else range_end
-decision_deadline = min(decision_deadline, continuous_deadline if supplied)
-eligible = Orders with confirmation <= decision_deadline
-sort by (strict stop event or range_end, Reaction First time)
-```
+### Scoped internal-Order visibility rule
 
-`_first_order` is the first sorted candidate that actually has a strict stop crossing.
+Order_B formation itself does not reject internal geometry evidence. Later lifecycle/OrderAudit preparation keeps the narrow filter: a physical Order whose native Reaction `mode=B` is behavior-internal is rejected only when every surviving creation cause is Reset-leg. A valid parent-stop creation cause on the same identity prevents that Reset-leg-only rejection. `accepted-live` is use provenance and does not count as a new creation cause.
 
 ## 15C. E zone construction and recursive chain contract
 
-### Carried/inherited/direct representatives
+### Direct / inherited / carried / accepted-live representatives
 
-For S parent, there may be an explicitly unconsumed inherited Order. For any parent there may be one earliest carried-live Order from the accepted ledger. Register newly discoverable Orders for audit, then compute one direct representative.
+For an S parent there may be an explicitly unconsumed inherited Order. For any parent there may be an already-live carried Order and a post-stop accepted-live Order from the accepted physical Order ledgers. A direct Order remains the normal fresh parent-stop/Order_B search route.
 
-Candidate representatives = direct + first inherited + first carried, but only with known strict stop crossings. Choose minimum by:
+The post-stop accepted-live representative is parent-neutral: it may have been created by A, S, E, StopAll, or Reset-leg/Order_B, provided it is already calculation-accepted and no hard reset lies between the candidate parent stop and its strict Order stop.
 
-`(Order strict-stop event time, -Order FirstIndex)`
-
-Thus earliest Order stop wins; if exact stop time ties, later FirstIndex wins.
+Candidate representatives with known strict stop crossings compete on exact chronology. Earliest strict Order stop wins; deterministic confirmation/First ordering resolves ties. Use provenance never overwrites creation provenance.
 
 ### E decision/source
 
-`decisionEventTime = max(parentStopEventTime, orderStopEventTime)`. Map to main candle for decision index/time. Source ownership is **main-candle based**, not truncated at lower stop seconds: include the complete main candle containing parent stop through the complete main candle containing E decision, inclusive, and select `maximum High`. This complete-candle rule is required even though stop chronology itself is lower-timeframe exact.
+`decisionEventTime = max(parentStopEventTime, winningOrderStopEventTime)`. Map to its main candle for decision index/time. Source ownership is complete-main-candle based: include the main candle containing the parent stop through the main candle containing the winning Order stop, inclusive, and select `minimum Low`. Lower-timeframe chronology decides stop order but never truncates boundary-candle OHLC.
+
+### Provisional chains
 
 ### Provisional chains
 
@@ -724,7 +754,7 @@ Group candidate zones by `sourceIndex`, order groups by earliest `(sourceTime, d
 
 ### Candidate Order validity
 
-A candidate is invalid if `_blocked_by_gate_owned_order` says a later nested direct Order_A lost to a gate-owned initial Order. Additionally, an E-parent Blue Mode-B candidate may be invalidated when its child source is also reachable from an S-owned candidate that decides no later than that child. Primary reconciliation keeps this legacy ownership rule unchanged. Historical-output preservation is handled separately: an E-parented Blue `Order_B` that was accepted during an earlier authoritative E pass may be retained for presentation when a later pass removes it, but only if it is not merely a hidden intermediate parent of a surviving final E and no higher-priority final E remains active through the candidate decision. This rescue never re-enters calculation ownership.
+A candidate is invalid if `_blocked_by_gate_owned_order` says a later nested direct Order_A lost to a gate-owned initial Order. Additionally, an E-parent Blue candidate carrying `reset-leg` / Order_B provenance may be invalidated when its child source is also reachable from an S-owned candidate that decides no later than that child. Primary reconciliation keeps this legacy ownership rule unchanged. Historical-output preservation is handled separately: an E-parented Blue `Order_B` that was accepted during an earlier authoritative E pass may be retained for presentation when a later pass removes it, but only if it is not merely a hidden intermediate parent of a surviving final E and no higher-priority final E remains active through the candidate decision. This rescue never re-enters calculation ownership.
 
 ### Parent active
 
@@ -739,7 +769,7 @@ For E-parent candidate: parent is active if it is the hard sequence-start source
 
 ### Does candidate stop an active E?
 
-Only when candidate decision occurs strictly after prior decision and `new.price > prior.price`.
+Only when candidate decision occurs strictly after prior decision and `new.price < prior.price`.
 
 ### Prevent lower-priority S stealing active continuation
 
@@ -779,7 +809,7 @@ else:
     number = 1
 ```
 
-Remove every strictly stopped active owner from `active`, append numbered winner. If winner source time is a StopAll sequence reset, clear active and set `sequence_start`; otherwise add winner to active. The detector may record future-conflict historical rescue evidence, but such evidence is presentation-only. Across the pipeline's repeated E passes, accepted E-parented Blue `Order_B` history is accumulated; after the final E calculation pass, missing earlier accepted history is eligible for public rescue only when it is not a hidden parent of a surviving final E and is not dominated by a higher-priority final E that remains active through its decision. If an E child points to an E source that is a sequence reset, publish `parentType=StopAll`.
+Remove every strictly stopped active owner from `active`, append numbered winner. If winner source time is a StopAll sequence reset, clear active and set `sequence_start`; otherwise add winner to active. The detector may record future-conflict historical rescue evidence, but such evidence is presentation-only. Across the pipeline's repeated E passes, accepted E-parented Blue Reset-leg/Order_B history is accumulated; after the final E calculation pass, missing earlier accepted history is eligible for public rescue only when it is not a hidden parent of a surviving final E and is not dominated by a higher-priority final E that remains active through its decision. If an E child points to an E source that is a sequence reset, publish `parentType=StopAll`.
 
 ### Final same-source conflict resolver
 
@@ -789,7 +819,7 @@ Key=`(sourceIndex,sourceTime)`. Higher `sequence_priority('e', family)` wins (Re
 
 ### `s_zones_for_module_engines`
 
-Walk S by source time against prior accepted E + prior kept S. If newest prior module has priority >= incoming S and incoming A source predates that module, reject. Otherwise compare both incoming `a_price` and S `price` against prior module price using strict Bearish boundary; if either is strictly beyond, reject. Higher-priority incoming S is allowed to supersede lower-priority prior behavior.
+Walk S by source time against prior accepted E + prior kept S. If newest prior module has priority >= incoming S and incoming A source predates that module, reject. Otherwise compare both incoming `a_price` and S `price` against prior module price using strict Bullish boundary; if either is strictly beyond, reject. Higher-priority incoming S is allowed to supersede lower-priority prior behavior.
 
 ### `s_zones_for_stopall`
 
@@ -807,7 +837,7 @@ Among original S candidates removed from accepted S:
 - require candidate priority < E owner priority;
 - require E exact stop strictly before candidate A source;
 - require candidate A to form strictly after that stop;
-- compare Close of E-stop main candle to Close of candidate S source main candle and require strict Bearish continuation beyond it;
+- compare Close of E-stop main candle to Close of candidate S source main candle and require strict Bullish continuation beyond it;
 - keep only earliest such suppressed S per E owner.
 
 That S becomes non-public continuation evidence via `continuation_chain_from_s`.
@@ -819,7 +849,7 @@ Build stopped-owner records from S/E/StopAll and, when provided, A strict stops.
 1. collect unconsumed owners whose source precedes A and whose stop main index is not after A source;
 2. for A→A owner, ignore old A if new `triggerEventTime` is strictly after old A stop; otherwise old transition still overlaps;
 3. choose dominant primarily by **latest stop main index**, then behavior priority, number, source time/index;
-4. if A price does not strictly cross dominant price in Bearish direction, keep A;
+4. if A price does not strictly cross dominant price in Bullish direction, keep A;
 5. if it does, test the exact interior-leg Reaction provenance exception; when proven, keep A but consume eligible lower/equal stopped owners;
 6. otherwise mark A calculation-invalid and consume all eligible stopped owners with priority <= dominant priority.
 
@@ -844,41 +874,60 @@ s_events = lifecycle-visible S sorted by (sourceTime, sourceIndex)
 e_events = reconciled E sorted by (sourceTime, sourceIndex)
 s_key=None; s_count=0
 e_key=None; e_count=0
+blue_dominant_count=0
 active_stopalls=[]
 output=[]
 
 process_s(S):
-    if direction is Bullish:
-        reversal = (S.color == Red and dominant same-key Blue count >= 2)
-    else:
-        reversal = (S.color == Blue and dominant same-key Red count >= 2)
+    # Red/Blue family labels are direction-invariant.
+    # In BOTH Bullish and Bearish, the reversal gate is Blue-dominance + S Red.
+    dominant_is_blue = (
+        (e_key exists and e_key.family == Blue)
+        or (no e_key and s_key == Blue)
+    )
+    reversal = (
+        S.color == Red
+        and dominant_is_blue
+        and blue_dominant_count >= 2
+    )
 
     if reversal:
         create StopAll1 FROM S
         gateType='opposite-s-group-stop'
-        stopped group = current dominant E key/count, else S key/count
+        stopped group = current dominant Blue E key/count, else S Blue group
         active_stopalls=[new StopAll1]
         clear S/E counters
+        blue_dominant_count=0
         return
 
     incoming_priority = sequence_priority(S, S.color)
     active_priority = priority(e_key if exists else s_key)
+    dominant_was_blue = dominant_is_blue
+
     if no e_key and s_key == S.color:
         s_count += 1
+        if S.color == Blue:
+            blue_dominant_count += 1
     elif incoming_priority > active_priority:
         s_key=S.color; s_count=1; e_key=None; e_count=0
+        if S.color == Blue:
+            blue_dominant_count = blue_dominant_count + 1 if dominant_was_blue else 1
+        else:
+            blue_dominant_count=0
+    # Lower-priority S remains valid output but does not replace/separate the dominant group.
 
-for e in e_events:
-    while next S sourceTime < e.sourceTime:
+for E in e_events:
+    while next S sourceTime < E.sourceTime:
         process_s(S)
 
-    stopped_active = every active StopAll whose first strict stop <= e.decisionEvent
+    stopped_active = every active StopAll whose first strict stop <= E.decisionEvent
     if stopped_active:
         n = max(stopped StopAll numbers)+1
         gateEvent = earliest stopped active exact stop
         create StopAll n from current E; gateType='stopall-stop'
         remove stopped active; append new StopAll to output+active
-        clear S/E sequence counters
+        clear S/E counters
+        blue_dominant_count=0
         continue
 
     qualifies_e = (e_key exists and e_count >= 2)
@@ -886,29 +935,44 @@ for e in e_events:
     if qualifies_e or qualifies_s:
         parent = latest prior behavior matching active group key
         gate = first strict stop(parent.price)
-        if gate exists and gate.event <= e.decisionEvent:
+        if gate exists and gate.event <= E.decisionEvent:
             create StopAll1 from current E; gateType='sequence-group-stop'
             active += new StopAll; output += new StopAll
             clear counters
+            blue_dominant_count=0
             continue
 
-    new_e_key=(e.family,e.number)
+    new_e_key=(E.family,E.number)
+    dominant_was_blue = (
+        (e_key exists and e_key.family == Blue)
+        or (no e_key and s_key == Blue)
+    )
+
     if e_key == new_e_key:
         e_count += 1
+        if E.family == Blue:
+            blue_dominant_count += 1
     else:
         incoming = E family priority
         active = current sequence priority
-        replace if incoming > active
-        or advance if same priority and new E dominates old E
-        if replaced/advanced: e_key=new_e_key;e_count=1;s_key=None;s_count=0
+        replace = incoming > active
+        advance = (e_key exists and incoming == active and new E dominates old E)
+        if replace or advance:
+            e_key=new_e_key; e_count=1; s_key=None; s_count=0
+            if E.family == Blue:
+                blue_dominant_count = blue_dominant_count + 1 if dominant_was_blue else 1
+            else:
+                blue_dominant_count=0
+    # Lower-priority E remains valid output but cannot replace/separate the dominant group.
 
 after final E: process every remaining S with process_s(S)
 
-finally: for every output StopAll compute its own first strict bearish stop
+finally: for every output StopAll compute its own first strict directional stop
+         Bullish: first Low < StopAll.price
+         Bearish: first High > StopAll.price
 ```
 
-Red E still dominates Blue E across family under the invariant priority table; within the same family larger number dominates. The directional S-reversal gate is explicit and is evaluated before ordinary S replacement. Lower-priority same-color events do not reset/separate the dominant group.
-
+Red E still dominates Blue E across family under the invariant priority table; within the same family larger number dominates. The S-reversal gate is deliberately **not** color-mirrored: `Blue-dominant-count >= 2 + accepted S Red -> StopAll1` in both market directions. Only directional strict-stop / Reaction geometry mirrors. Lower-priority same-color events do not reset or separate the dominant group.
 
 ## 16. Public serialization contract
 
@@ -940,7 +1004,9 @@ The top-level response contains: `engine`, `version`, `pipelineVersion`, `blueLi
 `direction`, `number`, source/decision fields, gate fields, stopped behavior fields, underlying E family/number, complete Order geometry/provenance, and strict stop fields `stopIndex`, `stopTime`, `stopEventTime`.
 
 ### OrderAudit
-One physical Order identity is `(firstIndex, breakIndex)`. Output fields are `direction`, `reactionNumber`, `reactionMode`, Reaction box fields, `stopLevel`, `stopSourceIndex`, `stopSourceTime`, `stopHitIndex`, `stopHitTime`, `stopHitEventTime`, and `causes`. Causes are either `parent-stop` (`parentType`, `parentFamily`, `eventTime`, `parentSourceTime`) or `reset-leg` (`resetTime`, `boundaryBreakTime`). Output is sorted by `(firstTime, breakTime)`.
+One physical Order identity is `(firstIndex, breakIndex)`. Output fields are `direction`, `reactionNumber`, `reactionMode`, Reaction box fields, `stopLevel`, `stopSourceIndex`, `stopSourceTime`, `stopHitIndex`, `stopHitTime`, `stopHitEventTime`, and `causes`. Causes are either `parent-stop` (`parentType`, `parentFamily`, `eventTime`, `parentSourceTime`) or `reset-leg` (`resetTime`, `boundaryBreakTime`). For V5.2.0 Order_B, `boundaryBreakTime` is the exact strict break of the Reset-leg ceiling. Output is sorted by `(firstTime, breakTime)`.
+
+The final Bridge has a hard consistency invariant: every public S/E/StopAll that carries an Order must reference a physical identity `(firstIndex,breakIndex)` present in the final canonical OrderAudit. Final E branch replacement or independent-root restoration must synchronize the accepted Order ledger before serialization. Conversely, one exact parent-stop cause may not appear on two different physical Order identities. Accepted carried-live and noncanonical bounded direct Order geometry (`reactionNumber=0`) must remain auditable; the Bridge must never invent a replacement Order merely to satisfy serialization.
 
 
 
@@ -972,369 +1038,375 @@ A replacement engine is conforming only if all of these are true:
 - Blue Scale/Reset formation and calculation/public validity match;
 - A ordinary, double-stop, chained-stop, trigger and exact-confirmation source ownership match;
 - S Type-3/Simple/Advanced decisions and accepted-Order reconciliation match;
-- E parent-stop, carried-live, Reset-leg, recursive chaining, family/number reconciliation, same-source resolution and invalid-S-root rule match;
+- E parent-stop, carried-live, and parent-neutral accepted-live routes match; Order_B uses the V5.2.0 same-direction Reset owner, Breakout→Reset inclusive primary extreme, exact strict break, closed primary-source→strict-break geometry-only opposite evidence, first canonical opposite Reaction after the gate, latest-reset-cause rule, and exact Bullish/Bearish mirror; recursive chaining, family/number reconciliation, same-source resolution and invalid-S-root rules match;
 - behavior hierarchy, post-stop lifecycle ownership, internal-Reaction scope and StopAll hard boundaries match;
 - OrderAudit cause merging, parent-stop single consumption and stop-hit chronology match;
+- every public S/E/StopAll Order identity exists in final OrderAudit, and no exact parent-stop provenance maps to two physical Orders;
 - final visibility and serialization match exactly;
 - requested presentation range does not change full-RAW calculation identities;
 - no fixture-specific production logic exists.
 
 ## 20. Source-symbol coverage appendix
-
-This appendix exists so a future implementation review can prove that no current Source class/function was silently omitted from the reconstruction specification. Cache-only implementation details may be redesigned, but their observable semantics described above must remain unchanged.
-
-### `reaction_engine.py`
-| Symbol | Kind | Source lines | Normative role |
+This appendix is generated from the exact V5.3.0 embedded source snapshot. Line numbers refer to the embedded/current production files in this document. Private helpers are listed because they can affect observable chronology or provenance.
+### 20.1 `reaction_engine.py`
+| Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
-| `Candle` | class | 26-34 | Calculation/chronology contract |
-| `Candidate` | class | 38-62 | Calculation/chronology contract |
-| `ResetEvent` | class | 66-71 | Calculation/chronology contract |
-| `IntrabarAnalysis` | class | 75-78 | Calculation/chronology contract |
-| `DetectionResult` | class | 82-87 | Calculation/chronology contract |
-| `classify_candle_color` | function | 90-92 | Calculation/chronology contract |
-| `opposite_direction` | function | 95-97 | Calculation/chronology contract |
-| `DetectorBase` | class | 100-170 | Calculation/chronology contract |
-| `DetectorBase.__init__` | method | 101-123 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `DetectorBase._shared_time_index` | method | 126-134 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `DetectorBase.seconds_between` | method | 136-139 | Calculation/chronology contract |
-| `DetectorBase.main_source_for_time` | method | 141-152 | Calculation/chronology contract |
-| `DetectorBase.minimum_low` | method | 154-161 | Calculation/chronology contract |
-| `DetectorBase.maximum_high` | method | 163-170 | Calculation/chronology contract |
-| `BullishDetector` | class | 173-556 | Calculation/chronology contract |
-| `BullishDetector.green_run_peak_before` | method | 174-182 | Calculation/chronology contract |
-| `BullishDetector.breakout_analysis` | method | 184-208 | Calculation/chronology contract |
-| `BullishDetector.mode_a_invalidation_before_breakout` | method | 210-244 | Calculation/chronology contract |
-| `BullishDetector.confirmed_reset_before_breakout` | method | 246-264 | Calculation/chronology contract |
-| `BullishDetector.post_breakout_reset` | method | 266-279 | Calculation/chronology contract |
-| `BullishDetector.detect` | method | 281-556 | Calculation/chronology contract |
-| `mirror_candle` | function | 559-576 | Calculation/chronology contract |
-| `mirror_candidate` | function | 579-596 | Calculation/chronology contract |
-| `mirror_analysis` | function | 598-604 | Calculation/chronology contract |
-| `_ReflectedCandles` | class | 607-629 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `_ReflectedCandles.__init__` | method | 615-617 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `_ReflectedCandles.__len__` | method | 619-620 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `_ReflectedCandles.__getitem__` | method | 622-629 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `_reflected_view` | function | 635-642 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `BearishDetector` | class | 645-702 | Calculation/chronology contract |
-| `BearishDetector.__init__` | method | 653-665 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `BearishDetector.red_run_bottom_before` | method | 667-669 | Calculation/chronology contract |
-| `BearishDetector.breakdown_analysis` | method | 671-674 | Calculation/chronology contract |
-| `BearishDetector.invalidation_high_break_before_breakdown` | method | 676-679 | Calculation/chronology contract |
-| `BearishDetector.confirmed_reset_before_breakdown` | method | 681-685 | Calculation/chronology contract |
-| `BearishDetector.post_breakdown_reset` | method | 687-692 | Calculation/chronology contract |
-| `BearishDetector.detect` | method | 694-702 | Calculation/chronology contract |
-| `published_reaction_candidate` | function | 705-800 | Calculation/chronology contract |
-| `_decimal_value` | function | 803-805 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `LowerTimeframeIndex` | class | 808-925 | Calculation/chronology contract |
-| `LowerTimeframeIndex.__init__` | method | 815-854 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `LowerTimeframeIndex.first_less` | method | 856-857 | Calculation/chronology contract |
-| `LowerTimeframeIndex.first_greater` | method | 859-860 | Calculation/chronology contract |
-| `LowerTimeframeIndex.range_minimum` | method | 862-864 | Calculation/chronology contract |
-| `LowerTimeframeIndex.range_maximum` | method | 866-868 | Calculation/chronology contract |
-| `LowerTimeframeIndex._range_query` | method | 870-906 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `LowerTimeframeIndex._first` | method | 908-925 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `shared_lower_timeframe_index` | function | 933-943 | Calculation/chronology contract |
-| `ReflectedLowerTimeframeIndex` | class | 946-967 | Calculation/chronology contract |
-| `ReflectedLowerTimeframeIndex.__init__` | method | 951-953 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `ReflectedLowerTimeframeIndex.first_less` | method | 955-956 | Calculation/chronology contract |
-| `ReflectedLowerTimeframeIndex.first_greater` | method | 958-959 | Calculation/chronology contract |
-| `ReflectedLowerTimeframeIndex.range_minimum` | method | 961-963 | Calculation/chronology contract |
-| `ReflectedLowerTimeframeIndex.range_maximum` | method | 965-967 | Calculation/chronology contract |
-| `MarketChronology` | class | 970-1198 | Calculation/chronology contract |
-| `MarketChronology.__init__` | method | 989-1009 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `MarketChronology.opposite_direction` | method | 1012-1014 | Calculation/chronology contract |
-| `MarketChronology.main_index` | method | 1016-1023 | Calculation/chronology contract |
-| `MarketChronology.lower_bounds` | method | 1025-1034 | Calculation/chronology contract |
-| `MarketChronology.lower_window` | method | 1036-1040 | Calculation/chronology contract |
-| `MarketChronology._reset_cache_key` | method | 1043-1052 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `MarketChronology._reaction_cache_key` | method | 1055-1067 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `MarketChronology.reset_time` | method | 1069-1086 | Calculation/chronology contract |
-| `MarketChronology.reaction_confirmation` | method | 1088-1133 | Calculation/chronology contract |
-| `MarketChronology.canonical_order_stop` | method | 1136-1198 | Calculation/chronology contract |
-| `build_behavior_reaction_views` | function | 1201-1306 | Calculation/chronology contract |
-| `directional_a_stop_order_finder` | function | 1309-1369 | Calculation/chronology contract |
-| `UnifiedReactionDetector` | class | 1372-2433 | Calculation/chronology contract |
-| `UnifiedReactionDetector.__init__` | method | 1382-1405 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `UnifiedReactionDetector.bull` | method | 1408-1413 | Calculation/chronology contract |
-| `UnifiedReactionDetector.bear` | method | 1416-1421 | Calculation/chronology contract |
-| `UnifiedReactionDetector._append_reaction` | method | 1423-1487 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `UnifiedReactionDetector._append_reset` | method | 1489-1505 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `UnifiedReactionDetector._refine` | method | 1507-1526 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `UnifiedReactionDetector._candidate_from_confirmation_remainder` | method | 1528-1611 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `UnifiedReactionDetector._first_initial` | method | 1613-1623 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `UnifiedReactionDetector._first_direct_same_direction_after_reset` | method | 1626-1662 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `UnifiedReactionDetector._first_geometry_after_reset` | method | 1664-1714 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `UnifiedReactionDetector.first_geometry_after_reset` | method | 1716-1720 | Calculation/chronology contract |
-| `UnifiedReactionDetector.first_simple_geometry_after_gate` | method | 1723-1781 | Calculation/chronology contract |
-| `UnifiedReactionDetector._reaction_break_indices` | method | 1783-1796 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `UnifiedReactionDetector.first_order_reaction_after_gate` | method | 1798-1920 | Calculation/chronology contract |
-| `UnifiedReactionDetector._earliest_confirmed_geometry` | method | 1922-1994 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `UnifiedReactionDetector._build_direct_candidate` | method | 1996-2051 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `UnifiedReactionDetector._scan_direct_candidate` | method | 2054-2082 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `UnifiedReactionDetector._owner_boundary_before_confirmation` | method | 2084-2122 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `UnifiedReactionDetector._result` | method | 2125-2132 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `UnifiedReactionDetector.detect` | method | 2134-2433 | Calculation/chronology contract |
+| `Candle` | class | 27 | Source class. |
+| `Candidate` | class | 39 | Source class. |
+| `ResetEvent` | class | 67 | Source class. |
+| `IntrabarAnalysis` | class | 76 | Source class. |
+| `DetectionResult` | class | 83 | Source class. |
+| `classify_candle_color` | function | 91 | Match Lightweight Charts: Open <= Close is an up/green candle. |
+| `opposite_direction` | function | 96 | Return the exact Bullish/Bearish mirror direction. |
+| `DetectorBase` | class | 101 | Source class. |
+| `DetectorBase.__init__` | method | 102 | Behaviorally relevant source symbol. |
+| `DetectorBase._shared_time_index` | method | 127 | Build one immutable-source timestamp index per calculation process. |
+| `DetectorBase.seconds_between` | method | 137 | Behaviorally relevant source symbol. |
+| `DetectorBase.main_source_for_time` | method | 142 | Behaviorally relevant source symbol. |
+| `DetectorBase.minimum_low` | method | 155 | Behaviorally relevant source symbol. |
+| `DetectorBase.maximum_high` | method | 164 | Behaviorally relevant source symbol. |
+| `BullishDetector` | class | 174 | Source class. |
+| `BullishDetector.green_run_peak_before` | method | 175 | Behaviorally relevant source symbol. |
+| `BullishDetector.breakout_analysis` | method | 185 | Behaviorally relevant source symbol. |
+| `BullishDetector.mode_a_invalidation_before_breakout` | method | 211 | Behaviorally relevant source symbol. |
+| `BullishDetector.confirmed_reset_before_breakout` | method | 247 | Behaviorally relevant source symbol. |
+| `BullishDetector.post_breakout_reset` | method | 267 | Behaviorally relevant source symbol. |
+| `BullishDetector.detect` | method | 282 | Behaviorally relevant source symbol. |
+| `mirror_candle` | function | 560 | Internal coordinate/role adapter; never reclassify a market candle here. Input dojis are GREEN in both market directions, matching the chart. Swapp... |
+| `mirror_candidate` | function | 580 | Mirror geometry while preserving invariant dynamic gate state. |
+| `mirror_analysis` | function | 599 | Behaviorally relevant source symbol. |
+| `_ReflectedCandles` | class | 608 | Read-only coordinate view with one-time mirror caching. Each source candle is mirrored at most once (on first access) and the result is cached, so ... |
+| `_ReflectedCandles.__init__` | method | 616 | Behaviorally relevant source symbol. |
+| `_ReflectedCandles.__len__` | method | 620 | Behaviorally relevant source symbol. |
+| `_ReflectedCandles.__getitem__` | method | 623 | Behaviorally relevant source symbol. |
+| `_reflected_view` | function | 636 | Behaviorally relevant source symbol. |
+| `BearishDetector` | class | 646 | Execute the Bullish reference state machine in reflected coordinates. This is a coordinate adapter, not a second rule implementation. Both the init... |
+| `BearishDetector.__init__` | method | 654 | Behaviorally relevant source symbol. |
+| `BearishDetector.red_run_bottom_before` | method | 668 | Behaviorally relevant source symbol. |
+| `BearishDetector.breakdown_analysis` | method | 672 | Behaviorally relevant source symbol. |
+| `BearishDetector.invalidation_high_break_before_breakdown` | method | 677 | Behaviorally relevant source symbol. |
+| `BearishDetector.confirmed_reset_before_breakdown` | method | 682 | Behaviorally relevant source symbol. |
+| `BearishDetector.post_breakdown_reset` | method | 688 | Behaviorally relevant source symbol. |
+| `BearishDetector.detect` | method | 695 | Behaviorally relevant source symbol. |
+| `published_reaction_candidate` | function | 706 | Return a presentation clone with Break-candle geometry frozen at confirmation. Detection/lifecycle ownership is intentionally not mutated here. The... |
+| `_decimal_value` | function | 804 | Normalize external numeric values without binary-float arithmetic. |
+| `LowerTimeframeIndex` | class | 809 | Immutable segment index for exact first strict High/Low crossings. The index is direction-agnostic and shared by A/S/E so heavy 1-second inputs are... |
+| `LowerTimeframeIndex.__init__` | method | 816 | Behaviorally relevant source symbol. |
+| `LowerTimeframeIndex.first_less` | method | 857 | Behaviorally relevant source symbol. |
+| `LowerTimeframeIndex.first_greater` | method | 860 | Behaviorally relevant source symbol. |
+| `LowerTimeframeIndex.range_minimum` | method | 863 | Return the minimum Low and earliest owning position in [left, right). |
+| `LowerTimeframeIndex.range_maximum` | method | 867 | Return the maximum High and earliest owning position in [left, right). |
+| `LowerTimeframeIndex._range_query` | method | 871 | Behaviorally relevant source symbol. |
+| `LowerTimeframeIndex._first` | method | 909 | Behaviorally relevant source symbol. |
+| `shared_lower_timeframe_index` | function | 934 | Reuse one immutable lower-timeframe index per source sequence. |
+| `ReflectedLowerTimeframeIndex` | class | 947 | Price-reflected view over a lower-timeframe index without rebuilding it. |
+| `ReflectedLowerTimeframeIndex.__init__` | method | 952 | Behaviorally relevant source symbol. |
+| `ReflectedLowerTimeframeIndex.first_less` | method | 956 | Behaviorally relevant source symbol. |
+| `ReflectedLowerTimeframeIndex.first_greater` | method | 959 | Behaviorally relevant source symbol. |
+| `ReflectedLowerTimeframeIndex.range_minimum` | method | 962 | Behaviorally relevant source symbol. |
+| `ReflectedLowerTimeframeIndex.range_maximum` | method | 966 | Behaviorally relevant source symbol. |
+| `MarketChronology` | class | 971 | Shared immutable market-time services for downstream behavior engines. Reaction owns chronology semantics. A/S/E receive this object rather than re... |
+| `MarketChronology.__init__` | method | 990 | Behaviorally relevant source symbol. |
+| `MarketChronology.opposite_direction` | method | 1013 | Expose the shared mirror-direction contract to downstream engines. |
+| `MarketChronology.main_index` | method | 1017 | Map an exact lower-timeframe timestamp to its owning main candle. |
+| `MarketChronology.lower_bounds` | method | 1026 | Behaviorally relevant source symbol. |
+| `MarketChronology.lower_window` | method | 1037 | Behaviorally relevant source symbol. |
+| `MarketChronology._reset_cache_key` | method | 1044 | Return a stable Reset identity suitable for chronology caches. |
+| `MarketChronology._reaction_cache_key` | method | 1056 | Return a stable physical/geometry identity for confirmation caches. |
+| `MarketChronology.reset_time` | method | 1070 | Return the exact Reset event time, preserving legacy provenance. |
+| `MarketChronology.reaction_confirmation` | method | 1089 | Return the first strict lower-timeframe Reaction confirmation. ``use_intrabar_start=False`` preserves the established A-engine chronology contract,... |
+| `MarketChronology.canonical_order_stop` | method | 1137 | Return canonical opposite-Order stop provenance for S and E. Mode A owns the true leg head/floor from its anchor/context through Break inclusive. M... |
+| `build_behavior_reaction_views` | function | 1202 | Mark true cross-direction Reaction interiors for downstream behavior. |
+| `directional_a_stop_order_finder` | function | 1310 | Build the cached bounded opposite-Reaction resolver used after A stop. |
+| `UnifiedReactionDetector` | class | 1373 | Unified v9 directional post-Reset engine. The proven directional detectors supply only the initial Leg-Start. After that first confirmation this cl... |
+| `UnifiedReactionDetector.__init__` | method | 1383 | Behaviorally relevant source symbol. |
+| `UnifiedReactionDetector.bull` | method | 1408 | Behaviorally relevant source symbol. |
+| `UnifiedReactionDetector.bear` | method | 1416 | Behaviorally relevant source symbol. |
+| `UnifiedReactionDetector._append_reaction` | method | 1423 | Behaviorally relevant source symbol. |
+| `UnifiedReactionDetector._append_reset` | method | 1489 | Behaviorally relevant source symbol. |
+| `UnifiedReactionDetector._refine` | method | 1507 | Behaviorally relevant source symbol. |
+| `UnifiedReactionDetector._candidate_from_confirmation_remainder` | method | 1528 | Reuse a correctly colored confirmation candle for the next reaction. |
+| `UnifiedReactionDetector._first_initial` | method | 1613 | Behaviorally relevant source symbol. |
+| `UnifiedReactionDetector._first_direct_same_direction_after_reset` | method | 1626 | Return the first structurally owned reaction after Reset. The earliest eligible candidate owns the evolving leg until it either confirms or its out... |
+| `UnifiedReactionDetector._first_geometry_after_reset` | method | 1664 | Return the first complete raw Reaction geometry after a boundary. This bounded search intentionally ignores normal Reset/invalidation acceptance. I... |
+| `UnifiedReactionDetector.first_geometry_after_reset` | method | 1717 | Public lifecycle API for post-Reset geometry discovery. |
+| `UnifiedReactionDetector._reaction_break_indices` | method | 1724 | Cached ascending `break_idx` values mirroring `all_reactions[direction]`. `all_reactions[direction]` is append-only and strictly non-decreasing in ... |
+| `UnifiedReactionDetector.first_order_reaction_after_gate` | method | 1739 | Return direct Order_A geometry from continuous Reaction context. |
+| `UnifiedReactionDetector._earliest_confirmed_geometry` | method | 1863 | Return the geometry whose strict confirmation occurs first. Multiple First candidates may overlap. Order-gender chronology belongs to the structure... |
+| `UnifiedReactionDetector._build_direct_candidate` | method | 1937 | Behaviorally relevant source symbol. |
+| `UnifiedReactionDetector._scan_direct_candidate` | method | 1995 | Behaviorally relevant source symbol. |
+| `UnifiedReactionDetector._owner_boundary_before_confirmation` | method | 2025 | Return whether structural alignment is lost before confirmation. A Bearish Leg-Start Top must not rise above its outer ceiling. A Bullish Leg-Start... |
+| `UnifiedReactionDetector._result` | method | 2066 | Behaviorally relevant source symbol. |
+| `UnifiedReactionDetector.detect` | method | 2075 | Behaviorally relevant source symbol. |
 
-### `blue_line_detector.py`
-| Symbol | Kind | Source lines | Normative role |
+### 20.2 `blue_line_detector.py`
+| Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
-| `ScaleStrike` | class | 23-26 | Calculation/chronology contract |
-| `BlueLine` | class | 30-45 | Calculation/chronology contract |
-| `_is_color` | function | 48-49 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `_main_candle` | function | 52-56 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `_stops_on_index` | function | 59-72 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `fibonacci_level` | function | 75-81 | Calculation/chronology contract |
-| `_intrabar_pending_confirmation` | function | 84-136 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `count_scale_strikes` | function | 139-204 | Calculation/chronology contract |
-| `_build_scale_blue_line` | function | 207-242 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `_build_reset_blue_line` | function | 245-297 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `detect_blue_lines` | function | 299-404 | Calculation/chronology contract |
-| `public_blue_lines` | function | 407-414 | Calculation/chronology contract |
-| `mark_internal_blue_lines` | function | 416-458 | Calculation/chronology contract |
+| `ScaleStrike` | class | 23 | Source class. |
+| `BlueLine` | class | 30 | Source class. |
+| `_is_color` | function | 48 | Behaviorally relevant source symbol. |
+| `_main_candle` | function | 52 | Behaviorally relevant source symbol. |
+| `_stops_on_index` | function | 59 | Behaviorally relevant source symbol. |
+| `fibonacci_level` | function | 75 | Behaviorally relevant source symbol. |
+| `_intrabar_pending_confirmation` | function | 84 | Behaviorally relevant source symbol. |
+| `count_scale_strikes` | function | 139 | Return the exact 0.618 level and confirmed strikes for one reaction. |
+| `_build_scale_blue_line` | function | 207 | Build one scale Blue from its decisive confirmed strike. |
+| `_build_reset_blue_line` | function | 245 | Build one Reset Blue while preserving the established double-stop rule. |
+| `detect_blue_lines` | function | 299 | Detect scale and Reset Blue Lines over authoritative engine events. |
+| `public_blue_lines` | function | 407 | Return only calculation-valid, public Blue Lines for serialization. |
+| `mark_internal_blue_lines` | function | 416 | Mark Blue Lines that are private to protected Reaction interiors. A Blue is internal when its owning Reaction is behavior-internal, or when both it... |
 
-### `a_zone_detector.py`
-| Symbol | Kind | Source lines | Normative role |
+### 20.3 `a_zone_detector.py`
+| Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
-| `BlueState` | class | 25-34 | Calculation/chronology contract |
-| `AZone` | class | 38-59 | Calculation/chronology contract |
-| `AZoneDetector` | class | 62-764 | Calculation/chronology contract |
-| `AZoneDetector.__init__` | method | 63-89 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector.extreme_name` | method | 92-93 | Calculation/chronology contract |
-| `AZoneDetector._strict_cross` | method | 95-96 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector._better` | method | 98-99 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector._main_index` | method | 101-102 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector._lower_window` | method | 104-107 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector._first_crossing` | method | 109-149 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector._range_extreme` | method | 151-183 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector._formation` | method | 185-200 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector._reset_formation_time` | method | 202-212 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector._build_blue_states` | method | 214-241 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector._double_stop_a_candidates` | method | 243-303 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector._pair_trigger` | method | 305-463 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector._reaction_confirmation_time` | method | 465-468 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector._first_reaction_after` | method | 470-486 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector._inherited_stop` | method | 488-532 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector._a_source` | method | 534-553 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector._detect_ordinary_a` | method | 555-663 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector._filter_special_a` | method | 665-727 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `AZoneDetector.detect` | method | 729-739 | Calculation/chronology contract |
-| `AZoneDetector._a_was_stopped_before` | method | 741-764 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `detect_a_zones` | function | 767-773 | Calculation/chronology contract |
+| `BlueState` | class | 25 | Source class. |
+| `AZone` | class | 38 | Source class. |
+| `AZoneDetector` | class | 62 | Source class. |
+| `AZoneDetector.__init__` | method | 63 | Behaviorally relevant source symbol. |
+| `AZoneDetector.extreme_name` | method | 92 | Behaviorally relevant source symbol. |
+| `AZoneDetector._strict_cross` | method | 95 | Behaviorally relevant source symbol. |
+| `AZoneDetector._better` | method | 98 | Behaviorally relevant source symbol. |
+| `AZoneDetector._main_index` | method | 101 | Behaviorally relevant source symbol. |
+| `AZoneDetector._lower_window` | method | 104 | Behaviorally relevant source symbol. |
+| `AZoneDetector._first_crossing` | method | 109 | Behaviorally relevant source symbol. |
+| `AZoneDetector._range_extreme` | method | 151 | Behaviorally relevant source symbol. |
+| `AZoneDetector._formation` | method | 185 | Behaviorally relevant source symbol. |
+| `AZoneDetector._reset_formation_time` | method | 202 | Return the exact strict Reset event that makes a Reset Blue exist. |
+| `AZoneDetector._build_blue_states` | method | 214 | Behaviorally relevant source symbol. |
+| `AZoneDetector._double_stop_a_candidates` | method | 243 | Behaviorally relevant source symbol. |
+| `AZoneDetector._pair_trigger` | method | 305 | Behaviorally relevant source symbol. |
+| `AZoneDetector._reaction_confirmation_time` | method | 465 | Behaviorally relevant source symbol. |
+| `AZoneDetector._first_reaction_after` | method | 470 | Behaviorally relevant source symbol. |
+| `AZoneDetector._inherited_stop` | method | 488 | Behaviorally relevant source symbol. |
+| `AZoneDetector._a_source` | method | 534 | Return A ownership frozen at the exact confirming Reaction event. The Blue-pair trigger opens the candidate on its main candle. The confirming Reac... |
+| `AZoneDetector._detect_ordinary_a` | method | 555 | Resolve the ordinary adjacent-Blue A lifecycle. |
+| `AZoneDetector._filter_special_a` | method | 665 | Resolve special double-stop A ownership against ordinary A state. |
+| `AZoneDetector.detect` | method | 729 | Return ordinary and special A zones after one ownership resolution. |
+| `AZoneDetector._a_was_stopped_before` | method | 741 | Return whether A's *first* strict stop belongs to this lifecycle. A stop that happened before ``not_before`` completed the prior cycle. A later rec... |
+| `detect_a_zones` | function | 767 | Behaviorally relevant source symbol. |
 
-### `s_zone_detector.py`
-| Symbol | Kind | Source lines | Normative role |
+### 20.4 `s_zone_detector.py`
+| Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
-| `SZone` | class | 24-59 | Calculation/chronology contract |
-| `SZoneDetector` | class | 62-1335 | Calculation/chronology contract |
-| `SZoneDetector.__init__` | method | 63-129 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._main_index` | method | 131-132 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._lower_window` | method | 134-137 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._reaction_confirmation_time` | method | 139-142 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector.reaction_confirmation_time` | method | 144-148 | Calculation/chronology contract |
-| `SZoneDetector._reset_time` | method | 151-152 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._a_confirmation_time` | method | 154-160 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._trend_extreme` | method | 162-165 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._a_stopped` | method | 167-168 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._first_a_stop` | method | 170-204 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector.first_a_stop` | method | 206-210 | Calculation/chronology contract |
-| `SZoneDetector._first_order_after` | method | 213-245 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._audit_stopped_a` | method | 247-284 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._candidate_source` | method | 286-299 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._candidate_source_last` | method | 301-319 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._first_trend_reaction_after_order` | method | 321-330 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._nested_trend_reaction` | method | 333-361 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._simple_candidate` | method | 363-370 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._type3_reset_leg` | method | 372-386 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._type3_has_trend_reaction` | method | 388-396 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._first_type3` | method | 398-466 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._candidate_after_order` | method | 469-508 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._a_source_event_time` | method | 510-517 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._a_owned_by_s` | method | 519-558 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._a_pair_is_reset_reset` | method | 560-571 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector.eligible_a_zones` | method | 574-576 | Calculation/chronology contract |
-| `SZoneDetector._candidate_timing` | method | 578-621 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._candidate_before_order` | method | 623-665 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._candidate_event_time` | method | 667-680 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector.candidate_event_time` | method | 682-686 | Calculation/chronology contract |
-| `SZoneDetector._blue_formation_time` | method | 689-717 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._candidate_cross_has_blue` | method | 719-734 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._has_ordinary_trend_reaction` | method | 736-753 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._order_stop` | method | 756-765 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._candidate_crossed` | method | 767-769 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._order_stop_crossed` | method | 771-774 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._decision` | method | 776-868 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._build_type3_zone` | method | 870-926 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector._build_order_backed_zone` | method | 928-1097 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector.detect` | method | 1099-1165 | Calculation/chronology contract |
-| `SZoneDetector._shared_order_stop_cross` | method | 1168-1192 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `SZoneDetector.reconcile_shared_order_stops` | method | 1194-1335 | Calculation/chronology contract |
-| `detect_s_zones` | function | 1338-1361 | Calculation/chronology contract |
+| `SZone` | class | 26 | Source class. |
+| `SZoneDetector` | class | 64 | Source class. |
+| `SZoneDetector.__init__` | method | 65 | Behaviorally relevant source symbol. |
+| `SZoneDetector._main_index` | method | 133 | Behaviorally relevant source symbol. |
+| `SZoneDetector._lower_window` | method | 136 | Behaviorally relevant source symbol. |
+| `SZoneDetector._reaction_confirmation_time` | method | 141 | Behaviorally relevant source symbol. |
+| `SZoneDetector.reaction_confirmation_time` | method | 146 | Public chronology API used by cross-stage lifecycle ownership. |
+| `SZoneDetector._reset_time` | method | 153 | Behaviorally relevant source symbol. |
+| `SZoneDetector._a_confirmation_time` | method | 156 | Behaviorally relevant source symbol. |
+| `SZoneDetector._trend_extreme` | method | 164 | Behaviorally relevant source symbol. |
+| `SZoneDetector._a_stopped` | method | 169 | Behaviorally relevant source symbol. |
+| `SZoneDetector._first_a_stop` | method | 172 | Behaviorally relevant source symbol. |
+| `SZoneDetector.first_a_stop` | method | 208 | Public lifecycle API for the first strict A stop. |
+| `SZoneDetector._first_order_after` | method | 215 | Return the earliest eligible canonical opposite Order after A-stop. Published Reaction identity is authoritative for an S Order. Local or bounded g... |
+| `SZoneDetector._audit_stopped_a` | method | 249 | Record the independent order gender created by one stopped A. |
+| `SZoneDetector._candidate_source` | method | 288 | Behaviorally relevant source symbol. |
+| `SZoneDetector._candidate_source_last` | method | 303 | Return the directional extreme, assigning equality to the last candle. |
+| `SZoneDetector._first_trend_reaction_after_order` | method | 323 | Behaviorally relevant source symbol. |
+| `SZoneDetector._nested_trend_reaction` | method | 335 | Behaviorally relevant source symbol. |
+| `SZoneDetector._simple_candidate` | method | 365 | Use the inclusive order-Break to aligned-Break interval. |
+| `SZoneDetector._type3_reset_leg` | method | 374 | Return the independent Type-3 inclusive Break-to-Reset geometry. |
+| `SZoneDetector._type3_has_trend_reaction` | method | 390 | Behaviorally relevant source symbol. |
+| `SZoneDetector._first_type3` | method | 400 | Find the first no-order Type-3 Reset-leg S decision before a new order. |
+| `SZoneDetector._candidate_after_order` | method | 471 | Find a candidate strictly after the order is confirmed. A reaction anchor is authoritative only when it is also after the order confirmation. Other... |
+| `SZoneDetector._a_source_event_time` | method | 512 | Locate the source extreme, including an A-stop main candle. |
+| `SZoneDetector._a_owned_by_s` | method | 521 | Behaviorally relevant source symbol. |
+| `SZoneDetector._a_pair_is_reset_reset` | method | 562 | Whether both Blue Lines that define A are Reset Blues. |
+| `SZoneDetector.eligible_a_zones` | method | 576 | A candidates outside stopped-parent S ownership, before rendering. |
+| `SZoneDetector._candidate_timing` | method | 580 | Resolve pre/post-Order ownership without stealing Advanced S. Existing nested same-direction geometry owns the Advanced branch and keeps the establ... |
+| `SZoneDetector._candidate_before_order` | method | 625 | Use the lowest/highest leg extreme from A-stop through order First. |
+| `SZoneDetector._candidate_event_time` | method | 669 | Return the first lower-timeframe event that forms the candidate. |
+| `SZoneDetector.candidate_event_time` | method | 684 | Public lifecycle API for exact S candidate provenance. |
+| `SZoneDetector._blue_formation_time` | method | 691 | Behaviorally relevant source symbol. |
+| `SZoneDetector._candidate_cross_has_blue` | method | 721 | Return whether the candidate cross has its aligned Reset Blue. The Reset Blue belongs to the same-direction reaction, but it does not have to be dr... |
+| `SZoneDetector._has_ordinary_trend_reaction` | method | 738 | Return whether ordinary aligned geometry completed in the leg. Order/S behavior deliberately consumes the maintained reaction output as geometry, w... |
+| `SZoneDetector._order_stop` | method | 758 | Behaviorally relevant source symbol. |
+| `SZoneDetector._candidate_crossed` | method | 769 | Behaviorally relevant source symbol. |
+| `SZoneDetector._order_stop_crossed` | method | 773 | Behaviorally relevant source symbol. |
+| `SZoneDetector._decision` | method | 778 | Behaviorally relevant source symbol. |
+| `SZoneDetector._build_type3_zone` | method | 872 | Build the order-free Blue Type-3 continuation for one stopped A. |
+| `SZoneDetector._build_order_backed_zone` | method | 930 | Resolve Simple/Advanced S ownership after a stopped A finds an Order. |
+| `SZoneDetector.detect` | method | 1101 | Behaviorally relevant source symbol. |
+| `SZoneDetector._shared_order_stop_cross` | method | 1170 | Return the first strict stop of an accepted Order after confirmation. |
+| `SZoneDetector.reconcile_shared_order_stops` | method | 1196 | Resolve open S candidates with any accepted physical Order stop. Order confirmation is parent-neutral. The decisive Order does not have to originat... |
+| `detect_s_zones` | function | 1319 | Behaviorally relevant source symbol. |
 
-### `e_zone_detector.py`
-| Symbol | Kind | Source lines | Normative role |
+### 20.5 `e_zone_detector.py`
+| Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
-| `EZone` | class | 25-62 | Calculation/chronology contract |
-| `EZoneDetector` | class | 72-2481 | Calculation/chronology contract |
-| `EZoneDetector.__init__` | method | 73-207 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._reset_time` | method | 209-210 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._main_index` | method | 212-213 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._first_cross_position` | method | 216-231 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._stop_value` | method | 233-234 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._first_parent_stop` | method | 237-248 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._confirmation_for` | method | 250-251 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._confirmation` | method | 253-254 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._reaction_first_time` | method | 256-257 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._strict_trigger_cross` | method | 259-271 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._reset_leg_geometry` | method | 273-300 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._reset_leg_has_simple_trend_reaction` | method | 302-316 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._first_order_b_geometry` | method | 318-452 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._next_outer_reset_time` | method | 454-473 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._replacement_order` | method | 476-524 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._reset_leg_evidence` | method | 526-566 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._legacy_reset_leg_evidence` | method | 569-607 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._order_stop` | method | 610-620 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector.order_stop` | method | 622-626 | Calculation/chronology contract |
-| `EZoneDetector._first_healthy_direct_geometry` | method | 629-712 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._synthetic_reset_leg_orders` | method | 714-803 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._trend_leg_direct_order` | method | 805-858 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._direct_parent_stop_order` | method | 860-943 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._merge_order_candidate` | method | 945-986 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._add_canonical_reset_leg_orders` | method | 988-1023 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector.order_candidates` | method | 1025-1120 | Calculation/chronology contract |
-| `EZoneDetector._first_order` | method | 1122-1135 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._has_sequence_reset_between` | method | 1137-1145 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._blue_parent_superseded` | method | 1147-1157 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._register_order_audit` | method | 1159-1286 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._reset_by_proven_order` | method | 1288-1312 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._enrich_order_audit_reset_causes` | method | 1314-1344 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector.visual_order_lifecycle` | method | 1346-1386 | Calculation/chronology contract |
-| `EZoneDetector._parent_stop` | method | 1388-1394 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector.parent_stop` | method | 1396-1400 | Calculation/chronology contract |
-| `EZoneDetector._cross_order` | method | 1403-1421 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector.cross_order` | method | 1423-1427 | Calculation/chronology contract |
-| `EZoneDetector._unconsumed_s_orders` | method | 1430-1463 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._initial_order_match` | method | 1467-1478 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._gate_owned_initial_order` | method | 1480-1506 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._carried_orders_for_parent` | method | 1508-1573 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._blocked_by_gate_owned_order` | method | 1576-1584 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._reset_evidence_for_order` | method | 1586-1597 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._extreme_between` | method | 1599-1613 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._zone` | method | 1615-1716 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector.set_consumed_s_evidence` | method | 1718-1728 | Calculation/chronology contract |
-| `EZoneDetector._apply_consumed_s_evidence` | method | 1730-1746 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector.continuation_chain_from_s` | method | 1748-1785 | Calculation/chronology contract |
-| `EZoneDetector.replace_with_earlier_continuation` | method | 1787-1828 | Calculation/chronology contract |
-| `EZoneDetector.resolve_same_source_conflicts` | method | 1830-1872 | Calculation/chronology contract |
-| `EZoneDetector.restore_independent_s_roots` | method | 1874-1932 | Calculation/chronology contract |
-| `EZoneDetector._discover_candidate_chains` | method | 1934-2024 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._reconcile_candidate_chains` | method | 2026-2361 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector._rebuild_accepted_order_audit` | method | 2363-2470 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `EZoneDetector.detect` | method | 2472-2481 | Calculation/chronology contract |
-| `detect_e_zones` | function | 2484-2519 | Calculation/chronology contract |
+| `EZone` | class | 27 | Source class. |
+| `OrderBFormation` | class | 75 | One complete reset-leg Order_B setup under the canonical mirror rule. |
+| `EZoneDetector` | class | 98 | Source class. |
+| `EZoneDetector.__init__` | method | 99 | Behaviorally relevant source symbol. |
+| `EZoneDetector._reset_time` | method | 226 | Behaviorally relevant source symbol. |
+| `EZoneDetector._main_index` | method | 229 | Behaviorally relevant source symbol. |
+| `EZoneDetector._first_cross_position` | method | 233 | Return the first strict lower-timeframe crossing in [left, right). |
+| `EZoneDetector._stop_value` | method | 250 | Behaviorally relevant source symbol. |
+| `EZoneDetector._first_parent_stop` | method | 254 | Behaviorally relevant source symbol. |
+| `EZoneDetector._confirmation_for` | method | 267 | Behaviorally relevant source symbol. |
+| `EZoneDetector._confirmation` | method | 270 | Behaviorally relevant source symbol. |
+| `EZoneDetector._reaction_first_time` | method | 273 | Behaviorally relevant source symbol. |
+| `EZoneDetector._main_range_extreme` | method | 276 | Return the first candle owning the requested closed-range extreme. |
+| `EZoneDetector._order_b_reset_leg` | method | 297 | Return the same-direction Reset owner and its trigger extreme. Bearish: from the owner's Breakout candle through the Reset candle, inclusive, the m... |
+| `EZoneDetector._order_b_strict_break` | method | 325 | Return the first exact strict break of the reset-leg trigger level. Bearish Order_B: Low < reset-leg floor. Bullish Order_B: High > reset-leg ceiling. |
+| `EZoneDetector._order_b_opposite_extreme` | method | 347 | Return the other reset-leg edge on the closed trigger->break range. |
+| `EZoneDetector._order_b_geometry_evidence` | method | 365 | Return raw opposite Reaction geometry inside the closed leg range. Reset validity, lifecycle acceptance, public visibility, and Internal status are... |
+| `EZoneDetector._first_order_b_reaction_after_break` | method | 389 | Return the first canonical opposite Reaction after the Order_B gate. |
+| `EZoneDetector._build_order_b_formations` | method | 406 | Build every Order_B from same-direction Reset-leg geometry. Bearish mirror: Bearish Reaction Reset -> minimum Low from Breakout..Reset -> first str... |
+| `EZoneDetector._order_b_orders` | method | 478 | Return canonical Order_B Orders whose Reaction forms at/after start. |
+| `EZoneDetector._order_b_evidence` | method | 494 | Return the latest eligible Order_B cause for one physical Reaction. |
+| `EZoneDetector._replacement_order` | method | 515 | Return the first later Order_B that forms before the owner stops. |
+| `EZoneDetector._order_stop` | method | 544 | Behaviorally relevant source symbol. |
+| `EZoneDetector.order_stop` | method | 556 | Public audit API for canonical Order stop provenance. |
+| `EZoneDetector._first_healthy_direct_geometry` | method | 563 | Return the first healthy geometry after an A/S/E strict stop. A candidate completes normally when the active prior reaction is not Reset before its... |
+| `EZoneDetector._trend_leg_direct_order` | method | 648 | Return bounded direct Order_A after a newly confirmed trend leg. A stopped E may be followed by a fresh same-direction Reaction before the next opp... |
+| `EZoneDetector._direct_parent_stop_order` | method | 703 | Select the direct parent-stop Order without Order_B evidence. |
+| `EZoneDetector._merge_order_candidate` | method | 788 | Merge one provenance cause into a single physical Order identity. |
+| `EZoneDetector._enforce_single_parent_stop_owner` | method | 831 | Keep one physical Order owner for the exact parent-stop cause. A single parent stop may open only one physical Order. When direct parent-stop disco... |
+| `EZoneDetector.order_candidates` | method | 874 | Return every valid E-space Order formed before this E decision. |
+| `EZoneDetector._first_order` | method | 972 | Behaviorally relevant source symbol. |
+| `EZoneDetector._has_sequence_reset_between` | method | 987 | Return whether a known hard reset lies in ``(start, end]``. |
+| `EZoneDetector._blue_parent_superseded` | method | 997 | A confirmed later Red S closes an older Blue-E order lifecycle. |
+| `EZoneDetector._register_order_audit` | method | 1009 | Behaviorally relevant source symbol. |
+| `EZoneDetector._enrich_order_audit_reset_causes` | method | 1128 | Attach canonical Order_B provenance to already relevant Orders. Order_B formation is independent market structure, but OrderAudit is an accepted-be... |
+| `EZoneDetector.visual_order_lifecycle` | method | 1185 | Return only orders admitted by the E lifecycle, including live ones. This is presentation/audit output. It follows the same direct and Order_B repl... |
+| `EZoneDetector._parent_stop` | method | 1227 | Behaviorally relevant source symbol. |
+| `EZoneDetector.parent_stop` | method | 1235 | Public lifecycle API for the first strict parent stop. |
+| `EZoneDetector._cross_order` | method | 1242 | Behaviorally relevant source symbol. |
+| `EZoneDetector.cross_order` | method | 1262 | Public audit API for an Order stop crossing. |
+| `EZoneDetector._unconsumed_s_orders` | method | 1269 | Return every Blue-S Order whose stop did not decide the S itself. |
+| `EZoneDetector._initial_order_match` | method | 1306 | Behaviorally relevant source symbol. |
+| `EZoneDetector._gate_owned_initial_order` | method | 1319 | Keep an A-owned order that starts in the parent-stop candle. The already-open A lifecycle owns that candle. A later ordinary Reaction cannot be rel... |
+| `EZoneDetector._carried_orders_for_parent` | method | 1347 | Return every Order formed and left live inside this parent lifecycle. |
+| `EZoneDetector._post_stop_accepted_orders_for_parent` | method | 1414 | Return accepted physical Orders confirmed after this parent stopped. Shared accepted-Order confirmation is parent-neutral. Once an Order is calcula... |
+| `EZoneDetector._blocked_by_gate_owned_order` | method | 1526 | Reject only a nested Order_A, while preserving its child lineage. |
+| `EZoneDetector._reset_evidence_for_order` | method | 1536 | Behaviorally relevant source symbol. |
+| `EZoneDetector._extreme_between` | method | 1555 | Behaviorally relevant source symbol. |
+| `EZoneDetector._zone` | method | 1571 | Behaviorally relevant source symbol. |
+| `EZoneDetector.set_consumed_s_evidence` | method | 1686 | Register non-public S evidence that continues a stopped larger E. |
+| `EZoneDetector._apply_consumed_s_evidence` | method | 1698 | Behaviorally relevant source symbol. |
+| `EZoneDetector.continuation_chain_from_s` | method | 1716 | Build the E continuation opened by one S consumed by a stopped E. The S remains a calculation/evidence object, not a new public owner. Its first E ... |
+| `EZoneDetector.replace_with_earlier_continuation` | method | 1755 | Replace an owner's not-yet-decided descendant branch when an earlier one wins. |
+| `EZoneDetector.resolve_same_source_conflicts` | method | 1798 | Keep exactly one accepted E behavior for each physical source candle. Candidate discovery may legitimately reach the same source through multiple S... |
+| `EZoneDetector.restore_independent_s_roots` | method | 1842 | Restore calculation-valid E1 roots owned directly by accepted S. E dominance chooses which chain owns larger-module continuation, but formation of ... |
+| `EZoneDetector._discover_candidate_chains` | method | 1902 | Build provisional recursive E chains from every stopped S parent. Calculation-invalid S evidence is still audited normally. It loses only the right... |
+| `EZoneDetector._reconcile_candidate_chains` | method | 1994 | Resolve competing E chains into the accepted chronological lifecycle. |
+| `EZoneDetector._historical_rescue_candidates` | method | 2331 | Return presentation-only historical E objects suppressed by future conflicts. Primary reconciliation is authoritative and remains byte-for-byte beh... |
+| `EZoneDetector._rebuild_accepted_order_audit` | method | 2418 | Rebuild Order Audit from accepted S/E/StopAll state only. |
+| `EZoneDetector.rebuild_accepted_order_audit` | method | 2604 | Rebuild the canonical Order ledger after external E reconciliation. The pipeline may replace a final E branch with an earlier continuation built fr... |
+| `EZoneDetector.ensure_accepted_order_audit` | method | 2619 | Add audit coverage for externally restored accepted E zones. Visibility may restore an independent S-owned E root after StopAll reconciliation. Reb... |
+| `EZoneDetector.detect` | method | 2641 | Discover, reconcile and audit recursive E lifecycles. |
+| `detect_e_zones` | function | 2657 | Behaviorally relevant source symbol. |
 
-### `lifecycle_engine.py`
-| Symbol | Kind | Source lines | Normative role |
+### 20.6 `lifecycle_engine.py`
+| Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
-| `sequence_priority` | function | 32-34 | Calculation/chronology contract |
-| `StopAll` | class | 38-77 | Calculation/chronology contract |
-| `StopAllDetector` | class | 80-320 | Calculation/chronology contract |
-| `StopAllDetector.__init__` | method | 81-100 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `StopAllDetector._strict_stop` | method | 102-116 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `StopAllDetector._e_key` | method | 119-120 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `StopAllDetector._dominates_e` | method | 123-130 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `StopAllDetector._sequence_priority` | method | 133-134 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `StopAllDetector._active_sequence_priority` | method | 137-144 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `StopAllDetector._stopall_from_e` | method | 146-202 | Calculation/chronology contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `StopAllDetector.detect` | method | 204-320 | Calculation/chronology contract |
-| `detect_stopalls` | function | 323-329 | Calculation/chronology contract |
-| `prepare_order_audit` | function | 335-486 | Calculation/chronology contract |
-| `accepted_audit_entry` | function | 489-516 | Calculation/chronology contract |
-| `resolve_order_context` | function | 518-567 | Calculation/chronology contract |
-| `visible_a_zones_after_s_stops` | function | 570-584 | Calculation/chronology contract |
-| `module_priority` | function | 586-598 | Calculation/chronology contract |
-| `module_identity` | function | 600-607 | Calculation/chronology contract |
-| `module_stop_event` | function | 609-621 | Calculation/chronology contract |
-| `strictly_beyond_boundary` | function | 623-626 | Calculation/chronology contract |
-| `dominant_module` | function | 628-637 | Calculation/chronology contract |
-| `split_a_zones_by_dominant_stops` | function | 641-831 | Calculation/chronology contract |
-| `blocked_orders_while_invalid_leg_heads_are_live` | function | 833-853 | Calculation/chronology contract |
-| `consumed_s_evidence_after_larger_stop` | function | 856-931 | Calculation/chronology contract |
-| `s_zones_for_module_engines` | function | 933-961 | Calculation/chronology contract |
-| `s_zones_for_stopall` | function | 963-980 | Calculation/chronology contract |
-| `visible_s_zones_after_module_resets` | function | 982-1149 | Calculation/chronology contract |
-| `reconcile_stopall_lifecycle` | function | 1151-1181 | Calculation/chronology contract |
-| `visible_a_zones_after_module_boundaries` | function | 1184-1229 | Calculation/chronology contract |
-| `reaction_number_is_internal` | function | 1231-1242 | Calculation/chronology contract |
-| `order_identity_is_internal` | function | 1245-1251 | Calculation/chronology contract |
-| `point_is_inside_healthy_reaction` | function | 1254-1274 | Calculation/chronology contract |
-| `forbidden_internal_order_b` | function | 1277-1294 | Calculation/chronology contract |
-| `filter_internal_behavior_outputs` | function | 1297-1325 | Calculation/chronology contract |
-| `finalize_behavior_visibility` | function | 1327-1419 | Calculation/chronology contract |
-| `visible_a_zones` | function | 1422-1428 | Calculation/chronology contract |
+| `sequence_priority` | function | 33 | Return the single authoritative cross-stage behavior priority. |
+| `StopAll` | class | 39 | Source class. |
+| `StopAllDetector` | class | 81 | Source class. |
+| `StopAllDetector.__init__` | method | 82 | Behaviorally relevant source symbol. |
+| `StopAllDetector._strict_stop` | method | 103 | Behaviorally relevant source symbol. |
+| `StopAllDetector._e_key` | method | 120 | Behaviorally relevant source symbol. |
+| `StopAllDetector._dominates_e` | method | 124 | Behaviorally relevant source symbol. |
+| `StopAllDetector._sequence_priority` | method | 134 | Behaviorally relevant source symbol. |
+| `StopAllDetector._active_sequence_priority` | method | 138 | Behaviorally relevant source symbol. |
+| `StopAllDetector._stopall_from_e` | method | 147 | Behaviorally relevant source symbol. |
+| `StopAllDetector._optional_int` | method | 206 | Behaviorally relevant source symbol. |
+| `StopAllDetector._optional_decimal` | method | 210 | Behaviorally relevant source symbol. |
+| `StopAllDetector._stopall_from_s` | method | 213 | Promote the accepted opposite-color S into a fresh StopAll1. This is the direction-invariant family reversal gate. In both Bullish and Bearish calc... |
+| `StopAllDetector._opposite_s_stopall_gate` | method | 304 | Return stopped-group metadata for the S-Red Blue-group gate. Red/Blue behavior families are direction-invariant. In both Bullish and Bearish calcul... |
+| `StopAllDetector.detect` | method | 344 | Behaviorally relevant source symbol. |
+| `detect_stopalls` | function | 524 | Behaviorally relevant source symbol. |
+| `prepare_order_audit` | function | 536 | Resolve calculation-valid Order Audit identities before serialization. Multiple causes may own the same physical ``(FirstIndex, BreakIndex)`` Order... |
+| `accepted_audit_entry` | function | 695 | Return an E-facing A audit entry for one accepted A provenance. A physical order may be opened by more than one stopped A. E still consumes one ide... |
+| `resolve_order_context` | function | 724 | Resolve accepted stopped-A Orders against provisional Order blocks. Calculation ownership is authoritative: a canonical Order already accepted from... |
+| `visible_a_zones_after_s_stops` | function | 776 | Suppress the A candle that contains an already-confirmed S stop. That candle is the S-stop/E transition candle. It may still carry the order box's ... |
+| `module_priority` | function | 792 | Return the confirmed behavioral ownership priority. StopAll > E red > S red > E blue > S blue. A is intentionally absent: this helper is used only ... |
+| `module_identity` | function | 806 | Behaviorally relevant source symbol. |
+| `module_stop_event` | function | 815 | Resolve the strict one-second stop event of an S/E/StopAll object. |
+| `strictly_beyond_boundary` | function | 829 | Behaviorally relevant source symbol. |
+| `dominant_module` | function | 834 | Behaviorally relevant source symbol. |
+| `split_a_zones_by_dominant_stops` | function | 847 | Separate visible A labels from A objects allowed into downstream math. A/Reaction/Blue discovery remains independent inside every half-leg. Once an... |
+| `blocked_orders_while_invalid_leg_heads_are_live` | function | 1039 | Return order First times owned by a still-live invalid leg head. A strict dominant-boundary crossing can expose a new leg head without making its A... |
+| `consumed_s_evidence_after_larger_stop` | function | 1062 | Return the earliest suppressed S evidence that continues each stopped E. A lower-priority S remains non-public when it belongs to the continuation ... |
+| `s_zones_for_module_engines` | function | 1139 | Preserve the established S eligibility contract consumed by E/StopAll. |
+| `s_zones_for_stopall` | function | 1169 | Return accepted S state that may participate in StopAll grouping. E reconciliation still consumes the established S eligibility contract. StopAll a... |
+| `visible_s_zones_after_module_resets` | function | 1188 | Apply dominant-behavior ownership to successive S candidates. Bullish/bearish half-leg calculations remain active under a larger behavior. But once... |
+| `reconcile_stopall_lifecycle` | function | 1357 | Freeze StopAll boundaries from the accepted chronological E state. StopAll is a hard historical lifecycle boundary. Once the accepted E/S chronolog... |
+| `visible_a_zones_after_module_boundaries` | function | 1390 | Require A provenance to rebuild after the dominant strict stop. A price is deliberately not compared with the old module price. Reactions and Blue ... |
+| `reaction_number_is_internal` | function | 1437 | Return whether a numbered Reaction resolves to a protected internal owner. |
+| `order_identity_is_internal` | function | 1451 | Return whether a behavior's physical Order Reaction is internal. |
+| `point_is_inside_healthy_reaction` | function | 1460 | Return True only for a strict protected Reaction interior. First and published box edges are ownership boundaries, so equality and the First timest... |
+| `forbidden_internal_order_b` | function | 1483 | Reject only an internal Reset-leg *Mode-B* Order owner. The internal-Reaction prohibition is scoped to Reset-leg Order_B. A Reset-leg provenance ca... |
+| `filter_internal_behavior_outputs` | function | 1503 | Apply only the scoped Internal-Reaction Order_B prohibition. Internal Reaction geometry and its eligible evidence remain calculation valid. A/S/E/S... |
+| `finalize_behavior_visibility` | function | 1533 | Resolve the final A/S/E lineage closure after StopAll reconciliation. |
+| `visible_a_zones` | function | 1628 | Return A objects whose source candle is not occupied by a final S. |
 
-### `trading_pipeline.py`
-| Symbol | Kind | Source lines | Normative role |
+### 20.7 `trading_pipeline.py`
+| Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
-| `emit_progress` | function | 46-51 | Pipeline/serialization contract |
-| `timed` | function | 54-63 | Pipeline/serialization contract |
-| `load_module` | function | 66-73 | Pipeline/serialization contract |
-| `load_engine` | function | 76-77 | Pipeline/serialization contract |
-| `local_datetime` | function | 83-89 | Pipeline/serialization contract |
-| `epoch` | function | 95-101 | Pipeline/serialization contract |
-| `display_epoch` | function | 107-114 | Pipeline/serialization contract |
-| `build_candle_buckets` | function | 117-172 | Pipeline/serialization contract |
-| `build_candle_objects` | function | 175-202 | Pipeline/serialization contract |
-| `_index_selected` | function | 205-210 | Pipeline/serialization contract; private helper but behaviorally relevant unless explicitly cache-only |
-| `serialize` | function | 213-244 | Pipeline/serialization contract |
-| `serialize_blue_lines` | function | 247-264 | Pipeline/serialization contract |
-| `serialize_a_zones` | function | 267-291 | Pipeline/serialization contract |
-| `serialize_s_zones` | function | 294-356 | Pipeline/serialization contract |
-| `serialize_e_zones` | function | 359-407 | Pipeline/serialization contract |
-| `serialize_stopalls` | function | 410-460 | Pipeline/serialization contract |
-| `serialize_order_audit` | function | 463-514 | Pipeline/serialization contract |
-| `EngineBundle` | class | 518-524 | Pipeline/serialization contract |
-| `MarketContext` | class | 528-534 | Pipeline/serialization contract |
-| `parse_arguments` | function | 537-601 | Pipeline/serialization contract |
-| `load_engines` | function | 604-635 | Pipeline/serialization contract |
-| `prepare_market_context` | function | 638-716 | Pipeline/serialization contract |
-| `PipelineState` | class | 719-735 | Pipeline/serialization contract |
-| `FullDirectionState` | class | 739-750 | Pipeline/serialization contract |
-| `create_e_detector` | function | 753-814 | Pipeline/serialization contract |
-| `calculate_full_direction_state` | function | 817-1070 | Pipeline/serialization contract |
-| `prepare_pipeline_state` | function | 1073-1186 | Pipeline/serialization contract |
-| `DirectionRangeState` | class | 1190-1199 | Pipeline/serialization contract |
-| `DirectionVisibilityState` | class | 1203-1211 | Pipeline/serialization contract |
-| `calculate_direction_range_state` | function | 1214-1313 | Pipeline/serialization contract |
-| `finalize_direction_visibility` | function | 1316-1469 | Pipeline/serialization contract |
-| `serialize_direction_payload` | function | 1472-1523 | Pipeline/serialization contract |
-| `build_direction_output` | function | 1526-1549 | Pipeline/serialization contract |
-| `build_response_payload` | function | 1551-1601 | Pipeline/serialization contract |
-| `main` | function | 1604-1634 | Pipeline/serialization contract |
+| `emit_progress` | function | 47 | Send machine-readable lifecycle events without contaminating JSON stdout. |
+| `timed` | function | 55 | Measure an existing pipeline phase without changing its inputs or output. |
+| `load_module` | function | 67 | Behaviorally relevant source symbol. |
+| `load_engine` | function | 77 | Behaviorally relevant source symbol. |
+| `local_datetime` | function | 84 | Behaviorally relevant source symbol. |
+| `epoch` | function | 96 | Behaviorally relevant source symbol. |
+| `display_epoch` | function | 108 | Convert an engine display/native timestamp once per pipeline process. |
+| `build_candle_buckets` | function | 120 | Normalize raw rows once, preserving lower and selected-timeframe buckets. |
+| `build_candle_objects` | function | 178 | Create maintained engine candles from already-normalized buckets. |
+| `_index_selected` | function | 208 | Behaviorally relevant source symbol. |
+| `serialize` | function | 216 | Behaviorally relevant source symbol. |
+| `serialize_blue_lines` | function | 250 | Behaviorally relevant source symbol. |
+| `serialize_a_zones` | function | 270 | Behaviorally relevant source symbol. |
+| `serialize_s_zones` | function | 297 | Behaviorally relevant source symbol. |
+| `serialize_e_zones` | function | 362 | Behaviorally relevant source symbol. |
+| `serialize_stopalls` | function | 413 | Behaviorally relevant source symbol. |
+| `validate_order_audit_bridge` | function | 488 | Assert that public behavior Order provenance matches canonical OrderAudit. This is a bridge consistency invariant only; it does not choose, rank, o... |
+| `serialize_order_audit` | function | 556 | Serialize already-resolved Order Audit identities without business filtering. |
+| `EngineBundle` | class | 611 | Source class. |
+| `MarketContext` | class | 621 | Source class. |
+| `parse_arguments` | function | 630 | Parse and validate the production pipeline command line. |
+| `load_engines` | function | 697 | Load every configured calculation engine exactly once. |
+| `prepare_market_context` | function | 731 | Read, isolate, normalize and index the selected raw-data range. |
+| `PipelineState` | class | 812 | Mutable calculation state shared across direction serialization passes. |
+| `FullDirectionState` | class | 832 | Authoritative full-range behavior state for one trend direction. |
+| `create_e_detector` | function | 846 | Construct one E detector from the shared geometry/lifecycle contract. |
+| `calculate_full_direction_state` | function | 900 | Run Blue→A→S→E calculation and lifecycle reconciliation for one direction. |
+| `prepare_pipeline_state` | function | 1265 | Run shared calculation stages once and retain reusable detector state. |
+| `DirectionRangeState` | class | 1382 | Unserialized calculation state for one requested direction/range. |
+| `DirectionVisibilityState` | class | 1395 | Final public behavior state after lifecycle and internal-Reaction rules. |
+| `calculate_direction_range_state` | function | 1406 | Collect detector output for one requested direction before visibility rules. |
+| `finalize_direction_visibility` | function | 1508 | Apply lifecycle, range and Internal-Reaction rules to detector output. |
+| `serialize_direction_payload` | function | 1725 | Serialize one direction without applying any trading rule. |
+| `build_direction_output` | function | 1779 | Calculate, finalize and serialize one requested trend direction. |
+| `build_response_payload` | function | 1804 | Build the public response envelope around serialized direction outputs. |
+| `main` | function | 1857 | Behaviorally relevant source symbol. |
 
-### `direction_policy.py`
-| Symbol | Kind | Source lines | Normative role |
+### 20.8 `direction_policy.py`
+| Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
-| `DirectionPolicy` | class | 21-46 | Calculation/chronology contract |
-| `DirectionPolicy.opposite_direction` | method | 29-30 | Calculation/chronology contract |
-| `DirectionPolicy.strict_cross` | method | 32-33 | Calculation/chronology contract |
-| `DirectionPolicy.better_extreme` | method | 35-36 | Calculation/chronology contract |
-| `DirectionPolicy.choose_extreme` | method | 38-39 | Calculation/chronology contract |
-| `DirectionPolicy.confirmation_cross` | method | 41-46 | Calculation/chronology contract |
-| `policy_for` | function | 49-54 | Calculation/chronology contract |
+| `DirectionPolicy` | class | 21 | Source class. |
+| `DirectionPolicy.opposite_direction` | method | 29 | Behaviorally relevant source symbol. |
+| `DirectionPolicy.strict_cross` | method | 32 | Behaviorally relevant source symbol. |
+| `DirectionPolicy.better_extreme` | method | 35 | Behaviorally relevant source symbol. |
+| `DirectionPolicy.choose_extreme` | method | 38 | Behaviorally relevant source symbol. |
+| `DirectionPolicy.confirmation_cross` | method | 41 | Reaction confirmation mirror: high>top vs low<bottom. ``value`` is the already-selected confirmation-side price. |
+| `policy_for` | function | 49 | Behaviorally relevant source symbol. |
 
-### `core_utils.py`
-| Symbol | Kind | Source lines | Normative role |
+### 20.9 `core_utils.py`
+| Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
-| `as_decimal` | function | 11-13 | Shared primitive |
-| `order_identity` | function | 19-21 | Shared primitive |
-| `reaction_identity` | function | 24-29 | Shared primitive |
+| `as_decimal` | function | 11 | Preserve Decimal values and normalize other numeric inputs losslessly. |
+| `order_identity` | function | 19 | Return the canonical physical Order/Reaction geometry identity. |
+| `reaction_identity` | function | 24 | Return ``(FirstIndex, BreakIndex)`` for a Reaction-like object. |
 
+### 20.10 Dataclass/object schemas present in the source snapshot
 
-## 21. Canonical data-object schema appendix
+#### `Candle` (`reaction_engine.py`)
 
-These are the source-level state objects that a reconstruction must be able to represent semantically. Names may change in a new implementation, but fields/provenance cannot be discarded if downstream logic uses them.
-
-### `Candle` (`reaction_engine.py`)
 | Field | Type |
 |---|---|
 | `index` | `int` |
@@ -1346,7 +1418,8 @@ These are the source-level state objects that a reconstruction must be able to r
 | `low` | `Decimal` |
 | `close` | `Decimal` |
 
-### `Candidate` (`reaction_engine.py`)
+#### `Candidate` (`reaction_engine.py`)
+
 | Field | Type |
 |---|---|
 | `first_idx` | `int` |
@@ -1374,7 +1447,8 @@ These are the source-level state objects that a reconstruction must be able to r
 | `behavior_first_time` | `datetime | None` |
 | `behavior_internal` | `bool` |
 
-### `ResetEvent` (`reaction_engine.py`)
+#### `ResetEvent` (`reaction_engine.py`)
+
 | Field | Type |
 |---|---|
 | `index` | `int` |
@@ -1383,14 +1457,16 @@ These are the source-level state objects that a reconstruction must be able to r
 | `broken_level` | `Decimal` |
 | `from_first_idx` | `int` |
 
-### `IntrabarAnalysis` (`reaction_engine.py`)
+#### `IntrabarAnalysis` (`reaction_engine.py`)
+
 | Field | Type |
 |---|---|
 | `event_second` | `Candle` |
 | `extreme` | `Decimal` |
 | `extreme_source` | `Candle` |
 
-### `DetectionResult` (`reaction_engine.py`)
+#### `DetectionResult` (`reaction_engine.py`)
+
 | Field | Type |
 |---|---|
 | `direction` | `str` |
@@ -1399,14 +1475,16 @@ These are the source-level state objects that a reconstruction must be able to r
 | `start_index` | `int` |
 | `end_index` | `int` |
 
-### `ScaleStrike` (`blue_line_detector.py`)
+#### `ScaleStrike` (`blue_line_detector.py`)
+
 | Field | Type |
 |---|---|
 | `source_index` | `int` |
 | `source_time` | `datetime` |
 | `extreme` | `Decimal` |
 
-### `BlueLine` (`blue_line_detector.py`)
+#### `BlueLine` (`blue_line_detector.py`)
+
 | Field | Type |
 |---|---|
 | `direction` | `str` |
@@ -1425,7 +1503,8 @@ These are the source-level state objects that a reconstruction must be able to r
 | `calculation_valid` | `bool` |
 | `behavior_internal` | `bool` |
 
-### `BlueState` (`a_zone_detector.py`)
+#### `BlueState` (`a_zone_detector.py`)
+
 | Field | Type |
 |---|---|
 | `ordinal` | `int` |
@@ -1438,7 +1517,8 @@ These are the source-level state objects that a reconstruction must be able to r
 | `stop_level` | `Decimal` |
 | `stop_event_extreme` | `Decimal | None` |
 
-### `AZone` (`a_zone_detector.py`)
+#### `AZone` (`a_zone_detector.py`)
+
 | Field | Type |
 |---|---|
 | `direction` | `str` |
@@ -1463,7 +1543,8 @@ These are the source-level state objects that a reconstruction must be able to r
 | `source_time` | `datetime` |
 | `price` | `Decimal` |
 
-### `SZone` (`s_zone_detector.py`)
+#### `SZone` (`s_zone_detector.py`)
+
 | Field | Type |
 |---|---|
 | `direction` | `str` |
@@ -1502,7 +1583,8 @@ These are the source-level state objects that a reconstruction must be able to r
 | `decision_time` | `datetime` |
 | `decision_event_time` | `datetime` |
 
-### `EZone` (`e_zone_detector.py`)
+#### `EZone` (`e_zone_detector.py`)
+
 | Field | Type |
 |---|---|
 | `direction` | `str` |
@@ -1543,7 +1625,31 @@ These are the source-level state objects that a reconstruction must be able to r
 | `decision_time` | `datetime` |
 | `decision_event_time` | `datetime` |
 
-### `StopAll` (`lifecycle_engine.py`)
+#### `OrderBFormation` (`e_zone_detector.py`)
+
+| Field | Type |
+|---|---|
+| `reset_time` | `datetime` |
+| `reset_index` | `int` |
+| `owner_first_index` | `int` |
+| `owner_break_index` | `int` |
+| `trigger_level` | `Decimal` |
+| `trigger_source_index` | `int` |
+| `trigger_source_time` | `datetime` |
+| `strict_break_index` | `int` |
+| `strict_break_time` | `datetime` |
+| `strict_break_event_time` | `datetime` |
+| `opposite_extreme` | `Decimal` |
+| `opposite_extreme_source_index` | `int` |
+| `opposite_extreme_source_time` | `datetime` |
+| `evidence_first_index` | `int` |
+| `evidence_break_index` | `int` |
+| `order_reaction_number` | `int` |
+| `order_reaction` | `object` |
+| `order_confirmation_time` | `datetime` |
+
+#### `StopAll` (`lifecycle_engine.py`)
+
 | Field | Type |
 |---|---|
 | `direction` | `str` |
@@ -1559,34 +1665,35 @@ These are the source-level state objects that a reconstruction must be able to r
 | `stopped_behavior_type` | `str` |
 | `stopped_behavior_key` | `str` |
 | `stopped_behavior_count` | `int` |
-| `underlying_e_family` | `str` |
-| `underlying_e_number` | `int` |
-| `order_direction` | `str` |
-| `order_reaction_number` | `int` |
-| `order_mode` | `str` |
+| `underlying_e_family` | `str | None` |
+| `underlying_e_number` | `int | None` |
+| `order_direction` | `str | None` |
+| `order_reaction_number` | `int | None` |
+| `order_mode` | `str | None` |
 | `order_causes` | `tuple[str, ...]` |
 | `order_parent_stop_cause_time` | `datetime | None` |
 | `order_reset_leg_reset_time` | `datetime | None` |
 | `order_reset_leg_break_time` | `datetime | None` |
-| `order_first_index` | `int` |
-| `order_first_time` | `datetime` |
-| `order_break_index` | `int` |
-| `order_break_time` | `datetime` |
-| `order_confirmation_time` | `datetime` |
-| `order_box_top` | `Decimal` |
-| `order_box_top_source_index` | `int` |
-| `order_box_top_source_time` | `datetime` |
-| `order_box_bottom` | `Decimal` |
-| `order_box_bottom_source_index` | `int` |
-| `order_box_bottom_source_time` | `datetime` |
-| `order_stop_level` | `Decimal` |
-| `order_stop_source_index` | `int` |
-| `order_stop_source_time` | `datetime` |
+| `order_first_index` | `int | None` |
+| `order_first_time` | `datetime | None` |
+| `order_break_index` | `int | None` |
+| `order_break_time` | `datetime | None` |
+| `order_confirmation_time` | `datetime | None` |
+| `order_box_top` | `Decimal | None` |
+| `order_box_top_source_index` | `int | None` |
+| `order_box_top_source_time` | `datetime | None` |
+| `order_box_bottom` | `Decimal | None` |
+| `order_box_bottom_source_index` | `int | None` |
+| `order_box_bottom_source_time` | `datetime | None` |
+| `order_stop_level` | `Decimal | None` |
+| `order_stop_source_index` | `int | None` |
+| `order_stop_source_time` | `datetime | None` |
 | `stop_index` | `int | None` |
 | `stop_time` | `datetime | None` |
 | `stop_event_time` | `datetime | None` |
 
-### `EngineBundle` (`trading_pipeline.py`)
+#### `EngineBundle` (`trading_pipeline.py`)
+
 | Field | Type |
 |---|---|
 | `reaction` | `object` |
@@ -1596,7 +1703,8 @@ These are the source-level state objects that a reconstruction must be able to r
 | `e_zone` | `object | None` |
 | `lifecycle` | `object | None` |
 
-### `MarketContext` (`trading_pipeline.py`)
+#### `MarketContext` (`trading_pipeline.py`)
+
 | Field | Type |
 |---|---|
 | `seconds` | `list[object]` |
@@ -1606,7 +1714,8 @@ These are the source-level state objects that a reconstruction must be able to r
 | `start_index` | `int` |
 | `end_index` | `int` |
 
-### `PipelineState` (`trading_pipeline.py`)
+#### `PipelineState` (`trading_pipeline.py`)
+
 | Field | Type |
 |---|---|
 | `directions` | `tuple[str, ...]` |
@@ -1624,7 +1733,8 @@ These are the source-level state objects that a reconstruction must be able to r
 | `full_s_by_direction` | `dict[str, list[object]]` |
 | `full_s_candidates_by_direction` | `dict[str, list[object]]` |
 
-### `FullDirectionState` (`trading_pipeline.py`)
+#### `FullDirectionState` (`trading_pipeline.py`)
+
 | Field | Type |
 |---|---|
 | `e_zones` | `list[object]` |
@@ -1637,7 +1747,8 @@ These are the source-level state objects that a reconstruction must be able to r
 | `s_zones` | `list[object]` |
 | `s_candidates` | `list[object]` |
 
-### `DirectionRangeState` (`trading_pipeline.py`)
+#### `DirectionRangeState` (`trading_pipeline.py`)
+
 | Field | Type |
 |---|---|
 | `blue_lines` | `list[object]` |
@@ -1648,7 +1759,8 @@ These are the source-level state objects that a reconstruction must be able to r
 | `invalid_a_identities` | `set[tuple[datetime, int]]` |
 | `invalid_s_identities` | `set[tuple[datetime, int]]` |
 
-### `DirectionVisibilityState` (`trading_pipeline.py`)
+#### `DirectionVisibilityState` (`trading_pipeline.py`)
+
 | Field | Type |
 |---|---|
 | `blue_lines` | `list[object]` |
@@ -1658,7 +1770,8 @@ These are the source-level state objects that a reconstruction must be able to r
 | `stopalls` | `list[object]` |
 | `prepared_order_audit` | `list[object]` |
 
-### `DirectionPolicy` (`direction_policy.py`)
+#### `DirectionPolicy` (`direction_policy.py`)
+
 | Field | Type |
 |---|---|
 | `direction` | `Direction` |
@@ -1666,7 +1779,6 @@ These are the source-level state objects that a reconstruction must be able to r
 | `opposite_extreme_attr` | `Literal['high', 'low']` |
 | `first_reaction_tag` | `Literal['RED', 'GREEN']` |
 | `context_tag` | `Literal['GREEN', 'RED']` |
-
 
 ## 22. Complete terminology and object/lifecycle glossary
 
@@ -1715,34 +1827,42 @@ S color (`red`/`blue`) is a behavior family label and is **not** synonymous with
 - **Parent:** an accepted S or E whose strict stop opens the possibility of the next E.
 - **Parent-stop Order:** an opposite-direction Order discovered/owned because a parent behavior stopped.
 - **Carried-live Order:** an already-accepted physical Order that remains eligible for a newer parent under exact lifecycle rules.
-- **Reset-leg Order_B:** a canonical opposite Order unlocked by an opposite Reset leg and its strict boundary crossing, subject to scoped internal-Reaction restrictions.
+- **Reset-leg Order_B:** an independent Order cause created when a **Bullish Reaction Reset** yields a Breakout→Reset inclusive maximum-High ceiling, that ceiling is later strictly broken (`High > ceiling`), raw **Bearish Reaction geometry** exists in the closed ceiling-source→strict-break-main-candle interval, and the first canonical Bearish Reaction after the gate is assigned as the physical Order_B. The same closed interval supplies the minimum-Low floor. Reset validity/lifecycle/Internal status is ignored only for the evidence geometry test.
 - **Direct Order_A:** direct post-parent-stop geometry, including the narrow fresh-trend-leg route after a stopped E.
+- **Shared accepted Order use:** a physical Order already accepted by another behavior/structure may decide the current S/E candidate when exact stop chronology is valid. The creating parent need not match. `carried-live` means already active at the candidate parent stop; `accepted-live` means confirmed after it. Both are use provenance only.
+- **Order cause vs Reaction mode:** `Order_A`/`Order_B` describe why the physical Order exists. `Reaction.mode` describes the Reaction engine geometry (`A` or `B`). They are independent fields/concepts.
 - **E family:** `red` or `blue`; Red family has higher invariant sequence priority than Blue family.
 - **E number:** recursive position inside the accepted family chain (E1, E2, E3, ...), assigned after candidate-chain reconciliation rather than by naive chronological counting.
 
 ### 22.7 StopAll
 
-StopAll is a behavior generated by three lifecycle gates: (1) the existing E-driven `sequence-group-stop`, (2) the existing E-driven `stopall-stop`, and (3) the accepted-S `opposite-s-group-stop`. The third gate is family-invariant: in Bearish as in Bullish, accepted S Red becomes `StopAll1` when the current dominant lifecycle has accumulated at least two dominant Blue behaviors. Those Blue behaviors may progress across different S/E keys; same-key repetition is not required. S-promoted StopAll source/price/decision come from that S. StopAll itself can later strictly stop and can seed a subsequent StopAll number according to the detector state machine. Every StopAll boundary clears active S/E sequence counters and the dominant-Blue count, terminating pre-boundary lifecycle ownership for downstream visibility/re-entry arbitration.
+StopAll is a behavior generated by three lifecycle gates: (1) the existing E-driven `sequence-group-stop`, (2) the existing E-driven `stopall-stop`, and (3) the accepted-S `opposite-s-group-stop`. The third gate is family-invariant: in both Bullish and Bearish, accepted S Red becomes `StopAll1` when the current dominant lifecycle has accumulated at least two dominant Blue behaviors. Those Blue behaviors may progress across different S/E keys; same-key repetition is not required. S-promoted StopAll source/price/decision come from that S. StopAll itself can later strictly stop and can seed a subsequent StopAll number according to the detector state machine. Every StopAll boundary clears active S/E sequence counters and the dominant-Blue count, terminating pre-boundary lifecycle ownership for downstream visibility/re-entry arbitration.
 
 ### 22.8 OrderAudit
 
 OrderAudit is not a separate market behavior. It is the canonical ledger of physical Orders keyed by `(FirstIndex, BreakIndex)`, with merged causes/provenance and exact strict stop-hit chronology. One physical Order can have multiple accepted causes, but one exact parent-stop provenance cannot be consumed twice to create multiple physical Orders.
 
-## 23. Directional rule matrix and full behavior transition catalog — Bearish
+## 23. Directional rule matrix and full behavior transition catalog — Bullish
 
 ### 23.1 Mechanical directional map
 
-| Concept | Bearish rule | Bullish mirror |
+| Concept | Bullish rule | Bearish mirror |
 |---|---|---|
-| Directional extreme | maximum / High | minimum / Low |
-| Strict behavior/Blue stop | `High > level` | `Low < level` |
-| Reaction First color | GREEN | RED |
-| Reaction confirm | `Low < BoxBottom` | `High > BoxTop` |
-| Reset boundary | previous confirmed BoxTop | previous confirmed BoxBottom |
-| Confirmation-side exact scan | Low | High |
-| A source extreme | maximum High | minimum Low |
-| Chained Blue carried stop | maximum High over complete interval | minimum Low over complete interval |
-| Opposite Order direction | Bullish | Bearish |
+| Directional extreme | minimum / Low | maximum / High |
+| Strict behavior/Blue stop | `Low < level` | `High > level` |
+| Reaction First color | RED | GREEN |
+| Reaction confirm | `High > BoxTop` | `Low < BoxBottom` |
+| Reset boundary | previous confirmed BoxBottom | previous confirmed BoxTop |
+| Confirmation-side exact scan | High | Low |
+| A source extreme | minimum Low | maximum High |
+| Chained Blue carried stop | minimum Low over complete interval | maximum High over complete interval |
+| Opposite Order direction | Bearish | Bullish |
+| Order_B Reset owner | Bullish Reaction Reset | Bearish Reaction Reset |
+| Order_B primary extreme | maximum High, owner Breakout→Reset inclusive | minimum Low, owner Breakout→Reset inclusive |
+| Order_B strict trigger | `High > ceiling` after Reset | `Low < floor` after Reset |
+| Order_B evidence geometry | raw Bearish geometry in closed ceiling-source→strict-break candle range | raw Bullish geometry in closed floor-source→strict-break candle range |
+| Order_B other edge | minimum Low over same closed evidence range | maximum High over same closed evidence range |
+| Order_B physical Order | first canonical Bearish Reaction after gate | first canonical Bullish Reaction after gate |
 
 ### 23.2 Invariant rules that must not be directionally swapped
 
@@ -1754,26 +1874,26 @@ OrderAudit is not a separate market behavior. It is the canonical ledger of phys
 - Full-RAW calculation and presentation filtering rules remain unchanged.
 - Exact invalidation-first ties stay invalidation-first where the implementation checks them in that order.
 
-### 23.3 End-to-end Bearish behavior flow
+### 23.3 End-to-end Bullish behavior flow
 
 ```text
 Bullish/ Bearish RAW candles
     ↓
-Bearish Reaction + Reset geometry (while Bullish Reaction/Reset is also calculated)
+Bullish Reaction + Reset geometry (while Bearish Reaction/Reset is also calculated)
     ↓
-Bearish Scale/Reset Blue evidence
+Bullish Scale/Reset Blue evidence
     ↓
 Blue stops + adjacent-pair / double-stop chronology
     ↓
-Bearish A candidate → validating Bearish Reaction exact confirmation → accepted A
-    ↓ strict High > A.price
+Bullish A candidate → validating Bullish Reaction exact confirmation → accepted A
+    ↓ strict Low < A.price
 A stop
     ↓
-first eligible Bullish Order geometry + Type3/Simple/Advanced S logic
+first eligible Bearish Order geometry + Type3/Simple/Advanced S logic
     ↓
 accepted S Red or S Blue
-    ↓ strict High > S.price (and accepted Order routes)
-recursive E candidates / parent-stop, carried-live, Reset-leg/direct Order routes
+    ↓ strict Low < S.price (and accepted Order routes)
+recursive E candidates / parent-stop Order_A, carried-live, and canonical V5.2.0 Reset-leg Order_B routes
     ↓
 family/number/same-source/lifecycle reconciliation
     ↓
@@ -1790,27 +1910,40 @@ final lifecycle visibility + OrderAudit + serialization
 
 These examples are included to make chronology and ownership concrete. They are regression fixtures/examples only; a conforming implementation must derive them from general rules and must never branch on their timestamps/prices.
 
-### 24.1 Bearish exact lower-timeframe Reaction confirmation and A ownership
+### 24.1 Bullish same-Break confirmation/reset ownership
 
-XAUUSD 30s reference shape: A source is `2026-09-04 16:57:30`; the validating Bearish Reaction has FirstGreen `16:58:00`, BoxBottom from `16:57:30`, BoxTop from `16:58:00`, and exact lower-timeframe breakdown confirmation at `16:58:38`. A source ownership freezes at exact confirmation; later remainder prices in the same Break main candle cannot retroactively move A to `16:58:30`.
+USOIL 30s reference shape: a Bullish Reaction confirms strictly inside the `2026-09-09 19:09:30` main candle at exact `19:09:45`. A later lower event in the same main candle at `19:09:50` trades below the frozen exact-confirmation opposite edge. Therefore that main candle is preserved as a Reset boundary and **cannot** simultaneously become the next normal Bullish FirstRed. This preserved Reset evidence participates in later Blue/A calculation.
 
-### 24.2 Bearish Order bounded Mode-A anchor
+### 24.2 Bullish Blue → A → S → Order → later A/S chain
 
-Reference Order `2026-09-07 10:14:00` keeps its stop source at `10:13:30`. When the bounded gate resolver returns `continue`, a genuinely resolved current-leg Mode-A anchor is authoritative; an older Reset cannot overwrite that anchor merely because historical Reset provenance exists.
+Reference chain: `A 2026-09-09 19:06:30 → S Red 19:09:30 → Order 19:14:30 → A 19:20:30 → S Blue 19:47:00`. An earlier candidate `A 19:17:00` is rejected by the corrected chained-Blue/exact-reset chronology. The timestamps are validation evidence, not rules.
 
-### 24.3 Bearish chained Blue carried-stop mirror
+### 24.3 Exact-source E continuation ownership
 
-For a stopped Bearish Blue, locate the first valid Bearish Reaction after the stop and compute the **maximum High** from the Blue stop main candle through the complete Breakout main candle, inclusive. This is now the exact mirror of Bullish minimum-Low chronology. Historical USOIL reference geometry around Blue `2026-09-11 09:23:00` is an example of the carried-stop route, but the production rule is fully general.
+XAUUSD 30s reference chain: `E1 Blue 2026-09-17 07:50:00 → E2 Blue 08:00:00 → E3 Blue 08:54:00`. A calculation-invalid `S Red @ 08:00:00` can remain Order/evidence provenance but cannot open a competing cross-family E1 at the same physical source occupied by the native Blue continuation. This prevents the formerly incorrect `E1 Red @ 08:54:00`.
 
-### 24.4 Exact-source E continuation ownership is direction-invariant
+### 24.4 StopAll downstream consequence of correct E ownership
 
-The invalid-S same-source cross-family rule does not depend on Bullish/Bearish direction. Family labels remain invariant; only price geometry mirrors. A price-mirrored validation fixture preserves the same `E1 Blue → E2 Blue → E3 Blue` ownership sequence without allowing an invalid Red S root to steal the physical source.
+Because the invalid Red E root above no longer exists, the old downstream `StopAll @ 18:30:30` based on that Red sequence also disappears; the native behavior at that source is resolved by the surviving legitimate chain. This demonstrates why E reconciliation must happen before StopAll history is finalized.
 
-### 24.5 Bearish validation of the family-invariant S-reversal StopAll cycle
+### 24.5 Bullish S-reversal StopAll cycle
 
-Bearish mirrors price geometry, not Red/Blue family labels. After a hard lifecycle reset or from calculation start, once at least two dominant Blue behaviors have accumulated, the next accepted S Red is promoted on its own source to `StopAll1`. A Blue progression may cross keys: `S Blue → E1 Blue` is already two dominant Blue behaviors. In the XAUUSD 1s / 30s validation case, `S Blue @ 2026-09-04 01:35:30` followed by dominant `E1 Blue @ 01:48:30` satisfies the minimum, so accepted `S Red @ 02:36:00` becomes `StopAll1`. Its strict Bearish stop uses `High > StopAll.price`; later accepted E sources may then become `StopAll2`, `StopAll3`, and so on. No timestamp or fixture-specific branch is allowed.
+XAUUSD 30s validation shape after `StopAll2 @ 2026-09-17 06:25:00`: dominant Blue behavior reaches `E3 Blue @ 08:54:00` and another dominant `E3 Blue @ 13:00:30` extends the same Blue lifecycle, so the cumulative dominant-Blue count is at least two. Accepted `S Red @ 16:15:00` is therefore promoted to `StopAll1` on that same source. After the promoted StopAll1 strictly stops, the accepted E source at `17:15:00` becomes `StopAll2`; after that StopAll2 strictly stops, the accepted E source at `18:30:30` becomes `StopAll3`. The rule is generic and must never branch on these timestamps.
+
+XAUUSD 1s / 30s Bearish validation shape: `S Blue @ 2026-09-04 01:35:30` followed by dominant `E1 Blue @ 01:48:30` already supplies at least two dominant Blue behaviors even though the labels are different keys. Accepted `S Red @ 02:36:00` must therefore be promoted to `StopAll1`. This case is the explicit proof that the reversal counter spans dominant Blue S/E progression and is not a same-key counter. Bearish strict-stop geometry remains mirrored, but Blue/Red family labels are unchanged.
+
+### 24.6 Canonical Bullish Order_B mirror contract
+
+For Bullish, mirror the Bearish worked route mechanically: a **Bullish Reaction Reset** owns the setup; take the maximum High from its Breakout main candle through its Reset main candle inclusive as the ceiling; after the exact Reset wait for strict `High > ceiling`; use the closed ceiling-source→strict-break-main-candle interval to require raw Bearish Reaction geometry and to obtain the minimum-Low floor; then the first canonical Bearish Reaction after the gate is the physical Order_B. No Red/Blue family, lifecycle priority, Doji or serialization invariant is mirrored.
+
+
+### 24.7 Shared accepted-Order exact mirror
+
+Bullish uses the identical parent-neutral accepted-Order rule. An already accepted Bearish physical Order may decide a different Bullish S/E candidate when the exact Bearish Order stop is chronologically eligible. Creation parent identity is invariant and ignored; only directional price semantics mirror (`Low/High`, `<`/`>`, minimum/maximum). Hard StopAll/sequence resets remain absolute boundaries.
 
 ## 25. Reconstruction procedure and implementation traps
+
+- Treating a calculation-accepted Order as usable only by the behavior that originally created it; accepted physical Orders are parent-neutral for S/E confirmation when their exact strict stop chronology is eligible.
 
 ### 25.1 Recommended implementation order
 
@@ -1838,7 +1971,15 @@ Bearish mirrors price geometry, not Red/Blue family labels. After a hard lifecyc
 - Counting E numbers before same-source/family/lifecycle reconciliation.
 - Recomputing historical StopAll after restoring an independent S-root E branch; accepted StopAll prefix/history has scoped immutability.
 - Consuming one exact parent-stop cause more than once for two physical Orders.
+- Letting a duplicate later parent-stop Order influence E deadline/selection before single-consumption arbitration.
+- Emitting a public S/E/StopAll whose `(orderFirstIndex,orderBreakIndex)` is absent from final OrderAudit, or rebuilding OrderAudit without resynchronizing later accepted E branch/root changes.
 - Mirroring Red/Blue family priority; it is invariant and must not swap.
+- Reusing the pre-V5.2.0 opposite-Reset Order_B algorithm; Order_B must start from a Reset of the **same trend direction**.
+- Treating `Order_B` as `Reaction.mode == B`; formation cause and native Reaction mode are independent.
+- Requiring the opposite evidence Reaction to survive normal Reset/lifecycle/public/Internal rules; for Order_B evidence, raw geometry alone is sufficient.
+- Searching evidence outside the closed primary-extreme-source→strict-break-main-candle interval, or excluding either endpoint.
+- Using a later equal extreme as the source; Order_B extrema retain the first main candle owning the final equal value.
+- Keeping multiple Reset-leg causes on one physical Order in final audit; latest valid `(resetTime, strictBreakEventTime)` is authoritative.
 
 ### 25.3 Observable-equivalence rule
 
@@ -1852,10 +1993,10 @@ This section embeds the complete production Python snapshot used to derive this 
 
 ### 26.1 `reaction_engine.py`
 
-- Lines: `2435`
-- SHA-256: `189bf417542fc7c329086bc3218f5ab5b587612136e67db2757198c65cc55584`
+- Lines: `2376`
+- SHA-256: `dfd38eff64de7cbf6ad90b9c981d58167f75ea1dd375fdf2ae503a4e85f720cb`
 
-<!-- SOURCE_FILE_BEGIN:reaction_engine.py:SHA256=189bf417542fc7c329086bc3218f5ab5b587612136e67db2757198c65cc55584 -->
+<!-- SOURCE_FILE_BEGIN:reaction_engine.py:SHA256=dfd38eff64de7cbf6ad90b9c981d58167f75ea1dd375fdf2ae503a4e85f720cb -->
 ```python
 """Authoritative Reaction geometry and shared market chronology.
 
@@ -1877,7 +2018,8 @@ from typing import Iterable, Sequence
 from direction_policy import policy_for
 
 
-REACTION_ENGINE_VERSION = "9.5.2"
+REACTION_ENGINE_VERSION = "9.6.0"
+REACTION_ENGINE_LAST_MODIFIED = "2026-09-20 03:48:27 +03:30"
 
 _SEQUENCE_TIME_INDEXES: dict[int, tuple[Sequence[Candle], list[datetime]]] = {}
 
@@ -3261,7 +3403,6 @@ class UnifiedReactionDetector(DetectorBase):
             "bearish": [],
         }
         self._geometry_after_reset_cache: dict[tuple, Candidate | None] = {}
-        self._simple_geometry_gate_cache: dict[tuple, Candidate | None] = {}
 
     @property
     def bull(self) -> BullishDetector:
@@ -3523,11 +3664,12 @@ class UnifiedReactionDetector(DetectorBase):
     def _first_geometry_after_reset(
         self, direction: str, reset_index: int, end_index: int | None = None,
     ) -> Candidate | None:
-        """Return the first complete same-direction geometry after Reset.
+        """Return the first complete raw Reaction geometry after a boundary.
 
-        This search intentionally does not apply the normal Reset/invalidation
-        gate.  In an E space, the reset-leg rule only requires the geometric
-        Top-Bottom-Top / Bottom-Top-Bottom structure.
+        This bounded search intentionally ignores normal Reset/invalidation
+        acceptance.  It is a geometry-only primitive: First/box/Break structure
+        may be used as evidence even when normal Reaction lifecycle rules would
+        later Reset or suppress that structure.
         """
         _lim = self.end_index if end_index is None else min(end_index, self.end_index)
         _ck = (direction, reset_index, _lim)
@@ -3578,66 +3720,6 @@ class UnifiedReactionDetector(DetectorBase):
         """Public lifecycle API for post-Reset geometry discovery."""
         return self._first_geometry_after_reset(direction, reset_index, end_index)
 
-
-    def first_simple_geometry_after_gate(
-        self,
-        direction: str,
-        reset_index: int,
-        gate_index: int,
-        end_index: int | None = None,
-    ) -> Candidate | None:
-        """Find the first E Order_B geometry from its actual Reset context.
-
-        The Order_B gate is opened later by a strict lower-timeframe boundary
-        crossing, but its simple geometry still belongs to the Reset that
-        created the leg.  Reconstructing it from ``gate_index - 1`` invents a
-        new Reset context and can promote a pattern that is not an
-        authoritative reaction.  This bounded helper preserves the real Reset
-        while restricting First to the gate candle or later.
-        """
-        _lim = self.end_index if end_index is None else min(end_index, self.end_index)
-        _ck = (direction, reset_index, gate_index, _lim)
-        if _ck in self._simple_geometry_gate_cache:
-            _cached = self._simple_geometry_gate_cache[_ck]
-            return replace(_cached) if _cached is not None else None
-        first_tag = "RED" if direction == "bullish" else "GREEN"
-        context_tag = "GREEN" if direction == "bullish" else "RED"
-        limit = self.end_index if end_index is None else min(end_index, self.end_index)
-        start = max(reset_index + 1, gate_index)
-        blocked_through = start - 1
-        for first_index in range(start, limit + 1):
-            if first_index <= blocked_through:
-                continue
-            if (
-                self.candles[first_index].tag != first_tag
-                or self.candles[first_index - 1].tag != context_tag
-            ):
-                continue
-            candidate = self._build_direct_candidate(
-                direction, reset_index, first_index
-            )
-            if candidate is None:
-                continue
-            # The earliest eligible post-gate candidate owns this Reset leg
-            # until it confirms or strictly loses its frozen owner boundary.
-            # An invalidated candidate is dead, but its invalidated interval
-            # must not prevent a later, genuinely new First from becoming the
-            # first valid Order_B geometry.
-            confirmed, invalidation_index = self._scan_direct_candidate(
-                direction, candidate, limit
-            )
-            if confirmed is not None:
-                self._simple_geometry_gate_cache[_ck] = confirmed
-                return confirmed
-            if invalidation_index is not None:
-                blocked_through = invalidation_index
-                continue
-            # No confirmation and no structural invalidation before the search
-            # deadline: this owner remains unresolved through the bounded leg,
-            # so no nested later First may replace it.
-            break
-        self._simple_geometry_gate_cache[_ck] = None
-        return None
 
     def _reaction_break_indices(self, direction: str) -> list[int]:
         """Cached ascending `break_idx` values mirroring `all_reactions[direction]`.
@@ -5550,16 +5632,17 @@ def detect_a_zones(
 
 ### 26.4 `s_zone_detector.py`
 
-- Lines: `1363`
-- SHA-256: `aa73c11a0d0f6c344a3c340e3cae72eecddcad756ec5094871e2c0ceb04bd82a`
+- Lines: `1344`
+- SHA-256: `3b1440f6e776c143babd93d817ac7c3bc3adbb80900797e25d44342932698185`
 
-<!-- SOURCE_FILE_BEGIN:s_zone_detector.py:SHA256=aa73c11a0d0f6c344a3c340e3cae72eecddcad756ec5094871e2c0ceb04bd82a -->
+<!-- SOURCE_FILE_BEGIN:s_zone_detector.py:SHA256=3b1440f6e776c143babd93d817ac7c3bc3adbb80900797e25d44342932698185 -->
 ```python
 """S-zone calculation from authoritative A, Reaction, Blue, and Order state.
 
 Owns A-to-S handoff, S Red/Blue Simple/Advanced/Type3 formation, S decision
-chronology, and the initial Order audit created by stopped A zones. Larger
-E/StopAll arbitration remains lifecycle-owned.
+chronology, shared accepted-Order stop reconciliation, and the initial Order
+audit created by stopped A zones. Larger E/StopAll arbitration remains
+lifecycle-owned.
 """
 
 from __future__ import annotations
@@ -5574,7 +5657,8 @@ from core_utils import as_decimal, reaction_identity
 from direction_policy import policy_for
 
 
-S_ZONE_VERSION = "4.13.1"
+S_ZONE_VERSION = "4.14.0"
+S_ZONE_LAST_MODIFIED = "2026-09-20 04:35:08 +03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -5929,7 +6013,7 @@ class SZoneDetector:
     def _type3_reset_leg(
         self, reset: object
     ) -> tuple[int, datetime, Decimal] | None:
-        """Return Order_B-equivalent inclusive Break-to-Reset geometry."""
+        """Return the independent Type-3 inclusive Break-to-Reset geometry."""
         owner_match = self._opposite_by_first_index.get(
             int(getattr(reset, "from_first_idx"))
         )
@@ -5957,7 +6041,7 @@ class SZoneDetector:
         a_stop_event: datetime,
         deadline: datetime,
     ) -> tuple[int, datetime, Decimal, int, datetime, int, datetime, datetime] | None:
-        """Find the first no-order Reset-leg S decision before a new order."""
+        """Find the first no-order Type-3 Reset-leg S decision before a new order."""
         reset_times_by_owner: dict[int, list[datetime]] = {}
         for reset in self.opposite_resets:
             reset_times_by_owner.setdefault(
@@ -6753,14 +6837,18 @@ class SZoneDetector:
         zones: Sequence[SZone],
         order_entries: Sequence[dict[str, object]],
     ) -> list[SZone]:
-        """Resolve an open S candidate with a later accepted physical Order stop.
+        """Resolve open S candidates with any accepted physical Order stop.
 
-        S owns one candidate through its current decision event, but the first
-        Order used to open that search is not permanently exclusive.  A later
-        calculation-accepted physical Order in the same chronology may strict-
-        stop before the candidate's current decision and therefore become the
-        decisive Red event.  The S source remains frozen; only Order provenance
-        and decision chronology move to the winning accepted Order.
+        Order confirmation is parent-neutral.  The decisive Order does not have
+        to originate from the A/S candidate currently being resolved.  Once a
+        physical Order is calculation-accepted, it may decide an S candidate if
+        the Order is live in that candidate window and its exact strict stop is
+        after the frozen S source but before the candidate's current strict
+        decision event.  Creation provenance remains attached to the Order and
+        is never rewritten to the S candidate.
+
+        This rule is direction invariant.  The strict Order stop itself is
+        resolved by the shared mirrored lower-timeframe chronology.
         """
         deduped: dict[tuple[int, int], dict[str, object]] = {}
         for entry in order_entries:
@@ -6772,8 +6860,9 @@ class SZoneDetector:
                 int(getattr(reaction, "break_idx")),
             )
             current = deduped.get(identity)
-            # Prefer the richer E-audit form when it already carries an exact
-            # stop crossing; otherwise either accepted ledger entry is enough.
+            # Prefer the richer accepted E-audit form when it already carries
+            # an exact stop crossing.  Physical identity, not parent identity,
+            # is authoritative.
             if current is None or (
                 current.get("stop_cross") is None
                 and entry.get("stop_cross") is not None
@@ -6782,52 +6871,15 @@ class SZoneDetector:
 
         output: list[SZone] = []
         for zone in zones:
-            # A later accepted Order may decide an already-open S only while
-            # both still belong to the same continuation.  The first accepted
-            # Order whose provenance is a parent-stop of an S marks the end of
-            # that shared-Order continuation.  Orders confirmed after that
-            # boundary (for example from a newer independent A) belong to a
-            # newer lifecycle and must not retroactively hijack this S.
-            terminal_s_order_confirmation: datetime | None = None
-            for entry in deduped.values():
-                causes = entry.get("causes", ())
-                has_s_parent = any(
-                    isinstance(cause, tuple)
-                    and len(cause) >= 2
-                    and str(cause[0]) == "parent-stop"
-                    and str(cause[1]).upper() == "S"
-                    for cause in causes
-                )
-                confirmation = entry.get("confirmation_time")
-                reaction = entry.get("reaction")
-                if not has_s_parent or not isinstance(confirmation, datetime) or reaction is None:
-                    continue
-                first_index = int(getattr(reaction, "first_idx"))
-                first_time = getattr(self.candles[first_index], "timestamp")
-                if first_time < zone.source_time or confirmation > zone.decision_event_time:
-                    continue
-                if (
-                    terminal_s_order_confirmation is None
-                    or confirmation < terminal_s_order_confirmation
-                ):
-                    terminal_s_order_confirmation = confirmation
-
-            winner: tuple[datetime, datetime, int, dict[str, object], tuple[int, datetime, datetime]] | None = None
-            for entry in deduped.values():
+            winner: tuple[
+                datetime, datetime, int, int, dict[str, object],
+                tuple[int, datetime, datetime]
+            ] | None = None
+            for identity, entry in deduped.items():
                 reaction = entry["reaction"]
                 first_index = int(getattr(reaction, "first_idx"))
-                first_time = getattr(self.candles[first_index], "timestamp")
                 confirmation = entry.get("confirmation_time")
                 if not isinstance(confirmation, datetime):
-                    continue
-                if first_time < zone.source_time:
-                    continue
-                if confirmation > zone.decision_event_time:
-                    continue
-                if (
-                    terminal_s_order_confirmation is not None
-                    and confirmation > terminal_s_order_confirmation
-                ):
                     continue
 
                 stop_level = as_decimal(entry["stop_level"])
@@ -6841,24 +6893,34 @@ class SZoneDetector:
                 if crossed is None:
                     continue
                 cross_event = crossed[2]
-                if not (zone.source_time <= cross_event < zone.decision_event_time):
+
+                # The accepted Order can have been confirmed before the S source
+                # and still be live, or it can be confirmed later.  Only its
+                # actual strict-stop chronology relative to the frozen candidate
+                # matters.  Equality with the current decision does not replace
+                # the existing owner.
+                if not (
+                    confirmation < cross_event
+                    and zone.source_time <= cross_event < zone.decision_event_time
+                ):
                     continue
 
                 candidate = (
                     cross_event,
                     confirmation,
                     first_index,
+                    identity[1],
                     entry,
                     crossed,
                 )
-                if winner is None or candidate[:3] < winner[:3]:
+                if winner is None or candidate[:4] < winner[:4]:
                     winner = candidate
 
             if winner is None:
                 output.append(zone)
                 continue
 
-            _, _, _, entry, crossed = winner
+            _, _, _, _, entry, crossed = winner
             reaction = entry["reaction"]
             first_index = int(getattr(reaction, "first_idx"))
             break_index = int(getattr(reaction, "break_idx"))
@@ -6892,6 +6954,7 @@ class SZoneDetector:
         return output
 
 
+
 def detect_s_zones(
     direction: str,
     trend_reactions: Sequence[object],
@@ -6923,16 +6986,17 @@ def detect_s_zones(
 
 ### 26.5 `e_zone_detector.py`
 
-- Lines: `2616`
-- SHA-256: `5e2fbea9b2685737b209fe45e630f746b0e316506e901b308b6bdb2e94425eb2`
+- Lines: `2690`
+- SHA-256: `1d40da3c66235fd6abd88073bb8fb25a073d1f721872d19995f16237efb808d0`
 
-<!-- SOURCE_FILE_BEGIN:e_zone_detector.py:SHA256=5e2fbea9b2685737b209fe45e630f746b0e316506e901b308b6bdb2e94425eb2 -->
+<!-- SOURCE_FILE_BEGIN:e_zone_detector.py:SHA256=1d40da3c66235fd6abd88073bb8fb25a073d1f721872d19995f16237efb808d0 -->
 ```python
 """Recursive E-zone and Order calculation from authoritative S/Reaction state.
 
-Owns parent-stop, carried-live, and Reset-leg Order discovery; recursive E
-chains; accepted Order causes; and E family/number reconciliation. Cross-stage
-public visibility and StopAll grouping are delegated to the lifecycle engine.
+Owns parent-stop, carried-live, accepted-live, and Reset-leg Order discovery;
+recursive E chains; accepted Order causes; and E family/number reconciliation.
+Cross-stage public visibility and StopAll grouping are delegated to the lifecycle
+engine.
 """
 
 from __future__ import annotations
@@ -6948,8 +7012,8 @@ from core_utils import as_decimal, order_identity, reaction_identity
 from direction_policy import policy_for
 
 
-E_ZONE_VERSION = "6.6.3"
-E_ZONE_LAST_MODIFIED = "2026-09-19"
+E_ZONE_VERSION = "6.8.0"
+E_ZONE_LAST_MODIFIED = "2026-09-20 04:35:08 +03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -7000,6 +7064,30 @@ OrderMatch = tuple[
 ]
 
 
+@dataclass(frozen=True, slots=True)
+class OrderBFormation:
+    """One complete reset-leg Order_B setup under the canonical mirror rule."""
+
+    reset_time: datetime
+    reset_index: int
+    owner_first_index: int
+    owner_break_index: int
+    trigger_level: Decimal
+    trigger_source_index: int
+    trigger_source_time: datetime
+    strict_break_index: int
+    strict_break_time: datetime
+    strict_break_event_time: datetime
+    opposite_extreme: Decimal
+    opposite_extreme_source_index: int
+    opposite_extreme_source_time: datetime
+    evidence_first_index: int
+    evidence_break_index: int
+    order_reaction_number: int
+    order_reaction: object
+    order_confirmation_time: datetime
+
+
 class EZoneDetector:
     def __init__(
         self,
@@ -7018,9 +7106,6 @@ class EZoneDetector:
         ] | None = None,
         blocked_order_first_times: set[datetime] | None = None,
         initial_order_audit: dict[tuple[int, int], dict[str, object]] | None = None,
-        reset_geometry_finder: Callable[
-            [str, int, int, int], object | None
-        ] | None = None,
         sequence_resets: dict[datetime, int] | None = None,
         sequence_priority: Callable[[str, str], int] | None = None,
         invalid_s_root_identities: set[tuple[datetime, int]] | None = None,
@@ -7059,6 +7144,7 @@ class EZoneDetector:
                 suffix_min = decision_time
             self._red_s_suffix_min_decision.append(suffix_min)
         self._red_s_suffix_min_decision.reverse()
+        self.trend_resets = sorted(trend_resets, key=self._reset_time)
         self.opposite_resets = sorted(opposite_resets, key=self._reset_time)
         self.candles = chronology.candles
         self.lower = chronology.seconds
@@ -7072,32 +7158,16 @@ class EZoneDetector:
         self.range_end = self.times[self.end_index] + self.timeframe
         self.geometry_finder = geometry_finder
         self.direct_geometry_finder = direct_geometry_finder or geometry_finder
-        self.reset_geometry_finder = reset_geometry_finder
         self.blocked_order_first_times = blocked_order_first_times or set()
         self.initial_order_audit = initial_order_audit or {}
-        self._geometry_evidence_cache: dict[tuple[datetime, datetime], bool] = {}
-        self._order_b_geometry_cache: dict[
-            tuple[datetime, datetime, datetime],
-            tuple[int, object, datetime] | None,
-        ] = {}
-        self._next_outer_reset_cache: dict[int, datetime | None] = {}
         self._cross_order_cache: dict[
             tuple[datetime, Decimal], tuple[int, datetime, datetime] | None
         ] = {}
-        self._trigger_cross_cache: dict[tuple[datetime, Decimal], datetime | None] = {}
-        self._reset_leg_geometry_cache: dict[
-            tuple[int, datetime], tuple[datetime, Decimal] | None
-        ] = {}
+        self._order_b_formations_cache: list[OrderBFormation] | None = None
         self._order_candidates_cache: dict[
             tuple[datetime, datetime | None, bool, bool, bool], tuple[OrderMatch, ...]
         ] = {}
         self.order_audit: dict[tuple[int, int], dict[str, object]] = {}
-        self._synthetic_order_cache: list[
-            tuple[int, object, datetime, datetime, datetime]
-        ] | None = None
-        self._audit_synthetic_order_cache: list[
-            tuple[int, object, datetime, datetime, datetime]
-        ] | None = None
         self._trend_first_times = [
             self._reaction_first_time(item) for item in self.trend_reactions
         ]
@@ -7120,15 +7190,19 @@ class EZoneDetector:
             key=lambda item: item[0],
         )
         self._trend_confirmation_times = [item[0] for item in self._trend_by_confirmation]
+        self._trend_by_first_index = {
+            int(getattr(item, "first_idx")): item
+            for item in self.trend_reactions
+        }
+        self._trend_reset_events = [
+            (self._reset_time(item), item) for item in self.trend_resets
+        ]
+        self._trend_reset_times = [item[0] for item in self._trend_reset_events]
         self._opposite_reset_times_by_first: dict[int, list[datetime]] = {}
         for reset in self.opposite_resets:
             self._opposite_reset_times_by_first.setdefault(
                 int(getattr(reset, "from_first_idx")), []
             ).append(self._reset_time(reset))
-        self._opposite_reset_events = [
-            (self._reset_time(item), item) for item in self.opposite_resets
-        ]
-        self._opposite_reset_times = [item[0] for item in self._opposite_reset_events]
         self._opposite_by_first_index = {
             int(getattr(item, "first_idx")): item
             for item in self.opposite_reactions
@@ -7192,222 +7266,244 @@ class EZoneDetector:
     def _reaction_first_time(self, reaction: object) -> datetime:
         return getattr(self.candles[int(getattr(reaction, "first_idx"))], "timestamp")
 
-    def _strict_trigger_cross(self, start: datetime, level: Decimal) -> datetime | None:
-        cache_key = (start, level)
-        cached = self._trigger_cross_cache.get(cache_key)
-        if cached is not None:
-            return cached
-        left = bisect_left(self.lower_times, start)
-        right = bisect_left(self.lower_times, self.range_end)
-        position = self._first_cross_position(
-            left, right, level, less=self.direction == "bullish"
-        )
-        result = None if position is None else self.lower_times[position]
-        self._trigger_cross_cache[cache_key] = result
-        return result
+    def _main_range_extreme(
+        self,
+        start_index: int,
+        end_index: int,
+        attribute: str,
+        *,
+        choose_minimum: bool,
+    ) -> tuple[Decimal, int, datetime]:
+        """Return the first candle owning the requested closed-range extreme."""
+        if end_index < start_index:
+            raise ValueError("Order_B extreme range ends before it starts.")
+        source = self.candles[start_index]
+        value = as_decimal(getattr(source, attribute))
+        for candle in self.candles[start_index + 1 : end_index + 1]:
+            candidate = as_decimal(getattr(candle, attribute))
+            better = candidate < value if choose_minimum else candidate > value
+            if better:
+                source = candle
+                value = candidate
+        return value, int(getattr(source, "index")), getattr(source, "timestamp")
 
-    def _reset_leg_geometry(
+    def _order_b_reset_leg(
         self, reset: object, reset_time: datetime,
-    ) -> tuple[datetime, Decimal] | None:
-        """Return the inclusive Break-to-Reset leg start and outer boundary."""
-        cache_key = (int(getattr(reset, "from_first_idx")), reset_time)
-        cached = self._reset_leg_geometry_cache.get(cache_key)
-        if cached is not None:
-            return cached
-        owner = self._opposite_by_first_index.get(
+    ) -> tuple[object, Decimal, int, datetime] | None:
+        """Return the same-direction Reset owner and its trigger extreme.
+
+        Bearish: from the owner's Breakout candle through the Reset candle,
+        inclusive, the minimum Low is the reset-leg floor.
+        Bullish: exact mirror, maximum High is the reset-leg ceiling.
+        """
+        owner = self._trend_by_first_index.get(
             int(getattr(reset, "from_first_idx"))
         )
         if owner is None:
-            self._reset_leg_geometry_cache[cache_key] = None
             return None
-        start_index = int(getattr(owner, "break_idx"))
-        end_index = self._main_index(reset_time)
-        if end_index < start_index:
-            self._reset_leg_geometry_cache[cache_key] = None
+        break_index = int(getattr(owner, "break_idx"))
+        reset_index = int(getattr(reset, "index"))
+        if reset_index < break_index:
             return None
-        boundary = self._stop_value(self.candles[start_index])
-        for candle in self.candles[start_index + 1 : end_index + 1]:
-            value = self._stop_value(candle)
-            better = value < boundary if self.direction == "bullish" else value > boundary
-            if better:
-                boundary = value
-        result = self.times[start_index], boundary
-        self._reset_leg_geometry_cache[cache_key] = result
-        return result
+        if self.direction == "bearish":
+            level, source_index, source_time = self._main_range_extreme(
+                break_index, reset_index, "low", choose_minimum=True
+            )
+        else:
+            level, source_index, source_time = self._main_range_extreme(
+                break_index, reset_index, "high", choose_minimum=False
+            )
+        return owner, level, source_index, source_time
 
-    def _reset_leg_has_simple_trend_reaction(
-        self, leg_start: datetime, boundary_cross: datetime,
-    ) -> bool:
-        key = (leg_start, boundary_cross)
-        cached = self._geometry_evidence_cache.get(key)
-        if cached is not None:
-            return cached
-        left = bisect_left(self._trend_confirmation_times, leg_start)
-        right = bisect_right(self._trend_confirmation_times, boundary_cross)
-        result = any(
-            not bool(getattr(self._trend_by_confirmation[position][2], "behavior_internal", False))
-            for position in range(left, right)
+    def _order_b_strict_break(
+        self, reset_time: datetime, level: Decimal,
+    ) -> tuple[int, datetime, datetime] | None:
+        """Return the first exact strict break of the reset-leg trigger level.
+
+        Bearish Order_B: Low < reset-leg floor.
+        Bullish Order_B: High > reset-leg ceiling.
+        """
+        left = bisect_left(self.lower_times, max(reset_time, self.range_start))
+        right = bisect_left(self.lower_times, self.range_end)
+        position = self._first_cross_position(
+            left,
+            right,
+            level,
+            less=self.direction == "bearish",
         )
-        self._geometry_evidence_cache[key] = result
-        return result
-
-    def _first_order_b_geometry(
-        self, reset_time: datetime, boundary_cross: datetime, deadline: datetime,
-    ) -> tuple[int, object, datetime] | None:
-        """Return the first structurally owned Order_B geometry after its gate."""
-        cache_key = (reset_time, boundary_cross, deadline)
-        if cache_key in self._order_b_geometry_cache:
-            return self._order_b_geometry_cache[cache_key]
-        end_index = min(self.end_index, bisect_left(self.times, deadline) - 1)
-        if self.geometry_finder is None:
-            self._order_b_geometry_cache[cache_key] = None
+        if position is None:
             return None
+        event_time = self.lower_times[position]
+        index = self._main_index(event_time)
+        return index, self.times[index], event_time
 
-        def find_geometry(gate_index: int) -> object | None:
-            if gate_index > end_index:
-                return None
-            if self.reset_geometry_finder is not None:
-                reset_index = self._main_index(reset_time)
-                gate_time = self.times[gate_index]
-                gate_owner = self._opposite_by_first_index.get(gate_index)
-                # A non-canonical First that is already open in the main
-                # candle containing the lower-timeframe gate belongs to the
-                # pre-gate leg.  Canonical ownership may start on that candle;
-                # otherwise the bounded Reset search begins on the next one.
-                reset_gate_index = (
-                    gate_index
-                    if gate_owner is not None
-                    and self._reaction_first_time(gate_owner) == gate_time
-                    else gate_index + 1
-                )
-                return self.reset_geometry_finder(
-                    self.order_direction,
-                    reset_index,
-                    reset_gate_index,
-                    end_index,
-                )
-            assert self.geometry_finder is not None
-            return self.geometry_finder(
-                self.order_direction, gate_index, end_index
+    def _order_b_opposite_extreme(
+        self, trigger_source_index: int, strict_break_index: int,
+    ) -> tuple[Decimal, int, datetime]:
+        """Return the other reset-leg edge on the closed trigger->break range."""
+        if self.direction == "bearish":
+            return self._main_range_extreme(
+                trigger_source_index,
+                strict_break_index,
+                "high",
+                choose_minimum=False,
             )
+        return self._main_range_extreme(
+            trigger_source_index,
+            strict_break_index,
+            "low",
+            choose_minimum=True,
+        )
 
-        gate_event = boundary_cross
-        while gate_event < deadline:
-            gate_index = self._main_index(gate_event)
-            geometry = find_geometry(gate_index)
-            if geometry is None:
-                break
-            gate_time = self.times[gate_index]
-            if self._reaction_first_time(geometry) == gate_time:
-                matching = self._opposite_by_first_index.get(
-                    int(getattr(geometry, "first_idx"))
-                )
-                if (
-                    matching is None
-                    or int(getattr(matching, "break_idx"))
-                    != int(getattr(geometry, "break_idx"))
-                ):
-                    geometry = find_geometry(gate_index + 1)
-                    if geometry is None:
-                        break
-            confirmation = self._confirmation_for(
-                geometry, self.order_direction
-            )
-            if confirmation >= deadline:
-                break
+    def _order_b_geometry_evidence(
+        self, trigger_source_index: int, strict_break_index: int,
+    ) -> object | None:
+        """Return raw opposite Reaction geometry inside the closed leg range.
 
-            geometry_first = self._reaction_first_time(geometry)
-            if geometry_first in self.blocked_order_first_times:
-                # The leg context may keep an internal head alive after the
-                # Reset boundary has crossed. Geometry whose First opens in
-                # that closed interval cannot own the resumed outer E space.
-                next_index = max(
-                    gate_index, int(getattr(geometry, "first_idx"))
-                ) + 1
-                if next_index > end_index:
-                    break
-                gate_event = self.times[next_index]
+        Reset validity, lifecycle acceptance, public visibility, and Internal
+        status are deliberately ignored for this evidence test.  Geometry
+        alone is sufficient, exactly as required by the Order_B contract.
+        """
+        if self.geometry_finder is None:
+            return None
+        geometry = self.geometry_finder(
+            self.order_direction,
+            trigger_source_index,
+            strict_break_index,
+        )
+        if geometry is None:
+            return None
+        if int(getattr(geometry, "first_idx")) < trigger_source_index:
+            return None
+        if int(getattr(geometry, "break_idx")) > strict_break_index:
+            return None
+        return geometry
+
+    def _first_order_b_reaction_after_break(
+        self, strict_break_index: int, strict_break_event: datetime,
+    ) -> tuple[int, object, datetime] | None:
+        """Return the first canonical opposite Reaction after the Order_B gate."""
+        gate_time = self.times[strict_break_index]
+        position = bisect_left(self._opposite_first_times, gate_time)
+        for order_position in range(position, len(self.opposite_reactions)):
+            reaction = self.opposite_reactions[order_position]
+            first_time = self._opposite_first_times[order_position]
+            confirmation = self._opposite_confirmations[order_position]
+            if first_time < gate_time:
                 continue
-            owner_position = bisect_right(
-                self._opposite_first_times, geometry_first
-            ) - 1
-            owner = (
-                self.opposite_reactions[owner_position]
-                if owner_position >= 0 else None
-            )
-            if owner is not None:
-                owner_first = self._reaction_first_time(owner)
-                owner_resets = self._opposite_reset_times_by_first.get(
-                    int(getattr(owner, "first_idx")), []
-                )
-                owner_reset = next(
-                    (value for value in owner_resets if value > geometry_first),
-                    None,
-                )
-                owner_already_reset = any(
-                    value <= geometry_first for value in owner_resets
-                )
-                # Opposite-Reaction ownership is directionally independent.
-                # A trend-side Reset cannot release or invalidate this owner;
-                # only a Reset belonging to that owner can do so.
-                active_owner = not owner_already_reset
-                if active_owner:
-                    owner_confirmation = self._confirmation(owner)
-                    if owner_first >= gate_time:
-                        if owner_confirmation >= deadline:
-                            break
-                        result = owner_position + 1, owner, owner_confirmation
-                        self._order_b_geometry_cache[cache_key] = result
-                        return result
-                    if owner_reset is None or owner_reset >= deadline:
-                        break
-                    gate_event = owner_reset
-                    continue
-
-            existing = self._opposite_by_first_index.get(
-                int(getattr(geometry, "first_idx"))
-            )
-            if (
-                existing is not None
-                and int(getattr(existing, "break_idx"))
-                == int(getattr(geometry, "break_idx"))
-            ):
-                result = owner_position + 1, existing, confirmation
-                self._order_b_geometry_cache[cache_key] = result
-                return result
-
-            # Reset-leg local geometry is only a search aid; without an exact
-            # published Reaction identity it cannot create an Order.
-            next_index = int(getattr(geometry, "first_idx")) + 1
-            if next_index > end_index:
-                break
-            gate_event = self.times[next_index]
-            continue
-
-        self._order_b_geometry_cache[cache_key] = None
+            if confirmation <= strict_break_event:
+                continue
+            return order_position + 1, reaction, confirmation
         return None
 
-    def _next_outer_reset_time(
-        self, reset_position: int, fallback: datetime,
-    ) -> datetime:
-        """Return the next non-nested Reset boundary.
+    def _build_order_b_formations(self) -> list[OrderBFormation]:
+        """Build every Order_B from same-direction Reset-leg geometry.
 
-        A reaction that starts after the current Reset belongs to a nested leg
-        and cannot close the outer ResetLeg owner.
+        Bearish mirror:
+          Bearish Reaction Reset -> minimum Low from Breakout..Reset -> first
+          strict Low below that floor -> require at least one raw Bullish
+          Reaction geometry from the floor candle through the strict-break
+          candle, inclusive -> first canonical Bullish Reaction after the gate.
+
+        Bullish is the exact directional mirror using maximum High, strict
+        High above it, raw Bearish geometry, and the first canonical Bearish
+        Reaction after the gate.
         """
-        if reset_position in self._next_outer_reset_cache:
-            cached = self._next_outer_reset_cache[reset_position]
-            return fallback if cached is None else cached
-        reset_time, _ = self._opposite_reset_events[reset_position]
-        result = None
-        for next_time, next_reset in self._opposite_reset_events[reset_position + 1:]:
-            owner_first = self.times[int(getattr(next_reset, "from_first_idx"))]
-            if owner_first <= reset_time:
-                result = next_time
-                break
-        self._next_outer_reset_cache[reset_position] = result
-        return fallback if result is None else result
+        if self._order_b_formations_cache is not None:
+            return self._order_b_formations_cache
+        formations: list[OrderBFormation] = []
+        for reset_time, reset in self._trend_reset_events:
+            leg = self._order_b_reset_leg(reset, reset_time)
+            if leg is None:
+                continue
+            owner, trigger_level, trigger_source_index, trigger_source_time = leg
+            strict_break = self._order_b_strict_break(reset_time, trigger_level)
+            if strict_break is None:
+                continue
+            strict_break_index, strict_break_time, strict_break_event = strict_break
+            if strict_break_index < trigger_source_index:
+                continue
+            evidence = self._order_b_geometry_evidence(
+                trigger_source_index, strict_break_index
+            )
+            if evidence is None:
+                continue
+            order_match = self._first_order_b_reaction_after_break(
+                strict_break_index, strict_break_event
+            )
+            if order_match is None:
+                continue
+            order_number, order_reaction, order_confirmation = order_match
+            opposite_extreme, opposite_source_index, opposite_source_time = (
+                self._order_b_opposite_extreme(
+                    trigger_source_index, strict_break_index
+                )
+            )
+            formations.append(OrderBFormation(
+                reset_time=reset_time,
+                reset_index=int(getattr(reset, "index")),
+                owner_first_index=int(getattr(owner, "first_idx")),
+                owner_break_index=int(getattr(owner, "break_idx")),
+                trigger_level=trigger_level,
+                trigger_source_index=trigger_source_index,
+                trigger_source_time=trigger_source_time,
+                strict_break_index=strict_break_index,
+                strict_break_time=strict_break_time,
+                strict_break_event_time=strict_break_event,
+                opposite_extreme=opposite_extreme,
+                opposite_extreme_source_index=opposite_source_index,
+                opposite_extreme_source_time=opposite_source_time,
+                evidence_first_index=int(getattr(evidence, "first_idx")),
+                evidence_break_index=int(getattr(evidence, "break_idx")),
+                order_reaction_number=order_number,
+                order_reaction=order_reaction,
+                order_confirmation_time=order_confirmation,
+            ))
+        formations.sort(key=lambda item: (
+            item.order_confirmation_time,
+            int(getattr(item.order_reaction, "first_idx")),
+            int(getattr(item.order_reaction, "break_idx")),
+            item.reset_time,
+        ))
+        self._order_b_formations_cache = formations
+        return formations
 
+    def _order_b_orders(
+        self, start: datetime,
+    ) -> list[tuple[int, object, datetime, datetime, datetime]]:
+        """Return canonical Order_B Orders whose Reaction forms at/after start."""
+        return [
+            (
+                item.order_reaction_number,
+                item.order_reaction,
+                item.order_confirmation_time,
+                item.reset_time,
+                item.strict_break_event_time,
+            )
+            for item in self._build_order_b_formations()
+            if item.order_confirmation_time >= start
+        ]
+
+    def _order_b_evidence(
+        self, reaction: object, context_start: datetime,
+    ) -> tuple[datetime, datetime] | None:
+        """Return the latest eligible Order_B cause for one physical Reaction."""
+        identity = reaction_identity(reaction)
+        evidence = [
+            item for item in self._build_order_b_formations()
+            if reaction_identity(item.order_reaction) == identity
+            and item.order_confirmation_time >= context_start
+        ]
+        if not evidence:
+            return None
+        owner = max(
+            evidence,
+            key=lambda item: (
+                item.reset_time,
+                item.strict_break_event_time,
+            ),
+        )
+        return owner.reset_time, owner.strict_break_event_time
 
     def _replacement_order(
         self,
@@ -7415,132 +7511,27 @@ class EZoneDetector:
         owner_confirmation: datetime,
         owner_stop_event: datetime,
     ) -> tuple[int, object, datetime, datetime] | None:
-        """Find the first order created by a complete behavioral-reset cycle."""
-        reset_left = bisect_right(self._opposite_reset_times, owner_confirmation)
-        reset_right = bisect_left(self._opposite_reset_times, owner_stop_event)
-        reset_events = self._opposite_reset_events[reset_left:reset_right]
-        owner_first_index = int(getattr(owner, "first_idx"))
-        for position, (reset_time, reset) in enumerate(reset_events):
-            reset_owner_index = int(getattr(reset, "from_first_idx"))
-            reset_owner_first = self.times[reset_owner_index]
-            if (
-                reset_owner_index != owner_first_index
-                and reset_owner_first < owner_confirmation
-            ):
-                continue
-            # A Reset of the provisional order, or of a later opposite
-            # reaction in its still-open lifecycle, can originate the
-            # replacement leg. Stale reactions from before that lifecycle
-            # cannot take ownership.
-            absolute_position = bisect_left(self._opposite_reset_times, reset_time)
-            next_opposite_reset = self._next_outer_reset_time(
-                absolute_position, owner_stop_event
-            )
-            leg = self._reset_leg_geometry(reset, reset_time)
-            if leg is None:
-                continue
-            leg_start, trigger = leg
-            crossing = self._strict_trigger_cross(reset_time, trigger)
-            if crossing is None or crossing >= min(next_opposite_reset, owner_stop_event):
-                continue
-            if not self._reset_leg_has_simple_trend_reaction(leg_start, crossing):
-                continue
-            gate_time = self.times[self._main_index(crossing)]
-            order_start = bisect_left(self._opposite_first_times, gate_time)
-            for order_position in range(order_start, len(self.opposite_reactions)):
-                reaction = self.opposite_reactions[order_position]
-                first = self._opposite_first_times[order_position]
-                confirmation = self._opposite_confirmations[order_position]
-                if (
-                    first >= gate_time
-                    and confirmation >= crossing
-                    and confirmation < owner_stop_event
-                ):
-                    return order_position + 1, reaction, confirmation, reset_time
-        return None
-
-    def _reset_leg_evidence(
-        self, reaction: object, context_start: datetime
-    ) -> tuple[datetime, datetime] | None:
-        """Return the Reset and strict-break events that created ``reaction``."""
-        order_first = self._reaction_first_time(reaction)
-        order_confirmation = self._confirmation(reaction)
-        # Mode-B ownership starts with the current E-space lifecycle. A Reset
-        # that occurred before the parent stop belongs to an older lifecycle
-        # and cannot create an order for this parent.
-        reset_left = bisect_left(self._opposite_reset_times, context_start)
-        reset_right = bisect_right(
-            self._opposite_reset_times, order_confirmation
+        """Return the first later Order_B that forms before the owner stops."""
+        owner_identity = reaction_identity(owner)
+        candidates = [
+            item for item in self._build_order_b_formations()
+            if item.order_confirmation_time > owner_confirmation
+            and item.order_confirmation_time < owner_stop_event
+            and reaction_identity(item.order_reaction) != owner_identity
+        ]
+        if not candidates:
+            return None
+        item = min(candidates, key=lambda value: (
+            value.order_confirmation_time,
+            int(getattr(value.order_reaction, "first_idx")),
+            int(getattr(value.order_reaction, "break_idx")),
+        ))
+        return (
+            item.order_reaction_number,
+            item.order_reaction,
+            item.order_confirmation_time,
+            item.reset_time,
         )
-        reaction_first_index = int(getattr(reaction, "first_idx"))
-        for reset_position in range(reset_left, reset_right):
-            reset_time, reset = self._opposite_reset_events[reset_position]
-            next_reset = self._next_outer_reset_time(
-                reset_position, self.range_end
-            )
-            if order_confirmation >= next_reset:
-                continue
-            leg = self._reset_leg_geometry(reset, reset_time)
-            if leg is None:
-                continue
-            leg_start, boundary = leg
-            crossing = self._strict_trigger_cross(reset_time, boundary)
-            if crossing is None or crossing > order_confirmation:
-                continue
-            if not self._reset_leg_has_simple_trend_reaction(leg_start, crossing):
-                continue
-            first_after_crossing = self._first_order_b_geometry(
-                reset_time, crossing, next_reset
-            )
-            if (
-                order_confirmation >= crossing
-                and first_after_crossing is not None
-                and int(getattr(first_after_crossing[1], "first_idx"))
-                == reaction_first_index
-            ):
-                return reset_time, crossing
-        return None
-
-
-    def _legacy_reset_leg_evidence(
-        self, reaction: object, context_start: datetime,
-    ) -> tuple[datetime, datetime] | None:
-        """Return the established audit cause without changing E eligibility."""
-        order_first = self._reaction_first_time(reaction)
-        order_confirmation = self._confirmation(reaction)
-        reset_left = bisect_left(self._opposite_reset_times, context_start)
-        reset_right = bisect_right(self._opposite_reset_times, order_confirmation)
-        reaction_first_index = int(getattr(reaction, "first_idx"))
-        for reset_position in range(reset_left, reset_right):
-            reset_time, reset = self._opposite_reset_events[reset_position]
-            next_reset = self._next_outer_reset_time(reset_position, self.range_end)
-            if order_confirmation >= next_reset:
-                continue
-            leg = self._reset_leg_geometry(reset, reset_time)
-            if leg is None:
-                continue
-            leg_start, boundary = leg
-            crossing = self._strict_trigger_cross(reset_time, boundary)
-            if crossing is None or crossing > order_confirmation:
-                continue
-            # Audit and calculation use the same Reset-leg evidence contract.
-            # A behavior-internal trend Reaction cannot unlock Order_B merely
-            # because local geometry can rediscover it.
-            aligned = self._reset_leg_has_simple_trend_reaction(
-                leg_start, crossing
-            )
-            if not aligned:
-                continue
-            gate_time = self.times[self._main_index(crossing)]
-            first_after = bisect_left(self._opposite_first_times, gate_time)
-            if (
-                order_first >= gate_time
-                and first_after < len(self.opposite_reactions)
-                and int(getattr(self.opposite_reactions[first_after], "first_idx"))
-                == reaction_first_index
-            ):
-                return reset_time, crossing
-        return None
 
 
     def _order_stop(
@@ -7647,97 +7638,6 @@ class EZoneDetector:
             return number, candidate, confirmation
         return None
 
-    def _synthetic_reset_leg_orders(
-        self, start: datetime, audit_legacy: bool
-    ) -> list[tuple[int, object, datetime, datetime, datetime]]:
-        """Return Reset-leg orders discovered from bounded post-Reset geometry."""
-        selected_cache = (
-            self._audit_synthetic_order_cache
-            if audit_legacy
-            else self._synthetic_order_cache
-        )
-        if selected_cache is not None:
-            return [item for item in selected_cache if item[3] >= start]
-        if self.geometry_finder is None:
-            return []
-
-        all_synthetic: list[
-            tuple[int, object, datetime, datetime, datetime]
-        ] = []
-        for reset_position, (reset_time, reset) in enumerate(
-            self._opposite_reset_events
-        ):
-            reset_owner = self._opposite_by_first_index.get(
-                int(getattr(reset, "from_first_idx"))
-            )
-            if reset_owner is None:
-                continue
-            leg = self._reset_leg_geometry(reset, reset_time)
-            if leg is None:
-                continue
-            leg_start, boundary = leg
-            crossing = self._strict_trigger_cross(reset_time, boundary)
-            if crossing is None:
-                continue
-            next_reset = self._next_outer_reset_time(
-                reset_position, self.range_end
-            )
-            if crossing >= next_reset:
-                continue
-
-            if audit_legacy:
-                if self.geometry_finder(
-                    self.direction,
-                    bisect_left(self.times, leg_start),
-                    self._main_index(crossing),
-                ) is None:
-                    continue
-                first_index = self._main_index(crossing)
-                end_index = min(
-                    self.end_index,
-                    max(first_index, bisect_left(self.times, next_reset) - 1),
-                )
-                geometry = self.geometry_finder(
-                    self.order_direction, first_index, end_index
-                )
-                if geometry is None:
-                    continue
-                existing = self._opposite_by_first_index.get(
-                    int(getattr(geometry, "first_idx"))
-                )
-                if (
-                    existing is None
-                    or int(getattr(existing, "break_idx"))
-                    != int(getattr(geometry, "break_idx"))
-                ):
-                    continue
-                geometry = existing
-                number = self.opposite_reactions.index(existing) + 1
-                confirmation = self._confirmation_for(
-                    geometry, self.order_direction
-                )
-            else:
-                if not self._reset_leg_has_simple_trend_reaction(
-                    leg_start, crossing
-                ):
-                    continue
-                order_b = self._first_order_b_geometry(
-                    reset_time, crossing, next_reset
-                )
-                if order_b is None:
-                    continue
-                number, geometry, confirmation = order_b
-
-            all_synthetic.append(
-                (number, geometry, confirmation, reset_time, crossing)
-            )
-
-        if audit_legacy:
-            self._audit_synthetic_order_cache = all_synthetic
-        else:
-            self._synthetic_order_cache = all_synthetic
-        return [item for item in all_synthetic if item[3] >= start]
-
     def _trend_leg_direct_order(
         self, start: datetime,
     ) -> tuple[int, object, datetime] | None:
@@ -7747,8 +7647,8 @@ class EZoneDetector:
         the next opposite public Reaction exists.  That trend confirmation
         establishes the new forming-leg boundary.  The first bounded opposite
         geometry after that exact confirmation may own direct Order_A when the
-        shared gate resolver proves ``continue``.  This is not Reset-leg
-        Order_B evidence and therefore does not relax Reset-leg canonicality.
+        shared gate resolver proves ``continue``.  This is direct
+        parent-stop Order_A provenance and is independent of Order_B.
         """
         if self.direct_geometry_finder is None:
             return None
@@ -7799,7 +7699,7 @@ class EZoneDetector:
         continuous_deadline: datetime | None,
         allow_bounded_continue: bool,
     ) -> tuple[int, object, datetime] | None:
-        """Select the direct parent-stop Order without Reset-leg evidence."""
+        """Select the direct parent-stop Order without Order_B evidence."""
         gate_time = self.times[self._main_index(start)]
         geometric_direct = self._first_healthy_direct_geometry(
             start, allow_bounded_continue
@@ -7921,42 +7821,48 @@ class EZoneDetector:
         by_geometry[key] = match
         return match
 
-    def _add_canonical_reset_leg_orders(
-        self,
-        by_geometry: dict[tuple[int, int], OrderMatch],
-        start: datetime,
-        provisional_deadline: datetime,
-        audit_legacy: bool,
-    ) -> datetime:
-        """Merge canonical Reset-leg evidence up to the current decision bound."""
-        for position, reaction in enumerate(self.opposite_reactions):
-            confirmation = self._opposite_confirmations[position]
-            if confirmation < start:
+    def _enforce_single_parent_stop_owner(
+        self, by_geometry: dict[tuple[int, int], OrderMatch]
+    ) -> None:
+        """Keep one physical Order owner for the exact parent-stop cause.
+
+        A single parent stop may open only one physical Order.  When direct
+        parent-stop discovery and the E-only fresh-trend route produce
+        different identities for the same stop event, the earliest confirmed
+        physical Order owns that parent-stop provenance.  A later identity may
+        survive only through an independent cause already merged onto it (for
+        example Reset-leg); in that case only the duplicate parent-stop cause
+        is removed.
+        """
+        parent_candidates = [
+            item for item in by_geometry.values()
+            if "parent-stop" in item[7]
+        ]
+        if len(parent_candidates) <= 1:
+            return
+
+        owner = min(
+            parent_candidates,
+            key=lambda item: (
+                item[2],
+                int(getattr(item[1], "first_idx")),
+                int(getattr(item[1], "break_idx")),
+            ),
+        )
+        owner_identity = reaction_identity(owner[1])
+        for identity, item in list(by_geometry.items()):
+            if identity == owner_identity or "parent-stop" not in item[7]:
                 continue
-            if confirmation > provisional_deadline:
-                break
-            evidence = (
-                self._legacy_reset_leg_evidence(reaction, start)
-                if audit_legacy
-                else self._reset_leg_evidence(reaction, start)
+            remaining_causes = tuple(
+                cause for cause in item[7] if cause != "parent-stop"
             )
-            if evidence is None:
+            if not remaining_causes:
+                del by_geometry[identity]
                 continue
-            reset_time, reset_break = evidence
-            match = self._merge_order_candidate(
-                by_geometry,
-                position + 1,
-                reaction,
-                confirmation,
-                "reset-leg",
-                reset_time=reset_time,
-                reset_break=reset_break,
+            by_geometry[identity] = (
+                item[0], item[1], item[2], item[3], item[4], item[5], item[6],
+                remaining_causes, None, item[9], item[10],
             )
-            if match[6] is not None:
-                provisional_deadline = min(
-                    provisional_deadline, match[6][2]
-                )
-        return provisional_deadline
 
     def order_candidates(
         self,
@@ -8000,11 +7906,12 @@ class EZoneDetector:
                     parent_stop_cause_time=start,
                 )
 
+        # Order_B is independent Reset-leg provenance.  Calculation and
+        # audit use the same canonical formation algorithm; ``audit_legacy``
+        # is retained only for public API compatibility.
         for number, reaction, confirmation, reset_time, reset_break in (
-            self._synthetic_reset_leg_orders(start, audit_legacy)
+            self._order_b_orders(start)
         ):
-            if confirmation < start:
-                continue
             self._merge_order_candidate(
                 by_geometry,
                 number,
@@ -8014,6 +7921,13 @@ class EZoneDetector:
                 reset_time=reset_time,
                 reset_break=reset_break,
             )
+
+        # Parent-stop provenance is single-consumption.  Resolve that ownership
+        # before any candidate stop is allowed to shrink the E decision horizon;
+        # otherwise a later fresh-trend Order can incorrectly win merely because
+        # its own stop occurs earlier than the true first Order opened by the
+        # same parent stop.  Independent Reset-leg provenance is preserved.
+        self._enforce_single_parent_stop_owner(by_geometry)
 
         known_stops = [
             item[6][2]
@@ -8025,13 +7939,6 @@ class EZoneDetector:
             provisional_deadline = min(
                 provisional_deadline, continuous_deadline
             )
-        provisional_deadline = self._add_canonical_reset_leg_orders(
-            by_geometry,
-            start,
-            provisional_deadline,
-            audit_legacy,
-        )
-
         stopped = [
             item[6][2]
             for item in by_geometry.values()
@@ -8165,24 +8072,14 @@ class EZoneDetector:
             crossed, causes = match[6], match[7]
             reset_evidence = None
             if "reset-leg" in causes:
-                if number == 0:
-                    reset_evidence = (
-                        None
-                        if self._reset_by_proven_order(reaction, confirmation)
-                        else (
-                            (match[9], match[10])
-                            if match[9] is not None and match[10] is not None
-                            else None
-                        )
-                    )
-                else:
-                    reset_evidence = self._legacy_reset_leg_evidence(
-                        reaction, parent_stop
-                    )
-            # Audit is an eligibility ledger, not a provisional-candidate log.
-            # A geometric Order_B may legitimately have reaction number zero,
-            # while a canonical reaction may still fail Reset ownership.  Admit
-            # either only after at least one creation cause is proven.
+                reset_evidence = (
+                    (match[9], match[10])
+                    if match[9] is not None and match[10] is not None
+                    else self._order_b_evidence(reaction, parent_stop)
+                )
+            # Order_B always resolves to a canonical opposite Reaction.
+            # Audit accepts it only when the new same-direction Reset-leg
+            # formation cause is proven.
             if "parent-stop" not in causes and reset_evidence is None:
                 continue
             key = (
@@ -8221,63 +8118,62 @@ class EZoneDetector:
                     "reset-leg", reset_evidence[0], reset_evidence[1],
                 ))
 
-    def _reset_by_proven_order(
-        self, reaction: object, confirmation: datetime,
-    ) -> bool:
-        """Whether a provisional geometry is Reset by a proven live order."""
-        proven = set(self.initial_order_audit)
-        proven.update(
-            identity for identity, entry in self.order_audit.items()
-            if entry.get("causes")
-        )
-        first = self._reaction_first_time(reaction)
-        left = bisect_left(self._opposite_reset_times, first)
-        right = bisect_right(self._opposite_reset_times, confirmation)
-        for _, reset in self._opposite_reset_events[left:right]:
-            owner = self._opposite_by_first_index.get(
-                int(getattr(reset, "from_first_idx"))
-            )
-            if owner is None:
-                continue
-            identity = (
-                int(getattr(owner, "first_idx")),
-                int(getattr(owner, "break_idx")),
-            )
-            if identity in proven:
-                return True
-        return False
-
     def _enrich_order_audit_reset_causes(self) -> None:
-        """Attach established Reset evidence without changing E eligibility."""
-        if not self.s_zones or not self.order_audit:
+        """Attach canonical Order_B provenance to already relevant Orders.
+
+        Order_B formation is independent market structure, but OrderAudit is an
+        accepted-behavior ledger rather than a dump of every market structure.
+        Therefore only physical Orders already referenced by accepted S/E state
+        (including the initial stopped-A audit) are enriched here.  When one
+        physical Order has several valid Order_B origins, only the latest
+        reset-leg cause is authoritative.
+        """
+        relevant_identities = set(self.order_audit) | set(self.initial_order_audit)
+        if not relevant_identities:
             return
-        lifecycle_start = min(
-            getattr(item, "decision_event_time") for item in self.s_zones
-        )
-        if self._audit_synthetic_order_cache is None:
-            self.order_candidates(
-                lifecycle_start, audit_legacy=True
-            )
-        reset_evidence: dict[tuple[int, int], tuple[datetime, datetime]] = {}
-        for _, reaction, _, reset_time, reset_break in (
-            self._audit_synthetic_order_cache or []
-        ):
-            if reset_time < lifecycle_start:
+        latest: dict[tuple[int, int], OrderBFormation] = {}
+        for item in self._build_order_b_formations():
+            identity = reaction_identity(item.order_reaction)
+            if identity not in relevant_identities:
                 continue
-            identity = (
-                int(getattr(reaction, "first_idx")),
-                int(getattr(reaction, "break_idx")),
-            )
-            current = reset_evidence.get(identity)
-            if current is None or reset_time < current[0]:
-                reset_evidence[identity] = (reset_time, reset_break)
-        for identity, (reset_time, reset_break) in reset_evidence.items():
+            current = latest.get(identity)
+            if current is None or (
+                item.reset_time,
+                item.strict_break_event_time,
+            ) > (
+                current.reset_time,
+                current.strict_break_event_time,
+            ):
+                latest[identity] = item
+
+        for identity, item in latest.items():
             entry = self.order_audit.get(identity)
             if entry is None:
-                continue
+                level, source, source_time = self._order_stop(
+                    item.order_reaction_number, item.order_reaction
+                )
+                entry = {
+                    "reaction_number": item.order_reaction_number,
+                    "reaction": item.order_reaction,
+                    "confirmation_time": item.order_confirmation_time,
+                    "stop_level": level,
+                    "stop_source_index": source,
+                    "stop_source_time": source_time,
+                    "stop_cross": self._cross_order(
+                        item.order_confirmation_time, level
+                    ),
+                    "causes": set(),
+                }
+                self.order_audit[identity] = entry
             causes = entry["causes"]
             assert isinstance(causes, set)
-            causes.add(("reset-leg", reset_time, reset_break))
+            for cause in [cause for cause in causes if cause[0] == "reset-leg"]:
+                causes.discard(cause)
+            causes.add((
+                "reset-leg",
+                item.reset_time,
+                item.strict_break_event_time,
+            ))
 
     def visual_order_lifecycle(
         self, start: datetime,
@@ -8286,7 +8182,7 @@ class EZoneDetector:
         """Return only orders admitted by the E lifecycle, including live ones.
 
         This is presentation/audit output.  It follows the same direct and
-        Reset-leg replacement gates as ``_first_order`` but does not require a
+        Order_B replacement gates as ``_first_order`` but does not require a
         stop crossing, so a valid still-live order can be drawn without
         changing E calculation.
         """
@@ -8508,6 +8404,117 @@ class EZoneDetector:
             key=lambda item: (item[6][2], -int(getattr(item[1], "first_idx"))),
         )
 
+    def _post_stop_accepted_orders_for_parent(
+        self, parent: object, parent_stop: datetime,
+    ) -> list[OrderMatch]:
+        """Return accepted physical Orders confirmed after this parent stopped.
+
+        Shared accepted-Order confirmation is parent-neutral.  Once an Order is
+        calculation-accepted, its creation parent does not have to be the S/E/
+        StopAll candidate currently being resolved.  A post-stop accepted Order
+        is eligible when its exact confirmation is after the candidate parent
+        stop, its own strict stop is later still, and no hard lifecycle reset
+        occurs between the parent stop and that Order stop.
+
+        Creation provenance is never rewritten here.  ``accepted-live`` is use
+        provenance only; final OrderAudit retains the Order's original accepted
+        parent-stop and/or reset-leg cause.  The rule is direction invariant;
+        Bullish/Bearish mirroring is already contained in ``_cross_order``.
+        """
+        del parent  # parent identity is deliberately irrelevant to eligibility.
+        matches_by_identity: dict[tuple[int, int], OrderMatch] = {}
+
+        def consider(entry: dict[str, object], *, initial: bool) -> None:
+            reaction = entry.get("reaction")
+            confirmation = entry.get("confirmation_time")
+            if reaction is None or not isinstance(confirmation, datetime):
+                return
+            # This route is specifically the missing post-parent-stop case.
+            # Orders already live at the parent stop remain owned by the
+            # established carried-live/inherited routes.
+            if confirmation <= parent_stop:
+                return
+
+            level_value = entry.get("stop_level")
+            source_index = entry.get("stop_source_index")
+            source_time = entry.get("stop_source_time")
+            if level_value is None or source_index is None or source_time is None:
+                return
+            level = as_decimal(level_value)
+            crossed = entry.get("stop_cross")
+            if not (
+                isinstance(crossed, tuple)
+                and len(crossed) >= 3
+                and isinstance(crossed[2], datetime)
+            ):
+                crossed = self._cross_order(confirmation, level)
+            if crossed is None or crossed[2] <= parent_stop or crossed[2] <= confirmation:
+                return
+            # StopAll / sequence reset is a hard boundary.  An Order accepted
+            # after a candidate stop cannot reach back across a later hard reset
+            # to decide that older candidate.
+            if self._has_sequence_reset_between(parent_stop, crossed[2]):
+                return
+
+            reset_evidence: tuple[datetime, datetime] | None = None
+            if not initial:
+                for cause in entry.get("causes", set()):
+                    if (
+                        isinstance(cause, tuple)
+                        and len(cause) >= 3
+                        and cause[0] == "reset-leg"
+                        and isinstance(cause[1], datetime)
+                        and isinstance(cause[2], datetime)
+                    ):
+                        evidence = (cause[1], cause[2])
+                        if reset_evidence is None or evidence > reset_evidence:
+                            reset_evidence = evidence
+
+            causes = (
+                ("accepted-live", "reset-leg")
+                if reset_evidence is not None
+                else ("accepted-live",)
+            )
+            match: OrderMatch = (
+                int(entry.get("reaction_number", 0)),
+                reaction,
+                confirmation,
+                level,
+                int(source_index),
+                source_time,
+                crossed,
+                causes,
+                None,
+                reset_evidence[0] if reset_evidence is not None else None,
+                reset_evidence[1] if reset_evidence is not None else None,
+            )
+            identity = reaction_identity(reaction)
+            current = matches_by_identity.get(identity)
+            if current is None or (
+                crossed[2], confirmation, int(getattr(reaction, "first_idx"))
+            ) < (
+                current[6][2], current[2], int(getattr(current[1], "first_idx"))
+            ):
+                matches_by_identity[identity] = match
+
+        # ``initial_order_audit`` contains lifecycle-accepted A-owned Orders.
+        # ``order_audit`` contains accepted S/E/StopAll/Order_B physical Orders
+        # discovered by the current E pass.  Neither ledger is filtered by the
+        # candidate parent's identity: acceptance and chronology are sufficient.
+        for entry in self.initial_order_audit.values():
+            consider(entry, initial=True)
+        for entry in self.order_audit.values():
+            consider(entry, initial=False)
+
+        return sorted(
+            matches_by_identity.values(),
+            key=lambda item: (
+                item[6][2],
+                item[2],
+                -int(getattr(item[1], "first_idx")),
+            ),
+        )
+
 
     def _blocked_by_gate_owned_order(self, zone: EZone) -> bool:
         """Reject only a nested Order_A, while preserving its child lineage."""
@@ -8522,15 +8529,21 @@ class EZoneDetector:
     def _reset_evidence_for_order(
         self, first_index: int, break_index: int,
     ) -> tuple[datetime, datetime] | None:
-        for _, reaction, _, reset_time, reset_break in (
-            self._synthetic_order_cache or []
-        ):
-            if (
-                int(getattr(reaction, "first_idx")) == first_index
-                and int(getattr(reaction, "break_idx")) == break_index
-            ):
-                return reset_time, reset_break
-        return None
+        matching = [
+            item for item in self._build_order_b_formations()
+            if int(getattr(item.order_reaction, "first_idx")) == first_index
+            and int(getattr(item.order_reaction, "break_idx")) == break_index
+        ]
+        if not matching:
+            return None
+        item = max(
+            matching,
+            key=lambda value: (
+                value.reset_time,
+                value.strict_break_event_time,
+            ),
+        )
+        return item.reset_time, item.strict_break_event_time
 
     def _extreme_between(self, start: datetime, end: datetime) -> tuple[int, datetime, Decimal]:
         # E source ownership is candle-based: include the complete main candle
@@ -8562,6 +8575,13 @@ class EZoneDetector:
         gate_owned = self._gate_owned_initial_order(stop_event)
         carried = self._carried_orders_for_parent(parent, stop_event)
         self._register_order_audit(parent_type, parent, stop_event)
+        # Parent-neutral shared accepted-Order route: an accepted Order may be
+        # confirmed only after this parent stopped and still decide the E when
+        # its own strict stop wins chronology.  Its original creation cause is
+        # preserved; it is not relabeled as belonging to this parent.
+        post_stop_accepted = self._post_stop_accepted_orders_for_parent(
+            parent, stop_event
+        )
         # A stopped E opens a new direct search at its own stop candle. An
         # older order formed before that event cannot replace the first valid
         # post-stop order. S may still pass its explicitly unconsumed Blue
@@ -8570,6 +8590,9 @@ class EZoneDetector:
         # directions, followed by the shared final stop-event race.
         inherited_one = inherited[0] if inherited else None
         carried_one = carried[0] if carried else None
+        post_stop_accepted_one = (
+            post_stop_accepted[0] if post_stop_accepted else None
+        )
         direct = self._first_order(
             stop_event,
             (
@@ -8584,7 +8607,9 @@ class EZoneDetector:
             allow_trend_leg_continue=(parent_type == "E"),
         )
         choices = [
-            item for item in (direct, inherited_one, carried_one)
+            item for item in (
+                direct, inherited_one, carried_one, post_stop_accepted_one
+            )
             if item is not None and item[6] is not None
         ]
         order_match = min(
@@ -9007,7 +9032,7 @@ class EZoneDetector:
                 return False
             if (
                 zone.parent_type == "S"
-                or zone.order_mode != "B"
+                or "reset-leg" not in zone.order_causes
                 or zone.family != "blue"
             ):
                 return True
@@ -9327,7 +9352,7 @@ class EZoneDetector:
         def suppressed_by_future_child_conflict(zone: EZone) -> bool:
             if zone.parent_type != "E":
                 return False
-            if zone.order_mode != "B" or zone.family != "blue":
+            if "reset-leg" not in zone.order_causes or zone.family != "blue":
                 return False
             if self._blocked_by_gate_owned_order(zone):
                 return False
@@ -9384,11 +9409,21 @@ class EZoneDetector:
 
 
     def _rebuild_accepted_order_audit(
-        self, numbered: list[EZone]
+        self, numbered: list[EZone], supplemental_s_zones: Sequence[object] = (),
     ) -> list[EZone]:
         """Rebuild Order Audit from accepted S/E/StopAll state only."""
         # Audit only accepted S/E state. Provisional candidate chains must not
-        # create visible or reported order genders.
+        # create visible or reported order genders.  Preserve a snapshot of the
+        # pre-reconciliation ledger so an accepted carried-live Order can keep
+        # its original creation cause even when that creating parent is no
+        # longer a public behavior.
+        prior_order_audit = {
+            identity: {
+                **entry,
+                "causes": set(entry.get("causes", set())),
+            }
+            for identity, entry in self.order_audit.items()
+        }
         self.order_audit.clear()
         accepted_parents: list[tuple[str, object]] = [
             ("S", item) for item in self.s_zones
@@ -9406,20 +9441,80 @@ class EZoneDetector:
                     continue
             self._register_order_audit(parent_type, parent, stop[1])
 
-        # Every order embedded in an accepted E is effective by definition.
-        # Keep it in audit even when its provisional parent was skipped and
-        # the child was reattached to the nearest active ancestor.
+        # Every physical Order embedded in an accepted E must remain present in
+        # the canonical ledger.  This includes two cases that cannot be rebuilt
+        # from final public parents alone:
+        #   1) carried-live Orders whose original creating parent became
+        #      historical/non-public during reconciliation; and
+        #   2) valid bounded fresh-trend geometry with reaction number 0, which
+        #      has no canonical opposite-Reaction object.
         for zone in numbered:
             identity = order_identity(zone.order_first_index, zone.order_break_index)
             if identity in self.order_audit:
                 continue
+
+            prior_entry = prior_order_audit.get(identity)
             reaction = self._opposite_by_first_index.get(zone.order_first_index)
             if (
                 reaction is None
-                or int(getattr(reaction, "break_idx")) != zone.order_break_index
+                or int(getattr(reaction, "break_idx", -1)) != zone.order_break_index
             ):
-                continue
+                reaction = SimpleNamespace(
+                    mode=zone.order_mode,
+                    first_idx=zone.order_first_index,
+                    break_idx=zone.order_break_index,
+                    box_top=zone.order_box_top,
+                    box_top_source_idx=zone.order_box_top_source_index,
+                    box_top_source_time=zone.order_box_top_source_time,
+                    box_bottom=zone.order_box_bottom,
+                    box_bottom_source_idx=zone.order_box_bottom_source_index,
+                    box_bottom_source_time=zone.order_box_bottom_source_time,
+                    behavior_internal=False,
+                )
+
             causes: set[tuple[object, ...]] = set()
+            if prior_entry is not None:
+                causes.update(prior_entry.get("causes", set()))
+
+            # An E may carry an A-owned Order that was already accepted before
+            # S/E reconciliation.  Initial A audit uses ``a_causes`` rather
+            # than the generic E-ledger cause tuple, so translate that original
+            # creation provenance when the carried physical Order would
+            # otherwise become cause-less after final-parent rebuilding.
+            initial_entry = self.initial_order_audit.get(identity)
+            if initial_entry is not None:
+                a_causes = initial_entry.get("a_causes") or [(
+                    initial_entry.get("a_source_time"),
+                    initial_entry.get("a_stop_event_time"),
+                )]
+                for a_source_time, a_stop_time in a_causes:
+                    if a_source_time is None or a_stop_time is None:
+                        continue
+                    causes.add((
+                        "parent-stop", "A", None, a_stop_time, a_source_time
+                    ))
+
+            if (
+                not causes
+                and "carried-live" in zone.order_causes
+                and zone.parent_type == "S"
+            ):
+                parent_s = next((
+                    item for item in [*self.s_zones, *supplemental_s_zones]
+                    if int(getattr(item, "source_index")) == zone.parent_source_index
+                    and getattr(item, "source_time") == zone.parent_source_time
+                    and getattr(item, "order_first_index", None) == zone.order_first_index
+                    and getattr(item, "order_break_index", None) == zone.order_break_index
+                ), None)
+                if parent_s is not None:
+                    causes.add((
+                        "parent-stop",
+                        "A",
+                        None,
+                        getattr(parent_s, "a_stop_event_time"),
+                        getattr(parent_s, "a_source_time"),
+                    ))
+
             if zone.order_parent_stop_cause_time is not None:
                 parent_label = zone.parent_type
                 if zone.parent_type == "E":
@@ -9451,6 +9546,17 @@ class EZoneDetector:
                     zone.order_reset_leg_reset_time,
                     zone.order_reset_leg_break_time,
                 ))
+
+            # carried-live / accepted-live labels are use provenance, not
+            # creation causes. Their original accepted parent-stop/reset-leg
+            # cause must therefore come from the preserved ledgers above. If
+            # no creation cause can be proven, do not fabricate one.
+            if not causes:
+                continue
+
+            exact_cross = self._cross_order(
+                zone.order_confirmation_time, as_decimal(zone.order_stop_level)
+            )
             self.order_audit[identity] = {
                 "reaction_number": zone.order_reaction_number,
                 "reaction": reaction,
@@ -9458,11 +9564,7 @@ class EZoneDetector:
                 "stop_level": zone.order_stop_level,
                 "stop_source_index": zone.order_stop_source_index,
                 "stop_source_time": zone.order_stop_source_time,
-                "stop_cross": (
-                    zone.decision_index,
-                    zone.decision_time,
-                    zone.decision_event_time,
-                ),
+                "stop_cross": exact_cross,
                 "causes": causes,
             }
 
@@ -9491,6 +9593,43 @@ class EZoneDetector:
             numbered,
             key=lambda item: (item.source_time, item.source_index),
         )
+
+    def rebuild_accepted_order_audit(
+        self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object] = (),
+    ) -> list[EZone]:
+        """Rebuild the canonical Order ledger after external E reconciliation.
+
+        The pipeline may replace a final E branch with an earlier continuation
+        built from consumed S evidence after ``detect()`` has completed.  That
+        accepted branch must become authoritative for OrderAudit as well; this
+        public hook keeps calculation ownership in the E engine instead of
+        forcing the bridge to reconstruct trading provenance.
+        """
+        return self._rebuild_accepted_order_audit(
+            list(zones), supplemental_s_zones=supplemental_s_zones
+        )
+
+    def ensure_accepted_order_audit(
+        self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object] = (),
+    ) -> list[EZone]:
+        """Add audit coverage for externally restored accepted E zones.
+
+        Visibility may restore an independent S-owned E root after StopAll
+        reconciliation.  Rebuilding from only that post-StopAll E list would
+        incorrectly discard physical Orders still needed by already-created
+        StopAll/history, so rebuild the accepted subset and then merge back any
+        previously canonical identities that were not superseded.
+        """
+        preserved = {
+            identity: {**entry, "causes": set(entry.get("causes", set()))}
+            for identity, entry in self.order_audit.items()
+        }
+        rebuilt = self._rebuild_accepted_order_audit(
+            list(zones), supplemental_s_zones=supplemental_s_zones
+        )
+        for identity, entry in preserved.items():
+            self.order_audit.setdefault(identity, entry)
+        return rebuilt
 
     def detect(self) -> list[EZone]:
         """Discover, reconcile and audit recursive E lifecycles."""
@@ -9522,7 +9661,6 @@ def detect_e_zones(
     direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None = None,
     blocked_order_first_times: set[datetime] | None = None,
     initial_order_audit: dict[tuple[int, int], dict[str, object]] | None = None,
-    reset_geometry_finder: Callable[[str, int, int, int], object | None] | None = None,
     sequence_priority: Callable[[str, str], int] | None = None,
     invalid_s_root_identities: set[tuple[datetime, int]] | None = None,
 ) -> list[EZone]:
@@ -9540,7 +9678,6 @@ def detect_e_zones(
         direct_geometry_finder,
         blocked_order_first_times,
         initial_order_audit,
-        reset_geometry_finder,
         sequence_priority=sequence_priority,
         invalid_s_root_identities=invalid_s_root_identities,
     ).detect()
@@ -9549,10 +9686,10 @@ def detect_e_zones(
 
 ### 26.6 `lifecycle_engine.py`
 
-- Lines: `1629`
-- SHA-256: `ae80525bfbfad62a2ed21a7c0192b921a1301c239c8ca8795963e49df4b32d87`
+- Lines: `1634`
+- SHA-256: `253eb154443033b6fee5fc05644ff4348ee039201b0da857ad87a78414ac258c`
 
-<!-- SOURCE_FILE_BEGIN:lifecycle_engine.py:SHA256=ae80525bfbfad62a2ed21a7c0192b921a1301c239c8ca8795963e49df4b32d87 -->
+<!-- SOURCE_FILE_BEGIN:lifecycle_engine.py:SHA256=253eb154443033b6fee5fc05644ff4348ee039201b0da857ad87a78414ac258c -->
 ```python
 """Cross-stage behavior lifecycle, visibility, priority, and StopAll ownership.
 
@@ -9574,8 +9711,8 @@ from core_utils import as_decimal, order_identity
 from direction_policy import policy_for
 
 
-STOP_ALL_VERSION = "1.11.1"
-STOP_ALL_LAST_MODIFIED = "2026-09-19"
+STOP_ALL_VERSION = "1.11.2"
+STOP_ALL_LAST_MODIFIED = "2026-09-20 03:48:27 +03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -10095,6 +10232,7 @@ def prepare_order_audit(
     end_index: int,
     s_detector=None,
     accepted_a_sources: set[datetime] | None = None,
+    required_identities: set[tuple[int, int]] | None = None,
 ):
     """Resolve calculation-valid Order Audit identities before serialization.
 
@@ -10105,6 +10243,7 @@ def prepare_order_audit(
     the pipeline serializer's responsibility.
     """
     combined: list[tuple[dict[str, object], list[dict[str, object]]]] = []
+    required_identities = set(required_identities or set())
 
     if s_detector is not None:
         for entry in s_detector.order_audit.values():
@@ -10153,9 +10292,12 @@ def prepare_order_audit(
     for entry, supplied_causes in combined:
         reaction = entry["reaction"]
         first_index = int(getattr(reaction, "first_idx"))
-        if not start_index <= first_index <= end_index:
-            continue
         identity = order_identity(first_index, getattr(reaction, "break_idx"))
+        if (
+            not start_index <= first_index <= end_index
+            and identity not in required_identities
+        ):
+            continue
         existing = merged.get(identity)
         if existing is not None:
             existing_causes = existing["causes"]
@@ -11188,10 +11330,10 @@ def visible_a_zones(a_zones: Sequence[object], s_zones: Sequence[object]) -> lis
 
 ### 26.7 `trading_pipeline.py`
 
-- Lines: `1802`
-- SHA-256: `90e5219830948c49502b9fbf2f69a3bc3929d844e082cf7f9527dc2a240465a0`
+- Lines: `1895`
+- SHA-256: `5f4893ea973c0aaac35d28b376edc37c3dbddb5d9bcc861b5b6fec257675652c`
 
-<!-- SOURCE_FILE_BEGIN:trading_pipeline.py:SHA256=90e5219830948c49502b9fbf2f69a3bc3929d844e082cf7f9527dc2a240465a0 -->
+<!-- SOURCE_FILE_BEGIN:trading_pipeline.py:SHA256=5f4893ea973c0aaac35d28b376edc37c3dbddb5d9bcc861b5b6fec257675652c -->
 ```python
 """Production trading pipeline orchestration, input normalization, and serialization.
 
@@ -11228,13 +11370,13 @@ _pipeline_dir_text = str(_PIPELINE_DIR)
 if _pipeline_dir_text not in sys.path:
     sys.path.insert(0, _pipeline_dir_text)
 
-from core_utils import as_decimal
+from core_utils import as_decimal, order_identity
 
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.2.5"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-09-19"
+TRADING_PIPELINE_VERSION = "1.3.1"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-09-20 03:48:27 +03:30"
 
 TEHRAN = ZoneInfo("Asia/Tehran")
 
@@ -11300,8 +11442,10 @@ def epoch(local: datetime) -> int:
 _display_epoch_cache: dict[str, int] = {}
 
 
-def display_epoch(value: str) -> int:
-    """Convert an engine display timestamp once per pipeline process."""
+def display_epoch(value: str | datetime) -> int:
+    """Convert an engine display/native timestamp once per pipeline process."""
+    if isinstance(value, datetime):
+        return epoch(value)
     cached = _display_epoch_cache.get(value)
     if cached is not None:
         return cached
@@ -11678,6 +11822,74 @@ def serialize_stopalls(items):
     } for item in items]
 
 
+def validate_order_audit_bridge(
+    prepared_items, s_zones, e_zones, stopalls,
+) -> None:
+    """Assert that public behavior Order provenance matches canonical OrderAudit.
+
+    This is a bridge consistency invariant only; it does not choose, rank, or
+    reconstruct Orders.  All trading ownership decisions remain in the
+    calculation engines.  Every public S/E/StopAll carrying a physical Order
+    identity must reference an identity retained by the already-resolved audit.
+    The resolved audit must also keep one owner per exact parent-stop cause.
+    """
+    audit_identities = {
+        order_identity(
+            int(getattr(item["reaction"], "first_idx")),
+            int(getattr(item["reaction"], "break_idx")),
+        )
+        for item in prepared_items
+    }
+
+    missing: list[str] = []
+    for behavior_type, items in (
+        ("S", s_zones), ("E", e_zones), ("StopAll", stopalls)
+    ):
+        for item in items:
+            first_index = getattr(item, "order_first_index", None)
+            break_index = getattr(item, "order_break_index", None)
+            if first_index is None or break_index is None:
+                continue
+            identity = order_identity(int(first_index), int(break_index))
+            if identity in audit_identities:
+                continue
+            missing.append(
+                f"{behavior_type}@{getattr(item, 'source_time', None)!s}"
+                f"->{identity}"
+            )
+    if missing:
+        raise RuntimeError(
+            "OrderAudit bridge invariant failed; public behavior references "
+            "an Order identity absent from canonical audit: " + ", ".join(missing)
+        )
+
+    parent_owner: dict[tuple[object, object, object, object], tuple[int, int]] = {}
+    duplicate_parent_causes: list[str] = []
+    for prepared in prepared_items:
+        reaction = prepared["reaction"]
+        identity = order_identity(
+            int(getattr(reaction, "first_idx")),
+            int(getattr(reaction, "break_idx")),
+        )
+        for cause in prepared["causes"]:
+            if cause.get("kind") != "parent-stop":
+                continue
+            key = (
+                cause.get("parentType"),
+                cause.get("parentFamily"),
+                cause.get("eventTime"),
+                cause.get("parentSourceTime"),
+            )
+            previous = parent_owner.setdefault(key, identity)
+            if previous != identity:
+                duplicate_parent_causes.append(f"{key!r}:{previous}->{identity}")
+    if duplicate_parent_causes:
+        raise RuntimeError(
+            "OrderAudit bridge invariant failed; one exact parent-stop owns "
+            "multiple physical Orders: " + ", ".join(duplicate_parent_causes)
+        )
+
+
 def serialize_order_audit(prepared_items, detector):
     """Serialize already-resolved Order Audit identities without business filtering."""
     output = []
@@ -11985,7 +12197,8 @@ def create_e_detector(
     opposite = chronology.opposite_direction(direction)
     end_index = len(chronology.candles) - 1
 
-    def reset_geometry(geometry_direction, geometry_start, geometry_end):
+    def bounded_geometry(geometry_direction, geometry_start, geometry_end):
+        """Return raw Reaction geometry inside a closed main-candle range."""
         return geometry_detectors[geometry_direction].first_geometry_after_reset(
             geometry_direction,
             max(0, geometry_start - 1),
@@ -12002,16 +12215,6 @@ def create_e_detector(
             gate_event,
         )
 
-    def simple_reset_geometry(
-        geometry_direction, reset_index, gate_index, geometry_end
-    ):
-        return geometry_detectors[geometry_direction].first_simple_geometry_after_gate(
-            geometry_direction,
-            reset_index,
-            gate_index,
-            geometry_end,
-        )
-
     return e_engine.EZoneDetector(
         direction,
         full_results[direction].reactions,
@@ -12022,11 +12225,10 @@ def create_e_detector(
         chronology,
         0,
         end_index,
-        reset_geometry,
+        bounded_geometry,
         direct_geometry,
         blocked_order_first_times=blocked_order_first_times,
         initial_order_audit=initial_order_audit,
-        reset_geometry_finder=simple_reset_geometry,
         sequence_priority=lifecycle_engine.sequence_priority,
         invalid_s_root_identities=invalid_s_root_identities,
     )
@@ -12096,15 +12298,16 @@ def calculate_full_direction_state(
             for item in accepted_e_history
         }
         for item in zones:
-            # Keep this safeguard intentionally narrow: only the E-parented
-            # Blue Order_B lineage is known to be vulnerable to later-pass
-            # retroactive suppression. Other families/modes retain the exact
-            # legacy reconciliation behavior.
+            # Keep this safeguard intentionally narrow: only E-parented Blue
+            # Orders carrying the independent Order_B/reset-leg cause are
+            # eligible for later-pass historical preservation.
             if str(getattr(item, "parent_type", "")).upper() != "E":
                 continue
             if str(getattr(item, "family", "")).lower() != "blue":
                 continue
-            if str(getattr(item, "order_mode", "")).upper() != "B":
+            if "reset-leg" not in {
+                str(value) for value in getattr(item, "order_causes", ())
+            }:
                 continue
             identity = (
                 int(getattr(item, "source_index")),
@@ -12318,6 +12521,13 @@ def calculate_full_direction_state(
         e_zones = e_detector.replace_with_earlier_continuation(
             e_zones, owner, continuation
         )
+
+    # Continuation replacement happens after the detector's normal final audit.
+    # Rebuild the accepted ledger from the actual final E state so OrderAudit
+    # cannot lag behind a branch that the lifecycle has just made authoritative.
+    e_zones = e_detector.rebuild_accepted_order_audit(
+        e_zones, supplemental_s_zones=[item for item, _ in consumed_s_evidence]
+    )
 
     s_zones = [
         item for item in s_zones
@@ -12678,10 +12888,13 @@ def finalize_direction_visibility(
         # fixed, restore direct E1 roots of accepted S behaviors so independent
         # E formation remains visible without letting lower-priority roots
         # rewrite the dominant StopAll sequence.
-        e_zones = state.full_e_detectors[direction].restore_independent_s_roots(
-            e_zones
-        )
-        visibility_stop = lambda item: state.full_e_detectors[direction].parent_stop(
+        detector = state.full_e_detectors[direction]
+        e_zones = detector.restore_independent_s_roots(e_zones)
+        # Root restoration is a calculation-valid acceptance step that occurs
+        # after the detector's normal ledger rebuild.  Sync only missing audit
+        # identities while preserving Orders already needed by StopAll/history.
+        e_zones = detector.ensure_accepted_order_audit(e_zones)
+        visibility_stop = lambda item: detector.parent_stop(
             "S" if hasattr(item, "a_source_time") else "E", item
         )
     else:
@@ -12741,8 +12954,16 @@ def finalize_direction_visibility(
         if (getattr(item, "source_time"), int(getattr(item, "source_index")))
         not in direction_state.invalid_s_identities
     ]
+    # OrderAudit provenance is calculated on the full RAW, not clipped by the
+    # presentation range.  A public S/E/StopAll inside the requested window may
+    # legitimately reference an accepted A-owned Order whose First/A source is
+    # before ``start_index``.  Keep all calculation-accepted A sources here;
+    # presentation filtering is handled separately by required Order identities.
     order_audit_a_sources = {
-        getattr(item, "source_time") for item in display_a_zones
+        getattr(item, "source_time")
+        for item in state.full_a_by_direction.get(direction, direction_state.a_zones)
+        if (getattr(item, "source_time"), int(getattr(item, "source_index")))
+        not in direction_state.invalid_a_identities
     }
 
     all_behavior_reactions = [
@@ -12803,6 +13024,15 @@ def finalize_direction_visibility(
                 ),
             )
 
+    required_order_identities = {
+        order_identity(int(first_index), int(break_index))
+        for item in [*display_s_zones, *e_zones, *stopalls]
+        for first_index, break_index in [(
+            getattr(item, "order_first_index", None),
+            getattr(item, "order_break_index", None),
+        )]
+        if first_index is not None and break_index is not None
+    }
     prepared_order_audit = (
         lifecycle_engine.prepare_order_audit(
             state.full_e_detectors[direction],
@@ -12810,10 +13040,15 @@ def finalize_direction_visibility(
             end_index,
             state.full_s_detectors.get(direction),
             order_audit_a_sources,
+            required_order_identities,
         )
         if direction in state.full_e_detectors
         else []
     )
+    if direction in state.full_e_detectors:
+        validate_order_audit_bridge(
+            prepared_order_audit, display_s_zones, e_zones, stopalls
+        )
     return DirectionVisibilityState(
         blue_lines=engines.blue_line.public_blue_lines(direction_state.blue_lines),
         a_zones=display_a_zones,
@@ -13126,8 +13361,8 @@ To recover the production snapshot from this single Markdown file:
 3. Compute SHA-256 and compare it with the marker and Section 1 manifest.
 4. Compile all recovered Python files before behavior regression.
 
-The build audit for this document performs this extraction automatically and verifies that all nine recovered files hash-identically to the production baseline.
+The build audit for this document extracts all nine embedded files and verifies that every recovered SHA-256 is identical to the declared production snapshot.
 
 ## 28. Final canonical contract
 
-This file is both an algorithm specification and a self-contained implementation archive for the declared Source snapshot. A future revision that changes any production behavior must update the document Version, Last Modified Date, source manifest/hash, affected semantic sections, and embedded exact source snapshot together. A documentation-only wording change should also increment the document version/date but must not silently change the embedded source hashes.
+This file is both an algorithm specification and a self-contained implementation archive for the declared Source snapshot. V5.3.0 preserves the V5.2.0 Order_B/reset-leg rebuild and supersedes earlier shared accepted-Order ownership/confirmation wording. A future revision that changes production behavior must update the document Version, Last Modified Date & Time, source manifest/hash, affected semantic sections, and embedded exact source snapshot together. A documentation-only wording change must not silently change the embedded source hashes.

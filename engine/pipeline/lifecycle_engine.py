@@ -18,8 +18,8 @@ from core_utils import as_decimal, order_identity
 from direction_policy import policy_for
 
 
-STOP_ALL_VERSION = "1.11.1"
-STOP_ALL_LAST_MODIFIED = "2026-09-19"
+STOP_ALL_VERSION = "1.11.2"
+STOP_ALL_LAST_MODIFIED = "2026-09-20 03:48:27 +03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -539,6 +539,7 @@ def prepare_order_audit(
     end_index: int,
     s_detector=None,
     accepted_a_sources: set[datetime] | None = None,
+    required_identities: set[tuple[int, int]] | None = None,
 ):
     """Resolve calculation-valid Order Audit identities before serialization.
 
@@ -549,6 +550,7 @@ def prepare_order_audit(
     the pipeline serializer's responsibility.
     """
     combined: list[tuple[dict[str, object], list[dict[str, object]]]] = []
+    required_identities = set(required_identities or set())
 
     if s_detector is not None:
         for entry in s_detector.order_audit.values():
@@ -597,9 +599,12 @@ def prepare_order_audit(
     for entry, supplied_causes in combined:
         reaction = entry["reaction"]
         first_index = int(getattr(reaction, "first_idx"))
-        if not start_index <= first_index <= end_index:
-            continue
         identity = order_identity(first_index, getattr(reaction, "break_idx"))
+        if (
+            not start_index <= first_index <= end_index
+            and identity not in required_identities
+        ):
+            continue
         existing = merged.get(identity)
         if existing is not None:
             existing_causes = existing["causes"]

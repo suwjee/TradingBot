@@ -1,8 +1,9 @@
 """Recursive E-zone and Order calculation from authoritative S/Reaction state.
 
-Owns parent-stop, carried-live, and Reset-leg Order discovery; recursive E
-chains; accepted Order causes; and E family/number reconciliation. Cross-stage
-public visibility and StopAll grouping are delegated to the lifecycle engine.
+Owns parent-stop, carried-live, accepted-live, and Reset-leg Order discovery;
+recursive E chains; accepted Order causes; and E family/number reconciliation.
+Cross-stage public visibility and StopAll grouping are delegated to the lifecycle
+engine.
 """
 
 from __future__ import annotations
@@ -18,7 +19,8 @@ from core_utils import as_decimal, order_identity, reaction_identity
 from direction_policy import policy_for
 
 
-E_ZONE_VERSION = "6.6.2"
+E_ZONE_VERSION = "6.8.0"
+E_ZONE_LAST_MODIFIED = "2026-09-20 04:35:08 +03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -69,6 +71,30 @@ OrderMatch = tuple[
 ]
 
 
+@dataclass(frozen=True, slots=True)
+class OrderBFormation:
+    """One complete reset-leg Order_B setup under the canonical mirror rule."""
+
+    reset_time: datetime
+    reset_index: int
+    owner_first_index: int
+    owner_break_index: int
+    trigger_level: Decimal
+    trigger_source_index: int
+    trigger_source_time: datetime
+    strict_break_index: int
+    strict_break_time: datetime
+    strict_break_event_time: datetime
+    opposite_extreme: Decimal
+    opposite_extreme_source_index: int
+    opposite_extreme_source_time: datetime
+    evidence_first_index: int
+    evidence_break_index: int
+    order_reaction_number: int
+    order_reaction: object
+    order_confirmation_time: datetime
+
+
 class EZoneDetector:
     def __init__(
         self,
@@ -87,9 +113,6 @@ class EZoneDetector:
         ] | None = None,
         blocked_order_first_times: set[datetime] | None = None,
         initial_order_audit: dict[tuple[int, int], dict[str, object]] | None = None,
-        reset_geometry_finder: Callable[
-            [str, int, int, int], object | None
-        ] | None = None,
         sequence_resets: dict[datetime, int] | None = None,
         sequence_priority: Callable[[str, str], int] | None = None,
         invalid_s_root_identities: set[tuple[datetime, int]] | None = None,
@@ -128,6 +151,7 @@ class EZoneDetector:
                 suffix_min = decision_time
             self._red_s_suffix_min_decision.append(suffix_min)
         self._red_s_suffix_min_decision.reverse()
+        self.trend_resets = sorted(trend_resets, key=self._reset_time)
         self.opposite_resets = sorted(opposite_resets, key=self._reset_time)
         self.candles = chronology.candles
         self.lower = chronology.seconds
@@ -141,32 +165,16 @@ class EZoneDetector:
         self.range_end = self.times[self.end_index] + self.timeframe
         self.geometry_finder = geometry_finder
         self.direct_geometry_finder = direct_geometry_finder or geometry_finder
-        self.reset_geometry_finder = reset_geometry_finder
         self.blocked_order_first_times = blocked_order_first_times or set()
         self.initial_order_audit = initial_order_audit or {}
-        self._geometry_evidence_cache: dict[tuple[datetime, datetime], bool] = {}
-        self._order_b_geometry_cache: dict[
-            tuple[datetime, datetime, datetime],
-            tuple[int, object, datetime] | None,
-        ] = {}
-        self._next_outer_reset_cache: dict[int, datetime | None] = {}
         self._cross_order_cache: dict[
             tuple[datetime, Decimal], tuple[int, datetime, datetime] | None
         ] = {}
-        self._trigger_cross_cache: dict[tuple[datetime, Decimal], datetime | None] = {}
-        self._reset_leg_geometry_cache: dict[
-            tuple[int, datetime], tuple[datetime, Decimal] | None
-        ] = {}
+        self._order_b_formations_cache: list[OrderBFormation] | None = None
         self._order_candidates_cache: dict[
             tuple[datetime, datetime | None, bool, bool, bool], tuple[OrderMatch, ...]
         ] = {}
         self.order_audit: dict[tuple[int, int], dict[str, object]] = {}
-        self._synthetic_order_cache: list[
-            tuple[int, object, datetime, datetime, datetime]
-        ] | None = None
-        self._audit_synthetic_order_cache: list[
-            tuple[int, object, datetime, datetime, datetime]
-        ] | None = None
         self._trend_first_times = [
             self._reaction_first_time(item) for item in self.trend_reactions
         ]
@@ -189,20 +197,29 @@ class EZoneDetector:
             key=lambda item: item[0],
         )
         self._trend_confirmation_times = [item[0] for item in self._trend_by_confirmation]
+        self._trend_by_first_index = {
+            int(getattr(item, "first_idx")): item
+            for item in self.trend_reactions
+        }
+        self._trend_reset_events = [
+            (self._reset_time(item), item) for item in self.trend_resets
+        ]
+        self._trend_reset_times = [item[0] for item in self._trend_reset_events]
         self._opposite_reset_times_by_first: dict[int, list[datetime]] = {}
         for reset in self.opposite_resets:
             self._opposite_reset_times_by_first.setdefault(
                 int(getattr(reset, "from_first_idx")), []
             ).append(self._reset_time(reset))
-        self._opposite_reset_events = [
-            (self._reset_time(item), item) for item in self.opposite_resets
-        ]
-        self._opposite_reset_times = [item[0] for item in self._opposite_reset_events]
         self._opposite_by_first_index = {
             int(getattr(item, "first_idx")): item
             for item in self.opposite_reactions
         }
         self.visual_lifecycle_starts: set[datetime] = set()
+        # Historical-only E objects that were fully formed but suppressed by
+        # a descendant conflict.  They are exposed for presentation only and
+        # never participate in lifecycle ownership, StopAll, numbering, or
+        # OrderAudit reconstruction.
+        self.historical_rescued_zones: list[EZone] = []
         self._consumed_s_evidence: list[tuple[object, tuple[int, datetime]]] = []
         self._last_candidate_zones: list[EZone] = []
 
@@ -256,222 +273,244 @@ class EZoneDetector:
     def _reaction_first_time(self, reaction: object) -> datetime:
         return getattr(self.candles[int(getattr(reaction, "first_idx"))], "timestamp")
 
-    def _strict_trigger_cross(self, start: datetime, level: Decimal) -> datetime | None:
-        cache_key = (start, level)
-        cached = self._trigger_cross_cache.get(cache_key)
-        if cached is not None:
-            return cached
-        left = bisect_left(self.lower_times, start)
-        right = bisect_left(self.lower_times, self.range_end)
-        position = self._first_cross_position(
-            left, right, level, less=self.direction == "bullish"
-        )
-        result = None if position is None else self.lower_times[position]
-        self._trigger_cross_cache[cache_key] = result
-        return result
+    def _main_range_extreme(
+        self,
+        start_index: int,
+        end_index: int,
+        attribute: str,
+        *,
+        choose_minimum: bool,
+    ) -> tuple[Decimal, int, datetime]:
+        """Return the first candle owning the requested closed-range extreme."""
+        if end_index < start_index:
+            raise ValueError("Order_B extreme range ends before it starts.")
+        source = self.candles[start_index]
+        value = as_decimal(getattr(source, attribute))
+        for candle in self.candles[start_index + 1 : end_index + 1]:
+            candidate = as_decimal(getattr(candle, attribute))
+            better = candidate < value if choose_minimum else candidate > value
+            if better:
+                source = candle
+                value = candidate
+        return value, int(getattr(source, "index")), getattr(source, "timestamp")
 
-    def _reset_leg_geometry(
+    def _order_b_reset_leg(
         self, reset: object, reset_time: datetime,
-    ) -> tuple[datetime, Decimal] | None:
-        """Return the inclusive Break-to-Reset leg start and outer boundary."""
-        cache_key = (int(getattr(reset, "from_first_idx")), reset_time)
-        cached = self._reset_leg_geometry_cache.get(cache_key)
-        if cached is not None:
-            return cached
-        owner = self._opposite_by_first_index.get(
+    ) -> tuple[object, Decimal, int, datetime] | None:
+        """Return the same-direction Reset owner and its trigger extreme.
+
+        Bearish: from the owner's Breakout candle through the Reset candle,
+        inclusive, the minimum Low is the reset-leg floor.
+        Bullish: exact mirror, maximum High is the reset-leg ceiling.
+        """
+        owner = self._trend_by_first_index.get(
             int(getattr(reset, "from_first_idx"))
         )
         if owner is None:
-            self._reset_leg_geometry_cache[cache_key] = None
             return None
-        start_index = int(getattr(owner, "break_idx"))
-        end_index = self._main_index(reset_time)
-        if end_index < start_index:
-            self._reset_leg_geometry_cache[cache_key] = None
+        break_index = int(getattr(owner, "break_idx"))
+        reset_index = int(getattr(reset, "index"))
+        if reset_index < break_index:
             return None
-        boundary = self._stop_value(self.candles[start_index])
-        for candle in self.candles[start_index + 1 : end_index + 1]:
-            value = self._stop_value(candle)
-            better = value < boundary if self.direction == "bullish" else value > boundary
-            if better:
-                boundary = value
-        result = self.times[start_index], boundary
-        self._reset_leg_geometry_cache[cache_key] = result
-        return result
+        if self.direction == "bearish":
+            level, source_index, source_time = self._main_range_extreme(
+                break_index, reset_index, "low", choose_minimum=True
+            )
+        else:
+            level, source_index, source_time = self._main_range_extreme(
+                break_index, reset_index, "high", choose_minimum=False
+            )
+        return owner, level, source_index, source_time
 
-    def _reset_leg_has_simple_trend_reaction(
-        self, leg_start: datetime, boundary_cross: datetime,
-    ) -> bool:
-        key = (leg_start, boundary_cross)
-        cached = self._geometry_evidence_cache.get(key)
-        if cached is not None:
-            return cached
-        left = bisect_left(self._trend_confirmation_times, leg_start)
-        right = bisect_right(self._trend_confirmation_times, boundary_cross)
-        result = any(
-            not bool(getattr(self._trend_by_confirmation[position][2], "behavior_internal", False))
-            for position in range(left, right)
+    def _order_b_strict_break(
+        self, reset_time: datetime, level: Decimal,
+    ) -> tuple[int, datetime, datetime] | None:
+        """Return the first exact strict break of the reset-leg trigger level.
+
+        Bearish Order_B: Low < reset-leg floor.
+        Bullish Order_B: High > reset-leg ceiling.
+        """
+        left = bisect_left(self.lower_times, max(reset_time, self.range_start))
+        right = bisect_left(self.lower_times, self.range_end)
+        position = self._first_cross_position(
+            left,
+            right,
+            level,
+            less=self.direction == "bearish",
         )
-        self._geometry_evidence_cache[key] = result
-        return result
-
-    def _first_order_b_geometry(
-        self, reset_time: datetime, boundary_cross: datetime, deadline: datetime,
-    ) -> tuple[int, object, datetime] | None:
-        """Return the first structurally owned Order_B geometry after its gate."""
-        cache_key = (reset_time, boundary_cross, deadline)
-        if cache_key in self._order_b_geometry_cache:
-            return self._order_b_geometry_cache[cache_key]
-        end_index = min(self.end_index, bisect_left(self.times, deadline) - 1)
-        if self.geometry_finder is None:
-            self._order_b_geometry_cache[cache_key] = None
+        if position is None:
             return None
+        event_time = self.lower_times[position]
+        index = self._main_index(event_time)
+        return index, self.times[index], event_time
 
-        def find_geometry(gate_index: int) -> object | None:
-            if gate_index > end_index:
-                return None
-            if self.reset_geometry_finder is not None:
-                reset_index = self._main_index(reset_time)
-                gate_time = self.times[gate_index]
-                gate_owner = self._opposite_by_first_index.get(gate_index)
-                # A non-canonical First that is already open in the main
-                # candle containing the lower-timeframe gate belongs to the
-                # pre-gate leg.  Canonical ownership may start on that candle;
-                # otherwise the bounded Reset search begins on the next one.
-                reset_gate_index = (
-                    gate_index
-                    if gate_owner is not None
-                    and self._reaction_first_time(gate_owner) == gate_time
-                    else gate_index + 1
-                )
-                return self.reset_geometry_finder(
-                    self.order_direction,
-                    reset_index,
-                    reset_gate_index,
-                    end_index,
-                )
-            assert self.geometry_finder is not None
-            return self.geometry_finder(
-                self.order_direction, gate_index, end_index
+    def _order_b_opposite_extreme(
+        self, trigger_source_index: int, strict_break_index: int,
+    ) -> tuple[Decimal, int, datetime]:
+        """Return the other reset-leg edge on the closed trigger->break range."""
+        if self.direction == "bearish":
+            return self._main_range_extreme(
+                trigger_source_index,
+                strict_break_index,
+                "high",
+                choose_minimum=False,
             )
+        return self._main_range_extreme(
+            trigger_source_index,
+            strict_break_index,
+            "low",
+            choose_minimum=True,
+        )
 
-        gate_event = boundary_cross
-        while gate_event < deadline:
-            gate_index = self._main_index(gate_event)
-            geometry = find_geometry(gate_index)
-            if geometry is None:
-                break
-            gate_time = self.times[gate_index]
-            if self._reaction_first_time(geometry) == gate_time:
-                matching = self._opposite_by_first_index.get(
-                    int(getattr(geometry, "first_idx"))
-                )
-                if (
-                    matching is None
-                    or int(getattr(matching, "break_idx"))
-                    != int(getattr(geometry, "break_idx"))
-                ):
-                    geometry = find_geometry(gate_index + 1)
-                    if geometry is None:
-                        break
-            confirmation = self._confirmation_for(
-                geometry, self.order_direction
-            )
-            if confirmation >= deadline:
-                break
+    def _order_b_geometry_evidence(
+        self, trigger_source_index: int, strict_break_index: int,
+    ) -> object | None:
+        """Return raw opposite Reaction geometry inside the closed leg range.
 
-            geometry_first = self._reaction_first_time(geometry)
-            if geometry_first in self.blocked_order_first_times:
-                # The leg context may keep an internal head alive after the
-                # Reset boundary has crossed. Geometry whose First opens in
-                # that closed interval cannot own the resumed outer E space.
-                next_index = max(
-                    gate_index, int(getattr(geometry, "first_idx"))
-                ) + 1
-                if next_index > end_index:
-                    break
-                gate_event = self.times[next_index]
+        Reset validity, lifecycle acceptance, public visibility, and Internal
+        status are deliberately ignored for this evidence test.  Geometry
+        alone is sufficient, exactly as required by the Order_B contract.
+        """
+        if self.geometry_finder is None:
+            return None
+        geometry = self.geometry_finder(
+            self.order_direction,
+            trigger_source_index,
+            strict_break_index,
+        )
+        if geometry is None:
+            return None
+        if int(getattr(geometry, "first_idx")) < trigger_source_index:
+            return None
+        if int(getattr(geometry, "break_idx")) > strict_break_index:
+            return None
+        return geometry
+
+    def _first_order_b_reaction_after_break(
+        self, strict_break_index: int, strict_break_event: datetime,
+    ) -> tuple[int, object, datetime] | None:
+        """Return the first canonical opposite Reaction after the Order_B gate."""
+        gate_time = self.times[strict_break_index]
+        position = bisect_left(self._opposite_first_times, gate_time)
+        for order_position in range(position, len(self.opposite_reactions)):
+            reaction = self.opposite_reactions[order_position]
+            first_time = self._opposite_first_times[order_position]
+            confirmation = self._opposite_confirmations[order_position]
+            if first_time < gate_time:
                 continue
-            owner_position = bisect_right(
-                self._opposite_first_times, geometry_first
-            ) - 1
-            owner = (
-                self.opposite_reactions[owner_position]
-                if owner_position >= 0 else None
-            )
-            if owner is not None:
-                owner_first = self._reaction_first_time(owner)
-                owner_resets = self._opposite_reset_times_by_first.get(
-                    int(getattr(owner, "first_idx")), []
-                )
-                owner_reset = next(
-                    (value for value in owner_resets if value > geometry_first),
-                    None,
-                )
-                owner_already_reset = any(
-                    value <= geometry_first for value in owner_resets
-                )
-                # Opposite-Reaction ownership is directionally independent.
-                # A trend-side Reset cannot release or invalidate this owner;
-                # only a Reset belonging to that owner can do so.
-                active_owner = not owner_already_reset
-                if active_owner:
-                    owner_confirmation = self._confirmation(owner)
-                    if owner_first >= gate_time:
-                        if owner_confirmation >= deadline:
-                            break
-                        result = owner_position + 1, owner, owner_confirmation
-                        self._order_b_geometry_cache[cache_key] = result
-                        return result
-                    if owner_reset is None or owner_reset >= deadline:
-                        break
-                    gate_event = owner_reset
-                    continue
-
-            existing = self._opposite_by_first_index.get(
-                int(getattr(geometry, "first_idx"))
-            )
-            if (
-                existing is not None
-                and int(getattr(existing, "break_idx"))
-                == int(getattr(geometry, "break_idx"))
-            ):
-                result = owner_position + 1, existing, confirmation
-                self._order_b_geometry_cache[cache_key] = result
-                return result
-
-            # Reset-leg local geometry is only a search aid; without an exact
-            # published Reaction identity it cannot create an Order.
-            next_index = int(getattr(geometry, "first_idx")) + 1
-            if next_index > end_index:
-                break
-            gate_event = self.times[next_index]
-            continue
-
-        self._order_b_geometry_cache[cache_key] = None
+            if confirmation <= strict_break_event:
+                continue
+            return order_position + 1, reaction, confirmation
         return None
 
-    def _next_outer_reset_time(
-        self, reset_position: int, fallback: datetime,
-    ) -> datetime:
-        """Return the next non-nested Reset boundary.
+    def _build_order_b_formations(self) -> list[OrderBFormation]:
+        """Build every Order_B from same-direction Reset-leg geometry.
 
-        A reaction that starts after the current Reset belongs to a nested leg
-        and cannot close the outer ResetLeg owner.
+        Bearish mirror:
+          Bearish Reaction Reset -> minimum Low from Breakout..Reset -> first
+          strict Low below that floor -> require at least one raw Bullish
+          Reaction geometry from the floor candle through the strict-break
+          candle, inclusive -> first canonical Bullish Reaction after the gate.
+
+        Bullish is the exact directional mirror using maximum High, strict
+        High above it, raw Bearish geometry, and the first canonical Bearish
+        Reaction after the gate.
         """
-        if reset_position in self._next_outer_reset_cache:
-            cached = self._next_outer_reset_cache[reset_position]
-            return fallback if cached is None else cached
-        reset_time, _ = self._opposite_reset_events[reset_position]
-        result = None
-        for next_time, next_reset in self._opposite_reset_events[reset_position + 1:]:
-            owner_first = self.times[int(getattr(next_reset, "from_first_idx"))]
-            if owner_first <= reset_time:
-                result = next_time
-                break
-        self._next_outer_reset_cache[reset_position] = result
-        return fallback if result is None else result
+        if self._order_b_formations_cache is not None:
+            return self._order_b_formations_cache
+        formations: list[OrderBFormation] = []
+        for reset_time, reset in self._trend_reset_events:
+            leg = self._order_b_reset_leg(reset, reset_time)
+            if leg is None:
+                continue
+            owner, trigger_level, trigger_source_index, trigger_source_time = leg
+            strict_break = self._order_b_strict_break(reset_time, trigger_level)
+            if strict_break is None:
+                continue
+            strict_break_index, strict_break_time, strict_break_event = strict_break
+            if strict_break_index < trigger_source_index:
+                continue
+            evidence = self._order_b_geometry_evidence(
+                trigger_source_index, strict_break_index
+            )
+            if evidence is None:
+                continue
+            order_match = self._first_order_b_reaction_after_break(
+                strict_break_index, strict_break_event
+            )
+            if order_match is None:
+                continue
+            order_number, order_reaction, order_confirmation = order_match
+            opposite_extreme, opposite_source_index, opposite_source_time = (
+                self._order_b_opposite_extreme(
+                    trigger_source_index, strict_break_index
+                )
+            )
+            formations.append(OrderBFormation(
+                reset_time=reset_time,
+                reset_index=int(getattr(reset, "index")),
+                owner_first_index=int(getattr(owner, "first_idx")),
+                owner_break_index=int(getattr(owner, "break_idx")),
+                trigger_level=trigger_level,
+                trigger_source_index=trigger_source_index,
+                trigger_source_time=trigger_source_time,
+                strict_break_index=strict_break_index,
+                strict_break_time=strict_break_time,
+                strict_break_event_time=strict_break_event,
+                opposite_extreme=opposite_extreme,
+                opposite_extreme_source_index=opposite_source_index,
+                opposite_extreme_source_time=opposite_source_time,
+                evidence_first_index=int(getattr(evidence, "first_idx")),
+                evidence_break_index=int(getattr(evidence, "break_idx")),
+                order_reaction_number=order_number,
+                order_reaction=order_reaction,
+                order_confirmation_time=order_confirmation,
+            ))
+        formations.sort(key=lambda item: (
+            item.order_confirmation_time,
+            int(getattr(item.order_reaction, "first_idx")),
+            int(getattr(item.order_reaction, "break_idx")),
+            item.reset_time,
+        ))
+        self._order_b_formations_cache = formations
+        return formations
 
+    def _order_b_orders(
+        self, start: datetime,
+    ) -> list[tuple[int, object, datetime, datetime, datetime]]:
+        """Return canonical Order_B Orders whose Reaction forms at/after start."""
+        return [
+            (
+                item.order_reaction_number,
+                item.order_reaction,
+                item.order_confirmation_time,
+                item.reset_time,
+                item.strict_break_event_time,
+            )
+            for item in self._build_order_b_formations()
+            if item.order_confirmation_time >= start
+        ]
+
+    def _order_b_evidence(
+        self, reaction: object, context_start: datetime,
+    ) -> tuple[datetime, datetime] | None:
+        """Return the latest eligible Order_B cause for one physical Reaction."""
+        identity = reaction_identity(reaction)
+        evidence = [
+            item for item in self._build_order_b_formations()
+            if reaction_identity(item.order_reaction) == identity
+            and item.order_confirmation_time >= context_start
+        ]
+        if not evidence:
+            return None
+        owner = max(
+            evidence,
+            key=lambda item: (
+                item.reset_time,
+                item.strict_break_event_time,
+            ),
+        )
+        return owner.reset_time, owner.strict_break_event_time
 
     def _replacement_order(
         self,
@@ -479,132 +518,27 @@ class EZoneDetector:
         owner_confirmation: datetime,
         owner_stop_event: datetime,
     ) -> tuple[int, object, datetime, datetime] | None:
-        """Find the first order created by a complete behavioral-reset cycle."""
-        reset_left = bisect_right(self._opposite_reset_times, owner_confirmation)
-        reset_right = bisect_left(self._opposite_reset_times, owner_stop_event)
-        reset_events = self._opposite_reset_events[reset_left:reset_right]
-        owner_first_index = int(getattr(owner, "first_idx"))
-        for position, (reset_time, reset) in enumerate(reset_events):
-            reset_owner_index = int(getattr(reset, "from_first_idx"))
-            reset_owner_first = self.times[reset_owner_index]
-            if (
-                reset_owner_index != owner_first_index
-                and reset_owner_first < owner_confirmation
-            ):
-                continue
-            # A Reset of the provisional order, or of a later opposite
-            # reaction in its still-open lifecycle, can originate the
-            # replacement leg. Stale reactions from before that lifecycle
-            # cannot take ownership.
-            absolute_position = bisect_left(self._opposite_reset_times, reset_time)
-            next_opposite_reset = self._next_outer_reset_time(
-                absolute_position, owner_stop_event
-            )
-            leg = self._reset_leg_geometry(reset, reset_time)
-            if leg is None:
-                continue
-            leg_start, trigger = leg
-            crossing = self._strict_trigger_cross(reset_time, trigger)
-            if crossing is None or crossing >= min(next_opposite_reset, owner_stop_event):
-                continue
-            if not self._reset_leg_has_simple_trend_reaction(leg_start, crossing):
-                continue
-            gate_time = self.times[self._main_index(crossing)]
-            order_start = bisect_left(self._opposite_first_times, gate_time)
-            for order_position in range(order_start, len(self.opposite_reactions)):
-                reaction = self.opposite_reactions[order_position]
-                first = self._opposite_first_times[order_position]
-                confirmation = self._opposite_confirmations[order_position]
-                if (
-                    first >= gate_time
-                    and confirmation >= crossing
-                    and confirmation < owner_stop_event
-                ):
-                    return order_position + 1, reaction, confirmation, reset_time
-        return None
-
-    def _reset_leg_evidence(
-        self, reaction: object, context_start: datetime
-    ) -> tuple[datetime, datetime] | None:
-        """Return the Reset and strict-break events that created ``reaction``."""
-        order_first = self._reaction_first_time(reaction)
-        order_confirmation = self._confirmation(reaction)
-        # Mode-B ownership starts with the current E-space lifecycle. A Reset
-        # that occurred before the parent stop belongs to an older lifecycle
-        # and cannot create an order for this parent.
-        reset_left = bisect_left(self._opposite_reset_times, context_start)
-        reset_right = bisect_right(
-            self._opposite_reset_times, order_confirmation
+        """Return the first later Order_B that forms before the owner stops."""
+        owner_identity = reaction_identity(owner)
+        candidates = [
+            item for item in self._build_order_b_formations()
+            if item.order_confirmation_time > owner_confirmation
+            and item.order_confirmation_time < owner_stop_event
+            and reaction_identity(item.order_reaction) != owner_identity
+        ]
+        if not candidates:
+            return None
+        item = min(candidates, key=lambda value: (
+            value.order_confirmation_time,
+            int(getattr(value.order_reaction, "first_idx")),
+            int(getattr(value.order_reaction, "break_idx")),
+        ))
+        return (
+            item.order_reaction_number,
+            item.order_reaction,
+            item.order_confirmation_time,
+            item.reset_time,
         )
-        reaction_first_index = int(getattr(reaction, "first_idx"))
-        for reset_position in range(reset_left, reset_right):
-            reset_time, reset = self._opposite_reset_events[reset_position]
-            next_reset = self._next_outer_reset_time(
-                reset_position, self.range_end
-            )
-            if order_confirmation >= next_reset:
-                continue
-            leg = self._reset_leg_geometry(reset, reset_time)
-            if leg is None:
-                continue
-            leg_start, boundary = leg
-            crossing = self._strict_trigger_cross(reset_time, boundary)
-            if crossing is None or crossing > order_confirmation:
-                continue
-            if not self._reset_leg_has_simple_trend_reaction(leg_start, crossing):
-                continue
-            first_after_crossing = self._first_order_b_geometry(
-                reset_time, crossing, next_reset
-            )
-            if (
-                order_confirmation >= crossing
-                and first_after_crossing is not None
-                and int(getattr(first_after_crossing[1], "first_idx"))
-                == reaction_first_index
-            ):
-                return reset_time, crossing
-        return None
-
-
-    def _legacy_reset_leg_evidence(
-        self, reaction: object, context_start: datetime,
-    ) -> tuple[datetime, datetime] | None:
-        """Return the established audit cause without changing E eligibility."""
-        order_first = self._reaction_first_time(reaction)
-        order_confirmation = self._confirmation(reaction)
-        reset_left = bisect_left(self._opposite_reset_times, context_start)
-        reset_right = bisect_right(self._opposite_reset_times, order_confirmation)
-        reaction_first_index = int(getattr(reaction, "first_idx"))
-        for reset_position in range(reset_left, reset_right):
-            reset_time, reset = self._opposite_reset_events[reset_position]
-            next_reset = self._next_outer_reset_time(reset_position, self.range_end)
-            if order_confirmation >= next_reset:
-                continue
-            leg = self._reset_leg_geometry(reset, reset_time)
-            if leg is None:
-                continue
-            leg_start, boundary = leg
-            crossing = self._strict_trigger_cross(reset_time, boundary)
-            if crossing is None or crossing > order_confirmation:
-                continue
-            # Audit and calculation use the same Reset-leg evidence contract.
-            # A behavior-internal trend Reaction cannot unlock Order_B merely
-            # because local geometry can rediscover it.
-            aligned = self._reset_leg_has_simple_trend_reaction(
-                leg_start, crossing
-            )
-            if not aligned:
-                continue
-            gate_time = self.times[self._main_index(crossing)]
-            first_after = bisect_left(self._opposite_first_times, gate_time)
-            if (
-                order_first >= gate_time
-                and first_after < len(self.opposite_reactions)
-                and int(getattr(self.opposite_reactions[first_after], "first_idx"))
-                == reaction_first_index
-            ):
-                return reset_time, crossing
-        return None
 
 
     def _order_stop(
@@ -711,97 +645,6 @@ class EZoneDetector:
             return number, candidate, confirmation
         return None
 
-    def _synthetic_reset_leg_orders(
-        self, start: datetime, audit_legacy: bool
-    ) -> list[tuple[int, object, datetime, datetime, datetime]]:
-        """Return Reset-leg orders discovered from bounded post-Reset geometry."""
-        selected_cache = (
-            self._audit_synthetic_order_cache
-            if audit_legacy
-            else self._synthetic_order_cache
-        )
-        if selected_cache is not None:
-            return [item for item in selected_cache if item[3] >= start]
-        if self.geometry_finder is None:
-            return []
-
-        all_synthetic: list[
-            tuple[int, object, datetime, datetime, datetime]
-        ] = []
-        for reset_position, (reset_time, reset) in enumerate(
-            self._opposite_reset_events
-        ):
-            reset_owner = self._opposite_by_first_index.get(
-                int(getattr(reset, "from_first_idx"))
-            )
-            if reset_owner is None:
-                continue
-            leg = self._reset_leg_geometry(reset, reset_time)
-            if leg is None:
-                continue
-            leg_start, boundary = leg
-            crossing = self._strict_trigger_cross(reset_time, boundary)
-            if crossing is None:
-                continue
-            next_reset = self._next_outer_reset_time(
-                reset_position, self.range_end
-            )
-            if crossing >= next_reset:
-                continue
-
-            if audit_legacy:
-                if self.geometry_finder(
-                    self.direction,
-                    bisect_left(self.times, leg_start),
-                    self._main_index(crossing),
-                ) is None:
-                    continue
-                first_index = self._main_index(crossing)
-                end_index = min(
-                    self.end_index,
-                    max(first_index, bisect_left(self.times, next_reset) - 1),
-                )
-                geometry = self.geometry_finder(
-                    self.order_direction, first_index, end_index
-                )
-                if geometry is None:
-                    continue
-                existing = self._opposite_by_first_index.get(
-                    int(getattr(geometry, "first_idx"))
-                )
-                if (
-                    existing is None
-                    or int(getattr(existing, "break_idx"))
-                    != int(getattr(geometry, "break_idx"))
-                ):
-                    continue
-                geometry = existing
-                number = self.opposite_reactions.index(existing) + 1
-                confirmation = self._confirmation_for(
-                    geometry, self.order_direction
-                )
-            else:
-                if not self._reset_leg_has_simple_trend_reaction(
-                    leg_start, crossing
-                ):
-                    continue
-                order_b = self._first_order_b_geometry(
-                    reset_time, crossing, next_reset
-                )
-                if order_b is None:
-                    continue
-                number, geometry, confirmation = order_b
-
-            all_synthetic.append(
-                (number, geometry, confirmation, reset_time, crossing)
-            )
-
-        if audit_legacy:
-            self._audit_synthetic_order_cache = all_synthetic
-        else:
-            self._synthetic_order_cache = all_synthetic
-        return [item for item in all_synthetic if item[3] >= start]
-
     def _trend_leg_direct_order(
         self, start: datetime,
     ) -> tuple[int, object, datetime] | None:
@@ -811,8 +654,8 @@ class EZoneDetector:
         the next opposite public Reaction exists.  That trend confirmation
         establishes the new forming-leg boundary.  The first bounded opposite
         geometry after that exact confirmation may own direct Order_A when the
-        shared gate resolver proves ``continue``.  This is not Reset-leg
-        Order_B evidence and therefore does not relax Reset-leg canonicality.
+        shared gate resolver proves ``continue``.  This is direct
+        parent-stop Order_A provenance and is independent of Order_B.
         """
         if self.direct_geometry_finder is None:
             return None
@@ -863,7 +706,7 @@ class EZoneDetector:
         continuous_deadline: datetime | None,
         allow_bounded_continue: bool,
     ) -> tuple[int, object, datetime] | None:
-        """Select the direct parent-stop Order without Reset-leg evidence."""
+        """Select the direct parent-stop Order without Order_B evidence."""
         gate_time = self.times[self._main_index(start)]
         geometric_direct = self._first_healthy_direct_geometry(
             start, allow_bounded_continue
@@ -985,42 +828,48 @@ class EZoneDetector:
         by_geometry[key] = match
         return match
 
-    def _add_canonical_reset_leg_orders(
-        self,
-        by_geometry: dict[tuple[int, int], OrderMatch],
-        start: datetime,
-        provisional_deadline: datetime,
-        audit_legacy: bool,
-    ) -> datetime:
-        """Merge canonical Reset-leg evidence up to the current decision bound."""
-        for position, reaction in enumerate(self.opposite_reactions):
-            confirmation = self._opposite_confirmations[position]
-            if confirmation < start:
+    def _enforce_single_parent_stop_owner(
+        self, by_geometry: dict[tuple[int, int], OrderMatch]
+    ) -> None:
+        """Keep one physical Order owner for the exact parent-stop cause.
+
+        A single parent stop may open only one physical Order.  When direct
+        parent-stop discovery and the E-only fresh-trend route produce
+        different identities for the same stop event, the earliest confirmed
+        physical Order owns that parent-stop provenance.  A later identity may
+        survive only through an independent cause already merged onto it (for
+        example Reset-leg); in that case only the duplicate parent-stop cause
+        is removed.
+        """
+        parent_candidates = [
+            item for item in by_geometry.values()
+            if "parent-stop" in item[7]
+        ]
+        if len(parent_candidates) <= 1:
+            return
+
+        owner = min(
+            parent_candidates,
+            key=lambda item: (
+                item[2],
+                int(getattr(item[1], "first_idx")),
+                int(getattr(item[1], "break_idx")),
+            ),
+        )
+        owner_identity = reaction_identity(owner[1])
+        for identity, item in list(by_geometry.items()):
+            if identity == owner_identity or "parent-stop" not in item[7]:
                 continue
-            if confirmation > provisional_deadline:
-                break
-            evidence = (
-                self._legacy_reset_leg_evidence(reaction, start)
-                if audit_legacy
-                else self._reset_leg_evidence(reaction, start)
+            remaining_causes = tuple(
+                cause for cause in item[7] if cause != "parent-stop"
             )
-            if evidence is None:
+            if not remaining_causes:
+                del by_geometry[identity]
                 continue
-            reset_time, reset_break = evidence
-            match = self._merge_order_candidate(
-                by_geometry,
-                position + 1,
-                reaction,
-                confirmation,
-                "reset-leg",
-                reset_time=reset_time,
-                reset_break=reset_break,
+            by_geometry[identity] = (
+                item[0], item[1], item[2], item[3], item[4], item[5], item[6],
+                remaining_causes, None, item[9], item[10],
             )
-            if match[6] is not None:
-                provisional_deadline = min(
-                    provisional_deadline, match[6][2]
-                )
-        return provisional_deadline
 
     def order_candidates(
         self,
@@ -1064,11 +913,12 @@ class EZoneDetector:
                     parent_stop_cause_time=start,
                 )
 
+        # Order_B is independent Reset-leg provenance.  Calculation and
+        # audit use the same canonical formation algorithm; ``audit_legacy``
+        # is retained only for public API compatibility.
         for number, reaction, confirmation, reset_time, reset_break in (
-            self._synthetic_reset_leg_orders(start, audit_legacy)
+            self._order_b_orders(start)
         ):
-            if confirmation < start:
-                continue
             self._merge_order_candidate(
                 by_geometry,
                 number,
@@ -1078,6 +928,13 @@ class EZoneDetector:
                 reset_time=reset_time,
                 reset_break=reset_break,
             )
+
+        # Parent-stop provenance is single-consumption.  Resolve that ownership
+        # before any candidate stop is allowed to shrink the E decision horizon;
+        # otherwise a later fresh-trend Order can incorrectly win merely because
+        # its own stop occurs earlier than the true first Order opened by the
+        # same parent stop.  Independent Reset-leg provenance is preserved.
+        self._enforce_single_parent_stop_owner(by_geometry)
 
         known_stops = [
             item[6][2]
@@ -1089,13 +946,6 @@ class EZoneDetector:
             provisional_deadline = min(
                 provisional_deadline, continuous_deadline
             )
-        provisional_deadline = self._add_canonical_reset_leg_orders(
-            by_geometry,
-            start,
-            provisional_deadline,
-            audit_legacy,
-        )
-
         stopped = [
             item[6][2]
             for item in by_geometry.values()
@@ -1229,24 +1079,14 @@ class EZoneDetector:
             crossed, causes = match[6], match[7]
             reset_evidence = None
             if "reset-leg" in causes:
-                if number == 0:
-                    reset_evidence = (
-                        None
-                        if self._reset_by_proven_order(reaction, confirmation)
-                        else (
-                            (match[9], match[10])
-                            if match[9] is not None and match[10] is not None
-                            else None
-                        )
-                    )
-                else:
-                    reset_evidence = self._legacy_reset_leg_evidence(
-                        reaction, parent_stop
-                    )
-            # Audit is an eligibility ledger, not a provisional-candidate log.
-            # A geometric Order_B may legitimately have reaction number zero,
-            # while a canonical reaction may still fail Reset ownership.  Admit
-            # either only after at least one creation cause is proven.
+                reset_evidence = (
+                    (match[9], match[10])
+                    if match[9] is not None and match[10] is not None
+                    else self._order_b_evidence(reaction, parent_stop)
+                )
+            # Order_B always resolves to a canonical opposite Reaction.
+            # Audit accepts it only when the new same-direction Reset-leg
+            # formation cause is proven.
             if "parent-stop" not in causes and reset_evidence is None:
                 continue
             key = (
@@ -1285,63 +1125,62 @@ class EZoneDetector:
                     "reset-leg", reset_evidence[0], reset_evidence[1],
                 ))
 
-    def _reset_by_proven_order(
-        self, reaction: object, confirmation: datetime,
-    ) -> bool:
-        """Whether a provisional geometry is Reset by a proven live order."""
-        proven = set(self.initial_order_audit)
-        proven.update(
-            identity for identity, entry in self.order_audit.items()
-            if entry.get("causes")
-        )
-        first = self._reaction_first_time(reaction)
-        left = bisect_left(self._opposite_reset_times, first)
-        right = bisect_right(self._opposite_reset_times, confirmation)
-        for _, reset in self._opposite_reset_events[left:right]:
-            owner = self._opposite_by_first_index.get(
-                int(getattr(reset, "from_first_idx"))
-            )
-            if owner is None:
-                continue
-            identity = (
-                int(getattr(owner, "first_idx")),
-                int(getattr(owner, "break_idx")),
-            )
-            if identity in proven:
-                return True
-        return False
-
     def _enrich_order_audit_reset_causes(self) -> None:
-        """Attach established Reset evidence without changing E eligibility."""
-        if not self.s_zones or not self.order_audit:
+        """Attach canonical Order_B provenance to already relevant Orders.
+
+        Order_B formation is independent market structure, but OrderAudit is an
+        accepted-behavior ledger rather than a dump of every market structure.
+        Therefore only physical Orders already referenced by accepted S/E state
+        (including the initial stopped-A audit) are enriched here.  When one
+        physical Order has several valid Order_B origins, only the latest
+        reset-leg cause is authoritative.
+        """
+        relevant_identities = set(self.order_audit) | set(self.initial_order_audit)
+        if not relevant_identities:
             return
-        lifecycle_start = min(
-            getattr(item, "decision_event_time") for item in self.s_zones
-        )
-        if self._audit_synthetic_order_cache is None:
-            self.order_candidates(
-                lifecycle_start, audit_legacy=True
-            )
-        reset_evidence: dict[tuple[int, int], tuple[datetime, datetime]] = {}
-        for _, reaction, _, reset_time, reset_break in (
-            self._audit_synthetic_order_cache or []
-        ):
-            if reset_time < lifecycle_start:
+        latest: dict[tuple[int, int], OrderBFormation] = {}
+        for item in self._build_order_b_formations():
+            identity = reaction_identity(item.order_reaction)
+            if identity not in relevant_identities:
                 continue
-            identity = (
-                int(getattr(reaction, "first_idx")),
-                int(getattr(reaction, "break_idx")),
-            )
-            current = reset_evidence.get(identity)
-            if current is None or reset_time < current[0]:
-                reset_evidence[identity] = (reset_time, reset_break)
-        for identity, (reset_time, reset_break) in reset_evidence.items():
+            current = latest.get(identity)
+            if current is None or (
+                item.reset_time,
+                item.strict_break_event_time,
+            ) > (
+                current.reset_time,
+                current.strict_break_event_time,
+            ):
+                latest[identity] = item
+
+        for identity, item in latest.items():
             entry = self.order_audit.get(identity)
             if entry is None:
-                continue
+                level, source, source_time = self._order_stop(
+                    item.order_reaction_number, item.order_reaction
+                )
+                entry = {
+                    "reaction_number": item.order_reaction_number,
+                    "reaction": item.order_reaction,
+                    "confirmation_time": item.order_confirmation_time,
+                    "stop_level": level,
+                    "stop_source_index": source,
+                    "stop_source_time": source_time,
+                    "stop_cross": self._cross_order(
+                        item.order_confirmation_time, level
+                    ),
+                    "causes": set(),
+                }
+                self.order_audit[identity] = entry
             causes = entry["causes"]
             assert isinstance(causes, set)
-            causes.add(("reset-leg", reset_time, reset_break))
+            for cause in [cause for cause in causes if cause[0] == "reset-leg"]:
+                causes.discard(cause)
+            causes.add((
+                "reset-leg",
+                item.reset_time,
+                item.strict_break_event_time,
+            ))
 
     def visual_order_lifecycle(
         self, start: datetime,
@@ -1350,7 +1189,7 @@ class EZoneDetector:
         """Return only orders admitted by the E lifecycle, including live ones.
 
         This is presentation/audit output.  It follows the same direct and
-        Reset-leg replacement gates as ``_first_order`` but does not require a
+        Order_B replacement gates as ``_first_order`` but does not require a
         stop crossing, so a valid still-live order can be drawn without
         changing E calculation.
         """
@@ -1572,6 +1411,117 @@ class EZoneDetector:
             key=lambda item: (item[6][2], -int(getattr(item[1], "first_idx"))),
         )
 
+    def _post_stop_accepted_orders_for_parent(
+        self, parent: object, parent_stop: datetime,
+    ) -> list[OrderMatch]:
+        """Return accepted physical Orders confirmed after this parent stopped.
+
+        Shared accepted-Order confirmation is parent-neutral.  Once an Order is
+        calculation-accepted, its creation parent does not have to be the S/E/
+        StopAll candidate currently being resolved.  A post-stop accepted Order
+        is eligible when its exact confirmation is after the candidate parent
+        stop, its own strict stop is later still, and no hard lifecycle reset
+        occurs between the parent stop and that Order stop.
+
+        Creation provenance is never rewritten here.  ``accepted-live`` is use
+        provenance only; final OrderAudit retains the Order's original accepted
+        parent-stop and/or reset-leg cause.  The rule is direction invariant;
+        Bullish/Bearish mirroring is already contained in ``_cross_order``.
+        """
+        del parent  # parent identity is deliberately irrelevant to eligibility.
+        matches_by_identity: dict[tuple[int, int], OrderMatch] = {}
+
+        def consider(entry: dict[str, object], *, initial: bool) -> None:
+            reaction = entry.get("reaction")
+            confirmation = entry.get("confirmation_time")
+            if reaction is None or not isinstance(confirmation, datetime):
+                return
+            # This route is specifically the missing post-parent-stop case.
+            # Orders already live at the parent stop remain owned by the
+            # established carried-live/inherited routes.
+            if confirmation <= parent_stop:
+                return
+
+            level_value = entry.get("stop_level")
+            source_index = entry.get("stop_source_index")
+            source_time = entry.get("stop_source_time")
+            if level_value is None or source_index is None or source_time is None:
+                return
+            level = as_decimal(level_value)
+            crossed = entry.get("stop_cross")
+            if not (
+                isinstance(crossed, tuple)
+                and len(crossed) >= 3
+                and isinstance(crossed[2], datetime)
+            ):
+                crossed = self._cross_order(confirmation, level)
+            if crossed is None or crossed[2] <= parent_stop or crossed[2] <= confirmation:
+                return
+            # StopAll / sequence reset is a hard boundary.  An Order accepted
+            # after a candidate stop cannot reach back across a later hard reset
+            # to decide that older candidate.
+            if self._has_sequence_reset_between(parent_stop, crossed[2]):
+                return
+
+            reset_evidence: tuple[datetime, datetime] | None = None
+            if not initial:
+                for cause in entry.get("causes", set()):
+                    if (
+                        isinstance(cause, tuple)
+                        and len(cause) >= 3
+                        and cause[0] == "reset-leg"
+                        and isinstance(cause[1], datetime)
+                        and isinstance(cause[2], datetime)
+                    ):
+                        evidence = (cause[1], cause[2])
+                        if reset_evidence is None or evidence > reset_evidence:
+                            reset_evidence = evidence
+
+            causes = (
+                ("accepted-live", "reset-leg")
+                if reset_evidence is not None
+                else ("accepted-live",)
+            )
+            match: OrderMatch = (
+                int(entry.get("reaction_number", 0)),
+                reaction,
+                confirmation,
+                level,
+                int(source_index),
+                source_time,
+                crossed,
+                causes,
+                None,
+                reset_evidence[0] if reset_evidence is not None else None,
+                reset_evidence[1] if reset_evidence is not None else None,
+            )
+            identity = reaction_identity(reaction)
+            current = matches_by_identity.get(identity)
+            if current is None or (
+                crossed[2], confirmation, int(getattr(reaction, "first_idx"))
+            ) < (
+                current[6][2], current[2], int(getattr(current[1], "first_idx"))
+            ):
+                matches_by_identity[identity] = match
+
+        # ``initial_order_audit`` contains lifecycle-accepted A-owned Orders.
+        # ``order_audit`` contains accepted S/E/StopAll/Order_B physical Orders
+        # discovered by the current E pass.  Neither ledger is filtered by the
+        # candidate parent's identity: acceptance and chronology are sufficient.
+        for entry in self.initial_order_audit.values():
+            consider(entry, initial=True)
+        for entry in self.order_audit.values():
+            consider(entry, initial=False)
+
+        return sorted(
+            matches_by_identity.values(),
+            key=lambda item: (
+                item[6][2],
+                item[2],
+                -int(getattr(item[1], "first_idx")),
+            ),
+        )
+
 
     def _blocked_by_gate_owned_order(self, zone: EZone) -> bool:
         """Reject only a nested Order_A, while preserving its child lineage."""
@@ -1586,15 +1536,21 @@ class EZoneDetector:
     def _reset_evidence_for_order(
         self, first_index: int, break_index: int,
     ) -> tuple[datetime, datetime] | None:
-        for _, reaction, _, reset_time, reset_break in (
-            self._synthetic_order_cache or []
-        ):
-            if (
-                int(getattr(reaction, "first_idx")) == first_index
-                and int(getattr(reaction, "break_idx")) == break_index
-            ):
-                return reset_time, reset_break
-        return None
+        matching = [
+            item for item in self._build_order_b_formations()
+            if int(getattr(item.order_reaction, "first_idx")) == first_index
+            and int(getattr(item.order_reaction, "break_idx")) == break_index
+        ]
+        if not matching:
+            return None
+        item = max(
+            matching,
+            key=lambda value: (
+                value.reset_time,
+                value.strict_break_event_time,
+            ),
+        )
+        return item.reset_time, item.strict_break_event_time
 
     def _extreme_between(self, start: datetime, end: datetime) -> tuple[int, datetime, Decimal]:
         # E source ownership is candle-based: include the complete main candle
@@ -1626,6 +1582,13 @@ class EZoneDetector:
         gate_owned = self._gate_owned_initial_order(stop_event)
         carried = self._carried_orders_for_parent(parent, stop_event)
         self._register_order_audit(parent_type, parent, stop_event)
+        # Parent-neutral shared accepted-Order route: an accepted Order may be
+        # confirmed only after this parent stopped and still decide the E when
+        # its own strict stop wins chronology.  Its original creation cause is
+        # preserved; it is not relabeled as belonging to this parent.
+        post_stop_accepted = self._post_stop_accepted_orders_for_parent(
+            parent, stop_event
+        )
         # A stopped E opens a new direct search at its own stop candle. An
         # older order formed before that event cannot replace the first valid
         # post-stop order. S may still pass its explicitly unconsumed Blue
@@ -1634,6 +1597,9 @@ class EZoneDetector:
         # directions, followed by the shared final stop-event race.
         inherited_one = inherited[0] if inherited else None
         carried_one = carried[0] if carried else None
+        post_stop_accepted_one = (
+            post_stop_accepted[0] if post_stop_accepted else None
+        )
         direct = self._first_order(
             stop_event,
             (
@@ -1648,7 +1614,9 @@ class EZoneDetector:
             allow_trend_leg_continue=(parent_type == "E"),
         )
         choices = [
-            item for item in (direct, inherited_one, carried_one)
+            item for item in (
+                direct, inherited_one, carried_one, post_stop_accepted_one
+            )
             if item is not None and item[6] is not None
         ]
         order_match = min(
@@ -2071,7 +2039,7 @@ class EZoneDetector:
                 return False
             if (
                 zone.parent_type == "S"
-                or zone.order_mode != "B"
+                or "reset-leg" not in zone.order_causes
                 or zone.family != "blue"
             ):
                 return True
@@ -2360,12 +2328,109 @@ class EZoneDetector:
                     else item for item in numbered]
         return numbered
 
+    def _historical_rescue_candidates(
+        self, candidates: Sequence[EZone], accepted: Sequence[EZone]
+    ) -> list[EZone]:
+        """Return presentation-only historical E objects suppressed by future conflicts.
+
+        Primary reconciliation is authoritative and remains byte-for-byte
+        behaviorally unchanged.  This pass only restores a candidate when:
+        * it is an E-parented Blue Order_B object;
+        * its Order is not blocked by a gate-owned prohibition;
+        * the suppressing S lineage itself formed after this E, so the conflict is truly future-only;
+        * its direct E parent is already accepted historical output;
+        * no sequence reset lies between parent and candidate; and
+        * no accepted behavior already owns the same physical E source.
+
+        Rescued objects are intentionally excluded from calculation ownership.
+        """
+        children_by_parent: dict[tuple[int, object], list[EZone]] = {}
+        s_children_by_source: dict[tuple[int, object], list[EZone]] = {}
+        for item in candidates:
+            if item.parent_type == "E":
+                children_by_parent.setdefault(
+                    (item.parent_source_index, item.parent_source_time), []
+                ).append(item)
+            elif item.parent_type == "S":
+                s_children_by_source.setdefault(
+                    (item.source_index, item.source_time), []
+                ).append(item)
+
+        def suppressed_by_future_child_conflict(zone: EZone) -> bool:
+            if zone.parent_type != "E":
+                return False
+            if "reset-leg" not in zone.order_causes or zone.family != "blue":
+                return False
+            if self._blocked_by_gate_owned_order(zone):
+                return False
+            children = children_by_parent.get(
+                (zone.source_index, zone.source_time), []
+            )
+            return any(
+                competing.decision_event_time <= child.decision_event_time
+                and competing.parent_source_time > zone.source_time
+                for child in children
+                for competing in s_children_by_source.get(
+                    (child.source_index, child.source_time), []
+                )
+            )
+
+        accepted_ids = {
+            (item.source_index, item.source_time) for item in accepted
+        }
+        rescued: list[EZone] = []
+        rescued_ids: set[tuple[int, datetime]] = set()
+
+        while True:
+            batch = [
+                item for item in candidates
+                if suppressed_by_future_child_conflict(item)
+                and (item.source_index, item.source_time) not in accepted_ids
+                and (item.source_index, item.source_time) not in rescued_ids
+                and (item.parent_source_index, item.parent_source_time)
+                    in accepted_ids | rescued_ids
+                and not self._has_sequence_reset_between(
+                    item.parent_source_time, item.source_time
+                )
+            ]
+            if not batch:
+                break
+            batch = self.resolve_same_source_conflicts(batch)
+            added = False
+            for item in batch:
+                identity = (item.source_index, item.source_time)
+                if identity in accepted_ids or identity in rescued_ids:
+                    continue
+                rescued.append(item)
+                rescued_ids.add(identity)
+                added = True
+            if not added:
+                break
+
+        rescued.sort(
+            key=lambda item: (
+                item.source_time, item.source_index, item.decision_event_time
+            )
+        )
+        return rescued
+
+
     def _rebuild_accepted_order_audit(
-        self, numbered: list[EZone]
+        self, numbered: list[EZone], supplemental_s_zones: Sequence[object] = (),
     ) -> list[EZone]:
         """Rebuild Order Audit from accepted S/E/StopAll state only."""
         # Audit only accepted S/E state. Provisional candidate chains must not
-        # create visible or reported order genders.
+        # create visible or reported order genders.  Preserve a snapshot of the
+        # pre-reconciliation ledger so an accepted carried-live Order can keep
+        # its original creation cause even when that creating parent is no
+        # longer a public behavior.
+        prior_order_audit = {
+            identity: {
+                **entry,
+                "causes": set(entry.get("causes", set())),
+            }
+            for identity, entry in self.order_audit.items()
+        }
         self.order_audit.clear()
         accepted_parents: list[tuple[str, object]] = [
             ("S", item) for item in self.s_zones
@@ -2383,20 +2448,80 @@ class EZoneDetector:
                     continue
             self._register_order_audit(parent_type, parent, stop[1])
 
-        # Every order embedded in an accepted E is effective by definition.
-        # Keep it in audit even when its provisional parent was skipped and
-        # the child was reattached to the nearest active ancestor.
+        # Every physical Order embedded in an accepted E must remain present in
+        # the canonical ledger.  This includes two cases that cannot be rebuilt
+        # from final public parents alone:
+        #   1) carried-live Orders whose original creating parent became
+        #      historical/non-public during reconciliation; and
+        #   2) valid bounded fresh-trend geometry with reaction number 0, which
+        #      has no canonical opposite-Reaction object.
         for zone in numbered:
             identity = order_identity(zone.order_first_index, zone.order_break_index)
             if identity in self.order_audit:
                 continue
+
+            prior_entry = prior_order_audit.get(identity)
             reaction = self._opposite_by_first_index.get(zone.order_first_index)
             if (
                 reaction is None
-                or int(getattr(reaction, "break_idx")) != zone.order_break_index
+                or int(getattr(reaction, "break_idx", -1)) != zone.order_break_index
             ):
-                continue
+                reaction = SimpleNamespace(
+                    mode=zone.order_mode,
+                    first_idx=zone.order_first_index,
+                    break_idx=zone.order_break_index,
+                    box_top=zone.order_box_top,
+                    box_top_source_idx=zone.order_box_top_source_index,
+                    box_top_source_time=zone.order_box_top_source_time,
+                    box_bottom=zone.order_box_bottom,
+                    box_bottom_source_idx=zone.order_box_bottom_source_index,
+                    box_bottom_source_time=zone.order_box_bottom_source_time,
+                    behavior_internal=False,
+                )
+
             causes: set[tuple[object, ...]] = set()
+            if prior_entry is not None:
+                causes.update(prior_entry.get("causes", set()))
+
+            # An E may carry an A-owned Order that was already accepted before
+            # S/E reconciliation.  Initial A audit uses ``a_causes`` rather
+            # than the generic E-ledger cause tuple, so translate that original
+            # creation provenance when the carried physical Order would
+            # otherwise become cause-less after final-parent rebuilding.
+            initial_entry = self.initial_order_audit.get(identity)
+            if initial_entry is not None:
+                a_causes = initial_entry.get("a_causes") or [(
+                    initial_entry.get("a_source_time"),
+                    initial_entry.get("a_stop_event_time"),
+                )]
+                for a_source_time, a_stop_time in a_causes:
+                    if a_source_time is None or a_stop_time is None:
+                        continue
+                    causes.add((
+                        "parent-stop", "A", None, a_stop_time, a_source_time
+                    ))
+
+            if (
+                not causes
+                and "carried-live" in zone.order_causes
+                and zone.parent_type == "S"
+            ):
+                parent_s = next((
+                    item for item in [*self.s_zones, *supplemental_s_zones]
+                    if int(getattr(item, "source_index")) == zone.parent_source_index
+                    and getattr(item, "source_time") == zone.parent_source_time
+                    and getattr(item, "order_first_index", None) == zone.order_first_index
+                    and getattr(item, "order_break_index", None) == zone.order_break_index
+                ), None)
+                if parent_s is not None:
+                    causes.add((
+                        "parent-stop",
+                        "A",
+                        None,
+                        getattr(parent_s, "a_stop_event_time"),
+                        getattr(parent_s, "a_source_time"),
+                    ))
+
             if zone.order_parent_stop_cause_time is not None:
                 parent_label = zone.parent_type
                 if zone.parent_type == "E":
@@ -2428,6 +2553,17 @@ class EZoneDetector:
                     zone.order_reset_leg_reset_time,
                     zone.order_reset_leg_break_time,
                 ))
+
+            # carried-live / accepted-live labels are use provenance, not
+            # creation causes. Their original accepted parent-stop/reset-leg
+            # cause must therefore come from the preserved ledgers above. If
+            # no creation cause can be proven, do not fabricate one.
+            if not causes:
+                continue
+
+            exact_cross = self._cross_order(
+                zone.order_confirmation_time, as_decimal(zone.order_stop_level)
+            )
             self.order_audit[identity] = {
                 "reaction_number": zone.order_reaction_number,
                 "reaction": reaction,
@@ -2435,11 +2571,7 @@ class EZoneDetector:
                 "stop_level": zone.order_stop_level,
                 "stop_source_index": zone.order_stop_source_index,
                 "stop_source_time": zone.order_stop_source_time,
-                "stop_cross": (
-                    zone.decision_index,
-                    zone.decision_time,
-                    zone.decision_event_time,
-                ),
+                "stop_cross": exact_cross,
                 "causes": causes,
             }
 
@@ -2469,6 +2601,43 @@ class EZoneDetector:
             key=lambda item: (item.source_time, item.source_index),
         )
 
+    def rebuild_accepted_order_audit(
+        self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object] = (),
+    ) -> list[EZone]:
+        """Rebuild the canonical Order ledger after external E reconciliation.
+
+        The pipeline may replace a final E branch with an earlier continuation
+        built from consumed S evidence after ``detect()`` has completed.  That
+        accepted branch must become authoritative for OrderAudit as well; this
+        public hook keeps calculation ownership in the E engine instead of
+        forcing the bridge to reconstruct trading provenance.
+        """
+        return self._rebuild_accepted_order_audit(
+            list(zones), supplemental_s_zones=supplemental_s_zones
+        )
+
+    def ensure_accepted_order_audit(
+        self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object] = (),
+    ) -> list[EZone]:
+        """Add audit coverage for externally restored accepted E zones.
+
+        Visibility may restore an independent S-owned E root after StopAll
+        reconciliation.  Rebuilding from only that post-StopAll E list would
+        incorrectly discard physical Orders still needed by already-created
+        StopAll/history, so rebuild the accepted subset and then merge back any
+        previously canonical identities that were not superseded.
+        """
+        preserved = {
+            identity: {**entry, "causes": set(entry.get("causes", set()))}
+            for identity, entry in self.order_audit.items()
+        }
+        rebuilt = self._rebuild_accepted_order_audit(
+            list(zones), supplemental_s_zones=supplemental_s_zones
+        )
+        for identity, entry in preserved.items():
+            self.order_audit.setdefault(identity, entry)
+        return rebuilt
+
     def detect(self) -> list[EZone]:
         """Discover, reconcile and audit recursive E lifecycles."""
         self.order_audit.clear()
@@ -2478,7 +2647,11 @@ class EZoneDetector:
         numbered = self._reconcile_candidate_chains(candidates)
         numbered = self._apply_consumed_s_evidence(numbered)
         numbered = self.resolve_same_source_conflicts(numbered)
-        return self._rebuild_accepted_order_audit(numbered)
+        numbered = self._rebuild_accepted_order_audit(numbered)
+        self.historical_rescued_zones = self._historical_rescue_candidates(
+            candidates, numbered
+        )
+        return numbered
 
 
 def detect_e_zones(
@@ -2495,7 +2668,6 @@ def detect_e_zones(
     direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None = None,
     blocked_order_first_times: set[datetime] | None = None,
     initial_order_audit: dict[tuple[int, int], dict[str, object]] | None = None,
-    reset_geometry_finder: Callable[[str, int, int, int], object | None] | None = None,
     sequence_priority: Callable[[str, str], int] | None = None,
     invalid_s_root_identities: set[tuple[datetime, int]] | None = None,
 ) -> list[EZone]:
@@ -2513,7 +2685,6 @@ def detect_e_zones(
         direct_geometry_finder,
         blocked_order_first_times,
         initial_order_audit,
-        reset_geometry_finder,
         sequence_priority=sequence_priority,
         invalid_s_root_identities=invalid_s_root_identities,
     ).detect()
