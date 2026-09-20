@@ -18,8 +18,8 @@ from core_utils import as_decimal, order_identity
 from direction_policy import policy_for
 
 
-STOP_ALL_VERSION = "1.11.2"
-STOP_ALL_LAST_MODIFIED = "2026-09-20 03:48:27 +03:30"
+STOP_ALL_VERSION = "1.12.0"
+STOP_ALL_LAST_MODIFIED = "2026-09-20 05:46:16 +03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -847,7 +847,7 @@ def dominant_module(modules: Sequence[object]) -> object:
 def split_a_zones_by_dominant_stops(
     a_zones, s_zones, e_zones, stopalls, candles, direction,
     stop_event_finder=None, trend_reactions=None, confirmation_finder=None,
-    a_stop_event_finder=None,
+    a_stop_event_finder=None, stage_invalid_a_identities=None,
 ):
     """Separate visible A labels from A objects allowed into downstream math.
 
@@ -1031,6 +1031,17 @@ def split_a_zones_by_dominant_stops(
 
         invalid.append(a_zone)
         dominant_priority = module_priority(dominant)
+        if hasattr(dominant, "a_source_time"):
+            # Stage-order invariant: A -> S -> E -> StopAll.  When S owns the
+            # transition, a rejected fallback A cannot consume that S merely
+            # by being rejected; otherwise the next A can re-enter behind S
+            # and fabricate a second S branch in the same stage.  Keep S as
+            # owner until a genuinely later-stage behavior takes ownership.
+            if stage_invalid_a_identities is not None:
+                stage_invalid_a_identities.add(
+                    (getattr(a_zone, "source_time"), int(getattr(a_zone, "source_index")))
+                )
+            continue
         for module in eligible:
             if module_priority(module) <= dominant_priority:
                 consumed.add(module_identity(module))

@@ -1,13 +1,13 @@
-# TradingBot Bullish Algorithm Reference — Comprehensive Standalone Rebuild & Exact Implementation Specification
+# TradingBot Bearish Algorithm Reference — Comprehensive Standalone Rebuild & Exact Implementation Specification
 
-**Document Version:** `5.3.0`  
-**Last Modified Date & Time:** `2026-09-20 04:35:08 +03:30`  
-**Status:** `Comprehensive standalone reconstruction specification with embedded exact production source; canonical Bullish direction`  
-**Target Direction:** `bullish`  
-**Opposite/Order Direction:** `bearish`  
+**Document Version:** `5.4.0`  
+**Last Modified Date & Time:** `2026-09-20 05:46:16 +03:30`  
+**Status:** `Comprehensive standalone reconstruction specification with embedded exact production source; exact Bearish directional mirror`  
+**Target Direction:** `bearish`  
+**Opposite/Order Direction:** `bullish`  
 **Primary computational example timeframe:** any integer timeframe >= 1 second; 30s is the project validation timeframe but is not hardcoded  
 **Internal timezone:** `Asia/Tehran`  
-**Mirror Contract:** `Bullish is the canonical directional algorithm. Bearish must be produced by exact directional reflection of every directional price/color rule while invariant lifecycle/priority/serialization rules remain unchanged.`  
+**Mirror Contract:** `Bearish is not an independently drifting algorithm. It is the exact directional mirror of canonical Bullish: Low↔High, minimum↔maximum, <↔>, FirstRed↔FirstGreen, Bullish↔Bearish; invariant lifecycle/priority/serialization rules do not mirror.`  
 
 > **Normative rule:** This document is written from the current production Source snapshot, not from older Algorithm Reference wording. If an older reference conflicts with this file, this file represents the Source behavior captured by the manifest below. The goal is implementation equivalence: a competent engineer must be able to reconstruct the calculation engine without having the original Source files.
 
@@ -23,6 +23,9 @@
 > **5.2.0 canonical Order_B rebuild (2026-09-20):** The previous Order_B/reset-leg implementation is removed and superseded. Order_B is now an independent formation cause rather than a synonym for native Reaction Mode B. It starts from a Reset of the **same trend direction**, derives the primary trigger extreme from the owner Breakout main candle through the Reset main candle inclusive, waits for the exact lower-timeframe strict break of that extreme, requires only raw opposite-direction Reaction **geometry** inside the closed primary-extreme-source → strict-break-main-candle interval, derives the mirrored other edge on that same closed interval, and assigns the first canonical opposite Reaction after the gate as the physical Order_B. Normal Reset validity/lifecycle/public/Internal status is ignored only for the evidence geometry test. If several valid Order_B origins map to one physical Order, the latest valid Reset-leg cause is authoritative. Bullish/Bearish are exact directional mirrors. Bridge consistency is also presentation-range safe: a public S/E/StopAll may retain the canonical OrderAudit identity/cause it references even when that Order First or accepted A source lies before the requested presentation start.
 
 > **5.3.0 shared accepted Order-stop correction (2026-09-20):** Order confirmation is now explicitly parent-neutral across calculation-accepted behavior state. A physical Order accepted through A, S, E, StopAll, or Reset-leg/Order_B provenance may decide a different open S/E candidate when its exact strict Order stop falls inside that candidate's valid chronology; the creating parent does not have to equal the candidate parent. S reconciliation now uses only accepted physical identity + exact stop chronology and no longer blocks an otherwise-valid Order because it belongs to a newer independent parent. E adds a dedicated post-parent-stop `accepted-live` route for Orders confirmed after the candidate parent stopped, while preserving carried-live for Orders already active at the stop. `accepted-live`/`carried-live` are use provenance only: original parent-stop/reset-leg creation causes remain authoritative in OrderAudit. Hard StopAll/sequence resets remain absolute boundaries. Bullish/Bearish apply the same ownership/chronology rule with only strict price comparisons mirrored.
+
+> **5.4.0 cycle/stage-order ownership correction (2026-09-20):** The normative behavior pass order `A → S → E → StopAll` is now enforced when an accepted S owns a transition. If a fallback A is rejected as an equal/lower re-entry under that S owner, the rejected A may no longer consume the S and thereby reopen a second A→S branch. That A identity is marked stage-invalid; S candidates descending from it are removed from accepted S and excluded from later suppressed-S continuation evidence, so they cannot fabricate a new E root or override an already accepted E chain. This fixes the Bearish `S Blue 17:43:00 → erroneous A 18:01:30` case and its exact Bullish mirror where an invalid S Red branch displaced `E2 Blue 14:26:30`. The correction is deliberately scoped: Reaction/Reset, Blue, A geometry, valid S geometry, Order_A, canonical Order_B, shared accepted Order-stop logic, E source geometry, and StopAll rules are unchanged.
+
 
 
 
@@ -53,6 +56,7 @@ In project terminology, **only `A`, `S`, `E`, and `StopAll` are behaviors**. `Re
 - Directional price geometry mirrors; lifecycle/family priority, serialization structure, Doji rule, and other explicitly invariant rules do **not** mirror.
 - Internal Reaction evidence remains calculation-visible except where a rule explicitly prohibits one scoped public/Order route.
 - A StopAll is a hard lifecycle boundary for ownership/history downstream.
+- Behavior stage ownership is invariant: `A → S → E → StopAll`. A rejected earlier-stage fallback cannot consume a later-stage accepted owner or feed descendants into a later stage.
 
 ### 0.3 Complete module inventory in this snapshot
 
@@ -63,8 +67,8 @@ In project terminology, **only `A`, `S`, `E`, and `StopAll` are behaviors**. `Re
 | `a_zone_detector.py` | 775 | `2f54b55e928ffc7016ce8d12d2a7dc0bfa6feb7416b1aeb4b3989391c5a61528` | 3 | 22 |
 | `s_zone_detector.py` | 1344 | `3b1440f6e776c143babd93d817ac7c3bc3adbb80900797e25d44342932698185` | 2 | 43 |
 | `e_zone_detector.py` | 2690 | `1d40da3c66235fd6abd88073bb8fb25a073d1f721872d19995f16237efb808d0` | 3 | 70 |
-| `lifecycle_engine.py` | 1634 | `253eb154443033b6fee5fc05644ff4348ee039201b0da857ad87a78414ac258c` | 2 | 39 |
-| `trading_pipeline.py` | 1895 | `5f4893ea973c0aaac35d28b376edc37c3dbddb5d9bcc861b5b6fec257675652c` | 6 | 37 |
+| `lifecycle_engine.py` | 1645 | `8df04b7730c0ab68c8030e5e2f23a29bcc090f2fd86b41f8fe1f3e5a19842f08` | 2 | 39 |
+| `trading_pipeline.py` | 1918 | `a19b29c2a44f40c779443b5d478bbc2520bc873992a9b80ef6f4fe8793c8f76d` | 6 | 37 |
 | `direction_policy.py` | 70 | `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea` | 1 | 6 |
 | `core_utils.py` | 29 | `3dae390ae77b72965f5799f7c132c4eba203775d5e72761fd7dd60c90f8578de` | 0 | 3 |
 
@@ -90,9 +94,9 @@ A rebuild intended to reproduce this specification must preserve the semantics o
 
 The engine is a deterministic multi-stage calculation pipeline. The stages are:
 
-`RAW normalization → both-direction Reaction/Reset geometry → Internal-Reaction ownership → Bullish Blue → Bullish A → Bullish S + stopped-A Order audit → Bullish E + Order reconciliation → lifecycle hierarchy → StopAll → final A/S/E visibility → public serialization`.
+`RAW normalization → both-direction Reaction/Reset geometry → Internal-Reaction ownership → Bearish Blue → Bearish A → Bearish S + stopped-A Order audit → Bearish E + Order reconciliation → lifecycle hierarchy → StopAll → final A/S/E visibility → public serialization`.
 
-Even when only `Bullish` output is requested, both Bullish and Bearish **Reaction** streams are required whenever behavior modules are active, because S/E Orders use the opposite direction's Reaction/Reset geometry. Do not replace this with a one-direction shortcut.
+Even when only `Bearish` output is requested, both Bullish and Bearish **Reaction** streams are required whenever behavior modules are active, because S/E Orders use the opposite direction's Reaction/Reset geometry. Do not replace this with a one-direction shortcut.
 
 When E is enabled and S is enabled, the pipeline first builds full-RAW geometry and full-range behavior state, performs S/E/lifecycle reconciliation, and only then filters objects to the requested presentation main-candle indexes.
 
@@ -128,19 +132,19 @@ Epoch timestamps are converted to `Asia/Tehran`, then held internally as naive d
 
 `GREEN` iff `close >= open`; otherwise `RED`. Equality/Doji is therefore always GREEN. This rule is global and must not be mirrored or changed.
 
-## 4. Direction policy for Bullish
+## 4. Direction policy for Bearish
 
-| Semantic | Bullish value |
+| Semantic | Bearish value |
 |---|---|
-| Trend extreme attribute | `low` (Low) |
-| Opposite extreme attribute | `high` (High) |
-| Strict stop/cross | `Low < level` |
-| Better directional extreme | smaller / minimum |
-| Reaction First color | `RED` |
-| Context color | `GREEN` |
-| Reaction confirmation | `High > BoxTop` |
-| Opposite Order direction | `bearish` |
-| Scale-strike confirming candle color | `GREEN` |
+| Trend extreme attribute | `high` (High) |
+| Opposite extreme attribute | `low` (Low) |
+| Strict stop/cross | `High > level` |
+| Better directional extreme | larger / maximum |
+| Reaction First color | `GREEN` |
+| Context color | `RED` |
+| Reaction confirmation | `Low < BoxBottom` |
+| Opposite Order direction | `bullish` |
+| Scale-strike confirming candle color | `RED` |
 
 A strict cross never accepts equality.
 
@@ -156,7 +160,7 @@ The canonical lower window is half-open `[start,end)`. Exact inclusive endpoints
 
 ### 5.3 Reaction confirmation time
 
-For Bullish, scan the Reaction Break main candle from `intrabar_start` when enabled, otherwise from Break candle open, and return the first lower event satisfying `High > BoxTop`. If no lower event is available/found, the Break main timestamp is the fallback.
+For Bearish, scan the Reaction Break main candle from `intrabar_start` when enabled, otherwise from Break candle open, and return the first lower event satisfying `Low < BoxBottom`. If no lower event is available/found, the Break main timestamp is the fallback.
 
 The A engine intentionally calls confirmation with `use_intrabar_start=False`; S/E/public Reaction chronology uses the exact intrabar start when present.
 
@@ -164,7 +168,7 @@ The A engine intentionally calls confirmation with `use_intrabar_start=False`; S
 
 If Reset has `secondTime`, that exact lower timestamp is authoritative; otherwise use its main display time/timestamp.
 
-## 6. Reaction and Reset engine — Bullish
+## 6. Reaction and Reset engine — Bearish
 
 ### 6.1 Core Reaction object
 
@@ -172,10 +176,10 @@ A Reaction Candidate stores First, BoxTop provenance/value, BoxBottom provenance
 
 ### 6.2 Initial Mode-A detection
 
-The first proven Leg-Start is discovered with the directional detector. For Bullish:
+The first proven Leg-Start is discovered with the directional detector. For Bearish:
 
-- First must be `RED` and is normally preceded by `GREEN` context.
-- The context run is extended backward across consecutive `GREEN` candles.
+- First must be `GREEN` and is normally preceded by `RED` context.
+- The context run is extended backward across consecutive `RED` candles.
 - Candidate outer confirmation edge and inner/opposite edge are derived from the complete local leg according to the formulas below.
 - A frozen leg boundary may invalidate Mode A before confirmation.
 
@@ -204,7 +208,7 @@ Public serialization uses a clone/frozen public Candidate. When the opposite edg
 
 Once a prior confirmed Reaction has an opposite boundary, a strict directional break of that boundary is a Reset. If Reset and a waiting candidate's confirmation are both possible in one main candle, compare exact lower events. Reset wins when its first strict event occurs before or at the confirmation event under the detector's ordering rule.
 
-For Bullish, Reset condition is `Low < previous confirmed BoxBottom`.
+For Bearish, Reset condition is `High > previous confirmed BoxTop`.
 
 ### 6.7 Post-confirmation same-Break Reset
 
@@ -218,11 +222,11 @@ If no post-confirmation Reset exists and the Break candle has the required new-F
 
 ### 6.9 Normal Mode-B search
 
-After a confirmed Bullish Reaction, keep a running trend-side outer extreme. When a `RED` candle becomes eligible:
+After a confirmed Bearish Reaction, keep a running trend-side outer extreme. When a `GREEN` candle becomes eligible:
 
-- Bullish: BoxTop = max(running peak, FirstRed High); BoxBottom = minimum Low from the BoxTop source (exclusive when earlier) through FirstRed.
+- Bearish: BoxBottom = min(running trough, FirstGreen Low); BoxTop = maximum High from the BoxBottom source (exclusive when earlier) through FirstGreen.
 - While waiting, update the opposite edge only if a new more-extreme value is made.
-- Confirm strictly with `High > BoxTop`.
+- Confirm strictly with `Low < BoxBottom`.
 
 ### 6.10 Direct same-direction recovery after Reset
 
@@ -234,7 +238,7 @@ Mode-A/direct post-Reset geometry is dead if the frozen owning leg boundary is s
 
 ### 6.12 Canonical Order stop geometry
 
-An Order is always an opposite-direction Reaction (`Bearish` for this Bullish behavior stream).
+An Order is always an opposite-direction Reaction (`Bullish` for this Bearish behavior stream).
 
 - Order Mode A: find the true leg outer boundary from its anchor/context through Break inclusive. For Bearish Order use maximum High; for Bullish Order use minimum Low. Context scan extends backward over the Order's context color.
 - Order Mode B: inherit the previous healthy opposite Reaction semantic outer edge: Bearish Order uses previous BoxTop; Bullish Order uses previous BoxBottom.
@@ -255,37 +259,37 @@ After both directional Reaction streams are calculated, build public box/confirm
 
 Internal Reaction evidence remains calculation-valid. Order_B evidence geometry explicitly ignores Internal/public status. A separate downstream lifecycle filter remains narrowly scoped to a **native Mode-B, behavior-internal physical Order whose surviving causes are all Reset-leg**; that filter occurs after formation/cause merging.
 
-## 7. Blue Line engine — Bullish
+## 7. Blue Line engine — Bearish
 
 ### 7.1 Fibonacci level
 
-`F = BoxTop - 0.618*(BoxTop-reference)`.
+`F = BoxBottom + 0.618*(reference-BoxBottom)`.
 
 ### 7.2 Scale strikes
 
-Process each Reaction from First through Break inclusive. The comparison extreme is the last confirmed strike extreme, or Fibonacci level if none. A new pending strike appears when the current Low is strictly more directional (smaller / minimum) than the comparison extreme. If a still more directional value appears before confirmation, replace the pending strike.
+Process each Reaction from First through Break inclusive. The comparison extreme is the last confirmed strike extreme, or Fibonacci level if none. A new pending strike appears when the current High is strictly more directional (larger / maximum) than the comparison extreme. If a still more directional value appears before confirmation, replace the pending strike.
 
-A pending strike confirms when a main candle is `GREEN`. If a pending strike remains at the Break, inspect lower events up to strict Reaction confirmation and confirm it intrabar only when eligible chronology supports it.
+A pending strike confirms when a main candle is `RED`. If a pending strike remains at the Break, inspect lower events up to strict Reaction confirmation and confirm it intrabar only when eligible chronology supports it.
 
 ### 7.3 Scale Blue emission
 
 A Scale Blue candidate exists when this Reaction's confirmed strike count is greater than the previous Reaction's strike count. Emit it only if there has never been a Blue, or at least one healthy Reaction has completed since the last Blue. Source = decisive last strike.
 
-Line drawing price: `Low + (High-Low)/3`. `sourceExtreme` is the semantic stop extreme; drawing price does not own stops.
+Line drawing price: `High - (High-Low)/3`. `sourceExtreme` is the semantic stop extreme; drawing price does not own stops.
 
 ### 7.4 Reset Blue
 
-A Reset belonging to a Reaction can create Reset Blue only under the same spacing rule: after an existing Blue there must be at least one healthy Reaction since the previous Blue. Source = Reset main candle. `sourceExtreme = Low`. Line drawing price: `Low + (High-Low)/5`. `brokenLevel = Reset.brokenLevel`.
+A Reset belonging to a Reaction can create Reset Blue only under the same spacing rule: after an existing Blue there must be at least one healthy Reaction since the previous Blue. Source = Reset main candle. `sourceExtreme = High`. Line drawing price: `High - (High-Low)/5`. `brokenLevel = Reset.brokenLevel`.
 
 ### 7.5 Reset Blue double-stop validity
 
-A Reset Blue is `calculation_valid=false` when all are true: a previous Blue exists; the previous Blue's first strict stop in the inspected interval occurs on this Reset's main index; and this Reset candle strictly crosses the previous Blue's semantic source extreme in the direction (`Low < level`). Such an invalid Blue is hidden from normal public Blue output but retained as structural evidence for the special double-stop A route.
+A Reset Blue is `calculation_valid=false` when all are true: a previous Blue exists; the previous Blue's first strict stop in the inspected interval occurs on this Reset's main index; and this Reset candle strictly crosses the previous Blue's semantic source extreme in the direction (`High > level`). Such an invalid Blue is hidden from normal public Blue output but retained as structural evidence for the special double-stop A route.
 
 ### 7.6 Internal Blue
 
 Blue is internal if its owning Reaction is internal, or if both its semantic `sourceExtreme` and rendered `linePrice` lie strictly inside the same protected healthy Reaction interior at the relevant time. Drawing offset alone never changes ownership. Internal Blue remains calculation evidence but is filtered from public Blue serialization.
 
-## 8. A engine — Bullish
+## 8. A engine — Bearish
 
 ### 8.1 Blue state and stop
 
@@ -293,7 +297,7 @@ Only calculation-valid Blue Lines enter ordinary Blue states. Blue ordinal is ba
 
 Scale Blue formation = its owning Reaction Break main index and exact Reaction confirmation event; stop scanning starts at that exact event. Reset Blue formation = Reset source index and the first exact strict lower event crossing its `brokenLevel`; its stop scanning starts at the next main-candle boundary (`source main time + timeframe`).
 
-A Blue stop is the first strict `Low < level` against `sourceExtreme`.
+A Blue stop is the first strict `High > level` against `sourceExtreme`.
 
 ### 8.2 Ordinary adjacent-Blue pair
 
@@ -302,23 +306,23 @@ Ordinary A pairs adjacent valid Blue states. A third Blue formation can expire a
 The pair's trigger is resolved by `_pair_trigger` semantics:
 
 1. Blue-1 must have a strict stop.
-2. Prefer an inherited/chained stop level when Blue-1 has an aligned valid Bullish Reaction before Blue-2 forms.
+2. Prefer an inherited/chained stop level when Blue-1 has an aligned valid Bearish Reaction before Blue-2 forms.
 3. Otherwise if Blue-1 stopped before Blue-2 formed, freeze the directional extreme between Blue-1 stop and Blue-2 source, then test crossing during Blue-2 formation; if not crossed, wait for Blue-2's own stop and then the continuation level crossing.
 4. If Blue stops overlap or occur after Blue-2 formation, order the two strict stop events. Exact-time tie is deterministically ordered by stop level (`higher` first in Bullish via `-level`, `lower` first in Bearish via `level` in the Source sort key), then trigger at the second stop event; otherwise wait after the second stop for a strict crossing of the first stop event extreme.
 
-The first validating Bullish Reaction must have confirmation `>= triggerEventTime` and First `>= max(Blue1StopTime, Blue2StopTime)`.
+The first validating Bearish Reaction must have confirmation `>= triggerEventTime` and First `>= max(Blue1StopTime, Blue2StopTime)`.
 
 ### 8.3 Inherited/chained Blue stop
 
-A prior Blue may carry a new continuation stop from the first aligned Bullish Reaction whose First is strictly after the applicable window start and whose Break is before the current Blue formation.
+A prior Blue may carry a new continuation stop from the first aligned Bearish Reaction whose First is strictly after the applicable window start and whose Break is before the current Blue formation.
 
-For a **chained** stopped Bullish Blue, the inherited-stop extreme range ends at the **end of the complete next Bullish Reaction Breakout main candle** (`breakTime + timeframe - 1 microsecond`). This complete-Breakout-candle window is the canonical rule that Bearish mirrors exactly.
+For a **chained** stopped Bearish Blue, the inherited-stop extreme range ends at the **end of the complete next Bearish Reaction Breakout main candle** (`breakTime + timeframe - 1 microsecond`). This exactly mirrors Bullish; the directional extreme is `maximum High` rather than `minimum Low`.
 
-The inherited level is `minimum Low` over that exact source interval; its source index/time are preserved. If a chained/inherited level exists, the pair triggers only after Blue-2 formation strictly crosses that inherited level.
+The inherited level is `maximum High` over that exact source interval; its source index/time are preserved. If a chained/inherited level exists, the pair triggers only after Blue-2 formation strictly crosses that inherited level.
 
 ### 8.4 A exact-confirmation source ownership
 
-The A candidate opens on the trigger main candle. The validating Reaction confirms the candidate, but prices after exact confirmation in that same Break candle belong to later chronology. Select A `price/source` as the `minimum Low` from **trigger main-candle open through exact validating Reaction confirmation inclusive**. Do not use later remainder prices.
+The A candidate opens on the trigger main candle. The validating Reaction confirms the candidate, but prices after exact confirmation in that same Break candle belong to later chronology. Select A `price/source` as the `maximum High` from **trigger main-candle open through exact validating Reaction confirmation inclusive**. Do not use later remainder prices.
 
 ### 8.5 Cycle and adjacent reuse
 
@@ -326,23 +330,23 @@ After A is accepted, its validating Reaction Break closes the current Blue pair 
 
 ### 8.6 Special double-stop A
 
-An invalid Reset Blue may pair with the most recent preceding valid Blue. On the invalid Blue's formation main candle, the previous valid Blue `sourceExtreme` must be strictly crossed within that candle. That exact crossing is the trigger. The first validating Bullish Reaction must confirm at/after trigger and have First at/after invalid Blue formation. A source is selected using the exact-confirmation rule above.
+An invalid Reset Blue may pair with the most recent preceding valid Blue. On the invalid Blue's formation main candle, the previous valid Blue `sourceExtreme` must be strictly crossed within that candle. That exact crossing is the trigger. The first validating Bearish Reaction must confirm at/after trigger and have First at/after invalid Blue formation. A source is selected using the exact-confirmation rule above.
 
 Special A is removed if it uses a validating Reaction already consumed by ordinary A. A special A can also suppress later ordinary A candidates that reuse its consumed Blue ordinals. A prior ordinary A whose first strict stop belongs to the current special lifecycle can invalidate the special candidate as defined by `_a_was_stopped_before`.
 
-## 9. S engine — Bullish
+## 9. S engine — Bearish
 
-S begins only after a calculation-eligible A strictly stops on `Low < level` against A price. The exact lower event is `aStopEventTime`; its containing main candle is `aStopTime/index`.
+S begins only after a calculation-eligible A strictly stops on `High > level` against A price. The exact lower event is `aStopEventTime`; its containing main candle is `aStopTime/index`.
 
 ### 9.1 First opposite Order after A stop
 
-Select the earliest canonical `Bearish` Reaction whose First main index is not before the A-stop main index and whose exact confirmation is strictly after `aStopEventTime`. Rank by `(confirmationTime, FirstIndex, BreakIndex)`. The canonical Reaction stream is authoritative; bounded reconstruction may not skip it.
+Select the earliest canonical `Bullish` Reaction whose First main index is not before the A-stop main index and whose exact confirmation is strictly after `aStopEventTime`. Rank by `(confirmationTime, FirstIndex, BreakIndex)`. The canonical Reaction stream is authoritative; bounded reconstruction may not skip it.
 
 The stopped-A Order is also written into OrderAudit with one or more A parent-stop causes.
 
 ### 9.2 Type-3 S (no new Order before decision)
 
-Before the newly selected opposite Order confirmation (or end of range if none), a pre-existing opposite Reaction may Reset after A stop. Use inclusive owner Break → Reset main geometry to select the directional `Low` (last candle wins on equal extreme). Find first strict candidate crossing before the deadline. Type-3 is valid only if at least one Bullish Reaction confirms after A stop and no later than that crossing. Type-3 is always `S Blue`, `formationType=type3`, and carries Reset provenance but no Order geometry.
+Before the newly selected opposite Order confirmation (or end of range if none), a pre-existing opposite Reaction may Reset after A stop. Use inclusive owner Break → Reset main geometry to select the directional `High` (last candle wins on equal extreme). Find first strict candidate crossing before the deadline. Type-3 is valid only if at least one Bearish Reaction confirms after A stop and no later than that crossing. Type-3 is always `S Blue`, `formationType=type3`, and carries Reset provenance but no Order geometry.
 
 ### 9.3 Pre-Order versus post-Order candidate ownership
 
@@ -351,18 +355,18 @@ The legacy geometry classifier compares A-stop candle directional extreme with t
 ### 9.4 Candidate geometry
 
 - Pre-Order Simple candidate: directional extreme from exact A-stop remainder through Order First inclusive; equal extremes in helper variants use the function's declared first/last ownership.
-- Post-Order Simple candidate: directional extreme from opposite Order Break through the aligned first subsequent Bullish Reaction Break inclusive; equal extreme is assigned to the **last** candle.
-- Advanced candidate: when a complete nested Bullish Reaction exists wholly inside the opposite Order before Order confirmation, source the candidate from the Order's opposite semantic box edge (`BoxBottom source` for Bullish trend, `BoxTop source` for Bearish trend); candidate may decide only from the nested trend confirmation onward.
+- Post-Order Simple candidate: directional extreme from opposite Order Break through the aligned first subsequent Bearish Reaction Break inclusive; equal extreme is assigned to the **last** candle.
+- Advanced candidate: when a complete nested Bearish Reaction exists wholly inside the opposite Order before Order confirmation, source the candidate from the Order's opposite semantic box edge (`BoxBottom source` for Bullish trend, `BoxTop source` for Bearish trend); candidate may decide only from the nested trend confirmation onward.
 
 ### 9.5 S decision race
 
-Start at Order confirmation and inspect lower events chronologically. Candidate strict cross uses the Bullish directional extreme (`Low < level`). `Order is Bearish, so stop crosses on High > orderStopLevel`.
+Start at Order confirmation and inspect lower events chronologically. Candidate strict cross uses the Bearish directional extreme (`High > level`). `Order is Bullish, so stop crosses on Low < orderStopLevel`.
 
 At each lower event:
 
 1. if candidate and Order stop both strictly cross in that same event: candidate is invalid, return no S;
 2. else if Order stop crosses first: `S Red`;
-3. else if candidate crosses and either its aligned Reset Blue has formed by that event **or** any ordinary Bullish Reaction confirmed after active behavior start and no later than the event: `S Blue`;
+3. else if candidate crosses and either its aligned Reset Blue has formed by that event **or** any ordinary Bearish Reaction confirmed after active behavior start and no later than the event: `S Blue`;
 4. in pre-Order Simple provisional mode only, an unqualified candidate cross returns `fallback`, abandoning the pre-Order ownership and re-evaluating the normal post-Order Simple/Advanced route.
 
 If no lower data is available, the same logic is applied on main candles, preserving strictness and branch order.
@@ -390,22 +394,22 @@ Deduplicate accepted Orders by physical `(FirstIndex,BreakIndex)` identity and p
 
 `accepted-live`/shared use never rewrites Order creation provenance. The physical Order keeps its original accepted `parent-stop` and/or `reset-leg` cause in OrderAudit. Arbitrary opposite Reactions that were never accepted as physical Orders are never promoted by this rule.
 
-## 10. E engine — Bullish
+## 10. E engine — Bearish
 
-E recursively consumes accepted S and E parents. E uses the same `low` directional stop semantics and opposite `Bearish` Order geometry.
+E recursively consumes accepted S and E parents. E uses the same `high` directional stop semantics and opposite `Bullish` Order geometry.
 
 ### 10.1 Parent strict stop
 
-For an S/E parent, find the first strict `Low < level` of its `price` starting from the parent's relevant source/decision chronology. The exact lower event and containing main index are parent-stop provenance.
+For an S/E parent, find the first strict `High > level` of its `price` starting from the parent's relevant source/decision chronology. The exact lower event and containing main index are parent-stop provenance.
 
 ### 10.2 Order routes
 
 E Order resolution is physical-Order based. Four use routes can participate in the same E decision race, all keyed by `(FirstIndex,BreakIndex)`:
 
-- **parent-stop/direct Order_A cause** — a new opposite Bearish Order created directly because the current accepted parent strictly stopped;
+- **parent-stop/direct Order_A cause** — a new opposite Bullish Order created directly because the current accepted parent strictly stopped;
 - **carried-live accepted Order** — an already accepted Order that confirmed before the current parent stop and is still live at that stop;
 - **post-stop accepted-live Order** — an already accepted physical Order whose exact confirmation occurs after the current parent stop. Its creation parent may be A, S, E, StopAll, or independent Reset-leg/Order_B structure; it does **not** have to equal the candidate parent;
-- **Reset-leg Order_B cause** — the canonical same-direction Bullish Reset-leg formation described below.
+- **Reset-leg Order_B cause** — the canonical same-direction Bearish Reset-leg formation described below.
 
 `Order_A`/`Order_B` are creation causes, not native Reaction modes. `carried-live` and `accepted-live` are **use provenance only**. They never relabel the physical Order's original accepted creation cause in OrderAudit.
 
@@ -413,18 +417,18 @@ For a post-stop accepted-live Order to participate, its exact confirmation must 
 
 All routes enter the same stop-event race. One exact parent-stop creation cause still belongs to only one physical Order; sharing an already accepted Order as confirmation does not consume or duplicate its creation provenance.
 
-### 10.3 Canonical Order_B Reset-leg formation — Bullish
+### 10.3 Canonical Order_B Reset-leg formation — Bearish
 
-Order_B is built from a **Bullish Reaction Reset**, not from a Bearish/opposite Reset:
+Order_B is built from a **Bearish Reaction Reset**, not from a Bullish/opposite Reset:
 
-1. Take one Bullish Reset and resolve its owning Bullish Reaction through `from_first_idx`.
-2. From the owner Reaction's **Breakout main candle through the Reset main candle, inclusive**, find the **maximum High**. This is the Reset-leg ceiling / trigger level. The first main candle that owns that maximum is the ceiling-source candle.
-3. Starting at the exact Reset event, scan lower-timeframe data for the first strict `High > ceiling`. Equality does not qualify. Preserve both the exact lower event and its containing main candle.
-4. Define the evidence interval as the **closed main-candle range from the ceiling-source candle through the strict-break main candle, inclusive**.
-5. In that closed interval, require at least one **raw Bearish Reaction geometry**. Geometry alone is sufficient: normal Reset validity, lifecycle acceptance, public visibility and Internal-Reaction status are deliberately ignored for this evidence test.
-6. Over the same closed interval, compute the **minimum Low**. This is the Reset-leg floor. The first candle that owns the minimum is retained as its source.
-7. After the strict-break gate, select the **first canonical Bearish Reaction** whose First belongs to the gate main candle or a later main candle and whose exact confirmation is strictly after the exact lower-timeframe ceiling break. That canonical Reaction is the physical `Order_B`.
-8. Store Order_B cause provenance as `reset-leg(resetTime, boundaryBreakTime)`, where the legacy public field `boundaryBreakTime` now means the exact strict break of the Reset-leg **ceiling**. If the same physical Order has several valid Order_B origins, the latest valid `(resetTime, strictBreakEventTime)` is authoritative in final OrderAudit.
+1. Take one Bearish Reset and resolve its owning Bearish Reaction through `from_first_idx`.
+2. From the owner Reaction's **Breakout main candle through the Reset main candle, inclusive**, find the **minimum Low**. This is the Reset-leg floor / trigger level. The first main candle that owns that minimum is the floor-source candle.
+3. Starting at the exact Reset event, scan lower-timeframe data for the first strict `Low < floor`. Equality does not qualify. Preserve both the exact lower event and its containing 30s/main candle.
+4. Define the evidence interval as the **closed main-candle range from the floor-source candle through the strict-break main candle, inclusive**.
+5. In that closed interval, require at least one **raw Bullish Reaction geometry**. Geometry alone is sufficient: normal Reset validity, lifecycle acceptance, public visibility and Internal-Reaction status are deliberately ignored for this evidence test.
+6. Over the same closed interval, compute the **maximum High**. This is the Reset-leg ceiling. The first candle that owns the maximum is retained as its source.
+7. After the strict-break gate, select the **first canonical Bullish Reaction** whose First belongs to the gate main candle or a later main candle and whose exact confirmation is strictly after the exact lower-timeframe floor break. That canonical Reaction is the physical `Order_B`.
+8. Store Order_B cause provenance as `reset-leg(resetTime, boundaryBreakTime)`, where the legacy public field `boundaryBreakTime` now means the exact strict break of the Reset-leg **floor**. If the same physical Order has several valid Order_B origins, the latest valid `(resetTime, strictBreakEventTime)` is authoritative in final OrderAudit.
 
 The scoped lifecycle rule remains separate from formation: after cause merging, an internal native Mode-B Reaction whose only accepted causes are Reset-leg can be filtered from public Order ownership. That filter does **not** change the geometry-only evidence rule above, and a valid parent-stop cause on the same physical Order is not erased.
 
@@ -438,7 +442,7 @@ For each stopped parent, E may use a direct/inherited/carried Order or a parent-
 
 The accepted-live ledger is composed from calculation-accepted stopped-A Orders plus accepted S/E/StopAll/Order_B physical Orders already present in canonical OrderAudit. A post-stop accepted Order is eligible only when its confirmation is after the parent stop, its strict Order stop is later than both confirmation and parent stop, and no hard sequence reset occurs between the parent stop and that Order stop.
 
-Representatives with known strict Order stops compete by exact stop chronology; earliest Order stop wins, with deterministic First-index tie handling. The E source is then the directional `minimum Low` over the complete main-candle interval from the parent-stop main candle through the winning Order-stop main candle, inclusive. Lower-timeframe data decides **when** stops happen; it does not truncate either boundary main candle's OHLC.
+Representatives with known strict Order stops compete by exact stop chronology; earliest Order stop wins, with deterministic First-index tie handling. The E source is then the directional `maximum High` over the complete main-candle interval from the parent-stop main candle through the winning Order-stop main candle, inclusive. Lower-timeframe data decides **when** stops happen; it does not truncate either boundary main candle's OHLC.
 
 `accepted-live` is use provenance only. Final OrderAudit must restore/preserve the winner's original accepted creation cause from the prior accepted ledger or stopped-A ledger. If no original accepted creation cause can be proven, the system must not fabricate one.
 
@@ -498,13 +502,23 @@ The global priority is invariant and **does not mirror**:
 
 A/S/E/StopAll native detection may proceed independently, but final calculation eligibility is resolved by strict-stop chronology and this hierarchy.
 
-### 12.1 A after stopped behavior
+### 12.1 A after stopped behavior and stage-order ownership
 
-For each accepted S/E/StopAll strict stop, assign the transition to the containing main candle. When evaluating a later A, choose the most recent relevant stopped transition first; priority/number only resolve owners stopped on that same transition. If A price is not strictly beyond the dominant stopped owner's price in Bullish direction, A remains valid. If it is strictly beyond, it is the equal/lower leg-head candidate and is normally calculation-invalid while consuming the closed transition so later genuine legs may form.
+The lifecycle stage order is invariant and **must be respected before cross-family priority is allowed to act**:
 
-A is also treated as the smallest owner for A→A: if new A `triggerEventTime <= previous A strict-stop event`, it overlaps the old transition and is invalid; if trigger starts strictly after the stop, old A does not block it (other hierarchy rules still apply).
+`A → S → E → StopAll`.
 
-A confirmed trend Reaction may prove that an A is an interior-leg behavior between stopped owner and source; in that precise provenance case the A remains valid while the consumed older owner is still advanced.
+For each accepted S/E/StopAll strict stop, assign the transition to the containing main candle. When evaluating a later A, choose the most recent relevant stopped transition first; priority/number only resolve owners stopped on that same transition. If A price is not strictly beyond the dominant stopped owner's price in the trend direction, A remains valid. If it is strictly beyond, it is the equal/lower leg-head candidate and is normally calculation-invalid.
+
+A is also the smallest owner for A→A: if new A `triggerEventTime <= previous A strict-stop event`, it overlaps the old transition and is invalid; if its trigger starts strictly after that stop, the old A does not block it, subject to all later-stage owners.
+
+**Accepted-S stage lock:** when the dominant owner is S and a fallback A is rejected by this equal/lower cycle rule, that rejected A must **not consume the S owner**. The accepted S remains authoritative for the current transition. Otherwise the pipeline can incorrectly reopen `A → S` behind an already accepted S and fabricate a second S branch in the same lifecycle.
+
+Only A identities rejected specifically by this S-stage lock are marked `stage-invalid`. Any S candidate whose `a_source_time` belongs to such a stage-invalid A is calculation-invalid for later E/StopAll ownership and is removed from accepted S. It may not create a new E root, change E family/number, or replace the already accepted S/E chain.
+
+The historical interior-leg provenance exception remains unchanged for the cases where it actually qualifies under the existing source logic; V5.4.0 does not globally remove that mechanism. The new rule is narrowly about an A that has already been rejected under **S ownership**: that rejected A cannot advance/consume S and its S descendants cannot re-enter later stages.
+
+This rule is direction-invariant. Bullish/Bearish mirror only price geometry; stage ordering and lifecycle ownership do not mirror.
 
 ### 12.2 S after larger-module stops
 
@@ -520,9 +534,9 @@ StopAll consumes lifecycle-visible S and reconciled E chronologically. The invar
 
 Maintain the existing dominant S key/count and E key/count plus a separate `blue_dominant_count` for the current lifecycle cycle. The existing same-key counters still own the legacy sequence-group rule. `blue_dominant_count` instead counts every accepted Blue behavior that actually becomes or extends the dominant Blue owner: for example `S Blue → E1 Blue` counts as two, `E1 Blue → E2 Blue` increments again, and a repeated dominant `E3 Blue` increments again. A lower-priority Blue behavior that remains nested under a stronger owner does not increment the count. If Red takes dominant ownership before the gate fires, the Blue dominant count resets.
 
-In **both Bullish and Bearish**, the reversal gate is: current dominant family is **Blue**, `blue_dominant_count >= 2`, then an accepted **S Red** arrives. Before ordinary S-priority replacement, promote that S itself to `StopAll1` with `gateType='opposite-s-group-stop'`. The StopAll source/price/decision are the accepted S source/price/decision. The stopped-group metadata records the current dominant Blue owner plus the cumulative dominant-Blue count. The promoted StopAll becomes the only active StopAll for the new lifecycle cycle; prior StopAll objects remain immutable history but cannot influence numbering in the new cycle. Clear S/E sequence counters and `blue_dominant_count` immediately.
+For **Bearish**, exactly as for Bullish, the reversal gate is: current dominant family is **Blue**, `blue_dominant_count >= 2`, then an accepted **S Red** arrives. Before ordinary S-priority replacement, promote that S itself to `StopAll1` with `gateType='opposite-s-group-stop'`. The StopAll source/price/decision are the accepted S source/price/decision. The stopped-group metadata records the current dominant Blue owner plus the cumulative dominant-Blue count. The promoted StopAll becomes the only active StopAll for the new lifecycle cycle; prior StopAll objects remain immutable history but cannot influence numbering in the new cycle. Clear S/E sequence counters and `blue_dominant_count` immediately.
 
-Bearish mirroring changes strict price geometry only (`High > level` versus Bullish `Low < level`); it does **not** change the family condition into Red-group/S-Blue.
+The Bearish mirror is only directional price geometry: Bearish strict stops use `High > level` where Bullish uses `Low < level`. Blue/Red family labels and the S-Red trigger are invariant.
 
 Before each new E decision:
 
@@ -533,7 +547,7 @@ Before each new E decision:
 
 After all E events, remaining S events are still ingested so an accepted terminal S can trigger the S-reversal StopAll even when no later E exists.
 
-Each emitted StopAll later receives its own first strict Bullish stop event. A StopAll is a hard historical lifecycle boundary: calculate the full StopAll sequence once from already reconciled E/S state; future sequence state must never retroactively delete/move an earlier StopAll. The resulting StopAll `sourceTime→number` map may inform downstream E audit semantics but must not trigger a fixed-point rebuild of the already-decided prefix.
+Each emitted StopAll later receives its own first strict Bearish stop event. A StopAll is a hard historical lifecycle boundary: calculate the full StopAll sequence once from already reconciled E/S state; future sequence state must never retroactively delete/move an earlier StopAll. The resulting StopAll `sourceTime→number` map may inform downstream E audit semantics but must not trigger a fixed-point rebuild of the already-decided prefix.
 
 For an S-promoted StopAll, Order fields are copied from the accepted S Red formation Order when available. Red/Blue family labels are invariant across directions, so the Bearish gate is still S Red after dominant Blue history.
 
@@ -543,12 +557,13 @@ For an S-promoted StopAll, Order fields are copied from the accepted S Red forma
 2. Detect/reconcile StopAll from lifecycle-visible S/E.
 3. Restore independent accepted S E1 roots without rewriting dominant StopAll sequence.
 4. Apply final behavior visibility: StopAll source index suppresses E on same source; final E/StopAll source indexes suppress A and S labels on same source.
-5. Preserve lineage: if final E references an S parent, keep that historical S even if it no longer owns downstream calculation; if final S references an A parent, keep that A history unless its source is occupied by E/StopAll.
+5. Preserve lineage: if final E references an S parent, keep that historical S only when it was calculation-eligible; if final S references an A parent, keep that A history unless its source is occupied by E/StopAll.
 6. After all lifecycle, StopAll, Internal-Reaction, and OrderAudit ownership is fixed, append eligible presentation-only historical E rescues. These objects must not feed back into StopAll, active ownership, numbering, family/color reconciliation, S/A visibility, or OrderAudit provenance.
-6. Remove calculation-invalid S identities from final S.
-7. A provenance that straddles the strict stop of the dominant current module is removed unless it rebuilt entirely after the boundary according to `visible_a_zones_after_module_boundaries`.
-8. Internal-Reaction filtering hides **only** forbidden internal native-Mode-B E/StopAll Orders whose surviving Order causes are Reset-leg-only. A/S and other E/StopAll are not hidden merely because their source point lies inside a healthy Reaction interior.
-9. Public Blue output contains only `calculation_valid=true` and `behavior_internal=false` Blue Lines.
+7. Remove calculation-invalid S identities from final S.
+8. Remove S descendants of an A marked stage-invalid by accepted-S ownership. Such S candidates are not continuation evidence and cannot be used to build a later E root.
+9. A provenance that straddles the strict stop of the dominant current module is removed unless it rebuilt entirely after the boundary according to `visible_a_zones_after_module_boundaries`.
+10. Internal-Reaction filtering hides **only** forbidden internal native-Mode-B E/StopAll Orders whose surviving Order causes are Reset-leg-only. A/S and other E/StopAll are not hidden merely because their source point lies inside a healthy Reaction interior.
+11. Public Blue output contains only `calculation_valid=true` and `behavior_internal=false` Blue Lines.
 
 ## 15. Direction-specific mirror table
 
@@ -566,13 +581,13 @@ For an S-promoted StopAll, Order fields are copied from the accepted S Red forma
 | Mode-B Order stop | previous BoxTop | previous BoxBottom |
 | Candidate/behavior stop | Low `<` price | High `>` price |
 
-**Exact mirror rule:** A chained stopped Bullish Blue uses the complete next Bullish Reaction Breakout main candle (`breakTime + timeframe - 1 microsecond`) and freezes the `minimum Low`. Bearish uses the identical time window and freezes the `maximum High`.
+**Exact mirror rule:** A chained stopped Bearish Blue uses the complete next Bearish Reaction Breakout main candle (`breakTime + timeframe - 1 microsecond`) and freezes the `maximum High`. Bullish uses the identical time window and freezes the `minimum Low`.
 
 
 
 ## 15A. Exact full-pipeline reconstruction sequence
 
-The following pass order is **normative**. A rebuild that computes the same local detector candidates but changes these reconciliation passes can produce different final behavior.
+The following pass order is **normative**. A rebuild that computes the same local detector candidates but changes these reconciliation passes can produce different final behavior. In particular, a later-stage accepted owner cannot be consumed merely because an earlier-stage fallback candidate was rejected.
 
 ```text
 prepare_market_context:
@@ -590,9 +605,9 @@ prepare_pipeline_state:
         for each requested output direction:
             calculate_full_direction_state(direction)
 
-calculate_full_direction_state(bullish):
-    Blue = detect_blue_lines(bullish, trend Reactions, trend Resets)
-    A = detect_a_zones(bullish, trend Reactions, Blue)
+calculate_full_direction_state(bearish):
+    Blue = detect_blue_lines(direction, trend Reactions, trend Resets)
+    A = detect_a_zones(direction, trend Reactions, Blue)
     S_detector = SZoneDetector(trend Reactions, opposite Reactions/Resets, Blue, A)
     S_candidates = S_detector.detect()
 
@@ -606,8 +621,15 @@ calculate_full_direction_state(bullish):
 
     candidate_A = lifecycle.visible_a_zones(S_detector.eligible_A, valid_S)
     candidate_A = lifecycle.visible_a_zones_after_s_stops(candidate_A, valid_S)
-    calculation_A, invalid_A = lifecycle.split_a_zones_by_dominant_stops(...)
-    invalid_S = every original S candidate whose a_source_time is an invalid_A source
+
+    stage_invalid_A = empty identity set
+    calculation_A, invalid_A = lifecycle.split_a_zones_by_dominant_stops(
+        ..., stage_invalid_a_identities=stage_invalid_A
+    )
+    invalid_S = every original S candidate whose a_source_time is any invalid_A source
+
+    stage_invalid_S = every original S candidate whose a_source_time is a stage_invalid_A source
+    remove stage_invalid_S from currently accepted S
 
     accepted stopped-A Orders, blocked First times = lifecycle.resolve_order_context(...)
     rebuild E with:
@@ -619,12 +641,14 @@ calculate_full_direction_state(bullish):
     if any S provenance/decision changed:
         rebuild E once more with reconciled S
 
-    find suppressed lower-priority S evidence that belongs to a stopped larger E
+    calculation_S_candidates = S_candidates excluding stage_invalid_S
+    find suppressed lower-priority S evidence from calculation_S_candidates
+        that belongs to a stopped larger E
     for each such S evidence:
         build native continuation chain from the E owner
         replace only the owner's later descendant branch if new continuation decides earlier
 
-    remove invalid_S from accepted S list (retain original S_candidates for lineage/evidence)
+    remove invalid_S from accepted S list (retain non-stage-invalid originals only where existing lineage/evidence rules require them)
     store full-range Blue/A/S/E detector state
 
 finalize_direction_visibility:
@@ -641,13 +665,13 @@ finalize_direction_visibility:
 
 ### Why the repeated E passes exist
 
-E depends on accepted S, accepted Order provenance, invalid A/S ownership, and shared Order-stop decisions. Each pass resolves one dependency. Do not collapse these passes into one speculative E run unless an alternative implementation proves the same fixed inputs and exact output. StopAll is deliberately **not** in a global E↔StopAll fixed-point loop; its accepted prefix is historical and immutable once formed.
+E depends on accepted S, accepted Order provenance, invalid A/S ownership, stage-invalid S descendants, and shared Order-stop decisions. Each pass resolves one dependency. Do not collapse these passes into one speculative E run unless an alternative implementation proves the same fixed inputs and exact output. StopAll is deliberately **not** in a global E↔StopAll fixed-point loop; its accepted prefix is historical and immutable once formed.
 
 ## 15B. E Order creation and shared accepted-Order confirmation — function-level
 
 ### Parent stop / direct Order_A route
 
-For any S/E parent, strict parent stop is the first lower-timeframe `Low < parent.price` from the applicable source/range start. The first lower event owns `parentStopEventTime`; map it to a main candle for `parentStopIndex/Time`.
+For any S/E parent, strict parent stop is the first lower-timeframe `High > parent.price` from the applicable source/range start. The first lower event owns `parentStopEventTime`; map it to a main candle for `parentStopIndex/Time`.
 
 Direct parent-stop search remains separate from Order_B. `_direct_parent_stop_order` and the narrow fresh-trend continuation route may produce a `parent-stop` creation cause. One exact parent-stop provenance can be spent by only one physical Order; `_enforce_single_parent_stop_owner` keeps the earliest `(confirmationTime,FirstIndex,BreakIndex)` owner and strips that cause from later identities unless another independent cause survives.
 
@@ -669,31 +693,31 @@ Direct parent-stop search remains separate from Order_B. `_direct_parent_stop_or
 8. Emit use provenance `accepted-live`; if the physical Order also has accepted Reset-leg provenance, retain `reset-leg` alongside the use marker.
 9. Never create a new parent-stop cause for the current candidate. Final audit recovers the physical Order's original creation provenance from the accepted ledgers.
 
-The implementation is direction invariant. `_cross_order` supplies the exact mirrored price rule for the opposite Bearish Order.
+The implementation is direction invariant. `_cross_order` supplies the exact mirrored price rule for the opposite Bullish Order.
 
 ### `OrderBFormation` — canonical Reset-leg state
 
-The E engine precomputes canonical Order_B formations with `_build_order_b_formations()`. Each formation stores Reset time/index, owning Bullish Reaction First/Break indexes, trigger level and source, exact strict-break chronology, the mirrored other-edge extreme/source, raw opposite-geometry identity, and the final canonical Bearish Order Reaction/confirmation.
+The E engine precomputes canonical Order_B formations with `_build_order_b_formations()`. Each formation stores Reset time/index, owning Bearish Reaction First/Break indexes, trigger level and source, exact strict-break chronology, the mirrored other-edge extreme/source, raw opposite-geometry identity, and the final canonical Bullish Order Reaction/confirmation.
 
 ### Order_B Step 1 — same-direction Reset owner and trigger extreme
 
-`_order_b_reset_leg(reset, reset_time)` resolves the Reset's owning **Bullish Reaction** through `from_first_idx`. Over the closed main-candle interval `owner.break_idx .. reset.index`, `_main_range_extreme` takes the **maximum High**. This is the Reset-leg ceiling; equal extrema preserve the earliest owning main candle.
+`_order_b_reset_leg(reset, reset_time)` resolves the Reset's owning **Bearish Reaction** through `from_first_idx`. Over the closed main-candle interval `owner.break_idx .. reset.index`, `_main_range_extreme` takes the **minimum Low**. This is the Reset-leg floor; equal extrema preserve the earliest owning main candle.
 
 ### Order_B Step 2 — exact strict break
 
-`_order_b_strict_break(reset_time, level)` begins at the exact Reset chronology and finds the first strict `High > ceiling`. Equality never qualifies.
+`_order_b_strict_break(reset_time, level)` begins at the exact Reset chronology and finds the first strict `Low < floor`. Equality never qualifies.
 
 ### Order_B Step 3 — closed evidence interval and mirrored other edge
 
-Evidence is exactly the closed main-candle range `primary-extreme source .. strict-break main candle`, both endpoints inclusive. `_order_b_opposite_extreme(...)` computes `minimum Low` over the same closed interval.
+Evidence is exactly the closed main-candle range `primary-extreme source .. strict-break main candle`, both endpoints inclusive. `_order_b_opposite_extreme(...)` computes `maximum High` over the same closed interval.
 
 ### Order_B Step 4 — raw opposite Reaction geometry only
 
-`_order_b_geometry_evidence(...)` searches bounded raw Bearish Reaction geometry only. Normal Reset validity, lifecycle acceptance, public visibility and Internal-Reaction status are not required for this evidence test.
+`_order_b_geometry_evidence(...)` searches bounded raw Bullish Reaction geometry only. Normal Reset validity, lifecycle acceptance, public visibility and Internal-Reaction status are not required for this evidence test.
 
 ### Order_B Step 5 — physical Order_B after the gate
 
-`_first_order_b_reaction_after_break(...)` selects the first canonical Bearish Reaction whose First belongs to the gate main candle or later and whose exact confirmation is strictly after the exact lower-timeframe gate event. That canonical Reaction is the physical Order_B; its native mode can be A or B.
+`_first_order_b_reaction_after_break(...)` selects the first canonical Bullish Reaction whose First belongs to the gate main candle or later and whose exact confirmation is strictly after the exact lower-timeframe gate event. That canonical Reaction is the physical Order_B; its native mode can be A or B.
 
 ### Order_B Step 6 — cause ownership and latest-cause rule
 
@@ -721,7 +745,7 @@ Candidate representatives with known strict stop crossings compete on exact chro
 
 ### E decision/source
 
-`decisionEventTime = max(parentStopEventTime, winningOrderStopEventTime)`. Map to its main candle for decision index/time. Source ownership is complete-main-candle based: include the main candle containing the parent stop through the main candle containing the winning Order stop, inclusive, and select `minimum Low`. Lower-timeframe chronology decides stop order but never truncates boundary-candle OHLC.
+`decisionEventTime = max(parentStopEventTime, winningOrderStopEventTime)`. Map to its main candle for decision index/time. Source ownership is complete-main-candle based: include the main candle containing the parent stop through the main candle containing the winning Order stop, inclusive, and select `maximum High`. Lower-timeframe chronology decides stop order but never truncates boundary-candle OHLC.
 
 ### Provisional chains
 
@@ -769,7 +793,7 @@ For E-parent candidate: parent is active if it is the hard sequence-start source
 
 ### Does candidate stop an active E?
 
-Only when candidate decision occurs strictly after prior decision and `new.price < prior.price`.
+Only when candidate decision occurs strictly after prior decision and `new.price > prior.price`.
 
 ### Prevent lower-priority S stealing active continuation
 
@@ -819,7 +843,7 @@ Key=`(sourceIndex,sourceTime)`. Higher `sequence_priority('e', family)` wins (Re
 
 ### `s_zones_for_module_engines`
 
-Walk S by source time against prior accepted E + prior kept S. If newest prior module has priority >= incoming S and incoming A source predates that module, reject. Otherwise compare both incoming `a_price` and S `price` against prior module price using strict Bullish boundary; if either is strictly beyond, reject. Higher-priority incoming S is allowed to supersede lower-priority prior behavior.
+Walk S by source time against prior accepted E + prior kept S. If newest prior module has priority >= incoming S and incoming A source predates that module, reject. Otherwise compare both incoming `a_price` and S `price` against prior module price using strict Bearish boundary; if either is strictly beyond, reject. Higher-priority incoming S is allowed to supersede lower-priority prior behavior.
 
 ### `s_zones_for_stopall`
 
@@ -837,7 +861,7 @@ Among original S candidates removed from accepted S:
 - require candidate priority < E owner priority;
 - require E exact stop strictly before candidate A source;
 - require candidate A to form strictly after that stop;
-- compare Close of E-stop main candle to Close of candidate S source main candle and require strict Bullish continuation beyond it;
+- compare Close of E-stop main candle to Close of candidate S source main candle and require strict Bearish continuation beyond it;
 - keep only earliest such suppressed S per E owner.
 
 That S becomes non-public continuation evidence via `continuation_chain_from_s`.
@@ -849,11 +873,15 @@ Build stopped-owner records from S/E/StopAll and, when provided, A strict stops.
 1. collect unconsumed owners whose source precedes A and whose stop main index is not after A source;
 2. for A→A owner, ignore old A if new `triggerEventTime` is strictly after old A stop; otherwise old transition still overlaps;
 3. choose dominant primarily by **latest stop main index**, then behavior priority, number, source time/index;
-4. if A price does not strictly cross dominant price in Bullish direction, keep A;
-5. if it does, test the exact interior-leg Reaction provenance exception; when proven, keep A but consume eligible lower/equal stopped owners;
-6. otherwise mark A calculation-invalid and consume all eligible stopped owners with priority <= dominant priority.
+4. if A price does not strictly cross dominant price in the trend direction, keep A;
+5. apply the existing interior-leg provenance test exactly as implemented;
+6. otherwise mark A calculation-invalid;
+7. **if the dominant owner is S, do not consume that S.** Record this rejected A identity in `stage_invalid_a_identities` and leave S as the authoritative owner of the transition;
+8. only for non-S dominant owners, consume eligible stopped owners with priority <= dominant priority as before.
 
-This consumption is what allows a later genuinely new leg to form instead of letting a stopped high-priority owner block forever.
+After this function returns, derive `stage_invalid_s_identities` from S candidates whose `a_source_time` belongs to a stage-invalid A. Remove those S descendants from accepted S before final E rebuilding, and exclude them from `consumed_s_evidence_after_larger_stop`. This is the exact enforcement of the normative `A → S → E → StopAll` pass order: a rejected fallback A cannot reopen A/S calculation behind an accepted S.
+
+This V5.4.0 change is deliberately scoped. It does not alter Reaction, Blue, A geometry, S decision geometry, Order_A, Order_B, accepted-live Order sharing, or E source geometry.
 
 ### `visible_s_zones_after_module_resets`
 
@@ -1004,7 +1032,7 @@ The top-level response contains: `engine`, `version`, `pipelineVersion`, `blueLi
 `direction`, `number`, source/decision fields, gate fields, stopped behavior fields, underlying E family/number, complete Order geometry/provenance, and strict stop fields `stopIndex`, `stopTime`, `stopEventTime`.
 
 ### OrderAudit
-One physical Order identity is `(firstIndex, breakIndex)`. Output fields are `direction`, `reactionNumber`, `reactionMode`, Reaction box fields, `stopLevel`, `stopSourceIndex`, `stopSourceTime`, `stopHitIndex`, `stopHitTime`, `stopHitEventTime`, and `causes`. Causes are either `parent-stop` (`parentType`, `parentFamily`, `eventTime`, `parentSourceTime`) or `reset-leg` (`resetTime`, `boundaryBreakTime`). For V5.2.0 Order_B, `boundaryBreakTime` is the exact strict break of the Reset-leg ceiling. Output is sorted by `(firstTime, breakTime)`.
+One physical Order identity is `(firstIndex, breakIndex)`. Output fields are `direction`, `reactionNumber`, `reactionMode`, Reaction box fields, `stopLevel`, `stopSourceIndex`, `stopSourceTime`, `stopHitIndex`, `stopHitTime`, `stopHitEventTime`, and `causes`. Causes are either `parent-stop` (`parentType`, `parentFamily`, `eventTime`, `parentSourceTime`) or `reset-leg` (`resetTime`, `boundaryBreakTime`). For V5.2.0 Order_B, `boundaryBreakTime` is the exact strict break of the Reset-leg floor. Output is sorted by `(firstTime, breakTime)`.
 
 The final Bridge has a hard consistency invariant: every public S/E/StopAll that carries an Order must reference a physical identity `(firstIndex,breakIndex)` present in the final canonical OrderAudit. Final E branch replacement or independent-root restoration must synchronize the accepted Order ledger before serialization. Conversely, one exact parent-stop cause may not appear on two different physical Order identities. Accepted carried-live and noncanonical bounded direct Order geometry (`reactionNumber=0`) must remain auditable; the Bridge must never invent a replacement Order merely to satisfy serialization.
 
@@ -1047,7 +1075,7 @@ A replacement engine is conforming only if all of these are true:
 - no fixture-specific production logic exists.
 
 ## 20. Source-symbol coverage appendix
-This appendix is generated from the exact V5.3.0 embedded source snapshot. Line numbers refer to the embedded/current production files in this document. Private helpers are listed because they can affect observable chronology or provenance.
+This appendix is generated from the exact V5.4.0 embedded source snapshot. Line numbers refer to the embedded/current production files in this document. Private helpers are listed because they can affect observable chronology or provenance.
 ### 20.1 `reaction_engine.py`
 | Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
@@ -1330,20 +1358,20 @@ This appendix is generated from the exact V5.3.0 embedded source snapshot. Line 
 | `strictly_beyond_boundary` | function | 829 | Behaviorally relevant source symbol. |
 | `dominant_module` | function | 834 | Behaviorally relevant source symbol. |
 | `split_a_zones_by_dominant_stops` | function | 847 | Separate visible A labels from A objects allowed into downstream math. A/Reaction/Blue discovery remains independent inside every half-leg. Once an... |
-| `blocked_orders_while_invalid_leg_heads_are_live` | function | 1039 | Return order First times owned by a still-live invalid leg head. A strict dominant-boundary crossing can expose a new leg head without making its A... |
-| `consumed_s_evidence_after_larger_stop` | function | 1062 | Return the earliest suppressed S evidence that continues each stopped E. A lower-priority S remains non-public when it belongs to the continuation ... |
-| `s_zones_for_module_engines` | function | 1139 | Preserve the established S eligibility contract consumed by E/StopAll. |
-| `s_zones_for_stopall` | function | 1169 | Return accepted S state that may participate in StopAll grouping. E reconciliation still consumes the established S eligibility contract. StopAll a... |
-| `visible_s_zones_after_module_resets` | function | 1188 | Apply dominant-behavior ownership to successive S candidates. Bullish/bearish half-leg calculations remain active under a larger behavior. But once... |
-| `reconcile_stopall_lifecycle` | function | 1357 | Freeze StopAll boundaries from the accepted chronological E state. StopAll is a hard historical lifecycle boundary. Once the accepted E/S chronolog... |
-| `visible_a_zones_after_module_boundaries` | function | 1390 | Require A provenance to rebuild after the dominant strict stop. A price is deliberately not compared with the old module price. Reactions and Blue ... |
-| `reaction_number_is_internal` | function | 1437 | Return whether a numbered Reaction resolves to a protected internal owner. |
-| `order_identity_is_internal` | function | 1451 | Return whether a behavior's physical Order Reaction is internal. |
-| `point_is_inside_healthy_reaction` | function | 1460 | Return True only for a strict protected Reaction interior. First and published box edges are ownership boundaries, so equality and the First timest... |
-| `forbidden_internal_order_b` | function | 1483 | Reject only an internal Reset-leg *Mode-B* Order owner. The internal-Reaction prohibition is scoped to Reset-leg Order_B. A Reset-leg provenance ca... |
-| `filter_internal_behavior_outputs` | function | 1503 | Apply only the scoped Internal-Reaction Order_B prohibition. Internal Reaction geometry and its eligible evidence remain calculation valid. A/S/E/S... |
-| `finalize_behavior_visibility` | function | 1533 | Resolve the final A/S/E lineage closure after StopAll reconciliation. |
-| `visible_a_zones` | function | 1628 | Return A objects whose source candle is not occupied by a final S. |
+| `blocked_orders_while_invalid_leg_heads_are_live` | function | 1050 | Return order First times owned by a still-live invalid leg head. A strict dominant-boundary crossing can expose a new leg head without making its A... |
+| `consumed_s_evidence_after_larger_stop` | function | 1073 | Return the earliest suppressed S evidence that continues each stopped E. A lower-priority S remains non-public when it belongs to the continuation ... |
+| `s_zones_for_module_engines` | function | 1150 | Preserve the established S eligibility contract consumed by E/StopAll. |
+| `s_zones_for_stopall` | function | 1180 | Return accepted S state that may participate in StopAll grouping. E reconciliation still consumes the established S eligibility contract. StopAll a... |
+| `visible_s_zones_after_module_resets` | function | 1199 | Apply dominant-behavior ownership to successive S candidates. Bullish/bearish half-leg calculations remain active under a larger behavior. But once... |
+| `reconcile_stopall_lifecycle` | function | 1368 | Freeze StopAll boundaries from the accepted chronological E state. StopAll is a hard historical lifecycle boundary. Once the accepted E/S chronolog... |
+| `visible_a_zones_after_module_boundaries` | function | 1401 | Require A provenance to rebuild after the dominant strict stop. A price is deliberately not compared with the old module price. Reactions and Blue ... |
+| `reaction_number_is_internal` | function | 1448 | Return whether a numbered Reaction resolves to a protected internal owner. |
+| `order_identity_is_internal` | function | 1462 | Return whether a behavior's physical Order Reaction is internal. |
+| `point_is_inside_healthy_reaction` | function | 1471 | Return True only for a strict protected Reaction interior. First and published box edges are ownership boundaries, so equality and the First timest... |
+| `forbidden_internal_order_b` | function | 1494 | Reject only an internal Reset-leg *Mode-B* Order owner. The internal-Reaction prohibition is scoped to Reset-leg Order_B. A Reset-leg provenance ca... |
+| `filter_internal_behavior_outputs` | function | 1514 | Apply only the scoped Internal-Reaction Order_B prohibition. Internal Reaction geometry and its eligible evidence remain calculation valid. A/S/E/S... |
+| `finalize_behavior_visibility` | function | 1544 | Resolve the final A/S/E lineage closure after StopAll reconciliation. |
+| `visible_a_zones` | function | 1639 | Return A objects whose source candle is not occupied by a final S. |
 
 ### 20.7 `trading_pipeline.py`
 | Symbol | Kind | Line | Contract summary |
@@ -1375,15 +1403,15 @@ This appendix is generated from the exact V5.3.0 embedded source snapshot. Line 
 | `FullDirectionState` | class | 832 | Authoritative full-range behavior state for one trend direction. |
 | `create_e_detector` | function | 846 | Construct one E detector from the shared geometry/lifecycle contract. |
 | `calculate_full_direction_state` | function | 900 | Run Blue→A→S→E calculation and lifecycle reconciliation for one direction. |
-| `prepare_pipeline_state` | function | 1265 | Run shared calculation stages once and retain reusable detector state. |
-| `DirectionRangeState` | class | 1382 | Unserialized calculation state for one requested direction/range. |
-| `DirectionVisibilityState` | class | 1395 | Final public behavior state after lifecycle and internal-Reaction rules. |
-| `calculate_direction_range_state` | function | 1406 | Collect detector output for one requested direction before visibility rules. |
-| `finalize_direction_visibility` | function | 1508 | Apply lifecycle, range and Internal-Reaction rules to detector output. |
-| `serialize_direction_payload` | function | 1725 | Serialize one direction without applying any trading rule. |
-| `build_direction_output` | function | 1779 | Calculate, finalize and serialize one requested trend direction. |
-| `build_response_payload` | function | 1804 | Build the public response envelope around serialized direction outputs. |
-| `main` | function | 1857 | Behaviorally relevant source symbol. |
+| `prepare_pipeline_state` | function | 1288 | Run shared calculation stages once and retain reusable detector state. |
+| `DirectionRangeState` | class | 1405 | Unserialized calculation state for one requested direction/range. |
+| `DirectionVisibilityState` | class | 1418 | Final public behavior state after lifecycle and internal-Reaction rules. |
+| `calculate_direction_range_state` | function | 1429 | Collect detector output for one requested direction before visibility rules. |
+| `finalize_direction_visibility` | function | 1531 | Apply lifecycle, range and Internal-Reaction rules to detector output. |
+| `serialize_direction_payload` | function | 1748 | Serialize one direction without applying any trading rule. |
+| `build_direction_output` | function | 1802 | Calculate, finalize and serialize one requested trend direction. |
+| `build_response_payload` | function | 1827 | Build the public response envelope around serialized direction outputs. |
+| `main` | function | 1880 | Behaviorally relevant source symbol. |
 
 ### 20.8 `direction_policy.py`
 | Symbol | Kind | Line | Contract summary |
@@ -1827,7 +1855,7 @@ S color (`red`/`blue`) is a behavior family label and is **not** synonymous with
 - **Parent:** an accepted S or E whose strict stop opens the possibility of the next E.
 - **Parent-stop Order:** an opposite-direction Order discovered/owned because a parent behavior stopped.
 - **Carried-live Order:** an already-accepted physical Order that remains eligible for a newer parent under exact lifecycle rules.
-- **Reset-leg Order_B:** an independent Order cause created when a **Bullish Reaction Reset** yields a Breakout→Reset inclusive maximum-High ceiling, that ceiling is later strictly broken (`High > ceiling`), raw **Bearish Reaction geometry** exists in the closed ceiling-source→strict-break-main-candle interval, and the first canonical Bearish Reaction after the gate is assigned as the physical Order_B. The same closed interval supplies the minimum-Low floor. Reset validity/lifecycle/Internal status is ignored only for the evidence geometry test.
+- **Reset-leg Order_B:** an independent Order cause created when a **Bearish Reaction Reset** yields a Breakout→Reset inclusive minimum-Low floor, that floor is later strictly broken (`Low < floor`), raw **Bullish Reaction geometry** exists in the closed floor-source→strict-break-main-candle interval, and the first canonical Bullish Reaction after the gate is assigned as the physical Order_B. The same closed interval supplies the maximum-High ceiling. Reset validity/lifecycle/Internal status is ignored only for the evidence geometry test.
 - **Direct Order_A:** direct post-parent-stop geometry, including the narrow fresh-trend-leg route after a stopped E.
 - **Shared accepted Order use:** a physical Order already accepted by another behavior/structure may decide the current S/E candidate when exact stop chronology is valid. The creating parent need not match. `carried-live` means already active at the candidate parent stop; `accepted-live` means confirmed after it. Both are use provenance only.
 - **Order cause vs Reaction mode:** `Order_A`/`Order_B` describe why the physical Order exists. `Reaction.mode` describes the Reaction engine geometry (`A` or `B`). They are independent fields/concepts.
@@ -1836,33 +1864,33 @@ S color (`red`/`blue`) is a behavior family label and is **not** synonymous with
 
 ### 22.7 StopAll
 
-StopAll is a behavior generated by three lifecycle gates: (1) the existing E-driven `sequence-group-stop`, (2) the existing E-driven `stopall-stop`, and (3) the accepted-S `opposite-s-group-stop`. The third gate is family-invariant: in both Bullish and Bearish, accepted S Red becomes `StopAll1` when the current dominant lifecycle has accumulated at least two dominant Blue behaviors. Those Blue behaviors may progress across different S/E keys; same-key repetition is not required. S-promoted StopAll source/price/decision come from that S. StopAll itself can later strictly stop and can seed a subsequent StopAll number according to the detector state machine. Every StopAll boundary clears active S/E sequence counters and the dominant-Blue count, terminating pre-boundary lifecycle ownership for downstream visibility/re-entry arbitration.
+StopAll is a behavior generated by three lifecycle gates: (1) the existing E-driven `sequence-group-stop`, (2) the existing E-driven `stopall-stop`, and (3) the accepted-S `opposite-s-group-stop`. The third gate is family-invariant: in Bearish as in Bullish, accepted S Red becomes `StopAll1` when the current dominant lifecycle has accumulated at least two dominant Blue behaviors. Those Blue behaviors may progress across different S/E keys; same-key repetition is not required. S-promoted StopAll source/price/decision come from that S. StopAll itself can later strictly stop and can seed a subsequent StopAll number according to the detector state machine. Every StopAll boundary clears active S/E sequence counters and the dominant-Blue count, terminating pre-boundary lifecycle ownership for downstream visibility/re-entry arbitration.
 
 ### 22.8 OrderAudit
 
 OrderAudit is not a separate market behavior. It is the canonical ledger of physical Orders keyed by `(FirstIndex, BreakIndex)`, with merged causes/provenance and exact strict stop-hit chronology. One physical Order can have multiple accepted causes, but one exact parent-stop provenance cannot be consumed twice to create multiple physical Orders.
 
-## 23. Directional rule matrix and full behavior transition catalog — Bullish
+## 23. Directional rule matrix and full behavior transition catalog — Bearish
 
 ### 23.1 Mechanical directional map
 
-| Concept | Bullish rule | Bearish mirror |
+| Concept | Bearish rule | Bullish mirror |
 |---|---|---|
-| Directional extreme | minimum / Low | maximum / High |
-| Strict behavior/Blue stop | `Low < level` | `High > level` |
-| Reaction First color | RED | GREEN |
-| Reaction confirm | `High > BoxTop` | `Low < BoxBottom` |
-| Reset boundary | previous confirmed BoxBottom | previous confirmed BoxTop |
-| Confirmation-side exact scan | High | Low |
-| A source extreme | minimum Low | maximum High |
-| Chained Blue carried stop | minimum Low over complete interval | maximum High over complete interval |
-| Opposite Order direction | Bearish | Bullish |
-| Order_B Reset owner | Bullish Reaction Reset | Bearish Reaction Reset |
-| Order_B primary extreme | maximum High, owner Breakout→Reset inclusive | minimum Low, owner Breakout→Reset inclusive |
-| Order_B strict trigger | `High > ceiling` after Reset | `Low < floor` after Reset |
-| Order_B evidence geometry | raw Bearish geometry in closed ceiling-source→strict-break candle range | raw Bullish geometry in closed floor-source→strict-break candle range |
-| Order_B other edge | minimum Low over same closed evidence range | maximum High over same closed evidence range |
-| Order_B physical Order | first canonical Bearish Reaction after gate | first canonical Bullish Reaction after gate |
+| Directional extreme | maximum / High | minimum / Low |
+| Strict behavior/Blue stop | `High > level` | `Low < level` |
+| Reaction First color | GREEN | RED |
+| Reaction confirm | `Low < BoxBottom` | `High > BoxTop` |
+| Reset boundary | previous confirmed BoxTop | previous confirmed BoxBottom |
+| Confirmation-side exact scan | Low | High |
+| A source extreme | maximum High | minimum Low |
+| Chained Blue carried stop | maximum High over complete interval | minimum Low over complete interval |
+| Opposite Order direction | Bullish | Bearish |
+| Order_B Reset owner | Bearish Reaction Reset | Bullish Reaction Reset |
+| Order_B primary extreme | minimum Low, owner Breakout→Reset inclusive | maximum High, owner Breakout→Reset inclusive |
+| Order_B strict trigger | `Low < floor` after Reset | `High > ceiling` after Reset |
+| Order_B evidence geometry | raw Bullish geometry in closed floor-source→strict-break candle range | raw Bearish geometry in closed ceiling-source→strict-break candle range |
+| Order_B other edge | maximum High over same closed evidence range | minimum Low over same closed evidence range |
+| Order_B physical Order | first canonical Bullish Reaction after gate | first canonical Bearish Reaction after gate |
 
 ### 23.2 Invariant rules that must not be directionally swapped
 
@@ -1874,25 +1902,25 @@ OrderAudit is not a separate market behavior. It is the canonical ledger of phys
 - Full-RAW calculation and presentation filtering rules remain unchanged.
 - Exact invalidation-first ties stay invalidation-first where the implementation checks them in that order.
 
-### 23.3 End-to-end Bullish behavior flow
+### 23.3 End-to-end Bearish behavior flow
 
 ```text
 Bullish/ Bearish RAW candles
     ↓
-Bullish Reaction + Reset geometry (while Bearish Reaction/Reset is also calculated)
+Bearish Reaction + Reset geometry (while Bullish Reaction/Reset is also calculated)
     ↓
-Bullish Scale/Reset Blue evidence
+Bearish Scale/Reset Blue evidence
     ↓
 Blue stops + adjacent-pair / double-stop chronology
     ↓
-Bullish A candidate → validating Bullish Reaction exact confirmation → accepted A
-    ↓ strict Low < A.price
+Bearish A candidate → validating Bearish Reaction exact confirmation → accepted A
+    ↓ strict High > A.price
 A stop
     ↓
-first eligible Bearish Order geometry + Type3/Simple/Advanced S logic
+first eligible Bullish Order geometry + Type3/Simple/Advanced S logic
     ↓
 accepted S Red or S Blue
-    ↓ strict Low < S.price (and accepted Order routes)
+    ↓ strict High > S.price (and accepted Order routes)
 recursive E candidates / parent-stop Order_A, carried-live, and canonical V5.2.0 Reset-leg Order_B routes
     ↓
 family/number/same-source/lifecycle reconciliation
@@ -1910,36 +1938,49 @@ final lifecycle visibility + OrderAudit + serialization
 
 These examples are included to make chronology and ownership concrete. They are regression fixtures/examples only; a conforming implementation must derive them from general rules and must never branch on their timestamps/prices.
 
-### 24.1 Bullish same-Break confirmation/reset ownership
+### 24.1 Bearish exact lower-timeframe Reaction confirmation and A ownership
 
-USOIL 30s reference shape: a Bullish Reaction confirms strictly inside the `2026-09-09 19:09:30` main candle at exact `19:09:45`. A later lower event in the same main candle at `19:09:50` trades below the frozen exact-confirmation opposite edge. Therefore that main candle is preserved as a Reset boundary and **cannot** simultaneously become the next normal Bullish FirstRed. This preserved Reset evidence participates in later Blue/A calculation.
+XAUUSD 30s reference shape: A source is `2026-09-04 16:57:30`; the validating Bearish Reaction has FirstGreen `16:58:00`, BoxBottom from `16:57:30`, BoxTop from `16:58:00`, and exact lower-timeframe breakdown confirmation at `16:58:38`. A source ownership freezes at exact confirmation; later remainder prices in the same Break main candle cannot retroactively move A to `16:58:30`.
 
-### 24.2 Bullish Blue → A → S → Order → later A/S chain
+### 24.2 Bearish Order bounded Mode-A anchor
 
-Reference chain: `A 2026-09-09 19:06:30 → S Red 19:09:30 → Order 19:14:30 → A 19:20:30 → S Blue 19:47:00`. An earlier candidate `A 19:17:00` is rejected by the corrected chained-Blue/exact-reset chronology. The timestamps are validation evidence, not rules.
+Reference Order `2026-09-07 10:14:00` keeps its stop source at `10:13:30`. When the bounded gate resolver returns `continue`, a genuinely resolved current-leg Mode-A anchor is authoritative; an older Reset cannot overwrite that anchor merely because historical Reset provenance exists.
 
-### 24.3 Exact-source E continuation ownership
+### 24.3 Bearish chained Blue carried-stop mirror
 
-XAUUSD 30s reference chain: `E1 Blue 2026-09-17 07:50:00 → E2 Blue 08:00:00 → E3 Blue 08:54:00`. A calculation-invalid `S Red @ 08:00:00` can remain Order/evidence provenance but cannot open a competing cross-family E1 at the same physical source occupied by the native Blue continuation. This prevents the formerly incorrect `E1 Red @ 08:54:00`.
+For a stopped Bearish Blue, locate the first valid Bearish Reaction after the stop and compute the **maximum High** from the Blue stop main candle through the complete Breakout main candle, inclusive. This is now the exact mirror of Bullish minimum-Low chronology. Historical USOIL reference geometry around Blue `2026-09-11 09:23:00` is an example of the carried-stop route, but the production rule is fully general.
 
-### 24.4 StopAll downstream consequence of correct E ownership
+### 24.4 Exact-source E continuation ownership is direction-invariant
 
-Because the invalid Red E root above no longer exists, the old downstream `StopAll @ 18:30:30` based on that Red sequence also disappears; the native behavior at that source is resolved by the surviving legitimate chain. This demonstrates why E reconciliation must happen before StopAll history is finalized.
+The invalid-S same-source cross-family rule does not depend on Bullish/Bearish direction. Family labels remain invariant; only price geometry mirrors. A price-mirrored validation fixture preserves the same `E1 Blue → E2 Blue → E3 Blue` ownership sequence without allowing an invalid Red S root to steal the physical source.
 
-### 24.5 Bullish S-reversal StopAll cycle
+### 24.5 Bearish validation of the family-invariant S-reversal StopAll cycle
 
-XAUUSD 30s validation shape after `StopAll2 @ 2026-09-17 06:25:00`: dominant Blue behavior reaches `E3 Blue @ 08:54:00` and another dominant `E3 Blue @ 13:00:30` extends the same Blue lifecycle, so the cumulative dominant-Blue count is at least two. Accepted `S Red @ 16:15:00` is therefore promoted to `StopAll1` on that same source. After the promoted StopAll1 strictly stops, the accepted E source at `17:15:00` becomes `StopAll2`; after that StopAll2 strictly stops, the accepted E source at `18:30:30` becomes `StopAll3`. The rule is generic and must never branch on these timestamps.
+Bearish mirrors price geometry, not Red/Blue family labels. After a hard lifecycle reset or from calculation start, once at least two dominant Blue behaviors have accumulated, the next accepted S Red is promoted on its own source to `StopAll1`. A Blue progression may cross keys: `S Blue → E1 Blue` is already two dominant Blue behaviors. In the XAUUSD 1s / 30s validation case, `S Blue @ 2026-09-04 01:35:30` followed by dominant `E1 Blue @ 01:48:30` satisfies the minimum, so accepted `S Red @ 02:36:00` becomes `StopAll1`. Its strict Bearish stop uses `High > StopAll.price`; later accepted E sources may then become `StopAll2`, `StopAll3`, and so on. No timestamp or fixture-specific branch is allowed.
 
-XAUUSD 1s / 30s Bearish validation shape: `S Blue @ 2026-09-04 01:35:30` followed by dominant `E1 Blue @ 01:48:30` already supplies at least two dominant Blue behaviors even though the labels are different keys. Accepted `S Red @ 02:36:00` must therefore be promoted to `StopAll1`. This case is the explicit proof that the reversal counter spans dominant Blue S/E progression and is not a same-key counter. Bearish strict-stop geometry remains mirrored, but Blue/Red family labels are unchanged.
+### 24.6 Canonical Bearish Order_B worked example — XAUUSD 30s
 
-### 24.6 Canonical Bullish Order_B mirror contract
+Using `RAW FOREXCOM_XAUUSD 5S FROM 2026-09-03 18-44-00 TO 2026-09-19 00-29-35(1).json` in Bearish 30s calculation:
 
-For Bullish, mirror the Bearish worked route mechanically: a **Bullish Reaction Reset** owns the setup; take the maximum High from its Breakout main candle through its Reset main candle inclusive as the ceiling; after the exact Reset wait for strict `High > ceiling`; use the closed ceiling-source→strict-break-main-candle interval to require raw Bearish Reaction geometry and to obtain the minimum-Low floor; then the first canonical Bearish Reaction after the gate is the physical Order_B. No Red/Blue family, lifecycle priority, Doji or serialization invariant is mirrored.
+- Bearish Reaction First: `2026-09-04 09:24:00`; Breakout main candle: `09:24:30`.
+- That Bearish Reaction resets on main candle `09:25:30`.
+- Breakout→Reset inclusive minimum Low is `4467.370`, owned by main candle `09:25:00`; this is the Reset-leg floor.
+- First exact lower-timeframe strict floor break is `2026-09-04 09:42:10` (`Low < 4467.370`), contained in the `09:42:00` main candle.
+- Closed evidence interval is therefore `09:25:00 .. 09:42:00`, inclusive.
+- Raw Bullish Reaction geometry exists inside that exact interval (First `09:27:00`, Break `09:28:00`). Its later Reset/lifecycle status is irrelevant to this evidence test.
+- Maximum High over the same closed interval is `4473.530`, owned by `09:31:30`; this is the Reset-leg ceiling.
+- The first canonical Bullish Reaction after the gate has First `09:45:00`, Break `09:45:30`, exact confirmation `09:45:55`; that physical Reaction is Order_B.
+
+These timestamps/prices are regression evidence only and must never be hardcoded.
 
 
-### 24.7 Shared accepted-Order exact mirror
+### 24.7 Shared accepted-Order regression case — XAUUSD Bearish 30s
 
-Bullish uses the identical parent-neutral accepted-Order rule. An already accepted Bearish physical Order may decide a different Bullish S/E candidate when the exact Bearish Order stop is chronologically eligible. Creation parent identity is invariant and ignored; only directional price semantics mirror (`Low/High`, `<`/`>`, minimum/maximum). Hard StopAll/sequence resets remain absolute boundaries.
+On `RAW FOREXCOM_XAUUSD 5S FROM 2026-09-03 18-44-00 TO 2026-09-19 00-29-35(1).json`, physical Bullish Order First `2026-09-04 17:45:30` is already accepted from an A parent-stop. Its canonical stop source is `Low 2026-09-04 17:41:30 = 4419.235`, exact confirmation is `17:55:45`, and exact strict Order stop is `18:24:40`. A different Red S parent stopped earlier at `17:13:05`; the Order is still eligible because shared accepted-Order confirmation does not require matching parents. The Bearish E source over the complete parent-stop→Order-stop main-candle interval is `High 2026-09-04 18:05:30 = 4442.395`. The Order retains its original A parent-stop creation cause; the E use is `accepted-live`. These values are regression evidence only and must never be hardcoded.
+
+### 24.8 Cycle/stage-order regression — USOIL Bearish 30s
+
+On `RAW FXCM_USOIL 5S FROM 2026-09-11 02-53-30 TO 2026-09-15 11-03-45.json`, accepted `S Blue @ 2026-09-11 17:43:00` already owns the later stage. The would-be `A @ 2026-09-11 18:01:30` is a rejected fallback A under that S-owned transition and therefore must not become a behavior. The accepted S is not consumed by the rejected A. This example is regression evidence only and must never be timestamp-hardcoded.
 
 ## 25. Reconstruction procedure and implementation traps
 
@@ -1960,6 +2001,8 @@ Bullish uses the identical parent-neutral accepted-Order rule. An already accept
 11. Implement final visibility and serializers last.
 
 ### 25.2 Common reconstruction mistakes that change output
+
+- Allowing a rejected fallback A to consume an accepted S and then using S descendants of that rejected A in E/StopAll calculation; this violates the normative `A → S → E → StopAll` stage order.
 
 - Slicing RAW before calculation instead of filtering only at serialization.
 - Treating equality as a stop/confirmation.
@@ -9686,10 +9729,10 @@ def detect_e_zones(
 
 ### 26.6 `lifecycle_engine.py`
 
-- Lines: `1634`
-- SHA-256: `253eb154443033b6fee5fc05644ff4348ee039201b0da857ad87a78414ac258c`
+- Lines: `1645`
+- SHA-256: `8df04b7730c0ab68c8030e5e2f23a29bcc090f2fd86b41f8fe1f3e5a19842f08`
 
-<!-- SOURCE_FILE_BEGIN:lifecycle_engine.py:SHA256=253eb154443033b6fee5fc05644ff4348ee039201b0da857ad87a78414ac258c -->
+<!-- SOURCE_FILE_BEGIN:lifecycle_engine.py:SHA256=8df04b7730c0ab68c8030e5e2f23a29bcc090f2fd86b41f8fe1f3e5a19842f08 -->
 ```python
 """Cross-stage behavior lifecycle, visibility, priority, and StopAll ownership.
 
@@ -9711,8 +9754,8 @@ from core_utils import as_decimal, order_identity
 from direction_policy import policy_for
 
 
-STOP_ALL_VERSION = "1.11.2"
-STOP_ALL_LAST_MODIFIED = "2026-09-20 03:48:27 +03:30"
+STOP_ALL_VERSION = "1.12.0"
+STOP_ALL_LAST_MODIFIED = "2026-09-20 05:46:16 +03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -10540,7 +10583,7 @@ def dominant_module(modules: Sequence[object]) -> object:
 def split_a_zones_by_dominant_stops(
     a_zones, s_zones, e_zones, stopalls, candles, direction,
     stop_event_finder=None, trend_reactions=None, confirmation_finder=None,
-    a_stop_event_finder=None,
+    a_stop_event_finder=None, stage_invalid_a_identities=None,
 ):
     """Separate visible A labels from A objects allowed into downstream math.
 
@@ -10724,6 +10767,17 @@ def split_a_zones_by_dominant_stops(
 
         invalid.append(a_zone)
         dominant_priority = module_priority(dominant)
+        if hasattr(dominant, "a_source_time"):
+            # Stage-order invariant: A -> S -> E -> StopAll.  When S owns the
+            # transition, a rejected fallback A cannot consume that S merely
+            # by being rejected; otherwise the next A can re-enter behind S
+            # and fabricate a second S branch in the same stage.  Keep S as
+            # owner until a genuinely later-stage behavior takes ownership.
+            if stage_invalid_a_identities is not None:
+                stage_invalid_a_identities.add(
+                    (getattr(a_zone, "source_time"), int(getattr(a_zone, "source_index")))
+                )
+            continue
         for module in eligible:
             if module_priority(module) <= dominant_priority:
                 consumed.add(module_identity(module))
@@ -11330,10 +11384,10 @@ def visible_a_zones(a_zones: Sequence[object], s_zones: Sequence[object]) -> lis
 
 ### 26.7 `trading_pipeline.py`
 
-- Lines: `1895`
-- SHA-256: `5f4893ea973c0aaac35d28b376edc37c3dbddb5d9bcc861b5b6fec257675652c`
+- Lines: `1918`
+- SHA-256: `a19b29c2a44f40c779443b5d478bbc2520bc873992a9b80ef6f4fe8793c8f76d`
 
-<!-- SOURCE_FILE_BEGIN:trading_pipeline.py:SHA256=5f4893ea973c0aaac35d28b376edc37c3dbddb5d9bcc861b5b6fec257675652c -->
+<!-- SOURCE_FILE_BEGIN:trading_pipeline.py:SHA256=a19b29c2a44f40c779443b5d478bbc2520bc873992a9b80ef6f4fe8793c8f76d -->
 ```python
 """Production trading pipeline orchestration, input normalization, and serialization.
 
@@ -11375,8 +11429,8 @@ from core_utils import as_decimal, order_identity
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.3.1"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-09-20 03:48:27 +03:30"
+TRADING_PIPELINE_VERSION = "1.4.0"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-09-20 05:46:16 +03:30"
 
 TEHRAN = ZoneInfo("Asia/Tehran")
 
@@ -12380,6 +12434,7 @@ def calculate_full_direction_state(
     candidate_a = lifecycle_engine.visible_a_zones_after_s_stops(
         candidate_a, s_zones, candles
     )
+    stage_invalid_a_identities: set[tuple[datetime, int]] = set()
     _calculation_a, invalid_a = lifecycle_engine.split_a_zones_by_dominant_stops(
         candidate_a,
         s_candidates,
@@ -12399,6 +12454,7 @@ def calculate_full_direction_state(
                 direction,
             ),
         ),
+        stage_invalid_a_identities=stage_invalid_a_identities,
     )
     invalid_a_identities = {
         (getattr(item, "source_time"), int(getattr(item, "source_index")))
@@ -12413,6 +12469,22 @@ def calculate_full_direction_state(
         (getattr(item, "source_time"), int(getattr(item, "source_index")))
         for item in invalid_s
     }
+    stage_invalid_a_source_times = {
+        source_time for source_time, _ in stage_invalid_a_identities
+    }
+    stage_invalid_s_identities = {
+        (getattr(item, "source_time"), int(getattr(item, "source_index")))
+        for item in s_candidates
+        if getattr(item, "a_source_time") in stage_invalid_a_source_times
+    }
+    # Only S descendants of an A rejected specifically by S-stage ownership
+    # are removed from later-stage calculation.  Other suppressed S evidence
+    # keeps its established continuation semantics unchanged.
+    s_zones = [
+        item for item in s_zones
+        if (getattr(item, "source_time"), int(getattr(item, "source_index")))
+        not in stage_invalid_s_identities
+    ]
 
     accepted_a_sources = {
         getattr(item, "source_time")
@@ -12498,8 +12570,13 @@ def calculate_full_direction_state(
         collect_historical_e_rescues(e_detector)
         collect_accepted_e_history(e_zones)
 
+    calculation_s_candidates = [
+        item for item in s_candidates
+        if (getattr(item, "source_time"), int(getattr(item, "source_index")))
+        not in stage_invalid_s_identities
+    ]
     consumed_s_evidence = lifecycle_engine.consumed_s_evidence_after_larger_stop(
-        s_candidates,
+        calculation_s_candidates,
         s_zones,
         e_zones,
         direction,
@@ -13365,4 +13442,4 @@ The build audit for this document extracts all nine embedded files and verifies 
 
 ## 28. Final canonical contract
 
-This file is both an algorithm specification and a self-contained implementation archive for the declared Source snapshot. V5.3.0 preserves the V5.2.0 Order_B/reset-leg rebuild and supersedes earlier shared accepted-Order ownership/confirmation wording. A future revision that changes production behavior must update the document Version, Last Modified Date & Time, source manifest/hash, affected semantic sections, and embedded exact source snapshot together. A documentation-only wording change must not silently change the embedded source hashes.
+This file is both an algorithm specification and a self-contained implementation archive for the declared Source snapshot. V5.4.0 preserves the V5.2.0 canonical Order_B rebuild and V5.3.0 shared accepted-Order correction, and supersedes earlier cycle/stage-order ownership wording. A future revision that changes production behavior must update the document Version, Last Modified Date, source manifest/hash, affected semantic sections, and embedded exact source snapshot together. A documentation-only wording change must not silently change the embedded source hashes.

@@ -38,8 +38,8 @@ from core_utils import as_decimal, order_identity
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.3.1"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-09-20 03:48:27 +03:30"
+TRADING_PIPELINE_VERSION = "1.4.0"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-09-20 05:46:16 +03:30"
 
 TEHRAN = ZoneInfo("Asia/Tehran")
 
@@ -1043,6 +1043,7 @@ def calculate_full_direction_state(
     candidate_a = lifecycle_engine.visible_a_zones_after_s_stops(
         candidate_a, s_zones, candles
     )
+    stage_invalid_a_identities: set[tuple[datetime, int]] = set()
     _calculation_a, invalid_a = lifecycle_engine.split_a_zones_by_dominant_stops(
         candidate_a,
         s_candidates,
@@ -1062,6 +1063,7 @@ def calculate_full_direction_state(
                 direction,
             ),
         ),
+        stage_invalid_a_identities=stage_invalid_a_identities,
     )
     invalid_a_identities = {
         (getattr(item, "source_time"), int(getattr(item, "source_index")))
@@ -1076,6 +1078,22 @@ def calculate_full_direction_state(
         (getattr(item, "source_time"), int(getattr(item, "source_index")))
         for item in invalid_s
     }
+    stage_invalid_a_source_times = {
+        source_time for source_time, _ in stage_invalid_a_identities
+    }
+    stage_invalid_s_identities = {
+        (getattr(item, "source_time"), int(getattr(item, "source_index")))
+        for item in s_candidates
+        if getattr(item, "a_source_time") in stage_invalid_a_source_times
+    }
+    # Only S descendants of an A rejected specifically by S-stage ownership
+    # are removed from later-stage calculation.  Other suppressed S evidence
+    # keeps its established continuation semantics unchanged.
+    s_zones = [
+        item for item in s_zones
+        if (getattr(item, "source_time"), int(getattr(item, "source_index")))
+        not in stage_invalid_s_identities
+    ]
 
     accepted_a_sources = {
         getattr(item, "source_time")
@@ -1161,8 +1179,13 @@ def calculate_full_direction_state(
         collect_historical_e_rescues(e_detector)
         collect_accepted_e_history(e_zones)
 
+    calculation_s_candidates = [
+        item for item in s_candidates
+        if (getattr(item, "source_time"), int(getattr(item, "source_index")))
+        not in stage_invalid_s_identities
+    ]
     consumed_s_evidence = lifecycle_engine.consumed_s_evidence_after_larger_stop(
-        s_candidates,
+        calculation_s_candidates,
         s_zones,
         e_zones,
         direction,
