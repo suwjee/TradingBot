@@ -18,8 +18,8 @@ from typing import Iterable, Sequence
 from direction_policy import policy_for
 
 
-REACTION_ENGINE_VERSION = "9.6.0"
-REACTION_ENGINE_LAST_MODIFIED = "2026-09-20 03:48:27 +03:30"
+REACTION_ENGINE_VERSION = "9.8.0"
+REACTION_ENGINE_LAST_MODIFIED = "2026-09-22 00:35:00 +03:30"
 
 _SEQUENCE_TIME_INDEXES: dict[int, tuple[Sequence[Candle], list[datetime]]] = {}
 
@@ -1227,14 +1227,17 @@ def build_behavior_reaction_views(
     ) -> bool:
         left = bisect.bisect_left(second_times, first_time)
         right = bisect.bisect_right(second_times, confirmed_at)
-        relevant = seconds[left:right]
-        if not relevant:
+        if left >= right:
             return False
-        return all(
-            _decimal_value(item.low) >= bottom
-            and _decimal_value(item.high) <= top
-            for item in relevant
-        )
+        # Algorithm requirement: every physical lower-timeframe candle must
+        # remain inside [bottom, top].  The immutable lower-timeframe range
+        # index proves the exact same predicate via min(Low) and max(High),
+        # without allocating/scanning the full slice for every Reaction pair.
+        minimum_low, _ = chronology.lower_index.range_minimum(left, right)
+        if minimum_low < bottom:
+            return False
+        maximum_high, _ = chronology.lower_index.range_maximum(left, right)
+        return maximum_high <= top
 
     blocked: dict[str, set[tuple[int, int]]] = {
         "bullish": set(),
@@ -1466,22 +1469,38 @@ class UnifiedReactionDetector(DetectorBase):
         # confirmation edge keeps the structure that discovered the Reaction:
         #   Bullish  -> BoxTop is the breakout edge.
         #   Bearish  -> BoxBottom is the breakdown edge.
-        # The opposite edge, however, belongs to the complete confirmed
-        # First..Break geometry (inclusive), not to pre-First context.
-        # This rule is symmetric and applies to every published Reaction.
+        # The opposite edge belongs to First..exact-confirmation chronology.
+        # Full main candles strictly before Break are eligible in full.  When
+        # the Break candle itself owns the full-range opposite extreme, only
+        # lower-timeframe prices up to and including the first strict
+        # confirmation event may contribute.  Post-confirmation remainder
+        # prices can never retroactively rewrite the Reaction/Order box.
         if candidate.break_idx is not None:
             first_index = int(candidate.first_idx)
             break_index = int(candidate.break_idx)
+            break_candle = self.candles[break_index]
             if direction == "bullish":
                 bottom, bottom_source = self.minimum_low(first_index, break_index)
                 candidate.box_bottom = bottom
                 candidate.box_bottom_source_idx = bottom_source.index
                 candidate.box_bottom_source_time = bottom_source.display_time
+                if bottom_source.index == break_index:
+                    analysis = self.bull.breakout_analysis(candidate, break_candle)
+                    if analysis is not None:
+                        candidate.box_bottom = analysis.extreme
+                        candidate.box_bottom_source_idx = analysis.extreme_source.index
+                        candidate.box_bottom_source_time = analysis.extreme_source.display_time
             else:
                 top, top_source = self.maximum_high(first_index, break_index)
                 candidate.box_top = top
                 candidate.box_top_source_idx = top_source.index
                 candidate.box_top_source_time = top_source.display_time
+                if top_source.index == break_index:
+                    analysis = self.bear.breakdown_analysis(candidate, break_candle)
+                    if analysis is not None:
+                        candidate.box_top = analysis.extreme
+                        candidate.box_top_source_idx = analysis.extreme_source.index
+                        candidate.box_top_source_time = analysis.extreme_source.display_time
 
         self.all_reactions[direction].append(replace(candidate))
         return True
@@ -1771,17 +1790,15 @@ class UnifiedReactionDetector(DetectorBase):
         reactions = self.all_reactions[direction]
         break_indices = self._reaction_break_indices(direction)
         # `break_indices` is non-decreasing and duplicate-free for this
-        # engine's reaction stream, so every reaction strictly before
-        # `gate_index` is automatically confirmed; only a reaction whose
-        # `break_idx` equals `gate_index` needs the fine-grained intrabar
-        # check via `confirmed_no_later_than_gate`.
+        # engine's reaction stream. Keep only the owning position instead of
+        # allocating the complete historical prefix on every gate lookup.
         cut = bisect.bisect_left(break_indices, gate_index)
-        history = list(reactions[:cut])
+        owner_position = cut - 1
         if cut < len(reactions) and break_indices[cut] == gate_index:
             if confirmed_no_later_than_gate(reactions[cut]):
-                history.append(reactions[cut])
+                owner_position = cut
         search_start = gate_index + 1
-        if not history:
+        if owner_position < 0:
             result = self._earliest_confirmed_geometry(
                 direction, search_start, limit
             )
@@ -1789,7 +1806,7 @@ class UnifiedReactionDetector(DetectorBase):
                 result.order_gate_decision = "no-history"
             return result
 
-        owner = max(history, key=lambda item: int(item.break_idx))
+        owner = reactions[owner_position]
         boundary_end = max(int(owner.first_idx), gate_index - 1)
         gate = self.candles[gate_index]
         if direction == "bearish":
@@ -1805,25 +1822,37 @@ class UnifiedReactionDetector(DetectorBase):
 
         event_start = gate_event_time or gate.timestamp
         event_end = self.candles[limit].timestamp + self.timeframe
-        decision: tuple[str, Candle] | None = None
-        for lower in self.seconds_between(event_start, event_end):
-            if direction == "bearish":
-                outer_cross = lower.high > outer_boundary
-                gate_cross = lower.low < gate_boundary
-            else:
-                outer_cross = lower.low < outer_boundary
-                gate_cross = lower.high > gate_boundary
-            if outer_cross:
-                decision = ("restart", lower)
-                break
-            if gate_cross:
-                decision = ("continue", lower)
-                break
-
-        if decision is None:
+        left = bisect.bisect_left(self.second_times, event_start)
+        right = bisect.bisect_left(self.second_times, event_end)
+        if left >= right:
             return None
-        if decision[0] == "restart":
-            source = self.main_source_for_time(decision[1].timestamp)
+        if direction == "bearish":
+            outer_position = self.lower_index.first_greater(
+                left, right, outer_boundary
+            )
+            gate_position = self.lower_index.first_less(
+                left, right, gate_boundary
+            )
+        else:
+            outer_position = self.lower_index.first_less(
+                left, right, outer_boundary
+            )
+            gate_position = self.lower_index.first_greater(
+                left, right, gate_boundary
+            )
+        if outer_position is None and gate_position is None:
+            return None
+        # Legacy loop checks the outer/restart predicate first inside each
+        # lower-timeframe candle, so restart owns an exact-position tie.
+        restart = outer_position is not None and (
+            gate_position is None or outer_position <= gate_position
+        )
+        decision_position = outer_position if restart else gate_position
+        assert decision_position is not None
+        decision_time = self.second_times[decision_position]
+        decision_kind = "restart" if restart else "continue"
+        if decision_kind == "restart":
+            source = self.main_source_for_time(decision_time)
             if source is None:
                 return None
             search_start = int(source.index) + 1
@@ -1833,8 +1862,8 @@ class UnifiedReactionDetector(DetectorBase):
             direction, search_start, limit
         )
         if result is not None:
-            result.order_gate_decision = decision[0]
-            if decision[0] == "continue" and (
+            result.order_gate_decision = decision_kind
+            if decision_kind == "continue" and (
                 result.anchor_idx is None or result.anchor_value is None
             ):
                 # The gate-bounded geometry already carries the true current
@@ -2107,15 +2136,14 @@ class UnifiedReactionDetector(DetectorBase):
             if direction == "bullish"
             else initial_helper.breakdown_analysis(initial, initial_break_candle)
         )
-        # Bullish mirror completion: exact-confirmation geometry owns the
-        # post-confirmation remainder. ``_append_reaction`` may later expand
-        # the public opposite edge with the complete Break main candle, but
-        # that later presentation geometry must never erase a Bullish Reset
-        # that occurred after exact confirmation inside the same candle. The
-        # already-approved Bearish path remains unchanged.
+        # Exact-confirmation geometry owns the post-confirmation remainder in
+        # both directions. ``_append_reaction`` may later expand the public
+        # opposite edge with the complete Break main candle, but that later
+        # presentation geometry must never erase a Reset that occurred after
+        # exact confirmation inside the same candle.
         initial_reset_level = (
             initial_analysis.extreme
-            if direction == "bullish" and initial_analysis is not None
+            if initial_analysis is not None
             else (initial.box_bottom if direction == "bullish" else initial.box_top)
         )
         initial_reset_second = (
@@ -2221,7 +2249,7 @@ class UnifiedReactionDetector(DetectorBase):
                 )
                 reset_level = (
                     analysis.extreme
-                    if direction == "bullish" and analysis is not None
+                    if analysis is not None
                     else (
                         structural.box_bottom
                         if direction == "bullish"
@@ -2305,7 +2333,9 @@ class UnifiedReactionDetector(DetectorBase):
                         candidate.break_idx = candle.index
                         candidate.break_time = candle.display_time
                         analysis = self._refine(direction, candidate, candle)
-                        reset_level = candidate.box_top
+                        reset_level = (
+                            analysis.extreme if analysis is not None else candidate.box_top
+                        )
                         post_reset_second = self.bear.post_breakdown_reset(
                             analysis, reset_level, candle
                         )
@@ -2322,7 +2352,7 @@ class UnifiedReactionDetector(DetectorBase):
                             self._append_reset(
                                 direction,
                                 candle,
-                                previous.box_top,
+                                reset_level,
                                 previous.first_idx,
                                 post_reset_second.display_time,
                             )

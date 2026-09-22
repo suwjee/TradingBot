@@ -18,8 +18,8 @@ from core_utils import as_decimal, reaction_identity
 from direction_policy import policy_for
 
 
-S_ZONE_VERSION = "4.14.0"
-S_ZONE_LAST_MODIFIED = "2026-09-20 04:35:08 +03:30"
+S_ZONE_VERSION = "4.19.0"
+S_ZONE_LAST_MODIFIED = "2026-09-22 00:35:00 +03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -118,6 +118,26 @@ class SZoneDetector:
             int(getattr(item, "first_idx")): (number, item)
             for number, item in enumerate(self.opposite_reactions, start=1)
         }
+        # Performance implementation detail: the authoritative Order chronology
+        # is immutable for this detector run. Build its exact legacy sort order
+        # once, then bisect/cache A-stop lookups instead of re-scanning and
+        # re-sorting the complete opposite-Reaction history for every A.
+        self._opposite_order_matches = sorted(
+            (
+                self._reaction_confirmation_time(item, self.order_direction),
+                int(getattr(item, "first_idx")),
+                int(getattr(item, "break_idx")),
+                number,
+                item,
+            )
+            for number, item in enumerate(self.opposite_reactions, start=1)
+        )
+        self._opposite_order_confirmation_times = [
+            item[0] for item in self._opposite_order_matches
+        ]
+        self._order_matches_after_cache: dict[
+            datetime, tuple[tuple[int, object, datetime], ...]
+        ] = {}
 
         for line in self.trend_blue_lines:
             if not bool(getattr(line, "calculation_valid", True)):
@@ -129,6 +149,45 @@ class SZoneDetector:
                 self._reset_blue_formation_by_reaction[reaction_number] = (
                     self._blue_formation_time(line)
                 )
+
+        # Performance implementation detail: immutable chronology indexes.
+        # They preserve the exact legacy sort keys and are scoped to this run.
+        self._trend_ordered = sorted(
+            (
+                self._reaction_confirmation_time(item, self.direction),
+                int(getattr(item, "first_idx")),
+                int(getattr(item, "break_idx")),
+                number,
+                item,
+            )
+            for number, item in enumerate(self.trend_reactions, start=1)
+        )
+        self._trend_ordered_confirmation_times = [item[0] for item in self._trend_ordered]
+        self._trend_confirmation_times_sorted = sorted(
+            item[0] for item in self._trend_ordered
+        )
+        self._opposite_confirmation_by_first = {
+            int(getattr(item, "first_idx")): self._reaction_confirmation_time(
+                item, self.order_direction
+            )
+            for item in self.opposite_reactions
+        }
+        self._opposite_reset_events = sorted(
+            ((self._reset_time(reset), reset) for reset in self.opposite_resets),
+            key=lambda item: item[0],
+        )
+        self._opposite_reset_event_times = [item[0] for item in self._opposite_reset_events]
+        self._opposite_reset_times_by_owner: dict[int, list[datetime]] = {}
+        for reset_time, reset in self._opposite_reset_events:
+            self._opposite_reset_times_by_owner.setdefault(
+                int(getattr(reset, "from_first_idx")), []
+            ).append(reset_time)
+        self._public_blue_formation_times = sorted(
+            self._blue_formation_time(line)
+            for line in self.trend_blue_lines
+            if bool(getattr(line, "calculation_valid", True))
+            and not bool(getattr(line, "behavior_internal", False))
+        )
 
     def _main_index(self, timestamp: datetime) -> int:
         return self.chronology.main_index(timestamp)
@@ -215,48 +274,118 @@ class SZoneDetector:
     def _first_order_after(
         self, a_stop_event_time: datetime
     ) -> tuple[int, object, datetime] | None:
-        """Return the earliest eligible canonical opposite Order after A-stop.
+        """Return the first provisional canonical opposite Order after A-stop.
 
-        Published Reaction identity is authoritative for an S Order.  Local or
-        bounded geometry may be useful elsewhere as a search aid, but it must
-        not jump over an earlier healthy canonical Reaction.  A Reaction whose
-        First belongs to the main candle containing the exact A-stop remains
-        eligible when its exact confirmation occurs strictly after the stop.
+        The first canonical Order opens stopped-A ownership.  A consecutive
+        native Mode-B chain may refresh that provisional owner later while S
+        remains undecided; ``_resolved_order_backed_zone`` owns that bounded
+        refresh rule.
         """
-        gate_index = self._main_index(a_stop_event_time)
-        candidates: list[tuple[datetime, int, int, int, object]] = []
-        for number, reaction in enumerate(self.opposite_reactions, start=1):
-            first_index = int(getattr(reaction, "first_idx"))
-            if first_index < gate_index:
-                continue
-            confirmation = self._reaction_confirmation_time(
-                reaction, self.order_direction
-            )
-            if confirmation <= a_stop_event_time:
-                continue
-            candidates.append((
-                confirmation,
-                first_index,
-                int(getattr(reaction, "break_idx")),
-                number,
-                reaction,
-            ))
-        if not candidates:
-            return None
-        confirmation, _, _, number, reaction = min(candidates, key=lambda item: item[:3])
-        return number, reaction, confirmation
+        matches = self._order_matches_after(a_stop_event_time)
+        return matches[0] if matches else None
 
-    def _audit_stopped_a(self, zone: object) -> None:
-        """Record the independent order gender created by one stopped A."""
+    def _order_matches_after(
+        self, a_stop_event_time: datetime
+    ) -> list[tuple[int, object, datetime]]:
+        """Return canonical opposite Orders after one A stop in chronology.
+
+        An A-owned Order may be refreshed by a later canonical opposite
+        Reaction while the S decision is still open.  The caller decides how
+        far that refresh chain remains authoritative; this helper only exposes
+        the exact confirmed Order chronology.
+        """
+        cached = self._order_matches_after_cache.get(a_stop_event_time)
+        if cached is not None:
+            return list(cached)
+
+        gate_index = self._main_index(a_stop_event_time)
+        position = bisect_right(
+            self._opposite_order_confirmation_times, a_stop_event_time
+        )
+        matches = tuple(
+            (number, reaction, confirmation)
+            for confirmation, first_index, _break, number, reaction
+            in self._opposite_order_matches[position:]
+            if first_index >= gate_index
+        )
+        self._order_matches_after_cache[a_stop_event_time] = matches
+        return list(matches)
+
+    def _resolved_order_backed_zone(
+        self,
+        zone: object,
+        a_ordinal: int,
+        a_price: Decimal,
+        a_stop: tuple[int, datetime, datetime],
+        first_order_match: tuple[int, object, datetime],
+    ) -> SZone | None:
+        """Resolve the final A-owned Order that decides the S branch.
+
+        The first canonical opposite Order after A-stop opens Order ownership,
+        but it is provisional while S is undecided.  If a later canonical
+        opposite Order confirms strictly before the current S decision event,
+        ownership refreshes to that newer Order and the S decision is
+        recalculated from its geometry.  Continue until no newer Order confirms
+        before the recalculated decision.  An Order that confirms at/after the
+        decision cannot retroactively steal the already-decided S.
+
+        This is direction-neutral; only the existing mirrored Order/S geometry
+        inside ``_build_order_backed_zone`` determines Red/Blue and price.
+        """
+        all_matches = self._order_matches_after(a_stop[2])
+        try:
+            position = next(
+                index
+                for index, match in enumerate(all_matches)
+                if reaction_identity(match[1]) == reaction_identity(first_order_match[1])
+            )
+        except StopIteration:
+            all_matches = [first_order_match, *all_matches]
+            position = 0
+
+        current_match = first_order_match
+        current_zone = self._build_order_backed_zone(
+            zone, a_ordinal, a_price, a_stop, current_match
+        )
+        if current_zone is None:
+            return None
+
+        # Native Mode-B is a continuation of the previous healthy opposite
+        # Reaction's semantic outer edge.  Consecutive Mode-B confirmations
+        # therefore belong to one replaceable Order chain while S is still
+        # undecided.  Mode-A starts a fresh Order structure and terminates this
+        # chain; it may not retroactively replace the already-open Mode-B chain.
+        if str(getattr(current_match[1], "mode", "")) != "B":
+            return current_zone
+
+        while position + 1 < len(all_matches):
+            replacement_position = position + 1
+            replacement = all_matches[replacement_position]
+            if str(getattr(replacement[1], "mode", "")) != "B":
+                break
+            if replacement[2] >= current_zone.decision_event_time:
+                break
+
+            refreshed = self._build_order_backed_zone(
+                zone, a_ordinal, a_price, a_stop, replacement
+            )
+            if refreshed is None:
+                break
+            current_match = replacement
+            current_zone = refreshed
+            position = replacement_position
+
+        self._reassign_a_order_audit(zone, a_stop[2], current_match)
+        return current_zone
+
+    def _record_a_order_audit(
+        self,
+        zone: object,
+        a_stop_event_time: datetime,
+        order_match: tuple[int, object, datetime],
+    ) -> None:
+        """Attach one stopped-A creation cause to a physical Order identity."""
         source_time = getattr(zone, "source_time")
-        a_price = as_decimal(getattr(zone, "price"))
-        a_stop = self._first_a_stop(a_price, self._a_confirmation_time(zone))
-        if a_stop is None:
-            return
-        _, _, a_stop_event_time = a_stop
-        order_match = self._first_order_after(a_stop_event_time)
-        if order_match is None:
-            return
         order_number, order, order_confirmation_time = order_match
         (
             order_stop_level,
@@ -273,8 +402,6 @@ class SZoneDetector:
                 "stop_level": order_stop_level,
                 "stop_source_index": order_stop_source_index,
                 "stop_source_time": order_stop_source_time,
-                # Keep the original scalar fields for E compatibility.  The
-                # complete A-stop provenance is retained below.
                 "a_source_time": source_time,
                 "a_stop_event_time": a_stop_event_time,
                 "a_causes": [],
@@ -284,6 +411,38 @@ class SZoneDetector:
         cause = (source_time, a_stop_event_time)
         if cause not in a_causes:
             a_causes.append(cause)
+
+    def _reassign_a_order_audit(
+        self,
+        zone: object,
+        a_stop_event_time: datetime,
+        order_match: tuple[int, object, datetime],
+    ) -> None:
+        """Move one A cause from provisional Orders to its final refreshed Order."""
+        cause = (getattr(zone, "source_time"), a_stop_event_time)
+        empty_identities: list[tuple[int, int]] = []
+        for identity, entry in self.order_audit.items():
+            a_causes = entry.get("a_causes")
+            if not isinstance(a_causes, list) or cause not in a_causes:
+                continue
+            entry["a_causes"] = [item for item in a_causes if item != cause]
+            if not entry["a_causes"]:
+                empty_identities.append(identity)
+        for identity in empty_identities:
+            self.order_audit.pop(identity, None)
+        self._record_a_order_audit(zone, a_stop_event_time, order_match)
+
+    def _audit_stopped_a(self, zone: object) -> None:
+        """Record the independent order gender created by one stopped A."""
+        a_price = as_decimal(getattr(zone, "price"))
+        a_stop = self._first_a_stop(a_price, self._a_confirmation_time(zone))
+        if a_stop is None:
+            return
+        _, _, a_stop_event_time = a_stop
+        order_match = self._first_order_after(a_stop_event_time)
+        if order_match is None:
+            return
+        self._record_a_order_audit(zone, a_stop_event_time, order_match)
 
     def _candidate_source(
         self, start_index: int, end_index: int
@@ -390,11 +549,10 @@ class SZoneDetector:
     def _type3_has_trend_reaction(
         self, a_stop_event: datetime, crossing: datetime
     ) -> bool:
-        return any(
-            a_stop_event
-            < self._reaction_confirmation_time(reaction, self.direction)
-            <= crossing
-            for reaction in self.trend_reactions
+        position = bisect_right(self._trend_confirmation_times_sorted, a_stop_event)
+        return (
+            position < len(self._trend_confirmation_times_sorted)
+            and self._trend_confirmation_times_sorted[position] <= crossing
         )
 
     def _first_type3(
@@ -403,52 +561,31 @@ class SZoneDetector:
         deadline: datetime,
     ) -> tuple[int, datetime, Decimal, int, datetime, int, datetime, datetime] | None:
         """Find the first no-order Type-3 Reset-leg S decision before a new order."""
-        reset_times_by_owner: dict[int, list[datetime]] = {}
-        for reset in self.opposite_resets:
-            reset_times_by_owner.setdefault(
-                int(getattr(reset, "from_first_idx")), []
-            ).append(self._reset_time(reset))
-
-        eligible: set[int] = set()
-        for reaction in self.opposite_reactions:
-            first_index = int(getattr(reaction, "first_idx"))
-            confirmation = self._reaction_confirmation_time(
-                reaction, self.order_direction
-            )
-            # A reaction whose Breakout and the A stop share the finest
-            # available candle is already the pre-stop owner: its confirmation
-            # threshold is crossed before the slightly deeper A-stop level in
-            # the accepted Type-3 geometry.
-            if confirmation > a_stop_event:
-                continue
-            if any(
-                reset_time <= a_stop_event
-                for reset_time in reset_times_by_owner.get(first_index, [])
-            ):
-                continue
-            eligible.add(first_index)
-
         winner = None
-        for reset in sorted(self.opposite_resets, key=self._reset_time):
+        left = bisect_right(self._opposite_reset_event_times, a_stop_event)
+        right = bisect_left(self._opposite_reset_event_times, deadline)
+        for reset_time, reset in self._opposite_reset_events[left:right]:
             owner_first = int(getattr(reset, "from_first_idx"))
-            reset_time = self._reset_time(reset)
-            if (
-                owner_first not in eligible
-                or reset_time <= a_stop_event
-                or reset_time >= deadline
-            ):
+            owner_confirmation = self._opposite_confirmation_by_first.get(owner_first)
+            if owner_confirmation is None or owner_confirmation > a_stop_event:
+                continue
+            owner_resets = self._opposite_reset_times_by_owner.get(owner_first, ())
+            if owner_resets and owner_resets[0] <= a_stop_event:
                 continue
             leg = self._type3_reset_leg(reset)
             if leg is None:
                 continue
             source_index, source_time, boundary = leg
-            crossing = None
-            for item in self._lower_window(reset_time, deadline):
-                if self._candidate_crossed(item, boundary):
-                    crossing = getattr(item, "timestamp")
-                    break
-            if crossing is None:
+            lower_left = bisect_left(self.lower_times, reset_time)
+            lower_right = bisect_left(self.lower_times, deadline)
+            crossing_position = (
+                self.lower_index.first_less(lower_left, lower_right, boundary)
+                if self.direction == "bullish"
+                else self.lower_index.first_greater(lower_left, lower_right, boundary)
+            )
+            if crossing_position is None:
                 continue
+            crossing = self.lower_times[crossing_position]
             if not self._type3_has_trend_reaction(a_stop_event, crossing):
                 continue
             decision_index = self._main_index(crossing)
@@ -466,6 +603,140 @@ class SZoneDetector:
             if winner is None or candidate[-1] < winner[-1]:
                 winner = candidate
         return winner
+
+
+    def _type4_has_blue(
+        self, candidate_source_index: int, crossing_event: datetime
+    ) -> bool:
+        """Return whether a public calculation-valid Blue exists in Type-4 window."""
+        window_start = self.candle_times[candidate_source_index]
+        position = bisect_left(self._public_blue_formation_times, window_start)
+        return (
+            position < len(self._public_blue_formation_times)
+            and self._public_blue_formation_times[position] <= crossing_event
+        )
+
+    def _first_type4(
+        self,
+        a_stop: tuple[int, datetime, datetime],
+        deadline: datetime,
+    ) -> tuple[int, datetime, Decimal, int, datetime, int, datetime] | None:
+        """Find the first order-free S Blue Type-4 decision after A stop.
+
+        Bearish: from the A-stop main candle through the Breakout main candle
+        of the latest confirmed Bearish Reaction, the maximum High is the
+        current S candidate. Bullish mirrors with minimum Low. The candidate is
+        valid only while no opposite Order has formed. If it strict-crosses
+        without a qualifying Blue, no S is emitted; a later aligned Reaction
+        replaces it with a freshly calculated candidate over the same A-stop
+        origin.
+        """
+        a_stop_index, _a_stop_time, a_stop_event = a_stop
+        left = bisect_right(self._trend_ordered_confirmation_times, a_stop_event)
+        right = bisect_left(self._trend_ordered_confirmation_times, deadline)
+        aligned = [
+            (confirmation, number, reaction)
+            for confirmation, _first, break_index, number, reaction
+            in self._trend_ordered[left:right]
+            if break_index >= a_stop_index
+        ]
+
+        for position, (confirmation, reaction_number, reaction) in enumerate(aligned):
+            break_index = int(getattr(reaction, "break_idx"))
+            source_index, source_time, candidate_level = self._candidate_source_last(
+                a_stop_index, break_index
+            )
+            candidate_event = self._candidate_event_time(
+                source_index, candidate_level, a_stop_event
+            )
+            search_start = max(confirmation, candidate_event, a_stop_event)
+            next_confirmation = (
+                aligned[position + 1][0]
+                if position + 1 < len(aligned)
+                else deadline
+            )
+            search_end = min(deadline, next_confirmation)
+            if search_start >= search_end:
+                continue
+
+            lower_left = bisect_left(self.lower_times, search_start)
+            lower_right = bisect_left(self.lower_times, search_end)
+            crossing_position = (
+                self.lower_index.first_less(lower_left, lower_right, candidate_level)
+                if self.direction == "bullish"
+                else self.lower_index.first_greater(lower_left, lower_right, candidate_level)
+            )
+            if crossing_position is None:
+                continue
+            crossing_event = self.lower_times[crossing_position]
+            if not self._type4_has_blue(source_index, crossing_event):
+                # The candidate failed without Blue.  While no Order exists,
+                # the next aligned Reaction will transfer/rebuild the candidate.
+                continue
+
+            decision_index = self._main_index(crossing_event)
+            return (
+                source_index,
+                source_time,
+                candidate_level,
+                decision_index,
+                getattr(self.candles[decision_index], "timestamp"),
+                reaction_number,
+                crossing_event,
+            )
+        return None
+
+    def _build_type4_zone(
+        self,
+        zone: object,
+        a_ordinal: int,
+        a_price: Decimal,
+        a_stop: tuple[int, datetime, datetime],
+        type4: tuple[int, datetime, Decimal, int, datetime, int, datetime],
+    ) -> SZone:
+        """Build the order-free Blue Type-4 continuation for one stopped A."""
+        a_stop_index, a_stop_time, a_stop_event_time = a_stop
+        (
+            source_index, source_time, price, decision_index, decision_time,
+            _trend_reaction_number, decision_event_time,
+        ) = type4
+        return SZone(
+            direction=self.direction,
+            color="blue",
+            formation_type="type4",
+            a_ordinal=a_ordinal,
+            a_source_index=int(getattr(zone, "source_index")),
+            a_source_time=getattr(zone, "source_time"),
+            a_price=a_price,
+            a_stop_index=a_stop_index,
+            a_stop_time=a_stop_time,
+            a_stop_event_time=a_stop_event_time,
+            order_direction=None,
+            order_reaction_number=None,
+            order_mode=None,
+            order_first_index=None,
+            order_first_time=None,
+            order_break_index=None,
+            order_break_time=None,
+            order_confirmation_time=None,
+            order_box_top=None,
+            order_box_top_source_index=None,
+            order_box_top_source_time=None,
+            order_box_bottom=None,
+            order_box_bottom_source_index=None,
+            order_box_bottom_source_time=None,
+            order_stop_level=None,
+            order_stop_source_index=None,
+            order_stop_source_time=None,
+            reset_reaction_number=None,
+            reset_time=None,
+            source_index=source_index,
+            source_time=source_time,
+            price=price,
+            decision_index=decision_index,
+            decision_time=decision_time,
+            decision_event_time=decision_event_time,
+        )
 
 
     def _candidate_after_order(
@@ -738,21 +1009,12 @@ class SZoneDetector:
     def _has_ordinary_trend_reaction(
         self, behavior_start: datetime, event_time: datetime
     ) -> bool:
-        """Return whether ordinary aligned geometry completed in the leg.
-
-        Order/S behavior deliberately consumes the maintained reaction output
-        as geometry, without requiring its Reset Blue to own the event.  The
-        reaction may complete before or after the opposite order confirms, but
-        it must complete after the active A-stop behavior begins and no later
-        than the candidate crossing.
-        """
-        for reaction in self.trend_reactions:
-            confirmation = self._reaction_confirmation_time(
-                reaction, self.direction
-            )
-            if behavior_start < confirmation <= event_time:
-                return True
-        return False
+        """Return whether ordinary aligned geometry completed in the leg."""
+        position = bisect_right(self._trend_confirmation_times_sorted, behavior_start)
+        return (
+            position < len(self._trend_confirmation_times_sorted)
+            and self._trend_confirmation_times_sorted[position] <= event_time
+        )
 
 
     def _order_stop(
@@ -785,49 +1047,89 @@ class SZoneDetector:
         candidate_start: datetime | None = None,
         fallback_on_unqualified_cross: bool = False,
     ) -> tuple[str, int, datetime, datetime] | None:
-        lower_items = self._lower_window(max(start, self.range_start), self.range_end)
-        for item in lower_items:
-            event_time = getattr(item, "timestamp")
-            candidate_cross = (
-                self._candidate_crossed(item, candidate_level)
-                and (candidate_start is None or event_time >= candidate_start)
+        scan_start = max(start, self.range_start)
+        left = bisect_left(self.lower_times, scan_start)
+        right = bisect_left(self.lower_times, self.range_end)
+        if right > left:
+            # Order stop is independent of candidate qualification.
+            order_position = (
+                self.lower_index.first_greater(left, right, order_stop_level)
+                if self.order_direction == "bearish"
+                else self.lower_index.first_less(left, right, order_stop_level)
             )
-            order_cross = self._order_stop_crossed(item, order_stop_level)
-            if candidate_cross and order_cross:
+
+            candidate_gate = max(scan_start, candidate_start or scan_start)
+            if fallback_on_unqualified_cross:
+                qualified_start = candidate_gate
+                candidate_family = "fallback"
+            else:
+                blue_time = (
+                    self._reset_blue_formation_by_reaction.get(trend_reaction_number)
+                    if 1 <= trend_reaction_number <= len(self.trend_reactions)
+                    else None
+                )
+                trend_position = bisect_right(
+                    self._trend_confirmation_times_sorted, behavior_start
+                )
+                trend_time = (
+                    self._trend_confirmation_times_sorted[trend_position]
+                    if trend_position < len(self._trend_confirmation_times_sorted)
+                    else None
+                )
+                qualifiers = [
+                    value for value in (blue_time, trend_time) if value is not None
+                ]
+                if not qualifiers:
+                    candidate_position = None
+                else:
+                    qualified_start = max(candidate_gate, min(qualifiers))
+                    candidate_family = "blue"
+                    candidate_left = bisect_left(self.lower_times, qualified_start, left, right)
+                    candidate_position = (
+                        self.lower_index.first_less(
+                            candidate_left, right, candidate_level
+                        )
+                        if self.direction == "bullish"
+                        else self.lower_index.first_greater(
+                            candidate_left, right, candidate_level
+                        )
+                    )
+            if fallback_on_unqualified_cross:
+                candidate_left = bisect_left(self.lower_times, qualified_start, left, right)
+                candidate_position = (
+                    self.lower_index.first_less(candidate_left, right, candidate_level)
+                    if self.direction == "bullish"
+                    else self.lower_index.first_greater(candidate_left, right, candidate_level)
+                )
+
+            if order_position is None and candidate_position is None:
                 return None
-            if order_cross:
+            if order_position is not None and candidate_position == order_position:
+                return None
+            if order_position is not None and (
+                candidate_position is None or order_position < candidate_position
+            ):
+                event_time = self.lower_times[order_position]
                 index = self._main_index(event_time)
                 return (
-                    "red",
-                    index,
-                    getattr(self.candles[index], "timestamp"),
-                    event_time,
+                    "red", index, getattr(self.candles[index], "timestamp"), event_time
                 )
-            if (
-                candidate_cross
-                and (
+            assert candidate_position is not None
+            event_time = self.lower_times[candidate_position]
+            if fallback_on_unqualified_cross and (
                 self._candidate_cross_has_blue(trend_reaction_number, event_time)
                 or self._has_ordinary_trend_reaction(behavior_start, event_time)
-                )
             ):
-                index = self._main_index(event_time)
-                return (
-                    "blue",
-                    index,
-                    getattr(self.candles[index], "timestamp"),
-                    event_time,
-                )
-            if candidate_cross and fallback_on_unqualified_cross:
-                index = self._main_index(event_time)
-                return (
-                    "fallback",
-                    index,
-                    getattr(self.candles[index], "timestamp"),
-                    event_time,
-                )
-        if lower_items:
-            return None
+                candidate_family = "blue"
+            index = self._main_index(event_time)
+            return (
+                candidate_family,
+                index,
+                getattr(self.candles[index], "timestamp"),
+                event_time,
+            )
 
+        # Preserve the established no-lower-data main-candle fallback exactly.
         start_index = max(
             self.start_index, bisect_right(self.candle_times, start) - 1
         )
@@ -842,32 +1144,24 @@ class SZoneDetector:
                 return None
             if order_cross:
                 return (
-                    "red",
-                    int(getattr(item, "index")),
-                    event_time,
-                    event_time,
+                    "red", int(getattr(item, "index")), event_time, event_time
                 )
             if (
                 candidate_cross
                 and (
-                self._candidate_cross_has_blue(trend_reaction_number, event_time)
-                or self._has_ordinary_trend_reaction(behavior_start, event_time)
+                    self._candidate_cross_has_blue(trend_reaction_number, event_time)
+                    or self._has_ordinary_trend_reaction(behavior_start, event_time)
                 )
             ):
                 return (
-                    "blue",
-                    int(getattr(item, "index")),
-                    event_time,
-                    event_time,
+                    "blue", int(getattr(item, "index")), event_time, event_time
                 )
             if candidate_cross and fallback_on_unqualified_cross:
                 return (
-                    "fallback",
-                    int(getattr(item, "index")),
-                    event_time,
-                    event_time,
+                    "fallback", int(getattr(item, "index")), event_time, event_time
                 )
         return None
+
 
     def _build_type3_zone(
         self,
@@ -1134,16 +1428,24 @@ class SZoneDetector:
                 continue
 
             self.a_ownership_windows.append((a_stop_event_time, None))
-            type3_deadline = (
+            no_order_deadline = (
                 order_match[2] if order_match is not None else self.range_end
             )
-            type3 = self._first_type3(a_stop_event_time, type3_deadline)
-            if type3 is not None:
+            type3 = self._first_type3(a_stop_event_time, no_order_deadline)
+            type4 = self._first_type4(a_stop, no_order_deadline)
+            # Type-3 and Type-4 are independent order-free S-Blue routes.
+            # Exact decision chronology owns the handoff; preserve established
+            # Type-3 precedence only on a true exact-event tie.
+            if type3 is not None and (type4 is None or type3[-1] <= type4[-1]):
                 s_zone = self._build_type3_zone(
                     zone, a_ordinal, a_price, a_stop, type3
                 )
+            elif type4 is not None:
+                s_zone = self._build_type4_zone(
+                    zone, a_ordinal, a_price, a_stop, type4
+                )
             elif order_match is not None:
-                s_zone = self._build_order_backed_zone(
+                s_zone = self._resolved_order_backed_zone(
                     zone, a_ordinal, a_price, a_stop, order_match
                 )
                 if s_zone is None:
@@ -1230,51 +1532,45 @@ class SZoneDetector:
             ):
                 deduped[identity] = entry
 
+        # Performance implementation detail: physical Order stop chronology is
+        # immutable for this reconciliation pass.  The legacy implementation
+        # recomputed the same strict crossing once per (S, Order) pair.  Build
+        # each exact candidate once, preserve the authoritative winner key
+        # (crossEvent, confirmation, FirstIndex, BreakIndex), then bisect by the
+        # frozen S decision window.  This changes only lookup complexity.
+        shared_candidates: list[tuple[
+            datetime, datetime, int, int, dict[str, object],
+            tuple[int, datetime, datetime]
+        ]] = []
+        for identity, entry in deduped.items():
+            reaction = entry["reaction"]
+            first_index = int(getattr(reaction, "first_idx"))
+            confirmation = entry.get("confirmation_time")
+            if not isinstance(confirmation, datetime):
+                continue
+            stop_level = as_decimal(entry["stop_level"])
+            crossed = entry.get("stop_cross")
+            if not (
+                isinstance(crossed, tuple)
+                and len(crossed) >= 3
+                and isinstance(crossed[2], datetime)
+            ):
+                crossed = self._shared_order_stop_cross(confirmation, stop_level)
+            if crossed is None or not confirmation < crossed[2]:
+                continue
+            shared_candidates.append((
+                crossed[2], confirmation, first_index, identity[1], entry, crossed
+            ))
+        shared_candidates.sort(key=lambda item: item[:4])
+        shared_cross_times = [item[0] for item in shared_candidates]
+
         output: list[SZone] = []
         for zone in zones:
-            winner: tuple[
-                datetime, datetime, int, int, dict[str, object],
-                tuple[int, datetime, datetime]
-            ] | None = None
-            for identity, entry in deduped.items():
-                reaction = entry["reaction"]
-                first_index = int(getattr(reaction, "first_idx"))
-                confirmation = entry.get("confirmation_time")
-                if not isinstance(confirmation, datetime):
-                    continue
-
-                stop_level = as_decimal(entry["stop_level"])
-                crossed = entry.get("stop_cross")
-                if not (
-                    isinstance(crossed, tuple)
-                    and len(crossed) >= 3
-                    and isinstance(crossed[2], datetime)
-                ):
-                    crossed = self._shared_order_stop_cross(confirmation, stop_level)
-                if crossed is None:
-                    continue
-                cross_event = crossed[2]
-
-                # The accepted Order can have been confirmed before the S source
-                # and still be live, or it can be confirmed later.  Only its
-                # actual strict-stop chronology relative to the frozen candidate
-                # matters.  Equality with the current decision does not replace
-                # the existing owner.
-                if not (
-                    confirmation < cross_event
-                    and zone.source_time <= cross_event < zone.decision_event_time
-                ):
-                    continue
-
-                candidate = (
-                    cross_event,
-                    confirmation,
-                    first_index,
-                    identity[1],
-                    entry,
-                    crossed,
-                )
-                if winner is None or candidate[:4] < winner[:4]:
+            left = bisect_left(shared_cross_times, zone.source_time)
+            winner = None
+            if left < len(shared_candidates):
+                candidate = shared_candidates[left]
+                if candidate[0] < zone.decision_event_time:
                     winner = candidate
 
             if winner is None:
@@ -1340,5 +1636,3 @@ def detect_s_zones(
         opposite_resets,
         initial_order_geometry,
     ).detect()
-
-

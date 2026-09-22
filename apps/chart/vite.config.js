@@ -7,6 +7,7 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { createFarazCandleApi } from './server/faraz-candle-api.js';
 import { createChartTransferBundle, importChartTransferBundle } from './server/chart-transfer.js';
+import { runIndicatorRangeCalculation } from './server/indicator-range-input.js';
 import { migrateFlatRawFiles } from './server/migrate-raw-resources.js';
 import { createRawResourceStore } from './server/raw-resource-store.js';
 
@@ -24,7 +25,8 @@ const aEnginePath = path.join(pipelineRoot, 'a_zone_detector.py');
 const sEnginePath = path.join(pipelineRoot, 's_zone_detector.py');
 const eEnginePath = path.join(pipelineRoot, 'e_zone_detector.py');
 const stopAllEnginePath = path.join(pipelineRoot, 'lifecycle_engine.py');
-const calculationSources = [bridgePath, enginePath, blueEnginePath, aEnginePath, sEnginePath, eEnginePath, stopAllEnginePath];
+const indicatorRangeInputPath = path.join(chartRoot, 'server', 'indicator-range-input.js');
+const calculationSources = [bridgePath, enginePath, blueEnginePath, aEnginePath, sEnginePath, eEnginePath, stopAllEnginePath, indicatorRangeInputPath];
 const pythonCommand = process.env.TRADINGBOT_PYTHON || 'python';
 // VMware shared folders reject native watches, while polling can monopolize
 // Vite's event loop. The launcher therefore serves without filesystem watches;
@@ -129,6 +131,7 @@ function calculationMetadata(item, request, calculationFile) {
     symbol: item.symbol,
     sourceFile: item.id,
     timeframe: request.timeframe,
+    chartTimeframe: request.chartTimeframe,
     direction: request.direction,
     from: request.from,
     to: request.to,
@@ -559,14 +562,22 @@ function localDataApi() {
           const valid = inventory().find((item) => item.id === body.id);
           if (!valid) throw new Error('Candle file not found');
           if (body.chartId && body.chartId !== valid.chartId) throw new Error('Chart identity does not match the selected RAW file');
-          const timeframe = Number(body.timeframe), from = Number(body.from), to = Number(body.to);
-          if (!Number.isInteger(timeframe) || timeframe < 1 || !Number.isFinite(from) || !Number.isFinite(to) || from > to) throw new Error('Invalid indicator range or timeframe');
+          const timeframe = Number(body.timeframe), chartTimeframe = Number(body.chartTimeframe), from = Number(body.from), to = Number(body.to);
+          if (!Number.isInteger(timeframe) || timeframe < 1 || !Number.isInteger(chartTimeframe) || chartTimeframe < 1
+            || !Number.isSafeInteger(from) || !Number.isSafeInteger(to) || from > to) throw new Error('Invalid indicator range or timeframe');
+          const sourceFromBucket = Math.floor(Number(valid.from) / chartTimeframe) * chartTimeframe;
+          const sourceToBucket = Math.floor(Number(valid.to) / chartTimeframe) * chartTimeframe;
+          if (from % chartTimeframe !== 0 || to % chartTimeframe !== 0 || from < sourceFromBucket || to > sourceToBucket) {
+            throw new Error('Indicator range must use available chart-candle boundaries');
+          }
           if (!['bullish', 'bearish'].includes(body.direction)) throw new Error('Invalid reaction direction');
           if (typeof body.blueLines !== 'boolean') throw new Error('Invalid Blue Line setting');
           const dataStat = fs.statSync(path.join(inputDir, valid.id));
           const sourceFingerprint = calculationSourceFingerprint();
-          const cacheKey = JSON.stringify(['engine-content-v2', sourceFingerprint, valid.chartId || valid.id, valid.id, dataStat.mtimeMs, timeframe, from, to, body.direction, body.blueLines]);
-           const persistedCalculationPath = calculationPath(valid, { timeframe, from, to, direction: body.direction, blueLines: body.blueLines }, cacheKey);
+          const inputScope = from === sourceFromBucket && to === sourceToBucket ? 'complete-source' : 'selected-range';
+          const calculationRequest = { timeframe, chartTimeframe, from, to, direction: body.direction, blueLines: body.blueLines };
+          const cacheKey = JSON.stringify(['engine-content-v3-range-input', sourceFingerprint, valid.chartId || valid.id, valid.id, dataStat.mtimeMs, timeframe, chartTimeframe, from, to, body.direction, body.blueLines, inputScope]);
+           const persistedCalculationPath = calculationPath(valid, calculationRequest, cacheKey);
           let output = null;
           let cacheSource = null;
           const cacheReadStarted = performance.now();
@@ -578,11 +589,41 @@ function localDataApi() {
           const cacheReadMs = performance.now() - cacheReadStarted;
           let detectorMs = 0;
           if (!output) {
-            const detectorStarted = performance.now();
-            publishProgress(requestId, { status: 'started', label: 'Start Python calculation' });
-            output = await runDetector(['--data', path.join(inputDir, valid.id), '--timeframe', String(timeframe), '--from-time', String(from), '--to-time', String(to), '--direction', body.direction, '--blue-lines', body.blueLines ? 'enabled' : 'disabled', '--a-zones', 'enabled', '--s-zones', 'enabled'], (event) => publishProgress(requestId, event));
-            detectorMs = performance.now() - detectorStarted;
-            publishProgress(requestId, { status: 'completed', label: 'Start Python calculation', durationMs: detectorMs });
+            const sourcePath = path.join(inputDir, valid.id);
+            const runCalculation = async (calculationInputPath, bounds) => {
+              const detectorStarted = performance.now();
+              publishProgress(requestId, { status: 'started', label: 'Start Python calculation' });
+              try {
+                const result = await runDetector(['--data', calculationInputPath, '--timeframe', String(timeframe), '--from-time', String(bounds.fromTime), '--to-time', String(bounds.toTime), '--direction', body.direction, '--blue-lines', body.blueLines ? 'enabled' : 'disabled', '--a-zones', 'enabled', '--s-zones', 'enabled'], (event) => publishProgress(requestId, event));
+                detectorMs = performance.now() - detectorStarted;
+                publishProgress(requestId, { status: 'completed', label: 'Start Python calculation', durationMs: detectorMs });
+                return result;
+              } catch (error) {
+                detectorMs = performance.now() - detectorStarted;
+                throw error;
+              }
+            };
+            if (inputScope === 'complete-source') {
+              output = await runCalculation(sourcePath, { fromTime: from, toTime: Number(valid.to) });
+            } else {
+              const inputPreparationStarted = performance.now();
+              publishProgress(requestId, { status: 'started', label: 'Filter raw range' });
+              const rows = rawStore.read(valid.id);
+              if (!rows) throw new Error('Candle file not found');
+              output = await runIndicatorRangeCalculation({
+                rows,
+                sourcePath,
+                from,
+                to,
+                chartTimeframeSeconds: chartTimeframe,
+                onPrepared: () => publishProgress(requestId, {
+                  status: 'completed',
+                  label: 'Filter raw range',
+                  durationMs: performance.now() - inputPreparationStarted,
+                }),
+                run: runCalculation,
+              });
+            }
             if (calculationSourceFingerprint() !== sourceFingerprint) {
               throw new Error('Calculation sources changed while running. Apply again with the current engines.');
             }
@@ -592,10 +633,11 @@ function localDataApi() {
            else publishProgress(requestId, { status: 'completed', label: `Cached result (${cacheSource})` });
            const metadataFile = calculationMetadataPath(persistedCalculationPath);
            if (!fs.existsSync(metadataFile)) fs.writeFileSync(metadataFile, JSON.stringify(
-             calculationMetadata(valid, { timeframe, from, to, direction: body.direction }, persistedCalculationPath),
-           ), 'utf8');
+              calculationMetadata(valid, calculationRequest, persistedCalculationPath),
+            ), 'utf8');
            res.setHeader('X-QG-Cache', cacheHit ? cacheSource : 'miss');
            res.setHeader('X-QG-Calculation-Id', calculationId(persistedCalculationPath));
+           res.setHeader('X-QG-Input-Scope', inputScope);
           res.setHeader('X-QG-Source-Fingerprint', sourceFingerprint);
           res.setHeader('X-QG-Detector-Ms', detectorMs.toFixed(2));
           res.setHeader('X-QG-Cache-Read-Ms', cacheReadMs.toFixed(2));

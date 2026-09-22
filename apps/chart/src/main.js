@@ -10,6 +10,7 @@ import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart/lod.js"
 import { coordinateToRawTime, createViewAnchorCache, rawTimeToCoordinate, selectDensityMode } from "./chart/view-transform.js";
 import { updateStageAggregate } from "./chart/progress.js";
 import { cacheClearLayers, clearIndicatorBrowserState } from "./features/indicator-cache.js";
+import { buildIndicatorCalculationRequest } from "./features/indicator-calculation-request.js";
 import { appliedContextMatches, restoreIndicatorLifecycle } from "./features/indicator-lifecycle.js";
 import { applyWorkspaceState } from "./ui/workspace-state.js";
 import { openManualReviewTab } from "./features/manual-review/tab.js";
@@ -5082,12 +5083,13 @@ function indicatorStatus(text, type = "idle") {
   root.className = type;
   root.querySelector("span").textContent = text;
 }
-function calculationKey(settings, from, to, timeframe) {
+function calculationKey(settings, from, to, timeframe, chartTimeframe) {
   return JSON.stringify({
     id: state.file?.id,
     chartId: state.file?.chartId || null,
     direction: settings.direction,
     timeframe,
+    chartTimeframe,
     from,
     to,
   });
@@ -5724,7 +5726,7 @@ async function calculateIndicator() {
   }
   const settings = indicatorSettings(),
     timeframe = settings.timeframe === "follow" ? state.tf : +settings.timeframe,
-    nextKey = calculationKey(settings, from, to, timeframe),
+    nextKey = calculationKey(settings, from, to, timeframe, state.tf),
     nextContext = {
       fileId: state.file.id,
       chartId: state.file.chartId || null,
@@ -5779,16 +5781,15 @@ async function calculateIndicator() {
     const r = await fetch("/api/reactions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: state.file.id,
-          chartId: state.file.chartId || null,
-          timeframe,
+        body: JSON.stringify(buildIndicatorCalculationRequest({
+          file: calculationSource,
+          analysisTimeframe: timeframe,
+          chartTimeframe: state.tf,
           from,
           to,
           direction: settings.direction,
-          blueLines: true,
           requestId: progressRequestId,
-        }),
+        })),
       }),
       responseReceived = performance.now();
     progressTimer.recordEvent({

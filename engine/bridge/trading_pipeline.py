@@ -38,8 +38,8 @@ from core_utils import as_decimal, order_identity
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.4.0"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-09-20 05:46:16 +03:30"
+TRADING_PIPELINE_VERSION = "1.4.1"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-09-21 08:40:00 +03:30"
 
 TEHRAN = ZoneInfo("Asia/Tehran")
 
@@ -1044,8 +1044,13 @@ def calculate_full_direction_state(
         candidate_a, s_zones, candles
     )
     stage_invalid_a_identities: set[tuple[datetime, int]] = set()
+    # Cycle validation must see every S-eligible A, even when a provisional
+    # S candidate temporarily hides that A from presentation.  Otherwise a
+    # later S reconciliation can remove the provisional S and accidentally
+    # resurrect an A that should have been rejected by the stopped S/E owner.
+    lifecycle_a_candidates = list(s_detector.eligible_a_zones)
     _calculation_a, invalid_a = lifecycle_engine.split_a_zones_by_dominant_stops(
-        candidate_a,
+        lifecycle_a_candidates,
         s_candidates,
         e_zones,
         [],

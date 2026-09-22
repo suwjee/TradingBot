@@ -17,8 +17,8 @@ from core_utils import as_decimal
 from direction_policy import policy_for
 
 
-A_ZONE_VERSION = "1.6.3"
-A_ZONE_LAST_MODIFIED_DATE = "2026-09-17"
+A_ZONE_VERSION = "1.6.4"
+A_ZONE_LAST_MODIFIED_DATE = "2026-09-21"
 
 
 @dataclass(frozen=True, slots=True)
@@ -499,6 +499,13 @@ class AZoneDetector:
             and not bool(getattr(previous.line, "behavior_internal", False))
             and not bool(getattr(current.line, "behavior_internal", False))
         )
+        # A Scale Blue may not inherit a continuation stop from a Reaction
+        # that completes before the following Blue while the Scale Blue itself
+        # is still live. Its semantic sourceExtreme remains authoritative until
+        # the Scale Blue actually strict-stops. Reset-Blue chaining keeps its
+        # established pre-stop structural route. This rule is direction-neutral.
+        if not chained and str(getattr(previous.line, "kind")) == "scale":
+            return None
         window_start = previous.stop_time if chained else previous.formation_time
         for reaction in self.reactions:
             first_time = getattr(

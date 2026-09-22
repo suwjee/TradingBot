@@ -21,7 +21,7 @@ The repository checkpoint/tag version and the chart package version are separate
 | `apps/chart/src/ui/`, `src/drawings/` | Feedback, logs, popovers, icons, workspace state, and drawing presentation. |
 | `apps/chart/src/algorithm/` | In-app algorithm reference content and directional mirror documentation. |
 | `apps/chart/server/`, `apps/chart/vite.config.js` | Local HTTP API, Python subprocess boundary, RAW/FARAZ persistence, caches, SSE, drawings, and templates. |
-| `apps/chart/tests/` | 21 Node test files; the current suite has 111 tests. |
+| `apps/chart/tests/` | 27 Node test files; the current suite has 147 tests. |
 | `engine/bridge/trading_pipeline.py` | Authoritative CLI, dynamic engine loading, market context, stage orchestration, lifecycle, visibility, and JSON serialization. |
 | `engine/pipeline/` | Reaction, Blue, A, S, E, StopAll, chronology, direction policy, Decimal/order helpers, and lifecycle logic. |
 | `data/raw/` | Authoritative candle arrays and metadata sidecars. |
@@ -42,15 +42,15 @@ bridge -> Reaction -> Blue -> A -> S -> E -> StopAll/visibility -> JSON stdout
 JSON -> Vite cache/API -> browser chart, panels, review, and audit views
 ```
 
-`vite.config.js` anchors paths from the configuration file, spawns Python with explicit bridge and detector paths, parses `QG_PROGRESS:` stderr, and returns serialized stdout. The bridge calculates from the complete physical RAW dataset; requested `from`/`to` values primarily control presentation filtering. The browser must not become a second trading-rule authority.
+`vite.config.js` anchors paths from the configuration file, spawns Python with explicit bridge and detector paths, parses `QG_PROGRESS:` stderr, and returns serialized stdout. For a full-chart request it passes the original RAW path. For a partial indicator range it filters RAW rows by the inclusive chart-candle buckets in Node memory and streams that JSON through a Windows named pipe; no second RAW file is written. The unchanged bridge calculates from the complete input it receives, so a partial request starts with empty state at `from` and cannot use chronology outside `to`. The browser must not become a second trading-rule authority.
 
 ## D. Runtime Execution Flow
 
 1. `scripts/start.ps1` validates files/runtimes, may install dependencies, creates runtime directories, sets `TRADINGBOT_PYTHON` and `TRADINGBOT_PROJECT_ROOT`, and starts Vite on `0.0.0.0`.
 2. `apps/chart/src/main.js` loads `/api/symbols`, restores workspace state, reads `/api/candles`, and creates Lightweight Charts.
-3. Indicator actions post validated direction/timeframe/range/Blue-line settings to `/api/reactions`; progress is streamed through `/api/reactions/progress` SSE.
-4. `vite.config.js` builds a cache key from engine source fingerprint, RAW identity/mtime, range, timeframe, direction, and Blue-line flags, then spawns `engine/bridge/trading_pipeline.py`.
-5. `prepare_market_context()` parses the complete RAW file, builds lower-timeframe and main-candle chronology, and computes visible indexes.
+3. Indicator actions post validated direction, analysis timeframe, chart timeframe, inclusive chart-candle range, and Blue-line settings to `/api/reactions`; progress is streamed through `/api/reactions/progress` SSE.
+4. `vite.config.js` builds a cache key from engine source fingerprint, RAW identity/mtime, input scope, chart/analysis timeframes, range, direction, and Blue-line flags, then spawns `engine/bridge/trading_pipeline.py`.
+5. `prepare_market_context()` parses the complete supplied input (the original RAW file or an in-memory selected-range stream), builds lower-timeframe and main-candle chronology, and computes visible indexes.
 6. `prepare_pipeline_state()` prepares both directional Reaction contexts when dependent stages are enabled. `calculate_full_direction_state()` runs Blue, A, S, initial E, S validity/rebuild, A/order context, final E audit, shared Order-stop reconciliation, and consumed-S continuation.
 7. `finalize_direction_visibility()` applies A/S/E/StopAll lifecycle ownership, restores allowed historical lineage, filters display-range objects, and prepares OrderAudit.
 8. The bridge serializes versioned stage collections and timings as compact JSON. The Vite API caches/persists the result and the browser renders chart overlays, tables, progress, and review state.

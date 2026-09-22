@@ -18,8 +18,8 @@ from core_utils import as_decimal, order_identity
 from direction_policy import policy_for
 
 
-STOP_ALL_VERSION = "1.12.0"
-STOP_ALL_LAST_MODIFIED = "2026-09-20 05:46:16 +03:30"
+STOP_ALL_VERSION = "1.15.0"
+STOP_ALL_LAST_MODIFIED = "2026-09-21 10:33:00 +03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -222,8 +222,10 @@ class StopAllDetector:
 
         This is the direction-invariant family reversal gate.  In both
         Bullish and Bearish calculations, accepted S Red is promoted after at
-        least two dominant Blue behaviors in the current cycle.  Directional
-        mirroring is handled by strict stop/reaction geometry; Red/Blue family
+        least two accepted occurrences of the same Blue behavior group in the
+        current cycle (S Blue, E1 Blue, E5 Blue, ...).  The repeated group need
+        not remain the current dominant owner.  Directional mirroring is handled
+        by strict stop/reaction geometry; Red/Blue family
         labels themselves are invariant.  Type-3 S Blue has no formation
         Order, so StopAll Order provenance remains optional.
         """
@@ -301,45 +303,72 @@ class StopAllDetector:
             stop_event_time=None,
         )
 
+    @staticmethod
+    def _blue_repeat_key(kind: str, number: int | None = None) -> tuple[str, int | None]:
+        """Return the cycle-local exact Blue behavior-group key.
+
+        S Blue is one group regardless of its internal subtype.  Each E number
+        is a separate group: E1 Blue, E2 Blue, E5 Blue, ... .  Counts are
+        occurrence counts of accepted behaviors inside the current lifecycle,
+        not counts of dominant-owner transitions.
+        """
+        normalized = str(kind).upper()
+        if normalized == "S":
+            return ("S", None)
+        if normalized != "E" or number is None:
+            raise ValueError("Blue repeat key must be S or numbered E.")
+        return ("E", int(number))
+
+    @staticmethod
+    def _record_blue_repeat(
+        counts: dict[tuple[str, int | None], int],
+        latest: dict[tuple[str, int | None], object],
+        key: tuple[str, int | None],
+        item: object,
+    ) -> None:
+        counts[key] = counts.get(key, 0) + 1
+        latest[key] = item
+
     def _opposite_s_stopall_gate(
         self,
         s_item: object,
-        s_key: str | None,
-        s_count: int,
-        e_key: tuple[str, int] | None,
-        e_count: int,
-        blue_dominant_count: int,
+        blue_repeat_counts: dict[tuple[str, int | None], int],
+        blue_repeat_latest: dict[tuple[str, int | None], object],
     ) -> tuple[str, str, int, tuple[str, int] | None] | None:
-        """Return stopped-group metadata for the S-Red Blue-group gate.
+        """Return Blue-repeat metadata when accepted S Red must become StopAll.
 
-        Red/Blue behavior families are direction-invariant.  In both Bullish
-        and Bearish calculations, an accepted S Red becomes StopAll1 when the
-        current dominant lifecycle contains at least two accepted Blue
-        behaviors.  The count spans dominant Blue progression across S/E keys
-        (for example S Blue -> E1 Blue, E1 Blue -> E2 Blue, or repeated E3
-        Blue).  Lower-priority Blue behaviors that never become dominant do
-        not increase this count.  Directional mirroring is supplied by strict
-        stop/reaction geometry elsewhere, not by swapping Red/Blue families.
+        From calculation start or the most recent StopAll hard boundary, every
+        accepted occurrence of the same Blue behavior group is counted even if
+        that group is not the current dominant owner.  Two S Blue occurrences,
+        two E1 Blue occurrences, two E5 Blue occurrences, etc. independently
+        arm this gate.  Different E numbers never add together.  Once any exact
+        Blue group reaches two occurrences, the next accepted S Red is promoted
+        to StopAll.  StopAll clears all repeat counters.
         """
-        del s_count, e_count
         if str(getattr(s_item, "color", "")).lower() != "red":
             return None
 
-        dominant_is_blue = (
-            (e_key is not None and e_key[0] == "blue")
-            or (e_key is None and s_key == "blue")
-        )
-        if not dominant_is_blue or blue_dominant_count < 2:
+        qualified = [
+            (key, count, blue_repeat_latest[key])
+            for key, count in blue_repeat_counts.items()
+            if count >= 2 and key in blue_repeat_latest
+        ]
+        if not qualified:
             return None
 
-        if e_key is not None and e_key[0] == "blue":
-            return (
-                "E",
-                f"E{e_key[1]} blue",
-                blue_dominant_count,
-                e_key,
-            )
-        return ("S", "S blue", blue_dominant_count, None)
+        key, count, _ = max(
+            qualified,
+            key=lambda entry: (
+                getattr(entry[2], "source_time"),
+                int(getattr(entry[2], "source_index", -1)),
+                1 if entry[0][0] == "E" else 0,
+                -1 if entry[0][1] is None else int(entry[0][1]),
+            ),
+        )
+        if key[0] == "S":
+            return ("S", "S blue", count, None)
+        e_number = int(key[1])
+        return ("E", f"E{e_number} blue", count, ("blue", e_number))
 
     def detect(self) -> list[StopAll]:
         s_events = sorted(
@@ -350,15 +379,22 @@ class StopAllDetector:
         s_count = 0
         e_key: tuple[str, int] | None = None
         e_count = 0
-        blue_dominant_count = 0
+        dominant_s_item: object | None = None
+        dominant_e_item: object | None = None
         active: list[StopAll] = []
         output: list[StopAll] = []
+        blue_repeat_counts: dict[tuple[str, int | None], int] = {}
+        blue_repeat_latest: dict[tuple[str, int | None], object] = {}
+
+        def reset_cycle_blue_repeats() -> None:
+            blue_repeat_counts.clear()
+            blue_repeat_latest.clear()
 
         def process_s_event(s_item: object) -> None:
-            nonlocal s_key, s_count, e_key, e_count, blue_dominant_count, active
+            nonlocal s_key, s_count, e_key, e_count, dominant_s_item, dominant_e_item, active
 
             reversal = self._opposite_s_stopall_gate(
-                s_item, s_key, s_count, e_key, e_count, blue_dominant_count
+                s_item, blue_repeat_counts, blue_repeat_latest
             )
             if reversal is not None:
                 behavior_type, behavior_key, behavior_count, underlying_e_key = reversal
@@ -376,29 +412,29 @@ class StopAllDetector:
                 active = [zone]
                 s_key = e_key = None
                 s_count = e_count = 0
-                blue_dominant_count = 0
+                dominant_s_item = None
+                dominant_e_item = None
+                reset_cycle_blue_repeats()
                 return
 
             color = str(s_item.color)
+            if color == "blue":
+                self._record_blue_repeat(
+                    blue_repeat_counts,
+                    blue_repeat_latest,
+                    self._blue_repeat_key("S"),
+                    s_item,
+                )
             incoming_priority = self._sequence_priority("s", color)
             active_priority = self._active_sequence_priority(s_key, e_key)
-            dominant_was_blue = (
-                (e_key is not None and e_key[0] == "blue")
-                or (e_key is None and s_key == "blue")
-            )
             if e_key is None and s_key == color:
                 s_count += 1
-                if color == "blue":
-                    blue_dominant_count += 1
+                dominant_s_item = s_item
             elif incoming_priority > active_priority:
                 s_key, s_count = color, 1
+                dominant_s_item = s_item
                 e_key, e_count = None, 0
-                if color == "blue":
-                    blue_dominant_count = (
-                        blue_dominant_count + 1 if dominant_was_blue else 1
-                    )
-                else:
-                    blue_dominant_count = 0
+                dominant_e_item = None
 
         for e_item in self.e_zones:
             while s_position < len(s_events) and (
@@ -426,7 +462,9 @@ class StopAllDetector:
                 active.append(zone)
                 s_key = e_key = None
                 s_count = e_count = 0
-                blue_dominant_count = 0
+                dominant_s_item = None
+                dominant_e_item = None
+                reset_cycle_blue_repeats()
                 continue
 
             new_key = self._e_key(e_item)
@@ -469,17 +507,29 @@ class StopAllDetector:
                     active.append(zone)
                     s_key = e_key = None
                     s_count = e_count = 0
-                    blue_dominant_count = 0
+                    dominant_s_item = None
+                    dominant_e_item = None
+                    reset_cycle_blue_repeats()
                     continue
 
-            dominant_was_blue = (
-                (e_key is not None and e_key[0] == "blue")
-                or (e_key is None and s_key == "blue")
-            )
+            # This E remains an accepted E behavior (it was not promoted to
+            # StopAll above), so count its exact Blue group occurrence for the
+            # cycle-wide accepted-S reversal rule independently of dominance.
+            if new_key[0] == "blue":
+                self._record_blue_repeat(
+                    blue_repeat_counts,
+                    blue_repeat_latest,
+                    self._blue_repeat_key("E", new_key[1]),
+                    e_item,
+                )
+
+            # Stage ownership is A -> S -> E -> StopAll. When the first E
+            # replaces an S owner, E starts a new dominant-stage occurrence;
+            # the superseded S is not counted again in current-owner sequence
+            # state. Cycle-wide Blue-repeat counting is independent above.
             if e_key == new_key:
                 e_count += 1
-                if new_key[0] == "blue":
-                    blue_dominant_count += 1
+                dominant_e_item = e_item
             else:
                 incoming_priority = self._sequence_priority("e", new_key[0])
                 active_priority = self._active_sequence_priority(s_key, e_key)
@@ -491,13 +541,9 @@ class StopAllDetector:
                 )
                 if replaces_active or advances_e:
                     e_key, e_count = new_key, 1
+                    dominant_e_item = e_item
                     s_key, s_count = None, 0
-                    if new_key[0] == "blue":
-                        blue_dominant_count = (
-                            blue_dominant_count + 1 if dominant_was_blue else 1
-                        )
-                    else:
-                        blue_dominant_count = 0
+                    dominant_s_item = None
             # A lower-priority Sequence event remains valid output but cannot
             # replace or separate the active dominant group.
 

@@ -24,20 +24,20 @@ The older documents under `engine/algorithms/*V4.0.1.md` are historical snapshot
 
 ## 2. Runtime Contract
 
-The public entry point is `engine/bridge/trading_pipeline.py`. Its required inputs are the engine module paths, RAW candle JSON, positive integer timeframe, `from`/`to` epochs, and direction. The Vite endpoint `/api/reactions` always supplies the current Reaction, Blue, A, S, E, and lifecycle modules.
+The public entry point is `engine/bridge/trading_pipeline.py`. Its required inputs are the engine module paths, RAW candle JSON, positive integer timeframe, `from`/`to` epochs, and direction. The Vite endpoint `/api/reactions` always supplies the current Reaction, Blue, A, S, E, and lifecycle modules. A full-chart request supplies the original RAW path. A partial request supplies only source rows in the inclusive selected chart-candle buckets through a Windows named pipe, without writing another RAW file.
 
 The RAW JSON must be an array whose rows contain `time`, `open`, `high`, `low`, and `close`. The bridge:
 
-1. reads the complete physical file;
+1. reads the complete supplied input (original RAW file or an in-memory range stream);
 2. removes an optional UTF-8 BOM;
 3. aggregates consecutive identical timestamps into lower candles;
 4. aggregates main candles into epoch-aligned `floor(timestamp / timeframe) * timeframe` buckets;
-5. calculates against the entire file, including data outside the requested display range;
+5. calculates against the entire supplied input; for a partial application request, that input contains no data outside the selected chart-candle range;
 6. applies `from`/`to` only when deciding which public objects are visible.
 
 The bridge does not sort rows, fill missing intervals, globally deduplicate timestamps, or independently validate OHLC relationships. Those integrity guarantees belong to the RAW storage boundary and validation tooling.
 
-All public indexes and ordinals retain full-file identity. A result visible inside a short range can depend on earlier or later observations outside that range.
+All public indexes and ordinals retain identity relative to the complete supplied input. Through `/api/reactions`, a partial request supplies only the selected source rows, so its identities restart inside that range and its results cannot depend on observations outside it. A direct bridge caller that supplies a full file while using narrower `from`/`to` presentation bounds retains the bridge's full-input identity and dependency behavior.
 
 ## 3. Shared Numerical and Time Semantics
 
@@ -57,7 +57,7 @@ All public indexes and ordinals retain full-file identity. A result visible insi
 The effective Bullish calculation flow is:
 
 ```text
-complete RAW
+complete supplied input
   -> Bullish + Bearish Reaction/Reset context
   -> Bullish Blue Lines
   -> Bullish A zones
