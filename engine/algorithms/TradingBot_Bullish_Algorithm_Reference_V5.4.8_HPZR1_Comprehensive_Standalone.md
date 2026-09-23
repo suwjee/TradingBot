@@ -1,15 +1,24 @@
-# TradingBot Bearish Algorithm Reference — Comprehensive Standalone Rebuild & Exact Implementation Specification
+# TradingBot Bullish Algorithm Reference — Comprehensive Standalone Rebuild & Exact Implementation Specification
 
-**Document Version:** `5.4.5-HPZR1`  
-**Last Modified Date & Time:** `2026-09-22 00:35:00 +03:30`  
-**Status:** `Comprehensive standalone reconstruction specification with embedded exact production source; exact Bearish directional mirror; HPZR1 behavior-preserving performance snapshot`  
-**Target Direction:** `bearish`  
-**Opposite/Order Direction:** `bullish`  
+**Document Version:** `5.4.8-HPZR1`  
+**Last Modified Date & Time:** `2026-09-23 10:19:31 +03:30`  
+**Status:** `Updated V5.4.8 production reconstruction specification; bullish direction; documentation-only HPZR2 synchronization over the unchanged HPZR1 production source snapshot`  
+**Target Direction:** `bullish`  
+**Opposite/Order Direction:** `bearish`  
 **Primary computational example timeframe:** any integer timeframe >= 1 second; 30s is the project validation timeframe but is not hardcoded  
 **Internal timezone:** `Asia/Tehran`  
-**Mirror Contract:** `Bearish is not an independently drifting algorithm. It is the exact directional mirror of canonical Bullish: Low↔High, minimum↔maximum, <↔>, FirstRed↔FirstGreen, Bullish↔Bearish; invariant lifecycle/priority/serialization rules do not mirror.`  
+**Mirror Contract:** `Bullish is the canonical directional algorithm. Bearish must be produced by exact directional reflection of every directional price/color rule while invariant lifecycle/priority/serialization rules remain unchanged.`  
 
 > **Normative rule:** This document is written from the current production Source snapshot, not from older Algorithm Reference wording. If an older reference conflicts with this file, this file represents the Source behavior captured by the manifest below. The goal is implementation equivalence: a competent engineer must be able to reconstruct the calculation engine without having the original Source files.
+
+> **5.4.5-HPZR2 standalone-reference regeneration (2026-09-22):** Documentation/reconstruction revision only. **Production Source changes: NONE. Algorithm changes: NONE. Calculation changes: NONE. Behavioral changes: NONE. Serialization changes: NONE.** All nine current production modules were re-read in full; the Source-symbol appendix is regenerated from the current syntax tree and current line positions; explicit Direction-Invariant, standalone dependency/Public-API, cache-scope, direct source-recovery, and mandatory verification sections are added. The complete current code for all nine project-owned modules remains embedded directly in this file, so no external Source directory is required.
+
+
+> **5.4.8-HPZR1 immutable first stopped-A Order_A owner (2026-09-23):** Each stopped A assigns its exact `parent-stop` cause to the FIRST canonical opposite Reaction confirmed strictly after the A stop (First at/after the stop main candle). This physical identity is final. Subsequent native Mode-B confirmations NEVER refresh the A-owned Order_A, regardless of the provisional S decision. S uses that first Order when the order-backed route owns the handoff. Another Order may participate only through a separately proven creation cause, e.g. an independent parent-stop or Reset-leg/Order_B; `accepted-live` and `carried-live` are use routes, not creation causes. One physical Order may correctly hold several distinct independent parent-stop causes. This supersedes the V5.4.5 consecutive Mode-B stopped-A refresh rule, but does not change native Reaction modes, Order_B formation, exact price/chronology, shared accepted-Order stops, E parent-stop owner ranking, StopAll, or serialization. This ownership invariant applies identically to Bullish and Bearish. The August 25 09:32:30 Bearish A retains physical First/Break (689,693); the historical September 9 Mode-B refresh example is a previous-version result, not a current expected output. All historical examples remain test evidence rather than production branches.
+
+> **5.4.7-HPZR1 Red-boundary stale-Blue reversal correction (2026-09-23):** The `opposite-s-group-stop` evidence counter is pending-reversal state, not an indefinite historical count through unrelated accepted Red behaviors. Process accepted S/E in the established chronological source order; after an eligible Mode-B S Red has been evaluated, any accepted Red S clears pending Blue-repeat counts (including an ineligible native Mode-A S Red). Any accepted Red E that remains E also clears those pending counts after the separate E-driven StopAll decisions. Later Blue S/E occurrences may re-arm a fresh exact-key repeat gate. StopAll still clears all counters and active owners. Native Mode-B eligibility, exact E-number/S grouping, deterministic gate metadata, Decimal/strict price geometry, E-driven StopAll priority and counters, physical Order identity, and serialization are unchanged. Both market directions use this identical direction-invariant Red-boundary rule. A price/timestamp/dataset-specific exception is forbidden. The four August XAUUSD Bearish cases are test evidence; the independent September 4 Bearish repeated-Blue StopAll remains valid.
+
+> **5.4.6-HPZR1 accepted-S native Order Mode-B eligibility correction (2026-09-23):** The independent accepted-S `opposite-s-group-stop` reversal gate now requires an accepted `S Red` whose forming physical Order has native `order_mode == "B"` (the opposite Reaction mode, not the independent Order_B/reset-leg provenance). An accepted S Red with a native Mode-A Order or no formation Order remains S Red even when older exact Blue behavior-group counts have reached two. For a Mode-B S Red, the existing hard-cycle exact Blue-group counts, latest-group tie-breaking, gate metadata, and StopAll hard reset are unchanged. E-driven `sequence-group-stop` and `stopall-stop` are unaffected. This eligibility condition is direction-invariant and does not alter Reaction, Reset, Blue, A, S formation, E formation, Order identity, strict crossing, or serialization. The three August XAUUSD Bearish 30s S Red anchors are validation cases only; the condition never checks a timestamp, symbol, RAW name, or expected output.
 
 > **5.4.5-HPZR1 high-performance zero-difference refactor (2026-09-22):** This revision changes implementation performance only. **Algorithm changes: NONE. Calculation/behavior rules: NONE. Serialization schema/order: NONE.** The authoritative 5.4.5 behavior remains unchanged. Production performance changes are scoped to three existing files only: `reaction_engine.py` replaces repeated lower-timeframe containment scans/history-prefix allocation with exact indexed range/first-event lookups; `s_zone_detector.py` pre-indexes immutable Reaction/Reset/Blue chronology, caches repeated A-stop→Order searches, and uses exact lower-timeframe range indexes for repeated strict-cross queries; `e_zone_detector.py` adds per-run canonical Order-stop caching, immutable initial-Order indexes, physical-identity indexes, a confirmation-time side index for the accepted Order ledger, and collapses repeated Order_B Reset-leg origins to the already-authoritative latest cause per physical `(FirstIndex, BreakIndex)`. All caches/indexes are run-scoped; no dataset/timestamp/symbol-specific branch or global mutable cross-run trading state is introduced. Four complete regression datasets are final-payload hash-identical before/after; the largest 309,906-row XAUUSD RAW completes in the optimized build in both directions, while the unmodified baseline build exceeds this execution environment's 240-second ceiling during initial E calculation and therefore is explicitly reported as an incomplete full-baseline comparison rather than a false PASS.
 
@@ -34,14 +43,14 @@
 
 > **5.4.3 cycle / exact-Order / exact-key StopAll / S-Blue Type-4 correction (2026-09-21):** Four scoped production corrections are applied as one lifecycle-consistent revision. (1) Cycle validation now consumes every S-eligible A identity, including an A temporarily hidden by a provisional S; later S reconciliation may not resurrect an equal/lower A behind an already accepted larger-stage owner. (2) Canonical Reaction/Order opposite-edge geometry is frozen at the **first exact lower-timeframe strict confirmation inside the Break main candle**: prices later in that same main candle may not retroactively rewrite BoxBottom/BoxTop. This is symmetric Bullish/Bearish and is now calculation-authoritative, not presentation-only. (3) The accepted-S reversal StopAll gate counts repetitions of the **exact current dominant Blue behavior key**, not progression across E numbers: `E1 Blue → E2 Blue → E3 Blue` leaves one current `E3 Blue`; a later S Red may become StopAll only after that same current Blue key has occurred at least twice and its latest occurrence has strictly stopped. The same exact-key principle remains available to repeated `S Blue`. Every StopAll is still a hard reset. (4) A new independent `S Blue Type-4` route exists only after A strict-stop and before any opposite Order forms: from the A-stop main candle through the Breakout main candle of the latest confirmed same-direction Reaction, select the directional extreme (Bearish maximum High; Bullish minimum Low) as the current S candidate; if it is strictly crossed before any Order and at least one calculation-valid non-Internal Blue exists from the candidate-source main candle through that exact crossing, emit S Blue Type-4. A crossing without qualifying Blue emits no S and a later aligned Reaction rebuilds the candidate; any Order confirmation ends Type-4 eligibility. These are semantic rules only; no timestamp/fixture branch is permitted.
 
-> **5.4.4 cycle-wide exact-Blue-repeat StopAll correction (2026-09-21):** The accepted-S reversal gate is no longer tied to the current dominant Blue owner or to a strict stop of that latest Blue occurrence. From calculation start, or from the most recent StopAll hard boundary, count every **accepted occurrence of each exact Blue behavior group independently**: all `S Blue` occurrences share one group, while `E1 Blue`, `E2 Blue`, `E5 Blue`, etc. are separate numbered groups. Any one group reaching `count >= 2` arms the reversal gate; the **next accepted `S Red`** is promoted to StopAll with `gateType='opposite-s-group-stop'`, even if another behavior has since become dominant. Different E numbers never add together (`E1 Blue + E2 Blue` is not two similar behaviors). Every StopAll clears all cycle-wide Blue-repeat counters. E-driven `sequence-group-stop` and `stopall-stop` rules remain unchanged. This rule is direction-invariant; only strict price geometry mirrors. Regression anchor: in Bullish XAUUSD 30s after `StopAll10 @ 2026-09-03 18:49:30`, repeated `E1 Blue @ 20:00:30, 21:17:00, 23:22:30, 2026-09-04 01:48:30` arms the gate, so the accepted `S Red @ 2026-09-04 02:36:00` is promoted to the next StopAll. Timestamps are validation evidence only and must never be hardcoded.
+> **5.4.4 cycle-wide exact-Blue-repeat StopAll correction (2026-09-21):** The accepted-S reversal gate is no longer tied to the current dominant Blue owner or to a strict stop of that latest Blue occurrence. From calculation start, or from the most recent StopAll hard boundary, count every **accepted occurrence of each exact Blue behavior group independently**: all `S Blue` occurrences share one group, while `E1 Blue`, `E2 Blue`, `E5 Blue`, etc. are separate numbered groups. Any one group reaching `count >= 2` arms the reversal gate; the **next accepted `S Red`** is promoted to StopAll with `gateType='opposite-s-group-stop'` (historical rule; V5.4.6 adds native Mode-B eligibility and V5.4.7 ends the armed interval on an accepted Red behavior), even if another behavior has since become dominant. Different E numbers never add together (`E1 Blue + E2 Blue` is not two similar behaviors). Every StopAll clears all cycle-wide Blue-repeat counters. E-driven `sequence-group-stop` and `stopall-stop` rules remain unchanged. This rule is direction-invariant; only strict price geometry mirrors. Historical regression anchor (superseded as an output assertion): the older Bullish `2026-09-04 02:36:00` example was documented for this gate. In the current full-file baseline and updated Source, no Bullish S/E/StopAll occupies that source; the Bearish `StopAll1 @ 2026-09-04 02:36:00` has a native Mode-B Order and remains a valid retained observation. Exact-key counting and the new Mode-B eligibility apply in both directions. Timestamps are validation evidence only and must never be hardcoded.
 
 
 
 
 
 
-> **5.4.5 consecutive native Mode-B stopped-A Order refresh correction (2026-09-21):** The first canonical opposite Order confirmed after an A strict stop still opens the provisional A→S Order owner. However, while that S remains undecided, consecutive **native Reaction Mode-B** Orders belong to one replaceable continuation chain: if the next Mode-B confirms strictly before the current provisional S decision event, Order ownership refreshes to that newer Mode-B and the S candidate/decision is rebuilt from the newer Order geometry. The refresh repeats until no later consecutive Mode-B confirms before the recalculated S decision. A native Mode-A Order terminates this replaceable Mode-B chain and may not be crossed by the refresh; likewise an Order confirming at or after the current S decision cannot retroactively steal ownership. OrderAudit moves the stopped-A parent-stop cause from provisional earlier Order identities to the final refreshed physical Order, preserving the one-cause/one-physical-Order bridge invariant. The rule is direction-neutral and contains no timestamp/symbol-specific branch. Regression anchor on XAUUSD 30s: `A 2026-09-09 03:33:30` resolves through consecutive Mode-B Orders `04:16:00 → 04:17:30 → 04:20:30 → 04:24:00`; the final Order keeps stop source `04:21:00`, producing `S Red 04:29:30`, removing the incorrect `S Blue 04:45:00`, then yielding `E1 Red 05:15:30` and existing lifecycle promotion to `StopAll 06:23:00`. These timestamps are validation evidence only.
+> **5.4.5 consecutive native Mode-B stopped-A Order refresh correction (historical; superseded by V5.4.8 first-Order_A ownership):** The first canonical opposite Order confirmed after an A strict stop still opens the provisional A→S Order owner. However, while that S remains undecided, consecutive **native Reaction Mode-B** Orders belong to one replaceable continuation chain: if the next Mode-B confirms strictly before the current provisional S decision event, Order ownership refreshes to that newer Mode-B and the S candidate/decision is rebuilt from the newer Order geometry. The refresh repeats until no later consecutive Mode-B confirms before the recalculated S decision. A native Mode-A Order terminates this replaceable Mode-B chain and may not be crossed by the refresh; likewise an Order confirming at or after the current S decision cannot retroactively steal ownership. OrderAudit moves the stopped-A parent-stop cause from provisional earlier Order identities to the final refreshed physical Order, preserving the one-cause/one-physical-Order bridge invariant. The rule is direction-neutral and contains no timestamp/symbol-specific branch. Regression anchor on XAUUSD 30s: `A 2026-09-09 03:33:30` resolves through consecutive Mode-B Orders `04:16:00 → 04:17:30 → 04:20:30 → 04:24:00`; the final Order keeps stop source `04:21:00`, producing `S Red 04:29:30`, removing the incorrect `S Blue 04:45:00`, then yielding `E1 Red 05:15:30` and existing lifecycle promotion to `StopAll 06:23:00`. These timestamps are validation evidence only.
 
 
 ## 0. How to use this document / reconstruction guarantee
@@ -73,43 +82,45 @@ In project terminology, **only `A`, `S`, `E`, and `StopAll` are behaviors**. `Re
 
 ### 0.3 Complete module inventory in this snapshot
 
-| File | Lines | SHA-256 | Classes | Functions/methods |
-|---|---:|---|---:|---:|
-| `reaction_engine.py` | 2406 | `bea0d5a5e95ee15ad54d024f6c01b8c777ba2abcc3c8e671118f1ae2df28f2a6` | 13 | 77 |
-| `blue_line_detector.py` | 458 | `6fa01d94bc98060b62bc7e68db0ec24a0b0159727d44043affee7130a9c11448` | 2 | 13 |
-| `a_zone_detector.py` | 782 | `f5658aef5105dcfad916d3ea6f792877737c2568d67cf27c7b63c2638c5343fd` | 3 | 22 |
-| `s_zone_detector.py` | 1638 | `3cb84015134c0dfb3a8fa39ff6c2365a114af0c69a77b8139515679e4ba0cb91` | 2 | 50 |
-| `e_zone_detector.py` | 2876 | `6e32b947aa1b4e1e6b986f26ee9a464542f320dc6a207ece1e8fce54407d0369` | 3 | 75 |
-| `lifecycle_engine.py` | 1691 | `241a7f2941d39728de2a3bf42164284b370a690ab770d0cdc05d6ebbcd898606` | 2 | 42 |
-| `trading_pipeline.py` | 1923 | `98f54cf3be6ddacd4e6b523b604be5a00635dcf8b464bc7d03772bbcccded62e` | 6 | 37 |
-| `direction_policy.py` | 70 | `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea` | 1 | 6 |
-| `core_utils.py` | 29 | `3dae390ae77b72965f5799f7c132c4eba203775d5e72761fd7dd60c90f8578de` | 0 | 3 |
+| File | Lines | Classes | Functions/methods (including nested helpers) | Optional SHA-256 |
+|---|---:|---:|---:|---|
+| `reaction_engine.py` | 2406 | 13 | 77 | `bea0d5a5e95ee15ad54d024f6c01b8c777ba2abcc3c8e671118f1ae2df28f2a6` |
+| `blue_line_detector.py` | 458 | 2 | 13 | `6fa01d94bc98060b62bc7e68db0ec24a0b0159727d44043affee7130a9c11448` |
+| `a_zone_detector.py` | 782 | 3 | 22 | `f5658aef5105dcfad916d3ea6f792877737c2568d67cf27c7b63c2638c5343fd` |
+| `s_zone_detector.py` | 1562 | 2 | 49 | `7714025b3f43087b09844df6feeef4eef0ec72eeb841115293df4c126fd202ee` |
+| `e_zone_detector.py` | 2876 | 3 | 75 | `6e32b947aa1b4e1e6b986f26ee9a464542f320dc6a207ece1e8fce54407d0369` |
+| `lifecycle_engine.py` | 1706 | 2 | 42 | `84bed2e674f855a4d2dc52960840eddc6d8f058ff247b893a319eecdc36e152d` |
+| `trading_pipeline.py` | 1923 | 6 | 37 | `98f54cf3be6ddacd4e6b523b604be5a00635dcf8b464bc7d03772bbcccded62e` |
+| `direction_policy.py` | 70 | 1 | 6 | `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea` |
+| `core_utils.py` | 29 | 0 | 3 | `3dae390ae77b72965f5799f7c132c4eba203775d5e72761fd7dd60c90f8578de` |
 
-The embedded source appendix reproduces these files byte-for-byte as UTF-8 text (excluding filesystem metadata). Section 27 provides an integrity/extraction procedure.
+All nine module texts are embedded in full in Section 26. Integrity hashes are recorded for extraction checking only; they are not a substitute for reading and semantic synchronization.
 
 ## 1. Source baseline / rebuild identity
 
-| Module | Source version | Lines | SHA-256 |
-|---|---:|---:|---|
-| `reaction_engine.py` | `9.8.0` | 2406 | `bea0d5a5e95ee15ad54d024f6c01b8c777ba2abcc3c8e671118f1ae2df28f2a6` |
-| `blue_line_detector.py` | `2.3.0` | 458 | `6fa01d94bc98060b62bc7e68db0ec24a0b0159727d44043affee7130a9c11448` |
-| `a_zone_detector.py` | `1.6.4` | 782 | `f5658aef5105dcfad916d3ea6f792877737c2568d67cf27c7b63c2638c5343fd` |
-| `s_zone_detector.py` | `4.19.0` | 1638 | `3cb84015134c0dfb3a8fa39ff6c2365a114af0c69a77b8139515679e4ba0cb91` |
-| `e_zone_detector.py` | `6.13.0` | 2876 | `6e32b947aa1b4e1e6b986f26ee9a464542f320dc6a207ece1e8fce54407d0369` |
-| `lifecycle_engine.py` | `1.15.0` | 1691 | `241a7f2941d39728de2a3bf42164284b370a690ab770d0cdc05d6ebbcd898606` |
-| `trading_pipeline.py` | `1.4.1` | 1923 | `98f54cf3be6ddacd4e6b523b604be5a00635dcf8b464bc7d03772bbcccded62e` |
-| `direction_policy.py` | `1.0.0` | 70 | `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea` |
-| `core_utils.py` | `1.0.0` | 29 | `3dae390ae77b72965f5799f7c132c4eba203775d5e72761fd7dd60c90f8578de` |
+The table below describes the exact production modules embedded by this documentation revision. The SHA-256 column is optional integrity metadata only; semantic synchronization is established by direct source reading/comparison.
 
-A rebuild intended to reproduce this specification must preserve the semantics of this exact source snapshot. The SHA-256 values are audit identifiers only; they are not used at runtime.
+| Module | Source version | Last modified declared by module | Lines | Role | Optional SHA-256 |
+|---|---:|---|---:|---|---|
+| `reaction_engine.py` | `9.8.0` | `2026-09-22 00:35:00 +03:30` | 2406 | Authoritative Reaction/Reset geometry, candle semantics, lower-timeframe chronology, canonical Order-stop geometry, and Internal-Reaction classification. | `bea0d5a5e95ee15ad54d024f6c01b8c777ba2abcc3c8e671118f1ae2df28f2a6` |
+| `blue_line_detector.py` | `2.3.0` | `not declared by module` | 458 | Scale/Reset Blue detection, strike state, Blue validity, line construction, and Internal/Public Blue ownership. | `6fa01d94bc98060b62bc7e68db0ec24a0b0159727d44043affee7130a9c11448` |
+| `a_zone_detector.py` | `1.6.4` | `2026-09-21` | 782 | A behavior formation from Blue-pair/double-stop state, inherited stops, trigger chronology, and A source ownership. | `f5658aef5105dcfad916d3ea6f792877737c2568d67cf27c7b63c2638c5343fd` |
+| `s_zone_detector.py` | `4.20.0` | `2026-09-23 10:19:31 +03:30` | 1562 | A-to-S handoff, S formation families, stopped-A Orders, shared accepted-Order stop reconciliation, and initial OrderAudit. | `7714025b3f43087b09844df6feeef4eef0ec72eeb841115293df4c126fd202ee` |
+| `e_zone_detector.py` | `6.13.0` | `2026-09-22 00:35:00 +03:30` | 2876 | Recursive E formation, parent-stop/Order_A/Order_B/accepted-live/carried-live routes, E reconciliation, and accepted Order provenance. | `6e32b947aa1b4e1e6b986f26ee9a464542f320dc6a207ece1e8fce54407d0369` |
+| `lifecycle_engine.py` | `1.15.2` | `2026-09-23 09:55:12 +03:30` | 1706 | Cross-stage behavior lifecycle, priority, visibility, StopAll state, cycle boundaries, and ownership arbitration. | `84bed2e674f855a4d2dc52960840eddc6d8f058ff247b893a319eecdc36e152d` |
+| `trading_pipeline.py` | `1.4.1` | `2026-09-21 08:40:00 +03:30` | 1923 | Production orchestration, RAW normalization, engine loading, full-range calculation, reconciliation passes, filtering, telemetry, and JSON serialization. | `98f54cf3be6ddacd4e6b523b604be5a00635dcf8b464bc7d03772bbcccded62e` |
+| `direction_policy.py` | `1.0.0` | `not declared by module` | 70 | Direction-neutral Bullish/Bearish price-geometry policy primitives. | `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea` |
+| `core_utils.py` | `1.0.0` | `not declared by module` | 29 | Small shared stateless primitives for Decimal normalization and physical Order identity. | `3dae390ae77b72965f5799f7c132c4eba203775d5e72761fd7dd60c90f8578de` |
+
+A rebuild intended to reproduce this specification must preserve the semantics, schemas, boundary rules, chronology, ordering, and serialization of this exact production snapshot.
 
 ## 2. System architecture and authoritative stage order
 
 The engine is a deterministic multi-stage calculation pipeline. The stages are:
 
-`RAW normalization → both-direction Reaction/Reset geometry → Internal-Reaction ownership → Bearish Blue → Bearish A → Bearish S + stopped-A Order audit → Bearish E + Order reconciliation → lifecycle hierarchy → StopAll → final A/S/E visibility → public serialization`.
+`RAW normalization → both-direction Reaction/Reset geometry → Internal-Reaction ownership → Bullish Blue → Bullish A → Bullish S + stopped-A Order audit → Bullish E + Order reconciliation → lifecycle hierarchy → StopAll → final A/S/E visibility → public serialization`.
 
-Even when only `Bearish` output is requested, both Bullish and Bearish **Reaction** streams are required whenever behavior modules are active, because S/E Orders use the opposite direction's Reaction/Reset geometry. Do not replace this with a one-direction shortcut.
+Even when only `Bullish` output is requested, both Bullish and Bearish **Reaction** streams are required whenever behavior modules are active, because S/E Orders use the opposite direction's Reaction/Reset geometry. Do not replace this with a one-direction shortcut.
 
 When E is enabled and S is enabled, the pipeline first builds full-RAW geometry and full-range behavior state, performs S/E/lifecycle reconciliation, and only then filters objects to the requested presentation main-candle indexes.
 
@@ -145,19 +156,41 @@ Epoch timestamps are converted to `Asia/Tehran`, then held internally as naive d
 
 `GREEN` iff `close >= open`; otherwise `RED`. Equality/Doji is therefore always GREEN. This rule is global and must not be mirrored or changed.
 
-## 4. Direction policy for Bearish
+## 3A. Direction-Invariant Rules
 
-| Semantic | Bearish value |
+The following rules are shared by Bullish and Bearish and **must not be directionally swapped**:
+
+- Candle color is global: `GREEN if close >= open else RED`; therefore **every Doji (`close == open`) is GREEN**.
+- Strictness is global: a level is crossed only by a strict inequality; equality never confirms, stops, breaks, or invalidates a level.
+- All algorithmic price values use exact `Decimal` semantics; binary floating-point approximations are not an alternative algorithm.
+- Full physical RAW is the calculation authority; request `from/to` bounds are presentation filters, not historical-state truncation rules.
+- Exact lower-timeframe chronology is authoritative whenever event ordering inside a main candle matters.
+- Behavior taxonomy is fixed: only `A`, `S`, `E`, and `StopAll` are behaviors. Reaction, Reset, Blue, Order, and OrderAudit are not behaviors.
+- Red/Blue family names are invariant and are never swapped because market direction changes.
+- E numbering semantics are invariant.
+- Lifecycle priority is invariant: `StopAll > E Red > S Red > E Blue > S Blue > A`.
+- StopAll semantics and hard-boundary reset behavior are invariant.
+- Physical Order identity is invariant: `(FirstIndex, BreakIndex)`.
+- Creation provenance and use provenance remain distinct in both directions.
+- Internal/public visibility is separate from calculation eligibility in both directions.
+- Stage order, stable chronology, output ordering, null/non-null meaning, JSON schema, and serialization ordering are invariant.
+- Exact Blue-repeat grouping for StopAll is invariant: all accepted `S Blue` occurrences share one group; each numbered `E<n> Blue` is a separate exact group.
+
+Only directional market geometry mirrors (`Low↔High`, `min↔max`, `<↔>`, `BoxBottom↔BoxTop`, FirstRed↔FirstGreen, Bullish↔Bearish). Do not change an invariant merely to make a synthetic mirror test look more symmetrical.
+
+## 4. Direction policy for Bullish
+
+| Semantic | Bullish value |
 |---|---|
-| Trend extreme attribute | `high` (High) |
-| Opposite extreme attribute | `low` (Low) |
-| Strict stop/cross | `High > level` |
-| Better directional extreme | larger / maximum |
-| Reaction First color | `GREEN` |
-| Context color | `RED` |
-| Reaction confirmation | `Low < BoxBottom` |
-| Opposite Order direction | `bullish` |
-| Scale-strike confirming candle color | `RED` |
+| Trend extreme attribute | `low` (Low) |
+| Opposite extreme attribute | `high` (High) |
+| Strict stop/cross | `Low < level` |
+| Better directional extreme | smaller / minimum |
+| Reaction First color | `RED` |
+| Context color | `GREEN` |
+| Reaction confirmation | `High > BoxTop` |
+| Opposite Order direction | `bearish` |
+| Scale-strike confirming candle color | `GREEN` |
 
 A strict cross never accepts equality.
 
@@ -173,7 +206,7 @@ The canonical lower window is half-open `[start,end)`. Exact inclusive endpoints
 
 ### 5.3 Reaction confirmation time
 
-For Bearish, scan the Reaction Break main candle from `intrabar_start` when enabled, otherwise from Break candle open, and return the first lower event satisfying `Low < BoxBottom`. If no lower event is available/found, the Break main timestamp is the fallback.
+For Bullish, scan the Reaction Break main candle from `intrabar_start` when enabled, otherwise from Break candle open, and return the first lower event satisfying `High > BoxTop`. If no lower event is available/found, the Break main timestamp is the fallback.
 
 The A engine intentionally calls confirmation with `use_intrabar_start=False`; S/E/public Reaction chronology uses the exact intrabar start when present.
 
@@ -181,7 +214,7 @@ The A engine intentionally calls confirmation with `use_intrabar_start=False`; S
 
 If Reset has `secondTime`, that exact lower timestamp is authoritative; otherwise use its main display time/timestamp.
 
-## 6. Reaction and Reset engine — Bearish
+## 6. Reaction and Reset engine — Bullish
 
 ### 6.1 Core Reaction object
 
@@ -189,10 +222,10 @@ A Reaction Candidate stores First, BoxTop provenance/value, BoxBottom provenance
 
 ### 6.2 Initial Mode-A detection
 
-The first proven Leg-Start is discovered with the directional detector. For Bearish:
+The first proven Leg-Start is discovered with the directional detector. For Bullish:
 
-- First must be `GREEN` and is normally preceded by `RED` context.
-- The context run is extended backward across consecutive `RED` candles.
+- First must be `RED` and is normally preceded by `GREEN` context.
+- The context run is extended backward across consecutive `GREEN` candles.
 - Candidate outer confirmation edge and inner/opposite edge are derived from the complete local leg according to the formulas below.
 - A frozen leg boundary may invalidate Mode A before confirmation.
 
@@ -221,7 +254,7 @@ Public serialization uses a clone/frozen public Candidate. When the opposite edg
 
 Once a prior confirmed Reaction has an opposite boundary, a strict directional break of that boundary is a Reset. If Reset and a waiting candidate's confirmation are both possible in one main candle, compare exact lower events. Reset wins when its first strict event occurs before or at the confirmation event under the detector's ordering rule.
 
-For Bearish, Reset condition is `High > previous confirmed BoxTop`.
+For Bullish, Reset condition is `Low < previous confirmed BoxBottom`.
 
 ### 6.7 Post-confirmation same-Break Reset
 
@@ -237,11 +270,11 @@ If no post-confirmation Reset exists and the Break candle has the required new-F
 
 ### 6.9 Normal Mode-B search
 
-After a confirmed Bearish Reaction, keep a running trend-side outer extreme. When a `GREEN` candle becomes eligible:
+After a confirmed Bullish Reaction, keep a running trend-side outer extreme. When a `RED` candle becomes eligible:
 
-- Bearish: BoxBottom = min(running trough, FirstGreen Low); BoxTop = maximum High from the BoxBottom source (exclusive when earlier) through FirstGreen.
+- Bullish: BoxTop = max(running peak, FirstRed High); BoxBottom = minimum Low from the BoxTop source (exclusive when earlier) through FirstRed.
 - While waiting, update the opposite edge only if a new more-extreme value is made.
-- Confirm strictly with `Low < BoxBottom`.
+- Confirm strictly with `High > BoxTop`.
 
 ### 6.10 Direct same-direction recovery after Reset
 
@@ -253,7 +286,7 @@ Mode-A/direct post-Reset geometry is dead if the frozen owning leg boundary is s
 
 ### 6.12 Canonical Order stop geometry
 
-An Order is always an opposite-direction Reaction (`Bullish` for this Bearish behavior stream).
+An Order is always an opposite-direction Reaction (`Bearish` for this Bullish behavior stream).
 
 - Order Mode A: find the true leg outer boundary from its anchor/context through Break inclusive. For Bearish Order use maximum High; for Bullish Order use minimum Low. Context scan extends backward over the Order's context color.
 - Order Mode B: inherit the previous healthy opposite Reaction semantic outer edge: Bearish Order uses previous BoxTop; Bullish Order uses previous BoxBottom.
@@ -274,37 +307,37 @@ After both directional Reaction streams are calculated, build public box/confirm
 
 Internal Reaction evidence remains calculation-valid. Order_B evidence geometry explicitly ignores Internal/public status. A separate downstream lifecycle filter remains narrowly scoped to a **native Mode-B, behavior-internal physical Order whose surviving causes are all Reset-leg**; that filter occurs after formation/cause merging.
 
-## 7. Blue Line engine — Bearish
+## 7. Blue Line engine — Bullish
 
 ### 7.1 Fibonacci level
 
-`F = BoxBottom + 0.618*(reference-BoxBottom)`.
+`F = BoxTop - 0.618*(BoxTop-reference)`.
 
 ### 7.2 Scale strikes
 
-Process each Reaction from First through Break inclusive. The comparison extreme is the last confirmed strike extreme, or Fibonacci level if none. A new pending strike appears when the current High is strictly more directional (larger / maximum) than the comparison extreme. If a still more directional value appears before confirmation, replace the pending strike.
+Process each Reaction from First through Break inclusive. The comparison extreme is the last confirmed strike extreme, or Fibonacci level if none. A new pending strike appears when the current Low is strictly more directional (smaller / minimum) than the comparison extreme. If a still more directional value appears before confirmation, replace the pending strike.
 
-A pending strike confirms when a main candle is `RED`. If a pending strike remains at the Break, inspect lower events up to strict Reaction confirmation and confirm it intrabar only when eligible chronology supports it.
+A pending strike confirms when a main candle is `GREEN`. If a pending strike remains at the Break, inspect lower events up to strict Reaction confirmation and confirm it intrabar only when eligible chronology supports it.
 
 ### 7.3 Scale Blue emission
 
 A Scale Blue candidate exists when this Reaction's confirmed strike count is greater than the previous Reaction's strike count. Emit it only if there has never been a Blue, or at least one healthy Reaction has completed since the last Blue. Source = decisive last strike.
 
-Line drawing price: `High - (High-Low)/3`. `sourceExtreme` is the semantic stop extreme; drawing price does not own stops.
+Line drawing price: `Low + (High-Low)/3`. `sourceExtreme` is the semantic stop extreme; drawing price does not own stops.
 
 ### 7.4 Reset Blue
 
-A Reset belonging to a Reaction can create Reset Blue only under the same spacing rule: after an existing Blue there must be at least one healthy Reaction since the previous Blue. Source = Reset main candle. `sourceExtreme = High`. Line drawing price: `High - (High-Low)/5`. `brokenLevel = Reset.brokenLevel`.
+A Reset belonging to a Reaction can create Reset Blue only under the same spacing rule: after an existing Blue there must be at least one healthy Reaction since the previous Blue. Source = Reset main candle. `sourceExtreme = Low`. Line drawing price: `Low + (High-Low)/5`. `brokenLevel = Reset.brokenLevel`.
 
 ### 7.5 Reset Blue double-stop validity
 
-A Reset Blue is `calculation_valid=false` when all are true: a previous Blue exists; the previous Blue's first strict stop in the inspected interval occurs on this Reset's main index; and this Reset candle strictly crosses the previous Blue's semantic source extreme in the direction (`High > level`). Such an invalid Blue is hidden from normal public Blue output but retained as structural evidence for the special double-stop A route.
+A Reset Blue is `calculation_valid=false` when all are true: a previous Blue exists; the previous Blue's first strict stop in the inspected interval occurs on this Reset's main index; and this Reset candle strictly crosses the previous Blue's semantic source extreme in the direction (`Low < level`). Such an invalid Blue is hidden from normal public Blue output but retained as structural evidence for the special double-stop A route.
 
 ### 7.6 Internal Blue
 
 Blue is internal if its owning Reaction is internal, or if both its semantic `sourceExtreme` and rendered `linePrice` lie strictly inside the same protected healthy Reaction interior at the relevant time. Drawing offset alone never changes ownership. Internal Blue remains calculation evidence but is filtered from public Blue serialization.
 
-## 8. A engine — Bearish
+## 8. A engine — Bullish
 
 ### 8.1 Blue state and stop
 
@@ -312,7 +345,7 @@ Only calculation-valid Blue Lines enter ordinary Blue states. Blue ordinal is ba
 
 Scale Blue formation = its owning Reaction Break main index and exact Reaction confirmation event; stop scanning starts at that exact event. Reset Blue formation = Reset source index and the first exact strict lower event crossing its `brokenLevel`; its stop scanning starts at the next main-candle boundary (`source main time + timeframe`).
 
-A Blue stop is the first strict `High > level` against `sourceExtreme`.
+A Blue stop is the first strict `Low < level` against `sourceExtreme`.
 
 ### 8.2 Ordinary adjacent-Blue pair
 
@@ -321,23 +354,23 @@ Ordinary A pairs adjacent valid Blue states. A third Blue formation can expire a
 The pair's trigger is resolved by `_pair_trigger` semantics:
 
 1. Blue-1 must have a strict stop.
-2. Prefer an inherited/chained stop level only when Blue-1 is eligible for carried-stop ownership. In particular, a **Scale Blue that is still live when Blue-2 forms cannot borrow a hypothetical inherited stop** from an intervening Bearish Reaction; its real strict stop chronology must resolve first. Reset-Blue pre-stop structural chaining remains unchanged.
+2. Prefer an inherited/chained stop level only when Blue-1 is eligible for carried-stop ownership. In particular, a **Scale Blue that is still live when Blue-2 forms cannot borrow a hypothetical inherited stop** from an intervening Bullish Reaction; its real strict stop chronology must resolve first. Reset-Blue pre-stop structural chaining remains unchanged.
 3. Otherwise if Blue-1 stopped before Blue-2 formed, freeze the directional extreme between Blue-1 stop and Blue-2 source, then test crossing during Blue-2 formation; if not crossed, wait for Blue-2's own stop and then the continuation level crossing.
 4. If Blue stops overlap or occur after Blue-2 formation, order the two strict stop events. Exact-time tie is deterministically ordered by stop level (`higher` first in Bullish via `-level`, `lower` first in Bearish via `level` in the Source sort key), then trigger at the second stop event; otherwise wait after the second stop for a strict crossing of the first stop event extreme.
 
-The first validating Bearish Reaction must have confirmation `>= triggerEventTime` and First `>= max(Blue1StopTime, Blue2StopTime)`.
+The first validating Bullish Reaction must have confirmation `>= triggerEventTime` and First `>= max(Blue1StopTime, Blue2StopTime)`.
 
 ### 8.3 Inherited/chained Blue stop
 
-A prior Blue may carry a continuation stop according to `_inherited_stop`. A **Scale Blue** may enter this carried route only after it has actually strict-stopped before the current Blue forms; an open Scale Blue keeps its own `sourceExtreme` authoritative. Once eligible, use the first aligned Bearish Reaction whose First is strictly after the applicable stop window start and whose Break is before current Blue formation. The established Reset-Blue pre-stop structural route is unchanged.
+A prior Blue may carry a continuation stop according to `_inherited_stop`. A **Scale Blue** may enter this carried route only after it has actually strict-stopped before the current Blue forms; an open Scale Blue keeps its own `sourceExtreme` authoritative. Once eligible, use the first aligned Bullish Reaction whose First is strictly after the applicable stop window start and whose Break is before current Blue formation. The established Reset-Blue pre-stop structural route is unchanged.
 
-For a **chained** stopped Bearish Blue, the inherited-stop extreme range ends at the **end of the complete next Bearish Reaction Breakout main candle** (`breakTime + timeframe - 1 microsecond`). This exactly mirrors Bullish; the directional extreme is `maximum High` rather than `minimum Low`.
+For a **chained** stopped Bullish Blue, the inherited-stop extreme range ends at the **end of the complete next Bullish Reaction Breakout main candle** (`breakTime + timeframe - 1 microsecond`). This complete-Breakout-candle window is the canonical rule that Bearish mirrors exactly.
 
-The inherited level is `maximum High` over that exact source interval; its source index/time are preserved. If a chained/inherited level exists, the pair triggers only after Blue-2 formation strictly crosses that inherited level.
+The inherited level is `minimum Low` over that exact source interval; its source index/time are preserved. If a chained/inherited level exists, the pair triggers only after Blue-2 formation strictly crosses that inherited level.
 
 ### 8.4 A exact-confirmation source ownership
 
-The A candidate opens on the trigger main candle. The validating Reaction confirms the candidate, but prices after exact confirmation in that same Break candle belong to later chronology. Select A `price/source` as the `maximum High` from **trigger main-candle open through exact validating Reaction confirmation inclusive**. Do not use later remainder prices.
+The A candidate opens on the trigger main candle. The validating Reaction confirms the candidate, but prices after exact confirmation in that same Break candle belong to later chronology. Select A `price/source` as the `minimum Low` from **trigger main-candle open through exact validating Reaction confirmation inclusive**. Do not use later remainder prices.
 
 ### 8.5 Cycle and adjacent reuse
 
@@ -345,25 +378,25 @@ After A is accepted, its validating Reaction Break closes the current Blue pair 
 
 ### 8.6 Special double-stop A
 
-An invalid Reset Blue may pair with the most recent preceding valid Blue. On the invalid Blue's formation main candle, the previous valid Blue `sourceExtreme` must be strictly crossed within that candle. That exact crossing is the trigger. The first validating Bearish Reaction must confirm at/after trigger and have First at/after invalid Blue formation. A source is selected using the exact-confirmation rule above.
+An invalid Reset Blue may pair with the most recent preceding valid Blue. On the invalid Blue's formation main candle, the previous valid Blue `sourceExtreme` must be strictly crossed within that candle. That exact crossing is the trigger. The first validating Bullish Reaction must confirm at/after trigger and have First at/after invalid Blue formation. A source is selected using the exact-confirmation rule above.
 
 Special A is removed if it uses a validating Reaction already consumed by ordinary A. A special A can also suppress later ordinary A candidates that reuse its consumed Blue ordinals. A prior ordinary A whose first strict stop belongs to the current special lifecycle can invalidate the special candidate as defined by `_a_was_stopped_before`.
 
-## 9. S engine — Bearish
+## 9. S engine — Bullish
 
-S begins only after a calculation-eligible A strictly stops on `High > level` against A price. The exact lower event is `aStopEventTime`; its containing main candle is `aStopTime/index`.
+S begins only after a calculation-eligible A strictly stops on `Low < level` against A price. The exact lower event is `aStopEventTime`; its containing main candle is `aStopTime/index`.
 
-### 9.1 First opposite Order after A stop and consecutive Mode-B refresh
+### 9.1 Immutable first opposite Order_A after A stop
 
-Select the earliest canonical `Bullish` Reaction whose First main index is not before the A-stop main index and whose exact confirmation is strictly after `aStopEventTime`. Rank by `(confirmationTime, FirstIndex, BreakIndex)`. This first Order opens **provisional** stopped-A Order ownership; bounded reconstruction may not skip it.
+Select the earliest canonical `Bearish` Reaction whose First main index is not before the A-stop main index and whose exact confirmation is strictly after `aStopEventTime`. Rank by `(confirmationTime, FirstIndex, BreakIndex)`. The first Order is the FINAL Order_A owner of that stopped A; it is never provisional.
 
-If that provisional Order has native `Reaction.mode=B`, ownership remains refreshable while S is undecided. Examine the next canonical opposite Order in exact confirmation chronology. When it is also native Mode B and confirms **strictly before** the current provisional S `decisionEventTime`, replace the Order owner with that newer Mode-B Order and rebuild the S candidate/decision from the newer Order geometry. Repeat through consecutive Mode-B Orders. Stop refreshing at the first native Mode-A Order, at the first Order whose confirmation is `>= decisionEventTime`, or when no later Order exists. Mode A starts a fresh Order structure and therefore terminates the replaceable Mode-B continuation chain. An Order at/after S decision cannot retroactively steal the decided S.
+Use only that first canonical Order for the stopped-A order-backed S candidate and its decision. No later native Mode-B or Mode-A Reaction can refresh it, even while S is undecided. The later physical Order can survive through an independently valid `parent-stop` or `reset-leg` creation cause; any `accepted-live`/`carried-live` use must preserve its true original creation provenance. The shared accepted-Order stop reconciliation is unchanged.
 
-The stopped-A `parent-stop` cause in OrderAudit must follow the final refreshed physical Order identity: remove that exact A cause from provisional earlier Order identities and attach it to the final owner. Other independent causes on earlier physical Orders are preserved.
+OrderAudit permanently associates this stopped-A `parent-stop` cause with the first physical Order identity `(FirstIndex,BreakIndex)`. One parent-stop cause cannot move or duplicate. Different independent causes may legitimately share one physical Order. No timestamp-specific exceptions are allowed.
 
 ### 9.2 Type-3 S (no new Order before decision)
 
-Before the newly selected opposite Order confirmation (or end of range if none), a pre-existing opposite Reaction may Reset after A stop. Use inclusive owner Break → Reset main geometry to select the directional `High` (last candle wins on equal extreme). Find first strict candidate crossing before the deadline. Type-3 is valid only if at least one Bearish Reaction confirms after A stop and no later than that crossing. Type-3 is always `S Blue`, `formationType=type3`, and carries Reset provenance but no Order geometry.
+Before the newly selected opposite Order confirmation (or end of range if none), a pre-existing opposite Reaction may Reset after A stop. Use inclusive owner Break → Reset main geometry to select the directional `Low` (last candle wins on equal extreme). Find first strict candidate crossing before the deadline. Type-3 is valid only if at least one Bullish Reaction confirms after A stop and no later than that crossing. Type-3 is always `S Blue`, `formationType=type3`, and carries Reset provenance but no Order geometry.
 
 ### 9.3 Type-4 S Blue — aligned-Reaction candidate before any Order
 
@@ -378,18 +411,18 @@ The legacy geometry classifier compares A-stop candle directional extreme with t
 ### 9.5 Candidate geometry
 
 - Pre-Order Simple candidate: directional extreme from exact A-stop remainder through Order First inclusive; equal extremes in helper variants use the function's declared first/last ownership.
-- Post-Order Simple candidate: directional extreme from opposite Order Break through the aligned first subsequent Bearish Reaction Break inclusive; equal extreme is assigned to the **last** candle.
-- Advanced candidate: when a complete nested Bearish Reaction exists wholly inside the opposite Order before Order confirmation, source the candidate from the Order's opposite semantic box edge (`BoxBottom source` for Bullish trend, `BoxTop source` for Bearish trend); candidate may decide only from the nested trend confirmation onward.
+- Post-Order Simple candidate: directional extreme from opposite Order Break through the aligned first subsequent Bullish Reaction Break inclusive; equal extreme is assigned to the **last** candle.
+- Advanced candidate: when a complete nested Bullish Reaction exists wholly inside the opposite Order before Order confirmation, source the candidate from the Order's opposite semantic box edge (`BoxBottom source` for Bullish trend, `BoxTop source` for Bearish trend); candidate may decide only from the nested trend confirmation onward.
 
 ### 9.6 S decision race
 
-Start at Order confirmation and inspect lower events chronologically. Candidate strict cross uses the Bearish directional extreme (`High > level`). `Order is Bullish, so stop crosses on Low < orderStopLevel`.
+Start at Order confirmation and inspect lower events chronologically. Candidate strict cross uses the Bullish directional extreme (`Low < level`). `Order is Bearish, so stop crosses on High > orderStopLevel`.
 
 At each lower event:
 
 1. if candidate and Order stop both strictly cross in that same event: candidate is invalid, return no S;
 2. else if Order stop crosses first: `S Red`;
-3. else if candidate crosses and either its aligned Reset Blue has formed by that event **or** any ordinary Bearish Reaction confirmed after active behavior start and no later than the event: `S Blue`;
+3. else if candidate crosses and either its aligned Reset Blue has formed by that event **or** any ordinary Bullish Reaction confirmed after active behavior start and no later than the event: `S Blue`;
 4. in pre-Order Simple provisional mode only, an unqualified candidate cross returns `fallback`, abandoning the pre-Order ownership and re-evaluating the normal post-Order Simple/Advanced route.
 
 If no lower data is available, the same logic is applied on main candles, preserving strictness and branch order.
@@ -417,22 +450,22 @@ Deduplicate accepted Orders by physical `(FirstIndex,BreakIndex)` identity and p
 
 `accepted-live`/shared use never rewrites Order creation provenance. The physical Order keeps its original accepted `parent-stop` and/or `reset-leg` cause in OrderAudit. Arbitrary opposite Reactions that were never accepted as physical Orders are never promoted by this rule.
 
-## 10. E engine — Bearish
+## 10. E engine — Bullish
 
-E recursively consumes accepted S and E parents. E uses the same `high` directional stop semantics and opposite `Bullish` Order geometry.
+E recursively consumes accepted S and E parents. E uses the same `low` directional stop semantics and opposite `Bearish` Order geometry.
 
 ### 10.1 Parent strict stop
 
-For an S/E parent, find the first strict `High > level` of its `price` starting from the parent's relevant source/decision chronology. The exact lower event and containing main index are parent-stop provenance.
+For an S/E parent, find the first strict `Low < level` of its `price` starting from the parent's relevant source/decision chronology. The exact lower event and containing main index are parent-stop provenance.
 
 ### 10.2 Order routes
 
 E Order resolution is physical-Order based. Four use routes can participate in the same E decision race, all keyed by `(FirstIndex,BreakIndex)`:
 
-- **parent-stop/direct Order_A cause** — a new opposite Bullish Order created directly because the current accepted parent strictly stopped;
+- **parent-stop/direct Order_A cause** — a new opposite Bearish Order created directly because the current accepted parent strictly stopped;
 - **carried-live accepted Order** — an already accepted Order that confirmed before the current parent stop and is still live at that stop;
 - **post-stop accepted-live Order** — an already accepted physical Order whose exact confirmation occurs after the current parent stop. Its creation parent may be A, S, E, StopAll, or independent Reset-leg/Order_B structure; it does **not** have to equal the candidate parent;
-- **Reset-leg Order_B cause** — the canonical same-direction Bearish Reset-leg formation described below.
+- **Reset-leg Order_B cause** — the canonical same-direction Bullish Reset-leg formation described below.
 
 `Order_A`/`Order_B` are creation causes, not native Reaction modes. `carried-live` and `accepted-live` are **use provenance only**. They never relabel the physical Order's original accepted creation cause in OrderAudit.
 
@@ -440,18 +473,18 @@ For a post-stop accepted-live Order to participate, its exact confirmation must 
 
 All routes enter the same stop-event race. One exact parent-stop creation cause still belongs to only one physical Order; sharing an already accepted Order as confirmation does not consume or duplicate its creation provenance.
 
-### 10.3 Canonical Order_B Reset-leg formation — Bearish
+### 10.3 Canonical Order_B Reset-leg formation — Bullish
 
-Order_B is built from a **Bearish Reaction Reset**, not from a Bullish/opposite Reset:
+Order_B is built from a **Bullish Reaction Reset**, not from a Bearish/opposite Reset:
 
-1. Take one Bearish Reset and resolve its owning Bearish Reaction through `from_first_idx`.
-2. From the owner Reaction's **Breakout main candle through the Reset main candle, inclusive**, find the **minimum Low**. This is the Reset-leg floor / trigger level. The first main candle that owns that minimum is the floor-source candle.
-3. Starting at the exact Reset event, scan lower-timeframe data for the first strict `Low < floor`. Equality does not qualify. Preserve both the exact lower event and its containing 30s/main candle.
-4. Define the evidence interval as the **closed main-candle range from the floor-source candle through the strict-break main candle, inclusive**.
-5. In that closed interval, require at least one **raw Bullish Reaction geometry**. Geometry alone is sufficient: normal Reset validity, lifecycle acceptance, public visibility and Internal-Reaction status are deliberately ignored for this evidence test.
-6. Over the same closed interval, compute the **maximum High**. This is the Reset-leg ceiling. The first candle that owns the maximum is retained as its source.
-7. After the strict-break gate, select the **first canonical Bullish Reaction** whose First belongs to the gate main candle or a later main candle and whose exact confirmation is strictly after the exact lower-timeframe floor break. That canonical Reaction is the physical `Order_B`.
-8. Store Order_B cause provenance as `reset-leg(resetTime, boundaryBreakTime)`, where the legacy public field `boundaryBreakTime` now means the exact strict break of the Reset-leg **floor**. If the same physical Order has several valid Order_B origins, the latest valid `(resetTime, strictBreakEventTime)` is authoritative in final OrderAudit.
+1. Take one Bullish Reset and resolve its owning Bullish Reaction through `from_first_idx`.
+2. From the owner Reaction's **Breakout main candle through the Reset main candle, inclusive**, find the **maximum High**. This is the Reset-leg ceiling / trigger level. The first main candle that owns that maximum is the ceiling-source candle.
+3. Starting at the exact Reset event, scan lower-timeframe data for the first strict `High > ceiling`. Equality does not qualify. Preserve both the exact lower event and its containing main candle.
+4. Define the evidence interval as the **closed main-candle range from the ceiling-source candle through the strict-break main candle, inclusive**.
+5. In that closed interval, require at least one **raw Bearish Reaction geometry**. Geometry alone is sufficient: normal Reset validity, lifecycle acceptance, public visibility and Internal-Reaction status are deliberately ignored for this evidence test.
+6. Over the same closed interval, compute the **minimum Low**. This is the Reset-leg floor. The first candle that owns the minimum is retained as its source.
+7. After the strict-break gate, select the **first canonical Bearish Reaction** whose First belongs to the gate main candle or a later main candle and whose exact confirmation is strictly after the exact lower-timeframe ceiling break. That canonical Reaction is the physical `Order_B`.
+8. Store Order_B cause provenance as `reset-leg(resetTime, boundaryBreakTime)`, where the legacy public field `boundaryBreakTime` now means the exact strict break of the Reset-leg **ceiling**. If the same physical Order has several valid Order_B origins, the latest valid `(resetTime, strictBreakEventTime)` is authoritative in final OrderAudit.
 
 The scoped lifecycle rule remains separate from formation: after cause merging, an internal native Mode-B Reaction whose only accepted causes are Reset-leg can be filtered from public Order ownership. That filter does **not** change the geometry-only evidence rule above, and a valid parent-stop cause on the same physical Order is not erased.
 
@@ -465,7 +498,7 @@ For each stopped parent, E may use a direct/inherited/carried Order or a parent-
 
 The accepted-live ledger is composed from calculation-accepted stopped-A Orders plus accepted S/E/StopAll/Order_B physical Orders already present in canonical OrderAudit. A post-stop accepted Order is eligible only when its confirmation is after the parent stop, its strict Order stop is later than both confirmation and parent stop, and no hard sequence reset occurs between the parent stop and that Order stop.
 
-Representatives with known strict Order stops compete by exact stop chronology; earliest Order stop wins, with deterministic First-index tie handling. The E source is then the directional `maximum High` over the complete main-candle interval from the parent-stop main candle through the winning Order-stop main candle, inclusive. Lower-timeframe data decides **when** stops happen; it does not truncate either boundary main candle's OHLC.
+Representatives with known strict Order stops compete by exact stop chronology; earliest Order stop wins, with deterministic First-index tie handling. The E source is then the directional `minimum Low` over the complete main-candle interval from the parent-stop main candle through the winning Order-stop main candle, inclusive. Lower-timeframe data decides **when** stops happen; it does not truncate either boundary main candle's OHLC.
 
 `accepted-live` is use provenance only. Final OrderAudit must restore/preserve the winner's original accepted creation cause from the prior accepted ledger or stopped-A ledger. If no original accepted creation cause can be proven, the system must not fabricate one.
 
@@ -555,11 +588,11 @@ If S and accepted E occupy the same physical `(sourceIndex,sourceTime)`, E owns 
 
 StopAll consumes lifecycle-visible S and reconciled E chronologically. The invariant priority table remains `S Blue=1`, `E Blue=2`, `S Red=3`, `E Red=4`; Red/Blue labels never mirror by market direction.
 
-Maintain the exact current dominant S key/count and E key/count for the existing E-driven `sequence-group-stop` rule. **Separately**, maintain cycle-wide Blue-repeat counters keyed by accepted behavior group: `S Blue` is one key regardless of S subtype, while each numbered Blue E is its own key (`E1 Blue`, `E2 Blue`, `E5 Blue`, ...). Every accepted occurrence increments its own key even when it is not, or no longer remains, the current dominant owner. Different E numbers never add together.
+Maintain the exact current dominant S key/count and E key/count for the existing E-driven `sequence-group-stop` rule. **Separately**, maintain pending Blue-repeat counters keyed by accepted behavior group: `S Blue` is one key regardless of subtype, while each numbered Blue E is a separate key (`E1 Blue`, `E2 Blue`, `E5 Blue`, ...). Blue occurrences increment their exact key regardless of current dominance, but an accepted Red S or E resolves the pending Blue reversal and clears only these Blue-repeat counters. A hard StopAll resets both the pending counters and all active owner state. Different E numbers never add together.
 
-When an accepted `S Red` arrives, evaluate the cycle-wide Blue-repeat counters **before** ordinary S replacement. If any exact Blue group has `count >= 2`, promote that incoming S Red itself to StopAll with `gateType='opposite-s-group-stop'`. No additional requirement exists that the qualifying Blue group still be dominant or that its latest occurrence have strictly stopped before the S decision. If several groups qualify, metadata is attributed deterministically to the qualifying group with the latest accepted occurrence. A single `E3 Blue`, even after earlier `E1 Blue/E2 Blue` progression, is still insufficient because those different E numbers are separate groups.
+When an accepted `S Red` arrives, evaluate its forming Order mode and pending exact-key Blue repeats **before** ordinary S replacement. A native Mode-B Order plus any exact Blue group with `count >= 2` promotes that S Red to StopAll with `gateType='opposite-s-group-stop'`. Otherwise, retain it as S Red and clear pending Blue evidence, even if its Order is Mode A or absent; a later S cannot reuse the resolved Blue group. An accepted Red E likewise clears pending evidence after independent `stopall-stop` and `sequence-group-stop` checks. No extra latest-Blue stop/dominance condition exists, and multiple qualified groups use the latest accepted occurrence for deterministic metadata. E-driven StopAll state is not cleared by an ordinary Red S/E.
 
-Before each E decision: ingest earlier S events; strictly stop active StopAll objects and, if one stops, create the next numbered StopAll from the current E (`stopall-stop`); otherwise preserve the same-key E/S `sequence-group-stop` gate; if no StopAll is created, update the active E key/count under the priority table. Any accepted StopAll is a hard boundary: all active S/E exact-key owner state and all cycle-wide Blue-repeat counters reset to zero.
+Before each E decision: ingest earlier S events; strictly stop active StopAll objects and, if one stops, create the next numbered StopAll from the current E (`stopall-stop`); otherwise preserve the same-key E/S `sequence-group-stop` gate; if no StopAll is created, update the active E key/count under the priority table. Any accepted StopAll is a hard boundary: all active S/E exact-key owner state and all pending Blue-repeat counters reset to zero.
 
 Bearish strict stops use `High > level`; Bullish mirrors with `Low < level`. StopAll chronology and key-count semantics themselves are direction-invariant.
 
@@ -593,7 +626,7 @@ Bearish strict stops use `High > level`; Bullish mirrors with `Low < level`. Sto
 | Mode-B Order stop | previous BoxTop | previous BoxBottom |
 | Candidate/behavior stop | Low `<` price | High `>` price |
 
-**Exact mirror rule:** A chained stopped Bearish Blue uses the complete next Bearish Reaction Breakout main candle (`breakTime + timeframe - 1 microsecond`) and freezes the `maximum High`. Bullish uses the identical time window and freezes the `minimum Low`.
+**Exact mirror rule:** A chained stopped Bullish Blue uses the complete next Bullish Reaction Breakout main candle (`breakTime + timeframe - 1 microsecond`) and freezes the `minimum Low`. Bearish uses the identical time window and freezes the `maximum High`.
 
 
 
@@ -617,7 +650,7 @@ prepare_pipeline_state:
         for each requested output direction:
             calculate_full_direction_state(direction)
 
-calculate_full_direction_state(bearish):
+calculate_full_direction_state(bullish):
     Blue = detect_blue_lines(direction, trend Reactions, trend Resets)
     A = detect_a_zones(direction, trend Reactions, Blue)
     S_detector = SZoneDetector(trend Reactions, opposite Reactions/Resets, Blue, A)
@@ -683,7 +716,7 @@ E depends on accepted S, accepted Order provenance, invalid A/S ownership, stage
 
 ### Parent stop / direct Order_A route
 
-For any S/E parent, strict parent stop is the first lower-timeframe `High > parent.price` from the applicable source/range start. The first lower event owns `parentStopEventTime`; map it to a main candle for `parentStopIndex/Time`.
+For any S/E parent, strict parent stop is the first lower-timeframe `Low < parent.price` from the applicable source/range start. The first lower event owns `parentStopEventTime`; map it to a main candle for `parentStopIndex/Time`.
 
 Direct parent-stop search remains separate from Order_B. `_direct_parent_stop_order` and the narrow fresh-trend continuation route may produce a `parent-stop` creation cause. One exact parent-stop provenance can be spent by only one physical Order; `_enforce_single_parent_stop_owner` keeps the earliest `(confirmationTime,FirstIndex,BreakIndex)` owner and strips that cause from later identities unless another independent cause survives.
 
@@ -705,31 +738,31 @@ Direct parent-stop search remains separate from Order_B. `_direct_parent_stop_or
 8. Emit use provenance `accepted-live`; if the physical Order also has accepted Reset-leg provenance, retain `reset-leg` alongside the use marker.
 9. Never create a new parent-stop cause for the current candidate. Final audit recovers the physical Order's original creation provenance from the accepted ledgers.
 
-The implementation is direction invariant. `_cross_order` supplies the exact mirrored price rule for the opposite Bullish Order.
+The implementation is direction invariant. `_cross_order` supplies the exact mirrored price rule for the opposite Bearish Order.
 
 ### `OrderBFormation` — canonical Reset-leg state
 
-The E engine precomputes canonical Order_B formations with `_build_order_b_formations()`. Each formation stores Reset time/index, owning Bearish Reaction First/Break indexes, trigger level and source, exact strict-break chronology, the mirrored other-edge extreme/source, raw opposite-geometry identity, and the final canonical Bullish Order Reaction/confirmation.
+The E engine precomputes canonical Order_B formations with `_build_order_b_formations()`. Each formation stores Reset time/index, owning Bullish Reaction First/Break indexes, trigger level and source, exact strict-break chronology, the mirrored other-edge extreme/source, raw opposite-geometry identity, and the final canonical Bearish Order Reaction/confirmation.
 
 ### Order_B Step 1 — same-direction Reset owner and trigger extreme
 
-`_order_b_reset_leg(reset, reset_time)` resolves the Reset's owning **Bearish Reaction** through `from_first_idx`. Over the closed main-candle interval `owner.break_idx .. reset.index`, `_main_range_extreme` takes the **minimum Low**. This is the Reset-leg floor; equal extrema preserve the earliest owning main candle.
+`_order_b_reset_leg(reset, reset_time)` resolves the Reset's owning **Bullish Reaction** through `from_first_idx`. Over the closed main-candle interval `owner.break_idx .. reset.index`, `_main_range_extreme` takes the **maximum High**. This is the Reset-leg ceiling; equal extrema preserve the earliest owning main candle.
 
 ### Order_B Step 2 — exact strict break
 
-`_order_b_strict_break(reset_time, level)` begins at the exact Reset chronology and finds the first strict `Low < floor`. Equality never qualifies.
+`_order_b_strict_break(reset_time, level)` begins at the exact Reset chronology and finds the first strict `High > ceiling`. Equality never qualifies.
 
 ### Order_B Step 3 — closed evidence interval and mirrored other edge
 
-Evidence is exactly the closed main-candle range `primary-extreme source .. strict-break main candle`, both endpoints inclusive. `_order_b_opposite_extreme(...)` computes `maximum High` over the same closed interval.
+Evidence is exactly the closed main-candle range `primary-extreme source .. strict-break main candle`, both endpoints inclusive. `_order_b_opposite_extreme(...)` computes `minimum Low` over the same closed interval.
 
 ### Order_B Step 4 — raw opposite Reaction geometry only
 
-`_order_b_geometry_evidence(...)` searches bounded raw Bullish Reaction geometry only. Normal Reset validity, lifecycle acceptance, public visibility and Internal-Reaction status are not required for this evidence test.
+`_order_b_geometry_evidence(...)` searches bounded raw Bearish Reaction geometry only. Normal Reset validity, lifecycle acceptance, public visibility and Internal-Reaction status are not required for this evidence test.
 
 ### Order_B Step 5 — physical Order_B after the gate
 
-`_first_order_b_reaction_after_break(...)` selects the first canonical Bullish Reaction whose First belongs to the gate main candle or later and whose exact confirmation is strictly after the exact lower-timeframe gate event. That canonical Reaction is the physical Order_B; its native mode can be A or B.
+`_first_order_b_reaction_after_break(...)` selects the first canonical Bearish Reaction whose First belongs to the gate main candle or later and whose exact confirmation is strictly after the exact lower-timeframe gate event. That canonical Reaction is the physical Order_B; its native mode can be A or B.
 
 ### Order_B Step 6 — cause ownership and latest-cause rule
 
@@ -757,7 +790,7 @@ Candidate representatives with known strict stop crossings compete on exact chro
 
 ### E decision/source
 
-`decisionEventTime = max(parentStopEventTime, winningOrderStopEventTime)`. Map to its main candle for decision index/time. Source ownership is complete-main-candle based: include the main candle containing the parent stop through the main candle containing the winning Order stop, inclusive, and select `maximum High`. Lower-timeframe chronology decides stop order but never truncates boundary-candle OHLC.
+`decisionEventTime = max(parentStopEventTime, winningOrderStopEventTime)`. Map to its main candle for decision index/time. Source ownership is complete-main-candle based: include the main candle containing the parent stop through the main candle containing the winning Order stop, inclusive, and select `minimum Low`. Lower-timeframe chronology decides stop order but never truncates boundary-candle OHLC.
 
 ### Provisional chains
 
@@ -776,7 +809,7 @@ while parent has valid E zone and sourceIndex not repeated in this chain:
     number += 1
 ```
 
-### Invalid-S-root collision (current E 6.8.0)
+### Invalid-S-root collision (current E 6.13.0; behavior preserved from the earlier implementation)
 
 After all provisional chains exist, collect physical identities of E zones whose parent is E, grouped by family. For every S identity marked invalid because its A parent failed final lifecycle eligibility: if that exact `(sourceTime,sourceIndex)` already has an E-parent continuation of a **different family**, block the **entire provisional chain rooted at that invalid S**. Do not block when continuation family is the same. The S remains available to OrderAudit/evidence elsewhere.
 
@@ -805,7 +838,7 @@ For E-parent candidate: parent is active if it is the hard sequence-start source
 
 ### Does candidate stop an active E?
 
-Only when candidate decision occurs strictly after prior decision and `new.price > prior.price`.
+Only when candidate decision occurs strictly after prior decision and `new.price < prior.price`.
 
 ### Prevent lower-priority S stealing active continuation
 
@@ -855,7 +888,7 @@ Key=`(sourceIndex,sourceTime)`. Higher `sequence_priority('e', family)` wins (Re
 
 ### `s_zones_for_module_engines`
 
-Walk S by source time against prior accepted E + prior kept S. If newest prior module has priority >= incoming S and incoming A source predates that module, reject. Otherwise compare both incoming `a_price` and S `price` against prior module price using strict Bearish boundary; if either is strictly beyond, reject. Higher-priority incoming S is allowed to supersede lower-priority prior behavior.
+Walk S by source time against prior accepted E + prior kept S. If newest prior module has priority >= incoming S and incoming A source predates that module, reject. Otherwise compare both incoming `a_price` and S `price` against prior module price using strict Bullish boundary; if either is strictly beyond, reject. Higher-priority incoming S is allowed to supersede lower-priority prior behavior.
 
 ### `s_zones_for_stopall`
 
@@ -873,7 +906,7 @@ Among original S candidates removed from accepted S:
 - require candidate priority < E owner priority;
 - require E exact stop strictly before candidate A source;
 - require candidate A to form strictly after that stop;
-- compare Close of E-stop main candle to Close of candidate S source main candle and require strict Bearish continuation beyond it;
+- compare Close of E-stop main candle to Close of candidate S source main candle and require strict Bullish continuation beyond it;
 - keep only earliest such suppressed S per E owner.
 
 That S becomes non-public continuation evidence via `continuation_chain_from_s`.
@@ -929,13 +962,15 @@ hard_reset():
     reset active StopAll ownership as required by the creating gate
 
 process_s(S):
-    if S.color == Red:
+    if S.color == Red and S.order_mode == B:
         qualified = every exact Blue key with blue_repeat_count[key] >= 2
         if qualified:
             key = qualified key whose latest accepted occurrence is latest
             promote S -> StopAll using key/count metadata
             hard_reset(); return
 
+    if S.color == Red:
+        clear pending Blue-repeat counters (not dominant S/E owner state)
     if S.color == Blue:
         record_blue(S)
 
@@ -958,7 +993,9 @@ for E in chronological E:
             create StopAll1 from E with sequence-group-stop; hard_reset(); continue
 
     # Only an E that remains E (was not promoted above) participates in the
-    # cycle-wide accepted-S reversal counter.
+    # pending accepted-S reversal counter.
+    if E.family == Red:
+        clear pending Blue-repeat counters (not dominant S/E owner state)
     if E.family == Blue:
         record_blue(E)
 
@@ -973,7 +1010,7 @@ after final E: ingest remaining S
 finally compute each StopAll's own first strict directional stop
 ```
 
-The accepted-S reversal gate uses **cycle-wide repetition of the same exact Blue behavior group**. `S Blue × 2`, `E1 Blue × 2`, or `E5 Blue × 2` each independently qualify. Different E numbers never add together, so `E1 Blue → E2 Blue → E3 Blue` leaves three different groups with count one and does not qualify by itself. Once any one group reaches two accepted occurrences, that qualification remains armed until a hard StopAll boundary; the next accepted `S Red` is promoted even if a different behavior has become dominant in between. The mirror changes only directional price geometry.
+The accepted-S reversal gate uses **pending repetition of the same exact Blue behavior group**. `S Blue × 2`, `E1 Blue × 2`, or `E5 Blue × 2` each independently qualify; different E numbers never add together. This qualification lasts only until the next accepted Red S/E or hard StopAll. The first accepted S Red with a native Mode-B Order and qualifying pending Blue group promotes to StopAll. A Mode-A/no-Order S Red remains S Red but clears the obsolete pending evidence. A Red E also clears it without changing E-driven priority/sequence counters. Another Blue group may re-arm thereafter. The mirror changes only directional price geometry.
 
 ## 16. Public serialization contract
 
@@ -1005,7 +1042,7 @@ The top-level response contains: `engine`, `version`, `pipelineVersion`, `blueLi
 `direction`, `number`, source/decision fields, gate fields, stopped behavior fields, underlying E family/number, complete Order geometry/provenance, and strict stop fields `stopIndex`, `stopTime`, `stopEventTime`.
 
 ### OrderAudit
-One physical Order identity is `(firstIndex, breakIndex)`. Output fields are `direction`, `reactionNumber`, `reactionMode`, Reaction box fields, `stopLevel`, `stopSourceIndex`, `stopSourceTime`, `stopHitIndex`, `stopHitTime`, `stopHitEventTime`, and `causes`. Causes are either `parent-stop` (`parentType`, `parentFamily`, `eventTime`, `parentSourceTime`) or `reset-leg` (`resetTime`, `boundaryBreakTime`). For V5.2.0 Order_B, `boundaryBreakTime` is the exact strict break of the Reset-leg floor. Output is sorted by `(firstTime, breakTime)`.
+One physical Order identity is `(firstIndex, breakIndex)`. Output fields are `direction`, `reactionNumber`, `reactionMode`, Reaction box fields, `stopLevel`, `stopSourceIndex`, `stopSourceTime`, `stopHitIndex`, `stopHitTime`, `stopHitEventTime`, and `causes`. Causes are either `parent-stop` (`parentType`, `parentFamily`, `eventTime`, `parentSourceTime`) or `reset-leg` (`resetTime`, `boundaryBreakTime`). For V5.2.0 Order_B, `boundaryBreakTime` is the exact strict break of the Reset-leg ceiling. Output is sorted by `(firstTime, breakTime)`.
 
 The final Bridge has a hard consistency invariant: every public S/E/StopAll that carries an Order must reference a physical identity `(firstIndex,breakIndex)` present in the final canonical OrderAudit. Final E branch replacement or independent-root restoration must synchronize the accepted Order ledger before serialization. Conversely, one exact parent-stop cause may not appear on two different physical Order identities. Accepted carried-live and noncanonical bounded direct Order geometry (`reactionNumber=0`) must remain auditable; the Bridge must never invent a replacement Order merely to satisfy serialization.
 
@@ -1048,744 +1085,849 @@ A replacement engine is conforming only if all of these are true:
 - no fixture-specific production logic exists.
 
 ## 20. Source-symbol coverage appendix
-This appendix is generated from the exact V5.4.0 embedded source snapshot. Line numbers refer to the embedded/current production files in this document. Private helpers are listed because they can affect observable chronology or provenance.
+This appendix is generated from the **current HPZR2 documentation snapshot over the actual production source text**. The line numbers below are regenerated from the current nine modules, not inherited from an older Reference. Hashes are not used to decide semantic synchronization; they are only optional integrity metadata. All module-level classes, functions, methods, nested helper functions, and important module constants discovered from the current Python syntax tree are indexed so implementation helpers are not silently omitted.
 ### 20.1 `reaction_engine.py`
+
 | Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
-| `Candle` | class | 27 | Behaviorally relevant source symbol. |
-| `Candidate` | class | 39 | Behaviorally relevant source symbol. |
-| `ResetEvent` | class | 67 | Behaviorally relevant source symbol. |
-| `IntrabarAnalysis` | class | 76 | Behaviorally relevant source symbol. |
-| `DetectionResult` | class | 83 | Behaviorally relevant source symbol. |
+| `REACTION_ENGINE_VERSION` | constant | 21 | Module constant. Value in this snapshot: `'9.8.0'`. |
+| `REACTION_ENGINE_LAST_MODIFIED` | constant | 22 | Module constant. Value in this snapshot: `'2026-09-22 00:35:00 +03:30'`. |
+| `_SEQUENCE_TIME_INDEXES` | constant | 24 | Module constant. Value in this snapshot: `{}`. |
+| `Candle` | class | 27 | Source symbol required by the production implementation. |
+| `Candidate` | class | 39 | Source symbol required by the production implementation. |
+| `ResetEvent` | class | 67 | Source symbol required by the production implementation. |
+| `IntrabarAnalysis` | class | 76 | Source symbol required by the production implementation. |
+| `DetectionResult` | class | 83 | Source symbol required by the production implementation. |
 | `classify_candle_color` | function | 91 | Match Lightweight Charts: Open <= Close is an up/green candle. |
 | `opposite_direction` | function | 96 | Return the exact Bullish/Bearish mirror direction. |
-| `DetectorBase` | class | 101 | Behaviorally relevant source symbol. |
-| `DetectorBase.__init__` | method | 102 | Behaviorally relevant source symbol. |
+| `DetectorBase` | class | 101 | Source symbol required by the production implementation. |
+| `DetectorBase.__init__` | method | 102 | Source symbol required by the production implementation. |
 | `DetectorBase._shared_time_index` | method | 127 | Build one immutable-source timestamp index per calculation process. |
-| `DetectorBase.seconds_between` | method | 137 | Behaviorally relevant source symbol. |
-| `DetectorBase.main_source_for_time` | method | 142 | Behaviorally relevant source symbol. |
-| `DetectorBase.minimum_low` | method | 155 | Behaviorally relevant source symbol. |
-| `DetectorBase.maximum_high` | method | 164 | Behaviorally relevant source symbol. |
-| `BullishDetector` | class | 174 | Behaviorally relevant source symbol. |
-| `BullishDetector.green_run_peak_before` | method | 175 | Behaviorally relevant source symbol. |
-| `BullishDetector.breakout_analysis` | method | 185 | Behaviorally relevant source symbol. |
-| `BullishDetector.mode_a_invalidation_before_breakout` | method | 211 | Behaviorally relevant source symbol. |
-| `BullishDetector.confirmed_reset_before_breakout` | method | 247 | Behaviorally relevant source symbol. |
-| `BullishDetector.post_breakout_reset` | method | 267 | Behaviorally relevant source symbol. |
-| `BullishDetector.detect` | method | 282 | Behaviorally relevant source symbol. |
-| `mirror_candle` | function | 560 | Internal coordinate/role adapter; never reclassify a market candle here. Input dojis are GREEN in both market directions, matching the chart. Swapping that tag inside the Bullish reference makes its RED/FirstRed branc... |
+| `DetectorBase.seconds_between` | method | 137 | Source symbol required by the production implementation. |
+| `DetectorBase.main_source_for_time` | method | 142 | Source symbol required by the production implementation. |
+| `DetectorBase.minimum_low` | method | 155 | Source symbol required by the production implementation. |
+| `DetectorBase.maximum_high` | method | 164 | Source symbol required by the production implementation. |
+| `BullishDetector` | class | 174 | Source symbol required by the production implementation. |
+| `BullishDetector.green_run_peak_before` | method | 175 | Source symbol required by the production implementation. |
+| `BullishDetector.breakout_analysis` | method | 185 | Source symbol required by the production implementation. |
+| `BullishDetector.mode_a_invalidation_before_breakout` | method | 211 | Source symbol required by the production implementation. |
+| `BullishDetector.confirmed_reset_before_breakout` | method | 247 | Source symbol required by the production implementation. |
+| `BullishDetector.post_breakout_reset` | method | 267 | Source symbol required by the production implementation. |
+| `BullishDetector.detect` | method | 282 | Source symbol required by the production implementation. |
+| `mirror_candle` | function | 560 | Internal coordinate/role adapter; never reclassify a market candle here. |
 | `mirror_candidate` | function | 580 | Mirror geometry while preserving invariant dynamic gate state. |
-| `mirror_analysis` | function | 599 | Behaviorally relevant source symbol. |
-| `_ReflectedCandles` | class | 608 | Read-only coordinate view with one-time mirror caching. Each source candle is mirrored at most once (on first access) and the result is cached, so repeated scans reuse the same object instead of allocating a fresh mir... |
-| `_ReflectedCandles.__init__` | method | 616 | Behaviorally relevant source symbol. |
-| `_ReflectedCandles.__len__` | method | 620 | Behaviorally relevant source symbol. |
-| `_ReflectedCandles.__getitem__` | method | 623 | Behaviorally relevant source symbol. |
-| `_reflected_view` | function | 636 | Behaviorally relevant source symbol. |
-| `BearishDetector` | class | 646 | Execute the Bullish reference state machine in reflected coordinates. This is a coordinate adapter, not a second rule implementation. Both the initial Leg-Start and opposite-anchor queries use the same reference rules... |
-| `BearishDetector.__init__` | method | 654 | Behaviorally relevant source symbol. |
-| `BearishDetector.red_run_bottom_before` | method | 668 | Behaviorally relevant source symbol. |
-| `BearishDetector.breakdown_analysis` | method | 672 | Behaviorally relevant source symbol. |
-| `BearishDetector.invalidation_high_break_before_breakdown` | method | 677 | Behaviorally relevant source symbol. |
-| `BearishDetector.confirmed_reset_before_breakdown` | method | 682 | Behaviorally relevant source symbol. |
-| `BearishDetector.post_breakdown_reset` | method | 688 | Behaviorally relevant source symbol. |
-| `BearishDetector.detect` | method | 695 | Behaviorally relevant source symbol. |
-| `published_reaction_candidate` | function | 706 | Return a presentation clone with Break-candle geometry frozen at confirmation. Detection/lifecycle ownership is intentionally not mutated here. The public Reaction box must not include an opposite-edge extreme that ha... |
+| `mirror_analysis` | function | 599 | Source symbol required by the production implementation. |
+| `_ReflectedCandles` | class | 608 | Read-only coordinate view with one-time mirror caching. |
+| `_ReflectedCandles.__init__` | method | 616 | Source symbol required by the production implementation. |
+| `_ReflectedCandles.__len__` | method | 620 | Source symbol required by the production implementation. |
+| `_ReflectedCandles.__getitem__` | method | 623 | Source symbol required by the production implementation. |
+| `_REFLECTED_VIEWS` | constant | 633 | Module constant. Value in this snapshot: `{}`. |
+| `_reflected_view` | function | 636 | Source symbol required by the production implementation. |
+| `BearishDetector` | class | 646 | Execute the Bullish reference state machine in reflected coordinates. |
+| `BearishDetector.__init__` | method | 654 | Source symbol required by the production implementation. |
+| `BearishDetector.red_run_bottom_before` | method | 668 | Source symbol required by the production implementation. |
+| `BearishDetector.breakdown_analysis` | method | 672 | Source symbol required by the production implementation. |
+| `BearishDetector.invalidation_high_break_before_breakdown` | method | 677 | Source symbol required by the production implementation. |
+| `BearishDetector.confirmed_reset_before_breakdown` | method | 682 | Source symbol required by the production implementation. |
+| `BearishDetector.post_breakdown_reset` | method | 688 | Source symbol required by the production implementation. |
+| `BearishDetector.detect` | method | 695 | Source symbol required by the production implementation. |
+| `published_reaction_candidate` | function | 706 | Return a presentation clone with Break-candle geometry frozen at confirmation. |
 | `_decimal_value` | function | 804 | Normalize external numeric values without binary-float arithmetic. |
-| `LowerTimeframeIndex` | class | 809 | Immutable segment index for exact first strict High/Low crossings. The index is direction-agnostic and shared by A/S/E so heavy 1-second inputs are not rescanned for every stop/trigger lookup. |
-| `LowerTimeframeIndex.__init__` | method | 816 | Behaviorally relevant source symbol. |
-| `LowerTimeframeIndex.first_less` | method | 857 | Behaviorally relevant source symbol. |
-| `LowerTimeframeIndex.first_greater` | method | 860 | Behaviorally relevant source symbol. |
+| `LowerTimeframeIndex` | class | 809 | Immutable segment index for exact first strict High/Low crossings. |
+| `LowerTimeframeIndex.__init__` | method | 816 | Source symbol required by the production implementation. |
+| `LowerTimeframeIndex.first_less` | method | 857 | Source symbol required by the production implementation. |
+| `LowerTimeframeIndex.first_greater` | method | 860 | Source symbol required by the production implementation. |
 | `LowerTimeframeIndex.range_minimum` | method | 863 | Return the minimum Low and earliest owning position in [left, right). |
 | `LowerTimeframeIndex.range_maximum` | method | 867 | Return the maximum High and earliest owning position in [left, right). |
-| `LowerTimeframeIndex._range_query` | method | 871 | Behaviorally relevant source symbol. |
-| `LowerTimeframeIndex._first` | method | 909 | Behaviorally relevant source symbol. |
+| `LowerTimeframeIndex._range_query` | method | 871 | Source symbol required by the production implementation. |
+| `LowerTimeframeIndex._first` | method | 909 | Source symbol required by the production implementation. |
+| `_LOWER_TIMEFRAME_INDEXES` | constant | 929 | Module constant. Value in this snapshot: `{}`. |
 | `shared_lower_timeframe_index` | function | 934 | Reuse one immutable lower-timeframe index per source sequence. |
 | `ReflectedLowerTimeframeIndex` | class | 947 | Price-reflected view over a lower-timeframe index without rebuilding it. |
-| `ReflectedLowerTimeframeIndex.__init__` | method | 952 | Behaviorally relevant source symbol. |
-| `ReflectedLowerTimeframeIndex.first_less` | method | 956 | Behaviorally relevant source symbol. |
-| `ReflectedLowerTimeframeIndex.first_greater` | method | 959 | Behaviorally relevant source symbol. |
-| `ReflectedLowerTimeframeIndex.range_minimum` | method | 962 | Behaviorally relevant source symbol. |
-| `ReflectedLowerTimeframeIndex.range_maximum` | method | 966 | Behaviorally relevant source symbol. |
-| `MarketChronology` | class | 971 | Shared immutable market-time services for downstream behavior engines. Reaction owns chronology semantics. A/S/E receive this object rather than rebuilding timestamp indexes, lower-timeframe windows, confirmation scan... |
-| `MarketChronology.__init__` | method | 990 | Behaviorally relevant source symbol. |
+| `ReflectedLowerTimeframeIndex.__init__` | method | 952 | Source symbol required by the production implementation. |
+| `ReflectedLowerTimeframeIndex.first_less` | method | 956 | Source symbol required by the production implementation. |
+| `ReflectedLowerTimeframeIndex.first_greater` | method | 959 | Source symbol required by the production implementation. |
+| `ReflectedLowerTimeframeIndex.range_minimum` | method | 962 | Source symbol required by the production implementation. |
+| `ReflectedLowerTimeframeIndex.range_maximum` | method | 966 | Source symbol required by the production implementation. |
+| `MarketChronology` | class | 971 | Shared immutable market-time services for downstream behavior engines. |
+| `MarketChronology.__init__` | method | 990 | Source symbol required by the production implementation. |
 | `MarketChronology.opposite_direction` | method | 1013 | Expose the shared mirror-direction contract to downstream engines. |
 | `MarketChronology.main_index` | method | 1017 | Map an exact lower-timeframe timestamp to its owning main candle. |
-| `MarketChronology.lower_bounds` | method | 1026 | Behaviorally relevant source symbol. |
-| `MarketChronology.lower_window` | method | 1037 | Behaviorally relevant source symbol. |
+| `MarketChronology.lower_bounds` | method | 1026 | Source symbol required by the production implementation. |
+| `MarketChronology.lower_window` | method | 1037 | Source symbol required by the production implementation. |
 | `MarketChronology._reset_cache_key` | method | 1044 | Return a stable Reset identity suitable for chronology caches. |
 | `MarketChronology._reaction_cache_key` | method | 1056 | Return a stable physical/geometry identity for confirmation caches. |
 | `MarketChronology.reset_time` | method | 1070 | Return the exact Reset event time, preserving legacy provenance. |
-| `MarketChronology.reaction_confirmation` | method | 1089 | Return the first strict lower-timeframe Reaction confirmation. ``use_intrabar_start=False`` preserves the established A-engine chronology contract, which starts its scan at the Break candle open. S/E and public Reacti... |
-| `MarketChronology.canonical_order_stop` | method | 1137 | Return canonical opposite-Order stop provenance for S and E. Mode A owns the true leg head/floor from its anchor/context through Break inclusive. Mode B inherits the previous healthy opposite Reaction's semantic outer... |
+| `MarketChronology.reaction_confirmation` | method | 1089 | Return the first strict lower-timeframe Reaction confirmation. |
+| `MarketChronology.canonical_order_stop` | method | 1137 | Return canonical opposite-Order stop provenance for S and E. |
 | `build_behavior_reaction_views` | function | 1202 | Mark true cross-direction Reaction interiors for downstream behavior. |
-| `directional_a_stop_order_finder` | function | 1310 | Build the cached bounded opposite-Reaction resolver used after A stop. |
-| `UnifiedReactionDetector` | class | 1373 | Unified v9 directional post-Reset engine. The proven directional detectors supply only the initial Leg-Start. After that first confirmation this class owns Normal search and directional post-Reset continuation. A Rese... |
-| `UnifiedReactionDetector.__init__` | method | 1383 | Behaviorally relevant source symbol. |
-| `UnifiedReactionDetector.bull` | method | 1408 | Behaviorally relevant source symbol. |
-| `UnifiedReactionDetector.bear` | method | 1416 | Behaviorally relevant source symbol. |
-| `UnifiedReactionDetector._append_reaction` | method | 1423 | Behaviorally relevant source symbol. |
-| `UnifiedReactionDetector._append_reset` | method | 1505 | Behaviorally relevant source symbol. |
-| `UnifiedReactionDetector._refine` | method | 1523 | Behaviorally relevant source symbol. |
-| `UnifiedReactionDetector._candidate_from_confirmation_remainder` | method | 1544 | Reuse a correctly colored confirmation candle for the next reaction. |
-| `UnifiedReactionDetector._first_initial` | method | 1629 | Behaviorally relevant source symbol. |
-| `UnifiedReactionDetector._first_direct_same_direction_after_reset` | method | 1642 | Return the first structurally owned reaction after Reset. The earliest eligible candidate owns the evolving leg until it either confirms or its outer leg boundary is strictly crossed. A nested local pattern cannot con... |
-| `UnifiedReactionDetector._first_geometry_after_reset` | method | 1680 | Return the first complete raw Reaction geometry after a boundary. This bounded search intentionally ignores normal Reset/invalidation acceptance. It is a geometry-only primitive: First/box/Break structure may be used ... |
-| `UnifiedReactionDetector.first_geometry_after_reset` | method | 1733 | Public lifecycle API for post-Reset geometry discovery. |
-| `UnifiedReactionDetector._reaction_break_indices` | method | 1740 | Cached ascending `break_idx` values mirroring `all_reactions[direction]`. `all_reactions[direction]` is append-only and strictly non-decreasing in `break_idx`, so this index list can be reused via bisect instead of re... |
-| `UnifiedReactionDetector.first_order_reaction_after_gate` | method | 1755 | Return direct Order_A geometry from continuous Reaction context. |
-| `UnifiedReactionDetector._earliest_confirmed_geometry` | method | 1879 | Return the geometry whose strict confirmation occurs first. Multiple First candidates may overlap. Order-gender chronology belongs to the structure that completes first, not necessarily to the oldest still-unconfirmed... |
-| `UnifiedReactionDetector._build_direct_candidate` | method | 1953 | Behaviorally relevant source symbol. |
-| `UnifiedReactionDetector._scan_direct_candidate` | method | 2011 | Behaviorally relevant source symbol. |
-| `UnifiedReactionDetector._owner_boundary_before_confirmation` | method | 2041 | Return whether structural alignment is lost before confirmation. A Bearish Leg-Start Top must not rise above its outer ceiling. A Bullish Leg-Start Bottom must not fall below its outer floor. Equality preserves the un... |
-| `UnifiedReactionDetector._result` | method | 2082 | Behaviorally relevant source symbol. |
-| `UnifiedReactionDetector.detect` | method | 2091 | Behaviorally relevant source symbol. |
+| `build_behavior_reaction_views.path_is_contained` | nested function | 1222 | Source symbol required by the production implementation. |
+| `directional_a_stop_order_finder` | function | 1313 | Build the cached bounded opposite-Reaction resolver used after A stop. |
+| `directional_a_stop_order_finder.find` | nested function | 1327 | Source symbol required by the production implementation. |
+| `UnifiedReactionDetector` | class | 1376 | Unified v9 directional post-Reset engine. |
+| `UnifiedReactionDetector.__init__` | method | 1386 | Source symbol required by the production implementation. |
+| `UnifiedReactionDetector.bull` | method | 1411 | Source symbol required by the production implementation. |
+| `UnifiedReactionDetector.bear` | method | 1419 | Source symbol required by the production implementation. |
+| `UnifiedReactionDetector._append_reaction` | method | 1426 | Source symbol required by the production implementation. |
+| `UnifiedReactionDetector._append_reset` | method | 1508 | Source symbol required by the production implementation. |
+| `UnifiedReactionDetector._refine` | method | 1526 | Source symbol required by the production implementation. |
+| `UnifiedReactionDetector._candidate_from_confirmation_remainder` | method | 1547 | Reuse a correctly colored confirmation candle for the next reaction. |
+| `UnifiedReactionDetector._first_initial` | method | 1632 | Source symbol required by the production implementation. |
+| `UnifiedReactionDetector._first_direct_same_direction_after_reset` | method | 1645 | Return the first structurally owned reaction after Reset. |
+| `UnifiedReactionDetector._first_geometry_after_reset` | method | 1683 | Return the first complete raw Reaction geometry after a boundary. |
+| `UnifiedReactionDetector.first_geometry_after_reset` | method | 1736 | Public lifecycle API for post-Reset geometry discovery. |
+| `UnifiedReactionDetector._reaction_break_indices` | method | 1743 | Cached ascending `break_idx` values mirroring `all_reactions[direction]`. |
+| `UnifiedReactionDetector.first_order_reaction_after_gate` | method | 1758 | Return direct Order_A geometry from continuous Reaction context. |
+| `UnifiedReactionDetector.first_order_reaction_after_gate.confirmed_no_later_than_gate` | nested function | 1770 | Source symbol required by the production implementation. |
+| `UnifiedReactionDetector._earliest_confirmed_geometry` | method | 1892 | Return the geometry whose strict confirmation occurs first. |
+| `UnifiedReactionDetector._build_direct_candidate` | method | 1966 | Source symbol required by the production implementation. |
+| `UnifiedReactionDetector._scan_direct_candidate` | method | 2024 | Source symbol required by the production implementation. |
+| `UnifiedReactionDetector._owner_boundary_before_confirmation` | method | 2054 | Return whether structural alignment is lost before confirmation. |
+| `UnifiedReactionDetector._result` | method | 2095 | Source symbol required by the production implementation. |
+| `UnifiedReactionDetector.detect` | method | 2104 | Source symbol required by the production implementation. |
+
 ### 20.2 `blue_line_detector.py`
+
 | Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
-| `ScaleStrike` | class | 23 | Source class. |
-| `BlueLine` | class | 30 | Source class. |
-| `_is_color` | function | 48 | Behaviorally relevant source symbol. |
-| `_main_candle` | function | 52 | Behaviorally relevant source symbol. |
-| `_stops_on_index` | function | 59 | Behaviorally relevant source symbol. |
-| `fibonacci_level` | function | 75 | Behaviorally relevant source symbol. |
-| `_intrabar_pending_confirmation` | function | 84 | Behaviorally relevant source symbol. |
+| `BLUE_LINE_VERSION` | constant | 18 | Module constant. Value in this snapshot: `'2.3.0'`. |
+| `FIBONACCI_RATIO` | constant | 19 | Module constant. Value in this snapshot: `Decimal('0.618')`. |
+| `ScaleStrike` | class | 23 | Source symbol required by the production implementation. |
+| `BlueLine` | class | 30 | Source symbol required by the production implementation. |
+| `_is_color` | function | 48 | Source symbol required by the production implementation. |
+| `_main_candle` | function | 52 | Source symbol required by the production implementation. |
+| `_stops_on_index` | function | 59 | Source symbol required by the production implementation. |
+| `fibonacci_level` | function | 75 | Source symbol required by the production implementation. |
+| `_intrabar_pending_confirmation` | function | 84 | Source symbol required by the production implementation. |
 | `count_scale_strikes` | function | 139 | Return the exact 0.618 level and confirmed strikes for one reaction. |
 | `_build_scale_blue_line` | function | 207 | Build one scale Blue from its decisive confirmed strike. |
 | `_build_reset_blue_line` | function | 245 | Build one Reset Blue while preserving the established double-stop rule. |
 | `detect_blue_lines` | function | 299 | Detect scale and Reset Blue Lines over authoritative engine events. |
 | `public_blue_lines` | function | 407 | Return only calculation-valid, public Blue Lines for serialization. |
-| `mark_internal_blue_lines` | function | 416 | Mark Blue Lines that are private to protected Reaction interiors. A Blue is internal when its owning Reaction is behavior-internal, or when both it... |
+| `mark_internal_blue_lines` | function | 416 | Mark Blue Lines that are private to protected Reaction interiors. |
+| `mark_internal_blue_lines.owner_is_internal` | nested function | 429 | Source symbol required by the production implementation. |
+| `mark_internal_blue_lines.geometry_is_internal` | nested function | 435 | Source symbol required by the production implementation. |
 
 ### 20.3 `a_zone_detector.py`
+
 | Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
-| `BlueState` | class | 25 | Source symbol. |
-| `AZone` | class | 38 | Source symbol. |
-| `AZoneDetector` | class | 62 | Source symbol. |
-| `AZoneDetector.__init__` | method | 63 | Source symbol. |
-| `AZoneDetector.extreme_name` | method | 92 | Source symbol. |
-| `AZoneDetector._strict_cross` | method | 95 | Source symbol. |
-| `AZoneDetector._better` | method | 98 | Source symbol. |
-| `AZoneDetector._main_index` | method | 101 | Source symbol. |
-| `AZoneDetector._lower_window` | method | 104 | Source symbol. |
-| `AZoneDetector._first_crossing` | method | 109 | Source symbol. |
-| `AZoneDetector._range_extreme` | method | 151 | Source symbol. |
-| `AZoneDetector._formation` | method | 185 | Source symbol. |
+| `A_ZONE_VERSION` | constant | 20 | Module constant. Value in this snapshot: `'1.6.4'`. |
+| `A_ZONE_LAST_MODIFIED_DATE` | constant | 21 | Module constant. Value in this snapshot: `'2026-09-21'`. |
+| `BlueState` | class | 25 | Source symbol required by the production implementation. |
+| `AZone` | class | 38 | Source symbol required by the production implementation. |
+| `AZoneDetector` | class | 62 | Source symbol required by the production implementation. |
+| `AZoneDetector.__init__` | method | 63 | Source symbol required by the production implementation. |
+| `AZoneDetector.extreme_name` | method | 92 | Source symbol required by the production implementation. |
+| `AZoneDetector._strict_cross` | method | 95 | Source symbol required by the production implementation. |
+| `AZoneDetector._better` | method | 98 | Source symbol required by the production implementation. |
+| `AZoneDetector._main_index` | method | 101 | Source symbol required by the production implementation. |
+| `AZoneDetector._lower_window` | method | 104 | Source symbol required by the production implementation. |
+| `AZoneDetector._first_crossing` | method | 109 | Source symbol required by the production implementation. |
+| `AZoneDetector._range_extreme` | method | 151 | Source symbol required by the production implementation. |
+| `AZoneDetector._formation` | method | 185 | Source symbol required by the production implementation. |
 | `AZoneDetector._reset_formation_time` | method | 202 | Return the exact strict Reset event that makes a Reset Blue exist. |
-| `AZoneDetector._build_blue_states` | method | 214 | Source symbol. |
-| `AZoneDetector._double_stop_a_candidates` | method | 243 | Source symbol. |
-| `AZoneDetector._pair_trigger` | method | 305 | Source symbol. |
-| `AZoneDetector._reaction_confirmation_time` | method | 465 | Source symbol. |
-| `AZoneDetector._first_reaction_after` | method | 470 | Source symbol. |
-| `AZoneDetector._inherited_stop` | method | 488 | Source symbol. |
-| `AZoneDetector._a_source` | method | 541 | Return A ownership frozen at the exact confirming Reaction event. The Blue-pair trigger opens the candidate on its main candle. The confirming Reaction validates that candidate, but later prices in the same ... |
+| `AZoneDetector._build_blue_states` | method | 214 | Source symbol required by the production implementation. |
+| `AZoneDetector._double_stop_a_candidates` | method | 243 | Source symbol required by the production implementation. |
+| `AZoneDetector._pair_trigger` | method | 305 | Source symbol required by the production implementation. |
+| `AZoneDetector._reaction_confirmation_time` | method | 465 | Source symbol required by the production implementation. |
+| `AZoneDetector._first_reaction_after` | method | 470 | Source symbol required by the production implementation. |
+| `AZoneDetector._inherited_stop` | method | 488 | Source symbol required by the production implementation. |
+| `AZoneDetector._a_source` | method | 541 | Return A ownership frozen at the exact confirming Reaction event. |
 | `AZoneDetector._detect_ordinary_a` | method | 562 | Resolve the ordinary adjacent-Blue A lifecycle. |
 | `AZoneDetector._filter_special_a` | method | 672 | Resolve special double-stop A ownership against ordinary A state. |
 | `AZoneDetector.detect` | method | 736 | Return ordinary and special A zones after one ownership resolution. |
-| `AZoneDetector._a_was_stopped_before` | method | 748 | Return whether A's *first* strict stop belongs to this lifecycle. A stop that happened before ``not_before`` completed the prior cycle. A later recross of the same price must not be mistaken for a new stop o... |
-| `detect_a_zones` | function | 774 | Source symbol. |
+| `AZoneDetector._a_was_stopped_before` | method | 748 | Return whether A's *first* strict stop belongs to this lifecycle. |
+| `detect_a_zones` | function | 774 | Source symbol required by the production implementation. |
+
 ### 20.4 `s_zone_detector.py`
+
 | Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
-| `SZone` | class | 26 | Behaviorally relevant source symbol. |
-| `SZoneDetector` | class | 64 | Behaviorally relevant source symbol. |
-| `SZoneDetector.__init__` | method | 65 | Behaviorally relevant source symbol. |
-| `SZoneDetector._main_index` | method | 133 | Behaviorally relevant source symbol. |
-| `SZoneDetector._lower_window` | method | 136 | Behaviorally relevant source symbol. |
-| `SZoneDetector._reaction_confirmation_time` | method | 141 | Behaviorally relevant source symbol. |
-| `SZoneDetector.reaction_confirmation_time` | method | 146 | Public chronology API used by cross-stage lifecycle ownership. |
-| `SZoneDetector._reset_time` | method | 153 | Behaviorally relevant source symbol. |
-| `SZoneDetector._a_confirmation_time` | method | 156 | Behaviorally relevant source symbol. |
-| `SZoneDetector._trend_extreme` | method | 164 | Behaviorally relevant source symbol. |
-| `SZoneDetector._a_stopped` | method | 169 | Behaviorally relevant source symbol. |
-| `SZoneDetector._first_a_stop` | method | 172 | Behaviorally relevant source symbol. |
-| `SZoneDetector.first_a_stop` | method | 208 | Public lifecycle API for the first strict A stop. |
-| `SZoneDetector._first_order_after` | method | 215 | Return the first provisional canonical opposite Order after A-stop. |
-| `SZoneDetector._order_matches_after` | method | 228 | Return canonical opposite Orders after one A stop in chronology. |
-| `SZoneDetector._resolved_order_backed_zone` | method | 262 | Resolve the final A-owned Order that decides the S branch. |
-| `SZoneDetector._record_a_order_audit` | method | 329 | Attach one stopped-A creation cause to a physical Order identity. |
-| `SZoneDetector._reassign_a_order_audit` | method | 363 | Move one A cause from provisional Orders to its final refreshed Order. |
-| `SZoneDetector._audit_stopped_a` | method | 383 | Record the independent order gender created by one stopped A. |
-| `SZoneDetector._candidate_source` | method | 395 | Behaviorally relevant source symbol. |
-| `SZoneDetector._candidate_source_last` | method | 410 | Return the directional extreme, assigning equality to the last candle. |
-| `SZoneDetector._first_trend_reaction_after_order` | method | 430 | Behaviorally relevant source symbol. |
-| `SZoneDetector._nested_trend_reaction` | method | 442 | Behaviorally relevant source symbol. |
-| `SZoneDetector._simple_candidate` | method | 472 | Use the inclusive order-Break to aligned-Break interval. |
-| `SZoneDetector._type3_reset_leg` | method | 481 | Return the independent Type-3 inclusive Break-to-Reset geometry. |
-| `SZoneDetector._type3_has_trend_reaction` | method | 497 | Behaviorally relevant source symbol. |
-| `SZoneDetector._first_type3` | method | 507 | Find the first no-order Type-3 Reset-leg S decision before a new order. |
-| `SZoneDetector._type4_has_blue` | method | 578 | Return whether a public calculation-valid Blue exists in Type-4 window. |
-| `SZoneDetector._first_type4` | method | 600 | Find the first order-free S Blue Type-4 decision after A stop. |
-| `SZoneDetector._build_type4_zone` | method | 669 | Build the order-free Blue Type-4 continuation for one stopped A. |
-| `SZoneDetector._candidate_after_order` | method | 722 | Find a candidate strictly after the order is confirmed. |
-| `SZoneDetector._a_source_event_time` | method | 763 | Locate the source extreme, including an A-stop main candle. |
-| `SZoneDetector._a_owned_by_s` | method | 772 | Behaviorally relevant source symbol. |
-| `SZoneDetector._a_pair_is_reset_reset` | method | 813 | Whether both Blue Lines that define A are Reset Blues. |
-| `SZoneDetector.eligible_a_zones` | method | 827 | A candidates outside stopped-parent S ownership, before rendering. |
-| `SZoneDetector._candidate_timing` | method | 831 | Resolve pre/post-Order ownership without stealing Advanced S. |
-| `SZoneDetector._candidate_before_order` | method | 876 | Use the lowest/highest leg extreme from A-stop through order First. |
-| `SZoneDetector._candidate_event_time` | method | 920 | Return the first lower-timeframe event that forms the candidate. |
-| `SZoneDetector.candidate_event_time` | method | 935 | Public lifecycle API for exact S candidate provenance. |
-| `SZoneDetector._blue_formation_time` | method | 942 | Behaviorally relevant source symbol. |
-| `SZoneDetector._candidate_cross_has_blue` | method | 972 | Return whether the candidate cross has its aligned Reset Blue. |
-| `SZoneDetector._has_ordinary_trend_reaction` | method | 989 | Return whether ordinary aligned geometry completed in the leg. |
-| `SZoneDetector._order_stop` | method | 1009 | Behaviorally relevant source symbol. |
-| `SZoneDetector._candidate_crossed` | method | 1020 | Behaviorally relevant source symbol. |
-| `SZoneDetector._order_stop_crossed` | method | 1024 | Behaviorally relevant source symbol. |
-| `SZoneDetector._decision` | method | 1029 | Behaviorally relevant source symbol. |
-| `SZoneDetector._build_type3_zone` | method | 1123 | Build the order-free Blue Type-3 continuation for one stopped A. |
-| `SZoneDetector._build_order_backed_zone` | method | 1181 | Resolve Simple/Advanced S ownership after a stopped A finds an Order. |
-| `SZoneDetector.detect` | method | 1352 | Behaviorally relevant source symbol. |
-| `SZoneDetector._shared_order_stop_cross` | method | 1429 | Return the first strict stop of an accepted Order after confirmation. |
-| `SZoneDetector.reconcile_shared_order_stops` | method | 1455 | Resolve open S candidates with any accepted physical Order stop. |
-| `detect_s_zones` | function | 1578 | Behaviorally relevant source symbol. |
+| `S_ZONE_VERSION` | constant | 21 | Module constant. Value in this snapshot: `'4.20.0'`. |
+| `S_ZONE_LAST_MODIFIED` | constant | 22 | Module constant. Value in this snapshot: `'2026-09-23 10:19:31 +03:30'`. |
+| `SZone` | class | 26 | Source symbol required by the production implementation. |
+| `SZoneDetector` | class | 64 | Source symbol required by the production implementation. |
+| `SZoneDetector.__init__` | method | 65 | Source symbol required by the production implementation. |
+| `SZoneDetector._main_index` | method | 192 | Source symbol required by the production implementation. |
+| `SZoneDetector._lower_window` | method | 195 | Source symbol required by the production implementation. |
+| `SZoneDetector._reaction_confirmation_time` | method | 200 | Source symbol required by the production implementation. |
+| `SZoneDetector.reaction_confirmation_time` | method | 205 | Public chronology API used by cross-stage lifecycle ownership. |
+| `SZoneDetector._reset_time` | method | 212 | Source symbol required by the production implementation. |
+| `SZoneDetector._a_confirmation_time` | method | 215 | Source symbol required by the production implementation. |
+| `SZoneDetector._trend_extreme` | method | 223 | Source symbol required by the production implementation. |
+| `SZoneDetector._a_stopped` | method | 228 | Source symbol required by the production implementation. |
+| `SZoneDetector._first_a_stop` | method | 231 | Source symbol required by the production implementation. |
+| `SZoneDetector.first_a_stop` | method | 267 | Public lifecycle API for the first strict A stop. |
+| `SZoneDetector._first_order_after` | method | 274 | Return the immutable first opposite Order_A after A-stop. |
+| `SZoneDetector._order_matches_after` | method | 286 | Return canonical opposite Orders after one A stop in chronology. |
+| `SZoneDetector._resolved_order_backed_zone` | method | 307 | Resolve S using the original first physical Order_A. |
+| `SZoneDetector._record_a_order_audit` | method | 325 | Attach one stopped-A creation cause to a physical Order identity. |
+| `SZoneDetector._audit_stopped_a` | method | 359 | Record the independent order gender created by one stopped A. |
+| `SZoneDetector._candidate_source` | method | 371 | Source symbol required by the production implementation. |
+| `SZoneDetector._candidate_source_last` | method | 386 | Return the directional extreme, assigning equality to the last candle. |
+| `SZoneDetector._first_trend_reaction_after_order` | method | 406 | Source symbol required by the production implementation. |
+| `SZoneDetector._nested_trend_reaction` | method | 418 | Source symbol required by the production implementation. |
+| `SZoneDetector._simple_candidate` | method | 448 | Use the inclusive order-Break to aligned-Break interval. |
+| `SZoneDetector._type3_reset_leg` | method | 457 | Return the independent Type-3 inclusive Break-to-Reset geometry. |
+| `SZoneDetector._type3_has_trend_reaction` | method | 473 | Source symbol required by the production implementation. |
+| `SZoneDetector._first_type3` | method | 482 | Find the first no-order Type-3 Reset-leg S decision before a new order. |
+| `SZoneDetector._type4_has_blue` | method | 532 | Return whether a public calculation-valid Blue exists in Type-4 window. |
+| `SZoneDetector._first_type4` | method | 543 | Find the first order-free S Blue Type-4 decision after A stop. |
+| `SZoneDetector._build_type4_zone` | method | 613 | Build the order-free Blue Type-4 continuation for one stopped A. |
+| `SZoneDetector._candidate_after_order` | method | 666 | Find a candidate strictly after the order is confirmed. |
+| `SZoneDetector._a_source_event_time` | method | 707 | Locate the source extreme, including an A-stop main candle. |
+| `SZoneDetector._a_owned_by_s` | method | 716 | Source symbol required by the production implementation. |
+| `SZoneDetector._a_pair_is_reset_reset` | method | 757 | Whether both Blue Lines that define A are Reset Blues. |
+| `SZoneDetector.eligible_a_zones` | method | 771 | A candidates outside stopped-parent S ownership, before rendering. |
+| `SZoneDetector._candidate_timing` | method | 775 | Resolve pre/post-Order ownership without stealing Advanced S. |
+| `SZoneDetector._candidate_before_order` | method | 820 | Use the lowest/highest leg extreme from A-stop through order First. |
+| `SZoneDetector._candidate_event_time` | method | 864 | Return the first lower-timeframe event that forms the candidate. |
+| `SZoneDetector.candidate_event_time` | method | 879 | Public lifecycle API for exact S candidate provenance. |
+| `SZoneDetector._blue_formation_time` | method | 886 | Source symbol required by the production implementation. |
+| `SZoneDetector._candidate_cross_has_blue` | method | 916 | Return whether the candidate cross has its aligned Reset Blue. |
+| `SZoneDetector._has_ordinary_trend_reaction` | method | 933 | Return whether ordinary aligned geometry completed in the leg. |
+| `SZoneDetector._order_stop` | method | 944 | Source symbol required by the production implementation. |
+| `SZoneDetector._candidate_crossed` | method | 955 | Source symbol required by the production implementation. |
+| `SZoneDetector._order_stop_crossed` | method | 959 | Source symbol required by the production implementation. |
+| `SZoneDetector._decision` | method | 964 | Source symbol required by the production implementation. |
+| `SZoneDetector._build_type3_zone` | method | 1090 | Build the order-free Blue Type-3 continuation for one stopped A. |
+| `SZoneDetector._build_order_backed_zone` | method | 1148 | Resolve Simple/Advanced S ownership after a stopped A finds an Order. |
+| `SZoneDetector.detect` | method | 1319 | Source symbol required by the production implementation. |
+| `SZoneDetector._shared_order_stop_cross` | method | 1396 | Return the first strict stop of an accepted Order after confirmation. |
+| `SZoneDetector.reconcile_shared_order_stops` | method | 1422 | Resolve open S candidates with any accepted physical Order stop. |
+| `detect_s_zones` | function | 1539 | Source symbol required by the production implementation. |
 
 ### 20.5 `e_zone_detector.py`
+
 | Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
-| `EZone` | class | 27 | Source class. |
+| `E_ZONE_VERSION` | constant | 22 | Module constant. Value in this snapshot: `'6.13.0'`. |
+| `E_ZONE_LAST_MODIFIED` | constant | 23 | Module constant. Value in this snapshot: `'2026-09-22 00:35:00 +03:30'`. |
+| `EZone` | class | 27 | Source symbol required by the production implementation. |
 | `OrderBFormation` | class | 75 | One complete reset-leg Order_B setup under the canonical mirror rule. |
-| `EZoneDetector` | class | 98 | Source class. |
-| `EZoneDetector.__init__` | method | 99 | Behaviorally relevant source symbol. |
-| `EZoneDetector._reset_time` | method | 226 | Behaviorally relevant source symbol. |
-| `EZoneDetector._main_index` | method | 229 | Behaviorally relevant source symbol. |
-| `EZoneDetector._first_cross_position` | method | 233 | Return the first strict lower-timeframe crossing in [left, right). |
-| `EZoneDetector._stop_value` | method | 250 | Behaviorally relevant source symbol. |
-| `EZoneDetector._first_parent_stop` | method | 254 | Behaviorally relevant source symbol. |
-| `EZoneDetector._confirmation_for` | method | 267 | Behaviorally relevant source symbol. |
-| `EZoneDetector._confirmation` | method | 270 | Behaviorally relevant source symbol. |
-| `EZoneDetector._reaction_first_time` | method | 273 | Behaviorally relevant source symbol. |
-| `EZoneDetector._main_range_extreme` | method | 276 | Return the first candle owning the requested closed-range extreme. |
-| `EZoneDetector._order_b_reset_leg` | method | 297 | Return the same-direction Reset owner and its trigger extreme. Bearish: from the owner's Breakout candle through the Reset candle, inclusive, the m... |
-| `EZoneDetector._order_b_strict_break` | method | 325 | Return the first exact strict break of the reset-leg trigger level. Bearish Order_B: Low < reset-leg floor. Bullish Order_B: High > reset-leg ceiling. |
-| `EZoneDetector._order_b_opposite_extreme` | method | 347 | Return the other reset-leg edge on the closed trigger->break range. |
-| `EZoneDetector._order_b_geometry_evidence` | method | 365 | Return raw opposite Reaction geometry inside the closed leg range. Reset validity, lifecycle acceptance, public visibility, and Internal status are... |
-| `EZoneDetector._first_order_b_reaction_after_break` | method | 389 | Return the first canonical opposite Reaction after the Order_B gate. |
-| `EZoneDetector._build_order_b_formations` | method | 406 | Build every Order_B from same-direction Reset-leg geometry. Bearish mirror: Bearish Reaction Reset -> minimum Low from Breakout..Reset -> first str... |
-| `EZoneDetector._order_b_orders` | method | 478 | Return canonical Order_B Orders whose Reaction forms at/after start. |
-| `EZoneDetector._order_b_evidence` | method | 494 | Return the latest eligible Order_B cause for one physical Reaction. |
-| `EZoneDetector._replacement_order` | method | 515 | Return the first later Order_B that forms before the owner stops. |
-| `EZoneDetector._order_stop` | method | 544 | Behaviorally relevant source symbol. |
-| `EZoneDetector.order_stop` | method | 556 | Public audit API for canonical Order stop provenance. |
-| `EZoneDetector._first_healthy_direct_geometry` | method | 563 | Return the first healthy geometry after an A/S/E strict stop. A candidate completes normally when the active prior reaction is not Reset before its... |
-| `EZoneDetector._trend_leg_direct_order` | method | 648 | Return bounded direct Order_A after a newly confirmed trend leg. A stopped E may be followed by a fresh same-direction Reaction before the next opp... |
-| `EZoneDetector._direct_parent_stop_order` | method | 703 | Select the direct parent-stop Order without Order_B evidence. |
-| `EZoneDetector._merge_order_candidate` | method | 788 | Merge one provenance cause into a single physical Order identity. |
-| `EZoneDetector._enforce_single_parent_stop_owner` | method | 831 | Keep one physical Order owner for the exact parent-stop cause. A single parent stop may open only one physical Order. When direct parent-stop disco... |
-| `EZoneDetector.order_candidates` | method | 874 | Return every valid E-space Order formed before this E decision. |
-| `EZoneDetector._first_order` | method | 972 | Behaviorally relevant source symbol. |
-| `EZoneDetector._has_sequence_reset_between` | method | 987 | Return whether a known hard reset lies in ``(start, end]``. |
-| `EZoneDetector._blue_parent_superseded` | method | 997 | A confirmed later Red S closes an older Blue-E order lifecycle. |
-| `EZoneDetector._register_order_audit` | method | 1009 | Behaviorally relevant source symbol. |
-| `EZoneDetector._enrich_order_audit_reset_causes` | method | 1128 | Attach canonical Order_B provenance to already relevant Orders. Order_B formation is independent market structure, but OrderAudit is an accepted-be... |
-| `EZoneDetector.visual_order_lifecycle` | method | 1185 | Return only orders admitted by the E lifecycle, including live ones. This is presentation/audit output. It follows the same direct and Order_B repl... |
-| `EZoneDetector._parent_stop` | method | 1227 | Behaviorally relevant source symbol. |
-| `EZoneDetector.parent_stop` | method | 1235 | Public lifecycle API for the first strict parent stop. |
-| `EZoneDetector._cross_order` | method | 1242 | Behaviorally relevant source symbol. |
-| `EZoneDetector.cross_order` | method | 1262 | Public audit API for an Order stop crossing. |
-| `EZoneDetector._unconsumed_s_orders` | method | 1269 | Return every Blue-S Order whose stop did not decide the S itself. |
-| `EZoneDetector._initial_order_match` | method | 1306 | Behaviorally relevant source symbol. |
-| `EZoneDetector._gate_owned_initial_order` | method | 1319 | Keep an A-owned order that starts in the parent-stop candle. The already-open A lifecycle owns that candle. A later ordinary Reaction cannot be rel... |
-| `EZoneDetector._carried_orders_for_parent` | method | 1347 | Return every Order formed and left live inside this parent lifecycle. |
-| `EZoneDetector._post_stop_accepted_orders_for_parent` | method | 1414 | Return accepted physical Orders confirmed after this parent stopped. Shared accepted-Order confirmation is parent-neutral. Once an Order is calcula... |
-| `EZoneDetector._blocked_by_gate_owned_order` | method | 1526 | Reject only a nested Order_A, while preserving its child lineage. |
-| `EZoneDetector._reset_evidence_for_order` | method | 1536 | Behaviorally relevant source symbol. |
-| `EZoneDetector._extreme_between` | method | 1555 | Behaviorally relevant source symbol. |
-| `EZoneDetector._zone` | method | 1571 | Behaviorally relevant source symbol. |
-| `EZoneDetector.set_consumed_s_evidence` | method | 1686 | Register non-public S evidence that continues a stopped larger E. |
-| `EZoneDetector._apply_consumed_s_evidence` | method | 1698 | Behaviorally relevant source symbol. |
-| `EZoneDetector.continuation_chain_from_s` | method | 1716 | Build the E continuation opened by one S consumed by a stopped E. The S remains a calculation/evidence object, not a new public owner. Its first E ... |
-| `EZoneDetector.replace_with_earlier_continuation` | method | 1755 | Replace an owner's not-yet-decided descendant branch when an earlier one wins. |
-| `EZoneDetector.resolve_same_source_conflicts` | method | 1798 | Keep exactly one accepted E behavior for each physical source candle. Candidate discovery may legitimately reach the same source through multiple S... |
-| `EZoneDetector.restore_independent_s_roots` | method | 1842 | Restore calculation-valid E1 roots owned directly by accepted S. E dominance chooses which chain owns larger-module continuation, but formation of ... |
-| `EZoneDetector._discover_candidate_chains` | method | 1902 | Build provisional recursive E chains from every stopped S parent. Calculation-invalid S evidence is still audited normally. It loses only the right... |
-| `EZoneDetector._reconcile_candidate_chains` | method | 1994 | Resolve competing E chains into the accepted chronological lifecycle. |
-| `EZoneDetector._historical_rescue_candidates` | method | 2331 | Return presentation-only historical E objects suppressed by future conflicts. Primary reconciliation is authoritative and remains byte-for-byte beh... |
-| `EZoneDetector._rebuild_accepted_order_audit` | method | 2418 | Rebuild Order Audit from accepted S/E/StopAll state only. |
-| `EZoneDetector.rebuild_accepted_order_audit` | method | 2604 | Rebuild the canonical Order ledger after external E reconciliation. The pipeline may replace a final E branch with an earlier continuation built fr... |
-| `EZoneDetector.ensure_accepted_order_audit` | method | 2619 | Add audit coverage for externally restored accepted E zones. Visibility may restore an independent S-owned E root after StopAll reconciliation. Reb... |
-| `EZoneDetector.detect` | method | 2641 | Discover, reconcile and audit recursive E lifecycles. |
-| `detect_e_zones` | function | 2657 | Behaviorally relevant source symbol. |
+| `EZoneDetector` | class | 98 | Source symbol required by the production implementation. |
+| `EZoneDetector.__init__` | method | 99 | Source symbol required by the production implementation. |
+| `EZoneDetector._reset_time` | method | 276 | Source symbol required by the production implementation. |
+| `EZoneDetector._main_index` | method | 279 | Source symbol required by the production implementation. |
+| `EZoneDetector._first_cross_position` | method | 283 | Return the first strict lower-timeframe crossing in [left, right). |
+| `EZoneDetector._stop_value` | method | 300 | Source symbol required by the production implementation. |
+| `EZoneDetector._first_parent_stop` | method | 304 | Source symbol required by the production implementation. |
+| `EZoneDetector._confirmation_for` | method | 317 | Source symbol required by the production implementation. |
+| `EZoneDetector._confirmation` | method | 320 | Source symbol required by the production implementation. |
+| `EZoneDetector._reaction_first_time` | method | 323 | Source symbol required by the production implementation. |
+| `EZoneDetector._main_range_extreme` | method | 326 | Return the first candle owning the requested closed-range extreme. |
+| `EZoneDetector._order_b_reset_leg` | method | 347 | Return the same-direction Reset owner and its trigger extreme. |
+| `EZoneDetector._order_b_strict_break` | method | 375 | Return the first exact strict break of the reset-leg trigger level. |
+| `EZoneDetector._order_b_opposite_extreme` | method | 397 | Return the other reset-leg edge on the closed trigger->break range. |
+| `EZoneDetector._order_b_geometry_evidence` | method | 415 | Return raw opposite Reaction geometry inside the closed leg range. |
+| `EZoneDetector._first_order_b_reaction_after_break` | method | 439 | Return the first canonical opposite Reaction after the Order_B gate. |
+| `EZoneDetector._build_order_b_formations` | method | 456 | Build every Order_B from same-direction Reset-leg geometry. |
+| `EZoneDetector._order_b_orders` | method | 577 | Return canonical Order_B Orders whose Reaction forms at/after start. |
+| `EZoneDetector._order_b_candidate_matches` | method | 595 | Return one final Reset-leg candidate per physical Order after start. |
+| `EZoneDetector._order_b_evidence` | method | 605 | Return the latest eligible Order_B cause for one physical Reaction. |
+| `EZoneDetector._replacement_order` | method | 627 | Return the first later Order_B that forms before the owner stops. |
+| `EZoneDetector._order_stop` | method | 652 | Source symbol required by the production implementation. |
+| `EZoneDetector.order_stop` | method | 680 | Public audit API for canonical Order stop provenance. |
+| `EZoneDetector._first_healthy_direct_geometry` | method | 687 | Return the first healthy geometry after an A/S/E strict stop. |
+| `EZoneDetector._trend_leg_direct_order` | method | 766 | Return bounded direct Order_A after a newly confirmed trend leg. |
+| `EZoneDetector._direct_parent_stop_order` | method | 815 | Select the direct parent-stop Order without Order_B evidence. |
+| `EZoneDetector._merge_order_candidate` | method | 900 | Merge one provenance cause into a single physical Order identity. |
+| `EZoneDetector._enforce_single_parent_stop_owner` | method | 943 | Keep one physical Order owner for the exact parent-stop cause. |
+| `EZoneDetector.order_candidates` | method | 986 | Return every valid E-space Order formed before this E decision. |
+| `EZoneDetector._first_order` | method | 1091 | Source symbol required by the production implementation. |
+| `EZoneDetector._has_sequence_reset_between` | method | 1106 | Return whether a known hard reset lies in ``(start, end]``. |
+| `EZoneDetector._blue_parent_superseded` | method | 1116 | A confirmed later Red S closes an older Blue-E order lifecycle. |
+| `EZoneDetector._index_order_audit_identity` | method | 1128 | Index one newly accepted physical Order by confirmation chronology. |
+| `EZoneDetector._clear_order_audit` | method | 1137 | Source symbol required by the production implementation. |
+| `EZoneDetector._register_order_audit` | method | 1141 | Source symbol required by the production implementation. |
+| `EZoneDetector._enrich_order_audit_reset_causes` | method | 1264 | Attach canonical Order_B provenance to already relevant Orders. |
+| `EZoneDetector.visual_order_lifecycle` | method | 1324 | Return only orders admitted by the E lifecycle, including live ones. |
+| `EZoneDetector._parent_stop` | method | 1366 | Source symbol required by the production implementation. |
+| `EZoneDetector.parent_stop` | method | 1374 | Public lifecycle API for the first strict parent stop. |
+| `EZoneDetector._cross_order` | method | 1381 | Source symbol required by the production implementation. |
+| `EZoneDetector.cross_order` | method | 1401 | Public audit API for an Order stop crossing. |
+| `EZoneDetector._unconsumed_s_orders` | method | 1408 | Return every Blue-S Order whose stop did not decide the S itself. |
+| `EZoneDetector._initial_order_records` | method | 1445 | Materialize immutable initial OrderAudit geometry once per run. |
+| `EZoneDetector._initial_record_match` | method | 1503 | Source symbol required by the production implementation. |
+| `EZoneDetector._initial_order_match` | method | 1516 | Source symbol required by the production implementation. |
+| `EZoneDetector._gate_owned_initial_order` | method | 1531 | Keep an A-owned order that starts in the parent-stop candle. |
+| `EZoneDetector._carried_orders_for_parent` | method | 1553 | Return every Order formed and left live inside this parent lifecycle. |
+| `EZoneDetector._post_stop_accepted_orders_for_parent` | method | 1617 | Return accepted physical Orders confirmed after this parent stopped. |
+| `EZoneDetector._post_stop_accepted_orders_for_parent.add_match` | nested function | 1624 | Source symbol required by the production implementation. |
+| `EZoneDetector._blocked_by_gate_owned_order` | method | 1709 | Reject only a nested Order_A, while preserving its child lineage. |
+| `EZoneDetector._reset_evidence_for_order` | method | 1719 | Source symbol required by the production implementation. |
+| `EZoneDetector._extreme_between` | method | 1738 | Source symbol required by the production implementation. |
+| `EZoneDetector._zone` | method | 1754 | Source symbol required by the production implementation. |
+| `EZoneDetector.set_consumed_s_evidence` | method | 1869 | Register non-public S evidence that continues a stopped larger E. |
+| `EZoneDetector._apply_consumed_s_evidence` | method | 1881 | Source symbol required by the production implementation. |
+| `EZoneDetector.continuation_chain_from_s` | method | 1899 | Build the E continuation opened by one S consumed by a stopped E. |
+| `EZoneDetector.replace_with_earlier_continuation` | method | 1938 | Replace an owner's not-yet-decided descendant branch when an earlier one wins. |
+| `EZoneDetector.replace_with_earlier_continuation.descends_from_owner` | nested function | 1947 | Source symbol required by the production implementation. |
+| `EZoneDetector.resolve_same_source_conflicts` | method | 1981 | Keep exactly one accepted E behavior for each physical source candle. |
+| `EZoneDetector.resolve_same_source_conflicts.outranks` | nested function | 1999 | Source symbol required by the production implementation. |
+| `EZoneDetector.restore_independent_s_roots` | method | 2025 | Restore calculation-valid E1 roots owned directly by accepted S. |
+| `EZoneDetector._discover_candidate_chains` | method | 2085 | Build provisional recursive E chains from every stopped S parent. |
+| `EZoneDetector._reconcile_candidate_chains` | method | 2177 | Resolve competing E chains into the accepted chronological lifecycle. |
+| `EZoneDetector._reconcile_candidate_chains.valid_order` | nested function | 2220 | Source symbol required by the production implementation. |
+| `EZoneDetector._reconcile_candidate_chains.invalidated_only_by_future_s` | nested function | 2240 | Source symbol required by the production implementation. |
+| `EZoneDetector._reconcile_candidate_chains.parent_active` | nested function | 2256 | Source symbol required by the production implementation. |
+| `EZoneDetector._reconcile_candidate_chains.stopped_by` | nested function | 2328 | Source symbol required by the production implementation. |
+| `EZoneDetector._reconcile_candidate_chains.ownership_priority` | nested function | 2384 | Source symbol required by the production implementation. |
+| `EZoneDetector._reconcile_candidate_chains.collect_lineage` | nested function | 2478 | Source symbol required by the production implementation. |
+| `EZoneDetector._historical_rescue_candidates` | method | 2514 | Return presentation-only historical E objects suppressed by future conflicts. |
+| `EZoneDetector._historical_rescue_candidates.suppressed_by_future_child_conflict` | nested function | 2542 | Source symbol required by the production implementation. |
+| `EZoneDetector._rebuild_accepted_order_audit` | method | 2601 | Rebuild Order Audit from accepted S/E/StopAll state only. |
+| `EZoneDetector.rebuild_accepted_order_audit` | method | 2790 | Rebuild the canonical Order ledger after external E reconciliation. |
+| `EZoneDetector.ensure_accepted_order_audit` | method | 2805 | Add audit coverage for externally restored accepted E zones. |
+| `EZoneDetector.detect` | method | 2827 | Discover, reconcile and audit recursive E lifecycles. |
+| `detect_e_zones` | function | 2843 | Source symbol required by the production implementation. |
 
 ### 20.6 `lifecycle_engine.py`
+
 | Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
+| `STOP_ALL_VERSION` | constant | 21 | Module constant. Value in this snapshot: `'1.15.2'`. |
+| `STOP_ALL_LAST_MODIFIED` | constant | 22 | Module constant. Value in this snapshot: `'2026-09-23 09:25:00 +03:30'`. |
+| `SEQUENCE_PRIORITY` | constant | 25 | Module constant. Value in this snapshot: `{('s', 'blue'): 1, ('e', 'blue'): 2, ('s', 'red'): 3, ('e', 'red'): 4}`. |
 | `sequence_priority` | function | 33 | Return the single authoritative cross-stage behavior priority. |
-| `StopAll` | class | 39 | Behaviorally relevant source symbol. |
-| `StopAllDetector` | class | 81 | Behaviorally relevant source symbol. |
-| `StopAllDetector.__init__` | method | 82 | Behaviorally relevant source symbol. |
-| `StopAllDetector._strict_stop` | method | 103 | Behaviorally relevant source symbol. |
-| `StopAllDetector._e_key` | method | 120 | Behaviorally relevant source symbol. |
-| `StopAllDetector._dominates_e` | method | 124 | Behaviorally relevant source symbol. |
-| `StopAllDetector._sequence_priority` | method | 134 | Behaviorally relevant source symbol. |
-| `StopAllDetector._active_sequence_priority` | method | 138 | Behaviorally relevant source symbol. |
-| `StopAllDetector._stopall_from_e` | method | 147 | Behaviorally relevant source symbol. |
-| `StopAllDetector._optional_int` | method | 206 | Behaviorally relevant source symbol. |
-| `StopAllDetector._optional_decimal` | method | 210 | Behaviorally relevant source symbol. |
-| `StopAllDetector._stopall_from_s` | method | 213 | Promote the accepted opposite-color S into a fresh StopAll1. This is the direction-invariant family reversal gate. In both Bullish and Bearish calculations, accepted S Red is promoted after at least two accepted occur... |
-| `StopAllDetector._blue_repeat_key` | method | 307 | Return the cycle-local exact Blue behavior-group key. S Blue is one group regardless of its internal subtype. Each E number is a separate group: E1 Blue, E2 Blue, E5 Blue, ... . Counts are occurrence counts of accepte... |
-| `StopAllDetector._record_blue_repeat` | method | 323 | Behaviorally relevant source symbol. |
-| `StopAllDetector._opposite_s_stopall_gate` | method | 332 | Return Blue-repeat metadata when accepted S Red must become StopAll. From calculation start or the most recent StopAll hard boundary, every accepted occurrence of the same Blue behavior group is counted even if that g... |
-| `StopAllDetector.detect` | method | 373 | Behaviorally relevant source symbol. |
-| `detect_stopalls` | function | 570 | Behaviorally relevant source symbol. |
-| `prepare_order_audit` | function | 582 | Resolve calculation-valid Order Audit identities before serialization. Multiple causes may own the same physical ``(FirstIndex, BreakIndex)`` Order. This function keeps one identity, merges all accepted provenance, ap... |
-| `accepted_audit_entry` | function | 741 | Return an E-facing A audit entry for one accepted A provenance. A physical order may be opened by more than one stopped A. E still consumes one identity-keyed entry, so select the first accepted cause while retaining... |
-| `resolve_order_context` | function | 770 | Resolve accepted stopped-A Orders against provisional Order blocks. Calculation ownership is authoritative: a canonical Order already accepted from stopped-A audit provenance cannot also be vetoed by the provisional i... |
-| `visible_a_zones_after_s_stops` | function | 822 | Suppress the A candle that contains an already-confirmed S stop. That candle is the S-stop/E transition candle. It may still carry the order box's BoxBottom, but it cannot receive a new A label. |
-| `module_priority` | function | 838 | Return the confirmed behavioral ownership priority. StopAll > E red > S red > E blue > S blue. A is intentionally absent: this helper is used only after A has become an S candidate. |
-| `module_identity` | function | 852 | Behaviorally relevant source symbol. |
-| `module_stop_event` | function | 861 | Resolve the strict one-second stop event of an S/E/StopAll object. |
-| `strictly_beyond_boundary` | function | 875 | Behaviorally relevant source symbol. |
-| `dominant_module` | function | 880 | Behaviorally relevant source symbol. |
-| `split_a_zones_by_dominant_stops` | function | 893 | Separate visible A labels from A objects allowed into downstream math. A/Reaction/Blue discovery remains independent inside every half-leg. Once an accepted S/E/StopAll is strictly stopped, however, the main candle th... |
-| `blocked_orders_while_invalid_leg_heads_are_live` | function | 1096 | Return order First times owned by a still-live invalid leg head. A strict dominant-boundary crossing can expose a new leg head without making its A calculation-valid. Until that head itself stops, an internal opposite... |
-| `consumed_s_evidence_after_larger_stop` | function | 1119 | Return the earliest suppressed S evidence that continues each stopped E. A lower-priority S remains non-public when it belongs to the continuation of the current larger E lifecycle, but its stopped geometry must remai... |
-| `s_zones_for_module_engines` | function | 1196 | Preserve the established S eligibility contract consumed by E/StopAll. |
-| `s_zones_for_stopall` | function | 1226 | Return accepted S state that may participate in StopAll grouping. E reconciliation still consumes the established S eligibility contract. StopAll adds one final same-source rule: when an accepted E owns the same physi... |
-| `visible_s_zones_after_module_resets` | function | 1245 | Apply dominant-behavior ownership to successive S candidates. Bullish/bearish half-leg calculations remain active under a larger behavior. But once the currently dominant S/E/StopAll and the candidate S's parent A hav... |
-| `reconcile_stopall_lifecycle` | function | 1414 | Freeze StopAll boundaries from the accepted chronological E state. StopAll is a hard historical lifecycle boundary. Once the accepted E/S chronology produces a StopAll, future sequence state may not feed back and dele... |
-| `visible_a_zones_after_module_boundaries` | function | 1447 | Require A provenance to rebuild after the dominant strict stop. A price is deliberately not compared with the old module price. Reactions and Blue Lines remain valid inside every half-leg; only provenance that straddl... |
-| `reaction_number_is_internal` | function | 1494 | Return whether a numbered Reaction resolves to a protected internal owner. |
-| `order_identity_is_internal` | function | 1508 | Return whether a behavior's physical Order Reaction is internal. |
-| `point_is_inside_healthy_reaction` | function | 1517 | Return True only for a strict protected Reaction interior. First and published box edges are ownership boundaries, so equality and the First timestamp itself remain eligible. |
-| `forbidden_internal_order_b` | function | 1540 | Reject only an internal Reset-leg *Mode-B* Order owner. The internal-Reaction prohibition is scoped to Reset-leg Order_B. A Reset-leg provenance can legitimately carry Mode-A geometry after a hard lifecycle restart; t... |
-| `filter_internal_behavior_outputs` | function | 1560 | Apply only the scoped Internal-Reaction Order_B prohibition. Internal Reaction geometry and its eligible evidence remain calculation valid. A/S/E/StopAll are not hidden merely because their source point lies inside a... |
-| `finalize_behavior_visibility` | function | 1590 | Resolve the final A/S/E lineage closure after StopAll reconciliation. |
-| `visible_a_zones` | function | 1685 | Return A objects whose source candle is not occupied by a final S. |
+| `StopAll` | class | 39 | Source symbol required by the production implementation. |
+| `StopAllDetector` | class | 81 | Source symbol required by the production implementation. |
+| `StopAllDetector.__init__` | method | 82 | Source symbol required by the production implementation. |
+| `StopAllDetector._strict_stop` | method | 103 | Source symbol required by the production implementation. |
+| `StopAllDetector._e_key` | method | 120 | Source symbol required by the production implementation. |
+| `StopAllDetector._dominates_e` | method | 124 | Source symbol required by the production implementation. |
+| `StopAllDetector._sequence_priority` | method | 134 | Source symbol required by the production implementation. |
+| `StopAllDetector._active_sequence_priority` | method | 138 | Source symbol required by the production implementation. |
+| `StopAllDetector._stopall_from_e` | method | 147 | Source symbol required by the production implementation. |
+| `StopAllDetector._optional_int` | method | 206 | Source symbol required by the production implementation. |
+| `StopAllDetector._optional_decimal` | method | 210 | Source symbol required by the production implementation. |
+| `StopAllDetector._stopall_from_s` | method | 213 | Promote the accepted opposite-color S into a fresh StopAll1. |
+| `StopAllDetector._blue_repeat_key` | method | 307 | Return the pending-reversal exact Blue behavior-group key. |
+| `StopAllDetector._record_blue_repeat` | method | 323 | Source symbol required by the production implementation. |
+| `StopAllDetector._opposite_s_stopall_gate` | method | 332 | Return Blue-repeat metadata when accepted S Red must become StopAll. |
+| `StopAllDetector.detect` | method | 379 | Source symbol required by the production implementation. |
+| `StopAllDetector.detect.reset_cycle_blue_repeats` | nested function | 395 | Source symbol required by the production implementation. |
+| `StopAllDetector.detect.process_s_event` | nested function | 399 | Source symbol required by the production implementation. |
+| `detect_stopalls` | function | 585 | Source symbol required by the production implementation. |
+| `prepare_order_audit` | function | 597 | Resolve calculation-valid Order Audit identities before serialization. |
+| `accepted_audit_entry` | function | 756 | Return an E-facing A audit entry for one accepted A provenance. |
+| `resolve_order_context` | function | 785 | Resolve accepted stopped-A Orders against provisional Order blocks. |
+| `visible_a_zones_after_s_stops` | function | 837 | Suppress the A candle that contains an already-confirmed S stop. |
+| `module_priority` | function | 853 | Return the confirmed behavioral ownership priority. |
+| `module_identity` | function | 867 | Source symbol required by the production implementation. |
+| `module_stop_event` | function | 876 | Resolve the strict one-second stop event of an S/E/StopAll object. |
+| `strictly_beyond_boundary` | function | 890 | Source symbol required by the production implementation. |
+| `dominant_module` | function | 895 | Source symbol required by the production implementation. |
+| `split_a_zones_by_dominant_stops` | function | 908 | Separate visible A labels from A objects allowed into downstream math. |
+| `blocked_orders_while_invalid_leg_heads_are_live` | function | 1111 | Return order First times owned by a still-live invalid leg head. |
+| `consumed_s_evidence_after_larger_stop` | function | 1134 | Return the earliest suppressed S evidence that continues each stopped E. |
+| `s_zones_for_module_engines` | function | 1211 | Preserve the established S eligibility contract consumed by E/StopAll. |
+| `s_zones_for_stopall` | function | 1241 | Return accepted S state that may participate in StopAll grouping. |
+| `visible_s_zones_after_module_resets` | function | 1260 | Apply dominant-behavior ownership to successive S candidates. |
+| `reconcile_stopall_lifecycle` | function | 1429 | Freeze StopAll boundaries from the accepted chronological E state. |
+| `visible_a_zones_after_module_boundaries` | function | 1462 | Require A provenance to rebuild after the dominant strict stop. |
+| `reaction_number_is_internal` | function | 1509 | Return whether a numbered Reaction resolves to a protected internal owner. |
+| `order_identity_is_internal` | function | 1523 | Return whether a behavior's physical Order Reaction is internal. |
+| `point_is_inside_healthy_reaction` | function | 1532 | Return True only for a strict protected Reaction interior. |
+| `forbidden_internal_order_b` | function | 1555 | Reject only an internal Reset-leg *Mode-B* Order owner. |
+| `filter_internal_behavior_outputs` | function | 1575 | Apply only the scoped Internal-Reaction Order_B prohibition. |
+| `finalize_behavior_visibility` | function | 1605 | Resolve the final A/S/E lineage closure after StopAll reconciliation. |
+| `visible_a_zones` | function | 1700 | Return A objects whose source candle is not occupied by a final S. |
 
 ### 20.7 `trading_pipeline.py`
+
 | Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
+| `_ENGINE_ROOT` | constant | 30 | Module constant. Value in this snapshot: `Path(__file__).resolve().parents[1]`. |
+| `_PIPELINE_DIR` | constant | 31 | Module constant. Value in this snapshot: `_ENGINE_ROOT / 'pipeline'`. |
+| `_DTFMT` | constant | 38 | Module constant. Value in this snapshot: `'{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}'`. |
+| `TRADING_PIPELINE_VERSION` | constant | 41 | Module constant. Value in this snapshot: `'1.4.1'`. |
+| `TRADING_PIPELINE_LAST_MODIFIED` | constant | 42 | Module constant. Value in this snapshot: `'2026-09-21 08:40:00 +03:30'`. |
+| `TEHRAN` | constant | 44 | Module constant. Value in this snapshot: `ZoneInfo('Asia/Tehran')`. |
 | `emit_progress` | function | 47 | Send machine-readable lifecycle events without contaminating JSON stdout. |
 | `timed` | function | 55 | Measure an existing pipeline phase without changing its inputs or output. |
-| `load_module` | function | 67 | Behaviorally relevant source symbol. |
-| `load_engine` | function | 77 | Behaviorally relevant source symbol. |
-| `local_datetime` | function | 84 | Behaviorally relevant source symbol. |
-| `epoch` | function | 96 | Behaviorally relevant source symbol. |
+| `load_module` | function | 67 | Source symbol required by the production implementation. |
+| `load_engine` | function | 77 | Source symbol required by the production implementation. |
+| `local_datetime` | function | 84 | Source symbol required by the production implementation. |
+| `epoch` | function | 96 | Source symbol required by the production implementation. |
 | `display_epoch` | function | 108 | Convert an engine display/native timestamp once per pipeline process. |
 | `build_candle_buckets` | function | 120 | Normalize raw rows once, preserving lower and selected-timeframe buckets. |
+| `build_candle_buckets.cached_decimal` | nested function | 129 | Source symbol required by the production implementation. |
 | `build_candle_objects` | function | 178 | Create maintained engine candles from already-normalized buckets. |
-| `_index_selected` | function | 208 | Behaviorally relevant source symbol. |
-| `serialize` | function | 216 | Behaviorally relevant source symbol. |
-| `serialize_blue_lines` | function | 250 | Behaviorally relevant source symbol. |
-| `serialize_a_zones` | function | 270 | Behaviorally relevant source symbol. |
-| `serialize_s_zones` | function | 297 | Behaviorally relevant source symbol. |
-| `serialize_e_zones` | function | 362 | Behaviorally relevant source symbol. |
-| `serialize_stopalls` | function | 413 | Behaviorally relevant source symbol. |
-| `validate_order_audit_bridge` | function | 488 | Assert that public behavior Order provenance matches canonical OrderAudit. This is a bridge consistency invariant only; it does not choose, rank, or reconstruct Orders. All trading ownership decisions remain in the ca... |
+| `_index_selected` | function | 208 | Source symbol required by the production implementation. |
+| `serialize` | function | 216 | Source symbol required by the production implementation. |
+| `serialize_blue_lines` | function | 250 | Source symbol required by the production implementation. |
+| `serialize_a_zones` | function | 270 | Source symbol required by the production implementation. |
+| `serialize_s_zones` | function | 297 | Source symbol required by the production implementation. |
+| `serialize_e_zones` | function | 362 | Source symbol required by the production implementation. |
+| `serialize_stopalls` | function | 413 | Source symbol required by the production implementation. |
+| `validate_order_audit_bridge` | function | 488 | Assert that public behavior Order provenance matches canonical OrderAudit. |
 | `serialize_order_audit` | function | 556 | Serialize already-resolved Order Audit identities without business filtering. |
-| `EngineBundle` | class | 611 | Behaviorally relevant source symbol. |
-| `MarketContext` | class | 621 | Behaviorally relevant source symbol. |
+| `EngineBundle` | class | 611 | Source symbol required by the production implementation. |
+| `MarketContext` | class | 621 | Source symbol required by the production implementation. |
 | `parse_arguments` | function | 630 | Parse and validate the production pipeline command line. |
 | `load_engines` | function | 697 | Load every configured calculation engine exactly once. |
 | `prepare_market_context` | function | 731 | Read, isolate, normalize and index the selected raw-data range. |
 | `PipelineState` | class | 812 | Mutable calculation state shared across direction serialization passes. |
 | `FullDirectionState` | class | 832 | Authoritative full-range behavior state for one trend direction. |
 | `create_e_detector` | function | 846 | Construct one E detector from the shared geometry/lifecycle contract. |
+| `create_e_detector.bounded_geometry` | nested function | 863 | Return raw Reaction geometry inside a closed main-candle range. |
+| `create_e_detector.direct_geometry` | nested function | 871 | Source symbol required by the production implementation. |
 | `calculate_full_direction_state` | function | 900 | Run Blue→A→S→E calculation and lifecycle reconciliation for one direction. |
+| `calculate_full_direction_state.collect_accepted_e_history` | nested function | 958 | Source symbol required by the production implementation. |
+| `calculate_full_direction_state.collect_historical_e_rescues` | nested function | 983 | Source symbol required by the production implementation. |
+| `calculate_full_direction_state.blocked_by_dominant_final_e` | nested function | 1253 | Source symbol required by the production implementation. |
 | `prepare_pipeline_state` | function | 1293 | Run shared calculation stages once and retain reusable detector state. |
 | `DirectionRangeState` | class | 1410 | Unserialized calculation state for one requested direction/range. |
 | `DirectionVisibilityState` | class | 1423 | Final public behavior state after lifecycle and internal-Reaction rules. |
 | `calculate_direction_range_state` | function | 1434 | Collect detector output for one requested direction before visibility rules. |
 | `finalize_direction_visibility` | function | 1536 | Apply lifecycle, range and Internal-Reaction rules to detector output. |
 | `serialize_direction_payload` | function | 1753 | Serialize one direction without applying any trading rule. |
+| `serialize_direction_payload.build_payload` | nested function | 1777 | Source symbol required by the production implementation. |
 | `build_direction_output` | function | 1807 | Calculate, finalize and serialize one requested trend direction. |
 | `build_response_payload` | function | 1832 | Build the public response envelope around serialized direction outputs. |
-| `main` | function | 1885 | Behaviorally relevant source symbol. |
+| `main` | function | 1885 | Source symbol required by the production implementation. |
+
 ### 20.8 `direction_policy.py`
+
 | Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
-| `DirectionPolicy` | class | 21 | Source class. |
-| `DirectionPolicy.opposite_direction` | method | 29 | Behaviorally relevant source symbol. |
-| `DirectionPolicy.strict_cross` | method | 32 | Behaviorally relevant source symbol. |
-| `DirectionPolicy.better_extreme` | method | 35 | Behaviorally relevant source symbol. |
-| `DirectionPolicy.choose_extreme` | method | 38 | Behaviorally relevant source symbol. |
-| `DirectionPolicy.confirmation_cross` | method | 41 | Reaction confirmation mirror: high>top vs low<bottom. ``value`` is the already-selected confirmation-side price. |
-| `policy_for` | function | 49 | Behaviorally relevant source symbol. |
+| `DIRECTION_POLICY_VERSION` | constant | 11 | Module constant. Value in this snapshot: `'1.0.0'`. |
+| `DirectionPolicy` | class | 21 | Source symbol required by the production implementation. |
+| `DirectionPolicy.opposite_direction` | method | 29 | Source symbol required by the production implementation. |
+| `DirectionPolicy.strict_cross` | method | 32 | Source symbol required by the production implementation. |
+| `DirectionPolicy.better_extreme` | method | 35 | Source symbol required by the production implementation. |
+| `DirectionPolicy.choose_extreme` | method | 38 | Source symbol required by the production implementation. |
+| `DirectionPolicy.confirmation_cross` | method | 41 | Reaction confirmation mirror: high>top vs low<bottom. |
+| `policy_for` | function | 49 | Source symbol required by the production implementation. |
+| `BULLISH` | constant | 57 | Module constant. Value in this snapshot: `DirectionPolicy(direction='bullish', extreme_attr='low', opposite_extreme_attr='high', first_reaction_tag='RED', context_tag='GREEN')`. |
+| `BEARISH` | constant | 64 | Module constant. Value in this snapshot: `DirectionPolicy(direction='bearish', extreme_attr='high', opposite_extreme_attr='low', first_reaction_tag='GREEN', context_tag='RED')`. |
 
 ### 20.9 `core_utils.py`
+
 | Symbol | Kind | Line | Contract summary |
 |---|---|---:|---|
+| `CORE_UTILS_VERSION` | constant | 5 | Module constant. Value in this snapshot: `'1.0.0'`. |
 | `as_decimal` | function | 11 | Preserve Decimal values and normalize other numeric inputs losslessly. |
 | `order_identity` | function | 19 | Return the canonical physical Order/Reaction geometry identity. |
 | `reaction_identity` | function | 24 | Return ``(FirstIndex, BreakIndex)`` for a Reaction-like object. |
 
 ### 20.10 Dataclass/object schemas present in the source snapshot
 
-#### `Candle` (`reaction_engine.py`)
+#### `Candle` (`reaction_engine.py`, source line 27)
 
-| Field | Type |
-|---|---|
-| `index` | `int` |
-| `timestamp` | `datetime` |
-| `display_time` | `str` |
-| `tag` | `str` |
-| `open` | `Decimal` |
-| `high` | `Decimal` |
-| `low` | `Decimal` |
-| `close` | `Decimal` |
+| Field | Type | Source line |
+|---|---|---:|
+| `index` | `int` | 28 |
+| `timestamp` | `datetime` | 29 |
+| `display_time` | `str` | 30 |
+| `tag` | `str` | 31 |
+| `open` | `Decimal` | 32 |
+| `high` | `Decimal` | 33 |
+| `low` | `Decimal` | 34 |
+| `close` | `Decimal` | 35 |
 
-#### `Candidate` (`reaction_engine.py`)
+#### `Candidate` (`reaction_engine.py`, source line 39)
 
-| Field | Type |
-|---|---|
-| `first_idx` | `int` |
-| `first_time` | `str` |
-| `box_top_source_idx` | `int` |
-| `box_top_source_time` | `str` |
-| `box_top` | `Decimal` |
-| `box_bottom_source_idx` | `int` |
-| `box_bottom_source_time` | `str` |
-| `box_bottom` | `Decimal` |
-| `mode` | `str` |
-| `anchor_idx` | `int | None` |
-| `anchor_value` | `Decimal | None` |
-| `leg_boundary_value` | `Decimal | None` |
-| `break_idx` | `int | None` |
-| `break_time` | `str | None` |
-| `intrabar_start` | `datetime | None` |
-| `cross_direction_origin` | `bool` |
-| `cross_direction_chain_owner` | `bool` |
-| `order_gate_decision` | `str | None` |
-| `behavior_public_number` | `int | None` |
-| `behavior_public_box_top` | `Decimal | None` |
-| `behavior_public_box_bottom` | `Decimal | None` |
-| `behavior_confirmation_time` | `datetime | None` |
-| `behavior_first_time` | `datetime | None` |
-| `behavior_internal` | `bool` |
+| Field | Type | Source line |
+|---|---|---:|
+| `first_idx` | `int` | 40 |
+| `first_time` | `str` | 41 |
+| `box_top_source_idx` | `int` | 42 |
+| `box_top_source_time` | `str` | 43 |
+| `box_top` | `Decimal` | 44 |
+| `box_bottom_source_idx` | `int` | 45 |
+| `box_bottom_source_time` | `str` | 46 |
+| `box_bottom` | `Decimal` | 47 |
+| `mode` | `str` | 48 |
+| `anchor_idx` | `int | None` | 49 |
+| `anchor_value` | `Decimal | None` | 50 |
+| `leg_boundary_value` | `Decimal | None` | 51 |
+| `break_idx` | `int | None` | 52 |
+| `break_time` | `str | None` | 53 |
+| `intrabar_start` | `datetime | None` | 54 |
+| `cross_direction_origin` | `bool` | 55 |
+| `cross_direction_chain_owner` | `bool` | 56 |
+| `order_gate_decision` | `str | None` | 57 |
+| `behavior_public_number` | `int | None` | 58 |
+| `behavior_public_box_top` | `Decimal | None` | 59 |
+| `behavior_public_box_bottom` | `Decimal | None` | 60 |
+| `behavior_confirmation_time` | `datetime | None` | 61 |
+| `behavior_first_time` | `datetime | None` | 62 |
+| `behavior_internal` | `bool` | 63 |
 
-#### `ResetEvent` (`reaction_engine.py`)
+#### `ResetEvent` (`reaction_engine.py`, source line 67)
 
-| Field | Type |
-|---|---|
-| `index` | `int` |
-| `display_time` | `str` |
-| `second_time` | `str | None` |
-| `broken_level` | `Decimal` |
-| `from_first_idx` | `int` |
+| Field | Type | Source line |
+|---|---|---:|
+| `index` | `int` | 68 |
+| `display_time` | `str` | 69 |
+| `second_time` | `str | None` | 70 |
+| `broken_level` | `Decimal` | 71 |
+| `from_first_idx` | `int` | 72 |
 
-#### `IntrabarAnalysis` (`reaction_engine.py`)
+#### `IntrabarAnalysis` (`reaction_engine.py`, source line 76)
 
-| Field | Type |
-|---|---|
-| `event_second` | `Candle` |
-| `extreme` | `Decimal` |
-| `extreme_source` | `Candle` |
+| Field | Type | Source line |
+|---|---|---:|
+| `event_second` | `Candle` | 77 |
+| `extreme` | `Decimal` | 78 |
+| `extreme_source` | `Candle` | 79 |
 
-#### `DetectionResult` (`reaction_engine.py`)
+#### `DetectionResult` (`reaction_engine.py`, source line 83)
 
-| Field | Type |
-|---|---|
-| `direction` | `str` |
-| `reactions` | `list[Candidate]` |
-| `resets` | `list[ResetEvent]` |
-| `start_index` | `int` |
-| `end_index` | `int` |
+| Field | Type | Source line |
+|---|---|---:|
+| `direction` | `str` | 84 |
+| `reactions` | `list[Candidate]` | 85 |
+| `resets` | `list[ResetEvent]` | 86 |
+| `start_index` | `int` | 87 |
+| `end_index` | `int` | 88 |
 
-#### `ScaleStrike` (`blue_line_detector.py`)
+#### `ScaleStrike` (`blue_line_detector.py`, source line 23)
 
-| Field | Type |
-|---|---|
-| `source_index` | `int` |
-| `source_time` | `datetime` |
-| `extreme` | `Decimal` |
+| Field | Type | Source line |
+|---|---|---:|
+| `source_index` | `int` | 24 |
+| `source_time` | `datetime` | 25 |
+| `extreme` | `Decimal` | 26 |
 
-#### `BlueLine` (`blue_line_detector.py`)
+#### `BlueLine` (`blue_line_detector.py`, source line 30)
 
-| Field | Type |
-|---|---|
-| `direction` | `str` |
-| `kind` | `str` |
-| `reaction_number` | `int` |
-| `previous_strike_count` | `int | None` |
-| `strike_count` | `int | None` |
-| `fibonacci_level` | `Decimal | None` |
-| `source_index` | `int` |
-| `source_time` | `datetime` |
-| `source_extreme` | `Decimal` |
-| `broken_level` | `Decimal | None` |
-| `line_price` | `Decimal` |
-| `start_time` | `datetime` |
-| `end_time` | `datetime` |
-| `calculation_valid` | `bool` |
-| `behavior_internal` | `bool` |
+| Field | Type | Source line |
+|---|---|---:|
+| `direction` | `str` | 31 |
+| `kind` | `str` | 32 |
+| `reaction_number` | `int` | 33 |
+| `previous_strike_count` | `int | None` | 34 |
+| `strike_count` | `int | None` | 35 |
+| `fibonacci_level` | `Decimal | None` | 36 |
+| `source_index` | `int` | 37 |
+| `source_time` | `datetime` | 38 |
+| `source_extreme` | `Decimal` | 39 |
+| `broken_level` | `Decimal | None` | 40 |
+| `line_price` | `Decimal` | 41 |
+| `start_time` | `datetime` | 42 |
+| `end_time` | `datetime` | 43 |
+| `calculation_valid` | `bool` | 44 |
+| `behavior_internal` | `bool` | 45 |
 
-#### `BlueState` (`a_zone_detector.py`)
+#### `BlueState` (`a_zone_detector.py`, source line 25)
 
-| Field | Type |
-|---|---|
-| `ordinal` | `int` |
-| `line` | `object` |
-| `formation_index` | `int` |
-| `formation_time` | `datetime` |
-| `stop_index` | `int | None` |
-| `stop_time` | `datetime | None` |
-| `stop_event_time` | `datetime | None` |
-| `stop_level` | `Decimal` |
-| `stop_event_extreme` | `Decimal | None` |
+| Field | Type | Source line |
+|---|---|---:|
+| `ordinal` | `int` | 26 |
+| `line` | `object` | 27 |
+| `formation_index` | `int` | 28 |
+| `formation_time` | `datetime` | 29 |
+| `stop_index` | `int | None` | 30 |
+| `stop_time` | `datetime | None` | 31 |
+| `stop_event_time` | `datetime | None` | 32 |
+| `stop_level` | `Decimal` | 33 |
+| `stop_event_extreme` | `Decimal | None` | 34 |
 
-#### `AZone` (`a_zone_detector.py`)
+#### `AZone` (`a_zone_detector.py`, source line 38)
 
-| Field | Type |
-|---|---|
-| `direction` | `str` |
-| `blue_1_ordinal` | `int` |
-| `blue_2_ordinal` | `int` |
-| `blue_1_source_time` | `datetime` |
-| `blue_2_source_time` | `datetime` |
-| `blue_1_stop_time` | `datetime` |
-| `blue_2_stop_time` | `datetime` |
-| `blue_1_stop_level` | `Decimal` |
-| `blue_2_stop_level` | `Decimal` |
-| `continuation_level` | `Decimal` |
-| `continuation_source_index` | `int` |
-| `continuation_source_time` | `datetime` |
-| `trigger_index` | `int` |
-| `trigger_time` | `datetime` |
-| `trigger_event_time` | `datetime` |
-| `reaction_number` | `int` |
-| `reaction_first_time` | `datetime` |
-| `reaction_break_time` | `datetime` |
-| `source_index` | `int` |
-| `source_time` | `datetime` |
-| `price` | `Decimal` |
+| Field | Type | Source line |
+|---|---|---:|
+| `direction` | `str` | 39 |
+| `blue_1_ordinal` | `int` | 40 |
+| `blue_2_ordinal` | `int` | 41 |
+| `blue_1_source_time` | `datetime` | 42 |
+| `blue_2_source_time` | `datetime` | 43 |
+| `blue_1_stop_time` | `datetime` | 44 |
+| `blue_2_stop_time` | `datetime` | 45 |
+| `blue_1_stop_level` | `Decimal` | 46 |
+| `blue_2_stop_level` | `Decimal` | 47 |
+| `continuation_level` | `Decimal` | 48 |
+| `continuation_source_index` | `int` | 49 |
+| `continuation_source_time` | `datetime` | 50 |
+| `trigger_index` | `int` | 51 |
+| `trigger_time` | `datetime` | 52 |
+| `trigger_event_time` | `datetime` | 53 |
+| `reaction_number` | `int` | 54 |
+| `reaction_first_time` | `datetime` | 55 |
+| `reaction_break_time` | `datetime` | 56 |
+| `source_index` | `int` | 57 |
+| `source_time` | `datetime` | 58 |
+| `price` | `Decimal` | 59 |
 
-#### `SZone` (`s_zone_detector.py`)
+#### `SZone` (`s_zone_detector.py`, source line 26)
 
-| Field | Type |
-|---|---|
-| `direction` | `str` |
-| `color` | `str` |
-| `formation_type` | `str` |
-| `a_ordinal` | `int` |
-| `a_source_index` | `int` |
-| `a_source_time` | `datetime` |
-| `a_price` | `Decimal` |
-| `a_stop_index` | `int` |
-| `a_stop_time` | `datetime` |
-| `a_stop_event_time` | `datetime` |
-| `order_direction` | `str | None` |
-| `order_reaction_number` | `int | None` |
-| `order_mode` | `str | None` |
-| `order_first_index` | `int | None` |
-| `order_first_time` | `datetime | None` |
-| `order_break_index` | `int | None` |
-| `order_break_time` | `datetime | None` |
-| `order_confirmation_time` | `datetime | None` |
-| `order_box_top` | `Decimal | None` |
-| `order_box_top_source_index` | `int | None` |
-| `order_box_top_source_time` | `datetime | None` |
-| `order_box_bottom` | `Decimal | None` |
-| `order_box_bottom_source_index` | `int | None` |
-| `order_box_bottom_source_time` | `datetime | None` |
-| `order_stop_level` | `Decimal | None` |
-| `order_stop_source_index` | `int | None` |
-| `order_stop_source_time` | `datetime | None` |
-| `reset_reaction_number` | `int | None` |
-| `reset_time` | `datetime | None` |
-| `source_index` | `int` |
-| `source_time` | `datetime` |
-| `price` | `Decimal` |
-| `decision_index` | `int` |
-| `decision_time` | `datetime` |
-| `decision_event_time` | `datetime` |
+| Field | Type | Source line |
+|---|---|---:|
+| `direction` | `str` | 27 |
+| `color` | `str` | 28 |
+| `formation_type` | `str` | 29 |
+| `a_ordinal` | `int` | 30 |
+| `a_source_index` | `int` | 31 |
+| `a_source_time` | `datetime` | 32 |
+| `a_price` | `Decimal` | 33 |
+| `a_stop_index` | `int` | 34 |
+| `a_stop_time` | `datetime` | 35 |
+| `a_stop_event_time` | `datetime` | 36 |
+| `order_direction` | `str | None` | 37 |
+| `order_reaction_number` | `int | None` | 38 |
+| `order_mode` | `str | None` | 39 |
+| `order_first_index` | `int | None` | 40 |
+| `order_first_time` | `datetime | None` | 41 |
+| `order_break_index` | `int | None` | 42 |
+| `order_break_time` | `datetime | None` | 43 |
+| `order_confirmation_time` | `datetime | None` | 44 |
+| `order_box_top` | `Decimal | None` | 45 |
+| `order_box_top_source_index` | `int | None` | 46 |
+| `order_box_top_source_time` | `datetime | None` | 47 |
+| `order_box_bottom` | `Decimal | None` | 48 |
+| `order_box_bottom_source_index` | `int | None` | 49 |
+| `order_box_bottom_source_time` | `datetime | None` | 50 |
+| `order_stop_level` | `Decimal | None` | 51 |
+| `order_stop_source_index` | `int | None` | 52 |
+| `order_stop_source_time` | `datetime | None` | 53 |
+| `reset_reaction_number` | `int | None` | 54 |
+| `reset_time` | `datetime | None` | 55 |
+| `source_index` | `int` | 56 |
+| `source_time` | `datetime` | 57 |
+| `price` | `Decimal` | 58 |
+| `decision_index` | `int` | 59 |
+| `decision_time` | `datetime` | 60 |
+| `decision_event_time` | `datetime` | 61 |
 
-#### `EZone` (`e_zone_detector.py`)
+#### `EZone` (`e_zone_detector.py`, source line 27)
 
-| Field | Type |
-|---|---|
-| `direction` | `str` |
-| `family` | `str` |
-| `number` | `int` |
-| `parent_type` | `str` |
-| `parent_source_index` | `int` |
-| `parent_source_time` | `datetime` |
-| `parent_price` | `Decimal` |
-| `parent_stop_index` | `int` |
-| `parent_stop_time` | `datetime` |
-| `parent_stop_event_time` | `datetime` |
-| `order_direction` | `str` |
-| `order_reaction_number` | `int` |
-| `order_mode` | `str` |
-| `order_causes` | `tuple[str, ...]` |
-| `order_parent_stop_cause_time` | `datetime | None` |
-| `order_reset_leg_reset_time` | `datetime | None` |
-| `order_reset_leg_break_time` | `datetime | None` |
-| `order_first_index` | `int` |
-| `order_first_time` | `datetime` |
-| `order_break_index` | `int` |
-| `order_break_time` | `datetime` |
-| `order_confirmation_time` | `datetime` |
-| `order_box_top` | `Decimal` |
-| `order_box_top_source_index` | `int` |
-| `order_box_top_source_time` | `datetime` |
-| `order_box_bottom` | `Decimal` |
-| `order_box_bottom_source_index` | `int` |
-| `order_box_bottom_source_time` | `datetime` |
-| `order_stop_level` | `Decimal` |
-| `order_stop_source_index` | `int` |
-| `order_stop_source_time` | `datetime` |
-| `source_index` | `int` |
-| `source_time` | `datetime` |
-| `price` | `Decimal` |
-| `decision_index` | `int` |
-| `decision_time` | `datetime` |
-| `decision_event_time` | `datetime` |
+| Field | Type | Source line |
+|---|---|---:|
+| `direction` | `str` | 28 |
+| `family` | `str` | 29 |
+| `number` | `int` | 30 |
+| `parent_type` | `str` | 31 |
+| `parent_source_index` | `int` | 32 |
+| `parent_source_time` | `datetime` | 33 |
+| `parent_price` | `Decimal` | 34 |
+| `parent_stop_index` | `int` | 35 |
+| `parent_stop_time` | `datetime` | 36 |
+| `parent_stop_event_time` | `datetime` | 37 |
+| `order_direction` | `str` | 38 |
+| `order_reaction_number` | `int` | 39 |
+| `order_mode` | `str` | 40 |
+| `order_causes` | `tuple[str, ...]` | 41 |
+| `order_parent_stop_cause_time` | `datetime | None` | 42 |
+| `order_reset_leg_reset_time` | `datetime | None` | 43 |
+| `order_reset_leg_break_time` | `datetime | None` | 44 |
+| `order_first_index` | `int` | 45 |
+| `order_first_time` | `datetime` | 46 |
+| `order_break_index` | `int` | 47 |
+| `order_break_time` | `datetime` | 48 |
+| `order_confirmation_time` | `datetime` | 49 |
+| `order_box_top` | `Decimal` | 50 |
+| `order_box_top_source_index` | `int` | 51 |
+| `order_box_top_source_time` | `datetime` | 52 |
+| `order_box_bottom` | `Decimal` | 53 |
+| `order_box_bottom_source_index` | `int` | 54 |
+| `order_box_bottom_source_time` | `datetime` | 55 |
+| `order_stop_level` | `Decimal` | 56 |
+| `order_stop_source_index` | `int` | 57 |
+| `order_stop_source_time` | `datetime` | 58 |
+| `source_index` | `int` | 59 |
+| `source_time` | `datetime` | 60 |
+| `price` | `Decimal` | 61 |
+| `decision_index` | `int` | 62 |
+| `decision_time` | `datetime` | 63 |
+| `decision_event_time` | `datetime` | 64 |
 
-#### `OrderBFormation` (`e_zone_detector.py`)
+#### `OrderBFormation` (`e_zone_detector.py`, source line 75)
 
-| Field | Type |
-|---|---|
-| `reset_time` | `datetime` |
-| `reset_index` | `int` |
-| `owner_first_index` | `int` |
-| `owner_break_index` | `int` |
-| `trigger_level` | `Decimal` |
-| `trigger_source_index` | `int` |
-| `trigger_source_time` | `datetime` |
-| `strict_break_index` | `int` |
-| `strict_break_time` | `datetime` |
-| `strict_break_event_time` | `datetime` |
-| `opposite_extreme` | `Decimal` |
-| `opposite_extreme_source_index` | `int` |
-| `opposite_extreme_source_time` | `datetime` |
-| `evidence_first_index` | `int` |
-| `evidence_break_index` | `int` |
-| `order_reaction_number` | `int` |
-| `order_reaction` | `object` |
-| `order_confirmation_time` | `datetime` |
+| Field | Type | Source line |
+|---|---|---:|
+| `reset_time` | `datetime` | 78 |
+| `reset_index` | `int` | 79 |
+| `owner_first_index` | `int` | 80 |
+| `owner_break_index` | `int` | 81 |
+| `trigger_level` | `Decimal` | 82 |
+| `trigger_source_index` | `int` | 83 |
+| `trigger_source_time` | `datetime` | 84 |
+| `strict_break_index` | `int` | 85 |
+| `strict_break_time` | `datetime` | 86 |
+| `strict_break_event_time` | `datetime` | 87 |
+| `opposite_extreme` | `Decimal` | 88 |
+| `opposite_extreme_source_index` | `int` | 89 |
+| `opposite_extreme_source_time` | `datetime` | 90 |
+| `evidence_first_index` | `int` | 91 |
+| `evidence_break_index` | `int` | 92 |
+| `order_reaction_number` | `int` | 93 |
+| `order_reaction` | `object` | 94 |
+| `order_confirmation_time` | `datetime` | 95 |
 
-#### `StopAll` (`lifecycle_engine.py`)
+#### `StopAll` (`lifecycle_engine.py`, source line 39)
 
-| Field | Type |
-|---|---|
-| `direction` | `str` |
-| `number` | `int` |
-| `source_index` | `int` |
-| `source_time` | `datetime` |
-| `price` | `Decimal` |
-| `decision_index` | `int` |
-| `decision_time` | `datetime` |
-| `decision_event_time` | `datetime` |
-| `gate_type` | `str` |
-| `gate_event_time` | `datetime` |
-| `stopped_behavior_type` | `str` |
-| `stopped_behavior_key` | `str` |
-| `stopped_behavior_count` | `int` |
-| `underlying_e_family` | `str | None` |
-| `underlying_e_number` | `int | None` |
-| `order_direction` | `str | None` |
-| `order_reaction_number` | `int | None` |
-| `order_mode` | `str | None` |
-| `order_causes` | `tuple[str, ...]` |
-| `order_parent_stop_cause_time` | `datetime | None` |
-| `order_reset_leg_reset_time` | `datetime | None` |
-| `order_reset_leg_break_time` | `datetime | None` |
-| `order_first_index` | `int | None` |
-| `order_first_time` | `datetime | None` |
-| `order_break_index` | `int | None` |
-| `order_break_time` | `datetime | None` |
-| `order_confirmation_time` | `datetime | None` |
-| `order_box_top` | `Decimal | None` |
-| `order_box_top_source_index` | `int | None` |
-| `order_box_top_source_time` | `datetime | None` |
-| `order_box_bottom` | `Decimal | None` |
-| `order_box_bottom_source_index` | `int | None` |
-| `order_box_bottom_source_time` | `datetime | None` |
-| `order_stop_level` | `Decimal | None` |
-| `order_stop_source_index` | `int | None` |
-| `order_stop_source_time` | `datetime | None` |
-| `stop_index` | `int | None` |
-| `stop_time` | `datetime | None` |
-| `stop_event_time` | `datetime | None` |
+| Field | Type | Source line |
+|---|---|---:|
+| `direction` | `str` | 40 |
+| `number` | `int` | 41 |
+| `source_index` | `int` | 42 |
+| `source_time` | `datetime` | 43 |
+| `price` | `Decimal` | 44 |
+| `decision_index` | `int` | 45 |
+| `decision_time` | `datetime` | 46 |
+| `decision_event_time` | `datetime` | 47 |
+| `gate_type` | `str` | 48 |
+| `gate_event_time` | `datetime` | 49 |
+| `stopped_behavior_type` | `str` | 50 |
+| `stopped_behavior_key` | `str` | 51 |
+| `stopped_behavior_count` | `int` | 52 |
+| `underlying_e_family` | `str | None` | 53 |
+| `underlying_e_number` | `int | None` | 54 |
+| `order_direction` | `str | None` | 55 |
+| `order_reaction_number` | `int | None` | 56 |
+| `order_mode` | `str | None` | 57 |
+| `order_causes` | `tuple[str, ...]` | 58 |
+| `order_parent_stop_cause_time` | `datetime | None` | 59 |
+| `order_reset_leg_reset_time` | `datetime | None` | 60 |
+| `order_reset_leg_break_time` | `datetime | None` | 61 |
+| `order_first_index` | `int | None` | 62 |
+| `order_first_time` | `datetime | None` | 63 |
+| `order_break_index` | `int | None` | 64 |
+| `order_break_time` | `datetime | None` | 65 |
+| `order_confirmation_time` | `datetime | None` | 66 |
+| `order_box_top` | `Decimal | None` | 67 |
+| `order_box_top_source_index` | `int | None` | 68 |
+| `order_box_top_source_time` | `datetime | None` | 69 |
+| `order_box_bottom` | `Decimal | None` | 70 |
+| `order_box_bottom_source_index` | `int | None` | 71 |
+| `order_box_bottom_source_time` | `datetime | None` | 72 |
+| `order_stop_level` | `Decimal | None` | 73 |
+| `order_stop_source_index` | `int | None` | 74 |
+| `order_stop_source_time` | `datetime | None` | 75 |
+| `stop_index` | `int | None` | 76 |
+| `stop_time` | `datetime | None` | 77 |
+| `stop_event_time` | `datetime | None` | 78 |
 
-#### `EngineBundle` (`trading_pipeline.py`)
+#### `EngineBundle` (`trading_pipeline.py`, source line 611)
 
-| Field | Type |
-|---|---|
-| `reaction` | `object` |
-| `blue_line` | `object` |
-| `a_zone` | `object` |
-| `s_zone` | `object` |
-| `e_zone` | `object | None` |
-| `lifecycle` | `object | None` |
+| Field | Type | Source line |
+|---|---|---:|
+| `reaction` | `object` | 612 |
+| `blue_line` | `object` | 613 |
+| `a_zone` | `object` | 614 |
+| `s_zone` | `object` | 615 |
+| `e_zone` | `object | None` | 616 |
+| `lifecycle` | `object | None` | 617 |
 
-#### `MarketContext` (`trading_pipeline.py`)
+#### `MarketContext` (`trading_pipeline.py`, source line 621)
 
-| Field | Type |
-|---|---|
-| `seconds` | `list[object]` |
-| `candles` | `list[object]` |
-| `lower_index` | `object` |
-| `chronology` | `object` |
-| `start_index` | `int` |
-| `end_index` | `int` |
+| Field | Type | Source line |
+|---|---|---:|
+| `seconds` | `list[object]` | 622 |
+| `candles` | `list[object]` | 623 |
+| `lower_index` | `object` | 624 |
+| `chronology` | `object` | 625 |
+| `start_index` | `int` | 626 |
+| `end_index` | `int` | 627 |
 
-#### `PipelineState` (`trading_pipeline.py`)
+#### `PipelineState` (`trading_pipeline.py`, source line 812)
 
-| Field | Type |
-|---|---|
-| `directions` | `tuple[str, ...]` |
-| `results` | `dict[str, object]` |
-| `reusable_full_context` | `bool` |
-| `initial_order_geometry` | `dict[str, object]` |
-| `internal_reaction_identities` | `dict[str, set[tuple[int, int]]]` |
-| `full_e_zones` | `dict[str, list[object]]` |
-| `full_e_detectors` | `dict[str, object]` |
-| `full_s_detectors` | `dict[str, object]` |
-| `full_lines_by_direction` | `dict[str, list[object]]` |
-| `full_a_by_direction` | `dict[str, list[object]]` |
-| `invalid_a_identities_by_direction` | `dict[str, set[tuple[datetime, int]]]` |
-| `invalid_s_identities_by_direction` | `dict[str, set[tuple[datetime, int]]]` |
-| `full_s_by_direction` | `dict[str, list[object]]` |
-| `full_s_candidates_by_direction` | `dict[str, list[object]]` |
+| Field | Type | Source line |
+|---|---|---:|
+| `directions` | `tuple[str, ...]` | 815 |
+| `results` | `dict[str, object]` | 816 |
+| `reusable_full_context` | `bool` | 817 |
+| `initial_order_geometry` | `dict[str, object]` | 818 |
+| `internal_reaction_identities` | `dict[str, set[tuple[int, int]]]` | 819 |
+| `full_e_zones` | `dict[str, list[object]]` | 820 |
+| `full_e_detectors` | `dict[str, object]` | 821 |
+| `full_s_detectors` | `dict[str, object]` | 822 |
+| `full_lines_by_direction` | `dict[str, list[object]]` | 823 |
+| `full_a_by_direction` | `dict[str, list[object]]` | 824 |
+| `invalid_a_identities_by_direction` | `dict[str, set[tuple[datetime, int]]]` | 825 |
+| `invalid_s_identities_by_direction` | `dict[str, set[tuple[datetime, int]]]` | 826 |
+| `full_s_by_direction` | `dict[str, list[object]]` | 827 |
+| `full_s_candidates_by_direction` | `dict[str, list[object]]` | 828 |
 
-#### `FullDirectionState` (`trading_pipeline.py`)
+#### `FullDirectionState` (`trading_pipeline.py`, source line 832)
 
-| Field | Type |
-|---|---|
-| `e_zones` | `list[object]` |
-| `e_detector` | `object` |
-| `s_detector` | `object` |
-| `blue_lines` | `list[object]` |
-| `a_zones` | `list[object]` |
-| `invalid_a_identities` | `set[tuple[datetime, int]]` |
-| `invalid_s_identities` | `set[tuple[datetime, int]]` |
-| `s_zones` | `list[object]` |
-| `s_candidates` | `list[object]` |
+| Field | Type | Source line |
+|---|---|---:|
+| `e_zones` | `list[object]` | 835 |
+| `e_detector` | `object` | 836 |
+| `s_detector` | `object` | 837 |
+| `blue_lines` | `list[object]` | 838 |
+| `a_zones` | `list[object]` | 839 |
+| `invalid_a_identities` | `set[tuple[datetime, int]]` | 840 |
+| `invalid_s_identities` | `set[tuple[datetime, int]]` | 841 |
+| `s_zones` | `list[object]` | 842 |
+| `s_candidates` | `list[object]` | 843 |
 
-#### `DirectionRangeState` (`trading_pipeline.py`)
+#### `DirectionRangeState` (`trading_pipeline.py`, source line 1410)
 
-| Field | Type |
-|---|---|
-| `blue_lines` | `list[object]` |
-| `a_zones` | `list[object]` |
-| `s_candidates` | `list[object]` |
-| `accepted_s_zones` | `list[object]` |
-| `e_zones` | `list[object]` |
-| `invalid_a_identities` | `set[tuple[datetime, int]]` |
-| `invalid_s_identities` | `set[tuple[datetime, int]]` |
+| Field | Type | Source line |
+|---|---|---:|
+| `blue_lines` | `list[object]` | 1413 |
+| `a_zones` | `list[object]` | 1414 |
+| `s_candidates` | `list[object]` | 1415 |
+| `accepted_s_zones` | `list[object]` | 1416 |
+| `e_zones` | `list[object]` | 1417 |
+| `invalid_a_identities` | `set[tuple[datetime, int]]` | 1418 |
+| `invalid_s_identities` | `set[tuple[datetime, int]]` | 1419 |
 
-#### `DirectionVisibilityState` (`trading_pipeline.py`)
+#### `DirectionVisibilityState` (`trading_pipeline.py`, source line 1423)
 
-| Field | Type |
-|---|---|
-| `blue_lines` | `list[object]` |
-| `a_zones` | `list[object]` |
-| `s_zones` | `list[object]` |
-| `e_zones` | `list[object]` |
-| `stopalls` | `list[object]` |
-| `prepared_order_audit` | `list[object]` |
+| Field | Type | Source line |
+|---|---|---:|
+| `blue_lines` | `list[object]` | 1426 |
+| `a_zones` | `list[object]` | 1427 |
+| `s_zones` | `list[object]` | 1428 |
+| `e_zones` | `list[object]` | 1429 |
+| `stopalls` | `list[object]` | 1430 |
+| `prepared_order_audit` | `list[object]` | 1431 |
 
-#### `DirectionPolicy` (`direction_policy.py`)
+#### `DirectionPolicy` (`direction_policy.py`, source line 21)
 
-| Field | Type |
-|---|---|
-| `direction` | `Direction` |
-| `extreme_attr` | `Literal['low', 'high']` |
-| `opposite_extreme_attr` | `Literal['high', 'low']` |
-| `first_reaction_tag` | `Literal['RED', 'GREEN']` |
-| `context_tag` | `Literal['GREEN', 'RED']` |
+| Field | Type | Source line |
+|---|---|---:|
+| `direction` | `Direction` | 22 |
+| `extreme_attr` | `Literal['low', 'high']` | 23 |
+| `opposite_extreme_attr` | `Literal['high', 'low']` | 24 |
+| `first_reaction_tag` | `Literal['RED', 'GREEN']` | 25 |
+| `context_tag` | `Literal['GREEN', 'RED']` | 26 |
+
+## 21. Standalone reconstruction boundary, dependencies, Public API, and cache scope
+
+### 21.1 No external project-source dependency
+
+This Reference is independently reconstructable. All project-owned algorithm source required by the production engine is embedded in Section 26. A reader does **not** need the original Source directory, Git history, another Reference, archived code, conversation history, or hidden developer memory.
+
+### 21.2 Runtime dependencies that are not project-owned source
+
+The reconstructed implementation relies on Python standard-library modules used by the embedded source, including `argparse`, `array`, `bisect`, `dataclasses`, `datetime`, `decimal`, `importlib.util`, `json`, `pathlib`, `sys`, `time`, `types`, `typing`, and `zoneinfo`. The only non-standard-library runtime package imported by the current production snapshot is `orjson`, used by `trading_pipeline.py` for final JSON output. The Reference does not embed Python or third-party package source code.
+
+Project-owned cross-module imports are fully satisfied by the nine embedded modules: `core_utils` and `direction_policy` are shared helpers; the remaining engine modules are dynamically loaded/orchestrated by `trading_pipeline.py`.
+
+### 21.3 Production command-line/Public API
+
+`trading_pipeline.py` exposes `main()` and `parse_arguments()` as the production command-line entry path. The current CLI accepts:
+
+- `--reaction-engine` / `--engine` (required path)
+- `--blue-line-engine` / `--blue-engine` (required path)
+- `--a-zone-engine` / `--a-engine` (required path)
+- `--s-zone-engine` / `--s-engine` (required path)
+- `--e-zone-engine` / `--e-engine` (optional path)
+- `--lifecycle-engine` / `--stopall-engine` (optional path)
+- `--blue-lines enabled|disabled` (default `enabled`)
+- `--a-zones enabled|disabled` (default `enabled`)
+- `--s-zones enabled|disabled` (default `enabled`)
+- `--data` (required RAW JSON path)
+- `--timeframe` (required integer, must be at least one second)
+- `--from-time` (required epoch-second presentation lower bound)
+- `--to-time` (required epoch-second presentation upper bound)
+- `--direction bullish|bearish|both` (required)
+
+The input RAW object is a JSON array of rows containing `time`, `open`, `high`, `low`, and `close`. The pipeline normalizes the full physical RAW before range filtering. Progress telemetry is emitted to stderr with the `QG_PROGRESS:` prefix so stdout remains reserved for the final JSON payload.
+
+### 21.4 Global mutable state and cache safety
+
+Performance indexes/caches are implementation details, not trading rules. Calculation-sensitive caches must preserve all algorithmic context and may not leak mutable lifecycle state across directions or RAW runs. The current source contains immutable-source reuse helpers (for example shared timestamp/lower-timeframe indexes and pipeline datetime conversion caches) and per-detector/per-run Order/search caches. They are valid only while they preserve exact first-event, boundary, equality, ownership, provenance, ordering, and Decimal semantics.
+
+Never introduce a module-level trading-state cache keyed only by a candle index, source index, direction, or similarly incomplete identity. Such a cache can contaminate multiple RAW files or Bullish/Bearish runs because indexes repeat across calculations.
 
 ## 22. Complete terminology and object/lifecycle glossary
 
@@ -1834,7 +1976,7 @@ S color (`red`/`blue`) is a behavior family label and is **not** synonymous with
 - **Parent:** an accepted S or E whose strict stop opens the possibility of the next E.
 - **Parent-stop Order:** an opposite-direction Order discovered/owned because a parent behavior stopped.
 - **Carried-live Order:** an already-accepted physical Order that remains eligible for a newer parent under exact lifecycle rules.
-- **Reset-leg Order_B:** an independent Order cause created when a **Bearish Reaction Reset** yields a Breakout→Reset inclusive minimum-Low floor, that floor is later strictly broken (`Low < floor`), raw **Bullish Reaction geometry** exists in the closed floor-source→strict-break-main-candle interval, and the first canonical Bullish Reaction after the gate is assigned as the physical Order_B. The same closed interval supplies the maximum-High ceiling. Reset validity/lifecycle/Internal status is ignored only for the evidence geometry test.
+- **Reset-leg Order_B:** an independent Order cause created when a **Bullish Reaction Reset** yields a Breakout→Reset inclusive maximum-High ceiling, that ceiling is later strictly broken (`High > ceiling`), raw **Bearish Reaction geometry** exists in the closed ceiling-source→strict-break-main-candle interval, and the first canonical Bearish Reaction after the gate is assigned as the physical Order_B. The same closed interval supplies the minimum-Low floor. Reset validity/lifecycle/Internal status is ignored only for the evidence geometry test.
 - **Direct Order_A:** direct post-parent-stop geometry, including the narrow fresh-trend-leg route after a stopped E.
 - **Shared accepted Order use:** a physical Order already accepted by another behavior/structure may decide the current S/E candidate when exact stop chronology is valid. The creating parent need not match. `carried-live` means already active at the candidate parent stop; `accepted-live` means confirmed after it. Both are use provenance only.
 - **Order cause vs Reaction mode:** `Order_A`/`Order_B` describe why the physical Order exists. `Reaction.mode` describes the Reaction engine geometry (`A` or `B`). They are independent fields/concepts.
@@ -1843,33 +1985,33 @@ S color (`red`/`blue`) is a behavior family label and is **not** synonymous with
 
 ### 22.7 StopAll
 
-StopAll is a behavior generated by three lifecycle gates: (1) E-driven `sequence-group-stop`, (2) E-driven `stopall-stop`, and (3) accepted-S `opposite-s-group-stop`. For gate (3), counting is **cycle-wide per exact accepted Blue behavior group**, independent of current dominance: all accepted `S Blue` occurrences share one group, while `E1 Blue`, `E2 Blue`, `E5 Blue`, etc. are distinct groups. Any one group reaching `count >= 2` arms the gate; the next accepted `S Red` is promoted to StopAll. A later dominant Red owner does not erase the armed qualification. Different E numbers never add together. This gate does not require the latest qualifying Blue occurrence to strict-stop before the S decision. E-driven same-key `sequence-group-stop` retains its own current-owner count and strict-stop chronology. Every StopAll is a hard boundary that clears current S/E owner state **and** all cycle-wide Blue-repeat counters.
+StopAll is a behavior generated by three lifecycle gates: (1) E-driven `sequence-group-stop`, (2) E-driven `stopall-stop`, and (3) accepted-S `opposite-s-group-stop`. For gate (3), counting is **pending per exact accepted Blue behavior group**, independent of current dominance: `S Blue` shares one group while each E number is distinct. Any one group reaching `count >= 2` may promote the next accepted `S Red` with a native Mode-B Order to StopAll, provided no intervening accepted Red S/E has resolved the pending evidence. Every ordinary accepted Red S (including Mode A) and accepted Red E clears these pending repeats. Different E numbers never add together. No extra latest-Blue strict-stop condition is imposed. E-driven same-key `sequence-group-stop` retains its separate current-owner count and strict-stop chronology. StopAll is a hard boundary that clears all counters and active owners.
 
 ### 22.8 OrderAudit
 
 OrderAudit is not a separate market behavior. It is the canonical ledger of physical Orders keyed by `(FirstIndex, BreakIndex)`, with merged causes/provenance and exact strict stop-hit chronology. One physical Order can have multiple accepted causes, but one exact parent-stop provenance cannot be consumed twice to create multiple physical Orders.
 
-## 23. Directional rule matrix and full behavior transition catalog — Bearish
+## 23. Directional rule matrix and full behavior transition catalog — Bullish
 
 ### 23.1 Mechanical directional map
 
-| Concept | Bearish rule | Bullish mirror |
+| Concept | Bullish rule | Bearish mirror |
 |---|---|---|
-| Directional extreme | maximum / High | minimum / Low |
-| Strict behavior/Blue stop | `High > level` | `Low < level` |
-| Reaction First color | GREEN | RED |
-| Reaction confirm | `Low < BoxBottom` | `High > BoxTop` |
-| Reset boundary | previous confirmed BoxTop | previous confirmed BoxBottom |
-| Confirmation-side exact scan | Low | High |
-| A source extreme | maximum High | minimum Low |
-| Chained Blue carried stop | maximum High over complete interval | minimum Low over complete interval |
-| Opposite Order direction | Bullish | Bearish |
-| Order_B Reset owner | Bearish Reaction Reset | Bullish Reaction Reset |
-| Order_B primary extreme | minimum Low, owner Breakout→Reset inclusive | maximum High, owner Breakout→Reset inclusive |
-| Order_B strict trigger | `Low < floor` after Reset | `High > ceiling` after Reset |
-| Order_B evidence geometry | raw Bullish geometry in closed floor-source→strict-break candle range | raw Bearish geometry in closed ceiling-source→strict-break candle range |
-| Order_B other edge | maximum High over same closed evidence range | minimum Low over same closed evidence range |
-| Order_B physical Order | first canonical Bullish Reaction after gate | first canonical Bearish Reaction after gate |
+| Directional extreme | minimum / Low | maximum / High |
+| Strict behavior/Blue stop | `Low < level` | `High > level` |
+| Reaction First color | RED | GREEN |
+| Reaction confirm | `High > BoxTop` | `Low < BoxBottom` |
+| Reset boundary | previous confirmed BoxBottom | previous confirmed BoxTop |
+| Confirmation-side exact scan | High | Low |
+| A source extreme | minimum Low | maximum High |
+| Chained Blue carried stop | minimum Low over complete interval | maximum High over complete interval |
+| Opposite Order direction | Bearish | Bullish |
+| Order_B Reset owner | Bullish Reaction Reset | Bearish Reaction Reset |
+| Order_B primary extreme | maximum High, owner Breakout→Reset inclusive | minimum Low, owner Breakout→Reset inclusive |
+| Order_B strict trigger | `High > ceiling` after Reset | `Low < floor` after Reset |
+| Order_B evidence geometry | raw Bearish geometry in closed ceiling-source→strict-break candle range | raw Bullish geometry in closed floor-source→strict-break candle range |
+| Order_B other edge | minimum Low over same closed evidence range | maximum High over same closed evidence range |
+| Order_B physical Order | first canonical Bearish Reaction after gate | first canonical Bullish Reaction after gate |
 
 ### 23.2 Invariant rules that must not be directionally swapped
 
@@ -1881,25 +2023,25 @@ OrderAudit is not a separate market behavior. It is the canonical ledger of phys
 - Full-RAW calculation and presentation filtering rules remain unchanged.
 - Exact invalidation-first ties stay invalidation-first where the implementation checks them in that order.
 
-### 23.3 End-to-end Bearish behavior flow
+### 23.3 End-to-end Bullish behavior flow
 
 ```text
 Bullish/ Bearish RAW candles
     ↓
-Bearish Reaction + Reset geometry (while Bullish Reaction/Reset is also calculated)
+Bullish Reaction + Reset geometry (while Bearish Reaction/Reset is also calculated)
     ↓
-Bearish Scale/Reset Blue evidence
+Bullish Scale/Reset Blue evidence
     ↓
 Blue stops + adjacent-pair / double-stop chronology
     ↓
-Bearish A candidate → validating Bearish Reaction exact confirmation → accepted A
-    ↓ strict High > A.price
+Bullish A candidate → validating Bullish Reaction exact confirmation → accepted A
+    ↓ strict Low < A.price
 A stop
     ↓
-first eligible Bullish Order geometry + Type3/Simple/Advanced S logic
+first eligible Bearish Order geometry + Type3/Simple/Advanced S logic
     ↓
 accepted S Red or S Blue
-    ↓ strict High > S.price (and accepted Order routes)
+    ↓ strict Low < S.price (and accepted Order routes)
 recursive E candidates / parent-stop Order_A, carried-live, and canonical V5.2.0 Reset-leg Order_B routes
     ↓
 family/number/same-source/lifecycle reconciliation
@@ -1917,49 +2059,40 @@ final lifecycle visibility + OrderAudit + serialization
 
 These examples are included to make chronology and ownership concrete. They are regression fixtures/examples only; a conforming implementation must derive them from general rules and must never branch on their timestamps/prices.
 
-### 24.1 Bearish exact lower-timeframe Reaction confirmation and A ownership
+### 24.1 Bullish same-Break confirmation/reset ownership
 
-XAUUSD 30s reference shape: A source is `2026-09-04 16:57:30`; the validating Bearish Reaction has FirstGreen `16:58:00`, BoxBottom from `16:57:30`, BoxTop from `16:58:00`, and exact lower-timeframe breakdown confirmation at `16:58:38`. A source ownership freezes at exact confirmation; later remainder prices in the same Break main candle cannot retroactively move A to `16:58:30`.
+USOIL 30s reference shape: a Bullish Reaction confirms strictly inside the `2026-09-09 19:09:30` main candle at exact `19:09:45`. A later lower event in the same main candle at `19:09:50` trades below the frozen exact-confirmation opposite edge. Therefore that main candle is preserved as a Reset boundary and **cannot** simultaneously become the next normal Bullish FirstRed. This preserved Reset evidence participates in later Blue/A calculation.
 
-### 24.2 Bearish Order bounded Mode-A anchor
+### 24.2 Bullish Blue → A → S → Order → later A/S chain
 
-Reference Order `2026-09-07 10:14:00` keeps its stop source at `10:13:30`. When the bounded gate resolver returns `continue`, a genuinely resolved current-leg Mode-A anchor is authoritative; an older Reset cannot overwrite that anchor merely because historical Reset provenance exists.
+Reference chain: `A 2026-09-09 19:06:30 → S Red 19:09:30 → Order 19:14:30 → A 19:20:30 → S Blue 19:47:00`. An earlier candidate `A 19:17:00` is rejected by the corrected chained-Blue/exact-reset chronology. The timestamps are validation evidence, not rules.
 
-### 24.3 Bearish chained Blue carried-stop mirror
+### 24.3 Exact-source E continuation ownership
 
-For a stopped Bearish Blue, locate the first valid Bearish Reaction after the stop and compute the **maximum High** from the Blue stop main candle through the complete Breakout main candle, inclusive. This is now the exact mirror of Bullish minimum-Low chronology. Historical USOIL reference geometry around Blue `2026-09-11 09:23:00` is an example of the carried-stop route, but the production rule is fully general.
+XAUUSD 30s reference chain: `E1 Blue 2026-09-17 07:50:00 → E2 Blue 08:00:00 → E3 Blue 08:54:00`. A calculation-invalid `S Red @ 08:00:00` can remain Order/evidence provenance but cannot open a competing cross-family E1 at the same physical source occupied by the native Blue continuation. This prevents the formerly incorrect `E1 Red @ 08:54:00`.
 
-### 24.4 Exact-source E continuation ownership is direction-invariant
+### 24.4 StopAll downstream consequence of correct E ownership
 
-The invalid-S same-source cross-family rule does not depend on Bullish/Bearish direction. Family labels remain invariant; only price geometry mirrors. A price-mirrored validation fixture preserves the same `E1 Blue → E2 Blue → E3 Blue` ownership sequence without allowing an invalid Red S root to steal the physical source.
+Because the invalid Red E root above no longer exists, the old downstream `StopAll @ 18:30:30` based on that Red sequence also disappears; the native behavior at that source is resolved by the surviving legitimate chain. This demonstrates why E reconciliation must happen before StopAll history is finalized.
 
-### 24.5 Bearish validation of exact-key S-reversal StopAll ownership
+### 24.5 Bullish S-reversal StopAll cycle
 
-Bearish mirrors price geometry, not Red/Blue family labels. After every hard StopAll boundary, all current owner state and all cycle-wide Blue-repeat counters restart from zero. A progression such as `E1 Blue → E2 Blue → E3 Blue` contributes one occurrence to three separate groups and is not cumulative. Any one exact group, such as repeated `E3 Blue`, qualifies once its accepted occurrence count reaches two; that qualification remains armed even if another behavior later becomes dominant. The next accepted S Red is promoted to StopAll without an additional latest-Blue strict-stop requirement. This accepted-S reversal rule is superseded and defined by V5.4.4. No timestamp or fixture-specific production branch is allowed.
+Historical V5.4.4 worked example (not a current expected output): `S Red @ 2026-09-17 16:15:00` was formerly described as a StopAll. In the complete V5.4.7 Bullish 30s output, it is an ordinary S Red with native Mode-A Order. A valid pending reversal requires repeated exact Blue behavior within an unbroken accepted-Blue interval and an incoming native Mode-B S Red. The historical timestamp is not a production branch.
 
-### 24.6 Canonical Bearish Order_B worked example — XAUUSD 30s
+Cross-direction validation uses the same pending exact-group rule. Different E numbers never accumulate; the qualifying repeat need not remain dominant, but accepted Red S/E terminates its pending validity. Red/Blue families and priority remain invariant; only price geometry mirrors.
 
-Using `RAW FOREXCOM_XAUUSD 5S FROM 2026-09-03 18-44-00 TO 2026-09-19 00-29-35(1).json` in Bearish 30s calculation:
+### 24.6 Canonical Bullish Order_B mirror contract
 
-- Bearish Reaction First: `2026-09-04 09:24:00`; Breakout main candle: `09:24:30`.
-- That Bearish Reaction resets on main candle `09:25:30`.
-- Breakout→Reset inclusive minimum Low is `4467.370`, owned by main candle `09:25:00`; this is the Reset-leg floor.
-- First exact lower-timeframe strict floor break is `2026-09-04 09:42:10` (`Low < 4467.370`), contained in the `09:42:00` main candle.
-- Closed evidence interval is therefore `09:25:00 .. 09:42:00`, inclusive.
-- Raw Bullish Reaction geometry exists inside that exact interval (First `09:27:00`, Break `09:28:00`). Its later Reset/lifecycle status is irrelevant to this evidence test.
-- Maximum High over the same closed interval is `4473.530`, owned by `09:31:30`; this is the Reset-leg ceiling.
-- The first canonical Bullish Reaction after the gate has First `09:45:00`, Break `09:45:30`, exact confirmation `09:45:55`; that physical Reaction is Order_B.
-
-These timestamps/prices are regression evidence only and must never be hardcoded.
+For Bullish, mirror the Bearish worked route mechanically: a **Bullish Reaction Reset** owns the setup; take the maximum High from its Breakout main candle through its Reset main candle inclusive as the ceiling; after the exact Reset wait for strict `High > ceiling`; use the closed ceiling-source→strict-break-main-candle interval to require raw Bearish Reaction geometry and to obtain the minimum-Low floor; then the first canonical Bearish Reaction after the gate is the physical Order_B. No Red/Blue family, lifecycle priority, Doji or serialization invariant is mirrored.
 
 
-### 24.7 Shared accepted-Order regression case — XAUUSD Bearish 30s
+### 24.7 Shared accepted-Order exact mirror
 
-On `RAW FOREXCOM_XAUUSD 5S FROM 2026-09-03 18-44-00 TO 2026-09-19 00-29-35(1).json`, physical Bullish Order First `2026-09-04 17:45:30` is already accepted from an A parent-stop. Its canonical stop source is `Low 2026-09-04 17:41:30 = 4419.235`, exact confirmation is `17:55:45`, and exact strict Order stop is `18:24:40`. A different Red S parent stopped earlier at `17:13:05`; the Order is still eligible because shared accepted-Order confirmation does not require matching parents. The Bearish E source over the complete parent-stop→Order-stop main-candle interval is `High 2026-09-04 18:05:30 = 4442.395`. The Order retains its original A parent-stop creation cause; the E use is `accepted-live`. These values are regression evidence only and must never be hardcoded.
+Bullish uses the identical parent-neutral accepted-Order rule. An already accepted Bearish physical Order may decide a different Bullish S/E candidate when the exact Bearish Order stop is chronologically eligible. Creation parent identity is invariant and ignored; only directional price semantics mirror (`Low/High`, `<`/`>`, minimum/maximum). Hard StopAll/sequence resets remain absolute boundaries.
 
-### 24.8 Cycle/stage-order regression — USOIL Bearish 30s
+### 24.8 Cycle/stage-order regression — USOIL Bullish 30s
 
-On `RAW FXCM_USOIL 5S FROM 2026-09-11 02-53-30 TO 2026-09-15 11-03-45.json`, accepted `S Blue @ 2026-09-11 17:43:00` already owns the later stage. The would-be `A @ 2026-09-11 18:01:30` is a rejected fallback A under that S-owned transition and therefore must not become a behavior. The accepted S is not consumed by the rejected A. This example is regression evidence only and must never be timestamp-hardcoded.
+On `RAW FXCM_USOIL 5S FROM 2026-09-08 07-23-20 TO 2026-09-12 00-14-55.json`, `E1 Blue @ 2026-09-10 13:56:00` is followed by the valid continuation `E2 Blue @ 2026-09-10 14:26:30`. The competing `S Red @ 2026-09-10 13:51:00` is not accepted because it descends from an A rejected under the already accepted S-stage ownership. A higher Red family priority does not bypass the normative pass order `A → S → E → StopAll`. This example is regression evidence only and must never be timestamp-hardcoded.
 
 ### 24.9 V5.4.2 Bearish XAUUSD 30s regression
 
@@ -1971,11 +2104,11 @@ On `RAW FOREXCOM_XAUUSD 5S FROM 2026-08-25 03-53-30 TO 2026-09-19 00-29-30.json`
 
 ### 24.11 V5.4.4 cycle-wide Blue-repeat StopAll regression
 
-On `RAW FOREXCOM_XAUUSD 5S FROM 2026-08-25 03-53-30 TO 2026-09-19 00-29-30.json`, Bullish 30s has `StopAll10 @ 2026-09-03 18:49:30`. That hard boundary clears all prior repeat state. In the new cycle, accepted `E1 Blue` occurs at `20:00:30`, `21:17:00`, `23:22:30`, and `2026-09-04 01:48:30`. Because the exact group `E1 Blue` has occurred at least twice, the accepted `S Red @ 2026-09-04 02:36:00` is promoted to the next StopAll. The same generic rule applies to `S Blue × 2`, `E1 Blue × 2`, `E5 Blue × 2`, or any other single numbered Blue E group. `E1 Blue + E2 Blue` does not qualify because they are different groups. Bearish uses the identical lifecycle rule; only directional price geometry mirrors. These timestamps are regression evidence only and must never be hardcoded.
+On `RAW FOREXCOM_XAUUSD 5S FROM 2026-08-25 03-53-30 TO 2026-09-19 00-29-30.json`, the historical 5.4.4 Bullish worked example `S Red @ 2026-09-04 02:36:00` is NOT reproduced by the complete full-RAW calculation in either current baseline or V5.4.6. Do not treat it as a current expected Bullish behavior. The actual retained Bearish `StopAll1 @ 2026-09-04 02:36:00` has an accepted native Mode-B formation Order. A valid accepted-S reversal requires an exact Blue group repeated at least twice since the last accepted Red S/E or hard StopAll boundary AND the incoming S Red native Mode-B Order. The same exact-key repeat threshold applies to `S Blue × 2`, `E1 Blue × 2`, `E5 Blue × 2`, or any other single numbered Blue E group, provided the incoming S Red has native Mode-B Order geometry. `E1 Blue + E2 Blue` does not qualify because they are different groups. Bearish uses the identical lifecycle rule; only directional price geometry mirrors. These timestamps are regression evidence only and must never be hardcoded.
 
-### 24.12 V5.4.5 consecutive Mode-B stopped-A Order refresh regression
+### 24.12 V5.4.5 historical Mode-B refresh regression (superseded by V5.4.8)
 
-On `RAW FOREXCOM_XAUUSD 5S FROM 2026-08-25 03-53-30 TO 2026-09-19 00-29-30.json` at 30s, the accepted A at `2026-09-09 03:33:30` strictly stops and opens opposite-Order ownership. The canonical opposite Order stream then confirms consecutive native Mode-B Orders with First times `04:16:00`, `04:17:30`, `04:20:30`, and `04:24:00` while S is still undecided. Under V5.4.5, each later Mode-B confirmed strictly before the current provisional S decision refreshes the stopped-A Order owner, so the final owner is the `04:24:00` Order. Its stop source remains `04:21:00`. Rebuilding S from that final Order produces accepted `S Red @ 04:29:30`; the former `S Blue @ 04:45:00` is not calculation-valid and disappears. Downstream calculation then produces `E1 Red @ 05:15:30`, and the already-existing E same-key `sequence-group-stop` lifecycle gate promotes the `06:23:00` source to StopAll. A native Mode-A Order ends a replaceable Mode-B chain, and no Order confirmed at/after an already-resolved S decision may replace it. The same chronology rule mirrors exactly in both market directions. These timestamps are regression evidence only and must never be hardcoded.
+On `RAW FOREXCOM_XAUUSD 5S FROM 2026-08-25 03-53-30 TO 2026-09-19 00-29-30.json` at 30s, the accepted A at `2026-09-09 03:33:30` strictly stops and opens opposite-Order ownership. The canonical opposite Order stream then confirms consecutive native Mode-B Orders with First times `04:16:00`, `04:17:30`, `04:20:30`, and `04:24:00` while S is still undecided. Under V5.4.5, each later Mode-B confirmed strictly before the current provisional S decision refreshes the stopped-A Order owner, so the final owner is the `04:24:00` Order. Its stop source remains `04:21:00`. Rebuilding S from that final Order produces accepted `S Red @ 04:29:30`; the former `S Blue @ 04:45:00` is not calculation-valid and disappears. Downstream calculation then produces `E1 Red @ 05:15:30`, and the already-existing E same-key `sequence-group-stop` lifecycle gate promotes the `06:23:00` source to StopAll. A native Mode-A Order ends a replaceable Mode-B chain, and no Order confirmed at/after an already-resolved S decision may replace it. The same chronology rule mirrors exactly in both market directions. These timestamps are regression evidence only and must never be hardcoded. Under the current 5.4.8 rule, the initial `04:16:00` Order remains the sole A-owned Order_A; the previously refreshed `04:24:00` Order cannot inherit its cause. Thus the prior `S Red 04:29:30` is not a valid current-version anchor; the complete updated full-RAW Bearish calculation emits `S Blue 04:45:00`. All downstream E/StopAll differences must be traced as connected effects, not silently matched to V5.4.5 history.
 
 ## 25. Reconstruction procedure and implementation traps
 
@@ -2036,16 +2169,16 @@ This document revision is a behavior-preserving implementation snapshot. The fol
 
 **Zero-difference release rule:** these structures are valid only while stage/final regression remains exact. If any behavior, field, ordering, Decimal string, ownership/provenance, or serialized value differs, the optimization is invalid.
 
-## 26. Exact production source snapshot — verbatim implementation appendix
-
-This section embeds the complete production Python snapshot used to derive this specification. The content between each `SOURCE_FILE_BEGIN` / `SOURCE_FILE_END` marker is exact source text. This appendix is intentionally large: it removes ambiguity and lets the engine be reconstructed even when the original Source directory is unavailable.
-
-**Authority rule:** prose explains intent and semantics; the embedded exact source is the implementation oracle for this document version if a low-level branch or tie-break remains ambiguous.
-
+## 26. Exact production source snapshot — complete standalone implementation appendix
+This section embeds the complete project-owned Python implementation required to reconstruct the current engine. No production module is abbreviated, omitted, replaced with ellipses, or delegated to an external repository. Standard-library and third-party package source code is intentionally not embedded; Section 21 declares those runtime dependencies.
+**Authority rule:** the semantic sections explain what the engine must do. The code below is the complete implementation snapshot for low-level reconstruction and disambiguation. During Reference generation, synchronization is verified by direct text comparison and semantic review; SHA-256 markers are retained only as optional integrity metadata.
 ### 26.1 `reaction_engine.py`
 
+- Source version: `9.8.0`
+- Last modified declared by module: `2026-09-22 00:35:00 +03:30`
 - Lines: `2406`
-- SHA-256: `bea0d5a5e95ee15ad54d024f6c01b8c777ba2abcc3c8e671118f1ae2df28f2a6`
+- Role: Authoritative Reaction/Reset geometry, candle semantics, lower-timeframe chronology, canonical Order-stop geometry, and Internal-Reaction classification.
+- Optional integrity SHA-256: `bea0d5a5e95ee15ad54d024f6c01b8c777ba2abcc3c8e671118f1ae2df28f2a6`
 
 <!-- SOURCE_FILE_BEGIN:reaction_engine.py:SHA256=bea0d5a5e95ee15ad54d024f6c01b8c777ba2abcc3c8e671118f1ae2df28f2a6 -->
 ```python
@@ -4457,11 +4590,13 @@ class UnifiedReactionDetector(DetectorBase):
 
 ```
 <!-- SOURCE_FILE_END:reaction_engine.py -->
-
 ### 26.2 `blue_line_detector.py`
 
+- Source version: `2.3.0`
+- Last modified declared by module: `not declared by module`
 - Lines: `458`
-- SHA-256: `6fa01d94bc98060b62bc7e68db0ec24a0b0159727d44043affee7130a9c11448`
+- Role: Scale/Reset Blue detection, strike state, Blue validity, line construction, and Internal/Public Blue ownership.
+- Optional integrity SHA-256: `6fa01d94bc98060b62bc7e68db0ec24a0b0159727d44043affee7130a9c11448`
 
 <!-- SOURCE_FILE_BEGIN:blue_line_detector.py:SHA256=6fa01d94bc98060b62bc7e68db0ec24a0b0159727d44043affee7130a9c11448 -->
 ```python
@@ -4925,11 +5060,13 @@ def mark_internal_blue_lines(
             object.__setattr__(line, "behavior_internal", True)
 ```
 <!-- SOURCE_FILE_END:blue_line_detector.py -->
-
 ### 26.3 `a_zone_detector.py`
 
+- Source version: `1.6.4`
+- Last modified declared by module: `2026-09-21`
 - Lines: `782`
-- SHA-256: `f5658aef5105dcfad916d3ea6f792877737c2568d67cf27c7b63c2638c5343fd`
+- Role: A behavior formation from Blue-pair/double-stop state, inherited stops, trigger chronology, and A source ownership.
+- Optional integrity SHA-256: `f5658aef5105dcfad916d3ea6f792877737c2568d67cf27c7b63c2638c5343fd`
 
 <!-- SOURCE_FILE_BEGIN:a_zone_detector.py:SHA256=f5658aef5105dcfad916d3ea6f792877737c2568d67cf27c7b63c2638c5343fd -->
 ```python
@@ -5717,13 +5854,15 @@ def detect_a_zones(
 
 ```
 <!-- SOURCE_FILE_END:a_zone_detector.py -->
-
 ### 26.4 `s_zone_detector.py`
 
-- Lines: `1638`
-- SHA-256: `3cb84015134c0dfb3a8fa39ff6c2365a114af0c69a77b8139515679e4ba0cb91`
+- Source version: `4.20.0`
+- Last modified declared by module: `2026-09-23 10:19:31 +03:30`
+- Lines: `1562`
+- Role: A-to-S handoff, S formation families, stopped-A Orders, shared accepted-Order stop reconciliation, and initial OrderAudit.
+- Optional integrity SHA-256: `7714025b3f43087b09844df6feeef4eef0ec72eeb841115293df4c126fd202ee`
 
-<!-- SOURCE_FILE_BEGIN:s_zone_detector.py:SHA256=3cb84015134c0dfb3a8fa39ff6c2365a114af0c69a77b8139515679e4ba0cb91 -->
+<!-- SOURCE_FILE_BEGIN:s_zone_detector.py:SHA256=7714025b3f43087b09844df6feeef4eef0ec72eeb841115293df4c126fd202ee -->
 ```python
 """S-zone calculation from authoritative A, Reaction, Blue, and Order state.
 
@@ -5745,8 +5884,8 @@ from core_utils import as_decimal, reaction_identity
 from direction_policy import policy_for
 
 
-S_ZONE_VERSION = "4.19.0"
-S_ZONE_LAST_MODIFIED = "2026-09-22 00:35:00 +03:30"
+S_ZONE_VERSION = "4.20.0"
+S_ZONE_LAST_MODIFIED = "2026-09-23 10:19:31 +03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -6001,12 +6140,11 @@ class SZoneDetector:
     def _first_order_after(
         self, a_stop_event_time: datetime
     ) -> tuple[int, object, datetime] | None:
-        """Return the first provisional canonical opposite Order after A-stop.
+        """Return the immutable first canonical opposite Order after A-stop.
 
-        The first canonical Order opens stopped-A ownership.  A consecutive
-        native Mode-B chain may refresh that provisional owner later while S
-        remains undecided; ``_resolved_order_backed_zone`` owns that bounded
-        refresh rule.
+        Each stopped A creates at most one parent-stop Order_A.  Subsequent
+        native Mode-B Reactions cannot refresh that physical identity; they
+        may be accepted only through independently valid creation causes.
         """
         matches = self._order_matches_after(a_stop_event_time)
         return matches[0] if matches else None
@@ -6014,13 +6152,7 @@ class SZoneDetector:
     def _order_matches_after(
         self, a_stop_event_time: datetime
     ) -> list[tuple[int, object, datetime]]:
-        """Return canonical opposite Orders after one A stop in chronology.
-
-        An A-owned Order may be refreshed by a later canonical opposite
-        Reaction while the S decision is still open.  The caller decides how
-        far that refresh chain remains authoritative; this helper only exposes
-        the exact confirmed Order chronology.
-        """
+        """Expose canonical opposite-Order chronology without changing ownership."""
         cached = self._order_matches_after_cache.get(a_stop_event_time)
         if cached is not None:
             return list(cached)
@@ -6046,64 +6178,15 @@ class SZoneDetector:
         a_stop: tuple[int, datetime, datetime],
         first_order_match: tuple[int, object, datetime],
     ) -> SZone | None:
-        """Resolve the final A-owned Order that decides the S branch.
+        """Resolve S using only the first physical Order_A owned by this A.
 
-        The first canonical opposite Order after A-stop opens Order ownership,
-        but it is provisional while S is undecided.  If a later canonical
-        opposite Order confirms strictly before the current S decision event,
-        ownership refreshes to that newer Order and the S decision is
-        recalculated from its geometry.  Continue until no newer Order confirms
-        before the recalculated decision.  An Order that confirms at/after the
-        decision cannot retroactively steal the already-decided S.
-
-        This is direction-neutral; only the existing mirrored Order/S geometry
-        inside ``_build_order_backed_zone`` determines Red/Blue and price.
+        The initial stopped-A OrderAudit retains its original parent-stop
+        cause.  A later canonical Reaction never replaces the original
+        Order_A, irrespective of its native Reaction Mode or S decision time.
         """
-        all_matches = self._order_matches_after(a_stop[2])
-        try:
-            position = next(
-                index
-                for index, match in enumerate(all_matches)
-                if reaction_identity(match[1]) == reaction_identity(first_order_match[1])
-            )
-        except StopIteration:
-            all_matches = [first_order_match, *all_matches]
-            position = 0
-
-        current_match = first_order_match
-        current_zone = self._build_order_backed_zone(
-            zone, a_ordinal, a_price, a_stop, current_match
+        return self._build_order_backed_zone(
+            zone, a_ordinal, a_price, a_stop, first_order_match
         )
-        if current_zone is None:
-            return None
-
-        # Native Mode-B is a continuation of the previous healthy opposite
-        # Reaction's semantic outer edge.  Consecutive Mode-B confirmations
-        # therefore belong to one replaceable Order chain while S is still
-        # undecided.  Mode-A starts a fresh Order structure and terminates this
-        # chain; it may not retroactively replace the already-open Mode-B chain.
-        if str(getattr(current_match[1], "mode", "")) != "B":
-            return current_zone
-
-        while position + 1 < len(all_matches):
-            replacement_position = position + 1
-            replacement = all_matches[replacement_position]
-            if str(getattr(replacement[1], "mode", "")) != "B":
-                break
-            if replacement[2] >= current_zone.decision_event_time:
-                break
-
-            refreshed = self._build_order_backed_zone(
-                zone, a_ordinal, a_price, a_stop, replacement
-            )
-            if refreshed is None:
-                break
-            current_match = replacement
-            current_zone = refreshed
-            position = replacement_position
-
-        self._reassign_a_order_audit(zone, a_stop[2], current_match)
-        return current_zone
 
     def _record_a_order_audit(
         self,
@@ -6120,6 +6203,7 @@ class SZoneDetector:
             order_stop_source_time,
         ) = self._order_stop(order_number, order)
         identity = reaction_identity(order)
+        cause = (source_time, a_stop_event_time)
         entry = self.order_audit.get(identity)
         if entry is None:
             entry = {
@@ -6135,29 +6219,8 @@ class SZoneDetector:
             }
             self.order_audit[identity] = entry
         a_causes = entry.setdefault("a_causes", [])
-        cause = (source_time, a_stop_event_time)
         if cause not in a_causes:
             a_causes.append(cause)
-
-    def _reassign_a_order_audit(
-        self,
-        zone: object,
-        a_stop_event_time: datetime,
-        order_match: tuple[int, object, datetime],
-    ) -> None:
-        """Move one A cause from provisional Orders to its final refreshed Order."""
-        cause = (getattr(zone, "source_time"), a_stop_event_time)
-        empty_identities: list[tuple[int, int]] = []
-        for identity, entry in self.order_audit.items():
-            a_causes = entry.get("a_causes")
-            if not isinstance(a_causes, list) or cause not in a_causes:
-                continue
-            entry["a_causes"] = [item for item in a_causes if item != cause]
-            if not entry["a_causes"]:
-                empty_identities.append(identity)
-        for identity in empty_identities:
-            self.order_audit.pop(identity, None)
-        self._record_a_order_audit(zone, a_stop_event_time, order_match)
 
     def _audit_stopped_a(self, zone: object) -> None:
         """Record the independent order gender created by one stopped A."""
@@ -7365,11 +7428,13 @@ def detect_s_zones(
     ).detect()
 ```
 <!-- SOURCE_FILE_END:s_zone_detector.py -->
-
 ### 26.5 `e_zone_detector.py`
 
+- Source version: `6.13.0`
+- Last modified declared by module: `2026-09-22 00:35:00 +03:30`
 - Lines: `2876`
-- SHA-256: `6e32b947aa1b4e1e6b986f26ee9a464542f320dc6a207ece1e8fce54407d0369`
+- Role: Recursive E formation, parent-stop/Order_A/Order_B/accepted-live/carried-live routes, E reconciliation, and accepted Order provenance.
+- Optional integrity SHA-256: `6e32b947aa1b4e1e6b986f26ee9a464542f320dc6a207ece1e8fce54407d0369`
 
 <!-- SOURCE_FILE_BEGIN:e_zone_detector.py:SHA256=6e32b947aa1b4e1e6b986f26ee9a464542f320dc6a207ece1e8fce54407d0369 -->
 ```python
@@ -10251,13 +10316,15 @@ def detect_e_zones(
     ).detect()
 ```
 <!-- SOURCE_FILE_END:e_zone_detector.py -->
-
 ### 26.6 `lifecycle_engine.py`
 
-- Lines: `1691`
-- SHA-256: `241a7f2941d39728de2a3bf42164284b370a690ab770d0cdc05d6ebbcd898606`
+- Source version: `1.15.2`
+- Last modified declared by module: `2026-09-23 09:25:00 +03:30`
+- Lines: `1706`
+- Role: Cross-stage behavior lifecycle, priority, visibility, StopAll state, cycle boundaries, and ownership arbitration.
+- Optional integrity SHA-256: `84bed2e674f855a4d2dc52960840eddc6d8f058ff247b893a319eecdc36e152d`
 
-<!-- SOURCE_FILE_BEGIN:lifecycle_engine.py:SHA256=241a7f2941d39728de2a3bf42164284b370a690ab770d0cdc05d6ebbcd898606 -->
+<!-- SOURCE_FILE_BEGIN:lifecycle_engine.py:SHA256=84bed2e674f855a4d2dc52960840eddc6d8f058ff247b893a319eecdc36e152d -->
 ```python
 """Cross-stage behavior lifecycle, visibility, priority, and StopAll ownership.
 
@@ -10279,8 +10346,8 @@ from core_utils import as_decimal, order_identity
 from direction_policy import policy_for
 
 
-STOP_ALL_VERSION = "1.15.0"
-STOP_ALL_LAST_MODIFIED = "2026-09-21 10:33:00 +03:30"
+STOP_ALL_VERSION = "1.15.2"
+STOP_ALL_LAST_MODIFIED = "2026-09-23 09:55:12 +03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -10482,10 +10549,10 @@ class StopAllDetector:
         """Promote the accepted opposite-color S into a fresh StopAll1.
 
         This is the direction-invariant family reversal gate.  In both
-        Bullish and Bearish calculations, accepted S Red is promoted after at
-        least two accepted occurrences of the same Blue behavior group in the
-        current cycle (S Blue, E1 Blue, E5 Blue, ...).  The repeated group need
-        not remain the current dominant owner.  Directional mirroring is handled
+        Bullish and Bearish calculations, only an accepted native Mode-B S Red
+        is promoted after two accepted occurrences of the same Blue behavior
+        group since the latest accepted Red or StopAll boundary.  The repeated
+        group need not remain the current dominant owner.  Directional mirroring is handled
         by strict stop/reaction geometry; Red/Blue family
         labels themselves are invariant.  Type-3 S Blue has no formation
         Order, so StopAll Order provenance remains optional.
@@ -10566,11 +10633,11 @@ class StopAllDetector:
 
     @staticmethod
     def _blue_repeat_key(kind: str, number: int | None = None) -> tuple[str, int | None]:
-        """Return the cycle-local exact Blue behavior-group key.
+        """Return the pending-reversal exact Blue behavior-group key.
 
         S Blue is one group regardless of its internal subtype.  Each E number
         is a separate group: E1 Blue, E2 Blue, E5 Blue, ... .  Counts are
-        occurrence counts of accepted behaviors inside the current lifecycle,
+        accepted-occurrence counts since the most recent Red S/Red E/StopAll,
         not counts of dominant-owner transitions.
         """
         normalized = str(kind).upper()
@@ -10598,15 +10665,21 @@ class StopAllDetector:
     ) -> tuple[str, str, int, tuple[str, int] | None] | None:
         """Return Blue-repeat metadata when accepted S Red must become StopAll.
 
-        From calculation start or the most recent StopAll hard boundary, every
-        accepted occurrence of the same Blue behavior group is counted even if
-        that group is not the current dominant owner.  Two S Blue occurrences,
-        two E1 Blue occurrences, two E5 Blue occurrences, etc. independently
-        arm this gate.  Different E numbers never add together.  Once any exact
-        Blue group reaches two occurrences, the next accepted S Red is promoted
-        to StopAll.  StopAll clears all repeat counters.
+        Accepted Blue occurrences accumulate per exact S/E group until the
+        first accepted Red S, accepted Red E, or hard StopAll boundary.  A Red
+        behavior resolves the prior Blue reversal opportunity; a later S Red
+        cannot consume its stale evidence.  The incoming S Red must have a
+        native Mode-B formation Order; different numbered E groups never add.
+        E-driven StopAll counters/priority are independent of this reversal
+        evidence and retain their existing semantics.
         """
         if str(getattr(s_item, "color", "")).lower() != "red":
+            return None
+        # An initial native Mode-A Order opens an independent A→S Red branch;
+        # it cannot consume old Blue-repeat evidence to promote that S to
+        # StopAll. A continued Mode-B Order may own the reversal gate in the
+        # existing hard lifecycle, in either market direction.
+        if str(getattr(s_item, "order_mode", "")).upper() != "B":
             return None
 
         qualified = [
@@ -10679,6 +10752,11 @@ class StopAllDetector:
                 return
 
             color = str(s_item.color)
+            # An accepted Red S resolves the pending Blue-repeat reversal
+            # opportunity even if its native Order mode cannot promote it.
+            # Later Red S may use only Blue occurrences accepted after it.
+            if color == "red":
+                reset_cycle_blue_repeats()
             if color == "blue":
                 self._record_blue_repeat(
                     blue_repeat_counts,
@@ -10773,9 +10851,13 @@ class StopAllDetector:
                     reset_cycle_blue_repeats()
                     continue
 
-            # This E remains an accepted E behavior (it was not promoted to
-            # StopAll above), so count its exact Blue group occurrence for the
-            # cycle-wide accepted-S reversal rule independently of dominance.
+            # Red E resolves earlier Blue-repeat evidence. It may be a
+            # higher-stage replacement of Blue, but cannot leave a stale
+            # Blue reversal armed for a later unrelated S Red. Do not reset
+            # dominant sequence state: E-driven StopAll gates own that state.
+            if new_key[0] == "red":
+                reset_cycle_blue_repeats()
+            # This E remains accepted after independent StopAll checks.
             if new_key[0] == "blue":
                 self._record_blue_repeat(
                     blue_repeat_counts,
@@ -10787,7 +10869,7 @@ class StopAllDetector:
             # Stage ownership is A -> S -> E -> StopAll. When the first E
             # replaces an S owner, E starts a new dominant-stage occurrence;
             # the superseded S is not counted again in current-owner sequence
-            # state. Cycle-wide Blue-repeat counting is independent above.
+            # state. Pending Blue-repeat counting is independent above.
             if e_key == new_key:
                 e_count += 1
                 dominant_e_item = e_item
@@ -11952,11 +12034,13 @@ def visible_a_zones(a_zones: Sequence[object], s_zones: Sequence[object]) -> lis
     ]
 ```
 <!-- SOURCE_FILE_END:lifecycle_engine.py -->
-
 ### 26.7 `trading_pipeline.py`
 
+- Source version: `1.4.1`
+- Last modified declared by module: `2026-09-21 08:40:00 +03:30`
 - Lines: `1923`
-- SHA-256: `98f54cf3be6ddacd4e6b523b604be5a00635dcf8b464bc7d03772bbcccded62e`
+- Role: Production orchestration, RAW normalization, engine loading, full-range calculation, reconciliation passes, filtering, telemetry, and JSON serialization.
+- Optional integrity SHA-256: `98f54cf3be6ddacd4e6b523b604be5a00635dcf8b464bc7d03772bbcccded62e`
 
 <!-- SOURCE_FILE_BEGIN:trading_pipeline.py:SHA256=98f54cf3be6ddacd4e6b523b604be5a00635dcf8b464bc7d03772bbcccded62e -->
 ```python
@@ -13885,11 +13969,13 @@ if __name__ == "__main__":
         raise SystemExit(1)
 ```
 <!-- SOURCE_FILE_END:trading_pipeline.py -->
-
 ### 26.8 `direction_policy.py`
 
+- Source version: `1.0.0`
+- Last modified declared by module: `not declared by module`
 - Lines: `70`
-- SHA-256: `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea`
+- Role: Direction-neutral Bullish/Bearish price-geometry policy primitives.
+- Optional integrity SHA-256: `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea`
 
 <!-- SOURCE_FILE_BEGIN:direction_policy.py:SHA256=a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea -->
 ```python
@@ -13965,11 +14051,13 @@ BEARISH = DirectionPolicy(
 )
 ```
 <!-- SOURCE_FILE_END:direction_policy.py -->
-
 ### 26.9 `core_utils.py`
 
+- Source version: `1.0.0`
+- Last modified declared by module: `not declared by module`
 - Lines: `29`
-- SHA-256: `3dae390ae77b72965f5799f7c132c4eba203775d5e72761fd7dd60c90f8578de`
+- Role: Small shared stateless primitives for Decimal normalization and physical Order identity.
+- Optional integrity SHA-256: `3dae390ae77b72965f5799f7c132c4eba203775d5e72761fd7dd60c90f8578de`
 
 <!-- SOURCE_FILE_BEGIN:core_utils.py:SHA256=3dae390ae77b72965f5799f7c132c4eba203775d5e72761fd7dd60c90f8578de -->
 ```python
@@ -14005,19 +14093,133 @@ def reaction_identity(reaction: object) -> OrderIdentity:
 ```
 <!-- SOURCE_FILE_END:core_utils.py -->
 
-## 27. Embedded-source integrity and recovery contract
+## 27. Embedded-source recovery and direct synchronization contract
 
-To recover the production snapshot from this single Markdown file:
+To recover the production implementation from this Markdown file:
 
-1. For each `SOURCE_FILE_BEGIN:<name>:SHA256=<hash>` marker, copy the exact text inside the immediately following Python code fence up to its closing fence.
-2. Write that text as UTF-8 to `<name>` without altering line endings/content.
-3. Compute SHA-256 and compare it with the marker and Section 1 manifest.
-4. Compile all recovered Python files before behavior regression.
+1. Locate each `SOURCE_FILE_BEGIN:<name>` marker in Section 26.
+2. Copy the complete text in the immediately following Python code fence through its closing fence.
+3. Write that text as UTF-8 to `<name>` without editing imports, comments, whitespace-sensitive source text, constants, schemas, or helper code.
+4. Recover all nine project-owned modules before attempting to run the pipeline.
+5. Compile the recovered modules and install the declared runtime dependency `orjson` if it is not already present.
 
-The build audit for this document extracts all nine embedded files and verifies that every recovered SHA-256 is identical to the declared production snapshot.
+During generation of this Reference, each recovered code block is compared **directly, character-by-character and line-by-line** with the current production module. Optional SHA-256 values are retained only as integrity metadata and are not the semantic synchronization method.
 
-## 28. Final canonical contract
+The embedded code is intentionally complete. No `...`, `code omitted`, `unchanged from previous version`, external repository pointer, or missing project helper is permitted.
 
-This file is both an algorithm specification and a self-contained implementation archive for the declared Source snapshot. **HPZR1 preserves the TradingBot V5.4.5 algorithm exactly; Algorithm Changes = NONE, Calculation Changes = NONE, Behavioral Changes = NONE.** The only changes in this revision are run-scoped performance/indexing structures in the three version-bumped production modules and the synchronized source hashes/snapshot in this document.
+## 28. Final canonical reconstruction contract
 
-A future revision that changes production behavior must update the algorithm Document Version, Last Modified Date, source manifest/hash, affected semantic sections, and embedded exact source snapshot together. A performance/documentation-only revision must not silently change any behavioral rule, output ordering, ownership/provenance, Decimal representation, or serialized value.
+This file is simultaneously an algorithm specification, engineering reconstruction manual, architecture/data/lifecycle/serialization contract, directional-mirror specification, and a self-contained archive of the complete required project-owned production source.
+
+**Document revision `5.4.8-HPZR1` changes only `s_zone_detector.py` (`4.19.0` → `4.20.0`).** Stopped-A Order_A is now permanently owned by the first opposite canonical Order, without native Mode-B refresh. This changes dependent S/E/StopAll and cause/visibility results; unchanged Reaction, Reset, Blue, A and shared physical Order geometry remain intact. `lifecycle_engine.py` remains at `1.15.2`. This document embeds the updated complete nine-module source snapshot.
+
+A future behavioral revision must update the semantic rules and both standalone direction References together. A future implementation-only refactor must update implementation/performance notes, symbol coverage, source manifest, and embedded source without inventing a new trading rule.
+
+## 29. Mandatory final verification report
+
+The historical 5.4.5-HPZR2 generation audit is retained below for provenance. The V5.4.6-HPZR1 implementation has separately been validated as described above and in Section 29A:
+
+```text
+All production files read completely: YES
+
+Bullish semantic audit: PASS
+Bearish semantic audit: PASS
+Mirror audit: PASS
+
+Doji invariant verified: PASS
+Strict crossing verified: PASS
+Decimal contract verified: PASS
+Lower-TF chronology verified: PASS
+Full RAW authority verified: PASS
+
+Reaction documented completely: PASS
+Reset documented completely: PASS
+Blue documented completely: PASS
+A documented completely: PASS
+S documented completely: PASS
+E documented completely: PASS
+StopAll documented completely: PASS
+Order documented completely: PASS
+OrderAudit documented completely: PASS
+
+Dataclass schemas synchronized: PASS
+Serialization synchronized: PASS
+Symbol index synchronized: PASS
+
+Complete project-owned production code embedded: PASS
+Any omitted required project code: NO
+Any external project Source dependency: NO
+
+Standalone reconstruction possible: PASS
+```
+
+These PASS states require direct source reading/comparison and compilation/reconstruction checks; they are not inferred merely from matching hashes.
+
+Concrete verification evidence for this documentation revision:
+
+- **Direct embedded-source recovery:** all nine code blocks were extracted from this Reference and compared character-by-character with the current production modules: PASS.
+- **Recovered-source compilation:** all nine extracted modules compile successfully: PASS.
+- **Standalone recovered execution:** the complete engine extracted independently from this Reference was run on the 36,821-row USOIL 5s regression RAW at 30s for `direction=both`; all stable JSON values matched the current production execution value-by-value, with only runtime timing telemetry excluded from equality: PASS.
+- **Current production regression sanity run:** the same RAW completed both Bullish and Bearish full calculation/serialization successfully.
+- **Reflected-market mirror validation:** on a 1,304-row / 220-main-candle no-Doji USOIL window, `Bullish(original) ↔ Bearish(reflected)` and `Bearish(original) ↔ Bullish(reflected)` matched field-by-field after the documented geometry mapping, including Reaction/Reset/Blue/A and the route containing S/E/OrderAudit: PASS.
+- The no-Doji condition is intentional for the mathematical reflection test because the production invariant `Doji = GREEN` must never be altered merely to force synthetic color symmetry.
+
+## 29A. V5.4.6-HPZR1 verified correction and regression evidence
+
+- Changed production owner: `lifecycle_engine.py` v1.15.1. Only native Mode-B S Red can consume the `opposite-s-group-stop` gate; other gates, chronology, geometry, and public schema are unchanged.
+- Full `RAW FOREXCOM_XAUUSD 5S FROM 2026-08-25 03-53-30 TO 2026-09-19 00-29-30.json` (309,906 records) completed both directions at 30s for the unchanged baseline and the new Source.
+- Four other complete RAW inputs (XAUUSD 1s, shorter XAUUSD 5s, two USOIL 5s), and one additional August–September XAUUSD prefix, were compared in both directions: 12 direction-runs total. Reaction, Reset, Blue, and A public payloads were identical for each baseline/updated pair.
+- Three requested Bearish 30s cases now produce `S Red` at `2026-08-26 11:04:00`, `2026-08-26 23:00:00`, and `2026-08-28 08:56:30`; the third historical request `08:57:00` is not the source price candle.
+- All final `opposite-s-group-stop` objects in the complete updated XAUUSD RAW have native Mode-B formation Orders in both directions. The independent `sequence-group-stop` and `stopall-stop` branches are unmodified.
+- The physical OrderAudit set is unchanged in complete XAUUSD runs; one additional reset-leg identity is accepted in the first USOIL dataset following downstream reconciliation. This is a dependent output change rather than a geometry rewrite.
+- Every embedded code module was compared byte-for-byte with the updated Source/current unchanged peers and compiled. Documentation-only historical expectations that do not reproduce from current complete-RAW Source have been distinguished from current regression assertions.
+
+## 29B. V5.4.7-HPZR1 verified Red-boundary correction
+
+- Changed production owner: `lifecycle_engine.py` v1.15.2; two pending-Blue reset points after accepted Red S/E, without geometry or serialization changes.
+- Five complete RAW inputs were run at 30s for both Bullish and Bearish (ten direction runs), with an additional authoritative August–September XAUUSD prefix Bearish run. Full XAUUSD 309,906-row calculation completed in both directions.
+- Before/after byte-equivalent serialized Reaction, Reset, Blue, and A for each pair; physical geometry of every common accepted Order is unchanged; all public S/E/StopAll Order identities exist in canonical OrderAudit.
+- Bearish complete XAUUSD S Red retained at `2026-08-26 11:04:00`, `2026-08-26 23:00:00`, `2026-08-28 08:56:30`, and corrected at `2026-08-31 12:35:30`; no StopAll occupies those sources.
+- Confirmed Bearish StopAll `2026-09-04 02:36:00` retains `opposite-s-group-stop` with repeated `E1 Blue` count four. Other StopAll differences after changed Red boundaries are downstream, not independent geometry changes.
+- Native Mode-B prerequisite, strict crossing/Decimal/Doji semantics, exact S/E Blue-group keys, hard StopAll reset, E-driven StopAll gates, and Bullish/Bearish direction-invariant Red boundary remain intact.
+- The source manifest/hash, complete embedded nine-module source snapshot, and AST symbol line index were regenerated and checked against production bytes.
+
+## 29C. V5.4.8-HPZR1 immutable Order_A validation
+
+- Modified source: `s_zone_detector.py` v4.20.0 only; native Mode-B stopped-A refresh and cause-reassignment helper removed. Existing first-order chronology and A-to-S decision logic retained.
+- Verified both directions on all five available complete RAW inputs at 30s, compared to the V5.4.7 snapshots, plus one focused August 25 input. Identical serialized Reaction, Reset, Blue and A for every comparison; every common Order retains identical physical geometry and confirmation/stop fields. Every public S/E/StopAll Order identity resolves in OrderAudit; exact parent-stop causes have a single physical owner.
+- Bearish full XAUUSD: accepted A source `2026-08-25 09:32:30`, first strict A stop `09:36:30`, and canonical first opposite Order First/Break `(689,693)` / First `09:38:00`. Its final OrderAudit retains both this A and independent StopAll1 creation causes. The subsequent `09:42:00` Order receives no recycled A cause. No time/symbol-dependent code exists.
+- Full-RAW Bearish `2026-08-26 11:04:00`, `2026-08-26 23:00:00`, and `2026-08-28 08:56:30` remain S Red. The historically requested `2026-08-31 12:35:30` S Red becomes S Blue because the newly authoritative first Order has First `12:31:00` instead of refreshed First `12:34:00`. This is an explicitly disclosed, causally related semantic change under the new first-Order_A rule, not an unrelated geometry mutation.
+- The earlier V5.4.5 September 9 `04:29:30` S Red no longer occurs; `04:45:00` S Blue is valid under first-order ownership. Preserve that old result as a historical regression for the superseded revision, not a current expected label.
+- StopAll counters, exact strict Decimal crossing, directional mirror, physical Order_B/Reset-leg cause, accepted-live/carried-live use routes, shared Order-stop reconciliation, hard lifecycle boundaries and serialized schema were not modified.
+- All nine embedded Source texts and hash manifests must be checked byte-for-byte against this snapshot before deploying. These regression runs establish results for the tested RAWs, not universal correctness for unobserved market data.
+
+## 30. Absolute standalone acceptance rule
+
+The production Source defines the current behavior, but this Reference must independently preserve everything required to understand and rebuild that behavior.
+
+The acceptance equation is:
+
+```text
+CURRENT PRODUCTION SOURCE
++
+COMPLETE SEMANTIC UNDERSTANDING
++
+COMPLETE DIRECTIONAL MIRROR RULES
++
+COMPLETE DIRECTION-INVARIANT RULES
++
+EXACT CHRONOLOGY / OWNERSHIP / TIES
++
+EXACT SCHEMAS / SERIALIZATION
++
+FUNCTION-LEVEL RECONSTRUCTION CONTRACT
++
+COMPLETE EMBEDDED PROJECT-OWNED SOURCE CODE
+=
+TRUE STANDALONE ALGORITHM REFERENCE
+```
+
+If every original TradingBot production `.py` file disappears, this Reference must still be sufficient to recreate the complete production engine with the same algorithm, event chronology, ownership, provenance, behaviors, output ordering, and serialized values.
+
+**DOJI IS ALWAYS GREEN.**

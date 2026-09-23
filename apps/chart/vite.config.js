@@ -10,6 +10,7 @@ import { createChartTransferBundle, importChartTransferBundle } from './server/c
 import { runIndicatorRangeCalculation } from './server/indicator-range-input.js';
 import { migrateFlatRawFiles } from './server/migrate-raw-resources.js';
 import { createRawResourceStore } from './server/raw-resource-store.js';
+import { sendCandleFile } from './server/candle-file-response.js';
 
 // Keep local data, caches, and Python engines anchored to this config file.
 // Vite may be launched from either the repository root or apps/chart.
@@ -384,14 +385,17 @@ function localDataApi() {
           res.end(JSON.stringify({ error: error.message }));
         }
       });
-      server.middlewares.use('/api/candles', (req, res) => {
-        const url = new URL(req.url ?? '', 'http://localhost');
-        const id = url.searchParams.get('id');
-        const resource = rawStore.resolve(id);
-        if (!resource) { res.statusCode = 404; res.end('Candle file not found'); return; }
-        res.setHeader('Content-Type', 'application/json; charset=utf-8');
-        res.setHeader('Cache-Control', 'no-store');
-        fs.createReadStream(resource.dataPath).pipe(res);
+      server.middlewares.use('/api/candles', async (req, res) => {
+        try {
+          const url = new URL(req.url ?? '', 'http://localhost');
+          const id = url.searchParams.get('id');
+          const resource = rawStore.resolve(id);
+          if (!resource) { res.statusCode = 404; res.end('Candle file not found'); return; }
+          await sendCandleFile(req, res, resource.dataPath);
+        } catch (error) {
+          if (!res.headersSent) res.statusCode = 500;
+          if (!res.writableEnded) res.end('Unable to read candle file');
+        }
       });
       server.middlewares.use('/api/reactions/cache', (req, res) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');

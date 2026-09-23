@@ -66,7 +66,9 @@ function readableCoverage(coverage) {
     checkedFrom: Number.isSafeInteger(coverage.checkedFrom) ? formatTehranMetadataTime(coverage.checkedFrom) : null,
     checkedTo: Number.isSafeInteger(coverage.checkedTo) ? formatTehranMetadataTime(coverage.checkedTo) : null,
     checkedThrough: Number.isSafeInteger(coverage.checkedThrough) ? formatTehranMetadataTime(coverage.checkedThrough) : null,
-    verifiedAt: formatTehranMetadataTime(Math.floor(Date.now() / 1000)),
+    verifiedAt: typeof coverage.verifiedAt === "string"
+      ? coverage.verifiedAt
+      : formatTehranMetadataTime(Math.floor(Date.now() / 1000)),
     ranges: (coverage.ranges || []).map((range) => ({ ...range, ...readableRange(range) })),
   };
 }
@@ -112,6 +114,13 @@ function persistedMetadata({ broker, symbol, timeframe, source, filename, candle
 
 export function createRawResourceStore({ rootDir }) {
   const root = path.resolve(rootDir);
+  const inventoryCache = new Map();
+
+  function inventorySignature(dataPath, metaPath) {
+    const data = fs.statSync(dataPath);
+    const metadata = fs.existsSync(metaPath) ? fs.statSync(metaPath) : null;
+    return `${data.size}:${data.mtimeMs}:${metadata?.size || 0}:${metadata?.mtimeMs || 0}`;
+  }
 
   function resolve(id) {
     const logicalId = safeId(id);
@@ -146,12 +155,14 @@ export function createRawResourceStore({ rootDir }) {
       updatedAt: existing.updatedAt, previousSha256: existing.dataSha256,
     });
     atomicWrite(sidecarPath(dataPath), `${JSON.stringify(metadata, null, 2)}\n`);
+    inventoryCache.delete(id);
     return { id, dataPath, metaPath: sidecarPath(dataPath), ...runtimeMetadata(metadata), chartId: metadata.chartId, count: candles.length, bytes: Buffer.byteLength(serialized) };
   }
 
   function list() {
     if (!fs.existsSync(root)) return [];
     const items = [];
+    const seen = new Set();
     const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).forEach((entry) => {
       const target = path.join(dir, entry.name);
       if (entry.isDirectory()) return walk(target);
@@ -159,11 +170,18 @@ export function createRawResourceStore({ rootDir }) {
       const id = path.relative(root, target).split(path.sep).join("/");
       const identity = parseRawFilename(entry.name);
       if (!safeId(id) || !identity) return;
+      seen.add(id);
+      const metaPath = sidecarPath(target);
+      const signature = inventorySignature(target, metaPath);
+      const cached = inventoryCache.get(id);
+      if (cached?.signature === signature) {
+        if (cached.item) items.push(cached.item);
+        return;
+      }
       try {
         const serialized = fs.readFileSync(target, "utf8");
         const candles = JSON.parse(serialized);
         assertCandles(candles);
-        const metaPath = sidecarPath(target);
         let previous = {};
         if (fs.existsSync(metaPath)) {
           try { previous = JSON.parse(fs.readFileSync(metaPath, "utf8")) || {}; } catch { previous = {}; }
@@ -172,10 +190,17 @@ export function createRawResourceStore({ rootDir }) {
         const metadata = persistedMetadata({ broker: identity.broker, symbol: identity.symbol, timeframe: identity.timeframe, source: previous.source || "import", filename: entry.name, candles, serialized, requestedRange: hydratedPrevious.requestedRange, farazCoverage: previous.farazCoverage, chartId: previous.chartId, createdAt: typeof previous.createdAt === "string" ? previous.createdAt : undefined, updatedAt: previous.updatedAt, previousSha256: previous.dataSha256 });
         if (JSON.stringify(previous) !== JSON.stringify(metadata)) atomicWrite(metaPath, `${JSON.stringify(metadata, null, 2)}\n`);
         const stat = fs.statSync(target);
-        items.push({ id, dataPath: target, metaPath, broker: identity.broker, symbol: identity.symbol, timeframe: identity.timeframe, chartId: metadata.chartId, from: candles[0].time, to: candles.at(-1).time, count: candles.length, bytes: stat.size, savedAt: stat.mtimeMs, metadata: runtimeMetadata(metadata), createdAt: metadata.createdAt, updatedAt: metadata.updatedAt });
-      } catch {}
+        const item = { id, dataPath: target, metaPath, broker: identity.broker, symbol: identity.symbol, timeframe: identity.timeframe, chartId: metadata.chartId, from: candles[0].time, to: candles.at(-1).time, count: candles.length, bytes: stat.size, savedAt: stat.mtimeMs, metadata: runtimeMetadata(metadata), createdAt: metadata.createdAt, updatedAt: metadata.updatedAt };
+        inventoryCache.set(id, { signature: inventorySignature(target, metaPath), item });
+        items.push(item);
+      } catch {
+        inventoryCache.set(id, { signature, item: null });
+      }
     });
     walk(root);
+    for (const id of inventoryCache.keys()) {
+      if (!seen.has(id)) inventoryCache.delete(id);
+    }
     return items.sort((a, b) => a.symbol.localeCompare(b.symbol) || b.savedAt - a.savedAt || a.id.localeCompare(b.id));
   }
 
@@ -263,6 +288,7 @@ export function createRawResourceStore({ rootDir }) {
     const serialized = fs.readFileSync(item.dataPath, "utf8");
     const metadata = persistedMetadata({ broker: identity.broker, symbol: identity.symbol, timeframe: identity.timeframe, source: previous.source || "local", filename: path.basename(item.dataPath), candles, serialized, requestedRange: hydrated.requestedRange, farazCoverage: coverage, chartId: previous.chartId, createdAt: previous.createdAt });
     atomicWrite(item.metaPath, `${JSON.stringify(metadata, null, 2)}\n`);
+    inventoryCache.delete(item.id);
     return runtimeMetadata(metadata);
   }
 
@@ -271,6 +297,7 @@ export function createRawResourceStore({ rootDir }) {
     if (!item) return false;
     fs.unlinkSync(item.dataPath);
     if (fs.existsSync(item.metaPath)) fs.unlinkSync(item.metaPath);
+    inventoryCache.delete(item.id);
     return true;
   }
   return { root, resolve, write, list, read, cut, recordFarazCoverage, remove };

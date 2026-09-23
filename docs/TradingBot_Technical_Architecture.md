@@ -185,7 +185,7 @@ Vite middleware is an in-process local backend. It owns request-body limits, sta
 ## 15. End-to-End Data Flow
 
 1. `/api/symbols` inventories RAW resources and returns metadata.
-2. `/api/candles?id=...` returns validated candle rows.
+2. `/api/candles?id=...` returns candle rows with file-stat ETag revalidation, so unchanged RAW bytes can be reused safely across tabs.
 3. Browser posts direction, analysis/chart timeframes, range and switches to `/api/reactions`.
 4. Vite validates the inventory identity, constructs a source fingerprint/cache key and chooses full-file or selected-range transport.
 5. Bridge normalizes candles and chronology, calculates enabled stages for dependent directions, reconciles visibility and serializes versioned collections.
@@ -229,7 +229,9 @@ Browser state includes selected RAW/chart identity, visible range, drawings, too
 
 ## 20. Persistence
 
-RAW and sidecars live in `data/raw`; drawings/templates/calculation cache and the FARAZ session live under `runtime/cache`. Browser preferences also use local storage. `raw-resource-store.list()` validates every RAW file and can rewrite stale/missing sidecars while servicing inventory (`raw-resource-store.js:152-177`), so a nominal GET has a metadata-repair side effect.
+RAW and sidecars live in `data/raw`; drawings/templates/calculation cache and the FARAZ session live under `runtime/cache`. Browser preferences also use local storage. `raw-resource-store.list()` validates and heals a RAW resource on first sight or after its RAW/sidecar stat signature changes, then reuses the validated in-memory snapshot for unchanged inventory requests. A nominal GET can still repair a missing or stale sidecar once, but repeated tab polling no longer reparses and rehashes every RAW file.
+
+Each loaded chart writes its stable `chartId` and chart timeframe to the current tab URL. URL state takes priority over shared browser fallback preferences, so duplicate tabs and independently opened tabs can resolve the same chart ID without taking another tab's last-selected symbol. Hidden tabs suspend inventory polling and refresh when visible again; the closed FARAZ workspace no longer starts its own duplicate inventory request.
 
 ## 21. Cache Architecture
 
@@ -264,7 +266,7 @@ Assets are RAW market data, drawing/templates, indicator outputs, FARAZ credenti
 | SEC-02 | High | FARAZ credentials and complete browser storage state are persisted as editable clear-text JSON despite a `.dpapi.json` name | `faraz-candle-api.js:414-477` writes `x-access-token`, cookie/storage state and history auth as JSON; POSIX mode hints do not provide DPAPI confidentiality on Windows | Use Windows DPAPI/Credential Manager; migrate v3; enforce ACLs and rotate exposed sessions |
 | SEC-03 | Medium | State-changing endpoints do not enforce `Origin`/CSRF tokens; combined with broad binding, a malicious webpage can issue blind requests to local APIs | Manual source search across all middleware; body readers do not establish origin trust | Reject non-local/unknown origins, require token/header and narrow content types |
 | SEC-04 | Medium | Unauthenticated status can disclose FARAZ profile identifiers to a reachable LAN client | auth status builds user ID/name/phone; UI consumes them in `candle-export.js:344-353` | Authenticate status, minimize returned identity and redact by default |
-| SEC-05 | Low | Inventory GET performs synchronous full-file parse/hash and metadata repair, enabling availability pressure and a read-side write | `raw-resource-store.js:152-177`, called by `/api/symbols` | Separate repair from reads; cache inventory; bound files/bytes and schedule work |
+| SEC-05 | Mitigated | The first sight/change of a RAW file still performs synchronous validation and possible metadata repair, but unchanged inventory requests reuse a stat-keyed validated snapshot | `raw-resource-store.js`, called by `/api/symbols`; multi-tab regression and runtime timing evidence | Keep first-load validation bounded; move repair to explicit maintenance if inventories become materially larger |
 
 Controls validated: RAW identifiers and paths are contained; candle schema/OHLC/chronology is checked; FARAZ hosts are allowlisted; Python arguments are constructed, not shell-concatenated; chart-transfer input is validated; `npm audit` found zero known dependency vulnerabilities. No command-injection or arbitrary SSRF path was confirmed.
 
@@ -278,7 +280,7 @@ Fresh `npm audit --json --fetch-retries=0 --fetch-timeout=15000` completed with 
 
 ## 29. Testing Architecture
 
-The 27 Node files contain 147 tests covering RAW validation/cut/inventory/store, FARAZ retry/coverage/session behavior, transfers, updates, range input, indicator cache/lifecycle/request, drawings, view transforms, review, screenshots, feedback, popovers, symbols and workspace state. A small Python bridge `unittest` covers serialization behavior. There is no repository CI workflow, unified Python test runner, lint task or type-check task.
+The 28 Node files contain 152 tests covering RAW validation/cut/inventory/store, multi-tab chart identity, conditional candle responses, FARAZ retry/coverage/session behavior, transfers, updates, range input, indicator cache/lifecycle/request, drawings, view transforms, review, screenshots, feedback, popovers, symbols and workspace state. A small Python bridge `unittest` covers serialization behavior. There is no repository CI workflow, unified Python test runner, lint task or type-check task.
 
 ## 30. Fresh Verification Results
 

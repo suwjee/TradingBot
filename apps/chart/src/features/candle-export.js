@@ -844,7 +844,6 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
     view.querySelector('[data-current-time-output="range"]').textContent = readableJobTime(now);
   }
   setInterval(renderReadableTimes, 1000);
-  void refreshRawInventory();
   void refreshAuth();
   // The footer remains visible outside the exporter. Keep it synchronized
   // with manual edits or deletion of the sole local session file.

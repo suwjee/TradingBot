@@ -158,7 +158,7 @@ The UI does not render credentials, but FARAZ status can display user ID/name/ph
 
 ## 29. Shared State and Persistence
 
-`main.js` owns live chart identity, candles, series, drawings, selected range, indicator results/settings, workspace and update state. Feature modules hold bounded state for FARAZ jobs, review snapshots, caches and workspace sessions. Local-storage keys persist layout/preferences; drawings/templates/results also use server persistence.
+`main.js` owns live chart identity, candles, series, drawings, selected range, indicator results/settings, workspace and update state. Feature modules hold bounded state for FARAZ jobs, review snapshots, caches and workspace sessions. Local-storage keys persist layout/preferences; drawings/templates/results also use server persistence. The active `chartId` and timeframe are also written to the current tab URL, which is authoritative for that tab and allows the same chart ID to remain open independently in multiple tabs.
 
 ## 30. Shared Component Map
 
@@ -181,7 +181,7 @@ Route `/`; entry `index.html` and `main.js`. Purpose: select RAW data, inspect/c
 
 ### User Workflow
 
-Select symbol/timeframe -> load candles -> navigate/zoom/draw -> choose indicator settings/range -> calculate -> inspect overlays/report -> optionally update, cut, export or review.
+Select symbol/timeframe -> tab URL records `chartId` and timeframe -> load candles -> navigate/zoom/draw -> choose indicator settings/range -> calculate -> inspect overlays/report -> optionally update, cut, export or review. Duplicating the URL reopens the same chart identity instead of resolving another tab's shared fallback selection.
 
 ### Source Map and Component Tree
 

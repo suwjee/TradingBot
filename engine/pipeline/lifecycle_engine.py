@@ -18,8 +18,8 @@ from core_utils import as_decimal, order_identity
 from direction_policy import policy_for
 
 
-STOP_ALL_VERSION = "1.15.0"
-STOP_ALL_LAST_MODIFIED = "2026-09-21 10:33:00 +03:30"
+STOP_ALL_VERSION = "1.15.2"
+STOP_ALL_LAST_MODIFIED = "2026-09-23 09:55:12 +03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -221,10 +221,10 @@ class StopAllDetector:
         """Promote the accepted opposite-color S into a fresh StopAll1.
 
         This is the direction-invariant family reversal gate.  In both
-        Bullish and Bearish calculations, accepted S Red is promoted after at
-        least two accepted occurrences of the same Blue behavior group in the
-        current cycle (S Blue, E1 Blue, E5 Blue, ...).  The repeated group need
-        not remain the current dominant owner.  Directional mirroring is handled
+        Bullish and Bearish calculations, only an accepted native Mode-B S Red
+        is promoted after two accepted occurrences of the same Blue behavior
+        group since the latest accepted Red or StopAll boundary.  The repeated
+        group need not remain the current dominant owner.  Directional mirroring is handled
         by strict stop/reaction geometry; Red/Blue family
         labels themselves are invariant.  Type-3 S Blue has no formation
         Order, so StopAll Order provenance remains optional.
@@ -305,11 +305,11 @@ class StopAllDetector:
 
     @staticmethod
     def _blue_repeat_key(kind: str, number: int | None = None) -> tuple[str, int | None]:
-        """Return the cycle-local exact Blue behavior-group key.
+        """Return the pending-reversal exact Blue behavior-group key.
 
         S Blue is one group regardless of its internal subtype.  Each E number
         is a separate group: E1 Blue, E2 Blue, E5 Blue, ... .  Counts are
-        occurrence counts of accepted behaviors inside the current lifecycle,
+        accepted-occurrence counts since the most recent Red S/Red E/StopAll,
         not counts of dominant-owner transitions.
         """
         normalized = str(kind).upper()
@@ -337,15 +337,21 @@ class StopAllDetector:
     ) -> tuple[str, str, int, tuple[str, int] | None] | None:
         """Return Blue-repeat metadata when accepted S Red must become StopAll.
 
-        From calculation start or the most recent StopAll hard boundary, every
-        accepted occurrence of the same Blue behavior group is counted even if
-        that group is not the current dominant owner.  Two S Blue occurrences,
-        two E1 Blue occurrences, two E5 Blue occurrences, etc. independently
-        arm this gate.  Different E numbers never add together.  Once any exact
-        Blue group reaches two occurrences, the next accepted S Red is promoted
-        to StopAll.  StopAll clears all repeat counters.
+        Accepted Blue occurrences accumulate per exact S/E group until the
+        first accepted Red S, accepted Red E, or hard StopAll boundary.  A Red
+        behavior resolves the prior Blue reversal opportunity; a later S Red
+        cannot consume its stale evidence.  The incoming S Red must have a
+        native Mode-B formation Order; different numbered E groups never add.
+        E-driven StopAll counters/priority are independent of this reversal
+        evidence and retain their existing semantics.
         """
         if str(getattr(s_item, "color", "")).lower() != "red":
+            return None
+        # An initial native Mode-A Order opens an independent A→S Red branch;
+        # it cannot consume old Blue-repeat evidence to promote that S to
+        # StopAll. A continued Mode-B Order may own the reversal gate in the
+        # existing hard lifecycle, in either market direction.
+        if str(getattr(s_item, "order_mode", "")).upper() != "B":
             return None
 
         qualified = [
@@ -418,6 +424,11 @@ class StopAllDetector:
                 return
 
             color = str(s_item.color)
+            # An accepted Red S resolves the pending Blue-repeat reversal
+            # opportunity even if its native Order mode cannot promote it.
+            # Later Red S may use only Blue occurrences accepted after it.
+            if color == "red":
+                reset_cycle_blue_repeats()
             if color == "blue":
                 self._record_blue_repeat(
                     blue_repeat_counts,
@@ -512,9 +523,13 @@ class StopAllDetector:
                     reset_cycle_blue_repeats()
                     continue
 
-            # This E remains an accepted E behavior (it was not promoted to
-            # StopAll above), so count its exact Blue group occurrence for the
-            # cycle-wide accepted-S reversal rule independently of dominance.
+            # Red E resolves earlier Blue-repeat evidence. It may be a
+            # higher-stage replacement of Blue, but cannot leave a stale
+            # Blue reversal armed for a later unrelated S Red. Do not reset
+            # dominant sequence state: E-driven StopAll gates own that state.
+            if new_key[0] == "red":
+                reset_cycle_blue_repeats()
+            # This E remains accepted after independent StopAll checks.
             if new_key[0] == "blue":
                 self._record_blue_repeat(
                     blue_repeat_counts,
@@ -526,7 +541,7 @@ class StopAllDetector:
             # Stage ownership is A -> S -> E -> StopAll. When the first E
             # replaces an S owner, E starts a new dominant-stage occurrence;
             # the superseded S is not counted again in current-owner sequence
-            # state. Cycle-wide Blue-repeat counting is independent above.
+            # state. Pending Blue-repeat counting is independent above.
             if e_key == new_key:
                 e_count += 1
                 dominant_e_item = e_item

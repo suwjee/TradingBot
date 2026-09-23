@@ -33,7 +33,7 @@ import { formatInventoryDateTime, formatSymbolWithBroker } from "./ui/symbol-for
 import { MIN_SAFE_BAR_SPACING } from "./chart/zoom-config.js";
 import { resolveCanonicalChartPoint } from "./chart/drawing-coordinates.js";
 import { drawScreenshotOverlay } from "./features/screenshot-overlay.js";
-import { resolveWorkspaceRefreshState } from "./features/workspace-session.js";
+import { chartTabUrl, resolveChartTabState, resolveWorkspaceRefreshState } from "./features/workspace-session.js";
 import { parseTehranMetadataTime } from "./features/raw-file-contract.js";
 import { moveIndicatorRange, normalizeIndicatorRange } from "./chart/indicator-range.js";
 import { calculateMeasureStats, calculatePositionLevels } from "./drawings/drawing-math.js";
@@ -507,6 +507,12 @@ function persistWorkspaceRefresh(workspace = appRoot.dataset.workspace || "chart
       timeframe: state.tf,
     }));
   } catch {}
+}
+function persistChartTabUrl(item = state.file) {
+  if (!item?.chartId) return;
+  const next = chartTabUrl(window.location.href, { chartId: item.chartId, timeframe: state.tf });
+  const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  if (next !== current) window.history.replaceState(window.history.state, "", next);
 }
 function setWorkspaceState(name, { persist = true } = {}) {
   const topbar = $(".topbar");
@@ -1646,8 +1652,11 @@ async function loadInventory() {
   const refreshState = resolveWorkspaceRefreshState(storedWorkspaceRefresh, {
     fileIds: state.inventory.map((item) => item.id), timeframes: TF.map((item) => item.s),
   });
-  if (refreshState.timeframe) state.tf = refreshState.timeframe;
-  const remembered = refreshState.fileId || localStorage.getItem("qg:last-symbol");
+  const tabState = resolveChartTabState(window.location.search, {
+    inventory: state.inventory, timeframes: TF.map((item) => item.s),
+  });
+  if (tabState.timeframe || refreshState.timeframe) state.tf = tabState.timeframe || refreshState.timeframe;
+  const remembered = tabState.fileId || refreshState.fileId || localStorage.getItem("qg:last-symbol");
   const next = state.inventory.find((item) => item.id === remembered) || state.inventory[0];
   await loadFile(next);
   if (!next) {
@@ -1724,7 +1733,7 @@ async function loadFile(item) {
   $("#loading").classList.remove("hidden");
   $("#progress").textContent = `Loading ${item.symbol}…`;
   try {
-    const r = await fetch(`/api/candles?id=${encodeURIComponent(item.id)}`, { signal: controller.signal, cache: "no-store" });
+    const r = await fetch(`/api/candles?id=${encodeURIComponent(item.id)}`, { signal: controller.signal, cache: "no-cache" });
     if (!r.ok) throw new Error(await r.text());
     const rows = await r.json();
     if (loadRevision !== symbolLoadRevision) return;
@@ -1766,6 +1775,7 @@ async function loadFile(item) {
     restoreChartIndicatorContext(item.id);
     loadDrawings();
     updateTimeframeAvailability();
+    persistChartTabUrl(item);
     renderChartIdentity(item);
     renderSymbolList();
     $("#chartSymbol").textContent = parseName(item);
@@ -1885,6 +1895,7 @@ function selectTimeframe(seconds, label) {
   try { localStorage.setItem(CHART_TIMEFRAME_KEY, String(seconds)); }
   catch (error) { log.chart.warn("TIMEFRAME_PERSIST_FAILED", { message: error.message }); }
   persistWorkspaceRefresh();
+  persistChartTabUrl();
   renderTimeframeControls(false);
   renderTf();
   clearActiveIndicatorCalculation();
@@ -2080,9 +2091,31 @@ $("#gotoBtn").onclick = () => {
   );
   openDateTimePicker("#gotoInput", true);
 };
-setInterval(() => {
-  void refreshSymbolInventory().catch((error) => log.chart.warn("SYMBOL_INVENTORY_REFRESH_FAILED", { message: error.message }));
-}, 1000);
+let inventoryRefreshTimer = null;
+function scheduleSymbolInventoryRefresh() {
+  clearTimeout(inventoryRefreshTimer);
+  inventoryRefreshTimer = null;
+  if (document.visibilityState !== "visible") return;
+  inventoryRefreshTimer = setTimeout(async () => {
+    try {
+      await refreshSymbolInventory();
+    } catch (error) {
+      log.chart.warn("SYMBOL_INVENTORY_REFRESH_FAILED", { message: error.message });
+    } finally {
+      scheduleSymbolInventoryRefresh();
+    }
+  }, 1000);
+}
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    void refreshSymbolInventory()
+      .catch((error) => log.chart.warn("SYMBOL_INVENTORY_REFRESH_FAILED", { message: error.message }))
+      .finally(scheduleSymbolInventoryRefresh);
+  } else {
+    scheduleSymbolInventoryRefresh();
+  }
+});
+scheduleSymbolInventoryRefresh();
 $("#gotoPickerButton").onclick = () => openDateTimePicker("#gotoInput");
 $$(".modal-close").forEach(
   (x) => (x.onclick = () => $("#gotoModal").classList.add("hidden")),

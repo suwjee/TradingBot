@@ -18,8 +18,8 @@ from core_utils import as_decimal, reaction_identity
 from direction_policy import policy_for
 
 
-S_ZONE_VERSION = "4.19.0"
-S_ZONE_LAST_MODIFIED = "2026-09-22 00:35:00 +03:30"
+S_ZONE_VERSION = "4.20.0"
+S_ZONE_LAST_MODIFIED = "2026-09-23 10:19:31 +03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -274,12 +274,11 @@ class SZoneDetector:
     def _first_order_after(
         self, a_stop_event_time: datetime
     ) -> tuple[int, object, datetime] | None:
-        """Return the first provisional canonical opposite Order after A-stop.
+        """Return the immutable first canonical opposite Order after A-stop.
 
-        The first canonical Order opens stopped-A ownership.  A consecutive
-        native Mode-B chain may refresh that provisional owner later while S
-        remains undecided; ``_resolved_order_backed_zone`` owns that bounded
-        refresh rule.
+        Each stopped A creates at most one parent-stop Order_A.  Subsequent
+        native Mode-B Reactions cannot refresh that physical identity; they
+        may be accepted only through independently valid creation causes.
         """
         matches = self._order_matches_after(a_stop_event_time)
         return matches[0] if matches else None
@@ -287,13 +286,7 @@ class SZoneDetector:
     def _order_matches_after(
         self, a_stop_event_time: datetime
     ) -> list[tuple[int, object, datetime]]:
-        """Return canonical opposite Orders after one A stop in chronology.
-
-        An A-owned Order may be refreshed by a later canonical opposite
-        Reaction while the S decision is still open.  The caller decides how
-        far that refresh chain remains authoritative; this helper only exposes
-        the exact confirmed Order chronology.
-        """
+        """Expose canonical opposite-Order chronology without changing ownership."""
         cached = self._order_matches_after_cache.get(a_stop_event_time)
         if cached is not None:
             return list(cached)
@@ -319,64 +312,15 @@ class SZoneDetector:
         a_stop: tuple[int, datetime, datetime],
         first_order_match: tuple[int, object, datetime],
     ) -> SZone | None:
-        """Resolve the final A-owned Order that decides the S branch.
+        """Resolve S using only the first physical Order_A owned by this A.
 
-        The first canonical opposite Order after A-stop opens Order ownership,
-        but it is provisional while S is undecided.  If a later canonical
-        opposite Order confirms strictly before the current S decision event,
-        ownership refreshes to that newer Order and the S decision is
-        recalculated from its geometry.  Continue until no newer Order confirms
-        before the recalculated decision.  An Order that confirms at/after the
-        decision cannot retroactively steal the already-decided S.
-
-        This is direction-neutral; only the existing mirrored Order/S geometry
-        inside ``_build_order_backed_zone`` determines Red/Blue and price.
+        The initial stopped-A OrderAudit retains its original parent-stop
+        cause.  A later canonical Reaction never replaces the original
+        Order_A, irrespective of its native Reaction Mode or S decision time.
         """
-        all_matches = self._order_matches_after(a_stop[2])
-        try:
-            position = next(
-                index
-                for index, match in enumerate(all_matches)
-                if reaction_identity(match[1]) == reaction_identity(first_order_match[1])
-            )
-        except StopIteration:
-            all_matches = [first_order_match, *all_matches]
-            position = 0
-
-        current_match = first_order_match
-        current_zone = self._build_order_backed_zone(
-            zone, a_ordinal, a_price, a_stop, current_match
+        return self._build_order_backed_zone(
+            zone, a_ordinal, a_price, a_stop, first_order_match
         )
-        if current_zone is None:
-            return None
-
-        # Native Mode-B is a continuation of the previous healthy opposite
-        # Reaction's semantic outer edge.  Consecutive Mode-B confirmations
-        # therefore belong to one replaceable Order chain while S is still
-        # undecided.  Mode-A starts a fresh Order structure and terminates this
-        # chain; it may not retroactively replace the already-open Mode-B chain.
-        if str(getattr(current_match[1], "mode", "")) != "B":
-            return current_zone
-
-        while position + 1 < len(all_matches):
-            replacement_position = position + 1
-            replacement = all_matches[replacement_position]
-            if str(getattr(replacement[1], "mode", "")) != "B":
-                break
-            if replacement[2] >= current_zone.decision_event_time:
-                break
-
-            refreshed = self._build_order_backed_zone(
-                zone, a_ordinal, a_price, a_stop, replacement
-            )
-            if refreshed is None:
-                break
-            current_match = replacement
-            current_zone = refreshed
-            position = replacement_position
-
-        self._reassign_a_order_audit(zone, a_stop[2], current_match)
-        return current_zone
 
     def _record_a_order_audit(
         self,
@@ -393,6 +337,7 @@ class SZoneDetector:
             order_stop_source_time,
         ) = self._order_stop(order_number, order)
         identity = reaction_identity(order)
+        cause = (source_time, a_stop_event_time)
         entry = self.order_audit.get(identity)
         if entry is None:
             entry = {
@@ -408,29 +353,8 @@ class SZoneDetector:
             }
             self.order_audit[identity] = entry
         a_causes = entry.setdefault("a_causes", [])
-        cause = (source_time, a_stop_event_time)
         if cause not in a_causes:
             a_causes.append(cause)
-
-    def _reassign_a_order_audit(
-        self,
-        zone: object,
-        a_stop_event_time: datetime,
-        order_match: tuple[int, object, datetime],
-    ) -> None:
-        """Move one A cause from provisional Orders to its final refreshed Order."""
-        cause = (getattr(zone, "source_time"), a_stop_event_time)
-        empty_identities: list[tuple[int, int]] = []
-        for identity, entry in self.order_audit.items():
-            a_causes = entry.get("a_causes")
-            if not isinstance(a_causes, list) or cause not in a_causes:
-                continue
-            entry["a_causes"] = [item for item in a_causes if item != cause]
-            if not entry["a_causes"]:
-                empty_identities.append(identity)
-        for identity in empty_identities:
-            self.order_audit.pop(identity, None)
-        self._record_a_order_audit(zone, a_stop_event_time, order_match)
 
     def _audit_stopped_a(self, zone: object) -> None:
         """Record the independent order gender created by one stopped A."""

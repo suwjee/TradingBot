@@ -51,6 +51,39 @@ test("RAW store heals a missing sidecar with a stable chart ID", async (t) => {
   assert.equal(store.list()[0].chartId, healed.chartId);
 });
 
+test("RAW inventory reuses an unchanged validated snapshot and invalidates it after a RAW change", async (t) => {
+  const { createRawResourceStore } = await import("../server/raw-resource-store.js");
+  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "raw-inventory-cache-"));
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+  const store = createRawResourceStore({ rootDir });
+  const item = store.write({
+    broker: "FXCM", symbol: "CACHE", timeframe: "5S",
+    candles: [{ time: 100, open: 1, high: 1, low: 1, close: 1 }],
+  });
+
+  const readFileSync = fs.readFileSync;
+  let rawReads = 0;
+  fs.readFileSync = function instrumentedRead(target, ...args) {
+    if (path.resolve(String(target)) === path.resolve(item.dataPath)) rawReads += 1;
+    return readFileSync.call(this, target, ...args);
+  };
+  t.after(() => { fs.readFileSync = readFileSync; });
+
+  assert.equal(store.list()[0].count, 1);
+  assert.equal(store.list()[0].count, 1);
+  assert.equal(rawReads, 1);
+
+  fs.writeFileSync(item.dataPath, JSON.stringify([
+    { time: 100, open: 1, high: 1, low: 1, close: 1 },
+    { time: 105, open: 2, high: 2, low: 2, close: 2 },
+  ]));
+  const changedTime = new Date(Date.now() + 2_000);
+  fs.utimesSync(item.dataPath, changedTime, changedTime);
+
+  assert.equal(store.list()[0].count, 2);
+  assert.equal(rawReads, 2);
+});
+
 test("RAW store replaces an invalid chart ID and preserves an explicit chart ID", async (t) => {
   const { createRawResourceStore } = await import("../server/raw-resource-store.js");
   const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "raw-chart-id-invalid-"));
