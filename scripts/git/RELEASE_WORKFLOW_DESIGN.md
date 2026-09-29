@@ -9,7 +9,7 @@
 - The resolved repository root is `X:\TradingBot`. All implementation paths derive from the repository root discovered by Git and script location; no implementation path may depend on `D:`.
 - The active branch is `main`, and its working tree intentionally contains user changes. The workflow must not reset, clean, stash, discard, or silently unstage that work.
 - `origin` is the existing GitHub remote for `suwjee/TradingBot`. The existing GitHub CLI session is authenticated as `suwjee`; the workflow must reuse it without reading or writing credentials.
-- The remote currently has both `main` and `production`. The current remote heads resolve to the same commit, although no local `production` tracking branch is currently present.
+- The remote currently has both `main` and `production`. The current remote heads resolve to the same commit, although no local `production` tracking branch is currently present. This absence is a supported state, not an error.
 - The normal startup path is `scripts/launch.bat` to `scripts/start.ps1`, then the chart Vite server and the Python bridge/pipeline. `apps/chart/state` is initialized at runtime and contains local RAW, cache, and credential state; its existing contents are not production inputs.
 - Existing tags use mixed `2.0.0` and `v*` forms. The workflow will require valid, unused Git tag names but will not impose a new naming convention.
 
@@ -20,6 +20,8 @@ The workflow provides one normal PowerShell entry point that prepares `main`, pr
 It must provide a real `-DryRun` that builds and validates temporary snapshots but never pushes, publishes a tag, or creates a GitHub Release.
 
 It does not alter TradingBot business rules, trade calculations, app behavior, account configuration, remote configuration, credentials, or published history. Implementing and testing this workflow does not authorize a release.
+
+Investigation and implementation use **First map → Then target → Then verify globally**. They must not recursively read `node_modules`, Graphify AST caches, large RAW datasets, repeated verification output, archives, or large generated JSON merely to demonstrate coverage. Repository inventories, Git metadata, manifests, targeted searches, producer/consumer tracing, dependency graphs, file metadata, and automated global validation take precedence when they establish the needed fact. Findings are reused rather than repeatedly rediscovered. This optimization reduces redundant context use only; it never reduces correctness, runtime-dependency analysis, security checks, policy accuracy, validation depth, or release safety.
 
 ## 3. Repository classification model
 
@@ -86,6 +88,8 @@ Because the user explicitly runs the release entry point and supplies its messag
 
 The workflow obtains the exact committed main SHA, then creates a uniquely named temporary worktree outside `.git` and outside the permanent project layout. It starts from the existing `production` branch/history after remote refresh, while its desired filesystem is selected from the exact main commit.
 
+After fetch, `refs/remotes/origin/production` is the required production base. A missing local `refs/heads/production` is handled explicitly: the temporary candidate is parented to the fetched remote production SHA, and only after local validation does the workflow create or advance the local production ref with an expected-old-value guard. It then establishes `production` to track `origin/production` when that upstream exists. Publication always uses explicit `refs/heads/production:refs/heads/production` refspecs, so correctness does not depend on an already-existing local tracking branch.
+
 The worktree procedure is convergent:
 
 1. Resolve the production dependency closure from the main commit.
@@ -110,6 +114,8 @@ release tag -> exact production commit -> main SHA
 When production has no changes, the production commit remains unchanged and the tag annotation, plus GitHub Release metadata, records the exact source main SHA. No meaningless commit is created.
 
 Only after local main and production validation succeeds does a normal run create the local tag and publish the branch refs and tag. It uses the existing `origin` credentials and GitHub CLI session, verifies repository access without exposing credentials, and requires safe publication. The GitHub Release is created only after its tag is confirmed on the remote, targets that tag/production commit, and repeats the main SHA metadata.
+
+The preferred publication is one atomic push of the prepared explicit refspecs for `main`, `production`, and the release tag. If that attempt fails, the workflow re-queries every affected remote ref before taking further action. It may use a non-atomic fallback only when the failure is identified as lack of atomic-push support and the remote state proves that none of those refs changed. The fallback pushes each ref without force, verifies the expected remote object after each push, and reports `main`, `production`, and tag results independently. Any observed or indeterminate partial publication stops the workflow and is reported as partial; it is never hidden or automatically repaired by rewriting history.
 
 Existing tags or GitHub Releases are never overwritten. Push, tag, and Release outcomes are reported separately; a GitHub Release failure after successful ref publication is a partial result, not success. No force push or history rewrite is used.
 
