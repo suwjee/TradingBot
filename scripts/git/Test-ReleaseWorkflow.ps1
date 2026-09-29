@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-  [ValidateSet('RootResolution', 'MainPolicy', 'ProductionClosure', 'Snapshot')]
+  [ValidateSet('RootResolution', 'MainPolicy', 'ProductionClosure', 'Snapshot', 'Publication')]
   [string] $Case = 'RootResolution'
 )
 
@@ -61,7 +61,8 @@ function New-MainPolicyFixture {
   Write-FixtureFile $fixture 'apps/chart/state/cache/runtime.json' '{}'
   Write-FixtureFile $fixture 'apps/chart/state/secret/session.dpapi.json' '{}'
   Write-FixtureFile $fixture 'apps/chart/dist/index.html' '<html></html>'
-  Write-FixtureFile $fixture 'candidate/private.pem' '-----BEGIN PRIVATE KEY-----\nprivate-material'
+  Write-FixtureFile $fixture '.editorconfig' 'root = true'
+  Write-FixtureFile $fixture 'candidate/private.pem' (('-----BEGIN ' + 'PRIVATE KEY-----') + "`nprivate-material")
   return $fixture
 }
 
@@ -140,7 +141,8 @@ function Invoke-MainPolicyTests {
       'engine/tests/unit/engine_test.py',
       'engineering/docs/architecture.md',
       'engineering/archive/repository-graphify/graph.json',
-      'apps/chart/state/data/raw/BaseLine/reference.json'
+      'apps/chart/state/data/raw/BaseLine/reference.json',
+      '.editorconfig'
     )) {
       Assert-True ($report.Eligible -contains $path) "main policy keeps $path eligible"
     }
@@ -234,6 +236,15 @@ function Invoke-SnapshotTests {
     Assert-True ((@(& git -C $fixture.Root show-ref) -join "`n") -eq ($refsBefore -join "`n")) 'dry-run preserves permanent refs and tags'
     Assert-True ((@(& git -C $fixture.Root ls-remote origin) -join "`n") -eq ($remoteBefore -join "`n")) 'dry-run leaves the remote unchanged'
 
+    $normalSnapshot = New-ProductionSnapshot -Root $fixture.Root -SourceMainSha $sourceSha -ProductionBaseSha $preflight.ProductionBaseSha -FileSet $fileSet -CommitMessage 'fixture release' -DryRun:$false
+    & git -C $fixture.Root show-ref --verify --quiet refs/heads/production
+    Assert-True ($LASTEXITCODE -ne 0) 'normal preparation keeps local production absent until validation completes'
+    Assert-True ((Test-ProductionSnapshot -Snapshot $normalSnapshot).Errors.Count -eq 0) 'normal candidate passes validation before production promotion'
+    $promotion = Finalize-ProductionBranch -Root $fixture.Root -Snapshot $normalSnapshot
+    Assert-True ((& git -C $fixture.Root rev-parse refs/heads/production).Trim() -eq $normalSnapshot.ProductionSha) 'validated candidate advances local production with guarded ref update'
+    Assert-True ($promotion.Upstream -eq 'origin/production') 'promoted production branch tracks origin/production'
+    Remove-TemporaryReleaseContext -Context $normalSnapshot.Context
+
     $divergent = (& git -C $fixture.Root -c user.name=Fixture -c user.email=fixture@example.invalid commit-tree "${sourceSha}^{tree}" -m divergent).Trim()
     & git -C $fixture.Root update-ref refs/heads/production $divergent
     $divergentPreflight = Test-ReleasePreflight -Root $fixture.Root -Tag 'snapshot-divergent'
@@ -244,12 +255,69 @@ function Invoke-SnapshotTests {
   }
 }
 
+function New-PublicationFixture {
+  $fixture = New-ProductionFixture
+  $remote = New-FixtureRemote -Root $fixture.Root
+  $base = (& git -C $fixture.Root rev-parse refs/remotes/origin/production).Trim()
+  Write-FixtureFile $fixture.Root 'scripts/start.ps1' ('release source ' + [guid]::NewGuid().ToString('N'))
+  $main = Commit-Fixture $fixture.Root
+  & git -C $fixture.Root branch production $base
+  if ($LASTEXITCODE -ne 0) { throw 'Could not create local production fixture branch.' }
+  return [pscustomobject]@{ Root = $fixture.Root; Remote = $remote; MainSha = $main; ProductionSha = $base }
+}
+
+function Invoke-PublicationTests {
+  Import-Module $script:ModulePath -Force
+  $fixtures = @()
+  try {
+    $fixture = New-PublicationFixture
+    $fixtures += $fixture
+    $inputs = Read-ReleaseInputs -CommitMessage 'fixture release' -ReleaseTag 'fixture-release'
+    Assert-True ($inputs.CommitMessage -eq 'fixture release' -and $inputs.ReleaseTag -eq 'fixture-release') 'provided release inputs are accepted unchanged'
+    Assert-Throws { Read-ReleaseInputs -CommitMessage '' -ReleaseTag 'fixture-release' -NonInteractive } 'empty noninteractive commit message'
+    Assert-Throws { New-ReleaseTag -Root $fixture.Root -Tag 'bad tag' -ProductionSha $fixture.ProductionSha -MainSha $fixture.MainSha } 'invalid tag syntax'
+    $tag = New-ReleaseTag -Root $fixture.Root -Tag 'fixture-release' -ProductionSha $fixture.ProductionSha -MainSha $fixture.MainSha
+    $tagText = & git -C $fixture.Root cat-file -p refs/tags/fixture-release
+    Assert-True ((($tagText -join "`n") -match [regex]::Escape("TradingBot-Main-Source: $($fixture.MainSha)"))) 'annotated tag records source main SHA'
+    Assert-True ((& git -C $fixture.Root rev-parse 'fixture-release^{}').Trim() -eq $fixture.ProductionSha) 'annotated tag points to exact production commit'
+    Assert-Throws { New-ReleaseTag -Root $fixture.Root -Tag 'fixture-release' -ProductionSha $fixture.ProductionSha -MainSha $fixture.MainSha } 'existing tag is never overwritten'
+    $prepared = [pscustomobject]@{ MainSha=$fixture.MainSha; ProductionSha=$fixture.ProductionSha; Tag='fixture-release'; TagObjectSha=$tag.TagObjectSha; RemoteMainSha=$fixture.ProductionSha; RemoteProductionSha=$fixture.ProductionSha; RemoteTagSha=$null }
+    $published = Publish-ReleaseRefs -Root $fixture.Root -PreparedRelease $prepared
+    Assert-True ($published.Status -eq 'ATOMIC_PASS') 'atomic publication succeeds to fixture remote'
+    Assert-True ($published.RemoteMain -eq $fixture.MainSha -and $published.RemoteProduction -eq $fixture.ProductionSha -and $published.RemoteTag -eq $tag.TagObjectSha) 'atomic publication verifies all refs'
+
+    $fallbackFixture = New-PublicationFixture
+    $fixtures += $fallbackFixture
+    $fallbackTag = New-ReleaseTag -Root $fallbackFixture.Root -Tag 'fixture-fallback' -ProductionSha $fallbackFixture.ProductionSha -MainSha $fallbackFixture.MainSha
+    $fallbackPrepared = [pscustomobject]@{ MainSha=$fallbackFixture.MainSha; ProductionSha=$fallbackFixture.ProductionSha; Tag='fixture-fallback'; TagObjectSha=$fallbackTag.TagObjectSha; RemoteMainSha=$fallbackFixture.ProductionSha; RemoteProductionSha=$fallbackFixture.ProductionSha; RemoteTagSha=$null }
+    $unsupportedAtomic = { param($root, $gitArgs) if ($gitArgs -contains '--atomic') { return [pscustomobject]@{ ExitCode=1; StdOut=''; StdErr='fatal: the receiving end does not support --atomic push'; Arguments=$gitArgs } }; Invoke-ReleaseGit -Root $root -Arguments $gitArgs }
+    $fallback = Publish-ReleaseRefs -Root $fallbackFixture.Root -PreparedRelease $fallbackPrepared -CommandAdapter $unsupportedAtomic
+    Assert-True ($fallback.Status -eq 'FALLBACK_PASS') 'unsupported atomic remote uses verified fallback'
+
+    $partialFixture = New-PublicationFixture
+    $fixtures += $partialFixture
+    $partialTag = New-ReleaseTag -Root $partialFixture.Root -Tag 'fixture-partial' -ProductionSha $partialFixture.ProductionSha -MainSha $partialFixture.MainSha
+    $partialPrepared = [pscustomobject]@{ MainSha=$partialFixture.MainSha; ProductionSha=$partialFixture.ProductionSha; Tag='fixture-partial'; TagObjectSha=$partialTag.TagObjectSha; RemoteMainSha=$partialFixture.ProductionSha; RemoteProductionSha=$partialFixture.ProductionSha; RemoteTagSha=$null }
+    $partialAdapter = { param($root, $gitArgs) if ($gitArgs -contains '--atomic') { return [pscustomobject]@{ ExitCode=1; StdOut=''; StdErr='fatal: the receiving end does not support --atomic push'; Arguments=$gitArgs } }; if ($gitArgs -contains 'refs/heads/production:refs/heads/production') { return [pscustomobject]@{ ExitCode=1; StdOut=''; StdErr='simulated production rejection'; Arguments=$gitArgs } }; Invoke-ReleaseGit -Root $root -Arguments $gitArgs }
+    $partial = Publish-ReleaseRefs -Root $partialFixture.Root -PreparedRelease $partialPrepared -CommandAdapter $partialAdapter
+    Assert-True ($partial.Status -eq 'PARTIAL_FAILURE') 'fallback stops and reports a partial publication'
+    $remotePartialTag = & git -C $partialFixture.Root ls-remote --exit-code origin refs/tags/fixture-partial
+    Assert-True ($LASTEXITCODE -ne 0) 'fallback does not publish tag after a partial branch failure'
+  } finally {
+    foreach ($fixture in $fixtures) {
+      if ($fixture -and (Test-Path -LiteralPath $fixture.Root)) { Remove-Item -LiteralPath $fixture.Root -Recurse -Force }
+      if ($fixture -and (Test-Path -LiteralPath $fixture.Remote)) { Remove-Item -LiteralPath $fixture.Remote -Recurse -Force }
+    }
+  }
+}
+
 try {
   switch ($Case) {
     'RootResolution' { Invoke-RootResolutionTests }
     'MainPolicy' { Invoke-MainPolicyTests }
     'ProductionClosure' { Invoke-ProductionClosureTests }
     'Snapshot' { Invoke-SnapshotTests }
+    'Publication' { Invoke-PublicationTests }
   }
   $script:Passed++
   Write-Output "PASS: $Case ($script:Passed passed, $script:Failed failed)"

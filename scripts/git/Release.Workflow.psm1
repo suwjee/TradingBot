@@ -4,7 +4,7 @@ function Assert-ReleaseCondition {
   [CmdletBinding()]
   param(
     [Parameter(Mandatory)] [bool] $Condition,
-    [Parameter(Mandatory)] [string] $Message
+    [Parameter(Mandatory)] [AllowEmptyString()] [string] $Message
   )
 
   if (-not $Condition) { throw $Message }
@@ -20,9 +20,12 @@ function Resolve-TradingBotProjectRoot {
   $candidate = [IO.Path]::GetFullPath((Join-Path (Split-Path -Parent $fullScriptPath) '..\..'))
   $gitRoot = & git -C $candidate rev-parse --show-toplevel 2>&1
   if ($LASTEXITCODE -ne 0) { throw "Unable to resolve a Git repository from: $candidate" }
-  $root = [IO.Path]::GetFullPath(($gitRoot | Select-Object -First 1).ToString().Trim())
-
-  Assert-ReleaseCondition ($root -eq $candidate) 'Release scripts must be located under the resolved repository root.'
+  # Git may render this VMware checkout through its UNC identity while the
+  # caller uses X:.  An empty prefix proves candidate itself is the Git root
+  # without replacing the canonical caller-visible X: path.
+  $gitPrefix = & git -C $candidate rev-parse --show-prefix 2>&1
+  Assert-ReleaseCondition ($LASTEXITCODE -eq 0 -and [string]::IsNullOrWhiteSpace(($gitPrefix | Select-Object -First 1).ToString())) 'Release scripts must be located under the resolved repository root.'
+  $root = $candidate
   foreach ($relative in @('AGENTS.md', 'apps\chart', 'engine')) {
     Assert-ReleaseCondition (Test-Path -LiteralPath (Join-Path $root $relative)) "TradingBot project marker is missing: $relative"
   }
@@ -61,7 +64,9 @@ function Invoke-ReleaseGit {
 
 function ConvertTo-ReleasePath {
   param([Parameter(Mandatory)] [string] $Path)
-  return $Path.Replace('\', '/').TrimStart('./')
+  $normalized = $Path.Replace('\', '/')
+  if ($normalized.StartsWith('./', [StringComparison]::Ordinal)) { $normalized = $normalized.Substring(2) }
+  return $normalized
 }
 
 function Test-ReleasePathPattern {
@@ -367,6 +372,13 @@ function Get-ReleaseRefOid {
   return ($result.StdOut -split '\s+' | Select-Object -First 1).Trim()
 }
 
+function Get-ReleaseObjectOid {
+  param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] [string] $Ref)
+  $result = Invoke-ReleaseGit -Root $Root -Arguments @('rev-parse', '--verify', '--quiet', $Ref)
+  if ($result.ExitCode -ne 0) { return $null }
+  return ($result.StdOut -split '\s+' | Select-Object -First 1).Trim()
+}
+
 function Test-ReleasePreflight {
   [CmdletBinding()]
   param(
@@ -496,20 +508,9 @@ function New-ProductionSnapshot {
       if ($null -eq $previousIndex) { Remove-Item Env:GIT_INDEX_FILE -ErrorAction SilentlyContinue } else { $env:GIT_INDEX_FILE = $previousIndex }
     }
 
-    if ($DryRun) {
-      $worktree = Invoke-ReleaseGit -Root $Root -Arguments @('worktree', 'add', '--detach', $context.WorktreePath, $fetchedProductionSha)
-    } else {
-      $localProductionSha = Get-ReleaseRefOid -Root $Root -Ref 'refs/heads/production'
-      if ($null -eq $localProductionSha) {
-        $createBranch = Invoke-ReleaseGit -Root $Root -Arguments @('branch', '--track', 'production', $context.TemporaryProductionRef)
-        Assert-ReleaseCondition ($createBranch.ExitCode -eq 0) 'Could not establish local production from fetched origin/production.'
-      } else {
-        Assert-ReleaseCondition ($localProductionSha -eq $fetchedProductionSha) 'Local production diverges from fetched origin/production.'
-      }
-      $upstream = Invoke-ReleaseGit -Root $Root -Arguments @('branch', '--set-upstream-to=origin/production', 'production')
-      Assert-ReleaseCondition ($upstream.ExitCode -eq 0) 'Could not configure production upstream tracking.'
-      $worktree = Invoke-ReleaseGit -Root $Root -Arguments @('worktree', 'add', $context.WorktreePath, 'production')
-    }
+    # Production stays detached until all candidate validation has passed.  The
+    # caller advances the permanent local ref with an expected-old-value guard.
+    $worktree = Invoke-ReleaseGit -Root $Root -Arguments @('worktree', 'add', '--detach', $context.WorktreePath, $fetchedProductionSha)
     Assert-ReleaseCondition ($worktree.ExitCode -eq 0) 'Could not create isolated temporary production worktree.'
 
     $removeTracked = Invoke-ReleaseGit -Root $Root -WorkingDirectory $context.WorktreePath -Arguments @('rm', '-r', '--ignore-unmatch', '--', '.')
@@ -635,6 +636,238 @@ function Remove-TemporaryReleaseContext {
   $Context.Cleaned = $true
 }
 
+function Read-ReleaseInputs {
+  [CmdletBinding()]
+  param(
+    [string] $CommitMessage = '',
+    [string] $ReleaseTag = '',
+    [switch] $NonInteractive
+  )
+  if ([string]::IsNullOrWhiteSpace($CommitMessage)) {
+    if ($NonInteractive) { throw 'CommitMessage is required in noninteractive mode.' }
+    $CommitMessage = Read-Host 'Release commit message'
+  }
+  if ([string]::IsNullOrWhiteSpace($ReleaseTag)) {
+    if ($NonInteractive) { throw 'ReleaseTag is required in noninteractive mode.' }
+    $ReleaseTag = Read-Host 'Release tag'
+  }
+  Assert-ReleaseCondition (-not [string]::IsNullOrWhiteSpace($CommitMessage)) 'Release commit message must not be empty.'
+  Assert-ReleaseCondition (-not [string]::IsNullOrWhiteSpace($ReleaseTag)) 'Release tag must not be empty.'
+  return [pscustomobject]@{ CommitMessage = $CommitMessage.Trim(); ReleaseTag = $ReleaseTag.Trim() }
+}
+
+function Invoke-PublicationGit {
+  param(
+    [Parameter(Mandatory)] [string] $Root,
+    [Parameter(Mandatory)] [string[]] $Arguments,
+    [scriptblock] $CommandAdapter
+  )
+  if ($null -ne $CommandAdapter) { return & $CommandAdapter $Root ([string[]] $Arguments) }
+  return Invoke-ReleaseGit -Root $Root -Arguments $Arguments
+}
+
+function Get-RemoteReleaseRefOid {
+  param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] [string] $Ref, [scriptblock] $CommandAdapter)
+  $result = Invoke-PublicationGit -Root $Root -Arguments @('ls-remote', 'origin', $Ref) -CommandAdapter $CommandAdapter
+  if ($result.ExitCode -ne 0 -or [string]::IsNullOrWhiteSpace($result.StdOut)) { return $null }
+  return ($result.StdOut -split '\s+' | Select-Object -First 1).Trim()
+}
+
+function Test-ReleaseOidEqual {
+  param($Left, $Right)
+  if ($null -eq $Left -and $null -eq $Right) { return $true }
+  if ($null -eq $Left -or $null -eq $Right) { return $false }
+  return [string]::Equals([string] $Left, [string] $Right, [StringComparison]::OrdinalIgnoreCase)
+}
+
+function New-ReleaseTag {
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory)] [string] $Root,
+    [Parameter(Mandatory)] [string] $Tag,
+    [Parameter(Mandatory)] [string] $ProductionSha,
+    [Parameter(Mandatory)] [string] $MainSha
+  )
+  $syntax = Invoke-ReleaseGit -Root $Root -Arguments @('check-ref-format', "refs/tags/$Tag")
+  Assert-ReleaseCondition ($syntax.ExitCode -eq 0) "Invalid Git tag syntax: $Tag"
+  $existingLocal = Invoke-ReleaseGit -Root $Root -Arguments @('show-ref', '--verify', '--quiet', "refs/tags/$Tag")
+  Assert-ReleaseCondition ($existingLocal.ExitCode -ne 0) "Local tag already exists: $Tag"
+  $existingRemote = Invoke-ReleaseGit -Root $Root -Arguments @('ls-remote', '--exit-code', 'origin', "refs/tags/$Tag")
+  Assert-ReleaseCondition ($existingRemote.ExitCode -ne 0) "Remote tag already exists: $Tag"
+  $production = Invoke-ReleaseGit -Root $Root -Arguments @('cat-file', '-e', "$ProductionSha^{commit}")
+  Assert-ReleaseCondition ($production.ExitCode -eq 0) "Production commit is unavailable: $ProductionSha"
+  $tagCreate = Invoke-ReleaseGit -Root $Root -Arguments @('-c', 'user.name=TradingBot Release', '-c', 'user.email=release@tradingbot.invalid', 'tag', '-a', $Tag, $ProductionSha, '-m', "TradingBot release $Tag", '-m', "TradingBot-Main-Source: $MainSha")
+  Assert-ReleaseCondition ($tagCreate.ExitCode -eq 0) "Could not create annotated release tag: $Tag"
+  $tagObject = Invoke-ReleaseGit -Root $Root -Arguments @('rev-parse', "refs/tags/$Tag")
+  $peeled = Invoke-ReleaseGit -Root $Root -Arguments @('rev-parse', "$Tag^{commit}")
+  Assert-ReleaseCondition ($tagObject.ExitCode -eq 0 -and $peeled.ExitCode -eq 0 -and $peeled.StdOut.Trim() -eq $ProductionSha) 'Annotated release tag does not point to the prepared production commit.'
+  return [pscustomobject]@{ Tag = $Tag; TagObjectSha = $tagObject.StdOut.Trim(); ProductionSha = $ProductionSha; MainSha = $MainSha }
+}
+
+function Finalize-ProductionBranch {
+  [CmdletBinding()]
+  param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] $Snapshot)
+  $refresh = Invoke-ReleaseGit -Root $Root -Arguments @('fetch', '--quiet', 'origin', '+refs/heads/production:refs/remotes/origin/production')
+  Assert-ReleaseCondition ($refresh.ExitCode -eq 0) 'Could not refresh origin/production before local branch promotion.'
+  $remoteBase = Get-ReleaseRefOid -Root $Root -Ref 'refs/remotes/origin/production'
+  Assert-ReleaseCondition ($remoteBase -eq $Snapshot.ProductionBaseSha) 'origin/production changed during local validation; refusing to advance production.'
+  $current = Get-ReleaseRefOid -Root $Root -Ref 'refs/heads/production'
+  if ($null -ne $current) { Assert-ReleaseCondition ($current -eq $Snapshot.ProductionBaseSha) 'Local production changed during validation; refusing to advance production.' }
+  $expected = if ($null -eq $current) { '0000000000000000000000000000000000000000' } else { $current }
+  $advance = Invoke-ReleaseGit -Root $Root -Arguments @('update-ref', 'refs/heads/production', $Snapshot.ProductionSha, $expected)
+  Assert-ReleaseCondition ($advance.ExitCode -eq 0) 'Could not advance local production with its expected-old-value guard.'
+  $upstream = Invoke-ReleaseGit -Root $Root -Arguments @('branch', '--set-upstream-to=origin/production', 'production')
+  Assert-ReleaseCondition ($upstream.ExitCode -eq 0) 'Could not configure local production to track origin/production.'
+  return [pscustomobject]@{ ProductionSha = $Snapshot.ProductionSha; PreviousSha = $current; Upstream = 'origin/production' }
+}
+
+function Add-ReleasePathsToIndex {
+  param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] [string[]] $Paths)
+  foreach ($batch in @($Paths | ForEach-Object -Begin { $items = @() } -Process { $items += $_; if ($items.Count -ge 100) { ,$items; $items = @() } } -End { if ($items.Count) { ,$items } })) {
+    $add = Invoke-ReleaseGit -Root $Root -Arguments (@('add', '--') + @($batch))
+    Assert-ReleaseCondition ($add.ExitCode -eq 0) ("Could not stage a policy-eligible path for main: " + $add.StdErr)
+  }
+}
+
+function New-MainReleaseSource {
+  [CmdletBinding()]
+  param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] [string] $CommitMessage, [switch] $DryRun)
+  $report = Get-MainPolicyReport -Root $Root
+  Assert-ReleaseCondition ($report.Errors.Count -eq 0) ($report.Errors -join '; ')
+  $staged = Invoke-ReleaseGit -Root $Root -Arguments @('diff', '--cached', '--name-only', '--diff-filter=ACMRD')
+  Assert-ReleaseCondition ($staged.ExitCode -eq 0) 'Could not inspect the active Git index.'
+  $invalidStaged = @($staged.StdOut -split "`r?`n" | Where-Object { $_ -and $report.Eligible -notcontains (ConvertTo-ReleasePath $_) })
+  Assert-ReleaseCondition ($invalidStaged.Count -eq 0) ('Existing staged content violates main policy: ' + ($invalidStaged -join ', '))
+  $sensitive = Test-SensitiveCandidate -Root $Root -Paths $report.Eligible
+  Assert-ReleaseCondition ($sensitive.Errors.Count -eq 0) ($sensitive.Errors -join '; ')
+  $head = Get-ReleaseRefOid -Root $Root -Ref 'HEAD'
+  if (-not $DryRun) {
+    Add-ReleasePathsToIndex -Root $Root -Paths $report.Eligible
+    $diff = Invoke-ReleaseGit -Root $Root -Arguments @('diff', '--cached', '--quiet')
+    Assert-ReleaseCondition ($diff.ExitCode -in @(0, 1)) 'Could not compare the staged main release candidate.'
+    $changed = ($diff.ExitCode -eq 1)
+    if ($changed) {
+      $commit = Invoke-ReleaseGit -Root $Root -Arguments @('-c', 'user.name=TradingBot Release', '-c', 'user.email=release@tradingbot.invalid', 'commit', '-m', $CommitMessage)
+      Assert-ReleaseCondition ($commit.ExitCode -eq 0) 'Could not create the main release commit.'
+    }
+    return [pscustomobject]@{ MainSha = (Get-ReleaseRefOid -Root $Root -Ref 'HEAD'); Changed = $changed; DryRun = $false }
+  }
+
+  $context = New-TemporaryReleaseContext -Root $Root
+  try {
+    $gitIndex = Invoke-ReleaseGit -Root $Root -Arguments @('rev-parse', '--git-path', 'index')
+    Assert-ReleaseCondition ($gitIndex.ExitCode -eq 0) 'Could not locate the active Git index.'
+    $activeIndex = Join-Path $Root $gitIndex.StdOut.Trim()
+    if (Test-Path -LiteralPath $activeIndex) { [IO.File]::Copy($activeIndex, $context.IndexPath, $true) }
+    $previousIndex = $env:GIT_INDEX_FILE
+    try {
+      $env:GIT_INDEX_FILE = $context.IndexPath
+      Add-ReleasePathsToIndex -Root $Root -Paths $report.Eligible
+      $diff = Invoke-ReleaseGit -Root $Root -Arguments @('diff', '--cached', '--quiet')
+      Assert-ReleaseCondition ($diff.ExitCode -in @(0, 1)) 'Could not compare the temporary main release candidate.'
+      $changed = ($diff.ExitCode -eq 1)
+      if ($changed) {
+        $tree = Invoke-ReleaseGit -Root $Root -Arguments @('write-tree')
+        Assert-ReleaseCondition ($tree.ExitCode -eq 0) 'Could not write the temporary main tree.'
+        $candidate = Invoke-ReleaseGit -Root $Root -Arguments @('-c', 'user.name=TradingBot Release', '-c', 'user.email=release@tradingbot.invalid', 'commit-tree', $tree.StdOut.Trim(), '-p', $head, '-m', $CommitMessage)
+        Assert-ReleaseCondition ($candidate.ExitCode -eq 0) 'Could not create the temporary main candidate commit.'
+        $mainSha = $candidate.StdOut.Trim()
+      } else { $mainSha = $head }
+    } finally {
+      if ($null -eq $previousIndex) { Remove-Item Env:GIT_INDEX_FILE -ErrorAction SilentlyContinue } else { $env:GIT_INDEX_FILE = $previousIndex }
+    }
+    return [pscustomobject]@{ MainSha = $mainSha; Changed = $changed; DryRun = $true }
+  } finally { Remove-TemporaryReleaseContext -Context $context }
+}
+
+function Publish-ReleaseRefs {
+  [CmdletBinding()]
+  param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] $PreparedRelease, [scriptblock] $CommandAdapter)
+  foreach ($local in @(@('refs/heads/main', $PreparedRelease.MainSha), @('refs/heads/production', $PreparedRelease.ProductionSha))) {
+    Assert-ReleaseCondition ((Get-ReleaseRefOid -Root $Root -Ref $local[0]) -eq $local[1]) "Local release ref is not prepared as expected: $($local[0])"
+  }
+  Assert-ReleaseCondition ((Get-ReleaseObjectOid -Root $Root -Ref "refs/tags/$($PreparedRelease.Tag)") -eq $PreparedRelease.TagObjectSha) "Local release ref is not prepared as expected: refs/tags/$($PreparedRelease.Tag)"
+  $specs = @('refs/heads/main:refs/heads/main', 'refs/heads/production:refs/heads/production', "refs/tags/$($PreparedRelease.Tag):refs/tags/$($PreparedRelease.Tag)")
+  $before = [pscustomobject]@{ Main = $PreparedRelease.RemoteMainSha; Production = $PreparedRelease.RemoteProductionSha; Tag = $PreparedRelease.RemoteTagSha }
+  $atomic = Invoke-PublicationGit -Root $Root -Arguments (@('push', '--atomic', 'origin') + $specs) -CommandAdapter $CommandAdapter
+  $readRemote = {
+    [pscustomobject]@{
+      Main = Get-RemoteReleaseRefOid -Root $Root -Ref 'refs/heads/main' -CommandAdapter $CommandAdapter
+      Production = Get-RemoteReleaseRefOid -Root $Root -Ref 'refs/heads/production' -CommandAdapter $CommandAdapter
+      Tag = Get-RemoteReleaseRefOid -Root $Root -Ref "refs/tags/$($PreparedRelease.Tag)" -CommandAdapter $CommandAdapter
+    }
+  }
+  $afterAtomic = & $readRemote
+  $desired = [pscustomobject]@{ Main = $PreparedRelease.MainSha; Production = $PreparedRelease.ProductionSha; Tag = $PreparedRelease.TagObjectSha }
+  $isDesired = (Test-ReleaseOidEqual $afterAtomic.Main $desired.Main) -and (Test-ReleaseOidEqual $afterAtomic.Production $desired.Production) -and (Test-ReleaseOidEqual $afterAtomic.Tag $desired.Tag)
+  if ($atomic.ExitCode -eq 0 -and $isDesired) { return [pscustomobject]@{ Status='ATOMIC_PASS'; Method='atomic'; RemoteMain=$afterAtomic.Main; RemoteProduction=$afterAtomic.Production; RemoteTag=$afterAtomic.Tag; AtomicError='' } }
+  $unchanged = (Test-ReleaseOidEqual $afterAtomic.Main $before.Main) -and (Test-ReleaseOidEqual $afterAtomic.Production $before.Production) -and (Test-ReleaseOidEqual $afterAtomic.Tag $before.Tag)
+  $unsupported = $atomic.StdErr -match '(?i)(does not support.*atomic|atomic.*not supported|unsupported.*atomic)'
+  if (-not $unchanged) { return [pscustomobject]@{ Status='PARTIAL_FAILURE'; Method='atomic'; RemoteMain=$afterAtomic.Main; RemoteProduction=$afterAtomic.Production; RemoteTag=$afterAtomic.Tag; AtomicError=$atomic.StdErr } }
+  if (-not $unsupported) { return [pscustomobject]@{ Status='ATOMIC_FAILED'; Method='atomic'; RemoteMain=$afterAtomic.Main; RemoteProduction=$afterAtomic.Production; RemoteTag=$afterAtomic.Tag; AtomicError=$atomic.StdErr } }
+  foreach ($item in @([pscustomobject]@{ Name='Main'; Spec=$specs[0]; Desired=$desired.Main }, [pscustomobject]@{ Name='Production'; Spec=$specs[1]; Desired=$desired.Production }, [pscustomobject]@{ Name='Tag'; Spec=$specs[2]; Desired=$desired.Tag })) {
+    $push = Invoke-PublicationGit -Root $Root -Arguments @('push', 'origin', $item.Spec) -CommandAdapter $CommandAdapter
+    $state = & $readRemote
+    $actual = $state.($item.Name)
+    if ($push.ExitCode -ne 0 -or -not (Test-ReleaseOidEqual $actual $item.Desired)) { return [pscustomobject]@{ Status='PARTIAL_FAILURE'; Method='fallback'; RemoteMain=$state.Main; RemoteProduction=$state.Production; RemoteTag=$state.Tag; AtomicError=$atomic.StdErr } }
+  }
+  $final = & $readRemote
+  return [pscustomobject]@{ Status='FALLBACK_PASS'; Method='fallback'; RemoteMain=$final.Main; RemoteProduction=$final.Production; RemoteTag=$final.Tag; AtomicError=$atomic.StdErr }
+}
+
+function New-GitHubRelease {
+  [CmdletBinding()]
+  param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] $PreparedRelease)
+  $existing = & gh release view $PreparedRelease.Tag 2>&1
+  Assert-ReleaseCondition ($LASTEXITCODE -ne 0) "GitHub Release already exists for tag: $($PreparedRelease.Tag)"
+  $provenance = "TradingBot-Main-Source: $($PreparedRelease.MainSha)"
+  $sourceNote = if ($PreparedRelease.ProductionChanged) { 'Production commit carries the provenance trailer.' } else { 'Production tree was unchanged; provenance is tag-sourced.' }
+  $created = & gh release create $PreparedRelease.Tag --target $PreparedRelease.ProductionSha --title $PreparedRelease.Tag --notes "$provenance`n$sourceNote" 2>&1
+  Assert-ReleaseCondition ($LASTEXITCODE -eq 0) 'Could not create GitHub Release after ref publication.'
+  return [pscustomobject]@{ Status='PASS'; Url=($created | Select-Object -Last 1).ToString().Trim() }
+}
+
+function Invoke-TradingBotRelease {
+  [CmdletBinding()]
+  param([Parameter(Mandatory)] [hashtable] $Parameters)
+  $root = if ($Parameters.ContainsKey('Root')) { $Parameters.Root } else { Resolve-TradingBotProjectRoot -ScriptPath $Parameters.ScriptPath }
+  $nonInteractive = $Parameters.ContainsKey('NonInteractive') -and [bool] $Parameters.NonInteractive
+  $inputs = Read-ReleaseInputs -CommitMessage $Parameters.CommitMessage -ReleaseTag $Parameters.ReleaseTag -NonInteractive:$nonInteractive
+  $preflight = Test-ReleasePreflight -Root $root -Tag $inputs.ReleaseTag -RequireGitHubCli
+  Assert-ReleaseCondition ($preflight.Errors.Count -eq 0) ($preflight.Errors -join '; ')
+  $containsRemoteMain = Invoke-ReleaseGit -Root $root -Arguments @('merge-base', '--is-ancestor', $preflight.RemoteMainSha, 'HEAD')
+  Assert-ReleaseCondition ($containsRemoteMain.ExitCode -eq 0) 'Local main must contain fetched origin/main before release preparation.'
+  $main = New-MainReleaseSource -Root $root -CommitMessage $inputs.CommitMessage -DryRun:([bool] $Parameters.DryRun)
+  $policy = Import-ReleasePolicy -Root $root
+  $fileSet = Get-ProductionFileSet -Root $root -MainSha $main.MainSha -Policy $policy
+  $fileSetValidation = Test-ProductionFileSet -FileSet $fileSet -Policy $policy
+  Assert-ReleaseCondition ($fileSet.Errors.Count -eq 0 -and $fileSetValidation.Errors.Count -eq 0) (($fileSet.Errors + $fileSetValidation.Errors) -join '; ')
+  $snapshot = $null
+  $outcome = $null
+  try {
+    $snapshot = New-ProductionSnapshot -Root $root -SourceMainSha $main.MainSha -ProductionBaseSha $preflight.ProductionBaseSha -FileSet $fileSet -CommitMessage $inputs.CommitMessage -DryRun:([bool] $Parameters.DryRun)
+    $validation = Test-ProductionSnapshot -Snapshot $snapshot -RunRuntimeValidation
+    Assert-ReleaseCondition ($validation.Errors.Count -eq 0) ($validation.Errors -join '; ')
+    if ($Parameters.DryRun) {
+      $outcome = [pscustomobject]@{ Mode='DRY_RUN'; LocalMain=$main.MainSha; LocalProduction=$snapshot.ProductionSha; RemoteMain=$preflight.RemoteMainSha; RemoteProduction=$preflight.ProductionBaseSha; Tag=$inputs.ReleaseTag; GitHubRelease='NOT_CREATED'; TemporaryWorktree='CLEANUP_PENDING'; Checks=@($validation.Checks) }
+      return $outcome
+    }
+    $branch = Finalize-ProductionBranch -Root $root -Snapshot $snapshot
+    $tag = New-ReleaseTag -Root $root -Tag $inputs.ReleaseTag -ProductionSha $branch.ProductionSha -MainSha $main.MainSha
+    $prepared = [pscustomobject]@{ MainSha=$main.MainSha; ProductionSha=$branch.ProductionSha; ProductionChanged=$snapshot.ProductionChanged; Tag=$tag.Tag; TagObjectSha=$tag.TagObjectSha; RemoteMainSha=$preflight.RemoteMainSha; RemoteProductionSha=$preflight.ProductionBaseSha; RemoteTagSha=$null }
+    $publication = Publish-ReleaseRefs -Root $root -PreparedRelease $prepared
+    Assert-ReleaseCondition ($publication.Status -in @('ATOMIC_PASS','FALLBACK_PASS')) "Ref publication stopped with status: $($publication.Status)"
+    $github = New-GitHubRelease -Root $root -PreparedRelease $prepared
+    $outcome = [pscustomobject]@{ Mode='PUBLISHED'; LocalMain=$main.MainSha; LocalProduction=$branch.ProductionSha; RemoteMain=$publication.RemoteMain; RemoteProduction=$publication.RemoteProduction; Tag=$tag.Tag; GitHubRelease=$github.Url; TemporaryWorktree='CLEANUP_PENDING'; Publication=$publication; Checks=@($validation.Checks) }
+    return $outcome
+  } finally {
+    if ($null -ne $snapshot) {
+      Remove-TemporaryReleaseContext -Context $snapshot.Context
+      if ($null -ne $outcome) { $outcome.TemporaryWorktree = 'CLEANUP_COMPLETE' }
+    }
+  }
+}
+
 function Test-ProductionFileSet {
   [CmdletBinding()]
   param([Parameter(Mandatory)] $FileSet, [Parameter(Mandatory)] [hashtable] $Policy)
@@ -653,4 +886,4 @@ function Test-ProductionFileSet {
   return [pscustomobject]@{ Errors = @($errors) }
 }
 
-Export-ModuleMember -Function Assert-ReleaseCondition, Resolve-TradingBotProjectRoot, Invoke-ReleaseGit, Import-ReleasePolicy, Get-MainPolicyReport, Test-SensitiveCandidate, Get-GitTreePaths, Get-GitBlobText, Get-ProductionFileSet, Test-ProductionFileSet, Test-ReleasePreflight, New-TemporaryReleaseContext, New-ProductionSnapshot, Test-ProductionSnapshot, Remove-TemporaryReleaseContext
+Export-ModuleMember -Function Assert-ReleaseCondition, Resolve-TradingBotProjectRoot, Invoke-ReleaseGit, Import-ReleasePolicy, Get-MainPolicyReport, Test-SensitiveCandidate, Get-GitTreePaths, Get-GitBlobText, Get-ProductionFileSet, Test-ProductionFileSet, Test-ReleasePreflight, New-TemporaryReleaseContext, New-ProductionSnapshot, Test-ProductionSnapshot, Remove-TemporaryReleaseContext, Read-ReleaseInputs, New-ReleaseTag, Finalize-ProductionBranch, Publish-ReleaseRefs, New-GitHubRelease, Invoke-TradingBotRelease
