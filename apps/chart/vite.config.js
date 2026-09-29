@@ -11,12 +11,14 @@ import { runIndicatorRangeCalculation } from './server/indicator-range-input.js'
 import { migrateFlatRawFiles } from './server/migrate-raw-resources.js';
 import { createRawResourceStore } from './server/raw-resource-store.js';
 import { sendCandleFile } from './server/candle-file-response.js';
+import { resolveLocalStatePaths } from './server/local-state-paths.js';
 
-// Keep local data, caches, and Python engines anchored to this config file.
+// Anchor source paths to this config and machine state to external storage.
 // Vite may be launched from either the repository root or apps/chart.
 const chartRoot = path.dirname(fileURLToPath(import.meta.url));
 const workspaceRoot = path.resolve(chartRoot, '..', '..');
-const inputDir = path.join(workspaceRoot, 'data', 'raw');
+const localState = resolveLocalStatePaths(workspaceRoot);
+const inputDir = localState.raw;
 const rawStore = createRawResourceStore({ rootDir: inputDir });
 const bridgePath = path.join(workspaceRoot, 'engine', 'bridge', 'trading_pipeline.py');
 const pipelineRoot = path.join(workspaceRoot, 'engine', 'pipeline');
@@ -26,8 +28,11 @@ const aEnginePath = path.join(pipelineRoot, 'a_zone_detector.py');
 const sEnginePath = path.join(pipelineRoot, 's_zone_detector.py');
 const eEnginePath = path.join(pipelineRoot, 'e_zone_detector.py');
 const stopAllEnginePath = path.join(pipelineRoot, 'lifecycle_engine.py');
+const orderEnginePath = path.join(pipelineRoot, 'order_audit_engine.py');
+const directionPolicyPath = path.join(pipelineRoot, 'direction_policy.py');
+const coreUtilsPath = path.join(pipelineRoot, 'core_utils.py');
 const indicatorRangeInputPath = path.join(chartRoot, 'server', 'indicator-range-input.js');
-const calculationSources = [bridgePath, enginePath, blueEnginePath, aEnginePath, sEnginePath, eEnginePath, stopAllEnginePath, indicatorRangeInputPath];
+const calculationSources = [bridgePath, enginePath, blueEnginePath, aEnginePath, sEnginePath, eEnginePath, stopAllEnginePath, orderEnginePath, directionPolicyPath, coreUtilsPath, indicatorRangeInputPath];
 const pythonCommand = process.env.TRADINGBOT_PYTHON || 'python';
 // VMware shared folders reject native watches, while polling can monopolize
 // Vite's event loop. The launcher therefore serves without filesystem watches;
@@ -54,7 +59,7 @@ const inventoryMeta = new Map();
 // Durable, human-navigable cache root.  Calculation results must never rely on
 // Vite's process memory: restarting the dev server must preserve the exact
 // serialized payload and each chart source gets an independent drawing file.
-const primaryCacheRoot = path.join(workspaceRoot, 'runtime', 'cache');
+const primaryCacheRoot = localState.cache;
 const drawingsDir = path.join(primaryCacheRoot, 'drawings');
 const calculationsDir = path.join(primaryCacheRoot, 'indicator-calculations');
 const templatesDir = path.join(primaryCacheRoot, 'indicator-templates');
@@ -453,11 +458,7 @@ function localDataApi() {
         if (layers.includes('drawings')) fs.rmSync(drawingsTarget, { recursive: true, force: true });
         fs.mkdirSync(calculationsDir, { recursive: true });
         fs.mkdirSync(drawingsDir, { recursive: true });
-        if (scope === 'all' && layers.includes('calculations')) {
-          // Keep the tracked placeholder; it is not cached indicator data.
-          fs.writeFileSync(path.join(calculationsDir, '.gitkeep'), '');
-        }
-        const farazSessionPath = path.join(primaryCacheRoot, 'secret', 'faraz-session.dpapi.json');
+        const farazSessionPath = path.join(localState.secret, 'faraz-session.dpapi.json');
         const localSessionCleared = layers.includes('secret') && fs.existsSync(farazSessionPath);
         if (localSessionCleared) fs.unlinkSync(farazSessionPath);
         res.end(JSON.stringify({ filesCleared, drawingsCleared, localSessionCleared, layers, scope, symbol: scope === 'symbol' ? symbol : undefined }));
@@ -579,8 +580,9 @@ function localDataApi() {
           const dataStat = fs.statSync(path.join(inputDir, valid.id));
           const sourceFingerprint = calculationSourceFingerprint();
           const inputScope = from === sourceFromBucket && to === sourceToBucket ? 'complete-source' : 'selected-range';
-          const calculationRequest = { timeframe, chartTimeframe, from, to, direction: body.direction, blueLines: body.blueLines };
-          const cacheKey = JSON.stringify(['engine-content-v3-range-input', sourceFingerprint, valid.chartId || valid.id, valid.id, dataStat.mtimeMs, timeframe, chartTimeframe, from, to, body.direction, body.blueLines, inputScope]);
+          const bridgeOutput = true;
+          const calculationRequest = { timeframe, chartTimeframe, from, to, direction: body.direction, blueLines: body.blueLines, bridgeOutput };
+          const cacheKey = JSON.stringify(['engine-content-v3-range-input', sourceFingerprint, valid.chartId || valid.id, valid.id, dataStat.mtimeMs, timeframe, chartTimeframe, from, to, body.direction, body.blueLines, bridgeOutput, inputScope]);
            const persistedCalculationPath = calculationPath(valid, calculationRequest, cacheKey);
           let output = null;
           let cacheSource = null;
@@ -598,7 +600,7 @@ function localDataApi() {
               const detectorStarted = performance.now();
               publishProgress(requestId, { status: 'started', label: 'Start Python calculation' });
               try {
-                const result = await runDetector(['--data', calculationInputPath, '--timeframe', String(timeframe), '--from-time', String(bounds.fromTime), '--to-time', String(bounds.toTime), '--direction', body.direction, '--blue-lines', body.blueLines ? 'enabled' : 'disabled', '--a-zones', 'enabled', '--s-zones', 'enabled'], (event) => publishProgress(requestId, event));
+                const result = await runDetector(['--data', calculationInputPath, '--timeframe', String(timeframe), '--from-time', String(bounds.fromTime), '--to-time', String(bounds.toTime), '--direction', body.direction, '--blue-lines', body.blueLines ? 'enabled' : 'disabled', '--a-zones', 'enabled', '--s-zones', 'enabled', '--bridge-output'], (event) => publishProgress(requestId, event));
                 detectorMs = performance.now() - detectorStarted;
                 publishProgress(requestId, { status: 'completed', label: 'Start Python calculation', durationMs: detectorMs });
                 return result;
@@ -678,7 +680,7 @@ function infoPage() {
 }
 
 export default defineConfig({
-  plugins: [localDataApi(), createFarazCandleApi(), infoPage()],
+  plugins: [localDataApi(), createFarazCandleApi({ workspaceRoot, localStateRoot: localState.root }), infoPage()],
   server: {
     port: 5173,
     strictPort: false,

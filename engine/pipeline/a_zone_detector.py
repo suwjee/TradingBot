@@ -8,7 +8,7 @@ handled by the S and lifecycle engines rather than rewritten here.
 from __future__ import annotations
 
 from bisect import bisect_left, bisect_right
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import Sequence
@@ -57,6 +57,11 @@ class AZone:
     source_index: int
     source_time: datetime
     price: Decimal
+    # Immutable, presentation-only provenance. These fields never participate
+    # in A acceptance, ordering, visibility, or downstream calculations.
+    formation_route: str | None = field(default=None, kw_only=True)
+    blue_1_stop_event_time: datetime | None = field(default=None, kw_only=True)
+    blue_2_stop_event_time: datetime | None = field(default=None, kw_only=True)
 
 
 class AZoneDetector:
@@ -297,6 +302,7 @@ class AZoneDetector:
                     source_index=source_index,
                     source_time=a_source_time,
                     price=price,
+                    formation_route="double-stop",
                 )
             )
             previous = None
@@ -646,6 +652,17 @@ class AZoneDetector:
                     source_index=source_index,
                     source_time=source_time,
                     price=price,
+                    formation_route="ordinary",
+                    blue_1_stop_event_time=(
+                        previous.stop_event_time
+                        if previous.stop_time == blue_1_stop_time
+                        else None
+                    ),
+                    blue_2_stop_event_time=(
+                        current.stop_event_time
+                        if current.stop_time == blue_2_stop_time
+                        else None
+                    ),
                 )
             )
             cycle_after_index = break_index
@@ -778,5 +795,3 @@ def detect_a_zones(
     chronology: object,
 ) -> list[AZone]:
     return AZoneDetector(direction, reactions, blue_lines, chronology).detect()
-
-

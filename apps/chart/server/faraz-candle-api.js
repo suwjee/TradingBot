@@ -3,6 +3,8 @@ import path from "node:path";
 import { createHash, randomUUID } from "node:crypto";
 import { execFile, execFileSync } from "node:child_process";
 import { chromium } from "playwright-core";
+import { fileURLToPath } from "node:url";
+import { resolveLocalStatePaths } from "./local-state-paths.js";
 import { createRawResourceStore } from "./raw-resource-store.js";
 import { buildRawFilename, formatTehranMetadataTime, parseRawFilename } from "../src/features/raw-file-contract.js";
 
@@ -409,13 +411,14 @@ export function normalizeClearTextSession(value) {
   return { storageState, credentials, historyAuth };
 }
 
-export function createFarazCandleApi({ workspaceRoot = path.resolve(process.cwd(), "..", ".."), launchBrowser, fetchImpl = globalThis.fetch } = {}) {
-  const secretDir = path.join(workspaceRoot, "runtime", "cache", "secret");
+export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..", ".."), localStateRoot, launchBrowser, fetchImpl = globalThis.fetch } = {}) {
+  const localState = resolveLocalStatePaths(workspaceRoot, localStateRoot);
+  const secretDir = localState.secret;
   const secretPath = path.join(secretDir, "faraz-session.dpapi.json");
-  const inputDir = path.join(workspaceRoot, "data", "raw");
-  const outputDir = path.join(workspaceRoot, "data", "raw");
+  const inputDir = localState.raw;
+  const outputDir = localState.raw;
   const rawStore = createRawResourceStore({ rootDir: inputDir });
-  const temporaryOutputDir = path.join(workspaceRoot, "tmp", "faraz-candle-exports");
+  const temporaryOutputDir = path.join(localState.tmp, "faraz-candle-exports");
   const jobs = new Map();
   let browser = null;
   let context = null;

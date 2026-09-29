@@ -9,17 +9,21 @@ geometry.
 from __future__ import annotations
 
 from bisect import bisect_left, bisect_right
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from datetime import datetime
 from decimal import Decimal
 from typing import Sequence
 
 from core_utils import as_decimal, order_identity
+from order_audit_engine import (
+    accepted_audit_entry, order_identity_is_internal, prepare_order_audit,
+)
 from direction_policy import policy_for
 
 
-STOP_ALL_VERSION = "1.15.2"
-STOP_ALL_LAST_MODIFIED = "2026-09-23 09:55:12 +03:30"
+STOP_ALL_VERSION = "1.17.0"
+STOP_ALL_IMPLEMENTATION_VERSION = "1.18.0"
+STOP_ALL_LAST_MODIFIED = "2026-09-27 23:17:17 +03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -57,8 +61,6 @@ class StopAll:
     order_mode: str | None
     order_causes: tuple[str, ...]
     order_parent_stop_cause_time: datetime | None
-    order_reset_leg_reset_time: datetime | None
-    order_reset_leg_break_time: datetime | None
     order_first_index: int | None
     order_first_time: datetime | None
     order_break_index: int | None
@@ -76,6 +78,18 @@ class StopAll:
     stop_index: int | None
     stop_time: datetime | None
     stop_event_time: datetime | None
+    # Immutable presentation provenance for the exact constructor donor. It is
+    # intentionally separate from stopped_behavior_* (the lifecycle gate).
+    # These fields never affect StopAll formation, priority, visibility, or
+    # Order selection.
+    donor_type: str | None = field(default=None, kw_only=True)
+    donor_source_index: int | None = field(default=None, kw_only=True)
+    donor_source_time: datetime | None = field(default=None, kw_only=True)
+    donor_color: str | None = field(default=None, kw_only=True)
+    donor_number: int | None = field(default=None, kw_only=True)
+    donor_price: Decimal | None = field(default=None, kw_only=True)
+    donor_stop_time: datetime | None = field(default=None, kw_only=True)
+    donor_stop_event_time: datetime | None = field(default=None, kw_only=True)
 
 
 class StopAllDetector:
@@ -177,12 +191,6 @@ class StopAllDetector:
             order_parent_stop_cause_time=getattr(
                 item, "order_parent_stop_cause_time", None
             ),
-            order_reset_leg_reset_time=getattr(
-                item, "order_reset_leg_reset_time", None
-            ),
-            order_reset_leg_break_time=getattr(
-                item, "order_reset_leg_break_time", None
-            ),
             order_first_index=int(item.order_first_index),
             order_first_time=item.order_first_time,
             order_break_index=int(item.order_break_index),
@@ -200,6 +208,12 @@ class StopAllDetector:
             stop_index=None,
             stop_time=None,
             stop_event_time=None,
+            donor_type="E",
+            donor_source_index=int(item.source_index),
+            donor_source_time=item.source_time,
+            donor_color=str(item.family),
+            donor_number=int(item.number),
+            donor_price=as_decimal(item.price),
         )
 
     @staticmethod
@@ -258,8 +272,6 @@ class StopAllDetector:
             order_parent_stop_cause_time=getattr(
                 item, "a_stop_event_time", None
             ),
-            order_reset_leg_reset_time=getattr(item, "reset_time", None),
-            order_reset_leg_break_time=None,
             order_first_index=self._optional_int(
                 getattr(item, "order_first_index", None)
             ),
@@ -301,6 +313,12 @@ class StopAllDetector:
             stop_index=None,
             stop_time=None,
             stop_event_time=None,
+            donor_type="S",
+            donor_source_index=int(item.source_index),
+            donor_source_time=item.source_time,
+            donor_color=str(item.color),
+            donor_number=None,
+            donor_price=as_decimal(item.price),
         )
 
     @staticmethod
@@ -594,193 +612,6 @@ def detect_stopalls(
 # Cross-stage lifecycle ownership
 # ---------------------------------------------------------------------------
 
-def prepare_order_audit(
-    detector,
-    start_index: int,
-    end_index: int,
-    s_detector=None,
-    accepted_a_sources: set[datetime] | None = None,
-    required_identities: set[tuple[int, int]] | None = None,
-):
-    """Resolve calculation-valid Order Audit identities before serialization.
-
-    Multiple causes may own the same physical ``(FirstIndex, BreakIndex)``
-    Order.  This function keeps one identity, merges all accepted provenance,
-    applies calculation eligibility, and resolves the canonical stop crossing.
-    It intentionally returns native datetimes/prices; JSON formatting remains
-    the pipeline serializer's responsibility.
-    """
-    combined: list[tuple[dict[str, object], list[dict[str, object]]]] = []
-    required_identities = set(required_identities or set())
-
-    if s_detector is not None:
-        for entry in s_detector.order_audit.values():
-            a_causes = entry.get("a_causes") or [(
-                entry["a_source_time"], entry["a_stop_event_time"]
-            )]
-            if accepted_a_sources is not None:
-                a_causes = [
-                    cause for cause in a_causes
-                    if cause[0] in accepted_a_sources
-                ]
-            if not a_causes:
-                continue
-            combined.append((entry, [
-                {
-                    "kind": "parent-stop",
-                    "parentType": "A",
-                    "parentFamily": None,
-                    "eventTime": stop_time,
-                    "parentSourceTime": source_time,
-                }
-                for source_time, stop_time in a_causes
-            ]))
-
-    for entry in detector.order_audit.values():
-        causes: list[dict[str, object]] = []
-        for cause in sorted(entry["causes"], key=str):
-            if cause[0] == "parent-stop":
-                causes.append({
-                    "kind": cause[0],
-                    "parentType": cause[1],
-                    "parentFamily": cause[2],
-                    "eventTime": cause[3],
-                    "parentSourceTime": cause[4],
-                })
-            else:
-                causes.append({
-                    "kind": cause[0],
-                    "resetTime": cause[1],
-                    "boundaryBreakTime": cause[2],
-                })
-        combined.append((entry, causes))
-
-    merged: dict[tuple[int, int], dict[str, object]] = {}
-    output: list[dict[str, object]] = []
-    for entry, supplied_causes in combined:
-        reaction = entry["reaction"]
-        first_index = int(getattr(reaction, "first_idx"))
-        identity = order_identity(first_index, getattr(reaction, "break_idx"))
-        if (
-            not start_index <= first_index <= end_index
-            and identity not in required_identities
-        ):
-            continue
-        existing = merged.get(identity)
-        if existing is not None:
-            existing_causes = existing["causes"]
-            existing_causes.extend(
-                cause for cause in supplied_causes
-                if cause not in existing_causes
-            )
-            continue
-        crossed = entry.get("stop_cross")
-        if "stop_cross" not in entry:
-            crossed = detector.cross_order(
-                entry["confirmation_time"], entry["stop_level"]
-            )
-        prepared = {
-            "entry": entry,
-            "reaction": reaction,
-            "causes": list(supplied_causes),
-            "crossed": crossed,
-        }
-        merged[identity] = prepared
-        output.append(prepared)
-
-    # One exact parent-stop event can open only one physical Order.  Keep the
-    # earliest confirmed Order that consumes that parent-stop provenance; a
-    # later synthetic/direct reconstruction may still survive if it has an
-    # independent cause (for example reset-leg), but it cannot spend the same
-    # parent stop a second time.
-    parent_owner: dict[tuple[object, object, object, object], dict[str, object]] = {}
-    parent_rank: dict[tuple[object, object, object, object], tuple[object, int, int]] = {}
-    for item in output:
-        reaction = item["reaction"]
-        rank = (
-            item["entry"]["confirmation_time"],
-            int(getattr(reaction, "first_idx")),
-            int(getattr(reaction, "break_idx")),
-        )
-        for cause in item["causes"]:
-            if cause.get("kind") != "parent-stop":
-                continue
-            key = (
-                cause.get("parentType"),
-                cause.get("parentFamily"),
-                cause.get("eventTime"),
-                cause.get("parentSourceTime"),
-            )
-            previous = parent_rank.get(key)
-            if previous is None or rank < previous:
-                parent_rank[key] = rank
-                parent_owner[key] = item
-
-    deduped_output: list[dict[str, object]] = []
-    for item in output:
-        accepted_causes: list[dict[str, object]] = []
-        for cause in item["causes"]:
-            if cause.get("kind") != "parent-stop":
-                accepted_causes.append(cause)
-                continue
-            key = (
-                cause.get("parentType"),
-                cause.get("parentFamily"),
-                cause.get("eventTime"),
-                cause.get("parentSourceTime"),
-            )
-            if parent_owner.get(key) is item:
-                accepted_causes.append(cause)
-        if accepted_causes:
-            item["causes"] = accepted_causes
-            deduped_output.append(item)
-    output = deduped_output
-
-    # Internal Reaction geometry remains calculation-valid for direct
-    # parent-stop and carried-live Order ownership.  The explicit prohibition
-    # is scoped to Reset-leg Order_B: if every accepted cause of this physical
-    # Order is reset-leg and the owning Reaction is behavior-internal, reject
-    # it.  Cause merging happens first so a valid parent-stop cause cannot be
-    # erased by an internal reset-leg provenance on the same identity.
-    return [
-        item for item in output
-        if not (
-            str(getattr(item["reaction"], "mode", "")).upper() == "B"
-            and bool(getattr(item["reaction"], "behavior_internal", False))
-            and item["causes"]
-            and all(cause.get("kind") == "reset-leg" for cause in item["causes"])
-        )
-    ]
-
-
-def accepted_audit_entry(
-    entry: dict[str, object], accepted_sources: set
-) -> dict[str, object] | None:
-    """Return an E-facing A audit entry for one accepted A provenance.
-
-    A physical order may be opened by more than one stopped A.  E still
-    consumes one identity-keyed entry, so select the first accepted cause
-    while retaining the complete cause list for presentation serialization.
-    """
-    causes = entry.get("a_causes") or [
-        (entry["a_source_time"], entry["a_stop_event_time"])
-    ]
-    selected = next(
-        ((source_time, stop_time) for source_time, stop_time in causes
-         if source_time in accepted_sources),
-        None,
-    )
-    if selected is None:
-        return None
-    if (
-        selected[0] == entry.get("a_source_time")
-        and selected[1] == entry.get("a_stop_event_time")
-    ):
-        return entry
-    adjusted = dict(entry)
-    adjusted["a_source_time"] = selected[0]
-    adjusted["a_stop_event_time"] = selected[1]
-    return adjusted
 
 def resolve_order_context(
     order_audit: dict,
@@ -902,7 +733,6 @@ def dominant_module(modules: Sequence[object]) -> object:
             int(getattr(item, "source_index", -1)),
         ),
     )
-
 
 
 def split_a_zones_by_dominant_stops(
@@ -1157,6 +987,20 @@ def consumed_s_evidence_after_larger_stop(
             int(getattr(item, "source_index", -1)),
         ),
     )
+    # One suppressed S may be downstream of several historical E objects.
+    # Resolve the actual stopped owner at the A leg head, not the most recently
+    # *formed* E. A later-formed, smaller E cannot renumber a transition
+    # already owned by a larger E stopped in the latest stop-main-candle.
+    # Cache exact stop events without changing their lower-timeframe semantics.
+    stopped_e = []
+    for owner in ordered_e:
+        owner_stop = module_stop_event(owner, stop_event_finder)
+        if owner_stop is None:
+            continue
+        stop_index = bisect_right(candle_times, owner_stop) - 1
+        if 0 <= stop_index < len(candles):
+            stopped_e.append((owner, owner_stop, stop_index))
+
     earliest_by_owner = {}
     for candidate in sorted(
         s_candidates,
@@ -1169,29 +1013,80 @@ def consumed_s_evidence_after_larger_stop(
         if identity in accepted:
             continue
         a_source_time = getattr(candidate, "a_source_time")
-        prior = [item for item in ordered_e if getattr(item, "source_time") < a_source_time]
-        if not prior:
+        source_index = int(getattr(candidate, "source_index"))
+        if not 0 <= source_index < len(candles):
             continue
-        owner = max(
-            prior,
-            key=lambda item: (
-                getattr(item, "source_time"),
-                int(getattr(item, "source_index", -1)),
+        source_close = Decimal(str(getattr(candles[source_index], "close")))
+        candidate_priority = module_priority(candidate)
+        eligible = []
+        for owner, owner_stop, stop_index in stopped_e:
+            if (
+                getattr(owner, "source_time") >= a_source_time
+                or owner_stop >= a_source_time
+                or candidate_priority >= module_priority(owner)
+            ):
+                continue
+            stop_close = Decimal(str(getattr(candles[stop_index], "close")))
+            if not strictly_beyond_boundary(source_close, stop_close, direction):
+                continue
+            eligible.append((owner, owner_stop, stop_index))
+        if not eligible:
+            continue
+        # The latest accepted E marks the current lifecycle; its formation is
+        # not a stop prerequisite for a still-dominant overlapping E.  In
+        # particular, a newer *smaller* E cannot prevent a stopped larger E
+        # from advancing its own family/number.  An older owner may qualify
+        # only if it is strictly higher-ranked and survived beyond the newer
+        # E's accepted decision.  Earlier historical stops cannot be revived.
+        latest_source = next(
+            (item for item in reversed(ordered_e)
+             if getattr(item, "source_time") < a_source_time),
+            None,
+        )
+        if latest_source is None:
+            continue
+        latest_rank = (
+            module_priority(latest_source),
+            int(getattr(latest_source, "number", 0)),
+        )
+        latest_qualified = next(
+            ((owner, owner_stop, stop_index) for owner, owner_stop, stop_index in eligible
+             if owner is latest_source),
+            None,
+        )
+        latest_decision = getattr(
+            latest_source, "decision_event_time", latest_source.source_time
+        )
+        eligible = [
+            entry for entry in eligible
+            if entry[0] is latest_source
+            or (
+                (
+                    module_priority(entry[0]),
+                    int(getattr(entry[0], "number", 0)),
+                ) > latest_rank
+                and entry[1] > latest_decision
+                and (
+                    latest_qualified is None
+                    or entry[2] >= latest_qualified[2]
+                )
+            )
+        ]
+        if not eligible:
+            continue
+        # Lifecycle ownership first follows the *latest stopped main candle*.
+        # Within that boundary use the shared S/E priority and the accepted E
+        # number. Neither family priority nor numbering is direction-mirrored.
+        owner, _, _ = max(
+            eligible,
+            key=lambda entry: (
+                entry[2],
+                module_priority(entry[0]),
+                int(getattr(entry[0], "number", 0)),
+                getattr(entry[0], "source_time"),
+                int(getattr(entry[0], "source_index", -1)),
             ),
         )
-        if module_priority(candidate) >= module_priority(owner):
-            continue
-        owner_stop = module_stop_event(owner, stop_event_finder)
-        if owner_stop is None or owner_stop >= a_source_time:
-            continue
-        stop_index = bisect_right(candle_times, owner_stop) - 1
-        source_index = int(getattr(candidate, "source_index"))
-        if not (0 <= stop_index < len(candles) and 0 <= source_index < len(candles)):
-            continue
-        stop_close = Decimal(str(getattr(candles[stop_index], "close")))
-        source_close = Decimal(str(getattr(candles[source_index], "close")))
-        if not strictly_beyond_boundary(source_close, stop_close, direction):
-            continue
         owner_id = module_identity(owner)
         current = earliest_by_owner.get(owner_id)
         if current is None or (
@@ -1520,15 +1415,6 @@ def reaction_number_is_internal(items, number, identities):
     ) in identities
 
 
-def order_identity_is_internal(item, internal_identities):
-    """Return whether a behavior's physical Order Reaction is internal."""
-    first_index = getattr(item, "order_first_index", None)
-    break_index = getattr(item, "order_break_index", None)
-    if first_index is None or break_index is None:
-        return False
-    return order_identity(first_index, break_index) in internal_identities
-
-
 def point_is_inside_healthy_reaction(source_time, price, reactions):
     """Return True only for a strict protected Reaction interior.
 
@@ -1552,26 +1438,6 @@ def point_is_inside_healthy_reaction(source_time, price, reactions):
     return False
 
 
-def forbidden_internal_order_b(item, internal_identities):
-    """Reject only an internal Reset-leg *Mode-B* Order owner.
-
-    The internal-Reaction prohibition is scoped to Reset-leg Order_B.  A
-    Reset-leg provenance can legitimately carry Mode-A geometry after a hard
-    lifecycle restart; treating every reset-leg cause as Order_B incorrectly
-    deletes valid E/StopAll output. Direct parent-stop and carried-live Orders
-    keep their native lifecycle rules as before.
-    """
-    if str(getattr(item, "order_mode", "")).upper() != "B":
-        return False
-    if not order_identity_is_internal(item, internal_identities):
-        return False
-    causes = {str(value) for value in getattr(item, "order_causes", ())}
-    return (
-        "reset-leg" in causes
-        or getattr(item, "order_reset_leg_reset_time", None) is not None
-    )
-
-
 def filter_internal_behavior_outputs(
     a_zones,
     s_zones,
@@ -1581,26 +1447,9 @@ def filter_internal_behavior_outputs(
     opposite_internal_identities,
     all_behavior_reactions,
 ):
-    """Apply only the scoped Internal-Reaction Order_B prohibition.
-
-    Internal Reaction geometry and its eligible evidence remain calculation
-    valid.  A/S/E/StopAll are not hidden merely because their source point lies
-    inside a healthy Reaction interior, and an S is not rejected merely because
-    a referenced Reset Reaction is internal.  The explicit prohibition that
-    remains is an internal Reset-leg Mode-B Order_B owner for E/StopAll.
-    """
-    del opposite_reactions, all_behavior_reactions
-    visible_a = list(a_zones)
-    visible_s = list(s_zones)
-    visible_e = [
-        item for item in e_zones
-        if not forbidden_internal_order_b(item, opposite_internal_identities)
-    ]
-    visible_stopalls = [
-        item for item in stopalls
-        if not forbidden_internal_order_b(item, opposite_internal_identities)
-    ]
-    return visible_a, visible_s, visible_e, visible_stopalls
+    """Return calculation-valid outputs without obsolete secondary-Order filtering."""
+    del opposite_reactions, opposite_internal_identities, all_behavior_reactions
+    return list(a_zones), list(s_zones), list(e_zones), list(stopalls)
 
 def finalize_behavior_visibility(
     a_zones,

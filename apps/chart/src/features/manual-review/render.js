@@ -26,7 +26,64 @@ function labelFor(group, row) {
   if (group === "stopAlls") return `StopAll${row.number ?? "—"}`;
   return collections[group]?.[0] || group;
 }
-export function reviewCategory(group, row, direction) {
+function bridgeProjection(groups, group, index) {
+  const projected = groups?.bridgeOutput?.[group]?.[index];
+  return projected && typeof projected === "object" && !Array.isArray(projected) ? projected : null;
+}
+const filterToken = (value) => String(value).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const bridgeText = (value) => typeof value === "string" && value.trim() ? value.trim() : null;
+const bridgeColorKey = (group, value) => `${group}:${String(value).toLowerCase()}`;
+const bridgeChildCategory = (baseKey, family, label, colorKey = baseKey) => ({
+  key: `${baseKey}:${filterToken(label)}`, family, label, colorKey,
+});
+function orderAuditFormation(projected) {
+  const explicit = bridgeText(projected.formation);
+  if (explicit) return explicit;
+  const kinds = new Set(Array.isArray(projected.causes)
+    ? projected.causes.map((cause) => cause?.kind)
+    : []);
+  const formations = [];
+  if (kinds.has("parent-stop")) formations.push("Order_A");
+  if (kinds.has("reset-leg")) formations.push("Order_B");
+  return formations.length ? formations.join(" | ") : null;
+}
+
+// This is deliberately a display-only lookup: the finalized legacy row and
+// its same-position bridge projection were constructed together by the bridge.
+// It never establishes a behavior or Order identity from that position.
+function bridgeCategory(group, row, direction, projected) {
+  if (!projected) return null;
+  if (group === "reactions") {
+    const mode = projected.mode === "Leg Start" ? "Reset leg" : bridgeText(projected.mode);
+    return mode ? bridgeChildCategory(`${group}:${direction}`, "Reaction", mode, `${group}:${direction}`) : null;
+  }
+  if (group === "sZones") {
+    const color = bridgeText(projected.color)?.toLowerCase();
+    if (color !== "blue" && color !== "red") return null;
+    const formation = color === "red" ? "Simple" : bridgeText(projected.formation);
+    return formation ? bridgeChildCategory(bridgeColorKey(group, color), `S ${color[0].toUpperCase()}${color.slice(1)}`, formation, bridgeColorKey(group, color)) : null;
+  }
+  if (group === "eZones") {
+    const color = bridgeText(projected.color)?.toLowerCase();
+    const number = Number.isInteger(projected.number) ? projected.number : null;
+    if ((color !== "blue" && color !== "red") || number == null) return null;
+    return bridgeChildCategory(bridgeColorKey(group, color), `E ${color[0].toUpperCase()}${color.slice(1)}`, `E${number}`, bridgeColorKey(group, color));
+  }
+  if (["blueLines", "aZones", "stopAlls"].includes(group)) {
+    const formation = bridgeText(projected.formation);
+    const family = collections[group]?.[0] || group;
+    return formation ? bridgeChildCategory(group, family, formation) : null;
+  }
+  if (group === "orderAudit") {
+    const formation = orderAuditFormation(projected);
+    return formation ? bridgeChildCategory(group, "Order Audit", formation) : null;
+  }
+  return null;
+}
+
+export function reviewCategory(group, row, direction, projected = null) {
+  const category = bridgeCategory(group, row, direction, projected);
+  if (category) return category;
   if (group === "reactions") return { key: `${group}:${direction}`, family: "Reaction", label: `${direction === "bullish" ? "Bullish" : "Bearish"} Reaction` };
   if (group === "sZones" || group === "eZones") {
     const family = (group === "sZones" ? row?.color : row?.family) || "unknown";
@@ -47,7 +104,7 @@ const colorSpec = {
 const objectKinds = { reactions: "reaction", blueLines: "blue", aZones: "a", sZones: "s", eZones: "e", stopAlls: "stopall" };
 const safeColor = (value) => typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value);
 export function reviewColor(record, snapshot = {}, objects = new Map((snapshot.indicatorObjects || []).map((item) => [item.id, item]))) {
-  const [setting, fallback] = colorSpec[record.category.key] || ["", "#475569"];
+  const [setting, fallback] = colorSpec[record.category.colorKey || record.category.key] || ["", "#475569"];
   const object = objects.get(`indicator:${record.direction}:${objectKinds[record.group]}:${record.index}`);
   const chosen = object?.customized ? object.color : snapshot.settings?.[setting];
   return safeColor(chosen) ? chosen : fallback;
@@ -89,7 +146,7 @@ export function reviewRecords(payload) {
       rows.forEach((row, index) => {
         const epoch = row?.[collections[group]?.[1] || "sourceTime"];
         records.push({ id: `${direction}:${group}:${index}`, direction, group, row, index, groups,
-          category: reviewCategory(group, row, direction),
+          category: reviewCategory(group, row, direction, bridgeProjection(groups, group, index)),
           epoch, time: reviewTime(epoch), label: labelFor(group, row || {}) });
       });
     }
@@ -189,7 +246,9 @@ function orderObject(row) {
 // never mutated and remains authoritative for chart rendering/calculation.
 export function manualInfoObject(record) {
   if (record?.reportDetails && typeof record.reportDetails === "object") return record.reportDetails;
-  const { group, row = {}, direction, groups = {} } = record;
+  const { group, index, row = {}, direction, groups = {} } = record;
+  const projected = bridgeProjection(groups, group, index);
+  if (projected) return projected;
   const base = { type: collections[group]?.[0] || group, direction: readableDirection(direction) };
   if (group === "reactions") return removeUndefined({
     ...base,
@@ -607,7 +666,7 @@ function reportEventCard(record) {
   const { id, direction, time, category } = record;
   const safeTime = time || "Undated";
   const label = reportDisplayLabel(record);
-  const color = reportCategoryColor(category.key, category.family);
+  const color = reportCategoryColor(category.colorKey || category.key, category.family);
   return `<article class="event" style="--event-color:${escapeHtml(color)}" data-id="${escapeHtml(id)}" data-filter="${escapeHtml(category.key)}" data-filter-family="${escapeHtml(category.family)}" data-report-family="${escapeHtml(category.family)}" data-time="${escapeHtml(safeTime)}" data-time-group="${escapeHtml(reviewTimeGroup(safeTime))}" data-label="${escapeHtml(`${direction} | ${label}`)}">
     <div class="state-control" role="group" aria-label="Review status"><label class="true-choice" title="Mark as true"><input class="state" type="radio" name="${escapeHtml(id)}" value="true" aria-label="Mark ${escapeHtml(`${direction} ${label} ${safeTime}`)} as true"><span class="sr-only">True</span></label><label class="false-choice" title="Mark as false"><input class="state" type="radio" name="${escapeHtml(id)}" value="false" aria-label="Mark ${escapeHtml(`${direction} ${label} ${safeTime}`)} as false"><span class="sr-only">False</span></label></div>
     <button class="event-time copy-line" type="button" title="Copy timestamp and review status"><time datetime="${safeTime === "Undated" ? "" : safeTime.replace(" ", "T")}">${escapeHtml(safeTime)}</time></button>
@@ -624,7 +683,7 @@ function reportFilterMarkup(families) {
   return ordered.map(([family, group]) => {
     const children = [...group.children.values()].sort((a, b) => a.label.localeCompare(b.label));
     const color = reportFamilyColor[family] || "var(--ui-text-secondary)";
-    return `<details class="filter-group" data-filter-group="${escapeHtml(family)}" style="--family-color:${color}"><summary><input class="filter-group-checkbox" type="checkbox" data-filter-parent="${escapeHtml(family)}" aria-label="Select all ${escapeHtml(family)}" checked><span class="filter-group-title"><i class="filter-dot" style="background:${color}" aria-hidden="true"></i><strong>${escapeHtml(family)}</strong></span><span class="filter-group-count">${group.count.toLocaleString()}</span></summary><div class="filter-options"><label class="filter-option filter-parent"><input type="checkbox" data-filter-parent="${escapeHtml(family)}" checked><span>All</span><b>${group.count.toLocaleString()}</b></label>${children.map((child) => { const childColor = reportCategoryColor(child.key, family); const childLabel = reportFilterChildLabel(family, child.label); return `<label class="filter-option" style="--option-color:${childColor}"><input class="category-filter" type="checkbox" data-filter-family="${escapeHtml(family)}" data-filter-key="${escapeHtml(child.key)}" value="${escapeHtml(child.key)}" checked><span>${escapeHtml(childLabel)}</span><b>${child.count.toLocaleString()}</b></label>`; }).join("")}</div></details>`;
+    return `<details class="filter-group" data-filter-group="${escapeHtml(family)}" style="--family-color:${color}"><summary><input class="filter-group-checkbox" type="checkbox" data-filter-parent="${escapeHtml(family)}" aria-label="Select all ${escapeHtml(family)}" checked><span class="filter-group-title"><i class="filter-dot" style="background:${color}" aria-hidden="true"></i><strong>${escapeHtml(family)}</strong></span><span class="filter-group-count">${group.count.toLocaleString()}</span></summary><div class="filter-options"><label class="filter-option filter-parent"><input type="checkbox" data-filter-parent="${escapeHtml(family)}" checked><span>All</span><b>${group.count.toLocaleString()}</b></label>${children.map((child) => { const childColor = reportCategoryColor(child.colorKey || child.key, family); const childLabel = reportFilterChildLabel(family, child.label); return `<label class="filter-option" style="--option-color:${childColor}"><input class="category-filter" type="checkbox" data-filter-family="${escapeHtml(family)}" data-filter-key="${escapeHtml(child.key)}" value="${escapeHtml(child.key)}" checked><span>${escapeHtml(childLabel)}</span><b>${child.count.toLocaleString()}</b></label>`; }).join("")}</div></details>`;
   }).join("");
 }
 
@@ -871,7 +930,7 @@ export async function buildReviewBody(payload, snapshot = {}, cryptoApi = global
     if (!families.has(category.family)) families.set(category.family, { count: 0, children: new Map() });
     const family = families.get(category.family);
     family.count++;
-    if (!family.children.has(category.key)) family.children.set(category.key, { key: category.key, label: category.label, count: 0 });
+    if (!family.children.has(category.key)) family.children.set(category.key, { key: category.key, colorKey: category.colorKey || category.key, label: category.label, count: 0 });
     family.children.get(category.key).count++;
     const day = reviewTimeGroup(record.time);
     record.timeGroup = day;

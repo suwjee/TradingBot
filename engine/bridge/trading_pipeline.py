@@ -19,6 +19,7 @@ from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
 from time import perf_counter
+from typing import Sequence
 from zoneinfo import ZoneInfo
 
 # This bridge lives in ``engine/bridge`` while the calculation modules live in
@@ -34,12 +35,14 @@ if _pipeline_dir_text not in sys.path:
     sys.path.insert(0, _pipeline_dir_text)
 
 from core_utils import as_decimal, order_identity
+from order_audit_engine import order_b_leg_identity
 
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.4.1"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-09-21 08:40:00 +03:30"
+TRADING_PIPELINE_VERSION = "1.7.0"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.8.0"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-09-27 23:17:17 +03:30"
 
 TEHRAN = ZoneInfo("Asia/Tehran")
 
@@ -213,8 +216,44 @@ def _index_selected(index: object, start_index: int | None, end_index: int | Non
     )
 
 
-def serialize(result, start_index=None, end_index=None, reaction_transform=None):
+def select_reaction_serialization_items(
+    result, start_index=None, end_index=None, reaction_transform=None,
+):
+    """Select the exact legacy Reaction/Reset sequence once for both views.
 
+    This is a presentation selection only.  It retains the legacy filtering
+    and ordering verbatim while exposing the same finalized source objects to
+    the optional Bridge Output projector.
+    """
+    resets = [
+        item
+        for item in result.resets
+        if _index_selected(item.index, start_index, end_index)
+    ]
+    reactions = []
+    for item in result.reactions:
+        if not _index_selected(item.first_idx, start_index, end_index):
+            continue
+        public_item = reaction_transform(item) if reaction_transform is not None else item
+        reactions.append((item, public_item))
+    return reactions, resets
+
+
+def serialize(
+    result,
+    start_index=None,
+    end_index=None,
+    reaction_transform=None,
+    selected_items=None,
+):
+    """Serialize legacy Reaction/Reset output without changing its contract."""
+    selected_reactions, selected_resets = (
+        selected_items
+        if selected_items is not None
+        else select_reaction_serialization_items(
+            result, start_index, end_index, reaction_transform
+        )
+    )
     resets = [{
         "index": item.index,
         "time": display_epoch(item.display_time),
@@ -225,12 +264,9 @@ def serialize(result, start_index=None, end_index=None, reaction_transform=None)
         ),
         "brokenLevel": str(item.broken_level),
         "fromFirstIndex": item.from_first_idx,
-    } for item in result.resets if _index_selected(item.index, start_index, end_index)]
+    } for item in selected_resets]
     reactions = []
-    for item in result.reactions:
-        if not _index_selected(item.first_idx, start_index, end_index):
-            continue
-        public_item = reaction_transform(item) if reaction_transform is not None else item
+    for _item, public_item in selected_reactions:
         reactions.append({
             "firstIndex": public_item.first_idx,
             "firstTime": display_epoch(public_item.first_time),
@@ -379,14 +415,6 @@ def serialize_e_zones(items):
             epoch(item.order_parent_stop_cause_time)
             if item.order_parent_stop_cause_time is not None else None
         ),
-        "orderResetLegResetTime": (
-            epoch(item.order_reset_leg_reset_time)
-            if item.order_reset_leg_reset_time is not None else None
-        ),
-        "orderResetLegBreakTime": (
-            epoch(item.order_reset_leg_break_time)
-            if item.order_reset_leg_break_time is not None else None
-        ),
         "orderFirstIndex": item.order_first_index,
         "orderFirstTime": epoch(item.order_first_time),
         "orderBreakIndex": item.order_break_index,
@@ -435,14 +463,6 @@ def serialize_stopalls(items):
             epoch(item.order_parent_stop_cause_time)
             if item.order_parent_stop_cause_time is not None else None
         ),
-        "orderResetLegResetTime": (
-            epoch(item.order_reset_leg_reset_time)
-            if item.order_reset_leg_reset_time is not None else None
-        ),
-        "orderResetLegBreakTime": (
-            epoch(item.order_reset_leg_break_time)
-            if item.order_reset_leg_break_time is not None else None
-        ),
         "orderFirstIndex": item.order_first_index,
         "orderFirstTime": (
             epoch(item.order_first_time) if item.order_first_time is not None else None
@@ -483,6 +503,954 @@ def serialize_stopalls(items):
         "stopTime": epoch(item.stop_time) if item.stop_time else None,
         "stopEventTime": epoch(item.stop_event_time) if item.stop_event_time else None,
     } for item in items]
+
+
+def bridge_datetime(value: object | None) -> str | None:
+    """Format a native Tehran-local timestamp for the YAML-facing view."""
+    if value is None:
+        return None
+    if isinstance(value, str):
+        return value
+    if not isinstance(value, datetime):
+        return None
+    return _DTFMT.format(
+        value.year, value.month, value.day,
+        value.hour, value.minute, value.second,
+    )
+
+
+def bridge_direction(direction: str) -> str:
+    return str(direction).title()
+
+
+def bridge_mode(mode: object) -> str | None:
+    return {"A": "Leg Start", "B": "Normal"}.get(str(mode))
+
+
+def bridge_color(value: object | None) -> str | None:
+    if value in (None, ""):
+        return None
+    return str(value).title()
+
+
+def _bridge_horizon(market: MarketContext) -> datetime:
+    return (
+        getattr(market.candles[market.end_index], "timestamp")
+        + market.chronology.timeframe
+    )
+
+
+def _bridge_in_horizon(market: MarketContext, value: datetime | None) -> bool:
+    return value is not None and value < _bridge_horizon(market)
+
+
+def _bridge_proven_strict_event(
+    market: MarketContext,
+    direction: str,
+    level: object | None,
+    event_time: datetime | None,
+) -> datetime | None:
+    """Validate a recorded event without selecting a new trading event.
+
+    A source helper has already selected ``event_time``.  This presentation
+    guard only verifies that the exact recorded lower-timeframe candle satisfies
+    that helper's existing directional strict-cross condition.  It never scans
+    for a substitute event, so a main-candle fallback remains ``null`` here.
+    """
+    if (
+        event_time is None
+        or level is None
+        or not _bridge_in_horizon(market, event_time)
+    ):
+        return None
+    normalized = as_decimal(level)
+    second_times = getattr(market.chronology, "second_times", None)
+    if second_times is None:
+        second_times = [getattr(item, "timestamp") for item in market.seconds]
+    position = bisect_left(second_times, event_time)
+    while (
+        position < len(market.seconds)
+        and getattr(market.seconds[position], "timestamp") == event_time
+    ):
+        item = market.seconds[position]
+        crossed = (
+            as_decimal(getattr(item, "high")) > normalized
+            if direction == "bearish"
+            else as_decimal(getattr(item, "low")) < normalized
+        )
+        if crossed:
+            return event_time
+        position += 1
+    return None
+
+
+def _bridge_stop_view(
+    market: MarketContext,
+    direction: str,
+    price: object | None,
+    stop_time: datetime | None,
+    stop_event_time: datetime | None,
+) -> dict[str, object]:
+    """Format a known behavior/order stop while respecting the view horizon."""
+    if stop_time is None or not _bridge_in_horizon(market, stop_time):
+        return {"time": None, "eventTime": None}
+    return {
+        "time": bridge_datetime(stop_time),
+        "eventTime": bridge_datetime(
+            _bridge_proven_strict_event(
+                market, direction, price, stop_event_time
+            )
+        ),
+    }
+
+
+def _bridge_reaction_confirmation(
+    market: MarketContext,
+    direction: str,
+    reaction: object,
+    *,
+    use_intrabar_start: bool = True,
+) -> datetime | None:
+    """Return only an already-recorded, lower-timeframe-proven confirmation."""
+    try:
+        event_time = market.chronology.reaction_confirmation(
+            direction, reaction, use_intrabar_start=use_intrabar_start
+        )
+        level = getattr(
+            reaction, "box_top" if direction == "bullish" else "box_bottom"
+        )
+    except (AttributeError, IndexError, TypeError, ValueError):
+        return None
+    # Reaction confirmation crosses the *opposite* side from the directional
+    # Stop predicate validated by this helper. Keep the recorded event immutable.
+    return _bridge_proven_strict_event(
+        market, market.chronology.opposite_direction(direction), level, event_time
+    )
+
+
+def _bridge_order_identity(item: object) -> tuple[int, int] | None:
+    first_index = getattr(item, "order_first_index", None)
+    break_index = getattr(item, "order_break_index", None)
+    if first_index is None or break_index is None:
+        return None
+    return order_identity(int(first_index), int(break_index))
+
+
+class BridgeProjection:
+    """Read-only formatter for the optional, finalized Bridge Output mapping.
+
+    The constructor receives only final selection/audit facts.  It owns newly
+    allocated dictionaries and indexes and does not mutate detector data,
+    lifecycle state, or legacy serializer output.
+    """
+
+    def __init__(
+        self,
+        *,
+        direction: str,
+        market: MarketContext,
+        prepared_order_audit: list[object],
+        order_direction: str,
+    ) -> None:
+        self.direction = direction
+        self.market = market
+        self.order_direction = order_direction
+        self.audit_by_identity: dict[tuple[int, int], object] = {
+            order_identity(
+                int(getattr(item["reaction"], "first_idx")),
+                int(getattr(item["reaction"], "break_idx")),
+            ): item
+            for item in prepared_order_audit
+        }
+
+    def physical_order(self, prepared: object | None) -> dict[str, object] | None:
+        """Project one final accepted physical Order by canonical identity."""
+        if prepared is None:
+            return None
+        entry = prepared["entry"]
+        reaction = prepared["reaction"]
+        first_index = int(getattr(reaction, "first_idx"))
+        break_index = int(getattr(reaction, "break_idx"))
+        if not (
+            0 <= first_index < len(self.market.candles)
+            and 0 <= break_index < len(self.market.candles)
+        ):
+            return None
+        crossed = prepared.get("crossed")
+        stop_time = crossed[1] if crossed is not None else None
+        stop_event_time = crossed[2] if crossed is not None else None
+        confirmation = _bridge_reaction_confirmation(
+            self.market,
+            self.order_direction,
+            reaction,
+        )
+        return {
+            "firstCandle": {
+                "time": bridge_datetime(
+                    getattr(self.market.candles[first_index], "timestamp")
+                ),
+            },
+            "breakoutCandle": {
+                "time": bridge_datetime(
+                    getattr(self.market.candles[break_index], "timestamp")
+                ),
+                "eventTime": bridge_datetime(confirmation),
+            },
+            "stop": {
+                "price": str(entry["stop_level"]),
+                **_bridge_stop_view(
+                    self.market,
+                    self.order_direction,
+                    entry["stop_level"],
+                    stop_time,
+                    stop_event_time,
+                ),
+            },
+        }
+
+    def parent_order(self, behavior: object) -> dict[str, object] | None:
+        """Return a behavior's recorded formation/decision Order, if final."""
+        identity = _bridge_order_identity(behavior)
+        return self.physical_order(
+            self.audit_by_identity.get(identity) if identity is not None else None
+        )
+
+    def current_order(
+        self,
+        behavior: object,
+        parent_type: str,
+        parent_family: str | None,
+        strict_stop_event: datetime | None,
+    ) -> dict[str, object] | None:
+        """Resolve a creator Order from an exact final stop-linked cause.
+
+        This intentionally declines to infer ownership from a behavior's
+        formation Order, timestamps, row order, unrelated provenance, or a
+        provisional Order.  A conflict or a missing exact cause returns null.
+        """
+        if strict_stop_event is None:
+            return None
+        source_time = getattr(behavior, "source_time", None)
+        if source_time is None:
+            return None
+        matching: dict[tuple[int, int], object] = {}
+        for identity, prepared in self.audit_by_identity.items():
+            for cause in prepared["causes"]:
+                kind = cause.get("kind")
+                if kind == "parent-stop":
+                    if (
+                        cause.get("parentType") != parent_type
+                        or cause.get("parentSourceTime") != source_time
+                        or cause.get("eventTime") != strict_stop_event
+                    ):
+                        continue
+                    recorded_family = cause.get("parentFamily")
+                    if parent_family is None:
+                        if recorded_family not in (None, ""):
+                            continue
+                    elif recorded_family != parent_family:
+                        continue
+                elif kind == "reset-leg":
+                    post_type = cause.get("postBehaviorType")
+                    matches_type = (
+                        post_type == parent_type
+                        or post_type == "E" and parent_type.startswith("E")
+                        or post_type == "StopAll" and parent_type.startswith("StopAll")
+                    )
+                    if (
+                        not matches_type
+                        or cause.get("postBehaviorSourceTime") != source_time
+                        or cause.get("postBehaviorStopTime") != strict_stop_event
+                    ):
+                        continue
+                else:
+                    continue
+                matching[identity] = prepared
+        if len(matching) != 1:
+            return None
+        return self.physical_order(next(iter(matching.values())))
+
+    def order_audit(self, prepared: object) -> dict[str, object]:
+        """Project final accepted audit evidence using the physical formatter."""
+        entry = prepared["entry"]
+        reaction = prepared["reaction"]
+        physical = self.physical_order(prepared)
+        if physical is None:
+            raise RuntimeError("Bridge Output received an invalid final Order Audit")
+        causes = []
+        for cause in prepared["causes"]:
+            if cause["kind"] == "parent-stop":
+                causes.append({
+                    "kind": "parent-stop",
+                    "parentType": cause["parentType"],
+                    "parentFamily": bridge_color(cause["parentFamily"]),
+                    "eventTime": bridge_datetime(cause["eventTime"]),
+                    "parentSourceTime": bridge_datetime(cause["parentSourceTime"]),
+                })
+            elif cause["kind"] == "reset-leg":
+                causes.append({
+                    key: bridge_datetime(value) if isinstance(value, datetime) else value
+                    for key, value in cause.items()
+                })
+        return {
+            "type": "Order Audit",
+            "direction": bridge_direction(self.order_direction),
+            "mode": bridge_mode(getattr(reaction, "mode")),
+            "firstCandle": {
+                "index": int(getattr(reaction, "first_idx")),
+                **physical["firstCandle"],
+            },
+            "structure": {
+                "boxTop": {
+                    "time": bridge_datetime(
+                        getattr(reaction, "box_top_source_time", None)
+                    ),
+                    "price": str(getattr(reaction, "box_top", None)),
+                },
+                "boxBottom": {
+                    "time": bridge_datetime(
+                        getattr(reaction, "box_bottom_source_time", None)
+                    ),
+                    "price": str(getattr(reaction, "box_bottom", None)),
+                },
+                "breakoutCandle": {
+                    "index": int(getattr(reaction, "break_idx")),
+                    **physical["breakoutCandle"],
+                },
+            },
+            "stop": {
+                "level": str(entry["stop_level"]),
+                "sourceTime": bridge_datetime(entry["stop_source_time"]),
+                "stoppedAt": {
+                    "time": physical["stop"]["time"],
+                    "eventTime": physical["stop"]["eventTime"],
+                },
+            },
+            "causes": causes,
+        }
+
+
+def _bridge_parent_stop(
+    projection: BridgeProjection,
+    detector: object | None,
+    parent_type: str,
+    item: object,
+) -> tuple[datetime | None, datetime | None]:
+    """Read an existing E-lifecycle stop; never perform a new stop search."""
+    if detector is None:
+        return None, None
+    try:
+        found = detector.parent_stop(parent_type, item)
+    except (AttributeError, TypeError, ValueError):
+        return None, None
+    if found is None:
+        return None, None
+    index, event_time = found
+    if not 0 <= int(index) < len(projection.market.candles):
+        return None, None
+    return getattr(projection.market.candles[int(index)], "timestamp"), event_time
+
+
+def _bridge_a_stop(
+    projection: BridgeProjection,
+    s_detector: object | None,
+    item: object,
+) -> tuple[datetime | None, datetime | None]:
+    """Read the already-authoritative S-stage first A stop."""
+    if s_detector is None:
+        return None, None
+    try:
+        found = s_detector.first_a_stop(
+            as_decimal(getattr(item, "price")),
+            s_detector._a_confirmation_time(item),
+        )
+    except (AttributeError, IndexError, TypeError, ValueError):
+        return None, None
+    if found is None:
+        return None, None
+    _index, main_time, event_time = found
+    return main_time, event_time
+
+
+def _bridge_behavior_stop(
+    projection: BridgeProjection,
+    direction: str,
+    price: object,
+    stop_time: datetime | None,
+    stop_event_time: datetime | None,
+) -> dict[str, object]:
+    return {
+        **_bridge_stop_view(
+            projection.market, direction, price, stop_time, stop_event_time
+        ),
+        "price": str(price),
+    }
+
+
+def _bridge_blue_formation(
+    projection: BridgeProjection,
+    direction: str,
+    line: object,
+    reactions: list[object],
+) -> tuple[datetime | None, datetime | None]:
+    if str(getattr(line, "kind", "")).lower() != "scale":
+        return getattr(line, "source_time", None), None
+    reaction_number = int(getattr(line, "reaction_number"))
+    if not 1 <= reaction_number <= len(reactions):
+        return None, None
+    reaction = reactions[reaction_number - 1]
+    break_index = int(getattr(reaction, "break_idx"))
+    if not 0 <= break_index < len(projection.market.candles):
+        return None, None
+    return (
+        getattr(projection.market.candles[break_index], "timestamp"),
+        _bridge_reaction_confirmation(
+            projection.market, direction, reaction, use_intrabar_start=False
+        ),
+    )
+
+
+def _bridge_project_reaction(
+    projection: BridgeProjection,
+    direction: str,
+    raw: object,
+    public: object,
+) -> dict[str, object]:
+    first_index = int(getattr(raw, "first_idx"))
+    break_index = int(getattr(raw, "break_idx"))
+    return {
+        "type": "Reaction",
+        "direction": bridge_direction(direction),
+        "mode": bridge_mode(getattr(public, "mode")),
+        "firstCandle": {
+            "color": bridge_color(
+                getattr(projection.market.candles[first_index], "tag")
+            ),
+            "time": bridge_datetime(
+                getattr(projection.market.candles[first_index], "timestamp")
+            ),
+        },
+        "structure": {
+            "boxTop": {
+                "time": bridge_datetime(getattr(public, "box_top_source_time")),
+                "price": str(getattr(public, "box_top")),
+            },
+            "boxBottom": {
+                "time": bridge_datetime(getattr(public, "box_bottom_source_time")),
+                "price": str(getattr(public, "box_bottom")),
+            },
+            "breakoutCandle": {
+                "time": bridge_datetime(
+                    getattr(projection.market.candles[break_index], "timestamp")
+                ),
+                "eventTime": bridge_datetime(
+                    _bridge_reaction_confirmation(
+                        projection.market, direction, raw
+                    )
+                ),
+            },
+        },
+    }
+
+
+def _bridge_project_reset(
+    projection: BridgeProjection,
+    direction: str,
+    reset: object,
+) -> dict[str, object]:
+    first_index = int(getattr(reset, "from_first_idx"))
+    previous_time = (
+        getattr(projection.market.candles[first_index], "timestamp")
+        if 0 <= first_index < len(projection.market.candles)
+        else None
+    )
+    return {
+        "type": "Reset",
+        "direction": bridge_direction(direction),
+        "occurredAt": {
+            "time": bridge_datetime(getattr(reset, "display_time", None)),
+            "eventTime": bridge_datetime(getattr(reset, "second_time", None)),
+        },
+        "previousReaction": {"firstCandle": {"time": bridge_datetime(previous_time)}},
+        "brokenLevel": str(getattr(reset, "broken_level")),
+    }
+
+
+def _bridge_project_blue(
+    projection: BridgeProjection,
+    direction: str,
+    line: object,
+    reactions: list[object],
+) -> dict[str, object]:
+    formation_time, formation_event_time = _bridge_blue_formation(
+        projection, direction, line, reactions
+    )
+    kind = str(getattr(line, "kind", "")).lower()
+    output: dict[str, object] = {
+        "type": "Blue Line",
+        "direction": bridge_direction(direction),
+        "formation": {"scale": "Scale", "reset": "Reset"}.get(kind),
+        "formedAt": {
+            "time": bridge_datetime(formation_time),
+            "eventTime": bridge_datetime(formation_event_time),
+        },
+        "line": {
+            "price": str(getattr(line, "line_price")),
+            "sourceExtreme": str(getattr(line, "source_extreme")),
+        },
+        # The final bridge does not retain standalone BlueState stop evidence.
+        # Returning null is deliberate: creating a detector here would be a
+        # second calculation instead of a read-only projection.
+        "stop": {
+            "time": None,
+            "eventTime": None,
+            "price": str(getattr(line, "source_extreme")),
+        },
+    }
+    if kind == "reset":
+        output["brokenLevel"] = str(getattr(line, "broken_level"))
+    return output
+
+
+def _bridge_full_lines_by_ordinal(lines: list[object]) -> dict[int, object]:
+    ordered = sorted(
+        lines,
+        key=lambda item: (
+            int(getattr(item, "reaction_number")),
+            getattr(item, "source_time"),
+            str(getattr(item, "kind")),
+        ),
+    )
+    return {ordinal: line for ordinal, line in enumerate(ordered, start=1)}
+
+
+def _bridge_project_a(
+    projection: BridgeProjection,
+    direction: str,
+    item: object,
+    lines_by_ordinal: dict[int, object],
+    reactions: list[object],
+    s_detector: object | None,
+) -> dict[str, object]:
+    first_line = lines_by_ordinal.get(int(getattr(item, "blue_1_ordinal")))
+    second_line = lines_by_ordinal.get(int(getattr(item, "blue_2_ordinal")))
+    first_formation, _first_formation_event = (
+        _bridge_blue_formation(projection, direction, first_line, reactions)
+        if first_line is not None
+        else (None, None)
+    )
+    second_formation, _second_formation_event = (
+        _bridge_blue_formation(projection, direction, second_line, reactions)
+        if second_line is not None
+        else (None, None)
+    )
+    stop_time, stop_event_time = _bridge_a_stop(projection, s_detector, item)
+    strict_stop_event = _bridge_proven_strict_event(
+        projection.market, direction, getattr(item, "price"), stop_event_time
+    )
+    reaction_number = int(getattr(item, "reaction_number"))
+    reaction = (
+        reactions[reaction_number - 1]
+        if 1 <= reaction_number <= len(reactions)
+        else None
+    )
+    route = getattr(item, "formation_route", None)
+    return {
+        "type": "A",
+        "direction": bridge_direction(direction),
+        "formation": {"ordinary": "Type-1", "double-stop": "Type-2"}.get(route),
+        "formedAt": {
+            "time": bridge_datetime(getattr(item, "source_time")),
+            "price": str(getattr(item, "price")),
+        },
+        "blueLines": {
+            "first": {
+                "formedAt": {"time": bridge_datetime(first_formation)},
+                "stoppedAt": _bridge_stop_view(
+                    projection.market,
+                    direction,
+                    getattr(item, "blue_1_stop_level"),
+                    getattr(item, "blue_1_stop_time"),
+                    getattr(item, "blue_1_stop_event_time", None),
+                ),
+                "stopLevel": str(getattr(item, "blue_1_stop_level")),
+            },
+            "second": {
+                "formedAt": {"time": bridge_datetime(second_formation)},
+                "stoppedAt": _bridge_stop_view(
+                    projection.market,
+                    direction,
+                    getattr(item, "blue_2_stop_level"),
+                    getattr(item, "blue_2_stop_time"),
+                    getattr(item, "blue_2_stop_event_time", None),
+                ),
+                "stopLevel": str(getattr(item, "blue_2_stop_level")),
+            },
+        },
+        "reaction": {
+            "startedAt": {
+                "time": bridge_datetime(getattr(item, "reaction_first_time")),
+            },
+            "confirmedAt": {
+                "time": bridge_datetime(getattr(item, "reaction_break_time")),
+                "eventTime": bridge_datetime(
+                    _bridge_reaction_confirmation(
+                        projection.market,
+                        direction,
+                        reaction,
+                        use_intrabar_start=False,
+                    )
+                    if reaction is not None else None
+                ),
+            },
+        },
+        "parent": None,
+        "currentOrder": projection.current_order(
+            item, "A", None, strict_stop_event
+        ),
+        "stop": _bridge_behavior_stop(
+            projection, direction, getattr(item, "price"), stop_time, stop_event_time
+        ),
+    }
+
+
+def _bridge_project_s(
+    projection: BridgeProjection,
+    direction: str,
+    item: object,
+    e_detector: object | None,
+) -> dict[str, object]:
+    stop_time, stop_event_time = _bridge_parent_stop(
+        projection, e_detector, "S", item
+    )
+    strict_stop_event = _bridge_proven_strict_event(
+        projection.market, direction, getattr(item, "price"), stop_event_time
+    )
+    color = str(getattr(item, "color", "")).lower()
+    formation = None
+    if color == "blue":
+        formation = {
+            "simple": "Type-1",
+            "advanced": "Type-2",
+            "type3": "Type-3",
+            "type4": "Type-4",
+        }.get(str(getattr(item, "formation_type", "")).lower())
+    return {
+        "type": "S",
+        "direction": bridge_direction(direction),
+        "color": bridge_color(getattr(item, "color")),
+        "formation": formation,
+        "formedAt": {
+            "time": bridge_datetime(getattr(item, "source_time")),
+            "price": str(getattr(item, "price")),
+        },
+        "parent": {
+            "behavior": {
+                "type": "A",
+                "formedAt": {
+                    "time": bridge_datetime(getattr(item, "a_source_time")),
+                    "price": str(getattr(item, "a_price")),
+                },
+                "stoppedAt": _bridge_stop_view(
+                    projection.market,
+                    direction,
+                    getattr(item, "a_price"),
+                    getattr(item, "a_stop_time"),
+                    getattr(item, "a_stop_event_time"),
+                ),
+            },
+            "order": projection.parent_order(item),
+        },
+        "currentOrder": projection.current_order(
+            item, "S", str(getattr(item, "color")), strict_stop_event
+        ),
+        "stop": _bridge_behavior_stop(
+            projection, direction, getattr(item, "price"), stop_time, stop_event_time
+        ),
+    }
+
+
+def _bridge_source_index(item: object) -> tuple[int, datetime] | None:
+    source_index = getattr(item, "source_index", None)
+    source_time = getattr(item, "source_time", None)
+    if source_index is None or source_time is None:
+        return None
+    return int(source_index), source_time
+
+
+def _bridge_parent_behavior_for_e(
+    projection: BridgeProjection,
+    direction: str,
+    item: object,
+    s_by_source: dict[tuple[int, datetime], object],
+    e_by_source: dict[tuple[int, datetime], object],
+    stopall_by_source: dict[tuple[int, datetime], object],
+) -> dict[str, object]:
+    parent_type = str(getattr(item, "parent_type"))
+    parent_identity = (
+        int(getattr(item, "parent_source_index")),
+        getattr(item, "parent_source_time"),
+    )
+    parent = None
+    color = None
+    number = None
+    if parent_type == "S":
+        parent = s_by_source.get(parent_identity)
+        color = bridge_color(getattr(parent, "color", None))
+    elif parent_type == "E":
+        parent = e_by_source.get(parent_identity)
+        color = bridge_color(getattr(parent, "family", None))
+        number = getattr(parent, "number", None)
+    elif parent_type == "StopAll":
+        parent = stopall_by_source.get(parent_identity)
+        number = getattr(parent, "number", None)
+    return {
+        "type": parent_type,
+        "color": color,
+        "number": number,
+        "formedAt": {
+            "time": bridge_datetime(getattr(item, "parent_source_time")),
+            "price": str(getattr(item, "parent_price")),
+        },
+        "stoppedAt": _bridge_stop_view(
+            projection.market,
+            direction,
+            getattr(item, "parent_price"),
+            getattr(item, "parent_stop_time"),
+            getattr(item, "parent_stop_event_time"),
+        ),
+    }
+
+
+def _bridge_project_e(
+    projection: BridgeProjection,
+    direction: str,
+    item: object,
+    e_detector: object | None,
+    s_by_source: dict[tuple[int, datetime], object],
+    e_by_source: dict[tuple[int, datetime], object],
+    stopall_by_source: dict[tuple[int, datetime], object],
+) -> dict[str, object]:
+    stop_time, stop_event_time = _bridge_parent_stop(
+        projection, e_detector, "E", item
+    )
+    strict_stop_event = _bridge_proven_strict_event(
+        projection.market, direction, getattr(item, "price"), stop_event_time
+    )
+    return {
+        "type": "E",
+        "direction": bridge_direction(direction),
+        "color": bridge_color(getattr(item, "family")),
+        "number": int(getattr(item, "number")),
+        "formedAt": {
+            "time": bridge_datetime(getattr(item, "source_time")),
+            "price": str(getattr(item, "price")),
+        },
+        "parent": {
+            "behavior": _bridge_parent_behavior_for_e(
+                projection,
+                direction,
+                item,
+                s_by_source,
+                e_by_source,
+                stopall_by_source,
+            ),
+            "order": projection.parent_order(item),
+        },
+        "currentOrder": projection.current_order(
+            item,
+            f"E{int(getattr(item, 'number'))}",
+            str(getattr(item, "family")),
+            strict_stop_event,
+        ),
+        "stop": _bridge_behavior_stop(
+            projection, direction, getattr(item, "price"), stop_time, stop_event_time
+        ),
+    }
+
+
+def _bridge_project_stopall(
+    projection: BridgeProjection,
+    direction: str,
+    item: object,
+) -> dict[str, object]:
+    donor_type = getattr(item, "donor_type", None)
+    donor_price = getattr(item, "donor_price", None)
+    donor_stop_time = getattr(item, "donor_stop_time", None)
+    donor_stop_event_time = getattr(item, "donor_stop_event_time", None)
+    own_stop_event = _bridge_proven_strict_event(
+        projection.market,
+        direction,
+        getattr(item, "price"),
+        getattr(item, "stop_event_time"),
+    )
+    formation = {
+        "sequence-group-stop": "Type-1",
+        "stopall-stop": "Type-2",
+        "opposite-s-group-stop": "Type-3",
+    }.get(getattr(item, "gate_type", None))
+    return {
+        "type": "StopAll",
+        "direction": bridge_direction(direction),
+        "number": int(getattr(item, "number")),
+        "formation": formation,
+        "formedAt": {
+            "time": bridge_datetime(getattr(item, "source_time")),
+            "price": str(getattr(item, "price")),
+        },
+        "parent": {
+            "behavior": {
+                "type": donor_type,
+                "color": bridge_color(getattr(item, "donor_color", None)),
+                "number": getattr(item, "donor_number", None),
+                "formedAt": {
+                    "time": bridge_datetime(
+                        getattr(item, "donor_source_time", None)
+                    ),
+                    "price": str(donor_price) if donor_price is not None else None,
+                },
+                # Donor stop metadata remains independent from the group-level
+                # gate. Type-3 S-Red promotion consequently keeps this null
+                # unless an actual donor stop was retained.
+                "stoppedAt": _bridge_stop_view(
+                    projection.market,
+                    direction,
+                    donor_price,
+                    donor_stop_time,
+                    donor_stop_event_time,
+                ),
+            },
+            "order": projection.parent_order(item),
+        },
+        "currentOrder": projection.current_order(
+            item,
+            f"StopAll{int(getattr(item, 'number'))}",
+            None,
+            own_stop_event,
+        ),
+        "stop": _bridge_behavior_stop(
+            projection,
+            direction,
+            getattr(item, "price"),
+            getattr(item, "stop_time"),
+            getattr(item, "stop_event_time"),
+        ),
+    }
+
+
+def _bridge_audit_order_key(
+    prepared: object, detector: object,
+) -> tuple[int, int]:
+    reaction = prepared["reaction"]
+    return (
+        epoch(detector.candles[int(getattr(reaction, "first_idx"))].timestamp),
+        epoch(detector.candles[int(getattr(reaction, "break_idx"))].timestamp),
+    )
+
+
+def build_bridge_output(
+    direction: str,
+    market: MarketContext,
+    state: PipelineState,
+    visibility: DirectionVisibilityState,
+    selected_reactions: list[tuple[object, object]],
+    selected_resets: list[object],
+    selected_blue_lines: list[object],
+    selected_a_zones: list[object],
+    selected_s_zones: list[object],
+    selected_e_zones: list[object],
+    selected_stopalls: list[object],
+    selected_order_audit: list[object],
+) -> dict[str, list[dict[str, object]]]:
+    """Build the opt-in YAML-facing mapping from final legacy selections.
+
+    Callers pass the exact lists used by every legacy serializer. Array
+    positions are therefore display alignment only; behavior and Order joins
+    use source identities and final audit causes rather than list indexes.
+    """
+    e_detector = state.full_e_detectors.get(direction)
+    s_detector = state.full_s_detectors.get(direction)
+    order_direction = (
+        str(getattr(e_detector, "order_direction"))
+        if e_detector is not None
+        else ("bearish" if direction == "bullish" else "bullish")
+    )
+    projection = BridgeProjection(
+        direction=direction,
+        market=market,
+        prepared_order_audit=selected_order_audit,
+        order_direction=order_direction,
+    )
+    full_lines = state.full_lines_by_direction.get(direction, visibility.blue_lines)
+    lines_by_ordinal = _bridge_full_lines_by_ordinal(list(full_lines))
+    full_s = getattr(visibility, "projection_s_zones", selected_s_zones)
+    full_e = getattr(visibility, "projection_e_zones", selected_e_zones)
+    full_stopalls = getattr(visibility, "projection_stopalls", selected_stopalls)
+    s_by_source = {
+        identity: item
+        for item in full_s
+        for identity in [_bridge_source_index(item)]
+        if identity is not None
+    }
+    e_by_source = {
+        identity: item
+        for item in [*full_e, *selected_e_zones]
+        for identity in [_bridge_source_index(item)]
+        if identity is not None
+    }
+    stopall_by_source = {
+        identity: item
+        for item in [*full_stopalls, *selected_stopalls]
+        for identity in [_bridge_source_index(item)]
+        if identity is not None
+    }
+    raw_reactions = state.results[direction].reactions
+    return {
+        "reactions": [
+            _bridge_project_reaction(projection, direction, raw, public)
+            for raw, public in selected_reactions
+        ],
+        "resets": [
+            _bridge_project_reset(projection, direction, item)
+            for item in selected_resets
+        ],
+        "blueLines": [
+            _bridge_project_blue(projection, direction, item, raw_reactions)
+            for item in selected_blue_lines
+        ],
+        "aZones": [
+            _bridge_project_a(
+                projection,
+                direction,
+                item,
+                lines_by_ordinal,
+                raw_reactions,
+                s_detector,
+            )
+            for item in selected_a_zones
+        ],
+        "sZones": [
+            _bridge_project_s(projection, direction, item, e_detector)
+            for item in selected_s_zones
+        ],
+        "eZones": [
+            _bridge_project_e(
+                projection,
+                direction,
+                item,
+                e_detector,
+                s_by_source,
+                e_by_source,
+                stopall_by_source,
+            )
+            for item in selected_e_zones
+        ],
+        "stopAlls": [
+            _bridge_project_stopall(projection, direction, item)
+            for item in selected_stopalls
+        ],
+        "orderAudit": [projection.order_audit(item) for item in selected_order_audit],
+    }
 
 
 def validate_order_audit_bridge(
@@ -565,17 +1533,16 @@ def serialize_order_audit(prepared_items, detector):
         for cause in prepared["causes"]:
             if cause["kind"] == "parent-stop":
                 causes.append({
-                    "kind": cause["kind"],
+                    "kind": "parent-stop",
                     "parentType": cause["parentType"],
                     "parentFamily": cause["parentFamily"],
                     "eventTime": epoch(cause["eventTime"]),
                     "parentSourceTime": epoch(cause["parentSourceTime"]),
                 })
-            else:
+            elif cause["kind"] == "reset-leg":
                 causes.append({
-                    "kind": cause["kind"],
-                    "resetTime": epoch(cause["resetTime"]),
-                    "boundaryBreakTime": epoch(cause["boundaryBreakTime"]),
+                    key: epoch(value) if isinstance(value, datetime) else value
+                    for key, value in cause.items()
                 })
         output.append({
             "direction": detector.order_direction,
@@ -680,6 +1647,11 @@ def parse_arguments(argv=None):
     )
     parser.add_argument(
         "--s-zones", choices=("enabled", "disabled"), default="enabled"
+    )
+    parser.add_argument(
+        "--bridge-output",
+        action="store_true",
+        help="Add the presentation-only Bridge Output projection.",
     )
     parser.add_argument("--data", type=Path, required=True)
     parser.add_argument("--timeframe", type=int, required=True)
@@ -841,6 +1813,7 @@ class FullDirectionState:
     invalid_s_identities: set[tuple[datetime, int]]
     s_zones: list[object]
     s_candidates: list[object]
+    initial_s_zones: list[object]
 
 
 def create_e_detector(
@@ -855,18 +1828,11 @@ def create_e_detector(
     *,
     blocked_order_first_times: set[datetime] | None = None,
     invalid_s_root_identities: set[tuple[datetime, int]] | None = None,
+    order_b_legs: Sequence[object] = (),
 ):
-    """Construct one E detector from the shared geometry/lifecycle contract."""
+    """Construct one E detector from shared geometry and physical Orders."""
     opposite = chronology.opposite_direction(direction)
     end_index = len(chronology.candles) - 1
-
-    def bounded_geometry(geometry_direction, geometry_start, geometry_end):
-        """Return raw Reaction geometry inside a closed main-candle range."""
-        return geometry_detectors[geometry_direction].first_geometry_after_reset(
-            geometry_direction,
-            max(0, geometry_start - 1),
-            geometry_end,
-        )
 
     def direct_geometry(
         geometry_direction, geometry_start, geometry_end, gate_event
@@ -883,17 +1849,16 @@ def create_e_detector(
         full_results[direction].reactions,
         full_results[opposite].reactions,
         s_zones,
-        full_results[direction].resets,
         full_results[opposite].resets,
         chronology,
         0,
         end_index,
-        bounded_geometry,
         direct_geometry,
         blocked_order_first_times=blocked_order_first_times,
         initial_order_audit=initial_order_audit,
         sequence_priority=lifecycle_engine.sequence_priority,
         invalid_s_root_identities=invalid_s_root_identities,
+        order_b_legs=order_b_legs,
     )
 
 
@@ -905,6 +1870,8 @@ def calculate_full_direction_state(
     geometry_detectors: dict[str, object],
     initial_order_geometry: dict[str, object],
     timings: dict[str, float],
+    order_b_legs: Sequence[object] = (),
+    shared_stages: FullDirectionState | None = None,
 ) -> FullDirectionState:
     """Run Blue→A→S→E calculation and lifecycle reconciliation for one direction."""
     blue_engine = engines.blue_line
@@ -917,82 +1884,51 @@ def calculate_full_direction_state(
     chronology = market.chronology
     opposite = engines.reaction.opposite_direction(direction)
 
-    blue_lines = timed(
-        timings,
-        f"Blue Line • {direction.title()}",
-        lambda: blue_engine.detect_blue_lines(
+    if shared_stages is None:
+        blue_lines = timed(
+            timings,
+            f"Blue Line • {direction.title()}",
+            lambda: blue_engine.detect_blue_lines(
+                direction,
+                full_results[direction].reactions,
+                chronology,
+                full_results[direction].resets,
+            ),
+        )
+        a_zones = timed(
+            timings,
+            f"A • {direction.title()}",
+            lambda: a_engine.detect_a_zones(
+                direction,
+                full_results[direction].reactions,
+                blue_lines,
+                chronology,
+            ),
+        )
+        s_detector = s_engine.SZoneDetector(
             direction,
             full_results[direction].reactions,
-            chronology,
-            full_results[direction].resets,
-        ),
-    )
-    a_zones = timed(
-        timings,
-        f"A • {direction.title()}",
-        lambda: a_engine.detect_a_zones(
-            direction,
-            full_results[direction].reactions,
+            full_results[opposite].reactions,
             blue_lines,
+            a_zones,
             chronology,
-        ),
-    )
-    s_detector = s_engine.SZoneDetector(
-        direction,
-        full_results[direction].reactions,
-        full_results[opposite].reactions,
-        blue_lines,
-        a_zones,
-        chronology,
-        0,
-        len(candles) - 1,
-        full_results[opposite].resets,
-        initial_order_geometry=initial_order_geometry[direction],
-    )
-    s_zones = timed(timings, f"S • {direction.title()}", s_detector.detect)
+            0,
+            len(candles) - 1,
+            full_results[opposite].resets,
+            initial_order_geometry=initial_order_geometry[direction],
+        )
+        s_zones = timed(timings, f"S • {direction.title()}", s_detector.detect)
+        initial_s_zones = list(s_zones)
+    else:
+        # Reaction, Blue, A and the initial S pass do not depend on Order_B.
+        blue_lines = shared_stages.blue_lines
+        a_zones = shared_stages.a_zones
+        s_detector = shared_stages.s_detector
+        s_zones = list(shared_stages.initial_s_zones)
+        initial_s_zones = shared_stages.initial_s_zones
     s_candidates = list(s_zones)
 
-    historical_e_rescues: list[object] = []
-    accepted_e_history: list[object] = []
 
-    def collect_accepted_e_history(zones) -> None:
-        existing = {
-            (int(getattr(item, "source_index")), getattr(item, "source_time"))
-            for item in accepted_e_history
-        }
-        for item in zones:
-            # Keep this safeguard intentionally narrow: only E-parented Blue
-            # Orders carrying the independent Order_B/reset-leg cause are
-            # eligible for later-pass historical preservation.
-            if str(getattr(item, "parent_type", "")).upper() != "E":
-                continue
-            if str(getattr(item, "family", "")).lower() != "blue":
-                continue
-            if "reset-leg" not in {
-                str(value) for value in getattr(item, "order_causes", ())
-            }:
-                continue
-            identity = (
-                int(getattr(item, "source_index")),
-                getattr(item, "source_time"),
-            )
-            if identity not in existing:
-                accepted_e_history.append(item)
-                existing.add(identity)
-
-    def collect_historical_e_rescues(detector) -> None:
-        existing = {
-            (int(getattr(item, "source_index")), getattr(item, "source_time"))
-            for item in historical_e_rescues
-        }
-        for item in getattr(detector, "historical_rescued_zones", []):
-            identity = (
-                int(getattr(item, "source_index")),
-                getattr(item, "source_time"),
-            )
-            if identity not in existing:
-                historical_e_rescues.append(item)
-                existing.add(identity)
 
     e_detector = create_e_detector(
         direction,
@@ -1003,12 +1939,11 @@ def calculate_full_direction_state(
         geometry_detectors,
         s_detector.order_audit,
         lifecycle_engine,
+        order_b_legs=order_b_legs,
     )
     e_zones = timed(
         timings, f"E • {direction.title()} • initial", e_detector.detect
     )
-    collect_historical_e_rescues(e_detector)
-    collect_accepted_e_history(e_zones)
     valid_s_zones = lifecycle_engine.s_zones_for_module_engines(
         s_zones, e_zones, direction
     )
@@ -1027,14 +1962,13 @@ def calculate_full_direction_state(
                 for item in s_zones
                 if item not in valid_s_zones
             },
+            order_b_legs=order_b_legs,
         )
         e_zones = timed(
             timings,
             f"E • {direction.title()} • S reconciliation",
             e_detector.detect,
         )
-        collect_historical_e_rescues(e_detector)
-        collect_accepted_e_history(e_zones)
         s_zones = valid_s_zones
 
     candidate_a = lifecycle_engine.visible_a_zones(
@@ -1132,12 +2066,11 @@ def calculate_full_direction_state(
         lifecycle_engine,
         blocked_order_first_times=blocked_order_first_times,
         invalid_s_root_identities=invalid_s_identities,
+        order_b_legs=order_b_legs,
     )
     e_zones = timed(
         timings, f"E • {direction.title()} • final audit", e_detector.detect
     )
-    collect_historical_e_rescues(e_detector)
-    collect_accepted_e_history(e_zones)
 
     # A still-open S candidate may be decided by the strict stop of a later
     # calculation-accepted physical Order in the same chronology.  Reconcile
@@ -1175,15 +2108,14 @@ def calculate_full_direction_state(
             lifecycle_engine,
             blocked_order_first_times=blocked_order_first_times,
             invalid_s_root_identities=invalid_s_identities,
+            order_b_legs=order_b_legs,
         )
         e_zones = timed(
             timings,
             f"E • {direction.title()} • shared Order-stop reconciliation",
             e_detector.detect,
         )
-        collect_historical_e_rescues(e_detector)
-        collect_accepted_e_history(e_zones)
-
+        
     calculation_s_candidates = [
         item for item in s_candidates
         if (getattr(item, "source_time"), int(getattr(item, "source_index")))
@@ -1226,57 +2158,6 @@ def calculate_full_direction_state(
         not in invalid_s_identities
     ]
 
-    # Preserve presentation-only historical E acceptance without changing
-    # calculation ownership. An earlier accepted E that disappears during a
-    # later detector rebuild is recoverable only when it is not merely a
-    # hidden intermediate parent of a surviving final E. Hidden intermediate
-    # parents remain intentionally non-public; independent accepted history is
-    # retained for reporting.
-    if accepted_e_history:
-        historical_e_rescues.extend(accepted_e_history)
-    if historical_e_rescues:
-        historical_e_rescues = e_detector.resolve_same_source_conflicts(
-            historical_e_rescues
-        )
-        final_e_ids = {
-            (int(getattr(item, "source_index")), getattr(item, "source_time"))
-            for item in e_zones
-        }
-        referenced_e_parent_ids = {
-            (
-                int(getattr(item, "parent_source_index")),
-                getattr(item, "parent_source_time"),
-            )
-            for item in e_zones
-            if str(getattr(item, "parent_type", "")).upper() == "E"
-        }
-        def blocked_by_dominant_final_e(item) -> bool:
-            candidate_priority = lifecycle_engine.sequence_priority(
-                "e", str(getattr(item, "family"))
-            )
-            candidate_decision = getattr(item, "decision_event_time")
-            for owner in e_zones:
-                if getattr(owner, "source_time") >= getattr(item, "source_time"):
-                    continue
-                owner_priority = lifecycle_engine.sequence_priority(
-                    "e", str(getattr(owner, "family"))
-                )
-                if owner_priority <= candidate_priority:
-                    continue
-                stop = e_detector.parent_stop("E", owner)
-                if stop is None or stop[1] >= candidate_decision:
-                    return True
-            return False
-
-        e_detector.historical_rescued_zones = [
-            item for item in historical_e_rescues
-            if (int(getattr(item, "source_index")), getattr(item, "source_time"))
-            not in final_e_ids
-            and (int(getattr(item, "source_index")), getattr(item, "source_time"))
-            not in referenced_e_parent_ids
-            and not blocked_by_dominant_final_e(item)
-        ]
-
     return FullDirectionState(
         e_zones=e_zones,
         e_detector=e_detector,
@@ -1287,7 +2168,63 @@ def calculate_full_direction_state(
         invalid_s_identities=invalid_s_identities,
         s_zones=s_zones,
         s_candidates=s_candidates,
+        initial_s_zones=initial_s_zones,
     )
+
+
+def calculate_direction_with_order_b_feedback(
+    direction: str,
+    engines: EngineBundle,
+    market: MarketContext,
+    full_results: dict[str, object],
+    geometry_detectors: dict[str, object],
+    initial_order_geometry: dict[str, object],
+    timings: dict[str, float],
+) -> FullDirectionState:
+    """Recalculate only while proven Order_B causes change accepted state."""
+    opposite = engines.reaction.opposite_direction(direction)
+    order_b_legs: list[object] = []
+    seen: set[tuple[object, ...]] = set()
+    shared_stages: FullDirectionState | None = None
+    for _pass in range(8):
+        state = calculate_full_direction_state(
+            direction, engines, market, full_results, geometry_detectors,
+            initial_order_geometry, timings, order_b_legs=order_b_legs,
+            shared_stages=shared_stages,
+        )
+        if shared_stages is None:
+            shared_stages = state
+        e_zones, stopalls = engines.lifecycle.reconcile_stopall_lifecycle(
+            state.e_detector, state.s_zones, state.e_zones,
+            market.chronology, direction,
+        )
+        e_zones = state.e_detector.restore_independent_s_roots(e_zones)
+        e_zones = state.e_detector.ensure_accepted_order_audit(e_zones)
+        discovered = engines.e_zone.discover_accepted_order_b_reset_legs(
+            direction,
+            market.chronology,
+            full_results[direction].reactions,
+            full_results[direction].resets,
+            full_results[opposite].reactions,
+            state.s_detector.eligible_a_zones,
+            state.invalid_a_identities,
+            state.s_zones,
+            e_zones,
+            stopalls,
+            state.s_detector,
+            state.e_detector,
+            engines.lifecycle.module_priority,
+        )
+
+        old_identity = order_b_leg_identity(order_b_legs)
+        new_identity = order_b_leg_identity(discovered)
+        if new_identity == old_identity:
+            return state
+        if new_identity in seen:
+            raise RuntimeError("Order_B lifecycle feedback did not converge.")
+        seen.add(new_identity)
+        order_b_legs = discovered
+    raise RuntimeError("Order_B lifecycle feedback exceeded eight passes.")
 
 
 def prepare_pipeline_state(
@@ -1350,7 +2287,7 @@ def prepare_pipeline_state(
             lambda: engine.build_behavior_reaction_views(results, chronology),
         )
         for direction in directions:
-            state = calculate_full_direction_state(
+            state = calculate_direction_with_order_b_feedback(
                 direction,
                 engines,
                 market,
@@ -1429,6 +2366,12 @@ class DirectionVisibilityState:
     e_zones: list[object]
     stopalls: list[object]
     prepared_order_audit: list[object]
+    # Final accepted source collections retained only for Bridge Output parent
+    # joins. They are never serialized as public legacy rows or fed back into
+    # lifecycle decisions.
+    projection_s_zones: list[object]
+    projection_e_zones: list[object]
+    projection_stopalls: list[object]
 
 
 def calculate_direction_range_state(
@@ -1588,10 +2531,42 @@ def finalize_direction_visibility(
         visibility_stop = lambda item: detector.parent_stop(
             "S" if hasattr(item, "a_source_time") else "E", item
         )
+
+        reset_legs = timed(
+            timings,
+            f"Order_B reset legs - {direction.title()}",
+            lambda: engines.e_zone.discover_accepted_order_b_reset_legs(
+                direction,
+                market.chronology,
+                state.results[direction].reactions,
+                state.results[direction].resets,
+                state.results[opposite].reactions,
+                direction_state.a_zones,
+                direction_state.invalid_a_identities,
+                direction_state.accepted_s_zones,
+                e_zones,
+                stopalls,
+                state.full_s_detectors[direction],
+                detector,
+                lifecycle_engine.module_priority,
+            ),
+        )
+        if order_b_leg_identity(reset_legs) != order_b_leg_identity(detector.order_b_legs):
+            raise RuntimeError(
+                "Final Order_B lifecycle causes differ from converged E feedback."
+            )
+        detector.register_order_b_reset_legs(reset_legs)
     else:
         visibility_stop = lambda item: state.full_s_detectors[direction].first_a_stop(
             Decimal(str(item.price)), item.decision_event_time
         )
+
+    # Capture accepted objects before presentation range/internal filtering.
+    # The Bridge projector may resolve a nested historical parent from these
+    # immutable references, but it never republishes them as independent rows.
+    projection_s_zones = list(direction_state.accepted_s_zones)
+    projection_e_zones = list(e_zones)
+    projection_stopalls = list(stopalls)
 
     e_zones, visible_s_zones, visible_a_zones = timed(
         timings,
@@ -1679,42 +2654,6 @@ def finalize_direction_visibility(
         )
     )
 
-    # Historical rescue is presentation-only.  It runs after all lifecycle,
-    # StopAll, visibility, and OrderAudit ownership calculations so restoring a
-    # fully formed historical E can never rewrite an already-correct behavior,
-    # number, parent, StopAll sequence, or physical Order provenance.
-    if direction in state.full_e_detectors:
-        detector = state.full_e_detectors[direction]
-        occupied_e_sources = {
-            (int(getattr(item, "source_index")), getattr(item, "source_time"))
-            for item in e_zones
-        }
-        occupied_stopall_sources = {
-            (int(getattr(item, "source_index")), getattr(item, "source_time"))
-            for item in stopalls
-        }
-        rescued_e_zones = [
-            item
-            for item in getattr(detector, "historical_rescued_zones", [])
-            if start_index <= int(getattr(item, "source_index")) <= end_index
-            and (int(getattr(item, "source_index")), getattr(item, "source_time"))
-                not in occupied_e_sources
-            and (int(getattr(item, "source_index")), getattr(item, "source_time"))
-                not in occupied_stopall_sources
-            and not lifecycle_engine.forbidden_internal_order_b(
-                item, state.internal_reaction_identities.get(opposite, set())
-            )
-        ]
-        if rescued_e_zones:
-            e_zones = sorted(
-                [*e_zones, *rescued_e_zones],
-                key=lambda item: (
-                    getattr(item, "source_time"),
-                    int(getattr(item, "source_index")),
-                    getattr(item, "decision_event_time"),
-                ),
-            )
-
     required_order_identities = {
         order_identity(int(first_index), int(break_index))
         for item in [*display_s_zones, *e_zones, *stopalls]
@@ -1747,6 +2686,9 @@ def finalize_direction_visibility(
         e_zones=e_zones,
         stopalls=stopalls,
         prepared_order_audit=prepared_order_audit,
+        projection_s_zones=projection_s_zones,
+        projection_e_zones=projection_e_zones,
+        projection_stopalls=projection_stopalls,
     )
 
 
@@ -1761,43 +2703,130 @@ def serialize_direction_payload(
 ):
     """Serialize one direction without applying any trading rule."""
     result = state.results[direction]
-    reactions, resets = timed(
-        timings,
-        f"Serialize Reaction - {direction.title()}",
-        lambda: serialize(
+    if not getattr(args, "bridge_output", False):
+        # Preserve the direct legacy path byte-for-byte in structure and
+        # ordering when the additive projection is not requested.
+        reactions, resets = timed(
+            timings,
+            f"Serialize Reaction - {direction.title()}",
+            lambda: serialize(
+                result,
+                market.start_index,
+                market.end_index,
+                reaction_transform=lambda item: engines.reaction.published_reaction_candidate(
+                    direction, item, market.chronology
+                ),
+            ),
+        )
+
+        def build_legacy_payload():
+            return {
+                "reactions": reactions,
+                "resets": resets,
+                "blueLines": serialize_blue_lines(
+                    visibility.blue_lines if args.blue_lines == "enabled" else [],
+                    market.start_index,
+                    market.end_index,
+                ),
+                "aZones": serialize_a_zones(
+                    visibility.a_zones if args.a_zones == "enabled" else []
+                ),
+                "sZones": serialize_s_zones(visibility.s_zones),
+                "eZones": serialize_e_zones(visibility.e_zones),
+                "stopAlls": serialize_stopalls(visibility.stopalls),
+                "orderAudit": (
+                    serialize_order_audit(
+                        visibility.prepared_order_audit,
+                        state.full_e_detectors[direction],
+                    )
+                    if direction in state.full_e_detectors
+                    else []
+                ),
+            }
+
+        return timed(
+            timings, f"Serialize output - {direction.title()}", build_legacy_payload
+        )
+
+    reaction_transform = lambda item: engines.reaction.published_reaction_candidate(
+        direction, item, market.chronology
+    )
+    def serialize_reactions_from_one_selection():
+        selected = select_reaction_serialization_items(
             result,
             market.start_index,
             market.end_index,
-            reaction_transform=lambda item: engines.reaction.published_reaction_candidate(
-                direction, item, market.chronology
-            ),
-        ),
+            reaction_transform,
+        )
+        reactions, resets = serialize(result, selected_items=selected)
+        return reactions, resets, selected
+
+    reactions, resets, selected_reaction_items = timed(
+        timings,
+        f"Serialize Reaction - {direction.title()}",
+        serialize_reactions_from_one_selection,
+    )
+    selected_reactions, selected_resets = selected_reaction_items
+    selected_blue_lines = [
+        item
+        for item in (
+            visibility.blue_lines if args.blue_lines == "enabled" else []
+        )
+        if _index_selected(
+            getattr(item, "source_index"), market.start_index, market.end_index
+        )
+    ]
+    selected_a_zones = (
+        visibility.a_zones if args.a_zones == "enabled" else []
+    )
+    selected_s_zones = visibility.s_zones
+    selected_e_zones = visibility.e_zones
+    selected_stopalls = visibility.stopalls
+    audit_detector = state.full_e_detectors.get(direction)
+    selected_order_audit = (
+        sorted(
+            visibility.prepared_order_audit,
+            key=lambda item: _bridge_audit_order_key(item, audit_detector),
+        )
+        if audit_detector is not None
+        else []
     )
 
     def build_payload():
-        return {
+        payload = {
             "reactions": reactions,
             "resets": resets,
             "blueLines": serialize_blue_lines(
-                visibility.blue_lines if args.blue_lines == "enabled" else [],
-                market.start_index,
-                market.end_index,
+                selected_blue_lines,
             ),
-            "aZones": serialize_a_zones(
-                visibility.a_zones if args.a_zones == "enabled" else []
-            ),
-            "sZones": serialize_s_zones(visibility.s_zones),
-            "eZones": serialize_e_zones(visibility.e_zones),
-            "stopAlls": serialize_stopalls(visibility.stopalls),
+            "aZones": serialize_a_zones(selected_a_zones),
+            "sZones": serialize_s_zones(selected_s_zones),
+            "eZones": serialize_e_zones(selected_e_zones),
+            "stopAlls": serialize_stopalls(selected_stopalls),
             "orderAudit": (
                 serialize_order_audit(
-                    visibility.prepared_order_audit,
-                    state.full_e_detectors[direction],
+                    selected_order_audit,
+                    audit_detector,
                 )
-                if direction in state.full_e_detectors
+                if audit_detector is not None
                 else []
             ),
         }
+        payload["bridgeOutput"] = build_bridge_output(
+            direction,
+            market,
+            state,
+            visibility,
+            selected_reactions,
+            selected_resets,
+            selected_blue_lines,
+            selected_a_zones,
+            selected_s_zones,
+            selected_e_zones,
+            selected_stopalls,
+            selected_order_audit,
+        )
+        return payload
 
     return timed(
         timings, f"Serialize output - {direction.title()}", build_payload

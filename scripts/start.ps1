@@ -7,6 +7,20 @@ $ProgressPreference = 'SilentlyContinue'
 
 $Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $ChartRoot = Join-Path $Root 'apps\chart'
+$ConfiguredLocalStateRoot = $env:TRADINGBOT_LOCAL_STATE_ROOT
+if ($null -ne $ConfiguredLocalStateRoot) { $ConfiguredLocalStateRoot = $ConfiguredLocalStateRoot.Trim() }
+$LocalStateRoot = if ([string]::IsNullOrWhiteSpace($ConfiguredLocalStateRoot)) {
+  Join-Path (Split-Path -Parent $Root) ((Split-Path -Leaf $Root) + '-Local')
+} else {
+  $configuredPath = if ([IO.Path]::IsPathRooted($ConfiguredLocalStateRoot)) { $ConfiguredLocalStateRoot } else { Join-Path $Root $ConfiguredLocalStateRoot }
+  [IO.Path]::GetFullPath($configuredPath)
+}
+$LocalStateRoot = [IO.Path]::GetFullPath($LocalStateRoot)
+if ($LocalStateRoot.TrimEnd('\', '/') -eq $Root.TrimEnd('\', '/') -or $LocalStateRoot.StartsWith($Root.TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
+  throw 'TRADINGBOT_LOCAL_STATE_ROOT must be outside the repository.'
+}
+$env:TRADINGBOT_LOCAL_STATE_ROOT = $LocalStateRoot
+$env:PYTHONDONTWRITEBYTECODE = '1'
 
 # Runtime dependencies used by the maintained Python engine.
 $PythonPackages = @('orjson', 'tzdata')
@@ -93,14 +107,15 @@ function Ensure-ProjectFiles {
 function Ensure-Directories {
   $directories = @(
     'data\raw',
-    'runtime\cache\drawings',
-    'runtime\cache\indicator-calculations',
-    'runtime\cache\indicator-templates',
-    'runtime\tmp\faraz-candle-exports'
+    'cache\drawings',
+    'cache\indicator-calculations',
+    'cache\indicator-templates',
+    'secret',
+    'tmp\faraz-candle-exports'
   )
 
   foreach ($relative in $directories) {
-    New-Item -ItemType Directory -Force -Path (Join-Path $Root $relative) | Out-Null
+    New-Item -ItemType Directory -Force -Path (Join-Path $LocalStateRoot $relative) | Out-Null
   }
 }
 
@@ -153,7 +168,7 @@ function Ensure-Runtimes {
 
   foreach ($relative in @($PythonPackageFiles + $EngineFiles)) {
     $path = Join-Path $Root $relative
-    & $python -m py_compile $path
+    & $python -B -c "import ast,pathlib,sys; ast.parse(pathlib.Path(sys.argv[1]).read_text(encoding='utf-8-sig'))" $path
     if ($LASTEXITCODE -ne 0) { throw "Python syntax validation failed: $relative" }
   }
 

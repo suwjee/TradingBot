@@ -1,12 +1,217 @@
-# TradingBot Project Knowledge
+# TradingBot Project Knowledge and Agent Rules
 
-This file is the root navigation and operating guide for AI-assisted work in the current TradingBot checkout. The current working tree is intentionally dirty; source files and user changes are authoritative, while generated artifacts and historical references are supporting evidence only.
+This file is the root navigation and operating guide for AI-assisted work in the current TradingBot checkout. The current working tree is intentionally dirty. Current source files, configuration, and user changes are authoritative for describing executable state. Trading semantics, behavior definitions, lifecycle rules, ownership rules, Order rules, directional rules, and other algorithmic intent must be resolved through the TradingBot Intelligence Plugin and the canonical Knowledge Vault first. Generated artifacts, historical references, old AI output, and memory are supporting evidence only.
+
+## 0. Governing Rules
+
+### 0.1 Instruction and Trading Authority
+
+For TradingBot work, apply this order:
+
+1. Current explicit user instruction.
+2. This root `AGENTS.md` and any nearer applicable project instruction.
+3. TradingBot Intelligence Plugin retrieval.
+4. Canonical / verified / normative TradingBot Knowledge Vault content.
+5. Accepted algorithm/reference documents identified by the Vault.
+6. Current production source and configuration as evidence of executable behavior.
+7. Approved regression fixtures and reproducible RAW/runtime evidence.
+8. Historical documentation, previous AI output, memory, and model inference.
+
+Use Plugin/Vault to determine what the system **should** do.
+
+Use current source and runtime evidence to determine what the system **currently does**.
+
+If canonical knowledge and executable source disagree, do not silently reconcile them. Report the mismatch and determine whether the task is to fix implementation, update knowledge, or clarify the intended rule.
+
+### 0.2 Mandatory Plugin/Vault-First Workflow
+
+Before interpreting, explaining, debugging, validating, or changing any TradingBot semantic rule, first query the TradingBot Intelligence Plugin and inspect the relevant canonical Vault knowledge.
+
+This is mandatory for:
+
+- Reaction;
+- Reset;
+- Blue;
+- A;
+- S;
+- E;
+- StopAll;
+- Orders and OrderAudit;
+- lifecycle transitions;
+- ownership;
+- dominance;
+- strictness;
+- source/confirmation semantics;
+- mirror rules;
+- regression fixtures;
+- special cases;
+- algorithm references;
+- canonical status.
+
+Do not rely on memory, previous AI summaries, old conversations, or remembered examples as the primary authority when Plugin/Vault knowledge is available.
+
+If the Plugin is unavailable, inspect the Vault directly if available. If canonical semantics still cannot be established, state the limitation and ask a precise clarifying question.
+
+### 0.3 AGENTS Is Not the Algorithm
+
+This file defines project navigation, authority, safety, workflow, and durable operating constraints.
+
+It must not become a second copy of volatile TradingBot algorithm rules.
+
+Do not hard-code changing semantics such as:
+
+- current Order status;
+- Order formation details;
+- exact StopAll grouping;
+- behavior counters;
+- S/E subtype edge cases;
+- ownership refresh rules;
+- dominance exceptions;
+- special candle outcomes.
+
+Resolve volatile trading semantics from the current Plugin/Vault at task time.
+
+### 0.4 Clarification — Hard Stop
+
+Material ambiguity in TradingBot semantics must be resolved before implementation.
+
+If uncertainty remains about behavior definition, source candle, confirmation candle, breakout, Reset, stop condition, strictness, direction, timeframe, lower-timeframe chronology, ownership, Order semantics, dominance, lifecycle transition, expected output, fixture meaning, canonical status, or mirror behavior:
+
+1. Investigate everything discoverable from Plugin/Vault, source, tests, RAW, logs, and references.
+2. Ask a precise technical question for what remains unresolved.
+3. Continue asking follow-up questions until the material ambiguity is actually resolved.
+4. Do not silently guess or convert an example into a general rule.
+
+### 0.5 Independent Evaluation
+
+Treat user-provided expected outputs, candle labels, diagnoses, root-cause theories, previous AI conclusions, old documentation, and memory as claims or evidence, not automatic proof.
+
+Actively test competing explanations.
+
+A user correction is important evidence, but production logic must still be based on a general canonical rule rather than a timestamp, OHLC fingerprint, fixture identity, or hidden special case.
+
+When evidence contradicts the initial theory, state the contradiction clearly.
+
+### 0.6 Strict Language Policy
+
+Only Persian and English may be authored as natural-language content.
+
+All developer-facing TradingBot technical content must be English, including:
+
+- source identifiers;
+- filenames created by the AI;
+- comments;
+- docstrings;
+- technical logs;
+- error messages;
+- test names;
+- assertion messages;
+- technical Markdown;
+- algorithm references;
+- Vault knowledge;
+- Plugin documentation;
+- commit messages;
+- changelog entries.
+
+Do not introduce any third human language.
+
+Persian may be used for user-facing conversation or dedicated Persian content/localization when explicitly required.
+
+Existing third-language content required for compatibility, localization, data fidelity, or historical preservation must not be destructively rewritten without explicit authorization.
+
+### 0.7 Truthfulness and Evidence Labels
+
+Never claim to have read, executed, tested, verified, benchmarked, modified, committed, pushed, deployed, synchronized, or validated something unless that action actually occurred.
+
+When the distinction matters, use:
+
+- `VERIFIED FACT`
+- `USER CLAIM`
+- `DOCUMENTED CLAIM`
+- `INFERENCE`
+- `ASSUMPTION`
+- `HYPOTHESIS`
+- `UNVERIFIED RESULT`
+
+Do not generalize bounded validation into full correctness.
+
+### 0.8 Git and Dirty-Work Safety
+
+Preserve all pre-existing tracked and untracked work.
+
+Do not reset, clean, stash, overwrite, broad-delete, or stage unrelated dirty files without explicit authorization.
+
+Remote push requires explicit authorization for the current task. Previous push authorization does not carry forward.
+
+Before claiming a push or publication succeeded, verify the actual remote state.
+
+### 0.9 Graphify Approval Rule
+
+Graphify is a navigation and source-orientation tool, not algorithmic authority.
+
+Every Graphify execution requires explicit user approval for that specific execution.
+
+This includes:
+
+- `build`;
+- `update`;
+- `query`;
+- `graph`;
+- `path`;
+- `explain`;
+- `export`;
+- `diagnose`;
+- dependency analysis.
+
+Do not automatically run Graphify after implementation changes.
+
+If Graphify would materially help, explain why and ask for approval first.
+
+### 0.10 Supporting Skills
+
+Supporting skills may improve workflow but do not define TradingBot semantics.
+
+Examples include:
+
+- Mirror Trading Pipeline;
+- Property-Based Testing;
+- Spec-to-Code Compliance;
+- Differential Review;
+- Persian Writing;
+- `i-have-adhd`.
+
+Trading-related supporting skills must operate only after Plugin/Vault retrieval.
+
+No skill may override current user instructions, this `AGENTS.md`, canonical TradingBot knowledge, or safety constraints.
+
+### 0.11 No Hidden Hardcoding
+
+Production trading logic must not branch on known:
+
+- timestamps;
+- candle identities;
+- symbols;
+- RAW filenames;
+- timeframe identities;
+- OHLC fingerprints;
+- fixture IDs;
+- expected labels.
+
+unless those values are genuinely part of the formal canonical specification.
+
+Fixtures validate general logic. They must not become the logic.
+
+### 0.12 Final Trading Workflow
+
+Use this process for TradingBot tasks:
+
+`Project instructions -> Plugin/Vault first -> Confirm authority -> Verify current source and RAW/runtime evidence -> Clarify ambiguity -> Find the first divergent stage/root cause -> Make the smallest correct change -> Validate protected regression -> Synchronize durable knowledge if needed -> Report honestly`
 
 ## A. Project Identity
 
 TradingBot is a Windows-oriented local candlestick/chart workstation. The browser application acquires and displays RAW candle data, manages drawings and indicator state, and requests calculations from a local Vite middleware. The calculation authority is Python under `engine/`; it produces Reaction, Blue Line, A, S, E, StopAll, and OrderAudit results for Bullish and Bearish directions.
 
-The chart package is `apps/chart` version `3.4.1`. Its runtime uses native ES modules, Vite `8.2.1`, Lightweight Charts `5.2.1`, Node's built-in test runner, and Playwright Core for local FARAZ workflows. The launcher currently expects Node `20.19+`, Python `3.12+`, `orjson`, and `tzdata`. The installed audit environment used Node `24.19.0` and Python `3.14.6`.
+Snapshot note: the chart package was recorded as `apps/chart` version `3.4.1`. Its recorded runtime used native ES modules, Vite `8.2.1`, Lightweight Charts `5.2.1`, Node's built-in test runner, and Playwright Core for local FARAZ workflows. The launcher was recorded as expecting Node `20.19+`, Python `3.12+`, `orjson`, and `tzdata`. The audited environment used Node `24.19.0` and Python `3.14.6`. Re-verify all version/runtime facts before relying on them.
 
 The repository checkpoint/tag version and the chart package version are separate. A `v2.0.0` release tag is not present in the baseline audited state.
 
@@ -21,14 +226,14 @@ The repository checkpoint/tag version and the chart package version are separate
 | `apps/chart/src/ui/`, `src/drawings/` | Feedback, logs, popovers, icons, workspace state, and drawing presentation. |
 | `apps/chart/src/algorithm/` | In-app algorithm reference content and directional mirror documentation. |
 | `apps/chart/server/`, `apps/chart/vite.config.js` | Local HTTP API, Python subprocess boundary, RAW/FARAZ persistence, caches, SSE, drawings, and templates. |
-| `apps/chart/tests/` | 27 Node test files; the current suite has 147 tests. |
+| `tests/chart/unit/` | 29 local-only Node test files; cleanup verification ran 159 tests. |
 | `engine/bridge/trading_pipeline.py` | Authoritative CLI, dynamic engine loading, market context, stage orchestration, lifecycle, visibility, and JSON serialization. |
 | `engine/pipeline/` | Reaction, Blue, A, S, E, StopAll, chronology, direction policy, Decimal/order helpers, and lifecycle logic. |
-| `data/raw/` | Authoritative candle arrays and metadata sidecars. |
-| `runtime/cache/` | User drawings, templates, calculation caches, and FARAZ session state; preserve by default. |
+| `<local-state-root>/data/raw/` | External authoritative candle arrays and metadata sidecars. |
+| `<local-state-root>/cache/`, `<local-state-root>/secret/` | External user drawings, templates, calculation caches, and FARAZ session state; preserve by default. |
 | `docs/` | Maintained architecture, algorithm, UI, audit, cleanup, validation, and Graphify evidence. |
 
-The tracked checkout is at `0d084590fb1ba1b57bcac6d4f19c977557830c2d` on `main`, two commits ahead of `origin/main` at baseline. The worktree contains user-owned tracked edits, deletions, and untracked replacement engine/frontend files. Never reset, clean, stash, rename, or stage those paths without explicit authorization.
+Baseline snapshot: the tracked checkout was recorded at `0d084590fb1ba1b57bcac6d4f19c977557830c2d` on `main`, two commits ahead of `origin/main`. Re-verify the current commit/branch/remote state before relying on this snapshot. The worktree contains or may contain user-owned tracked edits, deletions, and untracked replacement engine/frontend files. Never reset, clean, stash, rename, overwrite, or stage those paths without explicit authorization.
 
 ## C. Architecture Overview
 
@@ -46,7 +251,7 @@ JSON -> Vite cache/API -> browser chart, panels, review, and audit views
 
 ## D. Runtime Execution Flow
 
-1. `scripts/start.ps1` validates files/runtimes, may install dependencies, creates runtime directories, sets `TRADINGBOT_PYTHON` and `TRADINGBOT_PROJECT_ROOT`, and starts Vite on `0.0.0.0`.
+1. `scripts/start.ps1` validates files/runtimes, may install dependencies, creates external state directories, sets `TRADINGBOT_PYTHON`, `TRADINGBOT_PROJECT_ROOT`, and `TRADINGBOT_LOCAL_STATE_ROOT`, and starts Vite on `0.0.0.0`.
 2. `apps/chart/src/main.js` loads `/api/symbols`, restores workspace state, reads `/api/candles`, and creates Lightweight Charts.
 3. Indicator actions post validated direction, analysis timeframe, chart timeframe, inclusive chart-candle range, and Blue-line settings to `/api/reactions`; progress is streamed through `/api/reactions/progress` SSE.
 4. `vite.config.js` builds a cache key from engine source fingerprint, RAW identity/mtime, input scope, chart/analysis timeframes, range, direction, and Blue-line flags, then spawns `engine/bridge/trading_pipeline.py`.
@@ -57,7 +262,7 @@ JSON -> Vite cache/API -> browser chart, panels, review, and audit views
 
 ## E. Engine Knowledge
 
-Critical versions in the current source are Reaction `9.5.2`, Blue `2.3.0`, A `1.6.3`, S `4.13.1`, E `6.6.2`, StopAll/lifecycle `1.10.1`, and shared `core_utils`/`direction_policy` `1.0.0`.
+Executable snapshot: recorded source versions were Reaction `9.5.2`, Blue `2.3.0`, A `1.6.3`, S `4.13.1`, E `6.6.2`, StopAll/lifecycle `1.10.1`, and shared `core_utils`/`direction_policy` `1.0.0`. Re-read current source and Plugin/Vault knowledge before treating these values as current.
 
 - `reaction_engine.py` defines Candle, Candidate, ResetEvent, chronology indexes, BullishDetector, the reflected BearishDetector, and UnifiedReactionDetector.
 - `blue_line_detector.py` implements Fibonacci `0.618`, scale/reset strike counts, directional line prices, and public/internal filters.
@@ -67,9 +272,9 @@ Critical versions in the current source are Reaction `9.5.2`, Blue `2.3.0`, A `1
 - `lifecycle_engine.py` applies StopAll priority, one-pass historical reconciliation, and final visibility/lineage filtering.
 - `core_utils.py` owns Decimal conversion and Order identity; `direction_policy.py` owns directional strictness, extrema, colors, and confirmation rules.
 
-Numerical invariants: use Decimal semantics; preserve strict `<`/`>` crossings and explicit inclusive windows; retain physical source indexes/times, parent/order provenance, cause objects, nulls, version fields, and serialization ordering. Do not infer Bearish as a blanket inverse of Bullish. A known asymmetry is the Unified post-Reset same-Break reset level: Bullish uses `analysis.extreme` while Bearish uses stored `box_top` in the corresponding branch.
+Numerical invariants: use Decimal semantics; preserve strict `<`/`>` crossings and explicit inclusive windows; retain physical source indexes/times, parent/order provenance, cause objects, nulls, version fields, and serialization ordering. Do not infer Bearish as a blanket inverse of Bullish. Current directional exceptions must be retrieved from the canonical Vault and verified against the current Source; do not infer them from a recorded snapshot.
 
-Read [TradingBot_Technical_Architecture.md](docs/TradingBot_Technical_Architecture.md) and the two directional references before engine changes. The current Python package import surface is not a supported smoke path: flat imports can fail with `ModuleNotFoundError: direction_policy` or `ImportError: run_blue_line`; the production bridge uses dynamic file loading to work around this migration state.
+Before engine changes, query the TradingBot Intelligence Plugin, inspect canonical Vault knowledge, then read [TradingBot_Technical_Architecture.md](docs/architecture/TradingBot_Technical_Architecture.md) and the directional references identified as current by the Vault. The current Python package import surface is not a supported smoke path: flat imports can fail with `ModuleNotFoundError: direction_policy` or `ImportError: run_blue_line`; the production bridge uses dynamic file loading to work around this migration state.
 
 ## F. Bullish and Bearish Knowledge
 
@@ -94,11 +299,11 @@ The UI uses HTTP JSON and SSE, not a WebSocket. Preserve DOM IDs, persisted loca
 - Bridge -> dynamically loaded detector files, then serializers -> cache/API -> browser.
 - Public contracts preserve physical indexes/times and provenance. Reaction, Blue, A, S, E, StopAll, and OrderAudit collections have distinct ownership and nullable fields; see the architecture and algorithm references for exact fields.
 
-Graphify shows source-linked relationships but may include inferred edges or omit detector-classified files. Treat `docs/graphify/rebuild-2026-09-19/graph-health.json` and direct source tracing as the evidence boundary.
+Graphify shows source-linked relationships and may include explicitly marked inferred edges. The external historical `archive/docs/graphify/rebuild-2026-09-23/` snapshot supplements detector-unclassified files with path nodes and the sensitive `tokens.css` file with custom-property names only; CSS values and RAW/runtime contents are not indexed. Treat its health diagnostics and direct source tracing as the evidence boundary.
 
 ## I. Graphify Integration
 
-Installed tools: `graphify 0.9.63`, Python package `graphifyy 0.9.42`.
+Recorded tool snapshot: `graphify 0.9.63`, Python package `graphifyy 0.9.42`. Re-verify installed versions before relying on them. Installation does not grant execution permission; every Graphify execution requires explicit user approval.
 
 Verified commands:
 
@@ -109,9 +314,9 @@ graphify query "pipeline execution" --graph graphify-out/graph.json --budget 800
 graphify diagnose multigraph --graph graphify-out/graph.json --json
 ```
 
-The dated verified snapshot is `docs/graphify/rebuild-2026-09-19/`. It contains a directed 1,240-node/2,774-link graph, report, HTML visualization, manifest, and health diagnostics. One detector-classified file, `apps/chart/src/styles/tokens.css`, was skipped as sensitive and must be checked directly. The existing top-level `docs/graphify/` snapshot is retained as historical/supporting evidence; do not assume its larger vendored-dependency graph is current.
+The dated Graphify snapshot is now external archived evidence under the local-state root, `archive/docs/graphify/rebuild-2026-09-23/`. It is not part of the tracked repository. The snapshot covers classified source/docs, records literal HTML references, represents unclassified configuration/style files as path nodes, and indexes only custom-property names from detector-classified `apps/chart/src/styles/tokens.css` (never its values). RAW candle and runtime/cache data are represented only by directory-scope markers; their contents and credential/session values are not read or copied. `docs/graphify/rebuild-2026-09-19/` remains preserved as historical evidence.
 
-After implementation changes, rerun the update and diagnose commands, compare representative query results to direct source tracing, and record stale/unresolved relationships. Do not invent edges or promote inferred relationships to implementation facts.
+After implementation changes, do not automatically rerun Graphify. If graph refresh or diagnosis would materially help, explain why and obtain explicit user approval for that execution. When approved, compare representative query results to direct source tracing and record stale/unresolved relationships. Do not invent edges or promote inferred relationships to implementation facts.
 
 ## J. Development and Validation
 
@@ -124,32 +329,59 @@ npm.cmd run dev
 npm.cmd run preview
 ```
 
-The first two are check/build commands. `dev`, `preview`, and `scripts/start.ps1` start services or mutate runtime/dependency state. There is no repository-local Python test, lint, type-check, CI, or SonarQube CLI configuration. Safe source checks used in the current audit are Node `--check` for project JS/MJS and `ast.parse` for engine Python. Do not report a check as PASS without fresh output and an exit code.
+The first two are check/build commands. `dev`, `preview`, and `scripts/start.ps1` start services or mutate runtime/dependency state. Local-only Python tests are under ignored `tests/engine/unit/`; run `python -B -m pytest -q -p no:cacheprovider tests/engine/unit` from the repository root. No repository lint, type-check, CI, or SonarQube CLI configuration was found. Safe source checks are Node `--check` for project JS/MJS and `ast.parse` for Engine Python. Do not report a check as PASS without fresh output and an exit code.
 
 ## K. AI-Agent Operating Instructions
 
-- Preserve all pre-existing tracked and untracked work; never reset, clean, stash, or broad-delete.
-- Read the relevant technical reference and current source before changing a subsystem.
-- Use Graphify to locate dependencies, then verify important relationships and behavior directly in source.
-- Treat Python engine code as the numerical authority and preserve exact Decimal, temporal, provenance, strictness, null, and ordering semantics.
+- Preserve all pre-existing tracked and untracked work; never reset, clean, stash, overwrite, or broad-delete without explicit authorization.
+- For trading semantics, consult the TradingBot Intelligence Plugin and canonical Vault before relying on technical references, source intuition, memory, or old examples.
+- Read the relevant current source and accepted references before changing a subsystem.
+- Graphify may be used only after explicit user approval for that specific execution; verify important relationships and behavior directly in source.
+- Treat Python engine code as the numerical/executable authority while preserving canonical Plugin/Vault semantics and exact Decimal, temporal, provenance, strictness, null, identity, ownership, lifecycle, and ordering contracts.
+- Do not patch UI-only code to change trading semantics.
 - Avoid unrelated modifications, dependency upgrades, formatting writes, migrations, and runtime behavior changes.
-- Run the narrowest relevant tests, then the full safe suite; record failures and limitations accurately.
-- Update affected references and Graphify artifacts when implementation changes, while keeping generated findings labeled as such.
+- Run the narrowest relevant tests first, then protected regression and broader safe validation according to risk.
+- Do not report build, static review, unit tests, mirror parity, browser checks, or bounded fixtures as stronger evidence than they actually provide.
+- Update durable references/Vault knowledge when durable behavior or architecture changes. Do not create temporary knowledge noise.
+- Do not automatically refresh Graphify artifacts; request approval first if a graph refresh would materially help.
 - Keep credential/session values private. Do not expose or copy `runtime/cache/secret` contents.
-- Report unresolved ambiguity instead of guessing, and do not claim production readiness from documentation or unit tests alone.
+- Report unresolved ambiguity instead of guessing.
+- Never introduce hidden hardcoding for known timestamps, OHLC fingerprints, filenames, symbols, fixtures, or expected outputs.
+- All developer-facing technical content, comments, docstrings, logs, tests, commit messages, and documentation authored by the AI must be English.
+- Do not push to a remote without explicit authorization for the current task.
+
+### K.1 Validation Language
+
+Use precise validation labels when relevant:
+
+- `PASS`
+- `FAIL`
+- `INCOMPLETE`
+- `NOT_TESTED`
+- `NOT_TESTED_DEPENDENCY_UNAVAILABLE`
+- `STATIC_REVIEW_ONLY`
+- `BOUNDED_VALIDATION`
+
+Mirror/metamorphic parity is not independent Bearish correctness. Report source-direction regression safety, mirror parity, and independent target-direction real-data validation separately.
+
+A user-provided candle correction is important evidence, but it must be explained by a general canonical rule and must never become a hidden production branch.
 
 ## L. Documentation Index
 
-- [Repository Baseline](docs/TradingBot_Repository_Baseline.md): ownership boundary, Git identity, and pre-existing dirty state.
-- [Technical Architecture](docs/TradingBot_Technical_Architecture.md): runtime, modules, APIs, data flow, contracts, and risks.
-- [Project Audit](docs/TradingBot_Project_Audit.md): confirmed defects, potential risks, and verification status.
-- [UI/UX Technical Reference](docs/TradingBot_UI_UX_Technical_Reference.md): selectors, tokens, layout, states, breakpoints, and overlays.
-- [Bullish Reference](docs/TradingBot_Bullish_Algorithm_Reference.md): implementation-faithful Bullish path.
-- [Bearish Reference](docs/TradingBot_Bearish_Algorithm_Reference.md): implementation-faithful Bearish path and asymmetries.
-- [Cleanup Report](docs/TradingBot_Cleanup_Report.md): conservative retention/deletion decisions.
-- [Validation Report](docs/TradingBot_Validation_Report.md): fresh commands, statuses, evidence, and limitations.
-- [Graphify README](docs/graphify/README.md): prior repository-wide snapshot and interpretation notes.
-- [Current Graphify Rebuild](docs/graphify/rebuild-2026-09-19/README.md): current directed structural snapshot and health evidence.
-- `agent.md`: pre-existing lowercase guide retained for compatibility; this uppercase file is the canonical root entry point.
+- [Repository Baseline](docs/history/TradingBot_Repository_Baseline.md): ownership boundary, Git identity, and pre-existing dirty state.
+- [Technical Architecture](docs/architecture/TradingBot_Technical_Architecture.md): runtime, modules, APIs, data flow, contracts, and risks.
+- [Project Audit](docs/history/TradingBot_Project_Audit.md): confirmed defects, potential risks, and verification status.
+- [UI/UX Technical Reference](docs/architecture/TradingBot_UI_UX_Technical_Reference.md): selectors, tokens, layout, states, breakpoints, and overlays.
+- [Bullish Reference](engine/algorithms/TradingBot_Bullish_Algorithm_Reference_V5.4.19_EX1_Source_Synchronized.md): implementation-faithful Bullish path.
+- [Bearish Reference](engine/algorithms/TradingBot_Bearish_Algorithm_Reference_V5.4.19_EX1_Source_Synchronized.md): implementation-faithful Bearish path and asymmetries.
+- [Cleanup Report](docs/history/TradingBot_Cleanup_Report.md): conservative retention/deletion decisions.
+- [Validation Report](docs/history/TradingBot_Validation_Report.md): fresh commands, statuses, evidence, and limitations.
+- Graphify outputs are external local archives; every Graphify execution still requires explicit approval.
 
-No nested `AGENTS.md` is currently needed: the root file contains the engine-specific numerical rules and links to the detailed references without adding contradictory context.
+- `AGENTS.md` is the canonical root entry point; no lowercase compatibility guide exists in the current tree.
+
+No nested `AGENTS.md` was found during the 2026-09-29 inventory: the root file contains the engine-specific numerical rules and links to the detailed references without adding contradictory context.
+
+## M. Repository Storage Policy
+
+Machine state resolves through `TRADINGBOT_LOCAL_STATE_ROOT`, defaulting to a sibling directory named `<checkout-name>-Local`. The shared application resolver rejects repository-internal roots. RAW, cache, secrets, and temporary state stay external. Tests live under ignored `/tests/`; chart tests run with `npm.cmd test` from `apps/chart`. Dependencies/build output are reproducible and excluded. Historical Graphify and regression output is external archived evidence. Only the two current source-synchronized references under `engine/algorithms/` are current references.
