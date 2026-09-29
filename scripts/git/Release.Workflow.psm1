@@ -37,11 +37,22 @@ function Invoke-ReleaseGit {
     [string] $WorkingDirectory = $Root
   )
 
-  $records = @(& git -C $WorkingDirectory @Arguments 2>&1)
+  $previousErrorActionPreference = $ErrorActionPreference
+  try {
+    $ErrorActionPreference = 'Continue'
+    $gitArguments = @('-C', $WorkingDirectory)
+    if (-not ([IO.Path]::GetFullPath($WorkingDirectory).Equals([IO.Path]::GetFullPath($Root), [StringComparison]::OrdinalIgnoreCase))) {
+      $gitArguments += @('-c', "safe.directory=$([IO.Path]::GetFullPath($WorkingDirectory))")
+    }
+    $records = @(& git @gitArguments @Arguments 2>&1)
+    $exitCode = $LASTEXITCODE
+  } finally {
+    $ErrorActionPreference = $previousErrorActionPreference
+  }
   $stdout = @($records | Where-Object { $_ -isnot [System.Management.Automation.ErrorRecord] } | ForEach-Object { $_.ToString() })
   $stderr = @($records | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] } | ForEach-Object { $_.ToString() })
   return [pscustomobject]@{
-    ExitCode = $LASTEXITCODE
+    ExitCode = $exitCode
     StdOut = $stdout -join [Environment]::NewLine
     StdErr = $stderr -join [Environment]::NewLine
     Arguments = @($Arguments)
@@ -342,10 +353,286 @@ function Get-ProductionFileSet {
   return [pscustomobject]@{
     Root = $Root
     MainSha = $MainSha
+    Policy = $Policy
     Paths = @($selected | Sort-Object)
     Drift = @($drift | Sort-Object)
     Errors = @($errors)
   }
+}
+
+function Get-ReleaseRefOid {
+  param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] [string] $Ref)
+  $result = Invoke-ReleaseGit -Root $Root -Arguments @('rev-parse', '--verify', '--quiet', "$Ref^{commit}")
+  if ($result.ExitCode -ne 0) { return $null }
+  return ($result.StdOut -split '\s+' | Select-Object -First 1).Trim()
+}
+
+function Test-ReleasePreflight {
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory)] [string] $Root,
+    [Parameter(Mandatory)] [string] $Tag,
+    [switch] $RequireGitHubCli
+  )
+
+  $errors = [System.Collections.Generic.List[string]]::new()
+  $warnings = [System.Collections.Generic.List[string]]::new()
+  $branch = (Invoke-ReleaseGit -Root $Root -Arguments @('symbolic-ref', '--quiet', '--short', 'HEAD'))
+  if ($branch.ExitCode -ne 0 -or $branch.StdOut.Trim() -ne 'main') { $errors.Add('The active branch must be main.') }
+  foreach ($marker in @('.git/MERGE_HEAD', '.git/rebase-apply', '.git/rebase-merge')) {
+    if (Test-Path -LiteralPath (Join-Path $Root $marker)) { $errors.Add("Git operation in progress: $marker") }
+  }
+  $remoteUrl = Invoke-ReleaseGit -Root $Root -Arguments @('remote', 'get-url', 'origin')
+  if ($remoteUrl.ExitCode -ne 0 -or [string]::IsNullOrWhiteSpace($remoteUrl.StdOut)) { $errors.Add('Configured origin remote is required.') }
+  $tagSyntax = Invoke-ReleaseGit -Root $Root -Arguments @('check-ref-format', "refs/tags/$Tag")
+  if ($tagSyntax.ExitCode -ne 0) { $errors.Add("Invalid Git tag syntax: $Tag") }
+  $localTag = Invoke-ReleaseGit -Root $Root -Arguments @('show-ref', '--verify', '--quiet', "refs/tags/$Tag")
+  if ($localTag.ExitCode -eq 0) { $errors.Add("Local release tag already exists: $Tag") }
+
+  $remoteProduction = Invoke-ReleaseGit -Root $Root -Arguments @('ls-remote', '--exit-code', 'origin', 'refs/heads/production')
+  $productionBaseSha = $null
+  if ($remoteProduction.ExitCode -ne 0) {
+    $errors.Add('origin/production is required for a release snapshot.')
+  } else {
+    $productionBaseSha = ($remoteProduction.StdOut -split '\s+' | Select-Object -First 1).Trim()
+  }
+  $remoteMain = Invoke-ReleaseGit -Root $Root -Arguments @('ls-remote', '--exit-code', 'origin', 'refs/heads/main')
+  $remoteMainSha = if ($remoteMain.ExitCode -eq 0) { ($remoteMain.StdOut -split '\s+' | Select-Object -First 1).Trim() } else { $null }
+  $remoteTag = Invoke-ReleaseGit -Root $Root -Arguments @('ls-remote', '--exit-code', 'origin', "refs/tags/$Tag")
+  if ($remoteTag.ExitCode -eq 0) { $errors.Add("Remote release tag already exists: $Tag") }
+
+  $localProductionSha = Get-ReleaseRefOid -Root $Root -Ref 'refs/heads/production'
+  if ($null -ne $localProductionSha) {
+    if ($null -eq $productionBaseSha -or $localProductionSha -ne $productionBaseSha) {
+      $errors.Add('Local production branch diverges from origin/production; resolve it before release.')
+    }
+    $upstream = Invoke-ReleaseGit -Root $Root -Arguments @('rev-parse', '--abbrev-ref', 'production@{upstream}')
+    if ($upstream.ExitCode -ne 0 -or $upstream.StdOut.Trim() -ne 'origin/production') { $errors.Add('Local production branch must track origin/production.') }
+  }
+
+  if ($remoteUrl.ExitCode -eq 0 -and $branch.ExitCode -eq 0) {
+    $pushProbe = Invoke-ReleaseGit -Root $Root -Arguments @('push', '--dry-run', 'origin', 'HEAD:refs/heads/main')
+    if ($pushProbe.ExitCode -ne 0) { $errors.Add('Git push authentication or main-ref authorization failed during dry-run verification.') }
+  }
+
+  $github = 'NOT_REQUESTED'
+  if ($RequireGitHubCli) {
+    $gh = Get-Command gh -ErrorAction SilentlyContinue
+    if ($null -eq $gh) {
+      $errors.Add('GitHub CLI is required but unavailable.')
+      $github = 'UNAVAILABLE'
+    } else {
+      $auth = & gh auth status 2>&1
+      if ($LASTEXITCODE -ne 0) { $errors.Add('GitHub CLI authentication verification failed.'); $github = 'AUTH_FAILED' }
+      else {
+        $repo = & gh repo view --json nameWithOwner 2>&1
+        if ($LASTEXITCODE -ne 0) { $errors.Add('GitHub repository access verification failed.'); $github = 'REPOSITORY_FAILED' }
+        else { $github = 'PASS' }
+      }
+    }
+  }
+
+  return [pscustomobject]@{
+    Root = $Root
+    Tag = $Tag
+    RemoteUrl = $remoteUrl.StdOut.Trim()
+    RemoteMainSha = $remoteMainSha
+    ProductionBaseSha = $productionBaseSha
+    LocalProductionSha = $localProductionSha
+    GitHub = $github
+    Errors = @($errors)
+    Warnings = @($warnings)
+  }
+}
+
+function New-TemporaryReleaseContext {
+  [CmdletBinding()]
+  param([Parameter(Mandatory)] [string] $Root)
+  $id = [guid]::NewGuid().ToString('N')
+  $temporaryRoot = Join-Path ([IO.Path]::GetTempPath()) "tradingbot-release-$id"
+  New-Item -ItemType Directory -Force -Path $temporaryRoot | Out-Null
+  return [pscustomobject]@{
+    Root = $Root
+    TemporaryRoot = $temporaryRoot
+    WorktreePath = Join-Path $temporaryRoot 'production'
+    IndexPath = Join-Path $temporaryRoot 'candidate-main.index'
+    TemporaryProductionRef = "refs/release-tmp/$id/production"
+    Cleaned = $false
+  }
+}
+
+function New-ProductionSnapshot {
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory)] [string] $Root,
+    [Parameter(Mandatory)] [string] $SourceMainSha,
+    [Parameter(Mandatory)] [string] $ProductionBaseSha,
+    [Parameter(Mandatory)] $FileSet,
+    [Parameter(Mandatory)] [string] $CommitMessage,
+    [switch] $DryRun
+  )
+
+  Assert-ReleaseCondition (-not [string]::IsNullOrWhiteSpace($CommitMessage)) 'A nonempty production commit message is required.'
+  Assert-ReleaseCondition (@($FileSet.Errors).Count -eq 0) 'Production closure contains unresolved dependencies.'
+  $context = New-TemporaryReleaseContext -Root $Root
+  try {
+    $sourceCheck = Invoke-ReleaseGit -Root $Root -Arguments @('cat-file', '-e', "$SourceMainSha^{commit}")
+    Assert-ReleaseCondition ($sourceCheck.ExitCode -eq 0) "Source main commit is unavailable: $SourceMainSha"
+    $fetch = Invoke-ReleaseGit -Root $Root -Arguments @('fetch', '--quiet', 'origin', "+refs/heads/production:$($context.TemporaryProductionRef)")
+    Assert-ReleaseCondition ($fetch.ExitCode -eq 0) 'Could not fetch origin/production into the temporary release ref.'
+    $fetchedProductionSha = Get-ReleaseRefOid -Root $Root -Ref $context.TemporaryProductionRef
+    Assert-ReleaseCondition ($null -ne $fetchedProductionSha) 'Temporary fetched production ref is unavailable.'
+    Assert-ReleaseCondition ($fetchedProductionSha -eq $ProductionBaseSha) 'origin/production changed after preflight; restart release preparation.'
+
+    $previousIndex = $env:GIT_INDEX_FILE
+    try {
+      $env:GIT_INDEX_FILE = $context.IndexPath
+      $readTree = Invoke-ReleaseGit -Root $Root -Arguments @('read-tree', $SourceMainSha)
+      Assert-ReleaseCondition ($readTree.ExitCode -eq 0) 'Could not build a temporary source-main index.'
+      $candidateMainTree = Invoke-ReleaseGit -Root $Root -Arguments @('write-tree')
+      Assert-ReleaseCondition ($candidateMainTree.ExitCode -eq 0) 'Could not write the temporary source-main tree.'
+      $candidateMainTreeSha = $candidateMainTree.StdOut.Trim()
+    } finally {
+      if ($null -eq $previousIndex) { Remove-Item Env:GIT_INDEX_FILE -ErrorAction SilentlyContinue } else { $env:GIT_INDEX_FILE = $previousIndex }
+    }
+
+    if ($DryRun) {
+      $worktree = Invoke-ReleaseGit -Root $Root -Arguments @('worktree', 'add', '--detach', $context.WorktreePath, $fetchedProductionSha)
+    } else {
+      $localProductionSha = Get-ReleaseRefOid -Root $Root -Ref 'refs/heads/production'
+      if ($null -eq $localProductionSha) {
+        $createBranch = Invoke-ReleaseGit -Root $Root -Arguments @('branch', '--track', 'production', $context.TemporaryProductionRef)
+        Assert-ReleaseCondition ($createBranch.ExitCode -eq 0) 'Could not establish local production from fetched origin/production.'
+      } else {
+        Assert-ReleaseCondition ($localProductionSha -eq $fetchedProductionSha) 'Local production diverges from fetched origin/production.'
+      }
+      $upstream = Invoke-ReleaseGit -Root $Root -Arguments @('branch', '--set-upstream-to=origin/production', 'production')
+      Assert-ReleaseCondition ($upstream.ExitCode -eq 0) 'Could not configure production upstream tracking.'
+      $worktree = Invoke-ReleaseGit -Root $Root -Arguments @('worktree', 'add', $context.WorktreePath, 'production')
+    }
+    Assert-ReleaseCondition ($worktree.ExitCode -eq 0) 'Could not create isolated temporary production worktree.'
+
+    $removeTracked = Invoke-ReleaseGit -Root $Root -WorkingDirectory $context.WorktreePath -Arguments @('rm', '-r', '--ignore-unmatch', '--', '.')
+    Assert-ReleaseCondition ($removeTracked.ExitCode -eq 0) 'Could not clear tracked production worktree content.'
+    $checkoutArgs = @('checkout', $SourceMainSha, '--') + @($FileSet.Paths)
+    $restore = Invoke-ReleaseGit -Root $Root -WorkingDirectory $context.WorktreePath -Arguments $checkoutArgs
+    Assert-ReleaseCondition ($restore.ExitCode -eq 0) 'Could not synchronize the production file set from source main.'
+
+    $candidateTree = Invoke-ReleaseGit -Root $Root -WorkingDirectory $context.WorktreePath -Arguments @('write-tree')
+    Assert-ReleaseCondition ($candidateTree.ExitCode -eq 0) 'Could not write the candidate production tree.'
+    $candidatePaths = @(Get-GitTreePaths -Root $Root -Commitish $candidateTree.StdOut.Trim())
+    $expectedPaths = @($FileSet.Paths | Sort-Object)
+    Assert-ReleaseCondition (@(Compare-Object -ReferenceObject $expectedPaths -DifferenceObject $candidatePaths).Count -eq 0) 'Candidate production tree differs from the resolved source-main file set.'
+
+    $diff = Invoke-ReleaseGit -Root $Root -WorkingDirectory $context.WorktreePath -Arguments @('diff', '--cached', '--quiet')
+    Assert-ReleaseCondition ($diff.ExitCode -in @(0, 1)) 'Could not compare candidate production tree to its base.'
+    $productionChanged = ($diff.ExitCode -eq 1)
+    if ($productionChanged) {
+      $commit = Invoke-ReleaseGit -Root $Root -WorkingDirectory $context.WorktreePath -Arguments @('-c', 'user.name=TradingBot Release', '-c', 'user.email=release@tradingbot.invalid', 'commit', '-m', $CommitMessage, '-m', "TradingBot-Main-Source: $SourceMainSha")
+      Assert-ReleaseCondition ($commit.ExitCode -eq 0) 'Could not create the production snapshot commit.'
+    }
+    $productionHead = Invoke-ReleaseGit -Root $Root -WorkingDirectory $context.WorktreePath -Arguments @('rev-parse', '--verify', 'HEAD^{commit}')
+    Assert-ReleaseCondition ($productionHead.ExitCode -eq 0) 'Could not resolve the prepared production commit.'
+    $productionSha = ($productionHead.StdOut -split '\s+' | Select-Object -First 1).Trim()
+    return [pscustomobject]@{
+      Root = $Root
+      Context = $context
+      WorktreePath = $context.WorktreePath
+      SourceMainSha = $SourceMainSha
+      CandidateMainTreeSha = $candidateMainTreeSha
+      ProductionBaseSha = $fetchedProductionSha
+      ProductionSha = $productionSha
+      ProductionChanged = $productionChanged
+      FileSet = $FileSet
+      DryRun = [bool] $DryRun
+    }
+  } catch {
+    Remove-TemporaryReleaseContext -Context $context
+    throw
+  }
+}
+
+function Test-ProductionSnapshot {
+  [CmdletBinding()]
+  param([Parameter(Mandatory)] $Snapshot, [switch] $RunRuntimeValidation)
+  $errors = [System.Collections.Generic.List[string]]::new()
+  $checks = [System.Collections.Generic.List[object]]::new()
+  $treePaths = @(Get-GitTreePaths -Root $Snapshot.Root -Commitish $Snapshot.ProductionSha)
+  $treeDifference = Compare-Object -ReferenceObject @($Snapshot.FileSet.Paths | Sort-Object) -DifferenceObject $treePaths
+  if (@($treeDifference).Count -eq 0) { $checks.Add([pscustomobject]@{ Name = 'snapshot-tree'; Status = 'PASS'; Detail = 'exact resolved file set' }) }
+  else { $errors.Add('Production snapshot tree does not equal the resolved file set.'); $checks.Add([pscustomobject]@{ Name = 'snapshot-tree'; Status = 'FAIL'; Detail = 'tree mismatch' }) }
+  if (@($treePaths | Where-Object { $_ -like 'apps/chart/state/**' }).Count -eq 0) { $checks.Add([pscustomobject]@{ Name = 'state-exclusion'; Status = 'PASS'; Detail = 'no local state content' }) }
+  else { $errors.Add('Production snapshot contains apps/chart/state content.'); $checks.Add([pscustomobject]@{ Name = 'state-exclusion'; Status = 'FAIL'; Detail = 'state content present' }) }
+  $sensitive = Test-SensitiveCandidate -Root $Snapshot.Root -Paths $treePaths -Commitish $Snapshot.ProductionSha
+  foreach ($error in $sensitive.Errors) { $errors.Add($error) }
+  if ($sensitive.Errors.Count -eq 0) { $checks.Add([pscustomobject]@{ Name = 'sensitive-content'; Status = 'PASS'; Detail = 'no policy match' }) }
+  else { $checks.Add([pscustomobject]@{ Name = 'sensitive-content'; Status = 'FAIL'; Detail = 'policy match' }) }
+  if (-not $RunRuntimeValidation) {
+    $checks.Add([pscustomobject]@{ Name = 'runtime-validation'; Status = 'NOT_TESTED'; Detail = 'not requested for structural snapshot test' })
+    return [pscustomobject]@{ Errors = @($errors); Checks = @($checks) }
+  }
+
+  $psErrors = $null
+  foreach ($path in @($treePaths | Where-Object { $_ -like '*.ps1' })) {
+    $psErrors = @()
+    $null = [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $Snapshot.WorktreePath $path), [ref] $null, [ref] $psErrors)
+    if ($psErrors.Count -gt 0) { $errors.Add("PowerShell parse failed: $path") }
+  }
+  $checks.Add([pscustomobject]@{ Name = 'powershell-parse'; Status = if ($errors | Where-Object { $_ -like 'PowerShell parse failed:*' }) { 'FAIL' } else { 'PASS' }; Detail = 'selected scripts' })
+
+  $node = Get-Command node -ErrorAction SilentlyContinue
+  if ($null -eq $node) { $checks.Add([pscustomobject]@{ Name = 'node-check'; Status = 'NOT_TESTED_DEPENDENCY_UNAVAILABLE'; Detail = 'node unavailable' }) }
+  else {
+    $nodeFailures = 0
+    foreach ($path in @($treePaths | Where-Object { $_ -match '\.(js|mjs)$' })) { & $node.Source --check (Join-Path $Snapshot.WorktreePath $path); if ($LASTEXITCODE -ne 0) { $nodeFailures++ } }
+    if ($nodeFailures) { $errors.Add('Node syntax validation failed.'); $checks.Add([pscustomobject]@{ Name = 'node-check'; Status = 'FAIL'; Detail = "$nodeFailures selected files" }) }
+    else { $checks.Add([pscustomobject]@{ Name = 'node-check'; Status = 'PASS'; Detail = 'selected JavaScript files' }) }
+  }
+
+  $python = Get-Command python -ErrorAction SilentlyContinue
+  if ($null -eq $python) { $checks.Add([pscustomobject]@{ Name = 'python-ast'; Status = 'NOT_TESTED_DEPENDENCY_UNAVAILABLE'; Detail = 'python unavailable' }) }
+  else {
+    $pythonFailures = 0
+    $astCode = 'import ast,pathlib,sys; ast.parse(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))'
+    foreach ($path in @($treePaths | Where-Object { $_ -like '*.py' })) { & $python.Source -B -c $astCode (Join-Path $Snapshot.WorktreePath $path); if ($LASTEXITCODE -ne 0) { $pythonFailures++ } }
+    if ($pythonFailures) { $errors.Add('Python AST validation failed.'); $checks.Add([pscustomobject]@{ Name = 'python-ast'; Status = 'FAIL'; Detail = "$pythonFailures selected files" }) }
+    else { $checks.Add([pscustomobject]@{ Name = 'python-ast'; Status = 'PASS'; Detail = 'selected Python files' }) }
+    & $python.Source -B (Join-Path $Snapshot.WorktreePath 'engine/bridge/trading_pipeline.py') --help
+    if ($LASTEXITCODE -ne 0) { $errors.Add('Bridge --help validation failed.'); $checks.Add([pscustomobject]@{ Name = 'bridge-help'; Status = 'FAIL'; Detail = 'bridge command failed' }) }
+    else { $checks.Add([pscustomobject]@{ Name = 'bridge-help'; Status = 'PASS'; Detail = 'bridge command' }) }
+  }
+
+  $npm = Get-Command npm.cmd -ErrorAction SilentlyContinue
+  if ($null -eq $npm) { $checks.Add([pscustomobject]@{ Name = 'npm-ci-build'; Status = 'NOT_TESTED_DEPENDENCY_UNAVAILABLE'; Detail = 'npm.cmd unavailable' }) }
+  else {
+    Push-Location $Snapshot.WorktreePath
+    try {
+      & $npm.Source ci
+      $ciExit = $LASTEXITCODE
+      if ($ciExit -eq 0) { & $npm.Source run build; $buildExit = $LASTEXITCODE } else { $buildExit = -1 }
+    } finally { Pop-Location }
+    if ($ciExit -ne 0 -or $buildExit -ne 0) { $errors.Add('npm ci or npm run build validation failed.'); $checks.Add([pscustomobject]@{ Name = 'npm-ci-build'; Status = 'FAIL'; Detail = "ci=$ciExit build=$buildExit" }) }
+    else { $checks.Add([pscustomobject]@{ Name = 'npm-ci-build'; Status = 'PASS'; Detail = 'lockfile install and build' }) }
+  }
+  return [pscustomobject]@{ Errors = @($errors); Checks = @($checks) }
+}
+
+function Remove-TemporaryReleaseContext {
+  [CmdletBinding()]
+  param([Parameter(Mandatory)] $Context)
+  if ($Context.Cleaned) { return }
+  $worktreeList = Invoke-ReleaseGit -Root $Context.Root -Arguments @('worktree', 'list', '--porcelain')
+  $registeredWorktree = $worktreeList.StdOut -split "`r?`n" | Where-Object { $_ -eq "worktree $($Context.WorktreePath.Replace('\', '/'))" }
+  if ($registeredWorktree) {
+    $removeWorktree = Invoke-ReleaseGit -Root $Context.Root -Arguments @('worktree', 'remove', '--force', $Context.WorktreePath)
+    if ($removeWorktree.ExitCode -ne 0) { throw 'Could not remove the temporary release worktree.' }
+  }
+  if ($Context.TemporaryProductionRef) { $null = Invoke-ReleaseGit -Root $Context.Root -Arguments @('update-ref', '-d', $Context.TemporaryProductionRef) }
+  $tempBase = [IO.Path]::GetFullPath([IO.Path]::GetTempPath())
+  $tempRoot = [IO.Path]::GetFullPath($Context.TemporaryRoot)
+  Assert-ReleaseCondition ($tempRoot.StartsWith($tempBase, [StringComparison]::OrdinalIgnoreCase) -and (Split-Path -Leaf $tempRoot).StartsWith('tradingbot-release-', [StringComparison]::OrdinalIgnoreCase)) 'Refusing to remove a non-release temporary path.'
+  if (Test-Path -LiteralPath $tempRoot) { Remove-Item -LiteralPath $tempRoot -Recurse -Force }
+  $Context.Cleaned = $true
 }
 
 function Test-ProductionFileSet {
@@ -366,4 +653,4 @@ function Test-ProductionFileSet {
   return [pscustomobject]@{ Errors = @($errors) }
 }
 
-Export-ModuleMember -Function Assert-ReleaseCondition, Resolve-TradingBotProjectRoot, Invoke-ReleaseGit, Import-ReleasePolicy, Get-MainPolicyReport, Test-SensitiveCandidate, Get-GitTreePaths, Get-GitBlobText, Get-ProductionFileSet, Test-ProductionFileSet
+Export-ModuleMember -Function Assert-ReleaseCondition, Resolve-TradingBotProjectRoot, Invoke-ReleaseGit, Import-ReleasePolicy, Get-MainPolicyReport, Test-SensitiveCandidate, Get-GitTreePaths, Get-GitBlobText, Get-ProductionFileSet, Test-ProductionFileSet, Test-ReleasePreflight, New-TemporaryReleaseContext, New-ProductionSnapshot, Test-ProductionSnapshot, Remove-TemporaryReleaseContext

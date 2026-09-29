@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-  [ValidateSet('RootResolution', 'MainPolicy', 'ProductionClosure')]
+  [ValidateSet('RootResolution', 'MainPolicy', 'ProductionClosure', 'Snapshot')]
   [string] $Case = 'RootResolution'
 )
 
@@ -37,6 +37,8 @@ function New-RootFixture {
   [IO.File]::WriteAllText((Join-Path $path 'scripts\git\Invoke-TradingBotRelease.ps1'), '# fixture')
   & git -C $path init --quiet
   if ($LASTEXITCODE -ne 0) { throw 'Could not initialize Git fixture.' }
+  & git -C $path checkout --quiet -b main 2>$null | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw 'Could not initialize fixture main branch.' }
   return $path
 }
 
@@ -69,6 +71,19 @@ function Commit-Fixture {
   & git -C $Root -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m fixture
   if ($LASTEXITCODE -ne 0) { throw 'Could not commit Git fixture.' }
   return (& git -C $Root rev-parse HEAD).Trim()
+}
+
+function New-FixtureRemote {
+  param([string] $Root)
+  $remote = Join-Path ([IO.Path]::GetTempPath()) ("tradingbot-release-remote-" + [guid]::NewGuid().ToString('N') + '.git')
+  & git init --bare --quiet $remote 2>$null | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw 'Could not initialize bare Git remote fixture.' }
+  & git -C $Root remote add origin $remote 2>$null | Out-Null
+  & git -C $Root push --quiet origin HEAD:refs/heads/main 2>$null | Out-Null
+  & git -C $Root push --quiet origin HEAD:refs/heads/production 2>$null | Out-Null
+  & git -C $Root fetch --quiet origin 2>$null | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw 'Could not populate remote Git fixture.' }
+  return $remote
 }
 
 function New-ProductionFixture {
@@ -176,16 +191,70 @@ function Invoke-ProductionClosureTests {
   }
 }
 
+function Invoke-SnapshotTests {
+  Import-Module $script:ModulePath -Force
+  $fixture = New-ProductionFixture
+  $remote = $null
+  try {
+    $remote = New-FixtureRemote -Root $fixture.Root
+    Write-FixtureFile $fixture.Root 'engineering/docs/intentional-dirty.md' 'valid user-owned dirty work'
+    Write-FixtureFile $fixture.Root 'scripts/start.ps1' 'changed source main'
+    $sourceSha = Commit-Fixture $fixture.Root
+    $tag = 'snapshot-fixture-tag'
+    $preflight = Test-ReleasePreflight -Root $fixture.Root -Tag $tag
+    Assert-True ($preflight.Errors.Count -eq 0) ("preflight permits dirty active main and missing local production: " + ($preflight.Errors -join '; '))
+    & git -C $fixture.Root show-ref --verify --quiet refs/heads/production
+    $localProductionExists = ($LASTEXITCODE -eq 0)
+    Assert-True (-not $localProductionExists) 'fixture has no local production branch'
+
+    $policy = @{
+      Production = @{
+        MandatoryPaths = @('scripts/launch.bat', 'scripts/start.ps1', 'apps/chart/package.json', 'apps/chart/package-lock.json', 'apps/chart/vite.config.js', 'apps/chart/index.html', 'apps/chart/review.html', 'engine/bridge/trading_pipeline.py', 'engine/pipeline/detector.py')
+        RuntimeRoots = @('apps/chart/src/', 'apps/chart/server/', 'engine/bridge/', 'engine/pipeline/')
+        ExcludedPathPatterns = @('apps/chart/state/**', 'apps/chart/tests/**', 'engine/tests/**', 'engineering/**', 'scripts/git/**')
+      }
+      Sensitive = @{ PathPatterns = @(); ContentPatterns = @(); MaximumScanBytes = 1048576 }
+    }
+    Write-FixtureFile $fixture.Root 'apps/chart/state/cache/local.json' '{}'
+    $sourceSha = Commit-Fixture $fixture.Root
+    $fileSet = Get-ProductionFileSet -Root $fixture.Root -MainSha $sourceSha -Policy $policy
+    Assert-True (-not ($fileSet.Paths -contains 'apps/chart/state/cache/local.json')) 'closure excludes fixture local state'
+    $activeIndexBefore = (& git -C $fixture.Root write-tree).Trim()
+    $refsBefore = @(& git -C $fixture.Root show-ref)
+    $remoteBefore = @(& git -C $fixture.Root ls-remote origin)
+    $snapshot = New-ProductionSnapshot -Root $fixture.Root -SourceMainSha $sourceSha -ProductionBaseSha $preflight.ProductionBaseSha -FileSet $fileSet -CommitMessage 'fixture release' -DryRun
+    Assert-True $snapshot.ProductionChanged 'dry run creates a candidate production commit when source differs'
+    $snapshotStatePaths = @(Get-GitTreePaths -Root $fixture.Root -Commitish $snapshot.ProductionSha | Where-Object { $_ -like 'apps/chart/state/**' })
+    Assert-True ($snapshotStatePaths.Count -eq 0) ("snapshot excludes local state: " + ($snapshotStatePaths -join ', '))
+    $validation = Test-ProductionSnapshot -Snapshot $snapshot
+    Assert-True ($validation.Errors.Count -eq 0) 'candidate snapshot passes structural validation'
+    Remove-TemporaryReleaseContext -Context $snapshot.Context
+    Assert-True (-not (Test-Path -LiteralPath $snapshot.Context.WorktreePath)) 'dry-run worktree is cleaned'
+    Assert-True ((& git -C $fixture.Root write-tree).Trim() -eq $activeIndexBefore) 'dry-run preserves the active index'
+    Assert-True ((@(& git -C $fixture.Root show-ref) -join "`n") -eq ($refsBefore -join "`n")) 'dry-run preserves permanent refs and tags'
+    Assert-True ((@(& git -C $fixture.Root ls-remote origin) -join "`n") -eq ($remoteBefore -join "`n")) 'dry-run leaves the remote unchanged'
+
+    $divergent = (& git -C $fixture.Root -c user.name=Fixture -c user.email=fixture@example.invalid commit-tree "${sourceSha}^{tree}" -m divergent).Trim()
+    & git -C $fixture.Root update-ref refs/heads/production $divergent
+    $divergentPreflight = Test-ReleasePreflight -Root $fixture.Root -Tag 'snapshot-divergent'
+    Assert-True (@($divergentPreflight.Errors | Where-Object { $_ -match 'diverges' }).Count -gt 0) 'preflight rejects a divergent local production branch'
+  } finally {
+    if ($fixture -and (Test-Path -LiteralPath $fixture.Root)) { Remove-Item -LiteralPath $fixture.Root -Recurse -Force }
+    if ($remote -and (Test-Path -LiteralPath $remote)) { Remove-Item -LiteralPath $remote -Recurse -Force }
+  }
+}
+
 try {
   switch ($Case) {
     'RootResolution' { Invoke-RootResolutionTests }
     'MainPolicy' { Invoke-MainPolicyTests }
     'ProductionClosure' { Invoke-ProductionClosureTests }
+    'Snapshot' { Invoke-SnapshotTests }
   }
   $script:Passed++
   Write-Output "PASS: $Case ($script:Passed passed, $script:Failed failed)"
 } catch {
   $script:Failed++
-  Write-Error "FAIL: $Case - $($_.Exception.Message)"
+  Write-Error "FAIL: $Case - $($_.Exception.Message) at $($_.InvocationInfo.PositionMessage)"
   exit 1
 }
