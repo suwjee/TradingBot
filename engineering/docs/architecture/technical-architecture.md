@@ -10,7 +10,7 @@ scope:
   - engine
   - runtime-boundaries
   - state-and-transport
-last_modified_at: 2026-09-30T10:34:54+03:30
+last_modified_at: 2026-09-30T10:37:31+03:30
 ---
 
 # TradingBot Technical Architecture
@@ -19,7 +19,7 @@ last_modified_at: 2026-09-30T10:34:54+03:30
 
 This document is the maintained reference for the **Current TradingBot system architecture**. It describes subsystem ownership, runtime boundaries, data flow, state ownership, persistence/cache boundaries, process integration, and the public result path.
 
-It is subordinate to the root [\`AGENTS.md\`](../../../AGENTS.md) and [Documentation Governance](../documentation-governance.md). It is not an Algorithm Reference, a UI/UX specification, a testing manual, a release guide, or a historical audit.
+It is subordinate to the root [`AGENTS.md`](../../../AGENTS.md) and [Documentation Governance](../documentation-governance.md). It is not an Algorithm Reference, a UI/UX specification, a testing manual, a release guide, or a historical audit.
 
 Detailed trading semantics belong to the current canonical trading-knowledge system and accepted Algorithm References. Detailed interaction and visual behavior belongs to the [UI/UX Reference](ui-ux-reference.md). Operational storage rules belong to [Local State](../operations/local-state.md).
 
@@ -52,7 +52,7 @@ The major architectural domains are **Chart**, **Vite/local server**, **FARAZ**,
 
 TradingBot is a workstation-style application with a browser UI, an in-process Vite/local HTTP server, a Python calculation subprocess, project-local persisted state, and an external FARAZ integration.
 
-\`\`\`mermaid
+```mermaid
 flowchart LR
     B[Chart / browser] -->|HTTP JSON requests| S[Vite / local server]
     S -->|RAW and local state I/O| L[(Project-local state)]
@@ -66,7 +66,7 @@ flowchart LR
     F -->|validated RAW / coverage| L
     F <--> X[External FARAZ service]
     F <--> C[Chromium session process]
-\`\`\`
+```
 
 The diagram is conceptual. Internal files may be reorganized without changing this architecture if ownership and contracts remain the same.
 
@@ -120,7 +120,7 @@ Chart is the browser-side workstation and presentation owner. It owns:
 - rendering of finalized Engine results;
 - Manual Review presentation.
 
-Current composition is rooted in the chart application entry point and supporting \`src/\` feature, chart, drawing, UI, and review modules. These paths are discovery anchors, not an exhaustive future inventory.
+Current composition is rooted in the chart application entry point and supporting `src/` feature, chart, drawing, UI, and review modules. These paths are discovery anchors, not an exhaustive future inventory.
 
 ### Inputs and outputs
 
@@ -203,7 +203,7 @@ FARAZ data can become Engine input only after it is persisted/validated through 
 
 ## 9. Engine architecture
 
-Engine is the authoritative calculation subsystem under \`engine/\`. Its production closure must be discovered recursively from the current bridge/runtime loading and imports.
+Engine is the authoritative calculation subsystem under `engine/`. Its production closure must be discovered recursively from the current bridge/runtime loading and imports.
 
 ### System responsibility
 
@@ -254,7 +254,7 @@ For selected-range execution, the server reads the RAW resource, keeps only rows
 
 The bridge reads and calculates the **complete input stream supplied through its data input**.
 
-Within that supplied stream, bridge \`from/to\` bounds identify the public/presentation window. The bridge does not truncate calculation state at the visible end before running the calculation; later rows in the supplied stream may therefore resolve state that began earlier in that same supplied stream.
+Within that supplied stream, bridge `from/to` bounds identify the public/presentation window. The bridge does not truncate calculation state at the visible end before running the calculation; later rows in the supplied stream may therefore resolve state that began earlier in that same supplied stream.
 
 Consequences:
 
@@ -340,11 +340,11 @@ The complete public schema remains owned by current Source/contracts and accepte
 
 Calculation progress follows this path:
 
-\`Engine/bridge phase → progress record on stderr → Vite progress channel → SSE → Chart progress UI\`.
+`Engine/bridge phase → progress record on stderr → Vite progress channel → SSE → Chart progress UI`.
 
 The final calculation follows:
 
-\`Engine/bridge finalized state → JSON stdout → Vite/cache/HTTP → Chart or Manual Review\`.
+`Engine/bridge finalized state → JSON stdout → Vite/cache/HTTP → Chart or Manual Review`.
 
 Errors can originate at browser request validation, server validation/file I/O, child-process execution, Engine calculation, FARAZ acquisition, or external service boundaries. Each layer reports failure through its transport contract. Presentation may explain an error but must not substitute fabricated successful state.
 
@@ -369,7 +369,7 @@ Secrets, cookies, tokens, private keys, and session contents must not enter main
 
 The intended subsystem direction is:
 
-\`\`\`text
+```text
 External FARAZ service
         ↕
 FARAZ acquisition integration
@@ -385,7 +385,7 @@ Finalized serialized result
 Vite transport/cache
         ↓
 Chart / Manual Review presentation
-\`\`\`
+```
 
 Chart can initiate requests upstream, but semantic dependency runs from finalized Engine state toward presentation. Neither Chart nor transport layers may become an alternative source of trading truth.
 
@@ -457,7 +457,7 @@ This architecture remains valid under ordinary internal evolution:
 
 ## 22. Related maintained documents
 
-- Root operating contract: [\`AGENTS.md\`](../../../AGENTS.md)
+- Root operating contract: [`AGENTS.md`](../../../AGENTS.md)
 - Documentation lifecycle/ownership: [Documentation Governance](../documentation-governance.md)
 - Maintained documentation navigation: [Engineering Documentation](../README.md)
 - AI execution workflow: [AI Engineering Workflow](../ai/engineering-workflow.md)
