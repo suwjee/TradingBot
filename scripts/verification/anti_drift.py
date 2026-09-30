@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # created_at: 2026-09-30T16:20:59+03:30
-# last_modified_at: 2026-09-30T20:12:59+03:30
+# last_modified_at: 2026-09-30T20:16:20+03:30
 """Read-only structural/documentation anti-drift verifier for TradingBot."""
 
 from __future__ import annotations
@@ -648,14 +648,20 @@ def roadmap_checks(root: Path, resolver: CaseResolver) -> list[Diagnostic]:
         ))
 
     linked_targets: set[str] = set()
-    for _line, _label, raw_target in extract_links(section):
-        target, _fragment = normalize_relative_target(TECHNICAL_ARCHITECTURE, raw_target)
-        if target is None or (target.parts and target.parts[0] == ".."):
-            continue
-        target_text = target.as_posix().rstrip("/")
-        if target_text.startswith("engineering/archive/repository-graphify"):
-            continue
-        linked_targets.add(target_text)
+    # Roadmap labels intentionally use inline-code path formatting. Parse the
+    # Markdown targets directly here so label formatting cannot hide a valid path.
+    for line in section.splitlines():
+        for match in MARKDOWN_LINK_RE.finditer(line):
+            raw_target = match.group(2).strip()
+            if raw_target.startswith("<") and raw_target.endswith(">"):
+                raw_target = raw_target[1:-1].strip()
+            target, _fragment = normalize_relative_target(TECHNICAL_ARCHITECTURE, raw_target)
+            if target is None or (target.parts and target.parts[0] == ".."):
+                continue
+            target_text = target.as_posix().rstrip("/")
+            if target_text.startswith("engineering/archive/repository-graphify"):
+                continue
+            linked_targets.add(target_text)
 
     for anchor in ROADMAP_REQUIRED_ANCHORS:
         expected = PurePosixPath(anchor)
