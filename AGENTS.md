@@ -1,129 +1,432 @@
-# TradingBot Project Knowledge and Agent Rules
+# TradingBot Project Operating Contract
 
-This file is the root navigation and operating guide for AI-assisted work in the current TradingBot checkout. The current working tree is intentionally dirty. Current source files, configuration, and user changes are authoritative for describing executable state. Trading semantics, behavior definitions, lifecycle rules, ownership rules, Order rules, directional rules, and other algorithmic intent must be resolved through the TradingBot Intelligence Plugin and the canonical Knowledge Vault first. Generated artifacts, historical references, old AI output, and memory are supporting evidence only.
+This root `AGENTS.md` is the durable navigation and operating contract for AI-assisted work in TradingBot. It defines authority, discovery, ownership boundaries, safety rules, engineering workflow, and verification obligations. It is intentionally discovery-first: mutable repository facts must be re-discovered from the live project instead of being frozen here.
 
-## 0. Governing Rules
+Historical snapshots, old audit reports, generated artifacts, previous AI output, and memory are evidence only. They must never silently override maintained instructions, canonical trading knowledge, accepted references, or the current executable project.
 
-### 0.1 Instruction and Trading Authority
+## 1. Purpose and Scope
 
-For TradingBot work, apply this order:
+Use this file to determine:
+
+- which authority to consult;
+- how to discover the current project safely;
+- which subsystem owns a change;
+- how to investigate trading behavior;
+- how to protect user work;
+- what verification is required;
+- how to report evidence honestly.
+
+This file is **not** a second TradingBot algorithm specification. Detailed and changeable Reaction, Reset, Blue, A, S, E, Order, OrderAudit, StopAll, lifecycle, dominance, ownership, directional-exception, and edge-case semantics belong to the current canonical trading-knowledge system and accepted Algorithm References.
+
+## 2. Governing Authority
+
+For TradingBot work, apply this authority order:
 
 1. Current explicit user instruction.
-2. This root `AGENTS.md` and any nearer applicable project instruction.
+2. This root `AGENTS.md` and any nearer applicable `AGENTS.md`.
 3. TradingBot Intelligence Plugin retrieval.
-4. Canonical / verified / normative TradingBot Knowledge Vault content.
-5. Accepted algorithm/reference documents identified by the Vault.
-6. Current production source and configuration as evidence of executable behavior.
-7. Approved regression fixtures and reproducible RAW/runtime evidence.
-8. Historical documentation, previous AI output, memory, and model inference.
+4. Canonical / normative TradingBot Knowledge Vault content.
+5. Current accepted Algorithm References.
+6. Current production Source and configuration as evidence of executable behavior.
+7. Current tests, approved regression evidence, authoritative RAW, and reproducible runtime evidence.
+8. Historical documents, archives, old audit reports, previous AI output, memory, and inference.
 
-Use Plugin/Vault to determine what the system **should** do.
+Important distinction:
 
-Use current source and runtime evidence to determine what the system **currently does**.
+- Plugin / Vault / accepted References define **intended trading semantics**.
+- Current Source / configuration / runtime define **currently executable behavior**.
 
-If canonical knowledge and executable source disagree, do not silently reconcile them. Report the mismatch and determine whether the task is to fix implementation, update knowledge, or clarify the intended rule.
+If intended semantics and executable behavior disagree:
 
-### 0.2 Mandatory Plugin/Vault-First Workflow
+- do not silently reconcile them;
+- do not guess which side is correct;
+- report the exact mismatch;
+- determine whether implementation, canonical knowledge, references, or the requirement must change.
 
-Before interpreting, explaining, debugging, validating, or changing any TradingBot semantic rule, first query the TradingBot Intelligence Plugin and inspect the relevant canonical Vault knowledge.
+Hashes, versions, counts, timestamps, and recorded environment details may support evidence, but they are not semantic authority.
 
-This is mandatory for:
+## 3. Mandatory Project Discovery
 
-- Reaction;
-- Reset;
-- Blue;
-- A;
-- S;
-- E;
-- StopAll;
-- Orders and OrderAudit;
-- lifecycle transitions;
-- ownership;
-- dominance;
-- strictness;
-- source/confirmation semantics;
-- mirror rules;
-- regression fixtures;
-- special cases;
-- algorithm references;
-- canonical status.
+Before substantial work, discover the live project rather than relying on remembered structure.
 
-Do not rely on memory, previous AI summaries, old conversations, or remembered examples as the primary authority when Plugin/Vault knowledge is available.
+1. Locate the actual repository root from the current environment and repository metadata. Do not assume a fixed drive or absolute path.
+2. Inspect current Git status when a working tree is available.
+3. Preserve all existing user work, including staged, unstaged, untracked, deleted, renamed, and local-only files.
+4. Recursively inventory the current repository tree at the level needed for the task.
+5. Read this `AGENTS.md` completely and read any nearer applicable project instructions.
+6. Inspect the maintained engineering-documentation index and the current documentation relevant to the task.
+7. Inspect current `.gitignore`, `.gitattributes`, root `README.md`, manifests, configuration, startup files, and release/tooling documentation when they affect the task.
+8. Discover the current test layout and test configuration dynamically.
+9. For Engine work, recursively inventory the current live Engine tree and determine the production-owned Source dynamically.
+10. For trading semantics, query the TradingBot Intelligence Plugin and canonical Vault if available, then inspect current accepted Algorithm References as required.
+11. Follow imports, runtime entry points, manifests, configuration references, and dependency closure far enough to understand ownership and downstream impact.
+12. Treat archived, generated, cached, historical, or verification-only material as supporting evidence unless current governance explicitly promotes it.
 
-If the Plugin is unavailable, inspect the Vault directly if available. If canonical semantics still cannot be established, state the limitation and ask a precise clarifying question.
+Do not use old chat memory, historical reports, archived files, remembered versions, remembered hashes, remembered module counts, or previous AI summaries as primary current truth.
 
-### 0.3 AGENTS Is Not the Algorithm
+If multiple copies of a document or source artifact exist, determine which copy is maintained/current before relying on it.
 
-This file defines project navigation, authority, safety, workflow, and durable operating constraints.
+## 4. Trading Semantic Workflow
 
-It must not become a second copy of volatile TradingBot algorithm rules.
+Before interpreting, debugging, validating, or changing a trading semantic rule:
 
-Do not hard-code changing semantics such as:
+1. Retrieve the relevant canonical trading knowledge.
+2. Identify the current accepted reference material for that rule.
+3. Read the current executable Source that implements the affected path.
+4. Inspect relevant tests, regression evidence, and RAW/runtime chronology.
+5. Separate **intended semantics** from **current executable behavior**.
+6. Resolve any material ambiguity before making a behavioral decision.
+7. Find the earliest divergent state or transition.
+8. Fix the owning component with the smallest general rule that satisfies canonical semantics.
+9. Verify both directly affected behavior and required downstream behavior.
+10. Synchronize durable knowledge/references when the approved change requires it.
 
-- current Order status;
-- Order formation details;
-- exact StopAll grouping;
-- behavior counters;
-- S/E subtype edge cases;
-- ownership refresh rules;
-- dominance exceptions;
-- special candle outcomes.
+If the Plugin is unavailable, use the highest available authority and state the limitation. Do not invent missing canonical semantics.
 
-Resolve volatile trading semantics from the current Plugin/Vault at task time.
+### Durable trading-safety invariants
 
-### 0.4 Clarification — Hard Stop
+AGENTS may state only durable constraints needed to work safely:
 
-Material ambiguity in TradingBot semantics must be resolved before implementation.
+- preserve project-required Decimal semantics for price-sensitive behavior;
+- preserve strict versus inclusive boundaries exactly as defined by current canonical authority;
+- preserve directional consistency and mirror obligations defined by current authority;
+- use the finest authoritative chronology available when event order matters;
+- preserve identity, provenance, ordering, and serialization contracts unless an approved change explicitly modifies them;
+- do not infer a production rule from one fixture or historical example;
+- do not hard-code known timestamps, candle identities, symbols, RAW filenames, timeframe identities, OHLC fingerprints, fixture IDs, or expected outputs unless they are explicitly part of the formal specification;
+- resolve material semantic ambiguity before implementation.
 
-If uncertainty remains about behavior definition, source candle, confirmation candle, breakout, Reset, stop condition, strictness, direction, timeframe, lower-timeframe chronology, ownership, Order semantics, dominance, lifecycle transition, expected output, fixture meaning, canonical status, or mirror behavior:
+Detailed current algorithm behavior must be retrieved dynamically rather than duplicated here.
 
-1. Investigate everything discoverable from Plugin/Vault, source, tests, RAW, logs, and references.
-2. Ask a precise technical question for what remains unresolved.
-3. Continue asking follow-up questions until the material ambiguity is actually resolved.
-4. Do not silently guess or convert an example into a general rule.
+## 5. Architecture Ownership
 
-### 0.5 Independent Evaluation
+Use conceptual ownership, not an exhaustive filename inventory.
 
-Treat user-provided expected outputs, candle labels, diagnoses, root-cause theories, previous AI conclusions, old documentation, and memory as claims or evidence, not automatic proof.
+### Chart
 
-Actively test competing explanations.
+The Chart/browser application owns:
 
-A user correction is important evidence, but production logic must still be based on a general canonical rule rather than a timestamp, OHLC fingerprint, fixture identity, or hidden special case.
+- visualization;
+- interaction;
+- workspace and chart UI state;
+- drawing presentation;
+- review and presentation behavior;
+- user-facing rendering of finalized results.
 
-When evidence contradicts the initial theory, state the contradiction clearly.
+The Chart must not become a second trading algorithm.
 
-### 0.6 Strict Language Policy
+### Vite / local server boundary
 
-Only Persian and English may be authored as natural-language content.
+The Vite/server layer owns:
 
-All developer-facing TradingBot technical content must be English, including:
+- local API and transport boundaries;
+- orchestration between browser, local services, files, and Engine;
+- process/subprocess coordination;
+- request/response and progress transport;
+- cache/response coordination where currently assigned;
+- local service integration.
 
-- source identifiers;
-- filenames created by the AI;
-- comments;
-- docstrings;
-- technical logs;
-- error messages;
-- test names;
-- assertion messages;
-- technical Markdown;
-- algorithm references;
-- Vault knowledge;
-- Plugin documentation;
-- commit messages;
-- changelog entries.
+Vite must not become a second trading engine or silently redefine finalized Engine semantics.
 
-Do not introduce any third human language.
+### FARAZ
 
-Persian may be used for user-facing conversation or dedicated Persian content/localization when explicitly required.
+FARAZ integration owns:
 
-Existing third-language content required for compatibility, localization, data fidelity, or historical preservation must not be destructively rewritten without explicit authorization.
+- external market-data acquisition;
+- authentication/session handling;
+- history and update integration;
+- RAW acquisition/integration.
 
-### 0.7 Truthfulness and Evidence Labels
+FARAZ must not define TradingBot trading semantics.
 
-Never claim to have read, executed, tested, verified, benchmarked, modified, committed, pushed, deployed, synchronized, or validated something unless that action actually occurred.
+### Engine
 
-When the distinction matters, use:
+The Engine owns:
+
+- authoritative trading calculation;
+- trading state and stage execution;
+- lifecycle and reconciliation owned by calculation logic;
+- finalized trading results exposed to transport/serialization.
+
+The Engine must not depend on browser presentation behavior.
+
+### Boundary invariants
+
+- presentation must not repair or redefine trading truth;
+- transport/serialization must not silently become a second algorithm;
+- external acquisition must not define trading rules;
+- subsystem ownership must be verified from current Source before moving logic across boundaries.
+
+Stable roots such as `apps/`, `engine/`, `engineering/`, and `scripts/` are discovery anchors in the current project, not permission to assume their internal inventory will never evolve.
+
+## 6. Dynamic Source and Engine Discovery
+
+Never define production Source by a permanent file count, exhaustive filename list, hash list, version list, or old snapshot.
+
+For substantial Engine work:
+
+1. Recursively inventory the current live `engine/` tree.
+2. Identify production-owned Source from current structure, runtime loading, imports, manifests, references, and repository conventions.
+3. Distinguish production Source from:
+   - tests;
+   - benchmarks;
+   - fixtures;
+   - generated output;
+   - caches;
+   - historical copies;
+   - archived files;
+   - verification-only helpers;
+   - temporary files;
+   - bytecode.
+4. Inspect all relevant current production modules, not only the file named in the task.
+5. Follow dependency and ownership relationships far enough to understand upstream/downstream effects.
+6. Automatically include future production modules when live project evidence shows they participate in Engine behavior.
+7. Treat familiar filenames as discovery anchors only, never as an exhaustive future inventory.
+
+If Engine packages or directories are reorganized, rediscover the current production closure from live project evidence. No future production file may be missed merely because it was absent when this document was written.
+
+### Hash and version policy
+
+Hashes may support integrity checks, regression baselines, forensic analysis, migrations, and release evidence. They are not semantic authority and do not replace reading current Source.
+
+Versions may be recorded as evidence or checked for compatibility when required. Do not hard-code mutable current versions as permanent truth. Discover tool, runtime, package, Source, and reference versions at task time when they matter.
+
+## 7. Dynamic Test Discovery
+
+Do not rely on fixed test-file counts, test-case counts, historical suite totals, or permanent assumptions about how test source is tracked or distributed.
+
+For each task:
+
+1. Discover the current test layout from the live repository.
+2. Determine current ownership for affected areas such as Chart, Vite/server, FARAZ, Engine, integration/regression, documentation, and repository integrity.
+3. Inspect current manifests, test configuration, runner scripts, fixtures, and verification helpers that affect the task.
+4. Run the narrowest relevant current tests first.
+5. Expand to broader regression or end-to-end checks according to risk and current project requirements.
+6. Never reuse a historical PASS as a current PASS.
+7. Separate structural checks, unit results, bounded regressions, mirror/metamorphic evidence, browser/runtime evidence, and independent real-data correctness.
+
+Use these verification statuses:
+
+- `PASS`
+- `FAIL`
+- `NOT RUN`
+- `INCOMPLETE`
+- `NOT APPLICABLE`
+
+A status is `PASS` only when the check actually completed and its required assertions/comparisons succeeded.
+
+Keep mutable commands and suite layout in dedicated testing documentation or current runner/manifests; do not duplicate them extensively here.
+
+## 8. Git and Dirty-Work Safety
+
+Preserve user work.
+
+Do not, without explicit authorization:
+
+- `git reset`;
+- `git clean`;
+- stash user work;
+- discard user changes;
+- overwrite unrelated files;
+- restore files over user changes;
+- broad-delete paths;
+- stage unrelated files;
+- rewrite history;
+- force-push;
+- push to a remote;
+- publish a release.
+
+Before editing:
+
+- inspect working-tree state when available;
+- distinguish pre-existing changes from task changes;
+- avoid whole-file formatting or line-ending churn;
+- keep changes limited to the requested scope.
+
+Before claiming a commit, push, tag, release, deployment, or publication succeeded, verify the actual resulting state.
+
+Previous authorization to publish does not carry forward to a later task.
+
+## 9. Debugging and First-Difference Workflow
+
+When actual output disagrees with expected behavior, debug from upstream to downstream.
+
+Use the evidence chain:
+
+`Input / RAW -> current Source -> state transition -> actual -> expected -> first difference -> owning component -> root cause -> correction -> regression`
+
+Rules:
+
+- find the earliest state where expected and actual behavior diverge;
+- treat downstream differences as consequences until independently proven otherwise;
+- inspect the owner of that first difference;
+- do not patch serialization or UI to hide an upstream calculation defect;
+- do not convert one known candle, timestamp, price, symbol, fixture, or expected JSON into a production special case;
+- verify chronology with the finest authoritative data available;
+- report competing explanations when evidence is not conclusive.
+
+## 10. Verification Obligations
+
+Verification depth must match change risk.
+
+At minimum, consider:
+
+- syntax/parse checks for changed code;
+- import/runtime initialization through the supported current path;
+- targeted unit/invariant tests;
+- affected subsystem tests;
+- strict/equality and boundary checks;
+- upstream/downstream regression where behavior can propagate;
+- serialization/public-contract checks;
+- determinism checks;
+- both directional paths when directional behavior is affected;
+- historical regression anchors when still active;
+- representative or full RAW regression when chronology/history/lifecycle risk requires it;
+- performance and memory comparison for refactors, caches, indexes, or hot-path changes;
+- final diff review.
+
+Never claim stronger verification than was actually performed.
+
+Compilation is not trading correctness. Static inspection is not runtime verification. Mirror parity is not independent opposite-direction correctness. A bounded fixture is not global market correctness.
+
+## 11. Refactor and Performance Obligations
+
+Correctness and semantic equivalence take priority over speed, code reduction, or elegance.
+
+For implementation-only refactors:
+
+- establish a reproducible baseline before changing production behavior;
+- preserve stable observable behavior exactly;
+- identify the owning component and current complexity;
+- prefer eliminating repeated work and improving data access before micro-optimization;
+- preserve chronology, tie-breaking, Decimal semantics, identity, provenance, lifecycle state, ordering, and public output;
+- keep caches/indexes subordinate to authoritative state;
+- avoid persistent or cross-run caches unless safety is formally established;
+- verify deterministic output;
+- compare performance only with comparable inputs and environments.
+
+Use [Zero-difference refactor](engineering/docs/development/zero-difference-refactor.md) for specialized refactor/performance methodology. If that document conflicts with this root authority model, this `AGENTS.md` governs authority and current live project evidence governs mutable facts.
+
+## 12. Documentation and Knowledge Synchronization
+
+Documentation must follow current project truth rather than forcing the project to match an old document.
+
+Classify documentation before relying on it:
+
+- maintained normative guidance;
+- maintained descriptive architecture;
+- accepted Algorithm Reference;
+- current verification procedure;
+- historical evidence;
+- generated evidence.
+
+Historical snapshots may preserve old paths, counts, versions, hashes, or behavior records. Those facts remain historical and must not be promoted to current authority without fresh verification.
+
+When an approved change affects durable behavior or architecture:
+
+1. update the owning Source/configuration;
+2. run required verification;
+3. synchronize canonical Plugin/Vault knowledge when required;
+4. synchronize accepted Algorithm References when required;
+5. update maintained architecture/development/operations documentation affected by the change;
+6. preserve useful historical evidence as historical rather than rewriting it as current.
+
+Do not duplicate volatile algorithm semantics into general engineering documents.
+
+Current documentation navigation begins at [Engineering documentation](engineering/docs/README.md). Verify the status/currentness of a linked document before treating its body as maintained authority.
+
+For current local-state ownership, use [Project-local workstation state](engineering/docs/operations/local-state.md).
+
+## 13. Release and Publication Rules
+
+Release mechanics are owned by the current release subsystem, not by this file.
+
+When release work is requested:
+
+- inspect the current release implementation and [release operations](scripts/git/README.md);
+- preserve dirty user work;
+- use the maintained release tooling rather than inventing a parallel process;
+- verify remote state and authentication safely;
+- do not force-push or rewrite history unless the user explicitly authorizes a separately justified operation;
+- do not push, tag, publish, or create a release without explicit authorization for the current task;
+- report partial publication honestly.
+
+Do not impose a permanent package format, package filename, release artifact, tag format, or packaging step on every engineering task unless current release tooling or the explicit task requires it.
+
+## 14. Package / Archive Inputs
+
+Prefer the current live repository when it is available.
+
+If a task explicitly supplies an archive, package, extracted source bundle, or alternate checkout as authoritative input:
+
+- inspect it recursively enough for the task;
+- determine whether it or the live repository is the current authority;
+- detect duplicate/stale/conflicting copies;
+- do not assume a permanent package filename;
+- do not treat a package as authoritative merely because a previous task used it.
+
+## 15. Optional Tooling
+
+Optional tools support navigation, analysis, or verification. They do not define TradingBot semantics.
+
+This applies to tools such as Graphify, Semgrep, SonarQube, Trivy, Codex Security, Superpowers, MCP servers, and other plugins.
+
+### Graphify
+
+Graphify is navigation/evidence support, not semantic authority.
+
+Every Graphify execution requires explicit user approval for that specific execution. Installation or previous approval does not authorize a new run.
+
+If Graphify is used:
+
+- validate important relationships directly against current Source;
+- distinguish inferred graph edges from implementation facts;
+- do not treat old graph snapshots as current dependency truth.
+
+### Other tools
+
+Scanner, security, testing, and analysis tools may surface evidence or risks. Validate meaningful conclusions against the current project before documenting them as facts.
+
+## 16. Security and Local-State Safety
+
+Keep credentials, sessions, tokens, private keys, and secret state private.
+
+Do not copy secret values into:
+
+- chat output;
+- documentation;
+- tests;
+- logs;
+- delivery packages;
+- release metadata.
+
+Discover current local-state ownership from the live project and maintained operations documentation rather than assuming an old storage layout. Do not modify RAW merely to make a test pass.
+
+## 17. Authoring Standards
+
+Developer-facing TradingBot technical content authored by an AI must be English unless the task explicitly requires a dedicated localization artifact.
+
+This includes source identifiers, comments, docstrings, technical logs, test names, assertion messages, technical Markdown, algorithm references, commit messages, and changelog entries.
+
+Persian may be used in user-facing conversation.
+
+Existing language content required for compatibility, localization, data fidelity, or historical preservation must not be destructively rewritten without explicit authorization.
+
+Prefer:
+
+- clear ownership;
+- descriptive domain terminology;
+- small auditable changes;
+- direct evidence;
+- deterministic behavior;
+- minimal duplication;
+- links to the owning document instead of copying volatile content.
+
+## 18. Truthfulness and Evidence Labels
+
+Never claim to have read, run, tested, verified, benchmarked, modified, committed, pushed, deployed, synchronized, or validated something unless that action actually occurred.
+
+When useful, label statements as:
 
 - `VERIFIED FACT`
 - `USER CLAIM`
@@ -133,256 +436,49 @@ When the distinction matters, use:
 - `HYPOTHESIS`
 - `UNVERIFIED RESULT`
 
-Do not generalize bounded validation into full correctness.
-
-### 0.8 Git and Dirty-Work Safety
-
-Preserve all pre-existing tracked and untracked work.
-
-Do not reset, clean, stash, overwrite, broad-delete, or stage unrelated dirty files without explicit authorization.
-
-Remote push requires explicit authorization for the current task. Previous push authorization does not carry forward.
-
-Before claiming a push or publication succeeded, verify the actual remote state.
-
-### 0.9 Graphify Approval Rule
-
-Graphify is a navigation and source-orientation tool, not algorithmic authority.
-
-Every Graphify execution requires explicit user approval for that specific execution.
-
-This includes:
-
-- `build`;
-- `update`;
-- `query`;
-- `graph`;
-- `path`;
-- `explain`;
-- `export`;
-- `diagnose`;
-- dependency analysis.
-
-Do not automatically run Graphify after implementation changes.
-
-If Graphify would materially help, explain why and ask for approval first.
-
-### 0.10 Supporting Skills
-
-Supporting skills may improve workflow but do not define TradingBot semantics.
-
-Examples include:
-
-- Mirror Trading Pipeline;
-- Property-Based Testing;
-- Spec-to-Code Compliance;
-- Differential Review;
-- Persian Writing;
-- `i-have-adhd`.
-
-Trading-related supporting skills must operate only after Plugin/Vault retrieval.
-
-No skill may override current user instructions, this `AGENTS.md`, canonical TradingBot knowledge, or safety constraints.
-
-### 0.11 No Hidden Hardcoding
-
-Production trading logic must not branch on known:
-
-- timestamps;
-- candle identities;
-- symbols;
-- RAW filenames;
-- timeframe identities;
-- OHLC fingerprints;
-- fixture IDs;
-- expected labels.
-
-unless those values are genuinely part of the formal canonical specification.
-
-Fixtures validate general logic. They must not become the logic.
-
-### 0.12 Final Trading Workflow
-
-Use this process for TradingBot tasks:
-
-`Project instructions -> Plugin/Vault first -> Confirm authority -> Verify current source and RAW/runtime evidence -> Clarify ambiguity -> Find the first divergent stage/root cause -> Make the smallest correct change -> Validate protected regression -> Synchronize durable knowledge if needed -> Report honestly`
-
-## A. Project Identity
-
-TradingBot is a Windows-oriented local candlestick/chart workstation. The browser application acquires and displays RAW candle data, manages drawings and indicator state, and requests calculations from a local Vite middleware. The calculation authority is Python under `engine/`; it produces Reaction, Blue Line, A, S, E, StopAll, and OrderAudit results for Bullish and Bearish directions.
-
-Snapshot note: the chart package was recorded as `apps/chart` version `3.4.1`. Its recorded runtime used native ES modules, Vite `8.2.1`, Lightweight Charts `5.2.1`, Node's built-in test runner, and Playwright Core for local FARAZ workflows. The launcher was recorded as expecting Node `20.19+`, Python `3.12+`, `orjson`, and `tzdata`. The audited environment used Node `24.19.0` and Python `3.14.6`. Re-verify all version/runtime facts before relying on them.
-
-The repository checkpoint/tag version and the chart package version are separate. A `v2.0.0` release tag is not present in the baseline audited state.
-
-## B. Repository Map
-
-| Path | Use |
-| --- | --- |
-| `scripts/launch.bat`, `scripts/start.ps1` | Windows startup and dependency/bootstrap checks; these scripts can mutate the environment. |
-| `apps/chart/index.html`, `apps/chart/src/main.js` | Browser shell, composition root, mutable workstation state, chart and interaction orchestration. |
-| `apps/chart/src/chart/` | Chart state, LOD, coordinate transforms, progress, and zoom contracts. |
-| `apps/chart/src/features/` | RAW inventory/update, FARAZ integration, indicator cache/lifecycle, workspace sessions, screenshots, and manual review. |
-| `apps/chart/src/ui/`, `src/drawings/` | Feedback, logs, popovers, icons, workspace state, and drawing presentation. |
-| `apps/chart/src/algorithm/` | In-app algorithm reference content and directional mirror documentation. |
-| `apps/chart/server/`, `apps/chart/vite.config.js` | Local HTTP API, Python subprocess boundary, RAW/FARAZ persistence, caches, SSE, drawings, and templates. |
-| `apps/chart/tests/unit/` | 30 local-only Node test files; the 2026-09-29 baseline had 159 tests; internal-state and watcher coverage add five tests. |
-| `engine/bridge/trading_pipeline.py` | Authoritative CLI, dynamic engine loading, market context, stage orchestration, lifecycle, visibility, and JSON serialization. |
-| `engine/pipeline/` | Reaction, Blue, A, S, E, StopAll, chronology, direction policy, Decimal/order helpers, and lifecycle logic. |
-| `apps/chart/state/data/raw/` | Project-local candle arrays and metadata sidecars. |
-| `apps/chart/state/cache/`, `apps/chart/state/secret/` | Project-local user drawings, templates, calculations and FARAZ authentication; ignored and preserved by default. |
-| `engineering/docs/`, `engineering/archive/`, `engineering/verification/` | Maintained guidance, ignored historical evidence and local verification artifacts. |
-
-Baseline snapshot: the tracked checkout was recorded at `0d084590fb1ba1b57bcac6d4f19c977557830c2d` on `main`, two commits ahead of `origin/main`. Re-verify the current commit/branch/remote state before relying on this snapshot. The worktree contains or may contain user-owned tracked edits, deletions, and untracked replacement engine/frontend files. Never reset, clean, stash, rename, overwrite, or stage those paths without explicit authorization.
-
-## C. Architecture Overview
-
-The runtime boundary is:
-
-```text
-launch.bat -> start.ps1 -> Vite middleware/browser
-browser -> HTTP JSON/SSE -> vite.config.js/server/*.js
-Vite -> Python subprocess -> trading_pipeline.py
-bridge -> Reaction -> Blue -> A -> S -> E -> StopAll/visibility -> JSON stdout
-JSON -> Vite cache/API -> browser chart, panels, review, and audit views
-```
-
-`vite.config.js` anchors paths from the configuration file, spawns Python with explicit bridge and detector paths, parses `QG_PROGRESS:` stderr, and returns serialized stdout. For a full-chart request it passes the original RAW path. For a partial indicator range it filters RAW rows by the inclusive chart-candle buckets in Node memory and streams that JSON through a Windows named pipe; no second RAW file is written. The unchanged bridge calculates from the complete input it receives, so a partial request starts with empty state at `from` and cannot use chronology outside `to`. The browser must not become a second trading-rule authority.
-
-## D. Runtime Execution Flow
-
-1. `scripts/start.ps1` validates files/runtimes, may install dependencies, creates project-local state directories through the shared resolver, sets `TRADINGBOT_PYTHON`, `TRADINGBOT_PROJECT_ROOT`, and `TRADINGBOT_LOCAL_STATE_ROOT`, and starts Vite on `0.0.0.0`.
-2. `apps/chart/src/main.js` loads `/api/symbols`, restores workspace state, reads `/api/candles`, and creates Lightweight Charts.
-3. Indicator actions post validated direction, analysis timeframe, chart timeframe, inclusive chart-candle range, and Blue-line settings to `/api/reactions`; progress is streamed through `/api/reactions/progress` SSE.
-4. `vite.config.js` builds a cache key from engine source fingerprint, RAW identity/mtime, input scope, chart/analysis timeframes, range, direction, and Blue-line flags, then spawns `engine/bridge/trading_pipeline.py`.
-5. `prepare_market_context()` parses the complete supplied input (the original RAW file or an in-memory selected-range stream), builds lower-timeframe and main-candle chronology, and computes visible indexes.
-6. `prepare_pipeline_state()` prepares both directional Reaction contexts when dependent stages are enabled. `calculate_full_direction_state()` runs Blue, A, S, initial E, S validity/rebuild, A/order context, final E audit, shared Order-stop reconciliation, and consumed-S continuation.
-7. `finalize_direction_visibility()` applies A/S/E/StopAll lifecycle ownership, restores allowed historical lineage, filters display-range objects, and prepares OrderAudit.
-8. The bridge serializes versioned stage collections and timings as compact JSON. The Vite API caches/persists the result and the browser renders chart overlays, tables, progress, and review state.
-
-## E. Engine Knowledge
-
-Executable snapshot: recorded source versions were Reaction `9.5.2`, Blue `2.3.0`, A `1.6.3`, S `4.13.1`, E `6.6.2`, StopAll/lifecycle `1.10.1`, and shared `core_utils`/`direction_policy` `1.0.0`. Re-read current source and Plugin/Vault knowledge before treating these values as current.
-
-- `reaction_engine.py` defines Candle, Candidate, ResetEvent, chronology indexes, BullishDetector, the reflected BearishDetector, and UnifiedReactionDetector.
-- `blue_line_detector.py` implements Fibonacci `0.618`, scale/reset strike counts, directional line prices, and public/internal filters.
-- `a_zone_detector.py` pairs Blue formations and inherited stops with exact temporal boundaries.
-- `s_zone_detector.py` races Order-backed, trend, and Reset-leg candidates, including shared Order-stop recoloring.
-- `e_zone_detector.py` merges direct/inherited/carried Order causes, selects source/decision ranges, recursively continues families, and reconciles same-source conflicts.
-- `lifecycle_engine.py` applies StopAll priority, one-pass historical reconciliation, and final visibility/lineage filtering.
-- `core_utils.py` owns Decimal conversion and Order identity; `direction_policy.py` owns directional strictness, extrema, colors, and confirmation rules.
-
-Numerical invariants: use Decimal semantics; preserve strict `<`/`>` crossings and explicit inclusive windows; retain physical source indexes/times, parent/order provenance, cause objects, nulls, version fields, and serialization ordering. Do not infer Bearish as a blanket inverse of Bullish. Current directional exceptions must be retrieved from the canonical Vault and verified against the current Source; do not infer them from a recorded snapshot.
-
-Before engine changes, query the TradingBot Intelligence Plugin, inspect canonical Vault knowledge, then read [Technical architecture](engineering/docs/architecture/technical-architecture.md) and the directional references identified as current by the Vault. The current Python package import surface is not a supported smoke path: flat imports can fail with `ModuleNotFoundError: direction_policy` or `ImportError: run_blue_line`; the production bridge uses dynamic file loading to work around this migration state.
-
-## F. Bullish and Bearish Knowledge
-
-The authoritative implementations are independent paths in `engine/pipeline/reaction_engine.py`, with directional policy in `direction_policy.py` and reflected Bearish coordinates in `mirror_candle()`, `mirror_candidate()`, and `BearishDetector`. The rest of the pipeline consumes directional contracts rather than duplicating the state machine.
-
-- Bullish uses GREEN context/First RED, strict Low-based invalidation and High-based confirmation, lower-timeframe extrema, and Bullish directional stop formulas.
-- Bearish uses RED context/First GREEN through reflected coordinates, strict High-based invalidation and Low-based confirmation, and Bearish formulas/ownership. It has verified refinement and same-Break reset differences.
-
-Before changing either direction, read both references, inspect the shared detector and policy, trace the integrated Reaction -> Blue -> A -> S -> E -> StopAll path, and run the full chart test suite plus any safe engine sanity check. Do not “fix” a directional mismatch by changing only one side.
-
-## G. Frontend Knowledge
-
-`main.js` is the composition and state owner (about 6,500 lines). It creates the chart, loads RAW inventory/candles, owns indicator progress/result application, drawing persistence, workspace transitions, and chart updates. `tokens.css` defines neutral surfaces, blue action color, green/red chart colors, compact 10-17px typography, and z-index layers. Main responsive breakpoints are approximately 1180, 900, 760, 520, 420, and 400px; algorithm/review styles add their own breakpoints.
-
-The UI uses HTTP JSON and SSE, not a WebSocket. Preserve DOM IDs, persisted local-storage contracts, canonical raw-time drawing anchors, LOD/view-transform behavior, chart resize/overflow rules, reduced-motion behavior, and existing icon/accessibility conventions. Static inspection is not browser evidence; distinguish it from a real browser run.
-
-## H. Dependency and Data-Flow Map
-
-- Browser `main.js` -> Vite middleware endpoints -> bridge JSON/SSE.
-- Vite -> `raw-resource-store.js` for strict OHLC/chronology/schema validation and atomic RAW/sidecar writes.
-- Vite -> `faraz-candle-api.js` for FARAZ login/history/update/verification. Session data is currently an editable clear-text envelope despite the `.dpapi.json` filename.
-- Bridge -> dynamically loaded detector files, then serializers -> cache/API -> browser.
-- Public contracts preserve physical indexes/times and provenance. Reaction, Blue, A, S, E, StopAll, and OrderAudit collections have distinct ownership and nullable fields; see the architecture and algorithm references for exact fields.
-
-Graphify shows source-linked relationships and may include explicitly marked inferred edges. The project-local historical `engineering/archive/docs/graphify/rebuild-2026-09-23/` snapshot supplements detector-unclassified files with path nodes and the sensitive `tokens.css` file with custom-property names only; CSS values and RAW/runtime contents are not indexed. Treat its health diagnostics and direct source tracing as the evidence boundary.
-
-## I. Graphify Integration
-
-Recorded tool snapshot: `graphify 0.9.63`, Python package `graphifyy 0.9.42`. Re-verify installed versions before relying on them. Installation does not grant execution permission; every Graphify execution requires explicit user approval.
-
-Verified commands:
-
-```powershell
-graphify update . --no-cluster
-graphify cluster-only . --no-label
-graphify query "pipeline execution" --graph graphify-out/graph.json --budget 800
-graphify diagnose multigraph --graph graphify-out/graph.json --json
-```
-
-The dated Graphify snapshot is ignored project-local archived evidence under `engineering/archive/docs/graphify/rebuild-2026-09-23/`. It is not part of the tracked repository. The snapshot covers classified source/docs, records literal HTML references, represents unclassified configuration/style files as path nodes, and indexes only custom-property names from detector-classified `apps/chart/src/styles/tokens.css` (never its values). RAW candle and runtime/cache data are represented only by directory-scope markers; their contents and credential/session values are not read or copied. `engineering/archive/repository-graphify/rebuild-2026-09-19/` remains preserved as historical evidence.
-
-After implementation changes, do not automatically rerun Graphify. If graph refresh or diagnosis would materially help, explain why and obtain explicit user approval for that execution. When approved, compare representative query results to direct source tracing and record stale/unresolved relationships. Do not invent edges or promote inferred relationships to implementation facts.
-
-## J. Development and Validation
-
-Supported package commands, run from `apps/chart`:
-
-```powershell
-npm.cmd test
-npm.cmd run build
-npm.cmd run dev
-npm.cmd run preview
-```
-
-The first two are check/build commands. `dev`, `preview`, and `scripts/start.ps1` start services or mutate runtime/dependency state. Local-only Python tests are under ignored `engine/tests/unit/`; run `python -B -m pytest -q -p no:cacheprovider -p no:benchmark engine/tests/unit` from the repository root. No repository lint, type-check, CI, or SonarQube CLI configuration was found. Safe source checks are Node `--check` for project JS/MJS and `ast.parse` for Engine Python. Do not report a check as PASS without fresh output and an exit code.
-
-## K. AI-Agent Operating Instructions
-
-- Preserve all pre-existing tracked and untracked work; never reset, clean, stash, overwrite, or broad-delete without explicit authorization.
-- For trading semantics, consult the TradingBot Intelligence Plugin and canonical Vault before relying on technical references, source intuition, memory, or old examples.
-- Read the relevant current source and accepted references before changing a subsystem.
-- Graphify may be used only after explicit user approval for that specific execution; verify important relationships and behavior directly in source.
-- Treat Python engine code as the numerical/executable authority while preserving canonical Plugin/Vault semantics and exact Decimal, temporal, provenance, strictness, null, identity, ownership, lifecycle, and ordering contracts.
-- Do not patch UI-only code to change trading semantics.
-- Avoid unrelated modifications, dependency upgrades, formatting writes, migrations, and runtime behavior changes.
-- Run the narrowest relevant tests first, then protected regression and broader safe validation according to risk.
-- Do not report build, static review, unit tests, mirror parity, browser checks, or bounded fixtures as stronger evidence than they actually provide.
-- Update durable references/Vault knowledge when durable behavior or architecture changes. Do not create temporary knowledge noise.
-- Do not automatically refresh Graphify artifacts; request approval first if a graph refresh would materially help.
-- Keep credential/session values private. Do not expose or copy `apps/chart/state/secret/` values into logs, reports or delivery packages.
-- Report unresolved ambiguity instead of guessing.
-- Never introduce hidden hardcoding for known timestamps, OHLC fingerprints, filenames, symbols, fixtures, or expected outputs.
-- All developer-facing technical content, comments, docstrings, logs, tests, commit messages, and documentation authored by the AI must be English.
-- Do not push to a remote without explicit authorization for the current task.
-
-### K.1 Validation Language
-
-Use precise validation labels when relevant:
-
-- `PASS`
-- `FAIL`
-- `INCOMPLETE`
-- `NOT_TESTED`
-- `NOT_TESTED_DEPENDENCY_UNAVAILABLE`
-- `STATIC_REVIEW_ONLY`
-- `BOUNDED_VALIDATION`
-
-Mirror/metamorphic parity is not independent Bearish correctness. Report source-direction regression safety, mirror parity, and independent target-direction real-data validation separately.
-
-A user-provided candle correction is important evidence, but it must be explained by a general canonical rule and must never become a hidden production branch.
-
-## L. Documentation Index
-
-- [Engineering index](engineering/docs/README.md): current maintained document navigation.
-- [Operating protocol](engineering/docs/ai/operating-protocol.md): engineering and delivery requirements, subordinate to root authority.
-- [Technical architecture](engineering/docs/architecture/technical-architecture.md) and [UI/UX reference](engineering/docs/architecture/ui-ux-reference.md): dated evidence with current navigation notes.
-- [Local storage](engineering/docs/operations/local-state.md), [Local tests](engineering/docs/development/local-tests.md) and [Repository integrity](engineering/docs/verification/repository-integrity.md): current storage and validation rules.
-- [Single-root migration](engineering/docs/verification/single-root-migration.md): complete movement and validation evidence.
-- [Bullish Reference](engine/algorithms/TradingBot_Bullish_Algorithm_Reference_V5.4.19_EX1_Source_Synchronized.md) and [Bearish Reference](engine/algorithms/TradingBot_Bearish_Algorithm_Reference_V5.4.19_EX1_Source_Synchronized.md): unchanged current exact-source references.
-
-Historical Graphify/regression material stays in ignored `engineering/archive/`; old build scripts and path strings inside those bundles are historical evidence, not active tool entry points. Every Graphify execution still requires explicit approval.
-
-`AGENTS.md` is the canonical root entry point. No nested project AGENTS was found in the current source inventory.
-
-## M. Repository Storage Policy
-
-All project-owned content stays inside `D:\My-Projects\TradingBot`. Three primary owners are `apps/`, `engine/` and `engineering/`. `scripts/` remains a root tooling exception preserving established Windows/VMware startup paths. Root Git/editor configuration, AGENTS and README stay at discovery boundaries.
-
-`TRADINGBOT_LOCAL_STATE_ROOT` defaults to `apps/chart/state`; configured roots may select only that dedicated subtree or a descendant. The shared resolver rejects source directories, external paths and escaping junctions. The launcher uses the same resolver. RAW, caches, secrets and temporary files remain project-local and Git-ignored. Direct Vite file access to state is denied; its normal API contracts remain available.
-
-Tests live beside their owners under ignored `apps/chart/tests/` and `engine/tests/`; chart tests run with `npm.cmd test` from `apps/chart`. Engine production-source discovery excludes test code. Dependencies/build output remain reproducible and ignored. Historical Graphify/regression artifacts live in ignored `engineering/archive/`; migration snapshots, maps and logs live in ignored `engineering/verification/`. Only the two source-synchronized references under `engine/algorithms/` are current references.
+For test/execution outcomes use the verification statuses defined in Section 7.
+
+Do not convert old evidence into a new PASS.
+
+## 19. Completion Checklist
+
+Before declaring substantial TradingBot work complete, verify the applicable items:
+
+- [ ] Current repository/project state was inspected.
+- [ ] Current applicable instructions were read.
+- [ ] User work was preserved.
+- [ ] Trading semantics were resolved from the highest available current authority.
+- [ ] Intended semantics and executable behavior were distinguished.
+- [ ] Relevant current Source/configuration was discovered dynamically.
+- [ ] Future production files were not excluded by a fixed inventory assumption.
+- [ ] Relevant tests were discovered dynamically.
+- [ ] No historical PASS was reused as a current PASS.
+- [ ] Chart/Vite/FARAZ/Engine ownership boundaries were preserved.
+- [ ] No fixture/timestamp/OHLC-specific production hardcoding was introduced.
+- [ ] Hashes/versions/counts were used only as evidence, not permanent authority.
+- [ ] Required direction/mirror impact was checked.
+- [ ] Required regression/runtime/performance checks were run or honestly marked otherwise.
+- [ ] Maintained documentation/knowledge was synchronized when required.
+- [ ] Local links added or changed by the task were verified.
+- [ ] Final diff was reviewed.
+- [ ] No unrelated user work was overwritten.
+- [ ] No unauthorized staging, commit, push, tag, release, or publication occurred.
+- [ ] Final report distinguishes verified facts, limitations, and unperformed checks.
+
+## 20. Future-Proof Acceptance
+
+This operating contract is intentionally valid when mutable project details change.
+
+A normal change in any of the following must not require editing `AGENTS.md` by itself:
+
+- number of Engine production modules;
+- test files or test cases;
+- Source hashes;
+- Git HEAD;
+- package/runtime/tool versions;
+- route or endpoint counts;
+- repository file totals;
+- benchmark numbers;
+- internal package layout.
+
+Update this file only when durable governance, authority, ownership boundaries, safety requirements, engineering workflow, or verification obligations change.
