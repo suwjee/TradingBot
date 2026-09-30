@@ -1,388 +1,476 @@
-> Current layout/storage update: 2026-09-29. State is inside `apps/chart/state/`; component tests are under `apps/chart/tests/` and `engine/tests/`. The entire dated audit body below, including old paths and commands, is historical evidence. See [current storage](../operations/local-state.md) and [current document index](../README.md).
-
-# TradingBot Technical Architecture Reference
-
-**Audit snapshot:** 2026-09-22
-
-**Repository:** `//vmware-host/Shared Folders/My-Projects/TradingBot`
-
-**Branch / HEAD:** `main` / `9ad5a9021edb7e663751f692f173726850c05dda`
-**Authority:** current working-tree source. Existing documents and Graphify are supporting evidence only.
-
-## 1. Executive Summary
-
-TradingBot is a local Windows-oriented candlestick workstation. A native-ES-module browser UI renders RAW candles and drawings, manages workspaces and indicator settings, and calls Vite middleware over local HTTP/SSE. Vite validates resource identifiers and requests, persists user state, and invokes the Python bridge. Python under `engine/` is the calculation authority for Reaction, Blue Line, A, S, E, StopAll, lifecycle visibility, and OrderAudit.
-
-The checkout is intentionally dirty. This audit changed documentation only. It did not reset, stage, clean, rename, or modify application source or runtime data.
-
-## 2. Evidence and Confidence Model
-
-Evidence priority is: current source and lock files; fresh command output; rendered local runtime; tests; current generated structural artifacts; historical documentation. A claim is **verified** only when supported by one of the first four classes. External FARAZ behavior, authenticated workflows, production firewall posture, and deployment outside the local launcher remain unverified.
-
-## 3. Repository Baseline
-
-- Git remote: `origin https://github.com/suwjee/TradingBot.git`.
-- Current package: `apps/chart` version `3.4.1`.
-- Current repository count: 686 non-`.git` files.
-- Current project-owned audit set: 118 files, including this audit plan; 430 installed dependency files, 44 Graphify artifacts, 52 runtime/cache files, and 14 RAW/sidecar data files are separately classified.
-- Pre-existing dirty paths at audit start: `AGENTS.md`, `apps/chart/src/main.js`, `apps/chart/vite.config.js`, both directional reference documents, and four untracked indicator-range/request source or test files.
-- Audit-created path: `docs/superpowers/plans/2026-09-21-complete-project-engineering-audit.md`; this file and the two required references are the only intended audit writes.
-
-## 4. Coverage Accounting
-
-All 118 project-owned files were inventoried and assigned a subsystem/role. Large orchestration and detector files were reviewed by symbols and logical ranges. Generated, third-party, runtime, and RAW content was classified rather than line-reviewed. Secret-file contents under `runtime/cache/secret` were not opened or emitted.
-
-## 5. Repository Tree
-
-```text
-TradingBot/
-├─ .editorconfig, .gitignore, AGENTS.md
-├─ scripts/
-│  ├─ launch.bat
-│  └─ start.ps1
-├─ apps/chart/
-│  ├─ index.html, review.html, package.json, package-lock.json
-│  ├─ scripts/dev-server.mjs
-│  ├─ vite.config.js
-│  ├─ server/                 # persistence, FARAZ, transfer, range transport
-│  ├─ src/
-│  │  ├─ main.js             # browser composition/state owner
-│  │  ├─ algorithm/          # in-app algorithm reference
-│  │  ├─ chart/              # state, LOD, coordinate and range contracts
-│  │  ├─ drawings/           # drawing geometry and presentation
-│  │  ├─ features/           # RAW, FARAZ, cache, review, sessions
-│  │  ├─ platform/           # browser compatibility
-│  │  ├─ styles/             # global tokens and layouts
-│  │  └─ ui/                 # shared feedback, icons, popovers and identity
-│  ├─ tests/                 # 27 Node test files / 147 tests
-│  └─ node_modules/          # installed third-party dependencies
-├─ engine/
-│  ├─ bridge/trading_pipeline.py
-│  ├─ pipeline/              # deterministic calculation authority
-│  ├─ algorithms/            # standalone supporting references
-│  └─ styles/
-├─ data/raw/                 # authoritative user candle data and sidecars
-├─ runtime/cache/            # drawings, templates, results, FARAZ session
-└─ docs/                     # maintained references and Graphify snapshots
-```
-
-## 6. Folder Responsibilities
-
-| Folder | Responsibility | Runtime authority |
-|---|---|---|
-| `scripts/` | Runtime checks, optional dependency installation, environment setup, Vite launch | Startup only |
-| `apps/chart/src/` | Browser UI, interaction and presentation state | UI authority, not trading-rule authority |
-| `apps/chart/server/` | File/session/FARAZ service modules | Persistence and integration authority |
-| `apps/chart/vite.config.js` | Local API, SSE, cache and Python-process boundary | HTTP orchestration authority |
-| `engine/bridge/` | Input normalization, pipeline orchestration and serialization | Calculation/API contract authority |
-| `engine/pipeline/` | Deterministic indicator algorithms | Numerical authority |
-| `data/raw/` | Candle arrays and metadata | User data |
-| `runtime/cache/` | Mutable local state | User/runtime data |
-| `tests/chart/unit/` | Node contract/regression tests | Verification only |
-| `docs/graphify/` | Dated generated relationship evidence | Supporting, not authoritative |
-
-## 7. Complete File Responsibility Matrix
-
-The following compact matrix covers every current project-owned path. A comma-separated row means every named file was reviewed and has the stated role.
-
-| Files | Responsibility |
-|---|---|
-| `.editorconfig`, `.gitignore` | Editing and repository exclusion policy |
-| `AGENTS.md` | Canonical AI operating guide; reviewed, not changed by this audit |
-| `scripts/launch.bat`, `scripts/start.ps1` | Windows bootstrap, runtime validation, optional install, host launch |
-| `apps/chart/package.json`, `apps/chart/package-lock.json` | Package commands and resolved dependency graph |
-| `apps/chart/index.html`, `apps/chart/review.html` | Main and manual-review HTML entry points |
-| `apps/chart/scripts/dev-server.mjs` | Direct Vite development entry |
-| `apps/chart/vite.config.js` | API/SSE/cache/Python middleware and `/info` fallback |
-| `apps/chart/server/chart-transfer.js` | Chart bundle import/export validation |
-| `apps/chart/server/faraz-candle-api.js` | FARAZ auth/history/export/update/coverage workflow |
-| `apps/chart/server/indicator-range-input.js` | Full-path or Windows named-pipe indicator input |
-| `apps/chart/server/migrate-raw-resources.js` | RAW migration dry-run/apply support |
-| `apps/chart/server/raw-integrity.js` | RAW gap/integrity analysis |
-| `apps/chart/server/raw-resource-store.js` | RAW validation, metadata, identifiers and atomic-ish writes |
-| `apps/chart/src/main.js` | Main DOM, chart, state, events, drawings, indicator and workspace composition |
-| `apps/chart/src/platform/browser-compat.js` | Browser feature normalization |
-| `apps/chart/src/chart/state.js`, `progress.js` | Chart/request state and progress projection |
-| `apps/chart/src/chart/lod.js`, `view-transform.js`, `zoom-config.js` | Large-data display reduction and coordinate/zoom contracts |
-| `apps/chart/src/chart/drawing-coordinates.js`, `indicator-range.js` | Canonical drawing anchors and inclusive selected range |
-| `apps/chart/src/drawings/drawing-math.js` | Drawing geometry/hit-testing |
-| `apps/chart/src/drawings/drawing.css`, `object-tree.css` | Drawing and tree presentation |
-| `apps/chart/src/features/candle-export.js` | FARAZ workspace UI and job polling |
-| `apps/chart/src/features/candle-update.js` | Exclusive update modes, merge and bounded write batches |
-| `apps/chart/src/features/faraz-symbol.js` | FARAZ symbol normalization |
-| `apps/chart/src/features/indicator-cache.js`, `indicator-lifecycle.js` | Browser cache identity and result lifecycle |
-| `apps/chart/src/features/indicator-calculation-request.js` | Request payload/range contract |
-| `apps/chart/src/features/raw-file-contract.js`, `raw-inventory.js` | RAW filename/metadata and inventory UI contracts |
-| `apps/chart/src/features/screenshot-overlay.js` | Screenshot overlay composition |
-| `apps/chart/src/features/workspace-session.js` | Workspace persistence and restoration |
-| `apps/chart/src/features/manual-review/entry.js`, `render.js`, `tab.js`, `review.css` | Manual-review transport, rendering, runtime and styles |
-| `apps/chart/src/algorithm/page.js`, `mirror.js`, `styles.css` | Algorithm workspace routing, directional text reflection and styles |
-| `apps/chart/src/algorithm/content/bridge-content.js`, `calculation-guides.js`, `content.js`, `glossary.js`, `i18n.js`, `module-summaries.js`, `object-catalog.js`, `type-module-summaries.js` | Source-backed in-app reference data |
-| `apps/chart/src/styles/tokens.css`, `app.css`, `qg-modern.css`, `candle-export.css` | Tokens, shell, chart/panel and FARAZ visual system |
-| `apps/chart/src/ui/chart-identity.js`, `symbol-format.js` | Stable chart identity and display formatting |
-| `apps/chart/src/ui/feedback.js`, `log-window.js`, `popover.js`, `icons.js`, `workspace-state.js` | Shared feedback, logs, popovers, SVG icons and workspace header state |
-| all 27 `tests/chart/unit/*.test.mjs` files | Contract tests for the same-named feature plus drawing tools and chart update |
-| `engine/bridge/trading_pipeline.py` | CLI, dynamic loading, chronology, pipeline stages, visibility and JSON |
-| `engine/bridge/test_trading_pipeline.py` | Bridge serialization regression test |
-| `engine/pipeline/reaction_engine.py` | Bullish detector and reflected Bearish detector |
-| `engine/pipeline/blue_line_detector.py` | Scale/Reset Blue and private state inputs |
-| `engine/pipeline/a_zone_detector.py` | A formation and provenance |
-| `engine/pipeline/s_zone_detector.py` | S candidate races and Order-stop reconciliation |
-| `engine/pipeline/e_zone_detector.py` | Recursive E families and Order causes |
-| `engine/pipeline/lifecycle_engine.py` | StopAll, ownership, history and visibility |
-| `engine/pipeline/core_utils.py`, `direction_policy.py` | Decimal/Order identity and direction policy |
-| `engine/**/__init__.py` | Python package markers |
-| `engine/algorithms/*.md` | Supporting standalone algorithm references |
-| `engine/styles/reaction-detector.css` | Historical/reference detector styling |
-| `docs/TradingBot_*.md`, `docs/superpowers/plans/*.md` | Maintained architecture, algorithm, audit, validation and plan evidence |
-
-## 8. Entry Points
-
-- User startup: `scripts/launch.bat` -> `scripts/start.ps1`.
-- Dev server: `apps/chart/scripts/dev-server.mjs` or `npm run dev`.
-- Main page: `apps/chart/index.html` -> `src/main.js`.
-- Review page: `/info` -> `review.html` -> `manual-review/entry.js`.
-- Python CLI: `engine/bridge/trading_pipeline.py`.
-
-## 9. Technology Stack
-
-| Layer | Verified technology |
-|---|---|
-| Browser | Native ES modules, HTML/CSS, Lightweight Charts `5.2.1` |
-| Local server/build | Node `20.19+` expected, Vite `8.2.1` |
-| Browser automation | Playwright Core lock resolution `1.63.0` |
-| Calculation | Python `3.12+` expected, `Decimal`, `orjson`, `tzdata` |
-| Tests | Node built-in test runner; one Python `unittest` file |
-| Structural support | Graphify CLI `0.9.63` / package `0.9.42` in dated snapshot; current CLI unavailable |
-
-## 10. Dependency Architecture
-
-`main.js` imports chart/feature/UI modules and Lightweight Charts. Vite imports the server modules and spawns Python. The bridge dynamically loads pipeline files to avoid the incomplete flat-package import surface. Python stages exchange typed dataclasses/objects, not browser-owned calculations. No React, database server, WebSocket, or production cloud deployment is present.
-
-## 11. Startup and Runtime
-
-`start.ps1` validates Node and Python versions, may install Node/Python dependencies, creates runtime directories, sets `TRADINGBOT_PYTHON` and `TRADINGBOT_PROJECT_ROOT`, then invokes Vite on `0.0.0.0` (`scripts/start.ps1:217`). These are environment/runtime mutations, so the audit used a temporary mirror and direct Vite launch on `127.0.0.1`.
-
-## 12. System Architecture
-
-```text
-RAW JSON + sidecar
-  -> Vite/raw-resource-store
-  -> full RAW path OR in-memory selected rows via Windows named pipe
-  -> Python bridge
-  -> Reaction -> Blue -> A -> S -> E -> StopAll/lifecycle -> OrderAudit
-  -> compact JSON stdout
-  -> Vite cache/API + SSE progress
-  -> browser overlays, tables, report and manual review
-```
-
-## 13. Backend Architecture
+---
+title: TradingBot Technical Architecture
+document_role: reference
+lifecycle: maintained
+owner: architecture
+scope:
+  - chart
+  - vite-local-server
+  - faraz
+  - engine
+  - runtime-boundaries
+  - state-and-transport
+last_modified_at: 2026-09-30T10:34:54+03:30
+---
 
-Vite middleware is an in-process local backend. It owns request-body limits, status codes, cache directories, file-store construction, Python spawning, SSE subscribers, and endpoint composition. `raw-resource-store.js` owns path containment, strict candle schema, OHLC/chronology checks, canonical names, SHA-256 metadata and writes. `faraz-candle-api.js` owns outbound allowlisting, login capture, job state, packet retries, bounded concurrency, coverage recovery and final persistence.
+# TradingBot Technical Architecture
 
-## 14. Frontend Architecture
+## 1. Purpose and boundary
+
+This document is the maintained reference for the **Current TradingBot system architecture**. It describes subsystem ownership, runtime boundaries, data flow, state ownership, persistence/cache boundaries, process integration, and the public result path.
+
+It is subordinate to the root [\`AGENTS.md\`](../../../AGENTS.md) and [Documentation Governance](../documentation-governance.md). It is not an Algorithm Reference, a UI/UX specification, a testing manual, a release guide, or a historical audit.
+
+Detailed trading semantics belong to the current canonical trading-knowledge system and accepted Algorithm References. Detailed interaction and visual behavior belongs to the [UI/UX Reference](ui-ux-reference.md). Operational storage rules belong to [Local State](../operations/local-state.md).
 
-`main.js` is the approximately 6,834-line composition/state owner. It creates the chart and drawing layer, loads inventory/candles, coordinates workspaces, renders indicator results, stores drawings, handles updates and opens manual review. Smaller modules isolate deterministic view contracts. The browser is a projection/interaction layer; it must not become a second trading-rule implementation.
+## 2. Architectural authority and discovery
 
-## 15. End-to-End Data Flow
+Architecture is reconstructed from the current live repository, with current Source/configuration defining executable behavior.
 
-1. `/api/symbols` inventories RAW resources and returns metadata.
-2. `/api/candles?id=...` returns candle rows with file-stat ETag revalidation, so unchanged RAW bytes can be reused safely across tabs.
-3. Browser posts direction, analysis/chart timeframes, range and switches to `/api/reactions`.
-4. Vite validates the inventory identity, constructs a source fingerprint/cache key and chooses full-file or selected-range transport.
-5. Bridge normalizes candles and chronology, calculates enabled stages for dependent directions, reconciles visibility and serializes versioned collections.
-6. Vite stores result/cache metadata and returns JSON; SSE reports progress.
-7. Browser renders stage overlays, status, report and review snapshot.
+Use these durable discovery rules:
 
-## 16. HTTP and Communication Interfaces
+- discover production components from current runtime entry points, imports, configuration, and dependency closure;
+- treat filenames named below as current examples and discovery anchors, not a permanent exhaustive inventory;
+- do not define architecture by commit identity, hashes, mutable versions, module counts, route counts, test counts, or benchmark snapshots;
+- use historical/generated material only as supporting evidence;
+- if intended architecture and Current Source conflict, report the mismatch rather than rewriting Source or documentation to hide it.
 
-The repository exposes 26 API route families plus `/` and `/info` (28 discovered HTTP routes). Methods are enforced inside middleware.
+The major architectural domains are **Chart**, **Vite/local server**, **FARAZ**, and **Engine**.
 
-| Route | Purpose |
-|---|---|
-| `GET /api/symbols`, `GET /api/candles?id=` | RAW inventory and candle rows |
-| `POST /api/reactions`, `GET /api/reactions/progress`, `DELETE /api/reactions/cache` | Calculation, SSE progress and cache reset |
-| `GET /api/info/:symbol/:timeframe/:direction/:filename` | Saved result/report payload |
-| `GET/PUT /api/drawings` | Drawing persistence |
-| `GET/PUT /api/indicator-templates` | Template persistence |
-| `GET /api/chart-transfer/export`, `POST /api/chart-transfer/import` | Bundle transfer |
-| `POST /api/candle-files/delete|cut|migrate|update|verification` | RAW lifecycle and verification |
-| `POST /api/faraz/auth/open|browser|logout`, `GET /api/faraz/auth/status` | FARAZ browser/session lifecycle |
-| `POST /api/faraz/candles/start|cancel|coverage-decision|open`, `GET /api/faraz/candles/status|download` | Export job lifecycle |
-| `POST /api/faraz/history` | Bounded history request |
-| `/`, `/info` | Main application and manual-review page |
+## 3. Architecture principles
 
-SSE is one-way progress; there is no WebSocket. Python is a child process using JSON stdout and `QG_PROGRESS:` stderr. Selected ranges use an ephemeral Windows named pipe; no second RAW file is written.
+1. **Engine owns trading truth.** Trading calculation, trading state, stage execution, lifecycle/reconciliation, and finalized semantic results belong to Engine.
+2. **Chart owns presentation and interaction.** The browser may request, render, review, filter, and persist presentation/workspace state, but it must not independently recreate trading truth.
+3. **Vite/local server owns orchestration and transport.** It validates local API requests, coordinates files/services/processes, selects the Engine input transport, persists transport/cache artifacts, and returns finalized results.
+4. **FARAZ owns acquisition, not semantics.** FARAZ integration authenticates, retrieves, validates, and persists market data; it does not define TradingBot trading rules.
+5. **Serialization is a projection boundary.** Serialization exposes finalized Engine state; it must not repair or redefine the calculation.
+6. **Cache is subordinate.** Cached results and inventories are performance/persistence support, never semantic authority.
+7. **State follows its owner.** Browser/workspace state, server orchestration state, acquisition/session state, and Engine calculation state are separate domains.
+8. **Calculation scope and presentation scope are distinct.** The Engine calculates the complete input stream it actually receives; public range filtering is applied inside that supplied-input context.
 
-## 17. Core Data Structures
+## 4. System context
 
-- RAW candle: integer Unix `time` plus numeric `open`, `high`, `low`, `close`; ordered, unique timestamps and valid OHLC envelope.
-- RAW metadata: broker/symbol/timeframe, chart ID, readable Tehran bounds, hashes, counts, source and coverage data.
-- Engine objects: Candle, Candidate, Reaction/Reset, BlueLine, AZone, SZone, EZone, StopAll and OrderAudit with physical indices/times, parent identities, cause objects and nullable provenance.
-- Response: versioned stage collections, direction maps, lifecycle visibility, timings and input identity.
+TradingBot is a workstation-style application with a browser UI, an in-process Vite/local HTTP server, a Python calculation subprocess, project-local persisted state, and an external FARAZ integration.
 
-## 18. Numerical and Temporal Invariants
+\`\`\`mermaid
+flowchart LR
+    B[Chart / browser] -->|HTTP JSON requests| S[Vite / local server]
+    S -->|RAW and local state I/O| L[(Project-local state)]
+    S -->|full RAW path or selected-range stream| P[Python bridge]
+    P -->|calculation orchestration| E[Engine]
+    E -->|finalized calculation state| P
+    P -->|JSON stdout| S
+    P -->|progress stderr| S
+    S -->|JSON results + SSE progress| B
+    S --> F[FARAZ integration]
+    F -->|validated RAW / coverage| L
+    F <--> X[External FARAZ service]
+    F <--> C[Chromium session process]
+\`\`\`
 
-The engine uses `Decimal`; strict `<`/`>` crossings must not be relaxed. Windows are explicitly inclusive/exclusive by source contract. Physical source indices/times, ordering, nulls and provenance are observable behavior. Bearish uses reflected detector coordinates plus direction policy, not a blanket browser-side inversion. A known intentional Reaction asymmetry remains in the post-Reset same-Break branch.
+The diagram is conceptual. Internal files may be reorganized without changing this architecture if ownership and contracts remain the same.
 
-## 19. State, Lifecycle and Ownership
+## 5. End-to-end runtime flows
 
-Browser state includes selected RAW/chart identity, visible range, drawings, toolbar and workspace preferences, indicator settings/results, update progress and review snapshots. Engine lifecycle is separate: accepted A/S/E parents, exact stops, Order identity, consumed-S continuation, StopAll sequence ownership and historical visibility are reconciled before serialization.
+### 5.1 Chart loading
 
-## 20. Persistence
+1. Chart requests the current RAW inventory from the local server.
+2. The server resolves project-local RAW resources through the RAW store.
+3. Chart requests the selected candle resource.
+4. The server streams the RAW JSON and supports normal HTTP cache revalidation.
+5. Chart normalizes the rows for visualization and owns the resulting presentation/workspace state.
 
-RAW and sidecars live in `data/raw`; drawings/templates/calculation cache and the FARAZ session live under `runtime/cache`. Browser preferences also use local storage. `raw-resource-store.list()` validates and heals a RAW resource on first sight or after its RAW/sidecar stat signature changes, then reuses the validated in-memory snapshot for unchanged inventory requests. A nominal GET can still repair a missing or stale sidecar once, but repeated tab polling no longer reparses and rehashes every RAW file.
+This path does not perform trading calculation.
 
-Each loaded chart writes its stable `chartId` and chart timeframe to the current tab URL. URL state takes priority over shared browser fallback preferences, so duplicate tabs and independently opened tabs can resolve the same chart ID without taking another tab's last-selected symbol. Hidden tabs suspend inventory polling and refresh when visible again; the closed FARAZ workspace no longer starts its own duplicate inventory request.
+### 5.2 Trading calculation
 
-## 21. Cache Architecture
+1. Chart builds a calculation request containing the selected chart identity, analysis/chart timeframes, inclusive user-selected range, direction, and request identity.
+2. Vite validates resource identity, range boundaries, direction, and options.
+3. Vite determines whether the requested range is the complete source or a selected subset.
+4. Vite either supplies the original RAW path or prepares a selected in-memory row stream.
+5. Vite launches the Python bridge as a child process with the current Engine component paths and calculation arguments.
+6. The bridge loads the configured Engine components, reads the entire supplied input, normalizes chronology/candles, runs the required calculation/lifecycle pipeline, finalizes visibility/state, and serializes the requested direction output.
+7. Python writes machine-readable progress events to stderr and the final JSON result to stdout.
+8. Vite may persist the serialized result under its calculation cache and returns the same finalized result to Chart.
+9. Chart renders the result and may open the Manual Review surface using the persisted calculation identity.
 
-Calculation cache identity includes engine-source fingerprint, RAW identity/mtime, selected scope, chart/analysis timeframes, direction and Blue settings. Browser cache code separates source identity from display settings. Cache invalidation is explicit through the API/UI and through source fingerprint changes.
+### 5.3 Market-data acquisition
 
-## 22. Error Handling
+1. Chart/FARAZ UI initiates an acquisition or update request through the local server.
+2. FARAZ integration uses the current authenticated/session boundary to communicate with allowlisted FARAZ service hosts.
+3. Received candle payloads are normalized and validated.
+4. The RAW store persists valid project-local RAW data and associated metadata/coverage state.
+5. The resulting RAW resource becomes available through the normal Chart inventory/load flow.
 
-API handlers return JSON errors with bounded request-body parsing. The bridge prints progress to stderr and reserves stdout for JSON. UI errors flow to health state, toast/log surfaces and operation-specific status. FARAZ jobs keep error/cancel/coverage-decision states. Some broad catch blocks intentionally suppress malformed inventory entries; this favors continued listing but reduces diagnosis detail.
+Acquisition creates or updates input data. It does not execute Engine trading semantics.
 
-## 23. Logging and Observability
+## 6. Chart architecture
 
-Observability consists of Vite console output, browser health/error logs, SSE indicator progress, FARAZ packet logs and bridge timings. There is no centralized telemetry service. Optional FARAZ response auditing writes response bodies to a temporary NDJSON file and therefore requires careful handling.
+### Responsibility
 
-## 24. Performance Architecture
+Chart is the browser-side workstation and presentation owner. It owns:
 
-- Chart LOD activates for very large datasets and preserves raw coordinate anchors.
-- RAW reads, JSON parsing, hashing and `list()` traversal are synchronous and can block the Node event loop for large inventories.
-- Indicator cache avoids repeat Python work; selected ranges reduce input through memory/named pipe.
-- The opt-in Bridge Output formatter validates recorded strict events against the existing `MarketChronology.second_times` index. This avoids rebuilding a full lower-timeframe timestamp list for every projected event; the fallback list path remains for stand-alone projection fixtures without that index. It changes no detector decision or public field.
-- FARAZ uses packet size 1,000, 30 ms scheduling, bounded concurrency and coalesced recovery gaps.
-- Chart update batches writes with a 20 MB bound and merges chronologically without overwriting valid collisions.
-- Current production bundle is 763.91 kB JS (219.08 kB gzip), triggering Vite's >500 kB warning.
+- chart rendering and visual overlays;
+- workspace navigation and interaction;
+- user selection of symbols, timeframes, directions, and visible/calculation ranges;
+- drawing interaction and presentation;
+- browser-side preferences and workspace/session presentation state;
+- calculation request initiation;
+- progress consumption;
+- rendering of finalized Engine results;
+- Manual Review presentation.
 
-## 25. Security Threat Model
+Current composition is rooted in the chart application entry point and supporting \`src/\` feature, chart, drawing, UI, and review modules. These paths are discovery anchors, not an exhaustive future inventory.
 
-Assets are RAW market data, drawing/templates, indicator outputs, FARAZ credentials/session state and local file integrity. Trust boundaries are browser-to-local HTTP, untrusted import/RAW JSON, local filesystem paths, Vite-to-Python arguments/pipe, local-to-FARAZ HTTPS and browser automation. Plausible attackers are a malicious webpage in the same user's browser, another LAN host when the launcher binds broadly, or another local process/user with filesystem access.
+### Inputs and outputs
 
-## 26. Validated Security Findings
+Chart consumes:
 
-| ID | Severity | Finding | Evidence and validation | Remediation direction |
-|---|---|---|---|---|
-| SEC-01 | High | Local service binds to all interfaces while mutation, deletion, browser-launch and session-dependent APIs have no application authentication | `start.ps1:217`; route registrations at `vite.config.js:291-664` and `faraz-candle-api.js:1235-1499`; no auth middleware found | Default to loopback; require an unguessable local session token and explicit LAN opt-in/firewall guidance |
-| SEC-02 | High | FARAZ credentials and complete browser storage state are persisted as editable clear-text JSON despite a `.dpapi.json` name | `faraz-candle-api.js:414-477` writes `x-access-token`, cookie/storage state and history auth as JSON; POSIX mode hints do not provide DPAPI confidentiality on Windows | Use Windows DPAPI/Credential Manager; migrate v3; enforce ACLs and rotate exposed sessions |
-| SEC-03 | Medium | State-changing endpoints do not enforce `Origin`/CSRF tokens; combined with broad binding, a malicious webpage can issue blind requests to local APIs | Manual source search across all middleware; body readers do not establish origin trust | Reject non-local/unknown origins, require token/header and narrow content types |
-| SEC-04 | Medium | Unauthenticated status can disclose FARAZ profile identifiers to a reachable LAN client | auth status builds user ID/name/phone; UI consumes them in `candle-export.js:344-353` | Authenticate status, minimize returned identity and redact by default |
-| SEC-05 | Mitigated | The first sight/change of a RAW file still performs synchronous validation and possible metadata repair, but unchanged inventory requests reuse a stat-keyed validated snapshot | `raw-resource-store.js`, called by `/api/symbols`; multi-tab regression and runtime timing evidence | Keep first-load validation bounded; move repair to explicit maintenance if inventories become materially larger |
+- RAW inventory/candle responses from the local server;
+- persisted drawings/templates where exposed by the server;
+- calculation progress events;
+- finalized serialized calculation payloads;
+- FARAZ acquisition/job status.
 
-Controls validated: RAW identifiers and paths are contained; candle schema/OHLC/chronology is checked; FARAZ hosts are allowlisted; Python arguments are constructed, not shell-concatenated; chart-transfer input is validated; `npm audit` found zero known dependency vulnerabilities. No command-injection or arbitrary SSRF path was confirmed.
+Chart produces:
 
-## 27. Codex Security Deep Scan Status
+- HTTP requests for data, state, acquisition, and calculation;
+- user interaction and presentation-state changes;
+- drawing persistence requests;
+- browser-local preference state.
 
-The requested read-only Deep Scan started but stopped after three unsuccessful discovery workers because the account usage limit was reached. It returned no successful discovery manifest, no saved validated findings and no canonical coverage artifact. Per the scanner contract it was not retried, completed, or represented as a successful/no-findings scan. Scanner coverage is therefore **Incomplete**; SEC-01 through SEC-05 are manual, source-validated findings.
+### Owned state
 
-## 28. Dependency Security
+Chart owns ephemeral UI state and browser-local presentation preferences. Some durable presentation state, such as drawings and indicator templates/calculation artifacts, is persisted through the local server under project-local state ownership.
 
-Fresh `npm audit --json --fetch-retries=0 --fetch-timeout=15000` completed with exit code 0 and zero vulnerabilities across 42 dependencies. This is registry advisory coverage, not proof of application security. External font requests to Google Fonts expose client metadata and reduce offline reliability; self-hosting would reduce both concerns.
+### Forbidden responsibility
 
-## 29. Testing Architecture
+Chart must not infer a different Reaction/A/S/E/Order/lifecycle result from candles or repair a serialized Engine result. The Manual Review implementation is explicitly presentation-only: behavior identity, prices, and Orders come from the bridge payload.
 
-The 28 Node files contain 152 tests covering RAW validation/cut/inventory/store, multi-tab chart identity, conditional candle responses, FARAZ retry/coverage/session behavior, transfers, updates, range input, indicator cache/lifecycle/request, drawings, view transforms, review, screenshots, feedback, popovers, symbols and workspace state. A small Python bridge `unittest` covers serialization behavior. There is no repository CI workflow, unified Python test runner, lint task or type-check task.
+## 7. Vite / local-server architecture
 
-## 30. Fresh Verification Results
+The Vite configuration supplies the local backend boundary through server middleware and composes current service modules.
 
-To avoid UNC/npm and runtime-data side effects, `apps/chart` and `engine` were copied to a temporary local mirror.
+### Responsibility
 
-| Check | Result |
-|---|---|
-| Vite production build | PASS, exit 0; 55 modules; 575 ms; bundle-size warning only |
-| Node tests with explicit bundled Python | PARTIAL: 145/147 pass |
-| Remaining test 1 | Windows DPAPI CurrentUser unavailable in the runner's impersonated context |
-| Remaining test 2 | Bundled Python lacks `orjson` for one subprocess-based end-boundary test |
-| npm audit | PASS, zero known vulnerabilities |
-| Browser smoke | PASS for main, Algorithm, FARAZ, `/info`, 360 px responsive DOM and zero captured console warning/error |
+The Vite/local-server layer owns:
 
-No dependency was installed and no failure is claimed as an application defect without a compatible runtime rerun.
+- local HTTP/API routing and validation;
+- browser/server mediation;
+- RAW inventory and candle delivery;
+- drawing/template and calculation-result persistence;
+- calculation-cache coordination;
+- chart-transfer and RAW lifecycle orchestration;
+- Engine child-process launch;
+- full-source versus selected-range input preparation;
+- SSE calculation-progress transport;
+- response and error transport;
+- integration of the FARAZ service module;
+- serving the runtime review shell.
 
-## 31. Build and Deployment
+### Engine process boundary
 
-`npm run build` emits Vite static assets. `npm run dev`, `preview`, and `start.ps1` launch services; `start.ps1` can also install dependencies and create runtime directories. No Dockerfile, service unit, cloud manifest, release workflow or CI configuration exists. Production deployment topology is not defined in current source.
+Vite launches the Python bridge as a separate process. It provides Engine component locations and request arguments, collects stdout as the final JSON response, and interprets prefixed stderr records as progress events.
 
-## 32. Coding Conventions
+Vite does not reproduce Engine trading stages. Its calculation responsibility ends at validation, input preparation, process orchestration, transport, cache coordination, and persistence of already-serialized results.
 
-JavaScript uses native ESM, semicolons and small pure helper modules around a large composition root. Python uses dataclasses, explicit version constants, dynamic loading and Decimal conversion helpers. Public contracts preserve snake/camel case as serialized. Errors are user-oriented sentences. Tests use Node's `test`/`assert` and temporary directories.
+### Local file boundary
 
-## 33. Graphify Evidence
+The server accesses project-local state through the shared local-state resolver. Direct Vite static access to state, test, archive, and verification areas is denied; supported application access occurs through explicit API/service paths.
 
-The newest checked-in snapshot is `docs/graphify/rebuild-2026-09-19/`: 1,240 nodes, 2,774 directed links and 54 communities, with no duplicate/self/dangling links in its health report. It was built at an older commit and skipped `tokens.css` as sensitive. The current Graphify CLI was unavailable, so current relationships were confirmed by imports, handlers and calls rather than regenerated.
+## 8. FARAZ architecture
 
-## 34. Large Files
+FARAZ is an external market-data integration owned by the local server domain.
 
-Large source was reviewed by logical sections: `main.js` 6,834 lines; `trading_pipeline.py` 1,918; Reaction 2,376; S 1,344; E 2,690; lifecycle 1,645; FARAZ server 1,546. Generated Graphify HTML/JSON, lock files, RAW datasets and dependencies were classified rather than treated as handwritten logic.
+### Verified responsibilities
 
-## 35. Sensitive Data Handling
+FARAZ integration owns:
 
-The audit identified the FARAZ session path and data categories but did not read or print the file. No token, cookie, phone, credential, password or session value is present in this reference. Optional response-audit and exported RAW files should be treated as sensitive operational data.
+- user-driven browser/session establishment;
+- local session-state handling;
+- bounded external history requests;
+- host validation for FARAZ service calls;
+- candle-response normalization and validation;
+- acquisition job status/cancellation;
+- coverage/recovery coordination;
+- persistence of acquired/updated RAW resources through the RAW store.
 
-## 36. Change Impact Map
+The current implementation can coordinate a Chromium-based browser process for session capture and reuse. Session material remains in the project-local secret boundary and must never be exposed in architecture documentation or logs.
 
-| Desired change | Primary owner | Mandatory consumers/tests |
-|---|---|---|
-| Indicator math | `engine/pipeline/*` | bridge serializers, lifecycle, all dependent stages, chart tests/sanity data |
-| Payload contract | `trading_pipeline.py` | Vite cache/API, `main.js`, manual review, algorithm catalog |
-| Selected range | range request + named-pipe modules | `/api/reactions`, bridge chronology, range tests |
-| RAW schema/name | raw contract/store | inventory, update, FARAZ, transfer, cut/migration tests |
-| FARAZ coverage | `faraz-candle-api.js` | exporter UI and FARAZ tests |
-| Drawing coordinates | chart/drawing modules | main canvas, persistence, drawing tests |
-| Global layout/token | style files | all workspaces and responsive/browser checks |
-| New endpoint | Vite/FARAZ middleware | frontend consumer, security origin/auth controls and tests |
+### Boundary invariant
 
-## 37. Where to Make Changes
+FARAZ data can become Engine input only after it is persisted/validated through the local data boundary. FARAZ does not own Reaction, Blue, A, S, E, Order, OrderAudit, StopAll, lifecycle, or any other trading semantic.
 
-- Calculation semantics: start in the relevant `engine/pipeline` detector and trace through bridge/lifecycle.
-- Browser calculation request: `indicator-calculation-request.js`, `main.js`, `vite.config.js`, then range transport.
-- RAW storage: `raw-file-contract.js` and `raw-resource-store.js`.
-- FARAZ networking/coverage: `faraz-candle-api.js`; UI in `candle-export.js`.
-- Chart/drawing UX: `main.js`, the relevant `chart/` or `drawings/` helper, then CSS.
-- Manual report: `manual-review/render.js`, with bridge payload ownership respected.
+## 9. Engine architecture
 
-## 38. Technical Debt and Inconsistencies
+Engine is the authoritative calculation subsystem under \`engine/\`. Its production closure must be discovered recursively from the current bridge/runtime loading and imports.
 
-- `main.js` and several engine/server files are high-coupling, high-review-cost modules.
-- Python flat-package imports are not a supported smoke path; the bridge works around migration state with dynamic loading.
-- The FARAZ v3 filename implies DPAPI while the content is plaintext.
-- `rawStore.list()` mixes read, validation, hashing and repair writes.
-- Default LAN binding is inconsistent with unauthenticated local-control endpoints.
-- In-app algorithm `AUDITED_FILES` line/version metadata is stale relative to current engine source.
-- AGENTS baseline commit and several engine versions are stale relative to current source.
-- No CI, lint, type check, browser regression suite or supported complete Python environment is declared.
+### System responsibility
 
-## 39. Open Questions
+Engine owns:
 
-1. Is LAN exposure intentional, and what trusted network/firewall policy is required?
-2. Should FARAZ session persistence return to DPAPI CurrentUser or use Credential Manager?
-3. What Python environment is the supported test/runtime authority, including `orjson`?
-4. Should inventory repair become an explicit maintenance operation?
+- authoritative trading calculations;
+- normalized market chronology used by calculations;
+- directional calculation state;
+- stage-specific state and accepted objects;
+- physical Order/OrderAudit calculation ownership;
+- cross-stage lifecycle, visibility, priority, and StopAll reconciliation;
+- finalized semantic results before transport/presentation.
 
-## 40. Unverified Areas
+### Current stage ownership model
 
-Authenticated FARAZ login/history, real market downloads, saved-session migration, Windows shell-open behavior, production network/firewall posture, indicator correctness against an independent oracle, complete high-volume chart performance, and any deployment outside local Vite were not verified at runtime.
+Current Source contains separate owners for concepts such as Reaction/Reset, Blue, A, S, E, Order/OrderAudit, and lifecycle/StopAll. Shared helpers provide behavior-neutral Decimal, identity, direction, and chronology primitives where appropriate.
 
-## 41. Operational Versions
+These names describe the current conceptual stage ownership. They are not a permanent exhaustive module list.
 
-Current source constants: bridge `1.4.0`, Reaction `9.6.0`, Blue `2.3.0`, A `1.6.3`, S `4.14.0`, E `6.8.0`, StopAll/lifecycle `1.12.0`, core/direction policy `1.0.0`.
+The bridge is the Engine integration/orchestration boundary. It loads the current calculation owners, prepares shared market context, coordinates the requested direction and required opposite-direction context, permits bounded lifecycle/order feedback where the current Engine requires it, finalizes public visibility, then serializes the result.
 
-## 42. AGENTS.md Review
+### Direction handling
 
-`AGENTS.md` remains the canonical operating guide and correctly emphasizes dirty-tree preservation, Python authority, Decimal/strict crossing semantics, browser evidence and secret protection. Its commit/test-count/version snapshot has drifted, but the durable operating rules are sound. It was left unchanged because the user prohibited project-file changes beyond the required audit documentation and no new operational rule was necessary.
+Directional behavior is handled inside Engine using shared directional primitives and current stage owners. Direction is not implemented by browser presentation logic.
 
-## 43. Traceability Index
+### Determinism and chronology
 
-- Startup: `scripts/launch.bat`, `scripts/start.ps1`.
-- API/process/cache: `apps/chart/vite.config.js`.
-- RAW: `server/raw-resource-store.js`, `raw-integrity.js`, frontend raw modules.
-- FARAZ: `server/faraz-candle-api.js`, `src/features/candle-export.js`.
-- Browser: `src/main.js`, chart/feature/UI modules and styles.
-- Engine: `engine/bridge/trading_pipeline.py`, `engine/pipeline/*.py`.
-- Tests: `tests/chart/unit/*.test.mjs`, `engine/bridge/test_trading_pipeline.py`.
-- UI details: `docs/architecture/TradingBot_UI_UX_Technical_Reference.md`.
+Engine assumes an ordered supplied market stream and uses normalized price/time structures appropriate to current Source. Price-sensitive semantic decisions remain Engine-owned. When lower-timeframe chronology is supplied, chronology-sensitive stage logic uses that Engine context rather than asking Chart to infer intrabar event order.
 
-## 44. Completion Statement
+## 10. Input-scope contract
 
-Repository inventory, project-owned review, architecture reconstruction, manual security validation, safe build/test/browser checks and both required references are complete. Codex Security Deep Scan coverage is incomplete because its workers hit the account usage limit and produced no canonical manifest. Runtime verification is partial for authenticated FARAZ and the two environment-dependent tests. No production-readiness claim is made.
+This boundary is critical.
+
+### 10.1 Server scope decision
+
+The browser supplies an inclusive user-selected range aligned to chart-candle boundaries.
+
+The server classifies the request as one of:
+
+- **complete source** — the requested chart range covers the available source;
+- **selected range** — the requested chart range covers only part of the source.
+
+For complete-source execution, the server gives the bridge the original RAW resource path.
+
+For selected-range execution, the server reads the RAW resource, keeps only rows whose chart-timeframe buckets fall within the inclusive selected range, validates that the selected endpoints still exist, and supplies those selected rows to the bridge through the current in-memory range transport. In the current Windows-oriented implementation that transport is an ephemeral named pipe; it does not create another RAW data file.
+
+### 10.2 Engine calculation scope
+
+The bridge reads and calculates the **complete input stream supplied through its data input**.
+
+Within that supplied stream, bridge \`from/to\` bounds identify the public/presentation window. The bridge does not truncate calculation state at the visible end before running the calculation; later rows in the supplied stream may therefore resolve state that began earlier in that same supplied stream.
+
+Consequences:
+
+- a full-source request has the complete original RAW resource available as Engine context;
+- a selected-range request begins with only the selected rows supplied by the server;
+- selected-range Engine state therefore begins at the first supplied selected row and cannot use hidden rows before that selection;
+- presentation filtering is distinct from calculation over the supplied input;
+- Engine calculation scope is bounded by the stream supplied to the bridge and is not implicitly expanded to hidden original-history rows.
+
+### 10.3 Presentation scope
+
+Chart controls what the user selects and displays. Engine/bridge controls calculation state over the input it receives and selects public rows for the requested output range. Presentation code must not retroactively change upstream calculation state.
+
+## 11. Process and transport boundaries
+
+| Boundary | Current contract |
+| --- | --- |
+| Browser ↔ local server | Local HTTP/JSON APIs; SSE is used for calculation progress |
+| Local server ↔ Python bridge | Child process invocation with explicit arguments |
+| Selected-range server ↔ bridge | Ephemeral in-memory named-pipe stream in the current Windows path |
+| Full-source server ↔ bridge | Project-local RAW file path |
+| Python bridge → local server | Final JSON on stdout |
+| Python bridge → local server progress | Prefixed machine-readable events on stderr |
+| Local server ↔ project state | Filesystem through project-local state owners |
+| FARAZ integration ↔ external service | Network requests constrained by current FARAZ integration policy |
+| FARAZ integration ↔ browser process | Chromium automation/session boundary where required for authentication |
+
+Changing the transport mechanism does not necessarily change system architecture if ownership and observable contracts remain equivalent.
+
+## 12. State ownership
+
+| State class | Owner | Architectural rule |
+| --- | --- | --- |
+| Chart/workspace interaction state | Chart/browser | Presentation-only; not trading authority |
+| Browser preference/session presentation state | Chart/browser storage/URL | May restore UI context; cannot restore authoritative Engine state |
+| Drawings/templates | Chart semantics with server-backed local persistence | Presentation/user artifacts |
+| RAW candles and sidecars | RAW store under chart/server data ownership | Validated Engine input material, not trading output |
+| FARAZ authentication/session | FARAZ integration under secret state | Acquisition trust state; never trading semantics |
+| Acquisition jobs/coverage | FARAZ/local server | External-data workflow state |
+| Calculation progress channels | Vite/local server process | Transport/observability state only |
+| Serialized calculation cache | Vite/local server local state | Reusable finalized output; invalidatable and non-authoritative |
+| Trading calculation/lifecycle state | Engine | Authoritative for the current run |
+| Historical/archive/verification evidence | Engineering governance owners | Evidence only; never runtime state |
+
+Operational storage placement and migration rules are owned by [Local State](../operations/local-state.md), not duplicated here.
+
+## 13. Cache and persistence boundaries
+
+### Server calculation cache
+
+The local server persists serialized calculation results using an identity that includes the relevant current calculation-source fingerprint, RAW identity/freshness, requested input scope/range, timeframes, direction, and calculation settings.
+
+A compatible cache hit can avoid rerunning Python. A cache miss executes Engine and persists the resulting serialized payload. A source-fingerprint change during execution invalidates the in-flight result rather than silently storing it under stale code identity.
+
+The cache is a reuse layer for finalized output. It is not a substitute for Engine semantics.
+
+### RAW inventory cache
+
+The RAW store may cache validated inventory entries keyed by filesystem change evidence. When a RAW resource or sidecar changes, the store revalidates and refreshes its inventory representation. The store may repair current metadata sidecars as part of that ownership.
+
+This cache accelerates inventory work and does not change candle/trading semantics.
+
+### Browser caches and storage
+
+Browser storage, Cache Storage, IndexedDB, and local preferences may contain presentation or request-related state. Clearing them cannot redefine Engine truth. Cache-clear workflows explicitly separate browser layers from server calculation/drawing/session layers.
+
+## 14. Serialization and public-result boundary
+
+The Python bridge owns conversion from finalized Engine-native calculation objects to the public JSON payload.
+
+Architectural invariants:
+
+- stage/lifecycle calculation occurs before public serialization;
+- serialization does not apply a new trading rule;
+- object identity, provenance, stable ordering, and null/absence meaning must not be silently changed at the transport boundary;
+- additive presentation projections may describe finalized objects but cannot create new semantic objects;
+- Vite persists/returns the bridge output rather than recalculating it;
+- Chart and Manual Review consume the supplied result rather than deriving replacement trading decisions.
+
+The complete public schema remains owned by current Source/contracts and accepted References; it is intentionally not copied into this architecture document.
+
+## 15. Progress and error flow
+
+Calculation progress follows this path:
+
+\`Engine/bridge phase → progress record on stderr → Vite progress channel → SSE → Chart progress UI\`.
+
+The final calculation follows:
+
+\`Engine/bridge finalized state → JSON stdout → Vite/cache/HTTP → Chart or Manual Review\`.
+
+Errors can originate at browser request validation, server validation/file I/O, child-process execution, Engine calculation, FARAZ acquisition, or external service boundaries. Each layer reports failure through its transport contract. Presentation may explain an error but must not substitute fabricated successful state.
+
+## 16. Security and trust boundaries
+
+Architecture-relevant trust boundaries are:
+
+- browser content ↔ local HTTP service;
+- local HTTP service ↔ project-local filesystem state;
+- Node/Vite process ↔ Python Engine process;
+- selected-range stream/file input ↔ Engine parser;
+- local FARAZ integration ↔ external FARAZ network service;
+- local FARAZ integration ↔ browser/session process;
+- repository Source ↔ mutable runtime state;
+- secret/session state ↔ non-secret application data.
+
+The local server is a real service boundary even when used on one workstation. Runtime binding and firewall exposure are deployment/security concerns and must be reviewed from current startup configuration.
+
+Secrets, cookies, tokens, private keys, and session contents must not enter maintained architecture documentation.
+
+## 17. Dependency direction
+
+The intended subsystem direction is:
+
+\`\`\`text
+External FARAZ service
+        ↕
+FARAZ acquisition integration
+        ↓
+Validated project-local RAW/state
+        ↓
+Vite/local server orchestration
+        ↓
+Python bridge / Engine calculation
+        ↓
+Finalized serialized result
+        ↓
+Vite transport/cache
+        ↓
+Chart / Manual Review presentation
+\`\`\`
+
+Chart can initiate requests upstream, but semantic dependency runs from finalized Engine state toward presentation. Neither Chart nor transport layers may become an alternative source of trading truth.
+
+Generated dependency graphs can support investigation but do not own this architecture.
+
+## 18. Runtime, startup, and release boundaries
+
+Startup tooling discovers the repository root, validates the required runtime/tooling environment, resolves the same project-local state policy used by the application, prepares required state directories, sets runtime environment needed by the local server/Engine integration, and starts the chart service.
+
+Specific runtime/package versions belong to current manifests/startup compatibility checks rather than this conceptual architecture unless a version itself becomes an architectural protocol requirement.
+
+Release publication is outside the live calculation architecture. Release mechanics are owned by [TradingBot release operations](../../../scripts/git/README.md). Release tooling may package/verify runtime closure but must not redefine subsystem ownership or trading semantics.
+
+## 19. Architectural invariants and forbidden crossings
+
+The following boundaries are durable:
+
+- **Chart must not implement independent trading truth.**
+- **Vite/local server must not become a second trading engine.**
+- **FARAZ must not define trading semantics.**
+- **Engine must not depend on browser presentation behavior.**
+- **Serialization must not silently alter finalized Engine semantics.**
+- **Transport must not reinterpret algorithm results.**
+- **Caches must not become semantic authority.**
+- **Historical/generated documentation must not define Current runtime architecture.**
+- **Acquisition/session state must not become calculation state.**
+- **Presentation-range clipping must not be confused with the supplied-input calculation scope.**
+
+No verified Current Source evidence inspected for this reconstruction requires documenting a violation of these subsystem ownership boundaries.
+
+## 20. Change and review triggers
+
+Review this document when any of these change materially:
+
+- subsystem ownership;
+- browser/server/Engine/FARAZ process boundaries;
+- Engine invocation or public result boundary;
+- full-source versus selected-range input contract;
+- persistence/cache ownership;
+- state ownership;
+- acquisition-to-RAW boundary;
+- major transport direction;
+- runtime/startup architecture;
+- architecture-significant trust boundaries.
+
+Do **not** rewrite it merely because:
+
+- an Engine module is added or renamed inside the same ownership boundary;
+- tests increase;
+- package/runtime versions change without an architecture change;
+- hashes or repository revisions change;
+- route/file counts change;
+- a UI component is added without a new architectural boundary;
+- cache implementation changes while its ownership/contract stays the same.
+
+## 21. Future-proof acceptance
+
+This architecture remains valid under ordinary internal evolution:
+
+- **New Engine module:** dynamically discovered through current runtime/import closure; document changes only if it creates a new architectural owner/boundary.
+- **Internal package reorganization:** no architecture change when responsibilities and contracts are preserved.
+- **Version changes:** no architecture change unless compatibility or process boundaries change.
+- **New UI component:** usually a UI/UX concern unless it creates a new subsystem boundary.
+- **Selected range:** remains governed by the supplied-input contract in Section 10.
+- **Historical report:** cannot override this maintained Current reference.
+- **Serialization defect:** investigate bridge/transport ownership; do not repair the truth in Chart.
+- **FARAZ implementation change:** architecture remains stable while acquisition ownership and contracts remain stable.
+- **Cache implementation change:** architecture remains stable while cache ownership/semantic subordination remain unchanged.
+
+## 22. Related maintained documents
+
+- Root operating contract: [\`AGENTS.md\`](../../../AGENTS.md)
+- Documentation lifecycle/ownership: [Documentation Governance](../documentation-governance.md)
+- Maintained documentation navigation: [Engineering Documentation](../README.md)
+- AI execution workflow: [AI Engineering Workflow](../ai/engineering-workflow.md)
+- Detailed UI/UX owner: [UI/UX Reference](ui-ux-reference.md)
+- Refactor/equivalence methodology: [Zero-Difference Refactor](../development/zero-difference-refactor.md)
+- Local persistence/storage operations: [Local State](../operations/local-state.md)
+- Repository structural verification: [Repository Integrity](../verification/repository-integrity.md)
+- Release mechanics: [TradingBot release operations](../../../scripts/git/README.md)
+
+For detailed trading semantics, retrieve the current canonical trading knowledge and current accepted Algorithm References according to root AGENTS rather than copying their mutable filenames or versions here.
+
+## 23. Historical provenance
+
+The previous maintained file was primarily a dated architecture/audit snapshot containing mutable paths, counts, versions, hashes, security findings, test results, and one-time audit conclusions. Its unique historical body is preserved byte-for-byte at [the archived architecture audit](../../archive/documentation/technical-architecture-audit-2026-09-22.md).
+
+That historical evidence may explain past observations. It is not Current architecture authority.
