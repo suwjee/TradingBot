@@ -4,7 +4,7 @@
 **last_modified_at:** `2026-09-30T16:12:00+03:30`
 
 **task:** TradingBot Graphify Safe Cleanup  
-**status:** COMPLETE (pending push verification — see Git section)  
+**status:** INCOMPLETE — cleanup finished locally; GitHub push BLOCKED (remote diverged; merge/rebase not permitted in this session)  
 **scope:** cleanup only under `engineering/archive/repository-graphify`  
 **Graphify regenerated:** NO
 
@@ -170,11 +170,11 @@ A temporary validator `cache/validate_after_cleanup.py` was used and removed in 
 | --- | --- |
 | Staging scope | Only `engineering/archive/repository-graphify` |
 | Unrelated dirty files left unstaged | `engineering/archive/documentation/docs.zip` (D), `scripts/git.zip` (M) |
-| Commit | `089039c` — `chore: clean repository Graphify artifacts` |
-| Branch pushed | `main` |
-| Push result | _filled after push_ |
-| Remote verification | _filled after push_ |
-| Post-commit hook | Hook script failed (`python.exe` path missing under `codex-runtimes`); commit object created successfully |
+| Commits (local `main`) | `089039c` `chore: clean repository Graphify artifacts`<br>`aa703b1` `docs: record Graphify cleanup commit metadata` |
+| Branch intended | `main` → `origin/main` |
+| Push result | **BLOCKED** — `origin/main` advanced (`df85e88..2c3b60a`, +4 commits); local is ahead 2 / behind 4. `git push` rejected non-fast-forward. `git merge` / `git rebase` blocked by session isolation policy (cross-branch integration). Fast-forward pull impossible. No force-push used. |
+| Remote verification | **INCOMPLETE** — cleanup commits are local-only until integration/push is completed by an authorized merge/rebase + push. |
+| Post-commit hook | Hook script failed (`python.exe` path missing under `codex-runtimes`); commit objects created successfully |
 
 ---
 
