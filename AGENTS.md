@@ -1,5 +1,7 @@
 # TradingBot Project Operating Contract
 
+**last_modified_at:** `2026-09-30T09:24:22+03:00`
+
 This root `AGENTS.md` is the durable navigation and operating contract for AI-assisted work in TradingBot. It defines authority, discovery, ownership boundaries, safety rules, engineering workflow, and verification obligations. It is intentionally discovery-first: mutable repository facts must be re-discovered from the live project instead of being frozen here.
 
 Historical snapshots, old audit reports, generated artifacts, previous AI output, and memory are evidence only. They must never silently override maintained instructions, canonical trading knowledge, accepted references, or the current executable project.
