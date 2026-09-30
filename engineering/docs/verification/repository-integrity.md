@@ -9,7 +9,7 @@ scope:
   - generated-content
   - archive
   - verification
-last_modified_at: 2026-09-30T16:03:01+03:30
+last_modified_at: 2026-09-30T16:33:27+03:30
 ---
 
 # TradingBot Repository Integrity
@@ -385,7 +385,71 @@ Keep responsibilities separate:
 
 Repository Integrity owns classification/tracking/integrity, not those other procedures.
 
-## 22. Review triggers
+## 22. Automated anti-drift verification gate
+
+The maintained structural/documentation gate is:
+
+`python scripts/verification/anti_drift.py --mode full --format human --verbose`
+
+The verifier is read-only. It discovers the repository root from its own location/current checkout or accepts an explicit `--root`; it does not rewrite documents, mutate RAW/local state, stage files, commit, push, or fetch external URLs.
+
+### Modes and output
+
+- `--mode full` is the authoritative whole-repository mode used by CI.
+- `--mode changed` is an optional local working-tree mode that scopes per-document checks to staged, unstaged, and untracked changes while still running global navigation/authority/path-integrity checks.
+- `--format human` prints stable diagnostic codes and readable messages.
+- `--format json` emits deterministic machine-readable `errors`, `warnings`, `info`, and summary counts.
+- `--verbose` adds remediation hints to human output.
+
+Exit behavior is stable:
+
+- `0` — verification completed with no `ERROR` diagnostics;
+- `1` — objective anti-drift violations were found;
+- `2` — verifier/configuration/runtime failure prevented a valid verification run.
+
+`ERROR` is reserved for mechanically provable contract violations such as required metadata/timestamp defects, missing internal links, case/path mismatches, invalid Current navigation, or required repository-governance paths that are absent. `WARNING` is non-blocking and is used for conservative heuristics such as suspicious mutable snapshot wording or an anchor that cannot be validated robustly.
+
+### Checks owned by the gate
+
+The verifier implements machine-checkable portions of the current governance/integrity contract, including:
+
+- maintained-document metadata and lifecycle placement;
+- required timestamp format;
+- internal Markdown link and path-case integrity;
+- maintained navigation lifecycle checks;
+- root `AGENTS.md` structural links;
+- superseded-path use in Current navigation where derivable from metadata;
+- conservative mutable-snapshot drift detection in maintained general engineering prose;
+- required repository-governance paths;
+- tracked case-only collisions when Git is available.
+
+Historical/archive evidence, Graphify output, Algorithm References, release manifests/evidence, lockfiles, and generated verification evidence are not subjected to general maintained-document snapshot heuristics. The gate does not encode current Engine file counts, test counts, repository totals, Source hashes, Reference versions, package versions, or Git HEAD as durable truth.
+
+The gate intentionally does **not** decide trading semantics, validate Reaction/Blue/A/S/E/Order correctness, read secret contents, scan RAW payload contents, replace the Testing owner, replace Algorithm Reference Maintenance, or perform the broader Phase 8 semantic/manual documentation audit.
+
+### Tests and CI
+
+Run the verifier's tests with:
+
+`python -m unittest discover -s scripts/verification -p "test_*.py" -v`
+
+The minimal GitHub Actions workflow at `.github/workflows/anti-drift.yml` runs on pushes and pull requests with read-only repository permission. It runs the verifier tests, full-repository verification, and a repeated JSON comparison for deterministic output. Ordinary verification requires no project secrets and does not run Graphify, deploy, release, or mutate repository content.
+
+### Extending the gate safely
+
+When adding a rule:
+
+1. establish the durable owner/rule in [Documentation Governance](../documentation-governance.md), this document, or the appropriate maintained owner;
+2. automate only an objectively machine-verifiable portion;
+3. define scope and lifecycle exclusions explicitly;
+4. choose `ERROR` only for deterministic violations and `WARNING` for ambiguous heuristics;
+5. add positive, negative, and false-positive tests;
+6. keep diagnostics stable/deterministic;
+7. update this owner documentation when the verification contract changes.
+
+Governance remains authority; the verifier is an implementation of selected objective rules. Phase 8 uses this automated gate as one input and remains responsible for the final comprehensive semantic/manual documentation audit.
+
+## 23. Review triggers
 
 Review this document when a durable repository-integrity contract changes, including:
 
