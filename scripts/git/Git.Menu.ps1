@@ -937,7 +937,8 @@ function Invoke-InteractiveOperation {
       $result.Tag = 'FAIL'
       if ($ctx.TagTarget -eq 'both') {
         if ($Target -notin @('both')) { throw 'Both tag target requires Both operation.' }
-        $tagObject = New-MenuTag -Tag $ctx.Tag -TargetSha $actualProductionSha -TargetKind 'both' -MainSourceSha $actualMainSha
+        $tagTargetSha = $actualProductionSha
+        $tagObject = New-MenuTag -Tag $ctx.Tag -TargetSha $tagTargetSha -TargetKind 'both' -MainSourceSha $actualMainSha
       } elseif ($ctx.TagTarget -eq 'production') {
         if ($Target -notin @('production','both')) { throw 'Production tag target was selected but production is not part of this operation.' }
         $tagTargetSha = $actualProductionSha
