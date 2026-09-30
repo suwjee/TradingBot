@@ -1,7 +1,35 @@
 # CLEANUP_REPORT.md
 
 **created_at:** `2026-09-30T16:12:00+03:30`
-**last_modified_at:** `2026-09-30T16:12:00+03:30`
+**last_modified_at:** `2026-09-30T18:21:07+03:30`
+
+## Current follow-up cleanup attempt — 2026-09-30
+
+**Status:** BLOCKED. The automatic approval review rejected the precise deletion of two Python bytecode files with the reason `blocked by policy`. The deletion command did not execute; no file or directory was removed. This section records the current live archive; the older record below describes a prior cleanup and is retained as historical evidence.
+
+| Inventory metric | Before | After report update |
+| --- | ---: | ---: |
+| Files | 109 | 109 |
+| Directories below target | 15 | 15 |
+| Total bytes | 34,924,885 | 34927607 |
+| Deleted files / bytes reclaimed | — | 0 / 0 |
+
+The recursive inventory classified 100 files as KEEP, 7 as REVIEW-KEEP, and 2 as disposable DELETE candidates. File type, size, modification time, parent path, Git status, references, and rebuild value were considered. All 68 JSON files parsed. No zero-byte files or reparse points were found.
+
+| Intended deletion | Size | Reason | Result |
+| --- | ---: | --- | --- |
+| `snapshots/rebuild-2026-09-30_172124/cache/__pycache__/build_current_graph.cpython-314.pyc` | 60,346 bytes | Rebuildable bytecode; source script retained | BLOCKED; retained |
+| `snapshots/rebuild-2026-09-30_172124/cache/__pycache__/build_graph_html.cpython-314.pyc` | 20,953 bytes | Rebuildable bytecode; source script retained | BLOCKED; retained |
+
+The `__pycache__` directory could not be removed because its two files remain. The seven REVIEW-KEEP files are root `.graphify_labels.json` and `cost.json` plus the five byte-identical files in `snapshots/rebuild-2026-09-19/raw-run/`. They have explicit README references or historical path value. The root and dated graph artifacts, reports, manifests, HTML, extraction JSON, hashed AST cache JSON, `stat-index.json`, and generator scripts were retained. The 2026-09-30 snapshot and its `graph.html` remain intact.
+
+**Validation:** PASS — target still exists; all 68 JSON files parse; no deletion occurred; the Graphify tree remains structurally unchanged apart from this report. NOT RUN — browser rendering or a new Graphify build, because this is an archive-only cleanup. No Source, test, RAW, or Algorithm Reference was edited. Graphify was not executed.
+
+**Git state at inventory:** branch `main`; local HEAD `d5d221ef06b0b872c9c084fa354d2ab0c07f75f0`; remote `origin/main` was `b8012ce785865130eac9477d02d7fbf9753f264f`; histories diverged. Unrelated and pre-existing target changes remain untouched. Current-attempt commit, normal push, and remote verification are recorded in the final task response. Do not interpret the historical commit and push details below as results of this attempt.
+
+---
+
+## Historical cleanup record (earlier 2026-09-30 run)
 
 **task:** TradingBot Graphify Safe Cleanup  
 **status:** INCOMPLETE — cleanup finished locally; GitHub push BLOCKED (remote diverged; merge/rebase not permitted in this session)  
