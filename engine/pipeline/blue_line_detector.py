@@ -15,7 +15,7 @@ from typing import Sequence
 from direction_policy import policy_for
 
 
-BLUE_LINE_VERSION = "2.3.0"
+BLUE_LINE_VERSION = "2.4.0"
 FIBONACCI_RATIO = Decimal("0.618")
 
 
@@ -404,13 +404,25 @@ def detect_blue_lines(
     return output
 
 
-def public_blue_lines(lines: Sequence[BlueLine]) -> list[BlueLine]:
-    """Return only calculation-valid, public Blue Lines for serialization."""
+def public_blue_lines(
+    lines: Sequence[BlueLine],
+    excluded_source_indices: Sequence[int] = (),
+) -> list[BlueLine]:
+    """Return public Blue Lines after final behavior-source ownership.
+
+    A is the sole display exception: an A candle may retain its Blue line.
+    Final S/E/StopAll source candles are supplied as excluded indices and may
+    never simultaneously publish a Blue line.  This is presentation of already
+    finalized ownership; calculation consumption is enforced by A/lifecycle
+    reconciliation rather than by mutating immutable Blue evidence.
+    """
+    excluded = {int(index) for index in excluded_source_indices}
     return [
         line
         for line in lines
         if bool(getattr(line, "calculation_valid", True))
         and not bool(getattr(line, "behavior_internal", False))
+        and int(getattr(line, "source_index")) not in excluded
     ]
 
 def mark_internal_blue_lines(

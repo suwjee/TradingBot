@@ -40,9 +40,9 @@ from order_audit_engine import order_b_leg_identity
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.7.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.8.0"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-09-27 23:17:17 +03:30"
+TRADING_PIPELINE_VERSION = "1.8.0"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.9.0"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-09-30 12:00:00 +03:30"
 
 TEHRAN = ZoneInfo("Asia/Tehran")
 
@@ -1871,6 +1871,7 @@ def calculate_full_direction_state(
     initial_order_geometry: dict[str, object],
     timings: dict[str, float],
     order_b_legs: Sequence[object] = (),
+    blue_consumption_boundaries: Sequence[object] = (),
     shared_stages: FullDirectionState | None = None,
 ) -> FullDirectionState:
     """Run Blue→A→S→E calculation and lifecycle reconciliation for one direction."""
@@ -1903,6 +1904,7 @@ def calculate_full_direction_state(
                 full_results[direction].reactions,
                 blue_lines,
                 chronology,
+                blue_consumption_boundaries,
             ),
         )
         s_detector = s_engine.SZoneDetector(
@@ -2181,26 +2183,37 @@ def calculate_direction_with_order_b_feedback(
     initial_order_geometry: dict[str, object],
     timings: dict[str, float],
 ) -> FullDirectionState:
-    """Recalculate only while proven Order_B causes change accepted state."""
+    """Reconcile Order_B and downstream Blue-consumption boundaries to stability."""
     opposite = engines.reaction.opposite_direction(direction)
     order_b_legs: list[object] = []
+    blue_boundaries: list[object] = []
     seen: set[tuple[object, ...]] = set()
     shared_stages: FullDirectionState | None = None
-    for _pass in range(8):
+
+    for _pass in range(16):
         state = calculate_full_direction_state(
-            direction, engines, market, full_results, geometry_detectors,
-            initial_order_geometry, timings, order_b_legs=order_b_legs,
+            direction,
+            engines,
+            market,
+            full_results,
+            geometry_detectors,
+            initial_order_geometry,
+            timings,
+            order_b_legs=order_b_legs,
+            blue_consumption_boundaries=blue_boundaries,
             shared_stages=shared_stages,
         )
-        if shared_stages is None:
-            shared_stages = state
         e_zones, stopalls = engines.lifecycle.reconcile_stopall_lifecycle(
-            state.e_detector, state.s_zones, state.e_zones,
-            market.chronology, direction,
+            state.e_detector,
+            state.s_zones,
+            state.e_zones,
+            market.chronology,
+            direction,
         )
         e_zones = state.e_detector.restore_independent_s_roots(e_zones)
         e_zones = state.e_detector.ensure_accepted_order_audit(e_zones)
-        discovered = engines.e_zone.discover_accepted_order_b_reset_legs(
+
+        discovered_order_b = engines.e_zone.discover_accepted_order_b_reset_legs(
             direction,
             market.chronology,
             full_results[direction].reactions,
@@ -2215,16 +2228,47 @@ def calculate_direction_with_order_b_feedback(
             state.e_detector,
             engines.lifecycle.module_priority,
         )
+        discovered_boundaries = engines.a_zone.build_blue_consumption_boundaries(
+            state.s_zones,
+            e_zones,
+            stopalls,
+        )
 
-        old_identity = order_b_leg_identity(order_b_legs)
-        new_identity = order_b_leg_identity(discovered)
-        if new_identity == old_identity:
+        old_order_identity = order_b_leg_identity(order_b_legs)
+        new_order_identity = order_b_leg_identity(discovered_order_b)
+        old_boundary_identity = engines.a_zone.blue_consumption_boundary_identity(
+            blue_boundaries
+        )
+        new_boundary_identity = engines.a_zone.blue_consumption_boundary_identity(
+            discovered_boundaries
+        )
+        if (
+            new_order_identity == old_order_identity
+            and new_boundary_identity == old_boundary_identity
+        ):
             return state
-        if new_identity in seen:
-            raise RuntimeError("Order_B lifecycle feedback did not converge.")
-        seen.add(new_identity)
-        order_b_legs = discovered
-    raise RuntimeError("Order_B lifecycle feedback exceeded eight passes.")
+
+        feedback_identity = (new_order_identity, new_boundary_identity)
+        if feedback_identity in seen:
+            raise RuntimeError(
+                "Order_B / Blue lifecycle feedback did not converge."
+            )
+        seen.add(feedback_identity)
+
+        # Blue/A/S may be reused only while their boundary input is unchanged.
+        # An Order_B-only change remains downstream and can retain those stages.
+        if new_boundary_identity == old_boundary_identity:
+            if shared_stages is None:
+                shared_stages = state
+        else:
+            shared_stages = None
+
+        order_b_legs = discovered_order_b
+        blue_boundaries = discovered_boundaries
+
+    raise RuntimeError(
+        "Order_B / Blue lifecycle feedback exceeded sixteen passes."
+    )
 
 
 def prepare_pipeline_state(
@@ -2442,21 +2486,57 @@ def calculate_direction_range_state(
             accepted_s_zones = state.full_s_by_direction[direction]
             a_zones = state.full_s_detectors[direction].eligible_a_zones
         else:
-            s_detector = engines.s_zone.SZoneDetector(
-                direction,
-                result.reactions,
-                state.results[opposite].reactions,
-                blue_lines,
-                a_zones,
-                market.chronology,
-                0,
-                len(market.candles) - 1,
-                state.results[opposite].resets,
-                initial_order_geometry=state.initial_order_geometry[direction],
-            )
-            s_candidates = timed(
-                timings, f"S - {direction.title()}", s_detector.detect
-            )
+            blue_boundaries: list[object] = []
+            seen_boundaries: set[tuple[tuple[object, ...], ...]] = set()
+            for pass_number in range(12):
+                if pass_number > 0:
+                    a_zones = timed(
+                        timings,
+                        f"A Blue lifecycle - {direction.title()}",
+                        lambda: engines.a_zone.detect_a_zones(
+                            direction,
+                            result.reactions,
+                            blue_lines,
+                            market.chronology,
+                            blue_boundaries,
+                        ),
+                    )
+                s_detector = engines.s_zone.SZoneDetector(
+                    direction,
+                    result.reactions,
+                    state.results[opposite].reactions,
+                    blue_lines,
+                    a_zones,
+                    market.chronology,
+                    0,
+                    len(market.candles) - 1,
+                    state.results[opposite].resets,
+                    initial_order_geometry=state.initial_order_geometry[direction],
+                )
+                s_candidates = timed(
+                    timings, f"S - {direction.title()}", s_detector.detect
+                )
+                discovered_boundaries = engines.a_zone.build_blue_consumption_boundaries(
+                    s_candidates, (), ()
+                )
+                old_identity = engines.a_zone.blue_consumption_boundary_identity(
+                    blue_boundaries
+                )
+                new_identity = engines.a_zone.blue_consumption_boundary_identity(
+                    discovered_boundaries
+                )
+                if new_identity == old_identity:
+                    break
+                if new_identity in seen_boundaries:
+                    raise RuntimeError(
+                        "S / Blue lifecycle feedback did not converge."
+                    )
+                seen_boundaries.add(new_identity)
+                blue_boundaries = discovered_boundaries
+            else:
+                raise RuntimeError(
+                    "S / Blue lifecycle feedback exceeded twelve passes."
+                )
             state.full_s_detectors[direction] = s_detector
             accepted_s_zones = s_candidates
             a_zones = s_detector.eligible_a_zones
@@ -2587,6 +2667,14 @@ def finalize_direction_visibility(
         ),
     )
 
+    # A is the sole public Blue-line exception. Final S/E/StopAll source
+    # candles own their source completely and may not also publish Blue. Keep
+    # this full-range ownership set before presentation clipping.
+    non_blue_behavior_source_indices = {
+        int(getattr(item, "source_index"))
+        for item in [*visible_s_zones, *e_zones, *stopalls]
+    }
+
     visible_s_zones = [
         item
         for item in visible_s_zones
@@ -2680,7 +2768,9 @@ def finalize_direction_visibility(
             prepared_order_audit, display_s_zones, e_zones, stopalls
         )
     return DirectionVisibilityState(
-        blue_lines=engines.blue_line.public_blue_lines(direction_state.blue_lines),
+        blue_lines=engines.blue_line.public_blue_lines(
+            direction_state.blue_lines, non_blue_behavior_source_indices
+        ),
         a_zones=display_a_zones,
         s_zones=display_s_zones,
         e_zones=e_zones,
