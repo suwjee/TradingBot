@@ -10,7 +10,7 @@ scope:
   - engine
   - runtime-boundaries
   - state-and-transport
-last_modified_at: 2026-09-30T10:37:31+03:30
+last_modified_at: 2026-09-30T20:12:59+03:30
 ---
 
 # TradingBot Technical Architecture
@@ -455,7 +455,43 @@ This architecture remains valid under ordinary internal evolution:
 - **FARAZ implementation change:** architecture remains stable while acquisition ownership and contracts remain stable.
 - **Cache implementation change:** architecture remains stable while cache ownership/semantic subordination remain unchanged.
 
-## 22. Related maintained documents
+## 22. Current Project Path Roadmap
+
+This roadmap is a Current navigation map of major project ownership boundaries. It is not an immutable file inventory: internal files may evolve while the durable subsystem responsibilities remain unchanged. Re-discover the live tree for every substantial task, and review this roadmap when a major domain moves, is renamed, is added or removed, or changes ownership.
+
+| Current path | Owner / subsystem | Purpose and authority role | Important relationships / safety |
+| --- | --- | --- | --- |
+| [`AGENTS.md`](../../../AGENTS.md) | Root operating contract | Project authority, discovery, safety, engineering workflow, verification and publication boundaries | Read first for substantial work; it is not an Algorithm Reference. |
+| [`README.md`](../../../README.md) | Project navigation | Human-facing project entry point and startup/navigation summary | Links to maintained owners; mutable implementation detail is discovered live. |
+| [`.gitignore`](../../../.gitignore) and [`.gitattributes`](../../../.gitattributes) | Repository configuration | Ignore/tracking intent and byte/line-ending policy | Interpret with Repository Integrity and live Git state; ignored does not mean disposable. |
+| [`.editorconfig`](../../../.editorconfig) | Editor configuration | Cross-editor formatting defaults | Tooling policy only; not semantic authority. |
+| [`.github/workflows/`](../../../.github/workflows/) | CI | Current GitHub Actions workflows, including repository/documentation verification | CI proves only the checks it actually runs. |
+| [`apps/chart/`](../../../apps/chart/) | Chart workstation | Browser application plus its local Node/Vite service boundary | Presentation and orchestration domain; must not become a second trading algorithm. |
+| [`apps/chart/src/`](../../../apps/chart/src/) | Chart frontend | UI, chart/drawing features, workspace state, review and presentation logic | Consumes finalized Engine results; presentation cannot redefine trading truth. |
+| [`apps/chart/server/`](../../../apps/chart/server/) | Vite/local-server services | Local API/service modules, RAW/state services, FARAZ integration and server-side helpers | Composed by Vite; owns transport/persistence orchestration, not trading semantics. |
+| [`apps/chart/vite.config.js`](../../../apps/chart/vite.config.js) | Vite/local-server boundary | Main local backend composition, HTTP/SSE routes, Engine child-process orchestration and calculation-cache coordination | Launches the Engine bridge and composes current server modules. |
+| [`apps/chart/server/faraz-candle-api.js`](../../../apps/chart/server/faraz-candle-api.js) | FARAZ integration | External market-data acquisition, session/auth integration, validation and RAW publication | FARAZ supplies validated market data and never owns trading semantics. |
+| [`apps/chart/scripts/`](../../../apps/chart/scripts/) | Chart development startup | Chart-owned development-server entry/support tooling | Invoked by package/startup tooling; not a production trading owner. |
+| [`apps/chart/package.json`](../../../apps/chart/package.json) and [`package-lock.json`](../../../apps/chart/package-lock.json) | Chart manifests | Current Node scripts and dependency contract | Discover current versions/scripts here instead of freezing them in conceptual docs. |
+| [`apps/chart/tests/`](../../../apps/chart/tests/) | Chart tests | Current Chart/server/unit/contract verification | Test evidence verifies behavior; it is not trading-semantic authority. |
+| [`apps/chart/state/`](../../../apps/chart/state/) | Project-local runtime state | Dedicated machine-local state root for RAW, cache, secret and temporary state | Placement/lifecycle rules are owned by Local State; current contents are not production Source. |
+| [`apps/chart/state/data/raw/`](../../../apps/chart/state/data/raw/) | RAW evidence/data | Authoritative market-data resources and sidecars used as calculation input | RAW is evidence, not disposable cache; never modify it to make a test pass. |
+| [`engine/`](../../../engine/) | Engine | Authoritative trading calculation domain | Discover production closure recursively from current runtime/import evidence. |
+| [`engine/bridge/`](../../../engine/bridge/) | Engine bridge | Input normalization, calculation orchestration, progress and public serialization boundary | Serialization projects finalized state; it must not become a second algorithm. |
+| [`engine/pipeline/`](../../../engine/pipeline/) | Engine production pipeline | Current stage owners and shared behavior-neutral calculation primitives | Internal module inventory is mutable; ownership and dependency closure must be discovered live. |
+| [`engine/algorithms/`](../../../engine/algorithms/) | Accepted Algorithm References | First-class Bullish/Bearish synchronized algorithm specifications | Formal algorithm/reference authority according to root AGENTS; not generic engineering prose. |
+| [`engine/tests/`](../../../engine/tests/) | Engine verification | Unit, regression, benchmark and verification tooling/evidence | Discover applicable runners dynamically; historical PASS is never a Current PASS. |
+| [`engineering/docs/`](../) | Maintained engineering documentation | Current maintained normative/reference/procedure owners | Documentation Governance controls lifecycle/ownership; general docs do not override algorithm authority. |
+| [`engineering/verification/`](../../verification/) | Verification evidence | Audits, migration/regression and final verification evidence | Evidence records observed state; it does not become Current authority merely by being newer. |
+| [`engineering/archive/`](../../archive/) | Historical/archive evidence | Superseded, historical and forensic engineering material | Preserve provenance; Historical material must not be promoted to Current guidance. |
+| [`scripts/`](../../../scripts/) | Project tooling/startup | Public startup entry points plus maintained tooling families | Inspect the owning subdirectory/tool before use. |
+| [`scripts/launch.bat`](../../../scripts/launch.bat) and [`scripts/start.ps1`](../../../scripts/start.ps1) | Supported Windows startup | Resolve project/runtime prerequisites, project-local state and launch the Chart service | Startup may validate current runtime layout but does not define trading semantics. |
+| [`scripts/git/`](../../../scripts/git/) | Git/release subsystem | Main/production classification, validation, publication and recovery mechanics | Release operations own publication; do not invent a parallel release flow. |
+| [`scripts/verification/`](../../../scripts/verification/) | Structural verification | Anti-Drift verifier and deterministic tests | Implements selected objective governance checks; manual semantic review still has separate ownership. |
+
+The roadmap deliberately separates production Source from tests, maintained guidance from Historical evidence, runtime state from tracked Source, RAW from cache, engineering `main` from dependency-derived release `production`, Algorithm References from generic documentation, and verification evidence from semantic authority.
+
+## 23. Related maintained documents
 
 - Root operating contract: [`AGENTS.md`](../../../AGENTS.md)
 - Documentation lifecycle/ownership: [Documentation Governance](../documentation-governance.md)
@@ -469,7 +505,7 @@ This architecture remains valid under ordinary internal evolution:
 
 For detailed trading semantics, retrieve the current canonical trading knowledge and current accepted Algorithm References according to root AGENTS rather than copying their mutable filenames or versions here.
 
-## 23. Historical provenance
+## 24. Historical provenance
 
 The previous maintained file was primarily a dated architecture/audit snapshot containing mutable paths, counts, versions, hashes, security findings, test results, and one-time audit conclusions. Its unique historical body is preserved byte-for-byte at [the archived architecture audit](../../archive/documentation/technical-architecture-audit-2026-09-22.md).
 
