@@ -11,7 +11,7 @@ scope:
   - documentation-placement
   - documentation-maintenance
 created_at: 2026-09-30T09:24:20+03:00
-last_modified_at: 2026-09-30T09:24:20+03:00
+last_modified_at: 2026-09-30T11:40:11+03:30
 ---
 
 # TradingBot Documentation Governance
@@ -105,8 +105,8 @@ One knowledge class should have one clear maintained owner. The current project 
 | Current production Source/configuration | Current executable implementation behavior | Intended semantic authority when it conflicts with higher intended-semantic authority |
 | [Technical architecture](architecture/technical-architecture.md) | Current architecture, subsystem boundaries, responsibilities, runtime/data flow, architecture-level contracts | Historical audit container or algorithm specification |
 | [UI/UX reference](architecture/ui-ux-reference.md) | Current Chart/UI implementation reference and interaction/state contracts | Trading calculation authority |
-| [Local tests](development/local-tests.md) and current test runner/configuration | Test strategy, execution procedure, test ownership, result interpretation | A permanent inventory of test counts |
-| [Standalone reference specification](development/standalone-reference-specification.md) | Algorithm Reference construction/synchronization procedure while it remains the current owner | A current Algorithm Reference itself |
+| [Testing](development/testing.md) and current test runner/configuration | Test strategy, execution procedure, test ownership, RAW/regression evidence rules, result interpretation | A permanent inventory of test counts |
+| [Algorithm Reference Maintenance](development/algorithm-reference-maintenance.md) | Algorithm Reference construction/synchronization procedure | A current Algorithm Reference itself or a permanent production-Source inventory |
 | [Zero-difference refactor](development/zero-difference-refactor.md) | Behavior-equivalence refactor and performance methodology | General project authority |
 | [Local state](operations/local-state.md) | Local-state/storage operational ownership and contracts | Release or algorithm authority |
 | [Repository integrity](verification/repository-integrity.md) | Repository-structure and integrity verification rules while maintained | A historical migration record |

@@ -7,7 +7,7 @@ scope:
   - engineering-task-execution
   - documentation-synchronization
 created_at: 2026-09-30T10:14:08+03:30
-last_modified_at: 2026-09-30T10:14:08+03:30
+last_modified_at: 2026-09-30T11:40:11+03:30
 ---
 
 # TradingBot AI Engineering Workflow
@@ -85,7 +85,7 @@ For behavioral work:
 
 For refactoring/performance work, follow [Zero-Difference Refactor](../development/zero-difference-refactor.md).
 
-For Algorithm Reference construction/maintenance responsibilities, use the current reference-engineering owner documentation and discover the accepted References dynamically under `engine/algorithms/`.
+For Algorithm Reference construction/maintenance responsibilities, use [Algorithm Reference Maintenance](../development/algorithm-reference-maintenance.md) and discover the accepted References dynamically under `engine/algorithms/`.
 
 ## 7. Verification routing
 
@@ -93,7 +93,7 @@ Discover the current applicable verification rather than copying old suite total
 
 Use specialized owners where relevant:
 
-- [Local Tests](../development/local-tests.md) for current test execution/navigation;
+- [Testing](../development/testing.md) for current test discovery, execution, RAW/regression policy, and result interpretation;
 - [Repository Integrity](../verification/repository-integrity.md) for repository/integrity verification;
 - [Zero-Difference Refactor](../development/zero-difference-refactor.md) for behavior-equivalence and performance verification;
 - [Local State](../operations/local-state.md) for storage/state ownership.

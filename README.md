@@ -3,7 +3,7 @@ title: TradingBot
 document_role: reference
 lifecycle: maintained
 owner: project-navigation
-last_modified_at: 2026-09-30T10:14:08+03:30
+last_modified_at: 2026-09-30T11:40:11+03:30
 ---
 
 # TradingBot
@@ -20,7 +20,7 @@ TradingBot is a Windows candlestick workstation. The chart application acquires 
 
 The root `scripts/` directory preserves the public Windows startup paths used by existing shortcuts and the VMware shared checkout. Root Git/editor files, `AGENTS.md` and this README stay at their tool discovery boundaries.
 
-**Every project-owned file stays inside this TradingBot directory.** RAW and sidecars use `apps/chart/state/data/raw/`, persistent drawings/calculations/templates use `apps/chart/state/cache/`, FARAZ authentication uses `apps/chart/state/secret/`, and temporary files use `apps/chart/state/tmp/`. State, component tests, archives, verification output, dependencies and build output remain Git-ignored. See [local storage](engineering/docs/operations/local-state.md).
+**Every project-owned file stays inside this TradingBot directory.** RAW and sidecars use `apps/chart/state/data/raw/`, persistent drawings/calculations/templates use `apps/chart/state/cache/`, FARAZ authentication uses `apps/chart/state/secret/`, and temporary files use `apps/chart/state/tmp/`. Machine-local state, dependencies, caches, temporary files and rebuildable output are excluded according to current repository policy; legitimate tests, maintained documentation, curated baseline evidence and meaningful engineering evidence may be tracked. See [local storage](engineering/docs/operations/local-state.md).
 
 `TRADINGBOT_LOCAL_STATE_ROOT` is optional. Its default is `apps/chart/state`; a configured value must resolve to that directory or a descendant. External roots and source directories are rejected. Vite denies direct static access to state; the established `/api` resources remain available.
 
@@ -46,6 +46,6 @@ Build with `npm.cmd run build` from `apps/chart`. These commands keep generated 
 
 ## Local verification and navigation
 
-Tests are intentionally local-only under `apps/chart/tests/` and `engine/tests/`; a fresh GitHub clone requires the local test bundle. Run `npm.cmd test` from `apps/chart` and `python -B -m pytest -q -p no:cacheprovider -p no:benchmark engine/tests/unit` from the root. See [local verification](engineering/docs/development/local-tests.md).
+Tests are discovered from the current repository, manifests and runners rather than treated as a fixed local-only bundle. The current project contains Chart and Engine test/verification trees, but their layout and runner set are not permanent contracts. See [Testing](engineering/docs/development/testing.md) for dynamic discovery, execution status, RAW and regression policy.
 
 Read [AGENTS.md](AGENTS.md) and the [AI engineering workflow](engineering/docs/ai/engineering-workflow.md) before engineering work. Trading semantics require the Intelligence Plugin and canonical Knowledge Vault. Use the [engineering document index](engineering/docs/README.md) for Current maintained navigation. Historical single-root migration evidence is preserved at [engineering/verification/history/single-root-migration.md](engineering/verification/history/single-root-migration.md).
