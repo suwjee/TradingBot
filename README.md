@@ -1,3 +1,11 @@
+---
+title: TradingBot
+document_role: reference
+lifecycle: maintained
+owner: project-navigation
+last_modified_at: 2026-09-30T10:14:08+03:30
+---
+
 # TradingBot
 
 TradingBot is a Windows candlestick workstation. The chart application acquires and displays candles, drawings, indicators and review tables. Python under `engine/` owns trading calculations; the browser renders serialized results.
@@ -40,4 +48,4 @@ Build with `npm.cmd run build` from `apps/chart`. These commands keep generated 
 
 Tests are intentionally local-only under `apps/chart/tests/` and `engine/tests/`; a fresh GitHub clone requires the local test bundle. Run `npm.cmd test` from `apps/chart` and `python -B -m pytest -q -p no:cacheprovider -p no:benchmark engine/tests/unit` from the root. See [local verification](engineering/docs/development/local-tests.md).
 
-Read [AGENTS.md](AGENTS.md) and the [operating protocol](engineering/docs/ai/operating-protocol.md) before engineering work. Trading semantics require the Intelligence Plugin and canonical Knowledge Vault. The [engineering document index](engineering/docs/README.md) and [single-root migration report](engineering/docs/verification/single-root-migration.md) describe current navigation and the dated migration evidence.
+Read [AGENTS.md](AGENTS.md) and the [AI engineering workflow](engineering/docs/ai/engineering-workflow.md) before engineering work. Trading semantics require the Intelligence Plugin and canonical Knowledge Vault. Use the [engineering document index](engineering/docs/README.md) for Current maintained navigation. Historical single-root migration evidence is preserved at [engineering/verification/history/single-root-migration.md](engineering/verification/history/single-root-migration.md).

@@ -1,3 +1,11 @@
+---
+title: TradingBot Zero-Difference Refactor
+document_role: procedure
+lifecycle: maintained
+owner: zero-difference-refactor
+last_modified_at: 2026-09-30T10:14:08+03:30
+---
+
 > Current precedence/location note (2026-09-29): explicit user instruction and root AGENTS govern this document. Trading semantics require Plugin/Vault retrieval before source interpretation. For this structural task, the live working tree is authoritative; package/bootstrap and authority examples below are subordinate. Production Engine paths and exact references remain unchanged. Component tests and state use the current engineering document index.
 
 # TradingBot — Production Zero-Difference Refactor, Performance & Code-Quality Specification
@@ -94,7 +102,7 @@ For refactor and optimization work, use this authority order:
 
 ```text
 Latest explicit user instruction
-→ engineering/docs/ai/operating-protocol.md
+→ engineering/docs/ai/engineering-workflow.md
 → AGENTS.md
 → Current Bullish/Bearish Algorithm References
 → Current Production Source
@@ -119,7 +127,7 @@ If the mismatch represents a possible algorithm defect, separate that issue from
 
 Before editing production code, the programmer/AI must:
 
-1. Read `engineering/docs/ai/operating-protocol.md` completely.
+1. Read `engineering/docs/ai/engineering-workflow.md` completely.
 2. Read `AGENTS.md` completely.
 3. Recursively inventory the live `engine/` tree.
 4. Read all files under `engine/algorithms/` completely.

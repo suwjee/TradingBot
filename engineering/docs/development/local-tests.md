@@ -1,3 +1,11 @@
+---
+title: TradingBot Local Verification
+document_role: procedure
+lifecycle: maintained
+owner: testing
+last_modified_at: 2026-09-30T10:14:08+03:30
+---
+
 # Component-local verification
 
 All test-only code is local and Git-ignored. A fresh clone needs the local test bundle before running these commands.
@@ -26,4 +34,4 @@ Current selected-RAW defaults use `apps/chart/state/data/raw/`; optional state o
 
 HPZR2 tools preserve historical snapshot expectations and archived evidence. Their dated assertions are not current complete Engine proof. The regression comparer intentionally checks absolute RAW paths; comparisons across a relocation require an explicit reviewed input mapping while retaining all RAW hashes/rows/ranges/configuration checks.
 
-Algorithm correctness, source regression, directional parity and independent real-data validation require separate scoped evidence. Storage/AST/import checks establish structural integrity. Full market regression is not required solely for a storage-only migration with byte-identical Engine and RAW; any Engine or chronological behavior change uses the operating protocol's full applicable gate.
+Algorithm correctness, source regression, directional parity and independent real-data validation require separate scoped evidence. Storage/AST/import checks establish structural integrity. Full market regression is not required solely for a storage-only migration with byte-identical Engine and RAW; any Engine or chronological behavior change follows root AGENTS verification obligations and the current specialized verification owners.
