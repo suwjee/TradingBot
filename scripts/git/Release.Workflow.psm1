@@ -20,9 +20,9 @@ function Resolve-TradingBotProjectRoot {
   $candidate = [IO.Path]::GetFullPath((Join-Path (Split-Path -Parent $fullScriptPath) '..\..'))
   $gitRoot = & git -C $candidate rev-parse --show-toplevel 2>&1
   if ($LASTEXITCODE -ne 0) { throw "Unable to resolve a Git repository from: $candidate" }
-  # Git may render this VMware checkout through its UNC identity while the
-  # caller uses X:.  An empty prefix proves candidate itself is the Git root
-  # without replacing the canonical caller-visible X: path.
+  # Git may render a mapped-drive checkout through its UNC identity. An empty
+  # prefix proves candidate itself is the Git root while retaining the
+  # caller-visible path.
   $gitPrefix = & git -C $candidate rev-parse --show-prefix 2>&1
   Assert-ReleaseCondition ($LASTEXITCODE -eq 0 -and [string]::IsNullOrWhiteSpace(($gitPrefix | Select-Object -First 1).ToString())) 'Release scripts must be located under the resolved repository root.'
   $root = $candidate
