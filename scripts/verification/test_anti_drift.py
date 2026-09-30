@@ -1,5 +1,5 @@
 # created_at: 2026-09-30T16:20:59+03:30
-# last_modified_at: 2026-09-30T20:12:59+03:30
+# last_modified_at: 2026-09-30T20:16:20+03:30
 """Tests for the TradingBot read-only anti-drift verifier."""
 
 from __future__ import annotations
@@ -90,7 +90,7 @@ class RepoFixture:
             if anchor in omit:
                 continue
             target = posixpath.relpath(anchor, start=source_parent)
-            rows.append(f"| [{anchor}]({target}) | fixture-owner | fixture purpose |")
+            rows.append(f"| [`{anchor}`]({target}) | fixture-owner | fixture purpose |")
         return (
             frontmatter("Technical Architecture", owner="architecture")
             + "# Technical Architecture\n\n"
