@@ -170,10 +170,11 @@ A temporary validator `cache/validate_after_cleanup.py` was used and removed in 
 | --- | --- |
 | Staging scope | Only `engineering/archive/repository-graphify` |
 | Unrelated dirty files left unstaged | `engineering/archive/documentation/docs.zip` (D), `scripts/git.zip` (M) |
-| Commit | _filled after commit_ |
+| Commit | `089039c` — `chore: clean repository Graphify artifacts` |
 | Branch pushed | `main` |
 | Push result | _filled after push_ |
 | Remote verification | _filled after push_ |
+| Post-commit hook | Hook script failed (`python.exe` path missing under `codex-runtimes`); commit object created successfully |
 
 ---
 
