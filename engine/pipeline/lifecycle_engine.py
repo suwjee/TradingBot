@@ -21,9 +21,9 @@ from order_audit_engine import (
 from direction_policy import policy_for
 
 
-STOP_ALL_VERSION = "1.17.0"
-STOP_ALL_IMPLEMENTATION_VERSION = "1.18.0"
-STOP_ALL_LAST_MODIFIED = "2026-09-27 23:17:17 +03:30"
+STOP_ALL_VERSION = "1.18.0"
+STOP_ALL_IMPLEMENTATION_VERSION = "1.19.0"
+STOP_ALL_LAST_MODIFIED = "2026-09-30 13:58:08 +03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -361,7 +361,11 @@ class StopAllDetector:
         cannot consume its stale evidence.  The incoming S Red must have a
         native Mode-B formation Order; different numbered E groups never add.
         E-driven StopAll counters/priority are independent of this reversal
-        evidence and retain their existing semantics.
+        evidence and retain their existing semantics. The caller suppresses
+        this direct reversal promotion when the incoming S Red continues an
+        already-dominant S Red group whose accepted count is at least two; in
+        that case the S Red is counted normally and its later strict stop may
+        drive the E-stage sequence-group StopAll gate.
         """
         if str(getattr(s_item, "color", "")).lower() != "red":
             return None
@@ -417,9 +421,20 @@ class StopAllDetector:
         def process_s_event(s_item: object) -> None:
             nonlocal s_key, s_count, e_key, e_count, dominant_s_item, dominant_e_item, active
 
-            reversal = self._opposite_s_stopall_gate(
-                s_item, blue_repeat_counts, blue_repeat_latest
+            # A dominant S-Red group that has already reached the repeated
+            # sequence threshold owns its continuation. Lower-priority Blue
+            # repeat evidence must not promote the next same-family S Red
+            # directly to StopAll. Count that S Red normally; if it later
+            # stops, the following accepted E may trigger the established
+            # sequence-group StopAll gate.
+            continuing_dominant_s_red = (
+                e_key is None and s_key == "red" and s_count >= 2
             )
+            reversal = None
+            if not continuing_dominant_s_red:
+                reversal = self._opposite_s_stopall_gate(
+                    s_item, blue_repeat_counts, blue_repeat_latest
+                )
             if reversal is not None:
                 behavior_type, behavior_key, behavior_count, underlying_e_key = reversal
                 zone = self._stopall_from_s(

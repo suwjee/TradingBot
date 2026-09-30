@@ -1,18 +1,18 @@
 # TradingBot Bullish Algorithm Reference — Current Standalone Specification
 
-**Document Version:** `5.4.19-EX1`  
-**Last Modified:** `2026-09-28 22:34:26 +0330`  
-**Status:** `ACTIVE — Full Source-derived semantic rewrite, byte-exact Source-synchronized`  
+**Document Version:** `5.4.21`  
+**Last Modified:** `2026-09-30 13:58:08 +03:30`  
+**Status:** `ACTIVE — dominant S-Red continuation / StopAll sequencing correction, byte-exact Source-synchronized`  
 **Target Direction:** `bullish`  
 **Opposite Direction:** `bearish`  
-**Production Source Behavioral Change:** `E / OrderAudit minimal invariant bug fixes`  
+**Production Source Behavioral Change:** `dominant repeated S-Red continuation cannot be preempted by lower-priority Blue-repeat reversal evidence`  
 **Mirror Contract:** Current shared Production Source defines both directional paths. Price geometry is reflected; time, identity, provenance, Doji and lifecycle ordering remain invariant.
 
 > Current Production Source defines executable behavior. This canonical Reference specifies the current audited and synchronized implementation. Section 16 embeds its exact Source bytes.
 
 ## 0. Revision scope
 
-This current revision synchronizes the complete audited implementation after proven E/OrderAudit invariant fixes and corrects demonstrated narrative mismatches. Current Source module versions are independent from Reference version `5.4.19-EX1`. All current calculation and package files are reconstructed exactly. Empty RAW/Fixture stores and market-regression NOT_TESTED are explicit release constraints.
+This behavioral bug fix preserves the established calculation order `A → S → E → StopAll` and the established cross-stage priority `StopAll > E Red > S Red > E Blue > S Blue > A`. When the active dominant sequence is already `S Red` with accepted occurrence count `>= 2`, a later accepted `S Red` is a continuation of that dominant Red group. Lower-priority pending Blue-repeat evidence may not promote that continuation directly to StopAll. The S Red is retained and counted normally; if the resulting dominant S-Red group later strictly stops at or before an incoming E decision, the existing E-driven `sequence-group-stop` rule may create `StopAll1`. All Blue-lifecycle behavior from `5.4.20` remains unchanged.
 
 ## 1. Source manifest
 
@@ -20,14 +20,14 @@ This current revision synchronizes the complete audited implementation after pro
 |---|---|---:|---:|---:|---|
 | `__init__.py` | Package marker / unsupported wrapper | `unversioned package marker` | 0 | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 | `bridge/__init__.py` | Package marker / unsupported wrapper | `unversioned package marker` | 1 | 64 | `2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8` |
-| `bridge/trading_pipeline.py` | Pipeline / Serialization | `1.7.0 (impl 1.8.0)` | 2952 | 107807 | `ef5109f4ebb95bc0e04b3d964b14da5f764ae4472f3d10a1a9b7192d59fec683` |
+| `bridge/trading_pipeline.py` | Pipeline / Serialization | `1.8.0 (impl 1.9.0)` | 3042 | 111223 | `2f0f6ae64830cf3a1f9d8832e55bfc3746b387f3bb64a7df5c277fed0426e79b` |
 | `pipeline/__init__.py` | Package marker / unsupported wrapper | `unversioned package marker` | 19 | 348 | `ca549e4cf5d9a070227498d0d210279e0f7edae66d62dadab7981cddaa1db5c3` |
-| `pipeline/a_zone_detector.py` | A | `1.6.4` | 797 | 31007 | `d7c33dd619ad7e4590027667a2c4e984c83be7b82fbfafeb5d7f944ddd521097` |
-| `pipeline/blue_line_detector.py` | Blue | `2.3.0` | 458 | 15802 | `6fa01d94bc98060b62bc7e68db0ec24a0b0159727d44043affee7130a9c11448` |
+| `pipeline/a_zone_detector.py` | A | `1.7.0` | 971 | 37517 | `41b428f680f80b6a5320de63225d8614f64fea66f54fa5f8545b1ab136c49f10` |
+| `pipeline/blue_line_detector.py` | Blue | `2.4.0` | 470 | 16364 | `b501abf6aeba23b4c92db77718556d9849fb7921f1136eb80215bd947c36c124` |
 | `pipeline/core_utils.py` | Core Utilities | `1.0.0` | 29 | 885 | `3dae390ae77b72965f5799f7c132c4eba203775d5e72761fd7dd60c90f8578de` |
 | `pipeline/direction_policy.py` | Direction Policy | `1.0.0` | 70 | 2282 | `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea` |
 | `pipeline/e_zone_detector.py` | E | `6.16.1 (impl 6.18.1)` | 1033 | 44859 | `38834e96cc58931fe2e12096f4465ecaa046387d30fd40fecbd6891971020988` |
-| `pipeline/lifecycle_engine.py` | Lifecycle / StopAll | `1.17.0 (impl 1.18.0)` | 1555 | 64325 | `94feb038e1e78b291762cfc03dfc370e48bb94f3e1fe1171b7a5206301e8be13` |
+| `pipeline/lifecycle_engine.py` | Lifecycle / StopAll | `1.18.0 (impl 1.19.0)` | 1570 | 65258 | `7cd761f42825517db9f5d14a526afc070de7be4c0b5534716aeb25b7feb04a9b` |
 | `pipeline/order_audit_engine.py` | Order / OrderAudit | `1.5.1` | 1863 | 75219 | `09cba00c0623ffcce0d7bc3460c1e963c4e2b14fb02a9172cc25dcca8ba9aedc` |
 | `pipeline/reaction_engine.py` | Reaction / Reset | `9.8.0` | 2406 | 103120 | `bea0d5a5e95ee15ad54d024f6c01b8c777ba2abcc3c8e671118f1ae2df28f2a6` |
 | `pipeline/s_zone_detector.py` | S | `4.20.0 (impl 4.21.0)` | 1444 | 60888 | `ef71a2e4176caaabc25d1ef0c1f0f24efb54ed3110982cdb7cf52d2449cca2ee` |
@@ -40,7 +40,7 @@ The production execution contract is:
 
 `Complete supplied input normalization → both directional Reaction/Reset contexts → cross-direction Internal Reaction classification → Blue → A → initial S → provisional E → S validity/rebuild and accepted A/Order context → final E/OrderAudit → shared physical Order stop reconciliation → consumed-S native continuation → accepted Order_B feedback → lifecycle/StopAll → visibility/lineage closure → final OrderAudit synchronization → serialization`
 
-Order_B feedback may repeat S/E context construction up to eight passes, using exact reset-leg identities. A repeated non-convergent identity or pass overflow is an error. This feedback does not recalculate Reaction/Blue/A geometry. StopAll is reconciled once from accepted chronology; downstream boundary publication does not reinterpret historical E.
+Order_B and Blue-lifecycle feedback are reconciled together to a deterministic fixed point. Order_B-only changes may reuse unchanged Blue/A/S stages, but any changed accepted `S/E/StopAll` boundary identity forces A/S recalculation with the new immutable Blue-consumption boundary set; Reaction geometry is never recalculated. The full E/StopAll path is bounded to sixteen feedback passes, while the S-only path is bounded to twelve. Repeated identities or pass overflow are explicit non-convergence errors.
 
 The bridge calculates the complete input it actually receives. The full-chart HTTP route supplies the original RAW file. A selected-range HTTP route supplies an in-memory stream filtered by inclusive chart-candle buckets; that calculation begins with empty state at the selected start and cannot use rows outside the supplied stream. Within that supplied input, CLI from/to bounds filter presentation after calculation. Neither frontend nor serialization independently implements trading rules.
 
@@ -111,21 +111,23 @@ A Reset Blue is sourced by the Reset main candle, with source extreme `Low`, bro
 
 ### 5.4 Internal/public Blue
 
-A Blue becomes behavior-internal when its owning Reaction is internal, or when both the source extreme and rendered line price lie strictly inside the same protected healthy Reaction. Drawing offset alone does not create internal ownership. Public Blue is exactly `calculation_valid and not behavior_internal`.
+A Blue becomes behavior-internal when its owning Reaction is internal, or when both the source extreme and rendered line price lie strictly inside the same protected healthy Reaction. Drawing offset alone does not create internal ownership. Before final behavior ownership, a public Blue requires `calculation_valid and not behavior_internal`. Final source ownership then removes any same-source Blue whose candle is an accepted `S`, `E`, or `StopAll`. `A` is the sole display exception: an A source candle may retain its public Blue line even though that Blue is consumed for future calculation.
 
 ## 6. A — ACTIVE Bullish specification
 
-### 6.1 Blue state and strict stops
+### 6.1 Blue state, strict stops, and lifecycle consumption
 
-A builds an immutable `BlueState` ledger from all Blue calculation state. Blue formation is exact: Scale Blue forms at its Reaction confirmation; Reset Blue uses the first strict lower-TF crossing of its broken level when available. Each Blue stop is the first strict Bullish crossing of its `source_extreme`; equality does not stop a Blue.
+A builds an immutable `BlueState` ledger from Blue calculation evidence. Blue formation remains exact: Scale Blue forms at its Reaction confirmation; Reset Blue uses the first strict lower-TF crossing of its broken level when available. Each Blue stop is the first strict Bullish crossing of its `source_extreme`; equality does not stop a Blue.
+
+Accepted behavior source ownership adds a separate hard lifecycle rule: each accepted `A`, `S`, `E`, or `StopAll` source candle consumes every Blue whose source index is at or before that boundary for all later A formation. This is source-candle ownership, not decision-timestamp ownership. An A may use/retain a Blue on its own source candle while A is being formed and displayed, but immediately after that A is accepted the same Blue is no longer reusable. An accepted `S`, `E`, or `StopAll` source is excluded from Blue calculation state entirely.
 
 ### 6.2 Ordinary adjacent-Blue route
 
-Ordinary A evaluates adjacent calculation-valid Blue states. A pair may trigger through the established direct or inherited-stop route. When the first Blue stopped before the second formed, continuation geometry is frozen over the owning interval; inherited-stop ownership uses the complete stop-candle through the aligned Reaction Break candle. Directional source selection is the minimum Low and strict comparisons preserve chronology. Exact equal-event ties use deterministic ordering; the second/current Blue may be reused for the next adjacent pair only when the current A's first strict stop and the next Blue formation satisfy the source lifecycle gate.
+Ordinary A evaluates adjacent calculation-valid Blue states that remain newer than the active Blue-consumption boundary. A pair may trigger through the established direct or inherited-stop route. When the first Blue stopped before the second formed, continuation geometry is frozen over the owning interval; inherited-stop ownership uses the complete stop-candle through the aligned Reaction Break candle. Directional source selection is the minimum Low and strict comparisons preserve chronology. Exact equal-event ties use deterministic ordering. Once an A is accepted, its source becomes the next hard Blue-consumption boundary: both Blues that formed it and every earlier Blue are unavailable to subsequent pairs. The previous current-Blue adjacent-reuse exception is superseded by this lifecycle rule.
 
 ### 6.3 Double-stop route
 
-A Reset Blue marked calculation-invalid by the Blue double-stop rule can create the special A route with the previous valid Blue only when the previous Blue's first strict stop belongs to the invalid Reset Blue source candle. The route then requires the first qualifying same-direction canonical Reaction after the trigger chronology. A special route cannot duplicate a Reaction already owned by ordinary A, and earlier ordinary A lifecycle may suppress the special route when its first stop already completed before the special Reaction.
+A Reset Blue marked calculation-invalid by the Blue double-stop rule can create the special A route with the previous valid Blue only when the previous Blue's first strict stop belongs to the invalid Reset Blue source candle. The route then requires the first qualifying same-direction canonical Reaction after the trigger chronology. A special route cannot duplicate a Reaction already owned by ordinary A, and earlier ordinary A lifecycle may suppress the special route when its first stop already completed before the special Reaction. The same hard Blue-consumption cutoff applies before and after special-route source selection; an invalid Reset Blue cannot revive a Blue consumed by an earlier accepted behavior.
 
 ### 6.4 Reaction confirmation and A source freeze
 
@@ -133,7 +135,7 @@ After a valid Blue-pair trigger, the first qualifying canonical Bullish Reaction
 
 ### 6.5 A stop and lifecycle handoff
 
-A itself stops on the first strict Bullish crossing after its confirming Reaction. A historical stop before a route's `not_before` boundary belongs to the previous cycle; a later recross of the same level cannot be reinterpreted as the new cycle's first stop. The stop event opens S space.
+A itself stops on the first strict Bullish crossing after its confirming Reaction. A historical stop before a route's `not_before` boundary belongs to the previous cycle; a later recross of the same level cannot be reinterpreted as the new cycle's first stop. The stop event opens S space. Once A is accepted, its source candle is immediately a hard Blue-consumption boundary for all later A calculation; retaining a same-source A+Blue public line does not retain Blue calculation eligibility.
 
 ## 7. S — ACTIVE Bullish specification
 
@@ -141,7 +143,7 @@ A itself stops on the first strict Bullish crossing after its confirming Reactio
 
 Only A candidates outside an already-owned S continuation are eligible. S begins at A's first strict Bullish stop. If the next A confirmation is already reached at/before that handoff, the stale A does not open S. The detector audits the stopped A's first physical Order_A independently before choosing the S route.
 
-A decided S normally owns subsequent A continuation. A newly built Reset-Blue/Reset-Blue pair may preempt that ownership only when both Blue sources are born after the S handoff, Blue-1 stops before Blue-2 forms, the A source is Blue-2's stop candle, and the pair is actually Reset/Reset. A trigger that begins strictly after the exact S ownership handoff is independently eligible.
+A decided S normally owns subsequent A continuation. In addition, every accepted S source candle is a hard Blue-consumption boundary: all Blue sources at or before the S source are unavailable to every later A, irrespective of the later S decision timestamp, and the S source candle itself cannot be Blue. A later A may therefore use only Blue sources strictly newer than the accepted S source boundary. Existing Reset/Reset preemption geometry remains valid only inside that post-boundary Blue population.
 
 ### 7.2 Order-free Type-3 S Blue
 
@@ -198,7 +200,7 @@ A suppressed/non-public S can remain calculation evidence for continuation of a 
 
 ### 8.6 Same-source reconciliation and OrderAudit rebuild
 
-At one physical E source, Red E outranks Blue E; within the same family higher number wins; exact remaining ties preserve the earlier accepted object. After reconciliation, the canonical Order ledger is rebuilt from the accepted E state. Valid parent-stop Order_A identities are retained even if later visibility changes their consuming owner. External restoration/continuation replacement must resynchronize OrderAudit before serialization.
+At one physical E source, Red E outranks Blue E; within the same family higher number wins; exact remaining ties preserve the earlier accepted object. After reconciliation, the canonical Order ledger is rebuilt from the accepted E state. Valid parent-stop Order_A identities are retained even if later visibility changes their consuming owner. External restoration/continuation replacement must resynchronize OrderAudit before serialization. Every accepted E source is also a hard Blue-consumption boundary and may not publish or participate as a same-source Blue; later A may use only Blue sources strictly newer than that E source.
 
 ## 9. Order_A — ACTIVE canonical physical parent-stop rule
 
@@ -286,7 +288,7 @@ If an existing active StopAll is strictly stopped before/equal to an incoming E 
 
 ### 12.4 Exact Blue-repeat reversal gate
 
-Blue-repeat evidence is **accepted-occurrence counting**, independent of dominant-owner transitions:
+Blue-repeat evidence is **accepted-occurrence counting**, independent of dominant-owner transitions, except for the explicit dominant S-Red continuation rule below:
 
 - all S Blue occurrences share exact key `S` regardless of S subtype;
 - every numbered E Blue has its own key: `E1`, `E2`, `E3`, ...;
@@ -294,17 +296,18 @@ Blue-repeat evidence is **accepted-occurrence counting**, independent of dominan
 - a key qualifies only at count `>= 2`;
 - the incoming reversal must be an accepted **S Red with native Mode-B formation Order**;
 - among qualified keys, the latest accepted qualifying occurrence owns deterministic metadata;
-- any accepted Red S, accepted Red E, or hard StopAll boundary clears prior Blue-repeat evidence, so stale Blue evidence cannot be consumed later.
+- any accepted Red S, accepted Red E, or hard StopAll boundary clears prior Blue-repeat evidence, so stale Blue evidence cannot be consumed later;
+- **dominant S-Red continuation exception:** if current dominant sequence ownership is already `S Red` with `s_count >= 2`, an incoming S Red is counted as the next occurrence of that same dominant group and is **not** promoted by `opposite-s-group-stop`, regardless of lower-priority pending Blue-repeat evidence. If that continued S-Red group later strictly stops at/before an incoming E decision, Section 12.3 may create `StopAll1` through `sequence-group-stop`.
 
-A qualifying S Red is promoted to fresh `StopAll1` through `opposite-s-group-stop`. S/Red/Blue labels are not direction-mirrored.
+Outside that continuation exception, a qualifying S Red is promoted to fresh `StopAll1` through `opposite-s-group-stop`. This rule changes neither `SEQUENCE_PRIORITY` nor calculation-stage order. S/Red/Blue labels are not direction-mirrored.
 
 ### 12.5 Hard StopAll boundary
 
-StopAll is a hard historical boundary. Once decided from already-reconciled chronology, future state cannot retroactively remove or move that prefix boundary. Creation resets active sequence keys/counts, dominant owners and pending Blue-repeat evidence. Historical StopAll objects remain output; only current-cycle ownership resets. E receives the accepted StopAll source map through an atomic sequence-reset publication: the sorted boundary index is refreshed and candidate/carried context caches are invalidated once, while immutable physical crossing/stop caches and historical accepted causes remain retained. For downstream audit semantics, but StopAll reconciliation does not rebuild past E from future reset state.
+StopAll is a hard historical boundary. Once decided from already-reconciled chronology, future state cannot retroactively remove or move that prefix boundary. Creation resets active sequence keys/counts, dominant owners and pending Blue-repeat evidence. Historical StopAll objects remain output; only current-cycle ownership resets. E receives the accepted StopAll source map through an atomic sequence-reset publication: the sorted boundary index is refreshed and candidate/carried context caches are invalidated once, while immutable physical crossing/stop caches and historical accepted causes remain retained. For downstream audit semantics, but StopAll reconciliation does not rebuild past E from future reset state. A StopAll source is simultaneously a hard Blue-consumption boundary: every Blue at or before that source is unavailable to later A, and the StopAll source candle itself can never publish or participate as Blue.
 
 ### 12.6 Cross-stage A/S/E visibility ownership
 
-A, S and E calculations continue to retain internal historical evidence. Public ownership is resolved from exact strict stops, source chronology and shared priority. A source that strictly extends beyond the newest stopped owner can be consumed as the closed owner's next leg head instead of re-entering as equal/smaller behavior; equality stays with the earlier owner. S under a stopped larger owner obeys analogous chronology-first ownership; a higher-priority Red S may supersede a stopped Blue S, while equal/lower candidates remain owned by the prior lifecycle. Final E/StopAll source occupancy removes duplicate A/S labels on the same physical source, while referenced historical parents are retained for lineage closure.
+A, S and E calculations continue to retain internal historical evidence. Public ownership is resolved from exact strict stops, source chronology and shared priority. A source that strictly extends beyond the newest stopped owner can be consumed as the closed owner's next leg head instead of re-entering as equal/smaller behavior; equality stays with the earlier owner. S under a stopped larger owner obeys analogous chronology-first ownership; a higher-priority Red S may supersede a stopped Blue S, while equal/lower candidates remain owned by the prior lifecycle. Final E/StopAll source occupancy removes duplicate A/S labels on the same physical source, while referenced historical parents are retained for lineage closure. Final Blue projection follows the same source ownership: `S/E/StopAll` source occupancy suppresses a same-source Blue line, while A is the sole permitted same-candle `A+Blue` display combination. That A display exception never restores the Blue to future calculation.
 
 ## 13. Serialization / API contract
 
@@ -359,9 +362,9 @@ This inventory comes from the current Production AST after complete semantic rev
   - fields: `directions`, `results`, `reusable_full_context`, `initial_order_geometry`, `internal_reaction_identities`, `full_e_zones`, `full_e_detectors`, `full_s_detectors`, `full_lines_by_direction`, `full_a_by_direction`, `invalid_a_identities_by_direction`, `invalid_s_identities_by_direction`, `full_s_by_direction`, `full_s_candidates_by_direction`
 - **`FullDirectionState`** (source line 1804)
   - fields: `e_zones`, `e_detector`, `s_detector`, `blue_lines`, `a_zones`, `invalid_a_identities`, `invalid_s_identities`, `s_zones`, `s_candidates`, `initial_s_zones`
-- **`DirectionRangeState`** (source line 2347)
+- **`DirectionRangeState`** (source line 2391)
   - fields: `blue_lines`, `a_zones`, `s_candidates`, `accepted_s_zones`, `e_zones`, `invalid_a_identities`, `invalid_s_identities`
-- **`DirectionVisibilityState`** (source line 2360)
+- **`DirectionVisibilityState`** (source line 2404)
   - fields: `blue_lines`, `a_zones`, `s_zones`, `e_zones`, `stopalls`, `prepared_order_audit`, `projection_s_zones`, `projection_e_zones`, `projection_stopalls`
 
 #### `pipeline/__init__.py`
@@ -372,13 +375,15 @@ This inventory comes from the current Production AST after complete semantic rev
 #### `pipeline/a_zone_detector.py`
 
 **Module constants:** `A_ZONE_VERSION`, `A_ZONE_LAST_MODIFIED_DATE`.
-**Top-level functions:** `detect_a_zones()`.
-- **`BlueState`** (source line 25)
+**Top-level functions:** `build_blue_consumption_boundaries()`, `blue_consumption_boundary_identity()`, `detect_a_zones()`.
+- **`BlueState`** (source line 26)
   - fields: `ordinal`, `line`, `formation_index`, `formation_time`, `stop_index`, `stop_time`, `stop_event_time`, `stop_level`, `stop_event_extreme`
-- **`AZone`** (source line 38)
+- **`BlueConsumptionBoundary`** (source line 39)
+  - fields: `source_index`, `source_time`, `behavior_type`
+- **`AZone`** (source line 48)
   - fields: `direction`, `blue_1_ordinal`, `blue_2_ordinal`, `blue_1_source_time`, `blue_2_source_time`, `blue_1_stop_time`, `blue_2_stop_time`, `blue_1_stop_level`, `blue_2_stop_level`, `continuation_level`, `continuation_source_index`, `continuation_source_time`, `trigger_index`, `trigger_time`, `trigger_event_time`, `reaction_number`, `reaction_first_time`, `reaction_break_time`, `source_index`, `source_time`, `price`, `formation_route`, `blue_1_stop_event_time`, `blue_2_stop_event_time`
-- **`AZoneDetector`** (source line 67)
-  - methods: `__init__()`, `extreme_name()`, `_strict_cross()`, `_better()`, `_main_index()`, `_lower_window()`, `_first_crossing()`, `_range_extreme()`, `_formation()`, `_reset_formation_time()`, `_build_blue_states()`, `_double_stop_a_candidates()`, `_pair_trigger()`, `_reaction_confirmation_time()`, `_first_reaction_after()`, `_inherited_stop()`, `_a_source()`, `_detect_ordinary_a()`, `_filter_special_a()`, `detect()`, `_a_was_stopped_before()`
+- **`AZoneDetector`** (source line 77)
+  - methods: `__init__()`, `extreme_name()`, `_strict_cross()`, `_better()`, `_main_index()`, `_external_blue_cutoff()`, `_line_source_index()`, `_lower_window()`, `_first_crossing()`, `_range_extreme()`, `_formation()`, `_reset_formation_time()`, `_build_blue_states()`, `_double_stop_a_candidates()`, `_pair_trigger()`, `_reaction_confirmation_time()`, `_first_reaction_after()`, `_inherited_stop()`, `_a_source()`, `_detect_ordinary_a()`, `_filter_special_a()`, `_apply_blue_consumption()`, `detect()`, `_a_was_stopped_before()`
 
 #### `pipeline/blue_line_detector.py`
 
@@ -477,19 +482,27 @@ This inventory comes from the current Production AST after complete semantic rev
 
 ## 14. Verification scope for the current release
 
-Current validation covers every current Python file, supported production initialization, both exact reconstructed trees, a full semantic function/branch/comparator review, independent primitive oracles, synthetic mirrored state sequences, current unit tests and frontend compatibility checks. The release validation report records actual command exits and measured counts. Static parsing, bounded synthetic parity and current retrieval integrity do not establish independent real-market correctness.
+Verification status for this behavioral revision:
 
-Market regression: **NOT_TESTED**. The current task deliberately keeps the Vault RAW and Fixture stores empty. No old market run, historical RAW filename, candle expectation or old regression hash is current release evidence.
+- **PASS — syntax/compile:** every current Python module compiles successfully.
+- **PASS — authoritative corrected case:** `FXCM:USOIL`, 30-second main timeframe, complete supplied 5-second RAW `2026-09-28 20:44:00` through `2026-09-29 11:45:55`, both directions. Bullish `2026-09-29 05:30:30` remains `S Red`; after its strict stop, `2026-09-29 05:53:00` becomes `StopAll1` through `sequence-group-stop` with dominant `S Red ×3`; `2026-09-29 11:09:30` becomes `StopAll2`. Bearish output is unchanged.
+- **PASS — prior XAUUSD 1-second regression:** complete supplied `FOREXCOM:XAUUSD` 1-second RAW `2026-09-03 19:05:40` through `2026-09-08 03:18:28`, 30s, both directions. `Reaction/Reset/Blue/A/S/E/StopAll/OrderAudit` outputs are exact semantic matches to `5.4.20`.
+- **PASS — prior USOIL regression #1:** complete supplied 5-second RAW `2026-09-08 07:23:20` through `2026-09-12 00:14:55`, 30s, both directions. All final output families are exact semantic matches to `5.4.20`.
+- **PASS — prior USOIL regression #2:** complete supplied 5-second RAW `2026-09-11 02:53:30` through `2026-09-15 11:03:45`, 30s, both directions. All final output families are exact semantic matches to `5.4.20`.
+- **PASS — prior XAUUSD 5-second reviewed-window regression:** immutable physical slice from the supplied Aug-25..Sep-23 RAW through `2026-09-03 23:59:55`, 30s Bearish, preserves exact `Reaction/Reset/Blue/A/S/E/StopAll/OrderAudit` output relative to `5.4.20`.
+- **INCOMPLETE — full Aug-25..Sep-23 XAUUSD 5-second end-to-end comparison:** the full month-scale run exceeded the available single-command execution ceiling; no PASS is claimed for that supplemental full-history dataset.
 
-The supported dynamic loader bypasses the legacy package-wrapper import surface. Generic `import engine.pipeline` is unsupported under the current project contract and is not counted as a production initialization failure.
+The change is direction-invariant and resides only in shared lifecycle/StopAll arbitration. RAW inputs were not modified. Because one supplemental month-scale full-history regression remains incomplete, the release status is `REGRESSION NOT VERIFIED` under the project release gate despite all completed target and historical regression checks passing.
 
 ## 15. Current revision record
 
-### `5.4.19-EX1` — ACTIVE
+### `5.4.21` — ACTIVE
 
-The current patch fixes two demonstrated owning-layer defects: explicitly invalid S evidence cannot recreate or retain a parent-stop Order_A cause during audit reconstruction; publication of sequence-reset boundaries refreshes its sorted index and invalidates dependent context caches atomically. Valid historical Order_A and shared Order_B provenance remain retained. E and OrderAudit versions are recorded in Section 1.
+This bug fix corrects StopAll arbitration for a repeated dominant S-Red continuation. Once dominant `S Red` already has accepted count `>= 2`, a later S Red continues that same dominant group and lower-priority pending Blue-repeat evidence cannot preempt the S itself into `StopAll1`. The continued S is counted normally. If it later strictly stops before/equal to an incoming E decision, the established E-driven `sequence-group-stop` rule creates `StopAll1`. The cross-stage priority table and the `A → S → E → StopAll` calculation order are unchanged.
 
-Documentation now specifies the inclusive Blue confirmation row, inclusive S common-stop source start, inclusive Type-4 candidate search start, inclusive E-group StopAll event boundary, bounded post-Reset completion selection and actual supplied-input/pipeline ordering. Both directional documents share the same exact current Source snapshot and direction-invariant lifecycle, identity, Doji, ordering and serialization contracts. Old active correction overrides and historical market evidence are removed.
+### `5.4.20` — HISTORICAL / SUPERSEDED
+
+The previous synchronized release established hard Blue-consumption boundaries and the A display exception. Those rules remain incorporated unchanged. Its StopAll reversal gate could still promote an incoming S Red even when that S was the continuation of an already repeated dominant S-Red group; `5.4.21` supersedes only that arbitration detail.
 
 ## 16. Exact Production Source snapshot
 
@@ -520,9 +533,9 @@ Every current Engine Python file is embedded below, including package files. Raw
 
 ### 16.3 `bridge/trading_pipeline.py` — Pipeline / Serialization
 
-**SHA-256:** `ef5109f4ebb95bc0e04b3d964b14da5f764ae4472f3d10a1a9b7192d59fec683`  
-**Bytes:** `107807`  
-**LF count:** `2952`
+**SHA-256:** `2f0f6ae64830cf3a1f9d8832e55bfc3746b387f3bb64a7df5c277fed0426e79b`  
+**Bytes:** `111223`  
+**LF count:** `3042`
 
 <!-- EXACT-SOURCE-BEGIN:bridge/trading_pipeline.py -->
 ````python
@@ -568,9 +581,9 @@ from order_audit_engine import order_b_leg_identity
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.7.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.8.0"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-09-27 23:17:17 +03:30"
+TRADING_PIPELINE_VERSION = "1.8.0"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.9.0"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-09-30 12:00:00 +03:30"
 
 TEHRAN = ZoneInfo("Asia/Tehran")
 
@@ -2399,6 +2412,7 @@ def calculate_full_direction_state(
     initial_order_geometry: dict[str, object],
     timings: dict[str, float],
     order_b_legs: Sequence[object] = (),
+    blue_consumption_boundaries: Sequence[object] = (),
     shared_stages: FullDirectionState | None = None,
 ) -> FullDirectionState:
     """Run Blue→A→S→E calculation and lifecycle reconciliation for one direction."""
@@ -2431,6 +2445,7 @@ def calculate_full_direction_state(
                 full_results[direction].reactions,
                 blue_lines,
                 chronology,
+                blue_consumption_boundaries,
             ),
         )
         s_detector = s_engine.SZoneDetector(
@@ -2709,26 +2724,37 @@ def calculate_direction_with_order_b_feedback(
     initial_order_geometry: dict[str, object],
     timings: dict[str, float],
 ) -> FullDirectionState:
-    """Recalculate only while proven Order_B causes change accepted state."""
+    """Reconcile Order_B and downstream Blue-consumption boundaries to stability."""
     opposite = engines.reaction.opposite_direction(direction)
     order_b_legs: list[object] = []
+    blue_boundaries: list[object] = []
     seen: set[tuple[object, ...]] = set()
     shared_stages: FullDirectionState | None = None
-    for _pass in range(8):
+
+    for _pass in range(16):
         state = calculate_full_direction_state(
-            direction, engines, market, full_results, geometry_detectors,
-            initial_order_geometry, timings, order_b_legs=order_b_legs,
+            direction,
+            engines,
+            market,
+            full_results,
+            geometry_detectors,
+            initial_order_geometry,
+            timings,
+            order_b_legs=order_b_legs,
+            blue_consumption_boundaries=blue_boundaries,
             shared_stages=shared_stages,
         )
-        if shared_stages is None:
-            shared_stages = state
         e_zones, stopalls = engines.lifecycle.reconcile_stopall_lifecycle(
-            state.e_detector, state.s_zones, state.e_zones,
-            market.chronology, direction,
+            state.e_detector,
+            state.s_zones,
+            state.e_zones,
+            market.chronology,
+            direction,
         )
         e_zones = state.e_detector.restore_independent_s_roots(e_zones)
         e_zones = state.e_detector.ensure_accepted_order_audit(e_zones)
-        discovered = engines.e_zone.discover_accepted_order_b_reset_legs(
+
+        discovered_order_b = engines.e_zone.discover_accepted_order_b_reset_legs(
             direction,
             market.chronology,
             full_results[direction].reactions,
@@ -2743,16 +2769,47 @@ def calculate_direction_with_order_b_feedback(
             state.e_detector,
             engines.lifecycle.module_priority,
         )
+        discovered_boundaries = engines.a_zone.build_blue_consumption_boundaries(
+            state.s_zones,
+            e_zones,
+            stopalls,
+        )
 
-        old_identity = order_b_leg_identity(order_b_legs)
-        new_identity = order_b_leg_identity(discovered)
-        if new_identity == old_identity:
+        old_order_identity = order_b_leg_identity(order_b_legs)
+        new_order_identity = order_b_leg_identity(discovered_order_b)
+        old_boundary_identity = engines.a_zone.blue_consumption_boundary_identity(
+            blue_boundaries
+        )
+        new_boundary_identity = engines.a_zone.blue_consumption_boundary_identity(
+            discovered_boundaries
+        )
+        if (
+            new_order_identity == old_order_identity
+            and new_boundary_identity == old_boundary_identity
+        ):
             return state
-        if new_identity in seen:
-            raise RuntimeError("Order_B lifecycle feedback did not converge.")
-        seen.add(new_identity)
-        order_b_legs = discovered
-    raise RuntimeError("Order_B lifecycle feedback exceeded eight passes.")
+
+        feedback_identity = (new_order_identity, new_boundary_identity)
+        if feedback_identity in seen:
+            raise RuntimeError(
+                "Order_B / Blue lifecycle feedback did not converge."
+            )
+        seen.add(feedback_identity)
+
+        # Blue/A/S may be reused only while their boundary input is unchanged.
+        # An Order_B-only change remains downstream and can retain those stages.
+        if new_boundary_identity == old_boundary_identity:
+            if shared_stages is None:
+                shared_stages = state
+        else:
+            shared_stages = None
+
+        order_b_legs = discovered_order_b
+        blue_boundaries = discovered_boundaries
+
+    raise RuntimeError(
+        "Order_B / Blue lifecycle feedback exceeded sixteen passes."
+    )
 
 
 def prepare_pipeline_state(
@@ -2970,21 +3027,57 @@ def calculate_direction_range_state(
             accepted_s_zones = state.full_s_by_direction[direction]
             a_zones = state.full_s_detectors[direction].eligible_a_zones
         else:
-            s_detector = engines.s_zone.SZoneDetector(
-                direction,
-                result.reactions,
-                state.results[opposite].reactions,
-                blue_lines,
-                a_zones,
-                market.chronology,
-                0,
-                len(market.candles) - 1,
-                state.results[opposite].resets,
-                initial_order_geometry=state.initial_order_geometry[direction],
-            )
-            s_candidates = timed(
-                timings, f"S - {direction.title()}", s_detector.detect
-            )
+            blue_boundaries: list[object] = []
+            seen_boundaries: set[tuple[tuple[object, ...], ...]] = set()
+            for pass_number in range(12):
+                if pass_number > 0:
+                    a_zones = timed(
+                        timings,
+                        f"A Blue lifecycle - {direction.title()}",
+                        lambda: engines.a_zone.detect_a_zones(
+                            direction,
+                            result.reactions,
+                            blue_lines,
+                            market.chronology,
+                            blue_boundaries,
+                        ),
+                    )
+                s_detector = engines.s_zone.SZoneDetector(
+                    direction,
+                    result.reactions,
+                    state.results[opposite].reactions,
+                    blue_lines,
+                    a_zones,
+                    market.chronology,
+                    0,
+                    len(market.candles) - 1,
+                    state.results[opposite].resets,
+                    initial_order_geometry=state.initial_order_geometry[direction],
+                )
+                s_candidates = timed(
+                    timings, f"S - {direction.title()}", s_detector.detect
+                )
+                discovered_boundaries = engines.a_zone.build_blue_consumption_boundaries(
+                    s_candidates, (), ()
+                )
+                old_identity = engines.a_zone.blue_consumption_boundary_identity(
+                    blue_boundaries
+                )
+                new_identity = engines.a_zone.blue_consumption_boundary_identity(
+                    discovered_boundaries
+                )
+                if new_identity == old_identity:
+                    break
+                if new_identity in seen_boundaries:
+                    raise RuntimeError(
+                        "S / Blue lifecycle feedback did not converge."
+                    )
+                seen_boundaries.add(new_identity)
+                blue_boundaries = discovered_boundaries
+            else:
+                raise RuntimeError(
+                    "S / Blue lifecycle feedback exceeded twelve passes."
+                )
             state.full_s_detectors[direction] = s_detector
             accepted_s_zones = s_candidates
             a_zones = s_detector.eligible_a_zones
@@ -3115,6 +3208,14 @@ def finalize_direction_visibility(
         ),
     )
 
+    # A is the sole public Blue-line exception. Final S/E/StopAll source
+    # candles own their source completely and may not also publish Blue. Keep
+    # this full-range ownership set before presentation clipping.
+    non_blue_behavior_source_indices = {
+        int(getattr(item, "source_index"))
+        for item in [*visible_s_zones, *e_zones, *stopalls]
+    }
+
     visible_s_zones = [
         item
         for item in visible_s_zones
@@ -3208,7 +3309,9 @@ def finalize_direction_visibility(
             prepared_order_audit, display_s_zones, e_zones, stopalls
         )
     return DirectionVisibilityState(
-        blue_lines=engines.blue_line.public_blue_lines(direction_state.blue_lines),
+        blue_lines=engines.blue_line.public_blue_lines(
+            direction_state.blue_lines, non_blue_behavior_source_indices
+        ),
         a_zones=display_a_zones,
         s_zones=display_s_zones,
         e_zones=e_zones,
@@ -3513,17 +3616,18 @@ __all__ = [
 
 ### 16.5 `pipeline/a_zone_detector.py` — A
 
-**SHA-256:** `d7c33dd619ad7e4590027667a2c4e984c83be7b82fbfafeb5d7f944ddd521097`  
-**Bytes:** `31007`  
-**LF count:** `797`
+**SHA-256:** `41b428f680f80b6a5320de63225d8614f64fea66f54fa5f8545b1ab136c49f10`  
+**Bytes:** `37517`  
+**LF count:** `971`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/a_zone_detector.py -->
 ````python
 """A-zone calculation from authoritative Reaction and Blue state.
 
 Owns Blue-pair/double-stop A formation, trigger chronology, continuation
-geometry, and A source selection. Downstream S/larger-module ownership is
-handled by the S and lifecycle engines rather than rewritten here.
+geometry, A source selection, and Blue-consumption boundaries. Downstream
+S/larger-module ownership remains owned by the S and lifecycle engines; their
+accepted boundaries are supplied back here as immutable lifecycle evidence.
 """
 
 from __future__ import annotations
@@ -3538,8 +3642,8 @@ from core_utils import as_decimal
 from direction_policy import policy_for
 
 
-A_ZONE_VERSION = "1.6.4"
-A_ZONE_LAST_MODIFIED_DATE = "2026-09-21"
+A_ZONE_VERSION = "1.7.0"
+A_ZONE_LAST_MODIFIED_DATE = "2026-09-30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -3553,6 +3657,15 @@ class BlueState:
     stop_event_time: datetime | None
     stop_level: Decimal
     stop_event_extreme: Decimal | None
+
+
+@dataclass(frozen=True, slots=True)
+class BlueConsumptionBoundary:
+    """Accepted behavior source candle that expires older Blue calculation state."""
+
+    source_index: int
+    source_time: datetime
+    behavior_type: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -3592,6 +3705,7 @@ class AZoneDetector:
         reactions: Sequence[object],
         blue_lines: Sequence[object],
         chronology: object,
+        blue_consumption_boundaries: Sequence[object] = (),
     ) -> None:
         if direction not in {"bullish", "bearish"}:
             raise ValueError("Direction must be 'bullish' or 'bearish'.")
@@ -3613,6 +3727,22 @@ class AZoneDetector:
         self.candle_times = chronology.times
         self.lower_times = chronology.second_times
         self.lower_index = chronology.lower_index
+        self._blue_lines_by_ordinal = {
+            ordinal: line
+            for ordinal, line in enumerate(self.blue_lines, start=1)
+        }
+        self.blue_consumption_boundaries = sorted(
+            blue_consumption_boundaries,
+            key=lambda item: (
+                int(getattr(item, "source_index")),
+                getattr(item, "source_time"),
+                str(getattr(item, "behavior_type", "")),
+            ),
+        )
+        self._boundary_source_indices = sorted(
+            {int(getattr(item, "source_index")) for item in self.blue_consumption_boundaries}
+        )
+        self._excluded_blue_source_indices = set(self._boundary_source_indices)
 
     @property
     def extreme_name(self) -> str:
@@ -3626,6 +3756,17 @@ class AZoneDetector:
 
     def _main_index(self, timestamp: datetime) -> int:
         return self.chronology.main_index(timestamp)
+
+    def _external_blue_cutoff(self, source_index: int) -> int:
+        """Return the newest accepted S/E/StopAll source at/before this candle."""
+        position = bisect_right(self._boundary_source_indices, int(source_index)) - 1
+        if position < 0:
+            return -1
+        return self._boundary_source_indices[position]
+
+    @staticmethod
+    def _line_source_index(line: object) -> int:
+        return int(getattr(line, "source_index"))
 
     def _lower_window(
         self, start: datetime, end: datetime | None
@@ -3740,6 +3881,8 @@ class AZoneDetector:
     def _build_blue_states(self) -> list[BlueState]:
         states: list[BlueState] = []
         for ordinal, line in enumerate(self.blue_lines, start=1):
+            if self._line_source_index(line) in self._excluded_blue_source_indices:
+                continue
             if not bool(getattr(line, "calculation_valid", True)):
                 continue
             formation_index, formation_time, stop_scan_time = self._formation(line)
@@ -3769,15 +3912,33 @@ class AZoneDetector:
     def _double_stop_a_candidates(self) -> list[AZone]:
         result: list[AZone] = []
         previous: tuple[int, object] | None = None
+        consumed_source_index = -1
         for ordinal, line in enumerate(self.blue_lines, start=1):
+            formation_index = int(getattr(line, "source_index"))
+            formation_time = getattr(line, "source_time")
+            line_source_index = self._line_source_index(line)
+            consumed_source_index = max(
+                consumed_source_index,
+                self._external_blue_cutoff(line_source_index),
+            )
+            if line_source_index <= consumed_source_index:
+                if (
+                    previous is not None
+                    and self._line_source_index(previous[1]) <= consumed_source_index
+                ):
+                    previous = None
+                continue
+
             if bool(getattr(line, "calculation_valid", True)):
                 previous = (ordinal, line)
                 continue
             if previous is None:
                 continue
             previous_ordinal, previous_line = previous
-            formation_index = int(getattr(line, "source_index"))
-            formation_time = getattr(line, "source_time")
+            if self._line_source_index(previous_line) <= consumed_source_index:
+                previous = None
+                continue
+
             source_time = getattr(self.candles[formation_index], "timestamp")
             crossing = self._first_crossing(
                 as_decimal(getattr(previous_line, "source_extreme")),
@@ -3800,6 +3961,17 @@ class AZoneDetector:
             if source is None:
                 continue
             source_index, a_source_time, price = source
+            consumed_source_index = max(
+                consumed_source_index,
+                self._external_blue_cutoff(source_index),
+            )
+            if (
+                self._line_source_index(previous_line) <= consumed_source_index
+                or line_source_index <= consumed_source_index
+            ):
+                if self._line_source_index(previous_line) <= consumed_source_index:
+                    previous = None
+                continue
             result.append(
                 AZone(
                     direction=self.direction,
@@ -4087,30 +4259,43 @@ class AZoneDetector:
         return source_index, source_time, value
 
     def _detect_ordinary_a(self, states: list[BlueState]) -> list[AZone]:
-        """Resolve the ordinary adjacent-Blue A lifecycle."""
+        """Resolve ordinary A while consuming Blue at accepted behavior boundaries."""
         output: list[AZone] = []
         cycle_after_index = -1
-        bridge_reuse_ordinal: int | None = None
+        consumed_source_index = -1
         index = 0
 
-        while index + 1 < len(states):
+        def advance(position: int) -> int:
+            while position < len(states):
+                state = states[position]
+                if (
+                    state.formation_index <= cycle_after_index
+                    or self._line_source_index(state.line) <= consumed_source_index
+                ):
+                    position += 1
+                    continue
+                break
+            return position
+
+        while True:
+            index = advance(index)
+            if index + 1 >= len(states):
+                break
+
             previous = states[index]
             current = states[index + 1]
-            bridge_pair = (
-                bridge_reuse_ordinal is not None
-                and previous.ordinal == bridge_reuse_ordinal
+            consumed_source_index = max(
+                consumed_source_index,
+                self._external_blue_cutoff(self._line_source_index(current.line)),
             )
-            if (
-                current.formation_index <= cycle_after_index
-                or (
-                    previous.formation_index <= cycle_after_index
-                    and not bridge_pair
-                )
-            ):
-                if bridge_pair:
-                    bridge_reuse_ordinal = None
-                index += 1
+            advanced = advance(index)
+            if advanced != index:
+                index = advanced
                 continue
+            if index + 1 >= len(states):
+                break
+            previous = states[index]
+            current = states[index + 1]
 
             expires_at = (
                 states[index + 2].formation_time
@@ -4144,6 +4329,15 @@ class AZoneDetector:
                 index += 1
                 continue
             source_index, source_time, price = source
+            consumed_source_index = max(
+                consumed_source_index,
+                self._external_blue_cutoff(source_index),
+            )
+            if (
+                self._line_source_index(previous.line) <= consumed_source_index
+                or self._line_source_index(current.line) <= consumed_source_index
+            ):
+                continue
             break_index = int(getattr(reaction, "break_idx"))
             output.append(
                 AZone(
@@ -4186,25 +4380,12 @@ class AZoneDetector:
                     ),
                 )
             )
+            # Every accepted A is a hard Blue-consumption boundary for future
+            # A formation. Its own Blue line may remain public, but neither it
+            # nor any earlier Blue can participate in a later pair.
+            consumed_source_index = max(consumed_source_index, source_index)
             cycle_after_index = break_index
 
-            confirmation_time = self._reaction_confirmation_time(reaction)
-            first_stop = self._first_crossing(price, confirmation_time, None)
-            allow_adjacent_reuse = (
-                first_stop is not None
-                and index + 2 < len(states)
-                and states[index + 2].formation_time >= first_stop[1]
-            )
-            if allow_adjacent_reuse:
-                bridge_reuse_ordinal = current.ordinal
-                index += 1
-            else:
-                bridge_reuse_ordinal = None
-                while (
-                    index < len(states)
-                    and states[index].formation_index <= cycle_after_index
-                ):
-                    index += 1
         return output
 
     def _filter_special_a(
@@ -4271,15 +4452,47 @@ class AZoneDetector:
             ]
         return ordinary, special
 
+    def _apply_blue_consumption(
+        self, zones: Sequence[AZone]
+    ) -> list[AZone]:
+        """Apply final cross-route A/S/E/StopAll Blue-consumption ownership."""
+        accepted: list[AZone] = []
+        consumed_source_index = -1
+        for zone in sorted(
+            zones,
+            key=lambda item: (
+                int(getattr(item, "source_index")),
+                getattr(item, "source_time"),
+                getattr(item, "trigger_event_time"),
+            ),
+        ):
+            consumed_source_index = max(
+                consumed_source_index,
+                self._external_blue_cutoff(int(getattr(zone, "source_index"))),
+            )
+            blue_1 = self._blue_lines_by_ordinal[int(getattr(zone, "blue_1_ordinal"))]
+            blue_2 = self._blue_lines_by_ordinal[int(getattr(zone, "blue_2_ordinal"))]
+            if (
+                self._line_source_index(blue_1) <= consumed_source_index
+                or self._line_source_index(blue_2) <= consumed_source_index
+            ):
+                continue
+            accepted.append(zone)
+            consumed_source_index = max(
+                consumed_source_index, int(getattr(zone, "source_index"))
+            )
+        return accepted
+
     def detect(self) -> list[AZone]:
-        """Return ordinary and special A zones after one ownership resolution."""
+        """Return A zones after Blue-consumption and route ownership resolution."""
         states = self._build_blue_states()
         ordinary = self._detect_ordinary_a(states)
         ordinary, special = self._filter_special_a(
             self._double_stop_a_candidates(), ordinary
         )
+        accepted = self._apply_blue_consumption([*ordinary, *special])
         return sorted(
-            ordinary + special,
+            accepted,
             key=lambda item: (item.source_time, item.trigger_event_time),
         )
 
@@ -4309,21 +4522,85 @@ class AZoneDetector:
         return not_before is None or first_stop[1] >= not_before
 
 
+
+def build_blue_consumption_boundaries(
+    s_zones: Sequence[object],
+    e_zones: Sequence[object],
+    stopalls: Sequence[object],
+) -> list[BlueConsumptionBoundary]:
+    """Project accepted S/E/StopAll source ownership into Blue reset boundaries.
+
+    A boundaries are resolved internally while A zones are accepted.  Downstream
+    behavior boundaries are immutable evidence supplied by orchestration on the
+    next reconciliation pass.  The source candle owns the boundary because the
+    behavior candle, not its later decision timestamp, is the lifecycle owner.
+    """
+    boundaries: list[BlueConsumptionBoundary] = []
+    seen: set[tuple[object, ...]] = set()
+    for behavior_type, items in (
+        ("S", s_zones),
+        ("E", e_zones),
+        ("StopAll", stopalls),
+    ):
+        for item in items:
+            source_index = int(getattr(item, "source_index"))
+            source_time = getattr(item, "source_time")
+            identity = (behavior_type, source_index, source_time)
+            if identity in seen:
+                continue
+            seen.add(identity)
+            boundaries.append(
+                BlueConsumptionBoundary(
+                    source_index=source_index,
+                    source_time=source_time,
+                    behavior_type=behavior_type,
+                )
+            )
+    return sorted(
+        boundaries,
+        key=lambda item: (
+            item.source_index,
+            item.source_time,
+            item.behavior_type,
+        ),
+    )
+
+
+def blue_consumption_boundary_identity(
+    boundaries: Sequence[object],
+) -> tuple[tuple[object, ...], ...]:
+    """Return stable boundary identity without depending on object identity."""
+    return tuple(
+        (
+            str(getattr(item, "behavior_type")),
+            int(getattr(item, "source_index")),
+            getattr(item, "source_time"),
+        )
+        for item in boundaries
+    )
+
 def detect_a_zones(
     direction: str,
     reactions: Sequence[object],
     blue_lines: Sequence[object],
     chronology: object,
+    blue_consumption_boundaries: Sequence[object] = (),
 ) -> list[AZone]:
-    return AZoneDetector(direction, reactions, blue_lines, chronology).detect()
+    return AZoneDetector(
+        direction,
+        reactions,
+        blue_lines,
+        chronology,
+        blue_consumption_boundaries,
+    ).detect()
 ````
 <!-- EXACT-SOURCE-END:pipeline/a_zone_detector.py -->
 
 ### 16.6 `pipeline/blue_line_detector.py` — Blue
 
-**SHA-256:** `6fa01d94bc98060b62bc7e68db0ec24a0b0159727d44043affee7130a9c11448`  
-**Bytes:** `15802`  
-**LF count:** `458`
+**SHA-256:** `b501abf6aeba23b4c92db77718556d9849fb7921f1136eb80215bd947c36c124`  
+**Bytes:** `16364`  
+**LF count:** `470`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/blue_line_detector.py -->
 ````python
@@ -4344,7 +4621,7 @@ from typing import Sequence
 from direction_policy import policy_for
 
 
-BLUE_LINE_VERSION = "2.3.0"
+BLUE_LINE_VERSION = "2.4.0"
 FIBONACCI_RATIO = Decimal("0.618")
 
 
@@ -4733,13 +5010,25 @@ def detect_blue_lines(
     return output
 
 
-def public_blue_lines(lines: Sequence[BlueLine]) -> list[BlueLine]:
-    """Return only calculation-valid, public Blue Lines for serialization."""
+def public_blue_lines(
+    lines: Sequence[BlueLine],
+    excluded_source_indices: Sequence[int] = (),
+) -> list[BlueLine]:
+    """Return public Blue Lines after final behavior-source ownership.
+
+    A is the sole display exception: an A candle may retain its Blue line.
+    Final S/E/StopAll source candles are supplied as excluded indices and may
+    never simultaneously publish a Blue line.  This is presentation of already
+    finalized ownership; calculation consumption is enforced by A/lifecycle
+    reconciliation rather than by mutating immutable Blue evidence.
+    """
+    excluded = {int(index) for index in excluded_source_indices}
     return [
         line
         for line in lines
         if bool(getattr(line, "calculation_valid", True))
         and not bool(getattr(line, "behavior_internal", False))
+        and int(getattr(line, "source_index")) not in excluded
     ]
 
 def mark_internal_blue_lines(
@@ -5955,9 +6244,9 @@ def detect_e_zones(
 
 ### 16.10 `pipeline/lifecycle_engine.py` — Lifecycle / StopAll
 
-**SHA-256:** `94feb038e1e78b291762cfc03dfc370e48bb94f3e1fe1171b7a5206301e8be13`  
-**Bytes:** `64325`  
-**LF count:** `1555`
+**SHA-256:** `7cd761f42825517db9f5d14a526afc070de7be4c0b5534716aeb25b7feb04a9b`  
+**Bytes:** `65258`  
+**LF count:** `1570`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/lifecycle_engine.py -->
 ````python
@@ -5984,9 +6273,9 @@ from order_audit_engine import (
 from direction_policy import policy_for
 
 
-STOP_ALL_VERSION = "1.17.0"
-STOP_ALL_IMPLEMENTATION_VERSION = "1.18.0"
-STOP_ALL_LAST_MODIFIED = "2026-09-27 23:17:17 +03:30"
+STOP_ALL_VERSION = "1.18.0"
+STOP_ALL_IMPLEMENTATION_VERSION = "1.19.0"
+STOP_ALL_LAST_MODIFIED = "2026-09-30 13:58:08 +03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -6324,7 +6613,11 @@ class StopAllDetector:
         cannot consume its stale evidence.  The incoming S Red must have a
         native Mode-B formation Order; different numbered E groups never add.
         E-driven StopAll counters/priority are independent of this reversal
-        evidence and retain their existing semantics.
+        evidence and retain their existing semantics. The caller suppresses
+        this direct reversal promotion when the incoming S Red continues an
+        already-dominant S Red group whose accepted count is at least two; in
+        that case the S Red is counted normally and its later strict stop may
+        drive the E-stage sequence-group StopAll gate.
         """
         if str(getattr(s_item, "color", "")).lower() != "red":
             return None
@@ -6380,9 +6673,20 @@ class StopAllDetector:
         def process_s_event(s_item: object) -> None:
             nonlocal s_key, s_count, e_key, e_count, dominant_s_item, dominant_e_item, active
 
-            reversal = self._opposite_s_stopall_gate(
-                s_item, blue_repeat_counts, blue_repeat_latest
+            # A dominant S-Red group that has already reached the repeated
+            # sequence threshold owns its continuation. Lower-priority Blue
+            # repeat evidence must not promote the next same-family S Red
+            # directly to StopAll. Count that S Red normally; if it later
+            # stops, the following accepted E may trigger the established
+            # sequence-group StopAll gate.
+            continuing_dominant_s_red = (
+                e_key is None and s_key == "red" and s_count >= 2
             )
+            reversal = None
+            if not continuing_dominant_s_red:
+                reversal = self._opposite_s_stopall_gate(
+                    s_item, blue_repeat_counts, blue_repeat_latest
+                )
             if reversal is not None:
                 behavior_type, behavior_key, behavior_count, underlying_e_key = reversal
                 zone = self._stopall_from_s(
