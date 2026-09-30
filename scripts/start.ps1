@@ -7,19 +7,7 @@ $ProgressPreference = 'SilentlyContinue'
 
 $Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $ChartRoot = Join-Path $Root 'apps\chart'
-$ConfiguredLocalStateRoot = $env:TRADINGBOT_LOCAL_STATE_ROOT
-if ($null -ne $ConfiguredLocalStateRoot) { $ConfiguredLocalStateRoot = $ConfiguredLocalStateRoot.Trim() }
-$LocalStateRoot = if ([string]::IsNullOrWhiteSpace($ConfiguredLocalStateRoot)) {
-  Join-Path (Split-Path -Parent $Root) ((Split-Path -Leaf $Root) + '-Local')
-} else {
-  $configuredPath = if ([IO.Path]::IsPathRooted($ConfiguredLocalStateRoot)) { $ConfiguredLocalStateRoot } else { Join-Path $Root $ConfiguredLocalStateRoot }
-  [IO.Path]::GetFullPath($configuredPath)
-}
-$LocalStateRoot = [IO.Path]::GetFullPath($LocalStateRoot)
-if ($LocalStateRoot.TrimEnd('\', '/') -eq $Root.TrimEnd('\', '/') -or $LocalStateRoot.StartsWith($Root.TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
-  throw 'TRADINGBOT_LOCAL_STATE_ROOT must be outside the repository.'
-}
-$env:TRADINGBOT_LOCAL_STATE_ROOT = $LocalStateRoot
+$LocalStateRoot = $null
 $env:PYTHONDONTWRITEBYTECODE = '1'
 
 # Runtime dependencies used by the maintained Python engine.
@@ -117,6 +105,16 @@ function Ensure-Directories {
   foreach ($relative in $directories) {
     New-Item -ItemType Directory -Force -Path (Join-Path $LocalStateRoot $relative) | Out-Null
   }
+}
+
+function Resolve-LocalState([string]$Node) {
+  # Use the application's resolver so launcher and server enforce one path policy.
+  $resolver = Join-Path $ChartRoot 'server\local-state-paths.js'
+  $program = 'import { pathToFileURL } from ''node:url''; const { resolveLocalStatePaths } = await import(pathToFileURL(process.argv[1])); process.stdout.write(resolveLocalStatePaths(process.argv[2]).root);'
+  $resolved = & $Node --input-type=module -e $program $resolver $Root
+  if ($LASTEXITCODE -ne 0) { throw 'Unable to resolve the dedicated chart state directory.' }
+  $script:LocalStateRoot = $resolved
+  $env:TRADINGBOT_LOCAL_STATE_ROOT = $script:LocalStateRoot
 }
 
 function Ensure-Runtimes {
@@ -241,8 +239,9 @@ function Start-DevServer([string]$Npm, [string]$Python) {
 try {
   Write-Step "Checking project at $Root" Cyan
   Ensure-ProjectFiles
-  Ensure-Directories
   $tools = Ensure-Runtimes
+  Resolve-LocalState $tools.Node
+  Ensure-Directories
   Ensure-NpmDependencies $tools.Npm
   Start-DevServer $tools.Npm $tools.Python
 } catch {

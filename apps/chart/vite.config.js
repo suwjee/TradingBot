@@ -13,7 +13,7 @@ import { createRawResourceStore } from './server/raw-resource-store.js';
 import { sendCandleFile } from './server/candle-file-response.js';
 import { resolveLocalStatePaths } from './server/local-state-paths.js';
 
-// Anchor source paths to this config and machine state to external storage.
+// Anchor source paths to this config and local state to the chart-owned subtree.
 // Vite may be launched from either the repository root or apps/chart.
 const chartRoot = path.dirname(fileURLToPath(import.meta.url));
 const workspaceRoot = path.resolve(chartRoot, '..', '..');
@@ -684,7 +684,10 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: false,
-    watch: viteWatchOptions,
+    fs: {
+      deny: ['**/.env', '**/.env.*', '**/*.{crt,pem}', '**/.git/**', '**/state/**', '**/tests/**', '**/engineering/archive/**', '**/engineering/verification/**'],
+    },
+    watch: { ...viteWatchOptions, ignored: [...(viteWatchOptions.ignored ?? []), '**/state/**', '**/tests/**', '**/engineering/archive/**', '**/engineering/verification/**'] },
   },
   build: { target: 'chrome89' },
 });
