@@ -1,94 +1,111 @@
-# Graph Health — 2026-09-23
+# GRAPH_HEALTH.md
 
-- Graphify 0.9.63 / graphifyy 0.9.42; source commit `822c5ce1c1e7f464d2e08085fd6d991ee1d5d8ed`.
-- Final graph: 2,691 nodes, 4,526 directed links, 147 communities.
-- Normalized extraction integrity: missing=0, dangling=0, self-loops=0, duplicate endpoint pairs=0.
-- Serialized graph integrity: missing=0, dangling=0, self-loops=0.
-- Raw AST pass had 164 unresolved import/reference endpoints and 247 parallel endpoint-edge collapses; direct imports were resolved to path/external-module nodes and edge variants were preserved in `edge_evidence`.
-- Unclassified configuration/style/batch paths are path-only nodes. `tokens.css` redacted scan flags: {'private_key_marker': False, 'jwt_like_value': False, 'credential_assignment': False, 'long_high_entropy_literals': 0}; 177 CSS custom-property names indexed, all values omitted.
-- RAW/runtime paths are directory-scope markers only. No candles, drawings, caches, credentials, or session contents were read/copied.
-- Previous Graphify outputs were excluded from input. No filesystem walk errors. No semantic LLM call was made; the source-located inline layer contains 10 concepts and 2 hyperedges, all explicitly grounded and value-safe.
+**created_at:** `2026-09-30T15:43:03+03:30`
+**last_modified_at:** `2026-09-30T15:43:03+03:30`
 
-## Raw extractor diagnostic
+## Broken references
 
-```text
-[graphify] MultiDiGraph edge-collapse diagnostic
-input: <in-memory>
-input_stage: provided JSON (normal graph.json is post-build)
-effective_directed: <direct-call>
-nodes: 2448
-unverified_code_nodes: 0
-raw_edges: 4543
-valid_candidate_edges: 4379
-missing_endpoint_edges: 0
-dangling_endpoint_edges: 164
-self_loop_edges: 0
-exact_duplicate_edges: 116
-directed_unique_endpoint_pairs: 4132
-directed_same_endpoint_collapsed_edges: 247
-undirected_unique_endpoint_pairs: 4131
-undirected_same_endpoint_collapsed_edges: 248
-same_endpoint_group_count: 169
-relation_variant_groups: 54
-source_file_variant_groups: 0
-source_location_variant_groups: 22
-context_variant_groups: 49
-post_build_graph_type: DiGraph
-post_build_edges: 4143
-producer_suppression_sites: 11
-producer_suppression_examples:
-  - L1144 seen_ids arity=unknown
-  - L1410 seen_ids arity=unknown
-  - L1412 seen_doc_refs arity=unknown
-  - L1772 seen_ids arity=unknown
-  - L2262 seen_keys arity=unknown
-  - L2431 seen_keys arity=unknown
-  - L3837 seen_ids arity=unknown
-  - L3945 seen_ids arity=unknown
-examples:
-  - engine_pipeline_a_zone_detector_azonedetector_pair_trigger -> engine_pipeline_a_zone_detector_py_datetime edges=6 relations=['references'] locations=['L305'] contexts=['generic_arg', 'parameter_type']
-  - engine_pipeline_e_zone_detector_ezonedetector_cross_order -> engine_pipeline_e_zone_detector_py_datetime edges=6 relations=['references'] locations=['L1381', 'L1401'] contexts=['generic_arg', 'parameter_type']
-  - engine_pipeline_s_zone_detector_szonedetector_first_a_stop -> engine_pipeline_s_zone_detector_py_datetime edges=6 relations=['references'] locations=['L231', 'L267'] contexts=['generic_arg', 'parameter_type']
-  - engine_pipeline_s_zone_detector_szonedetector_first_type3 -> engine_pipeline_s_zone_detector_py_datetime edges=6 relations=['references'] locations=['L482'] contexts=['generic_arg', 'parameter_type']
-  - engine_pipeline_s_zone_detector_szonedetector_first_type4 -> engine_pipeline_s_zone_detector_py_datetime edges=6 relations=['references'] locations=['L543'] contexts=['generic_arg', 'parameter_type']
-note: normal graph.json is post-build; raw producer loss must be measured earlier.
-```
+Documentation link targets that do not resolve inside the repository: 4
 
-## Normalized extraction diagnostic
+- `engineering/archive/documentation/technical-architecture-audit-2026-09-22.md` -> `engineering/archive/operations/local-state.md`
+- `engineering/archive/documentation/ui-ux-audit-2026-09-22.md` -> `engineering/archive/operations/local-state.md`
+- `engineering/archive/repository-graphify/README.md` -> `engineering/archive/repository-graphify/rebuild-2026-09-23`
+- `engineering/archive/repository-graphify/snapshots/pre-rebuild-2026-09-30_154000/README.md` -> `engineering/archive/repository-graphify/snapshots/pre-rebuild-2026-09-30_154000/rebuild-2026-09-23`
 
-```text
-[graphify] MultiDiGraph edge-collapse diagnostic
-input: <in-memory>
-input_stage: provided JSON (normal graph.json is post-build)
-effective_directed: <direct-call>
-nodes: 2691
-unverified_code_nodes: 0
-raw_edges: 4526
-valid_candidate_edges: 4526
-missing_endpoint_edges: 0
-dangling_endpoint_edges: 0
-self_loop_edges: 0
-exact_duplicate_edges: 0
-directed_unique_endpoint_pairs: 4526
-directed_same_endpoint_collapsed_edges: 0
-undirected_unique_endpoint_pairs: 4525
-undirected_same_endpoint_collapsed_edges: 1
-same_endpoint_group_count: 0
-relation_variant_groups: 0
-source_file_variant_groups: 0
-source_location_variant_groups: 0
-context_variant_groups: 0
-post_build_graph_type: DiGraph
-post_build_edges: 4526
-producer_suppression_sites: 11
-producer_suppression_examples:
-  - L1144 seen_ids arity=unknown
-  - L1410 seen_ids arity=unknown
-  - L1412 seen_doc_refs arity=unknown
-  - L1772 seen_ids arity=unknown
-  - L2262 seen_keys arity=unknown
-  - L2431 seen_keys arity=unknown
-  - L3837 seen_ids arity=unknown
-  - L3945 seen_ids arity=unknown
-note: normal graph.json is post-build; raw producer loss must be measured earlier.
-```
+## Orphan nodes
+
+Maintained/test/docs files with no non-ownership relationship edges: 23
+
+- `.editorconfig`
+- `.gitattributes`
+- `.gitignore`
+- `apps/chart/index.html`
+- `apps/chart/package-lock.json`
+- `apps/chart/review.html`
+- `apps/chart/scripts/dev-server.mjs`
+- `apps/chart/src/features/manual-review/review.css`
+- `apps/chart/tests/unit/chart-update-contract.test.mjs`
+- `apps/chart/tests/unit/vite-state-policy.test.mjs`
+- `engine/__init__.py`
+- `engine/engine.zip`
+- `scripts/git.zip`
+- `scripts/git/git.bat`
+- `scripts/git/Git.Menu.ps1`
+- `scripts/git/IMPLEMENTATION_PLAN.md`
+- `scripts/git/Invoke-TradingBotRelease.ps1`
+- `scripts/git/production-policy.psd1`
+- `scripts/git/Release.Workflow.psm1`
+- `scripts/git/RELEASE_WORKFLOW_DESIGN.md`
+- `scripts/git/Test-ReleaseWorkflow.ps1`
+- `scripts/launch.bat`
+- `scripts/start.ps1`
+
+## Circular dependencies
+
+Import-edge cycles detected: 0
+
+- none
+
+## Suspicious duplicates
+
+Basename collisions across subsystems or archive/live paths: 39
+Identical-content groups: 8
+
+- `.graphify_labels.json`: `engineering/archive/repository-graphify/.graphify_labels.json`, `engineering/archive/repository-graphify/rebuild-2026-09-23/.graphify_labels.json`, `engineering/archive/repository-graphify/snapshots/pre-rebuild-2026-09-30_154000/.graphify_labels.json`
+- `__init__.py`: `engine/__init__.py`, `engine/bridge/__init__.py`, `engine/pipeline/__init__.py`
+- `case-01.baseline.json.gz`: `engineering/archive/docs/hpzr2-regression-2026-09-23/bridge-output-large/case-01.baseline.json.gz`, `engineering/archive/docs/hpzr2-regression-2026-09-23/bridge-output/case-01.baseline.json.gz`, `engineering/archive/docs/hpzr2-regression-2026-09-23/default/case-01.baseline.json.gz`, `engineering/archive/docs/hpzr2-regression-2026-09-23/smoke-default/case-01.baseline.json.gz`
+- `case-01.candidate.json.gz`: `engineering/archive/docs/hpzr2-regression-2026-09-23/bridge-output-large/case-01.candidate.json.gz`, `engineering/archive/docs/hpzr2-regression-2026-09-23/bridge-output/case-01.candidate.json.gz`, `engineering/archive/docs/hpzr2-regression-2026-09-23/default/case-01.candidate.json.gz`, `engineering/archive/docs/hpzr2-regression-2026-09-23/smoke-default/case-01.candidate.json.gz`
+- `case-01.json.gz`: `engineering/archive/docs/order-architecture-2026-09-27/phase2-cache-targeted/case-01.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/phase2-extract-smoke/case-01.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/phase2-extract-targeted/case-01.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/phase2-s-extract-smoke/case-01.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_DIAGNOSTIC_INTERRUPTED/case-01.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-01.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-01.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/recovery-smoke/case-01.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/smoke-precision/case-01.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/smoke-usoil-precision/case-01.json.gz`
+- `case-01.stderr.log`: `engineering/archive/docs/order-architecture-2026-09-27/phase2-cache-targeted/case-01.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/phase2-extract-smoke/case-01.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/phase2-extract-targeted/case-01.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/phase2-s-extract-smoke/case-01.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_DIAGNOSTIC_INTERRUPTED/case-01.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-01.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-01.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/recovery-smoke/case-01.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/smoke-precision/case-01.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/smoke-usoil-precision/case-01.stderr.log`
+- `case-02.baseline.json.gz`: `engineering/archive/docs/hpzr2-regression-2026-09-23/bridge-output-large/case-02.baseline.json.gz`, `engineering/archive/docs/hpzr2-regression-2026-09-23/bridge-output/case-02.baseline.json.gz`, `engineering/archive/docs/hpzr2-regression-2026-09-23/default/case-02.baseline.json.gz`
+- `case-02.candidate.json.gz`: `engineering/archive/docs/hpzr2-regression-2026-09-23/bridge-output-large/case-02.candidate.json.gz`, `engineering/archive/docs/hpzr2-regression-2026-09-23/bridge-output/case-02.candidate.json.gz`, `engineering/archive/docs/hpzr2-regression-2026-09-23/default/case-02.candidate.json.gz`
+- `case-02.json.gz`: `engineering/archive/docs/order-architecture-2026-09-27/phase2-cache-targeted/case-02.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/phase2-extract-targeted/case-02.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_DIAGNOSTIC_INTERRUPTED/case-02.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-02.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-02.json.gz`
+- `case-02.stderr.log`: `engineering/archive/docs/order-architecture-2026-09-27/phase2-cache-targeted/case-02.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/phase2-extract-targeted/case-02.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_DIAGNOSTIC_INTERRUPTED/case-02.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-02.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-02.stderr.log`
+- `case-03.baseline.json.gz`: `engineering/archive/docs/hpzr2-regression-2026-09-23/bridge-output/case-03.baseline.json.gz`, `engineering/archive/docs/hpzr2-regression-2026-09-23/default/case-03.baseline.json.gz`
+- `case-03.candidate.json.gz`: `engineering/archive/docs/hpzr2-regression-2026-09-23/bridge-output/case-03.candidate.json.gz`, `engineering/archive/docs/hpzr2-regression-2026-09-23/default/case-03.candidate.json.gz`
+- `case-03.json.gz`: `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-03.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-03.json.gz`
+- `case-03.stderr.log`: `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_DIAGNOSTIC_INTERRUPTED/case-03.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-03.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-03.stderr.log`
+- `case-04.baseline.json.gz`: `engineering/archive/docs/hpzr2-regression-2026-09-23/bridge-output/case-04.baseline.json.gz`, `engineering/archive/docs/hpzr2-regression-2026-09-23/default/case-04.baseline.json.gz`
+- `case-04.candidate.json.gz`: `engineering/archive/docs/hpzr2-regression-2026-09-23/bridge-output/case-04.candidate.json.gz`, `engineering/archive/docs/hpzr2-regression-2026-09-23/default/case-04.candidate.json.gz`
+- `case-04.json.gz`: `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-04.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-04.json.gz`
+- `case-04.stderr.log`: `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-04.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-04.stderr.log`
+- `case-05.baseline.json.gz`: `engineering/archive/docs/hpzr2-regression-2026-09-23/bridge-output/case-05.baseline.json.gz`, `engineering/archive/docs/hpzr2-regression-2026-09-23/default/case-05.baseline.json.gz`
+- `case-05.candidate.json.gz`: `engineering/archive/docs/hpzr2-regression-2026-09-23/bridge-output/case-05.candidate.json.gz`, `engineering/archive/docs/hpzr2-regression-2026-09-23/default/case-05.candidate.json.gz`
+- `case-05.json.gz`: `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-05.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-05.json.gz`
+- `case-05.stderr.log`: `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-05.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-05.stderr.log`
+- `case-06.json.gz`: `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-06.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-06.json.gz`
+- `case-06.stderr.log`: `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-06.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-06.stderr.log`
+- `case-07.json.gz`: `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-07.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-07.json.gz`
+- `case-07.stderr.log`: `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-07.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-07.stderr.log`
+- `case-08.json.gz`: `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-08.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-08.json.gz`
+- `case-08.stderr.log`: `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-08.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-08.stderr.log`
+- `case-09.json.gz`: `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-09.json.gz`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-09.json.gz`
+- `case-09.stderr.log`: `engineering/archive/docs/order-architecture-2026-09-27/PHASE_1_FINAL_BASELINE/case-09.stderr.log`, `engineering/archive/docs/order-architecture-2026-09-27/PHASE_2_FINAL_REGRESSION/case-09.stderr.log`
+
+## Missing ownership
+
+Files classified as Project/Unknown ownership: 3
+
+## Architecture boundary risks
+
+- Chart must not become a second trading algorithm (AGENTS.md §5). Chart algorithm UI content lives under `apps/chart/src/algorithm/content/` and is presentation/reference UI, not engine authority.
+- Vite must not redefine Engine semantics; `vite.config.js` should remain orchestration/transport.
+- FARAZ must not define trading rules.
+- `engineering/archive/**` is evidence only.
+
+## Documentation drift risks
+
+- Prior Graphify outputs under `repository-graphify/` and `snapshots/` are historical.
+- `engineering/archive/documentation/*legacy*` documents are historical classifications.
+- Algorithm references under `engine/algorithms/*Source_Synchronized.md` are accepted references; verify currency before treating as sole semantic authority.
+
+## Graph health summary
+
+| Check | Status |
+| --- | --- |
+| Extraction produced nodes | PASS (662 nodes) |
+| Extraction produced edges | PASS (2038 edges) |
+| Broken doc refs | WARN (4) |
+| Circular imports | PASS (0) |
+| Orphan maintained files | WARN (23) |
+| Duplicates reported only | PASS |
