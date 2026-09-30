@@ -1,0 +1,112 @@
+[
+  [
+    "Baseline npm.cmd test",
+    "PASS",
+    "156 tests; baseline-node-tests.log"
+  ],
+  [
+    "Baseline python -B -m pytest -q -p no:cacheprovider tests",
+    "PASS",
+    "21 tests; baseline-python-tests.log"
+  ],
+  [
+    "node --test tests/local-state-paths.test.mjs before implementation",
+    "FAIL",
+    "Expected red test: storage resolver did not exist."
+  ],
+  [
+    "node --test tests/local-state-paths.test.mjs after implementation",
+    "PASS",
+    "3 external storage checks."
+  ],
+  [
+    "npm.cmd ci",
+    "PASS",
+    "18 packages installed from unchanged lockfile; npm-ci.log"
+  ],
+  [
+    "npm.cmd test after centralization",
+    "PASS",
+    "159 tests; final-node-tests.log"
+  ],
+  [
+    "python -B -m pytest -q -p no:cacheprovider tests/engine/unit",
+    "PASS",
+    "21 tests."
+  ],
+  [
+    "python -B tests/engine/helpers/verify_order_references.py",
+    "PASS",
+    "13 exact embedded Python modules per direction."
+  ],
+  [
+    "python -B tests/engine/regression/order_regression.py --help",
+    "PASS",
+    "Relocated runner initializes and exposes supported options."
+  ],
+  [
+    "npm.cmd run build",
+    "PASS",
+    "55 modules; reproducible dist. Existing >500 kB chunk warning."
+  ],
+  [
+    "python -B external structural_checks.py",
+    "PASS",
+    "23 Python AST files, 50 Node syntax files, 66 relative imports, 36 links, normal dynamic Engine load."
+  ],
+  [
+    "PowerShell AST and storage block checks",
+    "PASS",
+    "Default, absolute/relative overrides and in-repository rejection."
+  ],
+  [
+    "First live-storage-check.mjs probe",
+    "FAIL",
+    "Probe used file= instead of the existing endpoint's id= parameter. Probe corrected; application contract preserved."
+  ],
+  [
+    "Corrected live-storage-check.mjs",
+    "PASS",
+    "14,140-row real migrated RAW returned unchanged; /info shell available."
+  ],
+  [
+    "Pre-stage and staged credential/path scan",
+    "PASS",
+    "102 indexed files; no findings or local-state/test artifacts."
+  ],
+  [
+    "Physical and Git-index Engine SHA-256 comparison",
+    "PASS",
+    "16 protected files unchanged versus the initial working tree."
+  ],
+  [
+    "RAW and metadata SHA-256 comparison",
+    "PASS",
+    "22 moved data/sidecar/placeholder files unchanged."
+  ],
+  [
+    "git diff --cached --check",
+    "FAIL",
+    "Four inherited protected-file whitespace warnings: both exact references, bridge and Order module. Engine bytes intentionally preserved."
+  ],
+  [
+    "git diff --cached --check -- . :!engine",
+    "PASS",
+    "Cleanup-owned staged changes pass. Markdown hard line breaks have explicit whitespace policy."
+  ],
+  [
+    "Final index, untracked, ignored tests and physical state audit",
+    "PASS",
+    "102 tracked; 39 local tests; no unstaged/unexplained untracked files or prohibited local-state directories."
+  ],
+  [
+    "Full market regression / independent directional correctness",
+    "SKIPPED",
+    "No calculation source or RAW bytes changed; user cleanup instruction excludes a new market run solely for layout changes."
+  ],
+  [
+    "Graphify, commit, push",
+    "SKIPPED",
+    "Explicitly prohibited by this task."
+  ]
+]

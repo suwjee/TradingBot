@@ -226,12 +226,12 @@ The repository checkpoint/tag version and the chart package version are separate
 | `apps/chart/src/ui/`, `src/drawings/` | Feedback, logs, popovers, icons, workspace state, and drawing presentation. |
 | `apps/chart/src/algorithm/` | In-app algorithm reference content and directional mirror documentation. |
 | `apps/chart/server/`, `apps/chart/vite.config.js` | Local HTTP API, Python subprocess boundary, RAW/FARAZ persistence, caches, SSE, drawings, and templates. |
-| `tests/chart/unit/` | 29 local-only Node test files; cleanup verification ran 159 tests. |
+| `apps/chart/tests/unit/` | 30 local-only Node test files; the 2026-09-29 baseline had 159 tests; internal-state and watcher coverage add five tests. |
 | `engine/bridge/trading_pipeline.py` | Authoritative CLI, dynamic engine loading, market context, stage orchestration, lifecycle, visibility, and JSON serialization. |
 | `engine/pipeline/` | Reaction, Blue, A, S, E, StopAll, chronology, direction policy, Decimal/order helpers, and lifecycle logic. |
-| `<local-state-root>/data/raw/` | External authoritative candle arrays and metadata sidecars. |
-| `<local-state-root>/cache/`, `<local-state-root>/secret/` | External user drawings, templates, calculation caches, and FARAZ session state; preserve by default. |
-| `docs/` | Maintained architecture, algorithm, UI, audit, cleanup, validation, and Graphify evidence. |
+| `apps/chart/state/data/raw/` | Project-local candle arrays and metadata sidecars. |
+| `apps/chart/state/cache/`, `apps/chart/state/secret/` | Project-local user drawings, templates, calculations and FARAZ authentication; ignored and preserved by default. |
+| `engineering/docs/`, `engineering/archive/`, `engineering/verification/` | Maintained guidance, ignored historical evidence and local verification artifacts. |
 
 Baseline snapshot: the tracked checkout was recorded at `0d084590fb1ba1b57bcac6d4f19c977557830c2d` on `main`, two commits ahead of `origin/main`. Re-verify the current commit/branch/remote state before relying on this snapshot. The worktree contains or may contain user-owned tracked edits, deletions, and untracked replacement engine/frontend files. Never reset, clean, stash, rename, overwrite, or stage those paths without explicit authorization.
 
@@ -251,7 +251,7 @@ JSON -> Vite cache/API -> browser chart, panels, review, and audit views
 
 ## D. Runtime Execution Flow
 
-1. `scripts/start.ps1` validates files/runtimes, may install dependencies, creates external state directories, sets `TRADINGBOT_PYTHON`, `TRADINGBOT_PROJECT_ROOT`, and `TRADINGBOT_LOCAL_STATE_ROOT`, and starts Vite on `0.0.0.0`.
+1. `scripts/start.ps1` validates files/runtimes, may install dependencies, creates project-local state directories through the shared resolver, sets `TRADINGBOT_PYTHON`, `TRADINGBOT_PROJECT_ROOT`, and `TRADINGBOT_LOCAL_STATE_ROOT`, and starts Vite on `0.0.0.0`.
 2. `apps/chart/src/main.js` loads `/api/symbols`, restores workspace state, reads `/api/candles`, and creates Lightweight Charts.
 3. Indicator actions post validated direction, analysis timeframe, chart timeframe, inclusive chart-candle range, and Blue-line settings to `/api/reactions`; progress is streamed through `/api/reactions/progress` SSE.
 4. `vite.config.js` builds a cache key from engine source fingerprint, RAW identity/mtime, input scope, chart/analysis timeframes, range, direction, and Blue-line flags, then spawns `engine/bridge/trading_pipeline.py`.
@@ -274,7 +274,7 @@ Executable snapshot: recorded source versions were Reaction `9.5.2`, Blue `2.3.0
 
 Numerical invariants: use Decimal semantics; preserve strict `<`/`>` crossings and explicit inclusive windows; retain physical source indexes/times, parent/order provenance, cause objects, nulls, version fields, and serialization ordering. Do not infer Bearish as a blanket inverse of Bullish. Current directional exceptions must be retrieved from the canonical Vault and verified against the current Source; do not infer them from a recorded snapshot.
 
-Before engine changes, query the TradingBot Intelligence Plugin, inspect canonical Vault knowledge, then read [TradingBot_Technical_Architecture.md](docs/architecture/TradingBot_Technical_Architecture.md) and the directional references identified as current by the Vault. The current Python package import surface is not a supported smoke path: flat imports can fail with `ModuleNotFoundError: direction_policy` or `ImportError: run_blue_line`; the production bridge uses dynamic file loading to work around this migration state.
+Before engine changes, query the TradingBot Intelligence Plugin, inspect canonical Vault knowledge, then read [Technical architecture](engineering/docs/architecture/technical-architecture.md) and the directional references identified as current by the Vault. The current Python package import surface is not a supported smoke path: flat imports can fail with `ModuleNotFoundError: direction_policy` or `ImportError: run_blue_line`; the production bridge uses dynamic file loading to work around this migration state.
 
 ## F. Bullish and Bearish Knowledge
 
@@ -299,7 +299,7 @@ The UI uses HTTP JSON and SSE, not a WebSocket. Preserve DOM IDs, persisted loca
 - Bridge -> dynamically loaded detector files, then serializers -> cache/API -> browser.
 - Public contracts preserve physical indexes/times and provenance. Reaction, Blue, A, S, E, StopAll, and OrderAudit collections have distinct ownership and nullable fields; see the architecture and algorithm references for exact fields.
 
-Graphify shows source-linked relationships and may include explicitly marked inferred edges. The external historical `archive/docs/graphify/rebuild-2026-09-23/` snapshot supplements detector-unclassified files with path nodes and the sensitive `tokens.css` file with custom-property names only; CSS values and RAW/runtime contents are not indexed. Treat its health diagnostics and direct source tracing as the evidence boundary.
+Graphify shows source-linked relationships and may include explicitly marked inferred edges. The project-local historical `engineering/archive/docs/graphify/rebuild-2026-09-23/` snapshot supplements detector-unclassified files with path nodes and the sensitive `tokens.css` file with custom-property names only; CSS values and RAW/runtime contents are not indexed. Treat its health diagnostics and direct source tracing as the evidence boundary.
 
 ## I. Graphify Integration
 
@@ -314,7 +314,7 @@ graphify query "pipeline execution" --graph graphify-out/graph.json --budget 800
 graphify diagnose multigraph --graph graphify-out/graph.json --json
 ```
 
-The dated Graphify snapshot is now external archived evidence under the local-state root, `archive/docs/graphify/rebuild-2026-09-23/`. It is not part of the tracked repository. The snapshot covers classified source/docs, records literal HTML references, represents unclassified configuration/style files as path nodes, and indexes only custom-property names from detector-classified `apps/chart/src/styles/tokens.css` (never its values). RAW candle and runtime/cache data are represented only by directory-scope markers; their contents and credential/session values are not read or copied. `docs/graphify/rebuild-2026-09-19/` remains preserved as historical evidence.
+The dated Graphify snapshot is ignored project-local archived evidence under `engineering/archive/docs/graphify/rebuild-2026-09-23/`. It is not part of the tracked repository. The snapshot covers classified source/docs, records literal HTML references, represents unclassified configuration/style files as path nodes, and indexes only custom-property names from detector-classified `apps/chart/src/styles/tokens.css` (never its values). RAW candle and runtime/cache data are represented only by directory-scope markers; their contents and credential/session values are not read or copied. `engineering/archive/repository-graphify/rebuild-2026-09-19/` remains preserved as historical evidence.
 
 After implementation changes, do not automatically rerun Graphify. If graph refresh or diagnosis would materially help, explain why and obtain explicit user approval for that execution. When approved, compare representative query results to direct source tracing and record stale/unresolved relationships. Do not invent edges or promote inferred relationships to implementation facts.
 
@@ -329,7 +329,7 @@ npm.cmd run dev
 npm.cmd run preview
 ```
 
-The first two are check/build commands. `dev`, `preview`, and `scripts/start.ps1` start services or mutate runtime/dependency state. Local-only Python tests are under ignored `tests/engine/unit/`; run `python -B -m pytest -q -p no:cacheprovider tests/engine/unit` from the repository root. No repository lint, type-check, CI, or SonarQube CLI configuration was found. Safe source checks are Node `--check` for project JS/MJS and `ast.parse` for Engine Python. Do not report a check as PASS without fresh output and an exit code.
+The first two are check/build commands. `dev`, `preview`, and `scripts/start.ps1` start services or mutate runtime/dependency state. Local-only Python tests are under ignored `engine/tests/unit/`; run `python -B -m pytest -q -p no:cacheprovider -p no:benchmark engine/tests/unit` from the repository root. No repository lint, type-check, CI, or SonarQube CLI configuration was found. Safe source checks are Node `--check` for project JS/MJS and `ast.parse` for Engine Python. Do not report a check as PASS without fresh output and an exit code.
 
 ## K. AI-Agent Operating Instructions
 
@@ -344,7 +344,7 @@ The first two are check/build commands. `dev`, `preview`, and `scripts/start.ps1
 - Do not report build, static review, unit tests, mirror parity, browser checks, or bounded fixtures as stronger evidence than they actually provide.
 - Update durable references/Vault knowledge when durable behavior or architecture changes. Do not create temporary knowledge noise.
 - Do not automatically refresh Graphify artifacts; request approval first if a graph refresh would materially help.
-- Keep credential/session values private. Do not expose or copy `runtime/cache/secret` contents.
+- Keep credential/session values private. Do not expose or copy `apps/chart/state/secret/` values into logs, reports or delivery packages.
 - Report unresolved ambiguity instead of guessing.
 - Never introduce hidden hardcoding for known timestamps, OHLC fingerprints, filenames, symbols, fixtures, or expected outputs.
 - All developer-facing technical content, comments, docstrings, logs, tests, commit messages, and documentation authored by the AI must be English.
@@ -368,20 +368,21 @@ A user-provided candle correction is important evidence, but it must be explaine
 
 ## L. Documentation Index
 
-- [Repository Baseline](docs/history/TradingBot_Repository_Baseline.md): ownership boundary, Git identity, and pre-existing dirty state.
-- [Technical Architecture](docs/architecture/TradingBot_Technical_Architecture.md): runtime, modules, APIs, data flow, contracts, and risks.
-- [Project Audit](docs/history/TradingBot_Project_Audit.md): confirmed defects, potential risks, and verification status.
-- [UI/UX Technical Reference](docs/architecture/TradingBot_UI_UX_Technical_Reference.md): selectors, tokens, layout, states, breakpoints, and overlays.
-- [Bullish Reference](engine/algorithms/TradingBot_Bullish_Algorithm_Reference_V5.4.19_EX1_Source_Synchronized.md): implementation-faithful Bullish path.
-- [Bearish Reference](engine/algorithms/TradingBot_Bearish_Algorithm_Reference_V5.4.19_EX1_Source_Synchronized.md): implementation-faithful Bearish path and asymmetries.
-- [Cleanup Report](docs/history/TradingBot_Cleanup_Report.md): conservative retention/deletion decisions.
-- [Validation Report](docs/history/TradingBot_Validation_Report.md): fresh commands, statuses, evidence, and limitations.
-- Graphify outputs are external local archives; every Graphify execution still requires explicit approval.
+- [Engineering index](engineering/docs/README.md): current maintained document navigation.
+- [Operating protocol](engineering/docs/ai/operating-protocol.md): engineering and delivery requirements, subordinate to root authority.
+- [Technical architecture](engineering/docs/architecture/technical-architecture.md) and [UI/UX reference](engineering/docs/architecture/ui-ux-reference.md): dated evidence with current navigation notes.
+- [Local storage](engineering/docs/operations/local-state.md), [Local tests](engineering/docs/development/local-tests.md) and [Repository integrity](engineering/docs/verification/repository-integrity.md): current storage and validation rules.
+- [Single-root migration](engineering/docs/verification/single-root-migration.md): complete movement and validation evidence.
+- [Bullish Reference](engine/algorithms/TradingBot_Bullish_Algorithm_Reference_V5.4.19_EX1_Source_Synchronized.md) and [Bearish Reference](engine/algorithms/TradingBot_Bearish_Algorithm_Reference_V5.4.19_EX1_Source_Synchronized.md): unchanged current exact-source references.
 
-- `AGENTS.md` is the canonical root entry point; no lowercase compatibility guide exists in the current tree.
+Historical Graphify/regression material stays in ignored `engineering/archive/`; old build scripts and path strings inside those bundles are historical evidence, not active tool entry points. Every Graphify execution still requires explicit approval.
 
-No nested `AGENTS.md` was found during the 2026-09-29 inventory: the root file contains the engine-specific numerical rules and links to the detailed references without adding contradictory context.
+`AGENTS.md` is the canonical root entry point. No nested project AGENTS was found in the current source inventory.
 
 ## M. Repository Storage Policy
 
-Machine state resolves through `TRADINGBOT_LOCAL_STATE_ROOT`, defaulting to a sibling directory named `<checkout-name>-Local`. The shared application resolver rejects repository-internal roots. RAW, cache, secrets, and temporary state stay external. Tests live under ignored `/tests/`; chart tests run with `npm.cmd test` from `apps/chart`. Dependencies/build output are reproducible and excluded. Historical Graphify and regression output is external archived evidence. Only the two current source-synchronized references under `engine/algorithms/` are current references.
+All project-owned content stays inside `D:\My-Projects\TradingBot`. Three primary owners are `apps/`, `engine/` and `engineering/`. `scripts/` remains a root tooling exception preserving established Windows/VMware startup paths. Root Git/editor configuration, AGENTS and README stay at discovery boundaries.
+
+`TRADINGBOT_LOCAL_STATE_ROOT` defaults to `apps/chart/state`; configured roots may select only that dedicated subtree or a descendant. The shared resolver rejects source directories, external paths and escaping junctions. The launcher uses the same resolver. RAW, caches, secrets and temporary files remain project-local and Git-ignored. Direct Vite file access to state is denied; its normal API contracts remain available.
+
+Tests live beside their owners under ignored `apps/chart/tests/` and `engine/tests/`; chart tests run with `npm.cmd test` from `apps/chart`. Engine production-source discovery excludes test code. Dependencies/build output remain reproducible and ignored. Historical Graphify/regression artifacts live in ignored `engineering/archive/`; migration snapshots, maps and logs live in ignored `engineering/verification/`. Only the two source-synchronized references under `engine/algorithms/` are current references.

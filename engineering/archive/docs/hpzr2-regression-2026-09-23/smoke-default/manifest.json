@@ -1,0 +1,283 @@
+{
+  "comparison": "ordered JSON bytes after removing top-level timings only",
+  "baselineSourceSha256": {
+    "pipeline/reaction_engine.py": "bea0d5a5e95ee15ad54d024f6c01b8c777ba2abcc3c8e671118f1ae2df28f2a6",
+    "pipeline/blue_line_detector.py": "6fa01d94bc98060b62bc7e68db0ec24a0b0159727d44043affee7130a9c11448",
+    "pipeline/a_zone_detector.py": "d7c33dd619ad7e4590027667a2c4e984c83be7b82fbfafeb5d7f944ddd521097",
+    "pipeline/s_zone_detector.py": "7714025b3f43087b09844df6feeef4eef0ec72eeb841115293df4c126fd202ee",
+    "pipeline/e_zone_detector.py": "6e32b947aa1b4e1e6b986f26ee9a464542f320dc6a207ece1e8fce54407d0369",
+    "pipeline/lifecycle_engine.py": "e3fff19ae909325a2938dede3a298bb98cfc4a1f1a869a976a2c951aa1d9c99a",
+    "bridge/trading_pipeline.py": "9ecf9fed84ef5aaa447477afec1e24d91ca7a87569dbd957f949f2495a67f10a",
+    "pipeline/direction_policy.py": "a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea",
+    "pipeline/core_utils.py": "3dae390ae77b72965f5799f7c132c4eba203775d5e72761fd7dd60c90f8578de"
+  },
+  "candidateSourceSha256": {
+    "pipeline/reaction_engine.py": "bea0d5a5e95ee15ad54d024f6c01b8c777ba2abcc3c8e671118f1ae2df28f2a6",
+    "pipeline/blue_line_detector.py": "6fa01d94bc98060b62bc7e68db0ec24a0b0159727d44043affee7130a9c11448",
+    "pipeline/a_zone_detector.py": "d7c33dd619ad7e4590027667a2c4e984c83be7b82fbfafeb5d7f944ddd521097",
+    "pipeline/s_zone_detector.py": "7714025b3f43087b09844df6feeef4eef0ec72eeb841115293df4c126fd202ee",
+    "pipeline/e_zone_detector.py": "6e32b947aa1b4e1e6b986f26ee9a464542f320dc6a207ece1e8fce54407d0369",
+    "pipeline/lifecycle_engine.py": "e3fff19ae909325a2938dede3a298bb98cfc4a1f1a869a976a2c951aa1d9c99a",
+    "bridge/trading_pipeline.py": "a4b4ecdac07e1c810794e45df9890508f54bff0e4b51e85fc8ee3480a36e4e01",
+    "pipeline/direction_policy.py": "a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea",
+    "pipeline/core_utils.py": "3dae390ae77b72965f5799f7c132c4eba203775d5e72761fd7dd60c90f8578de"
+  },
+  "timeframe": 30,
+  "direction": "both",
+  "bridgeOutput": false,
+  "cases": [
+    {
+      "name": "case-01",
+      "rawPath": "FOREXCOM\\XAUUSD\\RAW FOREXCOM_XAUUSD 5S FROM 2026-09-16 22-35-00 TO 2026-09-17 19-15-35.json",
+      "rawSha256": "d33c7e2c46440f7a4495bac7d80b38101a635491f0f95b8ea353caa8fdb7d96d",
+      "rawRows": 14140,
+      "rawFirst": 1789585500,
+      "rawLast": 1789659935,
+      "status": "PASS",
+      "baseline": {
+        "timings": {
+          "phasesMs": {
+            "Validate request": 8.83,
+            "Load Reaction engine": 7.41,
+            "Load Blue Line engine": 2.55,
+            "Load A engine": 4.55,
+            "Load S engine": 3.15,
+            "Load E engine": 5.42,
+            "Load Lifecycle engine": 4.06,
+            "Read source file": 0.64,
+            "Parse source JSON": 6.11,
+            "Use full RAW calculation context": 0.02,
+            "Normalize raw candles": 45.84,
+            "Build lower candle views": 53.07,
+            "Build timeframe candle views": 8.04,
+            "Reaction geometry • Bullish": 11.34,
+            "Reaction geometry • Bearish": 18.79,
+            "Internal Reaction ownership": 14.77,
+            "Blue Line • Bullish": 1.8,
+            "A • Bullish": 9.18,
+            "S • Bullish": 4.3,
+            "E • Bullish • initial": 20.04,
+            "E • Bullish • S reconciliation": 18.19,
+            "E • Bullish • final audit": 17.79,
+            "E • Bullish • shared Order-stop reconciliation": 17.28,
+            "Blue Line • Bearish": 1.61,
+            "A • Bearish": 9.36,
+            "S • Bearish": 5.31,
+            "E • Bearish • initial": 29.61,
+            "E • Bearish • S reconciliation": 21.08,
+            "E • Bearish • final audit": 19.32,
+            "E • Bearish • shared Order-stop reconciliation": 18.37,
+            "Reconcile S visibility - Bullish": 0.13,
+            "StopAll - Bullish": 0.27,
+            "Apply visibility filters - Bullish": 2.83,
+            "Serialize Reaction - Bullish": 7.76,
+            "Serialize output - Bullish": 1.38,
+            "Reconcile S visibility - Bearish": 0.09,
+            "StopAll - Bearish": 0.08,
+            "Apply visibility filters - Bearish": 3.91,
+            "Serialize Reaction - Bearish": 5.24,
+            "Serialize output - Bearish": 0.65
+          },
+          "bridgeTotalMs": 468.33
+        },
+        "wallSeconds": 0.7149781000043731,
+        "stdoutBytes": 282539,
+        "normalizedBytes": 281102,
+        "normalizedSha256": "d974876a41bb1f9415d3be65cb922e9a88b37bc7d0b76274eec5520d9f71d938",
+        "stages": {
+          "bullish": {
+            "reactions": {
+              "count": 206,
+              "sha256": "6acd6c6940c5604e1450a134a1cb3a125d8640fdb4d15277ebd3df581be1f011"
+            },
+            "resets": {
+              "count": 94,
+              "sha256": "afc4b475144aae8909304a535e32d8a7e723339876ddf82101dc998fbcb529c4"
+            },
+            "blueLines": {
+              "count": 93,
+              "sha256": "a2f88cd8752fd1a94ca1b11bffe0ff2e96fbcd36883e8f3ee19375d8be73b1a3"
+            },
+            "aZones": {
+              "count": 18,
+              "sha256": "32c9ce1034ebefcb1f806c713d1c789812e1d833c6ff72920c0f0ef7b5d65189"
+            },
+            "sZones": {
+              "count": 13,
+              "sha256": "a36518cf95c229d8a7203929635607af5cae60e9a21735b78406ab42f77b1146"
+            },
+            "eZones": {
+              "count": 12,
+              "sha256": "fd25b0b927395961354c27731fc083d02eb6e9d81715d4fed9a33909b22dff89"
+            },
+            "stopAlls": {
+              "count": 2,
+              "sha256": "bd0cf267327e8b4e548461c74f18813841602400cbd2f383796cde66e2978ce8"
+            },
+            "orderAudit": {
+              "count": 35,
+              "sha256": "9fa30d959e4fa1f0db89a1ad9ba48af09ce3a8f3ac91a70d98b59108419a68b4"
+            }
+          },
+          "bearish": {
+            "reactions": {
+              "count": 192,
+              "sha256": "89cca8a075f640f565109c2322a24fd5795912ced82067801edae9a287a75fae"
+            },
+            "resets": {
+              "count": 101,
+              "sha256": "31ec18e833d30ecdffed413dcb8edc6842e7f684b0a10cefb226d090cf7f743d"
+            },
+            "blueLines": {
+              "count": 83,
+              "sha256": "4b236058e5dc8e41277ef1f35fe7880a8c87d2a9e4a1e308be246668709d9a3e"
+            },
+            "aZones": {
+              "count": 18,
+              "sha256": "3023b587f6fe563005d2f2b6bc065279030346d03567da731d36ebee7777260f"
+            },
+            "sZones": {
+              "count": 10,
+              "sha256": "7188ed09019754302e9344e43ae6df15d249f98d6f83c948da2a1a8dd58d51b4"
+            },
+            "eZones": {
+              "count": 11,
+              "sha256": "06cd41eb60f1cc8583fa67998b26a87f9ae2406b469bfbb56f91ced16bf88f9f"
+            },
+            "stopAlls": {
+              "count": 0,
+              "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            "orderAudit": {
+              "count": 38,
+              "sha256": "8dfdc21d42a90b9faa57b23e9819f3bb41a881f93dc5d1ac23c944d736beaccc"
+            }
+          }
+        }
+      },
+      "candidate": {
+        "timings": {
+          "phasesMs": {
+            "Validate request": 8.74,
+            "Load Reaction engine": 6.81,
+            "Load Blue Line engine": 2.47,
+            "Load A engine": 3.7,
+            "Load S engine": 2.98,
+            "Load E engine": 4.81,
+            "Load Lifecycle engine": 3.81,
+            "Read source file": 0.45,
+            "Parse source JSON": 6.15,
+            "Use full RAW calculation context": 0.01,
+            "Normalize raw candles": 44.6,
+            "Build lower candle views": 50.91,
+            "Build timeframe candle views": 7.63,
+            "Reaction geometry • Bullish": 11.08,
+            "Reaction geometry • Bearish": 17.96,
+            "Internal Reaction ownership": 14.32,
+            "Blue Line • Bullish": 1.82,
+            "A • Bullish": 9.35,
+            "S • Bullish": 4.26,
+            "E • Bullish • initial": 19.65,
+            "E • Bullish • S reconciliation": 17.85,
+            "E • Bullish • final audit": 17.51,
+            "E • Bullish • shared Order-stop reconciliation": 18.37,
+            "Blue Line • Bearish": 1.87,
+            "A • Bearish": 9.98,
+            "S • Bearish": 5.57,
+            "E • Bearish • initial": 28.01,
+            "E • Bearish • S reconciliation": 18.84,
+            "E • Bearish • final audit": 17.51,
+            "E • Bearish • shared Order-stop reconciliation": 17.69,
+            "Reconcile S visibility - Bullish": 0.15,
+            "StopAll - Bullish": 0.27,
+            "Apply visibility filters - Bullish": 2.71,
+            "Serialize Reaction - Bullish": 7.33,
+            "Serialize output - Bullish": 1.53,
+            "Reconcile S visibility - Bearish": 0.13,
+            "StopAll - Bearish": 0.08,
+            "Apply visibility filters - Bearish": 4.02,
+            "Serialize Reaction - Bearish": 5.34,
+            "Serialize output - Bearish": 0.69
+          },
+          "bridgeTotalMs": 454.41
+        },
+        "wallSeconds": 0.6975411000021268,
+        "stdoutBytes": 282539,
+        "normalizedBytes": 281102,
+        "normalizedSha256": "d974876a41bb1f9415d3be65cb922e9a88b37bc7d0b76274eec5520d9f71d938",
+        "stages": {
+          "bullish": {
+            "reactions": {
+              "count": 206,
+              "sha256": "6acd6c6940c5604e1450a134a1cb3a125d8640fdb4d15277ebd3df581be1f011"
+            },
+            "resets": {
+              "count": 94,
+              "sha256": "afc4b475144aae8909304a535e32d8a7e723339876ddf82101dc998fbcb529c4"
+            },
+            "blueLines": {
+              "count": 93,
+              "sha256": "a2f88cd8752fd1a94ca1b11bffe0ff2e96fbcd36883e8f3ee19375d8be73b1a3"
+            },
+            "aZones": {
+              "count": 18,
+              "sha256": "32c9ce1034ebefcb1f806c713d1c789812e1d833c6ff72920c0f0ef7b5d65189"
+            },
+            "sZones": {
+              "count": 13,
+              "sha256": "a36518cf95c229d8a7203929635607af5cae60e9a21735b78406ab42f77b1146"
+            },
+            "eZones": {
+              "count": 12,
+              "sha256": "fd25b0b927395961354c27731fc083d02eb6e9d81715d4fed9a33909b22dff89"
+            },
+            "stopAlls": {
+              "count": 2,
+              "sha256": "bd0cf267327e8b4e548461c74f18813841602400cbd2f383796cde66e2978ce8"
+            },
+            "orderAudit": {
+              "count": 35,
+              "sha256": "9fa30d959e4fa1f0db89a1ad9ba48af09ce3a8f3ac91a70d98b59108419a68b4"
+            }
+          },
+          "bearish": {
+            "reactions": {
+              "count": 192,
+              "sha256": "89cca8a075f640f565109c2322a24fd5795912ced82067801edae9a287a75fae"
+            },
+            "resets": {
+              "count": 101,
+              "sha256": "31ec18e833d30ecdffed413dcb8edc6842e7f684b0a10cefb226d090cf7f743d"
+            },
+            "blueLines": {
+              "count": 83,
+              "sha256": "4b236058e5dc8e41277ef1f35fe7880a8c87d2a9e4a1e308be246668709d9a3e"
+            },
+            "aZones": {
+              "count": 18,
+              "sha256": "3023b587f6fe563005d2f2b6bc065279030346d03567da731d36ebee7777260f"
+            },
+            "sZones": {
+              "count": 10,
+              "sha256": "7188ed09019754302e9344e43ae6df15d249f98d6f83c948da2a1a8dd58d51b4"
+            },
+            "eZones": {
+              "count": 11,
+              "sha256": "06cd41eb60f1cc8583fa67998b26a87f9ae2406b469bfbb56f91ced16bf88f9f"
+            },
+            "stopAlls": {
+              "count": 0,
+              "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            "orderAudit": {
+              "count": 38,
+              "sha256": "8dfdc21d42a90b9faa57b23e9819f3bb41a881f93dc5d1ac23c944d736beaccc"
+            }
+          }
+        }
+      },
+      "exactJsonEqual": true,
+      "exactObjectsEqual": true
+    }
+  ]
+}

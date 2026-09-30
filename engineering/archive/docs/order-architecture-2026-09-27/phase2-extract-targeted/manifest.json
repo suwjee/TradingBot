@@ -1,0 +1,224 @@
+{
+  "status": "PASS",
+  "pythonVersion": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+  "sourceHashes": {
+    "engine/bridge/__init__.py": "2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8",
+    "engine/bridge/trading_pipeline.py": "0b7f1710b70eb8e36f98c36baab8086d74ed8b0161851782ba05ac3450c5f891",
+    "engine/pipeline/__init__.py": "ca549e4cf5d9a070227498d0d210279e0f7edae66d62dadab7981cddaa1db5c3",
+    "engine/pipeline/a_zone_detector.py": "d7c33dd619ad7e4590027667a2c4e984c83be7b82fbfafeb5d7f944ddd521097",
+    "engine/pipeline/blue_line_detector.py": "6fa01d94bc98060b62bc7e68db0ec24a0b0159727d44043affee7130a9c11448",
+    "engine/pipeline/core_utils.py": "3dae390ae77b72965f5799f7c132c4eba203775d5e72761fd7dd60c90f8578de",
+    "engine/pipeline/direction_policy.py": "a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea",
+    "engine/pipeline/e_zone_detector.py": "a3b1b53f58eeda25900bf770b4e881270c354c9c9fa898aea968a51d0f0a4d91",
+    "engine/pipeline/lifecycle_engine.py": "af0516e0aacdff17b969e3f905554ab3e5356b18c922afeba2edf72f246962e1",
+    "engine/pipeline/order_audit_engine.py": "3011a1b57d77ef53be50449eefdb64582552561f9727bb0c7e21cfbe57affe5b",
+    "engine/pipeline/reaction_engine.py": "bea0d5a5e95ee15ad54d024f6c01b8c777ba2abcc3c8e671118f1ae2df28f2a6",
+    "engine/pipeline/s_zone_detector.py": "7714025b3f43087b09844df6feeef4eef0ec72eeb841115293df4c126fd202ee"
+  },
+  "referenceHashes": {
+    "TradingBot_Bearish_Algorithm_Reference_V5.4.13_HPZR1_OrderAB.md": "60245b94f472caeac66fc45eef0d8519d09b22a4b2ee4b2eb907d4c6186f2ea1",
+    "TradingBot_Bullish_Algorithm_Reference_V5.4.13_HPZR1_OrderAB.md": "539b5d0de5ab1e0139144830310572554162ae137d86c4bd462f01e167b8c1ee"
+  },
+  "cases": [
+    {
+      "rawPath": "data\\raw\\FOREXCOM\\XAUUSD\\RAW FOREXCOM_XAUUSD 1S FROM 2026-09-03 19-05-40 TO 2026-09-08 03-18-28.json",
+      "rawSha256": "0291455b94b2a536b75b6129f3a90b71cd2eadb40a6a685f8a4e01dc2e744776",
+      "rawRows": 161376,
+      "rawFirstEpoch": 1788449740,
+      "rawLastEpoch": 1788824908,
+      "timeframeSeconds": 30,
+      "direction": "both",
+      "bridgeOutput": true,
+      "wallSeconds": 6.57,
+      "peakWorkingSetBytes": 197128192,
+      "returnCode": 0,
+      "stderrPath": "case-01.stderr.log",
+      "timings": {
+        "phasesMs": {
+          "Validate request": 11.24,
+          "Load Reaction engine": 8.72,
+          "Load Blue Line engine": 3.12,
+          "Load A engine": 3.86,
+          "Load S engine": 4.14,
+          "Load E engine": 35.2,
+          "Load Lifecycle engine": 18.18,
+          "Read source file": 6.75,
+          "Parse source JSON": 89.88,
+          "Use full RAW calculation context": 0.02,
+          "Normalize raw candles": 351.37,
+          "Build lower candle views": 812.23,
+          "Build timeframe candle views": 35.73,
+          "Reaction geometry • Bullish": 42.47,
+          "Reaction geometry • Bearish": 84.18,
+          "Internal Reaction ownership": 107.72,
+          "Blue Line • Bullish": 6.18,
+          "A • Bullish": 76.28,
+          "S • Bullish": 30.01,
+          "E • Bullish • initial": 480.62,
+          "E • Bullish • S reconciliation": 381.58,
+          "E • Bullish • final audit": 294.59,
+          "E • Bullish • shared Order-stop reconciliation": 343.37,
+          "Blue Line • Bearish": 12.66,
+          "A • Bearish": 152.35,
+          "S • Bearish": 53.47,
+          "E • Bearish • initial": 315.99,
+          "E • Bearish • S reconciliation": 248.41,
+          "E • Bearish • final audit": 241.5,
+          "E • Bearish • shared Order-stop reconciliation": 214.47,
+          "Reconcile S visibility - Bullish": 0.82,
+          "StopAll - Bullish": 1.99,
+          "Order_B reset legs - Bullish": 17.95,
+          "Apply visibility filters - Bullish": 41.92,
+          "Serialize Reaction - Bullish": 48.08,
+          "Serialize output - Bullish": 51.32,
+          "Reconcile S visibility - Bearish": 1.3,
+          "StopAll - Bearish": 2.02,
+          "Order_B reset legs - Bearish": 18.14,
+          "Apply visibility filters - Bearish": 49.59,
+          "Serialize Reaction - Bearish": 41.08,
+          "Serialize output - Bearish": 42.32
+        },
+        "bridgeTotalMs": 5731.59
+      },
+      "normalizedSha256": "684e080d7c14f5cca06bc2801155eb9d0245a33530da10b3fe4c1138d7f562dc",
+      "counts": {
+        "bullish": {
+          "reactions": 474,
+          "resets": 233,
+          "blueLines": 212,
+          "aZones": 43,
+          "sZones": 19,
+          "eZones": 17,
+          "stopAlls": 13,
+          "orderAudit": 77,
+          "orderBCausesByPostStop": {
+            "A": 2,
+            "E": 9,
+            "StopAll": 6
+          }
+        },
+        "bearish": {
+          "reactions": 518,
+          "resets": 264,
+          "blueLines": 221,
+          "aZones": 48,
+          "sZones": 27,
+          "eZones": 23,
+          "stopAlls": 7,
+          "orderAudit": 79,
+          "orderBCausesByPostStop": {
+            "A": 1,
+            "S": 2,
+            "StopAll": 3
+          }
+        }
+      },
+      "rawCauseValidation": {
+        "bullish": 17,
+        "bearish": 6
+      },
+      "normalizedPayloadPath": "case-01.json.gz",
+      "status": "PASS"
+    },
+    {
+      "rawPath": "data\\raw\\FXCM\\USOIL\\RAW FXCM_USOIL 5S FROM 2026-09-08 07-23-20 TO 2026-09-12 00-14-55.json",
+      "rawSha256": "062df750514715ecc57ff6e5c16c4c36fc4d8ed3020620654a505b3eeffc9ea6",
+      "rawRows": 57963,
+      "rawFirstEpoch": 1788839600,
+      "rawLastEpoch": 1789159495,
+      "timeframeSeconds": 30,
+      "direction": "both",
+      "bridgeOutput": true,
+      "wallSeconds": 20.682,
+      "peakWorkingSetBytes": 96948224,
+      "returnCode": 0,
+      "stderrPath": "case-02.stderr.log",
+      "timings": {
+        "phasesMs": {
+          "Validate request": 14.64,
+          "Load Reaction engine": 9.17,
+          "Load Blue Line engine": 3.49,
+          "Load A engine": 4.63,
+          "Load S engine": 4.11,
+          "Load E engine": 39.27,
+          "Load Lifecycle engine": 22.08,
+          "Read source file": 3.14,
+          "Parse source JSON": 41.45,
+          "Use full RAW calculation context": 0.02,
+          "Normalize raw candles": 144.25,
+          "Build lower candle views": 329.93,
+          "Build timeframe candle views": 53.72,
+          "Reaction geometry • Bullish": 73.47,
+          "Reaction geometry • Bearish": 123.31,
+          "Internal Reaction ownership": 290.76,
+          "Blue Line • Bullish": 11.51,
+          "A • Bullish": 158.41,
+          "S • Bullish": 67.86,
+          "E • Bullish • initial": 1314.58,
+          "E • Bullish • S reconciliation": 820.09,
+          "E • Bullish • final audit": 615.19,
+          "E • Bullish • shared Order-stop reconciliation": 607.05,
+          "Blue Line • Bearish": 20.17,
+          "A • Bearish": 290.2,
+          "S • Bearish": 162.76,
+          "E • Bearish • initial": 4604.74,
+          "E • Bearish • S reconciliation": 2742.22,
+          "E • Bearish • final audit": 2038.19,
+          "E • Bearish • shared Order-stop reconciliation": 2065.17,
+          "Reconcile S visibility - Bullish": 1.31,
+          "StopAll - Bullish": 1.97,
+          "Order_B reset legs - Bullish": 40.34,
+          "Apply visibility filters - Bullish": 164.36,
+          "Serialize Reaction - Bullish": 113.98,
+          "Serialize output - Bullish": 103.49,
+          "Reconcile S visibility - Bearish": 2.03,
+          "StopAll - Bearish": 4.18,
+          "Order_B reset legs - Bearish": 54.78,
+          "Apply visibility filters - Bearish": 158.27,
+          "Serialize Reaction - Bearish": 98.0,
+          "Serialize output - Bearish": 113.12
+        },
+        "bridgeTotalMs": 19962.31
+      },
+      "normalizedSha256": "084e846ecd588a2d5ebb0b2eeb859fa85bf41a20f408d01af2bcca41a5a9765c",
+      "counts": {
+        "bullish": {
+          "reactions": 848,
+          "resets": 408,
+          "blueLines": 363,
+          "aZones": 75,
+          "sZones": 32,
+          "eZones": 31,
+          "stopAlls": 12,
+          "orderAudit": 126,
+          "orderBCausesByPostStop": {
+            "A": 3,
+            "E": 2,
+            "StopAll": 18
+          }
+        },
+        "bearish": {
+          "reactions": 823,
+          "resets": 417,
+          "blueLines": 332,
+          "aZones": 78,
+          "sZones": 38,
+          "eZones": 18,
+          "stopAlls": 26,
+          "orderAudit": 168,
+          "orderBCausesByPostStop": {
+            "S": 4,
+            "StopAll": 38,
+            "A": 2
+          }
+        }
+      },
+      "rawCauseValidation": {
+        "bullish": 23,
+        "bearish": 44
+      },
+      "normalizedPayloadPath": "case-02.json.gz",
+      "status": "PASS"
+    }
+  ]
+}
