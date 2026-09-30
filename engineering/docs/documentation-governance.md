@@ -11,7 +11,7 @@ scope:
   - documentation-placement
   - documentation-maintenance
 created_at: 2026-09-30T09:24:20+03:00
-last_modified_at: 2026-09-30T11:40:11+03:30
+last_modified_at: 2026-09-30T20:12:59+03:30
 ---
 
 # TradingBot Documentation Governance
@@ -113,7 +113,7 @@ One knowledge class should have one clear maintained owner. The current project 
 | [Release operations](../../scripts/git/README.md) and current release subsystem | Release mechanics | Documentation governance |
 | Historical audits and migrations | Their dated observations and provenance only | Current guidance merely because they are detailed or newer-looking |
 
-Existing files that mix Current guidance with historical audit bodies are not repaired in Phase 1. Later phases may separate those bodies while preserving unique evidence.
+If a maintained file mixes Current guidance with historical audit material, separate the responsibilities during the owning documentation-maintenance change while preserving unique evidence as Historical material.
 
 ## 6. One fact → one maintained owner
 
@@ -249,7 +249,7 @@ Do not archive merely because a document is old. A durable maintained rule may r
 
 Prefer preserving unique engineering evidence over deleting it.
 
-Phase 1 defines these rules but does not move existing historical material.
+These rules define archiving policy but do not themselves authorize moving historical material; movement requires an explicitly scoped maintenance change that preserves unique evidence.
 
 ## 12. Conservative deletion policy
 
@@ -452,7 +452,7 @@ Release mechanics belong to the [current release subsystem](../../scripts/git/RE
 
 Documentation changes must follow the explicit publication authorization and phase boundary in the current task and root `AGENTS.md`.
 
-## 23. Phase-1 acceptance scenarios
+## 23. Governance acceptance scenarios
 
 | Scenario | Required governance result |
 | --- | --- |
@@ -470,23 +470,19 @@ Documentation changes must follow the explicit publication authorization and pha
 | L — New maintained file created | Record both `created_at` and `last_modified_at`. |
 | M — Historical file has newer timestamp | Timestamp recency does not override lifecycle or authority. |
 
-## 24. Phase boundary and deferred restructuring
+## 24. Governance scope boundary
 
-Phase 1 establishes governance only. It does not:
+This governance owner defines documentation policy only. It does not by itself authorize or perform:
 
-- move or rewrite old architecture/UI audit bodies;
-- rehome the engineering audit workflow;
-- move the single-root migration record;
-- rewrite Technical Architecture;
-- rewrite UI/UX Reference;
-- rewrite Testing documentation;
-- rewrite Algorithm Reference maintenance documentation;
-- rewrite Zero-Difference documentation;
-- substantially rewrite Local State or Repository Integrity;
-- create anti-drift automation;
-- execute the final documentation audit.
+- moving or rewriting historical architecture/UI audit bodies;
+- rehoming engineering workflow or migration evidence;
+- rewriting Technical Architecture or UI/UX Reference;
+- rewriting Testing or Algorithm Reference maintenance procedures;
+- rewriting Zero-Difference, Local State, or Repository Integrity owners;
+- changing Anti-Drift implementation;
+- executing a comprehensive final documentation audit.
 
-Those actions belong to later phases when explicitly requested.
+Those actions belong to their owning documents/subsystems and require explicitly scoped work under root `AGENTS.md`.
 
 ## 25. Final principle
 

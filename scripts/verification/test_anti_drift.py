@@ -1,5 +1,5 @@
 # created_at: 2026-09-30T16:20:59+03:30
-# last_modified_at: 2026-09-30T16:33:27+03:30
+# last_modified_at: 2026-09-30T20:16:20+03:30
 """Tests for the TradingBot read-only anti-drift verifier."""
 
 from __future__ import annotations
@@ -7,6 +7,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import posixpath
 import subprocess
 import sys
 import tempfile
@@ -22,6 +23,12 @@ SPEC.loader.exec_module(anti_drift)
 
 
 VALID_TS = "2026-09-30T15:08:41+03:30"
+ROADMAP_FILE_ANCHORS = {
+    ".editorconfig", ".gitattributes", ".gitignore", "AGENTS.md", "README.md",
+    "apps/chart/package.json", "apps/chart/package-lock.json",
+    "apps/chart/server/faraz-candle-api.js", "apps/chart/vite.config.js",
+    "scripts/launch.bat", "scripts/start.ps1",
+}
 
 
 def frontmatter(title: str = "Example", *, role: str = "reference", lifecycle: str = "maintained", owner: str = "example", timestamp: str = VALID_TS, extra: str = "") -> str:
@@ -59,6 +66,40 @@ class RepoFixture:
             + "[Governance](documentation-governance.md)\n\n"
             + "[Repository Integrity](verification/repository-integrity.md)\n",
         )
+        self.ensure_roadmap_anchors()
+        self.write(
+            anti_drift.TECHNICAL_ARCHITECTURE.as_posix(),
+            self.roadmap_document(),
+        )
+
+    def ensure_roadmap_anchors(self) -> None:
+        for anchor in anti_drift.ROADMAP_REQUIRED_ANCHORS:
+            path = self.root / anchor
+            if anchor in ROADMAP_FILE_ANCHORS:
+                if path.exists():
+                    continue
+                self.write(anchor, "# fixture\n")
+            else:
+                path.mkdir(parents=True, exist_ok=True)
+
+    def roadmap_document(self, *, omit: set[str] | None = None) -> str:
+        omit = omit or set()
+        source_parent = anti_drift.TECHNICAL_ARCHITECTURE.parent.as_posix()
+        rows = []
+        for anchor in anti_drift.ROADMAP_REQUIRED_ANCHORS:
+            if anchor in omit:
+                continue
+            target = posixpath.relpath(anchor, start=source_parent)
+            rows.append(f"| [`{anchor}`]({target}) | fixture-owner | fixture purpose |")
+        return (
+            frontmatter("Technical Architecture", owner="architecture")
+            + "# Technical Architecture\n\n"
+            + "## Current Project Path Roadmap\n\n"
+            + "| Current path | Owner / subsystem | Purpose and authority role |\n"
+            + "| --- | --- | --- |\n"
+            + "\n".join(rows)
+            + "\n"
+        )
 
     def write(self, relative: str, content: str) -> Path:
         path = self.root / relative
@@ -89,6 +130,49 @@ class AntiDriftTests(unittest.TestCase):
         repo.write("engineering/docs/example.md", frontmatter() + "# Example\n")
         report = anti_drift.verify_repository(repo.root)
         self.assertEqual([], report.by_severity("ERROR"))
+
+    def test_valid_project_path_roadmap_passes(self) -> None:
+        temp, repo = self.make_repo()
+        self.addCleanup(temp.cleanup)
+        codes = diagnostic_codes(anti_drift.verify_repository(repo.root))
+        self.assertFalse({code for code in codes if code.startswith("ROADMAP")})
+
+    def test_missing_project_path_roadmap_fails(self) -> None:
+        temp, repo = self.make_repo()
+        self.addCleanup(temp.cleanup)
+        repo.write(
+            anti_drift.TECHNICAL_ARCHITECTURE.as_posix(),
+            frontmatter("Technical Architecture", owner="architecture") + "# Technical Architecture\n",
+        )
+        self.assertIn("ROADMAP001", diagnostic_codes(anti_drift.verify_repository(repo.root)))
+
+    def test_required_project_path_anchor_omission_fails(self) -> None:
+        temp, repo = self.make_repo()
+        self.addCleanup(temp.cleanup)
+        repo.write(
+            anti_drift.TECHNICAL_ARCHITECTURE.as_posix(),
+            repo.roadmap_document(omit={"engine/tests"}),
+        )
+        self.assertIn("ROADMAP002", diagnostic_codes(anti_drift.verify_repository(repo.root)))
+
+    def test_missing_required_project_path_anchor_fails(self) -> None:
+        temp, repo = self.make_repo()
+        self.addCleanup(temp.cleanup)
+        (repo.root / "apps/chart/vite.config.js").unlink()
+        self.assertIn("ROADMAP003", diagnostic_codes(anti_drift.verify_repository(repo.root)))
+
+    def test_historical_roadmap_does_not_replace_current_roadmap(self) -> None:
+        temp, repo = self.make_repo()
+        self.addCleanup(temp.cleanup)
+        repo.write(
+            "engineering/archive/old-architecture.md",
+            "# Historical\n\n## Current Project Path Roadmap\n",
+        )
+        repo.write(
+            anti_drift.TECHNICAL_ARCHITECTURE.as_posix(),
+            frontmatter("Technical Architecture", owner="architecture") + "# Technical Architecture\n",
+        )
+        self.assertIn("ROADMAP001", diagnostic_codes(anti_drift.verify_repository(repo.root)))
 
     def test_missing_required_metadata_fails(self) -> None:
         temp, repo = self.make_repo()

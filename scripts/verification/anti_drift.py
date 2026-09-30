@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # created_at: 2026-09-30T16:20:59+03:30
-# last_modified_at: 2026-09-30T16:33:27+03:30
+# last_modified_at: 2026-09-30T20:16:20+03:30
 """Read-only structural/documentation anti-drift verifier for TradingBot."""
 
 from __future__ import annotations
@@ -24,6 +24,45 @@ TIMESTAMP_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$
 MARKDOWN_LINK_RE = re.compile(r"(?<!!)\[([^\]]+)\]\(([^)]+)\)")
 SEVERITY_ORDER = {"ERROR": 0, "WARNING": 1, "INFO": 2}
 EXTERNAL_SCHEMES = {"http", "https", "mailto", "tel", "data", "javascript"}
+TECHNICAL_ARCHITECTURE = PurePosixPath("engineering/docs/architecture/technical-architecture.md")
+ROADMAP_HEADING_RE = re.compile(
+    r"^\s{0,3}##\s+(?:\d+\.\s+)?Current Project Path Roadmap\s*#*\s*$",
+    re.IGNORECASE,
+)
+# Current major navigation anchors. These are not an exhaustive file inventory:
+# review this contract when a major project domain moves or changes ownership.
+ROADMAP_REQUIRED_ANCHORS = (
+    ".editorconfig",
+    ".gitattributes",
+    ".github/workflows",
+    ".gitignore",
+    "AGENTS.md",
+    "README.md",
+    "apps/chart",
+    "apps/chart/package.json",
+    "apps/chart/package-lock.json",
+    "apps/chart/scripts",
+    "apps/chart/server",
+    "apps/chart/server/faraz-candle-api.js",
+    "apps/chart/src",
+    "apps/chart/state",
+    "apps/chart/state/data/raw",
+    "apps/chart/tests",
+    "apps/chart/vite.config.js",
+    "engine",
+    "engine/algorithms",
+    "engine/bridge",
+    "engine/pipeline",
+    "engine/tests",
+    "engineering/archive",
+    "engineering/docs",
+    "engineering/verification",
+    "scripts",
+    "scripts/git",
+    "scripts/launch.bat",
+    "scripts/start.ps1",
+    "scripts/verification",
+)
 
 
 @dataclass(frozen=True)
@@ -567,6 +606,89 @@ def authority_link_checks(root: Path, resolver: CaseResolver, superseded: set[st
     return diagnostics
 
 
+def roadmap_checks(root: Path, resolver: CaseResolver) -> list[Diagnostic]:
+    """Verify the maintained architecture has a usable Current major-path roadmap."""
+    diagnostics: list[Diagnostic] = []
+    architecture = root / TECHNICAL_ARCHITECTURE
+    if not architecture.is_file():
+        return [Diagnostic(
+            "ROADMAP000", "ERROR", TECHNICAL_ARCHITECTURE.as_posix(), None,
+            "Maintained Technical Architecture is missing.",
+            "Restore the maintained architecture owner before verifying Current project-path coverage."
+        )]
+
+    text = read_text(architecture)
+    lines = text.splitlines()
+    start: int | None = None
+    for index, line in enumerate(lines):
+        if ROADMAP_HEADING_RE.match(line):
+            start = index
+            break
+    if start is None:
+        return [Diagnostic(
+            "ROADMAP001", "ERROR", TECHNICAL_ARCHITECTURE.as_posix(), None,
+            "Technical Architecture has no Current Project Path Roadmap section.",
+            "Add a Current roadmap that maps the live major project domains to their owners and purposes."
+        )]
+
+    end = len(lines)
+    for index in range(start + 1, len(lines)):
+        if re.match(r"^\s{0,3}##\s+", lines[index]):
+            end = index
+            break
+    section = "\n".join(lines[start:end])
+    section_line = start + 1
+
+    lowered = section.casefold()
+    if "owner" not in lowered or "purpose" not in lowered:
+        diagnostics.append(Diagnostic(
+            "ROADMAP005", "ERROR", TECHNICAL_ARCHITECTURE.as_posix(), section_line,
+            "Current Project Path Roadmap does not expose both owner and purpose information.",
+            "Keep the roadmap navigational: each major path needs a clear owner/subsystem and purpose/responsibility."
+        ))
+
+    linked_targets: set[str] = set()
+    # Roadmap labels intentionally use inline-code path formatting. Parse the
+    # Markdown targets directly here so label formatting cannot hide a valid path.
+    for line in section.splitlines():
+        for match in MARKDOWN_LINK_RE.finditer(line):
+            raw_target = match.group(2).strip()
+            if raw_target.startswith("<") and raw_target.endswith(">"):
+                raw_target = raw_target[1:-1].strip()
+            target, _fragment = normalize_relative_target(TECHNICAL_ARCHITECTURE, raw_target)
+            if target is None or (target.parts and target.parts[0] == ".."):
+                continue
+            target_text = target.as_posix().rstrip("/")
+            if target_text.startswith("engineering/archive/repository-graphify"):
+                continue
+            linked_targets.add(target_text)
+
+    for anchor in ROADMAP_REQUIRED_ANCHORS:
+        expected = PurePosixPath(anchor)
+        status, _resolved, actual = resolver.resolve(expected)
+        if status == "missing":
+            diagnostics.append(Diagnostic(
+                "ROADMAP003", "ERROR", TECHNICAL_ARCHITECTURE.as_posix(), section_line,
+                f"Required Current roadmap anchor is absent from the live repository: {anchor}",
+                "Reconcile the live structure, Technical Architecture, and roadmap-verifier contract when a major domain moves or is removed."
+            ))
+            continue
+        if status == "case-mismatch":
+            diagnostics.append(Diagnostic(
+                "ROADMAP004", "ERROR", TECHNICAL_ARCHITECTURE.as_posix(), section_line,
+                f"Required Current roadmap anchor has different repository casing: {anchor}",
+                f"Use exact Current repository casing; resolved path begins as '{actual}'."
+            ))
+            continue
+        if expected.as_posix() not in linked_targets:
+            diagnostics.append(Diagnostic(
+                "ROADMAP002", "ERROR", TECHNICAL_ARCHITECTURE.as_posix(), section_line,
+                f"Current Project Path Roadmap does not link required major-domain anchor: {anchor}",
+                "Add the live path to the roadmap with its owner/subsystem and purpose; do not replace navigation with a fixed file-count snapshot."
+            ))
+    return diagnostics
+
+
 def mutable_snapshot_checks(root: Path, path: Path, text: str, meta: FrontMatter | None) -> list[Diagnostic]:
     if not meta or meta.values.get("lifecycle") != "maintained":
         return []
@@ -742,6 +864,7 @@ def verify_repository(root: Path, mode: str = "full") -> Report:
     diagnostics.extend(navigation_checks(root, meta_by_path, resolver))
     diagnostics.extend(ownership_checks(root, meta_by_path, resolver))
     diagnostics.extend(authority_link_checks(root, resolver, superseded))
+    diagnostics.extend(roadmap_checks(root, resolver))
     diagnostics.extend(validate_links(root, root / "AGENTS.md", read_text(root / "AGENTS.md"), resolver, anchor_cache))
     root_readme = root / "README.md"
     if root_readme.is_file():

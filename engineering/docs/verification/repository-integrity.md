@@ -9,7 +9,7 @@ scope:
   - generated-content
   - archive
   - verification
-last_modified_at: 2026-09-30T16:33:27+03:30
+last_modified_at: 2026-09-30T20:12:59+03:30
 ---
 
 # TradingBot Repository Integrity
@@ -421,11 +421,12 @@ The verifier implements machine-checkable portions of the current governance/int
 - superseded-path use in Current navigation where derivable from metadata;
 - conservative mutable-snapshot drift detection in maintained general engineering prose;
 - required repository-governance paths;
-- tracked case-only collisions when Git is available.
+- tracked case-only collisions when Git is available;
+- presence and required Current major-domain coverage of the Technical Architecture Project Path Roadmap, with live path/casing validation for the roadmap anchors.
 
 Historical/archive evidence, Graphify output, Algorithm References, release manifests/evidence, lockfiles, and generated verification evidence are not subjected to general maintained-document snapshot heuristics. The gate does not encode current Engine file counts, test counts, repository totals, Source hashes, Reference versions, package versions, or Git HEAD as durable truth.
 
-The gate intentionally does **not** decide trading semantics, validate Reaction/Blue/A/S/E/Order correctness, read secret contents, scan RAW payload contents, replace the Testing owner, replace Algorithm Reference Maintenance, or perform the broader Phase 8 semantic/manual documentation audit.
+The gate intentionally does **not** decide trading semantics, validate Reaction/Blue/A/S/E/Order correctness, read secret contents, scan RAW payload contents, replace the Testing owner, replace Algorithm Reference Maintenance, or replace the broader comprehensive semantic/manual documentation audit.
 
 ### Tests and CI
 
@@ -447,7 +448,7 @@ When adding a rule:
 6. keep diagnostics stable/deterministic;
 7. update this owner documentation when the verification contract changes.
 
-Governance remains authority; the verifier is an implementation of selected objective rules. Phase 8 uses this automated gate as one input and remains responsible for the final comprehensive semantic/manual documentation audit.
+Governance remains authority; the verifier is an implementation of selected objective rules. A comprehensive final documentation audit uses this automated gate as one input and remains responsible for semantic/manual requirements that are not safely machine-verifiable.
 
 ## 23. Review triggers
 
