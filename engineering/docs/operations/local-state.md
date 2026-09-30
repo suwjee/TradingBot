@@ -1,28 +1,141 @@
-# Project-local workstation state
+---
+title: TradingBot Local Operational State
+document_role: reference
+lifecycle: maintained
+owner: local-state
+created_at: 2026-09-30T15:00:00+03:30
+last_modified_at: 2026-09-30T15:00:00+03:30
+---
 
-All TradingBot-owned files stay inside the existing project root. The chart and FARAZ servers share `apps/chart/server/local-state-paths.js`; the Windows launcher invokes this same resolver after validating Node.js.
+# TradingBot Local Operational State
 
-`TRADINGBOT_LOCAL_STATE_ROOT` defaults to `<project>/apps/chart/state`. Absolute and project-relative overrides are accepted only within this dedicated subtree. The resolver rejects external paths, source paths and junctions escaping the subtree.
+## Purpose
 
-```powershell
-# Default state: no override is needed.
-.\scripts\launch.bat
+This document defines ownership and lifecycle rules for local operational state.
+It answers:
 
-# Optional profile inside the same project.
-$env:TRADINGBOT_LOCAL_STATE_ROOT = 'apps/chart/state/profile'
-.\scripts\launch.bat
-```
+> What local data exists during development/runtime, who owns it, how persistent is it, and how can it be handled safely?
 
-| Path below the state root | Owner and contents |
-| --- | --- |
-| `data/raw/` | Market candle arrays and metadata sidecars, preserving resource IDs and filenames |
-| `cache/drawings/` | Persistent user drawings |
-| `cache/indicator-calculations/`, `cache/indicator-templates/` | Serialized calculations and templates |
-| `secret/` | FARAZ authentication; Git-ignored and never included in reports or delivery packages |
-| `tmp/faraz-candle-exports/` | Temporary acquisition and export files on the same volume as RAW |
+This document does not define UI behavior, trading semantics, release policy, or repository integrity rules.
 
-Vite denies direct static access to state, local tests and engineering archives/verification through both normal paths and `/@fs/`. State changes are excluded from the development watcher. Existing `/api` persistence and RAW response contracts remain active.
+## State classification
 
-The 2026-09-29 migration moved the former sibling directory's data, caches and authentication into state without rewriting their contents. Historical archives moved to `engineering/archive/`; previous cleanup proof moved to `engineering/verification/history/cleanup-2026-09-29/`. The former `TradingBot-Local` directory was removed only after becoming empty. Root `scripts/` stays as a compatibility boundary for existing Windows and VMware startup commands.
+Local state must be classified by ownership and lifecycle, not by filename.
 
-RAW inventory APIs may regenerate metadata sidecars during ordinary use. That runtime behavior is distinct from the byte-preserving file migration. User-requested export destinations remain user-selected external deliverables, rather than the application's persistent state location.
+Common categories discovered from the current project may include:
+
+- runtime state;
+- user workspace state;
+- session/authentication state;
+- cache;
+- temporary files;
+- generated local output;
+- logs;
+- RAW market evidence;
+- verification artifacts.
+
+New categories must be evaluated from the owning component.
+
+## Ownership model
+
+Every local state item must have an identified:
+
+- owner component;
+- lifecycle;
+- persistence level;
+- rebuildability status;
+- cleanup safety rule.
+
+Examples:
+
+- Chart workspace state owns user layout, drawing and preference persistence.
+- FARAZ integration owns authentication/session state handling.
+- Vite/runtime tooling owns development runtime artifacts.
+- Engine temporary calculations own short-lived calculation data.
+
+Memory state and persistent local state are different concepts.
+
+## Secrets
+
+Secrets must never be stored in:
+
+- Git;
+- documentation;
+- tests;
+- fixtures;
+- logs;
+- reports.
+
+Never expose passwords, tokens, cookies, API keys or credentials. Document handling rules only.
+
+## FARAZ and authentication state
+
+Authentication/session data is operational state owned by the integration layer.
+
+Documentation may describe:
+
+- ownership;
+- persistence model;
+- lifecycle;
+- invalidation/recovery rules.
+
+Actual secret values must never be documented.
+
+## Chart workspace state
+
+Workspace persistence belongs to the Chart/UI state owner.
+
+Examples of owned concepts:
+
+- drawings;
+- layouts;
+- preferences;
+- user workspace persistence.
+
+This document does not duplicate UI/UX interaction contracts.
+
+## RAW data policy
+
+RAW market data is immutable evidence.
+
+Rules:
+
+- never modify RAW to make tests pass;
+- never automatically delete RAW;
+- do not treat RAW as cache;
+- discover current RAW locations dynamically when required.
+
+A RAW filename inventory is not maintained here because repository structure evolves.
+
+## Cache policy
+
+Caches are classified individually.
+
+Before deletion determine:
+
+- owner;
+- rebuildability;
+- invalidation requirements;
+- evidence value;
+- tracking state.
+
+A cache name does not prove that deletion is safe.
+
+## Cleanup policy
+
+Before deleting local state:
+
+1. identify owner;
+2. determine lifecycle;
+3. determine rebuildability;
+4. determine evidence value;
+5. inspect Git tracking status;
+6. confirm no recovery or audit purpose exists.
+
+No automatic deletion rule may be based only on filename, extension, or directory name.
+
+## Relationship with repository integrity
+
+Local state explains operational ownership.
+Repository Integrity explains classification, tracking and protection boundaries.
+They must remain separate responsibilities.
