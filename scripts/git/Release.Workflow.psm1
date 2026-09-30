@@ -62,6 +62,25 @@ function Invoke-ReleaseGit {
   }
 }
 
+function Invoke-ReleaseGh {
+  param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] [string[]] $Arguments)
+  $previousErrorActionPreference = $ErrorActionPreference
+  Push-Location $Root
+  try {
+    $ErrorActionPreference = 'Continue'
+    $records = @(& gh @Arguments 2>&1)
+    $exitCode = $LASTEXITCODE
+  } finally {
+    $ErrorActionPreference = $previousErrorActionPreference
+    Pop-Location
+  }
+  return [pscustomobject]@{
+    ExitCode = $exitCode
+    StdOut = (@($records | Where-Object { $_ -isnot [System.Management.Automation.ErrorRecord] } | ForEach-Object { $_.ToString() }) -join [Environment]::NewLine)
+    StdErr = (@($records | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] } | ForEach-Object { $_.ToString() }) -join [Environment]::NewLine)
+  }
+}
+
 function ConvertTo-ReleasePath {
   param([Parameter(Mandatory)] [string] $Path)
   $normalized = $Path.Replace('\', '/')
@@ -72,7 +91,7 @@ function ConvertTo-ReleasePath {
 function Test-ReleasePathPattern {
   param([Parameter(Mandatory)] [string] $Path, [Parameter(Mandatory)] [string[]] $Patterns)
   foreach ($pattern in $Patterns) {
-    if ($Path -like $pattern) { return $true }
+    if ($Path -like $pattern -or ($pattern.StartsWith('**/', [StringComparison]::Ordinal) -and $Path -like $pattern.Substring(3))) { return $true }
   }
   return $false
 }
@@ -96,7 +115,10 @@ function Import-ReleasePolicy {
   $projectPolicy = Join-Path $Root 'scripts\git\production-policy.psd1'
   $policyPath = if (Test-Path -LiteralPath $projectPolicy) { $projectPolicy } else { Join-Path $PSScriptRoot 'production-policy.psd1' }
   Assert-ReleaseCondition (Test-Path -LiteralPath $policyPath -PathType Leaf) "Release policy was not found: $policyPath"
-  return Import-PowerShellDataFile -LiteralPath $policyPath
+  if (Get-Command Import-PowerShellDataFile -ErrorAction SilentlyContinue) { return Import-PowerShellDataFile -LiteralPath $policyPath }
+  $policy = $null
+  Import-LocalizedData -BaseDirectory (Split-Path -Parent $policyPath) -FileName (Split-Path -Leaf $policyPath) -BindingVariable policy
+  return $policy
 }
 
 function Get-MainPolicyReport {
@@ -110,10 +132,12 @@ function Get-MainPolicyReport {
   $commands = @(
     @('ls-files'),
     @('ls-files', '--others', '--exclude-standard'),
-    @('ls-files', '--others', '--ignored', '--exclude-standard')
+    @('ls-files', '--others', '--ignored', '--exclude-standard'),
+    @('diff', '--cached', '--name-only', '--diff-filter=D')
   )
   $allPaths = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
   $ignoredPaths = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+  $stagedDeletions = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
   foreach ($command in $commands) {
     $result = Invoke-ReleaseGit -Root $Root -Arguments $command
     if ($result.ExitCode -ne 0) { throw "Git inventory failed: $($result.StdErr)" }
@@ -122,6 +146,7 @@ function Get-MainPolicyReport {
       $path = ConvertTo-ReleasePath $line
       [void] $allPaths.Add($path)
       if ($command -contains '--ignored') { [void] $ignoredPaths.Add($path) }
+      if ($command -contains '--diff-filter=D') { [void] $stagedDeletions.Add($path) }
     }
   }
 
@@ -136,7 +161,7 @@ function Get-MainPolicyReport {
       continue
     }
     $eligible.Add($path)
-    if ($ignoredPaths.Contains($path) -and (Test-ReleasePathPattern -Path $path -Patterns $policy.Main.MeaningfulRoots)) {
+    if ($ignoredPaths.Contains($path) -and (Test-ReleasePathWithinRoots -Path $path -Roots $policy.Main.MeaningfulRoots)) {
       $drift.Add("Meaningful path is ignored: $path")
     }
   }
@@ -145,6 +170,7 @@ function Get-MainPolicyReport {
     Eligible = @($eligible)
     Excluded = @($excluded)
     Ignored = @($ignoredPaths | Sort-Object)
+    StagedDeletions = @($stagedDeletions | Sort-Object)
     Drift = @($drift)
     Errors = @($drift)
   }
@@ -172,7 +198,23 @@ function Test-SensitiveCandidate {
       $filePath = Join-Path $Root $path
       if (-not (Test-Path -LiteralPath $filePath -PathType Leaf)) { continue }
       if ((Get-Item -LiteralPath $filePath).Length -gt $policy.Sensitive.MaximumScanBytes) {
-        $skippedLargeFiles.Add($path)
+        $reader = [IO.StreamReader]::new($filePath)
+        try {
+          $buffer = [char[]]::new(65536)
+          $overlap = ''
+          $detected = $false
+          while (($read = $reader.Read($buffer, 0, $buffer.Length)) -gt 0) {
+            $chunk = $overlap + [string]::new($buffer, 0, $read)
+            foreach ($pattern in $policy.Sensitive.ContentPatterns) {
+              if ($chunk -match $pattern) { $detected = $true; break }
+            }
+            if ($detected) { break }
+            $overlap = $chunk.Substring([Math]::Max(0, $chunk.Length - 256))
+          }
+          if ($detected) { $errors.Add("Sensitive content marker detected: $path") }
+        } finally {
+          $reader.Dispose()
+        }
         continue
       }
       $content = [IO.File]::ReadAllText($filePath)
@@ -414,6 +456,9 @@ function Test-ReleasePreflight {
   if ($remoteTag.ExitCode -eq 0) { $errors.Add("Remote release tag already exists: $Tag") }
 
   $localProductionSha = Get-ReleaseRefOid -Root $Root -Ref 'refs/heads/production'
+  $worktrees = Invoke-ReleaseGit -Root $Root -Arguments @('worktree', 'list', '--porcelain')
+  if ($worktrees.ExitCode -ne 0) { $errors.Add('Git worktree inventory failed.') }
+  elseif ($worktrees.StdOut -match '(?m)^branch refs/heads/production\s*$') { $errors.Add('Local production branch is checked out in another worktree.') }
   if ($null -ne $localProductionSha) {
     if ($null -eq $productionBaseSha -or $localProductionSha -ne $productionBaseSha) {
       $errors.Add('Local production branch diverges from origin/production; resolve it before release.')
@@ -434,12 +479,24 @@ function Test-ReleasePreflight {
       $errors.Add('GitHub CLI is required but unavailable.')
       $github = 'UNAVAILABLE'
     } else {
-      $auth = & gh auth status 2>&1
-      if ($LASTEXITCODE -ne 0) { $errors.Add('GitHub CLI authentication verification failed.'); $github = 'AUTH_FAILED' }
+      $auth = Invoke-ReleaseGh -Root $Root -Arguments @('auth', 'status')
+      if ($auth.ExitCode -ne 0) { $errors.Add('GitHub CLI authentication verification failed.'); $github = 'AUTH_FAILED' }
       else {
-        $repo = & gh repo view --json nameWithOwner 2>&1
-        if ($LASTEXITCODE -ne 0) { $errors.Add('GitHub repository access verification failed.'); $github = 'REPOSITORY_FAILED' }
-        else { $github = 'PASS' }
+        $repo = Invoke-ReleaseGh -Root $Root -Arguments @('repo', 'view', '--json', 'nameWithOwner')
+        if ($repo.ExitCode -ne 0) { $errors.Add('GitHub repository access verification failed.'); $github = 'REPOSITORY_FAILED' }
+        else {
+          $originIdentity = [regex]::Match($remoteUrl.StdOut.Trim(), '(?i)github\.com[:/](?<owner>[^/]+)/(?<repository>[^/]+?)(?:\.git)?/?$')
+          $expectedRepository = if ($originIdentity.Success) { "$($originIdentity.Groups['owner'].Value)/$($originIdentity.Groups['repository'].Value)" } else { '' }
+          $actualRepository = try { ($repo.StdOut | ConvertFrom-Json).nameWithOwner } catch { '' }
+          if (-not [string]::Equals($expectedRepository, $actualRepository, [StringComparison]::OrdinalIgnoreCase)) {
+            $errors.Add('GitHub CLI repository does not match origin.'); $github = 'REPOSITORY_MISMATCH'
+          } else {
+            $existingRelease = Invoke-ReleaseGh -Root $Root -Arguments @('release', 'view', $Tag, '--json', 'tagName')
+            if ($existingRelease.ExitCode -eq 0) { $errors.Add("GitHub Release already exists: $Tag"); $github = 'RELEASE_EXISTS' }
+            elseif (($existingRelease.StdErr + $existingRelease.StdOut) -notmatch '(?i)release not found') { $errors.Add('GitHub Release uniqueness could not be verified.'); $github = 'RELEASE_CHECK_FAILED' }
+            else { $github = 'PASS' }
+          }
+        }
       }
     }
   }
@@ -490,7 +547,7 @@ function New-ProductionSnapshot {
   try {
     $sourceCheck = Invoke-ReleaseGit -Root $Root -Arguments @('cat-file', '-e', "$SourceMainSha^{commit}")
     Assert-ReleaseCondition ($sourceCheck.ExitCode -eq 0) "Source main commit is unavailable: $SourceMainSha"
-    $fetch = Invoke-ReleaseGit -Root $Root -Arguments @('fetch', '--quiet', 'origin', "+refs/heads/production:$($context.TemporaryProductionRef)")
+    $fetch = Invoke-ReleaseGit -Root $Root -Arguments @('fetch', '--no-tags', '--quiet', 'origin', "+refs/heads/production:$($context.TemporaryProductionRef)")
     Assert-ReleaseCondition ($fetch.ExitCode -eq 0) 'Could not fetch origin/production into the temporary release ref.'
     $fetchedProductionSha = Get-ReleaseRefOid -Root $Root -Ref $context.TemporaryProductionRef
     Assert-ReleaseCondition ($null -ne $fetchedProductionSha) 'Temporary fetched production ref is unavailable.'
@@ -553,6 +610,32 @@ function New-ProductionSnapshot {
   }
 }
 
+function Invoke-ReleaseExecutable {
+  param(
+    [Parameter(Mandatory)] [string] $FilePath,
+    [Parameter(Mandatory)] [string[]] $Arguments,
+    [Parameter(Mandatory)] [string] $WorkingDirectory
+  )
+  $quotedArguments = @($Arguments | ForEach-Object {
+    if ($_ -match '[\s"]') { '"' + $_.Replace('"', '\"') + '"' } else { $_ }
+  }) -join ' '
+  $startInfo = New-Object System.Diagnostics.ProcessStartInfo
+  $startInfo.FileName = $FilePath
+  $startInfo.Arguments = $quotedArguments
+  $startInfo.WorkingDirectory = $WorkingDirectory
+  $startInfo.UseShellExecute = $false
+  $startInfo.CreateNoWindow = $true
+  $startInfo.RedirectStandardOutput = $true
+  $startInfo.RedirectStandardError = $true
+  $process = New-Object System.Diagnostics.Process
+  $process.StartInfo = $startInfo
+  [void] $process.Start()
+  $stdout = $process.StandardOutput.ReadToEnd()
+  $stderr = $process.StandardError.ReadToEnd()
+  $process.WaitForExit()
+  return [pscustomobject]@{ ExitCode = $process.ExitCode; StdOut = $stdout; StdErr = $stderr }
+}
+
 function Test-ProductionSnapshot {
   [CmdletBinding()]
   param([Parameter(Mandatory)] $Snapshot, [switch] $RunRuntimeValidation)
@@ -585,7 +668,7 @@ function Test-ProductionSnapshot {
   if ($null -eq $node) { $checks.Add([pscustomobject]@{ Name = 'node-check'; Status = 'NOT_TESTED_DEPENDENCY_UNAVAILABLE'; Detail = 'node unavailable' }) }
   else {
     $nodeFailures = 0
-    foreach ($path in @($treePaths | Where-Object { $_ -match '\.(js|mjs)$' })) { & $node.Source --check (Join-Path $Snapshot.WorktreePath $path); if ($LASTEXITCODE -ne 0) { $nodeFailures++ } }
+    foreach ($path in @($treePaths | Where-Object { $_ -match '\.(js|mjs)$' })) { $nodeCheck = Invoke-ReleaseExecutable -FilePath $node.Source -Arguments @('--check', (Join-Path $Snapshot.WorktreePath $path)) -WorkingDirectory $Snapshot.WorktreePath; if ($nodeCheck.ExitCode -ne 0) { $nodeFailures++ } }
     if ($nodeFailures) { $errors.Add('Node syntax validation failed.'); $checks.Add([pscustomobject]@{ Name = 'node-check'; Status = 'FAIL'; Detail = "$nodeFailures selected files" }) }
     else { $checks.Add([pscustomobject]@{ Name = 'node-check'; Status = 'PASS'; Detail = 'selected JavaScript files' }) }
   }
@@ -594,28 +677,38 @@ function Test-ProductionSnapshot {
   if ($null -eq $python) { $checks.Add([pscustomobject]@{ Name = 'python-ast'; Status = 'NOT_TESTED_DEPENDENCY_UNAVAILABLE'; Detail = 'python unavailable' }) }
   else {
     $pythonFailures = 0
-    $astCode = 'import ast,pathlib,sys; ast.parse(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))'
-    foreach ($path in @($treePaths | Where-Object { $_ -like '*.py' })) { & $python.Source -B -c $astCode (Join-Path $Snapshot.WorktreePath $path); if ($LASTEXITCODE -ne 0) { $pythonFailures++ } }
+    $astCode = 'import ast,pathlib,sys; ast.parse(pathlib.Path(sys.argv[1]).read_text())'
+    foreach ($path in @($treePaths | Where-Object { $_ -like '*.py' })) { $pythonCheck = Invoke-ReleaseExecutable -FilePath $python.Source -Arguments @('-B', '-c', $astCode, (Join-Path $Snapshot.WorktreePath $path)) -WorkingDirectory $Snapshot.WorktreePath; if ($pythonCheck.ExitCode -ne 0) { $pythonFailures++ } }
     if ($pythonFailures) { $errors.Add('Python AST validation failed.'); $checks.Add([pscustomobject]@{ Name = 'python-ast'; Status = 'FAIL'; Detail = "$pythonFailures selected files" }) }
     else { $checks.Add([pscustomobject]@{ Name = 'python-ast'; Status = 'PASS'; Detail = 'selected Python files' }) }
-    & $python.Source -B (Join-Path $Snapshot.WorktreePath 'engine/bridge/trading_pipeline.py') --help
-    if ($LASTEXITCODE -ne 0) { $errors.Add('Bridge --help validation failed.'); $checks.Add([pscustomobject]@{ Name = 'bridge-help'; Status = 'FAIL'; Detail = 'bridge command failed' }) }
+    $bridgeHelp = Invoke-ReleaseExecutable -FilePath $python.Source -Arguments @('-B', (Join-Path $Snapshot.WorktreePath 'engine/bridge/trading_pipeline.py'), '--help') -WorkingDirectory $Snapshot.WorktreePath
+    if ($bridgeHelp.ExitCode -ne 0) { $errors.Add('Bridge --help validation failed.'); $checks.Add([pscustomobject]@{ Name = 'bridge-help'; Status = 'FAIL'; Detail = 'bridge command failed' }) }
     else { $checks.Add([pscustomobject]@{ Name = 'bridge-help'; Status = 'PASS'; Detail = 'bridge command' }) }
   }
 
   $npm = Get-Command npm.cmd -ErrorAction SilentlyContinue
   if ($null -eq $npm) { $checks.Add([pscustomobject]@{ Name = 'npm-ci-build'; Status = 'NOT_TESTED_DEPENDENCY_UNAVAILABLE'; Detail = 'npm.cmd unavailable' }) }
   else {
-    Push-Location $Snapshot.WorktreePath
+    Push-Location (Join-Path $Snapshot.WorktreePath 'apps\chart')
     try {
-      & $npm.Source ci
-      $ciExit = $LASTEXITCODE
-      if ($ciExit -eq 0) { & $npm.Source run build; $buildExit = $LASTEXITCODE } else { $buildExit = -1 }
+      $npmCi = Invoke-ReleaseExecutable -FilePath $npm.Source -Arguments @('ci') -WorkingDirectory (Get-Location).Path
+      $ciExit = $npmCi.ExitCode
+      if ($ciExit -eq 0) { $npmBuild = Invoke-ReleaseExecutable -FilePath $npm.Source -Arguments @('run', 'build') -WorkingDirectory (Get-Location).Path; $buildExit = $npmBuild.ExitCode } else { $buildExit = -1 }
     } finally { Pop-Location }
     if ($ciExit -ne 0 -or $buildExit -ne 0) { $errors.Add('npm ci or npm run build validation failed.'); $checks.Add([pscustomobject]@{ Name = 'npm-ci-build'; Status = 'FAIL'; Detail = "ci=$ciExit build=$buildExit" }) }
     else { $checks.Add([pscustomobject]@{ Name = 'npm-ci-build'; Status = 'PASS'; Detail = 'lockfile install and build' }) }
   }
   return [pscustomobject]@{ Errors = @($errors); Checks = @($checks) }
+}
+
+function Assert-ReleaseValidationComplete {
+  [CmdletBinding()]
+  param([Parameter(Mandatory)] $Validation)
+  Assert-ReleaseCondition ($Validation.Errors.Count -eq 0) ($Validation.Errors -join '; ')
+  foreach ($name in @('snapshot-tree', 'state-exclusion', 'sensitive-content', 'powershell-parse', 'node-check', 'python-ast', 'bridge-help', 'npm-ci-build')) {
+    $matching = @($Validation.Checks | Where-Object { $_.Name -eq $name })
+    Assert-ReleaseCondition ($matching.Count -eq 1 -and $matching[0].Status -eq 'PASS') "Required release validation did not pass: $name"
+  }
 }
 
 function Remove-TemporaryReleaseContext {
@@ -669,7 +762,8 @@ function Invoke-PublicationGit {
 function Get-RemoteReleaseRefOid {
   param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] [string] $Ref, [scriptblock] $CommandAdapter)
   $result = Invoke-PublicationGit -Root $Root -Arguments @('ls-remote', 'origin', $Ref) -CommandAdapter $CommandAdapter
-  if ($result.ExitCode -ne 0 -or [string]::IsNullOrWhiteSpace($result.StdOut)) { return $null }
+  if ($result.ExitCode -ne 0) { throw "Remote ref state is indeterminate for ${Ref}: ls-remote failed." }
+  if ([string]::IsNullOrWhiteSpace($result.StdOut)) { return $null }
   return ($result.StdOut -split '\s+' | Select-Object -First 1).Trim()
 }
 
@@ -707,7 +801,9 @@ function New-ReleaseTag {
 function Finalize-ProductionBranch {
   [CmdletBinding()]
   param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] $Snapshot)
-  $refresh = Invoke-ReleaseGit -Root $Root -Arguments @('fetch', '--quiet', 'origin', '+refs/heads/production:refs/remotes/origin/production')
+  $worktrees = Invoke-ReleaseGit -Root $Root -Arguments @('worktree', 'list', '--porcelain')
+  Assert-ReleaseCondition ($worktrees.ExitCode -eq 0 -and $worktrees.StdOut -notmatch '(?m)^branch refs/heads/production\s*$') 'Local production branch is checked out in another worktree.'
+  $refresh = Invoke-ReleaseGit -Root $Root -Arguments @('fetch', '--no-tags', '--quiet', 'origin', '+refs/heads/production:refs/remotes/origin/production')
   Assert-ReleaseCondition ($refresh.ExitCode -eq 0) 'Could not refresh origin/production before local branch promotion.'
   $remoteBase = Get-ReleaseRefOid -Root $Root -Ref 'refs/remotes/origin/production'
   Assert-ReleaseCondition ($remoteBase -eq $Snapshot.ProductionBaseSha) 'origin/production changed during local validation; refusing to advance production.'
@@ -742,7 +838,7 @@ function New-MainReleaseSource {
   Assert-ReleaseCondition ($sensitive.Errors.Count -eq 0) ($sensitive.Errors -join '; ')
   $head = Get-ReleaseRefOid -Root $Root -Ref 'HEAD'
   if (-not $DryRun) {
-    Add-ReleasePathsToIndex -Root $Root -Paths $report.Eligible
+    Add-ReleasePathsToIndex -Root $Root -Paths @($report.Eligible | Where-Object { $report.StagedDeletions -notcontains $_ })
     $diff = Invoke-ReleaseGit -Root $Root -Arguments @('diff', '--cached', '--quiet')
     Assert-ReleaseCondition ($diff.ExitCode -in @(0, 1)) 'Could not compare the staged main release candidate.'
     $changed = ($diff.ExitCode -eq 1)
@@ -762,7 +858,7 @@ function New-MainReleaseSource {
     $previousIndex = $env:GIT_INDEX_FILE
     try {
       $env:GIT_INDEX_FILE = $context.IndexPath
-      Add-ReleasePathsToIndex -Root $Root -Paths $report.Eligible
+      Add-ReleasePathsToIndex -Root $Root -Paths @($report.Eligible | Where-Object { $report.StagedDeletions -notcontains $_ })
       $diff = Invoke-ReleaseGit -Root $Root -Arguments @('diff', '--cached', '--quiet')
       Assert-ReleaseCondition ($diff.ExitCode -in @(0, 1)) 'Could not compare the temporary main release candidate.'
       $changed = ($diff.ExitCode -eq 1)
@@ -797,7 +893,8 @@ function Publish-ReleaseRefs {
       Tag = Get-RemoteReleaseRefOid -Root $Root -Ref "refs/tags/$($PreparedRelease.Tag)" -CommandAdapter $CommandAdapter
     }
   }
-  $afterAtomic = & $readRemote
+  try { $afterAtomic = & $readRemote }
+  catch { return [pscustomobject]@{ Status='INDETERMINATE_REMOTE'; Method='atomic'; RemoteMain=$null; RemoteProduction=$null; RemoteTag=$null; AtomicError=$atomic.StdErr; Detail=$_.Exception.Message } }
   $desired = [pscustomobject]@{ Main = $PreparedRelease.MainSha; Production = $PreparedRelease.ProductionSha; Tag = $PreparedRelease.TagObjectSha }
   $isDesired = (Test-ReleaseOidEqual $afterAtomic.Main $desired.Main) -and (Test-ReleaseOidEqual $afterAtomic.Production $desired.Production) -and (Test-ReleaseOidEqual $afterAtomic.Tag $desired.Tag)
   if ($atomic.ExitCode -eq 0 -and $isDesired) { return [pscustomobject]@{ Status='ATOMIC_PASS'; Method='atomic'; RemoteMain=$afterAtomic.Main; RemoteProduction=$afterAtomic.Production; RemoteTag=$afterAtomic.Tag; AtomicError='' } }
@@ -805,26 +902,32 @@ function Publish-ReleaseRefs {
   $unsupported = $atomic.StdErr -match '(?i)(does not support.*atomic|atomic.*not supported|unsupported.*atomic)'
   if (-not $unchanged) { return [pscustomobject]@{ Status='PARTIAL_FAILURE'; Method='atomic'; RemoteMain=$afterAtomic.Main; RemoteProduction=$afterAtomic.Production; RemoteTag=$afterAtomic.Tag; AtomicError=$atomic.StdErr } }
   if (-not $unsupported) { return [pscustomobject]@{ Status='ATOMIC_FAILED'; Method='atomic'; RemoteMain=$afterAtomic.Main; RemoteProduction=$afterAtomic.Production; RemoteTag=$afterAtomic.Tag; AtomicError=$atomic.StdErr } }
+  $expected = @{ Main=$before.Main; Production=$before.Production; Tag=$before.Tag }
   foreach ($item in @([pscustomobject]@{ Name='Main'; Spec=$specs[0]; Desired=$desired.Main }, [pscustomobject]@{ Name='Production'; Spec=$specs[1]; Desired=$desired.Production }, [pscustomobject]@{ Name='Tag'; Spec=$specs[2]; Desired=$desired.Tag })) {
     $push = Invoke-PublicationGit -Root $Root -Arguments @('push', 'origin', $item.Spec) -CommandAdapter $CommandAdapter
-    $state = & $readRemote
-    $actual = $state.($item.Name)
-    if ($push.ExitCode -ne 0 -or -not (Test-ReleaseOidEqual $actual $item.Desired)) { return [pscustomobject]@{ Status='PARTIAL_FAILURE'; Method='fallback'; RemoteMain=$state.Main; RemoteProduction=$state.Production; RemoteTag=$state.Tag; AtomicError=$atomic.StdErr } }
+    try { $state = & $readRemote }
+    catch { return [pscustomobject]@{ Status='INDETERMINATE_REMOTE'; Method='fallback'; RemoteMain=$null; RemoteProduction=$null; RemoteTag=$null; AtomicError=$atomic.StdErr; Detail=$_.Exception.Message } }
+    $expected[$item.Name] = $item.Desired
+    $allExpected = (Test-ReleaseOidEqual $state.Main $expected.Main) -and (Test-ReleaseOidEqual $state.Production $expected.Production) -and (Test-ReleaseOidEqual $state.Tag $expected.Tag)
+    if ($push.ExitCode -ne 0 -or -not $allExpected) { return [pscustomobject]@{ Status='PARTIAL_FAILURE'; Method='fallback'; RemoteMain=$state.Main; RemoteProduction=$state.Production; RemoteTag=$state.Tag; AtomicError=$atomic.StdErr } }
   }
-  $final = & $readRemote
+  try { $final = & $readRemote }
+  catch { return [pscustomobject]@{ Status='INDETERMINATE_REMOTE'; Method='fallback'; RemoteMain=$null; RemoteProduction=$null; RemoteTag=$null; AtomicError=$atomic.StdErr; Detail=$_.Exception.Message } }
+  $finalMatches = (Test-ReleaseOidEqual $final.Main $desired.Main) -and (Test-ReleaseOidEqual $final.Production $desired.Production) -and (Test-ReleaseOidEqual $final.Tag $desired.Tag)
+  if (-not $finalMatches) { return [pscustomobject]@{ Status='PARTIAL_FAILURE'; Method='fallback'; RemoteMain=$final.Main; RemoteProduction=$final.Production; RemoteTag=$final.Tag; AtomicError=$atomic.StdErr } }
   return [pscustomobject]@{ Status='FALLBACK_PASS'; Method='fallback'; RemoteMain=$final.Main; RemoteProduction=$final.Production; RemoteTag=$final.Tag; AtomicError=$atomic.StdErr }
 }
 
 function New-GitHubRelease {
   [CmdletBinding()]
   param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] $PreparedRelease)
-  $existing = & gh release view $PreparedRelease.Tag 2>&1
-  Assert-ReleaseCondition ($LASTEXITCODE -ne 0) "GitHub Release already exists for tag: $($PreparedRelease.Tag)"
+  $existing = Invoke-ReleaseGh -Root $Root -Arguments @('release', 'view', $PreparedRelease.Tag, '--json', 'tagName')
+  Assert-ReleaseCondition ($existing.ExitCode -ne 0 -and ($existing.StdErr + $existing.StdOut) -match '(?i)release not found') "GitHub Release uniqueness could not be confirmed for tag: $($PreparedRelease.Tag)"
   $provenance = "TradingBot-Main-Source: $($PreparedRelease.MainSha)"
   $sourceNote = if ($PreparedRelease.ProductionChanged) { 'Production commit carries the provenance trailer.' } else { 'Production tree was unchanged; provenance is tag-sourced.' }
-  $created = & gh release create $PreparedRelease.Tag --target $PreparedRelease.ProductionSha --title $PreparedRelease.Tag --notes "$provenance`n$sourceNote" 2>&1
-  Assert-ReleaseCondition ($LASTEXITCODE -eq 0) 'Could not create GitHub Release after ref publication.'
-  return [pscustomobject]@{ Status='PASS'; Url=($created | Select-Object -Last 1).ToString().Trim() }
+  $created = Invoke-ReleaseGh -Root $Root -Arguments @('release', 'create', $PreparedRelease.Tag, '--target', $PreparedRelease.ProductionSha, '--title', $PreparedRelease.Tag, '--notes', "$provenance`n$sourceNote")
+  Assert-ReleaseCondition ($created.ExitCode -eq 0) 'Could not create GitHub Release after ref publication.'
+  return [pscustomobject]@{ Status='PASS'; Url=($created.StdOut -split "`r?`n" | Select-Object -Last 1).Trim() }
 }
 
 function Invoke-TradingBotRelease {
@@ -847,18 +950,29 @@ function Invoke-TradingBotRelease {
   try {
     $snapshot = New-ProductionSnapshot -Root $root -SourceMainSha $main.MainSha -ProductionBaseSha $preflight.ProductionBaseSha -FileSet $fileSet -CommitMessage $inputs.CommitMessage -DryRun:([bool] $Parameters.DryRun)
     $validation = Test-ProductionSnapshot -Snapshot $snapshot -RunRuntimeValidation
-    Assert-ReleaseCondition ($validation.Errors.Count -eq 0) ($validation.Errors -join '; ')
+    Assert-ReleaseValidationComplete -Validation $validation
     if ($Parameters.DryRun) {
-      $outcome = [pscustomobject]@{ Mode='DRY_RUN'; LocalMain=$main.MainSha; LocalProduction=$snapshot.ProductionSha; RemoteMain=$preflight.RemoteMainSha; RemoteProduction=$preflight.ProductionBaseSha; Tag=$inputs.ReleaseTag; GitHubRelease='NOT_CREATED'; TemporaryWorktree='CLEANUP_PENDING'; Checks=@($validation.Checks) }
+      $outcome = [pscustomobject]@{ Mode='DRY_RUN'; LocalMain=$main.MainSha; LocalProduction=$snapshot.ProductionSha; RemoteMain=$preflight.RemoteMainSha; RemoteProduction=$preflight.ProductionBaseSha; RemoteTag='NOT_PUBLISHED'; Tag=$inputs.ReleaseTag; TagStatus='NOT_CREATED'; TagObjectSha='NOT_CREATED'; GitHubRelease='NOT_CREATED'; TemporaryWorktree='CLEANUP_PENDING'; ProductionDrift=@($fileSet.Drift); Publication='NOT_ATTEMPTED'; Checks=@($validation.Checks) }
       return $outcome
     }
     $branch = Finalize-ProductionBranch -Root $root -Snapshot $snapshot
     $tag = New-ReleaseTag -Root $root -Tag $inputs.ReleaseTag -ProductionSha $branch.ProductionSha -MainSha $main.MainSha
     $prepared = [pscustomobject]@{ MainSha=$main.MainSha; ProductionSha=$branch.ProductionSha; ProductionChanged=$snapshot.ProductionChanged; Tag=$tag.Tag; TagObjectSha=$tag.TagObjectSha; RemoteMainSha=$preflight.RemoteMainSha; RemoteProductionSha=$preflight.ProductionBaseSha; RemoteTagSha=$null }
-    $publication = Publish-ReleaseRefs -Root $root -PreparedRelease $prepared
-    Assert-ReleaseCondition ($publication.Status -in @('ATOMIC_PASS','FALLBACK_PASS')) "Ref publication stopped with status: $($publication.Status)"
-    $github = New-GitHubRelease -Root $root -PreparedRelease $prepared
-    $outcome = [pscustomobject]@{ Mode='PUBLISHED'; LocalMain=$main.MainSha; LocalProduction=$branch.ProductionSha; RemoteMain=$publication.RemoteMain; RemoteProduction=$publication.RemoteProduction; Tag=$tag.Tag; GitHubRelease=$github.Url; TemporaryWorktree='CLEANUP_PENDING'; Publication=$publication; Checks=@($validation.Checks) }
+    try { $publication = Publish-ReleaseRefs -Root $root -PreparedRelease $prepared }
+    catch {
+      $outcome = [pscustomobject]@{ Mode='PUBLICATION_INDETERMINATE'; LocalMain=$main.MainSha; LocalProduction=$branch.ProductionSha; RemoteMain='UNKNOWN'; RemoteProduction='UNKNOWN'; RemoteTag='UNKNOWN'; Tag=$tag.Tag; TagStatus='LOCAL_CREATED'; TagObjectSha=$tag.TagObjectSha; GitHubRelease='NOT_CREATED'; TemporaryWorktree='CLEANUP_PENDING'; ProductionDrift=@($fileSet.Drift); Publication=$null; Error=$_.Exception.Message; Checks=@($validation.Checks) }
+      return $outcome
+    }
+    if ($publication.Status -notin @('ATOMIC_PASS','FALLBACK_PASS')) {
+      $outcome = [pscustomobject]@{ Mode='PUBLICATION_STOPPED'; LocalMain=$main.MainSha; LocalProduction=$branch.ProductionSha; RemoteMain=$publication.RemoteMain; RemoteProduction=$publication.RemoteProduction; RemoteTag=$publication.RemoteTag; Tag=$tag.Tag; TagStatus='LOCAL_CREATED'; TagObjectSha=$tag.TagObjectSha; GitHubRelease='NOT_CREATED'; TemporaryWorktree='CLEANUP_PENDING'; ProductionDrift=@($fileSet.Drift); Publication=$publication; Error="Ref publication stopped: $($publication.Status)"; Checks=@($validation.Checks) }
+      return $outcome
+    }
+    try { $github = New-GitHubRelease -Root $root -PreparedRelease $prepared }
+    catch {
+      $outcome = [pscustomobject]@{ Mode='GITHUB_RELEASE_UNVERIFIED'; LocalMain=$main.MainSha; LocalProduction=$branch.ProductionSha; RemoteMain=$publication.RemoteMain; RemoteProduction=$publication.RemoteProduction; RemoteTag=$publication.RemoteTag; Tag=$tag.Tag; TagStatus='PUBLISHED'; TagObjectSha=$tag.TagObjectSha; GitHubRelease='UNVERIFIED'; TemporaryWorktree='CLEANUP_PENDING'; ProductionDrift=@($fileSet.Drift); Publication=$publication; Error=$_.Exception.Message; Checks=@($validation.Checks) }
+      return $outcome
+    }
+    $outcome = [pscustomobject]@{ Mode='PUBLISHED'; LocalMain=$main.MainSha; LocalProduction=$branch.ProductionSha; RemoteMain=$publication.RemoteMain; RemoteProduction=$publication.RemoteProduction; RemoteTag=$publication.RemoteTag; Tag=$tag.Tag; TagStatus='PUBLISHED'; TagObjectSha=$tag.TagObjectSha; GitHubRelease=$github.Url; TemporaryWorktree='CLEANUP_PENDING'; ProductionDrift=@($fileSet.Drift); Publication=$publication; Checks=@($validation.Checks) }
     return $outcome
   } finally {
     if ($null -ne $snapshot) {
@@ -886,4 +1000,4 @@ function Test-ProductionFileSet {
   return [pscustomobject]@{ Errors = @($errors) }
 }
 
-Export-ModuleMember -Function Assert-ReleaseCondition, Resolve-TradingBotProjectRoot, Invoke-ReleaseGit, Import-ReleasePolicy, Get-MainPolicyReport, Test-SensitiveCandidate, Get-GitTreePaths, Get-GitBlobText, Get-ProductionFileSet, Test-ProductionFileSet, Test-ReleasePreflight, New-TemporaryReleaseContext, New-ProductionSnapshot, Test-ProductionSnapshot, Remove-TemporaryReleaseContext, Read-ReleaseInputs, New-ReleaseTag, Finalize-ProductionBranch, Publish-ReleaseRefs, New-GitHubRelease, Invoke-TradingBotRelease
+Export-ModuleMember -Function Assert-ReleaseCondition, Assert-ReleaseValidationComplete, Resolve-TradingBotProjectRoot, Invoke-ReleaseGit, Import-ReleasePolicy, Get-MainPolicyReport, Test-SensitiveCandidate, Get-GitTreePaths, Get-GitBlobText, Get-ProductionFileSet, Test-ProductionFileSet, Test-ReleasePreflight, New-TemporaryReleaseContext, New-ProductionSnapshot, Test-ProductionSnapshot, Remove-TemporaryReleaseContext, Read-ReleaseInputs, New-MainReleaseSource, New-ReleaseTag, Finalize-ProductionBranch, Publish-ReleaseRefs, New-GitHubRelease, Invoke-TradingBotRelease

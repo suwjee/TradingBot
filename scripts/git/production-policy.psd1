@@ -5,6 +5,7 @@
     )
     ExcludedPathPatterns = @(
       'apps/chart/node_modules/**',
+      '**/node_modules/**',
       'apps/chart/dist/**',
       'apps/chart/state/cache/**',
       'apps/chart/state/secret/**',
@@ -13,6 +14,8 @@
       'engineering/archive/repository-graphify/cache/**',
       'engineering/archive/repository-graphify/**/cache/**',
       'engineering/archive/repository-graphify/**/last_query_stamp',
+      'engineering/archive/repository-graphify/**/raw-run/.graphify_*.json',
+      'engineering/archive/repository-graphify/**/raw-run/.graphify_root',
       'engineering/archive/docs/validation-temp/**',
       'engineering/verification/**/runtime-server.*',
       '**/__pycache__/**',
@@ -35,6 +38,8 @@
       '**/env/**',
       '**/.env',
       '**/.env.*',
+      '.env',
+      '.env.*',
       '**/.idea/**',
       '**/.vscode/**',
       '**/.DS_Store',
@@ -52,11 +57,17 @@
   }
   Sensitive = @{
     PathPatterns = @(
+      'apps/chart/state/secret/**',
       '**/apps/chart/state/secret/**',
+      '*.pem',
       '**/*.pem',
+      '*.key',
       '**/*.key',
+      'id_rsa',
       '**/id_rsa',
+      '.env',
       '**/.env',
+      '.env.*',
       '**/.env.*'
     )
     ContentPatterns = @(

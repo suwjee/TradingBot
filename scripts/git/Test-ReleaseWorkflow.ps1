@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
-  [ValidateSet('RootResolution', 'MainPolicy', 'ProductionClosure', 'Snapshot', 'Publication')]
-  [string] $Case = 'RootResolution'
+  [ValidateSet('All', 'RootResolution', 'MainPolicy', 'ProductionClosure', 'Snapshot', 'Publication', 'Documentation')]
+  [string] $Case = 'All'
 )
 
 Set-StrictMode -Version Latest
@@ -24,6 +24,16 @@ function Assert-Throws {
     return
   }
   throw "Assertion failed: expected failure for $Message"
+}
+
+function Remove-TestFixturePath {
+  param([string] $Path)
+  if ([string]::IsNullOrWhiteSpace($Path)) { return }
+  $target = [IO.Path]::GetFullPath($Path)
+  $temporaryRoot = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar
+  $leaf = Split-Path -Leaf $target
+  Assert-True ($target.StartsWith($temporaryRoot, [StringComparison]::OrdinalIgnoreCase) -and $leaf -match '^tradingbot-release-(?:test-[0-9a-f]{32}|remote-[0-9a-f]{32}\.git)$') 'fixture cleanup stays inside the named temporary directory'
+  if (Test-Path -LiteralPath $target) { Remove-Item -LiteralPath $target -Recurse -Force }
 }
 
 function New-RootFixture {
@@ -51,18 +61,27 @@ function Write-FixtureFile {
 
 function New-MainPolicyFixture {
   $fixture = New-RootFixture
+  Write-FixtureFile $fixture '.gitignore' "engineering/docs/hidden.md`n"
   Write-FixtureFile $fixture 'apps/chart/tests/unit/chart.test.mjs'
   Write-FixtureFile $fixture 'engine/tests/unit/engine_test.py'
   Write-FixtureFile $fixture 'engineering/docs/architecture.md'
+  Write-FixtureFile $fixture 'engineering/docs/hidden.md'
   Write-FixtureFile $fixture 'engineering/archive/repository-graphify/graph.json' '{}'
   Write-FixtureFile $fixture 'engineering/archive/repository-graphify/cache/ast/cache.json' '{}'
+  Write-FixtureFile $fixture 'engineering/archive/repository-graphify/rebuild/raw-run/.graphify_extract.json' '{}'
+  Write-FixtureFile $fixture 'engineering/archive/repository-graphify/rebuild/raw-run/GRAPH_REPORT.md' 'meaningful report'
   Write-FixtureFile $fixture 'apps/chart/state/data/raw/BaseLine/reference.json' '{}'
   Write-FixtureFile $fixture 'apps/chart/state/data/raw/acquired.json' '{}'
   Write-FixtureFile $fixture 'apps/chart/state/cache/runtime.json' '{}'
   Write-FixtureFile $fixture 'apps/chart/state/secret/session.dpapi.json' '{}'
   Write-FixtureFile $fixture 'apps/chart/dist/index.html' '<html></html>'
+  Write-FixtureFile $fixture 'engineering/verification/regenerated-artifacts/node_modules/package/index.js' 'rebuildable dependency'
+  Write-FixtureFile $fixture 'node_modules/package/index.js' 'root dependency installation'
+  Write-FixtureFile $fixture 'working.tmp' 'disposable temporary file'
   Write-FixtureFile $fixture '.editorconfig' 'root = true'
+  Write-FixtureFile $fixture '.env' 'TOKEN=fixture'
   Write-FixtureFile $fixture 'candidate/private.pem' (('-----BEGIN ' + 'PRIVATE KEY-----') + "`nprivate-material")
+  Write-FixtureFile $fixture 'candidate/large.txt' (('x' * 1048576) + '-----BEGIN ' + 'PRIVATE KEY-----')
   return $fixture
 }
 
@@ -125,22 +144,25 @@ function Invoke-RootResolutionTests {
     Remove-Item -LiteralPath (Join-Path $fixture 'AGENTS.md') -Force
     Assert-Throws { Resolve-TradingBotProjectRoot -ScriptPath $scriptPath } 'missing AGENTS marker'
 
-    Assert-Throws { Resolve-TradingBotProjectRoot -ScriptPath 'D:\My-Projects\TradingBot\scripts\git\Invoke-TradingBotRelease.ps1' } 'legacy path is never accepted'
+    Assert-Throws { Resolve-TradingBotProjectRoot -ScriptPath (Join-Path $fixture 'scripts\git\missing.ps1') } 'missing release script is rejected'
   } finally {
-    if (Test-Path -LiteralPath $fixture) { Remove-Item -LiteralPath $fixture -Recurse -Force }
+    Remove-TestFixturePath $fixture
   }
 }
 
 function Invoke-MainPolicyTests {
   Import-Module $script:ModulePath -Force
   $fixture = New-MainPolicyFixture
+  $deletionFixture = $null
   try {
     $report = Get-MainPolicyReport -Root $fixture -IndexPath ''
+    Assert-True (@($report.Drift | Where-Object { $_ -match 'engineering/docs/hidden.md' }).Count -eq 1) 'ignored meaningful engineering file is reported as policy drift'
     foreach ($path in @(
       'apps/chart/tests/unit/chart.test.mjs',
       'engine/tests/unit/engine_test.py',
       'engineering/docs/architecture.md',
       'engineering/archive/repository-graphify/graph.json',
+      'engineering/archive/repository-graphify/rebuild/raw-run/GRAPH_REPORT.md',
       'apps/chart/state/data/raw/BaseLine/reference.json',
       '.editorconfig'
     )) {
@@ -148,18 +170,40 @@ function Invoke-MainPolicyTests {
     }
     foreach ($path in @(
       'engineering/archive/repository-graphify/cache/ast/cache.json',
+      'engineering/archive/repository-graphify/rebuild/raw-run/.graphify_extract.json',
       'apps/chart/state/data/raw/acquired.json',
       'apps/chart/state/cache/runtime.json',
       'apps/chart/state/secret/session.dpapi.json',
       'apps/chart/dist/index.html'
+      'engineering/verification/regenerated-artifacts/node_modules/package/index.js'
+      'node_modules/package/index.js'
+      'working.tmp'
+      '.env'
     )) {
       Assert-True ($report.Excluded -contains $path) "main policy excludes $path"
     }
     $secret = Test-SensitiveCandidate -Root $fixture -Paths @('candidate/private.pem') -Commitish ''
     Assert-True ($secret.Errors.Count -eq 1) 'private-key marker is rejected'
     Assert-True ($secret.Errors[0] -notmatch 'private-material') 'secret value is redacted'
+    $largeSecret = Test-SensitiveCandidate -Root $fixture -Paths @('candidate/large.txt') -Commitish ''
+    Assert-True ($largeSecret.Errors.Count -eq 1) 'large eligible file is scanned for secret markers'
+    $rootSecret = Test-SensitiveCandidate -Root $fixture -Paths @('root.pem', '.env') -Commitish ''
+    Assert-True ($rootSecret.Errors.Count -eq 2) 'sensitive root-level filenames are rejected'
+
+    $deletionFixture = New-RootFixture
+    Write-FixtureFile $deletionFixture 'engineering/docs/retired.md' 'retired document'
+    $null = Commit-Fixture $deletionFixture
+    & git -C $deletionFixture rm --quiet -- engineering/docs/retired.md
+    $deletionReport = Get-MainPolicyReport -Root $deletionFixture
+    Assert-True ($deletionReport.Eligible -contains 'engineering/docs/retired.md') 'staged deletion remains policy eligible'
+    $indexBefore = (& git -C $deletionFixture write-tree).Trim()
+    $candidate = New-MainReleaseSource -Root $deletionFixture -CommitMessage 'fixture deletion' -DryRun
+    Assert-True ($candidate.Changed) 'staged deletion enters dry-run main candidate'
+    Assert-True (-not ((Get-GitTreePaths -Root $deletionFixture -Commitish $candidate.MainSha) -contains 'engineering/docs/retired.md')) 'candidate main tree removes staged deletion'
+    Assert-True ((& git -C $deletionFixture write-tree).Trim() -eq $indexBefore) 'staged deletion remains untouched in active index'
   } finally {
-    if (Test-Path -LiteralPath $fixture) { Remove-Item -LiteralPath $fixture -Recurse -Force }
+    Remove-TestFixturePath $fixture
+    Remove-TestFixturePath $deletionFixture
   }
 }
 
@@ -189,7 +233,7 @@ function Invoke-ProductionClosureTests {
     Assert-True ($fileSet.Errors.Count -eq 0) 'fixture closure has no unresolved imports'
     Assert-True ((Test-ProductionFileSet -FileSet $fileSet -Policy $policy).Errors.Count -eq 0) 'fixture file set passes integrity checks'
   } finally {
-    if (Test-Path -LiteralPath $fixture.Root) { Remove-Item -LiteralPath $fixture.Root -Recurse -Force }
+    Remove-TestFixturePath $fixture.Root
   }
 }
 
@@ -197,8 +241,14 @@ function Invoke-SnapshotTests {
   Import-Module $script:ModulePath -Force
   $fixture = New-ProductionFixture
   $remote = $null
+  $linkedWorktree = $null
+  $snapshot = $null
+  $normalSnapshot = $null
   try {
     $remote = New-FixtureRemote -Root $fixture.Root
+    & git -C $fixture.Root -c user.name=Fixture -c user.email=fixture@example.invalid tag -a fixture-remote-only $fixture.Sha -m remote-only
+    & git -C $fixture.Root push --quiet origin refs/tags/fixture-remote-only
+    & git -C $fixture.Root tag -d fixture-remote-only | Out-Null
     Write-FixtureFile $fixture.Root 'engineering/docs/intentional-dirty.md' 'valid user-owned dirty work'
     Write-FixtureFile $fixture.Root 'scripts/start.ps1' 'changed source main'
     $sourceSha = Commit-Fixture $fixture.Root
@@ -230,8 +280,14 @@ function Invoke-SnapshotTests {
     Assert-True ($snapshotStatePaths.Count -eq 0) ("snapshot excludes local state: " + ($snapshotStatePaths -join ', '))
     $validation = Test-ProductionSnapshot -Snapshot $snapshot
     Assert-True ($validation.Errors.Count -eq 0) 'candidate snapshot passes structural validation'
+    Assert-True ($null -ne (Get-Command Assert-ReleaseValidationComplete -ErrorAction SilentlyContinue)) 'publication validation gate is exported'
+    Assert-Throws { Assert-ReleaseValidationComplete -Validation $validation } 'structural-only validation cannot authorize publication'
+    $incompleteValidation = [pscustomobject]@{ Errors=@(); Checks=@([pscustomobject]@{ Name='node-check'; Status='NOT_TESTED_DEPENDENCY_UNAVAILABLE' }) }
+    Assert-Throws { Assert-ReleaseValidationComplete -Validation $incompleteValidation } 'missing required runtime validator cannot authorize publication'
     Remove-TemporaryReleaseContext -Context $snapshot.Context
     Assert-True (-not (Test-Path -LiteralPath $snapshot.Context.WorktreePath)) 'dry-run worktree is cleaned'
+    & git -C $fixture.Root show-ref --verify --quiet refs/tags/fixture-remote-only
+    Assert-True ($LASTEXITCODE -ne 0) 'dry-run does not import remote-only tags'
     Assert-True ((& git -C $fixture.Root write-tree).Trim() -eq $activeIndexBefore) 'dry-run preserves the active index'
     Assert-True ((@(& git -C $fixture.Root show-ref) -join "`n") -eq ($refsBefore -join "`n")) 'dry-run preserves permanent refs and tags'
     Assert-True ((@(& git -C $fixture.Root ls-remote origin) -join "`n") -eq ($remoteBefore -join "`n")) 'dry-run leaves the remote unchanged'
@@ -245,13 +301,25 @@ function Invoke-SnapshotTests {
     Assert-True ($promotion.Upstream -eq 'origin/production') 'promoted production branch tracks origin/production'
     Remove-TemporaryReleaseContext -Context $normalSnapshot.Context
 
+    $linkedWorktree = Join-Path ([IO.Path]::GetTempPath()) ("tradingbot-release-checkedout-" + [guid]::NewGuid().ToString('N'))
+    & git -C $fixture.Root worktree add --quiet $linkedWorktree production
+    Assert-True ($LASTEXITCODE -eq 0) 'fixture can check out production in a linked worktree'
+    $checkedOutPreflight = Test-ReleasePreflight -Root $fixture.Root -Tag 'snapshot-checkedout'
+    Assert-True (@($checkedOutPreflight.Errors | Where-Object { $_ -match 'checked out in another worktree' }).Count -gt 0) 'preflight rejects a checked-out production branch'
+    & git -C $fixture.Root worktree remove --force $linkedWorktree
+    Assert-True ($LASTEXITCODE -eq 0) 'linked production fixture worktree is removed'
+    $linkedWorktree = $null
+
     $divergent = (& git -C $fixture.Root -c user.name=Fixture -c user.email=fixture@example.invalid commit-tree "${sourceSha}^{tree}" -m divergent).Trim()
     & git -C $fixture.Root update-ref refs/heads/production $divergent
     $divergentPreflight = Test-ReleasePreflight -Root $fixture.Root -Tag 'snapshot-divergent'
     Assert-True (@($divergentPreflight.Errors | Where-Object { $_ -match 'diverges' }).Count -gt 0) 'preflight rejects a divergent local production branch'
   } finally {
-    if ($fixture -and (Test-Path -LiteralPath $fixture.Root)) { Remove-Item -LiteralPath $fixture.Root -Recurse -Force }
-    if ($remote -and (Test-Path -LiteralPath $remote)) { Remove-Item -LiteralPath $remote -Recurse -Force }
+    if ($snapshot -and -not $snapshot.Context.Cleaned) { Remove-TemporaryReleaseContext -Context $snapshot.Context }
+    if ($normalSnapshot -and -not $normalSnapshot.Context.Cleaned) { Remove-TemporaryReleaseContext -Context $normalSnapshot.Context }
+    if ($linkedWorktree -and (Test-Path -LiteralPath $linkedWorktree)) { & git -C $fixture.Root worktree remove --force $linkedWorktree 2>$null | Out-Null }
+    if ($fixture) { Remove-TestFixturePath $fixture.Root }
+    Remove-TestFixturePath $remote
   }
 }
 
@@ -303,23 +371,63 @@ function Invoke-PublicationTests {
     Assert-True ($partial.Status -eq 'PARTIAL_FAILURE') 'fallback stops and reports a partial publication'
     $remotePartialTag = & git -C $partialFixture.Root ls-remote --exit-code origin refs/tags/fixture-partial
     Assert-True ($LASTEXITCODE -ne 0) 'fallback does not publish tag after a partial branch failure'
+
+    $indeterminateFixture = New-PublicationFixture
+    $fixtures += $indeterminateFixture
+    $indeterminateTag = New-ReleaseTag -Root $indeterminateFixture.Root -Tag 'fixture-indeterminate' -ProductionSha $indeterminateFixture.ProductionSha -MainSha $indeterminateFixture.MainSha
+    $indeterminatePrepared = [pscustomobject]@{ MainSha=$indeterminateFixture.MainSha; ProductionSha=$indeterminateFixture.ProductionSha; Tag='fixture-indeterminate'; TagObjectSha=$indeterminateTag.TagObjectSha; RemoteMainSha=$indeterminateFixture.ProductionSha; RemoteProductionSha=$indeterminateFixture.ProductionSha; RemoteTagSha=$null }
+    $indeterminateAdapter = { param($root, $gitArgs) if ($gitArgs -contains '--atomic') { return [pscustomobject]@{ ExitCode=1; StdOut=''; StdErr='fatal: the receiving end does not support --atomic push'; Arguments=$gitArgs } }; if ($gitArgs -contains 'refs/tags/fixture-indeterminate') { return [pscustomobject]@{ ExitCode=128; StdOut=''; StdErr='simulated remote read failure'; Arguments=$gitArgs } }; Invoke-ReleaseGit -Root $root -Arguments $gitArgs }
+    $indeterminate = Publish-ReleaseRefs -Root $indeterminateFixture.Root -PreparedRelease $indeterminatePrepared -CommandAdapter $indeterminateAdapter
+    Assert-True ($indeterminate.Status -eq 'INDETERMINATE_REMOTE') 'indeterminate remote ref verification stops publication'
+    Assert-True ((& git -C $indeterminateFixture.Root ls-remote origin refs/heads/main | ForEach-Object { ($_ -split '\s+')[0] }) -eq $indeterminateFixture.ProductionSha) 'indeterminate probe leaves remote main unchanged'
+
+    $changedFixture = New-PublicationFixture
+    $fixtures += $changedFixture
+    $changedTag = New-ReleaseTag -Root $changedFixture.Root -Tag 'fixture-ref-changed' -ProductionSha $changedFixture.ProductionSha -MainSha $changedFixture.MainSha
+    $changedPrepared = [pscustomobject]@{ MainSha=$changedFixture.MainSha; ProductionSha=$changedFixture.ProductionSha; Tag='fixture-ref-changed'; TagObjectSha=$changedTag.TagObjectSha; RemoteMainSha=$changedFixture.ProductionSha; RemoteProductionSha=$changedFixture.ProductionSha; RemoteTagSha=$null }
+    $readState = [pscustomobject]@{ MainReads=0; OriginalMain=$changedFixture.ProductionSha }
+    $changedAdapter = { param($root, $gitArgs) if ($gitArgs -contains '--atomic') { return [pscustomobject]@{ ExitCode=1; StdOut=''; StdErr='fatal: the receiving end does not support --atomic push'; Arguments=$gitArgs } }; if ($gitArgs[0] -eq 'ls-remote' -and $gitArgs[-1] -eq 'refs/heads/main') { $readState.MainReads++; if ($readState.MainReads -ge 3) { return [pscustomobject]@{ ExitCode=0; StdOut="$($readState.OriginalMain)`trefs/heads/main"; StdErr=''; Arguments=$gitArgs } } }; Invoke-ReleaseGit -Root $root -Arguments $gitArgs }
+    $changed = Publish-ReleaseRefs -Root $changedFixture.Root -PreparedRelease $changedPrepared -CommandAdapter $changedAdapter
+    Assert-True ($changed.Status -eq 'PARTIAL_FAILURE') 'fallback stops if a previously verified ref changes'
   } finally {
     foreach ($fixture in $fixtures) {
-      if ($fixture -and (Test-Path -LiteralPath $fixture.Root)) { Remove-Item -LiteralPath $fixture.Root -Recurse -Force }
-      if ($fixture -and (Test-Path -LiteralPath $fixture.Remote)) { Remove-Item -LiteralPath $fixture.Remote -Recurse -Force }
+      if ($fixture) { Remove-TestFixturePath $fixture.Root; Remove-TestFixturePath $fixture.Remote }
     }
+  }
+}
+
+function Invoke-DocumentationTests {
+  $readmePath = Join-Path $PSScriptRoot 'README.md'
+  Assert-True (Test-Path -LiteralPath $readmePath -PathType Leaf) 'release operations README exists'
+  $text = Get-Content -LiteralPath $readmePath -Raw
+  Assert-True ($text -match '(?m)^powershell\.exe .*Invoke-TradingBotRelease\.ps1\s*$') 'README shows the one-command normal release invocation'
+  foreach ($phrase in @(
+    'derived from its own location and Git', 'inclusion-first', 'dependency-derived', 'BaseLine', 'Graphify', 'apps/chart/state',
+    'origin/production', 'GitHub CLI', '-DryRun', 'temporary worktree', '--atomic', 'fallback',
+    'TradingBot-Main-Source', 'GitHub Release', 'Recovery', 'No publication occurs during implementation validation'
+  )) {
+    Assert-True ($text.Contains($phrase)) "README covers $phrase"
   }
 }
 
 try {
   switch ($Case) {
-    'RootResolution' { Invoke-RootResolutionTests }
-    'MainPolicy' { Invoke-MainPolicyTests }
-    'ProductionClosure' { Invoke-ProductionClosureTests }
-    'Snapshot' { Invoke-SnapshotTests }
-    'Publication' { Invoke-PublicationTests }
+    'All' {
+      Invoke-RootResolutionTests
+      Invoke-MainPolicyTests
+      Invoke-ProductionClosureTests
+      Invoke-SnapshotTests
+      Invoke-PublicationTests
+      Invoke-DocumentationTests
+      $script:Passed += 6
+    }
+    'RootResolution' { Invoke-RootResolutionTests; $script:Passed++ }
+    'MainPolicy' { Invoke-MainPolicyTests; $script:Passed++ }
+    'ProductionClosure' { Invoke-ProductionClosureTests; $script:Passed++ }
+    'Snapshot' { Invoke-SnapshotTests; $script:Passed++ }
+    'Publication' { Invoke-PublicationTests; $script:Passed++ }
+    'Documentation' { Invoke-DocumentationTests; $script:Passed++ }
   }
-  $script:Passed++
   Write-Output "PASS: $Case ($script:Passed passed, $script:Failed failed)"
 } catch {
   $script:Failed++
