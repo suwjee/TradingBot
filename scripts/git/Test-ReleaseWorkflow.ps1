@@ -78,6 +78,8 @@ function New-MainPolicyFixture {
   Write-FixtureFile $fixture 'apps/chart/state/cache/runtime.json' '{}'
   Write-FixtureFile $fixture 'apps/chart/state/secret/session.dpapi.json' '{}'
   Write-FixtureFile $fixture 'apps/chart/dist/index.html' '<html></html>'
+  Write-FixtureFile $fixture 'engineering/verification/regenerated-artifacts/dist/index.html' '<html></html>'
+  Write-FixtureFile $fixture 'apps/chart/state/data/raw/BaseLine/temp/partial.json' '{}'
   Write-FixtureFile $fixture 'engineering/verification/regenerated-artifacts/node_modules/package/index.js' 'rebuildable dependency'
   Write-FixtureFile $fixture 'node_modules/package/index.js' 'root dependency installation'
   Write-FixtureFile $fixture 'working.tmp' 'disposable temporary file'
@@ -157,6 +159,7 @@ function Invoke-MainPolicyTests {
   Import-Module $script:ModulePath -Force
   $fixture = New-MainPolicyFixture
   $deletionFixture = $null
+  $trackedFixture = $null
   try {
     $report = Get-MainPolicyReport -Root $fixture -IndexPath ''
     Assert-True (@($report.Drift | Where-Object { $_ -match 'engineering/docs/hidden.md' }).Count -eq 1) 'ignored meaningful engineering file is reported as policy drift'
@@ -181,6 +184,8 @@ function Invoke-MainPolicyTests {
       'apps/chart/state/cache/runtime.json',
       'apps/chart/state/secret/session.dpapi.json',
       'apps/chart/dist/index.html'
+      'engineering/verification/regenerated-artifacts/dist/index.html'
+      'apps/chart/state/data/raw/BaseLine/temp/partial.json'
       'engineering/verification/regenerated-artifacts/node_modules/package/index.js'
       'node_modules/package/index.js'
       'working.tmp'
@@ -207,9 +212,31 @@ function Invoke-MainPolicyTests {
     Assert-True ($candidate.Changed) 'staged deletion enters dry-run main candidate'
     Assert-True (-not ((Get-GitTreePaths -Root $deletionFixture -Commitish $candidate.MainSha) -contains 'engineering/docs/retired.md')) 'candidate main tree removes staged deletion'
     Assert-True ((& git -C $deletionFixture write-tree).Trim() -eq $indexBefore) 'staged deletion remains untouched in active index'
+
+    $trackedFixture = New-RootFixture
+    Write-FixtureFile $trackedFixture 'engineering/verification/generated/dist/index.html' 'rebuildable output'
+    $null = Commit-Fixture $trackedFixture
+    $trackedReport = Get-MainPolicyReport -Root $trackedFixture
+    Assert-True (@($trackedReport.Errors | Where-Object { $_ -match 'Excluded artifact is tracked: engineering/verification/generated/dist/index.html' }).Count -eq 1) 'already tracked build output blocks publication'
+    & git -C $trackedFixture rm --cached --quiet -- engineering/verification/generated/dist/index.html
+    Assert-True ($LASTEXITCODE -eq 0) 'tracked build output can be removed from Git without deleting the local file'
+    $cleanedReport = Get-MainPolicyReport -Root $trackedFixture
+    Assert-True ($cleanedReport.Errors.Count -eq 0) 'staged artifact removal clears main policy drift'
+    $cleanedCandidate = New-MainReleaseSource -Root $trackedFixture -CommitMessage 'remove generated output' -DryRun
+    Assert-True (-not ((Get-GitTreePaths -Root $trackedFixture -Commitish $cleanedCandidate.MainSha) -contains 'engineering/verification/generated/dist/index.html')) 'release candidate removes formerly tracked build output'
+
+    Add-Type -AssemblyName System.IO.Compression
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    $badArchivePath = Join-Path $fixture 'engineering/archive/embedded-cache.zip'
+    $badArchive = [IO.Compression.ZipFile]::Open($badArchivePath, [IO.Compression.ZipArchiveMode]::Create)
+    try { $null = $badArchive.CreateEntry('snapshot/cache/rebuildable.json') }
+    finally { $badArchive.Dispose() }
+    $archiveReport = Get-MainPolicyReport -Root $fixture
+    Assert-True (@($archiveReport.Errors | Where-Object { $_ -match 'Archive contains excluded artifact: engineering/archive/embedded-cache.zip' }).Count -eq 1) 'cache inside an eligible ZIP blocks publication'
   } finally {
     Remove-TestFixturePath $fixture
     Remove-TestFixturePath $deletionFixture
+    Remove-TestFixturePath $trackedFixture
   }
 }
 

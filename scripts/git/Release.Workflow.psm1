@@ -136,6 +136,7 @@ function Get-MainPolicyReport {
     @('diff', '--cached', '--name-only', '--diff-filter=D')
   )
   $allPaths = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+  $trackedPaths = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
   $ignoredPaths = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
   $stagedDeletions = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
   foreach ($command in $commands) {
@@ -145,6 +146,7 @@ function Get-MainPolicyReport {
       if ([string]::IsNullOrWhiteSpace($line)) { continue }
       $path = ConvertTo-ReleasePath $line
       [void] $allPaths.Add($path)
+      if ($command.Count -eq 1 -and $command[0] -eq 'ls-files') { [void] $trackedPaths.Add($path) }
       if ($command -contains '--ignored') { [void] $ignoredPaths.Add($path) }
       if ($command -contains '--diff-filter=D') { [void] $stagedDeletions.Add($path) }
     }
@@ -155,14 +157,39 @@ function Get-MainPolicyReport {
   $drift = [System.Collections.Generic.List[string]]::new()
   foreach ($path in $allPaths | Sort-Object) {
     $included = Test-ReleasePathPattern -Path $path -Patterns $policy.Main.IncludedPathPatterns
-    $isExcluded = (-not $included) -and (Test-ReleasePathPattern -Path $path -Patterns $policy.Main.ExcludedPathPatterns)
+    $isForbiddenArtifact = Test-ReleasePathPattern -Path $path -Patterns $policy.Main.ForbiddenArtifactPatterns
+    $isExcluded = $isForbiddenArtifact -or ((-not $included) -and (Test-ReleasePathPattern -Path $path -Patterns $policy.Main.ExcludedPathPatterns))
     if ($isExcluded) {
       $excluded.Add($path)
+      if ($trackedPaths.Contains($path) -and -not $stagedDeletions.Contains($path)) {
+        $drift.Add("Excluded artifact is tracked: $path")
+      }
       continue
     }
     $eligible.Add($path)
     if ($ignoredPaths.Contains($path) -and (Test-ReleasePathWithinRoots -Path $path -Roots $policy.Main.MeaningfulRoots)) {
       $drift.Add("Meaningful path is ignored: $path")
+    }
+  }
+
+  Add-Type -AssemblyName System.IO.Compression.FileSystem
+  foreach ($path in @($eligible | Where-Object { $_ -like '*.zip' })) {
+    $archivePath = Join-Path $Root $path
+    if (-not (Test-Path -LiteralPath $archivePath -PathType Leaf)) { continue }
+    try {
+      $archive = [IO.Compression.ZipFile]::OpenRead($archivePath)
+      try {
+        foreach ($entry in $archive.Entries) {
+          $entryPath = ConvertTo-ReleasePath $entry.FullName
+          if ((Test-ReleasePathPattern -Path $entryPath -Patterns $policy.Main.ForbiddenArtifactPatterns) -or
+              $entryPath -match '(^|/)\.\.(/|$)') {
+            $drift.Add("Archive contains excluded artifact: $path -> $entryPath")
+            break
+          }
+        }
+      } finally { $archive.Dispose() }
+    } catch {
+      $drift.Add("Could not inspect ZIP archive: $path")
     }
   }
 
@@ -390,10 +417,13 @@ function Get-ProductionFileSet {
   }
 
   $drift = [System.Collections.Generic.List[string]]::new()
+  [string[]] $forbiddenPatterns = @()
+  if ($Policy.ContainsKey('Main')) { $forbiddenPatterns = @($Policy.Main.ForbiddenArtifactPatterns) }
   foreach ($path in $allPaths) {
     $isRuntimeAdjacent = Test-ReleasePathWithinRoots -Path $path -Roots $Policy.Production.RuntimeRoots
     $isCode = [IO.Path]::GetExtension($path).ToLowerInvariant() -in @('.js', '.mjs', '.css', '.py', '.html')
-    $isExplicitlyExcluded = Test-ReleasePathPattern -Path $path -Patterns $Policy.Production.ExcludedPathPatterns
+    $isExplicitlyExcluded = (Test-ReleasePathPattern -Path $path -Patterns $Policy.Production.ExcludedPathPatterns) -or
+      (($forbiddenPatterns.Count -gt 0) -and (Test-ReleasePathPattern -Path $path -Patterns $forbiddenPatterns))
     if ($isRuntimeAdjacent -and $isCode -and -not $selected.Contains($path) -and -not $isExplicitlyExcluded) { $drift.Add($path) }
   }
 
@@ -856,7 +886,8 @@ function New-MainReleaseSource {
   param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] [string] $CommitMessage, [switch] $DryRun)
   $report = Get-MainPolicyReport -Root $Root
   Assert-ReleaseCondition ($report.Errors.Count -eq 0) ($report.Errors -join '; ')
-  $staged = Invoke-ReleaseGit -Root $Root -Arguments @('diff', '--cached', '--name-only', '--diff-filter=ACMRD')
+  # Staged deletions are allowed: removing a formerly tracked artifact is safe.
+  $staged = Invoke-ReleaseGit -Root $Root -Arguments @('diff', '--cached', '--name-only', '--diff-filter=ACMRT')
   Assert-ReleaseCondition ($staged.ExitCode -eq 0) 'Could not inspect the active Git index.'
   $invalidStaged = @($staged.StdOut -split "`r?`n" | Where-Object { $_ -and $report.Eligible -notcontains (ConvertTo-ReleasePath $_) })
   Assert-ReleaseCondition ($invalidStaged.Count -eq 0) ('Existing staged content violates main policy: ' + ($invalidStaged -join ', '))
@@ -1014,11 +1045,14 @@ function Test-ProductionFileSet {
   param([Parameter(Mandatory)] $FileSet, [Parameter(Mandatory)] [hashtable] $Policy)
 
   $errors = [System.Collections.Generic.List[string]]::new()
+  [string[]] $forbiddenPatterns = @()
+  if ($Policy.ContainsKey('Main')) { $forbiddenPatterns = @($Policy.Main.ForbiddenArtifactPatterns) }
   foreach ($seed in $Policy.Production.MandatoryPaths) {
     if ($FileSet.Paths -notcontains $seed) { $errors.Add("Missing production seed: $seed") }
   }
   foreach ($path in $FileSet.Paths) {
-    if (Test-ReleasePathPattern -Path $path -Patterns $Policy.Production.ExcludedPathPatterns) {
+    if ((Test-ReleasePathPattern -Path $path -Patterns $Policy.Production.ExcludedPathPatterns) -or
+        (($forbiddenPatterns.Count -gt 0) -and (Test-ReleasePathPattern -Path $path -Patterns $forbiddenPatterns))) {
       $errors.Add("Excluded path entered production set: $path")
     }
   }

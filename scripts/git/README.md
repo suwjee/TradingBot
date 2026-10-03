@@ -20,6 +20,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\git\Invoke-Tradi
 
 Only narrowly proven disposable material is excluded: dependencies restored from manifests, build products, interpreter caches, temporary files, local secrets, and machine-local chart state. `apps/chart/state` is never copied to production; the launcher creates required directories at runtime without deploying current local contents.
 
+The main release stops if an excluded artifact is already tracked, including one staged for modification. Staged removal of such an artifact is allowed. Eligible ZIP archives are checked for embedded cache, build, temporary, dependency, or unsafe parent-directory paths. The two historical project snapshots containing those entries remain on the workstation but are excluded from Git; archived test logs remain eligible as verification evidence.
+
 `production` is dependency-derived and default-deny. The workflow resolves runtime closure from the exact committed main SHA, then replaces only a temporary worktree snapshot with those selected paths. It checks policy, sensitive markers, PowerShell and JavaScript syntax, Python AST and bridge help, `npm ci`, and the chart build.
 
 ## Branch and authentication safety

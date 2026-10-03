@@ -3,7 +3,48 @@
     IncludedPathPatterns = @(
       'apps/chart/state/data/raw/BaseLine/**'
     )
+    # These are disposable even inside a normally included BaseLine or archive.
+    ForbiddenArtifactPatterns = @(
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/.vite/**',
+      '**/cache/**',
+      '**/caches/**',
+      '**/.cache/**',
+      '**/tmp/**',
+      '**/temp/**',
+      '**/temporary/**',
+      '**/__pycache__/**',
+      '**/.pytest_cache/**',
+      '**/.mypy_cache/**',
+      '**/.ruff_cache/**',
+      '**/.benchmarks/**',
+      '**/*.egg-info/**',
+      '**/.venv/**',
+      '**/venv/**',
+      '**/env/**',
+      '**/coverage/**',
+      '**/htmlcov/**',
+      '**/.coverage',
+      '**/coverage.xml',
+      '**/*.pyc',
+      '**/*.pyo',
+      '**/*.tmp',
+      '**/*.temp',
+      '**/*.bak',
+      '**/*.pid',
+      '**/*.swp',
+      '**/*.swo',
+      '**/*.orig',
+      '**/*.rej',
+      '**/*.part',
+      '**/*.crdownload',
+      '**/*~'
+    )
     ExcludedPathPatterns = @(
+      'engineering/verification/history/cleanup-2026-09-29/pre-cleanup-project.zip',
+      'engineering/verification/single-root-2026-09-29/project-before-migration.zip',
       'apps/chart/node_modules/**',
       '**/node_modules/**',
       'apps/chart/dist/**',
