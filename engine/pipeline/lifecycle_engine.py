@@ -16,14 +16,14 @@ from typing import Sequence
 
 from core_utils import as_decimal, order_identity
 from order_audit_engine import (
-    accepted_audit_entry, order_identity_is_internal, prepare_order_audit,
+    accepted_audit_entry, prepare_order_audit,
 )
 from direction_policy import policy_for
 
 
 STOP_ALL_VERSION = "1.18.0"
-STOP_ALL_IMPLEMENTATION_VERSION = "1.19.0"
-STOP_ALL_LAST_MODIFIED = "2026-09-30 13:58:08 +03:30"
+STOP_ALL_IMPLEMENTATION_VERSION = "1.20.0"
+STOP_ALL_LAST_MODIFIED = "2026-10-02 13:27:31 +03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -361,11 +361,7 @@ class StopAllDetector:
         cannot consume its stale evidence.  The incoming S Red must have a
         native Mode-B formation Order; different numbered E groups never add.
         E-driven StopAll counters/priority are independent of this reversal
-        evidence and retain their existing semantics. The caller suppresses
-        this direct reversal promotion when the incoming S Red continues an
-        already-dominant S Red group whose accepted count is at least two; in
-        that case the S Red is counted normally and its later strict stop may
-        drive the E-stage sequence-group StopAll gate.
+        evidence and retain their existing semantics.
         """
         if str(getattr(s_item, "color", "")).lower() != "red":
             return None
@@ -421,20 +417,9 @@ class StopAllDetector:
         def process_s_event(s_item: object) -> None:
             nonlocal s_key, s_count, e_key, e_count, dominant_s_item, dominant_e_item, active
 
-            # A dominant S-Red group that has already reached the repeated
-            # sequence threshold owns its continuation. Lower-priority Blue
-            # repeat evidence must not promote the next same-family S Red
-            # directly to StopAll. Count that S Red normally; if it later
-            # stops, the following accepted E may trigger the established
-            # sequence-group StopAll gate.
-            continuing_dominant_s_red = (
-                e_key is None and s_key == "red" and s_count >= 2
+            reversal = self._opposite_s_stopall_gate(
+                s_item, blue_repeat_counts, blue_repeat_latest
             )
-            reversal = None
-            if not continuing_dominant_s_red:
-                reversal = self._opposite_s_stopall_gate(
-                    s_item, blue_repeat_counts, blue_repeat_latest
-                )
             if reversal is not None:
                 behavior_type, behavior_key, behavior_count, underlying_e_key = reversal
                 zone = self._stopall_from_s(
@@ -1188,6 +1173,20 @@ def visible_s_zones_after_module_resets(
             int(getattr(item, "source_index", -1)),
         ),
     )
+    # Immutable per invocation. Building this inside the S loop made the
+    # visibility pass O(S*C) allocations on large RAW histories.
+    candle_times = (
+        [getattr(candle, "timestamp") for candle in candles]
+        if candles is not None else None
+    )
+    stop_event_cache: dict[int, datetime | None] = {}
+
+    def cached_stop_event(module: object) -> datetime | None:
+        key = id(module)
+        if key not in stop_event_cache:
+            stop_event_cache[key] = module_stop_event(module, stop_event_finder)
+        return stop_event_cache[key]
+
     visible = []
     consumed = set()
     for s_zone in sorted(
@@ -1236,7 +1235,7 @@ def visible_s_zones_after_module_resets(
             stopped_prior = [
                 module for module in prior_modules
                 if (
-                    module_stop := module_stop_event(module, stop_event_finder)
+                    module_stop := cached_stop_event(module)
                 ) is not None
                 and module_stop <= ownership_event
             ]
@@ -1250,7 +1249,7 @@ def visible_s_zones_after_module_resets(
                     module for module in stopped_prior
                     if not hasattr(module, "a_source_time")
                 ]
-                if candles is not None and stopped_external:
+                if candle_times is not None and stopped_external:
                     latest_external = max(
                         stopped_external,
                         key=lambda item: (
@@ -1259,13 +1258,8 @@ def visible_s_zones_after_module_resets(
                         ),
                     )
                     if module_priority(s_zone) < module_priority(latest_external):
-                        larger_stop = module_stop_event(
-                            latest_external, stop_event_finder
-                        )
+                        larger_stop = cached_stop_event(latest_external)
                         if larger_stop is not None:
-                            candle_times = [
-                                getattr(candle, "timestamp") for candle in candles
-                            ]
                             stop_index = bisect_right(candle_times, larger_stop) - 1
                             source_index = int(getattr(s_zone, "source_index"))
                             if (
@@ -1290,7 +1284,7 @@ def visible_s_zones_after_module_resets(
                 dominant = max(
                     stopped_prior,
                     key=lambda item: (
-                        module_stop_event(item, stop_event_finder),
+                        cached_stop_event(item),
                         module_priority(item),
                         int(getattr(item, "number", 0)),
                         getattr(item, "source_time"),
@@ -1325,7 +1319,7 @@ def visible_s_zones_after_module_resets(
                 # highest-priority object determines the next module number.
                 dominant_priority = module_priority(dominant)
                 for module in stopped_prior:
-                    module_stop = module_stop_event(module, stop_event_finder)
+                    module_stop = cached_stop_event(module)
                     if (
                         module_priority(module) <= dominant_priority
                     ):

@@ -11,8 +11,8 @@ from typing import Callable, Sequence
 
 from core_utils import as_decimal, order_identity, reaction_identity
 
-ORDER_AUDIT_ENGINE_VERSION = "1.5.1"
-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-09-28 19:35:32 +03:30"
+ORDER_AUDIT_ENGINE_VERSION = "1.5.3"
+ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-10-03 14:32:06 +03:30"
 
 @dataclass(frozen=True, slots=True)
 class PostBehaviorStop:
@@ -607,6 +607,22 @@ class OrderAuditEngineMixin:
         allow_bounded_continue: bool,
     ) -> tuple[int, object, datetime] | None:
         """Select the direct parent-stop Order_A."""
+        cache_key = (start, continuous_deadline, allow_bounded_continue)
+        cached = self._direct_parent_stop_cache.get(cache_key)
+        if cached is not None or cache_key in self._direct_parent_stop_cache:
+            return cached
+        result = self._compute_direct_parent_stop_order(
+            start, continuous_deadline, allow_bounded_continue
+        )
+        self._direct_parent_stop_cache[cache_key] = result
+        return result
+
+    def _compute_direct_parent_stop_order(
+        self,
+        start: datetime,
+        continuous_deadline: datetime | None,
+        allow_bounded_continue: bool,
+    ) -> tuple[int, object, datetime] | None:
         gate_time = self.times[self._main_index(start)]
         geometric_direct = self._first_healthy_direct_geometry(
             start, allow_bounded_continue
@@ -865,6 +881,17 @@ class OrderAuditEngineMixin:
         self.order_audit.clear()
         self._order_audit_confirmation_index.clear()
         self._carried_orders_cache.clear()
+        self._invalidate_post_stop_order_cache()
+
+    def _invalidate_carried_order_caches(self) -> None:
+        # Carried results depend on creation causes, so they must drop when a
+        # cause is added. Post-stop results depend only on the confirmation
+        # index length (included in its cache key), so cause-only mutations
+        # must not wipe that cache.
+        self._carried_orders_cache.clear()
+
+    def _invalidate_post_stop_order_cache(self) -> None:
+        self._post_stop_orders_cache.clear()
 
 
     def register_order_b_reset_legs(
@@ -872,7 +899,7 @@ class OrderAuditEngineMixin:
     ) -> None:
         """Merge proven reset-leg causes by canonical physical identity."""
         if legs:
-            self._carried_orders_cache.clear()
+            self._invalidate_carried_order_caches()
         for leg in legs:
             reaction = leg.physical_reaction
             identity = reaction_identity(reaction)
@@ -931,6 +958,7 @@ class OrderAuditEngineMixin:
                     item["postBehaviorStopTime"], item["resetTime"],
                     item["strictBreakTime"], item["physicalOrderIdentity"],
                 ))
+                self._invalidate_carried_order_caches()
 
 
     def _register_order_audit(
@@ -962,7 +990,7 @@ class OrderAuditEngineMixin:
                     parent_stop,
                 ))
 
-        self._carried_orders_cache.clear()
+        changed = False
         for match in matches:
             number, reaction, confirmation, level, source, source_time = match[:6]
             crossed, causes = match[6], match[7]
@@ -983,6 +1011,7 @@ class OrderAuditEngineMixin:
                 }
                 self.order_audit[key] = entry
                 self._index_order_audit_identity(key, confirmation)
+                changed = True
             audit_causes = entry["causes"]
             assert isinstance(audit_causes, set)
             family = str(getattr(parent, "color", getattr(parent, "family", "")))
@@ -993,10 +1022,15 @@ class OrderAuditEngineMixin:
             if parent.source_time in self.sequence_resets:
                 parent_label = f"StopAll{self.sequence_resets[parent.source_time]}"
                 family = ""
-            audit_causes.add((
+            cause = (
                 "parent-stop", parent_label, family, parent_stop,
                 getattr(parent, "source_time"),
-            ))
+            )
+            if cause not in audit_causes:
+                audit_causes.add(cause)
+                changed = True
+        if changed:
+            self._invalidate_carried_order_caches()
 
 
     @staticmethod
@@ -1146,7 +1180,6 @@ class OrderAuditEngineMixin:
 
 
     @staticmethod
-    @staticmethod
     def _initial_record_match(
         record: tuple[
             datetime, datetime, int, object, Decimal, int, datetime,
@@ -1265,18 +1298,29 @@ class OrderAuditEngineMixin:
     ) -> list[OrderMatch]:
         """Return accepted physical Orders confirmed after this parent stop."""
         del parent
+        # Safe cache key: confirmation-index length changes whenever a new
+        # accepted Order enters the live ledger. Cause-only mutations do not
+        # change the post-stop result set.
+        cache_key = (parent_stop, len(self._order_audit_confirmation_index))
+        cached = self._post_stop_orders_cache.get(cache_key)
+        if cached is not None:
+            return list(cached)
         matches_by_identity: dict[tuple[int, int], OrderMatch] = {}
 
         def add_match(match: OrderMatch) -> None:
             crossed = match[6]
-            if crossed is None or crossed[2] <= parent_stop or crossed[2] <= match[2]:
+            if crossed is None:
                 return
-            if self._has_sequence_reset_between(parent_stop, crossed[2]):
+            crossed_time = crossed[2]
+            if crossed_time <= parent_stop or crossed_time <= match[2]:
                 return
-            identity = reaction_identity(match[1])
+            if self._has_sequence_reset_between(parent_stop, crossed_time):
+                return
+            reaction = match[1]
+            identity = (int(getattr(reaction, "first_idx")), int(getattr(reaction, "break_idx")))
             current = matches_by_identity.get(identity)
             if current is None or (
-                crossed[2], match[2], int(getattr(match[1], "first_idx"))
+                crossed_time, match[2], int(getattr(reaction, "first_idx"))
             ) < (
                 current[6][2], current[2], int(getattr(current[1], "first_idx"))
             ):
@@ -1321,12 +1365,14 @@ class OrderAuditEngineMixin:
                 ("accepted-live",), None,
             ))
 
-        return sorted(
+        result = sorted(
             matches_by_identity.values(),
             key=lambda item: (
                 item[6][2], item[2], -int(getattr(item[1], "first_idx")),
             ),
         )
+        self._post_stop_orders_cache[cache_key] = result
+        return list(result)
 
 
     def _blocked_by_gate_owned_order(self, zone: EZone) -> bool:
@@ -1494,7 +1540,9 @@ class OrderAuditEngineMixin:
                 "stop_cross": exact_cross,
                 "causes": causes,
             }
-            self._index_order_audit_identity(identity, zone.order_confirmation_time)
+            self._index_order_audit_identity(
+                identity, zone.order_confirmation_time
+            )
 
         # Order_A retention invariant: once a valid parent-stop physical Order
         # has entered the canonical ledger, later lifecycle reconciliation may
@@ -1559,45 +1607,56 @@ class OrderAuditEngineMixin:
         )
         for identity, entry in preserved.items():
             self.order_audit.setdefault(identity, entry)
-        self._carried_orders_cache.clear()
+        self._invalidate_carried_order_caches()
         return rebuilt
 
 
-def prepare_order_audit(
-    detector,
-    start_index: int,
-    end_index: int,
-    s_detector=None,
-    accepted_a_sources: set[datetime] | None = None,
-    required_identities: set[tuple[int, int]] | None = None,
-):
-    """Resolve final Order_A and Order_B identities before serialization."""
+def _parent_stop_cause_key(cause: dict[str, object]) -> tuple[object, object, object, object]:
+    return (
+        cause.get("parentType"),
+        cause.get("parentFamily"),
+        cause.get("eventTime"),
+        cause.get("parentSourceTime"),
+    )
+
+
+def _collect_s_ledger_entries(
+    s_detector,
+    accepted_a_sources: set[datetime] | None,
+) -> list[tuple[dict[str, object], list[dict[str, object]]]]:
+    """Collect A-owned Order_A entries with accepted creation causes."""
     combined: list[tuple[dict[str, object], list[dict[str, object]]]] = []
-    required_identities = set(required_identities or set())
+    if s_detector is None:
+        return combined
+    for entry in s_detector.order_audit.values():
+        a_causes = entry.get("a_causes") or [(
+            entry["a_source_time"], entry["a_stop_event_time"]
+        )]
+        if accepted_a_sources is not None:
+            a_causes = [
+                cause for cause in a_causes
+                if cause[0] in accepted_a_sources
+            ]
+        if not a_causes:
+            continue
+        combined.append((entry, [
+            {
+                "kind": "parent-stop",
+                "parentType": "A",
+                "parentFamily": None,
+                "eventTime": stop_time,
+                "parentSourceTime": source_time,
+            }
+            for source_time, stop_time in a_causes
+        ]))
+    return combined
 
-    if s_detector is not None:
-        for entry in s_detector.order_audit.values():
-            a_causes = entry.get("a_causes") or [(
-                entry["a_source_time"], entry["a_stop_event_time"]
-            )]
-            if accepted_a_sources is not None:
-                a_causes = [
-                    cause for cause in a_causes
-                    if cause[0] in accepted_a_sources
-                ]
-            if not a_causes:
-                continue
-            combined.append((entry, [
-                {
-                    "kind": "parent-stop",
-                    "parentType": "A",
-                    "parentFamily": None,
-                    "eventTime": stop_time,
-                    "parentSourceTime": source_time,
-                }
-                for source_time, stop_time in a_causes
-            ]))
 
+def _collect_e_ledger_entries(
+    detector,
+) -> list[tuple[dict[str, object], list[dict[str, object]]]]:
+    """Collect E-stage Order_A / Order_B entries for prepare."""
+    combined: list[tuple[dict[str, object], list[dict[str, object]]]] = []
     for entry in detector.order_audit.values():
         causes = [
             {
@@ -1613,7 +1672,17 @@ def prepare_order_audit(
         causes.extend(entry.get("order_b_causes", ()))
         if causes:
             combined.append((entry, causes))
+    return combined
 
+
+def _merge_prepared_identities(
+    combined: list[tuple[dict[str, object], list[dict[str, object]]]],
+    detector,
+    start_index: int,
+    end_index: int,
+    required_identities: set[tuple[int, int]],
+) -> list[dict[str, object]]:
+    """Merge ledger rows by physical identity inside the presentation window."""
     merged: dict[tuple[int, int], dict[str, object]] = {}
     output: list[dict[str, object]] = []
     for entry, supplied_causes in combined:
@@ -1646,8 +1715,13 @@ def prepare_order_audit(
         }
         merged[identity] = prepared
         output.append(prepared)
+    return output
 
-    # One exact parent-stop event creates one physical Order_A.
+
+def _single_owner_parent_stop_causes(
+    output: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    """Keep one physical Order_A owner per exact parent-stop cause key."""
     parent_owner: dict[tuple[object, object, object, object], dict[str, object]] = {}
     parent_rank: dict[tuple[object, object, object, object], tuple[object, int, int]] = {}
     for item in output:
@@ -1660,12 +1734,7 @@ def prepare_order_audit(
         for cause in item["causes"]:
             if cause.get("kind") != "parent-stop":
                 continue
-            key = (
-                cause.get("parentType"),
-                cause.get("parentFamily"),
-                cause.get("eventTime"),
-                cause.get("parentSourceTime"),
-            )
+            key = _parent_stop_cause_key(cause)
             previous = parent_rank.get(key)
             if previous is None or rank < previous:
                 parent_rank[key] = rank
@@ -1678,18 +1747,33 @@ def prepare_order_audit(
             if cause.get("kind") != "parent-stop":
                 accepted_causes.append(cause)
                 continue
-            key = (
-                cause.get("parentType"),
-                cause.get("parentFamily"),
-                cause.get("eventTime"),
-                cause.get("parentSourceTime"),
-            )
+            key = _parent_stop_cause_key(cause)
             if parent_owner.get(key) is item:
                 accepted_causes.append(cause)
         if accepted_causes:
             item["causes"] = accepted_causes
             deduped_output.append(item)
     return deduped_output
+
+
+def prepare_order_audit(
+    detector,
+    start_index: int,
+    end_index: int,
+    s_detector=None,
+    accepted_a_sources: set[datetime] | None = None,
+    required_identities: set[tuple[int, int]] | None = None,
+):
+    """Resolve final Order_A and Order_B identities before serialization."""
+    required_identities = set(required_identities or set())
+    combined = [
+        *_collect_s_ledger_entries(s_detector, accepted_a_sources),
+        *_collect_e_ledger_entries(detector),
+    ]
+    output = _merge_prepared_identities(
+        combined, detector, start_index, end_index, required_identities
+    )
+    return _single_owner_parent_stop_causes(output)
 
 
 def accepted_audit_entry(
