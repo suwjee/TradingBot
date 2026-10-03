@@ -484,8 +484,8 @@ function New-MenuTag {
   )
   $messages = @('-m', "TradingBot $TargetKind tag $Tag")
   if ($TargetKind -eq 'production') { $messages += @('-m', "TradingBot-Main-Source: $MainSourceSha") }
-  $args = @('-c', 'user.name=TradingBot Release', '-c', 'user.email=release@tradingbot.invalid', 'tag', '-a', $Tag, $TargetSha) + $messages
-  $r = Invoke-GitSafe $args
+  $tagArguments = @('-c', 'user.name=TradingBot Release', '-c', 'user.email=release@tradingbot.invalid', 'tag', '-a', $Tag, $TargetSha) + $messages
+  $r = Invoke-GitSafe $tagArguments
   Assert-GitOk $r "Could not create local tag: $Tag"
   $tagObject = Get-ObjectOid "refs/tags/$Tag"
   if ([string]::IsNullOrWhiteSpace($tagObject)) { throw "Created tag object could not be resolved: $Tag" }
