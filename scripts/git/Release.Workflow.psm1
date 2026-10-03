@@ -466,8 +466,8 @@ function Test-ReleasePreflight {
   if ($worktrees.ExitCode -ne 0) { $errors.Add('Git worktree inventory failed.') }
   elseif ($worktrees.StdOut -match '(?m)^branch refs/heads/production\s*$') { $errors.Add('Local production branch is checked out in another worktree.') }
   if ($null -ne $localProductionSha) {
-    if ($null -eq $productionBaseSha -or $localProductionSha -ne $productionBaseSha) {
-      $errors.Add('Local production branch diverges from origin/production; resolve it before release.')
+    if ($null -ne $productionBaseSha -and $localProductionSha -ne $productionBaseSha) {
+      $warnings.Add('Local production history will be preserved in the validated production snapshot.')
     }
     $upstream = Invoke-ReleaseGit -Root $Root -Arguments @('rev-parse', '--abbrev-ref', 'production@{upstream}')
     if ($upstream.ExitCode -ne 0 -or $upstream.StdOut.Trim() -ne 'origin/production') { $errors.Add('Local production branch must track origin/production.') }
@@ -598,6 +598,19 @@ function New-ProductionSnapshot {
     $productionHead = Invoke-ReleaseGit -Root $Root -WorkingDirectory $context.WorktreePath -Arguments @('rev-parse', '--verify', 'HEAD^{commit}')
     Assert-ReleaseCondition ($productionHead.ExitCode -eq 0) 'Could not resolve the prepared production commit.'
     $productionSha = ($productionHead.StdOut -split '\s+' | Select-Object -First 1).Trim()
+    $localProductionSha = Get-ReleaseRefOid -Root $Root -Ref 'refs/heads/production'
+    if ($null -ne $localProductionSha) {
+      $contained = Invoke-ReleaseGit -Root $Root -Arguments @('merge-base', '--is-ancestor', $localProductionSha, $productionSha)
+      Assert-ReleaseCondition ($contained.ExitCode -in @(0, 1)) 'Could not compare local production history with the candidate.'
+      if ($contained.ExitCode -eq 1) {
+        $candidateTree = Invoke-ReleaseGit -Root $Root -Arguments @('rev-parse', '--verify', "$productionSha^{tree}")
+        Assert-ReleaseCondition ($candidateTree.ExitCode -eq 0) 'Could not resolve the production candidate tree.'
+        $integration = Invoke-ReleaseGit -Root $Root -Arguments @('-c', 'user.name=TradingBot Release', '-c', 'user.email=release@tradingbot.invalid', 'commit-tree', $candidateTree.StdOut.Trim(), '-p', $productionSha, '-p', $localProductionSha, '-m', 'Preserve local production history in runtime snapshot', '-m', "TradingBot-Main-Source: $SourceMainSha")
+        Assert-ReleaseCondition ($integration.ExitCode -eq 0) 'Could not preserve local production history.'
+        $productionSha = $integration.StdOut.Trim()
+        $productionChanged = $true
+      }
+    }
     return [pscustomobject]@{
       Root = $Root
       Context = $context
@@ -605,6 +618,7 @@ function New-ProductionSnapshot {
       SourceMainSha = $SourceMainSha
       CandidateMainTreeSha = $candidateMainTreeSha
       ProductionBaseSha = $fetchedProductionSha
+      LocalProductionSha = $localProductionSha
       ProductionSha = $productionSha
       ProductionChanged = $productionChanged
       FileSet = $FileSet
@@ -814,7 +828,13 @@ function Finalize-ProductionBranch {
   $remoteBase = Get-ReleaseRefOid -Root $Root -Ref 'refs/remotes/origin/production'
   Assert-ReleaseCondition ($remoteBase -eq $Snapshot.ProductionBaseSha) 'origin/production changed during local validation; refusing to advance production.'
   $current = Get-ReleaseRefOid -Root $Root -Ref 'refs/heads/production'
-  if ($null -ne $current) { Assert-ReleaseCondition ($current -eq $Snapshot.ProductionBaseSha) 'Local production changed during validation; refusing to advance production.' }
+  Assert-ReleaseCondition ($current -eq $Snapshot.LocalProductionSha) 'Local production changed during validation; refusing to advance production.'
+  if ($null -ne $current) {
+    $containsLocal = Invoke-ReleaseGit -Root $Root -Arguments @('merge-base', '--is-ancestor', $current, $Snapshot.ProductionSha)
+    Assert-ReleaseCondition ($containsLocal.ExitCode -eq 0) 'Prepared production snapshot does not preserve local production history.'
+  }
+  $containsRemote = Invoke-ReleaseGit -Root $Root -Arguments @('merge-base', '--is-ancestor', $Snapshot.ProductionBaseSha, $Snapshot.ProductionSha)
+  Assert-ReleaseCondition ($containsRemote.ExitCode -eq 0) 'Prepared production snapshot does not preserve origin/production history.'
   $expected = if ($null -eq $current) { '0000000000000000000000000000000000000000' } else { $current }
   $advance = Invoke-ReleaseGit -Root $Root -Arguments @('update-ref', 'refs/heads/production', $Snapshot.ProductionSha, $expected)
   Assert-ReleaseCondition ($advance.ExitCode -eq 0) 'Could not advance local production with its expected-old-value guard.'

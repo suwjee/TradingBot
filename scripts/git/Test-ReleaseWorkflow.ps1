@@ -250,6 +250,7 @@ function Invoke-SnapshotTests {
   $linkedWorktree = $null
   $snapshot = $null
   $normalSnapshot = $null
+  $divergentSnapshot = $null
   try {
     $remote = New-FixtureRemote -Root $fixture.Root
     & git -C $fixture.Root -c user.name=Fixture -c user.email=fixture@example.invalid tag -a fixture-remote-only $fixture.Sha -m remote-only
@@ -319,10 +320,21 @@ function Invoke-SnapshotTests {
     $divergent = (& git -C $fixture.Root -c user.name=Fixture -c user.email=fixture@example.invalid commit-tree "${sourceSha}^{tree}" -m divergent).Trim()
     & git -C $fixture.Root update-ref refs/heads/production $divergent
     $divergentPreflight = Test-ReleasePreflight -Root $fixture.Root -Tag 'snapshot-divergent'
-    Assert-True (@($divergentPreflight.Errors | Where-Object { $_ -match 'diverges' }).Count -gt 0) 'preflight rejects a divergent local production branch'
+    Assert-True ($divergentPreflight.Errors.Count -eq 0) 'preflight accepts preservation of divergent local production history'
+    Assert-True (@($divergentPreflight.Warnings | Where-Object { $_ -match 'history will be preserved' }).Count -eq 1) 'preflight reports local production history integration'
+    $divergentSnapshot = New-ProductionSnapshot -Root $fixture.Root -SourceMainSha $sourceSha -ProductionBaseSha $preflight.ProductionBaseSha -FileSet $fileSet -CommitMessage 'fixture integrated production' -DryRun
+    & git -C $fixture.Root merge-base --is-ancestor $divergent $divergentSnapshot.ProductionSha
+    Assert-True ($LASTEXITCODE -eq 0) 'integrated snapshot retains the local production commit'
+    & git -C $fixture.Root merge-base --is-ancestor $preflight.ProductionBaseSha $divergentSnapshot.ProductionSha
+    Assert-True ($LASTEXITCODE -eq 0) 'integrated snapshot retains the remote production commit'
+    Assert-True ((Test-ProductionSnapshot -Snapshot $divergentSnapshot).Errors.Count -eq 0) 'integrated snapshot keeps the exact runtime tree'
+    $integratedPromotion = Finalize-ProductionBranch -Root $fixture.Root -Snapshot $divergentSnapshot
+    Assert-True ($integratedPromotion.PreviousSha -eq $divergent) 'integrated promotion advances the expected local production ref'
+    Remove-TemporaryReleaseContext -Context $divergentSnapshot.Context
   } finally {
     if ($snapshot -and -not $snapshot.Context.Cleaned) { Remove-TemporaryReleaseContext -Context $snapshot.Context }
     if ($normalSnapshot -and -not $normalSnapshot.Context.Cleaned) { Remove-TemporaryReleaseContext -Context $normalSnapshot.Context }
+    if ($divergentSnapshot -and -not $divergentSnapshot.Context.Cleaned) { Remove-TemporaryReleaseContext -Context $divergentSnapshot.Context }
     if ($linkedWorktree -and (Test-Path -LiteralPath $linkedWorktree)) { & git -C $fixture.Root worktree remove --force $linkedWorktree 2>$null | Out-Null }
     if ($fixture) { Remove-TestFixturePath $fixture.Root }
     Remove-TestFixturePath $remote

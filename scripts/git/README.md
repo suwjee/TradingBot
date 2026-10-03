@@ -28,6 +28,8 @@ The workflow reuses existing Git and GitHub CLI authentication without reading o
 
 `origin/production` is required. When local `production` is absent, the candidate starts from freshly fetched `origin/production` in a detached temporary worktree. Only after validation does the workflow advance local `production` with an expected-old-value guard and configure its `origin/production` upstream. Publication always uses explicit refspecs.
 
+If local `production` has independent commits, the validated runtime snapshot gains a second parent that preserves that local history. Its tree remains the exact dependency-derived runtime file set. Promotion checks both parent histories and the unchanged local ref before advancing `production`; an operation without a new snapshot still requires a fast-forward production target.
+
 Publication first uses one `git push --atomic` for `main`, `production`, and the annotated tag. If atomic push is unsupported, fallback is allowed only after every target remote ref is proven unchanged. The fallback verifies each ref immediately and stops with explicit partial-failure reporting; it never hides a partial result.
 
 ## Traceability and Recovery

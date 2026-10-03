@@ -704,7 +704,6 @@ function Invoke-InteractiveOperation {
     $ctx.State = Get-BranchState
     Show-RepositoryStatus $ctx.State
     Sync-MainFastForwardIfNeeded -State $ctx.State
-    if ($null -ne $ctx.State.LocalProduction -and $ctx.State.ProductionBehind -gt 0) { throw 'Local production is behind/diverged from origin/production.' }
 
     Write-Run 'Authentication validation'
     Test-GitAuthentication
@@ -744,9 +743,6 @@ function Invoke-InteractiveOperation {
 
     Write-Run 'Calculating branch candidates'
     $includeNewCommit = -not [string]::IsNullOrWhiteSpace($ctx.CommitMessage)
-    if ($includeNewCommit -and $Target -in @('production','both') -and $null -ne $ctx.State.LocalProduction -and $ctx.State.ProductionAhead -gt 0) {
-      throw 'Local production already contains unpushed commits. Push/reconcile those first, or leave the commit message empty to push the existing production commits.'
-    }
     $sourceMainPreview = $ctx.State.LocalMain
     if ($Target -in @('main','both')) {
       $ctx.MainPreview = New-MainPreview -CommitMessage $(if ($includeNewCommit) { $ctx.CommitMessage } else { 'TradingBot preview' }) -RemoteMain $ctx.State.RemoteMain -IncludeWorkingTree:$includeNewCommit
@@ -861,9 +857,6 @@ function Invoke-InteractiveOperation {
     $actualProductionSha = $ctx.State.RemoteProduction
     if ($Target -in @('production','both')) {
       if ($includeNewCommit) {
-        if ($null -ne $ctx.State.LocalProduction -and $ctx.State.ProductionAhead -gt 0) {
-          throw 'Local production already contains unpushed commits. Push/reconcile those first before creating another production snapshot.'
-        }
         Write-SubRun 'Preparing exact production snapshot from committed main SHA'
         $policy = Import-ReleasePolicy -Root $script:Root
         $actualFileSet = Get-ProductionFileSet -Root $script:Root -MainSha $actualMainSha -Policy $policy
