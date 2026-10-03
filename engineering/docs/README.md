@@ -3,7 +3,7 @@ title: TradingBot Engineering Documentation
 document_role: reference
 lifecycle: maintained
 owner: documentation
-last_modified_at: 2026-09-30T11:40:11+03:30
+last_modified_at: 2026-09-30T20:12:59+03:30
 ---
 
 # Engineering documentation
@@ -21,6 +21,6 @@ This directory is the maintained documentation entry point. Root [`AGENTS.md`](.
 
 Historical documentation is preserved outside the maintained documentation surface under `engineering/archive/`. Historical verification/migration evidence is preserved under `engineering/verification/history/` or its associated dated evidence area. Historical and generated material is supporting evidence, not Current authority.
 
-Some maintained owner paths still contain explicitly marked dated bodies that are scheduled for later owner-specific rewrites. Until those phases run, follow their lifecycle notes, root AGENTS, current Source, and Documentation Governance rather than promoting snapshot facts to durable Current truth.
+Maintained owner documents describe Current durable contracts. Historical phase records and superseded snapshots remain evidence under the project archive/verification owners and must not be interpreted as pending Current instructions.
 
 Current accepted Algorithm References are discovered under `engine/algorithms/` according to root AGENTS. Do not freeze their count, filenames, hashes, or versions in this index.

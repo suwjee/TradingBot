@@ -1,6 +1,6 @@
 # TradingBot Project Operating Contract
 
-**last_modified_at:** `2026-09-30T09:24:22+03:00`
+**last_modified_at:** `2026-09-30T20:12:59+03:30`
 
 This root `AGENTS.md` is the durable navigation and operating contract for AI-assisted work in TradingBot. It defines authority, discovery, ownership boundaries, safety rules, engineering workflow, and verification obligations. It is intentionally discovery-first: mutable repository facts must be re-discovered from the live project instead of being frozen here.
 
@@ -334,6 +334,8 @@ When an approved change affects durable behavior or architecture:
 6. preserve useful historical evidence as historical rather than rewriting it as current.
 
 Do not duplicate volatile algorithm semantics into general engineering documents.
+
+When creating or editing a governed maintained document, follow [Documentation Governance](engineering/docs/documentation-governance.md): preserve a reliable existing `created_at`, record `created_at` for a newly created maintained document where required, update `last_modified_at` to the actual final edit-completion timestamp with seconds and an explicit timezone offset, and never fabricate an unknown historical creation timestamp.
 
 Current documentation navigation begins at [Engineering documentation](engineering/docs/README.md). Verify the status/currentness of a linked document before treating its body as maintained authority.
 
