@@ -38,7 +38,8 @@ export function createCalculationCoordinator({ maxActive = 1 } = {}) {
   }
 
   function drain() {
-    while (!closed && activeJobs.size < maxActive && pending.length) {
+    if (closed) return;
+    while (activeJobs.size < maxActive && pending.length) {
       const job = pending.shift();
       const controller = new AbortController();
       job.controller = controller;
