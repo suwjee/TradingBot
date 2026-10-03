@@ -10,7 +10,7 @@ scope:
   - engine
   - runtime-boundaries
   - state-and-transport
-last_modified_at: 2026-09-30T10:37:31+03:30
+last_modified_at: 2026-10-03T02:11:38+03:30
 ---
 
 # TradingBot Technical Architecture
@@ -171,6 +171,8 @@ The Vite/local-server layer owns:
 ### Engine process boundary
 
 Vite launches the Python bridge as a separate process. It provides Engine component locations and request arguments, collects stdout as the final JSON response, and interprets prefixed stderr records as progress events.
+
+After a calculation-cache miss, a FIFO coordinator runs at most one Engine child by default. `TRADINGBOT_MAX_ENGINE_CONCURRENCY` accepts an integer from 1 through 8; invalid values stop server initialization. Concurrent requests with the same public calculation cache identity and RAW content digest share one execution and receive independent progress events. A cache hit requires an internal stamp matching that digest. An unchanged RAW keeps its calculation ID; changed RAW bytes with a preserved timestamp receive a separate ID so an existing stamped report stays intact. The server rechecks RAW and calculation Source before serving a cache hit; a calculation rejects a RAW source changed while it waited or ran, before its result is cached. Shutdown aborts owned calculations and closes their progress channels. Progress history retains at most 120 events per request; a finished channel is released after its last observer disconnects, while unobserved terminal history remains replayable for the life of the server process. These server controls leave Engine Source and both Algorithm References unchanged.
 
 Vite does not reproduce Engine trading stages. Its calculation responsibility ends at validation, input preparation, process orchestration, transport, cache coordination, and persistence of already-serialized results.
 

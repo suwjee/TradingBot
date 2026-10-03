@@ -1,0 +1,122 @@
+{
+  "status": "PASS",
+  "pythonVersion": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+  "sourceHashes": {
+    "engine/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "engine/bridge/__init__.py": "2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8",
+    "engine/bridge/trading_pipeline.py": "2f0f6ae64830cf3a1f9d8832e55bfc3746b387f3bb64a7df5c277fed0426e79b",
+    "engine/pipeline/__init__.py": "ca549e4cf5d9a070227498d0d210279e0f7edae66d62dadab7981cddaa1db5c3",
+    "engine/pipeline/a_zone_detector.py": "8249318f58180310142d9d132ba493db297d45dfea0b56c9366fb50bcfb263e4",
+    "engine/pipeline/blue_line_detector.py": "b501abf6aeba23b4c92db77718556d9849fb7921f1136eb80215bd947c36c124",
+    "engine/pipeline/core_utils.py": "007e5329e14ab9695e555c630527badc84dd35a239dea1cf685141e4278265eb",
+    "engine/pipeline/direction_policy.py": "a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea",
+    "engine/pipeline/e_zone_detector.py": "513d4f4a249fae5362ef86704e0be9617d99d7c85ca4983505a7b1add9c4b8fb",
+    "engine/pipeline/lifecycle_engine.py": "d7b9ffce66cd39123eda6232099dadd967ffde70873380e57d3628a8e22b4363",
+    "engine/pipeline/order_audit_engine.py": "5858864e671ae8429e225875c51538564d29a3af285365ded1f82aedbedad3ba",
+    "engine/pipeline/reaction_engine.py": "9bc697bdb3d1e421b7700a94bbd52a7407f7891215031b271ced4523d7d6c8ca",
+    "engine/pipeline/s_zone_detector.py": "ef71a2e4176caaabc25d1ef0c1f0f24efb54ed3110982cdb7cf52d2449cca2ee"
+  },
+  "referenceHashes": {
+    "TradingBot_Bearish_Algorithm_Reference_V5.4.21_Source_Synchronized.md": "eb3711760dbde5ac9920cb9fcc50bb177d0fa9bd5b2ef9d6687567dd3aa2ab30",
+    "TradingBot_Bullish_Algorithm_Reference_V5.4.21_Source_Synchronized.md": "90243afcb6aa296396f792b91c971c73f9ce327dfdba7743ab1a64bb953a8364"
+  },
+  "cases": [
+    {
+      "rawPath": "D:\\My-Projects\\TradingBot\\apps\\chart\\state\\data\\RAW\\FOREXCOM\\XAUUSD\\RAW FOREXCOM_XAUUSD 30S FROM 2026-09-28 20-44-00 TO 2026-09-29 11-45-30.json",
+      "rawSha256": "9b643ce975466e37f87ce452ac030531c13406bc6fe34d266ec5e0efd1618186",
+      "rawRows": 1683,
+      "rawFirstEpoch": 1790615640,
+      "rawLastEpoch": 1790669730,
+      "timeframeSeconds": 5,
+      "direction": "both",
+      "bridgeOutput": true,
+      "wallSeconds": 0.831,
+      "peakWorkingSetBytes": 33763328,
+      "returnCode": 0,
+      "stderrPath": "case-01.stderr.log",
+      "timings": {
+        "phasesMs": {
+          "Validate request": 11.54,
+          "Load Reaction engine": 10.28,
+          "Load Blue Line engine": 4.51,
+          "Load A engine": 6.63,
+          "Load S engine": 5.22,
+          "Load E engine": 4.85,
+          "Load Lifecycle engine": 6.75,
+          "Read source file": 0.32,
+          "Parse source JSON": 1.27,
+          "Use full RAW calculation context": 0.01,
+          "Normalize raw candles": 9.23,
+          "Build lower candle views": 9.22,
+          "Build timeframe candle views": 7.5,
+          "Reaction geometry • Bullish": 13.66,
+          "Reaction geometry • Bearish": 18.32,
+          "Internal Reaction ownership": 13.1,
+          "Blue Line • Bullish": 6.16,
+          "A • Bullish": 11.15,
+          "S • Bullish": 13.42,
+          "E • Bullish • initial": 28.34,
+          "E • Bullish • S reconciliation": 15.28,
+          "E • Bullish • final audit": 13.17,
+          "Blue Line • Bearish": 5.95,
+          "A • Bearish": 10.01,
+          "S • Bearish": 10.89,
+          "E • Bearish • initial": 31.1,
+          "E • Bearish • S reconciliation": 20.64,
+          "E • Bearish • final audit": 16.04,
+          "E • Bearish • shared Order-stop reconciliation": 16.92,
+          "Reconcile S visibility - Bullish": 0.13,
+          "StopAll - Bullish": 0.16,
+          "Order_B reset legs - Bullish": 2.77,
+          "Apply visibility filters - Bullish": 1.75,
+          "Serialize Reaction - Bullish": 7.67,
+          "Serialize output - Bullish": 9.12,
+          "Reconcile S visibility - Bearish": 0.11,
+          "StopAll - Bearish": 0.33,
+          "Order_B reset legs - Bearish": 2.82,
+          "Apply visibility filters - Bearish": 1.46,
+          "Serialize Reaction - Bearish": 5.69,
+          "Serialize output - Bearish": 7.3
+        },
+        "bridgeTotalMs": 562.88
+      },
+      "normalizedSha256": "3fd27774efa318e60a522a5f195e1085464a88460ce6e8cb8aa7b6e45d91814a",
+      "counts": {
+        "bullish": {
+          "reactions": 156,
+          "resets": 79,
+          "blueLines": 65,
+          "aZones": 15,
+          "sZones": 6,
+          "eZones": 9,
+          "stopAlls": 1,
+          "orderAudit": 29,
+          "orderBCausesByPostStop": {
+            "S": 1,
+            "E": 14
+          }
+        },
+        "bearish": {
+          "reactions": 145,
+          "resets": 71,
+          "blueLines": 65,
+          "aZones": 14,
+          "sZones": 5,
+          "eZones": 5,
+          "stopAlls": 3,
+          "orderAudit": 28,
+          "orderBCausesByPostStop": {
+            "S": 5,
+            "StopAll": 3
+          }
+        }
+      },
+      "rawCauseValidation": {
+        "bullish": 15,
+        "bearish": 8
+      },
+      "normalizedPayloadPath": "case-01.json.gz",
+      "status": "PASS"
+    }
+  ]
+}

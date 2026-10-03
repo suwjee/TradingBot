@@ -7,6 +7,8 @@ import { fileURLToPath } from "node:url";
 import { resolveLocalStatePaths } from "./local-state-paths.js";
 import { createRawResourceStore } from "./raw-resource-store.js";
 import { buildRawFilename, formatTehranMetadataTime, parseRawFilename } from "../src/features/raw-file-contract.js";
+import { readBoundedBody } from "./request-body.js";
+import { mergeChartUpdateCandles } from "./chart-update-merge.js";
 
 const HISTORY_PATH = "/api/customer/trading-view/history";
 const CHART_LIST_PATH = "/api/customer/chart-layout-v2/";
@@ -233,20 +235,10 @@ function json(res, status, body) {
   res.end(JSON.stringify(body));
 }
 
-function readJson(req, limit = 100_000) {
-  return new Promise((resolve, reject) => {
-    let body = "";
-    req.setEncoding("utf8");
-    req.on("data", (part) => {
-      body += part;
-      if (body.length > limit) reject(new Error("Request is too large."));
-    });
-    req.on("end", () => {
-      try { resolve(JSON.parse(body || "{}")); }
-      catch { reject(new Error("Request body must be valid JSON.")); }
-    });
-    req.on("error", reject);
-  });
+async function readJson(req, limit = 100_000) {
+  const body = await readBoundedBody(req, limit, "Request is too large.");
+  try { return JSON.parse(body || "{}"); }
+  catch { throw new Error("Request body must be valid JSON."); }
 }
 
 function replaceFileWithRetry(sourcePath, targetPath) {
@@ -433,6 +425,9 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
   let authCaptureArmed = false;
   let loginBrowser = null;
   let nextChartHistoryRequestAt = 0;
+  let shutdownPromise = null;
+  let shuttingDown = false;
+  const pendingLaunches = new Set();
   const observedHistoryPages = new WeakSet();
 
   async function waitForChartHistoryRequestSlot() {
@@ -663,6 +658,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
   }
 
   async function ensureContext({ showLogin = false, showBrowser = false } = {}) {
+    if (shuttingDown) throw new Error("FARAZ service is shutting down.");
     if (context && (showLogin || showBrowser) && !authCaptureArmed && !fs.existsSync(secretPath)) {
       await closeBrowserContext();
       credentials = { xAccessToken: "", farazSession: "" };
@@ -671,40 +667,63 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     }
     if (context && (showLogin || showBrowser) && contextHeadless) await closeBrowserContext();
     if (!context) {
-      const executablePath = launchBrowser ? (process.env.FARAZ_BROWSER_PATH || null) : browserExecutable();
-      const storageState = loadStoredSession();
-      if ((showLogin || showBrowser) && !storageState) authCaptureArmed = true;
-      const headless = !showLogin && !showBrowser;
-      const launch = launchBrowser || (async ({ executablePath }) => {
-        const launchedServer = await chromium.launchServer({
-          executablePath, headless,
-          args: headless ? ["--no-first-run", "--no-default-browser-check"] : ["--start-maximized", "--no-first-run", "--no-default-browser-check"],
+      if (pendingLaunches.size) {
+        await pendingLaunches.values().next().value;
+      } else {
+        const executablePath = launchBrowser ? (process.env.FARAZ_BROWSER_PATH || null) : browserExecutable();
+        const storageState = loadStoredSession();
+        if ((showLogin || showBrowser) && !storageState) authCaptureArmed = true;
+        const headless = !showLogin && !showBrowser;
+        const launch = launchBrowser || (async ({ executablePath }) => {
+          const launchedServer = await chromium.launchServer({
+            executablePath, headless,
+            args: headless ? ["--no-first-run", "--no-default-browser-check"] : ["--start-maximized", "--no-first-run", "--no-default-browser-check"],
+          });
+          let launchedBrowser;
+          try {
+            launchedBrowser = await chromium.connect(launchedServer.wsEndpoint());
+            const launchedContext = await launchedBrowser.newContext({ storageState: storageState || undefined, viewport: null });
+            return { browser: launchedBrowser, context: launchedContext, browserServer: launchedServer, browserPid: launchedServer.process()?.pid || null };
+          } catch (error) {
+            await launchedBrowser?.close().catch(() => {});
+            await launchedServer.kill().catch(() => {});
+            throw error;
+          }
         });
-        const launchedBrowser = await chromium.connect(launchedServer.wsEndpoint());
-        const launchedContext = await launchedBrowser.newContext({ storageState: storageState || undefined, viewport: null });
-        return { browser: launchedBrowser, context: launchedContext, browserServer: launchedServer, browserPid: launchedServer.process()?.pid || null };
-      });
-      const launched = await launch({ executablePath, headless, storageState });
-      browser = launched.browser;
-      if (authCaptureArmed && (showLogin || showBrowser)) loginBrowser = launched.browser;
-      context = launched.context;
-      browserServer = launched.browserServer || null;
-      browserPid = Number(launched.browserPid) || null;
-      contextHeadless = headless;
-      if (credentials.xAccessToken) await context.setExtraHTTPHeaders({ "x-access-token": credentials.xAccessToken });
-      context.on?.("page", observeHistoryRequests);
-      context.pages().forEach(observeHistoryRequests);
-      browser.on?.("disconnected", () => {
-        if (browser === launched.browser) {
-          if (loginBrowser === launched.browser) loginBrowser = null;
-          authCaptureArmed = false;
-          browser = null;
-          context = null;
-          authPage = null;
-          contextHeadless = null;
-        }
-      });
+        const launching = (async () => {
+          const launched = await launch({ executablePath, headless, storageState });
+          browser = launched.browser;
+          if (authCaptureArmed && (showLogin || showBrowser)) loginBrowser = launched.browser;
+          context = launched.context;
+          browserServer = launched.browserServer || null;
+          browserPid = Number(launched.browserPid) || null;
+          contextHeadless = headless;
+          try {
+            if (shuttingDown) throw new Error("FARAZ service is shutting down.");
+            if (credentials.xAccessToken) await context.setExtraHTTPHeaders({ "x-access-token": credentials.xAccessToken });
+            context.on?.("page", observeHistoryRequests);
+            context.pages().forEach(observeHistoryRequests);
+            browser.on?.("disconnected", () => {
+              if (browser === launched.browser) {
+                if (loginBrowser === launched.browser) loginBrowser = null;
+                authCaptureArmed = false;
+                browser = null;
+                context = null;
+                authPage = null;
+                contextHeadless = null;
+              }
+            });
+          } catch (error) {
+            await closeBrowserContext({ forceKill: true });
+            throw error;
+          }
+        })();
+        pendingLaunches.add(launching);
+        try { await launching; }
+        finally { pendingLaunches.delete(launching); }
+      }
     }
+    if (shuttingDown) throw new Error("FARAZ service is shutting down.");
     const pages = context.pages();
     authPage = pages.find((page) => /^https:\/\/([^.]+\.)?faraz\.io\//i.test(page.url())) || pages[0] || await context.newPage();
     observeHistoryRequests(authPage);
@@ -959,6 +978,22 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     }, 0);
   }
 
+  function shutdown() {
+    if (shutdownPromise) return shutdownPromise;
+    shuttingDown = true;
+    shutdownPromise = (async () => {
+      for (const job of jobs.values()) {
+        if (!job.running && !job.awaitingCoverageDecision) continue;
+        job.abort.cancelled = true;
+        job.requestController?.abort();
+        for (const controller of job.requestControllers || []) controller.abort();
+      }
+      await Promise.allSettled([...pendingLaunches]);
+      await closeBrowserContext({ forceKill: true });
+    })();
+    return shutdownPromise;
+  }
+
   async function recoverCoverageGaps(job, initialCandles) {
     const originalGaps = findCandleCoverageGaps(initialCandles, {
       from: job.requestedFrom, to: job.requestedTo, timeframeSeconds: job.timeframeSeconds,
@@ -1195,6 +1230,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
   }
 
   async function startJob(params) {
+    if (shuttingDown) throw new Error("FARAZ service is shutting down.");
     const symbolName = String(params.symbolName || "").trim();
     const resolution = String(params.resolution || "").trim().toUpperCase();
     if (!symbolName) throw new Error("Symbol is required.");
@@ -1226,13 +1262,19 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     runJob(job).catch((error) => {
       Object.assign(job, { running: false, done: false, failedAt: Date.now(), stage: error.message === "Extraction cancelled." ? "Cancelled" : "Error", status: "Failed", error: error.message });
       log(job, error.message === "Extraction cancelled." ? "warn" : "error", `${describeError(error)}; jobId=${job.id}; symbol=${job.endpointSymbolName}; resolution=${job.resolution}; endpoint=${job.endpoint}; requestedRange=${tehranDisplayTime(job.requestedFrom)}→${tehranDisplayTime(job.requestedTo)}; sentPackets=${job.sentPackets}; receivedPackets=${job.receivedPackets}; receivedRows=${job.receivedRows}.`);
-    }).finally(() => { job.requestController = null; job.requestControllers?.clear(); });
+    }).finally(() => {
+      job.requestController = null;
+      job.requestControllers?.clear();
+    });
     return publicJob(job);
   }
 
   return {
     name: "faraz-candle-export-api",
+    shutdown,
     configureServer(server) {
+      server.watcher?.once("close", () => { void shutdown(); });
+      server.httpServer?.once("close", () => { void shutdown(); });
       // Authentication is intentionally user-driven. Status checks inspect a
       // saved file without a browser and migrate legacy DPAPI files once.
       server.middlewares.use("/api/faraz/auth/open", async (req, res) => {
@@ -1359,17 +1401,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
             return json(res, 400, { error: "One or more candles do not align with the RAW file timeframe." });
           }
 
-          const byTime = new Map(existingCandles.map((row) => [row.time, row]));
-          let added = 0;
-          let ignoredExisting = 0;
-          for (const row of newCandles) {
-            if (byTime.has(row.time)) ignoredExisting++;
-            else {
-              byTime.set(row.time, row);
-              added++;
-            }
-          }
-          const merged = [...byTime.values()].sort((left, right) => left.time - right.time);
+          const { candles: merged, added, ignoredExisting } = mergeChartUpdateCandles(existingCandles, newCandles);
           const mergedLastTime = Number(merged.at(-1)?.time);
           if (lastCandleTime !== mergedLastTime) return json(res, 409, { error: "lastCandleTime must match the final merged candle." });
 

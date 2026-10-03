@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param()
+param([switch] $LoadFunctionsOnly)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -15,6 +15,7 @@ $script:Root = Resolve-TradingBotProjectRoot -ScriptPath $PSCommandPath
 $script:RepoName = ''
 $script:StageNumber = 0
 $script:StageTotal = 0
+$script:HadOperationFailure = $false
 
 function Write-ColorLine {
   param([string] $Text, [ConsoleColor] $Color = [ConsoleColor]::Gray)
@@ -136,6 +137,7 @@ function Test-CommitContains {
   param([string] $Ancestor, [string] $Descendant)
   if ([string]::IsNullOrWhiteSpace($Ancestor) -or [string]::IsNullOrWhiteSpace($Descendant)) { return $false }
   $r = Invoke-GitSafe @('merge-base', '--is-ancestor', $Ancestor, $Descendant)
+  if ($r.ExitCode -gt 1) { throw "Could not compare Git commits: $Ancestor and $Descendant" }
   return ($r.ExitCode -eq 0)
 }
 
@@ -145,9 +147,9 @@ function Get-AheadBehind {
     return [pscustomobject]@{ Ahead = 0; Behind = 0 }
   }
   $r = Invoke-GitSafe @('rev-list', '--left-right', '--count', "$RemoteSha...$LocalSha")
-  if ($r.ExitCode -ne 0) { return [pscustomobject]@{ Ahead = 0; Behind = 0 } }
+  Assert-GitOk $r 'Could not compare local and remote branch history.'
   $parts = @($r.StdOut.Trim() -split '\s+')
-  if ($parts.Count -lt 2) { return [pscustomobject]@{ Ahead = 0; Behind = 0 } }
+  if ($parts.Count -ne 2 -or $parts[0] -notmatch '^\d+$' -or $parts[1] -notmatch '^\d+$') { throw 'Git returned an invalid ahead/behind count.' }
   return [pscustomobject]@{ Behind = [int]$parts[0]; Ahead = [int]$parts[1] }
 }
 
@@ -160,64 +162,19 @@ function Get-ActiveBranch {
 function Assert-ActiveMain {
   $branch = Get-ActiveBranch
   if ($branch -ne 'main') { throw "The active working branch must be main. Current branch: $branch" }
-  foreach ($marker in @('.git\MERGE_HEAD', '.git\rebase-apply', '.git\rebase-merge')) {
-    if (Test-Path -LiteralPath (Join-Path $script:Root $marker)) { throw "Git operation in progress: $marker" }
+  foreach ($marker in @('MERGE_HEAD', 'rebase-apply', 'rebase-merge')) {
+    $path = Invoke-GitSafe @('rev-parse', '--git-path', $marker)
+    Assert-GitOk $path "Could not locate Git operation marker: $marker"
+    $markerPath = $path.StdOut.Trim()
+    if (-not [IO.Path]::IsPathRooted($markerPath)) { $markerPath = Join-Path $script:Root $markerPath }
+    if (Test-Path -LiteralPath $markerPath) { throw "Git operation in progress: $marker" }
   }
 }
 
 function Sync-MainFastForwardIfNeeded {
   param($State)
-
-  if ($State.MainBehind -le 0) { return }
-
-  Write-Warn ("Local main is behind origin/main by {0} commit(s). Attempting safe fast-forward only update." -f $State.MainBehind)
-
-  $status = Invoke-GitSafe @('status', '--porcelain')
-  Assert-GitOk $status 'Could not determine working tree state.'
-
-  $hasChanges = -not [string]::IsNullOrWhiteSpace($status.StdOut)
-  $stashCreated = $false
-
-  if ($hasChanges) {
-    Write-Warn 'Working tree has local changes. Creating temporary stash before fast-forward.'
-    $stash = Invoke-GitSafe @('stash', 'push', '-u', '-m', 'TradingBot-GitManager-temp-main-sync')
-    if ($stash.ExitCode -ne 0) {
-      throw 'Could not create temporary stash for safe main synchronization.'
-    }
-    $stashCreated = $true
-  }
-
-  try {
-    $ff = Invoke-GitSafe @('merge', '--ff-only', 'origin/main')
-    if ($ff.ExitCode -ne 0) {
-      throw 'Local main is behind origin/main but could not be fast-forwarded safely. Reconcile it manually before continuing.'
-    }
-
-    Write-Ok 'Local main fast-forwarded safely to origin/main'
-  }
-  finally {
-    if ($stashCreated) {
-      Write-Run 'Restoring temporary local changes'
-
-      $stashList = Invoke-GitSafe @('stash', 'list', '-1')
-      if ($stashList.ExitCode -ne 0 -or [string]::IsNullOrWhiteSpace($stashList.StdOut)) {
-        throw 'Main was synchronized, but the temporary stash was not found. Check git stash list manually.'
-      }
-
-      $apply = Invoke-GitSafe @('stash', 'apply', '--index')
-      if ($apply.ExitCode -ne 0) {
-        Write-Err 'Main was synchronized, but restoring local changes caused conflicts. The stash was kept safely.'
-        Write-Err 'Resolve conflicts manually and remove the temporary stash only after verification.'
-        throw 'Temporary local changes could not be restored automatically.'
-      }
-
-      $drop = Invoke-GitSafe @('stash', 'drop')
-      if ($drop.ExitCode -ne 0) {
-        throw 'Temporary changes were restored, but cleanup of the temporary stash failed. Check git stash list manually.'
-      }
-
-      Write-Ok 'Temporary local changes restored'
-    }
+  if ($State.MainBehind -gt 0) {
+    throw ("Local main is behind or diverged from origin/main by {0} commit(s). Reconcile main manually before continuing; no local changes were stashed or merged." -f $State.MainBehind)
   }
 }
 
@@ -505,11 +462,15 @@ function Test-OptionalTag {
   if ($syntax.ExitCode -ne 0) { throw "Invalid Git tag syntax: $Tag" }
   $local = Invoke-GitSafe @('show-ref', '--verify', '--quiet', "refs/tags/$Tag")
   if ($local.ExitCode -eq 0) { throw "Local tag already exists: $Tag" }
+  if ($local.ExitCode -ne 1) { throw "Could not determine whether local tag exists: $Tag" }
   $remote = Get-RemoteOid "refs/tags/$Tag"
   if ($null -ne $remote) { throw "Remote tag already exists: $Tag" }
   if ($CheckGitHubRelease) {
     $view = Invoke-GhBound @('release', 'view', $Tag, '--json', 'tagName')
     if ($view.ExitCode -eq 0) { throw "GitHub Release already exists for tag: $Tag" }
+    if (($view.StdErr + "`n" + $view.StdOut) -notmatch '(?i)(release not found|HTTP 404: Not Found)') {
+      throw "Could not determine whether GitHub Release exists for tag: $Tag"
+    }
   }
   Write-Ok 'Tag is valid and unused'
 }
@@ -743,7 +704,6 @@ function Invoke-InteractiveOperation {
     $ctx.State = Get-BranchState
     Show-RepositoryStatus $ctx.State
     Sync-MainFastForwardIfNeeded -State $ctx.State
-    if ($ctx.State.MainBehind -gt 0) { throw 'Local main is still behind origin/main after safe reconciliation.' }
     if ($null -ne $ctx.State.LocalProduction -and $ctx.State.ProductionBehind -gt 0) { throw 'Local production is behind/diverged from origin/production.' }
 
     Write-Run 'Authentication validation'
@@ -1005,22 +965,22 @@ function Invoke-InteractiveOperation {
     } else { Write-Skip 'GitHub Release not requested.' }
 
     Write-Run 'Final result'
-    Show-Results $result
   } catch {
+    $script:HadOperationFailure = $true
     Write-Fail $_.Exception.Message
     if ($result.MainCommit -ne 'PASS' -and $Target -in @('main','both')) { $result.MainCommit = if ([string]::IsNullOrWhiteSpace($ctx.CommitMessage)) { 'SKIPPED' } else { $result.MainCommit } }
-    Show-Results $result
   } finally {
     if ($null -ne $previewProd) {
-      try { Remove-PreviewProduction $previewProd } catch { $result.Cleanup = 'FAIL'; Write-Warn $_.Exception.Message }
+      try { Remove-PreviewProduction $previewProd } catch { $result.Cleanup = 'FAIL'; $script:HadOperationFailure = $true; Write-Warn $_.Exception.Message }
     }
     if ($null -ne $actualProd) {
       try {
         Write-SubRun 'Removing temporary production worktree'
         Remove-TemporaryReleaseContext -Context $actualProd.Context
         Write-Ok 'Temporary production worktree removed'
-      } catch { $result.Cleanup = 'FAIL'; Write-Warn $_.Exception.Message }
+      } catch { $result.Cleanup = 'FAIL'; $script:HadOperationFailure = $true; Write-Warn $_.Exception.Message }
     }
+    Show-Results $result
   }
 }
 
@@ -1059,15 +1019,19 @@ function Show-MainMenu {
         default { Write-Warn 'Invalid selection.'; Start-Sleep -Milliseconds 700 }
       }
     } catch {
+      $script:HadOperationFailure = $true
       Write-Fail $_.Exception.Message
       Pause-Menu
     }
   }
 }
 
+if ($LoadFunctionsOnly) { return }
+
 try {
   $script:RepoName = Get-OriginRepositoryName
   Show-MainMenu
+  if ($script:HadOperationFailure) { exit 1 }
   exit 0
 } catch {
   Write-Fail $_.Exception.Message

@@ -1,6 +1,6 @@
 # TradingBot release operations
 
-`Invoke-TradingBotRelease.ps1` is the sole normal release command. The project root is derived from its own location and Git, so the same command works from the current checkout on either drive without a hard-coded path.
+`git.bat` is the interactive Git Manager. `Invoke-TradingBotRelease.ps1` is the scripted release command. Both derive the project root from their own locations, so they work from the current checkout without a hard-coded drive path.
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\git\Invoke-TradingBotRelease.ps1
@@ -37,3 +37,9 @@ Changed production content receives `TradingBot-Main-Source: <main SHA>` in its 
 If validation fails, inspect the reported policy, closure, or tool check and correct it before retrying. If publication reports partial failure, do not retry blindly: compare the reported remote `main`, `production`, and tag OIDs, reconcile the remote state deliberately, then rerun with a new unused tag only when appropriate. Temporary worktree cleanup is reported separately.
 
 No publication occurs during implementation validation or `-DryRun`.
+
+## Interactive Git Manager
+
+Run `scripts\git\git.bat` from any working directory. It resolves this checkout from the batch file's own location. Menu option 4 previews the exact candidate paths without committing or publishing. The manager stops if local `main` is behind or diverged from remote `main`; it does not stash or merge user changes. A failed menu operation returns a nonzero process exit code after exit.
+
+The `main` policy keeps historical Graphify reports and generated `graph.html` files as engineering evidence. Rebuildable `graphify-out/cache` and Vite `.vite` caches are excluded. Both automatic SonarQube Cloud analysis (`.sonarcloud.properties`) and CI scanner analysis (`sonar-project.properties`) exclude only historical Graphify `graph.html` files from duplication measurement through `sonar.cpd.exclusions`. Git retains those files in `main`; `production` excludes the engineering tree. A remote Sonar quality gate must be checked after an authorized push, and security or reliability conditions are independent of the duplication setting.

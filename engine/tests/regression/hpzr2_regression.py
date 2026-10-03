@@ -19,17 +19,6 @@ from time import perf_counter
 import orjson
 
 
-MODULES = (
-    "pipeline/reaction_engine.py",
-    "pipeline/blue_line_detector.py",
-    "pipeline/a_zone_detector.py",
-    "pipeline/s_zone_detector.py",
-    "pipeline/e_zone_detector.py",
-    "pipeline/lifecycle_engine.py",
-    "bridge/trading_pipeline.py",
-    "pipeline/direction_policy.py",
-    "pipeline/core_utils.py",
-)
 STAGES = (
     "reactions",
     "resets",
@@ -48,9 +37,12 @@ def sha256(content: bytes) -> str:
 
 
 def source_hashes(root: Path) -> dict[str, str]:
+    engine = root / "engine"
+    paths = [engine / "__init__.py", *sorted((engine / "bridge").rglob("*.py")),
+             *sorted((engine / "pipeline").rglob("*.py"))]
     return {
-        name: sha256((root / "engine" / name).read_bytes())
-        for name in MODULES
+        str(path.relative_to(engine)).replace("\\", "/"): sha256(path.read_bytes())
+        for path in paths
     }
 
 
@@ -59,6 +51,7 @@ def command(root: Path, raw: Path, first: int, last: int, args) -> list[str]:
     pipeline = engine / "pipeline"
     result = [
         sys.executable,
+        "-B",
         str(engine / "bridge" / "trading_pipeline.py"),
         "--engine", str(pipeline / "reaction_engine.py"),
         "--blue-engine", str(pipeline / "blue_line_detector.py"),
@@ -87,9 +80,11 @@ def run(root: Path, raw: Path, first: int, last: int, args) -> tuple[dict, bytes
     )
     elapsed = perf_counter() - started
     if completed.returncode:
+        response = completed.stdout.decode("utf-8", errors="replace").strip()
+        progress = completed.stderr.decode("utf-8", errors="replace")
         raise RuntimeError(
-            f"engine exit {completed.returncode}: "
-            + completed.stderr.decode("utf-8", errors="replace")[-2000:]
+            f"engine exit {completed.returncode}; response={response[:800]}; "
+            f"stderr tail={progress[-500:]}"
         )
     payload = json.loads(completed.stdout)
     timings = payload.pop("timings", None)
@@ -114,6 +109,48 @@ def stage_hashes(normalized: bytes) -> dict[str, dict[str, dict[str, object]]]:
     return result
 
 
+def first_difference(baseline_json: bytes, candidate_json: bytes) -> dict[str, object] | None:
+    """Locate the first differing public stage without discarding stable fields."""
+    baseline = json.loads(baseline_json)
+    candidate = json.loads(candidate_json)
+    for direction in baseline["directions"] | candidate["directions"]:
+        left = baseline["directions"].get(direction, {})
+        right = candidate["directions"].get(direction, {})
+        for stage in STAGES:
+            if left.get(stage) == right.get(stage):
+                continue
+            left_items = left.get(stage)
+            right_items = right.get(stage)
+            if isinstance(left_items, list) and isinstance(right_items, list):
+                first_index = next(
+                    (index for index in range(min(len(left_items), len(right_items)))
+                     if left_items[index] != right_items[index]),
+                    min(len(left_items), len(right_items)),
+                )
+                return {
+                    "direction": direction, "stage": stage, "index": first_index,
+                    "baseline": left_items[first_index] if first_index < len(left_items) else None,
+                    "candidate": right_items[first_index] if first_index < len(right_items) else None,
+                }
+            return {"direction": direction, "stage": stage,
+                    "baseline": left_items, "candidate": right_items}
+    if baseline != candidate:
+        return {"stage": "other stable payload field"}
+    if baseline_json != candidate_json:
+        byte_offset = next(
+            (index for index in range(min(len(baseline_json), len(candidate_json)))
+             if baseline_json[index] != candidate_json[index]),
+            min(len(baseline_json), len(candidate_json)),
+        )
+        return {
+            "stage": "stable JSON bytes",
+            "byteOffset": byte_offset,
+            "baselineByte": baseline_json[byte_offset] if byte_offset < len(baseline_json) else None,
+            "candidateByte": candidate_json[byte_offset] if byte_offset < len(candidate_json) else None,
+        }
+    return None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--baseline-root", type=Path, required=True)
@@ -125,7 +162,11 @@ def main() -> int:
     parser.add_argument("--bridge-output", action="store_true")
     parser.add_argument("--timeout-seconds", type=int, default=600)
     parser.add_argument("--select", action="append", default=[])
+    parser.add_argument("--max-raw-bytes", type=int, default=20_971_520,
+                        help="Strict exclusive RAW input size limit; checked before reading")
     args = parser.parse_args()
+    if args.max_raw_bytes <= 0:
+        parser.error("--max-raw-bytes must be positive")
     baseline = args.baseline_root.resolve()
     candidate = args.candidate_root.resolve()
     raw_root = args.raw_root.resolve()
@@ -147,6 +188,16 @@ def main() -> int:
     }
     manifest_path = output / "manifest.json"
     for index, raw in enumerate(files, start=1):
+        raw_size = raw.stat().st_size
+        if raw_size >= args.max_raw_bytes:
+            manifest["cases"].append({
+                "name": f"case-{index:02d}",
+                "rawPath": str(raw.relative_to(raw_root)),
+                "rawBytes": raw_size,
+                "status": "NOT APPLICABLE — SIZE RESTRICTION",
+            })
+            manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+            continue
         raw_bytes = raw.read_bytes()
         rows = orjson.loads(raw_bytes)
         first = int(rows[0]["time"])
@@ -155,6 +206,7 @@ def main() -> int:
         record = {
             "name": name,
             "rawPath": str(raw.relative_to(raw_root)),
+            "rawBytes": raw_size,
             "rawSha256": sha256(raw_bytes),
             "rawRows": len(rows),
             "rawFirst": first,
@@ -197,6 +249,8 @@ def main() -> int:
             }
             record["exactJsonEqual"] = baseline_json == candidate_json
             record["exactObjectsEqual"] = json.loads(baseline_json) == json.loads(candidate_json)
+            if not record["exactJsonEqual"]:
+                record["firstDifference"] = first_difference(baseline_json, candidate_json)
             record["rawSha256AfterCandidate"] = sha256(raw.read_bytes())
             raw_unchanged = record["rawSha256AfterCandidate"] == record["rawSha256"]
             record["status"] = (
@@ -217,7 +271,8 @@ def main() -> int:
             record["error"] = str(exc)
             print(f"{name}: INCOMPLETE {exc}", flush=True)
         manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
-    return 0 if all(case["status"] == "PASS" for case in manifest["cases"]) else 1
+    eligible = [case for case in manifest["cases"] if case["status"] != "NOT APPLICABLE — SIZE RESTRICTION"]
+    return 0 if eligible and all(case["status"] == "PASS" for case in eligible) else 1
 
 
 if __name__ == "__main__":

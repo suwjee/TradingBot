@@ -43,18 +43,23 @@ def verify(raw_path: Path, payload_path: Path, timeframe: int) -> dict[str, int]
             for cause in order["causes"]:
                 if cause["kind"] != "reset-leg":
                     continue
-                previous = cause["previousReactionIdentity"]
+                # Authoritative Order_B provenance (Reference 10.7 / production
+                # register_order_b_reset_legs) records the geometric anchor and
+                # reset Reaction identity. previousReaction* is optional legacy
+                # evidence and is not part of the current serialized contract.
                 current = cause["resetReactionIdentity"]
                 first_index, break_index = cause["physicalOrderIdentity"]
                 assert (first_index, break_index) == (
                     order["firstIndex"], order["breakIndex"]
                 )
                 assert cause["physicalOrderConfirmationTime"] >= order["breakTime"]
+                # Reference 10.6: FirstTime equality with strictBreakTime is
+                # valid; only the price break and confirmation remain strict.
                 assert (
                     cause["postBehaviorStopTime"]
                     < cause["resetTime"]
                     < cause["strictBreakTime"]
-                    < order["firstTime"]
+                    <= order["firstTime"]
                     <= cause["physicalOrderConfirmationTime"]
                 )
                 if "previousReactionConfirmationTime" in cause:
@@ -64,7 +69,6 @@ def verify(raw_path: Path, payload_path: Path, timeframe: int) -> dict[str, int]
                         < cause["resetReactionConfirmationTime"]
                         < cause["resetTime"]
                     )
-                assert main[previous[1]][0] == cause["previousReactionBreakoutTime"]
                 assert main[current[1]][0] == cause["resetReactionBreakoutTime"]
                 reset_key = (
                     cause["resetIndex"], current[0], cause["resetBrokenLevel"],
@@ -83,13 +87,17 @@ def verify(raw_path: Path, payload_path: Path, timeframe: int) -> dict[str, int]
                             else item[2] > broken_level)
                     ), None)
                     assert first_reset == cause["resetTime"]
-                assert previous[1] <= current[1]
+                # Frozen LL/HH boundary is owned by the accepted anchor behavior
+                # candle through the Reset Reaction First candle (Reference 10).
+                source_start = cause["anchorBehaviorSourceIndex"]
+                reset_first = current[0]
+                assert source_start <= reset_first
                 prices = [
                     main[index][1 if direction == "bullish" else 2]
-                    for index in range(previous[1], current[1] + 1)
+                    for index in range(source_start, reset_first + 1)
                 ]
                 boundary = min(prices) if direction == "bullish" else max(prices)
-                source_index = previous[1] + prices.index(boundary)
+                source_index = source_start + prices.index(boundary)
                 assert Decimal(cause["legBoundary"]) == boundary
                 assert cause["legBoundarySourceIndex"] == source_index
                 assert cause["legBoundarySourceTime"] == main[source_index][0]

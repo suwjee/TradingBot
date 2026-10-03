@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-  [ValidateSet('All', 'RootResolution', 'MainPolicy', 'ProductionClosure', 'Snapshot', 'Publication', 'Documentation')]
+  [ValidateSet('All', 'RootResolution', 'MainPolicy', 'ProductionClosure', 'Snapshot', 'Publication', 'MenuSafety', 'Documentation')]
   [string] $Case = 'All'
 )
 
@@ -67,7 +67,10 @@ function New-MainPolicyFixture {
   Write-FixtureFile $fixture 'engineering/docs/architecture.md'
   Write-FixtureFile $fixture 'engineering/docs/hidden.md'
   Write-FixtureFile $fixture 'engineering/archive/repository-graphify/graph.json' '{}'
+  Write-FixtureFile $fixture 'engineering/archive/repository-graphify/graph.html' '<html>historical visualization</html>'
   Write-FixtureFile $fixture 'engineering/archive/repository-graphify/cache/ast/cache.json' '{}'
+  Write-FixtureFile $fixture 'graphify-out/cache/stat-index.json' '{}'
+  Write-FixtureFile $fixture 'apps/chart/.vite/deps/package.json' '{}'
   Write-FixtureFile $fixture 'engineering/archive/repository-graphify/rebuild/raw-run/.graphify_extract.json' '{}'
   Write-FixtureFile $fixture 'engineering/archive/repository-graphify/rebuild/raw-run/GRAPH_REPORT.md' 'meaningful report'
   Write-FixtureFile $fixture 'apps/chart/state/data/raw/BaseLine/reference.json' '{}'
@@ -162,6 +165,7 @@ function Invoke-MainPolicyTests {
       'engine/tests/unit/engine_test.py',
       'engineering/docs/architecture.md',
       'engineering/archive/repository-graphify/graph.json',
+      'engineering/archive/repository-graphify/graph.html',
       'engineering/archive/repository-graphify/rebuild/raw-run/GRAPH_REPORT.md',
       'apps/chart/state/data/raw/BaseLine/reference.json',
       '.editorconfig'
@@ -170,6 +174,8 @@ function Invoke-MainPolicyTests {
     }
     foreach ($path in @(
       'engineering/archive/repository-graphify/cache/ast/cache.json',
+      'graphify-out/cache/stat-index.json',
+      'apps/chart/.vite/deps/package.json',
       'engineering/archive/repository-graphify/rebuild/raw-run/.graphify_extract.json',
       'apps/chart/state/data/raw/acquired.json',
       'apps/chart/state/cache/runtime.json',
@@ -402,11 +408,37 @@ function Invoke-DocumentationTests {
   $text = Get-Content -LiteralPath $readmePath -Raw
   Assert-True ($text -match '(?m)^powershell\.exe .*Invoke-TradingBotRelease\.ps1\s*$') 'README shows the one-command normal release invocation'
   foreach ($phrase in @(
-    'derived from its own location and Git', 'inclusion-first', 'dependency-derived', 'BaseLine', 'Graphify', 'apps/chart/state',
+    'derive the project root from their own locations', 'inclusion-first', 'dependency-derived', 'BaseLine', 'Graphify', 'apps/chart/state',
     'origin/production', 'GitHub CLI', '-DryRun', 'temporary worktree', '--atomic', 'fallback',
     'TradingBot-Main-Source', 'GitHub Release', 'Recovery', 'No publication occurs during implementation validation'
   )) {
     Assert-True ($text.Contains($phrase)) "README covers $phrase"
+  }
+}
+
+function Invoke-MenuSafetyTests {
+  . (Join-Path $PSScriptRoot 'Git.Menu.ps1') -LoadFunctionsOnly
+  $fixture = New-RootFixture
+  $remote = $null
+  try {
+    $null = Commit-Fixture $fixture
+    $remote = New-FixtureRemote $fixture
+    $script:Root = $fixture
+    $beforeHead = (& git -C $fixture rev-parse HEAD).Trim()
+    $beforeStash = @(& git -C $fixture stash list)
+    Assert-Throws { Sync-MainFastForwardIfNeeded -State ([pscustomobject]@{ MainBehind=1 }) } 'behind main is rejected without stashing or merging'
+    Assert-True ((& git -C $fixture rev-parse HEAD).Trim() -eq $beforeHead) 'rejected sync preserves main HEAD'
+    Assert-True ((@(& git -C $fixture stash list) -join "`n") -eq ($beforeStash -join "`n")) 'rejected sync preserves stash list'
+    Assert-Throws { Get-AheadBehind -RemoteSha 'missing-remote-oid' -LocalSha $beforeHead } 'invalid branch comparison is not reported as equal'
+    & git -C $fixture remote set-url origin (Join-Path $fixture 'missing-origin.git')
+    Assert-Throws { Test-OptionalTag -Tag 'candidate-tag' } 'unreadable remote tag state blocks a menu release'
+    $preflight = Test-ReleasePreflight -Root $fixture -Tag 'candidate-tag'
+    Assert-True (@($preflight.Errors | Where-Object { $_ -match 'Remote release tag state is indeterminate' }).Count -eq 1) 'unreadable remote tag state blocks module release'
+    Assert-Throws { New-ReleaseTag -Root $fixture -Tag 'candidate-tag' -ProductionSha $beforeHead -MainSha $beforeHead } 'unreadable remote tag state blocks tag creation'
+    Assert-True (-not ((& git -C $fixture tag --list 'candidate-tag') -join '')) 'no tag created after remote read failure'
+  } finally {
+    Remove-TestFixturePath $fixture
+    Remove-TestFixturePath $remote
   }
 }
 
@@ -418,14 +450,16 @@ try {
       Invoke-ProductionClosureTests
       Invoke-SnapshotTests
       Invoke-PublicationTests
+      Invoke-MenuSafetyTests
       Invoke-DocumentationTests
-      $script:Passed += 6
+      $script:Passed += 7
     }
     'RootResolution' { Invoke-RootResolutionTests; $script:Passed++ }
     'MainPolicy' { Invoke-MainPolicyTests; $script:Passed++ }
     'ProductionClosure' { Invoke-ProductionClosureTests; $script:Passed++ }
     'Snapshot' { Invoke-SnapshotTests; $script:Passed++ }
     'Publication' { Invoke-PublicationTests; $script:Passed++ }
+    'MenuSafety' { Invoke-MenuSafetyTests; $script:Passed++ }
     'Documentation' { Invoke-DocumentationTests; $script:Passed++ }
   }
   Write-Output "PASS: $Case ($script:Passed passed, $script:Failed failed)"

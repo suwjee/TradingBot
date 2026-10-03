@@ -1,9 +1,8 @@
 """A-zone calculation from authoritative Reaction and Blue state.
 
 Owns Blue-pair/double-stop A formation, trigger chronology, continuation
-geometry, A source selection, and Blue-consumption boundaries. Downstream
-S/larger-module ownership remains owned by the S and lifecycle engines; their
-accepted boundaries are supplied back here as immutable lifecycle evidence.
+geometry, and A source selection. Downstream S/larger-module ownership is
+handled by the S and lifecycle engines rather than rewritten here.
 """
 
 from __future__ import annotations
@@ -33,15 +32,6 @@ class BlueState:
     stop_event_time: datetime | None
     stop_level: Decimal
     stop_event_extreme: Decimal | None
-
-
-@dataclass(frozen=True, slots=True)
-class BlueConsumptionBoundary:
-    """Accepted behavior source candle that expires older Blue calculation state."""
-
-    source_index: int
-    source_time: datetime
-    behavior_type: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -81,7 +71,6 @@ class AZoneDetector:
         reactions: Sequence[object],
         blue_lines: Sequence[object],
         chronology: object,
-        blue_consumption_boundaries: Sequence[object] = (),
     ) -> None:
         if direction not in {"bullish", "bearish"}:
             raise ValueError("Direction must be 'bullish' or 'bearish'.")
@@ -103,22 +92,17 @@ class AZoneDetector:
         self.candle_times = chronology.times
         self.lower_times = chronology.second_times
         self.lower_index = chronology.lower_index
-        self._blue_lines_by_ordinal = {
-            ordinal: line
-            for ordinal, line in enumerate(self.blue_lines, start=1)
-        }
-        self.blue_consumption_boundaries = sorted(
-            blue_consumption_boundaries,
-            key=lambda item: (
-                int(getattr(item, "source_index")),
-                getattr(item, "source_time"),
-                str(getattr(item, "behavior_type", "")),
-            ),
-        )
-        self._boundary_source_indices = sorted(
-            {int(getattr(item, "source_index")) for item in self.blue_consumption_boundaries}
-        )
-        self._excluded_blue_source_indices = set(self._boundary_source_indices)
+        self._reaction_first_times = [
+            self.candle_times[int(getattr(reaction, "first_idx"))]
+            for reaction in self.reactions
+        ]
+        self._reaction_break_times = [
+            self.candle_times[int(getattr(reaction, "break_idx"))]
+            for reaction in self.reactions
+        ]
+        self._reaction_confirmations = [
+            self._reaction_confirmation_time(reaction) for reaction in self.reactions
+        ]
 
     @property
     def extreme_name(self) -> str:
@@ -132,17 +116,6 @@ class AZoneDetector:
 
     def _main_index(self, timestamp: datetime) -> int:
         return self.chronology.main_index(timestamp)
-
-    def _external_blue_cutoff(self, source_index: int) -> int:
-        """Return the newest accepted S/E/StopAll source at/before this candle."""
-        position = bisect_right(self._boundary_source_indices, int(source_index)) - 1
-        if position < 0:
-            return -1
-        return self._boundary_source_indices[position]
-
-    @staticmethod
-    def _line_source_index(line: object) -> int:
-        return int(getattr(line, "source_index"))
 
     def _lower_window(
         self, start: datetime, end: datetime | None
@@ -257,8 +230,6 @@ class AZoneDetector:
     def _build_blue_states(self) -> list[BlueState]:
         states: list[BlueState] = []
         for ordinal, line in enumerate(self.blue_lines, start=1):
-            if self._line_source_index(line) in self._excluded_blue_source_indices:
-                continue
             if not bool(getattr(line, "calculation_valid", True)):
                 continue
             formation_index, formation_time, stop_scan_time = self._formation(line)
@@ -288,33 +259,15 @@ class AZoneDetector:
     def _double_stop_a_candidates(self) -> list[AZone]:
         result: list[AZone] = []
         previous: tuple[int, object] | None = None
-        consumed_source_index = -1
         for ordinal, line in enumerate(self.blue_lines, start=1):
-            formation_index = int(getattr(line, "source_index"))
-            formation_time = getattr(line, "source_time")
-            line_source_index = self._line_source_index(line)
-            consumed_source_index = max(
-                consumed_source_index,
-                self._external_blue_cutoff(line_source_index),
-            )
-            if line_source_index <= consumed_source_index:
-                if (
-                    previous is not None
-                    and self._line_source_index(previous[1]) <= consumed_source_index
-                ):
-                    previous = None
-                continue
-
             if bool(getattr(line, "calculation_valid", True)):
                 previous = (ordinal, line)
                 continue
             if previous is None:
                 continue
             previous_ordinal, previous_line = previous
-            if self._line_source_index(previous_line) <= consumed_source_index:
-                previous = None
-                continue
-
+            formation_index = int(getattr(line, "source_index"))
+            formation_time = getattr(line, "source_time")
             source_time = getattr(self.candles[formation_index], "timestamp")
             crossing = self._first_crossing(
                 as_decimal(getattr(previous_line, "source_extreme")),
@@ -337,17 +290,6 @@ class AZoneDetector:
             if source is None:
                 continue
             source_index, a_source_time, price = source
-            consumed_source_index = max(
-                consumed_source_index,
-                self._external_blue_cutoff(source_index),
-            )
-            if (
-                self._line_source_index(previous_line) <= consumed_source_index
-                or line_source_index <= consumed_source_index
-            ):
-                if self._line_source_index(previous_line) <= consumed_source_index:
-                    previous = None
-                continue
             result.append(
                 AZone(
                     direction=self.direction,
@@ -548,16 +490,15 @@ class AZoneDetector:
         *,
         not_before: datetime | None = None,
     ) -> tuple[int, object] | None:
-        for number, reaction in enumerate(self.reactions, start=1):
-            first_time = getattr(
-                self.candles[int(getattr(reaction, "first_idx"))],
-                "timestamp",
-            )
+        reactions = self.reactions
+        first_times = self._reaction_first_times
+        confirmations = self._reaction_confirmations
+        for number in range(len(reactions)):
             if (
-                self._reaction_confirmation_time(reaction) >= trigger_event_time
-                and (not_before is None or first_time >= not_before)
+                confirmations[number] >= trigger_event_time
+                and (not_before is None or first_times[number] >= not_before)
             ):
-                return number, reaction
+                return number + 1, reactions[number]
         return None
 
     def _inherited_stop(
@@ -582,15 +523,12 @@ class AZoneDetector:
         if not chained and str(getattr(previous.line, "kind")) == "scale":
             return None
         window_start = previous.stop_time if chained else previous.formation_time
-        for reaction in self.reactions:
-            first_time = getattr(
-                self.candles[int(getattr(reaction, "first_idx"))],
-                "timestamp",
-            )
-            break_time = getattr(
-                self.candles[int(getattr(reaction, "break_idx"))],
-                "timestamp",
-            )
+        reactions = self.reactions
+        first_times = self._reaction_first_times
+        break_times = self._reaction_break_times
+        for number in range(len(reactions)):
+            first_time = first_times[number]
+            break_time = break_times[number]
             if first_time <= window_start:
                 continue
             if break_time >= current.formation_time:
@@ -635,43 +573,30 @@ class AZoneDetector:
         return source_index, source_time, value
 
     def _detect_ordinary_a(self, states: list[BlueState]) -> list[AZone]:
-        """Resolve ordinary A while consuming Blue at accepted behavior boundaries."""
+        """Resolve the ordinary adjacent-Blue A lifecycle."""
         output: list[AZone] = []
         cycle_after_index = -1
-        consumed_source_index = -1
+        bridge_reuse_ordinal: int | None = None
         index = 0
 
-        def advance(position: int) -> int:
-            while position < len(states):
-                state = states[position]
-                if (
-                    state.formation_index <= cycle_after_index
-                    or self._line_source_index(state.line) <= consumed_source_index
-                ):
-                    position += 1
-                    continue
-                break
-            return position
-
-        while True:
-            index = advance(index)
-            if index + 1 >= len(states):
-                break
-
+        while index + 1 < len(states):
             previous = states[index]
             current = states[index + 1]
-            consumed_source_index = max(
-                consumed_source_index,
-                self._external_blue_cutoff(self._line_source_index(current.line)),
+            bridge_pair = (
+                bridge_reuse_ordinal is not None
+                and previous.ordinal == bridge_reuse_ordinal
             )
-            advanced = advance(index)
-            if advanced != index:
-                index = advanced
+            if (
+                current.formation_index <= cycle_after_index
+                or (
+                    previous.formation_index <= cycle_after_index
+                    and not bridge_pair
+                )
+            ):
+                if bridge_pair:
+                    bridge_reuse_ordinal = None
+                index += 1
                 continue
-            if index + 1 >= len(states):
-                break
-            previous = states[index]
-            current = states[index + 1]
 
             expires_at = (
                 states[index + 2].formation_time
@@ -705,15 +630,6 @@ class AZoneDetector:
                 index += 1
                 continue
             source_index, source_time, price = source
-            consumed_source_index = max(
-                consumed_source_index,
-                self._external_blue_cutoff(source_index),
-            )
-            if (
-                self._line_source_index(previous.line) <= consumed_source_index
-                or self._line_source_index(current.line) <= consumed_source_index
-            ):
-                continue
             break_index = int(getattr(reaction, "break_idx"))
             output.append(
                 AZone(
@@ -756,12 +672,25 @@ class AZoneDetector:
                     ),
                 )
             )
-            # Every accepted A is a hard Blue-consumption boundary for future
-            # A formation. Its own Blue line may remain public, but neither it
-            # nor any earlier Blue can participate in a later pair.
-            consumed_source_index = max(consumed_source_index, source_index)
             cycle_after_index = break_index
 
+            confirmation_time = self._reaction_confirmation_time(reaction)
+            first_stop = self._first_crossing(price, confirmation_time, None)
+            allow_adjacent_reuse = (
+                first_stop is not None
+                and index + 2 < len(states)
+                and states[index + 2].formation_time >= first_stop[1]
+            )
+            if allow_adjacent_reuse:
+                bridge_reuse_ordinal = current.ordinal
+                index += 1
+            else:
+                bridge_reuse_ordinal = None
+                while (
+                    index < len(states)
+                    and states[index].formation_index <= cycle_after_index
+                ):
+                    index += 1
         return output
 
     def _filter_special_a(
@@ -828,47 +757,15 @@ class AZoneDetector:
             ]
         return ordinary, special
 
-    def _apply_blue_consumption(
-        self, zones: Sequence[AZone]
-    ) -> list[AZone]:
-        """Apply final cross-route A/S/E/StopAll Blue-consumption ownership."""
-        accepted: list[AZone] = []
-        consumed_source_index = -1
-        for zone in sorted(
-            zones,
-            key=lambda item: (
-                int(getattr(item, "source_index")),
-                getattr(item, "source_time"),
-                getattr(item, "trigger_event_time"),
-            ),
-        ):
-            consumed_source_index = max(
-                consumed_source_index,
-                self._external_blue_cutoff(int(getattr(zone, "source_index"))),
-            )
-            blue_1 = self._blue_lines_by_ordinal[int(getattr(zone, "blue_1_ordinal"))]
-            blue_2 = self._blue_lines_by_ordinal[int(getattr(zone, "blue_2_ordinal"))]
-            if (
-                self._line_source_index(blue_1) <= consumed_source_index
-                or self._line_source_index(blue_2) <= consumed_source_index
-            ):
-                continue
-            accepted.append(zone)
-            consumed_source_index = max(
-                consumed_source_index, int(getattr(zone, "source_index"))
-            )
-        return accepted
-
     def detect(self) -> list[AZone]:
-        """Return A zones after Blue-consumption and route ownership resolution."""
+        """Return ordinary and special A zones after one ownership resolution."""
         states = self._build_blue_states()
         ordinary = self._detect_ordinary_a(states)
         ordinary, special = self._filter_special_a(
             self._double_stop_a_candidates(), ordinary
         )
-        accepted = self._apply_blue_consumption([*ordinary, *special])
         return sorted(
-            accepted,
+            ordinary + special,
             key=lambda item: (item.source_time, item.trigger_event_time),
         )
 
@@ -898,74 +795,10 @@ class AZoneDetector:
         return not_before is None or first_stop[1] >= not_before
 
 
-
-def build_blue_consumption_boundaries(
-    s_zones: Sequence[object],
-    e_zones: Sequence[object],
-    stopalls: Sequence[object],
-) -> list[BlueConsumptionBoundary]:
-    """Project accepted S/E/StopAll source ownership into Blue reset boundaries.
-
-    A boundaries are resolved internally while A zones are accepted.  Downstream
-    behavior boundaries are immutable evidence supplied by orchestration on the
-    next reconciliation pass.  The source candle owns the boundary because the
-    behavior candle, not its later decision timestamp, is the lifecycle owner.
-    """
-    boundaries: list[BlueConsumptionBoundary] = []
-    seen: set[tuple[object, ...]] = set()
-    for behavior_type, items in (
-        ("S", s_zones),
-        ("E", e_zones),
-        ("StopAll", stopalls),
-    ):
-        for item in items:
-            source_index = int(getattr(item, "source_index"))
-            source_time = getattr(item, "source_time")
-            identity = (behavior_type, source_index, source_time)
-            if identity in seen:
-                continue
-            seen.add(identity)
-            boundaries.append(
-                BlueConsumptionBoundary(
-                    source_index=source_index,
-                    source_time=source_time,
-                    behavior_type=behavior_type,
-                )
-            )
-    return sorted(
-        boundaries,
-        key=lambda item: (
-            item.source_index,
-            item.source_time,
-            item.behavior_type,
-        ),
-    )
-
-
-def blue_consumption_boundary_identity(
-    boundaries: Sequence[object],
-) -> tuple[tuple[object, ...], ...]:
-    """Return stable boundary identity without depending on object identity."""
-    return tuple(
-        (
-            str(getattr(item, "behavior_type")),
-            int(getattr(item, "source_index")),
-            getattr(item, "source_time"),
-        )
-        for item in boundaries
-    )
-
 def detect_a_zones(
     direction: str,
     reactions: Sequence[object],
     blue_lines: Sequence[object],
     chronology: object,
-    blue_consumption_boundaries: Sequence[object] = (),
 ) -> list[AZone]:
-    return AZoneDetector(
-        direction,
-        reactions,
-        blue_lines,
-        chronology,
-        blue_consumption_boundaries,
-    ).detect()
+    return AZoneDetector(direction, reactions, blue_lines, chronology).detect()

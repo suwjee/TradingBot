@@ -433,8 +433,12 @@ function Test-ReleasePreflight {
   $warnings = [System.Collections.Generic.List[string]]::new()
   $branch = (Invoke-ReleaseGit -Root $Root -Arguments @('symbolic-ref', '--quiet', '--short', 'HEAD'))
   if ($branch.ExitCode -ne 0 -or $branch.StdOut.Trim() -ne 'main') { $errors.Add('The active branch must be main.') }
-  foreach ($marker in @('.git/MERGE_HEAD', '.git/rebase-apply', '.git/rebase-merge')) {
-    if (Test-Path -LiteralPath (Join-Path $Root $marker)) { $errors.Add("Git operation in progress: $marker") }
+  foreach ($marker in @('MERGE_HEAD', 'rebase-apply', 'rebase-merge')) {
+    $gitPath = Invoke-ReleaseGit -Root $Root -Arguments @('rev-parse', '--git-path', $marker)
+    if ($gitPath.ExitCode -ne 0) { $errors.Add("Could not locate Git operation marker: $marker"); continue }
+    $markerPath = $gitPath.StdOut.Trim()
+    if (-not [IO.Path]::IsPathRooted($markerPath)) { $markerPath = Join-Path $Root $markerPath }
+    if (Test-Path -LiteralPath $markerPath) { $errors.Add("Git operation in progress: $marker") }
   }
   $remoteUrl = Invoke-ReleaseGit -Root $Root -Arguments @('remote', 'get-url', 'origin')
   if ($remoteUrl.ExitCode -ne 0 -or [string]::IsNullOrWhiteSpace($remoteUrl.StdOut)) { $errors.Add('Configured origin remote is required.') }
@@ -442,6 +446,7 @@ function Test-ReleasePreflight {
   if ($tagSyntax.ExitCode -ne 0) { $errors.Add("Invalid Git tag syntax: $Tag") }
   $localTag = Invoke-ReleaseGit -Root $Root -Arguments @('show-ref', '--verify', '--quiet', "refs/tags/$Tag")
   if ($localTag.ExitCode -eq 0) { $errors.Add("Local release tag already exists: $Tag") }
+  elseif ($localTag.ExitCode -ne 1) { $errors.Add("Local release tag state is indeterminate: $Tag") }
 
   $remoteProduction = Invoke-ReleaseGit -Root $Root -Arguments @('ls-remote', '--exit-code', 'origin', 'refs/heads/production')
   $productionBaseSha = $null
@@ -454,6 +459,7 @@ function Test-ReleasePreflight {
   $remoteMainSha = if ($remoteMain.ExitCode -eq 0) { ($remoteMain.StdOut -split '\s+' | Select-Object -First 1).Trim() } else { $null }
   $remoteTag = Invoke-ReleaseGit -Root $Root -Arguments @('ls-remote', '--exit-code', 'origin', "refs/tags/$Tag")
   if ($remoteTag.ExitCode -eq 0) { $errors.Add("Remote release tag already exists: $Tag") }
+  elseif ($remoteTag.ExitCode -ne 2) { $errors.Add("Remote release tag state is indeterminate: $Tag") }
 
   $localProductionSha = Get-ReleaseRefOid -Root $Root -Ref 'refs/heads/production'
   $worktrees = Invoke-ReleaseGit -Root $Root -Arguments @('worktree', 'list', '--porcelain')
@@ -493,7 +499,7 @@ function Test-ReleasePreflight {
           } else {
             $existingRelease = Invoke-ReleaseGh -Root $Root -Arguments @('release', 'view', $Tag, '--json', 'tagName')
             if ($existingRelease.ExitCode -eq 0) { $errors.Add("GitHub Release already exists: $Tag"); $github = 'RELEASE_EXISTS' }
-            elseif (($existingRelease.StdErr + $existingRelease.StdOut) -notmatch '(?i)release not found') { $errors.Add('GitHub Release uniqueness could not be verified.'); $github = 'RELEASE_CHECK_FAILED' }
+            elseif (($existingRelease.StdErr + $existingRelease.StdOut) -notmatch '(?i)(release not found|HTTP 404: Not Found)') { $errors.Add('GitHub Release uniqueness could not be verified.'); $github = 'RELEASE_CHECK_FAILED' }
             else { $github = 'PASS' }
           }
         }
@@ -785,9 +791,9 @@ function New-ReleaseTag {
   $syntax = Invoke-ReleaseGit -Root $Root -Arguments @('check-ref-format', "refs/tags/$Tag")
   Assert-ReleaseCondition ($syntax.ExitCode -eq 0) "Invalid Git tag syntax: $Tag"
   $existingLocal = Invoke-ReleaseGit -Root $Root -Arguments @('show-ref', '--verify', '--quiet', "refs/tags/$Tag")
-  Assert-ReleaseCondition ($existingLocal.ExitCode -ne 0) "Local tag already exists: $Tag"
+  Assert-ReleaseCondition ($existingLocal.ExitCode -eq 1) "Local tag exists or its state is indeterminate: $Tag"
   $existingRemote = Invoke-ReleaseGit -Root $Root -Arguments @('ls-remote', '--exit-code', 'origin', "refs/tags/$Tag")
-  Assert-ReleaseCondition ($existingRemote.ExitCode -ne 0) "Remote tag already exists: $Tag"
+  Assert-ReleaseCondition ($existingRemote.ExitCode -eq 2) "Remote tag exists or its state is indeterminate: $Tag"
   $production = Invoke-ReleaseGit -Root $Root -Arguments @('cat-file', '-e', "$ProductionSha^{commit}")
   Assert-ReleaseCondition ($production.ExitCode -eq 0) "Production commit is unavailable: $ProductionSha"
   $tagCreate = Invoke-ReleaseGit -Root $Root -Arguments @('-c', 'user.name=TradingBot Release', '-c', 'user.email=release@tradingbot.invalid', 'tag', '-a', $Tag, $ProductionSha, '-m', "TradingBot release $Tag", '-m', "TradingBot-Main-Source: $MainSha")
@@ -853,7 +859,8 @@ function New-MainReleaseSource {
   try {
     $gitIndex = Invoke-ReleaseGit -Root $Root -Arguments @('rev-parse', '--git-path', 'index')
     Assert-ReleaseCondition ($gitIndex.ExitCode -eq 0) 'Could not locate the active Git index.'
-    $activeIndex = Join-Path $Root $gitIndex.StdOut.Trim()
+    $activeIndex = $gitIndex.StdOut.Trim()
+    if (-not [IO.Path]::IsPathRooted($activeIndex)) { $activeIndex = Join-Path $Root $activeIndex }
     if (Test-Path -LiteralPath $activeIndex) { [IO.File]::Copy($activeIndex, $context.IndexPath, $true) }
     $previousIndex = $env:GIT_INDEX_FILE
     try {
@@ -922,7 +929,7 @@ function New-GitHubRelease {
   [CmdletBinding()]
   param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] $PreparedRelease)
   $existing = Invoke-ReleaseGh -Root $Root -Arguments @('release', 'view', $PreparedRelease.Tag, '--json', 'tagName')
-  Assert-ReleaseCondition ($existing.ExitCode -ne 0 -and ($existing.StdErr + $existing.StdOut) -match '(?i)release not found') "GitHub Release uniqueness could not be confirmed for tag: $($PreparedRelease.Tag)"
+  Assert-ReleaseCondition ($existing.ExitCode -ne 0 -and ($existing.StdErr + $existing.StdOut) -match '(?i)(release not found|HTTP 404: Not Found)') "GitHub Release uniqueness could not be confirmed for tag: $($PreparedRelease.Tag)"
   $provenance = "TradingBot-Main-Source: $($PreparedRelease.MainSha)"
   $sourceNote = if ($PreparedRelease.ProductionChanged) { 'Production commit carries the provenance trailer.' } else { 'Production tree was unchanged; provenance is tag-sourced.' }
   $created = Invoke-ReleaseGh -Root $Root -Arguments @('release', 'create', $PreparedRelease.Tag, '--target', $PreparedRelease.ProductionSha, '--title', $PreparedRelease.Tag, '--notes', "$provenance`n$sourceNote")

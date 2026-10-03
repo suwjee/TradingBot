@@ -128,6 +128,60 @@ test("indicator range rejects endpoints that are not real chart-candle buckets",
   );
 });
 
+test("partial range visits only nearby rows in a sorted RAW source", () => {
+  const source = candles(60, 250_055);
+  let indexedReads = 0;
+  const observed = new Proxy(source, {
+    get(target, property, receiver) {
+      if (typeof property === "string" && /^\d+$/.test(property)) indexedReads++;
+      return Reflect.get(target, property, receiver);
+    },
+  });
+  const options = { from: 120_000, to: 120_600, chartTimeframeSeconds: 60 };
+  const expected = source.filter((row) => {
+    const bucket = Math.floor(row.time / 60) * 60;
+    return bucket >= options.from && bucket <= options.to;
+  });
+
+  assert.deepEqual(prepareIndicatorRangeInput(observed, options).rows, expected);
+  assert.ok(indexedReads < 500, `Partial lookup read ${indexedReads} of ${source.length} rows.`);
+});
+
+test("seeded chronological ranges match the former filter oracle", () => {
+  let seed = 0x51f15e;
+  const next = (limit) => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed % limit; };
+  for (let caseIndex = 0; caseIndex < 400; caseIndex++) {
+    const timeframe = [1, 5, 10, 30, 60][next(5)];
+    const rows = [];
+    let time = 1000 + next(100);
+    for (let index = 0, length = 1 + next(60); index < length; index++) {
+      time += 1 + next(75);
+      rows.push({ time, marker: index });
+    }
+    const firstBucket = Math.floor(rows[0].time / timeframe) * timeframe;
+    const lastBucket = Math.floor(rows.at(-1).time / timeframe) * timeframe;
+    const from = firstBucket + next(1 + (lastBucket - firstBucket) / timeframe) * timeframe;
+    const to = from + next(1 + (lastBucket - from) / timeframe) * timeframe;
+    const expected = rows.filter((row) => {
+      const bucket = Math.floor(row.time / timeframe) * timeframe;
+      return bucket >= from && bucket <= to;
+    });
+    const complete = from === firstBucket && to === lastBucket;
+    const endpointsPresent = expected.length
+      && Math.floor(expected[0].time / timeframe) * timeframe === from
+      && Math.floor(expected.at(-1).time / timeframe) * timeframe === to;
+    const options = { from, to, chartTimeframeSeconds: timeframe };
+    if (!complete && !endpointsPresent) {
+      assert.throws(() => prepareIndicatorRangeInput(rows, options), /endpoints are no longer available/i,
+        `case ${caseIndex}`);
+    } else {
+      const actual = prepareIndicatorRangeInput(rows, options);
+      assert.equal(actual.usesCompleteSource, complete, `case ${caseIndex}`);
+      assert.deepEqual(actual.rows, complete ? rows : expected, `case ${caseIndex}`);
+    }
+  }
+});
+
 test("Windows range pipe gives Python the selected JSON without creating a data file", {
   skip: process.platform !== "win32",
 }, async () => {

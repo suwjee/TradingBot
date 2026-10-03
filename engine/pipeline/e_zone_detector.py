@@ -23,8 +23,8 @@ from order_audit_engine import (
 
 
 E_ZONE_VERSION = "6.16.1"
-E_ZONE_IMPLEMENTATION_VERSION = "6.18.1"
-E_ZONE_LAST_MODIFIED = "2026-09-28 19:35:32 +03:30"
+E_ZONE_IMPLEMENTATION_VERSION = "6.18.2"
+E_ZONE_LAST_MODIFIED = "2026-10-03 14:32:06 +03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -118,6 +118,12 @@ class EZoneDetector(OrderAuditEngineMixin):
         self.end_index = len(self.candles) - 1 if end_index is None else int(end_index)
         self.range_start = self.times[self.start_index]
         self.range_end = self.times[self.end_index] + self.timeframe
+        self._stop_values = [
+            as_decimal(getattr(candle, self.policy.extreme_attr))
+            for candle in self.candles
+        ]
+        self._candle_codes = [int(getattr(candle, "index")) for candle in self.candles]
+        self._extreme_sparse = self._build_extreme_sparse()
         self.direct_geometry_finder = direct_geometry_finder
         self.blocked_order_first_times = blocked_order_first_times or set()
         self.initial_order_audit = initial_order_audit or {}
@@ -156,6 +162,13 @@ class EZoneDetector(OrderAuditEngineMixin):
         ] = {}
         self._carried_orders_cache: dict[
             tuple[datetime, datetime], tuple[OrderMatch, ...]
+        ] = {}
+        self._post_stop_orders_cache: dict[
+            tuple[datetime, int], list[OrderMatch]
+        ] = {}
+        self._direct_parent_stop_cache: dict[
+            tuple[datetime, datetime | None, bool],
+            tuple[int, object, datetime] | None,
         ] = {}
         self.order_audit: dict[tuple[int, int], dict[str, object]] = {}
         # Performance implementation detail: ``order_audit`` remains the
@@ -218,7 +231,12 @@ class EZoneDetector(OrderAuditEngineMixin):
         """Publish hard boundaries and refresh their dependent query state once."""
         self._sequence_resets = dict(resets)
         self._sequence_reset_times = sorted(self._sequence_resets)
-        for cache_name in ("_order_candidates_cache", "_carried_orders_cache"):
+        for cache_name in (
+            "_order_candidates_cache",
+            "_carried_orders_cache",
+            "_post_stop_orders_cache",
+            "_direct_parent_stop_cache",
+        ):
             cache = getattr(self, cache_name, None)
             if cache is not None:
                 cache.clear()
@@ -250,6 +268,54 @@ class EZoneDetector(OrderAuditEngineMixin):
     def _stop_value(self, item: object) -> Decimal:
         return as_decimal(getattr(item, self.policy.extreme_attr))
 
+    def _build_extreme_sparse(self) -> list[list[int]]:
+        """Sparse table of first extreme candle positions over the main series."""
+        values = self._stop_values
+        n = len(values)
+        if n == 0:
+            return []
+        less = self.direction == "bullish"
+        st: list[list[int]] = [list(range(n))]
+        k = 1
+        while (1 << k) <= n:
+            prev = st[-1]
+            span = 1 << (k - 1)
+            width = n - (1 << k) + 1
+            cur = [0] * width
+            for i in range(width):
+                left = prev[i]
+                right = prev[i + span]
+                lv = values[left]
+                rv = values[right]
+                if (lv < rv) if less else (lv > rv):
+                    cur[i] = left
+                elif (rv < lv) if less else (rv > lv):
+                    cur[i] = right
+                else:
+                    cur[i] = left if left <= right else right
+            st.append(cur)
+            k += 1
+        return st
+
+    def _extreme_position(self, left: int, right: int) -> int:
+        """Return the first extreme candle position in ``[left, right]``."""
+        values = self._stop_values
+        less = self.direction == "bullish"
+        length = right - left + 1
+        if length <= 0:
+            return left
+        k = length.bit_length() - 1
+        st = self._extreme_sparse
+        i1 = st[k][left]
+        i2 = st[k][right - (1 << k) + 1]
+        lv = values[i1]
+        rv = values[i2]
+        if (lv < rv) if less else (lv > rv):
+            return i1
+        if (rv < lv) if less else (rv > lv):
+            return i2
+        return i1 if i1 <= i2 else i2
+
 
     def _first_parent_stop(
         self, source_time: datetime, level: Decimal
@@ -271,7 +337,7 @@ class EZoneDetector(OrderAuditEngineMixin):
         return self._confirmation_for(reaction, self.order_direction)
 
     def _reaction_first_time(self, reaction: object) -> datetime:
-        return getattr(self.candles[int(getattr(reaction, "first_idx"))], "timestamp")
+        return self.times[int(getattr(reaction, "first_idx"))]
 
 
     def _parent_stop(self, parent_type: str, parent: object) -> tuple[int, datetime] | None:
@@ -296,14 +362,14 @@ class EZoneDetector(OrderAuditEngineMixin):
         # happened, but it must not truncate either boundary candle's OHLC.
         start_index = max(self.start_index, self._main_index(start))
         end_index = min(self.end_index, self._main_index(end))
-        source = self.candles[start_index]
-        value = self._stop_value(source)
-        for item in self.candles[start_index + 1 : end_index + 1]:
-            candidate = self._stop_value(item)
-            better = candidate < value if self.direction == "bullish" else candidate > value
-            if better:
-                source, value = item, candidate
-        return int(getattr(source, "index")), getattr(source, "timestamp"), value
+        if end_index < start_index:
+            end_index = start_index
+        position = self._extreme_position(start_index, end_index)
+        return (
+            self._candle_codes[position],
+            self.times[position],
+            self._stop_values[position],
+        )
 
     def _zone(
         self, family: str, number: int, parent_type: str,
@@ -363,12 +429,13 @@ class EZoneDetector(OrderAuditEngineMixin):
         order_decision_index, order_decision_time, order_decision_event = crossed
         decision_event = max(stop_event, order_decision_event)
         decision_index = self._main_index(decision_event)
-        decision_time = getattr(self.candles[decision_index], "timestamp")
+        decision_time = self.times[decision_index]
         source_index, source_time, price = self._extreme_between(stop_event, decision_event)
         parent_stop_index = self._main_index(stop_event)
         order_first_index = int(getattr(order, "first_idx"))
         top_source = int(getattr(order, "box_top_source_idx"))
         bottom_source = int(getattr(order, "box_bottom_source_idx"))
+        order_break_index = int(getattr(order, "break_idx"))
         return EZone(
             direction=self.direction,
             family=family,
@@ -378,7 +445,7 @@ class EZoneDetector(OrderAuditEngineMixin):
             parent_source_time=getattr(parent, "source_time"),
             parent_price=as_decimal(getattr(parent, "price")),
             parent_stop_index=parent_stop_index,
-            parent_stop_time=getattr(self.candles[parent_stop_index], "timestamp"),
+            parent_stop_time=self.times[parent_stop_index],
             parent_stop_event_time=stop_event,
             order_direction=self.order_direction,
             order_reaction_number=order_number,
@@ -386,16 +453,16 @@ class EZoneDetector(OrderAuditEngineMixin):
             order_causes=order_causes,
             order_parent_stop_cause_time=order_parent_stop_cause_time,
             order_first_index=order_first_index,
-            order_first_time=getattr(self.candles[order_first_index], "timestamp"),
-            order_break_index=int(getattr(order, "break_idx")),
-            order_break_time=getattr(self.candles[int(getattr(order, "break_idx"))], "timestamp"),
+            order_first_time=self.times[order_first_index],
+            order_break_index=order_break_index,
+            order_break_time=self.times[order_break_index],
             order_confirmation_time=order_confirmation,
             order_box_top=as_decimal(getattr(order, "box_top")),
             order_box_top_source_index=top_source,
-            order_box_top_source_time=getattr(self.candles[top_source], "timestamp"),
+            order_box_top_source_time=self.times[top_source],
             order_box_bottom=as_decimal(getattr(order, "box_bottom")),
             order_box_bottom_source_index=bottom_source,
-            order_box_bottom_source_time=getattr(self.candles[bottom_source], "timestamp"),
+            order_box_bottom_source_time=self.times[bottom_source],
             order_stop_level=order_stop,
             order_stop_source_index=stop_source,
             order_stop_source_time=stop_source_time,
@@ -439,6 +506,7 @@ class EZoneDetector(OrderAuditEngineMixin):
 
     def continuation_chain_from_s(
         self, owner: EZone, s_zone: object,
+        independent_a_order_identities: frozenset[tuple[int, int]] = frozenset(),
     ) -> list[EZone]:
         """Build the E continuation opened by one S consumed by a stopped E.
 
@@ -460,6 +528,16 @@ class EZoneDetector(OrderAuditEngineMixin):
         while True:
             zone = self._zone(family, number, parent_type, parent, stop_event)
             if zone is None or zone.source_index in seen_sources:
+                break
+            # The stopped-A ledger can hold a physical Order before that
+            # independent cause reaches this detector's filtered E ledger.
+            # An invalid S cannot create its own cause, but it may continue a
+            # larger E with an Order already created by a stopped A.
+            if (
+                self._invalid_s_without_order_cause(zone)
+                and (zone.order_first_index, zone.order_break_index)
+                not in independent_a_order_identities
+            ):
                 break
             parent_source_time = getattr(parent, "source_time")
             if self._has_sequence_reset_between(
@@ -596,6 +674,7 @@ class EZoneDetector(OrderAuditEngineMixin):
             if item.parent_type == "S"
             and int(item.number) == 1
             and (item.parent_source_index, item.parent_source_time) in accepted_s
+            and not self._invalid_s_without_order_cause(item)
         ]
         result = list(dominant_zones)
         for root in roots:
@@ -622,6 +701,30 @@ class EZoneDetector(OrderAuditEngineMixin):
             ):
                 result.append(root)
         return self.resolve_same_source_conflicts(result)
+
+    def _invalid_s_without_order_cause(self, zone: EZone) -> bool:
+        """Reject an invalid S root unless its Order has another creation cause."""
+        if zone.parent_type != "S" or (
+            zone.parent_source_time, zone.parent_source_index
+        ) not in self.invalid_s_root_identities:
+            return False
+        identity = (zone.order_first_index, zone.order_break_index)
+        if identity in self.initial_order_audit:
+            return False
+        entry = self.order_audit.get(identity)
+        if entry is None:
+            return True
+        if entry.get("order_b_causes"):
+            return False
+        invalid_s_times = {
+            source_time for source_time, _ in self.invalid_s_root_identities
+        }
+        return not any(
+            cause[0] == "parent-stop" and not (
+                cause[1] == "S" and cause[4] in invalid_s_times
+            )
+            for cause in entry.get("causes", ())
+        )
 
     def _discover_candidate_chains(self) -> list[EZone]:
         """Build provisional recursive E chains from every stopped S parent.
@@ -747,7 +850,10 @@ class EZoneDetector(OrderAuditEngineMixin):
         }
 
         def valid_order(zone: EZone) -> bool:
-            return not self._blocked_by_gate_owned_order(zone)
+            return (
+                not self._blocked_by_gate_owned_order(zone)
+                and not self._invalid_s_without_order_cause(zone)
+            )
 
         def parent_active(zone: EZone, seen: set[tuple[int, datetime]] | None = None) -> bool:
             if zone.parent_type == "S":
@@ -818,6 +924,7 @@ class EZoneDetector(OrderAuditEngineMixin):
             return (
                 skipped_parent is not None
                 and not valid_order(skipped_parent)
+                and not self._invalid_s_without_order_cause(skipped_parent)
                 and parent_active(skipped_parent, seen)
             )
 

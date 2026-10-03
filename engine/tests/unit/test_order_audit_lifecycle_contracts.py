@@ -20,7 +20,7 @@ sys.path.insert(0, str(PIPELINE))
 
 from e_zone_detector import EZoneDetector
 from lifecycle_engine import reconcile_stopall_lifecycle, sequence_priority
-from order_audit_engine import OrderBResetLeg, PostBehaviorStop
+from order_audit_engine import OrderBResetLeg, PostBehaviorStop, prepare_order_audit
 from reaction_engine import Candle, Candidate, MarketChronology
 from s_zone_detector import SZone
 
@@ -97,6 +97,14 @@ def parent_causes(detector: EZoneDetector):
 
 
 @pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_extreme_range_query_keeps_first_equal_source(direction):
+    detector, _parent, _physical = detector_state(direction)
+    index, source_time, value = detector._extreme_between(moment(125), moment(190))
+    assert (index, source_time) == (4, moment(120))
+    assert value == Decimal("100" if direction == "bullish" else "120")
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
 def test_explicitly_invalid_s_cannot_freshly_create_parent_stop_order(direction):
     detector, parent, _physical = detector_state(direction, invalid=True)
     detector._rebuild_accepted_order_audit([])
@@ -112,6 +120,169 @@ def test_invalid_s_cause_is_not_reconstructed_from_internal_e_evidence(direction
     assert evidence.order_parent_stop_cause_time == moment(125)
     detector._rebuild_accepted_order_audit([evidence])
     assert parent_causes(detector) == set(), "Internal E evidence recreated its invalid S Order_A cause."
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_public_e_reference_cannot_create_an_order_without_valid_cause(direction):
+    """A consumer identity cannot manufacture an Order from an invalid S."""
+    detector, parent, _physical = detector_state(direction, invalid=True)
+    evidence = detector._zone("blue", 1, "S", parent, moment(125))
+    assert evidence is not None
+    identity = (int(evidence.order_first_index), int(evidence.order_break_index))
+    detector._rebuild_accepted_order_audit([evidence])
+    assert parent_causes(detector) == set()
+    assert identity not in detector.order_audit
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_invalid_s_order_cannot_enter_accepted_e_lifecycle(direction):
+    detector, parent, _physical = detector_state(direction, invalid=True)
+    evidence = detector._zone("blue", 1, "S", parent, moment(125))
+    assert evidence is not None
+    assert detector._reconcile_candidate_chains([evidence]) == []
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_invalid_s_order_cannot_be_restored_as_independent_e_root(direction):
+    detector, parent, _physical = detector_state(direction, invalid=True)
+    evidence = detector._zone("blue", 1, "S", parent, moment(125))
+    assert evidence is not None
+    detector._last_candidate_zones = [evidence]
+    assert detector.restore_independent_s_roots([]) == []
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_valid_s_order_can_be_restored_as_independent_e_root(direction):
+    detector, parent, _physical = detector_state(direction)
+    evidence = detector._zone("blue", 1, "S", parent, moment(125))
+    assert evidence is not None
+    detector._last_candidate_zones = [evidence]
+    assert detector.restore_independent_s_roots([]) == [evidence]
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_invalid_s_root_with_reset_leg_order_can_be_restored(direction):
+    detector, parent, physical = detector_state(direction, invalid=True)
+    evidence = detector._zone("blue", 1, "S", parent, moment(125))
+    assert evidence is not None
+    detector.order_audit[(physical.first_idx, physical.break_idx)] = {
+        "causes": set(), "order_b_causes": [{"kind": "reset-leg"}],
+    }
+    detector._last_candidate_zones = [evidence]
+    assert detector.restore_independent_s_roots([]) == [evidence]
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_invalid_s_order_cannot_start_consumed_s_continuation(direction):
+    detector, parent, _physical = detector_state(direction, invalid=True)
+    owner = detector._zone("blue", 1, "S", parent, moment(125))
+    assert owner is not None
+    assert detector.continuation_chain_from_s(owner, parent) == []
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_consumed_s_continuation_uses_independent_a_order_cause(direction):
+    detector, parent, physical = detector_state(direction, invalid=True)
+    owner = detector._zone("blue", 1, "S", parent, moment(125))
+    assert owner is not None
+    identity = (physical.first_idx, physical.break_idx)
+    assert detector.continuation_chain_from_s(owner, parent, frozenset({identity}))
+    assert detector.continuation_chain_from_s(owner, parent, frozenset({(0, 1)})) == []
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_invalid_s_chain_cannot_publish_cause_less_descendant(direction):
+    detector, parent, _physical = detector_state(direction, invalid=True)
+    evidence = detector._zone("blue", 1, "S", parent, moment(125))
+    assert evidence is not None
+    child = replace(
+        evidence, number=2, parent_type="E",
+        parent_source_index=evidence.source_index,
+        parent_source_time=evidence.source_time,
+        source_index=evidence.source_index + 1,
+        source_time=evidence.source_time + timedelta(seconds=30),
+        decision_event_time=evidence.decision_event_time + timedelta(seconds=30),
+    )
+    assert detector._reconcile_candidate_chains([evidence, child]) == []
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_invalid_s_root_can_use_independent_reset_leg_order(direction):
+    detector, parent, physical = detector_state(direction, invalid=True)
+    evidence = detector._zone("blue", 1, "S", parent, moment(125))
+    assert evidence is not None
+    detector.order_audit[(physical.first_idx, physical.break_idx)] = {
+        "causes": set(), "order_b_causes": [{"kind": "reset-leg"}],
+    }
+    assert detector._reconcile_candidate_chains([evidence]) == [evidence]
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_valid_s_order_enters_accepted_e_lifecycle(direction):
+    detector, parent, _physical = detector_state(direction)
+    evidence = detector._zone("blue", 1, "S", parent, moment(125))
+    assert evidence is not None
+    assert detector._reconcile_candidate_chains([evidence]) == [evidence]
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_required_identity_does_not_prepare_cause_less_order(direction):
+    detector, _parent, physical = detector_state(direction)
+    identity = (int(physical.first_idx), int(physical.break_idx))
+    detector.order_audit[identity] = {
+        "reaction_number": 1,
+        "reaction": physical,
+        "confirmation_time": moment(190),
+        "stop_level": Decimal("120" if direction == "bullish" else "100"),
+        "stop_source_index": 4,
+        "stop_source_time": moment(125),
+        "stop_cross": None,
+        "causes": set(),
+    }
+    prepared = prepare_order_audit(
+        detector, 0, 10, required_identities={identity}
+    )
+    assert prepared == []
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_same_identity_same_ledger_size_changed_causes_refresh_carried_query(direction):
+    detector, parent, physical = detector_state(direction)
+    detector._register_order_audit("S", parent, moment(125))
+    assert detector._carried_orders_for_parent(parent, moment(205))
+    entry = detector.order_audit[(physical.first_idx, physical.break_idx)]
+    entry["causes"] = {
+        ("parent-stop", "S", "blue", moment(100), parent.source_time)
+    }
+    detector._carried_orders_cache.clear()
+    assert detector._carried_orders_for_parent(parent, moment(205)) == []
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+@pytest.mark.xfail(
+    strict=True,
+    reason="Pinned GitHub 989647b also omits restored Order_B rows from its confirmation index",
+)
+def test_ensure_restored_order_is_visible_through_confirmation_query(direction):
+    detector, parent, physical = detector_state(direction)
+    identity = (int(physical.first_idx), int(physical.break_idx))
+    detector.s_zones = []
+    detector.order_audit[identity] = {
+        "reaction_number": 1,
+        "reaction": physical,
+        "confirmation_time": moment(190),
+        "stop_level": Decimal("120" if direction == "bullish" else "100"),
+        "stop_source_index": 4,
+        "stop_source_time": moment(125),
+        "stop_cross": (7, moment(210), moment(215)),
+        "causes": set(),
+        "order_b_causes": [{"kind": "reset-leg", "physicalOrderConfirmationTime": moment(190)}],
+    }
+    detector._index_order_audit_identity(identity, moment(190))
+    assert detector._post_stop_accepted_orders_for_parent(parent, moment(125))
+    detector.ensure_accepted_order_audit([])
+    matches = detector._post_stop_accepted_orders_for_parent(parent, moment(125))
+    assert [int(item[1].first_idx) for item in matches] == [int(physical.first_idx)]
 
 
 @pytest.mark.parametrize("direction", ["bullish", "bearish"])

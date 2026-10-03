@@ -22,9 +22,19 @@ async function listenForApi(t, api) {
     res.statusCode = 404;
     res.end();
   });
-  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
-  t.after(() => server.close());
-  return `http://127.0.0.1:${server.address().port}`;
+  for (let attempt = 0; attempt < 20; attempt++) {
+    await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+    const origin = `http://127.0.0.1:${server.address().port}`;
+    try {
+      await fetch(origin, { method: "HEAD" });
+      t.after(() => server.close());
+      return origin;
+    } catch (error) {
+      await new Promise((resolve) => server.close(resolve));
+      if (error?.cause?.message !== "bad port") throw error;
+    }
+  }
+  throw new Error("Unable to allocate a browser-compatible test port");
 }
 
 function fakeFarazLoginBrowser({ logoutStatus = 200, profileStatusAfterLogout = 401 } = {}) {
@@ -67,6 +77,12 @@ function fakeFarazLoginBrowser({ logoutStatus = 200, profileStatusAfterLogout = 
   return { browser, context, page, siteRequests, browserProbeEndpoints, isClosed: () => closed };
 }
 
+function deferred() {
+  let resolve;
+  const promise = new Promise((yes) => { resolve = yes; });
+  return { promise, resolve };
+}
+
 function writeFakeSession(workspaceRoot) {
   const secretDir = path.join(path.join(workspaceRoot, "apps", "chart", "state"), "secret");
   fs.mkdirSync(secretDir, { recursive: true });
@@ -97,6 +113,108 @@ test("removing the only FARAZ session file disconnects an open browser context",
   assert.equal(status.connected, false);
   assert.equal(status.state, "not_connected");
   assert.equal(fs.existsSync(sessionPath), false);
+});
+
+test("FARAZ shutdown closes its owned login browser", async (t) => {
+  const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-shutdown-"));
+  t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
+  writeFakeSession(workspaceRoot);
+  const managed = fakeFarazLoginBrowser();
+  const api = createFarazCandleApi({ workspaceRoot, launchBrowser: async () => managed,
+    fetchImpl: async () => new Response("{}", { headers: { "content-type": "application/json" } }) });
+  const origin = await listenForApi(t, api);
+  const opened = await fetch(`${origin}/api/faraz/auth/browser`, { method: "POST" });
+  assert.equal(opened.status, 200);
+  assert.equal(managed.isClosed(), false);
+  await api.shutdown();
+  assert.equal(managed.isClosed(), true);
+});
+
+test("FARAZ shutdown waits for a launching browser and closes it", async (t) => {
+  const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-launch-shutdown-"));
+  t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
+  const managed = fakeFarazLoginBrowser();
+  const entered = deferred();
+  const release = deferred();
+  const api = createFarazCandleApi({ workspaceRoot, launchBrowser: async () => {
+    entered.resolve();
+    await release.promise;
+    return managed;
+  } });
+  const origin = await listenForApi(t, api);
+  const opening = fetch(`${origin}/api/faraz/auth/browser`, { method: "POST" });
+  await entered.promise;
+  const closing = api.shutdown();
+  release.resolve();
+  await closing;
+  await opening;
+  assert.equal(managed.isClosed(), true);
+});
+
+test("concurrent FARAZ browser requests share one owned launch", async (t) => {
+  const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-overlap-launch-"));
+  t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
+  const managed = fakeFarazLoginBrowser();
+  const entered = deferred();
+  const release = deferred();
+  let launches = 0;
+  const api = createFarazCandleApi({ workspaceRoot, launchBrowser: async () => {
+    launches++;
+    entered.resolve();
+    await release.promise;
+    return managed;
+  } });
+  const routes = new Map();
+  api.configureServer({ middlewares: { use(route, handler) { routes.set(route, handler); } } });
+  const handler = routes.get("/api/faraz/auth/browser");
+  const response = () => ({ statusCode: 200, setHeader() {}, end() {} });
+  const firstResponse = response(), secondResponse = response();
+  const first = handler({ method: "POST" }, firstResponse);
+  await entered.promise;
+  const second = handler({ method: "POST" }, secondResponse);
+  release.resolve();
+  await Promise.all([first, second]);
+  assert.deepEqual([firstResponse.statusCode, secondResponse.statusCode], [200, 200]);
+  assert.equal(launches, 1);
+  await api.shutdown();
+  assert.equal(managed.isClosed(), true);
+});
+
+test("FARAZ closes a launched browser when context setup fails", async (t) => {
+  const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-launch-setup-failure-"));
+  t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
+  writeFakeSession(workspaceRoot);
+  const managed = fakeFarazLoginBrowser();
+  managed.context.setExtraHTTPHeaders = async () => { throw new Error("header setup failed"); };
+  const api = createFarazCandleApi({ workspaceRoot, launchBrowser: async () => managed });
+  const origin = await listenForApi(t, api);
+  const response = await fetch(`${origin}/api/faraz/auth/browser`, { method: "POST" });
+  assert.equal(response.status, 500);
+  assert.equal(managed.isClosed(), true);
+  await api.shutdown();
+});
+
+test("FARAZ cannot start an extraction after shutdown during auth probing", async (t) => {
+  const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-start-shutdown-"));
+  t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
+  writeFakeSession(workspaceRoot);
+  const entered = deferred();
+  const release = deferred();
+  let requests = 0;
+  const api = createFarazCandleApi({ workspaceRoot, fetchImpl: async () => {
+    requests++;
+    if (requests === 1) { entered.resolve(); await release.promise; }
+    return new Response("{}", { headers: { "content-type": "application/json" } });
+  } });
+  const origin = await listenForApi(t, api);
+  const starting = fetch(`${origin}/api/faraz/candles/start`, { method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ mode: "range", symbolName: "TEST:PAIR", resolution: "5S", from: 100, to: 120 }) });
+  await entered.promise;
+  await api.shutdown();
+  release.resolve();
+  const response = await starting;
+  assert.notEqual(response.status, 202);
+  assert.equal(requests, 2); // Probe and profile only; no extraction packets.
 });
 
 test("FARAZ history cannot use cached credentials after the session file is removed", async (t) => {
