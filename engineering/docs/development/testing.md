@@ -12,7 +12,7 @@ scope:
   - regression
 supersedes: engineering/archive/documentation/local-tests-legacy-2026-09-30.md
 created_at: 2026-09-30T11:40:11+03:30
-last_modified_at: 2026-09-30T11:40:11+03:30
+last_modified_at: 2026-10-04T05:09:22+03:30
 ---
 
 # TradingBot Testing
@@ -288,6 +288,18 @@ Discover current frontend tooling and classify checks as appropriate:
 Do not freeze a browser-tool version, browser count, test count, or one permanent end-to-end command here.
 
 A browser/runtime contract is `NOT RUN` if only static Source/tests were inspected.
+
+### Local calculation boundary
+
+For changes to local calculation dispatch, cache, RAW identity, or progress transport, select current tests and integration evidence for the affected transitions:
+
+- distinct requests respect the configured Engine concurrency limit and queue order; identical in-flight requests share one execution while each caller receives the appropriate progress;
+- a failed execution releases its slot so a later request can retry; server shutdown aborts owned active work and rejects queued work;
+- a cache hit requires the current RAW content and calculation Source identity; changed RAW bytes, including a same-size change with preserved modification time, cannot reuse a stale result;
+- RAW changes while a request waits or runs cause rejection before its result is persisted;
+- late or reconnected progress subscribers receive ordered, bounded history and terminal state; disconnection and shutdown release the appropriate progress resources.
+
+Use [Technical Architecture](../architecture/technical-architecture.md) for the current process, cache, and progress contract. A helper-level unit result does not by itself verify the HTTP route, persisted artifact, or user-visible status; add server/browser runtime checks when those boundaries change.
 
 ## 16. Engine and integration testing relationship
 

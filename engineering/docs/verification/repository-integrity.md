@@ -9,7 +9,7 @@ scope:
   - generated-content
   - archive
   - verification
-last_modified_at: 2026-10-03T22:30:37+03:30
+last_modified_at: 2026-10-04T05:09:22+03:30
 ---
 
 # TradingBot Repository Integrity
@@ -112,6 +112,8 @@ and:
 `excluded from production != Git-ignored`
 
 Maintained tests, engineering documentation/evidence, release tooling, and selected reproducibility evidence may be legitimate tracked engineering content while being excluded from the runtime production closure.
+
+Check both Current `.gitignore` and release policy when classifying a candidate: ignore rules affect ordinary discovery of untracked files, while release policy can reject an already-tracked excluded artifact or unsafe content inside an eligible archive. A locally retained, excluded historical artifact still requires the ownership and evidence review in [Conservative repository cleanup](#18-conservative-repository-cleanup) before deletion.
 
 Detailed selection, publication, tags, remote updates, and recovery mechanics belong to [Release Operations](../../../scripts/git/README.md) and Current release policy. Do not duplicate them here.
 
@@ -353,7 +355,7 @@ For a repository-structure/documentation task:
 14. perform only the currently authorized commit/push/release action;
 15. verify the resulting remote state independently.
 
-If a required evidence source is unavailable, report `NOT VERIFIED`/`INCOMPLETE` rather than substituting an old report.
+If a required check did not run, report `NOT RUN`; if it began but cannot establish the required conclusion, report `INCOMPLETE`. Do not substitute an old report for current evidence. Use the status definitions in [Testing](../development/testing.md).
 
 ## 20. Acceptance scenarios
 

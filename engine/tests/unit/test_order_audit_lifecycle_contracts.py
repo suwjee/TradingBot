@@ -342,9 +342,18 @@ def test_real_stopall_publication_refreshes_reset_queries_and_context_caches(dir
         s_zone(direction, source=30, decision=35),
         replace(s_zone(direction, source=90, decision=100), color="red", order_mode="B"),
     ]
+    lower_with_earlier_stop = list(detector.chronology.seconds)
+    lower_with_earlier_stop[75] = replace(
+        lower_with_earlier_stop[75],
+        low=Decimal("99") if direction == "bullish" else Decimal("100"),
+        high=Decimal("121") if direction == "bearish" else Decimal("120"),
+    )
+    stopall_chronology = MarketChronology(
+        detector.chronology.candles, lower_with_earlier_stop, 30,
+    )
 
     accepted_e, stopalls = reconcile_stopall_lifecycle(
-        detector, accepted_s, [], detector.chronology, direction,
+        detector, accepted_s, [], stopall_chronology, direction,
     )
 
     assert accepted_e == []

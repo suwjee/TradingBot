@@ -12,7 +12,7 @@ scope:
   - faraz-ui
   - algorithm-reference-ui
   - responsive-accessibility
-last_modified_at: 2026-09-30T10:55:19+03:30
+last_modified_at: 2026-10-04T05:09:22+03:30
 ---
 
 # TradingBot UI/UX Reference
@@ -224,6 +224,8 @@ On failure:
 - an error notification is shown;
 - diagnostic activity is recorded for user inspection;
 - the Apply control is re-enabled after the request finishes.
+
+If the selected RAW changes while a request is queued or running, the server rejects the stale calculation. The user can Apply again against the current RAW; the stale result does not become the active indicator result.
 
 ## 9. Trading-result presentation
 

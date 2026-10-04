@@ -1,39 +1,23 @@
-# dependency-report.md
+<!-- created_at: 2026-10-04T03:38:42+03:30 -->
+<!-- last_modified_at: 2026-10-04T03:38:45+03:30 -->
 
-**created_at:** `2026-09-30T15:43:03+03:30`
-**last_modified_at:** `2026-09-30T15:43:03+03:30`
+# Dependency report
 
-## Import edges (internal)
+Direct file imports: 456. Reverse impact edges: 383 (INFERRED).
 
-Count of internal import edges: 141
+## High-link files
 
-## External package edges
+- `apps/chart/src/algorithm/content/type-module-summaries.js (95 direct links)`
+- `engineering/docs/architecture/technical-architecture.md (67 direct links)`
+- `scripts/git/Test-ReleaseWorkflow.ps1 (66 direct links)`
+- `engine/pipeline/e_zone_detector.py (62 direct links)`
+- `apps/chart/src/main.js (59 direct links)`
+- `apps/chart/vite.config.js (45 direct links)`
+- `apps/chart/src/algorithm/content/module-summaries.js (43 direct links)`
+- `engine/pipeline/s_zone_detector.py (41 direct links)`
+- `engine/pipeline/reaction_engine.py (40 direct links)`
+- `apps/chart/server/raw-resource-store.js (39 direct links)`
+- `scripts/git/IMPLEMENTATION_PLAN.md (39 direct links)`
+- `engine/bridge/trading_pipeline.py (38 direct links)`
 
-Count of external/npm edges: 279
-
-## Hotspots
-
-- `apps/chart/server/raw-resource-store.js` (35)
-- `apps/chart/src/main.js` (33)
-- `engineering/docs/architecture/technical-architecture.md` (24)
-- `engineering/docs/architecture/ui-ux-reference.md` (23)
-- `engineering/docs/documentation-governance.md` (23)
-- `apps/chart/tests/unit/raw-resource-store.test.mjs` (22)
-- `engineering/docs/ai/engineering-workflow.md` (19)
-- `engineering/docs/development/testing.md` (19)
-- `AGENTS.md` (18)
-- `engine/tests/unit/test_order_audit_lifecycle_contracts.py` (17)
-- `engineering/docs/development/zero-difference-refactor.md` (17)
-- `engineering/docs/README.md` (17)
-- `engine/bridge/trading_pipeline.py` (16)
-- `engine/pipeline/order_audit_engine.py` (16)
-- `engine/tests/regression/order_regression.py` (15)
-
-## Cycles
-
-- none detected
-
-## Notes
-
-Engine tests use flat imports against `engine/pipeline` modules (runner `sys.path`).
-Chart tests use relative imports under `apps/chart`.
+AST call edges may be inferred and raw unresolved endpoints are preserved as ambiguous nodes.
