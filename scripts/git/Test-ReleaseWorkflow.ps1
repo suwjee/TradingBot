@@ -147,7 +147,9 @@ function Invoke-RootResolutionTests {
     Assert-True ($resolved -eq [IO.Path]::GetFullPath($fixture)) 'valid fixture root resolves from script location'
 
     Remove-Item -LiteralPath (Join-Path $fixture 'AGENTS.md') -Force
-    Assert-Throws { Resolve-TradingBotProjectRoot -ScriptPath $scriptPath } 'missing AGENTS marker'
+    Assert-True ((Resolve-TradingBotProjectRoot -ScriptPath $scriptPath) -eq $resolved) 'AGENTS.md is optional in a valid checkout'
+    Remove-Item -LiteralPath (Join-Path $fixture 'apps/chart') -Recurse -Force
+    Assert-Throws { Resolve-TradingBotProjectRoot -ScriptPath $scriptPath } 'missing runtime project marker'
 
     Assert-Throws { Resolve-TradingBotProjectRoot -ScriptPath (Join-Path $fixture 'scripts\git\missing.ps1') } 'missing release script is rejected'
   } finally {
@@ -260,8 +262,8 @@ function Invoke-ProductionClosureTests {
       Assert-True ($fileSet.Paths -contains $path) "closure includes $path"
     }
     foreach ($path in @('apps/chart/src/unused.js', 'apps/chart/server/unused.js', 'engine/pipeline/unused.py')) {
-      Assert-True (-not ($fileSet.Paths -contains $path)) "closure excludes unreferenced $path"
-      Assert-True ($fileSet.Drift -contains $path) "closure reports drift for $path"
+      Assert-True ($fileSet.Paths -contains $path) "runtime inventory includes unreferenced $path"
+      Assert-True (-not ($fileSet.Drift -contains $path)) "runtime inventory has no omitted runtime path: $path"
     }
     Assert-True ($fileSet.Errors.Count -eq 0) 'fixture closure has no unresolved imports'
     Assert-True ((Test-ProductionFileSet -FileSet $fileSet -Policy $policy).Errors.Count -eq 0) 'fixture file set passes integrity checks'
@@ -442,6 +444,7 @@ function Invoke-PublicationTests {
 }
 
 function Invoke-DocumentationTests {
+  Assert-True (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'Invoke-TradingBotRelease.ps1') -PathType Leaf) 'documented scripted release entry point exists'
   $readmePath = Join-Path $PSScriptRoot 'README.md'
   Assert-True (Test-Path -LiteralPath $readmePath -PathType Leaf) 'release operations README exists'
   $text = Get-Content -LiteralPath $readmePath -Raw

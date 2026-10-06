@@ -132,21 +132,12 @@
       'apps/chart/review.html',
       'apps/chart/scripts/dev-server.mjs',
       'engine/__init__.py',
-      'engine/pipeline/__init__.py',
-      'engine/bridge/trading_pipeline.py',
-      'engine/pipeline/reaction_engine.py',
-      'engine/pipeline/blue_line_detector.py',
-      'engine/pipeline/a_zone_detector.py',
-      'engine/pipeline/s_zone_detector.py',
-      'engine/pipeline/e_zone_detector.py',
-      'engine/pipeline/lifecycle_engine.py'
+      'engine/bridge/trading_pipeline.py'
     )
     RuntimeRoots = @(
-      'apps/chart/src/',
-      'apps/chart/server/',
-      'apps/chart/scripts/',
-      'engine/bridge/',
-      'engine/pipeline/'
+      'apps/chart/',
+      'engine/',
+      'scripts/'
     )
     ExcludedPathPatterns = @(
       'apps/chart/state/**',
@@ -156,7 +147,10 @@
       'apps/chart/dist/**',
       'engineering/**',
       'scripts/git/**',
+      'scripts/verification/**',
       'docs/**',
+      'engine/algorithms/**',
+      '**/*.zip',
       'engine/bridge/__init__.py',
       'apps/chart/server/raw-integrity.js',
       '**/__pycache__/**',

@@ -9,9 +9,9 @@ if (-not (Test-Path -LiteralPath $ModulePath -PathType Leaf)) {
   Write-Host '[FAIL] Release.Workflow.psm1 was not found.' -ForegroundColor Red
   exit 2
 }
-Import-Module $ModulePath -Force
+Import-Module $ModulePath -Force -DisableNameChecking
 
-$script:Root = Resolve-TradingBotProjectRoot -ScriptPath $PSCommandPath
+$script:Root = ''
 $script:RepoName = ''
 $script:StageNumber = 0
 $script:StageTotal = 0
@@ -73,7 +73,7 @@ function Get-OriginRepositoryName {
 function Invoke-GhBound {
   param([Parameter(Mandatory)] [string[]] $Arguments)
   if ([string]::IsNullOrWhiteSpace($script:RepoName)) { throw 'GitHub repository identity could not be derived from origin.' }
-  $gh = Get-Command gh -ErrorAction SilentlyContinue
+  $gh = Get-Command gh -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
   if ($null -eq $gh) {
     return [pscustomobject]@{ ExitCode = 127; StdOut = ''; StdErr = 'GitHub CLI (gh) is not installed.' }
   }
@@ -84,17 +84,7 @@ function Invoke-GhBound {
   } else {
     $effectiveArguments = @($Arguments) + @('--repo', $script:RepoName)
   }
-  $previous = $ErrorActionPreference
-  try {
-    $ErrorActionPreference = 'Continue'
-    $records = @(& $gh.Source @effectiveArguments 2>&1)
-    $code = $LASTEXITCODE
-  } finally {
-    $ErrorActionPreference = $previous
-  }
-  $stdout = @($records | Where-Object { $_ -isnot [System.Management.Automation.ErrorRecord] } | ForEach-Object { $_.ToString() }) -join [Environment]::NewLine
-  $stderr = @($records | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] } | ForEach-Object { $_.ToString() }) -join [Environment]::NewLine
-  return [pscustomobject]@{ ExitCode = $code; StdOut = $stdout; StdErr = $stderr }
+  return Invoke-ReleaseGh -Root $script:Root -Arguments $effectiveArguments
 }
 
 function Get-RemoteOid {
@@ -159,16 +149,29 @@ function Get-ActiveBranch {
   return $r.StdOut.Trim()
 }
 
-function Assert-ActiveMain {
-  $branch = Get-ActiveBranch
-  if ($branch -ne 'main') { throw "The active working branch must be main. Current branch: $branch" }
-  foreach ($marker in @('MERGE_HEAD', 'rebase-apply', 'rebase-merge')) {
+function Get-RepositoryBlockers {
+  $blockers = [System.Collections.Generic.List[string]]::new()
+  $unmerged = Invoke-GitSafe @('diff', '--name-only', '--diff-filter=U')
+  Assert-GitOk $unmerged 'Could not inspect unresolved Git conflicts.'
+  $paths = @($unmerged.StdOut -split "`r?`n" | Where-Object { $_ })
+  if ($paths.Count) {
+    $blockers.Add(("Unresolved conflicts in {0} file(s). Inspect with git status; resolve them before a release. Examples: {1}" -f $paths.Count, (($paths | Select-Object -First 5) -join ', ')))
+  }
+  foreach ($marker in @('MERGE_HEAD', 'CHERRY_PICK_HEAD', 'REVERT_HEAD', 'rebase-apply', 'rebase-merge', 'sequencer')) {
     $path = Invoke-GitSafe @('rev-parse', '--git-path', $marker)
     Assert-GitOk $path "Could not locate Git operation marker: $marker"
     $markerPath = $path.StdOut.Trim()
     if (-not [IO.Path]::IsPathRooted($markerPath)) { $markerPath = Join-Path $script:Root $markerPath }
-    if (Test-Path -LiteralPath $markerPath) { throw "Git operation in progress: $marker" }
+    if (Test-Path -LiteralPath $markerPath) { $blockers.Add("Git operation in progress: $marker. Finish that operation before a release.") }
   }
+  $branch = Get-ActiveBranch
+  if ($branch -ne 'main') { $blockers.Add("Release operations require main. Current branch: $branch. Resolve pending Git work before switching to main.") }
+  return $blockers.ToArray()
+}
+
+function Assert-ActiveMain {
+  $blockers = @(Get-RepositoryBlockers)
+  if ($blockers.Count) { throw ($blockers -join [Environment]::NewLine) }
 }
 
 function Sync-MainFastForwardIfNeeded {
@@ -179,13 +182,16 @@ function Sync-MainFastForwardIfNeeded {
 }
 
 function Update-RemoteState {
-  Write-SubRun 'Fetching main and production objects into temporary refs'
+  param([ValidateSet('main','production','both')] [string] $Target = 'both')
+  Write-SubRun 'Fetching selected branch objects into temporary refs'
   $id = [guid]::NewGuid().ToString('N')
   $mainRef = "refs/release-tmp/$id/main"
   $productionRef = "refs/release-tmp/$id/production"
   try {
-    $fetch = Invoke-GitSafe @('fetch', '--no-tags', '--quiet', 'origin', "+refs/heads/main:$mainRef", "+refs/heads/production:$productionRef")
-    Assert-GitOk $fetch 'Could not fetch origin/main and origin/production.'
+    $arguments = @('fetch', '--no-tags', '--quiet', 'origin', "+refs/heads/main:$mainRef")
+    if ($Target -in @('production','both')) { $arguments += "+refs/heads/production:$productionRef" }
+    $fetch = Invoke-GitSafe $arguments
+    Assert-GitOk $fetch 'Could not fetch the required origin branches.'
   } finally {
     $null = Invoke-GitSafe @('update-ref', '-d', $mainRef)
     $null = Invoke-GitSafe @('update-ref', '-d', $productionRef)
@@ -194,14 +200,16 @@ function Update-RemoteState {
 }
 
 function Get-BranchState {
+  param([ValidateSet('main','production','both')] [string] $Target = 'both')
   $remoteMain = Get-RemoteOid 'refs/heads/main'
-  $remoteProduction = Get-RemoteOid 'refs/heads/production'
+  $remoteProduction = if ($Target -in @('production','both')) { Get-RemoteOid 'refs/heads/production' } else { $null }
   if ([string]::IsNullOrWhiteSpace($remoteMain)) { throw 'origin/main is missing.' }
-  if ([string]::IsNullOrWhiteSpace($remoteProduction)) { throw 'origin/production is missing.' }
-  $localMain = Get-LocalCommitOid 'HEAD'
+  if ($Target -in @('production','both') -and [string]::IsNullOrWhiteSpace($remoteProduction)) { throw 'origin/production is missing.' }
+  $localMain = Get-LocalCommitOid 'refs/heads/main'
+  if ($null -eq $localMain) { throw 'Local main has no commit.' }
   $localProduction = Get-LocalCommitOid 'refs/heads/production'
   $mainRelation = Get-AheadBehind -RemoteSha $remoteMain -LocalSha $localMain
-  $prodRelation = if ($null -ne $localProduction) { Get-AheadBehind -RemoteSha $remoteProduction -LocalSha $localProduction } else { [pscustomobject]@{ Ahead = 0; Behind = 0 } }
+  $prodRelation = if ($null -ne $remoteProduction -and $null -ne $localProduction) { Get-AheadBehind -RemoteSha $remoteProduction -LocalSha $localProduction } else { [pscustomobject]@{ Ahead = 0; Behind = 0 } }
   return [pscustomobject]@{
     RemoteMain = $remoteMain
     RemoteProduction = $remoteProduction
@@ -222,6 +230,7 @@ function Show-RepositoryStatus {
   Write-Info ("Remote : {0}" -f $State.RemoteMain)
   Write-Info ("Ahead  : {0}" -f $State.MainAhead)
   Write-Info ("Behind : {0}" -f $State.MainBehind)
+  if ($null -eq $State.RemoteProduction) { return }
   Write-Host ''
   Write-ColorLine 'PRODUCTION' White
   Write-Info ("Local  : {0}" -f $(if ($State.LocalProduction) { $State.LocalProduction } else { '<none>' }))
@@ -231,9 +240,19 @@ function Show-RepositoryStatus {
 }
 
 function Test-GitAuthentication {
+  param([ValidateSet('main','production','both')] [string] $Target = 'main', $State)
   Write-SubRun 'Checking Git push authorization (dry-run only)'
-  $probe = Invoke-GitSafe @('push', '--dry-run', 'origin', 'HEAD:refs/heads/main')
-  if ($probe.ExitCode -ne 0) { throw 'Git push authentication/authorization check failed.' }
+  $specs = @()
+  if ($Target -in @('main','both')) {
+    $main = if ($null -eq $State) { 'HEAD' } else { $State.LocalMain }
+    $specs += "${main}:refs/heads/main"
+  }
+  if ($Target -in @('production','both')) {
+    if ($null -eq $State -or [string]::IsNullOrWhiteSpace($State.RemoteProduction)) { throw 'Production authorization requires the fetched origin/production state.' }
+    $specs += "$($State.RemoteProduction):refs/heads/production"
+  }
+  $probe = Invoke-GitSafe (@('push', '--dry-run', 'origin') + $specs)
+  Assert-GitOk $probe 'Git push authentication/authorization check failed.'
   Write-Ok 'Git push authorization verified'
 }
 
@@ -292,27 +311,26 @@ function Read-TagTarget {
 function Get-DiffEntries {
   param([Parameter(Mandatory)] [string] $Base, [Parameter(Mandatory)] [string] $Target)
   if (Test-OidEqual $Base $Target) { return @() }
-  $r = Invoke-GitSafe @('diff', '--name-status', '-M', $Base, $Target, '--')
+  $r = Invoke-GitSafe @('diff', '--name-status', '-z', '-M', $Base, $Target, '--')
   Assert-GitOk $r 'Could not calculate branch file preview.'
   $entries = [System.Collections.Generic.List[object]]::new()
-  foreach ($line in @($r.StdOut -split "`r?`n")) {
-    if ([string]::IsNullOrWhiteSpace($line)) { continue }
-    $parts = @($line -split "`t")
-    if ($parts.Count -lt 2) { continue }
-    $code = $parts[0]
+  $parts = @($r.StdOut -split "`0")
+  for ($i = 0; $i -lt ($parts.Count - 1); $i++) {
+    $code = $parts[$i]
+    if (-not $code) { continue }
     $kind = 'Modified'
     $oldPath = $null
-    $path = $parts[1]
+    $path = $parts[++$i]
     if ($code.StartsWith('A')) { $kind = 'Added' }
     elseif ($code.StartsWith('D')) { $kind = 'Deleted' }
     elseif ($code.StartsWith('R') -or $code.StartsWith('C')) {
       $kind = 'Renamed'
-      $oldPath = $parts[1]
-      if ($parts.Count -ge 3) { $path = $parts[2] }
+      $oldPath = $path
+      $path = $parts[++$i]
     } elseif ($code.StartsWith('M') -or $code.StartsWith('T')) { $kind = 'Modified' }
     $entries.Add([pscustomobject]@{ Kind = $kind; Path = $path.Replace('\','/'); OldPath = if ($oldPath) { $oldPath.Replace('\','/') } else { $null } })
   }
-  return @($entries)
+  return $entries.ToArray()
 }
 
 function Show-ChangeEntries {
@@ -425,7 +443,7 @@ function New-ProductionPreview {
     Write-SubRun $(if ($RuntimeValidation) { 'Running full production validation' } else { 'Running structural production validation' })
     $progressCallback = $null
     if ($RuntimeValidation) { $progressCallback = { param($message) Write-Host ("[...] {0}" -f $message) -ForegroundColor Cyan } }
-    $validation = Test-ProductionSnapshot -Snapshot $snapshot -RunRuntimeValidation:$RuntimeValidation
+    $validation = Test-ProductionSnapshot -Snapshot $snapshot -RunRuntimeValidation:$RuntimeValidation -ProgressCallback $progressCallback
     if ($RuntimeValidation) { Assert-ReleaseValidationComplete -Validation $validation }
     elseif (@($validation.Errors).Count -gt 0) { throw ($validation.Errors -join '; ') }
     Write-Ok $(if ($RuntimeValidation) { 'Production runtime/build validation passed' } else { 'Production structural validation passed' })
@@ -483,8 +501,8 @@ function New-MenuTag {
     [Parameter(Mandatory)] [string] $MainSourceSha
   )
   $messages = @('-m', "TradingBot $TargetKind tag $Tag")
-  if ($TargetKind -eq 'production') { $messages += @('-m', "TradingBot-Main-Source: $MainSourceSha") }
-  $tagArguments = @('-c', 'user.name=TradingBot Release', '-c', 'user.email=release@tradingbot.invalid', 'tag', '-a', $Tag, $TargetSha) + $messages
+  if ($TargetKind -in @('production','both')) { $messages += @('-m', "TradingBot-Main-Source: $MainSourceSha") }
+  $tagArguments = @('-c', 'user.name=TradingBot Release', '-c', 'user.email=release@tradingbot.invalid', 'tag', '-a') + $messages + @('--', $Tag, $TargetSha)
   $r = Invoke-GitSafe $tagArguments
   Assert-GitOk $r "Could not create local tag: $Tag"
   $tagObject = Get-ObjectOid "refs/tags/$Tag"
@@ -511,6 +529,7 @@ function Assert-RemoteBaselinesUnchanged {
 
 function Publish-MenuRefs {
   param([Parameter(Mandatory)] [AllowEmptyCollection()] [object[]] $Refs)
+  if ($Refs.Count) { Assert-RemoteBaselinesUnchanged -Refs $Refs }
   $toPush = @($Refs | Where-Object { -not (Test-OidEqual $_.DesiredOid $_.BaselineOid) })
   if ($toPush.Count -eq 0) {
     return [pscustomobject]@{ Status = 'SKIPPED'; Method = 'none'; Detail = 'All selected refs already match origin.' }
@@ -519,7 +538,7 @@ function Publish-MenuRefs {
     $localOid = if ($item.LocalRef -like 'refs/tags/*') { Get-ObjectOid $item.LocalRef } else { Get-LocalCommitOid $item.LocalRef }
     if (-not (Test-OidEqual $localOid $item.DesiredOid)) { throw "Local ref is not prepared as previewed: $($item.LocalRef)" }
   }
-  $specs = @($toPush | ForEach-Object { "$($_.LocalRef):$($_.RemoteRef)" })
+  $specs = @($toPush | ForEach-Object { "$($_.DesiredOid):$($_.RemoteRef)" })
   if ($toPush.Count -eq 1) {
     $r = Invoke-GitSafe (@('push', 'origin') + $specs)
     if ($r.ExitCode -ne 0) { throw "Push failed: $($r.StdErr)" }
@@ -529,25 +548,34 @@ function Publish-MenuRefs {
   }
 
   $atomic = Invoke-GitSafe (@('push', '--atomic', 'origin') + $specs)
-  $after = Get-RemoteStatesForRefs -Refs $toPush
+  $after = Get-RemoteStatesForRefs -Refs $Refs
   $allDesired = $true
-  foreach ($item in $toPush) { if (-not (Test-OidEqual $after[$item.Name] $item.DesiredOid)) { $allDesired = $false } }
+  foreach ($item in $Refs) { if (-not (Test-OidEqual $after[$item.Name] $item.DesiredOid)) { $allDesired = $false } }
   if ($atomic.ExitCode -eq 0 -and $allDesired) {
     return [pscustomobject]@{ Status = 'PASS'; Method = 'atomic'; Detail = ($toPush.Name -join ', ') }
   }
 
   $allUnchanged = $true
-  foreach ($item in $toPush) { if (-not (Test-OidEqual $after[$item.Name] $item.BaselineOid)) { $allUnchanged = $false } }
+  foreach ($item in $Refs) { if (-not (Test-OidEqual $after[$item.Name] $item.BaselineOid)) { $allUnchanged = $false } }
   if (-not $allUnchanged) { throw 'Atomic publication ended in a partial/indeterminate remote state. Stop and inspect origin manually.' }
   $atomicText = ($atomic.StdErr + "`n" + $atomic.StdOut)
   if ($atomicText -notmatch '(?i)(does not support.*atomic|atomic.*not supported|unsupported.*atomic)') {
     throw "Atomic push failed for a reason other than unsupported atomic capability. $($atomic.StdErr)"
   }
   Write-Warn 'Remote does not support atomic push. Using guarded sequential fallback.'
+  $expected = @{}
+  foreach ($item in $Refs) { $expected[$item.Name] = $item.BaselineOid }
   foreach ($item in $toPush) {
-    $r = Invoke-GitSafe @('push', 'origin', "$($item.LocalRef):$($item.RemoteRef)")
-    $remoteNow = Get-RemoteOid $item.RemoteRef
-    if ($r.ExitCode -ne 0 -or -not (Test-OidEqual $remoteNow $item.DesiredOid)) {
+    $current = Get-RemoteStatesForRefs -Refs $Refs
+    foreach ($ref in $Refs) {
+      if (-not (Test-OidEqual $current[$ref.Name] $expected[$ref.Name])) { throw 'Remote changed during fallback. Stop and inspect remote refs manually.' }
+    }
+    $r = Invoke-GitSafe @('push', 'origin', "$($item.DesiredOid):$($item.RemoteRef)")
+    $expected[$item.Name] = $item.DesiredOid
+    $current = Get-RemoteStatesForRefs -Refs $Refs
+    $matches = $true
+    foreach ($ref in $Refs) { if (-not (Test-OidEqual $current[$ref.Name] $expected[$ref.Name])) { $matches = $false } }
+    if ($r.ExitCode -ne 0 -or -not $matches) {
       throw "Partial publication while pushing $($item.Name). Stop and inspect remote refs manually."
     }
   }
@@ -568,7 +596,7 @@ function New-LatestGitHubRelease {
     "Target: $TargetKind"
     "Commit: $TargetSha"
   )
-  if ($TargetKind -eq 'production') { $notes += "Main Source: $MainSourceSha" }
+  if ($TargetKind -in @('production','both')) { $notes += "Main Source: $MainSourceSha" }
   $create = Invoke-GhBound @('release', 'create', $Tag, '--verify-tag', '--latest', '--title', $ReleaseName, '--notes', ($notes -join "`n"))
   if ($create.ExitCode -ne 0) { throw "GitHub Release creation failed. $($create.StdErr)" }
   return ($create.StdOut -split "`r?`n" | Select-Object -Last 1).Trim()
@@ -652,8 +680,8 @@ function Invoke-PreviewOnly {
     Assert-ActiveMain
     Write-Ok ("Repository: {0}" -f $script:Root)
     Write-Run 'Remote refresh'
-    Update-RemoteState
-    $ctx.State = Get-BranchState
+    Update-RemoteState -Target $Target
+    $ctx.State = Get-BranchState -Target $Target
     Show-RepositoryStatus $ctx.State
     Write-Run 'Main policy analysis'
     if ($Target -in @('main','both')) {
@@ -700,24 +728,20 @@ function Invoke-InteractiveOperation {
     Write-Ok ("Repository: {0}" -f $script:Root)
 
     Write-Run 'Fetching remote refs'
-    Update-RemoteState
-    $ctx.State = Get-BranchState
+    Update-RemoteState -Target $Target
+    $ctx.State = Get-BranchState -Target $Target
     Show-RepositoryStatus $ctx.State
     Sync-MainFastForwardIfNeeded -State $ctx.State
 
     Write-Run 'Authentication validation'
-    Test-GitAuthentication
+    Test-GitAuthentication -Target $Target -State $ctx.State
 
     Write-Run 'Main policy and secret validation'
-    if ($Target -in @('main','both')) {
-      $ctx.MainReport = Test-MainCandidatePolicy
-    } else {
-      $ctx.MainReport = [pscustomobject]@{ Drift = @(); Errors = @() }
-      Write-Skip 'Main working-tree policy scan is not required for production-only operation.'
-    }
+    $ctx.MainReport = Test-MainCandidatePolicy
 
     Write-Host ''
-    $ctx.CommitMessage = (Read-Host 'Commit message (leave empty to skip new commit)').Trim()
+    $ctx.CommitMessage = (Read-Host 'Commit message (leave empty for automatic message)').Trim()
+    if ([string]::IsNullOrWhiteSpace($ctx.CommitMessage)) { $ctx.CommitMessage = 'Update TradingBot project files' }
     $ctx.Tag = (Read-Host 'Tag (leave empty to skip tag)').Trim()
     if (-not [string]::IsNullOrWhiteSpace($ctx.Tag)) {
       if ($Target -eq 'both') { $ctx.TagTarget = Read-TagTarget }
@@ -744,43 +768,31 @@ function Invoke-InteractiveOperation {
     Write-Run 'Calculating branch candidates'
     $includeNewCommit = -not [string]::IsNullOrWhiteSpace($ctx.CommitMessage)
     $sourceMainPreview = $ctx.State.LocalMain
-    if ($Target -in @('main','both')) {
-      $ctx.MainPreview = New-MainPreview -CommitMessage $(if ($includeNewCommit) { $ctx.CommitMessage } else { 'TradingBot preview' }) -RemoteMain $ctx.State.RemoteMain -IncludeWorkingTree:$includeNewCommit
-      $ctx.MainEntries = @($ctx.MainPreview.Entries)
-      $ctx.PreviewMainTree = $ctx.MainPreview.TreeSha
-      $sourceMainPreview = $ctx.MainPreview.TargetSha
-    }
+    $ctx.MainPreview = New-MainPreview -CommitMessage $ctx.CommitMessage -RemoteMain $ctx.State.RemoteMain -IncludeWorkingTree
+    $ctx.MainEntries = @($ctx.MainPreview.Entries)
+    $ctx.PreviewMainTree = $ctx.MainPreview.TreeSha
+    $sourceMainPreview = $ctx.MainPreview.TargetSha
 
-    $needProductionCandidate = ($Target -in @('production','both') -and $includeNewCommit) -or ($ctx.TagTarget -eq 'production' -and -not [string]::IsNullOrWhiteSpace($ctx.Tag))
     if ($Target -in @('production','both')) {
-      if ($needProductionCandidate) {
-        $previewProd = New-ProductionPreview -SourceMainSha $sourceMainPreview -ProductionBaseSha $ctx.State.RemoteProduction -CommitMessage $(if ($includeNewCommit) { $ctx.CommitMessage } else { 'TradingBot tag validation preview' })
-        $ctx.ProductionPreview = $previewProd
-        $ctx.ProductionFileSet = $previewProd.FileSet
-        $ctx.PreviewProductionTree = $previewProd.TreeSha
-        if ($includeNewCommit) {
-          $ctx.ProductionEntries = @($previewProd.Entries)
-        } else {
-          $prodTarget = Get-ProductionPushTargetWithoutCommit -State $ctx.State
-          $ctx.ProductionEntries = @(Get-DiffEntries -Base $ctx.State.RemoteProduction -Target $prodTarget.TargetSha)
-          if (-not (Test-OidEqual $previewProd.TreeSha (Get-TreeOid $prodTarget.TargetSha))) {
-            throw 'Production runtime snapshot differs from the current production commit, but commit message is empty. Enter a commit message before tagging/releasing production.'
-          }
-        }
+      $previewProd = New-ProductionPreview -SourceMainSha $sourceMainPreview -ProductionBaseSha $ctx.State.RemoteProduction -CommitMessage $(if ($includeNewCommit) { $ctx.CommitMessage } else { 'TradingBot production validation preview' })
+      $ctx.ProductionPreview = $previewProd
+      $ctx.ProductionFileSet = $previewProd.FileSet
+      $ctx.PreviewProductionTree = $previewProd.TreeSha
+      if ($includeNewCommit) {
+        $ctx.ProductionEntries = @($previewProd.Entries)
       } else {
-        $policy = Import-ReleasePolicy -Root $script:Root
-        $fileSet = Get-ProductionFileSet -Root $script:Root -MainSha $sourceMainPreview -Policy $policy
-        $validation = Test-ProductionFileSet -FileSet $fileSet -Policy $policy
-        if (@($fileSet.Errors + $validation.Errors).Count -gt 0) { throw (@($fileSet.Errors + $validation.Errors) -join '; ') }
-        $ctx.ProductionFileSet = $fileSet
         $prodTarget = Get-ProductionPushTargetWithoutCommit -State $ctx.State
         $ctx.ProductionEntries = @(Get-DiffEntries -Base $ctx.State.RemoteProduction -Target $prodTarget.TargetSha)
+        if (-not (Test-OidEqual $previewProd.TreeSha (Get-TreeOid $prodTarget.TargetSha))) {
+          throw 'Production runtime snapshot differs from the current production commit, but commit message is empty. Enter a commit message to prepare the matching production snapshot.'
+        }
       }
     }
     Write-Ok 'Branch candidates calculated'
 
     Write-Run 'Displaying pre-push file tree'
     if ($Target -in @('main','both')) { Show-ChangeEntries -Title 'MAIN CHANGES' -Entries $ctx.MainEntries }
+    elseif (@($ctx.MainEntries).Count) { Show-ChangeEntries -Title 'MAIN SOURCE CHANGES (local commit; main will not be pushed)' -Entries $ctx.MainEntries }
     if ($Target -in @('production','both')) { Show-ChangeEntries -Title 'PRODUCTION CHANGES' -Entries $ctx.ProductionEntries }
     Show-PolicyDrift -MainDrift $ctx.MainReport.Drift -ProductionDrift $(if ($ctx.ProductionFileSet) { $ctx.ProductionFileSet.Drift } else { @() })
     if ($Target -in @('main','both') -and [string]::IsNullOrWhiteSpace($ctx.CommitMessage)) {
@@ -794,17 +806,16 @@ function Invoke-InteractiveOperation {
     }
 
     Show-FinalSummary $ctx
+    if ($null -ne $previewProd) {
+      Write-SubRun 'Validating the exact production candidate before confirmation'
+      $fullValidation = Test-ProductionSnapshot -Snapshot $previewProd.Snapshot -RunRuntimeValidation -ProgressCallback { param($message) Write-SubRun $message }
+      Assert-ReleaseValidationComplete -Validation $fullValidation
+      Write-Ok 'Production runtime/build validation passed'
+    }
     if ($DryRun) {
       Write-Run 'Running full dry-run production validation'
-      if ($Target -in @('production','both')) {
-        if ($null -eq $previewProd) {
-          $previewProd = New-ProductionPreview -SourceMainSha $sourceMainPreview -ProductionBaseSha $ctx.State.RemoteProduction -CommitMessage 'TradingBot dry-run validation' -RuntimeValidation
-        } else {
-          $fullValidation = Test-ProductionSnapshot -Snapshot $previewProd.Snapshot -RunRuntimeValidation
-          Assert-ReleaseValidationComplete -Validation $fullValidation
-          Write-Ok 'Production runtime/build validation passed'
-        }
-      } else { Write-Skip 'Production validation not required for main-only Dry Run.' }
+      if ($Target -in @('production','both')) { Write-Ok 'Confirmed production validation completed above' }
+      else { Write-Skip 'Production validation not required for main-only Dry Run.' }
       Write-Run 'Verifying non-publication state'
       Test-OptionalTag -Tag $ctx.Tag -CheckGitHubRelease:$ctx.CreateRelease
       Write-Ok 'No permanent commit, tag, push, or GitHub Release was created'
@@ -825,7 +836,7 @@ function Invoke-InteractiveOperation {
 
     Write-Run 'Re-checking preview state and remote refs'
     $currentRemoteMain = Get-RemoteOid 'refs/heads/main'
-    $currentRemoteProduction = Get-RemoteOid 'refs/heads/production'
+    $currentRemoteProduction = if ($Target -in @('production','both')) { Get-RemoteOid 'refs/heads/production' } else { $null }
     if (-not (Test-OidEqual $currentRemoteMain $ctx.State.RemoteMain) -or -not (Test-OidEqual $currentRemoteProduction $ctx.State.RemoteProduction)) {
       throw 'Remote repository changed after preview. Re-run the operation.'
     }
@@ -834,7 +845,9 @@ function Invoke-InteractiveOperation {
     }
 
     $actualMainSha = $ctx.State.LocalMain
-    if ($Target -in @('main','both') -and $includeNewCommit) {
+    Assert-ActiveMain
+    if (-not (Test-OidEqual (Get-LocalCommitOid 'HEAD') $ctx.State.LocalMain)) { throw 'Main HEAD changed after preview.' }
+    if ($includeNewCommit) {
       $verifyMain = New-MainPreview -CommitMessage $ctx.CommitMessage -RemoteMain $ctx.State.RemoteMain -IncludeWorkingTree
       if (-not (Test-OidEqual $verifyMain.TreeSha $ctx.PreviewMainTree)) { throw 'Main candidate changed after preview. Re-run the operation.' }
       Write-SubRun 'Creating main commit'
@@ -868,7 +881,7 @@ function Invoke-InteractiveOperation {
           throw 'Production candidate changed after preview. Re-run the operation.'
         }
         Write-SubRun 'Running production runtime/build validation'
-        $prodValidation = Test-ProductionSnapshot -Snapshot $actualProd -RunRuntimeValidation
+        $prodValidation = Test-ProductionSnapshot -Snapshot $actualProd -RunRuntimeValidation -ProgressCallback { param($message) Write-SubRun $message }
         Assert-ReleaseValidationComplete -Validation $prodValidation
         Write-Ok 'Production validation passed'
         Write-SubRun 'Advancing local production after validation'
@@ -907,7 +920,8 @@ function Invoke-InteractiveOperation {
     } else { Write-Skip 'No tag requested.' }
 
     Write-Run 'Remote race protection'
-    if (-not (Test-OidEqual (Get-RemoteOid 'refs/heads/main') $ctx.State.RemoteMain) -or -not (Test-OidEqual (Get-RemoteOid 'refs/heads/production') $ctx.State.RemoteProduction)) {
+    $remoteProductionNow = if ($Target -in @('production','both')) { Get-RemoteOid 'refs/heads/production' } else { $null }
+    if (-not (Test-OidEqual (Get-RemoteOid 'refs/heads/main') $ctx.State.RemoteMain) -or -not (Test-OidEqual $remoteProductionNow $ctx.State.RemoteProduction)) {
       throw 'Remote repository changed during local preparation. Nothing has been pushed; re-run the operation.'
     }
     if (-not [string]::IsNullOrWhiteSpace($ctx.Tag) -and $null -ne (Get-RemoteOid "refs/tags/$($ctx.Tag)")) {
@@ -923,8 +937,8 @@ function Invoke-InteractiveOperation {
     if ($Target -in @('production','both')) {
       $localProductionNow = Get-LocalCommitOid 'refs/heads/production'
       if ($null -ne $localProductionNow) {
-        $refs.Add([pscustomobject]@{ Name='production'; LocalRef='refs/heads/production'; RemoteRef='refs/heads/production'; BaselineOid=$ctx.State.RemoteProduction; DesiredOid=$localProductionNow })
-        $actualProductionSha = $localProductionNow
+        if (-not (Test-OidEqual $localProductionNow $actualProductionSha)) { throw 'Local production changed after validation. Nothing has been pushed.' }
+        $refs.Add([pscustomobject]@{ Name='production'; LocalRef='refs/heads/production'; RemoteRef='refs/heads/production'; BaselineOid=$ctx.State.RemoteProduction; DesiredOid=$actualProductionSha })
       } elseif (-not (Test-OidEqual $actualProductionSha $ctx.State.RemoteProduction)) {
         throw 'Production target differs from origin but no local production ref exists.'
       }
@@ -934,7 +948,7 @@ function Invoke-InteractiveOperation {
     }
     if ($Target -in @('main','both') -and -not (Test-OidEqual $actualMainSha $ctx.State.RemoteMain)) { $result.MainPush = 'FAIL' }
     if ($Target -in @('production','both') -and -not (Test-OidEqual $actualProductionSha $ctx.State.RemoteProduction)) { $result.ProductionPush = 'FAIL' }
-    $publication = Publish-MenuRefs -Refs @($refs)
+    $publication = Publish-MenuRefs -Refs $refs.ToArray()
     if ($publication.Status -eq 'PASS') {
       if ($Target -in @('main','both') -and -not (Test-OidEqual $actualMainSha $ctx.State.RemoteMain)) { $result.MainPush = 'PASS' }
       if ($Target -in @('production','both') -and -not (Test-OidEqual $actualProductionSha $ctx.State.RemoteProduction)) { $result.ProductionPush = 'PASS' }
@@ -985,6 +999,9 @@ function Show-MainMenu {
     Write-Info ("Repository : {0}" -f $script:Root)
     Write-Info ("GitHub     : {0}" -f $(if ($script:RepoName) { $script:RepoName } else { '<unknown>' }))
     Write-Info ("Branch     : {0}" -f (Get-ActiveBranch))
+    foreach ($blocker in @(Get-RepositoryBlockers)) { Write-Warn $blocker }
+    $origin = Invoke-GitSafe @('remote', 'get-url', 'origin')
+    if ($origin.ExitCode -ne 0) { Write-Warn 'origin is not configured. Configure it before previewing or publishing.' }
     Write-ColorLine ('=' * 72) DarkGray
     Write-Host ''
     Write-ColorLine '1. Main' White
@@ -1022,7 +1039,8 @@ function Show-MainMenu {
 if ($LoadFunctionsOnly) { return }
 
 try {
-  $script:RepoName = Get-OriginRepositoryName
+  $script:Root = Resolve-TradingBotProjectRoot -ScriptPath $PSCommandPath
+  try { $script:RepoName = Get-OriginRepositoryName } catch { $script:RepoName = '' }
   Show-MainMenu
   if ($script:HadOperationFailure) { exit 1 }
   exit 0

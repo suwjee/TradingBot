@@ -1,0 +1,681 @@
+{
+  "classification": "Confirmed RAW spec-to-code divergence; unchanged Source",
+  "trace": "D:\\My-Projects\\TradingBot\\engineering\\verification\\forensic-audit-2026-10-05\\traces\\raw-08-30s-ties.events.json",
+  "payload": "D:\\My-Projects\\TradingBot\\engineering\\verification\\forensic-audit-2026-10-05\\traces\\raw-08-30s-ties.payload.json",
+  "baseline": "D:\\My-Projects\\TradingBot\\engineering\\verification\\forensic-audit-2026-10-05\\raw-30s\\raw-08-30s-1.stdout.json",
+  "stable_uninstrumented_equality": true,
+  "tie_observations": 334,
+  "wrong_order_survives_zone_observations": 324,
+  "unique_subroute_conflicts": 20,
+  "unique_native_zone_variants_with_wrong_order": 52,
+  "unique_physical_zone_cores_with_wrong_order": 20,
+  "unique_final_visible_E_with_wrong_order": 4,
+  "final_visible_by_direction": {
+    "bullish": 2,
+    "bearish": 2
+  },
+  "final_visible_cases": [
+    {
+      "direction": "bullish",
+      "final_E": {
+        "direction": "bullish",
+        "family": "red",
+        "number": 5,
+        "parent_type": "E",
+        "parent_source_index": 2748,
+        "parent_source_time": "2026-09-29 20:38:30",
+        "parent_price": "4144.4",
+        "parent_stop_index": 2811,
+        "parent_stop_time": "2026-09-29 21:10:00",
+        "parent_stop_event_time": "2026-09-29 21:10:05",
+        "order_direction": "bearish",
+        "order_reaction_number": 250,
+        "order_mode": "A",
+        "order_causes": [
+          "parent-stop",
+          "reset-leg"
+        ],
+        "order_parent_stop_cause_time": "2026-09-29 21:10:05",
+        "order_first_index": 2825,
+        "order_first_time": "2026-09-29 21:17:00",
+        "order_break_index": 2839,
+        "order_break_time": "2026-09-29 21:24:00",
+        "order_confirmation_time": "2026-09-29 21:24:15",
+        "order_box_top": "4146.525",
+        "order_box_top_source_index": 2833,
+        "order_box_top_source_time": "2026-09-29 21:21:00",
+        "order_box_bottom": "4143.415",
+        "order_box_bottom_source_index": 2825,
+        "order_box_bottom_source_time": "2026-09-29 21:17:00",
+        "order_stop_level": "4147.6",
+        "order_stop_source_index": 2823,
+        "order_stop_source_time": "2026-09-29 21:16:00",
+        "source_index": 2847,
+        "source_time": "2026-09-29 21:28:00",
+        "price": "4142.445",
+        "decision_index": 2851,
+        "decision_time": "2026-09-29 21:30:00",
+        "decision_event_time": "2026-09-29 21:30:00"
+      },
+      "selected_Order": {
+        "direction": "bearish",
+        "reaction_number": 250,
+        "reaction_mode": "A",
+        "first_index": 2825,
+        "first_time": "2026-09-29 21:17:00",
+        "box_top_source_index": 2833,
+        "box_top_source_time": "2026-09-29 21:21:00",
+        "box_top": "4146.525",
+        "box_bottom_source_index": 2825,
+        "box_bottom_source_time": "2026-09-29 21:17:00",
+        "box_bottom": "4143.415",
+        "break_index": 2839,
+        "break_time": "2026-09-29 21:24:00",
+        "stop_level": "4147.6",
+        "stop_source_index": 2823,
+        "stop_source_time": "2026-09-29 21:16:00",
+        "stop_hit_index": 2851,
+        "stop_hit_time": "2026-09-29 21:30:00",
+        "stop_hit_event_time": "2026-09-29 21:30:00",
+        "causes": [
+          {
+            "kind": "parent-stop",
+            "parentType": "A",
+            "parentFamily": null,
+            "eventTime": 1790704015,
+            "parentSourceTime": 1790703690
+          },
+          {
+            "kind": "parent-stop",
+            "parentType": "E3",
+            "parentFamily": "blue",
+            "eventTime": 1790703605,
+            "parentSourceTime": 1790701710
+          },
+          {
+            "kind": "parent-stop",
+            "parentType": "E3",
+            "parentFamily": "red",
+            "eventTime": 1790703605,
+            "parentSourceTime": 1790701710
+          },
+          {
+            "kind": "parent-stop",
+            "parentType": "E4",
+            "parentFamily": "blue",
+            "eventTime": 1790703605,
+            "parentSourceTime": 1790701710
+          },
+          {
+            "kind": "parent-stop",
+            "parentType": "E4",
+            "parentFamily": "red",
+            "eventTime": 1790703605,
+            "parentSourceTime": 1790701710
+          },
+          {
+            "kind": "parent-stop",
+            "parentType": "E5",
+            "parentFamily": "blue",
+            "eventTime": 1790703605,
+            "parentSourceTime": 1790701710
+          },
+          {
+            "kind": "reset-leg",
+            "postBehaviorType": "StopAll",
+            "postBehaviorStopTime": 1790672310,
+            "postBehaviorSourceIndex": 1666,
+            "postBehaviorSourceTime": 1790669250,
+            "anchorBehaviorType": "E",
+            "anchorBehaviorSourceIndex": 2748,
+            "anchorBehaviorSourceTime": 1790701710,
+            "anchorBehaviorExtreme": "4144.4",
+            "resetReactionIdentity": [
+              2822,
+              2823
+            ],
+            "resetReactionBreakoutTime": 1790703960,
+            "resetReactionConfirmationTime": 1790703965,
+            "resetIndex": 2823,
+            "resetBrokenLevel": "4145.635",
+            "resetTime": 1790703985,
+            "legBoundary": "4143.875",
+            "legBoundarySourceIndex": 2814,
+            "legBoundarySourceTime": 1790703690,
+            "strictBreakTime": 1790704015,
+            "physicalOrderIdentity": [
+              2825,
+              2839
+            ],
+            "physicalOrderConfirmationTime": 1790704455
+          }
+        ]
+      },
+      "expected_Orders": [
+        {
+          "direction": "bearish",
+          "reaction_number": 251,
+          "reaction_mode": "B",
+          "first_index": 2841,
+          "first_time": "2026-09-29 21:25:00",
+          "box_top_source_index": 2843,
+          "box_top_source_time": "2026-09-29 21:26:00",
+          "box_top": "4143.7",
+          "box_bottom_source_index": 2841,
+          "box_bottom_source_time": "2026-09-29 21:25:00",
+          "box_bottom": "4142.71",
+          "break_index": 2847,
+          "break_time": "2026-09-29 21:28:00",
+          "stop_level": "4146.525",
+          "stop_source_index": 2833,
+          "stop_source_time": "2026-09-29 21:21:00",
+          "stop_hit_index": 2851,
+          "stop_hit_time": "2026-09-29 21:30:00",
+          "stop_hit_event_time": "2026-09-29 21:30:00",
+          "causes": [
+            {
+              "kind": "reset-leg",
+              "postBehaviorType": "StopAll",
+              "postBehaviorStopTime": 1790672310,
+              "postBehaviorSourceIndex": 1666,
+              "postBehaviorSourceTime": 1790669250,
+              "anchorBehaviorType": "E",
+              "anchorBehaviorSourceIndex": 2748,
+              "anchorBehaviorSourceTime": 1790701710,
+              "anchorBehaviorExtreme": "4144.4",
+              "resetReactionIdentity": [
+                2830,
+                2831
+              ],
+              "resetReactionBreakoutTime": 1790704200,
+              "resetReactionConfirmationTime": 1790704225,
+              "resetIndex": 2837,
+              "resetBrokenLevel": "4144.645",
+              "resetTime": 1790704390,
+              "legBoundary": "4143.415",
+              "legBoundarySourceIndex": 2825,
+              "legBoundarySourceTime": 1790704020,
+              "strictBreakTime": 1790704455,
+              "physicalOrderIdentity": [
+                2841,
+                2847
+              ],
+              "physicalOrderConfirmationTime": 1790704705
+            }
+          ],
+          "recorded_confirmation_time": "2026-09-29 21:28:25"
+        }
+      ],
+      "matching_native_observations": 46,
+      "native_route_causes": [
+        "reset-leg"
+      ]
+    },
+    {
+      "direction": "bullish",
+      "final_E": {
+        "direction": "bullish",
+        "family": "blue",
+        "number": 1,
+        "parent_type": "S",
+        "parent_source_index": 4520,
+        "parent_source_time": "2026-09-30 12:25:00",
+        "parent_price": "4191.505",
+        "parent_stop_index": 4530,
+        "parent_stop_time": "2026-09-30 12:30:00",
+        "parent_stop_event_time": "2026-09-30 12:30:00",
+        "order_direction": "bearish",
+        "order_reaction_number": 387,
+        "order_mode": "A",
+        "order_causes": [
+          "parent-stop"
+        ],
+        "order_parent_stop_cause_time": "2026-09-30 12:30:00",
+        "order_first_index": 4541,
+        "order_first_time": "2026-09-30 12:35:30",
+        "order_break_index": 4542,
+        "order_break_time": "2026-09-30 12:36:00",
+        "order_confirmation_time": "2026-09-30 12:36:15",
+        "order_box_top": "4193.91",
+        "order_box_top_source_index": 4541,
+        "order_box_top_source_time": "2026-09-30 12:35:30",
+        "order_box_bottom": "4193.035",
+        "order_box_bottom_source_index": 4541,
+        "order_box_bottom_source_time": "2026-09-30 12:35:30",
+        "order_stop_level": "4194.175",
+        "order_stop_source_index": 4540,
+        "order_stop_source_time": "2026-09-30 12:35:00",
+        "source_index": 4545,
+        "source_time": "2026-09-30 12:37:30",
+        "price": "4191.01",
+        "decision_index": 4547,
+        "decision_time": "2026-09-30 12:38:30",
+        "decision_event_time": "2026-09-30 12:38:30"
+      },
+      "selected_Order": {
+        "direction": "bearish",
+        "reaction_number": 387,
+        "reaction_mode": "A",
+        "first_index": 4541,
+        "first_time": "2026-09-30 12:35:30",
+        "box_top_source_index": 4541,
+        "box_top_source_time": "2026-09-30 12:35:30",
+        "box_top": "4193.91",
+        "box_bottom_source_index": 4541,
+        "box_bottom_source_time": "2026-09-30 12:35:30",
+        "box_bottom": "4193.035",
+        "break_index": 4542,
+        "break_time": "2026-09-30 12:36:00",
+        "stop_level": "4194.175",
+        "stop_source_index": 4540,
+        "stop_source_time": "2026-09-30 12:35:00",
+        "stop_hit_index": 4547,
+        "stop_hit_time": "2026-09-30 12:38:30",
+        "stop_hit_event_time": "2026-09-30 12:38:30",
+        "causes": [
+          {
+            "kind": "parent-stop",
+            "parentType": "A",
+            "parentFamily": null,
+            "eventTime": 1790758800,
+            "parentSourceTime": 1790758500
+          },
+          {
+            "kind": "parent-stop",
+            "parentType": "S",
+            "parentFamily": "blue",
+            "eventTime": 1790758800,
+            "parentSourceTime": 1790758500
+          }
+        ]
+      },
+      "expected_Orders": [
+        {
+          "direction": "bearish",
+          "reaction_number": 388,
+          "reaction_mode": "B",
+          "first_index": 4544,
+          "first_time": "2026-09-30 12:37:00",
+          "box_top_source_index": 4544,
+          "box_top_source_time": "2026-09-30 12:37:00",
+          "box_top": "4192.035",
+          "box_bottom_source_index": 4543,
+          "box_bottom_source_time": "2026-09-30 12:36:30",
+          "box_bottom": "4191.05",
+          "break_index": 4545,
+          "break_time": "2026-09-30 12:37:30",
+          "stop_level": "4193.91",
+          "stop_source_index": 4541,
+          "stop_source_time": "2026-09-30 12:35:30",
+          "stop_hit_index": 4547,
+          "stop_hit_time": "2026-09-30 12:38:30",
+          "stop_hit_event_time": "2026-09-30 12:38:30",
+          "causes": [
+            {
+              "kind": "parent-stop",
+              "parentType": "A",
+              "parentFamily": null,
+              "eventTime": 1790759200,
+              "parentSourceTime": 1790754390
+            },
+            {
+              "kind": "reset-leg",
+              "postBehaviorType": "StopAll",
+              "postBehaviorStopTime": 1790672310,
+              "postBehaviorSourceIndex": 1666,
+              "postBehaviorSourceTime": 1790669250,
+              "anchorBehaviorType": "S",
+              "anchorBehaviorSourceIndex": 4520,
+              "anchorBehaviorSourceTime": 1790758500,
+              "anchorBehaviorExtreme": "4191.505",
+              "resetReactionIdentity": [
+                4535,
+                4537
+              ],
+              "resetReactionBreakoutTime": 1790759010,
+              "resetReactionConfirmationTime": 1790759025,
+              "resetIndex": 4542,
+              "resetBrokenLevel": "4192.455",
+              "resetTime": 1790759175,
+              "legBoundary": "4191.385",
+              "legBoundarySourceIndex": 4530,
+              "legBoundarySourceTime": 1790758800,
+              "strictBreakTime": 1790759200,
+              "physicalOrderIdentity": [
+                4544,
+                4545
+              ],
+              "physicalOrderConfirmationTime": 1790759250
+            }
+          ],
+          "recorded_confirmation_time": "2026-09-30 12:37:30"
+        }
+      ],
+      "matching_native_observations": 8,
+      "native_route_causes": [
+        "reset-leg"
+      ]
+    },
+    {
+      "direction": "bearish",
+      "final_E": {
+        "direction": "bearish",
+        "family": "blue",
+        "number": 1,
+        "parent_type": "S",
+        "parent_source_index": 2755,
+        "parent_source_time": "2026-09-29 20:42:00",
+        "parent_price": "4148.15",
+        "parent_stop_index": 2769,
+        "parent_stop_time": "2026-09-29 20:49:00",
+        "parent_stop_event_time": "2026-09-29 20:49:10",
+        "order_direction": "bullish",
+        "order_reaction_number": 246,
+        "order_mode": "A",
+        "order_causes": [
+          "parent-stop"
+        ],
+        "order_parent_stop_cause_time": "2026-09-29 20:49:10",
+        "order_first_index": 2777,
+        "order_first_time": "2026-09-29 20:53:00",
+        "order_break_index": 2793,
+        "order_break_time": "2026-09-29 21:01:00",
+        "order_confirmation_time": "2026-09-29 21:01:05",
+        "order_box_top": "4148.77",
+        "order_box_top_source_index": 2777,
+        "order_box_top_source_time": "2026-09-29 20:53:00",
+        "order_box_bottom": "4146.33",
+        "order_box_bottom_source_index": 2782,
+        "order_box_bottom_source_time": "2026-09-29 20:55:30",
+        "order_stop_level": "4146.01",
+        "order_stop_source_index": 2773,
+        "order_stop_source_time": "2026-09-29 20:51:00",
+        "source_index": 2798,
+        "source_time": "2026-09-29 21:03:30",
+        "price": "4149.03",
+        "decision_index": 2807,
+        "decision_time": "2026-09-29 21:08:00",
+        "decision_event_time": "2026-09-29 21:08:25"
+      },
+      "selected_Order": {
+        "direction": "bullish",
+        "reaction_number": 246,
+        "reaction_mode": "A",
+        "first_index": 2777,
+        "first_time": "2026-09-29 20:53:00",
+        "box_top_source_index": 2777,
+        "box_top_source_time": "2026-09-29 20:53:00",
+        "box_top": "4148.77",
+        "box_bottom_source_index": 2782,
+        "box_bottom_source_time": "2026-09-29 20:55:30",
+        "box_bottom": "4146.33",
+        "break_index": 2793,
+        "break_time": "2026-09-29 21:01:00",
+        "stop_level": "4146.01",
+        "stop_source_index": 2773,
+        "stop_source_time": "2026-09-29 20:51:00",
+        "stop_hit_index": 2807,
+        "stop_hit_time": "2026-09-29 21:08:00",
+        "stop_hit_event_time": "2026-09-29 21:08:25",
+        "causes": [
+          {
+            "kind": "parent-stop",
+            "parentType": "S",
+            "parentFamily": "blue",
+            "eventTime": 1790702350,
+            "parentSourceTime": 1790701920
+          }
+        ]
+      },
+      "expected_Orders": [
+        {
+          "direction": "bullish",
+          "reaction_number": 248,
+          "reaction_mode": "A",
+          "first_index": 2801,
+          "first_time": "2026-09-29 21:05:00",
+          "box_top_source_index": 2801,
+          "box_top_source_time": "2026-09-29 21:05:00",
+          "box_top": "4148.015",
+          "box_bottom_source_index": 2803,
+          "box_bottom_source_time": "2026-09-29 21:06:00",
+          "box_bottom": "4146.9",
+          "break_index": 2805,
+          "break_time": "2026-09-29 21:07:00",
+          "stop_level": "4146.685",
+          "stop_source_index": 2799,
+          "stop_source_time": "2026-09-29 21:04:00",
+          "stop_hit_index": 2807,
+          "stop_hit_time": "2026-09-29 21:08:00",
+          "stop_hit_event_time": "2026-09-29 21:08:25",
+          "causes": [
+            {
+              "kind": "reset-leg",
+              "postBehaviorType": "StopAll",
+              "postBehaviorStopTime": 1790690000,
+              "postBehaviorSourceIndex": 2335,
+              "postBehaviorSourceTime": 1790689320,
+              "anchorBehaviorType": "S",
+              "anchorBehaviorSourceIndex": 2755,
+              "anchorBehaviorSourceTime": 1790701920,
+              "anchorBehaviorExtreme": "4148.15",
+              "resetReactionIdentity": [
+                2794,
+                2795
+              ],
+              "resetReactionBreakoutTime": 1790703120,
+              "resetReactionConfirmationTime": 1790703145,
+              "resetIndex": 2796,
+              "resetBrokenLevel": "4148.215",
+              "resetTime": 1790703175,
+              "legBoundary": "4148.93",
+              "legBoundarySourceIndex": 2793,
+              "legBoundarySourceTime": 1790703060,
+              "strictBreakTime": 1790703215,
+              "physicalOrderIdentity": [
+                2801,
+                2805
+              ],
+              "physicalOrderConfirmationTime": 1790703425
+            }
+          ],
+          "recorded_confirmation_time": "2026-09-29 21:07:05"
+        }
+      ],
+      "matching_native_observations": 8,
+      "native_route_causes": [
+        "reset-leg"
+      ]
+    },
+    {
+      "direction": "bearish",
+      "final_E": {
+        "direction": "bearish",
+        "family": "red",
+        "number": 4,
+        "parent_type": "E",
+        "parent_source_index": 8310,
+        "parent_source_time": "2026-10-01 21:00:30",
+        "parent_price": "4186.29",
+        "parent_stop_index": 9475,
+        "parent_stop_time": "2026-10-02 07:43:30",
+        "parent_stop_event_time": "2026-10-02 07:43:40",
+        "order_direction": "bullish",
+        "order_reaction_number": 749,
+        "order_mode": "B",
+        "order_causes": [
+          "parent-stop",
+          "reset-leg"
+        ],
+        "order_parent_stop_cause_time": "2026-10-02 07:43:40",
+        "order_first_index": 9476,
+        "order_first_time": "2026-10-02 07:44:00",
+        "order_break_index": 9498,
+        "order_break_time": "2026-10-02 07:55:00",
+        "order_confirmation_time": "2026-10-02 07:55:20",
+        "order_box_top": "4188.47",
+        "order_box_top_source_index": 9475,
+        "order_box_top_source_time": "2026-10-02 07:43:30",
+        "order_box_bottom": "4183.94",
+        "order_box_bottom_source_index": 9488,
+        "order_box_bottom_source_time": "2026-10-02 07:50:00",
+        "order_stop_level": "4183.445",
+        "order_stop_source_index": 9472,
+        "order_stop_source_time": "2026-10-02 07:42:00",
+        "source_index": 9512,
+        "source_time": "2026-10-02 08:02:00",
+        "price": "4190.985",
+        "decision_index": 9525,
+        "decision_time": "2026-10-02 08:08:30",
+        "decision_event_time": "2026-10-02 08:08:30"
+      },
+      "selected_Order": {
+        "direction": "bullish",
+        "reaction_number": 749,
+        "reaction_mode": "B",
+        "first_index": 9476,
+        "first_time": "2026-10-02 07:44:00",
+        "box_top_source_index": 9475,
+        "box_top_source_time": "2026-10-02 07:43:30",
+        "box_top": "4188.47",
+        "box_bottom_source_index": 9488,
+        "box_bottom_source_time": "2026-10-02 07:50:00",
+        "box_bottom": "4183.94",
+        "break_index": 9498,
+        "break_time": "2026-10-02 07:55:00",
+        "stop_level": "4183.445",
+        "stop_source_index": 9472,
+        "stop_source_time": "2026-10-02 07:42:00",
+        "stop_hit_index": 9525,
+        "stop_hit_time": "2026-10-02 08:08:30",
+        "stop_hit_event_time": "2026-10-02 08:08:30",
+        "causes": [
+          {
+            "kind": "parent-stop",
+            "parentType": "E1",
+            "parentFamily": "blue",
+            "eventTime": 1790914420,
+            "parentSourceTime": 1790875830
+          },
+          {
+            "kind": "parent-stop",
+            "parentType": "E1",
+            "parentFamily": "blue",
+            "eventTime": 1790914430,
+            "parentSourceTime": 1790858820
+          },
+          {
+            "kind": "parent-stop",
+            "parentType": "E2",
+            "parentFamily": "red",
+            "eventTime": 1790914420,
+            "parentSourceTime": 1790875830
+          },
+          {
+            "kind": "parent-stop",
+            "parentType": "E3",
+            "parentFamily": "red",
+            "eventTime": 1790914430,
+            "parentSourceTime": 1790858820
+          },
+          {
+            "kind": "parent-stop",
+            "parentType": "E4",
+            "parentFamily": "blue",
+            "eventTime": 1790914430,
+            "parentSourceTime": 1790858820
+          },
+          {
+            "kind": "reset-leg",
+            "postBehaviorType": "StopAll",
+            "postBehaviorStopTime": 1790771410,
+            "postBehaviorSourceIndex": 4487,
+            "postBehaviorSourceTime": 1790757510,
+            "anchorBehaviorType": "A",
+            "anchorBehaviorSourceIndex": 9306,
+            "anchorBehaviorSourceTime": 1790909340,
+            "anchorBehaviorExtreme": "4162.41",
+            "resetReactionIdentity": [
+              9465,
+              9467
+            ],
+            "resetReactionBreakoutTime": 1790914170,
+            "resetReactionConfirmationTime": 1790914185,
+            "resetIndex": 9470,
+            "resetBrokenLevel": "4184.53",
+            "resetTime": 1790914265,
+            "legBoundary": "4185.62",
+            "legBoundarySourceIndex": 9463,
+            "legBoundarySourceTime": 1790914050,
+            "strictBreakTime": 1790914410,
+            "physicalOrderIdentity": [
+              9476,
+              9498
+            ],
+            "physicalOrderConfirmationTime": 1790915120
+          }
+        ]
+      },
+      "expected_Orders": [
+        {
+          "direction": "bullish",
+          "reaction_number": 750,
+          "reaction_mode": "B",
+          "first_index": 9499,
+          "first_time": "2026-10-02 07:55:30",
+          "box_top_source_index": 9499,
+          "box_top_source_time": "2026-10-02 07:55:30",
+          "box_top": "4188.95",
+          "box_bottom_source_index": 9503,
+          "box_bottom_source_time": "2026-10-02 07:57:30",
+          "box_bottom": "4186.42",
+          "break_index": 9508,
+          "break_time": "2026-10-02 08:00:00",
+          "stop_level": "4183.94",
+          "stop_source_index": 9488,
+          "stop_source_time": "2026-10-02 07:50:00",
+          "stop_hit_index": 9525,
+          "stop_hit_time": "2026-10-02 08:08:30",
+          "stop_hit_event_time": "2026-10-02 08:08:30",
+          "causes": [
+            {
+              "kind": "reset-leg",
+              "postBehaviorType": "StopAll",
+              "postBehaviorStopTime": 1790771410,
+              "postBehaviorSourceIndex": 4487,
+              "postBehaviorSourceTime": 1790757510,
+              "anchorBehaviorType": "A",
+              "anchorBehaviorSourceIndex": 9306,
+              "anchorBehaviorSourceTime": 1790909340,
+              "anchorBehaviorExtreme": "4162.41",
+              "resetReactionIdentity": [
+                9478,
+                9488
+              ],
+              "resetReactionBreakoutTime": 1790914800,
+              "resetReactionConfirmationTime": 1790914800,
+              "resetIndex": 9491,
+              "resetBrokenLevel": "4186.875",
+              "resetTime": 1790914895,
+              "legBoundary": "4188.47",
+              "legBoundarySourceIndex": 9475,
+              "legBoundarySourceTime": 1790914410,
+              "strictBreakTime": 1790915120,
+              "physicalOrderIdentity": [
+                9499,
+                9508
+              ],
+              "physicalOrderConfirmationTime": 1790915405
+            }
+          ],
+          "recorded_confirmation_time": "2026-10-02 08:00:05"
+        }
+      ],
+      "matching_native_observations": 24,
+      "native_route_causes": [
+        "reset-leg"
+      ]
+    }
+  ],
+  "duplicate_policy": "Final cases are enumerated once per actual public E row; intermediate family/number variants collapse by physical parent/Order/source/decision identity."
+}

@@ -1,13 +1,13 @@
 @echo off
-setlocal EnableExtensions
+setlocal EnableExtensions DisableDelayedExpansion
 
 title TradingBot Git Manager
 
 for %%I in ("%~dp0..\..") do set "TB_ROOT=%%~fI"
-if exist "%TB_ROOT%\scripts\git\Git.Menu.ps1" if exist "%TB_ROOT%\AGENTS.md" goto :root_found
+if exist "%TB_ROOT%\scripts\git\Git.Menu.ps1" goto :root_found
 
 echo [FAIL] TradingBot Git Manager files were not found.
-echo Expected: %TB_ROOT%\scripts\git\Git.Menu.ps1
+echo Expected: "%TB_ROOT%\scripts\git\Git.Menu.ps1"
 echo.
 pause
 exit /b 2
@@ -15,12 +15,12 @@ exit /b 2
 :root_found
 pushd "%TB_ROOT%" >nul 2>&1
 if errorlevel 1 (
-  echo [FAIL] Could not enter TradingBot project root: %TB_ROOT%
+  echo [FAIL] Could not enter TradingBot project root: "%TB_ROOT%"
   pause
   exit /b 3
 )
 
-powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%TB_ROOT%\scripts\git\Git.Menu.ps1"
+"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%TB_ROOT%\scripts\git\Git.Menu.ps1" %*
 set "TB_GIT_RC=%ERRORLEVEL%"
 popd
 

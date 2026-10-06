@@ -1,0 +1,76 @@
+FF                                                                       [100%]
+================================== FAILURES ===================================
+__ test_ensure_restored_order_is_visible_through_confirmation_query[bullish] __
+
+direction = 'bullish'
+
+    @pytest.mark.parametrize("direction", ["bullish", "bearish"])
+    @pytest.mark.xfail(
+        strict=True,
+        reason="Pinned GitHub 989647b also omits restored Order_B rows from its confirmation index",
+    )
+    def test_ensure_restored_order_is_visible_through_confirmation_query(direction):
+        detector, parent, physical = detector_state(direction)
+        identity = (int(physical.first_idx), int(physical.break_idx))
+        detector.s_zones = []
+        detector.order_audit[identity] = {
+            "reaction_number": 1,
+            "reaction": physical,
+            "confirmation_time": moment(190),
+            "stop_level": Decimal("120" if direction == "bullish" else "100"),
+            "stop_source_index": 4,
+            "stop_source_time": moment(125),
+            "stop_cross": (7, moment(210), moment(215)),
+            "causes": set(),
+            "order_b_causes": [{"kind": "reset-leg", "physicalOrderConfirmationTime": moment(190)}],
+        }
+        detector._index_order_audit_identity(identity, moment(190))
+        assert detector._post_stop_accepted_orders_for_parent(parent, moment(125))
+        detector.ensure_accepted_order_audit([])
+        matches = detector._post_stop_accepted_orders_for_parent(parent, moment(125))
+>       assert [int(item[1].first_idx) for item in matches] == [int(physical.first_idx)]
+E       assert [] == [5]
+E         
+E         Right contains one more item: 5
+E         Use -v to get more diff
+
+engine\tests\unit\test_order_audit_lifecycle_contracts.py:285: AssertionError
+__ test_ensure_restored_order_is_visible_through_confirmation_query[bearish] __
+
+direction = 'bearish'
+
+    @pytest.mark.parametrize("direction", ["bullish", "bearish"])
+    @pytest.mark.xfail(
+        strict=True,
+        reason="Pinned GitHub 989647b also omits restored Order_B rows from its confirmation index",
+    )
+    def test_ensure_restored_order_is_visible_through_confirmation_query(direction):
+        detector, parent, physical = detector_state(direction)
+        identity = (int(physical.first_idx), int(physical.break_idx))
+        detector.s_zones = []
+        detector.order_audit[identity] = {
+            "reaction_number": 1,
+            "reaction": physical,
+            "confirmation_time": moment(190),
+            "stop_level": Decimal("120" if direction == "bullish" else "100"),
+            "stop_source_index": 4,
+            "stop_source_time": moment(125),
+            "stop_cross": (7, moment(210), moment(215)),
+            "causes": set(),
+            "order_b_causes": [{"kind": "reset-leg", "physicalOrderConfirmationTime": moment(190)}],
+        }
+        detector._index_order_audit_identity(identity, moment(190))
+        assert detector._post_stop_accepted_orders_for_parent(parent, moment(125))
+        detector.ensure_accepted_order_audit([])
+        matches = detector._post_stop_accepted_orders_for_parent(parent, moment(125))
+>       assert [int(item[1].first_idx) for item in matches] == [int(physical.first_idx)]
+E       assert [] == [5]
+E         
+E         Right contains one more item: 5
+E         Use -v to get more diff
+
+engine\tests\unit\test_order_audit_lifecycle_contracts.py:285: AssertionError
+=========================== short test summary info ===========================
+FAILED engine/tests/unit/test_order_audit_lifecycle_contracts.py::test_ensure_restored_order_is_visible_through_confirmation_query[bullish]
+FAILED engine/tests/unit/test_order_audit_lifecycle_contracts.py::test_ensure_restored_order_is_visible_through_confirmation_query[bearish]
+2 failed, 37 deselected in 0.24s

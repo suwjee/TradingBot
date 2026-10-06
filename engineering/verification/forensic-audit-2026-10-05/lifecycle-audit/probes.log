@@ -1,0 +1,305 @@
+{
+  "authority_module": "D:\\My-Projects\\TradingBot\\engineering\\verification\\forensic-audit-2026-10-05\\package\\pipeline\\lifecycle_engine.py",
+  "probe_cases": [
+    {
+      "case": "A_S_transition_rounding",
+      "direction": "bullish",
+      "S_source": "2000-01-01 00:00:00",
+      "S_decision": "2000-01-01 00:00:35",
+      "containing_index": 1,
+      "actual_excluded_index": 2,
+      "retained_A_sources": [
+        "2000-01-01 00:00:30"
+      ],
+      "expected_retained_A_sources": [
+        "2000-01-01 00:01:00"
+      ],
+      "mismatch": true
+    },
+    {
+      "case": "live_invalid_head_missing_stop",
+      "direction": "bullish",
+      "head_source": "2000-01-01 00:00:30",
+      "opposite_First": "2000-01-01 00:01:00",
+      "blocked_without_future_stop": [],
+      "blocked_with_future_stop": [
+        "2000-01-01 00:01:00"
+      ],
+      "prefix_changes": true
+    },
+    {
+      "case": "live_invalid_head_real_stop_API",
+      "direction": "bullish",
+      "prefix_first_stop": null,
+      "extension_first_stop": [
+        3,
+        "2000-01-01 00:01:30",
+        "2000-01-01 00:01:35"
+      ],
+      "prefix_blocked": [],
+      "extended_blocked": [
+        "2000-01-01 00:01:00"
+      ],
+      "past_order_first": "2000-01-01 00:01:00",
+      "prefix_changes": true
+    },
+    {
+      "case": "A_boundary_priority_over_latest_stop",
+      "direction": "bullish",
+      "old_Red_stop": "2000-01-01 00:00:45",
+      "new_Blue_stop": "2000-01-01 00:01:35",
+      "A_source": "2000-01-01 00:02:00",
+      "A_min_provenance": "2000-01-01 00:01:00",
+      "selected_owner": "red",
+      "A_visible": true,
+      "expected_A_visible_for_latest_stop": false
+    },
+    {
+      "case": "S_latest_source_discards_larger_owner",
+      "direction": "bullish",
+      "older_Red_stop": "2000-01-01 00:01:20",
+      "newer_Blue_source": "2000-01-01 00:00:30",
+      "newer_Blue_decision": "2000-01-01 00:00:35",
+      "S_source": "2000-01-01 00:01:30",
+      "visible_with_lower_E": true,
+      "visible_without_lower_E": false
+    },
+    {
+      "case": "exact_owner_contract_controls",
+      "direction": "bullish",
+      "strict_equal_result": [],
+      "direct_parent_result": [
+        {
+          "number": 1,
+          "source": "2000-01-01 00:02:00",
+          "gate": "2000-01-01 00:02:00",
+          "gate_type": "sequence-group-stop",
+          "owner": "S red",
+          "count": 2
+        }
+      ],
+      "single_result": [],
+      "wrong_parent_result": [],
+      "inputs_unchanged": true,
+      "pass": true
+    },
+    {
+      "case": "direct_E_parent_controls",
+      "direction": "bullish",
+      "valid": [
+        {
+          "number": 1,
+          "source": "2000-01-01 00:02:00",
+          "gate": "2000-01-01 00:02:00",
+          "gate_type": "sequence-group-stop",
+          "owner": "E2 red",
+          "count": 2
+        }
+      ],
+      "stop_after_donor_decision": [],
+      "wrong_exact_parent_stop": [],
+      "pass": true
+    },
+    {
+      "case": "rejected_A_cause_restoration",
+      "direction": "bullish",
+      "accepted_A_source": "2000-01-01 00:00:00",
+      "rejected_A_source": "2000-01-01 00:00:30",
+      "selected_primary_A_source": "2000-01-01 00:00:00",
+      "selected_a_causes": [
+        [
+          "2000-01-01 00:00:30",
+          "2000-01-01 00:01:05"
+        ],
+        [
+          "2000-01-01 00:00:00",
+          "2000-01-01 00:00:35"
+        ]
+      ],
+      "rebuilt_causes": [
+        [
+          "parent-stop",
+          "A",
+          null,
+          "2000-01-01 00:00:35",
+          "2000-01-01 00:00:00"
+        ],
+        [
+          "parent-stop",
+          "A",
+          null,
+          "2000-01-01 00:01:05",
+          "2000-01-01 00:00:30"
+        ]
+      ],
+      "final_prepared_causes": [
+        {
+          "kind": "parent-stop",
+          "parentType": "A",
+          "parentFamily": null,
+          "eventTime": "2000-01-01 00:00:35",
+          "parentSourceTime": "2000-01-01 00:00:00"
+        },
+        {
+          "kind": "parent-stop",
+          "parentType": "A",
+          "parentFamily": null,
+          "eventTime": "2000-01-01 00:01:05",
+          "parentSourceTime": "2000-01-01 00:00:30"
+        }
+      ],
+      "ledger_unchanged": true,
+      "rejected_A_in_final": true
+    },
+    {
+      "case": "A_S_transition_rounding",
+      "direction": "bearish",
+      "S_source": "2000-01-01 00:00:00",
+      "S_decision": "2000-01-01 00:00:35",
+      "containing_index": 1,
+      "actual_excluded_index": 2,
+      "retained_A_sources": [
+        "2000-01-01 00:00:30"
+      ],
+      "expected_retained_A_sources": [
+        "2000-01-01 00:01:00"
+      ],
+      "mismatch": true
+    },
+    {
+      "case": "live_invalid_head_missing_stop",
+      "direction": "bearish",
+      "head_source": "2000-01-01 00:00:30",
+      "opposite_First": "2000-01-01 00:01:00",
+      "blocked_without_future_stop": [],
+      "blocked_with_future_stop": [
+        "2000-01-01 00:01:00"
+      ],
+      "prefix_changes": true
+    },
+    {
+      "case": "live_invalid_head_real_stop_API",
+      "direction": "bearish",
+      "prefix_first_stop": null,
+      "extension_first_stop": [
+        3,
+        "2000-01-01 00:01:30",
+        "2000-01-01 00:01:35"
+      ],
+      "prefix_blocked": [],
+      "extended_blocked": [
+        "2000-01-01 00:01:00"
+      ],
+      "past_order_first": "2000-01-01 00:01:00",
+      "prefix_changes": true
+    },
+    {
+      "case": "A_boundary_priority_over_latest_stop",
+      "direction": "bearish",
+      "old_Red_stop": "2000-01-01 00:00:45",
+      "new_Blue_stop": "2000-01-01 00:01:35",
+      "A_source": "2000-01-01 00:02:00",
+      "A_min_provenance": "2000-01-01 00:01:00",
+      "selected_owner": "red",
+      "A_visible": true,
+      "expected_A_visible_for_latest_stop": false
+    },
+    {
+      "case": "S_latest_source_discards_larger_owner",
+      "direction": "bearish",
+      "older_Red_stop": "2000-01-01 00:01:20",
+      "newer_Blue_source": "2000-01-01 00:00:30",
+      "newer_Blue_decision": "2000-01-01 00:00:35",
+      "S_source": "2000-01-01 00:01:30",
+      "visible_with_lower_E": true,
+      "visible_without_lower_E": false
+    },
+    {
+      "case": "exact_owner_contract_controls",
+      "direction": "bearish",
+      "strict_equal_result": [],
+      "direct_parent_result": [
+        {
+          "number": 1,
+          "source": "2000-01-01 00:02:00",
+          "gate": "2000-01-01 00:02:00",
+          "gate_type": "sequence-group-stop",
+          "owner": "S red",
+          "count": 2
+        }
+      ],
+      "single_result": [],
+      "wrong_parent_result": [],
+      "inputs_unchanged": true,
+      "pass": true
+    },
+    {
+      "case": "direct_E_parent_controls",
+      "direction": "bearish",
+      "valid": [
+        {
+          "number": 1,
+          "source": "2000-01-01 00:02:00",
+          "gate": "2000-01-01 00:02:00",
+          "gate_type": "sequence-group-stop",
+          "owner": "E2 red",
+          "count": 2
+        }
+      ],
+      "stop_after_donor_decision": [],
+      "wrong_exact_parent_stop": [],
+      "pass": true
+    },
+    {
+      "case": "rejected_A_cause_restoration",
+      "direction": "bearish",
+      "accepted_A_source": "2000-01-01 00:00:00",
+      "rejected_A_source": "2000-01-01 00:00:30",
+      "selected_primary_A_source": "2000-01-01 00:00:00",
+      "selected_a_causes": [
+        [
+          "2000-01-01 00:00:30",
+          "2000-01-01 00:01:05"
+        ],
+        [
+          "2000-01-01 00:00:00",
+          "2000-01-01 00:00:35"
+        ]
+      ],
+      "rebuilt_causes": [
+        [
+          "parent-stop",
+          "A",
+          null,
+          "2000-01-01 00:00:35",
+          "2000-01-01 00:00:00"
+        ],
+        [
+          "parent-stop",
+          "A",
+          null,
+          "2000-01-01 00:01:05",
+          "2000-01-01 00:00:30"
+        ]
+      ],
+      "final_prepared_causes": [
+        {
+          "kind": "parent-stop",
+          "parentType": "A",
+          "parentFamily": null,
+          "eventTime": "2000-01-01 00:00:35",
+          "parentSourceTime": "2000-01-01 00:00:00"
+        },
+        {
+          "kind": "parent-stop",
+          "parentType": "A",
+          "parentFamily": null,
+          "eventTime": "2000-01-01 00:01:05",
+          "parentSourceTime": "2000-01-01 00:00:30"
+        }
+      ],
+      "ledger_unchanged": true,
+      "rejected_A_in_final": true
+    }
+  ]
+}

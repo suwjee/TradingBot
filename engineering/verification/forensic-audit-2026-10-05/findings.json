@@ -1,0 +1,391 @@
+[
+  {
+    "BUG ID": "RX-01",
+    "TITLE": "Initial confirmed Reaction omits eligible confirmation-candle continuation",
+    "SEVERITY": "HIGH",
+    "CONFIDENCE": "CONFIRMED",
+    "DIRECTION": "Both",
+    "CATEGORY": "Calculation implementation",
+    "AFFECTED MODULE(S)": [
+      "engine/pipeline/reaction_engine.py"
+    ],
+    "AFFECTED VERSION(S)": [
+      "pipeline/reaction_engine.py: REACTION_ENGINE_VERSION=9.8.0; REACTION_ENGINE_IMPLEMENTATION_VERSION=9.9.0; REACTION_ENGINE_LAST_MODIFIED=2026-10-02 13:27:31 +03:30"
+    ],
+    "FUNCTION / METHOD": "UnifiedReactionDetector.detect; _candidate_from_confirmation_remainder",
+    "TRIGGER CONDITIONS": "The initial confirmed Reaction has a Break main candle with the required next First color, a qualifying confirmation remainder, no post-confirmation Reset, and a later strict confirmation.",
+    "EXPECTED BEHAVIOR": "Apply the normal confirmation remainder transition to the initial confirmation and admit its eligible next Mode B candidate.",
+    "ACTUAL BEHAVIOR": "Initial detection starts at BreakIndex+1 with candidate=None, so the eligible Break-candle First is absent from canonical Reactions.",
+    "FIRST DIFF": "Immediately after initial confirmation, next candidate should own First=BreakIndex; actual candidate is None, before Blue or lifecycle execution.",
+    "ROOT CAUSE": "The initial-state branch omits the shared remainder-seeding call that all later confirmation branches perform.",
+    "STATE CHAIN": "RAW -> initial Reaction strict confirmation -> remainder First -> missing canonical identity -> downstream canonical consumers.",
+    "RAW EVIDENCE": "Original idx6 XAUUSD 14,140 five-second rows at main30s. Bullish First 2026-09-16 22:42:00, Break22:44:00, confirmation22:44:05 +03:30. Eligible continuation (First18,Break19) confirms in main22:44:30; box4249.81/4244.635. Canonical identity(18,19) is missing. Bearish market occurrence not independently established.",
+    "SOURCE EVIDENCE": "reaction_engine.py:2148-2157 and2183-2195; contrasting shared calls2308,2349,2387 and contract1589.",
+    "ALGORITHM REFERENCE": "Both V5.4.24 §4.4 L80 permit confirmation-candle reuse; Source shared-state contract says every confirmation opens Normal search. Newline-normalized embedded Source preserves the same omission. Current Source has precedence, but its inconsistent transition plus reproduced eligible continuation support implementation-defect classification.",
+    "DOWNSTREAM IMPACT": "Canonical membership and numbering are incorrect. Missing Reaction can alter Blue/A/Order discovery. Exact accepted trade, S/E/StopAll consequences were not counterfactually executed.",
+    "MIRROR IMPACT": "Both valid synthetic reflections omit(2,3): actual[(1,2)] versus expected[(1,2),(2,3)].",
+    "REPRODUCTION": "python -B engineering/verification/forensic-audit-2026-10-05/reaction-audit/probes.py; then python -B engineering/verification/forensic-audit-2026-10-05/reaction-audit/raw_probes.py. See reaction-audit/probe-evidence.json and reaction-audit/raw-evidence.json.",
+    "GENERAL FIX DIRECTION": "Correct the initial Reaction state transition in its owning detector using the same general confirmation remainder contract, preserving exact Reset precedence.",
+    "REGRESSION TEST REQUIRED": "Both directions, confirmation reused with/without Reset, equality boundary, initial versus later confirmation parity, then full-engine first-divergence regression on real input."
+  },
+  {
+    "BUG ID": "BL-01",
+    "TITLE": "Two Scale strike paths consume Break-candle extrema after exact confirmation",
+    "SEVERITY": "HIGH",
+    "CONFIDENCE": "CONFIRMED",
+    "DIRECTION": "Both",
+    "CATEGORY": "Calculation chronology",
+    "AFFECTED MODULE(S)": [
+      "engine/pipeline/blue_line_detector.py"
+    ],
+    "AFFECTED VERSION(S)": [
+      "pipeline/blue_line_detector.py: BLUE_LINE_VERSION=2.4.0"
+    ],
+    "FUNCTION / METHOD": "count_scale_strikes; _intrabar_pending_confirmation",
+    "TRIGGER CONDITIONS": "A Break main candle reaches its eligible directional extreme after its first exact Reaction confirmation; either the main candle has confirming color or no eligible strike existed at first confirmation.",
+    "EXPECTED BEHAVIOR": "Limit Break strike evidence through the first exact confirmation lower row, inclusive, independently of pending strike eligibility.",
+    "ACTUAL BEHAVIOR": "Full-main pending extrema can confirm directly; the lower loop also continues after first strict confirmation when eligible is empty.",
+    "FIRST DIFF": "Pending/strike state first includes an extreme attained after the owning Reaction confirmation. The divergence precedes scale spacing and public filtering.",
+    "ROOT CAUSE": "The full-main confirming-color shortcut bypasses the lower cutoff; the lower helper uses breaks AND eligible instead of an unconditional owning-Reaction confirmation boundary.",
+    "STATE CHAIN": "RAW exact confirmation -> later Break extreme -> wrong strike/source state -> Blue calculation provenance -> A Blue-2 provenance.",
+    "RAW EVIDENCE": "Five real idx6/idx9 cases are recorded in reaction-audit/REPORT.md. Example Bullish Reaction58: main2026-09-17 05:30:30 confirms05:30:35, eligible Low4299.06, actual strike4298.815 first attained05:30:45 +03:30. Example Bearish Reaction42: 2026-09-29 07:00:00 confirms07:00:00, eligible High4139.515, later actual4140.305 at07:00:20. None immediately emits a Scale Blue due separate spacing suppression.",
+    "SOURCE EVIDENCE": "blue_line_detector.py:162-188 and103-135; strict termination conditional at118.",
+    "ALGORITHM REFERENCE": "Both V5.4.24 §5.2 L106 and reconstruction row617 cap Break intrabar confirmation. Higher-authority Source is internally inconsistent with exact Reaction chronology; independently reproduced in both branches.",
+    "DOWNSTREAM IMPACT": "Bounded eligibility oracle changes Bearish Blue ordinal146 source from2026-09-30 03:23:00/index2984/line4184.93 to03:22:30/index2983/line4184.305. A ordinal50 inherits changed Blue-2 source; its price4187.69/source03:26:30 stay equal. The Blue is internal, but its A consumer demonstrates calculation propagation. Final public A/S/E/trade counterfactual NOT RUN.",
+    "MIRROR IMPACT": "Both branches reproduce both directions. Pre-confirmation Low9.1 stays aboveFib8.764; laterLow5 at12:01:15 leaks afterconfirmation12:01:00. Reflected High-5 leaks likewise.",
+    "REPRODUCTION": "python -B engineering/verification/forensic-audit-2026-10-05/reaction-audit/probes.py; then python -B engineering/verification/forensic-audit-2026-10-05/reaction-audit/raw_probes.py. The oracle runs in a separate namespace and never changes production globals or RAW.",
+    "GENERAL FIX DIRECTION": "Enforce exact Break cutoff in the Blue strike owner for every entry path; preserve earlier eligible extreme ownership and strict first-equal source semantics.",
+    "REGRESSION TEST REQUIRED": "Confirming-color and pending-intrabar paths, empty eligible at first break, same-row inclusivity, later equal extreme, both mirrors, full pipeline provenance comparisons."
+  },
+  {
+    "BUG ID": "SE-01",
+    "TITLE": "E route reduction discards the required later First on equal Order stop",
+    "SEVERITY": "HIGH",
+    "CONFIDENCE": "CONFIRMED",
+    "DIRECTION": "Both",
+    "CATEGORY": "Calculation selection",
+    "AFFECTED MODULE(S)": [
+      "engine/pipeline/e_zone_detector.py",
+      "engine/pipeline/order_audit_engine.py"
+    ],
+    "AFFECTED VERSION(S)": [
+      "pipeline/e_zone_detector.py: E_ZONE_VERSION=6.16.1; E_ZONE_IMPLEMENTATION_VERSION=6.18.2; E_ZONE_LAST_MODIFIED=2026-10-03 14:32:06 +03:30",
+      "pipeline/order_audit_engine.py: ORDER_AUDIT_ENGINE_VERSION=1.5.3; ORDER_AUDIT_ENGINE_LAST_MODIFIED=2026-10-03 14:32:06 +03:30"
+    ],
+    "FUNCTION / METHOD": "EZoneDetector._zone; OrderAuditEngineMixin.order_candidates; _first_order; _post_stop_accepted_orders_for_parent",
+    "TRIGGER CONDITIONS": "Multiple eligible canonical physical Orders in the same E parent branch have the identical first strict Order-stop event and different First indices.",
+    "EXPECTED BEHAVIOR": "For E consumption choose earliest exact stop, then larger FirstIndex for a true stop tie, across all eligible routes.",
+    "ACTUAL BEHAVIOR": "Route-specific selection retains an earlier First before the final correct tie key executes.",
+    "FIRST DIFF": "The native order_candidates pool contains both identities, but _first_order/other one-member route reductions discard the later First. E final (stop,-First) cannot recover it.",
+    "ROOT CAUSE": "Creation ordering by confirmation/ascending First is reused during consumption; inconsistent minima are computed before global E adjudication.",
+    "STATE CHAIN": "Canonical direct-parent and accepted reset-leg Orders -> same exact stop -> early route minimum -> E construction with wrong Order -> final-visible E geometry/provenance.",
+    "RAW EVIDENCE": "idx8 complete XAUUSD 68,492 five-second rows main30s: four unique final-visible rows, two per direction. Bull RedE5 source2026-09-29 21:28:00, parentstop21:10:05, selected(2825,2839) confirms21:24:15 versus eligible(2841,2847) confirms21:28:25; exact stop21:30:00 both. Actual A/250 box4146.525/4143.415 stop4147.6 versus required B/251 box4143.7/4142.71 stop4146.525. Other cases: BullBlueE1 2026-09-30 12:37:30; BearBlueE1 2026-09-29 21:03:30; BearRedE4 2026-10-02 08:02:00, all +03:30.",
+    "SOURCE EVIDENCE": "E:391-418 retains route[0]; Order:830-856 uses ascending FirstTime and first result; post-stop route1366-1374 ranks confirmation ahead of later First.",
+    "ALGORITHM REFERENCE": "Both V5.4.24 §8.2 L185-187 and E matrixrow620 require larger FirstIndex after equal stop. §9.1 earliest confirmation is the separate physical creation rule, not E consumption. Source precedence is recorded; native same-pool eligibility and inconsistent final key establish an implementation error.",
+    "DOWNSTREAM IMPACT": "Four final E rows select wrong Order identity/mode/number/box/stop. Twenty unique physical branch conflicts were traced;334 route observations/324 survivors/52 provisional variants are NOT final defect counts. Subsequent accepted orders after correcting E were not simulated.",
+    "MIRROR IMPACT": "Both mirrored synthetic probes and two real final E cases in each direction.",
+    "REPRODUCTION": "python -B engineering/verification/forensic-audit-2026-10-05/trace_pipeline.py --raw-index 8 --timeframe 30 --order-ties; then python -B engineering/verification/forensic-audit-2026-10-05/s-e-audit/raw_tie_analysis.py. s-e-audit/RAW-tie-confirmation.json verifies native pool eligibility, exact stop tie and final-output joins. Traced stable payload equals uninstrumented payload.",
+    "GENERAL FIX DIRECTION": "Own the E consumption comparator over the complete eligible physical set; ensure each route uses that same minimum before reducing. Preserve independent creation/one-parent-stop rules.",
+    "REGRESSION TEST REQUIRED": "Direct parent versus reset leg, inherited/carried/post-stop routes, equal stop with unequal confirmations, two directions, exact final E identity and geometry, repeated stable rebuild."
+  },
+  {
+    "BUG ID": "RX-02",
+    "TITLE": "Sparse first buckets inflate Reaction timeframe and misassign Reset ownership",
+    "SEVERITY": "HIGH",
+    "CONFIDENCE": "CONFIRMED",
+    "DIRECTION": "Both",
+    "CATEGORY": "Calculation chronology",
+    "AFFECTED MODULE(S)": [
+      "engine/pipeline/reaction_engine.py",
+      "engine/bridge/trading_pipeline.py"
+    ],
+    "AFFECTED VERSION(S)": [
+      "pipeline/reaction_engine.py: REACTION_ENGINE_VERSION=9.8.0; REACTION_ENGINE_IMPLEMENTATION_VERSION=9.9.0; REACTION_ENGINE_LAST_MODIFIED=2026-10-02 13:27:31 +03:30",
+      "bridge/trading_pipeline.py: TRADING_PIPELINE_VERSION=1.8.0; TRADING_PIPELINE_IMPLEMENTATION_VERSION=1.9.0; TRADING_PIPELINE_LAST_MODIFIED=2026-09-30 12:00:00 +03:30"
+    ],
+    "FUNCTION / METHOD": "DetectorBase.__init__; post_breakout_reset; UnifiedReactionDetector.detect; build_candle_buckets",
+    "TRIGGER CONDITIONS": "Valid supplied main buckets omit an empty bucket between the first two occupied starts, so their gap exceeds the requested main timeframe.",
+    "EXPECTED BEHAVIOR": "Use the explicit requested timeframe for each half-open main/lower window and map the exact Reset to its containing main bucket.",
+    "ACTUAL BEHAVIOR": "DetectorBase infers the larger first occupied gap as timeframe; confirmation remainder scans into a later main candle and assigns its Reset to the previous index.",
+    "FIRST DIFF": "Detector initialization has timeframe60 while request/MarketChronology have30; first observable Reset then uses index2 instead of3.",
+    "ROOT CAUSE": "Timeframe metadata is inferred from occupancy rather than passed consistently through the calculation context.",
+    "STATE CHAIN": "Accepted sparse transport -> 30s bucket list with a60s first gap -> inferred60 detector -> overlong lower window -> wrong Reset main identity.",
+    "RAW EVIDENCE": "Synthetic consistent occupied30s starts2026-10-05 12:00:00,12:01:00,12:01:30,12:02:00; six5s rows per occupied candle. Exact Reset12:02:00 is attached to main12:01:30/index2 instead of12:02:00/index3. These dates identify the probe only, not production rules. No original RAW prefix case was established.",
+    "SOURCE EVIDENCE": "Reaction:121-124; post_breakout_reset278-283 and Unified2174-2193. Bridge164-177 preserves sparse occupancy and MarketChronology1749-1750 receives explicit timeframe.",
+    "ALGORITHM REFERENCE": "Both V5.4.24 global chronology L56/§4.6 L88 require correct owning main and exact event order. Selected-range contract L47 and audited chart transport explicitly preserve missing buckets; the fixture is an accepted input shape.",
+    "DOWNSTREAM IMPACT": "Reset identity/time and subsequent search boundaries can be wrong across the stream. Full accepted trade counterfactual NOT RUN; real supplied RAW-prefix incidence unproven.",
+    "MIRROR IMPACT": "Both directions reproduce the same owner misassignment; range boundary independently validated by500 sparse histories/2500 assertions.",
+    "REPRODUCTION": "python -B engineering/verification/forensic-audit-2026-10-05/reaction-audit/probes.py; see boundary-audit/REPORT.md and its executable probe for transport acceptance.",
+    "GENERAL FIX DIRECTION": "Own timeframe in the run context and pass it to Reaction/lower-window consumers; never infer duration from occupied timestamps.",
+    "REGRESSION TEST REQUIRED": "Sparse prefix/middle gaps, cold selected range, complete-source range, one-candle input,30/60s, exact bucket boundary, mirrors; assert event belongs to declared half-open bucket."
+  },
+  {
+    "BUG ID": "BR-01",
+    "TITLE": "Accepted optional StopAll-engine omission causes feedback/final mismatch crash",
+    "SEVERITY": "HIGH",
+    "CONFIDENCE": "CONFIRMED",
+    "DIRECTION": "Direction-invariant",
+    "CATEGORY": "CLI orchestration",
+    "AFFECTED MODULE(S)": [
+      "engine/bridge/trading_pipeline.py"
+    ],
+    "AFFECTED VERSION(S)": [
+      "bridge/trading_pipeline.py: TRADING_PIPELINE_VERSION=1.8.0; TRADING_PIPELINE_IMPLEMENTATION_VERSION=1.9.0; TRADING_PIPELINE_LAST_MODIFIED=2026-09-30 12:00:00 +03:30"
+    ],
+    "FUNCTION / METHOD": "parse_arguments; load_engines; calculate_direction_with_order_b_feedback; finalize_direction_visibility",
+    "TRIGGER CONDITIONS": "Valid RAW with E/Order_B activity is calculated while optional --lifecycle-engine/--stopall-engine is omitted.",
+    "EXPECTED BEHAVIOR": "One effective enablement decision must be used in feedback and final visibility; every parser-accepted supported configuration should complete consistently.",
+    "ACTUAL BEHAVIOR": "Fallback loads lifecycle and feedback uses StopAll, but final visibility gates it on the absent explicit argument, then crashes comparing accepted reset-leg identities.",
+    "FIRST DIFF": "StopAll participation diverges between feedback input at2203 and final gate2511 before identity comparison2559.",
+    "ROOT CAUSE": "Effective module loading/default state is not the configuration authority for every orchestration stage.",
+    "STATE CHAIN": "CLI omission -> fallback lifecycle -> feedback StopAll -> accepted Order_B identities -> empty final StopAll -> different identities -> RuntimeError.",
+    "RAW EVIDENCE": "idx6 XAUUSD 14,140 valid5s rows main30s, both directions. Explicit-path control exits0; omitted-path exits1 with error Final Order_B lifecycle causes differ from converged E feedback.",
+    "SOURCE EVIDENCE": "Bridge1635-1640 optional parser;1694-1699 fallback;2203-2219 unconditional feedback;2511-2519 conditional final;2559-2562 invariant failure.",
+    "ALGORITHM REFERENCE": "V5.4.24 §13.3 enablement fields do not decide default-on versus default-off. Either interpretation requires consistent stage inputs; the crash is confirmed without inventing a trading default.",
+    "DOWNSTREAM IMPACT": "The accepted CLI configuration produces no successful calculation payload. Normal explicit-path production matrix succeeds.",
+    "MIRROR IMPACT": "Direction-invariant orchestration defect; command --direction both reproduces.",
+    "REPRODUCTION": "python -B engineering/verification/forensic-audit-2026-10-05/check_configurations.py; exact CLI/path/RAW/flags preserved in configurations/manifest.json; error file without-stopall-engine.stdout.json.",
+    "GENERAL FIX DIRECTION": "Resolve effective lifecycle enablement once in the bridge and reuse it throughout feedback/finalization; select and document the optional default before repair.",
+    "REGRESSION TEST REQUIRED": "Explicit/omitted module paths, E on/off, both and separate directions, histories with/without StopAll and reset legs; assert converged and final identities match."
+  },
+  {
+    "BUG ID": "OA-INDEX-01",
+    "TITLE": "Restored accepted Order ledger rows lack the confirmation secondary index",
+    "SEVERITY": "MEDIUM",
+    "CONFIDENCE": "CONFIRMED",
+    "DIRECTION": "Both",
+    "CATEGORY": "State/index integrity",
+    "AFFECTED MODULE(S)": [
+      "engine/pipeline/order_audit_engine.py"
+    ],
+    "AFFECTED VERSION(S)": [
+      "pipeline/order_audit_engine.py: ORDER_AUDIT_ENGINE_VERSION=1.5.3; ORDER_AUDIT_ENGINE_LAST_MODIFIED=2026-10-03 14:32:06 +03:30"
+    ],
+    "FUNCTION / METHOD": "ensure_accepted_order_audit; _rebuild_accepted_order_audit; _accepted_post_stop_orders_after",
+    "TRIGGER CONDITIONS": "An accepted historical/reset-leg physical Order is preserved, absent from the rebuilt subset, and merged back after a ledger rebuild.",
+    "EXPECTED BEHAVIOR": "Every retained eligible ledger identity must be discoverable through the same confirmation index used by accepted post-stop queries.",
+    "ACTUAL BEHAVIOR": "setdefault restores the row but not its confirmation index; query returns[] although identity(5,6) exists in the ledger.",
+    "FIRST DIFF": "At the restoration merge, ledger membership becomes populated while the rebuilt confirmation index remains missing the identity.",
+    "ROOT CAUSE": "A mutation of canonical state updates only one of its coupled structures; cache invalidation alone does not populate the secondary index.",
+    "STATE CHAIN": "Accepted ledger -> rebuild clears/reindexes subset -> preserved identity merged -> index omission -> accepted post-stop E query misses it.",
+    "RAW EVIDENCE": "Source-level both-direction fixture is the existing strict xfail; actual market loss was not established. Current direct order_b_legs scanning may mask this in common full-pipeline paths.",
+    "SOURCE EVIDENCE": "Order1590-1611 preserves and setdefaults; query1340-1374 relies on confirmation index; compare normal _index_order_audit_identity path. Existing test_order_audit_lifecycle_contracts.py:266-286.",
+    "ALGORITHM REFERENCE": "Reference §11/§13 identity and accepted physical ledger requirements; decisive evidence is existing explicit desired-query regression plus canonical/index inconsistency. No novel market rule is required.",
+    "DOWNSTREAM IMPACT": "Accepted physical evidence is unavailable to this query. A general final-output corruption claim is unproven; two expected failures already describe this defect.",
+    "MIRROR IMPACT": "Existing paired strict expected failures reproduce both directions.",
+    "REPRODUCTION": "python -B -m pytest -q engine/tests/unit/test_order_audit_lifecycle_contracts.py -k ensure_restored --runxfail -p no:cacheprovider ->2 failed,37 deselected; restored-index-failures.log.",
+    "GENERAL FIX DIRECTION": "Restore ledger and all semantic indexes atomically through the canonical registration owner; preserve history and invalidate dependent caches together.",
+    "REGRESSION TEST REQUIRED": "Rebuild then restore, repeated ensure, ledger/query equivalence, no duplicates, both directions, restored active/inactive legs, full-engine route reachability."
+  },
+  {
+    "BUG ID": "SE-02",
+    "TITLE": "Shared Order reconciliation leaves converted Red S with null Order direction",
+    "SEVERITY": "MEDIUM",
+    "CONFIDENCE": "CONFIRMED",
+    "DIRECTION": "Both",
+    "CATEGORY": "Conditional provenance/schema",
+    "AFFECTED MODULE(S)": [
+      "engine/pipeline/s_zone_detector.py",
+      "engine/bridge/trading_pipeline.py"
+    ],
+    "AFFECTED VERSION(S)": [
+      "pipeline/s_zone_detector.py: S_ZONE_VERSION=4.20.0; S_ZONE_IMPLEMENTATION_VERSION=4.21.0; S_ZONE_LAST_MODIFIED=2026-09-27 23:17:17 +03:30",
+      "bridge/trading_pipeline.py: TRADING_PIPELINE_VERSION=1.8.0; TRADING_PIPELINE_IMPLEMENTATION_VERSION=1.9.0; TRADING_PIPELINE_LAST_MODIFIED=2026-09-30 12:00:00 +03:30"
+    ],
+    "FUNCTION / METHOD": "SZoneDetector.reconcile_shared_order_stops; serialize_s_zones",
+    "TRIGGER CONDITIONS": "An initially order-free Type3/Type4 S acquires an authoritative physical opposite Order during shared stop reconciliation.",
+    "EXPECTED BEHAVIOR": "Populate the physical Order direction together with its identity, geometry and chronology, as native Order-backed S construction does.",
+    "ACTUAL BEHAVIOR": "Conversion sets Red and physical Order fields but leaves order_direction=None; serializer emits null.",
+    "FIRST DIFF": "Immediately at replace in reconciliation, new Order identity is populated while its direction remains the order-free value.",
+    "ROOT CAUSE": "Duplicated Order-backed constructor/replacement logic omits a field in the reconciliation owner.",
+    "STATE CHAIN": "Order-free S -> accepted physical shared Order stop -> Red replacement with stale null provenance -> JSON null.",
+    "RAW EVIDENCE": "Both valid synthetic chronology probes: S source00:01:00, Astop00:00:35, physical confirmation00:01:10, decision/stop00:01:30. This stays after A gate and is independent of SE-03. No public occurrence found in21 saved calculations scanned.",
+    "SOURCE EVIDENCE": "S562,1030 initializeNone;1393-1417 replace omitsdirection; ordinary construction1193 sets opposite; Bridge345,349 serialize retained field.",
+    "ALGORITHM REFERENCE": "Both V5.4.24 §7.6 L175-177 keeps physical Order authority; mirror opposite-Order row near558 and schema§13.2 L316 include orderDirection. Native constructor supplies unambiguous control.",
+    "DOWNSTREAM IMPACT": "Incorrect S provenance/schema under the conditional route. Current RAW prevalence and accepted trading effect unproven.",
+    "MIRROR IMPACT": "Expected bearish physical direction in Bullish behavior and bullish in Bearish behavior; both getNone.",
+    "REPRODUCTION": "python -B engineering/verification/forensic-audit-2026-10-05/s-e-audit/probes.py; case shared_s_direction_after_a_gate in probe-results.json.",
+    "GENERAL FIX DIRECTION": "Make shared physical Order adoption populate the same complete provenance contract as native Order-backed S, in S ownership rather than serializer.",
+    "REGRESSION TEST REQUIRED": "Both order-free builders, both directions, valid post-A-gate decision, repeated reconcile, immutable physical creator, legacy/Bridge field equality."
+  },
+  {
+    "BUG ID": "NUM-JSON-01",
+    "TITLE": "Numeric JSON loses exact OHLC distinctions before Decimal normalization",
+    "SEVERITY": "MEDIUM",
+    "CONFIDENCE": "CONFIRMED",
+    "DIRECTION": "Direction-invariant",
+    "CATEGORY": "Input numeric precision",
+    "AFFECTED MODULE(S)": [
+      "engine/bridge/trading_pipeline.py",
+      "engine/pipeline/core_utils.py"
+    ],
+    "AFFECTED VERSION(S)": [
+      "bridge/trading_pipeline.py: TRADING_PIPELINE_VERSION=1.8.0; TRADING_PIPELINE_IMPLEMENTATION_VERSION=1.9.0; TRADING_PIPELINE_LAST_MODIFIED=2026-09-30 12:00:00 +03:30",
+      "pipeline/core_utils.py: CORE_UTILS_VERSION=1.0.0"
+    ],
+    "FUNCTION / METHOD": "prepare_market_context RAW loading; build_candle_buckets.cached_decimal; as_decimal",
+    "TRIGGER CONDITIONS": "Accepted numeric JSON OHLC lexemes differ by less than their binary floating point resolution.",
+    "EXPECTED BEHAVIOR": "Preserve supplied exact price distinctions before any color, strict crossing or Decimal-sensitive decision.",
+    "ACTUAL BEHAVIOR": "orjson.loads materializes floats; unequal prices round to100.0 before as_decimal(str(value)). A valid RED candle becomes GREEN equality/Doji.",
+    "FIRST DIFF": "RAW decoding converts exact distinct lexemes into equal floats, before bucket aggregation or detector construction.",
+    "ROOT CAUSE": "Decimal conversion occurs after a lossy numeric parser; type/value Decimal caching cannot recover discarded digits.",
+    "STATE CHAIN": "Valid numeric JSON -> binaryfloat100.0 values -> Decimal100.0 -> wrong candle tag and potential strict equality decisions.",
+    "RAW EVIDENCE": "Synthetic internally consistent numeric row: Open100.0000000000000002, High100.0000000000000003, Low100.0000000000000000, Close100.0000000000000001. ExpectedRED, actualGREEN. String-price control retains exactRED. No current market RAW precision loss demonstrated.",
+    "SOURCE EVIDENCE": "Bridge RAW orjson.loads near1720; Decimal cache131-145; core_utils.as_decimal normalizesstr. Exact parser and loaded result in numeric-input-results.json.",
+    "ALGORITHM REFERENCE": "Both V5.4.24 global exact Decimal requirement L53/57 and GREEN Doji rule L54. Doji rule is correctly implemented on already-normalized values; input normalization is owning divergence.",
+    "DOWNSTREAM IMPACT": "Wrong input candle color/equality under narrow high-precision numeric input; downstream price-sensitive decisions may differ. No current supplied-market corruption claim.",
+    "MIRROR IMPACT": "Direction-invariant price decoding; Doji remains GREEN in both market directions.",
+    "REPRODUCTION": "python -B engineering/verification/forensic-audit-2026-10-05/check_numeric_input.py; results preserve inputlexemes, expected/actual and string control.",
+    "GENERAL FIX DIRECTION": "Define and enforce exact price representation at RAW ingestion before numeric decoding; preserve lexemes or validate/document a string-price contract. Correct owner is ingress, not later comparisons.",
+    "REGRESSION TEST REQUIRED": "Numeric/string equivalence at supported precision; distinct/equal lexemes; large/small magnitudes; exponent form; exact color and strict crossing boundary; immutable RAW."
+  },
+  {
+    "BUG ID": "LC-01",
+    "TITLE": "S-transition visibility helper maps intrabar event to the next main candle",
+    "SEVERITY": "LOW",
+    "CONFIDENCE": "CONFIRMED",
+    "DIRECTION": "Direction-invariant",
+    "CATEGORY": "Scoped documented-helper defect; trading impact unproven",
+    "AFFECTED MODULE(S)": [
+      "engine/pipeline/lifecycle_engine.py",
+      "engine/bridge/trading_pipeline.py"
+    ],
+    "AFFECTED VERSION(S)": [
+      "pipeline/lifecycle_engine.py: STOP_ALL_VERSION=1.18.2; STOP_ALL_IMPLEMENTATION_VERSION=1.20.2; STOP_ALL_LAST_MODIFIED=2026-10-04 21:25:23 +03:30",
+      "bridge/trading_pipeline.py: TRADING_PIPELINE_VERSION=1.8.0; TRADING_PIPELINE_IMPLEMENTATION_VERSION=1.9.0; TRADING_PIPELINE_LAST_MODIFIED=2026-09-30 12:00:00 +03:30"
+    ],
+    "FUNCTION / METHOD": "visible_a_zones_after_s_stops; final visibility caller",
+    "TRIGGER CONDITIONS": "A confirmed S transition/decision event falls strictly inside a main candle rather than at its start.",
+    "EXPECTED BEHAVIOR": "Under this helper documented contract, suppress the A candle containing the confirmed transition event.",
+    "ACTUAL BEHAVIOR": "bisect_left returns the next main start, so the helper removes an A in the following candle.",
+    "FIRST DIFF": "Computed excluded index is2 at event00:00:35, whereas containing candle00:00:30 isindex1.",
+    "ROOT CAUSE": "Insertion-point index is used where a containing-bucket floor index is required.",
+    "STATE CHAIN": "Exact S decision -> left insertion main index -> wrong A visibility candidate exclusion.",
+    "RAW EVIDENCE": "Four unique idx8 real pairs are in lifecycle-audit/REPORT.md, e.g. Bullish decision2026-09-30 03:52:25 maps toA03:52:30 instead ofcontaining03:52:00 +03:30. All four A are independently calculation-invalid, so observed final impact is masked.",
+    "SOURCE EVIDENCE": "Lifecycle549-556; MarketChronology.main_index usesbisect_right-1; relevant finalcallerBridge2502-2506. Earlier candidate_a1977 is unused.",
+    "ALGORITHM REFERENCE": "Direct Source doc544-547 says containing confirmed transition. Reference§12.6 has a generic exact-stop rule but does not settle the helper S-decision versus own-stop terminology. This is a confirmed local documented-helper mismatch, not a confirmed normative trading visibility bug.",
+    "DOWNSTREAM IMPACT": "Conditional helper output excludes the wrong candle. No demonstrated final public difference on real RAW; changing the trading visibility event contract requires clarification first.",
+    "MIRROR IMPACT": "Both helper directions reproduce identical temporal mapping.",
+    "REPRODUCTION": "python -B engineering/verification/forensic-audit-2026-10-05/lifecycle-audit/probes.py; saved trace join proves real reachability and independent invalidA masking.",
+    "GENERAL FIX DIRECTION": "Resolve the intended transition event semantics, then use the shared containing-candle index contract in lifecycle visibility.",
+    "REGRESSION TEST REQUIRED": "Inside/start/end main boundary, no next candle, gaps, both directions; require an otherwise valid A to prove final visibility impact."
+  },
+  {
+    "BUG ID": "API-LEGACY-01",
+    "TITLE": "Legacy pipeline package wrapper imports a missing symbol",
+    "SEVERITY": "LOW",
+    "CONFIDENCE": "CONFIRMED",
+    "DIRECTION": "Direction-invariant",
+    "CATEGORY": "Unsupported legacy API defect; not production trading",
+    "AFFECTED MODULE(S)": [
+      "engine/pipeline/__init__.py",
+      "engine/pipeline/blue_line_detector.py"
+    ],
+    "AFFECTED VERSION(S)": [
+      "pipeline/__init__.py: unversioned",
+      "pipeline/blue_line_detector.py: BLUE_LINE_VERSION=2.4.0"
+    ],
+    "FUNCTION / METHOD": "pipeline package import",
+    "TRIGGER CONDITIONS": "A caller imports the packaged pipeline wrapper with the same flat dependency path available as the current Bridge loader.",
+    "EXPECTED BEHAVIOR": "An offered package wrapper resolves its declared imports, or is deliberately retired with a consistent public boundary.",
+    "ACTUAL BEHAVIOR": "Import raises ImportError because run_blue_line is absent from blue_line_detector.",
+    "FIRST DIFF": "Import resolution at pipeline/__init__.py fails before calculation.",
+    "ROOT CAUSE": "Legacy wrapper references a removed/renamed symbol and was not synchronized.",
+    "STATE CHAIN": "Python package import -> missing exported symbol -> import failure.",
+    "RAW EVIDENCE": "No RAW is needed. Current production Bridge flat imports succeed and full RAW execution is unaffected.",
+    "SOURCE EVIDENCE": "pipeline/__init__.py import statement; complete blue_line_detector.py has no run_blue_line definition. package-import.log.",
+    "ALGORITHM REFERENCE": "V5.4.24 §13.9/§14.3 explicitly documents the pre-existing unsupported wrapper. Therefore maintainability/API debt, not a newly discovered algorithm regression.",
+    "DOWNSTREAM IMPACT": "Only consumers of that legacy wrapper fail; current production trading path does not use it.",
+    "MIRROR IMPACT": "Direction-invariant import failure.",
+    "REPRODUCTION": "python -B engineering/verification/forensic-audit-2026-10-05/check_legacy_import.py reproduces the isolated packaged pipeline import failure; package-import.log preserves the traceback. No detector patch.",
+    "GENERAL FIX DIRECTION": "Deliberately retire the wrapper or align its exports with the supported API after confirming intended public surface.",
+    "REGRESSION TEST REQUIRED": "Supported import smoke test; preserve current flat loader and exact module identity."
+  },
+  {
+    "BUG ID": "LC-03",
+    "TITLE": "Unstopped invalid live heads do not block Orders until a future stop appears",
+    "SEVERITY": "MEDIUM",
+    "CONFIDENCE": "HIGH-CONFIDENCE",
+    "DIRECTION": "Both",
+    "CATEGORY": "Documented lifecycle invariant; full market impact unproven",
+    "AFFECTED MODULE(S)": [
+      "engine/pipeline/lifecycle_engine.py"
+    ],
+    "AFFECTED VERSION(S)": [
+      "pipeline/lifecycle_engine.py: STOP_ALL_VERSION=1.18.2; STOP_ALL_IMPLEMENTATION_VERSION=1.20.2; STOP_ALL_LAST_MODIFIED=2026-10-04 21:25:23 +03:30"
+    ],
+    "FUNCTION / METHOD": "blocked_orders_while_invalid_leg_heads_are_live; resolve_order_context",
+    "TRIGGER CONDITIONS": "An invalid A leg head remains live at input end; an opposite First occurs after its source but before any future strict head stop.",
+    "EXPECTED BEHAVIOR": "Under the helper live-until-stop contract, block the open live interval as well as closed intervals.",
+    "ACTUAL BEHAVIOR": "No stop returned causes the head to be skipped. Appending a later first stop retroactively changes the already-existing blocked First set.",
+    "FIRST DIFF": "Prefix blockset[] becomes[oppositeFirst] after future lower row is appended, although the First event already occurred inside the same live interval.",
+    "ROOT CAUSE": "None stop is interpreted as no blocking interval rather than an open-ended interval.",
+    "STATE CHAIN": "Invalid live A -> no stop in prefix -> Order First permitted -> future strict stop -> historical First veto changes.",
+    "RAW EVIDENCE": "Both synthetic production chronology probes: headsource00:00:30, First00:01:00, prefixthrough00:01:30 no stop; appended00:01:35 strict stop blocks First. Actual SZoneDetector.first_a_stop/MarketChronology used; full-market accepted Order consequence not established.",
+    "SOURCE EVIDENCE": "Lifecycle825-835; helper contract821-823; resolve_order_context518 and Bridge2044-2056.",
+    "ALGORITHM REFERENCE": "Source doc says blocked while invalid head remains live until stop. References§11/12.6 give general validity ownership but not the exact open interval. A post-stop prerequisite interpretation remains possible only by changing the documented contract.",
+    "DOWNSTREAM IMPACT": "Returned blockset is prefix-sensitive. Potential accepted Order/lifecycle lookahead remains HIGH-CONFIDENCE until native accepted-output and normative interval are established.",
+    "MIRROR IMPACT": "Both real detector/chronology reflections reproduce the same prefix change.",
+    "REPRODUCTION": "python -B engineering/verification/forensic-audit-2026-10-05/lifecycle-audit/probes.py; corresponding paired invalid-head no-stop cases in probe-results.json.",
+    "GENERAL FIX DIRECTION": "Clarify live interval authority; handle an unresolved end in the lifecycle interval owner if open intervals are normative, preserving accepted independent causes.",
+    "REGRESSION TEST REQUIRED": "Prefix extension before/at/after stop; equality; accepted independent A causes; both directions; actual Order creation joins."
+  },
+  {
+    "BUG ID": "LC-04",
+    "TITLE": "Final A visibility can use older priority stop instead of newest stopped boundary",
+    "SEVERITY": "MEDIUM",
+    "CONFIDENCE": "HIGH-CONFIDENCE",
+    "DIRECTION": "Both",
+    "CATEGORY": "Lifecycle/visibility rule discrepancy",
+    "AFFECTED MODULE(S)": [
+      "engine/pipeline/lifecycle_engine.py"
+    ],
+    "AFFECTED VERSION(S)": [
+      "pipeline/lifecycle_engine.py: STOP_ALL_VERSION=1.18.2; STOP_ALL_IMPLEMENTATION_VERSION=1.20.2; STOP_ALL_LAST_MODIFIED=2026-10-04 21:25:23 +03:30"
+    ],
+    "FUNCTION / METHOD": "visible_a_zones_after_module_boundaries; dominant_module; split_a_zones_by_dominant_stops",
+    "TRIGGER CONDITIONS": "An older high-priority owner stopped before a newer lower-priority owner was created; A provenance starts after the old stop but before the newest stop.",
+    "EXPECTED BEHAVIOR": "Use newest stopped-owner main boundary first, then priority for the appropriate tie, as calculation validation and§12.6 describe.",
+    "ACTUAL BEHAVIOR": "Final visibility selects the older Red owner by priority and publishes the A that spans the newer Blue stop boundary.",
+    "FIRST DIFF": "Final provenance boundary selection chooses historical Red stop00:00:45 instead of newest Blue stop00:01:35.",
+    "ROOT CAUSE": "A duplicated owner comparator omits chronological stop recency from final visibility while calculation validation includes it.",
+    "STATE CHAIN": "Old Red stopped -> independent newer Blue stopped -> A provenance crossing latest stop -> wrong final boundary owner.",
+    "RAW EVIDENCE": "Both synthetic helper probes: Redsource00:00:00 stop00:00:45; Bluesource00:01:00 stop00:01:35; Asource00:02:00 provenance00:01:00. Independent E roots can structurally coexist, but no real final-output counterexample was established.",
+    "SOURCE EVIDENCE": "Lifecycle1266-1284/601-610 versus calculation714-725.",
+    "ALGORITHM REFERENCE": "Both V5.4.24§12.6 L303 newest stopped owner. Earlier high priority surviving beyond newer decision is a legitimate alternative case; probe explicitly stops old owner before new source to refute it.",
+    "DOWNSTREAM IMPACT": "Potential final A provenance visibility disagreement; actual full-pipeline market effect unproven.",
+    "MIRROR IMPACT": "Both paired visibility helper outputs reproduce priority choice.",
+    "REPRODUCTION": "python -B engineering/verification/forensic-audit-2026-10-05/lifecycle-audit/probes.py; see LC-04 in REPORT.md.",
+    "GENERAL FIX DIRECTION": "Define one authoritative lifecycle boundary comparator shared by calculation and final provenance visibility; retain surviving larger-owner exceptions explicitly.",
+    "REGRESSION TEST REQUIRED": "Older stopped versus older still-live high priority, newest-stop ties, independent roots, both directions, final accepted A provenance joins."
+  },
+  {
+    "BUG ID": "RX-H01",
+    "TITLE": "Bounded geometry helper prioritizes First index over exact confirmation time",
+    "SEVERITY": "MEDIUM",
+    "CONFIDENCE": "HIGH-CONFIDENCE",
+    "DIRECTION": "Both",
+    "CATEGORY": "Method contract; accepted Order impact unproven",
+    "AFFECTED MODULE(S)": [
+      "engine/pipeline/reaction_engine.py"
+    ],
+    "AFFECTED VERSION(S)": [
+      "pipeline/reaction_engine.py: REACTION_ENGINE_VERSION=9.8.0; REACTION_ENGINE_IMPLEMENTATION_VERSION=9.9.0; REACTION_ENGINE_LAST_MODIFIED=2026-10-02 13:27:31 +03:30"
+    ],
+    "FUNCTION / METHOD": "_earliest_confirmed_geometry; Order candidate caller closure",
+    "TRIGGER CONDITIONS": "Nested geometry candidates confirm in the same main candle at different exact lower timestamps; earlier First confirms later.",
+    "EXPECTED BEHAVIOR": "Under the method first-strict-confirmation contract, compare exact lower confirmation time before First/Break tie ordering.",
+    "ACTUAL BEHAVIOR": "Within the same main candle, min(confirmed,key=first_idx) chooses an earlier First whose confirmation is ten seconds later.",
+    "FIRST DIFF": "Geometry helper selects First1 confirming12:02:10 overFirst3 confirming12:02:00.",
+    "ROOT CAUSE": "Main-candle completion grouping loses exact confirmation ordering before First-index reduction.",
+    "STATE CHAIN": "Bounded geometry candidates -> same Break main -> wrong local minimum -> possible physical-Order candidate, then canonical membership guard.",
+    "RAW EVIDENCE": "Both synthetic nested-candidate probes. No accepted physical Order RAW counterexample; later First may be noncanonical while the initial owner remains healthy.",
+    "SOURCE EVIDENCE": "Reaction1917-1924 contract;1987-1988 reduction; separate canonical membership/Order creation checks remain authoritative.",
+    "ALGORITHM REFERENCE": "Source method contract and both V5.4.24§9.1 L211 earliest canonical confirmation thenFirst/Break. Geometry candidates are not interchangeable with canonical accepted registry.",
+    "DOWNSTREAM IMPACT": "A local contract discrepancy is reproduced, but accepted Order chronology defect is not confirmed because downstream membership can refute it.",
+    "MIRROR IMPACT": "Both geometry reflections select the same wrong local index.",
+    "REPRODUCTION": "python -B engineering/verification/forensic-audit-2026-10-05/reaction-audit/probes.py; earliest geometry case.",
+    "GENERAL FIX DIRECTION": "Resolve helper contract versus canonical candidate requirements before changing order; keep creation and consumption comparator contracts distinct.",
+    "REGRESSION TEST REQUIRED": "Same-main differing exact confirmation, canonical/noncanonical candidates, tie events, both directions, accepted Order causal join."
+  }
+]

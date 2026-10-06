@@ -1,0 +1,125 @@
+{
+  "scope": "artificial production-source contract probes, not RAW correctness",
+  "order_equal_stop_tie": [
+    {
+      "direction": "bullish",
+      "candidate_orders": [
+        {
+          "first": 5,
+          "break": 6,
+          "confirm": "2000-01-01T00:03:10",
+          "stop": "2000-01-01T00:04:35",
+          "causes": [
+            "parent-stop"
+          ]
+        },
+        {
+          "first": 7,
+          "break": 8,
+          "confirm": "2000-01-01T00:04:10",
+          "stop": "2000-01-01T00:04:35",
+          "causes": [
+            "reset-leg"
+          ]
+        }
+      ],
+      "expected_first": 7,
+      "actual_first": 5,
+      "decision": "2000-01-01T00:04:35",
+      "contradiction": true
+    },
+    {
+      "direction": "bearish",
+      "candidate_orders": [
+        {
+          "first": 5,
+          "break": 6,
+          "confirm": "2000-01-01T00:03:10",
+          "stop": "2000-01-01T00:04:35",
+          "causes": [
+            "parent-stop"
+          ]
+        },
+        {
+          "first": 7,
+          "break": 8,
+          "confirm": "2000-01-01T00:04:10",
+          "stop": "2000-01-01T00:04:35",
+          "causes": [
+            "reset-leg"
+          ]
+        }
+      ],
+      "expected_first": 7,
+      "actual_first": 5,
+      "decision": "2000-01-01T00:04:35",
+      "contradiction": true
+    }
+  ],
+  "shared_s_before_a_gate": [
+    {
+      "direction": "bullish",
+      "source": "2000-01-01T00:00:00",
+      "a_stop": "2000-01-01T00:00:35",
+      "input_decision": "2000-01-01T00:01:50",
+      "actual_decision": "2000-01-01T00:00:15",
+      "decision_before_a_stop": true,
+      "actual_order_direction": null,
+      "expected_order_direction": "bearish",
+      "accepted_order_identity": [
+        0,
+        0
+      ]
+    },
+    {
+      "direction": "bearish",
+      "source": "2000-01-01T00:00:00",
+      "a_stop": "2000-01-01T00:00:35",
+      "input_decision": "2000-01-01T00:01:50",
+      "actual_decision": "2000-01-01T00:00:15",
+      "decision_before_a_stop": true,
+      "actual_order_direction": null,
+      "expected_order_direction": "bullish",
+      "accepted_order_identity": [
+        0,
+        0
+      ]
+    }
+  ],
+  "shared_s_direction_after_a_gate": [
+    {
+      "direction": "bullish",
+      "source": "2000-01-01 00:01:00",
+      "a_stop": "2000-01-01 00:00:35",
+      "decision": "2000-01-01 00:01:30",
+      "color": "red",
+      "actual_order_direction": null,
+      "expected_order_direction": "bearish",
+      "missing_order_direction": true
+    },
+    {
+      "direction": "bearish",
+      "source": "2000-01-01 00:01:00",
+      "a_stop": "2000-01-01 00:00:35",
+      "decision": "2000-01-01 00:01:30",
+      "color": "red",
+      "actual_order_direction": null,
+      "expected_order_direction": "bullish",
+      "missing_order_direction": true
+    }
+  ],
+  "overlapping_s_ownership": [
+    {
+      "direction": "bullish",
+      "chronological_windows": false,
+      "reverse_windows": true,
+      "order_dependent": true
+    },
+    {
+      "direction": "bearish",
+      "chronological_windows": false,
+      "reverse_windows": true,
+      "order_dependent": true
+    }
+  ]
+}

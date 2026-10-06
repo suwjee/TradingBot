@@ -18,9 +18,9 @@ from typing import Iterable, Sequence
 from direction_policy import policy_for
 
 
-REACTION_ENGINE_VERSION = "9.8.0"
-REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.9.0"
-REACTION_ENGINE_LAST_MODIFIED = "2026-10-02 13:27:31 +03:30"
+REACTION_ENGINE_VERSION = "9.8.1"
+REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.9.1"
+REACTION_ENGINE_LAST_MODIFIED = "2026-10-07 00:56:52 +03:30"
 
 _ORDER_GATE_CACHE_MAX_ENTRIES = 32_768
 
@@ -2190,6 +2190,14 @@ class UnifiedReactionDetector(DetectorBase):
                 initial_reset_level,
                 initial.first_idx,
                 initial_reset_second.display_time,
+            )
+        else:
+            # Initial confirmation opens the same Normal-search handoff as
+            # every later confirmed Reaction. Reuse the shared confirmation-
+            # candle candidate rule so an eligible same-candle First is not
+            # lost merely because this was the first Reaction of the run.
+            candidate = self._candidate_from_confirmation_remainder(
+                direction, initial, initial_break_candle, initial_analysis
             )
 
         while index <= self.end_index:

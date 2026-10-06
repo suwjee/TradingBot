@@ -2,6 +2,14 @@
 
 `git.bat` is the interactive Git Manager. `Invoke-TradingBotRelease.ps1` is the scripted release command. Both derive the project root from their own locations, so they work from the current checkout without a hard-coded drive path.
 
+Open the interactive manager with:
+
+```powershell
+& "D:\My-Projects\TradingBot\scripts\git\git.bat"
+```
+
+`AGENTS.md` is optional. The launcher checks the menu file; PowerShell verifies the Git root and the `apps/chart` and `engine` directories. Paths containing spaces, parentheses, ampersands, and exclamation marks are supported. Git for Windows must be installed and `git.exe` must be on PATH.
+
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\git\Invoke-TradingBotRelease.ps1
 ```
@@ -22,7 +30,9 @@ Only narrowly proven disposable material is excluded: dependencies restored from
 
 The main release stops if an excluded artifact is already tracked, including one staged for modification. Staged removal of such an artifact is allowed. Eligible ZIP archives are checked for embedded cache, build, temporary, dependency, or unsafe parent-directory paths. The two historical project snapshots containing those entries remain on the workstation but are excluded from Git; archived test logs remain eligible as verification evidence.
 
-`production` is dependency-derived and default-deny. The workflow resolves runtime closure from the exact committed main SHA, then replaces only a temporary worktree snapshot with those selected paths. It checks policy, sensitive markers, PowerShell and JavaScript syntax, Python AST and bridge help, `npm ci`, and the chart build.
+`production` uses a dependency-derived runtime inventory from the exact committed main SHA. Every eligible file under the runtime-owned `apps/chart`, `engine`, and `scripts` roots is included, even if it is not imported yet. Import traversal validates dependencies and adds referenced paths; it does not decide whether a new runtime file is eligible. Tests, engineering evidence, Algorithm References, ZIP snapshots, local chart state, credentials, dependencies, and disposable artifacts remain excluded from production. The workflow replaces only a temporary worktree snapshot with the selected paths and checks policy, sensitive markers, PowerShell and JavaScript syntax, Python AST and bridge help, `npm ci`, and the chart build.
+
+A new `engine/pipeline/xyz.py`, a new configuration file, or a renamed runtime folder is picked up automatically. Additions, modifications, renames, and deletions appear in the branch previews. Main includes all eligible project files; eligible files accidentally matching `.gitignore` are explicitly staged after policy and sensitive-content checks. Individual detector filenames are not a permanent production allowlist.
 
 ## Branch and authentication safety
 
@@ -45,5 +55,20 @@ No publication occurs during implementation validation or `-DryRun`.
 ## Interactive Git Manager
 
 Run `scripts\git\git.bat` from any working directory. It resolves this checkout from the batch file's own location. Menu option 4 previews the exact candidate paths without committing or publishing. The manager stops if local `main` is behind or diverged from remote `main`; it does not stash or merge user changes. A failed menu operation returns a nonzero process exit code after exit.
+
+The menu opens on any branch, including `production`, and without a configured `origin`. Keep the development checkout on `main`. Release operations require active `main`, a configured `origin`, and no unresolved index conflicts or pending merge, rebase, cherry-pick, or revert. The menu displays these blockers immediately. Do not manually merge `main` into the runtime-only `production` checkout: the manager prepares production in an isolated worktree and preserves its history. Generic conflicts still require an explicit resolution; the manager does not silently discard them. Main-only operations require `origin/main`; production and both require `origin/production` as well.
+
+Production previews show the complete runtime inventory. Full production validation runs before the final confirmation and before permanent commits. Leaving the commit message empty uses `Update TradingBot project files` and includes current eligible working changes; it never silently omits new files. No empty commit is created when the source tree is unchanged. Production-only operations also prepare a local main source commit when needed, but push only production. A single Git tag always points to one commit; the Both tag option points to production and records its main source SHA. Publication uses explicit immutable commit/object IDs, verifies the preview baseline again, and checks all selected refs during sequential fallback.
+
+Validation captures stdout and stderr concurrently, preserving multiline arguments and Unicode paths. This avoids stalls when a validator fills its stderr pipe and gives consistent diagnostics in Windows PowerShell 5.1 and PowerShell 7.
+
+Run both focused test suites without publishing to the configured project remote:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\git\Test-GitManager.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\git\Test-ReleaseWorkflow.ps1
+```
+
+Tests use disposable local repositories and local bare remotes. They preserve the active checkout's index, branches, tags, and merge state. They do not prove live GitHub authorization or branch protection behavior.
 
 The `main` policy keeps historical Graphify reports and generated `graph.html` files as engineering evidence. Rebuildable `graphify-out/cache` and Vite `.vite` caches are excluded. Both automatic SonarQube Cloud analysis (`.sonarcloud.properties`) and CI scanner analysis (`sonar-project.properties`) analyze maintained source while excluding historical Engine copies, archives, verification evidence, and local chart state. Test sources are excluded only from duplication measurement. Git retains eligible evidence in `main`; `production` excludes the engineering tree. Check the remote Sonar quality gate after an authorized push.

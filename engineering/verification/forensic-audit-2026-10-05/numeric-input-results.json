@@ -1,0 +1,21 @@
+{
+  "encodedNumericJSON": "[{\"time\":1789000020,\"open\":100.0000000000000002,\"high\":100.0000000000000003,\"low\":100.0000000000000000,\"close\":100.0000000000000001}]",
+  "inputValidity": "valid numeric JSON, internally consistent OHLC",
+  "expected": {
+    "open": "100.0000000000000002",
+    "close": "100.0000000000000001",
+    "tag": "RED"
+  },
+  "actual": {
+    "open": "100.0",
+    "close": "100.0",
+    "tag": "GREEN"
+  },
+  "stringInputControl": {
+    "open": "100.0000000000000002",
+    "close": "100.0000000000000001",
+    "tag": "RED"
+  },
+  "firstDiff": "orjson.loads converts unequal exact prices into equal float100.0 before Decimal normalization",
+  "marketRAWScope": "synthetic valid input; no price lexeme loss demonstrated in current market files"
+}

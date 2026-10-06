@@ -18,15 +18,15 @@ function Resolve-TradingBotProjectRoot {
   Assert-ReleaseCondition (Test-Path -LiteralPath $fullScriptPath -PathType Leaf) "Release script was not found: $fullScriptPath"
 
   $candidate = [IO.Path]::GetFullPath((Join-Path (Split-Path -Parent $fullScriptPath) '..\..'))
-  $gitRoot = & git -C $candidate rev-parse --show-toplevel 2>&1
-  if ($LASTEXITCODE -ne 0) { throw "Unable to resolve a Git repository from: $candidate" }
+  $gitRoot = Invoke-ReleaseGit -Root $candidate -Arguments @('rev-parse', '--show-toplevel')
+  if ($gitRoot.ExitCode -ne 0) { throw "Unable to resolve a Git repository from: $candidate" }
   # Git may render a mapped-drive checkout through its UNC identity. An empty
   # prefix proves candidate itself is the Git root while retaining the
   # caller-visible path.
-  $gitPrefix = & git -C $candidate rev-parse --show-prefix 2>&1
-  Assert-ReleaseCondition ($LASTEXITCODE -eq 0 -and [string]::IsNullOrWhiteSpace(($gitPrefix | Select-Object -First 1).ToString())) 'Release scripts must be located under the resolved repository root.'
+  $gitPrefix = Invoke-ReleaseGit -Root $candidate -Arguments @('rev-parse', '--show-prefix')
+  Assert-ReleaseCondition ($gitPrefix.ExitCode -eq 0 -and [string]::IsNullOrWhiteSpace($gitPrefix.StdOut)) 'Release scripts must be located under the resolved repository root.'
   $root = $candidate
-  foreach ($relative in @('AGENTS.md', 'apps\chart', 'engine')) {
+  foreach ($relative in @('apps\chart', 'engine')) {
     Assert-ReleaseCondition (Test-Path -LiteralPath (Join-Path $root $relative)) "TradingBot project marker is missing: $relative"
   }
   return $root
@@ -40,45 +40,24 @@ function Invoke-ReleaseGit {
     [string] $WorkingDirectory = $Root
   )
 
-  $previousErrorActionPreference = $ErrorActionPreference
-  try {
-    $ErrorActionPreference = 'Continue'
-    $gitArguments = @('-C', $WorkingDirectory)
-    if (-not ([IO.Path]::GetFullPath($WorkingDirectory).Equals([IO.Path]::GetFullPath($Root), [StringComparison]::OrdinalIgnoreCase))) {
-      $gitArguments += @('-c', "safe.directory=$([IO.Path]::GetFullPath($WorkingDirectory))")
-    }
-    $records = @(& git @gitArguments @Arguments 2>&1)
-    $exitCode = $LASTEXITCODE
-  } finally {
-    $ErrorActionPreference = $previousErrorActionPreference
+  $gitArguments = @('-C', $WorkingDirectory, '-c', 'core.quotepath=false')
+  if (-not ([IO.Path]::GetFullPath($WorkingDirectory).Equals([IO.Path]::GetFullPath($Root), [StringComparison]::OrdinalIgnoreCase))) {
+    $gitArguments += @('-c', "safe.directory=$([IO.Path]::GetFullPath($WorkingDirectory))")
   }
-  $stdout = @($records | Where-Object { $_ -isnot [System.Management.Automation.ErrorRecord] } | ForEach-Object { $_.ToString() })
-  $stderr = @($records | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] } | ForEach-Object { $_.ToString() })
+  $git = Get-Command git.exe -CommandType Application -ErrorAction Stop | Select-Object -First 1
+  $result = Invoke-ReleaseExecutable -FilePath $git.Source -Arguments ($gitArguments + $Arguments) -WorkingDirectory $WorkingDirectory
   return [pscustomobject]@{
-    ExitCode = $exitCode
-    StdOut = $stdout -join [Environment]::NewLine
-    StdErr = $stderr -join [Environment]::NewLine
+    ExitCode = $result.ExitCode
+    StdOut = $result.StdOut.TrimEnd([char[]]"`r`n")
+    StdErr = $result.StdErr.TrimEnd([char[]]"`r`n")
     Arguments = @($Arguments)
   }
 }
 
 function Invoke-ReleaseGh {
   param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] [string[]] $Arguments)
-  $previousErrorActionPreference = $ErrorActionPreference
-  Push-Location $Root
-  try {
-    $ErrorActionPreference = 'Continue'
-    $records = @(& gh @Arguments 2>&1)
-    $exitCode = $LASTEXITCODE
-  } finally {
-    $ErrorActionPreference = $previousErrorActionPreference
-    Pop-Location
-  }
-  return [pscustomobject]@{
-    ExitCode = $exitCode
-    StdOut = (@($records | Where-Object { $_ -isnot [System.Management.Automation.ErrorRecord] } | ForEach-Object { $_.ToString() }) -join [Environment]::NewLine)
-    StdErr = (@($records | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] } | ForEach-Object { $_.ToString() }) -join [Environment]::NewLine)
-  }
+  $gh = Get-Command gh -CommandType Application -ErrorAction Stop | Select-Object -First 1
+  return Invoke-ReleaseExecutable -FilePath $gh.Source -Arguments $Arguments -WorkingDirectory $Root
 }
 
 function ConvertTo-ReleasePath {
@@ -199,7 +178,7 @@ function Get-MainPolicyReport {
     Ignored = @($ignoredPaths | Sort-Object)
     StagedDeletions = @($stagedDeletions | Sort-Object)
     Drift = @($drift)
-    Errors = @($drift)
+    Errors = @($drift | Where-Object { $_ -notlike 'Meaningful path is ignored:*' })
   }
 }
 
@@ -377,6 +356,17 @@ function Get-ProductionFileSet {
     if ($selected.Add($Path)) { $queue.Enqueue($Path) }
   }
 
+  # Runtime ownership, rather than today's import graph, determines inclusion.
+  # This includes new modules, assets, and renamed folders automatically.
+  [string[]] $forbiddenPatterns = @()
+  if ($Policy.ContainsKey('Main')) { $forbiddenPatterns = @($Policy.Main.ForbiddenArtifactPatterns) }
+  foreach ($path in $allPaths) {
+    $isRuntimePath = Test-ReleasePathWithinRoots -Path $path -Roots $Policy.Production.RuntimeRoots
+    $isExcluded = (Test-ReleasePathPattern -Path $path -Patterns $Policy.Production.ExcludedPathPatterns) -or
+      (($forbiddenPatterns.Count -gt 0) -and (Test-ReleasePathPattern -Path $path -Patterns $forbiddenPatterns))
+    if ($isRuntimePath -and -not $isExcluded) { Add-ClosurePath $path }
+  }
+
   foreach ($seed in $Policy.Production.MandatoryPaths) {
     if ($allPathSet.Contains($seed)) { Add-ClosurePath $seed } else { $errors.Add("Required production seed is missing: $seed") }
   }
@@ -463,7 +453,10 @@ function Test-ReleasePreflight {
   $warnings = [System.Collections.Generic.List[string]]::new()
   $branch = (Invoke-ReleaseGit -Root $Root -Arguments @('symbolic-ref', '--quiet', '--short', 'HEAD'))
   if ($branch.ExitCode -ne 0 -or $branch.StdOut.Trim() -ne 'main') { $errors.Add('The active branch must be main.') }
-  foreach ($marker in @('MERGE_HEAD', 'rebase-apply', 'rebase-merge')) {
+  $unmerged = Invoke-ReleaseGit -Root $Root -Arguments @('diff', '--name-only', '--diff-filter=U')
+  if ($unmerged.ExitCode -ne 0) { $errors.Add('Could not inspect unresolved Git conflicts.') }
+  elseif (-not [string]::IsNullOrWhiteSpace($unmerged.StdOut)) { $errors.Add('Unresolved Git conflicts exist. Resolve the index before a release.') }
+  foreach ($marker in @('MERGE_HEAD', 'CHERRY_PICK_HEAD', 'REVERT_HEAD', 'rebase-apply', 'rebase-merge', 'sequencer')) {
     $gitPath = Invoke-ReleaseGit -Root $Root -Arguments @('rev-parse', '--git-path', $marker)
     if ($gitPath.ExitCode -ne 0) { $errors.Add("Could not locate Git operation marker: $marker"); continue }
     $markerPath = $gitPath.StdOut.Trim()
@@ -663,11 +656,14 @@ function New-ProductionSnapshot {
 function Invoke-ReleaseExecutable {
   param(
     [Parameter(Mandatory)] [string] $FilePath,
-    [Parameter(Mandatory)] [string[]] $Arguments,
+    [Parameter(Mandatory)] [AllowEmptyString()] [AllowEmptyCollection()] [string[]] $Arguments,
     [Parameter(Mandatory)] [string] $WorkingDirectory
   )
+  # Preserve Windows argv, including empty strings and trailing backslashes.
   $quotedArguments = @($Arguments | ForEach-Object {
-    if ($_ -match '[\s"]') { '"' + $_.Replace('"', '\"') + '"' } else { $_ }
+    $escaped = [regex]::Replace($_, '(\\*)"', '$1$1\"')
+    $escaped = [regex]::Replace($escaped, '(\\+)$', '$1$1')
+    '"' + $escaped + '"'
   }) -join ' '
   $startInfo = New-Object System.Diagnostics.ProcessStartInfo
   $startInfo.FileName = $FilePath
@@ -677,18 +673,22 @@ function Invoke-ReleaseExecutable {
   $startInfo.CreateNoWindow = $true
   $startInfo.RedirectStandardOutput = $true
   $startInfo.RedirectStandardError = $true
+  $startInfo.StandardOutputEncoding = [Text.UTF8Encoding]::new($false)
+  $startInfo.StandardErrorEncoding = [Text.UTF8Encoding]::new($false)
   $process = New-Object System.Diagnostics.Process
   $process.StartInfo = $startInfo
-  [void] $process.Start()
-  $stdout = $process.StandardOutput.ReadToEnd()
-  $stderr = $process.StandardError.ReadToEnd()
-  $process.WaitForExit()
-  return [pscustomobject]@{ ExitCode = $process.ExitCode; StdOut = $stdout; StdErr = $stderr }
+  try {
+    [void] $process.Start()
+    $stdout = $process.StandardOutput.ReadToEndAsync()
+    $stderr = $process.StandardError.ReadToEndAsync()
+    $process.WaitForExit()
+    return [pscustomobject]@{ ExitCode = $process.ExitCode; StdOut = $stdout.Result; StdErr = $stderr.Result }
+  } finally { $process.Dispose() }
 }
 
 function Test-ProductionSnapshot {
   [CmdletBinding()]
-  param([Parameter(Mandatory)] $Snapshot, [switch] $RunRuntimeValidation)
+  param([Parameter(Mandatory)] $Snapshot, [switch] $RunRuntimeValidation, [scriptblock] $ProgressCallback)
   $errors = [System.Collections.Generic.List[string]]::new()
   $checks = [System.Collections.Generic.List[object]]::new()
   $treePaths = @(Get-GitTreePaths -Root $Snapshot.Root -Commitish $Snapshot.ProductionSha)
@@ -703,9 +703,10 @@ function Test-ProductionSnapshot {
   else { $checks.Add([pscustomobject]@{ Name = 'sensitive-content'; Status = 'FAIL'; Detail = 'policy match' }) }
   if (-not $RunRuntimeValidation) {
     $checks.Add([pscustomobject]@{ Name = 'runtime-validation'; Status = 'NOT_TESTED'; Detail = 'not requested for structural snapshot test' })
-    return [pscustomobject]@{ Errors = @($errors); Checks = @($checks) }
+    return [pscustomobject]@{ Errors = $errors.ToArray(); Checks = $checks.ToArray() }
   }
 
+  if ($ProgressCallback) { & $ProgressCallback 'Checking PowerShell syntax' }
   $psErrors = $null
   foreach ($path in @($treePaths | Where-Object { $_ -like '*.ps1' })) {
     $psErrors = @()
@@ -714,7 +715,8 @@ function Test-ProductionSnapshot {
   }
   $checks.Add([pscustomobject]@{ Name = 'powershell-parse'; Status = if ($errors | Where-Object { $_ -like 'PowerShell parse failed:*' }) { 'FAIL' } else { 'PASS' }; Detail = 'selected scripts' })
 
-  $node = Get-Command node -ErrorAction SilentlyContinue
+  if ($ProgressCallback) { & $ProgressCallback 'Checking JavaScript syntax' }
+  $node = Get-Command node -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
   if ($null -eq $node) { $checks.Add([pscustomobject]@{ Name = 'node-check'; Status = 'NOT_TESTED_DEPENDENCY_UNAVAILABLE'; Detail = 'node unavailable' }) }
   else {
     $nodeFailures = 0
@@ -723,7 +725,8 @@ function Test-ProductionSnapshot {
     else { $checks.Add([pscustomobject]@{ Name = 'node-check'; Status = 'PASS'; Detail = 'selected JavaScript files' }) }
   }
 
-  $python = Get-Command python -ErrorAction SilentlyContinue
+  if ($ProgressCallback) { & $ProgressCallback 'Checking Python syntax and bridge --help' }
+  $python = Get-Command python -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
   if ($null -eq $python) { $checks.Add([pscustomobject]@{ Name = 'python-ast'; Status = 'NOT_TESTED_DEPENDENCY_UNAVAILABLE'; Detail = 'python unavailable' }) }
   else {
     $pythonFailures = 0
@@ -736,19 +739,24 @@ function Test-ProductionSnapshot {
     else { $checks.Add([pscustomobject]@{ Name = 'bridge-help'; Status = 'PASS'; Detail = 'bridge command' }) }
   }
 
-  $npm = Get-Command npm.cmd -ErrorAction SilentlyContinue
+  $npm = Get-Command npm.cmd -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
   if ($null -eq $npm) { $checks.Add([pscustomobject]@{ Name = 'npm-ci-build'; Status = 'NOT_TESTED_DEPENDENCY_UNAVAILABLE'; Detail = 'npm.cmd unavailable' }) }
   else {
     Push-Location (Join-Path $Snapshot.WorktreePath 'apps\chart')
     try {
+      if ($ProgressCallback) { & $ProgressCallback 'Installing production chart dependencies: npm ci' }
       $npmCi = Invoke-ReleaseExecutable -FilePath $npm.Source -Arguments @('ci') -WorkingDirectory (Get-Location).Path
       $ciExit = $npmCi.ExitCode
-      if ($ciExit -eq 0) { $npmBuild = Invoke-ReleaseExecutable -FilePath $npm.Source -Arguments @('run', 'build') -WorkingDirectory (Get-Location).Path; $buildExit = $npmBuild.ExitCode } else { $buildExit = -1 }
+      if ($ciExit -eq 0) {
+        if ($ProgressCallback) { & $ProgressCallback 'Building production chart: npm run build' }
+        $npmBuild = Invoke-ReleaseExecutable -FilePath $npm.Source -Arguments @('run', 'build') -WorkingDirectory (Get-Location).Path
+        $buildExit = $npmBuild.ExitCode
+      } else { $buildExit = -1 }
     } finally { Pop-Location }
     if ($ciExit -ne 0 -or $buildExit -ne 0) { $errors.Add('npm ci or npm run build validation failed.'); $checks.Add([pscustomobject]@{ Name = 'npm-ci-build'; Status = 'FAIL'; Detail = "ci=$ciExit build=$buildExit" }) }
     else { $checks.Add([pscustomobject]@{ Name = 'npm-ci-build'; Status = 'PASS'; Detail = 'lockfile install and build' }) }
   }
-  return [pscustomobject]@{ Errors = @($errors); Checks = @($checks) }
+  return [pscustomobject]@{ Errors = $errors.ToArray(); Checks = $checks.ToArray() }
 }
 
 function Assert-ReleaseValidationComplete {
@@ -876,7 +884,7 @@ function Finalize-ProductionBranch {
 function Add-ReleasePathsToIndex {
   param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] [string[]] $Paths)
   foreach ($batch in @($Paths | ForEach-Object -Begin { $items = @() } -Process { $items += $_; if ($items.Count -ge 100) { ,$items; $items = @() } } -End { if ($items.Count) { ,$items } })) {
-    $add = Invoke-ReleaseGit -Root $Root -Arguments (@('add', '--') + @($batch))
+    $add = Invoke-ReleaseGit -Root $Root -Arguments (@('add', '--force', '--') + @($batch))
     Assert-ReleaseCondition ($add.ExitCode -eq 0) ("Could not stage a policy-eligible path for main: " + $add.StdErr)
   }
 }
@@ -884,6 +892,9 @@ function Add-ReleasePathsToIndex {
 function New-MainReleaseSource {
   [CmdletBinding()]
   param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] [string] $CommitMessage, [switch] $DryRun)
+  $unmerged = Invoke-ReleaseGit -Root $Root -Arguments @('diff', '--name-only', '--diff-filter=U')
+  Assert-ReleaseCondition ($unmerged.ExitCode -eq 0) 'Could not inspect unresolved Git conflicts.'
+  Assert-ReleaseCondition ([string]::IsNullOrWhiteSpace($unmerged.StdOut)) 'Unresolved Git conflicts exist. Resolve the index before preparing main.'
   $report = Get-MainPolicyReport -Root $Root
   Assert-ReleaseCondition ($report.Errors.Count -eq 0) ($report.Errors -join '; ')
   # Staged deletions are allowed: removing a formerly tracked artifact is safe.
@@ -1061,4 +1072,4 @@ function Test-ProductionFileSet {
   return [pscustomobject]@{ Errors = @($errors) }
 }
 
-Export-ModuleMember -Function Assert-ReleaseCondition, Assert-ReleaseValidationComplete, Resolve-TradingBotProjectRoot, Invoke-ReleaseGit, Import-ReleasePolicy, Get-MainPolicyReport, Test-SensitiveCandidate, Get-GitTreePaths, Get-GitBlobText, Get-ProductionFileSet, Test-ProductionFileSet, Test-ReleasePreflight, New-TemporaryReleaseContext, New-ProductionSnapshot, Test-ProductionSnapshot, Remove-TemporaryReleaseContext, Read-ReleaseInputs, New-MainReleaseSource, New-ReleaseTag, Finalize-ProductionBranch, Publish-ReleaseRefs, New-GitHubRelease, Invoke-TradingBotRelease
+Export-ModuleMember -Function Assert-ReleaseCondition, Assert-ReleaseValidationComplete, Resolve-TradingBotProjectRoot, Invoke-ReleaseGit, Invoke-ReleaseGh, Import-ReleasePolicy, Get-MainPolicyReport, Test-SensitiveCandidate, Get-GitTreePaths, Get-GitBlobText, Get-ProductionFileSet, Test-ProductionFileSet, Test-ReleasePreflight, New-TemporaryReleaseContext, New-ProductionSnapshot, Test-ProductionSnapshot, Remove-TemporaryReleaseContext, Read-ReleaseInputs, New-MainReleaseSource, New-ReleaseTag, Finalize-ProductionBranch, Publish-ReleaseRefs, New-GitHubRelease, Invoke-TradingBotRelease
