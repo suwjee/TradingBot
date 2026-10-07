@@ -22,9 +22,9 @@ from order_audit_engine import (
 )
 
 
-E_ZONE_VERSION = "6.16.1"
-E_ZONE_IMPLEMENTATION_VERSION = "6.18.2"
-E_ZONE_LAST_MODIFIED = "2026-10-03 14:32:06 +03:30"
+E_ZONE_VERSION = "6.16.2"
+E_ZONE_IMPLEMENTATION_VERSION = "6.18.3"
+E_ZONE_LAST_MODIFIED = "2026-10-07 00:56:52 +03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -388,29 +388,30 @@ class EZoneDetector(OrderAuditEngineMixin):
         post_stop_accepted = self._post_stop_accepted_orders_for_parent(
             parent, stop_event
         )
-        inherited_one = inherited[0] if inherited else None
-        carried_one = carried[0] if carried else None
-        post_stop_accepted_one = (
-            post_stop_accepted[0] if post_stop_accepted else None
+        inherited_stop_events = [
+            item[6][2] for item in inherited if item[6] is not None
+        ]
+        continuous_deadline = (
+            min(inherited_stop_events)
+            if parent_type == "S" and not carried and inherited_stop_events
+            else self.range_end
+            if parent_type == "S" and not carried
+            else None
         )
-        direct = self._first_order(
+        direct = self.order_candidates(
             stop_event,
-            (
-                inherited_one[6][2]
-                if parent_type == "S" and carried_one is None
-                and inherited_one is not None and inherited_one[6] is not None
-                else self.range_end
-                if parent_type == "S" and carried_one is None
-                else None
-            ),
+            continuous_deadline,
             allow_bounded_continue=(parent_type == "S"),
             allow_trend_leg_continue=(parent_type == "E"),
         )
+        # E consumption owns one global adjudication across every eligible
+        # physical Order route. Route-local reductions must not discard a
+        # later First before the canonical exact-stop tie-break can run.
         choices = [
-            item for item in (
-                direct, inherited_one, carried_one, post_stop_accepted_one
-            )
-            if item is not None and item[6] is not None
+            item
+            for route in (direct, inherited, carried, post_stop_accepted)
+            for item in route
+            if item[6] is not None
         ]
         order_match = min(
             choices,

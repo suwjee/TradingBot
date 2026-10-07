@@ -35,14 +35,14 @@ if _pipeline_dir_text not in sys.path:
     sys.path.insert(0, _pipeline_dir_text)
 
 from core_utils import as_decimal, order_identity
-from order_audit_engine import order_b_leg_identity
+from order_audit_engine import accepted_audit_entries, order_b_leg_identity
 
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.8.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.9.0"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-09-30 12:00:00 +03:30"
+TRADING_PIPELINE_VERSION = "1.8.1"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.9.1"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-10-07 00:56:52 +03:30"
 
 TEHRAN = ZoneInfo("Asia/Tehran")
 
@@ -1928,7 +1928,15 @@ def calculate_full_direction_state(
         initial_s_zones = shared_stages.initial_s_zones
     s_candidates = list(s_zones)
 
-
+    # A detection is provisional. Only A that survives S ownership may create
+    # a parent-stop Order_A used by downstream E/Order state. Later lifecycle
+    # invalidation applies the same accepted-cause filter again.
+    s_accepted_a_sources = {
+        getattr(item, "source_time") for item in s_detector.eligible_a_zones
+    }
+    s_accepted_order_audit = accepted_audit_entries(
+        s_detector.order_audit, s_accepted_a_sources
+    )
 
     e_detector = create_e_detector(
         direction,
@@ -1937,7 +1945,7 @@ def calculate_full_direction_state(
         s_zones,
         chronology,
         geometry_detectors,
-        s_detector.order_audit,
+        s_accepted_order_audit,
         lifecycle_engine,
         order_b_legs=order_b_legs,
     )
@@ -1955,7 +1963,7 @@ def calculate_full_direction_state(
             valid_s_zones,
             chronology,
             geometry_detectors,
-            s_detector.order_audit,
+            s_accepted_order_audit,
             lifecycle_engine,
             blocked_order_first_times={
                 getattr(item, "source_time")
@@ -2129,10 +2137,9 @@ def calculate_full_direction_state(
         lambda item: e_detector.parent_stop("E", item),
         candles,
     )
-    # A stopped A creates its physical Order independently of the S whose
-    # suppressed geometry later supplies an E continuation. The filtered E
-    # ledger may not contain that A cause yet; preserve its S-stage identity.
-    independent_a_order_identities = frozenset(s_detector.order_audit)
+    # Preserve only physical Order identities already backed by accepted A
+    # provenance. Provisional/S-owned A candidates must not reopen Order_A.
+    independent_a_order_identities = frozenset(accepted_orders)
     for evidence_s, original_owner in consumed_s_evidence:
         owner = next(
             (
@@ -2632,7 +2639,7 @@ def finalize_direction_visibility(
     # presentation filtering is handled separately by required Order identities.
     order_audit_a_sources = {
         getattr(item, "source_time")
-        for item in state.full_a_by_direction.get(direction, direction_state.a_zones)
+        for item in state.full_s_detectors[direction].eligible_a_zones
         if (getattr(item, "source_time"), int(getattr(item, "source_index")))
         not in direction_state.invalid_a_identities
     }

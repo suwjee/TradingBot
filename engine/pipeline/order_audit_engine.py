@@ -11,8 +11,8 @@ from typing import Callable, Sequence
 
 from core_utils import as_decimal, order_identity, reaction_identity
 
-ORDER_AUDIT_ENGINE_VERSION = "1.5.3"
-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-10-03 14:32:06 +03:30"
+ORDER_AUDIT_ENGINE_VERSION = "1.5.5"
+ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-10-07 02:04:22 +03:30"
 
 @dataclass(frozen=True, slots=True)
 class PostBehaviorStop:
@@ -148,10 +148,13 @@ def discover_order_b_reset_legs(
     the highest High from the anchor behavior candle through the Reset
     Reaction FirstGreen; Bullish mirrors it with the lowest Low through
     FirstRed.  The boundary must extend strictly beyond the anchor behavior
-    candle, the reset Reaction must start strictly after that boundary source,
-    and the physical opposite Reaction is the first canonical Reaction whose
-    First candle starts at or after the exact strict lower-TF crossing of the
-    frozen boundary following Reset, with confirmation strictly after it.
+    candle and the reset Reaction must start strictly after that boundary
+    source.  Order_B selection is owned by the calculation timeframe: the
+    first main candle containing a strict post-Reset boundary crossing opens
+    the opposite-Reaction gate, and a canonical opposite Reaction whose First
+    is that same main candle is eligible.  Lower-timeframe chronology is kept
+    only to prove that the crossing occurs after the exact Reset and, when
+    needed, that confirmation occurs strictly after the crossing.
     """
     if direction not in {"bullish", "bearish"}:
         raise ValueError("Direction must be 'bullish' or 'bearish'.")
@@ -281,23 +284,28 @@ def discover_order_b_reset_legs(
         if crossing is None:
             continue
         strict_break_time = lower_times[crossing]
+        strict_break_index = chronology.main_index(strict_break_time, clamp=True)
 
-        # A newly formed A is an upstream, Order_B-independent lifecycle
-        # boundary.  A reset-leg that was prepared before that A may not stay
-        # pending and fire after it; the new A is now the behavior context for
-        # subsequent Order logic.  Using A as the hard expiry also keeps the
-        # Order_B feedback monotonic because S/E/StopAll may themselves depend
-        # on Order_B while A does not.
+        # Order_B is a calculation-timeframe rule.  The exact lower-TF crossing
+        # proves the break happened after Reset and remains audit provenance,
+        # but it must not disqualify a canonical opposite Reaction whose First
+        # belongs to the same calculation candle as that strict break.
+        #
+        # A newly formed accepted A is likewise compared by its owning main
+        # candle.  This keeps lifecycle expiry on the configured calculation
+        # timeframe while preserving lower-TF chronology only where exact
+        # within-candle ordering is genuinely required.
         next_a_position = bisect_right(a_times, current_first_time)
         if (
             next_a_position < len(a_times)
-            and a_times[next_a_position] <= strict_break_time
+            and chronology.main_index(a_times[next_a_position], clamp=True)
+            <= strict_break_index
         ):
             continue
 
         physical = next((
             item for item in opposite_direction
-            if strict_break_time <= chronology.times[item[1]]
+            if strict_break_index <= item[1]
             and strict_break_time < item[0]
         ), None)
         if physical is None:
@@ -1654,8 +1662,9 @@ def _collect_s_ledger_entries(
 
 def _collect_e_ledger_entries(
     detector,
+    accepted_a_sources: set[datetime] | None = None,
 ) -> list[tuple[dict[str, object], list[dict[str, object]]]]:
-    """Collect E-stage Order_A / Order_B entries for prepare."""
+    """Collect E-stage Order entries using only accepted A parent-stop causes."""
     combined: list[tuple[dict[str, object], list[dict[str, object]]]] = []
     for entry in detector.order_audit.values():
         causes = [
@@ -1668,6 +1677,11 @@ def _collect_e_ledger_entries(
             }
             for cause in sorted(entry["causes"], key=str)
             if cause[0] == "parent-stop"
+            and not (
+                cause[1] == "A"
+                and accepted_a_sources is not None
+                and cause[4] not in accepted_a_sources
+            )
         ]
         causes.extend(entry.get("order_b_causes", ()))
         if causes:
@@ -1768,7 +1782,7 @@ def prepare_order_audit(
     required_identities = set(required_identities or set())
     combined = [
         *_collect_s_ledger_entries(s_detector, accepted_a_sources),
-        *_collect_e_ledger_entries(detector),
+        *_collect_e_ledger_entries(detector, accepted_a_sources),
     ]
     output = _merge_prepared_identities(
         combined, detector, start_index, end_index, required_identities
@@ -1788,22 +1802,38 @@ def accepted_audit_entry(
     causes = entry.get("a_causes") or [
         (entry["a_source_time"], entry["a_stop_event_time"])
     ]
-    selected = next(
-        ((source_time, stop_time) for source_time, stop_time in causes
-         if source_time in accepted_sources),
-        None,
-    )
-    if selected is None:
+    accepted_causes = [
+        (source_time, stop_time)
+        for source_time, stop_time in causes
+        if source_time in accepted_sources
+    ]
+    if not accepted_causes:
         return None
+    selected = accepted_causes[0]
     if (
         selected[0] == entry.get("a_source_time")
         and selected[1] == entry.get("a_stop_event_time")
+        and accepted_causes == list(causes)
     ):
         return entry
     adjusted = dict(entry)
     adjusted["a_source_time"] = selected[0]
     adjusted["a_stop_event_time"] = selected[1]
+    adjusted["a_causes"] = accepted_causes
     return adjusted
+
+
+def accepted_audit_entries(
+    order_audit: dict[tuple[int, int], dict[str, object]],
+    accepted_sources: set[datetime],
+) -> dict[tuple[int, int], dict[str, object]]:
+    """Return Order_A entries whose creating A remains calculation-accepted."""
+    return {
+        identity: accepted
+        for identity, entry in order_audit.items()
+        for accepted in [accepted_audit_entry(entry, accepted_sources)]
+        if accepted is not None
+    }
 
 
 def order_identity_is_internal(item, internal_identities):
