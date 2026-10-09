@@ -21,9 +21,9 @@ from order_audit_engine import (
 from direction_policy import policy_for
 
 
-STOP_ALL_VERSION = "1.18.2"
-STOP_ALL_IMPLEMENTATION_VERSION = "1.20.2"
-STOP_ALL_LAST_MODIFIED = "2026-10-04 21:25:23 +03:30"
+STOP_ALL_VERSION = "1.20.0"
+STOP_ALL_IMPLEMENTATION_VERSION = "1.22.0"
+STOP_ALL_LAST_MODIFIED = "2026-10-09 22:28:00 +03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -101,6 +101,9 @@ class _DominantBehavior:
     number: int | None
     count: int
     latest: object
+    # Every accepted occurrence of this exact dominant identity in the current
+    # unbroken owner epoch. Historical/replaced groups are never consulted.
+    members: tuple[object, ...]
 
     @property
     def priority(self) -> int:
@@ -241,7 +244,7 @@ class StopAllDetector:
         underlying_e_key: tuple[str, int] | None,
         gate_event: datetime,
     ) -> StopAll:
-        """Materialize a stopped, armed Blue owner from an accepted S Red donor."""
+        """Materialize StopAll from an accepted S Red and eligible Blue owner."""
         return StopAll(
             direction=self.direction,
             number=1,
@@ -346,31 +349,52 @@ class StopAllDetector:
                 return stop[2]
             if donor_e is None or stop[2] > donor_e.decision_event_time:
                 return None
-            # E source geometry is retrospective and may use the main candle
-            # containing its own parent's strict stop. Match that physical
-            # parent exactly before allowing a stop at/after E source time.
+            # E source geometry may precede a parent stop inside its main
+            # candle. Preserve the existing exact-latest-parent rule, then
+            # extend it only to another accepted member of the SAME armed
+            # dominant group whose strict stop coincides with the latest one's.
             parent_index = getattr(donor_e, "parent_source_index", None)
+            parent_time = getattr(donor_e, "parent_source_time", None)
             parent_price = getattr(donor_e, "parent_price", None)
             if (
-                str(getattr(donor_e, "parent_type", "")).upper() == owner.kind
-                and parent_index is not None
-                and int(parent_index) == int(owner.latest.source_index)
-                and getattr(donor_e, "parent_source_time", None)
-                == owner.latest.source_time
-                and parent_price is not None
-                and as_decimal(parent_price) == as_decimal(owner.latest.price)
-                and getattr(donor_e, "parent_stop_event_time", None) == stop[2]
+                str(getattr(donor_e, "parent_type", "")).upper() != owner.kind
+                or parent_index is None
+                or parent_time is None
+                or parent_price is None
+                or getattr(donor_e, "parent_stop_event_time", None) != stop[2]
             ):
+                return None
+
+            def matches_parent(member: object) -> bool:
+                return (
+                    int(parent_index) == int(member.source_index)
+                    and parent_time == member.source_time
+                    and as_decimal(parent_price) == as_decimal(member.price)
+                )
+
+            if matches_parent(owner.latest):
                 return stop[2]
+            for member in owner.members[:-1]:
+                if not matches_parent(member):
+                    continue
+                member_stop = self._strict_stop(
+                    member.decision_event_time, as_decimal(member.price)
+                )
+                if member_stop is not None and member_stop[2] == stop[2]:
+                    return stop[2]
+                break
             return None
 
         def accept(kind: str, family: str, number: int | None, item: object) -> None:
             nonlocal owner
-            incoming = _DominantBehavior(kind, family, number, 1, item)
+            incoming = _DominantBehavior(kind, family, number, 1, item, (item,))
             if owner is None:
                 owner = incoming
             elif (owner.kind, owner.family, owner.number) == (kind, family, number):
-                owner = replace(owner, count=owner.count + 1, latest=item)
+                owner = replace(
+                    owner, count=owner.count + 1, latest=item,
+                    members=(*owner.members, item),
+                )
             elif incoming.priority > owner.priority or (
                 incoming.priority == owner.priority
                 and kind == owner.kind == "E"
@@ -381,6 +405,29 @@ class StopAllDetector:
         def process_s_event(s_item: object) -> None:
             nonlocal owner, pending_stop, active
             color = str(s_item.color).lower()
+            # An armed exact Blue owner is stopped by the first accepted S Red
+            # itself. No previous strict price stop or Order-B mode is needed.
+            # Formation is checked at the exact decision event (not at the
+            # retrospectively chosen S source candle).
+            if (
+                color == "red"
+                and owner is not None
+                and owner.family == "blue"
+                and owner.armed
+                and owner.latest.decision_event_time < s_item.decision_event_time
+            ):
+                zone = self._stopall_from_s(
+                    s_item, owner.kind, owner.key, owner.count,
+                    (owner.family, int(owner.number))
+                    if owner.kind == "E" else None,
+                    s_item.decision_event_time,
+                )
+                output.append(zone)
+                active = [zone]
+                owner = None
+                pending_stop = None
+                return
+
             gate_event = armed_stop_before(s_item.source_time)
             completed = pending_stop or (
                 (owner, gate_event) if owner is not None and gate_event is not None
