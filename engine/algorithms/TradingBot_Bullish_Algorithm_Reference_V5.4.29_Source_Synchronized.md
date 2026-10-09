@@ -1,43 +1,43 @@
 # TradingBot Bullish Algorithm Reference — Current Standalone Specification
 
-**Document Version:** `5.4.26`  
-**Last Modified:** `2026-10-07 02:18:23 +03:30`  
-**Status:** `ACTIVE — Order_B calculation-timeframe break-candle correction; byte-exact Current Source`  
+**Document Version:** `5.4.29`  
+**Last Modified:** `2026-10-09 22:28:00 +03:30`  
+**Status:** `ACTIVE — shared-stop sibling Parent for armed dominant group; selected calculation range preserved; byte-exact Current Source`
 **Target Direction:** `bullish`  
 **Opposite Direction:** `bearish`  
-**Production Source Behavioral Change:** `YES — one approved Order_B chronology correction`  
+**Production Source Behavioral Change:** `YES — narrowly extended Lifecycle strict-stop/E-donor Parent rule`  
 **Mirror Contract:** Current shared Production Source defines both directional paths. Price geometry is reflected; time, identity, provenance, Doji, behavior-family names and lifecycle ordering remain invariant.
 
 > Current Production Source defines executable behavior. This canonical Reference specifies the audited implementation and its exact Bullish↔Bearish mirror contract. Section 16 embeds every current live production Python Source file, byte-synchronized.
 
 ## 0. Revision scope
 
-Reference `5.4.26` adds one user-approved general chronology correction on top of `5.4.25`:
+Reference `5.4.29` extends the pre-existing armed-owner strict-stop → E donor path **only** where a retrospective E source belongs to a simultaneous strict stop shared by a parent from the same current exact dominant group:
 
-1. **Order_B calculation-timeframe break ownership:** Order_B remains dependent on a strict post-Reset LL/HH break, but the configured calculation candle containing that strict break owns the physical-Reaction eligibility gate. A canonical opposite Reaction whose First belongs to that same calculation candle is eligible even when the exact lower-timeframe crossing occurs later inside the candle. Lower-timeframe RAW is retained only where exact intrabar ordering is explicitly required: proving that a same-candle boundary crossing occurs after the exact Reset, proving confirmation is strictly after the crossing, and preserving exact audit provenance.
-2. **Accepted-A expiry uses the calculation candle:** when a pending reset-leg is compared with the next accepted A, both are compared by their owning calculation-timeframe candle. An A in the strict-break candle expires the pending setup.
-
-The fix is general and contains no timestamp, symbol, price, fixture or RAW-name branch. `pipeline/order_audit_engine.py` is the only changed production module. RX-01, SE-01, accepted-final-A Order_A eligibility, A detection, S ownership, E tie policy, Reaction/Reset geometry and serialization schema remain unchanged.
-
-The Source manifest and exact embedded Source are regenerated from the authoritative `engine.zip` Source tree. The stale virtual root `__init__.py` entry present in Reference `5.4.25` is removed because the authoritative package contains no such file; this is documentation/source-integrity synchronization only and has no runtime effect.
+1. Keep the exact latest-owner Parent match as the first accepted path. For an E whose retrospective Source is earlier than or equal to the owner's strict stop, additionally allow its physical Parent to be **any accepted same-identity occurrence in the still-current armed owner's group**, not only the latest one.
+2. The chosen sibling Parent must match the E's `parentType`, `parentSourceIndex`, `parentSourceTime`, `parentPrice`, and `parentStopEventTime`; its own earliest directional strict stop from its decision event must occur at the **same lower-timeframe instant** as the strict stop of the latest dominant occurrence. The common stop may not be later than the incoming E's decision event. Equality of price to stop level is never a stop.
+3. No unrelated Parent, formerly displaced group, different E number/family, earlier separate stop, synthetic timestamp or future donor can use this exception. Historical pending-stop, older exact-latest Parent path, S Red reversal, StopAll-chain continuation, and all other stages remain unchanged.
+4. `5.4.28` full-vs-selected calculation scope and the `5.4.27` armed Blue + first S Red rule are retained. Only `pipeline/lifecycle_engine.py` changes in production, from behavior `1.19.0 → 1.20.0`, implementation `1.21.0 → 1.22.0`.
+5. The shared direction-neutral ownership/provenance check runs identically for Bullish/Bearish. Strict stop remains Bullish `Low < price` versus Bearish `High > price`; `StopAll1` occupies the donor E Source without exporting a separate E there. RAW is immutable.
 
 ## 1. Source manifest
 
 | Module | Owner | Version | Lines | Bytes | SHA-256 |
 |---|---|---:|---:|---:|---|
-| `bridge/trading_pipeline.py` | Pipeline / Serialization | `1.8.1 (impl 1.9.1)` | 2964 | 108528 | `820254f27bb7cfe1cc47aecf2f4a36c74f66e6abbf681c2c72d7492a6c05b83a` |
+| `bridge/__init__.py` | Bridge package marker | `unversioned` | 1 | 64 | `2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8` |
+| `bridge/trading_pipeline.py` | Pipeline / Serialization | `1.9.0 (impl 1.10.0)` | 2999 | 109993 | `a18cd16f087331cd2239ec47fe0048e5deaa35ae54c03fe9f26d475c802ea271` |
 | `pipeline/__init__.py` | Legacy / unsupported package wrapper | `unversioned` | 19 | 348 | `ca549e4cf5d9a070227498d0d210279e0f7edae66d62dadab7981cddaa1db5c3` |
 | `pipeline/a_zone_detector.py` | A | `1.7.0` | 804 | 31373 | `83f08b06556eb59c6d1b3afd22b51c280315bd80f3a31bc3044ada349251a115` |
 | `pipeline/blue_line_detector.py` | Blue | `2.4.0` | 458 | 15802 | `b0426cddc49c2fface77b00ba713beaa469ffa4f33f0291d34e51827825f283a` |
 | `pipeline/core_utils.py` | Core Utilities | `1.0.0` | 26 | 832 | `007e5329e14ab9695e555c630527badc84dd35a239dea1cf685141e4278265eb` |
 | `pipeline/direction_policy.py` | Direction Policy | `1.0.0` | 70 | 2282 | `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea` |
 | `pipeline/e_zone_detector.py` | E | `6.16.2 (impl 6.18.3)` | 1141 | 48755 | `50d9d64953fdaa571b3fca73e759b5fa587af95d0ff570b9a63321a6fbdb8ed8` |
-| `pipeline/lifecycle_engine.py` | Lifecycle / StopAll | `1.18.2 (impl 1.20.2)` | 1439 | 58761 | `e17f85cc6a14d40539f487b9c083a218da1ee3809d0f0c911fd9a8e71adc8558` |
+| `pipeline/lifecycle_engine.py` | Lifecycle / StopAll | `1.20.0 (impl 1.22.0)` | 1486 | 60712 | `f5aef0c8aea5a5ca51b9ea1fefaa0ced958e5416a23a1d0f574cf4a06647b3e9` |
 | `pipeline/order_audit_engine.py` | Order / OrderAudit | `1.5.5` | 1977 | 79803 | `4a6a8d4d00fcdfcc8f2fd95a10bc74ae0e54b4fc108be4a56109509276fd5eaf` |
 | `pipeline/reaction_engine.py` | Reaction / Reset | `9.8.1 (impl 9.9.1)` | 2439 | 105073 | `f62f7e3c6480750068c4550a8489806030aac16f021f349930bd5efb3ce54198` |
 | `pipeline/s_zone_detector.py` | S | `4.20.0 (impl 4.21.0)` | 1444 | 60888 | `ef71a2e4176caaabc25d1ef0c1f0f24efb54ed3110982cdb7cf52d2449cca2ee` |
 
-This manifest is regenerated from the actual Current production Source tree used for this fix. The authoritative package contains **11** Python Source files. No root `__init__.py` exists in the supplied `engine.zip`; the stale zero-byte virtual entry from Reference `5.4.25` is removed rather than fabricated.
+This manifest is regenerated from the actual Current production Source tree used for this fix. The authoritative package contains **12** Python Source files. The previously omitted `bridge/__init__.py` package marker is included here byte-exact, without any production change. No root `__init__.py` exists in the supplied `engine.zip`; the stale zero-byte virtual entry from Reference `5.4.25` is removed rather than fabricated.
 
 Exact Source bytes and newline structure are verified against Section 16.
 
@@ -49,7 +49,7 @@ The production execution contract is:
 
 Order_B feedback may repeat S/E context construction up to eight passes, using exact reset-leg identities. A repeated non-convergent identity or pass overflow is an error. This feedback does not recalculate Reaction/Blue/A geometry. StopAll is reconciled once from accepted chronology; downstream boundary publication does not reinterpret historical E.
 
-The bridge calculates the complete input it actually receives. The full-chart HTTP route supplies the original RAW file. A selected-range HTTP route supplies an in-memory stream filtered by inclusive chart-candle buckets; that calculation begins with empty state at the selected start and cannot use rows outside the supplied stream. Within that supplied input, CLI from/to bounds filter presentation after calculation. Neither frontend nor serialization independently implements trading rules.
+The bridge supports two **explicit and distinct** calculation contracts. Default `--calculation-scope full` calculates every supplied RAW record, with `--from-time`/`--to-time` limiting presentation only. `--calculation-scope selected` instead first isolates the supplied RAW to the requested inclusive chart-candle buckets and restarts the entire detector/lifecycle chain with empty state at the first selected candle; rows outside that window cannot affect any calculation. A selected-range HTTP route can equivalently supply an already isolated input stream. External HTTP/UI caller code is not in this Source snapshot; callers must use either isolation mechanism. Neither frontend nor serialization independently implements trading rules.
 
 Ownership boundaries are strict: Reaction/Reset is owned by `reaction_engine.py`; Blue by `blue_line_detector.py`; A by `a_zone_detector.py`; S by `s_zone_detector.py`; E by `e_zone_detector.py`; physical Order discovery/reuse/provenance by `order_audit_engine.py`; lifecycle/StopAll/visibility by `lifecycle_engine.py`; request/range orchestration and serialization by `bridge/trading_pipeline.py`. Serialization is a projection of finalized state and is not a second trading algorithm.
 
@@ -62,7 +62,7 @@ Ownership boundaries are strict: Reaction/Reset is owned by `reaction_engine.py`
 5. **Reaction identity:** physical Reaction/Order identity is `(FirstIndex, BreakIndex)`. Identity, provenance structure, stable ordering, lifecycle priority, behavior-family names and public schemas are direction-invariant.
 6. **Determinism:** candidate ordering and tie-breaking are explicit. Equal main-candle extremes keep the earliest source unless the owning rule explicitly requests last-on-equality (S Type-3/Type-4 candidate construction).
 7. **Canonical mirror:** the Bearish Reaction path mechanically reflects the shared Bullish coordinate state machine. Independently inspect explicit directional branches and policies. Reflect prices/roles; preserve time, state ownership, canonical identity, cause structure and lifecycle families.
-8. **Calculation vs presentation:** internal/historical objects may remain necessary for later calculation even when they are not independently visible. Final filters cannot rewrite upstream truth.
+8. **Calculation vs presentation:** in `full` scope, internal/historical objects may remain necessary for later calculation even when not visible; final filters cannot rewrite upstream truth. In `selected` scope, isolated input intentionally starts a new calculation state, and excluded RAW never participates in that state. The two scopes must not be conflated.
 
 ## 4. Reaction / Reset — ACTIVE Bullish specification
 
@@ -295,21 +295,27 @@ This priority and exact-identity rule are identical in Bullish and Bearish. Only
 
 ### 12.2 Highest existing behavior and armed owner
 
-The first accepted S/E occurrence immediately becomes the highest existing exact behavior with count `1`. It is not armed. A repeated occurrence increments only the same exact identity: `S Blue`, `S Red`, or an E identity with the same family and number such as `E1 Blue` or `E1 Red`. Different E numbers and colors never combine. The current exact owner is armed for StopAll at count `>= 2`; its latest accepted occurrence supplies the strict stop level and search start. A third or later exact occurrence remains armed while it still owns the highest state.
+The first accepted S/E occurrence immediately becomes the highest existing exact behavior with count `1`. It is not armed. A repeated occurrence increments only the same exact identity: `S Blue`, `S Red`, or an E identity with the same family and number such as `E1 Blue` or `E1 Red`. Different E numbers and colors never combine. The current exact owner is armed for StopAll at count `>= 2`. A third or later exact occurrence remains armed while it still owns the highest state. For strict-stop-triggered E donors, the latest accepted owner's decision event and price define the strict stop search. The current dominant epoch also retains its same-identity accepted member origins solely for exact sibling-Parent proof; this does not create a parallel occurrence counter. For the new Blue-to-S-Red reversal, the most recent owner's decision event must instead strictly precede the accepted S Red decision event; **no owner price stop is required**.
 
 An accepted unrelated higher-priority behavior replaces the owner at its source time and starts at count `1`. A direct E child first resolves the strict stop of its exact armed parent, even when its retrospectively chosen source candle begins at or before that stop. A larger number within the same E family advances the E owner; a smaller number does not. Lower-priority accepted objects may remain valid calculation/output objects, but cannot count, remain armed, or trigger StopAll behind the current owner. There is one active exact owner and no independent Blue repetition ledger.
 
 ### 12.3 Chronological strict stop and E donor
 
-The armed owner's stop is the first strict 5-second crossing at or after its latest occurrence's decision event. A stop must precede replacement by an unrelated higher-priority behavior to belong to the former owner; an E directly caused by that stop is resolved as a donor before it replaces its parent. A completed earlier stop is frozen as pending historical evidence if no eligible donor exists at that transition; later replacement cannot cancel it. This pending completed gate is not a second occurrence counter and cannot re-arm a displaced behavior.
+The strict-stop gate in this subsection remains active for **E donors and historically completed stops**, independently of the new S Red reversal. The armed owner's stop is the first strict 5-second crossing at or after its latest occurrence's decision event. A stop must precede replacement by an unrelated higher-priority behavior to belong to the former owner; an E directly caused by that stop is resolved as a donor before it replaces its parent. A completed earlier stop is frozen as pending historical evidence if no eligible donor exists at that transition; later replacement cannot cancel it. This pending completed gate is not a second occurrence counter and cannot re-arm a displaced behavior.
 
-At an incoming E, a completed owner stop strictly before the E source time creates `StopAll1` through `sequence-group-stop`; the incoming E supplies physical geometry and Order provenance regardless of family. There is one narrow causal exception: the E may be the direct child of the armed current owner whose first strict stop is its exact `parentStopEventTime`, even when that stop is at or after the E's retrospective `sourceTime`. The match requires parent type, source index/time and price to identify the owner's latest occurrence exactly, and the stop must be no later than the E decision event. An E descended from a different parent cannot revive a displaced owner or use a later unrelated stop. An existing active StopAll that strictly stops at or before the incoming E decision continues to create the next numbered StopAll through `stopall-stop` under its separate historical contract. Its gate precedes the S/E owner gate.
+At an incoming E, a completed owner stop strictly before the E source time creates `StopAll1` through `sequence-group-stop`; the incoming E supplies physical geometry and Order provenance regardless of family. When an E source is retrospective and the latest current owner's stop is at or after the E source, the **original direct latest-Parent exception** remains: exact parent type/source index/source time/price and `parentStopEventTime` must match the latest armed owner and its first strict stop. **Additional synchronized-group-Parent exception (`5.4.29`):** the same exact Parent identity may instead select another *accepted member of the current, same-identity dominant owner epoch*; the selected member's earliest strict price stop at or after its own decision must exactly equal the latest owner's strict stop event, and the E's reported exact parent stop event must equal that same event. The stop must occur no later than the incoming E decision. This is an extension of causality at one physical stop event, **not** permission for any historical parent or stop time. Group members have a single current owner/count; replacement or StopAll clears the entire epoch. An E from a different family/number/owner epoch, or with a different stop event, cannot revive a displaced group. An existing active StopAll that strictly stops at or before incoming E decision still creates the next numbered StopAll via `stopall-stop` first.
 
 ### 12.4 S Red donor and legacy gate name
 
-An accepted S Red whose final accepted `order_mode` is `B` may donate fresh `StopAll1` through the serialized `opposite-s-group-stop` gate only for a completed strict stop of a Blue behavior that was the armed current owner when it stopped. The gate event is the actual lower-timeframe stop, not the S Red decision. If the earlier stopped owner is E, its family and number remain exact in `stoppedBehaviorKey`. A Mode-A S Red cannot use this S-donor gate; the completed stop remains pending for an eligible later donor. The S Red donor's own validity and the stopped owner's eligibility are separate questions.
+For every **accepted S Red**, if the currently dominant exact S/E owner is from the Blue family and has at least two accepted same-identity occurrences (`S Blue ×2`, `E1 Blue ×2`, `E2 Blue ×3`, etc.), the **first such S Red** ends that dominant Blue owner and materializes `StopAll1` at the S Red's own Source, **regardless of S Red `order_mode`, Source price, Source position, or any prior Strict Stop of Blue**. Different Blue identities never combine. The latest Blue occurrence must have been confirmed at a `decision_event_time` strictly before the S Red decision event. An unrelated higher-priority behavior already replacing the owner prevents this direct gate; counting past Blue occurrences outside current dominant ownership is forbidden.
 
-**HISTORICAL / SUPERSEDED (`5.4.22` and earlier):** accepted Blue occurrences were counted in a parallel ledger independent of dominant-owner transitions. That ledger could promote a lower-priority Blue group after a higher-priority Red owner had formed, or promote without a strict stop. It is not an active rule.
+The S Red is the materialization donor (`donorType=S`, `donorColor=red`) rather than a new accepted public S. `gateType` stays `opposite-s-group-stop` for API compatibility; for this **direct no-prior-stop route**, `gateEventTime` is the exact accepted S Red `decisionEventTime` (not the retrospective Source and not an invented lower-TF Blue stop). `stoppedBehaviorType`, `stoppedBehaviorKey`, and `stoppedBehaviorCount` preserve the current exact dominant Blue owner. Materialization clears owner, occurrence counter and pending stop, establishing a hard new lifecycle boundary. The public S output is suppressed at the shared StopAll Source; no invalid public S is fabricated merely to represent supersession.
+
+The pre-existing **completed-Blue-strict-stop fallback** remains: when the new direct gate does not apply, an accepted S Red with final `order_mode=B` may donate `StopAll1` from a previously completed, eligible exact-owner Blue stop. In that legacy-compatible case, the same `opposite-s-group-stop` gate name uses the actual lower-timeframe **Blue stop** as `gateEventTime`. Mode-A S Red cannot use this older fallback, but it **can** trigger the new direct armed-Blue reversal above. For an E stopped owner, its family and number remain exact in `stoppedBehaviorKey`.
+
+**HISTORICAL / SUPERSEDED (`5.4.26` and earlier, for direct S Red reversal only):** an armed current Blue group still required a completed Strict Stop and S Red `order_mode=B` before the S donor could produce StopAll. That extra prerequisite is intentionally removed for the direct Blue-to-S-Red gate. The independent strict-stop-driven E and completed-owner fallback paths remain active.
+
+**HISTORICAL / SUPERSEDED (`5.4.22` and earlier):** accepted Blue occurrences were counted in a parallel ledger independent of dominant-owner transitions. That ledger could promote a lower-priority Blue group after a higher-priority Red owner had formed. This parallel ledger is not restored by the new rule.
 
 ### 12.5 Hard StopAll boundary
 
@@ -323,7 +329,7 @@ A, S and E calculations continue to retain internal historical evidence. Public 
 
 ### 13.1 Projection rule
 
-Legacy serialization contains no trading recalculation. Decimal prices are stringified; native local datetimes are converted through the existing Tehran-local epoch contract. Stable source ordering is preserved. Presentation range filtering is applied after full calculation, and OrderAudit may retain a pre-range physical identity when an in-range public behavior references it. `calculationValid` is emitted as `true` for public A/S because invalid calculation objects have already been removed by the calculation/visibility owner.
+Legacy serialization contains no trading recalculation. Decimal prices are stringified; native local datetimes are converted through the existing Tehran-local epoch contract. Stable source ordering is preserved. Presentation range filtering is applied **after the calculation on the chosen input scope**. In `full` mode, OrderAudit may retain a pre-display-range physical identity when an in-range public behavior references it; in `selected` mode no calculation or identity can originate from an excluded RAW record. `calculationValid` is emitted as `true` for public A/S because invalid calculation objects have already been removed by the calculation/visibility owner.
 
 ### 13.2 Legacy JSON fields
 
@@ -338,7 +344,7 @@ Legacy serialization contains no trading recalculation. Decimal prices are strin
 
 ### 13.3 Response envelope
 
-The envelope contains `engine`, `version`, `pipelineVersion`, `blueLineVersion`, `aVersion`, `sVersion`, `eVersion`, `stopAllVersion`, enablement booleans, `timeframe`, `actualFrom`, `actualTo`, `directions`, and runtime `timings`. Each requested direction owns its own Reaction/Reset/Blue/A/S/E/StopAll/OrderAudit arrays.
+The envelope contains `engine`, `version`, `pipelineVersion`, `blueLineVersion`, `aVersion`, `sVersion`, `eVersion`, `stopAllVersion`, enablement booleans, `timeframe`, `actualFrom`, `actualTo`, `directions`, and runtime `timings`. The CLI additionally accepts `--calculation-scope full|selected` (default `full`); this control does not add a new JSON response field. Each requested direction owns its own Reaction/Reset/Blue/A/S/E/StopAll/OrderAudit arrays.
 
 ### 13.4 Optional Bridge Output
 
@@ -350,9 +356,15 @@ This index is regenerated mechanically from the exact Current Source AST for thi
 
 The index is descriptive only. It does not create algorithm behavior and does not supersede the semantic stage rules above.
 
+#### `bridge/__init__.py`
+- **Module-level symbols/assignments:** _none_
+- **Top-level functions:** _none_
+- **Classes / schemas:** _none_
+- **Nested implementation functions/closures:** _none_
+
 #### `bridge/trading_pipeline.py`
 - **Module-level symbols/assignments:** `_ENGINE_ROOT` (L31), `_PIPELINE_DIR` (L32), `_pipeline_dir_text` (L33), `_DTFMT` (L40), `TRADING_PIPELINE_VERSION` (L43), `TRADING_PIPELINE_IMPLEMENTATION_VERSION` (L44), `TRADING_PIPELINE_LAST_MODIFIED` (L45), `TEHRAN` (L47), `_local_dt_cache` (L84), `_epoch_cache` (L96), `_display_epoch_cache` (L108)
-- **Top-level functions:** `emit_progress` (L50), `timed` (L58), `load_module` (L70), `load_engine` (L80), `local_datetime` (L87), `epoch` (L99), `display_epoch` (L111), `build_candle_buckets` (L123), `build_candle_objects` (L181), `_index_selected` (L211), `select_reaction_serialization_items` (L219), `serialize` (L242), `serialize_blue_lines` (L286), `serialize_a_zones` (L306), `serialize_s_zones` (L333), `serialize_e_zones` (L398), `serialize_stopalls` (L441), `bridge_datetime` (L508), `bridge_direction` (L522), `bridge_mode` (L526), `bridge_color` (L530), `_bridge_horizon` (L536), `_bridge_in_horizon` (L543), `_bridge_proven_strict_event` (L547), `_bridge_stop_view` (L587), `_bridge_reaction_confirmation` (L607), `_bridge_order_identity` (L631), `_bridge_parent_stop` (L833), `_bridge_a_stop` (L854), `_bridge_behavior_stop` (L875), `_bridge_blue_formation` (L890), `_bridge_project_reaction` (L913), `_bridge_project_reset` (L956), `_bridge_project_blue` (L979), `_bridge_full_lines_by_ordinal` (L1015), `_bridge_project_a` (L1027), `_bridge_project_s` (L1117), `_bridge_source_index` (L1173), `_bridge_parent_behavior_for_e` (L1181), `_bridge_project_e` (L1225), `_bridge_project_stopall` (L1272), `_bridge_audit_order_key` (L1341), `build_bridge_output` (L1351), `validate_order_audit_bridge` (L1456), `serialize_order_audit` (L1524), `parse_arguments` (L1597), `load_engines` (L1669), `prepare_market_context` (L1703), `create_e_detector` (L1819), `calculate_full_direction_state` (L1865), `calculate_direction_with_order_b_feedback` (L2188), `prepare_pipeline_state` (L2242), `calculate_direction_range_state` (L2389), `finalize_direction_visibility` (L2491), `serialize_direction_payload` (L2707), `build_direction_output` (L2848), `build_response_payload` (L2873), `main` (L2926)
+- **Top-level functions:** `emit_progress` (L50), `timed` (L58), `load_module` (L70), `load_engine` (L80), `local_datetime` (L87), `epoch` (L99), `display_epoch` (L111), `build_candle_buckets` (L123), `build_candle_objects` (L181), `_index_selected` (L211), `select_reaction_serialization_items` (L219), `serialize` (L242), `serialize_blue_lines` (L286), `serialize_a_zones` (L306), `serialize_s_zones` (L333), `serialize_e_zones` (L398), `serialize_stopalls` (L441), `bridge_datetime` (L508), `bridge_direction` (L522), `bridge_mode` (L526), `bridge_color` (L530), `_bridge_horizon` (L536), `_bridge_in_horizon` (L543), `_bridge_proven_strict_event` (L547), `_bridge_stop_view` (L587), `_bridge_reaction_confirmation` (L607), `_bridge_order_identity` (L631), `_bridge_parent_stop` (L833), `_bridge_a_stop` (L854), `_bridge_behavior_stop` (L875), `_bridge_blue_formation` (L890), `_bridge_project_reaction` (L913), `_bridge_project_reset` (L956), `_bridge_project_blue` (L979), `_bridge_full_lines_by_ordinal` (L1015), `_bridge_project_a` (L1027), `_bridge_project_s` (L1117), `_bridge_source_index` (L1173), `_bridge_parent_behavior_for_e` (L1181), `_bridge_project_e` (L1225), `_bridge_project_stopall` (L1272), `_bridge_audit_order_key` (L1341), `build_bridge_output` (L1351), `validate_order_audit_bridge` (L1456), `serialize_order_audit` (L1524), `parse_arguments` (L1597), `load_engines` (L1681), `isolate_calculation_range` (L1715), `prepare_market_context` (L1727), `create_e_detector` (L1854), `calculate_full_direction_state` (L1900), `calculate_direction_with_order_b_feedback` (L2223), `prepare_pipeline_state` (L2277), `calculate_direction_range_state` (L2424), `finalize_direction_visibility` (L2526), `serialize_direction_payload` (L2742), `build_direction_output` (L2883), `build_response_payload` (L2908), `main` (L2961)
 - **Classes / schemas:**
   - **`BridgeProjection`** (L639)
     - fields: _none_
@@ -363,19 +375,19 @@ The index is descriptive only. It does not create algorithm behavior and does no
   - **`MarketContext`** (L1588)
     - fields: `seconds` (L1589), `candles` (L1590), `lower_index` (L1591), `chronology` (L1592), `start_index` (L1593), `end_index` (L1594)
     - methods/properties: _none_
-  - **`PipelineState`** (L1784)
-    - fields: `directions` (L1787), `results` (L1788), `reusable_full_context` (L1789), `initial_order_geometry` (L1790), `internal_reaction_identities` (L1791), `full_e_zones` (L1792), `full_e_detectors` (L1793), `full_s_detectors` (L1794), `full_lines_by_direction` (L1795), `full_a_by_direction` (L1796), `invalid_a_identities_by_direction` (L1797), `invalid_s_identities_by_direction` (L1798), `full_s_by_direction` (L1799), `full_s_candidates_by_direction` (L1800)
+  - **`PipelineState`** (L1819)
+    - fields: `directions` (L1822), `results` (L1823), `reusable_full_context` (L1824), `initial_order_geometry` (L1825), `internal_reaction_identities` (L1826), `full_e_zones` (L1827), `full_e_detectors` (L1828), `full_s_detectors` (L1829), `full_lines_by_direction` (L1830), `full_a_by_direction` (L1831), `invalid_a_identities_by_direction` (L1832), `invalid_s_identities_by_direction` (L1833), `full_s_by_direction` (L1834), `full_s_candidates_by_direction` (L1835)
     - methods/properties: _none_
-  - **`FullDirectionState`** (L1804)
-    - fields: `e_zones` (L1807), `e_detector` (L1808), `s_detector` (L1809), `blue_lines` (L1810), `a_zones` (L1811), `invalid_a_identities` (L1812), `invalid_s_identities` (L1813), `s_zones` (L1814), `s_candidates` (L1815), `initial_s_zones` (L1816)
+  - **`FullDirectionState`** (L1839)
+    - fields: `e_zones` (L1842), `e_detector` (L1843), `s_detector` (L1844), `blue_lines` (L1845), `a_zones` (L1846), `invalid_a_identities` (L1847), `invalid_s_identities` (L1848), `s_zones` (L1849), `s_candidates` (L1850), `initial_s_zones` (L1851)
     - methods/properties: _none_
-  - **`DirectionRangeState`** (L2359)
-    - fields: `blue_lines` (L2362), `a_zones` (L2363), `s_candidates` (L2364), `accepted_s_zones` (L2365), `e_zones` (L2366), `invalid_a_identities` (L2367), `invalid_s_identities` (L2368)
+  - **`DirectionRangeState`** (L2394)
+    - fields: `blue_lines` (L2397), `a_zones` (L2398), `s_candidates` (L2399), `accepted_s_zones` (L2400), `e_zones` (L2401), `invalid_a_identities` (L2402), `invalid_s_identities` (L2403)
     - methods/properties: _none_
-  - **`DirectionVisibilityState`** (L2372)
-    - fields: `blue_lines` (L2375), `a_zones` (L2376), `s_zones` (L2377), `e_zones` (L2378), `stopalls` (L2379), `prepared_order_audit` (L2380), `projection_s_zones` (L2384), `projection_e_zones` (L2385), `projection_stopalls` (L2386)
+  - **`DirectionVisibilityState`** (L2407)
+    - fields: `blue_lines` (L2410), `a_zones` (L2411), `s_zones` (L2412), `e_zones` (L2413), `stopalls` (L2414), `prepared_order_audit` (L2415), `projection_s_zones` (L2419), `projection_e_zones` (L2420), `projection_stopalls` (L2421)
     - methods/properties: _none_
-- **Nested implementation functions/closures:** `build_candle_buckets.cached_decimal` (L132), `create_e_detector.direct_geometry` (L1837), `serialize_direction_payload.build_legacy_payload` (L2734), `serialize_direction_payload.serialize_reactions_from_one_selection` (L2766), `serialize_direction_payload.build_payload` (L2807)
+- **Nested implementation functions/closures:** `build_candle_buckets.cached_decimal` (L132), `create_e_detector.direct_geometry` (L1872), `serialize_direction_payload.serialize_reactions_from_one_selection` (L2801), `serialize_direction_payload.build_payload` (L2842), `serialize_direction_payload.build_legacy_payload` (L2769)
 
 #### `pipeline/__init__.py`
 - **Module-level symbols/assignments:** `__all__` (L12)
@@ -439,18 +451,18 @@ The index is descriptive only. It does not create algorithm behavior and does no
 
 #### `pipeline/lifecycle_engine.py`
 - **Module-level symbols/assignments:** `STOP_ALL_VERSION` (L24), `STOP_ALL_IMPLEMENTATION_VERSION` (L25), `STOP_ALL_LAST_MODIFIED` (L26), `SEQUENCE_PRIORITY` (L29)
-- **Top-level functions:** `sequence_priority` (L37), `detect_stopalls` (L478), `resolve_order_context` (L491), `visible_a_zones_after_s_stops` (L543), `module_priority` (L559), `module_identity` (L573), `module_stop_event` (L582), `strictly_beyond_boundary` (L596), `dominant_module` (L601), `split_a_zones_by_dominant_stops` (L613), `blocked_orders_while_invalid_leg_heads_are_live` (L816), `consumed_s_evidence_after_larger_stop` (L839), `s_zones_for_module_engines` (L981), `s_zones_for_stopall` (L1011), `visible_s_zones_after_module_resets` (L1030), `reconcile_stopall_lifecycle` (L1208), `visible_a_zones_after_module_boundaries` (L1241), `reaction_number_is_internal` (L1288), `point_is_inside_healthy_reaction` (L1302), `filter_internal_behavior_outputs` (L1325), `finalize_behavior_visibility` (L1338), `visible_a_zones` (L1433)
+- **Top-level functions:** `sequence_priority` (L37), `detect_stopalls` (L525), `resolve_order_context` (L538), `visible_a_zones_after_s_stops` (L590), `module_priority` (L606), `module_identity` (L620), `module_stop_event` (L629), `strictly_beyond_boundary` (L643), `dominant_module` (L648), `split_a_zones_by_dominant_stops` (L660), `blocked_orders_while_invalid_leg_heads_are_live` (L863), `consumed_s_evidence_after_larger_stop` (L886), `s_zones_for_module_engines` (L1028), `s_zones_for_stopall` (L1058), `visible_s_zones_after_module_resets` (L1077), `reconcile_stopall_lifecycle` (L1255), `visible_a_zones_after_module_boundaries` (L1288), `reaction_number_is_internal` (L1335), `point_is_inside_healthy_reaction` (L1349), `filter_internal_behavior_outputs` (L1372), `finalize_behavior_visibility` (L1385), `visible_a_zones` (L1480)
 - **Classes / schemas:**
   - **`StopAll`** (L43)
     - fields: `direction` (L44), `number` (L45), `source_index` (L46), `source_time` (L47), `price` (L48), `decision_index` (L49), `decision_time` (L50), `decision_event_time` (L51), `gate_type` (L52), `gate_event_time` (L53), `stopped_behavior_type` (L54), `stopped_behavior_key` (L55), `stopped_behavior_count` (L56), `underlying_e_family` (L57), `underlying_e_number` (L58), `order_direction` (L59), `order_reaction_number` (L60), `order_mode` (L61), `order_causes` (L62), `order_parent_stop_cause_time` (L63), `order_first_index` (L64), `order_first_time` (L65), `order_break_index` (L66), `order_break_time` (L67), `order_confirmation_time` (L68), `order_box_top` (L69), `order_box_top_source_index` (L70), `order_box_top_source_time` (L71), `order_box_bottom` (L72), `order_box_bottom_source_index` (L73), `order_box_bottom_source_time` (L74), `order_stop_level` (L75), `order_stop_source_index` (L76), `order_stop_source_time` (L77), `stop_index` (L78), `stop_time` (L79), `stop_event_time` (L80), `donor_type` (L85), `donor_source_index` (L86), `donor_source_time` (L87), `donor_color` (L88), `donor_number` (L89), `donor_price` (L90), `donor_stop_time` (L91), `donor_stop_event_time` (L92)
     - methods/properties: _none_
   - **`_DominantBehavior`** (L96)
-    - fields: `kind` (L99), `family` (L100), `number` (L101), `count` (L102), `latest` (L103)
-    - methods/properties: `priority` (L106), `armed` (L110), `key` (L114)
-  - **`StopAllDetector`** (L121)
+    - fields: `kind` (L99), `family` (L100), `number` (L101), `count` (L102), `latest` (L103), `members` (L106)
+    - methods/properties: `priority` (L109), `armed` (L113), `key` (L117)
+  - **`StopAllDetector`** (L124)
     - fields: _none_
-    - methods/properties: `__init__` (L122), `_strict_stop` (L143), `_dominates_e` (L160), `_stopall_from_e` (L169), `_optional_int` (L228), `_optional_decimal` (L232), `_stopall_from_s` (L235), `detect` (L323)
-- **Nested implementation functions/closures:** `StopAllDetector.detect.armed_stop_before` (L335), `StopAllDetector.detect.accept` (L367), `StopAllDetector.detect.process_s_event` (L381), `visible_s_zones_after_module_resets.cached_stop_event` (L1059)
+    - methods/properties: `__init__` (L125), `_strict_stop` (L146), `_dominates_e` (L163), `_stopall_from_e` (L172), `_optional_int` (L231), `_optional_decimal` (L235), `_stopall_from_s` (L238), `detect` (L326)
+- **Nested implementation functions/closures:** `visible_s_zones_after_module_resets.cached_stop_event` (L1106), `detect.armed_stop_before` (L338), `detect.accept` (L388), `detect.process_s_event` (L405), `detect.matches_parent` (L368)
 
 #### `pipeline/order_audit_engine.py`
 - **Module-level symbols/assignments:** `ORDER_AUDIT_ENGINE_VERSION` (L14), `ORDER_AUDIT_ENGINE_LAST_MODIFIED` (L15), `OrderMatch` (L414)
@@ -565,7 +577,8 @@ This matrix is normative for directional transformation. Bullish is the canonica
 | Physical Order strict stop in current calculation | `High > OrderStop` | `Low < OrderStop` | directional |
 | S Red race event | physical Order `High > OrderStop` | physical Order `Low < OrderStop` | directional |
 | E parent/behavior strict stop | lower directional penetration | upper directional penetration | directional |
-| Armed S/E owner strict stop | first lower-TF `Low < owner price` | first lower-TF `High > owner price` | directional |
+| Armed S/E owner strict stop for E / completed-stop donors | first lower-TF `Low < owner price` | first lower-TF `High > owner price` | directional |
+| Armed dominant Blue → accepted S Red StopAll | exact Blue owner count `>=2`, independent of prior price crossing | exact Blue owner count `>=2`, independent of prior price crossing | invariant |
 | Direct E-child donor | exact owner identity and parent-stop provenance | exact owner identity and parent-stop provenance | invariant |
 | E source | minimum `Low` across complete boundary candles | maximum `High` across complete boundary candles | directional |
 | Order_B reset Reaction role | Bullish reset Reaction / `FirstRed` | Bearish reset Reaction / `FirstGreen` | directional |
@@ -592,6 +605,7 @@ The following semantics are intentionally identical in Bullish and Bearish. Mirr
 | Decimal | price-sensitive decisions use Decimal semantics; direction does not change numeric representation |
 | Strict equality | equality never satisfies a strict crossing |
 | Exact StopAll owner | one exact S/E identity; count `1` is highest but unarmed; count `>=2` arms the latest occurrence |
+| Blue reversal gate | first accepted S Red with S decision strictly after latest armed dominant exact Blue decision creates StopAll1 without a prior Blue Strict Stop or Mode B requirement |
 | Replacement and chronology | unrelated higher formation disarms lower future eligibility; a completed earlier strict stop remains valid |
 | Retrospective E source | direct child may reuse the armed owner's exact completed parent-stop event through its decision; unrelated E cannot |
 | Physical identity | canonical Reaction/Order identity is `(FirstIndex, BreakIndex)` |
@@ -625,20 +639,53 @@ This table makes the stage chain reconstructable without relying on examples. Th
 | E | accepted S/E parent, exact parent stop, canonical Order ledger | first strict parent stop + physical Order with exact strict stop | directional extreme over complete main candles containing parent stop through Order stop | winner Order is earliest stop; same stop uses larger FirstIndex; `decision_event=max(parent_stop,order_stop)` | recursive child starts only after preceding E strict stop; sequence reset may invalidate crossings spanning hard boundary | reconciled E feeds lifecycle/StopAll and canonical OrderAudit rebuild |
 | Order_A | accepted final strict behavior stop + canonical opposite-direction Reaction registry | parent-stop direct/bounded geometry that is canonically registered; A parent must survive S ownership/current invalid-A filtering | canonical Reaction identity; canonical Order stop from `MarketChronology` | competing parent-stop candidates: earliest confirmation, then FirstIndex, then BreakIndex | exact opposite-direction strict Order stop | identity-keyed physical Order with accepted `parent-stop` provenance; nonaccepted A cause is removed |
 | Order_B | accepted lifecycle stop + later reset same-direction Reaction + canonical Reset | eligible post-stop reset leg with accepted behavior anchor strictly before reset Reaction First | LL/HH from closed anchor-source .. reset-First range; strict extension beyond anchor | first calculation candle containing a strict post-Reset break owns the gate; next accepted A in/earlier than that main candle expires setup; opposite Reaction First may be in that same break candle while exact confirmation must remain after the strict crossing | physical Order then follows canonical opposite Order stop rules | adds `reset-leg` provenance to canonical physical identity; exact lower-TF break remains audit provenance and same-candle ordering evidence |
-| Lifecycle / StopAll | accepted S/E chronology and lower-TF strict stops | one exact highest owner; count `>=2` arms it; an E or qualified S Red donates StopAll after a completed stop | priority, exact identity and direct E-parent proof are direction-invariant; only strict price comparison mirrors | prior stop survives unrelated replacement; direct E child may share or precede its retrospective source timestamp | StopAll hard boundary clears owner/count/pending completed stop but retains history | final visibility/lineage closure and StopAll source map |
+| Lifecycle / StopAll | accepted S/E chronology and lower-TF strict stops for stop-dependent donors | one exact highest owner; count `>=2` arms it; first later confirmed S Red on current exact Blue owner promotes without a Blue price stop; E and completed-stop fallback donors retain strict stops | exact identity and priority invariant; S Red direct gate ignores donor mode and price | latest Blue decision strictly before S Red decision for direct gate; old E-parent strict stop chronology remains | StopAll hard boundary clears owner/count/pending completed stop but retains history | final visibility/lineage closure and StopAll source map |
 | OrderAudit | physical identity ledger + accepted S/E/A causes + lifecycle results | merge accepted ledgers and reconcile current accepted causes | dedupe by `(FirstIndex, BreakIndex)`; provenance is attached to identity | stable cause/order sorting; retain pre-range identity when a visible behavior references it | strict stop computed only when not already authoritative; invalid parent cannot fabricate cause | canonical serialized physical Order history |
 | Serialization | finalized calculation state only | requested direction/presentation range | projection only; Decimal values stringified under existing contract | stable source ordering; presentation filtering occurs after calculation | never recalculates trading decisions | response envelope + optional read-only Bridge Output |
 
 ### 13.9 Package/source integrity notes
 
-1. The authoritative supplied Engine tree contains the **11** Python Source paths in Section 1. It does not contain a root `__init__.py`; the stale virtual zero-byte entry from Reference `5.4.25` is removed in this synchronization.
+1. The authoritative supplied Engine tree contains the **12** Python Source paths in Section 1. It does not contain a root `__init__.py`; the stale virtual zero-byte entry from Reference `5.4.25` is removed in this synchronization.
 2. Section 16 embeds each current production Python file byte-for-byte.
-3. The pre-existing unsupported `pipeline/__init__.py` wrapper import of missing `run_blue_line` remains outside this Order_B correction. The production Bridge path is the supported calculation entry.
+3. The pre-existing unsupported `pipeline/__init__.py` wrapper import of missing `run_blue_line` remains outside this StopAll revision. The production Bridge path is the supported calculation entry.
 4. Unit, targeted and full RAW regression evidence for this revision is recorded in Section 14. Prior verification claims remain historical evidence for their own Source revisions.
 
-## 14. Verification scope for Reference `5.4.26`
+## 14. Verification scope for Reference `5.4.29`
 
-### 14.1 Current `5.4.26` verification — PASS
+### 14.0 Current `5.4.29` verification — ACTIVE
+
+- **Target:** selected XAUUSD 5s `2026-10-09 09:07:30`–`18:14:25`, 30s Bearish. Exact dominant `E1 Blue ×3` accepted at `11:51:00`, `15:01:30`, and `15:40:00`; the last two E1 members share strict stop at `16:00:35`. The incoming E at Source `16:00:30` is parented to the `15:01:30` member. New expected output: `StopAll1` Source `16:00:30`, `gateEventTime=16:00:35`, followed by `StopAll2` Source `17:01:30` and `StopAll3` Source `17:27:00`.
+- **Changed Source:** lifecycle only; public StopAll schema, donor geometry, serialization and Bridge selected/full flags unchanged. The accepted latest-member Parent route remains first and unchanged; only the simultaneously stopped sibling-parent exception is added.
+- **Required regression evidence:** focused mirrored strict/equality/identity/decision/pending tests, full both-direction RAW execution, unchanged upstream output, analyzed downstream diffs, historical unchanged StopAll anchors, deterministic replay and byte-identical 12-source embedding. Test outcomes are recorded separately in the delivered verification report; this Source Reference does not claim unexecuted tests.
+
+
+### 14.1 Current selected-range contract verification
+
+- **PASS — compilation:** Current Source compiled with no syntax errors.
+- **PASS — actual selected-range reproduction:** newest 15,542-row XAUUSD 5s RAW, `30s`, `2026-10-09 09:07:30` through file end; selected-scope output for both Bullish/Bearish exactly equals the output of the same code run against the externally isolated 6,564-row RAW with full scope, excluding nonstable timing fields.
+- **PASS — no upstream leakage:** Bearish `E9 Red` inherited from the pre-range calculation is absent in isolated-range output, while the expected E1 Blue anchors at 11:51, 15:01:30 and 15:40 remain present.
+- **PASS — legacy full-mode parity:** default `full` mode produces the identical stable output as explicit `full` mode on the complete RAW.
+- **PASS — invalid range:** `--from-time > --to-time` produces a clear error.
+- **PASS — selected bucket boundaries:** included RAW uses the complete selected main-timeframe buckets, excluding all earlier and later buckets.
+- **UNCHANGED:** no lifecycle, E parent, StopAll or mirrored price-geometry rule has been modified. The independent E1 Blue StopAll donor/parent issue discussed with the user remains deliberately outside this range-only patch.
+- **OUTSIDE PACKAGE:** HTTP/UI adapter dispatch cannot be verified because those sources are not in `engine.zip`; external selected-range callers must pass `--calculation-scope selected` or supply a prefiltered input stream.
+
+### 14.2 Previous `5.4.27` verification — HISTORICAL
+
+#### 14.2.1 Historical `5.4.27` verification
+
+- **PASS — compile:** all 12 Current Python Source files compile.
+- **PASS — focused rule/invariants:** eight focused cases, each testing both Bullish and Bearish paths where applicable, cover `S Blue ×2`, `E1 Blue ×3`, `E2 Blue ×2`, accepted S Red Mode A/Mode B, mixed identities, priority replacement, decision-time boundary, lifecycle reset and unarmed behavior.
+- **PASS — reported RAW:** full `RAW FOREXCOM_XAUUSD 5S FROM 2026-10-08 19-35-30 TO 2026-10-09 18-14-25.json`, 30-second timeframe, complete both-direction calculation. Bullish S Red Source `2026-10-09 03:56:00` becomes `StopAll1` with `stoppedBehaviorKey=E2 blue`, `stoppedBehaviorCount=2`, and exact gate/decision at `04:02:15`; the redundant public S is absent. Latest Blue `01:33:00` had no previous Strict Stop.
+- **PASS — previously independent stages:** Reaction, Reset, Blue, A, raw accepted E and physical OrderAudit are unchanged in the reported complete RAW run compared with the unmodified Current package; only S public ownership and downstream StopAll state change as approved.
+- **PASS — mirror semantics:** direct S Red conversion uses direction-invariant Blue identity and confirmation chronology; stop-dependent legacy routes still use mirrored Bullish `Low < price` / Bearish `High > price` comparisons.
+- **PASS — supplemental full continuous RAW:** four additional complete 30-second both-direction executions succeeded: XAUUSD 5s 2026-09-28→10-06 (97,930 lower-TF rows), XAUUSD 5s 2026-09-03→09-19 (183,741 rows), USOIL 5s 2026-09-24→10-03 (93,533 rows), and largest XAUUSD 5s 2026-08-25→09-23 (354,698 rows). Together with the requested 15,542-row RAW, five complete datasets × two directions executed successfully.
+- **PASS — independent historical unchanged anchor:** the full September 28→October 06 XAUUSD 30s Bullish and Bearish stable payloads are completely identical to the unmodified Source baseline, including Reaction, Reset, Blue, A, S, E, StopAll and OrderAudit outputs.
+- **PASS — historic RX-01 and SE-01:** the September 16 Bullish Reaction 22:44:00 and the four historically verified E source anchors (Bullish September 29 21:28:00 / September 30 12:37:30; Bearish September 29 21:03:30 / October 2 08:02:00) all remain present in the completed historical runs.
+- **PASS — determinism and public serialization:** repeated full requested RAW execution produces identical stable directional payloads; `stopAllVersion` is `1.19.0`; the existing field names and source-occupancy behavior are preserved.
+- **PASS — Source / Reference integrity:** all 12 embedded production Python files exactly match current Source; hash/byte/line manifest and updated AST index agree for changed lifecycle module.
+
+#### 14.2.2 Historical `5.4.26` verification — HISTORICAL / SUPERSEDED for changed StopAll expectation
 
 - **PASS — Source compile/runtime:** all 11 actual Python Source files compile; the supported production Bridge executes successfully. The pre-existing unsupported legacy `pipeline/__init__.py` wrapper issue is unchanged and outside this fix.
 - **PASS — targeted Order_B regression:** on `RAW FOREXCOM_XAUUSD 5S FROM 2026-09-28 20-44-00 TO 2026-10-03 00-29-35.json`, 30-second Bullish calculation maps the exact LL crossing `2026-09-29 20:26:40` to main candle `20:26:30`; canonical Bearish Reaction `20:26:30 → 20:28:30` now receives the `reset-leg` / Order_B cause. The stale later `20:32:00` reset-leg selection is removed. The subsequent canonical Bearish Reaction `20:44:00 → 20:45:30` receives the reset-leg belonging to Bullish Reaction `20:29:30`.
@@ -653,13 +700,46 @@ This table makes the stage chain reconstructable without relying on examples. Th
 - **PASS — Bullish/Bearish mirror:** the same main-candle break gate and exact-confirmation safeguard are shared in both directions; all nine RAW datasets completed in both directions.
 - **PASS — Source/Reference synchronization:** manifest hashes and Section 16 embedded bytes are regenerated from the Current Source; both directional References embed identical production Source bytes.
 
-### 14.2 Previous `5.4.25` verification — HISTORICAL / SUPERSEDED
+### 14.3 Previous `5.4.25` verification — HISTORICAL / SUPERSEDED
 
 Reference `5.4.25` and its recorded verification remain historical evidence for the immediately preceding Source. Its exact lower-TF Order_B First-time gate is superseded by the user-approved calculation-timeframe break-candle rule in `5.4.26`.
 
 ## 15. Current revision record
 
-### `5.4.26` Order_B calculation-timeframe break-candle correction — ACTIVE / BEHAVIORAL RULE CORRECTION
+### `5.4.29` Synchronized current dominant group Parent strict-stop — ACTIVE / BEHAVIORAL CORRECTION
+
+- **Document version:** `5.4.29`; previous `5.4.28`.
+- **Changed Source:** `pipeline/lifecycle_engine.py` behavioral `1.19.0 → 1.20.0`, implementation `1.21.0 → 1.22.0` only. Other Python Source files are untouched.
+- **General rule:** when an armed exact dominant group's latest accepted member and another accepted member in that same ownership epoch first strictly stop at an identical lower-timeframe event, an incoming E whose canonical Parent is that sibling may donate `StopAll1` despite retrospective E Source preceding the shared stop; all exact parent provenance and E decision deadline requirements remain.
+- **Unchanged:** exact latest-Parent E path; unrelated/higher-priority group replacement, distinct stops, strict-equality rules, no-prior-stop S Red reversal, StopAll chain and hard reset, Bridge range contracts, serialized fields.
+- **Mirror:** shared invariant Parent/group matching; strict Bullish Low versus Bearish High stop unchanged.
+- **Intentional example:** independently selected October 9 bearish 30s Source `16:00:30` E2 Blue becomes StopAll1 from `E1 blue ×3`, gate at `16:00:35`; later StopAll sequence can continue at `17:01:30` and `17:27:00`.
+- **Verification:** see Section 14.0 and delivered test report.
+
+
+### `5.4.28` Explicit selected-range input isolation — ACTIVE / BRIDGE BEHAVIORAL CONTRACT
+
+- **Document version:** `5.4.28`; previous `5.4.27`.
+- **Changed Source:** `bridge/trading_pipeline.py` behavioral `1.8.1 → 1.9.0`, implementation `1.9.1 → 1.10.0` only; no direction-specific engine or StopAll change.
+- **General rule:** selected calculation scope clips raw records to requested inclusive timeframe buckets *before* all state is initialized. Full scope remains the unchanged default for backward-compatible presentation-only clipping. Empty selection and reversed ranges fail explicitly.
+- **Mirror:** the shared Bridge restricts the same input in Bullish and Bearish before either direction's computation begins.
+- **Intended output difference:** when the full RAW begins before the requested selected start, independently selected calculations no longer inherit earlier E/reaction/lifecycle state; for `2026-10-09 09:07:30` on the October XAUUSD example, the earlier-history-dependent `E9 Red` is absent.
+- **Out of scope:** prior strict-owner StopAll parent validation and all other trading algorithms remain untouched. No RAW is modified.
+
+
+### `5.4.27` Armed dominant Blue ×2 → first S Red StopAll1 — ACTIVE / BEHAVIORAL CHANGE
+
+- **Document version:** `5.4.27`
+- **Previous Reference:** `5.4.26`
+- **Modified:** `2026-10-09 18:53:14 +03:30`
+- **Changed Source:** `pipeline/lifecycle_engine.py` behavioral `1.18.2 → 1.19.0`, implementation `1.20.2 → 1.21.0` only.
+- **General rule:** current dominant exact Blue S/E owner count `>=2` is sufficient for a first subsequently confirmed accepted S Red to terminate that owner and produce StopAll1 without prior Strict Stop or S donor Mode-B restriction. Last Blue decision strictly precedes S decision. Exact identity, priority, donor validity, and hard reset remain intact.
+- **API:** identical field/schema shape and legacy gate name `opposite-s-group-stop`; new direct path uses S Red confirmation as gate event. One StopAll public record replaces the would-be public S.
+- **Intentional changed historical anchor:** XAUUSD Bullish 30s S Source `2026-10-09 03:56:00` changes from public S Red to public StopAll1, with stopped owner `E2 blue ×2`. Any downstream StopAll numbering and visibility changes are permitted causal consequences, not frozen expectations.
+- **Mirror:** shared lifecycle owner for Bullish/Bearish; no asymmetric directional branches added. Only old strict-stop checks continue to use direction-specific Low/High primitives.
+- **Other Source modules:** unchanged; the standalone tests are newly added verification artifacts.
+
+### `5.4.26` Order_B calculation-timeframe break-candle correction — HISTORICAL / SUPERSEDED
 
 - **Document version:** `5.4.26`
 - **Previous Reference:** `5.4.25`
@@ -734,9 +814,9 @@ Every Python Source file actually present in the authoritative supplied Engine p
 
 ### 16.1 `bridge/trading_pipeline.py` — Pipeline / Serialization
 
-**SHA-256:** `820254f27bb7cfe1cc47aecf2f4a36c74f66e6abbf681c2c72d7492a6c05b83a`  
-**Bytes:** `108528`  
-**LF count:** `2964`
+**SHA-256:** `a18cd16f087331cd2239ec47fe0048e5deaa35ae54c03fe9f26d475c802ea271`  
+**Bytes:** `109993`  
+**LF count:** `2999`
 
 <!-- EXACT-SOURCE-BEGIN:bridge/trading_pipeline.py -->
 ````python
@@ -782,9 +862,9 @@ from order_audit_engine import accepted_audit_entries, order_b_leg_identity
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.8.1"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.9.1"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-10-07 00:56:52 +03:30"
+TRADING_PIPELINE_VERSION = "1.9.0"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.10.0"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-10-09 21:27:00 +03:30"
 
 TEHRAN = ZoneInfo("Asia/Tehran")
 
@@ -2400,11 +2480,23 @@ def parse_arguments(argv=None):
     parser.add_argument("--from-time", type=int, required=True)
     parser.add_argument("--to-time", type=int, required=True)
     parser.add_argument(
+        "--calculation-scope",
+        choices=("full", "selected"),
+        default="full",
+        help=(
+            "full: calculate all supplied RAW and use from/to only for display "
+            "(legacy default); selected: start a fresh calculation using only "
+            "RAW within the inclusive selected timeframe candle buckets."
+        ),
+    )
+    parser.add_argument(
         "--direction", choices=("bullish", "bearish", "both"), required=True
     )
     args = parser.parse_args(argv)
     if args.timeframe < 1:
         raise ValueError("Timeframe must be at least one second.")
+    if args.from_time > args.to_time:
+        raise ValueError("from-time must not exceed to-time.")
     return args
 
 
@@ -2442,6 +2534,18 @@ def load_engines(args, timings: dict[str, float]) -> EngineBundle:
     return EngineBundle(reaction, blue_line, a_zone, s_zone, e_zone, lifecycle)
 
 
+def isolate_calculation_range(
+    source_rows: list[dict], from_time: int, to_time: int, timeframe: int,
+) -> list[dict]:
+    """Select inclusive main-candle buckets before any detector state exists."""
+    first_bucket = from_time // timeframe * timeframe
+    last_bucket_exclusive = to_time // timeframe * timeframe + timeframe
+    return [
+        row for row in source_rows
+        if first_bucket <= int(row["time"]) < last_bucket_exclusive
+    ]
+
+
 def prepare_market_context(
     args, engines: EngineBundle, timings: dict[str, float]
 ) -> MarketContext:
@@ -2455,16 +2559,27 @@ def prepare_market_context(
     source_rows = timed(
         timings, "Parse source JSON", lambda: orjson.loads(source_bytes)
     )
-    # A requested time range is a presentation window only.  Reaction state
-    # can remain open past ``to_time`` and be resolved by later RAW chronology;
-    # truncating calculation at the visible end manufactures provisional
-    # Reactions/Blue/A state that does not exist in a full-file run.  Calculate
-    # on the complete physical RAW and apply from/to only during serialization.
-    rows = timed(
-        timings,
-        "Use full RAW calculation context",
-        lambda: source_rows,
-    )
+    # Two explicit request contracts, without conflating calculation and display:
+    # - full (legacy): use all supplied RAW; from/to affect presentation only.
+    # - selected: calculate from empty state using ONLY RAW in the inclusive
+    #   main-timeframe buckets requested by from/to.  Excluded candles cannot
+    #   influence Reaction, dominant lifecycle ownership or downstream state.
+    # Align both boundaries exactly like build_candle_buckets().  The upper
+    # boundary is exclusive and contains the entire final selected candle.
+    if getattr(args, "calculation_scope", "full") == "selected":
+        rows = timed(
+            timings,
+            "Isolate selected RAW calculation range",
+            lambda: isolate_calculation_range(
+                source_rows, args.from_time, args.to_time, args.timeframe
+            ),
+        )
+    else:
+        rows = timed(
+            timings,
+            "Use full RAW calculation context",
+            lambda: source_rows,
+        )
     if not rows:
         raise ValueError("The selected range contains no raw candles.")
 
@@ -2492,10 +2607,10 @@ def prepare_market_context(
         candles, seconds, args.timeframe, lower_index
     )
 
-    # Resolve the visible main-candle range inside the prefix calculation.
-    # Bucket boundaries are epoch-aligned exactly as ``build_candle_buckets``
-    # constructs them, which also keeps full-run source indexes/ordinals
-    # stable in a short-window request.
+    # Resolve visible main-candle indexes in the calculated RAW context.
+    # In full scope this keeps full-run source indexes stable for display.
+    # In selected scope the first selected candle is calculation index zero;
+    # no prior source or lifecycle objects exist in this fresh state.
     main_bucket_times = [int(item["time"]) for item in timeframe_buckets]
     requested_start_bucket = (
         args.from_time
@@ -6293,9 +6408,9 @@ def detect_e_zones(
 
 ### 16.8 `pipeline/lifecycle_engine.py` — Lifecycle / StopAll
 
-**SHA-256:** `e17f85cc6a14d40539f487b9c083a218da1ee3809d0f0c911fd9a8e71adc8558`  
-**Bytes:** `58761`  
-**LF count:** `1439`
+**SHA-256:** `f5aef0c8aea5a5ca51b9ea1fefaa0ced958e5416a23a1d0f574cf4a06647b3e9`  
+**Bytes:** `60712`  
+**LF count:** `1486`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/lifecycle_engine.py -->
 ````python
@@ -6322,9 +6437,9 @@ from order_audit_engine import (
 from direction_policy import policy_for
 
 
-STOP_ALL_VERSION = "1.18.2"
-STOP_ALL_IMPLEMENTATION_VERSION = "1.20.2"
-STOP_ALL_LAST_MODIFIED = "2026-10-04 21:25:23 +03:30"
+STOP_ALL_VERSION = "1.20.0"
+STOP_ALL_IMPLEMENTATION_VERSION = "1.22.0"
+STOP_ALL_LAST_MODIFIED = "2026-10-09 22:28:00 +03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -6402,6 +6517,9 @@ class _DominantBehavior:
     number: int | None
     count: int
     latest: object
+    # Every accepted occurrence of this exact dominant identity in the current
+    # unbroken owner epoch. Historical/replaced groups are never consulted.
+    members: tuple[object, ...]
 
     @property
     def priority(self) -> int:
@@ -6542,7 +6660,7 @@ class StopAllDetector:
         underlying_e_key: tuple[str, int] | None,
         gate_event: datetime,
     ) -> StopAll:
-        """Materialize a stopped, armed Blue owner from an accepted S Red donor."""
+        """Materialize StopAll from an accepted S Red and eligible Blue owner."""
         return StopAll(
             direction=self.direction,
             number=1,
@@ -6647,31 +6765,52 @@ class StopAllDetector:
                 return stop[2]
             if donor_e is None or stop[2] > donor_e.decision_event_time:
                 return None
-            # E source geometry is retrospective and may use the main candle
-            # containing its own parent's strict stop. Match that physical
-            # parent exactly before allowing a stop at/after E source time.
+            # E source geometry may precede a parent stop inside its main
+            # candle. Preserve the existing exact-latest-parent rule, then
+            # extend it only to another accepted member of the SAME armed
+            # dominant group whose strict stop coincides with the latest one's.
             parent_index = getattr(donor_e, "parent_source_index", None)
+            parent_time = getattr(donor_e, "parent_source_time", None)
             parent_price = getattr(donor_e, "parent_price", None)
             if (
-                str(getattr(donor_e, "parent_type", "")).upper() == owner.kind
-                and parent_index is not None
-                and int(parent_index) == int(owner.latest.source_index)
-                and getattr(donor_e, "parent_source_time", None)
-                == owner.latest.source_time
-                and parent_price is not None
-                and as_decimal(parent_price) == as_decimal(owner.latest.price)
-                and getattr(donor_e, "parent_stop_event_time", None) == stop[2]
+                str(getattr(donor_e, "parent_type", "")).upper() != owner.kind
+                or parent_index is None
+                or parent_time is None
+                or parent_price is None
+                or getattr(donor_e, "parent_stop_event_time", None) != stop[2]
             ):
+                return None
+
+            def matches_parent(member: object) -> bool:
+                return (
+                    int(parent_index) == int(member.source_index)
+                    and parent_time == member.source_time
+                    and as_decimal(parent_price) == as_decimal(member.price)
+                )
+
+            if matches_parent(owner.latest):
                 return stop[2]
+            for member in owner.members[:-1]:
+                if not matches_parent(member):
+                    continue
+                member_stop = self._strict_stop(
+                    member.decision_event_time, as_decimal(member.price)
+                )
+                if member_stop is not None and member_stop[2] == stop[2]:
+                    return stop[2]
+                break
             return None
 
         def accept(kind: str, family: str, number: int | None, item: object) -> None:
             nonlocal owner
-            incoming = _DominantBehavior(kind, family, number, 1, item)
+            incoming = _DominantBehavior(kind, family, number, 1, item, (item,))
             if owner is None:
                 owner = incoming
             elif (owner.kind, owner.family, owner.number) == (kind, family, number):
-                owner = replace(owner, count=owner.count + 1, latest=item)
+                owner = replace(
+                    owner, count=owner.count + 1, latest=item,
+                    members=(*owner.members, item),
+                )
             elif incoming.priority > owner.priority or (
                 incoming.priority == owner.priority
                 and kind == owner.kind == "E"
@@ -6682,6 +6821,29 @@ class StopAllDetector:
         def process_s_event(s_item: object) -> None:
             nonlocal owner, pending_stop, active
             color = str(s_item.color).lower()
+            # An armed exact Blue owner is stopped by the first accepted S Red
+            # itself. No previous strict price stop or Order-B mode is needed.
+            # Formation is checked at the exact decision event (not at the
+            # retrospectively chosen S source candle).
+            if (
+                color == "red"
+                and owner is not None
+                and owner.family == "blue"
+                and owner.armed
+                and owner.latest.decision_event_time < s_item.decision_event_time
+            ):
+                zone = self._stopall_from_s(
+                    s_item, owner.kind, owner.key, owner.count,
+                    (owner.family, int(owner.number))
+                    if owner.kind == "E" else None,
+                    s_item.decision_event_time,
+                )
+                output.append(zone)
+                active = [zone]
+                owner = None
+                pending_stop = None
+                return
+
             gate_event = armed_stop_before(s_item.source_time)
             completed = pending_stop or (
                 (owner, gate_event) if owner is not None and gate_event is not None
@@ -13633,3 +13795,15 @@ def detect_s_zones(
     ).detect()
 ````
 <!-- EXACT-SOURCE-END:pipeline/s_zone_detector.py -->
+
+### 16.12 `bridge/__init__.py` — Bridge package marker
+
+**SHA-256:** `2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8`  
+**Bytes:** `64`  
+**LF count:** `1`
+
+<!-- EXACT-SOURCE-BEGIN:bridge/__init__.py -->
+````python
+"""Bridge entrypoints for the TradingBot calculation engine."""
+````
+<!-- EXACT-SOURCE-END:bridge/__init__.py -->

@@ -40,9 +40,9 @@ from order_audit_engine import accepted_audit_entries, order_b_leg_identity
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.8.1"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.9.1"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-10-07 00:56:52 +03:30"
+TRADING_PIPELINE_VERSION = "1.9.0"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.10.0"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-10-09 21:27:00 +03:30"
 
 TEHRAN = ZoneInfo("Asia/Tehran")
 
@@ -1658,11 +1658,23 @@ def parse_arguments(argv=None):
     parser.add_argument("--from-time", type=int, required=True)
     parser.add_argument("--to-time", type=int, required=True)
     parser.add_argument(
+        "--calculation-scope",
+        choices=("full", "selected"),
+        default="full",
+        help=(
+            "full: calculate all supplied RAW and use from/to only for display "
+            "(legacy default); selected: start a fresh calculation using only "
+            "RAW within the inclusive selected timeframe candle buckets."
+        ),
+    )
+    parser.add_argument(
         "--direction", choices=("bullish", "bearish", "both"), required=True
     )
     args = parser.parse_args(argv)
     if args.timeframe < 1:
         raise ValueError("Timeframe must be at least one second.")
+    if args.from_time > args.to_time:
+        raise ValueError("from-time must not exceed to-time.")
     return args
 
 
@@ -1700,6 +1712,18 @@ def load_engines(args, timings: dict[str, float]) -> EngineBundle:
     return EngineBundle(reaction, blue_line, a_zone, s_zone, e_zone, lifecycle)
 
 
+def isolate_calculation_range(
+    source_rows: list[dict], from_time: int, to_time: int, timeframe: int,
+) -> list[dict]:
+    """Select inclusive main-candle buckets before any detector state exists."""
+    first_bucket = from_time // timeframe * timeframe
+    last_bucket_exclusive = to_time // timeframe * timeframe + timeframe
+    return [
+        row for row in source_rows
+        if first_bucket <= int(row["time"]) < last_bucket_exclusive
+    ]
+
+
 def prepare_market_context(
     args, engines: EngineBundle, timings: dict[str, float]
 ) -> MarketContext:
@@ -1713,16 +1737,27 @@ def prepare_market_context(
     source_rows = timed(
         timings, "Parse source JSON", lambda: orjson.loads(source_bytes)
     )
-    # A requested time range is a presentation window only.  Reaction state
-    # can remain open past ``to_time`` and be resolved by later RAW chronology;
-    # truncating calculation at the visible end manufactures provisional
-    # Reactions/Blue/A state that does not exist in a full-file run.  Calculate
-    # on the complete physical RAW and apply from/to only during serialization.
-    rows = timed(
-        timings,
-        "Use full RAW calculation context",
-        lambda: source_rows,
-    )
+    # Two explicit request contracts, without conflating calculation and display:
+    # - full (legacy): use all supplied RAW; from/to affect presentation only.
+    # - selected: calculate from empty state using ONLY RAW in the inclusive
+    #   main-timeframe buckets requested by from/to.  Excluded candles cannot
+    #   influence Reaction, dominant lifecycle ownership or downstream state.
+    # Align both boundaries exactly like build_candle_buckets().  The upper
+    # boundary is exclusive and contains the entire final selected candle.
+    if getattr(args, "calculation_scope", "full") == "selected":
+        rows = timed(
+            timings,
+            "Isolate selected RAW calculation range",
+            lambda: isolate_calculation_range(
+                source_rows, args.from_time, args.to_time, args.timeframe
+            ),
+        )
+    else:
+        rows = timed(
+            timings,
+            "Use full RAW calculation context",
+            lambda: source_rows,
+        )
     if not rows:
         raise ValueError("The selected range contains no raw candles.")
 
@@ -1750,10 +1785,10 @@ def prepare_market_context(
         candles, seconds, args.timeframe, lower_index
     )
 
-    # Resolve the visible main-candle range inside the prefix calculation.
-    # Bucket boundaries are epoch-aligned exactly as ``build_candle_buckets``
-    # constructs them, which also keeps full-run source indexes/ordinals
-    # stable in a short-window request.
+    # Resolve visible main-candle indexes in the calculated RAW context.
+    # In full scope this keeps full-run source indexes stable for display.
+    # In selected scope the first selected candle is calculation index zero;
+    # no prior source or lifecycle objects exist in this fresh state.
     main_bucket_times = [int(item["time"]) for item in timeframe_buckets]
     requested_start_bucket = (
         args.from_time
