@@ -1,16 +1,28 @@
 # TradingBot Bullish Algorithm Reference — Current Standalone Specification
 
-**Document Version:** `5.4.30`  
-**Last Modified:** `2026-10-18 12:31:00 +03:30`  
-**Status:** `SOURCE-SYNCHRONIZED PATCH BRANCH — Based on supplied engine.zip (Reference 5.4.26); newer Library Reference 5.4.29 has not been merged`  
+**Document Version:** `5.4.31`  
+**Last Modified:** `2026-10-21 18:35:00 +03:30`  
+**Status:** `ACTIVE SOURCE-SYNCHRONIZED PATCH BRANCH — 5.4.30 with approved S-Red / armed-Blue StopAll restoration; not a cumulative merge of 5.4.29`  
 **Target Direction:** `bullish`  
 **Opposite Direction:** `bearish`  
-**Production Source Behavioral Change:** `YES — independent A-stop opposite Order_A physical geometry; no change to canonical Reaction/Blue/A`  
+**Production Source Behavioral Change:** `YES — restored exact-dominant Blue ×2 + accepted S Red → StopAll1; preserves 5.4.30 independent A-stop Order_A geometry`  
 **Mirror Contract:** Current shared Production Source defines both directional paths. Price geometry is reflected; time, identity, provenance, Doji, behavior-family names and lifecycle ordering remain invariant.
 
-> The supplied **engine.zip** is the executable baseline for this patch branch. Section 16 embeds its complete patched production Source, byte-synchronized. **Version conflict:** a separate Project Library Reference 5.4.29 (including later Lifecycle changes) exists, but the explicitly supplied engine.zip embeds 5.4.26. Those later changes are NOT silently merged. This branch is not verified as a cumulative replacement for 5.4.29.
+> **Source lineage:** this Reference is based strictly on the supplied `engine.zip` version `5.4.30`, preserving its independent A-stop Order_A feature. Only the previously user-approved Blue-owner / accepted-S-Red StopAll1 rule from `5.4.27` is selectively ported. Other `5.4.28`/`5.4.29` changes (selected CLI calculation scope and synchronized E-parent stops) remain **UNMERGED**. This patch branch is not a cumulative replacement for every historical `5.4.29` capability. Section 16 embeds all Current production Source byte-for-byte.
 
 ## 0. Revision scope
+
+### `5.4.31` — restored first accepted S Red after armed exact Blue dominant owner (PATCH BRANCH)
+
+1. A currently dominant, accepted **exact S/E Blue identity** with two or more occurrences is armed: `S Blue ×2` or `E(n) Blue ×2`, never mixed numbers or families. Its most recently accepted occurrence must have a **decision event strictly earlier** than the accepted incoming `S Red` decision event.
+2. At the first eligible incoming accepted `S Red`, create `StopAll1` immediately through the existing `opposite-s-group-stop` gate, using the incoming S geometry, provenance and **S decision event time** as the gate event. Do **not** require the Blue owner to have crossed its strict price stop or the S to have Order Mode B; either Mode A or Mode B is eligible. The retrospective S source time is not its formation eligibility clock.
+3. Clear the exact owner, repeat count and pending stop, and retain prior accepted/historical evidence for downstream lineage. Existing StopAll/E donor and completed-stop S Red Mode-B paths are not deleted. Higher-priority intervening E Red prevents the Blue group from remaining the current owner, even if previous Blue occurrences are public.
+4. The shared code implements the same rule for both directions. The only price-sensitive stop comparator for unrelated routes remains Bullish strict `Low < level` / Bearish strict `High > level`. No timestamp-, symbol-, or dataset-dependent production checks were added.
+5. This change **preserves all 5.4.30 `Order_A` code and Bridge APIs**. It selectively ports the approved `5.4.27` direct S Red rule and does not silently import other historical fixes from `5.4.28` or `5.4.29`.
+
+**Version ownership:** `pipeline/lifecycle_engine.py` alone changed from the supplied branch baseline `1.18.2 (impl 1.20.2)` to `1.18.3 (impl 1.20.3)`. These are **branch-local** version identifiers; `5.4.29` used a separate `1.20.0` Lifecycle lineage and is not fully merged.
+
+**Verification:** 10 focused rule and source-integrity tests (both directions); real 30-second OHLC replay for USOIL selected range (October 20 18:00 to file end), full USOIL October, XAUUSD October 8–9, XAUUSD September 28–October 6, USOIL September 24–October 3, and full 354,698-row XAUUSD August 25–September 23, before/after in both directions. The reported S Red at October 21 06:17 becomes `StopAll1`, `stoppedBehaviorKey=E2 blue`, `stoppedBehaviorCount=2`, S decision `06:21:35`. Upstream Reaction/Reset/Blue/A arrays match before/after in every pair. Exact completed cases and output differences are in `REGRESSION_REPORT_V5.4.31.json`.
 
 ### `5.4.30` — independent first opposite Order_A after A stop (PATCH BRANCH)
 
@@ -47,7 +59,7 @@ The Source manifest and exact embedded Source are regenerated from the authorita
 | `pipeline/core_utils.py` | Core Utilities | `1.0.0` | 26 | 832 | `007e5329e14ab9695e555c630527badc84dd35a239dea1cf685141e4278265eb` |
 | `pipeline/direction_policy.py` | Direction Policy | `1.0.0` | 70 | 2282 | `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea` |
 | `pipeline/e_zone_detector.py` | E | `6.16.2 (impl 6.18.3)` | 1141 | 48755 | `50d9d64953fdaa571b3fca73e759b5fa587af95d0ff570b9a63321a6fbdb8ed8` |
-| `pipeline/lifecycle_engine.py` | Lifecycle / StopAll | `1.18.2 (impl 1.20.2)` | 1439 | 58761 | `e17f85cc6a14d40539f487b9c083a218da1ee3809d0f0c911fd9a8e71adc8558` |
+| `pipeline/lifecycle_engine.py` | Lifecycle / StopAll | `1.18.3 (impl 1.20.3)` | 1462 | 59748 | `63fdf2771d2aa7b924753cf13eabed8e0e00c13525f47275f02aa45f0554052d` |
 | `pipeline/order_audit_engine.py` | Order / OrderAudit | `1.6.0` | 2020 | 81608 | `0ec864fb257f341536471d5728bc6629dbbd129589ea3b047867d19448d704d5` |
 | `pipeline/reaction_engine.py` | Reaction / Reset | `9.8.1 (impl 9.9.1)` | 2439 | 105073 | `f62f7e3c6480750068c4550a8489806030aac16f021f349930bd5efb3ce54198` |
 | `pipeline/s_zone_detector.py` | S | `4.20.0 (impl 4.21.0)` | 1444 | 60888 | `ef71a2e4176caaabc25d1ef0c1f0f24efb54ed3110982cdb7cf52d2449cca2ee` |
@@ -324,7 +336,11 @@ At an incoming E, a completed owner stop strictly before the E source time creat
 
 ### 12.4 S Red donor and legacy gate name
 
-An accepted S Red whose final accepted `order_mode` is `B` may donate fresh `StopAll1` through the serialized `opposite-s-group-stop` gate only for a completed strict stop of a Blue behavior that was the armed current owner when it stopped. The gate event is the actual lower-timeframe stop, not the S Red decision. If the earlier stopped owner is E, its family and number remain exact in `stoppedBehaviorKey`. A Mode-A S Red cannot use this S-donor gate; the completed stop remains pending for an eligible later donor. The S Red donor's own validity and the stopped owner's eligibility are separate questions.
+**ACTIVE (5.4.31 direct accepted-S Red rule):** When the currently dominant exact S/E behavior is Blue, its count is `>= 2`, and its latest accepted occurrence was confirmed **strictly before** the decision event of an accepted `S Red`, the **first eligible S Red itself** immediately produces `StopAll1`. No strict Blue price stop is required. Either Order Mode A or Mode B is valid. Formation must be checked at the incoming S **decision event**, not merely its retrospective source candle. The new `gateEventTime` is exactly the S decision event, and `stoppedBehaviorKey` preserves `S blue` or the precise `E(n) blue` owner and its count. The S is the donor; the StopAll resets the current dominant owner and pending stop state. This direct accepted-S Red gate has precedence inside S handling over the older completed-stop-only path. A previously displaced lower-priority Blue cannot trigger it.
+
+**HISTORICAL LEGACY ROUTE (still executable as fallback):** When the direct gate is not eligible, an accepted S Red of Mode B may still consume an already-completed strict stop of an earlier armed Blue owner using the existing pending-stop rule. This fallback gate event is the earlier physical stop; Mode A does not consume that fallback. The two routes reuse the legacy serialized name `opposite-s-group-stop` but differ in gate chronology. Neither fallback nor other StopAll/E donor paths is removed.
+
+
 
 **HISTORICAL / SUPERSEDED (`5.4.22` and earlier):** accepted Blue occurrences were counted in a parallel ledger independent of dominant-owner transitions. That ledger could promote a lower-priority Blue group after a higher-priority Red owner had formed, or promote without a strict stop. It is not an active rule.
 
@@ -463,7 +479,7 @@ The index is descriptive only. It does not create algorithm behavior and does no
 
 #### `pipeline/lifecycle_engine.py`
 - **Module-level symbols/assignments:** `STOP_ALL_VERSION` (L24), `STOP_ALL_IMPLEMENTATION_VERSION` (L25), `STOP_ALL_LAST_MODIFIED` (L26), `SEQUENCE_PRIORITY` (L29)
-- **Top-level functions:** `sequence_priority` (L37), `detect_stopalls` (L478), `resolve_order_context` (L491), `visible_a_zones_after_s_stops` (L543), `module_priority` (L559), `module_identity` (L573), `module_stop_event` (L582), `strictly_beyond_boundary` (L596), `dominant_module` (L601), `split_a_zones_by_dominant_stops` (L613), `blocked_orders_while_invalid_leg_heads_are_live` (L816), `consumed_s_evidence_after_larger_stop` (L839), `s_zones_for_module_engines` (L981), `s_zones_for_stopall` (L1011), `visible_s_zones_after_module_resets` (L1030), `reconcile_stopall_lifecycle` (L1208), `visible_a_zones_after_module_boundaries` (L1241), `reaction_number_is_internal` (L1288), `point_is_inside_healthy_reaction` (L1302), `filter_internal_behavior_outputs` (L1325), `finalize_behavior_visibility` (L1338), `visible_a_zones` (L1433)
+- **Top-level functions:** `sequence_priority` (L37), `detect_stopalls` (L501), `resolve_order_context` (L514), `visible_a_zones_after_s_stops` (L566), `module_priority` (L582), `module_identity` (L596), `module_stop_event` (L605), `strictly_beyond_boundary` (L619), `dominant_module` (L624), `split_a_zones_by_dominant_stops` (L636), `blocked_orders_while_invalid_leg_heads_are_live` (L839), `consumed_s_evidence_after_larger_stop` (L862), `s_zones_for_module_engines` (L1004), `s_zones_for_stopall` (L1034), `visible_s_zones_after_module_resets` (L1053), `reconcile_stopall_lifecycle` (L1231), `visible_a_zones_after_module_boundaries` (L1264), `reaction_number_is_internal` (L1311), `point_is_inside_healthy_reaction` (L1325), `filter_internal_behavior_outputs` (L1348), `finalize_behavior_visibility` (L1361), `visible_a_zones` (L1456)
 - **Classes / schemas:**
   - **`StopAll`** (L43)
     - fields: `direction` (L44), `number` (L45), `source_index` (L46), `source_time` (L47), `price` (L48), `decision_index` (L49), `decision_time` (L50), `decision_event_time` (L51), `gate_type` (L52), `gate_event_time` (L53), `stopped_behavior_type` (L54), `stopped_behavior_key` (L55), `stopped_behavior_count` (L56), `underlying_e_family` (L57), `underlying_e_number` (L58), `order_direction` (L59), `order_reaction_number` (L60), `order_mode` (L61), `order_causes` (L62), `order_parent_stop_cause_time` (L63), `order_first_index` (L64), `order_first_time` (L65), `order_break_index` (L66), `order_break_time` (L67), `order_confirmation_time` (L68), `order_box_top` (L69), `order_box_top_source_index` (L70), `order_box_top_source_time` (L71), `order_box_bottom` (L72), `order_box_bottom_source_index` (L73), `order_box_bottom_source_time` (L74), `order_stop_level` (L75), `order_stop_source_index` (L76), `order_stop_source_time` (L77), `stop_index` (L78), `stop_time` (L79), `stop_event_time` (L80), `donor_type` (L85), `donor_source_index` (L86), `donor_source_time` (L87), `donor_color` (L88), `donor_number` (L89), `donor_price` (L90), `donor_stop_time` (L91), `donor_stop_event_time` (L92)
@@ -474,7 +490,7 @@ The index is descriptive only. It does not create algorithm behavior and does no
   - **`StopAllDetector`** (L121)
     - fields: _none_
     - methods/properties: `__init__` (L122), `_strict_stop` (L143), `_dominates_e` (L160), `_stopall_from_e` (L169), `_optional_int` (L228), `_optional_decimal` (L232), `_stopall_from_s` (L235), `detect` (L323)
-- **Nested implementation functions/closures:** `StopAllDetector.detect.armed_stop_before` (L335), `StopAllDetector.detect.accept` (L367), `StopAllDetector.detect.process_s_event` (L381), `visible_s_zones_after_module_resets.cached_stop_event` (L1059)
+- **Nested implementation functions/closures:** `StopAllDetector.detect.armed_stop_before` (L335), `StopAllDetector.detect.accept` (L367), `StopAllDetector.detect.process_s_event` (L381), `visible_s_zones_after_module_resets.cached_stop_event` (L1082)
 
 #### `pipeline/order_audit_engine.py`
 - **Module-level symbols/assignments:** `ORDER_AUDIT_ENGINE_VERSION` (L14), `ORDER_AUDIT_ENGINE_LAST_MODIFIED` (L15), `OrderMatch` (L414)
@@ -662,9 +678,19 @@ This table makes the stage chain reconstructable without relying on examples. Th
 3. The pre-existing unsupported `pipeline/__init__.py` wrapper import of missing `run_blue_line` remains outside this Order_B correction. The production Bridge path is the supported calculation entry.
 4. Unit, targeted and full RAW regression evidence for this revision is recorded in Section 14. Prior verification claims remain historical evidence for their own Source revisions.
 
-## 14. Verification scope (patch 5.4.30; baseline 5.4.26)
+## 14. Verification scope (patch 5.4.31; baseline supplied 5.4.30)
 
-### 14.0 Executed patch-regression status — INCOMPLETE cumulative release gate
+### 14.0 Executed V5.4.31 patch verification
+
+- **PASS:** 10 test cases: 8 focused prior-approved direct S-Red StopAll scenarios (both directions) and 2 complete Reference integrity/mirror checks.
+- **PASS:** full supported pipeline/serializer, six RAW-derived input scenarios × two directions × before/after = **24 completed runs**, with stable Reaction, Reset, Blue, A output unchanged in all **12** before/after pairs.
+- **PASS:** from original FXCM_USOIL 5s October 16–21, calculation restricted by input to October 20 18:00 onward: two `E2 Blue` occurrences (`21:34`, `23:54`) then accepted `S Red` (`06:17`) convert to `StopAll1` with accepted decision event `06:21:35`. `StopAll1` donor is an accepted S Red, owner key `E2 blue`, owner count `2`, gate event = S decision event.
+- **PASS:** full-range USOIL October and both directions, XAUUSD October 8–9, XAUUSD September 28–October 6, USOIL September 24–October 3 and largest 354,698-row XAUUSD August 25–September 23, with permitted downstream S/E/StopAll/OrderAudit changes attributable to the approved direct gate.
+- **PASS:** 5.4.30 production Bridge, OrderAudit and all other unaffected Source bytes remain unchanged; no serializer schema changes. Both References embed identical complete production Source.
+- **NOT RUN:** independent external UI selected-range caller integration and the complete exhaustive historical user-anchor matrix. The current 5.4.30 Bridge does not expose the `5.4.28` selected-range CLI option; the selected calculation starts at the supplied input boundary.
+- **Scope limitation:** the 5.4.29 synchronized-group-E-Parent patch remains outside this targeted merge; this is not a cumulative 5.4.29 rebase.
+
+### 14.0a Previous `5.4.30` verification — HISTORICAL
 
 - **PASS:** compile/import all supported Source, main-chart 30s and complete RAW history, XAUUSD Sep 22–29 both directions.
 - **PASS:** targeted 3-case regression including immutable A-stop chronology, independent First, nested Advanced S Blue, public OrderAudit cause/identity.
@@ -695,6 +721,17 @@ This table makes the stage chain reconstructable without relying on examples. Th
 Reference `5.4.25` and its recorded verification remain historical evidence for the immediately preceding Source. Its exact lower-TF Order_B First-time gate is superseded by the user-approved calculation-timeframe break-candle rule in `5.4.26`.
 
 ## 15. Current revision record
+
+### `5.4.31` direct accepted S Red after armed Blue exact owner — PATCH BRANCH / BEHAVIORAL RESTORATION
+
+- **Modified:** `2026-10-21 18:35:00 +03:30`.
+- **Source baseline:** exact supplied `engine.zip` V5.4.30, not an inferred cumulative merge.
+- **Changed production file:** `pipeline/lifecycle_engine.py` `1.18.2 (impl 1.20.2)` → `1.18.3 (impl 1.20.3)` on this branch only.
+- **Behavior:** accepted S Red (either mode) after `>=2` exactly identical dominant Blue S/E occurrences creates StopAll1 at the S decision event; no Blue Strict Stop prerequisite. Historical Mode-B stopped-owner gate remains as fallback.
+- **Preserved:** native V5.4.30 A-stop independent Order_A and unchanged Bridge/other detector Source; all existing public schema fields.
+- **Not merged:** 5.4.28 selected-range CLI and 5.4.29 synchronized-parent E StopAll change.
+- **Mirror:** direction-invariant Lifecycle code; both directions tested.
+- **Verification:** 10 tests and six RAW-derived scenarios in both directions for before/after (24 runs), upstream serialized equality, no deletion of any pre-existing StopAll source, complete Source/Reference byte check; external exhaustive UI integration NOT RUN.
 
 ### `5.4.30` stopped-A independent physical Order_A — PATCH BRANCH / BEHAVIORAL RULE
 
@@ -6354,9 +6391,9 @@ def detect_e_zones(
 
 ### 16.8 `pipeline/lifecycle_engine.py` — Lifecycle / StopAll
 
-**SHA-256:** `e17f85cc6a14d40539f487b9c083a218da1ee3809d0f0c911fd9a8e71adc8558`  
-**Bytes:** `58761`  
-**LF count:** `1439`
+**SHA-256:** `63fdf2771d2aa7b924753cf13eabed8e0e00c13525f47275f02aa45f0554052d`  
+**Bytes:** `59748`  
+**LF count:** `1462`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/lifecycle_engine.py -->
 ````python
@@ -6383,9 +6420,9 @@ from order_audit_engine import (
 from direction_policy import policy_for
 
 
-STOP_ALL_VERSION = "1.18.2"
-STOP_ALL_IMPLEMENTATION_VERSION = "1.20.2"
-STOP_ALL_LAST_MODIFIED = "2026-10-04 21:25:23 +03:30"
+STOP_ALL_VERSION = "1.18.3"
+STOP_ALL_IMPLEMENTATION_VERSION = "1.20.3"
+STOP_ALL_LAST_MODIFIED = "2026-10-21 18:35:00 +03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -6603,7 +6640,7 @@ class StopAllDetector:
         underlying_e_key: tuple[str, int] | None,
         gate_event: datetime,
     ) -> StopAll:
-        """Materialize a stopped, armed Blue owner from an accepted S Red donor."""
+        """Materialize StopAll from an accepted S Red and eligible Blue owner."""
         return StopAll(
             direction=self.direction,
             number=1,
@@ -6743,6 +6780,29 @@ class StopAllDetector:
         def process_s_event(s_item: object) -> None:
             nonlocal owner, pending_stop, active
             color = str(s_item.color).lower()
+            # An armed exact Blue owner reverses directly on the first
+            # accepted S Red. Neither a prior price stop nor Order Mode B
+            # is required; S decision chronology, not retrospective source,
+            # determines whether the second Blue had already confirmed.
+            if (
+                color == "red"
+                and owner is not None
+                and owner.family == "blue"
+                and owner.armed
+                and owner.latest.decision_event_time < s_item.decision_event_time
+            ):
+                zone = self._stopall_from_s(
+                    s_item, owner.kind, owner.key, owner.count,
+                    (owner.family, int(owner.number))
+                    if owner.kind == "E" else None,
+                    s_item.decision_event_time,
+                )
+                output.append(zone)
+                active = [zone]
+                owner = None
+                pending_stop = None
+                return
+
             gate_event = armed_stop_before(s_item.source_time)
             completed = pending_stop or (
                 (owner, gate_event) if owner is not None and gate_event is not None

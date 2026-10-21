@@ -23,8 +23,8 @@ from order_audit_engine import (
 
 
 E_ZONE_VERSION = "6.16.2"
-E_ZONE_IMPLEMENTATION_VERSION = "6.18.3"
-E_ZONE_LAST_MODIFIED = "2026-10-07 00:56:52 +03:30"
+E_ZONE_IMPLEMENTATION_VERSION = "6.18.4"
+E_ZONE_LAST_MODIFIED = "2026-10-21 19:42:00 +03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -81,6 +81,7 @@ class EZoneDetector(OrderAuditEngineMixin):
             [str, int, int, datetime], object | None
         ] | None = None,
         blocked_order_first_times: set[datetime] | None = None,
+        e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]] = frozenset(),
         initial_order_audit: dict[tuple[int, int], dict[str, object]] | None = None,
         sequence_resets: dict[datetime, int] | None = None,
         sequence_priority: Callable[[str, str], int] | None = None,
@@ -126,6 +127,7 @@ class EZoneDetector(OrderAuditEngineMixin):
         self._extreme_sparse = self._build_extreme_sparse()
         self.direct_geometry_finder = direct_geometry_finder
         self.blocked_order_first_times = blocked_order_first_times or set()
+        self.e_parent_order_first_exceptions = e_parent_order_first_exceptions
         self.initial_order_audit = initial_order_audit or {}
         self.order_b_legs = tuple(order_b_legs)
         self._cross_order_cache: dict[
@@ -403,6 +405,7 @@ class EZoneDetector(OrderAuditEngineMixin):
             continuous_deadline,
             allow_bounded_continue=(parent_type == "S"),
             allow_trend_leg_continue=(parent_type == "E"),
+            e_parent=(parent_type == "E"),
         )
         # E consumption owns one global adjudication across every eligible
         # physical Order route. Route-local reductions must not discard a

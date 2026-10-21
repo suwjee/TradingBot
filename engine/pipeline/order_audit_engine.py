@@ -11,8 +11,8 @@ from typing import Callable, Sequence
 
 from core_utils import as_decimal, order_identity, reaction_identity
 
-ORDER_AUDIT_ENGINE_VERSION = "1.6.0"
-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-10-18 12:31:00 +03:30"
+ORDER_AUDIT_ENGINE_VERSION = "1.6.1"
+ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-10-21 19:42:00 +03:30"
 
 @dataclass(frozen=True, slots=True)
 class PostBehaviorStop:
@@ -613,14 +613,15 @@ class OrderAuditEngineMixin:
         start: datetime,
         continuous_deadline: datetime | None,
         allow_bounded_continue: bool,
+        e_parent: bool = False,
     ) -> tuple[int, object, datetime] | None:
         """Select the direct parent-stop Order_A."""
-        cache_key = (start, continuous_deadline, allow_bounded_continue)
+        cache_key = (start, continuous_deadline, allow_bounded_continue, e_parent)
         cached = self._direct_parent_stop_cache.get(cache_key)
         if cached is not None or cache_key in self._direct_parent_stop_cache:
             return cached
         result = self._compute_direct_parent_stop_order(
-            start, continuous_deadline, allow_bounded_continue
+            start, continuous_deadline, allow_bounded_continue, e_parent
         )
         self._direct_parent_stop_cache[cache_key] = result
         return result
@@ -630,6 +631,7 @@ class OrderAuditEngineMixin:
         start: datetime,
         continuous_deadline: datetime | None,
         allow_bounded_continue: bool,
+        e_parent: bool = False,
     ) -> tuple[int, object, datetime] | None:
         gate_time = self.times[self._main_index(start)]
         geometric_direct = self._first_healthy_direct_geometry(
@@ -642,6 +644,16 @@ class OrderAuditEngineMixin:
             in self.blocked_order_first_times
             and self._opposite_first_times[direct_position] == gate_time
         ):
+            # The invalid-A First veto remains in force except for a native
+            # Order_A consumed by this accepted E stop. Exact A/E simultaneous
+            # stop and strict post-stop confirmation are required; inherited
+            # unrelated blocks cannot be bypassed by a later E stop.
+            if (
+                e_parent
+                and (start, gate_time) in self.e_parent_order_first_exceptions
+                and self._opposite_confirmations[direct_position] > start
+            ):
+                break
             direct_position += 1
 
         independent = None
@@ -765,6 +777,7 @@ class OrderAuditEngineMixin:
         continuous_deadline: datetime | None = None,
         allow_bounded_continue: bool = False,
         allow_trend_leg_continue: bool = False,
+        e_parent: bool = False,
     ) -> list[OrderMatch]:
         """Return physical Order candidates formed before this E decision."""
         cache_key = (
@@ -772,6 +785,7 @@ class OrderAuditEngineMixin:
             continuous_deadline,
             allow_bounded_continue,
             allow_trend_leg_continue,
+            e_parent,
         )
         cached = self._order_candidates_cache.get(cache_key)
         if cached is not None:
@@ -779,7 +793,7 @@ class OrderAuditEngineMixin:
 
         by_geometry: dict[tuple[int, int], OrderMatch] = {}
         direct = self._direct_parent_stop_order(
-            start, continuous_deadline, allow_bounded_continue
+            start, continuous_deadline, allow_bounded_continue, e_parent
         )
         if direct is not None:
             self._merge_order_candidate(
@@ -984,9 +998,11 @@ class OrderAuditEngineMixin:
             None,
             allow_bounded_continue=(parent_type == "S"),
             allow_trend_leg_continue=(parent_type == "E"),
+            e_parent=(parent_type == "E"),
         )
         direct = self._direct_parent_stop_order(
-            parent_stop, None, allow_bounded_continue=(parent_type == "S")
+            parent_stop, None, allow_bounded_continue=(parent_type == "S"),
+            e_parent=(parent_type == "E"),
         )
         if direct is not None:
             direct_identity = reaction_identity(direct[1])
