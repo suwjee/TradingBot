@@ -11,8 +11,8 @@ from typing import Callable, Sequence
 
 from core_utils import as_decimal, order_identity, reaction_identity
 
-ORDER_AUDIT_ENGINE_VERSION = "1.5.5"
-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-10-07 02:04:22 +03:30"
+ORDER_AUDIT_ENGINE_VERSION = "1.6.0"
+ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-10-18 12:31:00 +03:30"
 
 @dataclass(frozen=True, slots=True)
 class PostBehaviorStop:
@@ -1851,14 +1851,57 @@ class SOrderAuditMixin:
     def _first_order_after(
         self, a_stop_event_time: datetime
     ) -> tuple[int, object, datetime] | None:
-        """Return the immutable first canonical opposite Order after A-stop.
+        """Resolve the first physical Order_A independently after each A stop.
 
-        Each stopped A creates at most one parent-stop Order_A.  Subsequent
-        native Mode-B Reactions cannot refresh that physical identity; they
-        may be accepted only through independently valid creation causes.
+        Opposite Order geometry must not inherit the normal same-direction
+        Reaction stream's previous-First ownership.  A valid post-stop First
+        can be nested inside an earlier, still-open opposite Reaction.  Keep
+        the canonical identity/number when the geometry is already present;
+        otherwise use reaction number zero (no invented public Reaction).
+        The same immutable chosen physical identity is shared by S and E audit.
         """
-        matches = self._order_matches_after(a_stop_event_time)
-        return matches[0] if matches else None
+        canonical = self._order_matches_after(a_stop_event_time)
+        native = canonical[0] if canonical else None
+        if self.initial_order_geometry is None:
+            return native
+
+        gate_index = self._main_index(a_stop_event_time)
+        physical = self.initial_order_geometry(
+            gate_index, a_stop_event_time, self.end_index
+        )
+        if physical is None or getattr(physical, "break_idx", None) is None:
+            return native
+        first_index = int(getattr(physical, "first_idx"))
+        if first_index < gate_index:
+            return native
+        confirmation = self._reaction_confirmation_time(
+            physical, self.order_direction
+        )
+        if confirmation <= a_stop_event_time:
+            return native
+
+        identity = reaction_identity(physical)
+        mapped = self._opposite_by_first_index.get(first_index)
+        if mapped is not None and reaction_identity(mapped[1]) == identity:
+            number, physical = mapped
+            confirmation = self._reaction_confirmation_time(
+                physical, self.order_direction
+            )
+        else:
+            # Order-only physical geometry is not a new canonical Reaction.
+            number = 0
+        independent = (number, physical, confirmation)
+        if native is None:
+            return independent
+        # A stopped parent owns its first post-stop First, not whichever
+        # unrelated continuous-stream Reaction happens to be published.
+        if (
+            first_index, confirmation
+        ) < (
+            int(getattr(native[1], "first_idx")), native[2]
+        ):
+            return independent
+        return native
 
 
     def _order_matches_after(
