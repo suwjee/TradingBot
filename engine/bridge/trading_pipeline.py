@@ -40,9 +40,9 @@ from order_audit_engine import accepted_audit_entries, order_b_leg_identity
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.10.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.11.0"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-10-18 12:31:00 +03:30"
+TRADING_PIPELINE_VERSION = "1.10.1"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.11.1"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-10-21 19:42:00 +03:30"
 
 TEHRAN = ZoneInfo("Asia/Tehran")
 
@@ -1827,6 +1827,7 @@ def create_e_detector(
     lifecycle_engine,
     *,
     blocked_order_first_times: set[datetime] | None = None,
+    e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]] = frozenset(),
     invalid_s_root_identities: set[tuple[datetime, int]] | None = None,
     order_b_legs: Sequence[object] = (),
 ):
@@ -1855,6 +1856,7 @@ def create_e_detector(
         end_index,
         direct_geometry,
         blocked_order_first_times=blocked_order_first_times,
+        e_parent_order_first_exceptions=e_parent_order_first_exceptions,
         initial_order_audit=initial_order_audit,
         sequence_priority=lifecycle_engine.sequence_priority,
         invalid_s_root_identities=invalid_s_root_identities,
@@ -2049,6 +2051,7 @@ def calculate_full_direction_state(
         not in invalid_a_identities
     }
     pending_s_a_sources = {getattr(item, "a_source_time") for item in s_candidates}
+    e_parent_exceptions: set[tuple[datetime, datetime]] = set()
     accepted_orders, blocked_order_first_times = lifecycle_engine.resolve_order_context(
         s_detector.order_audit,
         accepted_a_sources,
@@ -2062,6 +2065,15 @@ def calculate_full_direction_state(
             Decimal(str(getattr(item, "price"))),
             getattr(item, "source_time"),
         ),
+        accepted_e_stop_events={
+            stopped[1]
+            for e_zone in e_zones
+            if (stopped := e_detector.parent_stop("E", e_zone)) is not None
+        },
+        opposite_confirmation_finder=lambda reaction: chronology.reaction_confirmation(
+            opposite, reaction
+        ),
+        e_parent_order_first_exceptions_out=e_parent_exceptions,
     )
     e_detector = create_e_detector(
         direction,
@@ -2073,6 +2085,7 @@ def calculate_full_direction_state(
         accepted_orders,
         lifecycle_engine,
         blocked_order_first_times=blocked_order_first_times,
+        e_parent_order_first_exceptions=e_parent_exceptions,
         invalid_s_root_identities=invalid_s_identities,
         order_b_legs=order_b_legs,
     )
@@ -2115,6 +2128,7 @@ def calculate_full_direction_state(
             accepted_orders,
             lifecycle_engine,
             blocked_order_first_times=blocked_order_first_times,
+            e_parent_order_first_exceptions=e_parent_exceptions,
             invalid_s_root_identities=invalid_s_identities,
             order_b_legs=order_b_legs,
         )

@@ -21,9 +21,9 @@ from order_audit_engine import (
 from direction_policy import policy_for
 
 
-STOP_ALL_VERSION = "1.18.2"
-STOP_ALL_IMPLEMENTATION_VERSION = "1.20.2"
-STOP_ALL_LAST_MODIFIED = "2026-10-04 21:25:23 +03:30"
+STOP_ALL_VERSION = "1.18.4"
+STOP_ALL_IMPLEMENTATION_VERSION = "1.20.4"
+STOP_ALL_LAST_MODIFIED = "2026-10-21 19:42:00 +03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -241,7 +241,7 @@ class StopAllDetector:
         underlying_e_key: tuple[str, int] | None,
         gate_event: datetime,
     ) -> StopAll:
-        """Materialize a stopped, armed Blue owner from an accepted S Red donor."""
+        """Materialize StopAll from an accepted S Red and eligible Blue owner."""
         return StopAll(
             direction=self.direction,
             number=1,
@@ -381,6 +381,29 @@ class StopAllDetector:
         def process_s_event(s_item: object) -> None:
             nonlocal owner, pending_stop, active
             color = str(s_item.color).lower()
+            # An armed exact Blue owner reverses directly on the first
+            # accepted S Red. Neither a prior price stop nor Order Mode B
+            # is required; S decision chronology, not retrospective source,
+            # determines whether the second Blue had already confirmed.
+            if (
+                color == "red"
+                and owner is not None
+                and owner.family == "blue"
+                and owner.armed
+                and owner.latest.decision_event_time < s_item.decision_event_time
+            ):
+                zone = self._stopall_from_s(
+                    s_item, owner.kind, owner.key, owner.count,
+                    (owner.family, int(owner.number))
+                    if owner.kind == "E" else None,
+                    s_item.decision_event_time,
+                )
+                output.append(zone)
+                active = [zone]
+                owner = None
+                pending_stop = None
+                return
+
             gate_event = armed_stop_before(s_item.source_time)
             completed = pending_stop or (
                 (owner, gate_event) if owner is not None and gate_event is not None
@@ -498,6 +521,10 @@ def resolve_order_context(
     candles: Sequence[object],
     direction: str,
     stop_finder,
+    *,
+    accepted_e_stop_events: set[datetime] | None = None,
+    opposite_confirmation_finder=None,
+    e_parent_order_first_exceptions_out: set[tuple[datetime, datetime]] | None = None,
 ) -> tuple[dict, set[datetime]]:
     """Resolve accepted stopped-A Orders against provisional Order blocks.
 
@@ -537,6 +564,39 @@ def resolve_order_context(
         for value in accepted_initial_first_times
     }
     blocked_order_first_times.difference_update(accepted_initial_first_times)
+
+    # This is NOT a global unblock.  Preserve the invalid-A and inherited-S
+    # First vetoes for every A/S order route.  Only the accepted E parent whose
+    # exact strict stop also ends that invalid A may use a canonical opposite
+    # Reaction started in the stop-owning main candle and confirmed afterward.
+    # The exception is keyed by both exact E stop event and physical First.
+    exceptions: set[tuple[datetime, datetime]] = set()
+    if accepted_e_stop_events and opposite_confirmation_finder is not None:
+        candle_times = [getattr(item, "timestamp") for item in candles]
+        reactions_by_first_index: dict[int, list[object]] = {}
+        for reaction in opposite_reactions:
+            reactions_by_first_index.setdefault(
+                int(getattr(reaction, "first_idx")), []
+            ).append(reaction)
+        for invalid_a in invalid_a_zones:
+            if getattr(invalid_a, "source_time") not in pending_s_a_sources:
+                continue
+            stop = stop_finder(invalid_a)
+            if stop is None or stop[2] not in accepted_e_stop_events:
+                continue
+            exact_stop = stop[2]
+            stop_candle = bisect_right(candle_times, exact_stop) - 1
+            if stop_candle < 0:
+                continue
+            for reaction in reactions_by_first_index.get(stop_candle, ()):
+                first_time = candle_times[stop_candle]
+                if (first_time in blocked_order_first_times
+                        and first_time not in inherited_blocked_first_times
+                        and getattr(invalid_a, "source_time") <= first_time < exact_stop
+                        and opposite_confirmation_finder(reaction) > exact_stop):
+                    exceptions.add((exact_stop, first_time))
+    if e_parent_order_first_exceptions_out is not None:
+        e_parent_order_first_exceptions_out.update(exceptions)
     return accepted_orders, blocked_order_first_times
 
 
