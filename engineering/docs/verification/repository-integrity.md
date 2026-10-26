@@ -9,7 +9,7 @@ scope:
   - generated-content
   - archive
   - verification
-last_modified_at: 2026-10-04T05:09:22+03:30
+last_modified_at: 2026-10-26T20:53:36+03:30
 ---
 
 # TradingBot Repository Integrity
@@ -257,6 +257,8 @@ Integrity review must check:
 - cross-platform path assumptions.
 
 Do not rely on Windows case-insensitivity as proof that a path is repository-correct elsewhere.
+
+The architecture roadmap distinguishes physical repository anchors from runtime-created storage paths. Physical Source and maintained-document anchors must exist with exact casing. The machine-local state root and canonical `data/raw` path require roadmap declarations linked to their Local State owner, while their directories may be absent from a clean checkout. Anti-Drift verifies those declarations without creating runtime state or requiring acquired data to be tracked.
 
 Case-only renames require deliberate Git verification so the intended tree is represented remotely.
 

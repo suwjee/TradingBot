@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # created_at: 2026-09-30T16:20:59+03:30
-# last_modified_at: 2026-09-30T20:16:20+03:30
+# last_modified_at: 2026-10-26T20:53:36+03:30
 """Read-only structural/documentation anti-drift verifier for TradingBot."""
 
 from __future__ import annotations
@@ -45,8 +45,6 @@ ROADMAP_REQUIRED_ANCHORS = (
     "apps/chart/server",
     "apps/chart/server/faraz-candle-api.js",
     "apps/chart/src",
-    "apps/chart/state",
-    "apps/chart/state/data/RAW",
     "apps/chart/tests",
     "apps/chart/vite.config.js",
     "engine",
@@ -62,6 +60,12 @@ ROADMAP_REQUIRED_ANCHORS = (
     "scripts/launch.bat",
     "scripts/start.ps1",
     "scripts/verification",
+)
+# Startup creates these machine-local storage paths. Their roadmap declarations
+# remain required, but their directories need not exist in a clean checkout.
+ROADMAP_RUNTIME_ANCHORS = (
+    "apps/chart/state",
+    "apps/chart/state/data/raw",
 )
 
 
@@ -685,6 +689,18 @@ def roadmap_checks(root: Path, resolver: CaseResolver) -> list[Diagnostic]:
                 "ROADMAP002", "ERROR", TECHNICAL_ARCHITECTURE.as_posix(), section_line,
                 f"Current Project Path Roadmap does not link required major-domain anchor: {anchor}",
                 "Add the live path to the roadmap with its owner/subsystem and purpose; do not replace navigation with a fixed file-count snapshot."
+            ))
+    runtime_paths: set[str] = set()
+    for line in section.splitlines():
+        match = re.match(r"\s*\|\s*`([^`]+)`", line)
+        if match:
+            runtime_paths.add(match.group(1).rstrip("/"))
+    for anchor in ROADMAP_RUNTIME_ANCHORS:
+        if anchor not in runtime_paths:
+            diagnostics.append(Diagnostic(
+                "ROADMAP006", "ERROR", TECHNICAL_ARCHITECTURE.as_posix(), section_line,
+                f"Runtime-created roadmap path is not documented: {anchor}",
+                "Declare the canonical runtime path in the roadmap table and link its Local State owner; startup creates the directory."
             ))
     return diagnostics
 

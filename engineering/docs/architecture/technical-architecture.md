@@ -10,7 +10,7 @@ scope:
   - engine
   - runtime-boundaries
   - state-and-transport
-last_modified_at: 2026-10-24T13:23:45+03:30
+last_modified_at: 2026-10-26T20:53:36+03:30
 ---
 
 # TradingBot Technical Architecture
@@ -478,8 +478,8 @@ This roadmap is a Current navigation map of major project ownership boundaries. 
 | [`apps/chart/scripts/`](../../../apps/chart/scripts/) | Chart development startup | Chart-owned development-server entry/support tooling | Invoked by package/startup tooling; not a production trading owner. |
 | [`apps/chart/package.json`](../../../apps/chart/package.json) and [`package-lock.json`](../../../apps/chart/package-lock.json) | Chart manifests | Current Node scripts and dependency contract | Discover current versions/scripts here instead of freezing them in conceptual docs. |
 | [`apps/chart/tests/`](../../../apps/chart/tests/) | Chart tests | Current Chart/server/unit/contract verification | Test evidence verifies behavior; it is not trading-semantic authority. |
-| [`apps/chart/state/`](../../../apps/chart/state/) | Project-local runtime state | Dedicated machine-local state root for RAW, cache, secret and temporary state | Placement/lifecycle rules are owned by Local State; current contents are not production Source. |
-| [`apps/chart/state/data/RAW/`](../../../apps/chart/state/data/RAW/) | RAW evidence/data | Authoritative market-data resources and sidecars used as calculation input | RAW is evidence, not disposable cache; never modify it to make a test pass. |
+| `apps/chart/state/` ([Local State](../operations/local-state.md)) | Project-local runtime state | Dedicated machine-local state root for RAW, cache, secret and temporary state | Created by startup; a clean Git checkout may omit this directory. Current contents are not production Source. |
+| `apps/chart/state/data/raw/` ([Local State](../operations/local-state.md)) | RAW evidence/data | Canonical runtime location for authoritative market-data resources and sidecars used as calculation input | Created by startup; RAW remains immutable evidence and must never be modified to make a test pass. |
 | [`engine/`](../../../engine/) | Engine | Authoritative trading calculation domain | Discover production closure recursively from current runtime/import evidence. |
 | [`engine/bridge/`](../../../engine/bridge/) | Engine bridge | Input normalization, calculation orchestration, progress and public serialization boundary | Serialization projects finalized state; it must not become a second algorithm. |
 | [`engine/pipeline/`](../../../engine/pipeline/) | Engine production pipeline | Current stage owners and shared behavior-neutral calculation primitives | Internal module inventory is mutable; ownership and dependency closure must be discovered live. |
@@ -494,6 +494,8 @@ This roadmap is a Current navigation map of major project ownership boundaries. 
 | [`scripts/verification/`](../../../scripts/verification/) | Structural verification | Anti-Drift verifier and deterministic tests | Implements selected objective governance checks; manual semantic review still has separate ownership. |
 
 The roadmap deliberately separates production Source from tests, maintained guidance from Historical evidence, runtime state from tracked Source, RAW from cache, engineering `main` from dependency-derived release `production`, Algorithm References from generic documentation, and verification evidence from semantic authority.
+
+Runtime-created paths are logical storage locations linked to their Local State owner. They remain part of the roadmap even when absent from a clean checkout; the supported startup creates them. Source and maintained-document paths must exist in the checkout and retain exact repository casing.
 
 ## 23. Related maintained documents
 

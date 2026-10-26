@@ -1,5 +1,5 @@
 # created_at: 2026-09-30T16:20:59+03:30
-# last_modified_at: 2026-09-30T20:16:20+03:30
+# last_modified_at: 2026-10-26T20:57:03+03:30
 """Tests for the TradingBot read-only anti-drift verifier."""
 
 from __future__ import annotations
@@ -60,6 +60,10 @@ class RepoFixture:
             frontmatter("Repository Integrity", role="procedure", owner="repository-integrity") + "# Repository Integrity\n",
         )
         self.write(
+            "engineering/docs/operations/local-state.md",
+            frontmatter("Local State", owner="local-state") + "# Local State\n",
+        )
+        self.write(
             "engineering/docs/README.md",
             frontmatter("Docs", owner="documentation")
             + "# Engineering documentation\n\n"
@@ -91,6 +95,9 @@ class RepoFixture:
                 continue
             target = posixpath.relpath(anchor, start=source_parent)
             rows.append(f"| [`{anchor}`]({target}) | fixture-owner | fixture purpose |")
+        for anchor in ("apps/chart/state", "apps/chart/state/data/raw"):
+            if anchor not in omit:
+                rows.append(f"| `{anchor}/` ([Local State](../operations/local-state.md)) | runtime-owner | Created at startup |")
         return (
             frontmatter("Technical Architecture", owner="architecture")
             + "# Technical Architecture\n\n"
@@ -160,6 +167,28 @@ class AntiDriftTests(unittest.TestCase):
         self.addCleanup(temp.cleanup)
         (repo.root / "apps/chart/vite.config.js").unlink()
         self.assertIn("ROADMAP003", diagnostic_codes(anti_drift.verify_repository(repo.root)))
+
+    def test_clean_checkout_without_runtime_state_passes_without_creating_it(self) -> None:
+        temp, repo = self.make_repo()
+        self.addCleanup(temp.cleanup)
+        for relative in ("apps/chart/state/data/RAW", "apps/chart/state/data", "apps/chart/state"):
+            path = repo.root / relative
+            if path.exists():
+                path.rmdir()
+        before = tree_hashes(repo.root)
+        report = anti_drift.verify_repository(repo.root)
+        self.assertEqual([], report.by_severity("ERROR"))
+        self.assertFalse((repo.root / "apps/chart/state").exists())
+        self.assertEqual(before, tree_hashes(repo.root))
+
+    def test_runtime_state_paths_still_require_roadmap_documentation(self) -> None:
+        temp, repo = self.make_repo()
+        self.addCleanup(temp.cleanup)
+        repo.write(
+            anti_drift.TECHNICAL_ARCHITECTURE.as_posix(),
+            repo.roadmap_document(omit={"apps/chart/state/data/raw"}),
+        )
+        self.assertIn("ROADMAP006", diagnostic_codes(anti_drift.verify_repository(repo.root)))
 
     def test_historical_roadmap_does_not_replace_current_roadmap(self) -> None:
         temp, repo = self.make_repo()

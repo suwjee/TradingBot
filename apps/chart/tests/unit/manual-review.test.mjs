@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import vm from "node:vm";
 
 import {
   buildReviewBody,
@@ -7,6 +8,7 @@ import {
   reportCategoryColor,
   reportDisplayLabel,
   reviewRecords,
+  reviewRuntime,
   reviewColor,
   visibleReviewTimeGroupIds,
 } from "../../src/features/manual-review/render.js";
@@ -108,6 +110,29 @@ test("live report offers all visible events in addition to reviewed statuses", a
   const { body } = await buildReviewBody({ directions: { bearish: { eZones: [{ sourceTime: 100, number: 3, family: "red" }] } } });
   assert.match(body, /<option value="visible">All visible<\/option>/);
   for (const value of ["all", "true", "false"]) assert.match(body, new RegExp(`<option value="${value}">`));
+});
+
+test("serialized live report exports numbered labels as tab-separated fields", () => {
+  for (const [label, expected] of [
+    ["bearish | PH-1", "PH-1"], ["bullish | PL-2", "PL-2"],
+    ["bearish | StopAll-9", "StopAll-9"], ["E-3", "E-3"],
+    ["bearish | E-3 | detail", "E-3 | detail"],
+  ]) {
+    const output = { value: "" };
+    const event = {
+      dataset: { id: "point", time: "2026-01-01 10:00:00", label, filter: "primary" },
+      querySelector: selector => selector === ".copy-line" ? {} : null,
+      querySelectorAll: () => [],
+    };
+    const document = {
+      body: { dataset: {} }, addEventListener() {},
+      querySelector: selector => ({ "#report-text": output, "#mode": { value: "visible" } })[selector] || null,
+      querySelectorAll: selector => ({ ".event": [event], ".category-filter": [{ checked: true, value: "primary" }] })[selector] || [],
+    };
+    const localStorage = { getItem: () => null, setItem() {}, removeItem() {} };
+    vm.runInNewContext(`(${reviewRuntime.toString()})()`, { document, localStorage });
+    assert.equal(output.value.split("\n").at(-1), `2026-01-01 10:00:00\t${expected}\tUNSELECTED`);
+  }
 });
 
 test("primary report chips and filters use chart colors and omit primaryCycles", async () => {
