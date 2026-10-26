@@ -803,7 +803,7 @@ export function reviewRuntime(initialBridgeData = null) {
       ...metadata.map(([label, value]) => `${label}: ${value}`),
       `${accepted === "visible" ? "Visible" : "Reviewed"} events in current view: ${reviewed.length}`,
       "",
-      ...reviewed.map((event) => `${event.dataset.time}\t${event.dataset.label.replace(/^\\w+\\s*\\|\\s*/, "")}\t${(statusOf(event) || "Unselected").toUpperCase()}`),
+      ...reviewed.map((event) => `${event.dataset.time}\t${event.dataset.label.replace(/^\w+\s*\|\s*/, "")}\t${(statusOf(event) || "Unselected").toUpperCase()}`),
     ];
     const output = q("#report-text");
     if (output) output.value = lines.join("\n");
