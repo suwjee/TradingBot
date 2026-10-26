@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from bisect import bisect_left, bisect_right
+from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
@@ -11,8 +12,23 @@ from typing import Callable, Sequence
 
 from core_utils import as_decimal, order_identity, reaction_identity
 
-ORDER_AUDIT_ENGINE_VERSION = "1.6.1"
-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-10-21 19:42:00 +03:30"
+ORDER_AUDIT_ENGINE_VERSION = "1.7.1"
+ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-10-24T23:30:27+03:30"
+
+
+def relabel_primary_causes(causes, labels):
+    """Resolve PH aliases by physical source without changing Order provenance."""
+    result = []
+    for cause in causes:
+        row = deepcopy(cause)
+        for name, source in (("parentType", "parentSourceTime"),
+                             ("postBehaviorType", "postBehaviorSourceTime"),
+                             ("anchorBehaviorType", "anchorBehaviorSourceTime")):
+            if str(row.get(name, "")).startswith("PH") and row.get(source) in labels:
+                row[name] = labels[row[source]]
+        if row not in result:
+            result.append(row)
+    return result
 
 @dataclass(frozen=True, slots=True)
 class PostBehaviorStop:
@@ -614,14 +630,16 @@ class OrderAuditEngineMixin:
         continuous_deadline: datetime | None,
         allow_bounded_continue: bool,
         e_parent: bool = False,
+        *, confirmation_after: datetime | None = None,
     ) -> tuple[int, object, datetime] | None:
         """Select the direct parent-stop Order_A."""
-        cache_key = (start, continuous_deadline, allow_bounded_continue, e_parent)
+        cache_key = (start, continuous_deadline, allow_bounded_continue, e_parent, confirmation_after)
         cached = self._direct_parent_stop_cache.get(cache_key)
         if cached is not None or cache_key in self._direct_parent_stop_cache:
             return cached
         result = self._compute_direct_parent_stop_order(
-            start, continuous_deadline, allow_bounded_continue, e_parent
+            start, continuous_deadline, allow_bounded_continue, e_parent,
+            confirmation_after=confirmation_after,
         )
         self._direct_parent_stop_cache[cache_key] = result
         return result
@@ -632,12 +650,20 @@ class OrderAuditEngineMixin:
         continuous_deadline: datetime | None,
         allow_bounded_continue: bool,
         e_parent: bool = False,
+        *, confirmation_after: datetime | None = None,
     ) -> tuple[int, object, datetime] | None:
         gate_time = self.times[self._main_index(start)]
         geometric_direct = self._first_healthy_direct_geometry(
             start, allow_bounded_continue
         )
+        if (geometric_direct is not None and confirmation_after is not None
+                and geometric_direct[2] <= confirmation_after):
+            geometric_direct = None
         direct_position = bisect_left(self._opposite_first_times, gate_time)
+        if confirmation_after is not None:
+            while (direct_position < len(self.opposite_reactions)
+                   and self._opposite_confirmations[direct_position] <= confirmation_after):
+                direct_position += 1
         while (
             direct_position < len(self.opposite_reactions)
             and self._opposite_first_times[direct_position]
@@ -982,6 +1008,113 @@ class OrderAuditEngineMixin:
                 ))
                 self._invalidate_carried_order_caches()
 
+
+    def _reparent_primary_high_causes(self, parent, stop_event, direct_identity):
+        """Replace only StopAll roles owned by an already confirmed PH."""
+        label = f"PH{parent.number}"
+        source = (int(parent.source_index), parent.source_time)
+        changed = False
+        revoked = set()
+        for identity, entry in self.order_audit.items():
+            previous = entry.get("causes", set())
+            current = set()
+            for cause in previous:
+                replaced = (cause[0] == "parent-stop" and str(cause[1]).startswith("StopAll")
+                    and cause[4] == parent.source_time and stop_event is not None
+                    and cause[3] == stop_event and cause[3] > parent.decision_event_time)
+                if not replaced:
+                    current.add(cause)
+                elif identity == direct_identity:
+                    current.add((cause[0], label, "", cause[3], cause[4]))
+            if current != previous:
+                entry["causes"] = current
+                changed = True
+            for cause in entry.get("order_b_causes", ()):
+                if (str(cause.get("postBehaviorType", "")).startswith("StopAll")
+                        and (cause.get("postBehaviorSourceIndex"), cause.get("postBehaviorSourceTime")) == source
+                        and stop_event is not None
+                        and cause.get("postBehaviorStopTime") == stop_event
+                        and stop_event > parent.decision_event_time):
+                    cause["postBehaviorType"] = label
+                    changed = True
+                reset_identity = cause.get("resetReactionIdentity")
+                if (str(cause.get("anchorBehaviorType", "")).startswith("StopAll")
+                        and (cause.get("anchorBehaviorSourceIndex"), cause.get("anchorBehaviorSourceTime")) == source
+                        and reset_identity
+                        and self.times[int(reset_identity[0])] >= parent.decision_event_time):
+                    cause["anchorBehaviorType"] = label
+                    changed = True
+            if not current and not entry.get("order_b_causes"):
+                revoked.add(identity)
+        for identity in revoked:
+            del self.order_audit[identity]
+        if revoked:
+            self._order_audit_confirmation_index[:] = [
+                item for item in self._order_audit_confirmation_index
+                if (item[1], item[2]) not in revoked
+            ]
+            self._invalidate_post_stop_order_cache()
+        if changed or revoked:
+            self._invalidate_carried_order_caches()
+
+    def register_primary_high(self, parent):
+        """Create the native bearish-owner Order_A after a confirmed PH stop.
+
+        PH replaces the final StopAll owner without deleting the historical
+        sequence boundaries that were needed before PH confirmation.
+        """
+        if self.direction != "bearish" or getattr(parent, "kind", None) != "PH":
+            raise ValueError("Primary-High Order_A is specified for the bearish owner only.")
+        left = bisect_right(self.lower_times, parent.decision_event_time)
+        right = bisect_left(self.lower_times, self.range_end)
+        position = self._first_cross_position(left, right, as_decimal(parent.price), less=False)
+        stop_event = self.lower_times[position] if position is not None else None
+        direct = self._direct_parent_stop_order(
+            stop_event, None, False, confirmation_after=stop_event,
+        ) if stop_event is not None else None
+        self._reparent_primary_high_causes(
+            parent, stop_event, reaction_identity(direct[1]) if direct is not None else None,
+        )
+        if direct is None:
+            return None
+        number, reaction, confirmation = direct
+        identity = reaction_identity(reaction)
+        entry = self.order_audit.get(identity)
+        if entry is None:
+            level, source, source_time = self._order_stop(number, reaction)
+            entry = {
+                "reaction_number": number, "reaction": reaction,
+                "confirmation_time": confirmation, "stop_level": level,
+                "stop_source_index": source, "stop_source_time": source_time,
+                "stop_cross": self._cross_order(confirmation, level), "causes": set(),
+            }
+            self.order_audit[identity] = entry
+            self._index_order_audit_identity(identity, confirmation)
+        cause = ("parent-stop", f"PH{parent.number}", "", stop_event, parent.source_time)
+        if cause not in entry["causes"]:
+            entry["causes"].add(cause)
+            self._invalidate_carried_order_caches()
+        return identity
+
+    def reconcile_primary_high_labels(self, highs):
+        """Publish one final PH name without rediscovering or moving Orders."""
+        labels = {point.source_time: f"PH{point.number}" for point in highs}
+        changed = False
+        for entry in self.order_audit.values():
+            previous = entry.get("causes", set())
+            current = {(kind, labels.get(source, label) if str(label).startswith("PH") else label,
+                        family, event, source)
+                       for kind, label, family, event, source in previous}
+            if current != previous:
+                entry["causes"] = current
+                changed = True
+            previous_b = entry.get("order_b_causes", [])
+            current_b = relabel_primary_causes(previous_b, labels)
+            if current_b != previous_b:
+                entry["order_b_causes"] = current_b
+                changed = True
+        if changed:
+            self._invalidate_carried_order_caches()
 
     def _register_order_audit(
         self, parent_type: str, parent: object, parent_stop: datetime,
@@ -1630,7 +1763,13 @@ class OrderAuditEngineMixin:
             list(zones), supplemental_s_zones=supplemental_s_zones
         )
         for identity, entry in preserved.items():
-            self.order_audit.setdefault(identity, entry)
+            if identity in self.order_audit:
+                continue
+            self.order_audit[identity] = entry
+            # The rebuild clears both ledger and index. Restoring only the
+            # ledger makes the physical Order invisible to chronological
+            # post-stop queries and downstream E/Order_B consumers.
+            self._index_order_audit_identity(identity, entry["confirmation_time"])
         self._invalidate_carried_order_caches()
         return rebuilt
 

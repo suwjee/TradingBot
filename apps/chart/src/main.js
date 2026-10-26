@@ -6,12 +6,14 @@ import {
 import "./platform/browser-compat.js";
 import { icon } from "./ui/icons.js";
 import { drawingArray, normalizeHistorySnapshot, CHART_TIMEFRAME_KEY, restoredTimeframe, indicatorControlId } from "./chart/state.js";
+import { PRIMARY_VISUAL_DEFAULTS, primaryVisualObjects, drawPrimaryStructures } from "./chart/primary-structure.js";
 import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart/lod.js";
 import { coordinateToRawTime, createViewAnchorCache, rawTimeToCoordinate, selectDensityMode } from "./chart/view-transform.js";
 import { updateStageAggregate } from "./chart/progress.js";
 import { cacheClearLayers, clearIndicatorBrowserState } from "./features/indicator-cache.js";
 import { buildIndicatorCalculationRequest } from "./features/indicator-calculation-request.js";
-import { appliedContextMatches, restoreIndicatorLifecycle } from "./features/indicator-lifecycle.js";
+import { appliedContextMatches, canReuseAppliedCalculation, captureCalculationInputs, calculationInputsMatch, restoreIndicatorLifecycle } from "./features/indicator-lifecycle.js";
+import { primaryDetectionSummary } from "./features/primary-detection-summary.js";
 import { applyWorkspaceState } from "./ui/workspace-state.js";
 import { openManualReviewTab } from "./features/manual-review/tab.js";
 import { initCandleExport } from "./features/candle-export.js";
@@ -844,6 +846,7 @@ let candleExportController = null;
 let algorithmController = null;
 let symbolLoadController = null;
 let symbolLoadRevision = 0;
+let indicatorCalculationOwner = null;
 function selectWorkspaceNavigation(activeId) {
   $$(".leftbar .nav-item").forEach((button) => {
     const active = button.id === activeId;
@@ -1084,6 +1087,13 @@ $(".indicator-body").innerHTML = `
         ["orderStopVisible", "Order stops", ""],
       ].map(([id, title]) => `<label class="module-row"><span><b>${title}</b></span><input id="${id}" class="module-toggle-input" type="checkbox" aria-label="Toggle ${title}"${id === "eStopVisible" ? "" : " checked"}><span class="module-toggle" aria-hidden="true"></span></label>`).join("")}
     </section>
+    <section class="tv-section"><h3>PH/PL</h3>
+      ${[
+        ["phVisible", "PH markers"], ["phLabelVisible", "PH labels"],
+        ["plVisible", "PL markers"], ["plLabelVisible", "PL labels"],
+        ["mblVisible", "MBL line"], ["mblLabelVisible", "MBL label"],
+      ].map(([id, title]) => `<label class="module-row"><span><b>${title}</b></span><input id="${id}" class="module-toggle-input" type="checkbox" aria-label="Toggle ${title}" checked><span class="module-toggle" aria-hidden="true"></span></label>`).join("")}
+    </section>
   </div>
   <div class="indicator-tab" data-indicator-page="style">
     <section class="style-group" data-style-group="foundation"><button type="button" class="style-group-header" aria-expanded="true"><span><strong>Foundation</strong><small>Reaction • Blue Line • A</small></span><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div class="style-group-body">
@@ -1103,6 +1113,12 @@ $(".indicator-body").innerHTML = `
       ${styleModule("stopall", "StopAll marker", [appearancePopup("stopall", "StopAll appearance", "Fill, opacity and border", [swatchRow([["stopAllFill", "Fill", "color", "#ff9800"], ["stopAllBorder", "Border", "color", "#ff9800"]]), rangeRow("stopAllOpacity", "Fill opacity", 0, 100, 20, "%"), widthRow("stopAllWidth", "Border width", 0.25)], ["stopAllFill", "stopAllBorder", "stopAllOpacity", "stopAllWidth"]), fontSizeRow("stopAllSize", "Label font size", 15), rangeRow("stopAllRadius", "Circle radius", 4, 16, 8, "px"), rangeRow("stopAllGap", "Label distance", 4, 32, 16, "px")])}
     </div>
     </section>
+    <section class="style-group" data-style-group="primary"><button type="button" class="style-group-header" aria-expanded="true"><span><strong>PH/PL</strong><small>Primary High • Primary Low • MBL</small></span><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div class="style-group-body">
+      ${styleModule("primary-arrow", "Primary arrows", [appearancePopup("primary-arrow", "Primary arrow appearance", "Arrow color and size", [swatchRow([["primaryArrowColor", "Arrow and label color", "color", "#056656"]]), rangeRow("primaryArrowSize", "Arrow size", 4, 32, 12, "px")], ["primaryArrowColor", "primaryArrowSize"])])}
+      ${styleModule("primary-circle", "Primary circles", [appearancePopup("primary-circle", "Primary circle appearance", "Circle color, opacity and radius", [swatchRow([["primaryCircleColor", "Circle and label color", "color", "#ec407a"]]), rangeRow("primaryCircleOpacity", "Circle opacity", 0, 100, 100, "%"), rangeRow("primaryCircleRadius", "Circle radius", 4, 28, 12, "px")], ["primaryCircleColor", "primaryCircleOpacity", "primaryCircleRadius"])])}
+      ${styleModule("primary-label", "Primary labels and spacing", [fontSizeRow("primaryLabelSize", "Label font size", 12), rangeRow("primaryGap", "Distance from candle", 0, 48, 12, "px"), rangeRow("primaryLabelGap", "Distance from marker", 0, 48, 10, "px")], ["primaryLabelSize", "primaryGap", "primaryLabelGap"])}
+      ${styleModule("mbl", "Matching behavior leg", [appearancePopup("mbl", "MBL appearance", "Line, label and dotted style", [swatchRow([["mblColor", "Line and label color", "color", "#b22833"]]), widthRow("mblWidth", "Line width", 2), lineStyleRow("mblLineStyle", "dot"), fontSizeRow("mblSize", "Label font size", PRIMARY_VISUAL_DEFAULTS.mblSize)], ["mblColor", "mblWidth", "mblLineStyle", "mblSize"])])}
+    </div></section>
     <section class="style-group" data-style-group="order"><button type="button" class="style-group-header" aria-expanded="true"><span><strong>Order reactions</strong><small>Order Reaction</small></span><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div class="style-group-body">
       ${styleModule("order", "Order reaction boxes", [appearancePopup("order", "Order reaction appearance", "Fill, opacity and border", [swatchRow([["orderFill", "Fill", "color", "#d1d3d6"], ["orderColor", "Border", "color", "#8a8f98"]]), rangeRow("orderOpacity", "Fill opacity", 0, 100, 20, "%"), widthRow("orderWidth", "Border width", 0.25), lineStyleRow("orderLineStyle", "solid")], ["orderFill", "orderColor", "orderOpacity", "orderWidth", "orderLineStyle"])])}
       ${styleModule("order-stop", "Order stop lines", [appearancePopup("order-stop", "Order stop line appearance", "Color, width and dotted style", [swatchRow([["orderStopColor", "Line color", "color", "#ef4444"]]), widthRow("orderStopWidth", "Line width", 1), lineStyleRow("orderStopLineStyle", "dot")], ["orderStopColor", "orderStopWidth", "orderStopLineStyle"]), `<div class="setting-row"><label>Unbroken stop cap</label><input id="orderStopCap" type="number" min="1" max="200" value="200"></div>`])}
@@ -1112,7 +1128,7 @@ $(".indicator-body").innerHTML = `
   <div class="indicator-tab" data-indicator-page="info">
     <section class="tv-section">
       <h3>Detection summary</h3>
-      <div id="indicatorInfo" class="indicator-info"><div class="info-empty">Run the pipeline to see Reaction, Blue Line, A, S, E, StopAll, range and engine details.</div></div>
+      <div id="indicatorInfo" class="indicator-info"><div class="info-empty">Run the pipeline to see Reaction, Blue Line, A, S, E, StopAll, PH, PL, MBL, range and engine details.</div></div>
     </section>
   </div>`;
 $$(".style-module-header").forEach((header) => {
@@ -1202,6 +1218,7 @@ const COLOR_OPACITY_TARGETS = {
   bullFill: "bullOpacity",
   bearFill: "bearOpacity",
   stopAllFill: "stopAllOpacity",
+  primaryCircleColor: "primaryCircleOpacity",
   orderFill: "orderOpacity",
   blueColor: "blueOpacity",
 };
@@ -1724,6 +1741,7 @@ function refreshSymbolInventory({ initial = false } = {}) {
 }
 async function loadFile(item) {
   if (!item) return;
+  invalidateIndicatorCalculation();
   symbolLoadController?.abort();
   const controller = new AbortController();
   symbolLoadController = controller;
@@ -2261,6 +2279,7 @@ function saveChartIndicatorContext() {
   } catch (error) { log.chart.warn("INDICATOR_STATE_STORAGE_FAILED", { message: error.message }); }
 }
 function restoreChartIndicatorContext(fileId) {
+  invalidateIndicatorCalculation();
   state.indicator.results = null;
   state.indicator.settings = null;
   state.indicator.calculationKey = null;
@@ -2272,7 +2291,18 @@ function restoreChartIndicatorContext(fileId) {
   state.indicator.selectedObjectId = null;
   state.indicatorRange = { from: null, to: null, dragging: null, preview: false };
 }
+function invalidateIndicatorCalculation() {
+  const owner = indicatorCalculationOwner;
+  if (!owner) return;
+  indicatorCalculationOwner = null;
+  owner.probeAbort?.abort();
+  owner.requestAbort.abort();
+  if (owner.progress) stopCalculationProgress(owner.progress, false);
+  state.indicator.loading = false;
+  $("#applyIndicator").disabled = false;
+}
 function clearActiveIndicatorCalculation() {
+  invalidateIndicatorCalculation();
   const hadResult = Boolean(state.indicator.results);
   state.indicator.results = null;
   state.indicator.settings = null;
@@ -2824,7 +2854,7 @@ function indicatorObjectVisible(id) {
 }
 function removeInvalidIndicatorCalculations(payload) {
   for (const group of Object.values(payload?.directions || {})) {
-    for (const key of ["blueLines", "aZones", "sZones", "eZones", "stopAlls", "orderAudit"]) {
+    for (const key of ["blueLines", "aZones", "sZones", "eZones", "stopAlls", "orderAudit", "primaryHighs", "primaryLows", "matchingBehaviorLegs"]) {
       if (Array.isArray(group[key]))
         group[key] = group[key].filter((item) => item.calculationValid !== false);
     }
@@ -2869,6 +2899,7 @@ function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
     output.push({ locked: true, hidden: false, ...item, ...preserved });
   };
   for (const [direction, group] of Object.entries(state.indicator.results.directions)) {
+    primaryVisualObjects(group, direction, state.indicator.settings).forEach(add);
     const behaviorOrders = [
       ...(group.sZones || []),
       ...(group.eZones || []),
@@ -3643,6 +3674,15 @@ function drawIndicator() {
         ctx.restore();
       }
     }
+    drawPrimaryStructures(ctx, group, {
+      direction, settings, timeframe,
+      timeToX: indicatorTimeToCoordinate,
+      priceToY: (price) => series.priceToCoordinate(price),
+      objectFor: indicatorObject,
+      offsetPoint: offsetIndicatorPoint,
+      offsetRect: offsetIndicatorRect,
+      onHit: (hit) => state.indicator.hitBoxes.push(hit),
+    });
   }
 }
 function drawIndicatorSelection() {
@@ -5107,6 +5147,11 @@ function indicatorSettings() {
     eStopColor: $("#eStopColor").value,
     eStopWidth: +$("#eStopWidth").value,
     eStopLineStyle: $("#eStopLineStyle").value,
+    ...Object.fromEntries(Object.entries(PRIMARY_VISUAL_DEFAULTS).map(([id, fallback]) => {
+      const control = $("#" + id);
+      return [id, typeof fallback === "boolean" ? control.checked
+        : typeof fallback === "number" ? Number(control.value) : control.value];
+    })),
     numberEnabled: false,
     numberMode: "off",
   };
@@ -5465,7 +5510,10 @@ function renderIndicatorInfo() {
     aTotal = 0,
     sTotal = 0,
     eTotal = 0,
-    stopAllTotal = 0;
+    stopAllTotal = 0,
+    phTotal = 0,
+    plTotal = 0,
+    mblTotal = 0;
   const groups = Object.entries(payload.directions)
     .map(([direction, group]) => {
       reactionTotal += group.reactions.length;
@@ -5475,7 +5523,11 @@ function renderIndicatorInfo() {
       sTotal += (group.sZones || []).length;
       eTotal += (group.eZones || []).length;
       stopAllTotal += (group.stopAlls || []).length;
-      return `<section class="info-direction ${direction}"><header><i></i><strong>${direction === "bullish" ? "Bullish" : "Bearish"}</strong><span>${group.reactions.length} reactions • ${(group.blueLines || []).length} Blue Lines • ${(group.aZones || []).length} A • ${(group.sZones || []).length} S • ${(group.eZones || []).length} E • ${(group.stopAlls || []).length} StopAll</span></header><details><summary>Reactions <b>${group.reactions.length}</b></summary><ol>${eventDetails(direction, group, "reactions")}</ol></details><details><summary>Blue Lines <b>${(group.blueLines || []).length}</b></summary><ol>${eventDetails(direction, group, "blueLines")}</ol></details><details><summary>A <b>${(group.aZones || []).length}</b></summary><ol>${eventDetails(direction, group, "aZones")}</ol></details><details><summary>S <b>${(group.sZones || []).length}</b></summary><ol>${eventDetails(direction, group, "sZones")}</ol></details><details><summary>E <b>${(group.eZones || []).length}</b></summary><ol>${eventDetails(direction, group, "eZones")}</ol></details><details><summary>StopAll <b>${(group.stopAlls || []).length}</b></summary><ol>${eventDetails(direction, group, "stopAlls")}</ol></details><details><summary>Resets <b>${group.resets.length}</b></summary><ol>${eventDetails(direction, group, "resets")}</ol></details></section>`;
+      const primary = primaryDetectionSummary(group);
+      phTotal += primary.highs;
+      plTotal += primary.lows;
+      mblTotal += primary.legs;
+      return `<section class="info-direction ${direction}"><header><i></i><strong>${direction === "bullish" ? "Bullish" : "Bearish"}</strong><span>${group.reactions.length} reactions • ${(group.blueLines || []).length} Blue Lines • ${(group.aZones || []).length} A • ${(group.sZones || []).length} S • ${(group.eZones || []).length} E • ${(group.stopAlls || []).length} StopAll • ${primary.highs} PH • ${primary.lows} PL • ${primary.legs} MBL</span></header><p class="info-primary-status" data-primary-status="${escapeHtml(direction)}">${escapeHtml(primary.statusLabel)}</p><details><summary>Reactions <b>${group.reactions.length}</b></summary><ol>${eventDetails(direction, group, "reactions")}</ol></details><details><summary>Blue Lines <b>${(group.blueLines || []).length}</b></summary><ol>${eventDetails(direction, group, "blueLines")}</ol></details><details><summary>A <b>${(group.aZones || []).length}</b></summary><ol>${eventDetails(direction, group, "aZones")}</ol></details><details><summary>S <b>${(group.sZones || []).length}</b></summary><ol>${eventDetails(direction, group, "sZones")}</ol></details><details><summary>E <b>${(group.eZones || []).length}</b></summary><ol>${eventDetails(direction, group, "eZones")}</ol></details><details><summary>StopAll <b>${(group.stopAlls || []).length}</b></summary><ol>${eventDetails(direction, group, "stopAlls")}</ol></details><details><summary>Resets <b>${group.resets.length}</b></summary><ol>${eventDetails(direction, group, "resets")}</ol></details></section>`;
     })
     .join("");
   if (!$("#infoBadge") || !$("#indicatorInfo")) {
@@ -5505,7 +5557,7 @@ function renderIndicatorInfo() {
     .join("") || '<li><span>No popup trace was captured for this calculation.</span></li>';
   const timingSource = state.indicator.lastCalculation?.cache || "unknown";
   const bridgeTotal = payload.timings?.bridgeTotalMs;
-  state.indicator.infoDetails = `<details class="info-analysis-details" open><summary>Calculation details <b>${reactionTotal} reactions</b></summary><div class="info-metrics"><div><span>Reactions</span><strong>${reactionTotal}</strong></div><div><span>Blue Lines</span><strong>${blueLineTotal}</strong></div><div><span>A</span><strong>${aTotal}</strong></div><div><span>S</span><strong>${sTotal}</strong></div><div><span>E</span><strong>${eTotal}</strong></div><div><span>StopAll</span><strong>${stopAllTotal}</strong></div><div><span>Resets</span><strong>${resetTotal}</strong></div><div><span>Timeframe</span><strong>${payload.timeframe || "—"}s</strong></div></div><section class="info-timing info-stage-summary"><header><span>Execution timing</span><strong>${formatDuration(state.indicator.lastCalculation?.durationMs)}</strong></header><p>Cache: ${escapeHtml(timingSource)}${Number.isFinite(Number(bridgeTotal)) ? ` • Python bridge total: ${formatDuration(bridgeTotal)}` : ""}</p><ol>${stageRows}</ol></section><section class="info-timing info-engine-timing"><header><span>Engine timing details</span><strong>${backendPhases.length} measurements</strong></header><div class="info-timing-grid">${timingRows}</div></section><section class="info-timing info-progress-trace"><header><span>Complete execution log</span><strong>${progressTrace.length} events</strong></header><ol>${progressRows}</ol></section><div class="info-meta"><span>Engines</span><b>Reaction ${payload.version || "9.2.1"} • Blue Line ${payload.blueLineVersion || "3.0.0"} • A ${payload.aVersion || "2.0.0"} • S ${payload.sVersion || "4.0.0"} • E ${payload.eVersion || "—"} • StopAll ${payload.stopAllVersion || "—"}</b><span>Range</span><b>${formatTehran(payload.actualFrom, false)} → ${formatTehran(payload.actualTo, false)}</b></div>${groups}</details>`;
+  state.indicator.infoDetails = `<details class="info-analysis-details" open><summary>Calculation details <b>${reactionTotal} reactions</b></summary><div class="info-metrics"><div><span>Reactions</span><strong>${reactionTotal}</strong></div><div><span>Blue Lines</span><strong>${blueLineTotal}</strong></div><div><span>A</span><strong>${aTotal}</strong></div><div><span>S</span><strong>${sTotal}</strong></div><div><span>E</span><strong>${eTotal}</strong></div><div><span>StopAll</span><strong>${stopAllTotal}</strong></div><div><span>PH</span><strong>${phTotal}</strong></div><div><span>PL</span><strong>${plTotal}</strong></div><div><span>MBL</span><strong>${mblTotal}</strong></div><div><span>Resets</span><strong>${resetTotal}</strong></div><div><span>Timeframe</span><strong>${payload.timeframe || "—"}s</strong></div></div><section class="info-timing info-stage-summary"><header><span>Execution timing</span><strong>${formatDuration(state.indicator.lastCalculation?.durationMs)}</strong></header><p>Cache: ${escapeHtml(timingSource)}${Number.isFinite(Number(bridgeTotal)) ? ` • Python bridge total: ${formatDuration(bridgeTotal)}` : ""}</p><ol>${stageRows}</ol></section><section class="info-timing info-engine-timing"><header><span>Engine timing details</span><strong>${backendPhases.length} measurements</strong></header><div class="info-timing-grid">${timingRows}</div></section><section class="info-timing info-progress-trace"><header><span>Complete execution log</span><strong>${progressTrace.length} events</strong></header><ol>${progressRows}</ol></section><div class="info-meta"><span>Engines</span><b>Reaction ${payload.version || "9.2.1"} • Blue Line ${payload.blueLineVersion || "3.0.0"} • A ${payload.aVersion || "2.0.0"} • S ${payload.sVersion || "4.0.0"} • E ${payload.eVersion || "—"} • StopAll ${payload.stopAllVersion || "—"} • PH/PL ${payload.primaryVersion || "—"}</b><span>Range</span><b>${formatTehran(payload.actualFrom, false)} → ${formatTehran(payload.actualTo, false)}</b></div>${groups}</details>`;
   renderIndicatorActivity();
 }
 const pickerState = { target: null, trigger: null, year: 0, month: 0, day: 1, applyAfterSave: false };
@@ -5523,6 +5575,8 @@ function setDateTimeValue(target, value) {
     log.chart.error("DATE_FIELD_NOT_FOUND", new Error("Date input is missing"), { target, value });
     return false;
   }
+  if ((target === "#indicatorFrom" || target === "#indicatorTo") && field.value !== (value || ""))
+    invalidateIndicatorCalculation();
   field.value = value || "";
   if (display) display.textContent = displayPickerValue(value);
   else log.chart.debug("DATE_DISPLAY_NOT_PRESENT", { target });
@@ -5757,10 +5811,10 @@ async function calculateIndicator() {
     state.indicatorRange.toIndex = snappedRange.toIndex;
     commitIndicatorRangeInputs();
   }
-  const settings = indicatorSettings(),
+  const settings = Object.freeze(indicatorSettings()),
     timeframe = settings.timeframe === "follow" ? state.tf : +settings.timeframe,
     nextKey = calculationKey(settings, from, to, timeframe, state.tf),
-    nextContext = {
+    nextContext = Object.freeze({
       fileId: state.file.id,
       chartId: state.file.chartId || null,
       symbol: state.file.symbol,
@@ -5769,8 +5823,41 @@ async function calculateIndicator() {
       from,
       to,
       direction: settings.direction,
-    };
+    });
+  const calculationSource = Object.freeze(clone(state.file));
+  const captureCurrentInputs = () => captureCalculationInputs({
+    file: state.file, chartTimeframe: state.tf, raw: state.raw, data: state.data,
+    settings: indicatorSettings(), from: $("#indicatorFrom").value, to: $("#indicatorTo").value,
+    enabled: $("#indicatorEnabled").checked, results: state.indicator.results,
+    resultContext: state.indicator.resultContext,
+  });
+  let capturedInputs = captureCurrentInputs();
+  const owner = { requestAbort: new AbortController(), probeAbort: null, progress: null };
+  indicatorCalculationOwner = owner;
+  const operationIsCurrent = () => indicatorCalculationOwner === owner
+    && calculationInputsMatch(capturedInputs, captureCurrentInputs());
+  state.indicator.loading = true;
+  $("#applyIndicator").disabled = true;
+  let progressTimer = null;
+  let succeeded = false;
+  try {
+  let reusableSourceFingerprint = null;
   if (state.indicator.results && appliedContextMatches(state.indicator.resultContext, nextContext)) {
+    indicatorStatus("Checking calculation source", "loading");
+    const sourceProbeAbort = owner.probeAbort = new AbortController();
+    const sourceProbeTimer = setTimeout(() => sourceProbeAbort.abort(), 5000);
+    try {
+      const response = await fetch("/api/reactions/source", { cache: "no-store", signal: sourceProbeAbort.signal });
+      if (response.ok) reusableSourceFingerprint = (await response.json()).sourceFingerprint;
+    } catch (error) {
+      if (operationIsCurrent()) log.indicator.warn("SOURCE_IDENTITY_PROBE_FAILED", { message: error.message });
+    } finally {
+      clearTimeout(sourceProbeTimer);
+      owner.probeAbort = null;
+    }
+  }
+  if (!operationIsCurrent()) return;
+  if (state.indicator.results && canReuseAppliedCalculation(state.indicator.resultContext, nextContext, reusableSourceFingerprint)) {
     setIndicatorVisibility(true);
     applyVisualSettings(settings);
     indicatorStatus("Appearance updated without recalculation", "success");
@@ -5785,7 +5872,7 @@ async function calculateIndicator() {
   indicatorStatus("Calculation progress is open", "loading");
   $("#applyIndicator").disabled = true;
   const progressRequestId = createUniqueId();
-  const progressTimer = startCalculationProgress(progressRequestId, settings.direction);
+  progressTimer = owner.progress = startCalculationProgress(progressRequestId, settings.direction);
   pushIndicatorActivity("INFO", "Calculation started");
   pushIndicatorActivity("DATA", `Validated ${formatTehran(from, false)} → ${formatTehran(to, false)}`);
   log.indicator.info("CALCULATION_STARTED", {
@@ -5806,18 +5893,17 @@ async function calculateIndicator() {
       orderStops: settings.orderStopVisible,
     },
   });
-  let succeeded = false;
   try {
-    const calculationSource = clone(state.file),
-      requestStarted = performance.now();
+    const requestStarted = performance.now();
     progressTimer.recordEvent({ status: "started", label: "HTTP request and server" });
     const r = await fetch("/api/reactions", {
         method: "POST",
+        signal: owner.requestAbort.signal,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(buildIndicatorCalculationRequest({
           file: calculationSource,
           analysisTimeframe: timeframe,
-          chartTimeframe: state.tf,
+          chartTimeframe: nextContext.chartTimeframe,
           from,
           to,
           direction: settings.direction,
@@ -5825,6 +5911,7 @@ async function calculateIndicator() {
         })),
       }),
       responseReceived = performance.now();
+    if (!operationIsCurrent()) return;
     progressTimer.recordEvent({
       status: "completed",
       label: "HTTP request and server",
@@ -5838,6 +5925,7 @@ async function calculateIndicator() {
     pushIndicatorActivity("STEP", "Python pipeline response received");
     const payload = await r.json(),
       responseParsed = performance.now();
+    if (!operationIsCurrent()) return;
     progressTimer.recordEvent({
       status: "completed",
       label: "Response parsing",
@@ -5848,6 +5936,7 @@ async function calculateIndicator() {
     state.indicator.settings = settings;
     state.indicator.results = removeInvalidIndicatorCalculations(payload);
     state.indicator.resultContext = { ...nextContext, source: calculationSource, calculationKey: nextKey, calculationId: r.headers.get("X-QG-Calculation-Id"), sourceFingerprint: r.headers.get("X-QG-Source-Fingerprint") };
+    capturedInputs = captureCurrentInputs();
     state.indicator.calculationKey = nextKey;
     const objectPreparationStarted = performance.now();
     rebuildIndicatorObjects();
@@ -5933,6 +6022,7 @@ async function calculateIndicator() {
     $("#indicatorStatusFooter").setAttribute("aria-label", $("#indicatorStatusFooter").title);
     log.indicator.info("CALCULATION_COMPLETED", completedTiming);
   } catch (error) {
+    if (!operationIsCurrent()) return;
     const failedDurationMs = Math.round((performance.now() - calculationStarted) * 100) / 100;
     state.indicator.lastCalculation = {
       durationMs: failedDurationMs,
@@ -5952,11 +6042,19 @@ async function calculateIndicator() {
     $("#indicatorStatusFooter").title = "Indicator calculation error";
     $("#indicatorStatusFooter").setAttribute("aria-label", "Indicator calculation error. Open indicator settings.");
     setFooterCacheStatus("error");
+  }
   } finally {
-    stopCalculationProgress(progressTimer, succeeded);
-    if (succeeded) renderIndicatorInfo();
-    state.indicator.loading = false;
-    $("#applyIndicator").disabled = false;
+    if (indicatorCalculationOwner === owner) {
+      if (progressTimer) stopCalculationProgress(progressTimer, succeeded);
+      if (succeeded) renderIndicatorInfo();
+      indicatorCalculationOwner = null;
+      state.indicator.loading = false;
+      $("#applyIndicator").disabled = false;
+    } else if (progressTimer && !progressTimer.stopped) {
+      clearInterval(progressTimer.timer);
+      progressTimer.stopped = true;
+      progressTimer.source.close();
+    }
   }
 }
 $("#indicatorBtn").onclick = openIndicator;
@@ -6039,6 +6137,7 @@ async function runChartUpdate(mode) {
   const btn = $("#updateDataBtn");
   if (chartUpdateRunning) return;
   if (!state.file) { toast("No data file loaded", "error"); return; }
+  invalidateIndicatorCalculation();
   chartUpdateRunning = true;
   setUpdateButtonState("loading");
   const persistedCandles = [];
@@ -6540,6 +6639,7 @@ $("#pickerSave").onclick = () => {
   if (applyAfterSave) $("#gotoApply").click();
 };
 const visualSettingIds = [
+  ...Object.keys(PRIMARY_VISUAL_DEFAULTS),
   "bullFill",
   "bullBorder",
   "bullOpacity",
@@ -6596,6 +6696,7 @@ const visualSettingIds = [
 ];
 for (const id of visualSettingIds) {
   $("#" + id).oninput = () => {
+    invalidateIndicatorCalculation();
     const valueLabel = $("#" + id + "Value");
     if (valueLabel)
       valueLabel.textContent =

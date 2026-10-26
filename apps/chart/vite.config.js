@@ -36,8 +36,9 @@ const stopAllEnginePath = path.join(pipelineRoot, 'lifecycle_engine.py');
 const orderEnginePath = path.join(pipelineRoot, 'order_audit_engine.py');
 const directionPolicyPath = path.join(pipelineRoot, 'direction_policy.py');
 const coreUtilsPath = path.join(pipelineRoot, 'core_utils.py');
+const primaryEnginePath = path.join(pipelineRoot, 'PL_PH_detector.py');
 const indicatorRangeInputPath = path.join(chartRoot, 'server', 'indicator-range-input.js');
-const calculationSources = [bridgePath, enginePath, blueEnginePath, aEnginePath, sEnginePath, eEnginePath, stopAllEnginePath, orderEnginePath, directionPolicyPath, coreUtilsPath, indicatorRangeInputPath];
+const calculationSources = [bridgePath, enginePath, blueEnginePath, aEnginePath, sEnginePath, eEnginePath, stopAllEnginePath, orderEnginePath, directionPolicyPath, coreUtilsPath, primaryEnginePath, indicatorRangeInputPath];
 const pythonCommand = process.env.TRADINGBOT_PYTHON || 'python';
 // VMware shared folders reject native watches, while polling can monopolize
 // Vite's event loop. The launcher therefore serves without filesystem watches;
@@ -566,6 +567,21 @@ function localDataApi() {
         } catch (error) {
           res.statusCode = 400;
           res.end(JSON.stringify({ error: error.message }));
+        }
+      });
+      server.middlewares.use('/api/reactions/source', (req, res) => {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-store');
+        if (req.method !== 'GET') {
+          res.statusCode = 405;
+          res.end(JSON.stringify({ error: 'GET is required' }));
+          return;
+        }
+        try {
+          res.end(JSON.stringify({ sourceFingerprint: calculationSourceFingerprint() }));
+        } catch {
+          res.statusCode = 500;
+          res.end(JSON.stringify({ error: 'Calculation source identity is unavailable' }));
         }
       });
       server.middlewares.use('/api/reactions', async (req, res) => {
