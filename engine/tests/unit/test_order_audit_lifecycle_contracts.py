@@ -259,10 +259,6 @@ def test_same_identity_same_ledger_size_changed_causes_refresh_carried_query(dir
 
 
 @pytest.mark.parametrize("direction", ["bullish", "bearish"])
-@pytest.mark.xfail(
-    strict=True,
-    reason="Pinned GitHub 989647b also omits restored Order_B rows from its confirmation index",
-)
 def test_ensure_restored_order_is_visible_through_confirmation_query(direction):
     detector, parent, physical = detector_state(direction)
     identity = (int(physical.first_idx), int(physical.break_idx))

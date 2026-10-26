@@ -234,6 +234,19 @@ function Test-ManagerValidationGate {
   } finally { Remove-ManagerFixture $fixture }
 }
 
+function Initialize-ManagerRuntimeFiles {
+  param([string] $Fixture)
+  $policy = Import-ReleasePolicy -Root $Fixture
+  foreach ($relative in $policy.Production.MandatoryPaths) {
+    $path = Join-Path $Fixture $relative
+    [void](New-Item -ItemType Directory -Path (Split-Path -Parent $path) -Force)
+    [IO.File]::WriteAllText($path, '')
+  }
+  [IO.File]::WriteAllText((Join-Path $Fixture 'apps/chart/package.json'), '{"name":"manager-fixture","version":"1.0.0","scripts":{"build":"node --check vite.config.js"}}')
+  [IO.File]::WriteAllText((Join-Path $Fixture 'apps/chart/package-lock.json'), '{"name":"manager-fixture","version":"1.0.0","lockfileVersion":3,"requires":true,"packages":{"":{"name":"manager-fixture","version":"1.0.0"}}}')
+  [IO.File]::WriteAllText((Join-Path $Fixture 'engine/bridge/trading_pipeline.py'), "import argparse`nargparse.ArgumentParser().parse_args()`n")
+}
+
 function Test-ManagerRuntime {
   $fixture = New-ManagerFixture
   $remote = $null
@@ -241,14 +254,7 @@ function Test-ManagerRuntime {
   try {
     . Initialize-ManagerFunctions $fixture
     $policy = Import-ReleasePolicy -Root $fixture
-    foreach ($relative in $policy.Production.MandatoryPaths) {
-      $path = Join-Path $fixture $relative
-      [void](New-Item -ItemType Directory -Path (Split-Path -Parent $path) -Force)
-      [IO.File]::WriteAllText($path, '')
-    }
-    [IO.File]::WriteAllText((Join-Path $fixture 'apps/chart/package.json'), '{"name":"manager-fixture","version":"1.0.0","scripts":{"build":"node --check vite.config.js"}}')
-    [IO.File]::WriteAllText((Join-Path $fixture 'apps/chart/package-lock.json'), '{"name":"manager-fixture","version":"1.0.0","lockfileVersion":3,"requires":true,"packages":{"":{"name":"manager-fixture","version":"1.0.0"}}}')
-    [IO.File]::WriteAllText((Join-Path $fixture 'engine/bridge/trading_pipeline.py'), "import argparse`nargparse.ArgumentParser().parse_args()`n")
+    Initialize-ManagerRuntimeFiles $fixture
     & git.exe -C $fixture add --all
     & git.exe -C $fixture -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m runtime
     $remote = New-ManagerRemote -Root $fixture -Production
@@ -361,7 +367,142 @@ function Test-ManagerFileChanges {
   } finally { Remove-ManagerFixture $fixture }
 }
 
-$cases = [ordered]@{ Root={Test-ManagerRoot}; Launcher={Test-ManagerLauncher}; Branch={Test-ManagerBranch}; MainOnly={Test-ManagerMainOnly}; Unicode={Test-ManagerUnicode}; Publication={Test-ManagerPublication}; Tag={Test-ManagerTag}; Process={Test-ManagerProcess}; ValidationGate={Test-ManagerValidationGate}; Runtime={Test-ManagerRuntime}; Fallback={Test-ManagerFallback}; Authentication={Test-ManagerAuthentication}; FileChanges={Test-ManagerFileChanges} }
+function Test-ManagerLiteralPaths {
+  $fixture = New-ManagerFixture
+  try {
+    . Initialize-ManagerFunctions $fixture
+    [IO.File]::WriteAllText((Join-Path $fixture 'engine/runtime[1].py'), '# literal filename')
+    [IO.File]::WriteAllText((Join-Path $fixture 'engine/runtime1.py'), '# different module')
+    & git.exe -C $fixture add --all
+    & git.exe -C $fixture -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m baseline
+    Remove-Item -LiteralPath (Join-Path $fixture 'engine/runtime[1].py')
+    $candidate = New-MainReleaseSource -Root $fixture -CommitMessage 'remove literal filename' -DryRun
+    $paths = @(Get-GitTreePaths -Root $fixture -Commitish $candidate.MainSha)
+    Assert-Manager ($paths -notcontains 'engine/runtime[1].py') 'a deleted filename containing brackets is removed from the candidate'
+    Assert-Manager ($paths -contains 'engine/runtime1.py') 'a neighboring filename matched by a glob remains intact'
+  } finally { Remove-ManagerFixture $fixture }
+}
+
+function Test-ManagerLargeInventory {
+  $fixture = New-ManagerFixture
+  $remote = $null
+  $snapshot = $null
+  try {
+    . Initialize-ManagerFunctions $fixture
+    $remote = New-ManagerRemote -Root $fixture -Production
+    $base = (& git.exe -C $fixture rev-parse HEAD).Trim()
+    $expected = @('apps/chart/package.json', 'engine/runtime.py')
+    $directory = Join-Path $fixture 'engine/configuration'
+    [void](New-Item -ItemType Directory -Path $directory -Force)
+    for ($i = 0; $i -lt 700; $i++) {
+      $relative = 'engine/configuration/runtime-module-settings-{0:D4}-configuration.json' -f $i
+      [IO.File]::WriteAllText((Join-Path $fixture $relative), ('{"module":' + $i + '}'))
+      $expected += $relative
+    }
+    Assert-Manager (($expected -join ' ').Length -gt 32767) 'fixture exceeds the Windows native command-line limit'
+    $indexBefore = (Get-FileHash -LiteralPath (Join-Path $fixture '.git/index')).Hash
+    $candidate = New-MainReleaseSource -Root $fixture -CommitMessage 'new runtime configuration' -DryRun
+    $policy = @{ Production=@{ MandatoryPaths=@('apps/chart/package.json'); RuntimeRoots=@('engine/'); ExcludedPathPatterns=@('engine/tests/**') } }
+    $fileSet = Get-ProductionFileSet -Root $fixture -MainSha $candidate.MainSha -Policy $policy
+    $snapshot = New-ProductionSnapshot -Root $fixture -SourceMainSha $candidate.MainSha -ProductionBaseSha $base -FileSet $fileSet -CommitMessage 'large runtime inventory' -DryRun
+    $actual = @(Get-GitTreePaths -Root $fixture -Commitish $snapshot.ProductionSha)
+    Assert-Manager (@(Compare-Object -ReferenceObject $expected -DifferenceObject $actual).Count -eq 0) 'large production snapshot contains every eligible new file'
+    Assert-Manager ((Get-FileHash -LiteralPath (Join-Path $fixture '.git/index')).Hash -eq $indexBefore) 'large preview preserves active index bytes'
+    Assert-Manager ((Get-LocalCommitOid 'HEAD') -eq $base -and (Get-RemoteOid 'refs/heads/main') -eq $base) 'large preview does not advance local or remote main'
+  } finally {
+    if ($snapshot -and -not $snapshot.Context.Cleaned) { Remove-TemporaryReleaseContext -Context $snapshot.Context }
+    Remove-ManagerFixture $fixture
+    if ($remote) { Remove-ManagerFixture $remote }
+  }
+}
+
+function Test-ManagerProductionPreview {
+  $fixture = New-ManagerFixture
+  $remote = $null
+  try {
+    . Initialize-ManagerFunctions $fixture
+    Initialize-ManagerRuntimeFiles $fixture
+    & git.exe -C $fixture add --all
+    & git.exe -C $fixture -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m runtime
+    $remote = New-ManagerRemote -Root $fixture -Production
+    [void](New-Item -ItemType Directory -Path (Join-Path $fixture 'engine/pipeline') -Force)
+    [IO.File]::WriteAllText((Join-Path $fixture 'engine/pipeline/new_detector.py'), '# uncommitted detector')
+    $indexBefore = (Get-FileHash -LiteralPath (Join-Path $fixture '.git/index')).Hash
+    $output = (Invoke-PreviewOnly -Target production 6>&1 | Out-String)
+    Assert-Manager ($output -match '(?s)PRODUCTION CHANGES.*\+ /engine/pipeline/new_detector.py') 'production-only preview displays new eligible working-tree files just like publication'
+    Assert-Manager ((Get-FileHash -LiteralPath (Join-Path $fixture '.git/index')).Hash -eq $indexBefore) 'production-only preview preserves active index bytes'
+    Assert-Manager ((Get-LocalCommitOid 'HEAD') -eq (Get-RemoteOid 'refs/heads/main')) 'production-only preview does not create a permanent main commit'
+  } finally {
+    Remove-ManagerFixture $fixture
+    if ($remote) { Remove-ManagerFixture $remote }
+  }
+}
+
+function Test-ManagerPublishWorkingTree {
+  $fixture = New-ManagerFixture -SpecialPath
+  $remote = $null
+  try {
+    Import-Module (Join-Path $fixture 'scripts/git/Release.Workflow.psm1') -Force -DisableNameChecking
+    Initialize-ManagerRuntimeFiles $fixture
+    [IO.File]::WriteAllText((Join-Path $fixture 'engine/retired.py'), '# retired module')
+    & git.exe -C $fixture add --all
+    & git.exe -C $fixture -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m runtime
+    $remote = New-ManagerRemote -Root $fixture -Production
+    $base = (& git.exe -C $fixture rev-parse HEAD).Trim()
+    $source = [IO.Path]::GetFullPath((Join-Path $fixture 'engine/runtime.py'))
+    $destination = [IO.Path]::GetFullPath((Join-Path $fixture 'engine/renamed-runtime.py'))
+    Assert-Manager ($source.StartsWith($fixture + '\') -and $destination.StartsWith($fixture + '\')) 'publish fixture rename stays inside its checkout'
+    Move-Item -LiteralPath $source -Destination $destination
+    Remove-Item -LiteralPath (Join-Path $fixture 'engine/retired.py')
+    $contents = [ordered]@{
+      'scripts/start.ps1' = '$WarningPreference = ''Continue'''
+      'engine/pipeline/new_detector.py' = '# new detector'
+      'engine/configuration/new[1].json' = '{"enabled":true}'
+      'apps/chart/src/new-feature.js' = 'export const enabled = true;'
+      'engine/tests/test_new_detector.py' = '# new test'
+      'engine/algorithms/new-reference.md' = '# New reference'
+      'engineering/docs/new-guide.md' = '# New guide'
+      'apps/chart/state/cache/local.json' = '{}'
+      'apps/chart/state/data/RAW/local.json' = '{}'
+      'apps/chart/state/secret/local.json' = '{}'
+      'engine/__pycache__/local.pyc' = 'disposable bytecode'
+    }
+    $unicodeRelative = 'engine/configuration/' + [char]0x062A + [char]0x0633 + [char]0x062A + ' settings.json'
+    $contents[$unicodeRelative] = '{"unicodePath":true}'
+    foreach ($relative in $contents.Keys) {
+      $path = Join-Path $fixture $relative
+      [void](New-Item -ItemType Directory -Path (Split-Path -Parent $path) -Force)
+      [IO.File]::WriteAllText($path, $contents[$relative])
+    }
+    [IO.File]::WriteAllText((Join-Path $fixture '.gitignore'), "engine/configuration/`nengineering/docs/`napps/chart/state/`n**/__pycache__/`n")
+    $bat = Join-Path $fixture 'scripts/git/git.bat'
+    $result = Invoke-TestProcess -Executable $env:ComSpec -Arguments ('/d /c ""' + $bat + '""') -Directory ([IO.Path]::GetTempPath()) -InputText "3`r`n`r`n`r`nn`r`ny`r`n`r`n0`r`n" -TimeoutSeconds 120
+    Assert-Manager ($result.ExitCode -eq 0) "real batch Both publication succeeded: $($result.StdOut) $($result.StdErr)"
+    foreach ($branch in @('main', 'production')) {
+      $sha = (& git.exe --git-dir=$remote rev-parse "refs/heads/$branch").Trim()
+      Assert-Manager ($sha -ne $base) "$branch was pushed to the local fixture remote"
+      $paths = @(Get-GitTreePaths -Root $fixture -Commitish $sha)
+      foreach ($relative in @('engine/pipeline/new_detector.py', 'engine/configuration/new[1].json', 'apps/chart/src/new-feature.js', 'scripts/start.ps1', 'engine/renamed-runtime.py', $unicodeRelative)) {
+        Assert-Manager ($paths -contains $relative) "$branch contains eligible runtime change $relative"
+        if ($contents.Contains($relative)) { Assert-Manager ((Get-GitBlobText -Root $fixture -Commitish $sha -RelativePath $relative) -eq $contents[$relative]) "$branch contains current content for $relative" }
+      }
+      foreach ($relative in @('engine/runtime.py', 'engine/retired.py', 'apps/chart/state/cache/local.json', 'apps/chart/state/data/RAW/local.json', 'apps/chart/state/secret/local.json', 'engine/__pycache__/local.pyc')) {
+        Assert-Manager ($paths -notcontains $relative) "$branch omits removed or excluded path $relative"
+      }
+      foreach ($relative in @('engine/tests/test_new_detector.py', 'engine/algorithms/new-reference.md', 'engineering/docs/new-guide.md')) {
+        Assert-Manager (($paths -contains $relative) -eq ($branch -eq 'main')) "$relative follows the existing $branch content policy"
+      }
+    }
+    $status = Invoke-ReleaseGit -Root $fixture -Arguments @('status', '--porcelain', '--untracked-files=all')
+    Assert-Manager ($status.ExitCode -eq 0 -and [string]::IsNullOrWhiteSpace($status.StdOut)) 'no eligible changes remain uncommitted after publication'
+    Assert-Manager ([IO.File]::ReadAllText((Join-Path $fixture 'apps/chart/state/secret/local.json')) -eq '{}') 'excluded local state remains on disk'
+  } finally {
+    Remove-ManagerFixture $fixture
+    if ($remote) { Remove-ManagerFixture $remote }
+  }
+}
+
+$cases = [ordered]@{ Root={Test-ManagerRoot}; Launcher={Test-ManagerLauncher}; Branch={Test-ManagerBranch}; MainOnly={Test-ManagerMainOnly}; Unicode={Test-ManagerUnicode}; Publication={Test-ManagerPublication}; Tag={Test-ManagerTag}; Process={Test-ManagerProcess}; ValidationGate={Test-ManagerValidationGate}; Runtime={Test-ManagerRuntime}; Fallback={Test-ManagerFallback}; Authentication={Test-ManagerAuthentication}; FileChanges={Test-ManagerFileChanges}; LiteralPaths={Test-ManagerLiteralPaths}; LargeInventory={Test-ManagerLargeInventory}; ProductionPreview={Test-ManagerProductionPreview}; PublishWorkingTree={Test-ManagerPublishWorkingTree} }
 if ($Case -ne 'All' -and -not $cases.Contains($Case)) { throw "Unknown test case: $Case" }
 $passed = 0
 $failed = 0

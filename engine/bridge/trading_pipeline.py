@@ -12,9 +12,8 @@ import argparse
 import importlib.util
 import json
 import sys
-import orjson
 from bisect import bisect_left
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
@@ -40,9 +39,10 @@ from order_audit_engine import accepted_audit_entries, order_b_leg_identity
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.10.1"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.11.1"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-10-21 19:42:00 +03:30"
+TRADING_PIPELINE_VERSION = "1.11.0"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.14.2"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-10-26T19:31:03+03:30"
+MBL_EXTENSION_CANDLES = 100
 
 TEHRAN = ZoneInfo("Asia/Tehran")
 
@@ -1582,6 +1582,7 @@ class EngineBundle:
     s_zone: object
     e_zone: object | None
     lifecycle: object | None
+    primary: object | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -1653,6 +1654,7 @@ def parse_arguments(argv=None):
         action="store_true",
         help="Add the presentation-only Bridge Output projection.",
     )
+    parser.add_argument("--pl-ph", choices=("enabled", "disabled"), default="enabled")
     parser.add_argument("--data", type=Path, required=True)
     parser.add_argument("--timeframe", type=int, required=True)
     parser.add_argument("--from-time", type=int, required=True)
@@ -1697,7 +1699,11 @@ def load_engines(args, timings: dict[str, float]) -> EngineBundle:
         "Load Lifecycle engine",
         lambda: load_module("lifecycle_engine", lifecycle_path),
     )
-    return EngineBundle(reaction, blue_line, a_zone, s_zone, e_zone, lifecycle)
+    primary = (
+        load_module("PL_PH_detector", _PIPELINE_DIR / "PL_PH_detector.py")
+        if getattr(args, "pl_ph", "disabled") == "enabled" else None
+    )
+    return EngineBundle(reaction, blue_line, a_zone, s_zone, e_zone, lifecycle, primary)
 
 
 def prepare_market_context(
@@ -1707,11 +1713,13 @@ def prepare_market_context(
     source_bytes = timed(
         timings, "Read source file", lambda: args.data.read_bytes()
     )
-    # Match the former ``utf-8-sig`` behavior without decoding the entire raw
-    # payload to a Python string before orjson parses it.
+    # Price lexemes must remain exact: orjson converts all JSON decimals to
+    # binary float before the downstream Decimal(str(value)) normalization.
+    # This can silently change strict crossings near a price boundary.
     source_bytes = source_bytes.removeprefix(b"\xef\xbb\xbf")
     source_rows = timed(
-        timings, "Parse source JSON", lambda: orjson.loads(source_bytes)
+        timings, "Parse source JSON",
+        lambda: json.loads(source_bytes, parse_float=Decimal),
     )
     # A requested time range is a presentation window only.  Reaction state
     # can remain open past ``to_time`` and be resolved by later RAW chronology;
@@ -2207,6 +2215,8 @@ def calculate_direction_with_order_b_feedback(
     geometry_detectors: dict[str, object],
     initial_order_geometry: dict[str, object],
     timings: dict[str, float],
+    *,
+    stopall_enabled: bool,
 ) -> FullDirectionState:
     """Recalculate only while proven Order_B causes change accepted state."""
     opposite = engines.reaction.opposite_direction(direction)
@@ -2221,10 +2231,16 @@ def calculate_direction_with_order_b_feedback(
         )
         if shared_stages is None:
             shared_stages = state
-        e_zones, stopalls = engines.lifecycle.reconcile_stopall_lifecycle(
-            state.e_detector, state.s_zones, state.e_zones,
-            market.chronology, direction,
-        )
+        # The feedback pass and final visibility must use the SAME optional
+        # StopAll contract. Otherwise the converged Order_B causes can name a
+        # StopAll owner which the final pass intentionally never calculates.
+        if stopall_enabled:
+            e_zones, stopalls = engines.lifecycle.reconcile_stopall_lifecycle(
+                state.e_detector, state.s_zones, state.e_zones,
+                market.chronology, direction,
+            )
+        else:
+            e_zones, stopalls = list(state.e_zones), []
         e_zones = state.e_detector.restore_independent_s_roots(e_zones)
         e_zones = state.e_detector.ensure_accepted_order_audit(e_zones)
         discovered = engines.e_zone.discover_accepted_order_b_reset_legs(
@@ -2320,7 +2336,12 @@ def prepare_pipeline_state(
             )
             for direction in ("bullish", "bearish")
         }
-        for direction in directions:
+        calculation_directions = (
+            ("bullish", "bearish")
+            if engines.primary is not None and "bearish" in directions
+            else directions
+        )
+        for direction in calculation_directions:
             state = calculate_direction_with_order_b_feedback(
                 direction,
                 engines,
@@ -2329,6 +2350,7 @@ def prepare_pipeline_state(
                 geometry_detectors,
                 initial_order_geometry,
                 timings,
+                stopall_enabled=(args.lifecycle_engine is not None),
             )
             full_e_zones[direction] = state.e_zones
             full_e_detectors[direction] = state.e_detector
@@ -2412,6 +2434,7 @@ class DirectionVisibilityState:
     projection_s_zones: list[object]
     projection_e_zones: list[object]
     projection_stopalls: list[object]
+    primary_groups: dict[str, list[object]] = field(default_factory=dict, kw_only=True)
 
 
 def calculate_direction_range_state(
@@ -2541,6 +2564,24 @@ def finalize_direction_visibility(
     )
 
     e_zones = list(direction_state.e_zones)
+    stopall_e_zones = e_zones
+    detector = state.full_e_detectors.get(direction)
+    if detector is not None:
+        # E reconciliation can omit an otherwise accepted independent S root.
+        # An omitted physical source must still be available as a StopAll donor.
+        # Preserve existing dominant E objects/provenance: restoration may
+        # replace an E at an already-accepted source, but that replacement is
+        # only the final visibility decision, not a new StopAll donor.
+        accepted_sources = {
+            (item.source_index, item.source_time) for item in e_zones
+        }
+        independent = detector.restore_independent_s_roots(e_zones)
+        missing = [
+            item for item in independent
+            if (item.source_index, item.source_time) not in accepted_sources
+        ]
+        if missing:
+            stopall_e_zones = [*e_zones, *missing]
     stopalls: list[object] = []
     stopall_enabled = (
         args.lifecycle_engine is not None
@@ -2551,22 +2592,19 @@ def finalize_direction_visibility(
         e_zones, stopalls = lifecycle_engine.reconcile_stopall_lifecycle(
             state.full_e_detectors[direction],
             direction_state.accepted_s_zones,
-            e_zones,
+            stopall_e_zones,
             market.chronology,
             direction,
             lambda label, work: timed(timings, label, work),
         )
 
     if direction in state.full_e_detectors:
-        # Dominant E ownership drives StopAll.  After those hard boundaries are
-        # fixed, restore direct E1 roots of accepted S behaviors so independent
-        # E formation remains visible without letting lower-priority roots
-        # rewrite the dominant StopAll sequence.
+        # Preserve the preexisting final independent-root visibility policy.
+        # Only missing physical donor identities were supplemented for StopAll.
         detector = state.full_e_detectors[direction]
         e_zones = detector.restore_independent_s_roots(e_zones)
-        # Root restoration is a calculation-valid acceptance step that occurs
-        # after the detector's normal ledger rebuild.  Sync only missing audit
-        # identities while preserving Orders already needed by StopAll/history.
+        # Root restoration occurs after the detector's normal ledger rebuild.
+        # Sync missing audit identities without deleting historical Orders.
         e_zones = detector.ensure_accepted_order_audit(e_zones)
         visibility_stop = lambda item: detector.parent_stop(
             "S" if hasattr(item, "a_source_time") else "E", item
@@ -2627,6 +2665,11 @@ def finalize_direction_visibility(
         ),
     )
 
+    primary_groups = {
+        "A": [item for item in direction_state.a_zones
+              if (item.source_time, int(item.source_index)) not in direction_state.invalid_a_identities],
+        "S": list(visible_s_zones), "E": list(e_zones), "StopAll": list(stopalls),
+    }
     visible_s_zones = [
         item
         for item in visible_s_zones
@@ -2729,6 +2772,7 @@ def finalize_direction_visibility(
         projection_s_zones=projection_s_zones,
         projection_e_zones=projection_e_zones,
         projection_stopalls=projection_stopalls,
+        primary_groups=primary_groups,
     )
 
 
@@ -2873,6 +2917,185 @@ def serialize_direction_payload(
     )
 
 
+def serialize_primary_order(order, market, owner_direction):
+    """Preserve physical direction separately from the conceptual owner."""
+    stamp = lambda index: epoch(market.candles[index].timestamp)
+    def value(item):
+        if isinstance(item, datetime):
+            return epoch(item)
+        if isinstance(item, Decimal):
+            return str(item)
+        return item
+    return {
+        "ownerDirection": owner_direction, "direction": order.direction,
+        "reactionNumber": order.reaction_number,
+        "reactionMode": order.reaction_mode,
+        "types": [label for cause, label in (("parent-stop", "Order_A"), ("reset-leg", "Order_B"))
+                  if cause in order.causes],
+        "auditCauses": [{key: value(item) for key, item in cause.items()}
+                        for cause in order.audit_causes],
+        "firstIndex": order.first_index, "firstTime": stamp(order.first_index),
+        "breakIndex": order.break_index, "breakTime": stamp(order.break_index),
+        "confirmationEventTime": epoch(order.confirmation_event_time),
+        "stopLevel": str(order.stop_level), "stopSourceIndex": order.stop_source_index,
+        "stopSourceTime": stamp(order.stop_source_index),
+        "stopHitIndex": order.stop_index, "stopHitTime": stamp(order.stop_index),
+        "stopHitEventTime": epoch(order.stop_event_time), "causes": list(order.causes),
+        "boxTop": str(order.box_top) if order.box_top is not None else None,
+        "boxBottom": str(order.box_bottom) if order.box_bottom is not None else None,
+    }
+
+
+def serialize_primary_structures(primary, market):
+    """Project finalized structure state without price or lifecycle decisions."""
+    from PL_PH_detector import resolve_primary_highs, relabel_primary_order, formed_matching_legs
+    final_highs = resolve_primary_highs(primary, through_index=market.end_index)
+    cycles = getattr(primary, "cycles", None) or [primary]
+    first_cycle_id = getattr(cycles[0], "cycle_id", None)
+    def point(item):
+        order = relabel_primary_order(item.order, final_highs)
+        cycle_id = getattr(item, "cycle_id", None)
+        origin = getattr(item, "identity_source", None) or item
+        identity = f"bearish:{origin.kind}:{origin.number}:{origin.trigger_index}:{origin.decision_index}"
+        origin_cycle_id = getattr(origin, "cycle_id", None)
+        if origin_cycle_id is not None and origin_cycle_id != first_cycle_id:
+            identity += f":{origin_cycle_id}"
+        row = {
+            "id": identity,
+            "direction": "bearish", "kind": item.kind, "number": item.number,
+            "sourceIndex": item.source_index, "sourceTime": epoch(item.source_time),
+            "price": str(item.price), "triggerIndex": item.trigger_index,
+            "triggerTime": epoch(market.candles[item.trigger_index].timestamp),
+            "triggerEventTime": epoch(item.trigger_event_time),
+            "decisionIndex": item.decision_index,
+            "decisionTime": epoch(market.candles[item.decision_index].timestamp),
+            "decisionEventTime": epoch(item.decision_event_time),
+            "order": serialize_primary_order(order, market,
+                                              "bearish" if item.kind == "PH" else "bullish"),
+        }
+        if cycle_id is not None:
+            row["cycleId"] = cycle_id
+        return row
+    selected = lambda items: [point(item) for item in items
+        if market.start_index <= item.source_index <= market.end_index
+        and item.decision_index <= market.end_index]
+    legs = []
+    visible_cycles = []
+    for cycle in cycles:
+        leg = cycle.mbl
+        if leg is None or leg.trigger_index > market.end_index:
+            continue
+        visible_cycles.append(cycle)
+    for cycle, confirmation in formed_matching_legs(primary, through_index=market.end_index):
+        leg = cycle.mbl
+        row = {
+            "id": f"bearish:MBL:{leg.reference_stopall_index}:{leg.second_behavior_index}",
+            "direction": "bearish", "sourceIndex": leg.source_index,
+            "sourceTime": epoch(leg.source_time), "price": str(leg.price),
+            "referenceStopAllIndex": leg.reference_stopall_index,
+            "secondBehaviorIndex": leg.second_behavior_index,
+            "capTime": epoch(market.candles[leg.source_index + MBL_EXTENSION_CANDLES].timestamp)
+                if leg.source_index + MBL_EXTENSION_CANDLES < len(market.candles)
+                else epoch(market.candles[-1].timestamp +
+                           market.chronology.timeframe * (leg.source_index + MBL_EXTENSION_CANDLES + 1 - len(market.candles))),
+            "triggerIndex": leg.trigger_index,
+            "triggerTime": epoch(market.candles[leg.trigger_index].timestamp),
+            "triggerEventTime": epoch(leg.trigger_event_time),
+            "confirmationIndex": confirmation.decision_index,
+            "confirmationTime": epoch(market.candles[confirmation.decision_index].timestamp),
+            "confirmationEventTime": epoch(confirmation.decision_event_time),
+            "stopIndex": leg.stop_index if leg.stop_index is not None and leg.stop_index <= market.end_index else None,
+            "stopTime": epoch(market.candles[leg.stop_index].timestamp) if leg.stop_index is not None and leg.stop_index <= market.end_index else None,
+            "stopEventTime": epoch(leg.stop_event_time) if leg.stop_index is not None and leg.stop_index <= market.end_index else None,
+        }
+        if getattr(cycle, "cycle_id", None) is not None:
+            row["cycleId"] = cycle.cycle_id
+        legs.append(row)
+    highs, lows = selected(final_highs), selected(primary.lows)
+    high_by_source = {(row["sourceIndex"], row["sourceTime"]): row for row in highs}
+    for row in highs:
+        row["cycleIds"] = list(dict.fromkeys(
+            item.cycle_id for item in primary.highs
+            if item.source_index == row["sourceIndex"] and epoch(item.source_time) == row["sourceTime"]
+            and item.decision_index <= market.end_index and getattr(item, "cycle_id", None) is not None))
+    cycle_rows = [{
+        "id": cycle.cycle_id, "direction": "bearish", "status": cycle.status,
+        "referenceStopAllIndex": cycle.mbl.reference_stopall_index,
+        "secondBehaviorIndex": cycle.mbl.second_behavior_index,
+        "triggerIndex": cycle.mbl.trigger_index,
+        "triggerTime": epoch(market.candles[cycle.mbl.trigger_index].timestamp),
+        "triggerEventTime": epoch(cycle.mbl.trigger_event_time),
+        "highCount": len(selected(cycle.highs)),
+        "highIds": list(dict.fromkeys(high_by_source[(item.source_index, epoch(item.source_time))]["id"]
+            for item in cycle.highs if item.decision_index <= market.end_index
+            and (item.source_index, epoch(item.source_time)) in high_by_source)),
+        "lowCount": sum(row.get("cycleId") == cycle.cycle_id for row in lows),
+    } for cycle in visible_cycles if getattr(cycle, "cycle_id", None) is not None]
+    post_orders = []
+    for cycle in visible_cycles:
+        for order in cycle.post_pl3_orders:
+            if order.stop_index > market.end_index:
+                continue
+            row = serialize_primary_order(relabel_primary_order(order, final_highs), market, "bullish")
+            if getattr(cycle, "cycle_id", None) is not None:
+                row["cycleId"] = cycle.cycle_id
+            post_orders.append(row)
+    qualification = getattr(primary, "qualification_event_time", None)
+    horizon = market.candles[market.end_index].timestamp + market.chronology.timeframe
+    status = (visible_cycles[-1].status if visible_cycles else
+              "waiting-for-stopall-break" if qualification is not None and qualification < horizon
+              else "waiting-for-matching-behaviors")
+    return {"primaryHighs": highs, "primaryLows": lows,
+            "matchingBehaviorLegs": legs, "primaryStatus": status,
+            "primaryCycles": cycle_rows, "postPL3Orders": post_orders}
+
+
+def calculate_primary_structures(args, engines, market, state, visibility, timings):
+    """Connect finalized full-history behaviors to existing native Order services."""
+    groups = {"bearish": visibility.primary_groups}
+    opposite_state = calculate_direction_range_state(
+        "bullish", args, engines, market, state, timings
+    )
+    opposite_visibility = finalize_direction_visibility(
+        "bullish", args, engines, market, state, opposite_state, timings
+    )
+    groups["bullish"] = opposite_visibility.primary_groups
+    accepted_by_owner = {}
+    for owner in ("bullish", "bearish"):
+        detector = state.full_e_detectors[owner]
+        s_detector = state.full_s_detectors[owner]
+        accepted_sources = {item.source_time for item in s_detector.eligible_a_zones
+            if (item.source_time, int(item.source_index))
+            not in state.invalid_a_identities_by_direction[owner]}
+        accepted_by_owner[owner] = accepted_sources
+        groups[owner]["OrderAudit"] = engines.lifecycle.prepare_order_audit(
+            detector, 0, len(market.candles)-1, s_detector, accepted_sources
+        )
+    def commit_high(point):
+        detector = state.full_e_detectors["bearish"]
+        detector.register_primary_high(point)
+        groups["bearish"]["OrderAudit"] = engines.lifecycle.prepare_order_audit(
+            detector, 0, len(market.candles)-1, state.full_s_detectors["bearish"],
+            accepted_by_owner["bearish"],
+        )
+
+    resolver = engines.primary.NativePrimaryOrders(market.chronology, groups, on_high=commit_high)
+    primary = engines.primary.detect_bearish(
+        market.chronology, groups["bearish"]["S"], groups["bearish"]["E"],
+        groups["bearish"]["StopAll"], resolver,
+    )
+    state.full_e_detectors["bearish"].reconcile_primary_high_labels(
+        engines.primary.resolve_primary_highs(primary, through_index=market.end_index)
+    )
+    required = {order_identity(item["reaction"].first_idx, item["reaction"].break_idx)
+                for item in visibility.prepared_order_audit}
+    visibility.prepared_order_audit = engines.lifecycle.prepare_order_audit(
+        state.full_e_detectors["bearish"], market.start_index, market.end_index,
+        state.full_s_detectors["bearish"], accepted_by_owner["bearish"], required,
+    )
+    return primary
+
+
 def build_direction_output(
     direction: str,
     args,
@@ -2894,9 +3117,24 @@ def build_direction_output(
         direction_state,
         timings,
     )
-    return serialize_direction_payload(
+    primary = None
+    if (direction == "bearish" and engines.primary is not None
+            and direction in state.full_e_detectors and args.lifecycle_engine is not None):
+        primary = timed(timings, "PH/PL - Bearish", lambda: calculate_primary_structures(
+            args, engines, market, state, visibility, timings))
+        visibility.stopalls = engines.primary.resolve_stopall_ownership(
+            visibility.stopalls, primary, through_index=market.end_index,
+        )
+        validate_order_audit_bridge(
+            visibility.prepared_order_audit, visibility.s_zones,
+            visibility.e_zones, visibility.stopalls,
+        )
+    payload = serialize_direction_payload(
         direction, args, engines, market, state, visibility, timings
     )
+    if primary is not None:
+        payload.update(serialize_primary_structures(primary, market))
+    return payload
 
 def build_response_payload(
     args,
@@ -2917,6 +3155,7 @@ def build_response_payload(
         "engine": "reaction_engine.py",
         "version": engines.reaction.REACTION_ENGINE_VERSION,
         "pipelineVersion": TRADING_PIPELINE_VERSION,
+        "primaryVersion": engines.primary.PL_PH_VERSION if engines.primary is not None else None,
         "blueLineVersion": engines.blue_line.BLUE_LINE_VERSION,
         "aVersion": engines.a_zone.A_ZONE_VERSION,
         "sVersion": engines.s_zone.S_ZONE_VERSION,

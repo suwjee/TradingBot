@@ -684,19 +684,11 @@ function Invoke-PreviewOnly {
     $ctx.State = Get-BranchState -Target $Target
     Show-RepositoryStatus $ctx.State
     Write-Run 'Main policy analysis'
-    if ($Target -in @('main','both')) {
-      $ctx.MainReport = Test-MainCandidatePolicy
-    } else {
-      $ctx.MainReport = [pscustomobject]@{ Drift = @(); Errors = @() }
-      Write-Skip 'Main working-tree policy scan is not required for production-only preview.'
-    }
+    $ctx.MainReport = Test-MainCandidatePolicy
     Write-Run 'Calculating preview candidates'
-    $sourceMain = $ctx.State.LocalMain
-    if ($Target -in @('main','both')) {
-      $ctx.MainPreview = New-MainPreview -CommitMessage 'TradingBot preview only' -RemoteMain $ctx.State.RemoteMain -IncludeWorkingTree
-      $ctx.MainEntries = $ctx.MainPreview.Entries
-      $sourceMain = $ctx.MainPreview.TargetSha
-    }
+    $ctx.MainPreview = New-MainPreview -CommitMessage 'TradingBot preview only' -RemoteMain $ctx.State.RemoteMain -IncludeWorkingTree
+    $ctx.MainEntries = $ctx.MainPreview.Entries
+    $sourceMain = $ctx.MainPreview.TargetSha
     if ($Target -in @('production','both')) {
       $prodPreview = New-ProductionPreview -SourceMainSha $sourceMain -ProductionBaseSha $ctx.State.RemoteProduction -CommitMessage 'TradingBot preview only'
       $ctx.ProductionPreview = $prodPreview
@@ -704,6 +696,7 @@ function Invoke-PreviewOnly {
     }
     Write-Run 'Displaying exact candidate paths'
     if ($Target -in @('main','both')) { Show-ChangeEntries -Title 'MAIN CHANGES' -Entries $ctx.MainEntries }
+    elseif (@($ctx.MainEntries).Count) { Show-ChangeEntries -Title 'MAIN SOURCE CHANGES (candidate source for production)' -Entries $ctx.MainEntries }
     if ($Target -in @('production','both')) { Show-ChangeEntries -Title 'PRODUCTION CHANGES' -Entries $ctx.ProductionEntries }
     Show-PolicyDrift -MainDrift $ctx.MainReport.Drift -ProductionDrift $(if ($prodPreview) { $prodPreview.FileSet.Drift } else { @() })
     Write-Ok 'Preview only complete. No commit, tag, push, or release occurred.'

@@ -1,6 +1,7 @@
 # TradingBot Git and Release Workflow Design
 
-**Status:** Proposed and approved for planning  
+**Status:** Historical planning record. Current operations are maintained in [README.md](README.md).
+
 **Project root for this task:** `X:\TradingBot`  
 **Scope:** Repository policy and Git/GitHub release automation only. Trading calculations, UI behavior, and runtime behavior are out of scope.
 

@@ -12,7 +12,7 @@ scope:
   - faraz-ui
   - algorithm-reference-ui
   - responsive-accessibility
-last_modified_at: 2026-10-04T05:09:22+03:30
+last_modified_at: 2026-10-26T17:08:13+03:30
 ---
 
 # TradingBot UI/UX Reference
@@ -195,7 +195,7 @@ When a required choice is missing, the user receives an error and the relevant c
 
 ### 8.2 Calculation reuse vs recalculation
 
-If the current finalized result already matches the same calculation context, changing presentation-only settings can update appearance without rerunning Engine.
+If the current finalized result matches the same calculation context and the local server confirms its calculation-Source fingerprint is current, changing presentation-only settings can update appearance without rerunning Engine. An unavailable, missing or changed Source identity requires the normal calculation request. The Source check does not independently validate RAW freshness.
 
 Changes to calculation identity/context—such as source, direction, analysis timeframe, chart timeframe, or selected calculation range—require an appropriate calculation result for that new context.
 
@@ -216,6 +216,8 @@ On success:
 - Chart redraws;
 - indicator/cache status is refreshed;
 - calculation details/activity become available.
+
+The Info panel includes finalized PH, PL and MBL counts and explains the Engine's primary-structure waiting or terminal status, including when no primary objects have formed.
 
 On failure:
 
@@ -325,6 +327,32 @@ The review surface provides:
 - copy/download of the review report.
 
 Bridge detail is a display-only view of finalized supplied data. It does not infer a new behavior or Order identity from row position.
+
+Counted behavior labels retain the finalized supplied number with a hyphen
+separator, including E-3, StopAll-2, PH-5 and PL-2; the report does not infer a
+trading count from row order.
+Reaction, Reset and Blue Line filters start unchecked and their events stay
+hidden until explicitly selected. Other behavior filters remain available.
+The aggregate All checkbox reflects partially selected families.
+Reaction filter text follows its direction: green for bullish calculation,
+red for bearish calculation; a combined-direction family uses a neutral header
+and keeps directional child colors.
+
+The Live review report Include selector can export all currently visible rows,
+including unreviewed rows, through All visible. Category/date filters remain in
+force; unreviewed rows are reported as UNSELECTED without changing annotation
+state. Existing reviewed, True-only and False-only modes remain available.
+Copy and download use the selected output mode. Report typography is enlarged
+by 15% with local styles, wider reading columns and responsive stacking.
+
+
+Primary structures use the names MBL, PH and PL. Their labels and filter colors
+share the Chart primary presentation defaults and honor supplied appearance
+snapshot settings/overrides. PH and PL retain their finalized numbered labels;
+MBL is an unnumbered leg label. Primary-cycle metadata is not rendered as a
+reviewable behavior, filter family or record collection. Omitting that metadata
+from this page does not remove it from the authoritative calculation payload.
+
 
 ### 11.3 Review persistence
 

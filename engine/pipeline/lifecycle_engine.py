@@ -21,9 +21,9 @@ from order_audit_engine import (
 from direction_policy import policy_for
 
 
-STOP_ALL_VERSION = "1.18.4"
-STOP_ALL_IMPLEMENTATION_VERSION = "1.20.4"
-STOP_ALL_LAST_MODIFIED = "2026-10-21 19:42:00 +03:30"
+STOP_ALL_VERSION = "1.18.6"
+STOP_ALL_IMPLEMENTATION_VERSION = "1.20.7"
+STOP_ALL_LAST_MODIFIED = "2026-10-24T12:06:51+03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -116,6 +116,27 @@ class _DominantBehavior:
             f"E{self.number} {self.family}"
             if self.kind == "E" else f"S {self.family}"
         )
+
+
+def advance_dominant_behavior(
+    owner: _DominantBehavior | None, kind: str, family: str,
+    number: int | None, item: object,
+) -> _DominantBehavior:
+    """Accept one finalized S/E occurrence using the shared exact-owner rule."""
+    incoming = _DominantBehavior(kind, family, number, 1, item)
+    if owner is None:
+        return incoming
+    if (owner.kind, owner.family, owner.number) == (kind, family, number):
+        return replace(owner, count=owner.count + 1, latest=item)
+    if incoming.priority > owner.priority or (
+        incoming.priority == owner.priority
+        and kind == owner.kind == "E"
+        and StopAllDetector._dominates_e(
+            (family, int(number)), (owner.family, int(owner.number))
+        )
+    ):
+        return incoming
+    return owner
 
 
 class StopAllDetector:
@@ -346,6 +367,24 @@ class StopAllDetector:
                 return stop[2]
             if donor_e is None or stop[2] > donor_e.decision_event_time:
                 return None
+            # An independently accepted E can donate its physical source when
+            # its extreme strictly stops the armed owner *inside that source
+            # candle*.  Its earlier source timestamp is only a bucket label;
+            # the authoritative lower-timeframe stop must be inside the bucket
+            # and no later than E's decision event.  This is independent of
+            # the E parent: its parent may predate the dominant owner.
+            source_index = int(donor_e.source_index)
+            if (
+                self.chronology.main_index(stop[2], clamp=True) == source_index
+                and donor_e.source_time <= stop[2]
+                and stop[2] < donor_e.source_time + self.chronology.timeframe
+                and (
+                    as_decimal(donor_e.price) < as_decimal(owner.latest.price)
+                    if self.direction == "bullish"
+                    else as_decimal(donor_e.price) > as_decimal(owner.latest.price)
+                )
+            ):
+                return stop[2]
             # E source geometry is retrospective and may use the main candle
             # containing its own parent's strict stop. Match that physical
             # parent exactly before allowing a stop at/after E source time.
@@ -366,17 +405,7 @@ class StopAllDetector:
 
         def accept(kind: str, family: str, number: int | None, item: object) -> None:
             nonlocal owner
-            incoming = _DominantBehavior(kind, family, number, 1, item)
-            if owner is None:
-                owner = incoming
-            elif (owner.kind, owner.family, owner.number) == (kind, family, number):
-                owner = replace(owner, count=owner.count + 1, latest=item)
-            elif incoming.priority > owner.priority or (
-                incoming.priority == owner.priority
-                and kind == owner.kind == "E"
-                and self._dominates_e((family, int(number)), (owner.family, int(owner.number)))
-            ):
-                owner = incoming
+            owner = advance_dominant_behavior(owner, kind, family, number, item)
 
         def process_s_event(s_item: object) -> None:
             nonlocal owner, pending_stop, active
@@ -608,9 +637,10 @@ def visible_a_zones_after_s_stops(a_zones, s_zones, candles):
     """
     times = [getattr(item, "timestamp") for item in candles]
     stop_indices = {
-        bisect_left(times, getattr(item, "decision_event_time"))
+        bisect_right(times, getattr(item, "decision_event_time")) - 1
         for item in s_zones
     }
+    stop_indices.discard(-1)
     return [
         item for item in a_zones
         if int(getattr(item, "source_index")) not in stop_indices

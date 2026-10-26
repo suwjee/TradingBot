@@ -2,12 +2,25 @@
 // identities, prices and orders come exclusively from the supplied bridge
 // payload, never chart inference. The page is generated fresh per export;
 // no file is written and no candle cache is serialized.
+import { PRIMARY_VISUAL_DEFAULTS, primaryMarkerLayout, primaryObjectId } from "../../chart/primary-structure.js";
+
 const collections = {
   reactions: ["Reaction", "firstTime"], resets: ["Reset", "time"],
   blueLines: ["Blue Line", "sourceTime"], aZones: ["A", "sourceTime"],
   sZones: ["S", "sourceTime"], eZones: ["E", "sourceTime"],
   stopAlls: ["StopAll", "sourceTime"], orderReactions: ["Order reaction", "firstTime"],
   orderAudit: ["Order Audit", "firstTime"],
+  primaryHighs: ["PH", "sourceTime"], primaryLows: ["PL", "sourceTime"],
+  matchingBehaviorLegs: ["MBL", "sourceTime"],
+};
+const primaryKinds = { primaryHighs: "PH", primaryLows: "PL", matchingBehaviorLegs: "MBL" };
+const primaryFamilies = new Set(Object.values(primaryKinds));
+const defaultHiddenFamilies = new Set(["Reaction", "Reset", "Blue Line"]);
+const primaryFamily = (family) => primaryKinds[family] || family;
+const behaviorNumber = (value) => value != null && value !== "" && Number.isInteger(Number(value)) && Number(value) >= 0 ? Number(value) : null;
+const numberedLabel = (family, number) => {
+  if (number == null || family === "MBL") return family;
+  return `${family}-${number}`;
 };
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g,
   (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
@@ -21,10 +34,7 @@ export function reviewTime(epoch) {
   return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}:${parts.second}`;
 }
 function labelFor(group, row) {
-  if (group === "sZones") return "S";
-  if (group === "eZones") return "E";
-  if (group === "stopAlls") return `StopAll${row.number ?? "—"}`;
-  return collections[group]?.[0] || group;
+  return numberedLabel(collections[group]?.[0] || group, behaviorNumber(row.number));
 }
 function bridgeProjection(groups, group, index) {
   const projected = groups?.bridgeOutput?.[group]?.[index];
@@ -104,6 +114,16 @@ const colorSpec = {
 const objectKinds = { reactions: "reaction", blueLines: "blue", aZones: "a", sZones: "s", eZones: "e", stopAlls: "stopall" };
 const safeColor = (value) => typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value);
 export function reviewColor(record, snapshot = {}, objects = new Map((snapshot.indicatorObjects || []).map((item) => [item.id, item]))) {
+  const kind = primaryKinds[record.group] || (primaryFamilies.has(record.category.family) ? record.category.family : null);
+  if (kind) {
+    const direction = String(record.direction || record.row?.direction || "bearish").toLowerCase();
+    const object = objects.get(primaryObjectId(direction, kind, record.row || {}));
+    const chartColor = kind === "MBL" ? snapshot.settings?.mblColor || PRIMARY_VISUAL_DEFAULTS.mblColor
+      : primaryMarkerLayout(kind, direction, 0, 0, snapshot.settings).color;
+    const chosen = object?.customized ? object.color : chartColor;
+    return safeColor(chosen) ? chosen : kind === "MBL" ? PRIMARY_VISUAL_DEFAULTS.mblColor
+      : primaryMarkerLayout(kind, direction, 0, 0).color;
+  }
   const [setting, fallback] = colorSpec[record.category.colorKey || record.category.key] || ["", "#475569"];
   const object = objects.get(`indicator:${record.direction}:${objectKinds[record.group]}:${record.index}`);
   const chosen = object?.customized ? object.color : snapshot.settings?.[setting];
@@ -122,16 +142,21 @@ export function manualReviewFilename(date = new Date(), extension = "txt") {
 }
 export function reviewRecords(payload) {
   if (Array.isArray(payload?.report)) {
-    return payload.report.map((item, index) => {
+    return payload.report.flatMap((item, index) => {
       const details = item?.details && typeof item.details === "object" ? item.details : {};
-      const family = item?.category?.family || details.type || "Report";
+      const originalFamily = item?.category?.family || details.type || "Report";
+      if (originalFamily === "primaryCycles" || item?.group === "primaryCycles") return [];
+      const family = primaryFamily(originalFamily);
       return {
         id: String(item.id || `report:${index}`),
         direction: item.direction || details.direction || "",
         group: family,
         row: details,
         index,
-        category: item.category || { key: family, family, label: item.label || family },
+        category: item.category ? { ...item.category, family,
+          label: originalFamily !== family && (!item.category.label || item.category.label === originalFamily)
+            ? family : item.category.label }
+          : { key: family, family, label: item.label || family },
         epoch: item.time,
         time: item.time || "Undated",
         label: item.label || family,
@@ -142,7 +167,7 @@ export function reviewRecords(payload) {
   const records = [];
   for (const [direction, groups] of Object.entries(payload.directions || {})) {
     for (const [group, rows] of Object.entries(groups)) {
-      if (!Array.isArray(rows)) continue;
+      if (!Array.isArray(rows) || group === "primaryCycles") continue;
       rows.forEach((row, index) => {
         const epoch = row?.[collections[group]?.[1] || "sourceTime"];
         records.push({ id: `${direction}:${group}:${index}`, direction, group, row, index, groups,
@@ -250,6 +275,7 @@ export function manualInfoObject(record) {
   const projected = bridgeProjection(groups, group, index);
   if (projected) return projected;
   const base = { type: collections[group]?.[0] || group, direction: readableDirection(direction) };
+  if (primaryKinds[group]) return { ...row, ...base };
   if (group === "reactions") return removeUndefined({
     ...base,
     mode: readableMode(row.mode),
@@ -632,42 +658,59 @@ function legacyReviewRuntime(initialBridgeData = null) {
   update();
 }
 
-const reportFamilyOrder = ["Reaction", "Reset", "Blue Line", "A", "S Blue", "S Red", "E Blue", "E Red", "StopAll", "Order Audit"];
+const reportFamilyOrder = ["Reaction", "Reset", "Blue Line", "A", "S Blue", "S Red", "E Blue", "E Red", "StopAll", "Order Audit", "MBL", "PH", "PL"];
 export const reportFamilyColor = {
   Reaction: "var(--report-reaction)", Reset: "var(--report-reset)",
   "Blue Line": "var(--report-blue-line)", A: "var(--report-a)",
   "S Blue": "var(--report-s-blue)", "S Red": "var(--report-s-red)",
   "E Blue": "var(--report-e-blue)", "E Red": "var(--report-e-red)",
   StopAll: "var(--report-stop-all)", "Order Audit": "var(--report-order-audit)",
+  PH: PRIMARY_VISUAL_DEFAULTS.primaryArrowColor, PL: PRIMARY_VISUAL_DEFAULTS.primaryCircleColor,
+  MBL: PRIMARY_VISUAL_DEFAULTS.mblColor,
 };
 
 export function reportCategoryColor(key, family) {
-  if (key === "reactions:bearish" || key === "reaction:bearish") return "var(--report-reaction-bearish)";
-  if (key === "reactions:bullish" || key === "reaction:bullish") return "var(--report-reaction-bullish)";
+  if (/^reactions?:bearish(?::|$)/.test(key)) return "var(--report-reaction-bearish)";
+  if (/^reactions?:bullish(?::|$)/.test(key)) return "var(--report-reaction-bullish)";
   return reportFamilyColor[family] || "var(--ui-text-secondary)";
+}
+
+function reportRecordColorKey(record) {
+  const direction = String(record.direction || "").toLowerCase();
+  return record.category.family === "Reaction" && ["bearish", "bullish"].includes(direction)
+    ? `reactions:${direction}` : record.category.colorKey || record.category.key;
 }
 
 export function reportDisplayLabel(record) {
   const family = record?.category?.family || "";
-  if (family === "Reaction") return String(record?.direction || "").toLowerCase() === "bearish" ? "Bearish Reaction" : "Bullish Reaction";
+  const projected = record?.reportDetails || bridgeProjection(record?.groups, record?.group, record?.index);
+  let number = behaviorNumber(record?.row?.number ?? projected?.number);
+  if (number == null) {
+    const base = family.startsWith("E ") ? "E" : family.startsWith("S ") ? "S" : family;
+    for (const label of [record?.label, record?.category?.label]) {
+      const supplied = String(label || "").split(/\s*\/\s*/).at(-1).match(/^(E|S|A|StopAll|PH|PL)[ -]?(\d+)$/);
+      if (supplied?.[1] === base) { number = behaviorNumber(supplied[2]); break; }
+    }
+  }
+  if (family === "Reaction") return numberedLabel(String(record?.direction || "").toLowerCase() === "bearish" ? "Bearish Reaction" : "Bullish Reaction", number);
   if (family === "Order Audit") return record?.category?.label || record?.label || family;
-  if (family === "Blue Line" || family === "Reset" || family === "A" || family === "StopAll") return family;
-  if (family.startsWith("S ")) return "S";
-  if (family.startsWith("E ")) return "E";
+  if (["Blue Line", "Reset", "A", "StopAll", "PH", "PL", "MBL"].includes(family)) return numberedLabel(family, number);
+  if (family.startsWith("S ")) return numberedLabel("S", number);
+  if (family.startsWith("E ")) return numberedLabel("E", number);
   return record?.label || family || "Report";
 }
 
 function reportFilterChildLabel(family, label) {
   const value = String(label || "");
-  return value.replace(`${family} / `, "");
+  return value.replace(`${family} / `, "").replace(/^(E|S|A|StopAll|PH|PL)[ -]?(\d+)$/, "$1-$2");
 }
 
 function reportEventCard(record) {
   const { id, direction, time, category } = record;
   const safeTime = time || "Undated";
   const label = reportDisplayLabel(record);
-  const color = reportCategoryColor(category.colorKey || category.key, category.family);
-  return `<article class="event" style="--event-color:${escapeHtml(color)}" data-id="${escapeHtml(id)}" data-filter="${escapeHtml(category.key)}" data-filter-family="${escapeHtml(category.family)}" data-report-family="${escapeHtml(category.family)}" data-time="${escapeHtml(safeTime)}" data-time-group="${escapeHtml(reviewTimeGroup(safeTime))}" data-label="${escapeHtml(`${direction} | ${label}`)}">
+  const color = primaryFamilies.has(category.family) ? record.color : reportCategoryColor(reportRecordColorKey(record), category.family);
+  return `<article class="event"${defaultHiddenFamilies.has(category.family) ? " hidden" : ""} style="--event-color:${escapeHtml(color)}" data-id="${escapeHtml(id)}" data-filter="${escapeHtml(category.key)}" data-filter-family="${escapeHtml(category.family)}" data-report-family="${escapeHtml(category.family)}" data-time="${escapeHtml(safeTime)}" data-time-group="${escapeHtml(reviewTimeGroup(safeTime))}" data-label="${escapeHtml(`${direction} | ${label}`)}">
     <div class="state-control" role="group" aria-label="Review status"><label class="true-choice" title="Mark as true"><input class="state" type="radio" name="${escapeHtml(id)}" value="true" aria-label="Mark ${escapeHtml(`${direction} ${label} ${safeTime}`)} as true"><span class="sr-only">True</span></label><label class="false-choice" title="Mark as false"><input class="state" type="radio" name="${escapeHtml(id)}" value="false" aria-label="Mark ${escapeHtml(`${direction} ${label} ${safeTime}`)} as false"><span class="sr-only">False</span></label></div>
     <button class="event-time copy-line" type="button" title="Copy timestamp and review status"><time datetime="${safeTime === "Undated" ? "" : safeTime.replace(" ", "T")}">${escapeHtml(safeTime)}</time></button>
     <div class="event-label"><span class="chip" style="--chip-color:${escapeHtml(color)};--event-color:${escapeHtml(color)}">${escapeHtml(label)}</span><small>${escapeHtml(direction)}</small></div>
@@ -682,8 +725,11 @@ function reportFilterMarkup(families) {
   });
   return ordered.map(([family, group]) => {
     const children = [...group.children.values()].sort((a, b) => a.label.localeCompare(b.label));
-    const color = reportFamilyColor[family] || "var(--ui-text-secondary)";
-    return `<details class="filter-group" data-filter-group="${escapeHtml(family)}" style="--family-color:${color}"><summary><input class="filter-group-checkbox" type="checkbox" data-filter-parent="${escapeHtml(family)}" aria-label="Select all ${escapeHtml(family)}" checked><span class="filter-group-title"><i class="filter-dot" style="background:${color}" aria-hidden="true"></i><strong>${escapeHtml(family)}</strong></span><span class="filter-group-count">${group.count.toLocaleString()}</span></summary><div class="filter-options"><label class="filter-option filter-parent"><input type="checkbox" data-filter-parent="${escapeHtml(family)}" checked><span>All</span><b>${group.count.toLocaleString()}</b></label>${children.map((child) => { const childColor = reportCategoryColor(child.colorKey || child.key, family); const childLabel = reportFilterChildLabel(family, child.label); return `<label class="filter-option" style="--option-color:${childColor}"><input class="category-filter" type="checkbox" data-filter-family="${escapeHtml(family)}" data-filter-key="${escapeHtml(child.key)}" value="${escapeHtml(child.key)}" checked><span>${escapeHtml(childLabel)}</span><b>${child.count.toLocaleString()}</b></label>`; }).join("")}</div></details>`;
+    const childColors = [...new Set(children.map(child => reportCategoryColor(child.colorKey || child.key, family)))];
+    const color = primaryFamilies.has(family) ? group.color : childColors.length === 1 ? childColors[0]
+      : family === "Reaction" ? "var(--ui-text-secondary)" : reportFamilyColor[family] || "var(--ui-text-secondary)";
+    const checked = defaultHiddenFamilies.has(family) ? "" : " checked";
+    return `<details class="filter-group" data-filter-group="${escapeHtml(family)}" style="--family-color:${escapeHtml(color)}"><summary><input class="filter-group-checkbox" type="checkbox" data-filter-parent="${escapeHtml(family)}" aria-label="Select all ${escapeHtml(family)}"${checked}><span class="filter-group-title"><i class="filter-dot" style="background:${escapeHtml(color)}" aria-hidden="true"></i><strong>${escapeHtml(family)}</strong></span><span class="filter-group-count">${group.count.toLocaleString()}</span></summary><div class="filter-options"><label class="filter-option filter-parent"><input type="checkbox" data-filter-parent="${escapeHtml(family)}"${checked}><span>All</span><b>${group.count.toLocaleString()}</b></label>${children.map((child) => { const childColor = primaryFamilies.has(family) ? child.color : reportCategoryColor(child.colorKey || child.key, family); const childLabel = reportFilterChildLabel(family, child.label); return `<label class="filter-option" style="--option-color:${escapeHtml(childColor)}"><input class="category-filter" type="checkbox" data-filter-family="${escapeHtml(family)}" data-filter-key="${escapeHtml(child.key)}" value="${escapeHtml(child.key)}"${checked}><span>${escapeHtml(childLabel)}</span><b>${child.count.toLocaleString()}</b></label>`; }).join("")}</div></details>`;
   }).join("");
 }
 
@@ -750,13 +796,14 @@ export function reviewRuntime(initialBridgeData = null) {
   const metadata = [...document.querySelectorAll(".calculation-meta > div")].map((item) => [item.querySelector("dt")?.textContent || "", item.querySelector("dd")?.textContent || ""]);
   const refreshReport = () => {
     const accepted = q("#mode")?.value || "all";
-    const reviewed = events.filter((event) => !event.hidden && statusOf(event) && (accepted === "all" || statusOf(event) === accepted));
+    const reviewed = events.filter((event) => !event.hidden && (accepted === "visible"
+      || statusOf(event) && (accepted === "all" || statusOf(event) === accepted)));
     const lines = [
       "CALCULATION REPORT - MANUAL REVIEW",
       ...metadata.map(([label, value]) => `${label}: ${value}`),
-      `Reviewed events in current view: ${reviewed.length}`,
+      `${accepted === "visible" ? "Visible" : "Reviewed"} events in current view: ${reviewed.length}`,
       "",
-      ...reviewed.map((event) => `${event.dataset.time}\t${event.dataset.label.replace(/^\\w+\\s*\\|\\s*/, "")}\t${statusOf(event).toUpperCase()}`),
+      ...reviewed.map((event) => `${event.dataset.time}\t${event.dataset.label.replace(/^\\w+\\s*\\|\\s*/, "")}\t${(statusOf(event) || "Unselected").toUpperCase()}`),
     ];
     const output = q("#report-text");
     if (output) output.value = lines.join("\n");
@@ -927,10 +974,10 @@ export async function buildReviewBody(payload, snapshot = {}, cryptoApi = global
     bridgeData[record.id] = record.reportDetails || manualInfoObject(record);
     record.color = reviewColor(record, snapshot, objects);
     const category = record.category || { key: record.group, family: record.group, label: record.label };
-    if (!families.has(category.family)) families.set(category.family, { count: 0, children: new Map() });
+    if (!families.has(category.family)) families.set(category.family, { count: 0, color: record.color, children: new Map() });
     const family = families.get(category.family);
     family.count++;
-    if (!family.children.has(category.key)) family.children.set(category.key, { key: category.key, colorKey: category.colorKey || category.key, label: category.label, count: 0 });
+    if (!family.children.has(category.key)) family.children.set(category.key, { key: category.key, colorKey: reportRecordColorKey(record), label: category.label, color: record.color, count: 0 });
     family.children.get(category.key).count++;
     const day = reviewTimeGroup(record.time);
     record.timeGroup = day;
@@ -953,7 +1000,7 @@ export async function buildReviewBody(payload, snapshot = {}, cryptoApi = global
   const featureDetails = [...groups].map(([group, count]) => `<details class="feature"><summary><strong>${escapeHtml(group)}</strong><span>${count.toLocaleString()}</span></summary></details>`).join("");
   const body = `<a class="skip-link" href="#timeline">Skip to timeline</a><header><span class="eyebrow">CALCULATION REPORT</span><h1>Indicator information</h1><dl class="calculation-meta" aria-label="Calculation details">${reportMeta.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}</dl></header>
 <main class="report-shell"><aside class="filter-sidebar" aria-label="Behavior filters"><div class="filter-sidebar-head"><h2 class="filter-sidebar-title"><svg class="filter-heading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16l-6.5 7.5v5.5l-3 2v-7.5L4 5Z"></path></svg>Behavior filters</h2><span class="filter-total-count">${records.length.toLocaleString()}</span><div class="filter-actions"><button id="clear-filters" class="quiet-action" type="button">Clear all</button></div></div><label class="filter-search"><span class="sr-only">Search filters</span><input id="filter-search" type="search" placeholder="Search filters…" autocomplete="off"></label><div class="filter-dates"><label>From<input id="from" type="datetime-local" step="1" aria-describedby="range-error"></label><label>To<input id="to" type="datetime-local" step="1" aria-describedby="range-error"></label><button id="reset" class="quiet-action" type="button">Reset dates</button></div><p class="error" id="range-error" role="alert" hidden>From must not be later than To.</p><div class="filter-tree"><div class="filter-all-row"><button class="filter-all-toggle" type="button" aria-controls="filter-groups" aria-expanded="true" aria-label="Collapse all filters"></button><label class="filter-all-label"><input id="all-filters" type="checkbox" checked><strong>All</strong><span class="filter-all-count">${records.length.toLocaleString()}</span></label></div><div class="filter-groups" id="filter-groups">${reportFilterMarkup(families)}</div></div><footer class="filter-footer"><span id="filter-note" role="status" aria-live="polite"></span></footer></aside><section class="report-content" id="timeline" aria-labelledby="timeline-title"><div class="section-head"><h2 id="timeline-title">Chronological timeline</h2><span id="empty" class="empty" hidden>No matching events.</span></div>${timeline || "<p class=\"empty\">No events.</p>"}</section></main>
-<section class="report-export" id="review-report" aria-labelledby="report-title"><div class="report-export-head"><h2 id="report-title">Live review report</h2><div class="report-controls"><label>Include <select id="mode"><option value="all">All selected</option><option value="true">True only</option><option value="false">False only</option></select></label><button id="copy" type="button">Copy</button><button id="download" type="button">Download</button></div></div><textarea id="report-text" readonly aria-label="Review report"></textarea></section>
+<section class="report-export" id="review-report" aria-labelledby="report-title"><div class="report-export-head"><h2 id="report-title">Live review report</h2><div class="report-controls"><label>Include <select id="mode"><option value="all">All selected</option><option value="visible">All visible</option><option value="true">True only</option><option value="false">False only</option></select></label><button id="copy" type="button">Copy</button><button id="download" type="button">Download</button></div></div><textarea id="report-text" readonly aria-label="Review report"></textarea></section>
 <section class="collections" aria-labelledby="collections-title"><h2 id="collections-title">Record collections</h2>${featureDetails}</section>`;
   return { hash, reviewId: snapshot.exportedAt || "standalone", runtime: reviewRuntime.toString(), body, bridgeData };
 }

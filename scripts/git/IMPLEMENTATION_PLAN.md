@@ -1,5 +1,7 @@
 # TradingBot Git and Release Workflow Implementation Plan
 
+**Status:** Historical implementation plan. Current operations are maintained in [README.md](README.md); the unchecked steps below preserve the original planning record.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (- [ ]) syntax for tracking.
 
 **Goal:** Build a safe PowerShell workflow that prepares inclusion-first main and dependency-derived production, validates both locally, and can then publish two branches, an exact-production tag, and its GitHub Release.

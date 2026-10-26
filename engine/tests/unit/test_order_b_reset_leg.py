@@ -19,6 +19,13 @@ from e_zone_detector import (
 )
 from lifecycle_engine import prepare_order_audit
 from order_audit_engine import OrderBBehaviorAnchor
+from reaction_engine import MarketChronology
+
+
+class ChronologyFixture(SimpleNamespace):
+    """Keep the production main-candle clock with controlled Reset events."""
+
+    main_index = MarketChronology.main_index
 
 
 def scenario(*, crossing_low="8", opposite_first=6, a_cutoff=7, direction="bullish"):
@@ -51,10 +58,10 @@ def scenario(*, crossing_low="8", opposite_first=6, a_cutoff=7, direction="bulli
     current = SimpleNamespace(first_idx=4, break_idx=4, confirmed_at=base + timedelta(seconds=125))
     opposite = SimpleNamespace(
         first_idx=opposite_first,
-        break_idx=opposite_first,
+        break_idx=6,
         confirmed_at=base + timedelta(seconds=195),
     )
-    chronology = SimpleNamespace(
+    chronology = ChronologyFixture(
         candles=candles,
         seconds=lower,
         second_times=lower_times,
@@ -96,12 +103,34 @@ def test_equal_boundary_does_not_create_order():
     assert discover(crossing_low="9") == []
 
 
-def test_opposite_first_candle_must_begin_at_or_after_break():
-    assert discover(opposite_first=5) == []
+def test_opposite_first_candle_before_strict_break_main_candle_is_rejected():
+    assert discover(opposite_first=4) == []
+
+
+def test_opposite_first_in_strict_break_main_candle_is_eligible():
+    matches = discover(opposite_first=5)
+    assert len(matches) == 1
+    match = matches[0]
+    assert match.physical_reaction.first_idx == 5
+    assert match.strict_break_time == datetime(2026, 9, 27, 12, 2, 35)
+    assert match.physical_confirmation_time == datetime(2026, 9, 27, 12, 3, 15)
+    # First opens at 12:02:30. The later 12:02:35 RAW break belongs to it.
+    assert match.physical_reaction.break_idx == 6
 
 
 def test_next_a_formation_expires_incomplete_candidate():
     assert discover(a_cutoff=5) == []
+
+
+def test_a_after_exact_break_still_expires_same_main_candle_candidate():
+    values = list(scenario())
+    values[-1] = [datetime(2026, 9, 27, 12, 2, 50)]
+    matches = discover_order_b_reset_legs(
+        "bullish", *values,
+        behavior_anchors=[OrderBBehaviorAnchor("A", 0, values[0].times[0], 0, 1)],
+    )
+    # A is later than the exact 12:02:35 break, but both own candle 5.
+    assert matches == []
 
 
 def test_bearish_direction_uses_strict_high_above_inclusive_ceiling():
@@ -138,9 +167,6 @@ def test_latest_accepted_behavior_is_anchor_independent_of_previous_reaction():
 
 def test_dominant_stop_owns_one_main_candle_transition():
     chronology, *_ = scenario()
-    chronology.main_index = lambda event, clamp=True: max(
-        0, min(len(chronology.times) - 1, int((event - chronology.times[0]).total_seconds() // 30))
-    )
     a = SimpleNamespace(source_time=chronology.times[0], source_index=0, number=1, rank=0)
     e = SimpleNamespace(source_time=chronology.times[0], source_index=0, number=2, rank=4)
     stops = [
@@ -157,9 +183,6 @@ def test_dominant_stop_owns_one_main_candle_transition():
 
 def test_open_higher_priority_behavior_blocks_lower_priority_stop():
     chronology, *_ = scenario()
-    chronology.main_index = lambda event, clamp=True: max(
-        0, min(len(chronology.times) - 1, int((event - chronology.times[0]).total_seconds() // 30))
-    )
     a = SimpleNamespace(source_time=chronology.times[0], source_index=0, number=1, rank=0)
     e = SimpleNamespace(source_time=chronology.times[0], source_index=1, number=1, rank=4)
     result = dominant_post_behavior_stops(
@@ -207,8 +230,9 @@ def test_same_physical_identity_keeps_parent_and_all_reset_leg_causes():
             for leg in legs
         ],
     }
-    detector = SimpleNamespace(order_audit={(5, 5): b_entry})
-    s_detector = SimpleNamespace(order_audit={(5, 5): first_entry})
+    identity = (int(reaction.first_idx), int(reaction.break_idx))
+    detector = SimpleNamespace(order_audit={identity: b_entry})
+    s_detector = SimpleNamespace(order_audit={identity: first_entry})
     prepared = prepare_order_audit(
         detector, 0, 6, s_detector, {a_source}, set()
     )
@@ -222,27 +246,30 @@ def test_b_only_accepted_order_can_carry_into_next_parent_lifecycle():
     chronology, _same, _resets, opposite, _stops, _formations = scenario()
     base = chronology.times[0]
     reaction = opposite[0]
+    identity = (int(reaction.first_idx), int(reaction.break_idx))
     fake = SimpleNamespace(
-        order_audit={(5, 5): {
+        order_audit={identity: {
             "reaction": reaction,
             "reaction_number": 1,
-            "confirmation_time": base + timedelta(seconds=145),
+            "confirmation_time": reaction.confirmed_at,
             "stop_level": Decimal("11"),
             "stop_source_index": 1,
             "stop_source_time": chronology.times[1],
-            "stop_cross": (1, 1, base + timedelta(seconds=210)),
+            "stop_cross": (6, chronology.times[6], base + timedelta(seconds=205)),
             "causes": set(),
             "order_b_causes": [{
-                "physicalOrderConfirmationTime": base + timedelta(seconds=145),
+                "kind": "reset-leg",
+                "physicalOrderConfirmationTime": reaction.confirmed_at,
             }],
         }},
         _initial_order_first_times=[],
         _initial_order_records=lambda: [],
         _carried_orders_cache={},
     )
-    parent = SimpleNamespace(decision_event_time=base + timedelta(seconds=120))
+    parent = SimpleNamespace(decision_event_time=base + timedelta(seconds=150))
     matches = EZoneDetector._carried_orders_for_parent(
-        fake, parent, base + timedelta(seconds=180),
+        fake, parent, base + timedelta(seconds=200),
     )
     assert len(matches) == 1
     assert matches[0][1] is reaction
+    assert matches[0][2] == datetime(2026, 9, 27, 12, 3, 15)

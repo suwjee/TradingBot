@@ -23,8 +23,8 @@ from order_audit_engine import (
 
 
 E_ZONE_VERSION = "6.16.2"
-E_ZONE_IMPLEMENTATION_VERSION = "6.18.4"
-E_ZONE_LAST_MODIFIED = "2026-10-21 19:42:00 +03:30"
+E_ZONE_IMPLEMENTATION_VERSION = "6.18.5"
+E_ZONE_LAST_MODIFIED = "2026-10-24T17:28:55+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -169,7 +169,7 @@ class EZoneDetector(OrderAuditEngineMixin):
             tuple[datetime, int], list[OrderMatch]
         ] = {}
         self._direct_parent_stop_cache: dict[
-            tuple[datetime, datetime | None, bool],
+            tuple[datetime, datetime | None, bool, bool, datetime | None],
             tuple[int, object, datetime] | None,
         ] = {}
         self.order_audit: dict[tuple[int, int], dict[str, object]] = {}

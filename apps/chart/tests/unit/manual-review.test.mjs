@@ -6,8 +6,124 @@ import {
   manualInfoObject,
   reportCategoryColor,
   reportDisplayLabel,
+  reviewRecords,
+  reviewColor,
   visibleReviewTimeGroupIds,
 } from "../../src/features/manual-review/render.js";
+
+test("counted report labels retain finalized behavior numbers", () => {
+  for (const [family, number, expected] of [
+    ["E Red", 3, "E-3"], ["E Blue", 12, "E-12"], ["StopAll", 9, "StopAll-9"],
+    ["PH", 5, "PH-5"], ["PL", 2, "PL-2"], ["A", 4, "A-4"],
+  ]) assert.equal(reportDisplayLabel({ category: { family }, row: { number } }), expected);
+  assert.equal(reportDisplayLabel({ category: { family: "E Red" }, row: {} }), "E");
+  assert.equal(reportDisplayLabel({ category: { family: "MBL" }, row: { number: 9 } }), "MBL");
+});
+
+test("raw primary collections become PH PL MBL events and exclude cycle metadata", () => {
+  const payload = { directions: { bearish: {
+    primaryHighs: [{ id: "high", number: 5, sourceTime: 100, price: "12" }],
+    primaryLows: [{ id: "low", number: 2, sourceTime: 200, price: "8" }],
+    matchingBehaviorLegs: [{ id: "leg", sourceTime: 50, price: "9" }],
+    primaryCycles: [{ id: "internal-cycle", triggerTime: 90 }],
+  } } };
+  const original = JSON.stringify(payload);
+  const records = reviewRecords(payload);
+  assert.deepEqual(records.map(record => [record.category.family, reportDisplayLabel(record)]),
+    [["MBL", "MBL"], ["PH", "PH-5"], ["PL", "PL-2"]]);
+  assert.equal(JSON.stringify(payload), original);
+});
+
+test("structured report numbers and primary family names are preserved", () => {
+  const records = reviewRecords({ directions: {}, report: [
+    { id: "e", time: "2026-01-01 10:00:00", category: { key: "e:red:3", family: "E Red", label: "E3" }, details: { number: 3 } },
+    { id: "high", time: "2026-01-01 10:01:00", category: { key: "primaryHighs", family: "primaryHighs" }, details: { number: 5 } },
+    { id: "cycles", category: { key: "primaryCycles", family: "primaryCycles" }, details: {} },
+  ] });
+  assert.deepEqual(records.map(record => reportDisplayLabel(record)), ["E-3", "PH-5"]);
+  assert.deepEqual(records.map(record => record.category.family), ["E Red", "PH"]);
+});
+
+test("structured reports keep an explicit numbered label when details omit number", () => {
+  for (const [family, label, expected] of [
+    ["E Blue", "E7", "E-7"], ["StopAll", "StopAll9", "StopAll-9"],
+    ["PH", "PH-5", "PH-5"], ["PL", "PL-2", "PL-2"],
+  ]) assert.equal(reportDisplayLabel({ category: { family }, label, row: {} }), expected);
+  assert.equal(reportDisplayLabel({ category: { family: "E Blue", label: "E Blue / E7" }, row: {} }), "E-7");
+});
+
+test("primary collection aliases retain explicit category-only numbers", () => {
+  const records = reviewRecords({ directions: {}, report: [
+    { id: "high", category: { key: "primaryHighs", family: "primaryHighs", label: "PH-5" }, details: {} },
+    { id: "low", category: { key: "primaryLows", family: "primaryLows", label: "PL-2" }, details: {} },
+  ] });
+  assert.deepEqual(records.map(record => reportDisplayLabel(record)), ["PH-5", "PL-2"]);
+});
+
+test("primary report colors follow chart defaults direction appearance and object overrides", () => {
+  const record = (group, kind, direction = "bearish") => ({
+    group, direction, row: { id: "point", sourceTime: 1 },
+    category: { key: group, family: kind },
+  });
+  const ph = record("primaryHighs", "PH"), pl = record("primaryLows", "PL");
+  const mbl = record("matchingBehaviorLegs", "MBL");
+  assert.equal(reviewColor(ph), "#056656");
+  assert.equal(reviewColor(pl), "#ec407a");
+  assert.equal(reviewColor(mbl), "#b22833");
+  assert.equal(reviewColor(record("primaryHighs", "PH", "bullish")), "#ec407a");
+  assert.equal(reviewColor(record("primaryLows", "PL", "bullish")), "#056656");
+  assert.equal(reviewColor(ph, { settings: { primaryArrowColor: "#123456" } }), "#123456");
+  assert.equal(reviewColor(ph, { indicatorObjects: [
+    { id: "indicator:bearish:primary:PH:point", customized: true, color: "#abcdef" },
+  ] }), "#abcdef");
+});
+
+test("default report controls and rows hide Reaction Reset and Blue Line only", async () => {
+  const payload = { directions: { bearish: {
+    reactions: [{ firstTime: 100 }], resets: [{ time: 110 }], blueLines: [{ sourceTime: 120 }],
+    eZones: [{ sourceTime: 130, family: "red", number: 3 }],
+    stopAlls: [{ sourceTime: 140, number: 9 }],
+  } } };
+  const { body } = await buildReviewBody(payload);
+  for (const family of ["Reaction", "Reset", "Blue Line"]) {
+    const controls = body.match(new RegExp(`<input[^>]+data-filter-family="${family}"[^>]*>`, "g"));
+    assert.ok(controls?.length);
+    for (const input of controls) assert.doesNotMatch(input, /\bchecked\b/);
+    const article = body.match(new RegExp(`<article[^>]+data-report-family="${family}"[^>]*>`))?.[0];
+    assert.match(article, /\bhidden\b/);
+  }
+  for (const label of ["E-3", "StopAll-9"]) assert.match(body, new RegExp(`class="chip"[^>]*>${label}</span>`));
+});
+
+test("Reaction filter family color follows the calculation direction", async () => {
+  for (const direction of ["bearish", "bullish"]) {
+    const { body } = await buildReviewBody({ directions: { [direction]: {
+      reactions: [{ firstTime: 100 }],
+    } } });
+    assert.match(body, new RegExp(`data-filter-group="Reaction" style="--family-color:var\\(--report-reaction-${direction}\\)"`));
+  }
+});
+
+test("live report offers all visible events in addition to reviewed statuses", async () => {
+  const { body } = await buildReviewBody({ directions: { bearish: { eZones: [{ sourceTime: 100, number: 3, family: "red" }] } } });
+  assert.match(body, /<option value="visible">All visible<\/option>/);
+  for (const value of ["all", "true", "false"]) assert.match(body, new RegExp(`<option value="${value}">`));
+});
+
+test("primary report chips and filters use chart colors and omit primaryCycles", async () => {
+  const payload = { directions: { bearish: {
+    primaryHighs: [{ id: "high", number: 5, sourceTime: 100, price: "12" }],
+    primaryLows: [{ id: "low", number: 2, sourceTime: 200, price: "8" }],
+    matchingBehaviorLegs: [{ id: "leg", sourceTime: 50, price: "9" }],
+    primaryCycles: [{ id: "internal-cycle" }],
+  } } };
+  const { body } = await buildReviewBody(payload, { settings: { primaryArrowColor: "#123456" } });
+  for (const [label, color] of [["PH-5", "#123456"], ["PL-2", "#ec407a"], ["MBL", "#b22833"]]) {
+    assert.match(body, new RegExp(`class="chip"[^>]*--chip-color:${color}[^>]*>${label}</span>`));
+  }
+  for (const family of ["PH", "PL", "MBL"]) assert.match(body, new RegExp(`data-filter-group="${family}"`));
+  assert.doesNotMatch(body, /primaryCycles|internal-cycle|primaryHighs<|primaryLows<|matchingBehaviorLegs</);
+});
 
 test("report labels use family names while retaining semantic color variants", () => {
   assert.equal(reportDisplayLabel({ direction: "Bullish", category: { family: "Blue Line" }, label: "Blue Line / Reset" }), "Blue Line");
@@ -166,7 +282,7 @@ test("sidebar filters use the other finalized Bridge formations without changing
   ]) assert.match(body, new RegExp(`data-filter-key="${filterKey}"`));
   assert.match(body, />Scale<\/span>/);
   assert.match(body, />Type-1<\/span>/);
-  assert.match(body, />E1<\/span>/);
+  assert.match(body, />E-1<\/span>/);
   assert.match(body, />Type-2<\/span>/);
 });
 
@@ -264,7 +380,7 @@ test("filter children retain their canonical subtype labels", async () => {
 
   assert.match(body, />Scale<\/span>/);
   assert.match(body, />Simple<\/span>/);
-  assert.match(body, />E1<\/span>/);
+  assert.match(body, />E-1<\/span>/);
   assert.doesNotMatch(body, /<span>Blue Line<\/span>/);
   assert.doesNotMatch(body, /<span>S<\/span>/);
   assert.doesNotMatch(body, /<span>E<\/span>/);

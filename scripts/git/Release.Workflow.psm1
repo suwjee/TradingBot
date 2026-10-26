@@ -601,7 +601,11 @@ function New-ProductionSnapshot {
 
     $removeTracked = Invoke-ReleaseGit -Root $Root -WorkingDirectory $context.WorktreePath -Arguments @('rm', '-r', '--ignore-unmatch', '--', '.')
     Assert-ReleaseCondition ($removeTracked.ExitCode -eq 0) 'Could not clear tracked production worktree content.'
-    $checkoutArgs = @('checkout', $SourceMainSha, '--') + @($FileSet.Paths)
+    # Read the exact inventory from a file so growing projects cannot exceed
+    # Windows' native command-line limit. Treat names as literal paths.
+    $pathspecFile = Join-Path $context.TemporaryRoot 'production-paths.nul'
+    [IO.File]::WriteAllText($pathspecFile, ((@($FileSet.Paths) -join "`0") + "`0"), [Text.UTF8Encoding]::new($false))
+    $checkoutArgs = @('--literal-pathspecs', 'checkout', $SourceMainSha, "--pathspec-from-file=$pathspecFile", '--pathspec-file-nul')
     $restore = Invoke-ReleaseGit -Root $Root -WorkingDirectory $context.WorktreePath -Arguments $checkoutArgs
     Assert-ReleaseCondition ($restore.ExitCode -eq 0) 'Could not synchronize the production file set from source main.'
 

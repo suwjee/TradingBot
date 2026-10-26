@@ -10,7 +10,7 @@ scope:
   - engine
   - runtime-boundaries
   - state-and-transport
-last_modified_at: 2026-10-03T22:30:37+03:30
+last_modified_at: 2026-10-24T13:23:45+03:30
 ---
 
 # TradingBot Technical Architecture
@@ -312,6 +312,8 @@ The local server persists serialized calculation results using an identity that 
 A compatible cache hit can avoid rerunning Python. A cache miss executes Engine and persists the resulting serialized payload. A source-fingerprint change during execution invalidates the in-flight result rather than silently storing it under stale code identity.
 
 The cache is a reuse layer for finalized output. It is not a substitute for Engine semantics.
+
+The local server also exposes a non-cacheable calculation-Source identity to Chart. Before appearance-only reuse of an already applied result, Chart compares that opaque identity with the result's Source identity. A missing, changed or unavailable identity falls back to the normal calculation request; this check does not replace the server's RAW validation.
 
 ### RAW inventory cache
 

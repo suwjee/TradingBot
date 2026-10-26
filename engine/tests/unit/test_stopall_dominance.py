@@ -96,7 +96,40 @@ def test_exact_e_owner_arms_only_after_second_occurrence(direction, count):
 
 @pytest.mark.parametrize("direction", ["bullish", "bearish"])
 def test_equal_level_does_not_stop_armed_blue_owner(direction):
-    assert detect(direction, [s(0, 10), s(30, 40), s(180, 190, "red")], []) == []
+    # An E donor keeps this a price-stop test: S Red has its own direct gate.
+    assert detect(direction, [s(0, 10), s(30, 40)], [e(180, 190, "blue")]) == []
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+@pytest.mark.parametrize("owner_kind", ["S", "E"])
+@pytest.mark.parametrize("order_mode", ["A", "B"])
+def test_armed_blue_owner_reverses_on_red_s_without_a_price_stop(
+    direction, owner_kind, order_mode,
+):
+    incoming = s(180, 190, "red")
+    incoming.order_mode = order_mode
+    s_items = [s(0, 10), s(30, 40)] if owner_kind == "S" else []
+    e_items = [e(0, 10, "blue", 3), e(30, 40, "blue", 3)] if owner_kind == "E" else []
+    result = detect(direction, [*s_items, incoming], e_items)
+    assert len(result) == 1
+    stopped, = result
+    assert (stopped.number, stopped.source_time, stopped.gate_event_time) == (
+        1, moment(180), moment(190),
+    )
+    assert stopped.gate_type == "opposite-s-group-stop"
+    assert stopped.stopped_behavior_key == ("S blue" if owner_kind == "S" else "E3 blue")
+    assert stopped.stopped_behavior_count == 2
+    assert (stopped.donor_type, stopped.donor_color, stopped.order_mode) == ("S", "red", order_mode)
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+@pytest.mark.parametrize("owner_kind", ["S", "E"])
+def test_red_s_cannot_reverse_blue_before_second_blue_has_confirmed(
+    direction, owner_kind,
+):
+    s_items = [s(0, 10), s(30, 190)] if owner_kind == "S" else []
+    e_items = [e(0, 10, "blue"), e(30, 190, "blue")] if owner_kind == "E" else []
+    assert detect(direction, [*s_items, s(60, 190, "red")], e_items) == []
 
 
 @pytest.mark.parametrize("direction", ["bullish", "bearish"])
@@ -104,7 +137,6 @@ def test_equal_level_does_not_stop_armed_blue_owner(direction):
     ("s_items", "e_items"),
     [
         ([s(0, 10), s(30, 40)], [e(90, 190, "blue")]),
-        ([s(90, 190, "red")], [e(0, 10, "blue"), e(30, 40, "blue")]),
         ([s(0, 10, "red"), s(30, 40, "red")], [e(90, 190, "red")]),
     ],
 )
@@ -166,14 +198,14 @@ def test_single_s_owner_cannot_use_direct_e_child_stop(direction):
 
 
 @pytest.mark.parametrize("direction", ["bullish", "bearish"])
-def test_stopped_blue_e_owner_can_use_later_red_s_donor(direction):
+def test_red_s_direct_gate_uses_its_decision_even_after_blue_price_stop(direction):
     result = detect(
         direction, [s(180, 190, "red")],
         [e(0, 10, "blue"), e(30, 40, "blue")], (120,),
     )
     assert len(result) == 1
     assert (result[0].gate_type, result[0].gate_event_time) == (
-        "opposite-s-group-stop", moment(120),
+        "opposite-s-group-stop", moment(190),
     )
     assert (result[0].stopped_behavior_key, result[0].stopped_behavior_count) == (
         "E1 blue", 2,
@@ -181,7 +213,7 @@ def test_stopped_blue_e_owner_can_use_later_red_s_donor(direction):
 
 
 @pytest.mark.parametrize("direction", ["bullish", "bearish"])
-def test_completed_stop_survives_intervening_higher_s_without_s_donor(direction):
+def test_mode_a_red_s_takes_direct_gate_before_later_e_donor(direction):
     higher_s = s(90, 100, "red")
     higher_s.order_mode = "A"
     result = detect(
@@ -190,10 +222,26 @@ def test_completed_stop_survives_intervening_higher_s_without_s_donor(direction)
     )
     assert len(result) == 1
     assert (result[0].gate_type, result[0].gate_event_time) == (
-        "sequence-group-stop", moment(80),
+        "opposite-s-group-stop", moment(100),
     )
     assert (result[0].stopped_behavior_key, result[0].stopped_behavior_count) == (
         "S blue", 2,
+    )
+    assert (result[0].source_time, result[0].donor_type) == (moment(90), "S")
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_completed_red_stop_survives_lower_s_before_e_donor(direction):
+    result = detect(
+        direction, [s(0, 10, "red"), s(30, 40, "red"), s(90, 100)],
+        [e(180, 190, "red")], (80,),
+    )
+    assert len(result) == 1
+    assert (result[0].gate_type, result[0].gate_event_time) == (
+        "sequence-group-stop", moment(80),
+    )
+    assert (result[0].stopped_behavior_key, result[0].stopped_behavior_count) == (
+        "S red", 2,
     )
 
 
