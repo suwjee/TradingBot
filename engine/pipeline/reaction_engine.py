@@ -18,9 +18,9 @@ from typing import Iterable, Sequence
 from direction_policy import policy_for
 
 
-REACTION_ENGINE_VERSION = "9.8.1"
-REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.9.1"
-REACTION_ENGINE_LAST_MODIFIED = "2026-10-07 00:56:52 +03:30"
+REACTION_ENGINE_VERSION = "9.9.1"
+REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.11.0"
+REACTION_ENGINE_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
 
 _ORDER_GATE_CACHE_MAX_ENTRIES = 32_768
 
@@ -1393,9 +1393,14 @@ class UnifiedReactionDetector(DetectorBase):
         start_index: int,
         end_index: int,
         output_direction: str,
+        *,
+        initial_bullish_trend: bool = False,
+        initial_bearish_trend: bool = False,
     ) -> None:
         super().__init__(candles, one_second_candles, start_index, end_index)
         self.output_direction = output_direction
+        self.initial_bullish_trend = initial_bullish_trend
+        self.initial_bearish_trend = initial_bearish_trend
         # Directional helpers are created lazily: a bullish-only run must not
         # pay the BearishDetector mirroring cost and vice versa.
         self._bull: BullishDetector | None = None
@@ -1640,6 +1645,10 @@ class UnifiedReactionDetector(DetectorBase):
         )
 
     def _first_initial(self, direction: str) -> Candidate | None:
+        if direction == "bullish" and self.initial_bullish_trend:
+            return self._first_bullish_trend_reaction()
+        if direction == "bearish" and self.initial_bearish_trend:
+            return self._first_trend_reaction("bearish")
         initial_result = (
             self.bull.detect(first_only=True)
             if direction == "bullish"
@@ -1650,6 +1659,59 @@ class UnifiedReactionDetector(DetectorBase):
             if initial_result.reactions
             else None
         )
+
+    def _first_bullish_trend_reaction(self) -> Candidate | None:
+        """Keep the existing bullish bootstrap entry point."""
+        return self._first_trend_reaction("bullish")
+
+    def _first_trend_reaction(self, direction: str) -> Candidate | None:
+        """Bootstrap only the first Reaction of a newly isolated regime.
+
+        The boundary candle is eligible as First without an earlier context.
+        No previous leg/Reset boundary can invalidate this initial search.
+        Confirmation refinement and all later Reset handling remain native.
+        """
+        if self.start_index > self.end_index:
+            return None
+        bullish = direction == "bullish"
+        fixed_source = self.candles[self.start_index]
+        candidate = None
+        for index in range(self.start_index, self.end_index + 1):
+            candle = self.candles[index]
+            if candidate is None:
+                if ((candle.high > fixed_source.high) if bullish
+                        else (candle.low < fixed_source.low)):
+                    fixed_source = candle
+                if candle.tag == ("RED" if bullish else "GREEN"):
+                    top_source = fixed_source if bullish else candle
+                    bottom_source = candle if bullish else fixed_source
+                    candidate = Candidate(
+                        first_idx=index, first_time=candle.display_time,
+                        box_top_source_idx=top_source.index,
+                        box_top_source_time=top_source.display_time,
+                        box_top=top_source.high,
+                        box_bottom_source_idx=bottom_source.index,
+                        box_bottom_source_time=bottom_source.display_time,
+                        box_bottom=bottom_source.low, mode="A",
+                        leg_boundary_value=(self.candles[self.start_index].low if bullish
+                                            else self.candles[self.start_index].high),
+                    )
+                continue
+            if bullish and candle.low < candidate.box_bottom:
+                candidate.box_bottom = candle.low
+                candidate.box_bottom_source_idx = index
+                candidate.box_bottom_source_time = candle.display_time
+            elif not bullish and candle.high > candidate.box_top:
+                candidate.box_top = candle.high
+                candidate.box_top_source_idx = index
+                candidate.box_top_source_time = candle.display_time
+            if ((candle.high > candidate.box_top) if bullish
+                    else (candle.low < candidate.box_bottom)):
+                candidate.break_idx = index
+                candidate.break_time = candle.display_time
+                self._refine(direction, candidate, candle)
+                return candidate
+        return None
 
 
     def _first_direct_same_direction_after_reset(

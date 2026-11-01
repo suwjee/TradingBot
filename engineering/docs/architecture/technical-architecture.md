@@ -10,7 +10,7 @@ scope:
   - engine
   - runtime-boundaries
   - state-and-transport
-last_modified_at: 2026-10-26T20:53:36+03:30
+last_modified_at: 2026-11-01T19:22:42+03:30
 ---
 
 # TradingBot Technical Architecture
@@ -231,6 +231,8 @@ The bridge is the Engine integration/orchestration boundary. It loads the curren
 
 Directional behavior is handled inside Engine using shared directional primitives and current stage owners. Direction is not implemented by browser presentation logic.
 
+When finalized primary state ends a directional regime, the Engine bridge recalculates its independent historical prefix and starts the opposite regime from the complete boundary candle with fresh market, detector, lifecycle and Order state. Repeated transitions expose complete bounded directional segments; aggregate collections remain finalized output. The bridge owns input isolation and public index translation, while the primary stage owns the transition decision. Trading details belong to the accepted Algorithm References.
+
 ### Determinism and chronology
 
 Engine assumes an ordered supplied market stream and uses normalized price/time structures appropriate to current Source. Price-sensitive semantic decisions remain Engine-owned. When lower-timeframe chronology is supplied, chronology-sensitive stage logic uses that Engine context rather than asking Chart to infer intrabar event order.
@@ -418,7 +420,7 @@ The following boundaries are durable:
 - **Acquisition/session state must not become calculation state.**
 - **Presentation-range clipping must not be confused with the supplied-input calculation scope.**
 
-No verified Current Source evidence inspected for this reconstruction requires documenting a violation of these subsystem ownership boundaries.
+If current Source violates one of these boundaries, record the exact implementation path and the owning contract. A structural documentation check alone cannot establish that every runtime path preserves these boundaries.
 
 ## 20. Change and review triggers
 

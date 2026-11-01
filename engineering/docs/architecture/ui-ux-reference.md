@@ -12,7 +12,7 @@ scope:
   - faraz-ui
   - algorithm-reference-ui
   - responsive-accessibility
-last_modified_at: 2026-10-26T17:08:13+03:30
+last_modified_at: 2026-11-01T19:22:42+03:30
 ---
 
 # TradingBot UI/UX Reference
@@ -23,7 +23,7 @@ This document is the maintained reference for the **Current TradingBot user inte
 
 It documents behavior and responsibility rather than today's frontend file layout. Internal components may be reorganized without requiring this document to change when the user-visible contract remains the same.
 
-This document does **not** define trading semantics. Current Engine behavior and accepted trading specifications remain owned by the current Source and canonical trading-knowledge system.
+This document does **not** define trading semantics. Intended trading semantics belong to the canonical trading-knowledge system and accepted Algorithm References under root AGENTS. Current Engine Source establishes executable behavior; a disagreement between those authorities must be reported rather than reconciled in the UI.
 
 ## 2. Authority and related owners
 
@@ -34,7 +34,7 @@ Use the following owner boundaries:
 - [Technical Architecture](technical-architecture.md) owns subsystem/process/transport architecture.
 - [Local State](../operations/local-state.md) owns persistence placement and operational storage rules.
 - [AI Engineering Workflow](../ai/engineering-workflow.md) owns repository engineering procedure.
-- Current Engine Source and accepted Algorithm References own trading semantics.
+- Canonical trading knowledge and accepted Algorithm References define intended trading semantics; current Engine Source defines executable behavior.
 - This document owns maintained **user-visible UI/UX behavior**.
 
 Current implementation claims in this document are reconstructed from the live Chart/frontend Source, its UI-facing server contracts, and current UI contract tests. Historical screenshots, audits, and reports are evidence only.
@@ -242,6 +242,8 @@ Chart projects finalized result collections into visual objects such as:
 
 These are **presentation projections of Engine output**. The frontend may filter objects explicitly marked invalid for presentation, but it does not create alternative trading decisions.
 
+For repeated directional regimes, Chart renders each Engine-finalized calculation segment independently and applies each historical segment's end bound consistently to paint, hit testing and selection. New segment anchors come from fresh finalized input; user presentation offsets may move drawings. Aggregate collections serve counts and object inspection. Directional start markers use the Engine's finalized event and actual target-candle metadata. Stable object identities preserve appearance and visibility settings; the accepted Algorithm References own marker defaults and trading rules.
+
 ### 9.1 Visibility and appearance
 
 Users can control presentation properties such as visibility, line/fill appearance, label styling, and selected object appearance.
@@ -426,7 +428,7 @@ Current user-facing capabilities include:
 
 Language, direction, and applicable navigation preferences persist locally.
 
-The Algorithm workspace is a convenience reference surface. Canonical project authority remains governed by root AGENTS, project knowledge, current Source, and accepted Algorithm References.
+The Algorithm workspace is a convenience reference surface. Its content does not replace the authority order in root AGENTS or establish that a displayed explanation is synchronized with canonical knowledge, accepted References, or current executable Source. Verify the affected rule against those owners before relying on the workspace as engineering evidence.
 
 ## 14. UI state ownership
 

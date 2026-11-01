@@ -1,8 +1,9 @@
-"""Bearish Primary-High/Low state and the immutable matching behavior leg.
+"""Directional primary structure state and immutable matching behavior legs.
 
-Only the bearish algorithm has been specified. Native Reaction, Reset,
+The bullish path reflects the approved bearish primary state machine.
+Native Reaction, Reset,
 dominance, physical Order identity and stop geometry remain owned by their
-existing engines. No bullish primary calculation is inferred here.
+existing engines.
 """
 from __future__ import annotations
 
@@ -17,8 +18,8 @@ from core_utils import as_decimal
 from lifecycle_engine import advance_dominant_behavior
 from order_audit_engine import relabel_primary_causes
 
-PL_PH_VERSION = "1.2.2"
-PL_PH_LAST_MODIFIED = "2026-10-26T19:31:03+03:30"
+PL_PH_VERSION = "1.4.0"
+PL_PH_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -68,6 +69,21 @@ class MatchingBehaviorLeg:
     stop_event_time: datetime | None
 
 
+@dataclass(frozen=True, slots=True)
+class TrendTransition:
+    """The first strict stop of a confirmed primary3 ends every owner cycle."""
+    index: int
+    event_time: datetime
+    level: Decimal
+    high: PrimaryPoint
+    target_direction: str = "bullish"
+
+    @property
+    def point(self):
+        """Neutral stopped-point name; high remains positional compatibility."""
+        return self.high
+
+
 @dataclass(slots=True)
 class PrimaryResult:
     highs: list[PrimaryPoint] = field(default_factory=list)
@@ -78,6 +94,35 @@ class PrimaryResult:
     cycle_id: str | None = None
     cycles: list[PrimaryResult] = field(default_factory=list)
     qualification_event_time: datetime | None = None
+    transition: TrendTransition | None = None
+    direction: str = "bearish"
+
+
+def first_bullish_transition(chronology, primary):
+    """Select the earliest exact PH3 stop across all confirmed cycle owners."""
+    transitions = []
+    for point in resolve_primary_highs(primary, through_index=len(chronology.candles)-1):
+        if point.number != 3:
+            continue
+        crossed = strict_cross(chronology, point.decision_event_time, point.price, True)
+        if crossed is not None:
+            transitions.append(TrendTransition(*crossed, point.price, point))
+    return min(transitions, key=lambda item: (
+        item.event_time, item.high.source_index, item.high.cycle_id or ""
+    ), default=None)
+
+
+def first_bearish_transition(chronology, primary):
+    """Select the earliest confirmed physical PL3 stop across bullish cycles."""
+    transitions = []
+    for point in resolve_primary_lows(primary, through_index=len(chronology.candles)-1):
+        if point.number == 3:
+            crossed = strict_cross(chronology, point.decision_event_time, point.price, False)
+            if crossed is not None:
+                transitions.append(TrendTransition(*crossed, point.price, point, "bearish"))
+    return min(transitions, key=lambda item: (
+        item.event_time, item.high.source_index, item.high.cycle_id or ""
+    ), default=None)
 
 
 def resolve_primary_highs(primary, *, through_index):
@@ -89,10 +134,21 @@ def resolve_primary_highs(primary, *, through_index):
     Filter confirmations before reconciliation so future roles cannot rename
     an earlier requested horizon.
     """
+    return _resolve_primary_points(primary.highs, getattr(primary, "cycles", ()),
+                                   through_index, above=True)
+
+
+def resolve_primary_lows(primary, *, through_index):
+    """Reconcile bullish physical PL ownership without resetting local state."""
+    return _resolve_primary_points(primary.lows, getattr(primary, "cycles", ()),
+                                   through_index, above=False)
+
+
+def _resolve_primary_points(points, cycles, through_index, *, above):
     physical = {}
     cycle_order = {cycle.cycle_id: index for index, cycle in
-                   enumerate(getattr(primary, "cycles", ()))}
-    for point in primary.highs:
+                   enumerate(cycles)}
+    for point in points:
         if point.decision_index <= through_index:
             physical.setdefault((point.source_index, point.source_time), []).append(point)
     groups = sorted(physical.values(), key=lambda rows: (
@@ -108,7 +164,8 @@ def resolve_primary_highs(primary, *, through_index):
         identity = min(rows, key=role_order)
         winner = min(rows, key=lambda point: (-point.number, *role_order(point)))
         number = winner.number
-        if result and winner.price > result[-1].price:
+        if result and ((winner.price > result[-1].price) if above
+                       else (winner.price < result[-1].price)):
             number = max(number, result[-1].number + 1)
         result.append(replace(winner, number=number,
                               identity_source=identity.identity_source or identity))
@@ -117,7 +174,7 @@ def resolve_primary_highs(primary, *, through_index):
 
 def relabel_primary_order(order, highs):
     """Keep frozen structure Order snapshots aligned with final PH names."""
-    labels = {point.source_time: f"PH{point.number}" for point in highs}
+    labels = {point.source_time: f"{point.kind}{point.number}" for point in highs}
     return replace(order, audit_causes=tuple(relabel_primary_causes(order.audit_causes, labels)))
 
 
@@ -130,7 +187,8 @@ def formed_matching_legs(primary, *, through_index):
     for cycle in getattr(primary, "cycles", None) or [primary]:
         if cycle.mbl is None or cycle.mbl.trigger_index > through_index:
             continue
-        confirmation = min((point for point in cycle.highs
+        points = cycle.lows if getattr(primary, "direction", "bearish") == "bullish" else cycle.highs
+        confirmation = min((point for point in points
                             if point.decision_index <= through_index),
                            key=lambda point: point.decision_event_time, default=None)
         if confirmation is not None:
@@ -143,7 +201,8 @@ def resolve_stopall_ownership(stopalls, primary: PrimaryResult, *, through_index
     A future PH confirmation must not remove the StopAll from an earlier
     requested horizon. The supplied historical collection is never mutated.
     """
-    promoted = {(point.source_index, point.source_time) for point in primary.highs
+    points = primary.lows if getattr(primary, "direction", "bearish") == "bullish" else primary.highs
+    promoted = {(point.source_index, point.source_time) for point in points
                 if point.decision_index <= through_index}
     return [item for item in stopalls
             if (int(item.source_index), item.source_time) not in promoted]
@@ -259,13 +318,22 @@ def detect_bearish(
     pending = {}
     promoted_sources = set()
     activation_index = 0
+    transition = None
     while True:
         for index, checkpoint in enumerate(checkpoints):
             if index not in pending:
-                pending[index] = _next_point(chronology, checkpoint, orders)
+                pending[index] = _next_point(chronology, checkpoint, orders,
+                    before_event=transition.event_time if transition else None)
         decisions = [(point.decision_event_time, index)
                      for index, (_, point) in pending.items() if point is not None]
         decision = min(decisions, default=None)
+        next_activation = (activated[activation_index][0][1]
+            if activation_index < len(activated) else None)
+        if (transition is not None
+                and (decision is None or transition.event_time <= decision[0])
+                and (next_activation is None or transition.event_time <= next_activation)):
+            result.transition = transition
+            break
         if activation_index < len(activated) and (
             decision is None or activated[activation_index][0][1] <= decision[0]
         ):
@@ -294,10 +362,14 @@ def detect_bearish(
             if commit_high is not None:
                 commit_high(point)
                 pending.clear()
+            transition = first_bullish_transition(chronology, result)
 
-    result.cycles = [pending[index][0].result for index in range(len(checkpoints))]
+    result.cycles = [pending[index][0].result if index in pending else checkpoint.result
+                     for index, checkpoint in enumerate(checkpoints)]
     result.mbl = result.cycles[0].mbl
     result.status = result.cycles[-1].status
+    if result.transition is not None:
+        result.status = "reversed-to-bullish"
     physical_orders = {}
     for cycle in result.cycles:
         for order in cycle.post_pl3_orders:
@@ -336,7 +408,7 @@ def _activate_cycle(chronology, activation):
     return _CycleCheckpoint(result, reference_price, gate_index, cursor)
 
 
-def _next_point(chronology, checkpoint, orders):
+def _next_point(chronology, checkpoint, orders, *, before_event=None):
     """Prospect from committed state without changing shared native ownership.
 
     Cancel/seek transitions are replayable: a later global PH commitment may
@@ -350,7 +422,8 @@ def _next_point(chronology, checkpoint, orders):
     reference_price, floor = checkpoint.reference_price, result.mbl.price
     prospective = replace(checkpoint, result=result)
     # Every iteration consumes a strictly later RAW event. No arbitrary
-    # maximum PH/PL number or feedback-pass cap is part of this algorithm.
+    # feedback-pass cap is part of this algorithm. The PH3 transition is an
+    # authoritative event boundary, not an arbitrary loop limit.
     while True:
         high_level = result.highs[-1].price if result.highs else reference_price
         low_level = result.lows[-1].price if result.lows else floor
@@ -368,6 +441,9 @@ def _next_point(chronology, checkpoint, orders):
             phase = "PH" if up and (down is None or up[1] < down[1]) else "PL"
             gate_index, cursor = up if phase == "PH" else down
 
+        if before_event is not None and cursor >= before_event:
+            result.status = "waiting-for-trend-reversal"
+            return prospective, None
         number = high_number if phase == "PH" else low_number
         candidates = [item for item in orders(phase, number, gate_index, cursor)
                       if order_meets_structure_gate(phase, item.first_index,
@@ -442,9 +518,10 @@ class NativePrimaryOrders:
     structure crossings cannot manufacture physical Orders here.
     """
 
-    def __init__(self, chronology, groups, *, on_high=None):
+    def __init__(self, chronology, groups, *, on_high=None, direction="bearish"):
         self.chronology, self.groups = chronology, groups
         self.on_high = on_high
+        self.direction = direction
 
     def confirm_high(self, point):
         """Commit PH ownership before subsequent native Order selection."""
@@ -453,6 +530,7 @@ class NativePrimaryOrders:
 
     def __call__(self, kind, number, gate_index, event):
         owner = "bearish" if kind == "PH" else "bullish"
+        is_primary = kind == ("PL" if self.direction == "bullish" else "PH")
         physical_direction = self.chronology.opposite_direction(owner)
         eligible = []
         records = []
@@ -462,12 +540,13 @@ class NativePrimaryOrders:
             confirmation = self.chronology.reaction_confirmation(physical_direction, reaction)
             stopped = prepared["crossed"]
             causes = tuple(dict.fromkeys(cause["kind"] for cause in prepared["causes"]))
-            if not order_meets_structure_gate(kind, first, confirmation, gate_index, event):
+            if not order_meets_structure_gate("PH" if is_primary else "PL",
+                                             first, confirmation, gate_index, event):
                 continue
             # PL Order_A's first valid downward Reaction must be canonical.
-            if kind == "PL" and int(entry["reaction_number"]) <= 0:
+            if not is_primary and int(entry["reaction_number"]) <= 0:
                 continue
-            if kind == "PH" and number > 1 and "parent-stop" not in causes:
+            if is_primary and number > 1 and "parent-stop" not in causes:
                 continue
             records.append((prepared, first, breakout, confirmation, causes))
         direct = [row for row in records if "parent-stop" in row[4]]
@@ -475,7 +554,7 @@ class NativePrimaryOrders:
         for record in records:
             prepared, first, breakout, confirmation, causes = record
             reaction, entry, stopped = prepared["reaction"], prepared["entry"], prepared["crossed"]
-            if (kind == "PL" and "reset-leg" not in causes and record is not first_direct):
+            if (not is_primary and "reset-leg" not in causes and record is not first_direct):
                 continue
             if stopped is None or stopped[2] <= max(confirmation, event):
                 continue
@@ -488,3 +567,100 @@ class NativePrimaryOrders:
                 audit_causes=tuple(deepcopy(cause) for cause in prepared["causes"]),
             ))
         return eligible
+
+
+def _negate_price(value):
+    """Reflect a Decimal without context rounding, including long lexemes."""
+    return as_decimal(value).copy_negate()
+
+
+@dataclass(frozen=True, slots=True)
+class _ReflectedRow:
+    original: object
+
+    @property
+    def high(self):
+        return _negate_price(self.original.low)
+
+    @property
+    def low(self):
+        return _negate_price(self.original.high)
+
+
+class _ReflectedPriceIndex:
+    """Reuse immutable original RAW indexes rather than allocate a second tree."""
+    def __init__(self, original):
+        self.original = original
+
+    def first_greater(self, left, right, level):
+        return self.original.first_less(left, right, _negate_price(level))
+
+    def first_less(self, left, right, level):
+        return self.original.first_greater(left, right, _negate_price(level))
+
+
+class _ReflectedChronology:
+    def __init__(self, original):
+        self.candles = tuple(_ReflectedRow(row) for row in original.candles)
+        self.seconds = tuple(_ReflectedRow(row) for row in original.seconds)
+        self.times, self.second_times = original.times, original.second_times
+        self.lower_index = _ReflectedPriceIndex(original.lower_index)
+        self.main_index = original.main_index
+
+
+def _reflect_structure_order(order):
+    return replace(order,
+        direction="bearish" if order.direction == "bullish" else "bullish",
+        stop_level=_negate_price(order.stop_level),
+        box_top=_negate_price(order.box_bottom) if order.box_bottom is not None else None,
+        box_bottom=_negate_price(order.box_top) if order.box_top is not None else None)
+
+
+def detect_bullish(chronology, s_zones, e_zones, stopalls, orders):
+    """Apply the approved bullish mirror without reversing time or native state.
+
+    Only the primary state machine sees reflected price coordinates. Native
+    Orders and callbacks see original market prices, physical identities and
+    unchanged audit causes. Market candle colors and S/E families never swap.
+    """
+    point_cache = {}
+
+    def cycle_id(value):
+        return value.replace("bearish:cycle:", "bullish:cycle:", 1) if value else value
+
+    def point(item):
+        if id(item) not in point_cache:
+            point_cache[id(item)] = replace(item,
+                kind="PL" if item.kind == "PH" else "PH", price=_negate_price(item.price),
+                order=_reflect_structure_order(item.order), cycle_id=cycle_id(item.cycle_id),
+                identity_source=point(item.identity_source) if item.identity_source else None)
+        return point_cache[id(item)]
+
+    def status(value):
+        return value.replace("ph", "__primary_high__").replace("pl", "ph").replace(
+            "__primary_high__", "pl").replace("reversed-to-bullish", "reversed-to-bearish")
+
+    def result(item):
+        transition = item.transition
+        return replace(item, direction="bullish", highs=[point(row) for row in item.lows],
+            lows=[point(row) for row in item.highs],
+            mbl=replace(item.mbl, price=_negate_price(item.mbl.price)) if item.mbl else None,
+            cycle_id=cycle_id(item.cycle_id), status=status(item.status),
+            post_pl3_orders=[_reflect_structure_order(row) for row in item.post_pl3_orders],
+            cycles=[result(row) for row in item.cycles],
+            transition=(replace(transition, level=_negate_price(transition.level),
+                                high=point(transition.high), target_direction="bearish")
+                        if transition else None))
+
+    class ReflectedOrders:
+        def __call__(self, kind, number, gate, event):
+            actual_kind = "PL" if kind == "PH" else "PH"
+            return [_reflect_structure_order(row) for row in orders(actual_kind, number, gate, event)]
+
+        def confirm_high(self, item):
+            callback = getattr(orders, "confirm_high", None)
+            if callback is not None:
+                callback(point(item))
+
+    return result(detect_bearish(_ReflectedChronology(chronology), s_zones, e_zones,
+                                stopalls, ReflectedOrders()))

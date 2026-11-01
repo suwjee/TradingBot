@@ -1,4 +1,6 @@
-> Current layout/storage update: 2026-09-29. State is inside `apps/chart/state/`; component tests are under `apps/chart/tests/` and `engine/tests/`. The entire dated audit body below, including old paths and commands, is historical evidence. See [current storage](../operations/local-state.md) and [current document index](../README.md).
+<!-- Navigation note last_modified_at: 2026-10-28T18:08:26+03:30 -->
+
+> Historical layout/storage note recorded 2026-09-29. State and test locations below describe that migration. The entire dated audit body, including old paths and commands, is historical evidence. Use [current storage](../../docs/operations/local-state.md) and the [current document index](../../docs/README.md) for maintained guidance.
 
 # TradingBot UI/UX Technical Reference
 

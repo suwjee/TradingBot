@@ -10,7 +10,7 @@ export const PRIMARY_VISUAL_DEFAULTS = Object.freeze({
   primaryArrowColor: "#056656",
   primaryArrowSize: 12,
   primaryCircleColor: "#ec407a",
-  primaryCircleRadius: 12,
+  primaryCircleRadius: 4,
   primaryCircleOpacity: 100,
   primaryLabelSize: 12,
   primaryGap: 12,
@@ -22,7 +22,94 @@ export const PRIMARY_VISUAL_DEFAULTS = Object.freeze({
 });
 
 const FONT = 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-const MBL_UNBROKEN_CANDLES = 100;
+const MBL_UNBROKEN_CANDLES = 400;
+const TREND_COLOR = "#00a886";
+const BEARISH_TREND_COLOR = "#f23645";
+const TREND_ICON_SIZE = 28;
+const TREND_ICON_CLEARANCE = 100;
+
+export function clipHistoricalHitBoxes(hits, right) {
+  if (right < 0) return [];
+  return hits.flatMap(hit => {
+    const clipped = { ...hit, clipRight: right };
+    if (hit.shape === "rect") {
+      if (hit.left >= right) return [];
+      clipped.right = Math.min(hit.right, right);
+    } else if (hit.shape === "point") {
+      if (hit.x - (hit.radius || 12) >= right) return [];
+    } else if (hit.shape === "line") {
+      if (Math.min(hit.x1, hit.x2) >= right) return [];
+      if (Math.max(hit.x1, hit.x2) > right) {
+        const y = hit.y1 + (right - hit.x1) * (hit.y2 - hit.y1) / (hit.x2 - hit.x1);
+        const end = hit.x1 > right ? "1" : "2";
+        clipped[`x${end}`] = right;
+        clipped[`y${end}`] = y;
+      }
+    }
+    return [clipped];
+  });
+}
+
+export function trendTransitionLayout(transition, { timeToX, priceToY, height }) {
+  const lineX = timeToX(transition.sourceTime);
+  const bullish = transition.direction !== "bearish";
+  const targetPrice = bullish ? transition.iconCandleHigh : transition.iconCandleLow;
+  let icon = null;
+  if (transition.iconCandleTime != null && targetPrice != null) {
+    const centerX = timeToX(transition.iconCandleTime);
+    const priceY = priceToY(Number(targetPrice));
+    if (Number.isFinite(centerX) && Number.isFinite(priceY)) {
+      const top = bullish ? priceY - TREND_ICON_CLEARANCE - TREND_ICON_SIZE
+        : priceY + TREND_ICON_CLEARANCE;
+      icon = { left: centerX - TREND_ICON_SIZE / 2, top,
+        right: centerX + TREND_ICON_SIZE / 2, bottom: top + TREND_ICON_SIZE, size: TREND_ICON_SIZE };
+    }
+  }
+  return { lineX, lineBottom: height, icon };
+}
+
+export function drawTrendTransitions(ctx, group, { timeToX, priceToY, height }) {
+  for (const transition of group.trendTransitions || []) {
+    const bullish = transition.direction !== "bearish";
+    const color = bullish ? TREND_COLOR : BEARISH_TREND_COLOR;
+    const marker = trendTransitionLayout(transition, { timeToX, priceToY, height });
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([6, 5]);
+    if (Number.isFinite(marker.lineX)) {
+      ctx.beginPath();
+      ctx.moveTo(marker.lineX, 0);
+      ctx.lineTo(marker.lineX, marker.lineBottom);
+      ctx.stroke();
+    }
+    if (marker.icon) {
+      const { left, top, size } = marker.icon;
+      ctx.translate(left, top + (bullish ? 0 : size));
+      ctx.scale(size / 20, (bullish ? 1 : -1) * size / 20);
+      ctx.setLineDash([]);
+      ctx.lineWidth = 2.4;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      ctx.moveTo(1.2, 18.8);
+      ctx.lineTo(6.1, 12.2);
+      ctx.lineTo(9.3, 15.4);
+      ctx.lineTo(13.7, 8.4);
+      ctx.lineTo(16, 10.5);
+      ctx.lineTo(18.8, 1.2);
+      ctx.stroke();
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(13.2, 3);
+      ctx.lineTo(18.8, 1.2);
+      ctx.lineTo(18.1, 7);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
 
 function settingsWithDefaults(settings = {}) {
   const output = { ...PRIMARY_VISUAL_DEFAULTS };
@@ -46,10 +133,23 @@ export function primaryMarkerLayout(kind, direction, x, y, settings = {}) {
     top: centerY - radius, bottom: centerY + radius,
     labelY: centerY + sign * (radius + style.primaryLabelGap),
     textBaseline: above ? "bottom" : "top",
-    color: arrow ? style.primaryArrowColor : style.primaryCircleColor,
+    color: kind === "PH" ? style.primaryArrowColor : style.primaryCircleColor,
     opacity: arrow ? 1 : style.primaryCircleOpacity / 100,
     fontSize: style.primaryLabelSize,
   };
+}
+
+export function indicatorCalculationSegments(results) {
+  const output = [];
+  const fields = ["reactions", "blueLines", "aZones", "sZones", "eZones", "stopAlls"];
+  for (const [direction, aggregate] of Object.entries(results.directions || {})) {
+    const offsets = Object.fromEntries(fields.map(key => [key, 0]));
+    for (const group of aggregate.calculationSegments || [aggregate]) {
+      output.push({ direction, group, objectOffsets: { ...offsets } });
+      for (const key of fields) offsets[key] += (group[key] || []).length;
+    }
+  }
+  return output;
 }
 
 export function primaryObjectId(direction, kind, item) {
@@ -72,7 +172,7 @@ export function primaryVisualObjects(group, direction, settings = {}) {
   for (const [kind, rows] of [["PH", group.primaryHighs], ["PL", group.primaryLows]]) {
     for (const item of rows || []) {
       if (item.calculationValid === false) continue;
-      const marker = primaryMarkerLayout(kind, direction, 0, 0, style);
+      const marker = primaryMarkerLayout(kind, direction, 0, 0, settings);
       output.push({
         id: primaryObjectId(direction, kind, item),
         type: "indicator-label", primaryKind: kind,
@@ -104,7 +204,7 @@ export function matchingLegEndTime(leg, latest, timeframe) {
   const end = leg.stopTime != null
     ? Number(leg.stopTime)
     : Number(leg.sourceTime) + (Number(leg.stopIndex) - Number(leg.sourceIndex)) * timeframe;
-  return latest ? end : Math.min(end, cap);
+  return Math.min(end, cap);
 }
 
 function drawChevrons(ctx, marker) {
@@ -148,7 +248,7 @@ export function drawPrimaryStructures(ctx, group, {
       const x = timeToX(item.sourceTime), y = priceToY(Number(item.price));
       if (x == null || y == null || !Number.isFinite(x) || !Number.isFinite(y)) continue;
       const shifted = offsetPoint(object, x, y);
-      const marker = primaryMarkerLayout(kind, direction, shifted.x, shifted.y, style);
+      const marker = primaryMarkerLayout(kind, direction, shifted.x, shifted.y, settings);
       const color = object?.customized ? object.color : marker.color;
       ctx.save();
       ctx.strokeStyle = color;

@@ -10,9 +10,10 @@ scope:
   - faraz
   - integration
   - regression
+  - release-tooling
 supersedes: engineering/archive/documentation/local-tests-legacy-2026-09-30.md
 created_at: 2026-09-30T11:40:11+03:30
-last_modified_at: 2026-10-04T05:09:22+03:30
+last_modified_at: 2026-10-28T18:08:26+03:30
 ---
 
 # TradingBot Testing
@@ -72,6 +73,8 @@ Before executing tests, inspect the live project for:
 Use the current supported command from those sources. Do not copy an old command merely because it worked in a previous report.
 
 If no supported runner exists for a required check, report that limitation explicitly instead of inventing a false PASS.
+
+For Git Manager or release-workflow changes, discover the focused tests and commands through [Release Operations](../../../scripts/git/README.md) and the current `scripts/git/` implementation. Its tests use disposable local repositories and bare remotes. Their results verify the exercised local workflow; live GitHub authentication, remote branch protections, and publication state require separate evidence when the task authorizes those operations. Release Operations owns the exact invocation and publication procedure.
 
 ## 5. Risk-based scope selection
 

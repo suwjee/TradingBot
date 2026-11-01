@@ -6,6 +6,11 @@ const PRIMARY_STATUS_LABELS = Object.freeze({
   "waiting-for-ph-order-stop": "Waiting for a valid PH order to stop.",
   "waiting-for-pl-order-stop": "Waiting for a valid PL order to stop.",
   "post-pl3-orders-only": "Evaluating valid orders after PL-3.",
+  "post-ph3-orders-only": "Evaluating valid orders after PH-3.",
+  "reversed-to-bullish": "Bullish trend started; bearish calculation stopped.",
+  "reversed-to-bearish": "Bearish trend started; bullish calculation stopped.",
+  "stopped-on-trend-reversal": "Calculation stopped at a trend change.",
+  "waiting-for-trend-reversal": "Waiting at the trend change boundary.",
   "ambiguous-raw-boundary-order": "The available RAW candles cannot determine which event happened first.",
 });
 

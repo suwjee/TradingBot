@@ -134,6 +134,10 @@ function New-ProductionFixture {
   Write-FixtureFile $fixture 'engine/pipeline/core_utils.py' "def helper(): pass\n"
   Write-FixtureFile $fixture 'engine/pipeline/helper_module.py' "def helper(): pass\n"
   Write-FixtureFile $fixture 'engine/pipeline/unused.py'
+  Write-FixtureFile $fixture 'engine/__init__.py' '# package marker'
+  Write-FixtureFile $fixture 'engine/bridge/__init__.py' '# bridge package marker'
+  Write-FixtureFile $fixture 'apps/chart/server/raw-integrity.js' 'export const helper = true;'
+  Write-FixtureFile $fixture 'apps/chart/scripts/dev-server.mjs' '// development server entry point'
   $sha = Commit-Fixture $fixture
   return [pscustomobject]@{ Root = $fixture; Sha = $sha }
 }
@@ -267,6 +271,13 @@ function Invoke-ProductionClosureTests {
     }
     Assert-True ($fileSet.Errors.Count -eq 0) 'fixture closure has no unresolved imports'
     Assert-True ((Test-ProductionFileSet -FileSet $fileSet -Policy $policy).Errors.Count -eq 0) 'fixture file set passes integrity checks'
+    $currentPolicy = Import-PowerShellDataFile (Join-Path $PSScriptRoot 'production-policy.psd1')
+    $currentSet = Get-ProductionFileSet -Root $fixture.Root -MainSha $fixture.Sha -Policy $currentPolicy
+    foreach ($path in @('engine/bridge/__init__.py', 'apps/chart/server/raw-integrity.js')) {
+      Assert-True ($currentSet.Paths -contains $path) "maintained policy includes runtime-owned package markers and helpers: $path"
+    }
+    Assert-True ($currentSet.Errors.Count -eq 0) 'maintained policy fixture has no missing runtime dependencies'
+    Assert-True ((Test-ProductionFileSet -FileSet $currentSet -Policy $currentPolicy).Errors.Count -eq 0) 'maintained runtime inventory passes category exclusions'
   } finally {
     Remove-TestFixturePath $fixture.Root
   }

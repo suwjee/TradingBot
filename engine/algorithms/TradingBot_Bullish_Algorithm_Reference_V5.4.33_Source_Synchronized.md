@@ -1,38 +1,40 @@
 # TradingBot Bullish Algorithm Reference — Current Standalone Specification
 
 **Document Version:** `5.4.33`  
-**Last Modified:** `2026-10-26T19:42:22+03:30`  
-**last_modified_at:** `2026-10-26T19:42:22+03:30`  
+**Last Modified:** `2026-11-01T20:28:25+03:30`  
+**last_modified_at:** `2026-11-01T20:28:25+03:30`  
 **document_role:** `reference`  
 **lifecycle:** `maintained`  
 **owner:** `engine/algorithms`  
-**scope:** `accepted directional trading specification and exact Source; bearish PH/PL extension only`  
-**Status:** `ACTIVE SOURCE-SYNCHRONIZED LOCAL EXTENSION — bearish PH/PL; UNRELEASED`  
+**scope:** `accepted directional specification and exact Source; bidirectional primary structures and isolated alternating regimes`  
+**Status:** `ACTIVE SOURCE-SYNCHRONIZED LOCAL EXTENSION — bullish primary mirror and alternating regimes; UNRELEASED`  
 **Target Direction:** `bullish`  
 **Opposite Direction:** `bearish`  
-**Production Source Behavioral Change:** `YES — approved bearish PH/PL/MBL extension; bullish primary calculation deferred`  
-**Mirror Contract:** Existing upstream geometry retains its directional mirror contract. The new primary-structure calculation is bearish only by explicit instruction; no bullish PH/PL mirror is approved or inferred.
+**Production Source Behavioral Change:** `YES — approved bullish PL/PH/MBL mirror, PL3 reversal and fresh bidirectional Reaction bootstrap`  
+**Mirror Contract:** Standard upstream geometry retains its directional mirror contract. The user-approved primary mirror and first-Reaction bootstrap apply symmetrically to newly isolated regimes; time, physical identity, provenance and S/E families remain invariant.
 
 > **Historical baseline source lineage:** V5.4.33 starts from the exact newly uploaded V5.4.32 `engine(1).zip`. V5.4.32 remains the historical baseline; older unmerged branches are not silently introduced.
 
 ## 0. Revision scope
 
-### Current local extension — bearish PH/PL/MBL (UNRELEASED)
+### Current local extension — bidirectional PH/PL/MBL (UNRELEASED)
 <!-- PRIMARY-REVISION-BEGIN -->
 
 - **Approved behavioral addition:** the user-taught bearish primary-structure state, immutable MBL, native accepted-audit Order race, cancellation/reset behavior and Chart presentation. See Section 13.4a for the complete rules and later teaching corrections.
-- **Calculation scope:** bearish PH/PL only. Bullish primary calculation is expressly deferred; existing upstream directional calculations remain owned by their current engines.
+- **Calculation scope:** approved bearish and bullish primary structures. Section 13.4a retains the bearish rules; Section 13.4b specifies the approved bullish mirror, native PL parents and repeated isolated directional regimes. Existing upstream calculations retain their owners.
 - **Compatibility:** primary output and Source-aware cache invalidation; the later approved PH-over-StopAll classification and PH-stop Order_A extension intentionally update bearish StopAll/OrderAudit output. Other upstream arrays retain their original trading authority. Native OrderAudit owns all physical creation.
 - **Revision identity:** this edits the maintained `5.4.33` Reference files in place. No new release, tag, package publication or cumulative historical branch merge is claimed.
-- **Historical boundary:** prior version-specific verification claims below remain historical evidence. Current task checks are recorded separately in Section 14.0p.
+- **Historical boundary:** prior version-specific verification claims below remain historical evidence. Earlier bounded checks remain historical in Section 14.0p; current synchronization and integrated-verification boundaries are separated in Section 14.0m.
 
-- **Latest approved correction:** PH Order consumption uses confirmation at or after the exact crossing, including older First; PL and native fresh Order_A creation gates stay separate. MBL display cap is 100 candles and its default label is 9px.
+- **Latest approved correction:** PH Order consumption uses confirmation at or after the exact crossing, including older First; PL and native fresh Order_A creation gates stay separate. MBL display cap is 400 candles and its default label is 9px; the first strict PH3 stop starts an isolated bullish regime.
 
 - **Independent-cycle extension:** each qualifying activated setup owns separate logical PH/PL confirmation state and immutable MBL while older contexts remain active; globally chronological native callbacks and additive cycle provenance preserve shared physical Order identity.
 
 - **PH number-priority correction:** one final PH per physical candle, larger local role wins, and strict higher-price continuation takes at least the preceding final number plus one. Preserve logical eligibility, native physical Orders, horizon boundaries and stable physical object IDs.
 
 - **MBL formation correction:** require the owning cycle's first confirmed PH before exposing its frozen candidate as MBL; reject the entire pending cycle if its historical StopAll reference is already PH-owned. Dependent PH/PL/native causes are recalculated, not merely hidden.
+
+- **Approved bullish mirror:** immutable maximum-High MBL, primary PL and opposite PH, native bullish PL parent ownership, strict PL3 reversal, and repeated physically fresh contexts. The Chart consumes finalized directional segments and mirrored markers; complete rules are in Section 13.4b.
 
 <!-- PRIMARY-REVISION-END -->
 
@@ -103,7 +105,7 @@ The Source manifest and exact embedded Source are regenerated from the authorita
 |---|---|---|---:|---:|---|
 | `__init__.py` | Engine package marker | `unversioned` | 0 | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 | `bridge/__init__.py` | Bridge package marker | `unversioned` | 1 | 64 | `2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8` |
-| `bridge/trading_pipeline.py` | Pipeline / Serialization | `1.11.0 (impl 1.14.2)` | 3231 | 123325 | `d70481975d2b8e41c6271a02243862d967d5c906bbe1f2f23a432df6fc0f85a1` |
+| `bridge/trading_pipeline.py` | Pipeline / Serialization | `1.13.0 (impl 1.16.0)` | 3433 | 134613 | `6d93dbaf67e4dce02060575b92dda5de6eaf6de0148f6db54056015c072181dc` |
 | `pipeline/__init__.py` | Compatibility package wrapper | `unversioned` | 28 | 653 | `d22a1b81495a6c97b5eccc4d921b1ba4b709bfbcd39be6ef34b9014690b9f460` |
 | `pipeline/a_zone_detector.py` | A | `1.7.0` | 804 | 31373 | `83f08b06556eb59c6d1b3afd22b51c280315bd80f3a31bc3044ada349251a115` |
 | `pipeline/blue_line_detector.py` | Blue | `2.4.1` | 481 | 16945 | `c6466c280504f82d8f2b189263ed0e9b9581c2f48edd8aaa12f016e55effc98c` |
@@ -111,16 +113,16 @@ The Source manifest and exact embedded Source are regenerated from the authorita
 | `pipeline/direction_policy.py` | Direction Policy | `1.0.0` | 70 | 2282 | `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea` |
 | `pipeline/e_zone_detector.py` | E | `6.16.2 (impl 6.18.5)` | 1144 | 48992 | `96ea351ff88c195937da5c32c5712356b9b876ba6f509d68cb16d37012958ad5` |
 | `pipeline/lifecycle_engine.py` | Lifecycle / StopAll | `1.18.6 (impl 1.20.7)` | 1529 | 63174 | `760928f5480efad446b42bc6aa2fbea3e431de13ab92714bac05c09188519c26` |
-| `pipeline/order_audit_engine.py` | Order / OrderAudit | `1.7.1` | 2175 | 89666 | `f4e991a6a516ad84e0223c802f5baf611f5e20fb8d7965b9dcdf4ff949d89296` |
-| `pipeline/PL_PH_detector.py` | Primary High / Low / Matching Behavior Leg | `1.2.2` | 490 | 22048 | `4c03c016762c55006cba98b9dd565a5e0d37c9420c6e0cacdd1a060d4e8bd989` |
-| `pipeline/reaction_engine.py` | Reaction / Reset | `9.8.1 (impl 9.9.1)` | 2439 | 105073 | `f62f7e3c6480750068c4550a8489806030aac16f021f349930bd5efb3ce54198` |
+| `pipeline/order_audit_engine.py` | Order / OrderAudit | `1.8.0` | 2192 | 90511 | `8e4da88b57a5a27f3a285c51ddeee2c396afa73de7a119c127ab30c2515494e4` |
+| `pipeline/PL_PH_detector.py` | Primary High / Low / Matching Behavior Leg | `1.4.0` | 666 | 29764 | `5107fe02c8314552f4c8e45bb84e23682e43d2d49d925cfdaf165eb6a30462d9` |
+| `pipeline/reaction_engine.py` | Reaction / Reset | `9.9.1 (impl 9.11.0)` | 2501 | 108353 | `2554a5609bb126206ad2b7c58eca6694d8b9623f3e5859487540fe9d49dad89b` |
 | `pipeline/s_zone_detector.py` | S | `4.20.1 (impl 4.21.1)` | 1445 | 60942 | `0c5864bc3bc6c17f72c5c38b04a1cd0b5b38c726d8834207a55d5351fdfa38fe` |
 
-Generated Source-inventory evidence at `2026-10-26T19:42:22+03:30`. Discovery covers the live Engine package marker and every production Python file under its current Bridge and Pipeline roots; this observed inventory is not a permanent file-count requirement.
+Generated Source-inventory evidence at `2026-11-01T19:15:08+03:30`. Discovery recursively reviews the live Engine tree, current runtime loading and imports; the current reconstruction closure includes its package markers and all production Python under the Bridge and Pipeline owners. Test, verification, benchmark, cache and historical material are excluded. This observed inventory is not a permanent file-count requirement.
 
 The empty live `engine/__init__.py` is included as zero exact bytes. Earlier package revisions that omitted that marker remain historical lineage; their omission is not applied to the current live tree.
 
-Section 16 embeds the exact current bytes used for this manifest, including package markers and the new primary-structure module.
+Section 16 embeds the exact current bytes used for this manifest, including package markers and the primary-structure module.
 
 ## 2. Authoritative pipeline and ownership
 
@@ -132,7 +134,7 @@ Order_B feedback may repeat S/E context construction up to eight passes, using e
 
 The bridge calculates the complete input it actually receives. The full-chart HTTP route supplies the original RAW file. A selected-range HTTP route supplies an in-memory stream filtered by inclusive chart-candle buckets; that calculation begins with empty state at the selected start and cannot use rows outside the supplied stream. Within that supplied input, CLI from/to bounds filter presentation after calculation. Neither frontend nor serialization independently implements trading rules.
 
-Ownership boundaries are strict: Reaction/Reset is owned by `reaction_engine.py`; Blue by `blue_line_detector.py`; A by `a_zone_detector.py`; S by `s_zone_detector.py`; E by `e_zone_detector.py`; physical Order discovery/reuse/provenance by `order_audit_engine.py`; lifecycle/StopAll/visibility by `lifecycle_engine.py`; request/range orchestration and serialization by `bridge/trading_pipeline.py`. Serialization is a projection of finalized state and is not a second trading algorithm.
+Ownership boundaries are strict: Reaction/Reset is owned by `reaction_engine.py`; Blue by `blue_line_detector.py`; A by `a_zone_detector.py`; S by `s_zone_detector.py`; E by `e_zone_detector.py`; physical Order discovery/reuse/provenance by `order_audit_engine.py`; lifecycle/StopAll/visibility by `lifecycle_engine.py`; primary PH/PL/MBL state and reversal selection by `PL_PH_detector.py`; request/range and fresh-regime orchestration and serialization by `bridge/trading_pipeline.py`. Serialization is a projection of finalized state and is not a second trading algorithm.
 
 ## 3. Global invariants
 
@@ -442,7 +444,7 @@ The envelope contains `engine`, `version`, `pipelineVersion`, `blueLineVersion`,
 
 `pipeline/PL_PH_detector.py` owns the newly taught **bearish** Primary-High (`PH`), Primary-Low (`PL`) and **matching behavior leg (`MBL`)** state. `MBLL` / `matching_behavior_leg_low` are superseded training names; a bearish MBL still represents the original leg's minimum Low. The new module consumes finalized calculation-accepted behavior state and the existing accepted physical OrderAudit. It does not repair Reaction/Reset/Order eligibility, invent additional physical Orders, or delegate trading decisions to the Chart or serializer.
 
-**Bullish PH/PL calculation is explicitly deferred by the user.** Existing Bullish Reaction/Reset/Blue/A/S/E/StopAll and native Orders remain available as upstream dependencies of the bearish calculation. Their continued execution is not a bullish primary-structure implementation. Both directional References contain the same complete shared Source, while this new normative state machine remains bearish only. The pre-existing mirror matrices do not authorize a bullish primary mirror.
+**The earlier bullish deferral is superseded by the user's explicit mirror approval.** This subsection retains the bearish specification; Section 13.4b defines its approved bullish counterpart and symmetric fresh regime restart. Both directional References independently contain the same complete current shared Source. The upstream engines and native physical OrderAudit retain their original ownership.
 
 #### Matching setup and first PH gate
 
@@ -502,7 +504,7 @@ The frozen minimum boundary is retained internally as a candidate for existing
 Order/cancellation chronology. `PL_PH_detector.formed_matching_legs` promotes
 that candidate to the formed output only when the owning cycle's earliest PH
 confirmation is within the requested end horizon. Source, price, strict break
-and 100-candle cap stay unchanged; PH resets do not generate another MBL.
+and 400-candle cap stay unchanged; PH resets do not generate another MBL.
 An already-broken candidate is not made unbroken by later PH confirmation.
 
 PH ownership is committed before any strictly later reference breakout. If a
@@ -546,11 +548,21 @@ Record `parent-stop` creation with parent `PHn`, its source and exact stop event
 
 Independent valid Reset routes retain creation type **Order_B**. Their post-stop owner is PH only when the same source's actual PH stop occurred after PH confirmation. Their geometric anchor owner is PH only when PH was already confirmed at the Reset Reaction's First main timestamp. Earlier roles retain historical StopAll provenance. Reparenting does not change Reset geometry or convert a Reset cause into Order_A. Re-prepare accepted audits after each PH commitment, and revalidate final public behavior references after PH/StopAll ownership resolution.
 
-#### PH continuation and unlimited same-cycle numbering
+#### PH continuation through PH3
 
-After confirming PH-n, wait for the first strict `High > PH-n.price`. That main candle opens PH-(n+1). Use the earliest eligible accepted Order_A stop after that gate. The new PH price is the maximum High from the breakout main candle through the selected Order-stop main candle, **including both whole candles**; earliest equal-maximum candle owns the source. PH source is retrospective; its exact confirmation is the later selected Order stop. PH-2 and later highs remain above the same original MBL.
+After confirming PH-1 or PH-2, wait for the first strict `High > PH-n.price`. That main candle opens PH-(n+1). Use the earliest eligible accepted Order_A stop after that gate. The new PH price is the maximum High from the breakout main candle through the selected Order-stop main candle, including both whole candles; earliest equality owns the source. Source and exact later confirmation remain distinct.
 
-The previous three-PH cap is explicitly superseded: **PH-1, PH-2, PH-3, PH-4, ...** follow the shared continuation rule until a taught cancellation/reset transition changes the state. Do not add a numeric cap or use a fixture timestamp as a boundary.
+The approved sequence stops at PH3. The former unlimited-PH rule is superseded. No PH4 is confirmed or registered as a native PH parent.
+
+#### PH3 stop and bullish regime start
+
+The first authoritative strict `High > confirmed PH3.price` across all independent cycle owners ends the entire bearish regime. Equality does not reverse. The exact selected lower-timeframe event orders this transition against all pending activations and decisions; reversal wins a joint boundary before a later bearish point can commit.
+
+All bearish cycles stop at that transition. Their finalized prefix objects remain historical on the Chart, including stable physical identity and provenance. No later bearish calculation result or active continuation is exposed.
+
+The bridge constructs independent calculation inputs: the bearish prefix ends before the crossing main candle; the bullish suffix includes that complete candle and all subsequent supplied candles. Earlier candles and previous detector/lifecycle/Order state cannot enter the new bullish calculation. Public indexes are translated back to the original supplied-input coordinates. A discovery event must be supported by a freshly calculated historical prefix. A transition beyond the requested presentation horizon cannot replace the current outputs.
+
+Only the first bullish Reaction uses the explicit new-regime bootstrap. The first RED candle from the boundary is eligible without an earlier GREEN; its BoxTop uses the initial GREEN run and FirstRed, or FirstRed alone when the boundary is RED. Its BoxBottom evolves through exact confirmation without applying an earlier-leg/Reset boundary. The new leg-head Low remains available to native Blue calculation. After first confirmation, ordinary same-direction Reset, Blue, A, S, E, StopAll and physical Order rules resume. Section 13.4b now explicitly authorizes the bullish primary calculation and its symmetric bearish restart; that later teaching supersedes the earlier one-direction scope limit.
 
 #### PL-1, PL-2 and PL-3
 
@@ -584,7 +596,7 @@ The bearish group adds `primaryHighs`, `primaryLows`, `matchingBehaviorLegs`, `p
 
 - **Primary point:** stable `id`, owning `cycleId`, market `direction`, `kind`, final `number`, `sourceIndex/sourceTime/price`, `triggerIndex/triggerTime/triggerEventTime`, `decisionIndex/decisionTime/decisionEventTime`, and the selected native `order`.
 - **Selected Order / post-PL3 Order:** conceptual `ownerDirection` and opposite physical `direction`; `reactionNumber`, physical `firstIndex/firstTime`, `breakIndex/breakTime`, `confirmationEventTime`, `stopLevel`, `stopSourceIndex/stopSourceTime`, `stopHitIndex/stopHitTime/stopHitEventTime`, accepted creation-kind `causes`, readable creation `types`, native `reactionMode`, isolated complete `auditCauses`, and box geometry. Stable physical identity and the creation-type/Reaction-Mode distinction must survive projection.
-- **MBL:** stable `id`, additive `cycleId`, `direction`, `sourceIndex/sourceTime/price`, `referenceStopAllIndex`, `secondBehaviorIndex`, `triggerIndex/triggerTime/triggerEventTime`, earliest owning-PH `confirmationIndex/confirmationTime/confirmationEventTime`, nullable `stopIndex/stopTime/stopEventTime`, and `capTime` for 100 subsequent analysis candles. A future confirmation or crossing beyond the presentation horizon must not be presented as already confirmed inside the window.
+- **MBL:** stable `id`, additive `cycleId`, `direction`, `sourceIndex/sourceTime/price`, `referenceStopAllIndex`, `secondBehaviorIndex`, `triggerIndex/triggerTime/triggerEventTime`, earliest owning-PH `confirmationIndex/confirmationTime/confirmationEventTime`, nullable `stopIndex/stopTime/stopEventTime`, and `capTime` for 400 subsequent analysis candles. A future confirmation or crossing beyond the presentation horizon must not be presented as already confirmed inside the window.
 - **Status:** explicit waiting state, unresolved authoritative RAW ordering, or `post-pl3-orders-only`. A missing valid Order cannot be replaced with a provisional point.
 
 The Section 13.5 AST index and Section 16 exact Source provide complete current dataclass fields, function contracts and serializer implementation; they are regenerated after Source edits.
@@ -601,15 +613,25 @@ The Chart receives final calculation truth. It never reconstructs matching, cros
 | Market direction | PH marker / label | PL marker / label |
 |---|---|---|
 | Bearish | downward double chevron above candle; label above marker | filled circle below candle; label below marker |
-| Bullish appearance only, calculation deferred | filled circle above candle; label above marker | upward double chevron below candle; label below marker |
+| Bullish | green filled circle above candle; label above marker | pink upward double chevron below candle; label below marker |
 
-Default arrow extent and label font are `12px`, color `#056656`. Filled circles have radius `12px` (diameter `24px`), color `#ec407a`, opacity `100%`; their label font is `12px` and the same pink. Candle-to-nearest-marker-edge gap is `12px`; marker-to-visible-label-edge gap is `10px`. Text is `PH-n` / `PL-n` using the finalized number; repeated PH-1 after reset retains a distinct stable object identity.
+Default arrow extent and label font are `12px`. Colors follow point kind: PH is green `#056656`; PL is pink `#ec407a`. Both bearish PL and bullish PH circles default to radius `4px` (diameter `8px`) and opacity `100%`; circle label font is `12px` in the point's color. Explicit marker/radius/appearance customization remains supported. Candle-to-nearest-marker-edge gap is `12px`; marker-to-visible-label-edge gap is `10px`. Text is `PH-n` / `PL-n` using the finalized number; repeated PH-1 after reset retains a distinct stable object identity.
 
-MBL uses the finalized source/price and strict end event, dotted line size `2`, color `#b22833`, and centered `MBL` text at `9px`, with a label gap in the line. Without a strict break, display 100 subsequent analysis candles. The latest existing MBL may extend to a later actual break; an older MBL must not extend beyond 100 analysis candles when newer legs exist. A PH reset does not itself create such a newer MBL. Source `capTime` preserves actual main-candle chronology across market-data gaps; the Chart does not scan prices for a substitute end.
+MBL uses the finalized source/price and strict end event, dotted line size `2`, color `#b22833`, and centered `MBL` text at `9px`, with a label gap in the line. Display at most 400 subsequent actual analysis candles. An earlier strict break ends the line at that candle. The cap applies equally to the latest and all earlier MBLs; no later break extends a line beyond the cap. At a bearish-to-bullish handoff, historical drawing is bounded by the explicit calculation end. A PH reset does not itself create such a newer MBL. Source `capTime` preserves actual main-candle chronology across market-data gaps; the Chart does not scan prices for a substitute end.
 
 Configure contains a PH/PL section with marker/label visibility switches for PH, PL and MBL. Appearance exposes colors, marker/label sizes, circle opacity/radius, gaps and line style/width using the same persistence and reset patterns as existing controls. Per-object hide/unhide uses the existing object tree and stable IDs. All stated appearance values are defaults, not fixed calculation rules.
 
 The Info panel reports finalized PH, PL and MBL counts and the Engine's current primary status. A zero count remains a valid result and its waiting state is shown explicitly. Before reusing an in-browser result for appearance changes, the Chart checks the current opaque calculation-Source fingerprint through the local server. Missing, failed or changed Source identity requires the normal calculation request. This identity check does not independently validate RAW bytes or infer trading state.
+
+#### Directional transition presentation
+
+Draw a green dashed vertical line across the full plot height at the finalized bullish-start main candle, irrespective of that candle's market color. Render a clean green upward zigzag arrow at the actual 50th calculation candle counting the start as candle 1 (offset 49). The icon is 28 by 28 CSS pixels with a stronger stroke and a filled arrowhead; its bottom edge is exactly 100 CSS pixels above that candle's High, horizontally centered on that candle. Pan/zoom changes anchors while preserving screen-pixel dimensions and clearance. If the 50th actual candle is absent, retain the boundary line and omit the icon.
+
+At a bearish start, draw the symmetric red dashed full-height boundary and a red downward zigzag at the actual 50th calculation candle counting the start as 1. Its size is `28 × 28` CSS pixels; its top edge is exactly `100px` below that candle's Low, horizontally centered on it. Preserve pixel dimensions and clearance during pan/zoom; omit the icon when the target actual candle is absent.
+
+The Engine supplies `trendTransitions` on the incoming direction with stable identity, direction/previousDirection, source and exact event time, stopped PH3 or PL3 provenance, and nullable target-candle High or Low. The Chart does not search OHLC for a trend event. Historical paint, hit testing and selection all respect the owning segment's end bound; new segment anchors come from fresh finalized input and user presentation offsets may move drawings; Section 13.4b specifies the complete repeated-regime contract.
+
+The approved full-October USOIL 5s RAW calculated at 30s retains bearish PH1 at `2026-10-07 00:13:30`, PH2 at `03:55:30` and PH3 at `04:47:00`, with PH3 High `90.573`. Its strict stop starts the bullish context at `16:57:30`. FirstRed/BoxTop are `16:57:30`, BoxBottom is `16:59:30` and Break is `17:00:30`. The 50th candle is `17:22:00`. These are bounded acceptance anchors, never production special cases.
 
 #### Bounded authoritative-RAW acceptance example
 
@@ -627,14 +649,18 @@ The reference breaks strictly at `2026-10-07 00:13:45`, belonging to main candle
 
 The previous gate required First at or after the crossing candle and confirmation strictly later than the crossing; it wrongly excluded this accepted Order and selected `03:55:30` as the first PH source. The general PH confirmation gate above corrects that earliest divergence. These timestamps, prices and the chart identity are bounded acceptance evidence only; production contains no corresponding special case.
 
-#### Bounded independent USOIL October 22 acceptance example
+#### Historical later-cycle acceptance examples
+
+The following examples predate the approved global PH3 reversal. They retain historical evidence of local-cycle/ownership behavior; later October cycles and PH4+ are not current full-month acceptance expectations once the October 7 PH3 stops.
+
+#### Historical independent USOIL October 22 example
 
 In the **same full** USOIL107AA8C4 calculation, reference StopAll9 is `2026-10-22 12:05:30`, High `100.068`; matching S Red sources are `13:20:00` and `15:42:00`. Their qualified leg strictly breaks at `21:20:35`, belonging to main candle `21:20:30`. Its independent PH-1 source is `21:20:30`, High `100.149`, confirmed at `21:47:25`. Its own immutable MBL is `18:56:30`, price `97.883`.
 
 This cycle must coexist with the October6/7 cycle above, whose MBL remains unbroken and whose numbering continues locally. The October22 PH source is no longer a public StopAll10. Both independent PH-1 objects and both MBLs must have distinct object identities and support independent hide/unhide. MBL remains dotted red, with a 100-analysis-candle unbroken cap and 9px default label; older legs use their capped presentation when newer cycles exist. None of these bounded fixture dates/prices/chart identities participates in production conditionals.
 
 
-#### Bounded USOIL PH number-priority acceptance example
+#### Historical USOIL PH number-priority example
 
 The later explicit invalid-cycle rule supersedes the previous PH-5 example
 at October8 11:25:30: that point depended on a PH-owned StopAll reference and
@@ -654,9 +680,88 @@ October22 MBL at18:56:30, each confirmed by its own PH.
 
 <!-- PRIMARY-STRUCTURES-END -->
 
+### 13.4b Bullish primary mirror and alternating regimes — approved current extension
+<!-- PRIMARY-BULLISH-MIRROR-BEGIN -->
+
+#### Scope and exact transformation
+
+The user has approved the bullish PL/PH/MBL mirror and subsequent bearish restart. This section extends, rather than removes, the bearish rules in Section 13.4a. `detect_bullish` executes that shared primary state machine with exact Decimal sign/High-Low reflection, then restores real market prices, kinds and directions. Reflection never reverses time or changes market candle colors, S/E Red/Blue families, dominant-owner priority, canonical physical Order identity, accepted cause structure or chronological tie rules. Native Order selection and parent callbacks see the original market coordinates. Exact Decimal negation preserves long input lexemes without context rounding.
+
+| Primary contract | Bullish regime | Bearish regime |
+|---|---|---|
+| Main confirmed structure | PL | PH |
+| Activated reference break | strict `Low < reference StopAll Low` | strict `High > reference StopAll High` |
+| Immutable MBL extreme | maximum main-candle High | minimum main-candle Low |
+| MBL break | strict `High > MBL.price` | strict `Low < MBL.price` |
+| Main continuation / stop | strict `Low < confirmed PL.price` | strict `High > confirmed PH.price` |
+| Opposite confirmed structure | PH | PL |
+| Regime reversal | first strict stop of a confirmed final PL3 | first strict stop of a confirmed final PH3 |
+
+#### Matching, independent cycles and frozen MBL
+
+1. Require StopAll3 or later and the same exact dominant matching S/E pair, with the same accepted-event exclusions, decision-time qualification, causal historical reference, duplicate suppression and deterministic activation ordering as Section 13.4a. Do not swap behavior families or aggregate unlike identities.
+2. The first strict authoritative RAW `Low < reference StopAll main-candle Low` activates a separate bullish cycle. Equality does not activate it. A reference already promoted to a confirmed PL is ineligible to seed another cycle; reject that whole pending setup without native parent side effects.
+3. Freeze the MBL candidate at the maximum main-candle High from the second matching behavior source through the reference-break main candle, both inclusive. Earliest equal maximum owns the source. Publish that cycle's candidate only after its own first PL confirmation within the requested horizon. No other cycle or future point can confirm it.
+4. Keep the frozen source, price and provenance for the cycle's entire lifetime. A PL reset does not create a new MBL. Its first later strict `High > MBL.price` remains its break even if it occurred before the first PL confirmation. Distinct qualified cycles remain independent and may share one accepted physical Order without duplicating that Order.
+5. Globally interleave activations and confirmed points in exact RAW chronology. A committed primary PL updates the shared native audit and invalidates pending prospective decisions. Reversal wins a joint boundary; activation ties precede point commitment and remaining point ties retain deterministic activation order. Opposing RAW events with no resolvable ordering report `ambiguous-raw-boundary-order`.
+
+#### Bullish Order gates, confirmation and extrema
+
+| Bullish point | Conceptual Order owner | Opposite physical Reaction | Accepted creation types | Structure consumption gate |
+|---|---|---|---|---|
+| Initial/reset local PL1 | `bullish` | `bearish` | Order_A and Order_B | confirmation at or after crossing; older First allowed |
+| Local PL2 / PL3 | `bullish` | `bearish` | Order_A | confirmation at or after crossing; older First allowed |
+| PH1 / PH2 / PH3 | `bearish` | `bullish` | Order_A and Order_B | First in trigger main candle or later; confirmation strictly after crossing |
+
+Conceptual bullish Orders use native physical bearish `High > stopLevel`; conceptual bearish Orders use native physical bullish `Low < stopLevel`. Creation type is accepted parent-stop/reset-leg provenance, independent of physical Reaction Mode A/B. An Order stop must be strictly after both its confirmation and the structure crossing. The earliest exact eligible stop wins; exact stop ties prefer larger FirstIndex, then BreakIndex, with no A/B preference. For opposite PH, preserve canonical Reaction eligibility and the first valid direct Order_A lock: an open first eligible direct A cannot be replaced by a later direct A, while accepted B candidates still race normally.
+
+Confirm each PL at the minimum Low over the whole trigger main candle through the whole winning Order-stop main candle, inclusive. Confirm each PH at the maximum High over its own corresponding inclusive interval. Earliest equal extrema retain the source. Trigger, source and exact later confirmation remain distinct. No unconfirmed crossing manufactures a native Order.
+
+#### Continuation, cancellation and final physical PL ownership
+
+After confirmed PL1 or PL2, the first strict break of that PL Low opens the next local PL stage. Before a pending PL confirms, an MBL High break cancels it and enters the PH path. If an earlier PH exists, a later PH still requires its own preceding PH High break; cancellation alone cannot invent that crossing.
+
+PH1 opens at the first strict `High > MBL.price`; subsequent PH stages require the first strict break above the last PH High after its confirmation. PH numbering survives a PL reset. If PH is pending and no new PH has confirmed since the latest PL, strict loss of that PL Low cancels the pending PH and resumes the next local PL. A confirmed PH resets local PL confirmation to PL1 at the next valid downward gate with A/B eligibility; the original MBL and PH counter persist.
+
+`resolve_primary_lows` reconciles final physical PL roles before presentation filtering. Coincident roles publish one greatest local number; chronological ties retain the same deterministic identity-source rule as PH. A distinct next confirmed physical PL strictly lower than the preceding final PL-n takes at least n+1, retaining a larger qualified local number. Equal/higher price does not force that continuation. Final renumbering preserves native Order eligibility, exact events, logical cycle membership and stable object IDs. Native PL aliases and frozen selected-Order causes use that same final source-to-number map without rediscovering Orders.
+
+No PL4 is confirmed or registered as a new primary parent. The first strict stop of any confirmed final PL3 ends all bullish cycles, as described below. Opposite PH stops after PH3 retain eligible conceptual bearish Order_A/B evidence as `postPH3Orders`, without forming PH4. This evidence does not override a PL3 regime reversal.
+
+#### Confirmed PL parent and StopAll ownership
+
+A confirmed primary PL owns its exact source candle in final output and replaces that candle's public StopAll, including optional Bridge output. Preserve the historical StopAll boundaries required before PL confirmation; a future PL cannot erase an earlier presentation horizon.
+
+Commit each primary PL immediately to native `register_primary_low`. Its first strictly later authoritative RAW `Low < PL.price` is a genuine bullish-owner parent stop. It creates native Order_A from the first eligible canonical physical bearish Reaction, with First in the stop-owning main candle or later and confirmation strictly after the exact stop. Preserve one physical owner per parent-stop cause, native stop geometry and identity. Open Orders remain in the accepted ledger without provisionally confirming a point.
+
+Use `PLn` for the parent-stop cause and eligible Reset-leg post-stop/anchor aliases under the same exact confirmation-time checks as PH. Transfer an obsolete StopAll direct cause only to the eligible native identity; retain other independent causes, remove cause-less identities and their confirmation-index entries, and invalidate affected reuse caches. A Reset-leg remains Order_B. Final PL relabeling changes aliases only, never physical geometry or chronology.
+
+#### Fresh alternating directional regimes
+
+The first authoritative strict `Low < confirmed final PL3.price` begins bearish calculation; equality does not reverse. The existing PH3 High stop begins bullish calculation. Across each regime's independent cycles select the earliest exact eligible primary-3 stop. All cycles in the stopped direction end there, with no later active continuation.
+
+Recalculate the stopped regime from its physically independent prefix ending before the crossing main candle. That prefix must independently support the confirmed stopped final primary-3 source and level; otherwise fail rather than publish an unsupported transition. Start the opposite direction from the complete crossing main candle, with new normalized candles, lower chronology, detectors, lifecycle and Order state. Carry no earlier candle or previous regime state. Repeat this fresh prefix/suffix process whenever the new regime subsequently reverses. Time always advances and public indexes translate back to the original supplied-input coordinates.
+
+Only the first Reaction of each newly started direction uses the bootstrap exception. Bullish accepts FirstRed without earlier GREEN and confirms strict `High > BoxTop`; bearish accepts FirstGreen, including a market Doji, without earlier RED and confirms strict `Low < BoxBottom`. The fixed confirmation edge spans the initial context run and First, or First alone when it starts at the boundary; its opposite edge evolves through exact confirmation. No prior-leg/Reset boundary invalidates that first search. Preserve the boundary leg-head Low/High for downstream native calculation. Ordinary Reset and all downstream rules resume immediately after first confirmation.
+
+An explicit bullish request starts bullish primary calculation; `both` retains the existing initial bearish precedence. Repeated transitions alternate from that initial regime. Disabling primary calculation preserves the existing directional behavior. A transition after the requested presentation horizon does not replace current output.
+
+#### Additive public contract and historical presentation
+
+Both directions expose finalized `primaryHighs`, `primaryLows`, `matchingBehaviorLegs`, `primaryStatus` and `primaryCycles`. Bearish retains `postPL3Orders`; bullish exposes `postPH3Orders` with conceptual bearish owner and physical bullish direction. Primary prices remain Decimal strings. Bullish primary PL objects expose participating `cycleIds`; each bullish cycle joins them through `lowIds`, matching bearish `highIds`. Absolute input offsets participate in stable point/cycle/MBL identities, so a later same-direction regime cannot reuse an earlier regime's IDs.
+
+Each incoming direction receives Engine-finalized `trendTransitions` with stable `id`, `direction`, `previousDirection`, boundary `sourceIndex/sourceTime`, exact `eventTime` and stopped `level`. Bullish-start provenance uses `phNumber/phSourceIndex/phSourceTime`; bearish-start provenance uses the corresponding `pl*` fields. `iconCandleIndex/iconCandleTime` target the actual 50th calculation candle counting the boundary as 1. Bullish exposes `iconCandleHigh`; bearish exposes `iconCandleLow`. Target fields are null when that actual candle does not exist. The envelope's `activeDirection` identifies the latest published regime.
+
+Both trend-start icons remain `28 × 28` CSS pixels. The bullish icon's bottom edge is exactly `100px` above its target candle's High; the bearish icon's top edge is exactly `100px` below its target candle's Low. These are screen-pixel clearances during pan/zoom and do not change the actual-candle-50 target. The latest explicit user instruction restores `100px` clearance and supersedes the earlier `500px` clarification. Current automatic calculation remains unchanged; Auto/Manual controls are not part of this approved change. Historical verification retains the geometry tested at that time.
+
+Historical groups carry `calculationEndTime`; later groups carry `calculationStartTime/calculationStartIndex`. A direction occurring more than once exposes flat chronological `calculationSegments`, each a complete same-direction finalized payload without nested segments. Aggregate list fields concatenate those finalized collections for counts/object inspection, optional Bridge lists concatenate likewise, and scalar state follows the latest same-direction segment. A single segment retains the legacy group shape. Chart renders each segment independently and applies each historical segment's end bound consistently to paint, hit testing and selection. New segment anchors come from fresh finalized input; user presentation offsets may move drawings. The Chart cannot infer a crossing from OHLC. Stable IDs preserve per-object Hide/Appearance state.
+
+MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 actual analysis candles after its source, ending earlier at its strict break or historical regime end. `capTime` and explicit regime bounds own presentation; Chart cannot calculate a replacement trading end. The actual-bar target/cap chronology survives data gaps.
+
+<!-- PRIMARY-BULLISH-MIRROR-END -->
+
 ### 13.5 Complete module/class symbol and schema coverage
 
-This index is regenerated mechanically from the exact current Source AST. It covers module assignments/type aliases, top-level functions, classes, annotated schema fields, methods/properties and nested function definitions. Imports, local variables and lambda bodies remain preserved in the exact Source snapshot. Line numbers address each Source file, not this Reference.
+This index is regenerated mechanically from the exact current Source AST. It covers module assignments/type aliases, top-level functions, classes, annotated schema fields, methods/properties and nested class/function definitions. Imports, local variables and lambda bodies remain preserved in the exact Source snapshot. Line numbers address each Source file, not this Reference.
 
 The index is descriptive integrity/navigation evidence, not trading-semantic authority.
 
@@ -675,214 +780,229 @@ The index is descriptive integrity/navigation evidence, not trading-semantic aut
 - **Nested implementation functions/closures:** _none_
 
 #### `bridge/trading_pipeline.py`
-- **Module-level symbols/assignments:** `_ENGINE_ROOT` (L30), `_PIPELINE_DIR` (L31), `_pipeline_dir_text` (L32), `_DTFMT` (L39), `TRADING_PIPELINE_VERSION` (L42), `TRADING_PIPELINE_IMPLEMENTATION_VERSION` (L43), `TRADING_PIPELINE_LAST_MODIFIED` (L44), `MBL_EXTENSION_CANDLES` (L45), `TEHRAN` (L47), `_local_dt_cache: dict[int, datetime]` (L84), `_epoch_cache: dict[datetime, int]` (L96), `_display_epoch_cache: dict[str, int]` (L108)
-- **Top-level functions:** `emit_progress` (L50), `timed` (L58), `load_module` (L70), `load_engine` (L80), `local_datetime` (L87), `epoch` (L99), `display_epoch` (L111), `build_candle_buckets` (L123), `build_candle_objects` (L181), `_index_selected` (L211), `select_reaction_serialization_items` (L219), `serialize` (L242), `serialize_blue_lines` (L286), `serialize_a_zones` (L306), `serialize_s_zones` (L333), `serialize_e_zones` (L398), `serialize_stopalls` (L441), `bridge_datetime` (L508), `bridge_direction` (L522), `bridge_mode` (L526), `bridge_color` (L530), `_bridge_horizon` (L536), `_bridge_in_horizon` (L543), `_bridge_proven_strict_event` (L547), `_bridge_stop_view` (L587), `_bridge_reaction_confirmation` (L607), `_bridge_order_identity` (L631), `_bridge_parent_stop` (L833), `_bridge_a_stop` (L854), `_bridge_behavior_stop` (L875), `_bridge_blue_formation` (L890), `_bridge_project_reaction` (L913), `_bridge_project_reset` (L956), `_bridge_project_blue` (L979), `_bridge_full_lines_by_ordinal` (L1015), `_bridge_project_a` (L1027), `_bridge_project_s` (L1117), `_bridge_source_index` (L1173), `_bridge_parent_behavior_for_e` (L1181), `_bridge_project_e` (L1225), `_bridge_project_stopall` (L1272), `_bridge_audit_order_key` (L1341), `build_bridge_output` (L1351), `validate_order_audit_bridge` (L1456), `serialize_order_audit` (L1524), `parse_arguments` (L1598), `load_engines` (L1671), `prepare_market_context` (L1709), `create_e_detector` (L1827), `calculate_full_direction_state` (L1875), `calculate_direction_with_order_b_feedback` (L2210), `prepare_pipeline_state` (L2272), `calculate_direction_range_state` (L2440), `finalize_direction_visibility` (L2542), `serialize_direction_payload` (L2779), `serialize_primary_order` (L2920), `serialize_primary_structures` (L2949), `calculate_primary_structures` (L3053), `build_direction_output` (L3099), `build_response_payload` (L3139), `main` (L3193)
+- **Module-level symbols/assignments:** `_ENGINE_ROOT` (L30–L30), `_PIPELINE_DIR` (L31–L31), `_pipeline_dir_text` (L32–L32), `_DTFMT` (L39–L39), `TRADING_PIPELINE_VERSION` (L42–L42), `TRADING_PIPELINE_IMPLEMENTATION_VERSION` (L43–L43), `TRADING_PIPELINE_LAST_MODIFIED` (L44–L44), `MBL_EXTENSION_CANDLES` (L45–L45), `TEHRAN` (L47–L47), `_local_dt_cache` (L84–L84), `_epoch_cache` (L96–L96), `_display_epoch_cache` (L108–L108)
+- **Top-level functions:** `emit_progress(status: str, label: str, duration_ms: float | None=None)` (L50–L55), `timed(timings: dict[str, float], label: str, work)` (L58–L67), `load_module(name: str, path: Path)` (L70–L77), `load_engine(path: Path)` (L80–L81), `local_datetime(epoch: int) -> datetime` (L87–L93), `epoch(local: datetime) -> int` (L99–L105), `display_epoch(value: str | datetime) -> int` (L111–L120), `build_candle_buckets(rows: list[dict], timeframe: int)` (L123–L178), `build_candle_objects(engine, buckets: list[dict])` (L181–L208), `_index_selected(index: object, start_index: int | None, end_index: int | None) -> bool` (L211–L216), `select_reaction_serialization_items(result, start_index=None, end_index=None, reaction_transform=None)` (L219–L239), `serialize(result, start_index=None, end_index=None, reaction_transform=None, selected_items=None)` (L242–L283), `serialize_blue_lines(items, start_index=None, end_index=None)` (L286–L303), `serialize_a_zones(items)` (L306–L330), `serialize_s_zones(items)` (L333–L395), `serialize_e_zones(items)` (L398–L438), `serialize_stopalls(items)` (L441–L505), `bridge_datetime(value: object | None) -> str | None` (L508–L519), `bridge_direction(direction: str) -> str` (L522–L523), `bridge_mode(mode: object) -> str | None` (L526–L527), `bridge_color(value: object | None) -> str | None` (L530–L533), `_bridge_horizon(market: MarketContext) -> datetime` (L536–L540), `_bridge_in_horizon(market: MarketContext, value: datetime | None) -> bool` (L543–L544), `_bridge_proven_strict_event(market: MarketContext, direction: str, level: object | None, event_time: datetime | None) -> datetime | None` (L547–L584), `_bridge_stop_view(market: MarketContext, direction: str, price: object | None, stop_time: datetime | None, stop_event_time: datetime | None) -> dict[str, object]` (L587–L604), `_bridge_reaction_confirmation(market: MarketContext, direction: str, reaction: object, *, use_intrabar_start: bool=True) -> datetime | None` (L607–L628), `_bridge_order_identity(item: object) -> tuple[int, int] | None` (L631–L636), `_bridge_parent_stop(projection: BridgeProjection, detector: object | None, parent_type: str, item: object) -> tuple[datetime | None, datetime | None]` (L833–L851), `_bridge_a_stop(projection: BridgeProjection, s_detector: object | None, item: object) -> tuple[datetime | None, datetime | None]` (L854–L872), `_bridge_behavior_stop(projection: BridgeProjection, direction: str, price: object, stop_time: datetime | None, stop_event_time: datetime | None) -> dict[str, object]` (L875–L887), `_bridge_blue_formation(projection: BridgeProjection, direction: str, line: object, reactions: list[object]) -> tuple[datetime | None, datetime | None]` (L890–L910), `_bridge_project_reaction(projection: BridgeProjection, direction: str, raw: object, public: object) -> dict[str, object]` (L913–L953), `_bridge_project_reset(projection: BridgeProjection, direction: str, reset: object) -> dict[str, object]` (L956–L976), `_bridge_project_blue(projection: BridgeProjection, direction: str, line: object, reactions: list[object]) -> dict[str, object]` (L979–L1012), `_bridge_full_lines_by_ordinal(lines: list[object]) -> dict[int, object]` (L1015–L1024), `_bridge_project_a(projection: BridgeProjection, direction: str, item: object, lines_by_ordinal: dict[int, object], reactions: list[object], s_detector: object | None) -> dict[str, object]` (L1027–L1114), `_bridge_project_s(projection: BridgeProjection, direction: str, item: object, e_detector: object | None) -> dict[str, object]` (L1117–L1170), `_bridge_source_index(item: object) -> tuple[int, datetime] | None` (L1173–L1178), `_bridge_parent_behavior_for_e(projection: BridgeProjection, direction: str, item: object, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object]) -> dict[str, object]` (L1181–L1222), `_bridge_project_e(projection: BridgeProjection, direction: str, item: object, e_detector: object | None, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object]) -> dict[str, object]` (L1225–L1269), `_bridge_project_stopall(projection: BridgeProjection, direction: str, item: object) -> dict[str, object]` (L1272–L1338), `_bridge_audit_order_key(prepared: object, detector: object) -> tuple[int, int]` (L1341–L1348), `build_bridge_output(direction: str, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, selected_reactions: list[tuple[object, object]], selected_resets: list[object], selected_blue_lines: list[object], selected_a_zones: list[object], selected_s_zones: list[object], selected_e_zones: list[object], selected_stopalls: list[object], selected_order_audit: list[object]) -> dict[str, list[dict[str, object]]]` (L1351–L1453), `validate_order_audit_bridge(prepared_items, s_zones, e_zones, stopalls) -> None` (L1456–L1521), `serialize_order_audit(prepared_items, detector)` (L1524–L1574), `market_segment(market, start, stop, *, initial_bullish_trend=None, initial_bearish_trend=None)` (L1601–L1621), `absolute_payload_indexes(value, offset)` (L1624–L1635), `serialize_trend_transition(transition, market)` (L1638–L1658), `parse_arguments(argv=None)` (L1661–L1731), `load_engines(args, timings: dict[str, float]) -> EngineBundle` (L1734–L1769), `prepare_market_context(args, engines: EngineBundle, timings: dict[str, float]) -> MarketContext` (L1772–L1852), `create_e_detector(direction: str, e_engine, full_results: dict[str, object], s_zones: list[object], chronology, geometry_detectors: dict[str, object], initial_order_audit, lifecycle_engine, *, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[object]=())` (L1891–L1936), `calculate_full_direction_state(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], order_b_legs: Sequence[object]=(), shared_stages: FullDirectionState | None=None) -> FullDirectionState` (L1939–L2271), `calculate_direction_with_order_b_feedback(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], *, stopall_enabled: bool) -> FullDirectionState` (L2274–L2333), `prepare_pipeline_state(args, engines: EngineBundle, market: MarketContext, timings: dict[str, float]) -> PipelineState` (L2336–L2473), `calculate_direction_range_state(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float]) -> DirectionRangeState` (L2508–L2607), `finalize_direction_visibility(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, direction_state: DirectionRangeState, timings: dict[str, float]) -> DirectionVisibilityState` (L2610–L2844), `serialize_direction_payload(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, timings: dict[str, float])` (L2847–L2985), `serialize_primary_order(order, market, owner_direction)` (L2988–L3014), `serialize_primary_structures(primary, market)` (L3017–L3136), `calculate_primary_structures(args, engines, market, state, visibility, timings, direction='bearish')` (L3139–L3189), `build_direction_output(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L3192–L3232), `merge_regime_outputs(regimes)` (L3234–L3260), `build_reversed_trend_outputs(args, engines, market, transition, timings)` (L3263–L3329), `build_response_payload(args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float], pipeline_started: float) -> dict[str, object]` (L3332–L3392), `main() -> int` (L3395–L3425)
 - **Classes / schemas:**
-  - `BridgeProjection` (L639)
-    - fields: _none_
-    - methods/properties: `__init__` (L647), `physical_order` (L666), `parent_order` (L711), `current_order` (L718), `order_audit` (L773)
-  - `EngineBundle` (L1578)
-    - fields: `reaction: object` (L1579), `blue_line: object` (L1580), `a_zone: object` (L1581), `s_zone: object` (L1582), `e_zone: object | None` (L1583), `lifecycle: object | None` (L1584), `primary: object | None` (L1585)
-    - methods/properties: _none_
-  - `MarketContext` (L1589)
-    - fields: `seconds: list[object]` (L1590), `candles: list[object]` (L1591), `lower_index: object` (L1592), `chronology: object` (L1593), `start_index: int` (L1594), `end_index: int` (L1595)
-    - methods/properties: _none_
-  - `PipelineState` (L1792)
-    - fields: `directions: tuple[str, ...]` (L1795), `results: dict[str, object]` (L1796), `reusable_full_context: bool` (L1797), `initial_order_geometry: dict[str, object]` (L1798), `internal_reaction_identities: dict[str, set[tuple[int, int]]]` (L1799), `full_e_zones: dict[str, list[object]]` (L1800), `full_e_detectors: dict[str, object]` (L1801), `full_s_detectors: dict[str, object]` (L1802), `full_lines_by_direction: dict[str, list[object]]` (L1803), `full_a_by_direction: dict[str, list[object]]` (L1804), `invalid_a_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L1805), `invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L1806), `full_s_by_direction: dict[str, list[object]]` (L1807), `full_s_candidates_by_direction: dict[str, list[object]]` (L1808)
-    - methods/properties: _none_
-  - `FullDirectionState` (L1812)
-    - fields: `e_zones: list[object]` (L1815), `e_detector: object` (L1816), `s_detector: object` (L1817), `blue_lines: list[object]` (L1818), `a_zones: list[object]` (L1819), `invalid_a_identities: set[tuple[datetime, int]]` (L1820), `invalid_s_identities: set[tuple[datetime, int]]` (L1821), `s_zones: list[object]` (L1822), `s_candidates: list[object]` (L1823), `initial_s_zones: list[object]` (L1824)
-    - methods/properties: _none_
-  - `DirectionRangeState` (L2409)
-    - fields: `blue_lines: list[object]` (L2412), `a_zones: list[object]` (L2413), `s_candidates: list[object]` (L2414), `accepted_s_zones: list[object]` (L2415), `e_zones: list[object]` (L2416), `invalid_a_identities: set[tuple[datetime, int]]` (L2417), `invalid_s_identities: set[tuple[datetime, int]]` (L2418)
-    - methods/properties: _none_
-  - `DirectionVisibilityState` (L2422)
-    - fields: `blue_lines: list[object]` (L2425), `a_zones: list[object]` (L2426), `s_zones: list[object]` (L2427), `e_zones: list[object]` (L2428), `stopalls: list[object]` (L2429), `prepared_order_audit: list[object]` (L2430), `projection_s_zones: list[object]` (L2434), `projection_e_zones: list[object]` (L2435), `projection_stopalls: list[object]` (L2436), `primary_groups: dict[str, list[object]]` (L2437)
-    - methods/properties: _none_
-- **Nested implementation functions/closures:** `build_candle_buckets.cached_decimal` (L132), `create_e_detector.direct_geometry` (L1846), `serialize_direction_payload.build_legacy_payload` (L2806), `serialize_direction_payload.serialize_reactions_from_one_selection` (L2838), `serialize_direction_payload.build_payload` (L2879), `serialize_primary_order.value` (L2923), `serialize_primary_structures.point` (L2955), `calculate_primary_structures.commit_high` (L3074)
+  - `BridgeProjection` (L639–L830)
+    - Fields: _none_
+    - Methods/properties: `__init__(self, *, direction: str, market: MarketContext, prepared_order_audit: list[object], order_direction: str) -> None` (L647–L664), `physical_order(self, prepared: object | None) -> dict[str, object] | None` (L666–L709), `parent_order(self, behavior: object) -> dict[str, object] | None` (L711–L716), `current_order(self, behavior: object, parent_type: str, parent_family: str | None, strict_stop_event: datetime | None) -> dict[str, object] | None` (L718–L771), `order_audit(self, prepared: object) -> dict[str, object]` (L773–L830)
+  - `EngineBundle` (L1578–L1585)
+    - Fields: `reaction: object` (L1579), `blue_line: object` (L1580), `a_zone: object` (L1581), `s_zone: object` (L1582), `e_zone: object | None` (L1583), `lifecycle: object | None` (L1584), `primary: object | None` (L1585)
+    - Methods/properties: _none_
+  - `MarketContext` (L1589–L1598)
+    - Fields: `seconds: list[object]` (L1590), `candles: list[object]` (L1591), `lower_index: object` (L1592), `chronology: object` (L1593), `start_index: int` (L1594), `end_index: int` (L1595), `index_offset: int` (L1596), `initial_bullish_trend: bool` (L1597), `initial_bearish_trend: bool` (L1598)
+    - Methods/properties: _none_
+  - `PipelineState` (L1855–L1872)
+    - Fields: `directions: tuple[str, ...]` (L1858), `results: dict[str, object]` (L1859), `reusable_full_context: bool` (L1860), `initial_order_geometry: dict[str, object]` (L1861), `internal_reaction_identities: dict[str, set[tuple[int, int]]]` (L1862), `full_e_zones: dict[str, list[object]]` (L1863), `full_e_detectors: dict[str, object]` (L1864), `full_s_detectors: dict[str, object]` (L1865), `full_lines_by_direction: dict[str, list[object]]` (L1866), `full_a_by_direction: dict[str, list[object]]` (L1867), `invalid_a_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L1868), `invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L1869), `full_s_by_direction: dict[str, list[object]]` (L1870), `full_s_candidates_by_direction: dict[str, list[object]]` (L1871), `primary_result: object | None` (L1872)
+    - Methods/properties: _none_
+  - `FullDirectionState` (L1876–L1888)
+    - Fields: `e_zones: list[object]` (L1879), `e_detector: object` (L1880), `s_detector: object` (L1881), `blue_lines: list[object]` (L1882), `a_zones: list[object]` (L1883), `invalid_a_identities: set[tuple[datetime, int]]` (L1884), `invalid_s_identities: set[tuple[datetime, int]]` (L1885), `s_zones: list[object]` (L1886), `s_candidates: list[object]` (L1887), `initial_s_zones: list[object]` (L1888)
+    - Methods/properties: _none_
+  - `DirectionRangeState` (L2477–L2486)
+    - Fields: `blue_lines: list[object]` (L2480), `a_zones: list[object]` (L2481), `s_candidates: list[object]` (L2482), `accepted_s_zones: list[object]` (L2483), `e_zones: list[object]` (L2484), `invalid_a_identities: set[tuple[datetime, int]]` (L2485), `invalid_s_identities: set[tuple[datetime, int]]` (L2486)
+    - Methods/properties: _none_
+  - `DirectionVisibilityState` (L2490–L2505)
+    - Fields: `blue_lines: list[object]` (L2493), `a_zones: list[object]` (L2494), `s_zones: list[object]` (L2495), `e_zones: list[object]` (L2496), `stopalls: list[object]` (L2497), `prepared_order_audit: list[object]` (L2498), `projection_s_zones: list[object]` (L2502), `projection_e_zones: list[object]` (L2503), `projection_stopalls: list[object]` (L2504), `primary_groups: dict[str, list[object]]` (L2505)
+    - Methods/properties: _none_
+- **Nested implementation functions/closures:** `build_candle_buckets.cached_decimal(value: object) -> Decimal` (L132–L143), `create_e_detector.direct_geometry(geometry_direction, geometry_start, geometry_end, gate_event)` (L1910–L1918), `serialize_direction_payload.build_legacy_payload()` (L2874–L2897), `serialize_direction_payload.serialize_reactions_from_one_selection()` (L2906–L2914), `serialize_direction_payload.build_payload()` (L2947–L2981), `serialize_primary_order.value(item)` (L2991–L2996), `serialize_primary_structures.cycle_identity(value)` (L3028–L3033), `serialize_primary_structures.point(item)` (L3034–L3057), `calculate_primary_structures.commit_high(point)` (L3162–L3170), `build_reversed_trend_outputs.calculate(context, direction)` (L3271–L3276), `build_reversed_trend_outputs.publish(group, context, *, stopped=False)` (L3278–L3293), `build_reversed_trend_outputs.empty_lists(item)` (L3311–L3316)
 
 #### `pipeline/__init__.py`
-- **Module-level symbols/assignments:** `_pipeline_dir` (L10), `__all__` (L22)
+- **Module-level symbols/assignments:** `_pipeline_dir` (L10–L10), `__all__` (L22–L28)
 - **Top-level functions:** _none_
 - **Classes / schemas:**
   - _none_
 - **Nested implementation functions/closures:** _none_
 
 #### `pipeline/a_zone_detector.py`
-- **Module-level symbols/assignments:** `A_ZONE_VERSION` (L20), `A_ZONE_LAST_MODIFIED_DATE` (L21)
-- **Top-level functions:** `detect_a_zones` (L798)
+- **Module-level symbols/assignments:** `A_ZONE_VERSION` (L20–L20), `A_ZONE_LAST_MODIFIED_DATE` (L21–L21)
+- **Top-level functions:** `detect_a_zones(direction: str, reactions: Sequence[object], blue_lines: Sequence[object], chronology: object) -> list[AZone]` (L798–L804)
 - **Classes / schemas:**
-  - `BlueState` (L25)
-    - fields: `ordinal: int` (L26), `line: object` (L27), `formation_index: int` (L28), `formation_time: datetime` (L29), `stop_index: int | None` (L30), `stop_time: datetime | None` (L31), `stop_event_time: datetime | None` (L32), `stop_level: Decimal` (L33), `stop_event_extreme: Decimal | None` (L34)
-    - methods/properties: _none_
-  - `AZone` (L38)
-    - fields: `direction: str` (L39), `blue_1_ordinal: int` (L40), `blue_2_ordinal: int` (L41), `blue_1_source_time: datetime` (L42), `blue_2_source_time: datetime` (L43), `blue_1_stop_time: datetime` (L44), `blue_2_stop_time: datetime` (L45), `blue_1_stop_level: Decimal` (L46), `blue_2_stop_level: Decimal` (L47), `continuation_level: Decimal` (L48), `continuation_source_index: int` (L49), `continuation_source_time: datetime` (L50), `trigger_index: int` (L51), `trigger_time: datetime` (L52), `trigger_event_time: datetime` (L53), `reaction_number: int` (L54), `reaction_first_time: datetime` (L55), `reaction_break_time: datetime` (L56), `source_index: int` (L57), `source_time: datetime` (L58), `price: Decimal` (L59), `formation_route: str | None` (L62), `blue_1_stop_event_time: datetime | None` (L63), `blue_2_stop_event_time: datetime | None` (L64)
-    - methods/properties: _none_
-  - `AZoneDetector` (L67)
-    - fields: _none_
-    - methods/properties: `__init__` (L68), `extreme_name` (L108), `_strict_cross` (L111), `_better` (L114), `_main_index` (L117), `_lower_window` (L120), `_first_crossing` (L125), `_range_extreme` (L167), `_formation` (L201), `_reset_formation_time` (L218), `_build_blue_states` (L230), `_double_stop_a_candidates` (L259), `_pair_trigger` (L322), `_reaction_confirmation_time` (L482), `_first_reaction_after` (L487), `_inherited_stop` (L504), `_a_source` (L554), `_detect_ordinary_a` (L575), `_filter_special_a` (L696), `detect` (L760), `_a_was_stopped_before` (L772)
+  - `BlueState` (L25–L34)
+    - Fields: `ordinal: int` (L26), `line: object` (L27), `formation_index: int` (L28), `formation_time: datetime` (L29), `stop_index: int | None` (L30), `stop_time: datetime | None` (L31), `stop_event_time: datetime | None` (L32), `stop_level: Decimal` (L33), `stop_event_extreme: Decimal | None` (L34)
+    - Methods/properties: _none_
+  - `AZone` (L38–L64)
+    - Fields: `direction: str` (L39), `blue_1_ordinal: int` (L40), `blue_2_ordinal: int` (L41), `blue_1_source_time: datetime` (L42), `blue_2_source_time: datetime` (L43), `blue_1_stop_time: datetime` (L44), `blue_2_stop_time: datetime` (L45), `blue_1_stop_level: Decimal` (L46), `blue_2_stop_level: Decimal` (L47), `continuation_level: Decimal` (L48), `continuation_source_index: int` (L49), `continuation_source_time: datetime` (L50), `trigger_index: int` (L51), `trigger_time: datetime` (L52), `trigger_event_time: datetime` (L53), `reaction_number: int` (L54), `reaction_first_time: datetime` (L55), `reaction_break_time: datetime` (L56), `source_index: int` (L57), `source_time: datetime` (L58), `price: Decimal` (L59), `formation_route: str | None` (L62), `blue_1_stop_event_time: datetime | None` (L63), `blue_2_stop_event_time: datetime | None` (L64)
+    - Methods/properties: _none_
+  - `AZoneDetector` (L67–L795)
+    - Fields: _none_
+    - Methods/properties: `__init__(self, direction: str, reactions: Sequence[object], blue_lines: Sequence[object], chronology: object) -> None` (L68–L105), `extreme_name(self) -> str` (L108–L109), `_strict_cross(self, value: Decimal, level: Decimal) -> bool` (L111–L112), `_better(self, value: Decimal, current: Decimal) -> bool` (L114–L115), `_main_index(self, timestamp: datetime) -> int` (L117–L118), `_lower_window(self, start: datetime, end: datetime | None) -> Sequence[object]` (L120–L123), `_first_crossing(self, level: Decimal, start: datetime, end: datetime | None) -> tuple[int, datetime, Decimal] | None` (L125–L165), `_range_extreme(self, start: datetime, end: datetime) -> tuple[Decimal, int, datetime]` (L167–L199), `_formation(self, line: object) -> tuple[int, datetime, datetime]` (L201–L216), `_reset_formation_time(self, line: object, source_index: int) -> datetime` (L218–L228), `_build_blue_states(self) -> list[BlueState]` (L230–L257), `_double_stop_a_candidates(self) -> list[AZone]` (L259–L320), `_pair_trigger(self, previous: BlueState, current: BlueState, expires_at: datetime | None) -> tuple[Decimal, int, datetime, int, datetime, datetime, datetime, datetime] | None` (L322–L480), `_reaction_confirmation_time(self, reaction: object) -> datetime` (L482–L485), `_first_reaction_after(self, trigger_event_time: datetime, *, not_before: datetime | None=None) -> tuple[int, object] | None` (L487–L502), `_inherited_stop(self, previous: BlueState, current: BlueState) -> tuple[Decimal, int, datetime, datetime] | None` (L504–L552), `_a_source(self, trigger_index: int, reaction: object) -> tuple[int, datetime, Decimal] | None` (L554–L573), `_detect_ordinary_a(self, states: list[BlueState]) -> list[AZone]` (L575–L694), `_filter_special_a(self, special: list[AZone], ordinary: list[AZone]) -> tuple[list[AZone], list[AZone]]` (L696–L758), `detect(self) -> list[AZone]` (L760–L770), `_a_was_stopped_before(self, zone: AZone, end_time: datetime, *, not_before: datetime | None=None) -> bool` (L772–L795)
 - **Nested implementation functions/closures:** _none_
 
 #### `pipeline/blue_line_detector.py`
-- **Module-level symbols/assignments:** `BLUE_LINE_VERSION` (L18), `FIBONACCI_RATIO` (L19)
-- **Top-level functions:** `_is_color` (L48), `_main_candle` (L52), `_stops_on_index` (L59), `fibonacci_level` (L75), `_intrabar_pending_confirmation` (L84), `count_scale_strikes` (L142), `_build_scale_blue_line` (L230), `_build_reset_blue_line` (L268), `detect_blue_lines` (L322), `public_blue_lines` (L430), `mark_internal_blue_lines` (L439)
+- **Module-level symbols/assignments:** `BLUE_LINE_VERSION` (L18–L18), `FIBONACCI_RATIO` (L19–L19)
+- **Top-level functions:** `_is_color(candle: object, color: str) -> bool` (L48–L49), `_main_candle(candles_by_index: dict[int, object], index: int) -> object` (L52–L56), `_stops_on_index(direction: str, line: object, candles: Sequence[object], start_index: int, end_index: int) -> bool` (L59–L72), `fibonacci_level(direction: str, reaction: object, reference: Decimal) -> Decimal` (L75–L81), `_intrabar_pending_confirmation(direction: str, chronology: object, reaction: object, comparison_extreme: Decimal, start_time: datetime, break_time: datetime, candles_by_index: dict[int, object]) -> ScaleStrike | None` (L84–L139), `count_scale_strikes(direction: str, reaction: object, chronology: object, reference: Decimal, candles_by_index: dict[int, object] | None=None) -> tuple[Decimal, list[ScaleStrike]]` (L142–L227), `_build_scale_blue_line(direction: str, reaction_number: int, previous_count: int, level: Decimal, strikes: Sequence[ScaleStrike], candles_by_index: dict[int, object], chronology: object, behavior_internal: bool) -> BlueLine` (L230–L265), `_build_reset_blue_line(direction: str, reaction_number: int, reset: object, previous_line: BlueLine | None, candles: Sequence[object], candles_by_index: dict[int, object], chronology: object, behavior_internal: bool) -> BlueLine` (L268–L320), `detect_blue_lines(direction: str, reactions: Sequence[object], chronology: object, resets: Sequence[object]=()) -> list[BlueLine]` (L322–L427), `public_blue_lines(lines: Sequence[BlueLine]) -> list[BlueLine]` (L430–L437), `mark_internal_blue_lines(lines: Sequence[BlueLine], owner_reactions: Sequence[object], all_behavior_reactions: Sequence[object]) -> None` (L439–L481)
 - **Classes / schemas:**
-  - `ScaleStrike` (L23)
-    - fields: `source_index: int` (L24), `source_time: datetime` (L25), `extreme: Decimal` (L26)
-    - methods/properties: _none_
-  - `BlueLine` (L30)
-    - fields: `direction: str` (L31), `kind: str` (L32), `reaction_number: int` (L33), `previous_strike_count: int | None` (L34), `strike_count: int | None` (L35), `fibonacci_level: Decimal | None` (L36), `source_index: int` (L37), `source_time: datetime` (L38), `source_extreme: Decimal` (L39), `broken_level: Decimal | None` (L40), `line_price: Decimal` (L41), `start_time: datetime` (L42), `end_time: datetime` (L43), `calculation_valid: bool` (L44), `behavior_internal: bool` (L45)
-    - methods/properties: _none_
-- **Nested implementation functions/closures:** `mark_internal_blue_lines.owner_is_internal` (L452), `mark_internal_blue_lines.geometry_is_internal` (L458)
+  - `ScaleStrike` (L23–L26)
+    - Fields: `source_index: int` (L24), `source_time: datetime` (L25), `extreme: Decimal` (L26)
+    - Methods/properties: _none_
+  - `BlueLine` (L30–L45)
+    - Fields: `direction: str` (L31), `kind: str` (L32), `reaction_number: int` (L33), `previous_strike_count: int | None` (L34), `strike_count: int | None` (L35), `fibonacci_level: Decimal | None` (L36), `source_index: int` (L37), `source_time: datetime` (L38), `source_extreme: Decimal` (L39), `broken_level: Decimal | None` (L40), `line_price: Decimal` (L41), `start_time: datetime` (L42), `end_time: datetime` (L43), `calculation_valid: bool` (L44), `behavior_internal: bool` (L45)
+    - Methods/properties: _none_
+- **Nested implementation functions/closures:** `mark_internal_blue_lines.owner_is_internal(line: BlueLine) -> bool` (L452–L456), `mark_internal_blue_lines.geometry_is_internal(line: BlueLine) -> bool` (L458–L477)
 
 #### `pipeline/core_utils.py`
-- **Module-level symbols/assignments:** `CORE_UTILS_VERSION` (L5), `OrderIdentity: TypeAlias` (L16)
-- **Top-level functions:** `as_decimal` (L11), `order_identity` (L19), `reaction_identity` (L24)
+- **Module-level symbols/assignments:** `CORE_UTILS_VERSION` (L5–L5), `OrderIdentity` (L16–L16)
+- **Top-level functions:** `as_decimal(value: object) -> Decimal` (L11–L13), `order_identity(first_index: object, break_index: object) -> OrderIdentity` (L19–L21), `reaction_identity(reaction: object) -> OrderIdentity` (L24–L26)
 - **Classes / schemas:**
   - _none_
 - **Nested implementation functions/closures:** _none_
 
 #### `pipeline/direction_policy.py`
-- **Module-level symbols/assignments:** `DIRECTION_POLICY_VERSION` (L11), `Direction` (L17), `BULLISH` (L57), `BEARISH` (L64)
-- **Top-level functions:** `policy_for` (L49)
+- **Module-level symbols/assignments:** `DIRECTION_POLICY_VERSION` (L11–L11), `Direction` (L17–L17), `BULLISH` (L57–L63), `BEARISH` (L64–L70)
+- **Top-level functions:** `policy_for(direction: str) -> DirectionPolicy` (L49–L54)
 - **Classes / schemas:**
-  - `DirectionPolicy` (L21)
-    - fields: `direction: Direction` (L22), `extreme_attr: Literal['low', 'high']` (L23), `opposite_extreme_attr: Literal['high', 'low']` (L24), `first_reaction_tag: Literal['RED', 'GREEN']` (L25), `context_tag: Literal['GREEN', 'RED']` (L26)
-    - methods/properties: `opposite_direction` (L29), `strict_cross` (L32), `better_extreme` (L35), `choose_extreme` (L38), `confirmation_cross` (L41)
+  - `DirectionPolicy` (L21–L46)
+    - Fields: `direction: Direction` (L22), `extreme_attr: Literal['low', 'high']` (L23), `opposite_extreme_attr: Literal['high', 'low']` (L24), `first_reaction_tag: Literal['RED', 'GREEN']` (L25), `context_tag: Literal['GREEN', 'RED']` (L26)
+    - Methods/properties: `opposite_direction(self) -> Direction` (L29–L30), `strict_cross(self, value: Decimal, level: Decimal) -> bool` (L32–L33), `better_extreme(self, value: Decimal, current: Decimal) -> bool` (L35–L36), `choose_extreme(self, left: Decimal, right: Decimal) -> Decimal` (L38–L39), `confirmation_cross(self, value: Decimal, level: Decimal) -> bool` (L41–L46)
 - **Nested implementation functions/closures:** _none_
 
 #### `pipeline/e_zone_detector.py`
-- **Module-level symbols/assignments:** `E_ZONE_VERSION` (L25), `E_ZONE_IMPLEMENTATION_VERSION` (L26), `E_ZONE_LAST_MODIFIED` (L27)
-- **Top-level functions:** `detect_e_zones` (L1115)
+- **Module-level symbols/assignments:** `E_ZONE_VERSION` (L25–L25), `E_ZONE_IMPLEMENTATION_VERSION` (L26–L26), `E_ZONE_LAST_MODIFIED` (L27–L27)
+- **Top-level functions:** `detect_e_zones(direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], s_zones: Sequence[object], opposite_resets: Sequence[object], chronology: object, start_index: int=0, end_index: int | None=None, direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None=None, blocked_order_first_times: set[datetime] | None=None, initial_order_audit: dict[tuple[int, int], dict[str, object]] | None=None, sequence_priority: Callable[[str, str], int] | None=None, invalid_s_root_identities: set[tuple[datetime, int]] | None=None) -> list[EZone]` (L1115–L1144)
 - **Classes / schemas:**
-  - `EZone` (L31)
-    - fields: `direction: str` (L32), `family: str` (L33), `number: int` (L34), `parent_type: str` (L35), `parent_source_index: int` (L36), `parent_source_time: datetime` (L37), `parent_price: Decimal` (L38), `parent_stop_index: int` (L39), `parent_stop_time: datetime` (L40), `parent_stop_event_time: datetime` (L41), `order_direction: str` (L42), `order_reaction_number: int` (L43), `order_mode: str` (L44), `order_causes: tuple[str, ...]` (L45), `order_parent_stop_cause_time: datetime | None` (L46), `order_first_index: int` (L47), `order_first_time: datetime` (L48), `order_break_index: int` (L49), `order_break_time: datetime` (L50), `order_confirmation_time: datetime` (L51), `order_box_top: Decimal` (L52), `order_box_top_source_index: int` (L53), `order_box_top_source_time: datetime` (L54), `order_box_bottom: Decimal` (L55), `order_box_bottom_source_index: int` (L56), `order_box_bottom_source_time: datetime` (L57), `order_stop_level: Decimal` (L58), `order_stop_source_index: int` (L59), `order_stop_source_time: datetime` (L60), `source_index: int` (L61), `source_time: datetime` (L62), `price: Decimal` (L63), `decision_index: int` (L64), `decision_time: datetime` (L65), `decision_event_time: datetime` (L66)
-    - methods/properties: _none_
-  - `EZoneDetector` (L69)
-    - fields: _none_
-    - methods/properties: `__init__` (L70), `sequence_resets` (L228), `sequence_resets` (L232), `_reset_time` (L246), `_main_index` (L249), `_first_cross_position` (L253), `_stop_value` (L270), `_build_extreme_sparse` (L273), `_extreme_position` (L302), `_first_parent_stop` (L322), `_confirmation_for` (L335), `_confirmation` (L338), `_reaction_first_time` (L341), `_parent_stop` (L345), `parent_stop` (L353), `_extreme_between` (L360), `_zone` (L376), `set_consumed_s_evidence` (L481), `_apply_consumed_s_evidence` (L493), `continuation_chain_from_s` (L511), `replace_with_earlier_continuation` (L561), `resolve_same_source_conflicts` (L604), `restore_independent_s_roots` (L648), `_invalid_s_without_order_cause` (L709), `_discover_candidate_chains` (L733), `_reconcile_candidate_chains` (L825), `detect` (L1102)
-- **Nested implementation functions/closures:** `EZoneDetector.replace_with_earlier_continuation.descends_from_owner` (L570), `EZoneDetector.resolve_same_source_conflicts.outranks` (L622), `EZoneDetector._reconcile_candidate_chains.valid_order` (L856), `EZoneDetector._reconcile_candidate_chains.parent_active` (L862), `EZoneDetector._reconcile_candidate_chains.stopped_by` (L935), `EZoneDetector._reconcile_candidate_chains.ownership_priority` (L991), `EZoneDetector._reconcile_candidate_chains.collect_lineage` (L1077)
+  - `EZone` (L31–L66)
+    - Fields: `direction: str` (L32), `family: str` (L33), `number: int` (L34), `parent_type: str` (L35), `parent_source_index: int` (L36), `parent_source_time: datetime` (L37), `parent_price: Decimal` (L38), `parent_stop_index: int` (L39), `parent_stop_time: datetime` (L40), `parent_stop_event_time: datetime` (L41), `order_direction: str` (L42), `order_reaction_number: int` (L43), `order_mode: str` (L44), `order_causes: tuple[str, ...]` (L45), `order_parent_stop_cause_time: datetime | None` (L46), `order_first_index: int` (L47), `order_first_time: datetime` (L48), `order_break_index: int` (L49), `order_break_time: datetime` (L50), `order_confirmation_time: datetime` (L51), `order_box_top: Decimal` (L52), `order_box_top_source_index: int` (L53), `order_box_top_source_time: datetime` (L54), `order_box_bottom: Decimal` (L55), `order_box_bottom_source_index: int` (L56), `order_box_bottom_source_time: datetime` (L57), `order_stop_level: Decimal` (L58), `order_stop_source_index: int` (L59), `order_stop_source_time: datetime` (L60), `source_index: int` (L61), `source_time: datetime` (L62), `price: Decimal` (L63), `decision_index: int` (L64), `decision_time: datetime` (L65), `decision_event_time: datetime` (L66)
+    - Methods/properties: _none_
+  - `EZoneDetector` (L69–L1112)
+    - Fields: _none_
+    - Methods/properties: `__init__(self, direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], s_zones: Sequence[object], opposite_resets: Sequence[object], chronology: object, start_index: int=0, end_index: int | None=None, direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None=None, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), initial_order_audit: dict[tuple[int, int], dict[str, object]] | None=None, sequence_resets: dict[datetime, int] | None=None, sequence_priority: Callable[[str, str], int] | None=None, invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[OrderBResetLeg]=()) -> None` (L70–L225), `sequence_resets(self) -> dict[datetime, int]` (L228–L229), `sequence_resets(self, resets: dict[datetime, int]) -> None` (L232–L244), `_reset_time(self, reset: object) -> datetime` (L246–L247), `_main_index(self, value: datetime) -> int` (L249–L250), `_first_cross_position(self, left: int, right: int, level: Decimal, *, less: bool) -> int | None` (L253–L268), `_stop_value(self, item: object) -> Decimal` (L270–L271), `_build_extreme_sparse(self) -> list[list[int]]` (L273–L300), `_extreme_position(self, left: int, right: int) -> int` (L302–L319), `_first_parent_stop(self, source_time: datetime, level: Decimal) -> tuple[int, datetime] | None` (L322–L333), `_confirmation_for(self, reaction: object, direction: str) -> datetime` (L335–L336), `_confirmation(self, reaction: object) -> datetime` (L338–L339), `_reaction_first_time(self, reaction: object) -> datetime` (L341–L342), `_parent_stop(self, parent_type: str, parent: object) -> tuple[int, datetime] | None` (L345–L351), `parent_stop(self, parent_type: str, parent: object) -> tuple[int, datetime] | None` (L353–L357), `_extreme_between(self, start: datetime, end: datetime) -> tuple[int, datetime, Decimal]` (L360–L374), `_zone(self, family: str, number: int, parent_type: str, parent: object, stop_event: datetime) -> EZone | None` (L376–L479), `set_consumed_s_evidence(self, evidence: Sequence[tuple[object, object]]) -> None` (L481–L491), `_apply_consumed_s_evidence(self, zones: Sequence[EZone]) -> list[EZone]` (L493–L509), `continuation_chain_from_s(self, owner: EZone, s_zone: object, independent_a_order_identities: frozenset[tuple[int, int]]=frozenset()) -> list[EZone]` (L511–L559), `replace_with_earlier_continuation(self, base_zones: Sequence[EZone], owner: EZone, continuation: Sequence[EZone]) -> list[EZone]` (L561–L602), `resolve_same_source_conflicts(self, zones: Sequence[EZone]) -> list[EZone]` (L604–L646), `restore_independent_s_roots(self, dominant_zones: Sequence[EZone]) -> list[EZone]` (L648–L707), `_invalid_s_without_order_cause(self, zone: EZone) -> bool` (L709–L731), `_discover_candidate_chains(self) -> list[EZone]` (L733–L823), `_reconcile_candidate_chains(self, candidates: list[EZone]) -> list[EZone]` (L825–L1099), `detect(self) -> list[EZone]` (L1102–L1112)
+- **Nested implementation functions/closures:** `EZoneDetector.replace_with_earlier_continuation.descends_from_owner(item: EZone) -> bool` (L570–L584), `EZoneDetector.resolve_same_source_conflicts.outranks(candidate: EZone, current: EZone) -> bool` (L622–L629), `EZoneDetector._reconcile_candidate_chains.valid_order(zone: EZone) -> bool` (L856–L860), `EZoneDetector._reconcile_candidate_chains.parent_active(zone: EZone, seen: set[tuple[int, datetime]] | None=None) -> bool` (L862–L933), `EZoneDetector._reconcile_candidate_chains.stopped_by(zone: EZone, prior: EZone) -> bool` (L935–L940), `EZoneDetector._reconcile_candidate_chains.ownership_priority(item: EZone) -> int` (L991–L996), `EZoneDetector._reconcile_candidate_chains.collect_lineage(zone: EZone, seen: set[tuple[int, datetime]]) -> None` (L1077–L1089)
 
 #### `pipeline/lifecycle_engine.py`
-- **Module-level symbols/assignments:** `STOP_ALL_VERSION` (L24), `STOP_ALL_IMPLEMENTATION_VERSION` (L25), `STOP_ALL_LAST_MODIFIED` (L26), `SEQUENCE_PRIORITY` (L29)
-- **Top-level functions:** `sequence_priority` (L37), `advance_dominant_behavior` (L121), `detect_stopalls` (L530), `resolve_order_context` (L543), `visible_a_zones_after_s_stops` (L632), `module_priority` (L649), `module_identity` (L663), `module_stop_event` (L672), `strictly_beyond_boundary` (L686), `dominant_module` (L691), `split_a_zones_by_dominant_stops` (L703), `blocked_orders_while_invalid_leg_heads_are_live` (L906), `consumed_s_evidence_after_larger_stop` (L929), `s_zones_for_module_engines` (L1071), `s_zones_for_stopall` (L1101), `visible_s_zones_after_module_resets` (L1120), `reconcile_stopall_lifecycle` (L1298), `visible_a_zones_after_module_boundaries` (L1331), `reaction_number_is_internal` (L1378), `point_is_inside_healthy_reaction` (L1392), `filter_internal_behavior_outputs` (L1415), `finalize_behavior_visibility` (L1428), `visible_a_zones` (L1523)
+- **Module-level symbols/assignments:** `STOP_ALL_VERSION` (L24–L24), `STOP_ALL_IMPLEMENTATION_VERSION` (L25–L25), `STOP_ALL_LAST_MODIFIED` (L26–L26), `SEQUENCE_PRIORITY` (L29–L34)
+- **Top-level functions:** `sequence_priority(kind: str, family: str) -> int` (L37–L39), `advance_dominant_behavior(owner: _DominantBehavior | None, kind: str, family: str, number: int | None, item: object) -> _DominantBehavior` (L121–L139), `detect_stopalls(direction: str, s_zones: Sequence[object], e_zones: Sequence[object], chronology: object) -> list[StopAll]` (L530–L536), `resolve_order_context(order_audit: dict, accepted_a_sources: set[datetime], inherited_blocked_first_times: set[datetime], invalid_a_zones: Sequence[object], pending_s_a_sources: set[datetime], opposite_reactions: Sequence[object], candles: Sequence[object], direction: str, stop_finder, *, accepted_e_stop_events: set[datetime] | None=None, opposite_confirmation_finder=None, e_parent_order_first_exceptions_out: set[tuple[datetime, datetime]] | None=None) -> tuple[dict, set[datetime]]` (L543–L629), `visible_a_zones_after_s_stops(a_zones, s_zones, candles)` (L632–L647), `module_priority(item: object) -> int` (L649–L661), `module_identity(item: object) -> tuple[object, ...]` (L663–L670), `module_stop_event(item: object, stop_event_finder=None) -> datetime | None` (L672–L684), `strictly_beyond_boundary(price: Decimal, boundary: Decimal, direction: str) -> bool` (L686–L689), `dominant_module(modules: Sequence[object]) -> object` (L691–L700), `split_a_zones_by_dominant_stops(a_zones, s_zones, e_zones, stopalls, candles, direction, stop_event_finder=None, trend_reactions=None, confirmation_finder=None, a_stop_event_finder=None, stage_invalid_a_identities=None)` (L703–L904), `blocked_orders_while_invalid_leg_heads_are_live(invalid_a_zones, opposite_reactions, candles, direction, stop_finder)` (L906–L926), `consumed_s_evidence_after_larger_stop(s_candidates, accepted_s_zones, e_zones, direction, stop_event_finder, candles)` (L929–L1069), `s_zones_for_module_engines(s_zones, e_zones, direction)` (L1071–L1099), `s_zones_for_stopall(s_zones, e_zones, direction)` (L1101–L1118), `visible_s_zones_after_module_resets(s_zones, e_zones, direction, stop_event_finder=None, source_event_finder=None, candles=None)` (L1120–L1296), `reconcile_stopall_lifecycle(detector, s_zones, e_zones, chronology, direction, timed_step=None)` (L1298–L1328), `visible_a_zones_after_module_boundaries(a_zones, s_zones, e_zones, direction, stop_event_finder=None)` (L1331–L1376), `reaction_number_is_internal(items, number, identities)` (L1378–L1389), `point_is_inside_healthy_reaction(source_time, price, reactions)` (L1392–L1412), `filter_internal_behavior_outputs(a_zones, s_zones, e_zones, stopalls, opposite_reactions, opposite_internal_identities, all_behavior_reactions)` (L1415–L1426), `finalize_behavior_visibility(a_zones, s_zones, e_zones, stopalls, direction, invalid_s_identities, stop_event_finder, source_event_finder, candles, *, all_a_zones=None)` (L1428–L1520), `visible_a_zones(a_zones: Sequence[object], s_zones: Sequence[object]) -> list[object]` (L1523–L1529)
 - **Classes / schemas:**
-  - `StopAll` (L43)
-    - fields: `direction: str` (L44), `number: int` (L45), `source_index: int` (L46), `source_time: datetime` (L47), `price: Decimal` (L48), `decision_index: int` (L49), `decision_time: datetime` (L50), `decision_event_time: datetime` (L51), `gate_type: str` (L52), `gate_event_time: datetime` (L53), `stopped_behavior_type: str` (L54), `stopped_behavior_key: str` (L55), `stopped_behavior_count: int` (L56), `underlying_e_family: str | None` (L57), `underlying_e_number: int | None` (L58), `order_direction: str | None` (L59), `order_reaction_number: int | None` (L60), `order_mode: str | None` (L61), `order_causes: tuple[str, ...]` (L62), `order_parent_stop_cause_time: datetime | None` (L63), `order_first_index: int | None` (L64), `order_first_time: datetime | None` (L65), `order_break_index: int | None` (L66), `order_break_time: datetime | None` (L67), `order_confirmation_time: datetime | None` (L68), `order_box_top: Decimal | None` (L69), `order_box_top_source_index: int | None` (L70), `order_box_top_source_time: datetime | None` (L71), `order_box_bottom: Decimal | None` (L72), `order_box_bottom_source_index: int | None` (L73), `order_box_bottom_source_time: datetime | None` (L74), `order_stop_level: Decimal | None` (L75), `order_stop_source_index: int | None` (L76), `order_stop_source_time: datetime | None` (L77), `stop_index: int | None` (L78), `stop_time: datetime | None` (L79), `stop_event_time: datetime | None` (L80), `donor_type: str | None` (L85), `donor_source_index: int | None` (L86), `donor_source_time: datetime | None` (L87), `donor_color: str | None` (L88), `donor_number: int | None` (L89), `donor_price: Decimal | None` (L90), `donor_stop_time: datetime | None` (L91), `donor_stop_event_time: datetime | None` (L92)
-    - methods/properties: _none_
-  - `_DominantBehavior` (L96)
-    - fields: `kind: str` (L99), `family: str` (L100), `number: int | None` (L101), `count: int` (L102), `latest: object` (L103)
-    - methods/properties: `priority` (L106), `armed` (L110), `key` (L114)
-  - `StopAllDetector` (L142)
-    - fields: _none_
-    - methods/properties: `__init__` (L143), `_strict_stop` (L164), `_dominates_e` (L181), `_stopall_from_e` (L190), `_optional_int` (L249), `_optional_decimal` (L253), `_stopall_from_s` (L256), `detect` (L344)
-- **Nested implementation functions/closures:** `StopAllDetector.detect.armed_stop_before` (L356), `StopAllDetector.detect.accept` (L406), `StopAllDetector.detect.process_s_event` (L410), `visible_s_zones_after_module_resets.cached_stop_event` (L1149)
+  - `StopAll` (L43–L92)
+    - Fields: `direction: str` (L44), `number: int` (L45), `source_index: int` (L46), `source_time: datetime` (L47), `price: Decimal` (L48), `decision_index: int` (L49), `decision_time: datetime` (L50), `decision_event_time: datetime` (L51), `gate_type: str` (L52), `gate_event_time: datetime` (L53), `stopped_behavior_type: str` (L54), `stopped_behavior_key: str` (L55), `stopped_behavior_count: int` (L56), `underlying_e_family: str | None` (L57), `underlying_e_number: int | None` (L58), `order_direction: str | None` (L59), `order_reaction_number: int | None` (L60), `order_mode: str | None` (L61), `order_causes: tuple[str, ...]` (L62), `order_parent_stop_cause_time: datetime | None` (L63), `order_first_index: int | None` (L64), `order_first_time: datetime | None` (L65), `order_break_index: int | None` (L66), `order_break_time: datetime | None` (L67), `order_confirmation_time: datetime | None` (L68), `order_box_top: Decimal | None` (L69), `order_box_top_source_index: int | None` (L70), `order_box_top_source_time: datetime | None` (L71), `order_box_bottom: Decimal | None` (L72), `order_box_bottom_source_index: int | None` (L73), `order_box_bottom_source_time: datetime | None` (L74), `order_stop_level: Decimal | None` (L75), `order_stop_source_index: int | None` (L76), `order_stop_source_time: datetime | None` (L77), `stop_index: int | None` (L78), `stop_time: datetime | None` (L79), `stop_event_time: datetime | None` (L80), `donor_type: str | None` (L85), `donor_source_index: int | None` (L86), `donor_source_time: datetime | None` (L87), `donor_color: str | None` (L88), `donor_number: int | None` (L89), `donor_price: Decimal | None` (L90), `donor_stop_time: datetime | None` (L91), `donor_stop_event_time: datetime | None` (L92)
+    - Methods/properties: _none_
+  - `_DominantBehavior` (L96–L118)
+    - Fields: `kind: str` (L99), `family: str` (L100), `number: int | None` (L101), `count: int` (L102), `latest: object` (L103)
+    - Methods/properties: `priority(self) -> int` (L106–L107), `armed(self) -> bool` (L110–L111), `key(self) -> str` (L114–L118)
+  - `StopAllDetector` (L142–L527)
+    - Fields: _none_
+    - Methods/properties: `__init__(self, direction: str, s_zones: Sequence[object], e_zones: Sequence[object], chronology: object) -> None` (L143–L162), `_strict_stop(self, start: datetime, level: Decimal) -> tuple[int, datetime, datetime] | None` (L164–L178), `_dominates_e(new: tuple[str, int], old: tuple[str, int]) -> bool` (L181–L188), `_stopall_from_e(self, item: object, number: int, gate_type: str, gate_event: datetime, behavior_type: str, behavior_key: str, behavior_count: int) -> StopAll` (L190–L246), `_optional_int(value: object | None) -> int | None` (L249–L250), `_optional_decimal(value: object | None) -> Decimal | None` (L253–L254), `_stopall_from_s(self, item: object, behavior_type: str, behavior_key: str, behavior_count: int, underlying_e_key: tuple[str, int] | None, gate_event: datetime) -> StopAll` (L256–L342), `detect(self) -> list[StopAll]` (L344–L527)
+- **Nested implementation functions/closures:** `StopAllDetector.detect.armed_stop_before(boundary: datetime, donor_e: object | None=None) -> datetime | None` (L356–L404), `StopAllDetector.detect.accept(kind: str, family: str, number: int | None, item: object) -> None` (L406–L408), `StopAllDetector.detect.process_s_event(s_item: object) -> None` (L410–L461), `visible_s_zones_after_module_resets.cached_stop_event(module: object) -> datetime | None` (L1149–L1153)
 
 #### `pipeline/order_audit_engine.py`
-- **Module-level symbols/assignments:** `ORDER_AUDIT_ENGINE_VERSION` (L15), `ORDER_AUDIT_ENGINE_LAST_MODIFIED` (L16), `OrderMatch` (L430)
-- **Top-level functions:** `relabel_primary_causes` (L19), `dominant_post_behavior_stops` (L71), `order_b_reset_event_time` (L117), `discover_order_b_reset_legs` (L148), `discover_accepted_order_b_reset_legs` (L352), `order_b_leg_identity` (L437), `_parent_stop_cause_key` (L1777), `_collect_s_ledger_entries` (L1786), `_collect_e_ledger_entries` (L1818), `_merge_prepared_identities` (L1847), `_single_owner_parent_stop_causes` (L1890), `prepare_order_audit` (L1928), `accepted_audit_entry` (L1948), `accepted_audit_entries` (L1981), `order_identity_is_internal` (L1994)
+- **Module-level symbols/assignments:** `ORDER_AUDIT_ENGINE_VERSION` (L15–L15), `ORDER_AUDIT_ENGINE_LAST_MODIFIED` (L16–L16), `OrderMatch` (L430–L434)
+- **Top-level functions:** `relabel_primary_causes(causes, labels)` (L19–L31), `dominant_post_behavior_stops(chronology: object, lifetimes: Sequence[tuple[str, object, datetime | None]], priority: Callable[[object], int]) -> list[PostBehaviorStop]` (L71–L114), `order_b_reset_event_time(direction: str, chronology: object, reset: object) -> datetime | None` (L117–L145), `discover_order_b_reset_legs(direction: str, chronology: object, trend_reactions: Sequence[object], resets: Sequence[object], opposite_reactions: Sequence[object], post_stops: Sequence[PostBehaviorStop], a_formation_times: Sequence[datetime], *, behavior_anchors: Sequence[OrderBBehaviorAnchor]=()) -> list[OrderBResetLeg]` (L148–L349), `discover_accepted_order_b_reset_legs(direction: str, chronology: object, trend_reactions: Sequence[object], trend_resets: Sequence[object], opposite_reactions: Sequence[object], a_zones: Sequence[object], invalid_a_identities: set[tuple[datetime, int]], s_zones: Sequence[object], e_zones: Sequence[object], stopalls: Sequence[object], s_detector: object, e_detector: object, priority: Callable[[object], int]) -> list[OrderBResetLeg]` (L352–L427), `order_b_leg_identity(items: Sequence[object]) -> tuple[object, ...]` (L437–L457), `_parent_stop_cause_key(cause: dict[str, object]) -> tuple[object, object, object, object]` (L1794–L1800), `_collect_s_ledger_entries(s_detector, accepted_a_sources: set[datetime] | None) -> list[tuple[dict[str, object], list[dict[str, object]]]]` (L1803–L1832), `_collect_e_ledger_entries(detector, accepted_a_sources: set[datetime] | None=None) -> list[tuple[dict[str, object], list[dict[str, object]]]]` (L1835–L1861), `_merge_prepared_identities(combined: list[tuple[dict[str, object], list[dict[str, object]]]], detector, start_index: int, end_index: int, required_identities: set[tuple[int, int]]) -> list[dict[str, object]]` (L1864–L1904), `_single_owner_parent_stop_causes(output: list[dict[str, object]]) -> list[dict[str, object]]` (L1907–L1942), `prepare_order_audit(detector, start_index: int, end_index: int, s_detector=None, accepted_a_sources: set[datetime] | None=None, required_identities: set[tuple[int, int]] | None=None)` (L1945–L1962), `accepted_audit_entry(entry: dict[str, object], accepted_sources: set) -> dict[str, object] | None` (L1965–L1995), `accepted_audit_entries(order_audit: dict[tuple[int, int], dict[str, object]], accepted_sources: set[datetime]) -> dict[tuple[int, int], dict[str, object]]` (L1998–L2008), `order_identity_is_internal(item, internal_identities)` (L2011–L2017)
 - **Classes / schemas:**
-  - `PostBehaviorStop` (L34)
-    - fields: `behavior_type: str` (L35), `behavior_source_index: int` (L36), `behavior_source_time: datetime` (L37), `event_time: datetime` (L38)
-    - methods/properties: _none_
-  - `OrderBBehaviorAnchor` (L42)
-    - fields: `behavior_type: str` (L43), `behavior_source_index: int` (L44), `behavior_source_time: datetime` (L45), `priority: int` (L46), `number: int` (L47)
-    - methods/properties: _none_
-  - `OrderBResetLeg` (L51)
-    - fields: `post_stop: PostBehaviorStop` (L52), `anchor_behavior_type: str` (L53), `anchor_behavior_source_index: int` (L54), `anchor_behavior_source_time: datetime` (L55), `anchor_behavior_extreme: Decimal` (L56), `reset_reaction: object` (L57), `reset_confirmation_time: datetime` (L58), `reset_source_index: int` (L59), `reset_broken_level: Decimal` (L60), `reset_time: datetime` (L61), `leg_boundary: Decimal` (L62), `leg_source_index: int` (L63), `leg_source_time: datetime` (L64), `strict_break_time: datetime` (L65), `reaction_number: int` (L66), `physical_reaction: object` (L67), `physical_confirmation_time: datetime` (L68)
-    - methods/properties: _none_
-  - `OrderAuditEngineMixin` (L461)
-    - fields: _none_
-    - methods/properties: `_order_stop` (L464), `order_stop` (L493), `_first_healthy_direct_geometry` (L500), `_trend_leg_direct_order` (L575), `_direct_parent_stop_order` (L627), `_compute_direct_parent_stop_order` (L647), `_merge_order_candidate` (L739), `_enforce_single_parent_stop_owner` (L773), `order_candidates` (L800), `_first_order` (L891), `_has_sequence_reset_between` (L907), `_index_order_audit_identity` (L918), `_clear_order_audit` (L928), `_invalidate_carried_order_caches` (L934), `_invalidate_post_stop_order_cache` (L941), `register_order_b_reset_legs` (L945), `_reparent_primary_high_causes` (L1012), `register_primary_high` (L1060), `reconcile_primary_high_labels` (L1099), `_register_order_audit` (L1119), `visual_order_lifecycle` (L1194), `_cross_order` (L1216), `cross_order` (L1237), `_unconsumed_s_orders` (L1244), `_initial_order_records` (L1281), `_initial_record_match` (L1340), `_initial_order_match` (L1354), `_gate_owned_initial_order` (L1369), `_carried_orders_for_parent` (L1392), `_post_stop_accepted_orders_for_parent` (L1453), `_blocked_by_gate_owned_order` (L1535), `_rebuild_accepted_order_audit` (L1546), `rebuild_accepted_order_audit` (L1732), `ensure_accepted_order_audit` (L1747)
-  - `SOrderAuditMixin` (L2003)
-    - fields: _none_
-    - methods/properties: `_first_order_after` (L2006), `_order_matches_after` (L2062), `_record_a_order_audit` (L2084), `_audit_stopped_a` (L2119), `_order_stop` (L2132), `_order_stop_crossed` (L2144), `_shared_order_stop_cross` (L2150)
-- **Nested implementation functions/closures:** `OrderAuditEngineMixin._post_stop_accepted_orders_for_parent.add_match` (L1467), `OrderAuditEngineMixin._rebuild_accepted_order_audit.valid_parent_stop_cause` (L1557)
+  - `PostBehaviorStop` (L34–L38)
+    - Fields: `behavior_type: str` (L35), `behavior_source_index: int` (L36), `behavior_source_time: datetime` (L37), `event_time: datetime` (L38)
+    - Methods/properties: _none_
+  - `OrderBBehaviorAnchor` (L42–L47)
+    - Fields: `behavior_type: str` (L43), `behavior_source_index: int` (L44), `behavior_source_time: datetime` (L45), `priority: int` (L46), `number: int` (L47)
+    - Methods/properties: _none_
+  - `OrderBResetLeg` (L51–L68)
+    - Fields: `post_stop: PostBehaviorStop` (L52), `anchor_behavior_type: str` (L53), `anchor_behavior_source_index: int` (L54), `anchor_behavior_source_time: datetime` (L55), `anchor_behavior_extreme: Decimal` (L56), `reset_reaction: object` (L57), `reset_confirmation_time: datetime` (L58), `reset_source_index: int` (L59), `reset_broken_level: Decimal` (L60), `reset_time: datetime` (L61), `leg_boundary: Decimal` (L62), `leg_source_index: int` (L63), `leg_source_time: datetime` (L64), `strict_break_time: datetime` (L65), `reaction_number: int` (L66), `physical_reaction: object` (L67), `physical_confirmation_time: datetime` (L68)
+    - Methods/properties: _none_
+  - `OrderAuditEngineMixin` (L461–L1791)
+    - Fields: _none_
+    - Methods/properties: `_order_stop(self, number: int, reaction: object, context_start: datetime | None=None) -> tuple[Decimal, int, datetime]` (L464–L490), `order_stop(self, reaction_number: int, reaction: object) -> tuple[Decimal, int, datetime]` (L493–L497), `_first_healthy_direct_geometry(self, start: datetime, allow_bounded_continue: bool=False) -> tuple[int, object, datetime] | None` (L500–L572), `_trend_leg_direct_order(self, start: datetime) -> tuple[int, object, datetime] | None` (L575–L624), `_direct_parent_stop_order(self, start: datetime, continuous_deadline: datetime | None, allow_bounded_continue: bool, e_parent: bool=False, *, confirmation_after: datetime | None=None) -> tuple[int, object, datetime] | None` (L627–L645), `_compute_direct_parent_stop_order(self, start: datetime, continuous_deadline: datetime | None, allow_bounded_continue: bool, e_parent: bool=False, *, confirmation_after: datetime | None=None) -> tuple[int, object, datetime] | None` (L647–L736), `_merge_order_candidate(self, by_geometry: dict[tuple[int, int], OrderMatch], number: int, reaction: object, confirmation: datetime, *, parent_stop_cause_time: datetime) -> OrderMatch` (L739–L770), `_enforce_single_parent_stop_owner(self, by_geometry: dict[tuple[int, int], OrderMatch]) -> None` (L773–L797), `order_candidates(self, start: datetime, continuous_deadline: datetime | None=None, allow_bounded_continue: bool=False, allow_trend_leg_continue: bool=False, e_parent: bool=False) -> list[OrderMatch]` (L800–L888), `_first_order(self, start: datetime, continuous_deadline: datetime | None=None, allow_bounded_continue: bool=False, allow_trend_leg_continue: bool=False) -> OrderMatch | None` (L891–L904), `_has_sequence_reset_between(self, start: datetime, end: datetime) -> bool` (L907–L915), `_index_order_audit_identity(self, identity: tuple[int, int], confirmation: datetime) -> None` (L918–L925), `_clear_order_audit(self) -> None` (L928–L932), `_invalidate_carried_order_caches(self) -> None` (L934–L939), `_invalidate_post_stop_order_cache(self) -> None` (L941–L942), `register_order_b_reset_legs(self, legs: Sequence[OrderBResetLeg]) -> None` (L945–L1009), `_reparent_primary_high_causes(self, parent, stop_event, direct_identity)` (L1012–L1058), `register_primary_high(self, parent)` (L1060–L1068), `register_primary_low(self, parent)` (L1070–L1074), `_register_primary_point(self, parent)` (L1076–L1107), `reconcile_primary_high_labels(self, highs)` (L1109–L1111), `reconcile_primary_low_labels(self, lows)` (L1113–L1115), `_reconcile_primary_labels(self, points, prefix)` (L1117–L1134), `_register_order_audit(self, parent_type: str, parent: object, parent_stop: datetime) -> None` (L1136–L1207), `visual_order_lifecycle(self, start: datetime) -> list[tuple[int, object, datetime, Decimal, int, datetime, tuple[int, datetime, datetime] | None, bool]]` (L1211–L1230), `_cross_order(self, start: datetime, level: Decimal) -> tuple[int, datetime, datetime] | None` (L1233–L1251), `cross_order(self, confirmation_time: datetime, stop_level: Decimal) -> tuple[int, datetime, datetime] | None` (L1254–L1258), `_unconsumed_s_orders(self, parent: object, parent_stop: datetime) -> list[OrderMatch]` (L1261–L1295), `_initial_order_records(self) -> tuple[tuple[datetime, datetime, int, object, Decimal, int, datetime, tuple[int, datetime, datetime] | None], ...]` (L1298–L1353), `_initial_record_match(record: tuple[datetime, datetime, int, object, Decimal, int, datetime, tuple[int, datetime, datetime] | None], causes: tuple[str, ...]) -> OrderMatch` (L1357–L1368), `_initial_order_match(self, entry: dict[str, object], causes: tuple[str, ...]) -> OrderMatch` (L1371–L1383), `_gate_owned_initial_order(self, parent_stop: datetime) -> OrderMatch | None` (L1386–L1406), `_carried_orders_for_parent(self, parent: object, parent_stop: datetime) -> list[OrderMatch]` (L1409–L1467), `_post_stop_accepted_orders_for_parent(self, parent: object, parent_stop: datetime) -> list[OrderMatch]` (L1470–L1549), `_blocked_by_gate_owned_order(self, zone: EZone) -> bool` (L1552–L1560), `_rebuild_accepted_order_audit(self, numbered: list[EZone], supplemental_s_zones: Sequence[object]=()) -> list[EZone]` (L1563–L1746), `rebuild_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=()) -> list[EZone]` (L1749–L1761), `ensure_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=()) -> list[EZone]` (L1764–L1791)
+  - `SOrderAuditMixin` (L2020–L2191)
+    - Fields: _none_
+    - Methods/properties: `_first_order_after(self, a_stop_event_time: datetime) -> tuple[int, object, datetime] | None` (L2023–L2076), `_order_matches_after(self, a_stop_event_time: datetime) -> list[tuple[int, object, datetime]]` (L2079–L2098), `_record_a_order_audit(self, zone: object, a_stop_event_time: datetime, order_match: tuple[int, object, datetime]) -> None` (L2101–L2133), `_audit_stopped_a(self, zone: object) -> None` (L2136–L2146), `_order_stop(self, order_number: int, reaction: object) -> tuple[Decimal, int, datetime]` (L2149–L2158), `_order_stop_crossed(self, candle: object, level: Decimal) -> bool` (L2161–L2164), `_shared_order_stop_cross(self, confirmation: datetime, level: Decimal) -> tuple[int, datetime, datetime] | None` (L2167–L2191)
+- **Nested implementation functions/closures:** `OrderAuditEngineMixin._post_stop_accepted_orders_for_parent.add_match(match: OrderMatch) -> None` (L1484–L1501), `OrderAuditEngineMixin._rebuild_accepted_order_audit.valid_parent_stop_cause(cause: tuple[object, ...]) -> bool` (L1574–L1587)
 
 #### `pipeline/PL_PH_detector.py`
-- **Module-level symbols/assignments:** `PL_PH_VERSION` (L20), `PL_PH_LAST_MODIFIED` (L21)
-- **Top-level functions:** `resolve_primary_highs` (L83), `relabel_primary_order` (L118), `formed_matching_legs` (L124), `resolve_stopall_ownership` (L140), `order_meets_structure_gate` (L152), `strict_cross` (L163), `_extreme` (L176), `_matching_seeds` (L185), `detect_bearish` (L224), `_activate_cycle` (L321), `_next_point` (L339)
+- **Module-level symbols/assignments:** `PL_PH_VERSION` (L21–L21), `PL_PH_LAST_MODIFIED` (L22–L22)
+- **Top-level functions:** `first_bullish_transition(chronology, primary)` (L101–L112), `first_bearish_transition(chronology, primary)` (L115–L125), `resolve_primary_highs(primary, *, through_index)` (L128–L138), `resolve_primary_lows(primary, *, through_index)` (L141–L144), `_resolve_primary_points(points, cycles, through_index, *, above)` (L147–L172), `relabel_primary_order(order, highs)` (L175–L178), `formed_matching_legs(primary, *, through_index)` (L181–L195), `resolve_stopall_ownership(stopalls, primary: PrimaryResult, *, through_index: int)` (L198–L208), `order_meets_structure_gate(kind, first_index, confirmation, gate_index, event)` (L211–L219), `strict_cross(chronology, event: datetime, level: Decimal, above: bool)` (L222–L232), `_extreme(chronology, left: int, right: int, high: bool)` (L235–L241), `_matching_seeds(s_zones, e_zones, stopalls)` (L244–L280), `detect_bearish(chronology, s_zones: Sequence[object], e_zones: Sequence[object], stopalls: Sequence[object], orders: Callable[[str, int, int, datetime], Sequence[StructureOrder]]) -> PrimaryResult` (L283–L380), `_activate_cycle(chronology, activation)` (L393–L408), `_next_point(chronology, checkpoint, orders, *, before_event=None)` (L411–L508), `_negate_price(value)` (L572–L574), `_reflect_structure_order(order)` (L611–L616), `detect_bullish(chronology, s_zones, e_zones, stopalls, orders)` (L619–L666)
 - **Classes / schemas:**
-  - `StructureOrder` (L25)
-    - fields: `direction: str` (L26), `reaction_number: int` (L27), `first_index: int` (L28), `break_index: int` (L29), `confirmation_event_time: datetime` (L30), `stop_level: Decimal` (L31), `stop_source_index: int` (L32), `stop_index: int` (L33), `stop_event_time: datetime` (L34), `causes: tuple[str, ...]` (L35), `box_top: Decimal | None` (L36), `box_bottom: Decimal | None` (L37), `reaction_mode: str | None` (L38), `audit_causes: tuple[dict[str, object], ...]` (L39)
-    - methods/properties: _none_
-  - `PrimaryPoint` (L43)
-    - fields: `kind: str` (L44), `number: int` (L45), `source_index: int` (L46), `source_time: datetime` (L47), `price: Decimal` (L48), `trigger_index: int` (L49), `trigger_event_time: datetime` (L50), `decision_index: int` (L51), `decision_event_time: datetime` (L52), `order: StructureOrder` (L53), `cycle_id: str | None` (L54), `identity_source: PrimaryPoint | None` (L55)
-    - methods/properties: _none_
-  - `MatchingBehaviorLeg` (L59)
-    - fields: `source_index: int` (L60), `source_time: datetime` (L61), `price: Decimal` (L62), `reference_stopall_index: int` (L63), `second_behavior_index: int` (L64), `trigger_index: int` (L65), `trigger_event_time: datetime` (L66), `stop_index: int | None` (L67), `stop_event_time: datetime | None` (L68)
-    - methods/properties: _none_
-  - `PrimaryResult` (L72)
-    - fields: `highs: list[PrimaryPoint]` (L73), `lows: list[PrimaryPoint]` (L74), `mbl: MatchingBehaviorLeg | None` (L75), `status: str` (L76), `post_pl3_orders: list[StructureOrder]` (L77), `cycle_id: str | None` (L78), `cycles: list[PrimaryResult]` (L79), `qualification_event_time: datetime | None` (L80)
-    - methods/properties: _none_
-  - `_CycleCheckpoint` (L312)
-    - fields: `result: PrimaryResult` (L313), `reference_price: Decimal` (L314), `gate_index: int` (L315), `cursor: datetime` (L316), `phase: str` (L317), `reset_high: bool` (L318)
-    - methods/properties: _none_
-  - `NativePrimaryOrders` (L435)
-    - fields: _none_
-    - methods/properties: `__init__` (L445), `confirm_high` (L449), `__call__` (L454)
-- **Nested implementation functions/closures:** `resolve_primary_highs.role_order` (L104)
+  - `StructureOrder` (L26–L40)
+    - Fields: `direction: str` (L27), `reaction_number: int` (L28), `first_index: int` (L29), `break_index: int` (L30), `confirmation_event_time: datetime` (L31), `stop_level: Decimal` (L32), `stop_source_index: int` (L33), `stop_index: int` (L34), `stop_event_time: datetime` (L35), `causes: tuple[str, ...]` (L36), `box_top: Decimal | None` (L37), `box_bottom: Decimal | None` (L38), `reaction_mode: str | None` (L39), `audit_causes: tuple[dict[str, object], ...]` (L40)
+    - Methods/properties: _none_
+  - `PrimaryPoint` (L44–L56)
+    - Fields: `kind: str` (L45), `number: int` (L46), `source_index: int` (L47), `source_time: datetime` (L48), `price: Decimal` (L49), `trigger_index: int` (L50), `trigger_event_time: datetime` (L51), `decision_index: int` (L52), `decision_event_time: datetime` (L53), `order: StructureOrder` (L54), `cycle_id: str | None` (L55), `identity_source: PrimaryPoint | None` (L56)
+    - Methods/properties: _none_
+  - `MatchingBehaviorLeg` (L60–L69)
+    - Fields: `source_index: int` (L61), `source_time: datetime` (L62), `price: Decimal` (L63), `reference_stopall_index: int` (L64), `second_behavior_index: int` (L65), `trigger_index: int` (L66), `trigger_event_time: datetime` (L67), `stop_index: int | None` (L68), `stop_event_time: datetime | None` (L69)
+    - Methods/properties: _none_
+  - `TrendTransition` (L73–L84)
+    - Fields: `index: int` (L75), `event_time: datetime` (L76), `level: Decimal` (L77), `high: PrimaryPoint` (L78), `target_direction: str` (L79)
+    - Methods/properties: `point(self)` (L82–L84)
+  - `PrimaryResult` (L88–L98)
+    - Fields: `highs: list[PrimaryPoint]` (L89), `lows: list[PrimaryPoint]` (L90), `mbl: MatchingBehaviorLeg | None` (L91), `status: str` (L92), `post_pl3_orders: list[StructureOrder]` (L93), `cycle_id: str | None` (L94), `cycles: list[PrimaryResult]` (L95), `qualification_event_time: datetime | None` (L96), `transition: TrendTransition | None` (L97), `direction: str` (L98)
+    - Methods/properties: _none_
+  - `_CycleCheckpoint` (L384–L390)
+    - Fields: `result: PrimaryResult` (L385), `reference_price: Decimal` (L386), `gate_index: int` (L387), `cursor: datetime` (L388), `phase: str` (L389), `reset_high: bool` (L390)
+    - Methods/properties: _none_
+  - `NativePrimaryOrders` (L511–L569)
+    - Fields: _none_
+    - Methods/properties: `__init__(self, chronology, groups, *, on_high=None, direction='bearish')` (L521–L524), `confirm_high(self, point)` (L526–L529), `__call__(self, kind, number, gate_index, event)` (L531–L569)
+  - `_ReflectedRow` (L578–L587)
+    - Fields: `original: object` (L579)
+    - Methods/properties: `high(self)` (L582–L583), `low(self)` (L586–L587)
+  - `_ReflectedPriceIndex` (L590–L599)
+    - Fields: _none_
+    - Methods/properties: `__init__(self, original)` (L592–L593), `first_greater(self, left, right, level)` (L595–L596), `first_less(self, left, right, level)` (L598–L599)
+  - `_ReflectedChronology` (L602–L608)
+    - Fields: _none_
+    - Methods/properties: `__init__(self, original)` (L603–L608)
+  - `detect_bullish.ReflectedOrders` (L655–L663)
+    - Fields: _none_
+    - Methods/properties: `__call__(self, kind, number, gate, event)` (L656–L658), `confirm_high(self, item)` (L660–L663)
+- **Nested implementation functions/closures:** `_resolve_primary_points.role_order(point)` (L160–L163), `detect_bullish.cycle_id(value)` (L628–L629), `detect_bullish.point(item)` (L631–L637), `detect_bullish.status(value)` (L639–L641), `detect_bullish.result(item)` (L643–L653)
 
 #### `pipeline/reaction_engine.py`
-- **Module-level symbols/assignments:** `REACTION_ENGINE_VERSION` (L21), `REACTION_ENGINE_IMPLEMENTATION_VERSION` (L22), `REACTION_ENGINE_LAST_MODIFIED` (L23), `_ORDER_GATE_CACHE_MAX_ENTRIES` (L25), `_SEQUENCE_TIME_INDEXES: dict[int, tuple[Sequence[Candle], list[datetime]]]` (L27), `_REFLECTED_VIEWS: dict[int, tuple[Sequence[Candle], _ReflectedCandles]]` (L636), `_LOWER_TIMEFRAME_INDEXES: dict[int, tuple[Sequence[Candle], LowerTimeframeIndex]]` (L932)
-- **Top-level functions:** `classify_candle_color` (L94), `opposite_direction` (L99), `mirror_candle` (L563), `mirror_candidate` (L583), `mirror_analysis` (L602), `_reflected_view` (L639), `published_reaction_candidate` (L709), `_decimal_value` (L807), `shared_lower_timeframe_index` (L937), `build_behavior_reaction_views` (L1205), `directional_a_stop_order_finder` (L1316)
+- **Module-level symbols/assignments:** `REACTION_ENGINE_VERSION` (L21–L21), `REACTION_ENGINE_IMPLEMENTATION_VERSION` (L22–L22), `REACTION_ENGINE_LAST_MODIFIED` (L23–L23), `_ORDER_GATE_CACHE_MAX_ENTRIES` (L25–L25), `_SEQUENCE_TIME_INDEXES` (L27–L27), `_REFLECTED_VIEWS` (L636–L636), `_LOWER_TIMEFRAME_INDEXES` (L932–L934)
+- **Top-level functions:** `classify_candle_color(open_price: Decimal, close_price: Decimal) -> str` (L94–L96), `opposite_direction(direction: str) -> str` (L99–L101), `mirror_candle(candle: Candle) -> Candle` (L563–L580), `mirror_candidate(candidate: Candidate | None) -> Candidate | None` (L583–L600), `mirror_analysis(analysis: IntrabarAnalysis | None) -> IntrabarAnalysis | None` (L602–L608), `_reflected_view(source: Sequence[Candle]) -> _ReflectedCandles` (L639–L646), `published_reaction_candidate(direction: str, candidate: Candidate, chronology: object) -> Candidate` (L709–L804), `_decimal_value(value: object) -> Decimal` (L807–L809), `shared_lower_timeframe_index(candles: Sequence[Candle]) -> LowerTimeframeIndex` (L937–L947), `build_behavior_reaction_views(full_results: dict[str, object], chronology: MarketChronology)` (L1205–L1313), `directional_a_stop_order_finder(candles: Sequence[Candle], seconds: Sequence[Candle], direction: str)` (L1316–L1376)
 - **Classes / schemas:**
-  - `Candle` (L30)
-    - fields: `index: int` (L31), `timestamp: datetime` (L32), `display_time: str` (L33), `tag: str` (L34), `open: Decimal` (L35), `high: Decimal` (L36), `low: Decimal` (L37), `close: Decimal` (L38)
-    - methods/properties: _none_
-  - `Candidate` (L42)
-    - fields: `first_idx: int` (L43), `first_time: str` (L44), `box_top_source_idx: int` (L45), `box_top_source_time: str` (L46), `box_top: Decimal` (L47), `box_bottom_source_idx: int` (L48), `box_bottom_source_time: str` (L49), `box_bottom: Decimal` (L50), `mode: str` (L51), `anchor_idx: int | None` (L52), `anchor_value: Decimal | None` (L53), `leg_boundary_value: Decimal | None` (L54), `break_idx: int | None` (L55), `break_time: str | None` (L56), `intrabar_start: datetime | None` (L57), `cross_direction_origin: bool` (L58), `cross_direction_chain_owner: bool` (L59), `order_gate_decision: str | None` (L60), `behavior_public_number: int | None` (L61), `behavior_public_box_top: Decimal | None` (L62), `behavior_public_box_bottom: Decimal | None` (L63), `behavior_confirmation_time: datetime | None` (L64), `behavior_first_time: datetime | None` (L65), `behavior_internal: bool` (L66)
-    - methods/properties: _none_
-  - `ResetEvent` (L70)
-    - fields: `index: int` (L71), `display_time: str` (L72), `second_time: str | None` (L73), `broken_level: Decimal` (L74), `from_first_idx: int` (L75)
-    - methods/properties: _none_
-  - `IntrabarAnalysis` (L79)
-    - fields: `event_second: Candle` (L80), `extreme: Decimal` (L81), `extreme_source: Candle` (L82)
-    - methods/properties: _none_
-  - `DetectionResult` (L86)
-    - fields: `direction: str` (L87), `reactions: list[Candidate]` (L88), `resets: list[ResetEvent]` (L89), `start_index: int` (L90), `end_index: int` (L91)
-    - methods/properties: _none_
-  - `DetectorBase` (L104)
-    - fields: _none_
-    - methods/properties: `__init__` (L105), `_shared_time_index` (L130), `seconds_between` (L140), `main_source_for_time` (L145), `minimum_low` (L158), `maximum_high` (L167)
-  - `BullishDetector` (L177)
-    - fields: _none_
-    - methods/properties: `green_run_peak_before` (L178), `breakout_analysis` (L188), `mode_a_invalidation_before_breakout` (L214), `confirmed_reset_before_breakout` (L250), `post_breakout_reset` (L270), `detect` (L285)
-  - `_ReflectedCandles` (L611)
-    - fields: _none_
-    - methods/properties: `__init__` (L619), `__len__` (L623), `__getitem__` (L626)
-  - `BearishDetector` (L649)
-    - fields: _none_
-    - methods/properties: `__init__` (L657), `red_run_bottom_before` (L671), `breakdown_analysis` (L675), `invalidation_high_break_before_breakdown` (L680), `confirmed_reset_before_breakdown` (L685), `post_breakdown_reset` (L691), `detect` (L698)
-  - `LowerTimeframeIndex` (L812)
-    - fields: _none_
-    - methods/properties: `__init__` (L819), `first_less` (L860), `first_greater` (L863), `range_minimum` (L866), `range_maximum` (L870), `_range_query` (L874), `_first` (L912)
-  - `ReflectedLowerTimeframeIndex` (L950)
-    - fields: _none_
-    - methods/properties: `__init__` (L955), `first_less` (L959), `first_greater` (L962), `range_minimum` (L965), `range_maximum` (L969)
-  - `MarketChronology` (L974)
-    - fields: _none_
-    - methods/properties: `__init__` (L993), `opposite_direction` (L1016), `main_index` (L1020), `lower_bounds` (L1029), `lower_window` (L1040), `_reset_cache_key` (L1047), `_reaction_cache_key` (L1059), `reset_time` (L1073), `reaction_confirmation` (L1092), `canonical_order_stop` (L1140)
-  - `UnifiedReactionDetector` (L1379)
-    - fields: _none_
-    - methods/properties: `__init__` (L1389), `bull` (L1421), `bear` (L1429), `_append_reaction` (L1436), `_append_reset` (L1518), `_refine` (L1536), `_candidate_from_confirmation_remainder` (L1557), `_first_initial` (L1642), `_first_direct_same_direction_after_reset` (L1655), `_first_geometry_after_reset` (L1693), `first_geometry_after_reset` (L1746), `_reaction_break_indices` (L1753), `first_order_reaction_after_gate` (L1768), `_earliest_confirmed_geometry` (L1917), `_build_direct_candidate` (L1991), `_scan_direct_candidate` (L2049), `_owner_boundary_before_confirmation` (L2079), `_result` (L2120), `detect` (L2129)
-- **Nested implementation functions/closures:** `build_behavior_reaction_views.path_is_contained` (L1225), `directional_a_stop_order_finder.find` (L1330), `UnifiedReactionDetector.first_order_reaction_after_gate.cache_result` (L1784), `UnifiedReactionDetector.first_order_reaction_after_gate.confirmed_no_later_than_gate` (L1795)
+  - `Candle` (L30–L38)
+    - Fields: `index: int` (L31), `timestamp: datetime` (L32), `display_time: str` (L33), `tag: str` (L34), `open: Decimal` (L35), `high: Decimal` (L36), `low: Decimal` (L37), `close: Decimal` (L38)
+    - Methods/properties: _none_
+  - `Candidate` (L42–L66)
+    - Fields: `first_idx: int` (L43), `first_time: str` (L44), `box_top_source_idx: int` (L45), `box_top_source_time: str` (L46), `box_top: Decimal` (L47), `box_bottom_source_idx: int` (L48), `box_bottom_source_time: str` (L49), `box_bottom: Decimal` (L50), `mode: str` (L51), `anchor_idx: int | None` (L52), `anchor_value: Decimal | None` (L53), `leg_boundary_value: Decimal | None` (L54), `break_idx: int | None` (L55), `break_time: str | None` (L56), `intrabar_start: datetime | None` (L57), `cross_direction_origin: bool` (L58), `cross_direction_chain_owner: bool` (L59), `order_gate_decision: str | None` (L60), `behavior_public_number: int | None` (L61), `behavior_public_box_top: Decimal | None` (L62), `behavior_public_box_bottom: Decimal | None` (L63), `behavior_confirmation_time: datetime | None` (L64), `behavior_first_time: datetime | None` (L65), `behavior_internal: bool` (L66)
+    - Methods/properties: _none_
+  - `ResetEvent` (L70–L75)
+    - Fields: `index: int` (L71), `display_time: str` (L72), `second_time: str | None` (L73), `broken_level: Decimal` (L74), `from_first_idx: int` (L75)
+    - Methods/properties: _none_
+  - `IntrabarAnalysis` (L79–L82)
+    - Fields: `event_second: Candle` (L80), `extreme: Decimal` (L81), `extreme_source: Candle` (L82)
+    - Methods/properties: _none_
+  - `DetectionResult` (L86–L91)
+    - Fields: `direction: str` (L87), `reactions: list[Candidate]` (L88), `resets: list[ResetEvent]` (L89), `start_index: int` (L90), `end_index: int` (L91)
+    - Methods/properties: _none_
+  - `DetectorBase` (L104–L174)
+    - Fields: _none_
+    - Methods/properties: `__init__(self, candles: Sequence[Candle], one_second_candles: Sequence[Candle], start_index: int, end_index: int) -> None` (L105–L127), `_shared_time_index(candles: Sequence[Candle]) -> list[datetime]` (L130–L138), `seconds_between(self, start: datetime, end: datetime) -> Iterable[Candle]` (L140–L143), `main_source_for_time(self, timestamp: datetime) -> Candle | None` (L145–L156), `minimum_low(self, start_index: int, end_index: int) -> tuple[Decimal, Candle]` (L158–L165), `maximum_high(self, start_index: int, end_index: int) -> tuple[Decimal, Candle]` (L167–L174)
+  - `BullishDetector` (L177–L560)
+    - Fields: _none_
+    - Methods/properties: `green_run_peak_before(self, first_red_index: int) -> tuple[Decimal, Candle]` (L178–L186), `breakout_analysis(self, candidate: Candidate, breakout_candle: Candle) -> IntrabarAnalysis | None` (L188–L212), `mode_a_invalidation_before_breakout(self, candidate: Candidate, candle: Candle) -> bool` (L214–L248), `confirmed_reset_before_breakout(self, candidate: Candidate | None, candle: Candle, confirmed_bottom: Decimal) -> bool` (L250–L268), `post_breakout_reset(self, analysis: IntrabarAnalysis | None, box_bottom: Decimal, breakout_candle: Candle) -> Candle | None` (L270–L283), `detect(self, *, first_only: bool=False) -> DetectionResult` (L285–L560)
+  - `_ReflectedCandles` (L611–L633)
+    - Fields: _none_
+    - Methods/properties: `__init__(self, source: Sequence[Candle]) -> None` (L619–L621), `__len__(self) -> int` (L623–L624), `__getitem__(self, index)` (L626–L633)
+  - `BearishDetector` (L649–L706)
+    - Fields: _none_
+    - Methods/properties: `__init__(self, candles, one_second_candles, start_index, end_index)` (L657–L669), `red_run_bottom_before(self, first_green_index)` (L671–L673), `breakdown_analysis(self, candidate, breakdown_candle)` (L675–L678), `invalidation_high_break_before_breakdown(self, candidate, candle)` (L680–L683), `confirmed_reset_before_breakdown(self, candidate, candle, confirmed_top)` (L685–L689), `post_breakdown_reset(self, analysis, box_top, breakdown_candle)` (L691–L696), `detect(self, *, first_only: bool=False) -> DetectionResult` (L698–L706)
+  - `LowerTimeframeIndex` (L812–L929)
+    - Fields: _none_
+    - Methods/properties: `__init__(self, candles: Sequence[Candle]) -> None` (L819–L858), `first_less(self, left: int, right: int, level: Decimal) -> int | None` (L860–L861), `first_greater(self, left: int, right: int, level: Decimal) -> int | None` (L863–L864), `range_minimum(self, left: int, right: int) -> tuple[Decimal, int]` (L866–L868), `range_maximum(self, left: int, right: int) -> tuple[Decimal, int]` (L870–L872), `_range_query(self, left: int, right: int, *, minimum: bool) -> tuple[Decimal, int]` (L874–L910), `_first(self, node: int, start: int, end: int, left: int, right: int, level: Decimal, less: bool) -> int | None` (L912–L929)
+  - `ReflectedLowerTimeframeIndex` (L950–L971)
+    - Fields: _none_
+    - Methods/properties: `__init__(self, base: LowerTimeframeIndex) -> None` (L955–L957), `first_less(self, left: int, right: int, level: Decimal) -> int | None` (L959–L960), `first_greater(self, left: int, right: int, level: Decimal) -> int | None` (L962–L963), `range_minimum(self, left: int, right: int) -> tuple[Decimal, int]` (L965–L967), `range_maximum(self, left: int, right: int) -> tuple[Decimal, int]` (L969–L971)
+  - `MarketChronology` (L974–L1202)
+    - Fields: _none_
+    - Methods/properties: `__init__(self, candles: Sequence[Candle], seconds: Sequence[Candle], timeframe_seconds: int, lower_index: LowerTimeframeIndex | None=None) -> None` (L993–L1013), `opposite_direction(direction: str) -> str` (L1016–L1018), `main_index(self, timestamp: datetime, *, clamp: bool=False) -> int` (L1020–L1027), `lower_bounds(self, start: datetime, end: datetime | None=None) -> tuple[int, int]` (L1029–L1038), `lower_window(self, start: datetime, end: datetime | None=None) -> Sequence[Candle]` (L1040–L1044), `_reset_cache_key(reset: object) -> tuple[object, ...]` (L1047–L1056), `_reaction_cache_key(reaction: object, direction: str, use_intrabar_start: bool) -> tuple[object, ...]` (L1059–L1071), `reset_time(self, reset: object) -> datetime` (L1073–L1090), `reaction_confirmation(self, direction: str, reaction: object, *, use_intrabar_start: bool=True) -> datetime` (L1092–L1137), `canonical_order_stop(self, order_direction: str, reaction_number: int, reaction: object, opposite_reactions: Sequence[object], *, start_index: int=0) -> tuple[Decimal, int, datetime]` (L1140–L1202)
+  - `UnifiedReactionDetector` (L1379–L2499)
+    - Fields: _none_
+    - Methods/properties: `__init__(self, candles: Sequence[Candle], one_second_candles: Sequence[Candle], start_index: int, end_index: int, output_direction: str, *, initial_bullish_trend: bool=False, initial_bearish_trend: bool=False) -> None` (L1389–L1423), `bull(self) -> BullishDetector` (L1426–L1431), `bear(self) -> BearishDetector` (L1434–L1439), `_append_reaction(self, direction: str, candidate: Candidate) -> bool` (L1441–L1521), `_append_reset(self, direction: str, candle: Candle, level: Decimal, first_idx: int, second_time: str | None=None) -> None` (L1523–L1539), `_refine(self, direction: str, candidate: Candidate, candle: Candle) -> IntrabarAnalysis | None` (L1541–L1560), `_candidate_from_confirmation_remainder(self, direction: str, confirmed: Candidate, candle: Candle, analysis: IntrabarAnalysis | None) -> Candidate | None` (L1562–L1645), `_first_initial(self, direction: str) -> Candidate | None` (L1647–L1661), `_first_bullish_trend_reaction(self) -> Candidate | None` (L1663–L1665), `_first_trend_reaction(self, direction: str) -> Candidate | None` (L1667–L1714), `_first_direct_same_direction_after_reset(self, direction: str, reset_index: int) -> Candidate | None` (L1717–L1753), `_first_geometry_after_reset(self, direction: str, reset_index: int, end_index: int | None=None) -> Candidate | None` (L1755–L1806), `first_geometry_after_reset(self, direction: str, reset_index: int, end_index: int) -> Candidate | None` (L1808–L1812), `_reaction_break_indices(self, direction: str) -> list[int]` (L1815–L1828), `first_order_reaction_after_gate(self, direction: str, gate_index: int, end_index: int | None=None, gate_event_time: datetime | None=None) -> Candidate | None` (L1830–L1977), `_earliest_confirmed_geometry(self, direction: str, start_index: int, end_index: int | None=None) -> Candidate | None` (L1979–L2051), `_build_direct_candidate(self, direction: str, reset_index: int, first_index: int) -> Candidate | None` (L2053–L2108), `_scan_direct_candidate(self, direction: str, candidate: Candidate, stop_index: int) -> tuple[Candidate | None, int | None]` (L2111–L2139), `_owner_boundary_before_confirmation(self, direction: str, candidate: Candidate, candle: Candle) -> bool` (L2141–L2179), `_result(self) -> DetectionResult` (L2182–L2189), `detect(self, *, stop_after_first_at_or_after: int | None=None) -> DetectionResult` (L2191–L2499)
+- **Nested implementation functions/closures:** `build_behavior_reaction_views.path_is_contained(first_time: datetime, confirmed_at: datetime, bottom: Decimal, top: Decimal) -> bool` (L1225–L1243), `directional_a_stop_order_finder.find(gate_index: int, gate_event: datetime, end_index: int)` (L1330–L1374), `UnifiedReactionDetector.first_order_reaction_after_gate.cache_result(result: Candidate | None) -> Candidate | None` (L1846–L1855), `UnifiedReactionDetector.first_order_reaction_after_gate.confirmed_no_later_than_gate(reaction: Candidate) -> bool` (L1857–L1875)
 
 #### `pipeline/s_zone_detector.py`
-- **Module-level symbols/assignments:** `S_ZONE_VERSION` (L22), `S_ZONE_IMPLEMENTATION_VERSION` (L23), `S_ZONE_LAST_MODIFIED` (L24)
-- **Top-level functions:** `detect_s_zones` (L1422)
+- **Module-level symbols/assignments:** `S_ZONE_VERSION` (L22–L22), `S_ZONE_IMPLEMENTATION_VERSION` (L23–L23), `S_ZONE_LAST_MODIFIED` (L24–L24)
+- **Top-level functions:** `detect_s_zones(direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], trend_blue_lines: Sequence[object], a_zones: Sequence[object], chronology: object, start_index: int | None=None, end_index: int | None=None, opposite_resets: Sequence[object]=(), initial_order_geometry: Callable[[int, datetime, int], object | None] | None=None) -> list[SZone]` (L1422–L1445)
 - **Classes / schemas:**
-  - `SZone` (L28)
-    - fields: `direction: str` (L29), `color: str` (L30), `formation_type: str` (L31), `a_ordinal: int` (L32), `a_source_index: int` (L33), `a_source_time: datetime` (L34), `a_price: Decimal` (L35), `a_stop_index: int` (L36), `a_stop_time: datetime` (L37), `a_stop_event_time: datetime` (L38), `order_direction: str | None` (L39), `order_reaction_number: int | None` (L40), `order_mode: str | None` (L41), `order_first_index: int | None` (L42), `order_first_time: datetime | None` (L43), `order_break_index: int | None` (L44), `order_break_time: datetime | None` (L45), `order_confirmation_time: datetime | None` (L46), `order_box_top: Decimal | None` (L47), `order_box_top_source_index: int | None` (L48), `order_box_top_source_time: datetime | None` (L49), `order_box_bottom: Decimal | None` (L50), `order_box_bottom_source_index: int | None` (L51), `order_box_bottom_source_time: datetime | None` (L52), `order_stop_level: Decimal | None` (L53), `order_stop_source_index: int | None` (L54), `order_stop_source_time: datetime | None` (L55), `reset_reaction_number: int | None` (L56), `reset_time: datetime | None` (L57), `source_index: int` (L58), `source_time: datetime` (L59), `price: Decimal` (L60), `decision_index: int` (L61), `decision_time: datetime` (L62), `decision_event_time: datetime` (L63)
-    - methods/properties: _none_
-  - `SZoneDetector` (L66)
-    - fields: _none_
-    - methods/properties: `__init__` (L67), `_main_index` (L194), `_lower_window` (L197), `_reaction_confirmation_time` (L202), `reaction_confirmation_time` (L207), `_reset_time` (L214), `_a_confirmation_time` (L217), `_trend_extreme` (L225), `_a_stopped` (L230), `_first_a_stop` (L233), `first_a_stop` (L269), `_resolved_order_backed_zone` (L276), `_candidate_source` (L295), `_candidate_source_last` (L310), `_first_trend_reaction_after_order` (L330), `_nested_trend_reaction` (L342), `_simple_candidate` (L372), `_type3_reset_leg` (L381), `_type3_has_trend_reaction` (L397), `_first_type3` (L406), `_type4_has_blue` (L456), `_first_type4` (L467), `_build_type4_zone` (L537), `_candidate_after_order` (L590), `_a_source_event_time` (L631), `_a_owned_by_s` (L640), `_a_pair_is_reset_reset` (L681), `eligible_a_zones` (L695), `_candidate_timing` (L699), `_candidate_before_order` (L744), `_candidate_event_time` (L788), `candidate_event_time` (L803), `_blue_formation_time` (L810), `_candidate_cross_has_blue` (L840), `_has_ordinary_trend_reaction` (L857), `_candidate_crossed` (L868), `_decision` (L873), `_build_type3_zone` (L999), `_build_order_backed_zone` (L1057), `detect` (L1228), `reconcile_shared_order_stops` (L1305)
+  - `SZone` (L28–L63)
+    - Fields: `direction: str` (L29), `color: str` (L30), `formation_type: str` (L31), `a_ordinal: int` (L32), `a_source_index: int` (L33), `a_source_time: datetime` (L34), `a_price: Decimal` (L35), `a_stop_index: int` (L36), `a_stop_time: datetime` (L37), `a_stop_event_time: datetime` (L38), `order_direction: str | None` (L39), `order_reaction_number: int | None` (L40), `order_mode: str | None` (L41), `order_first_index: int | None` (L42), `order_first_time: datetime | None` (L43), `order_break_index: int | None` (L44), `order_break_time: datetime | None` (L45), `order_confirmation_time: datetime | None` (L46), `order_box_top: Decimal | None` (L47), `order_box_top_source_index: int | None` (L48), `order_box_top_source_time: datetime | None` (L49), `order_box_bottom: Decimal | None` (L50), `order_box_bottom_source_index: int | None` (L51), `order_box_bottom_source_time: datetime | None` (L52), `order_stop_level: Decimal | None` (L53), `order_stop_source_index: int | None` (L54), `order_stop_source_time: datetime | None` (L55), `reset_reaction_number: int | None` (L56), `reset_time: datetime | None` (L57), `source_index: int` (L58), `source_time: datetime` (L59), `price: Decimal` (L60), `decision_index: int` (L61), `decision_time: datetime` (L62), `decision_event_time: datetime` (L63)
+    - Methods/properties: _none_
+  - `SZoneDetector` (L66–L1419)
+    - Fields: _none_
+    - Methods/properties: `__init__(self, direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], trend_blue_lines: Sequence[object], a_zones: Sequence[object], chronology: object, start_index: int | None=None, end_index: int | None=None, opposite_resets: Sequence[object]=(), initial_order_geometry: Callable[[int, datetime, int], object | None] | None=None) -> None` (L67–L192), `_main_index(self, timestamp: datetime) -> int` (L194–L195), `_lower_window(self, start: datetime, end: datetime | None) -> Sequence[object]` (L197–L200), `_reaction_confirmation_time(self, reaction: object, direction: str) -> datetime` (L202–L205), `reaction_confirmation_time(self, reaction: object, direction: str) -> datetime` (L207–L211), `_reset_time(self, reset: object) -> datetime` (L214–L215), `_a_confirmation_time(self, zone: object) -> datetime` (L217–L223), `_trend_extreme(self, candle: object) -> Decimal` (L225–L228), `_a_stopped(self, value: Decimal, level: Decimal) -> bool` (L230–L231), `_first_a_stop(self, level: Decimal, start: datetime) -> tuple[int, datetime, datetime] | None` (L233–L267), `first_a_stop(self, level: Decimal, start: datetime) -> tuple[int, datetime, datetime] | None` (L269–L273), `_resolved_order_backed_zone(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], first_order_match: tuple[int, object, datetime]) -> SZone | None` (L276–L292), `_candidate_source(self, start_index: int, end_index: int) -> tuple[int, datetime, Decimal]` (L295–L308), `_candidate_source_last(self, start_index: int, end_index: int) -> tuple[int, datetime, Decimal]` (L310–L328), `_first_trend_reaction_after_order(self, order_confirmation_time: datetime) -> tuple[int, object, datetime] | None` (L330–L339), `_nested_trend_reaction(self, order: object, order_confirmation_time: datetime) -> tuple[int, object, datetime] | None` (L342–L370), `_simple_candidate(self, order: object, reaction: object) -> tuple[int, datetime, Decimal]` (L372–L379), `_type3_reset_leg(self, reset: object) -> tuple[int, datetime, Decimal] | None` (L381–L395), `_type3_has_trend_reaction(self, a_stop_event: datetime, crossing: datetime) -> bool` (L397–L404), `_first_type3(self, a_stop_event: datetime, deadline: datetime) -> tuple[int, datetime, Decimal, int, datetime, int, datetime, datetime] | None` (L406–L453), `_type4_has_blue(self, candidate_source_index: int, crossing_event: datetime) -> bool` (L456–L465), `_first_type4(self, a_stop: tuple[int, datetime, datetime], deadline: datetime) -> tuple[int, datetime, Decimal, int, datetime, int, datetime] | None` (L467–L535), `_build_type4_zone(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], type4: tuple[int, datetime, Decimal, int, datetime, int, datetime]) -> SZone` (L537–L587), `_candidate_after_order(self, order_confirmation_time: datetime, reaction: object) -> tuple[int, datetime, Decimal]` (L590–L629), `_a_source_event_time(self, zone: object) -> datetime` (L631–L638), `_a_owned_by_s(self, zone: object) -> bool` (L640–L679), `_a_pair_is_reset_reset(self, zone: object) -> bool` (L681–L692), `eligible_a_zones(self) -> list[object]` (L695–L697), `_candidate_timing(self, a_stop_index: int, order: object, order_confirmation_time: datetime, a_stop_event_time: datetime | None=None) -> str` (L699–L742), `_candidate_before_order(self, a_stop_index: int, order: object, a_stop_event_time: datetime | None=None) -> tuple[int, datetime, Decimal]` (L744–L786), `_candidate_event_time(self, source_index: int, level: Decimal, not_before: datetime) -> datetime` (L788–L801), `candidate_event_time(self, source_index: int, price: Decimal, fallback: datetime) -> datetime` (L803–L807), `_blue_formation_time(self, line: object) -> datetime` (L810–L838), `_candidate_cross_has_blue(self, reaction_number: int, event_time: datetime) -> bool` (L840–L855), `_has_ordinary_trend_reaction(self, behavior_start: datetime, event_time: datetime) -> bool` (L857–L865), `_candidate_crossed(self, candle: object, level: Decimal) -> bool` (L868–L870), `_decision(self, candidate_level: Decimal, order_stop_level: Decimal, start: datetime, trend_reaction_number: int, behavior_start: datetime, candidate_start: datetime | None=None, fallback_on_unqualified_cross: bool=False) -> tuple[str, int, datetime, datetime] | None` (L873–L996), `_build_type3_zone(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], type3: tuple[int, datetime, Decimal, int, datetime, int, datetime, datetime]) -> SZone` (L999–L1055), `_build_order_backed_zone(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], order_match: tuple[int, object, datetime]) -> SZone | None` (L1057–L1226), `detect(self) -> list[SZone]` (L1228–L1302), `reconcile_shared_order_stops(self, zones: Sequence[SZone], order_entries: Sequence[dict[str, object]]) -> list[SZone]` (L1305–L1419)
 - **Nested implementation functions/closures:** _none_
 
 ### 13.6 Master Bullish ↔ Bearish directional mirror matrix
 
-This pre-existing matrix governs upstream directional transformation only; it does not define the explicitly deferred bullish PH/PL calculation. This matrix is normative for directional transformation. Bullish is the canonical geometry; Bearish is derived mechanically. A row marked **directional** must transform exactly as shown. A concept listed in Section 13.7 is invariant and must not be direction-flipped.
+This matrix governs upstream directional transformation. Section 13.4b separately defines the explicitly approved primary mirror and fresh directional regime contract. This matrix is normative for the upstream directional transformation. Bullish is the canonical geometry; Bearish is derived mechanically. A row marked **directional** must transform exactly as shown. A concept listed in Section 13.7 is invariant and must not be direction-flipped.
 
 | Rule / primitive | Bullish | Bearish | Classification |
 |---|---|---|---|
@@ -990,7 +1110,15 @@ This table makes the stage chain reconstructable without relying on examples. Th
 
 ## 14. Verification scope and historical evidence
 
-### 14.0p Current PH/PL task verification boundary
+### 14.0m Current bullish primary mirror synchronization boundary
+
+The current approved delta is specified in Section 13.4b. Source blocks, manifest metadata and the complete AST index in both References are regenerated together from the live production closure. Their byte reconstruction, parse and documentation checks are structural evidence; they do not independently prove trading correctness.
+
+Current integrated Engine/Chart, RAW, determinism, performance, browser and independent-review evidence belongs to the dated task record under `engineering/verification/bullish-primary-mirror-2026-11-01/`. No historical PASS below is promoted to a current mirror result. The earlier Section 14.0p describes an older bearish MBL correction, including its then-deferred bullish scope and then-unavailable Plugin, not the current approval or tool availability.
+
+Current Plugin retrieval supplies bounded upstream knowledge and retains the disclosed `REF-REACTION-SUCCESSOR` ambiguity. Standalone PH/PL/MBL knowledge remains excluded by user instruction; the explicit approved teaching and these local accepted References own this extension. Vault source/reference recapture remains pending a clean committed Source snapshot. No Vault synchronization, RAW mutation, release or publication is claimed here.
+
+### 14.0p Earlier bearish MBL correction verification — HISTORICAL
 <!-- PRIMARY-VERIFICATION-BEGIN -->
 
 This is bounded evidence for the approved bearish MBL formation correction.
@@ -1089,10 +1217,10 @@ Reference `5.4.25` and its recorded verification remain historical evidence for 
 ### Current PH/PL local extension — UNRELEASED
 
 - **Modified:** `2026-10-26T19:42:22+03:30`.
-- **Rule owner:** current approved bearish teaching; complete active rules are in Section 13.4a.
+- **Rule owner:** current approved bearish teaching and explicit bullish mirror; complete active rules are in Sections 13.4a and 13.4b.
 - **Source ownership:** new primary-state module; shared Lifecycle matching helper; Bridge full-history invocation/serialization. Existing OrderAudit remains the sole physical Order/provenance owner.
-- **Mirror scope:** bullish primary calculation deferred; both References embed the same shared production Source.
-- **Verification:** current bounded evidence and limitations are in Section 14.0p; historical release claims below are not current feature verification.
+- **Mirror scope:** approved bullish PL/PH/MBL, native PL parent causes, PL3 reversal and repeated fresh regimes; both References embed the same complete current production Source.
+- **Verification:** current synchronization boundaries are in Section 14.0m. Section 14.0p and historical release claims below retain earlier evidence and are not current mirror verification.
 
 
 ### `5.4.33` independent accepted-E StopAll donor and strict source-candle chronology
@@ -1233,9 +1361,9 @@ Every currently discovered production Python file in the live Engine package, Br
 
 ### 16.3 `bridge/trading_pipeline.py` — Pipeline / Serialization
 
-**SHA-256:** `d70481975d2b8e41c6271a02243862d967d5c906bbe1f2f23a432df6fc0f85a1`  
-**Bytes:** `123325`  
-**LF count:** `3231`
+**SHA-256:** `6d93dbaf67e4dce02060575b92dda5de6eaf6de0148f6db54056015c072181dc`  
+**Bytes:** `134613`  
+**LF count:** `3433`
 
 <!-- EXACT-SOURCE-BEGIN:bridge/trading_pipeline.py -->
 ````python
@@ -1254,7 +1382,7 @@ import importlib.util
 import json
 import sys
 from bisect import bisect_left
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
@@ -1280,10 +1408,10 @@ from order_audit_engine import accepted_audit_entries, order_b_leg_identity
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.11.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.14.2"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-10-26T19:31:03+03:30"
-MBL_EXTENSION_CANDLES = 100
+TRADING_PIPELINE_VERSION = "1.13.0"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.16.0"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
+MBL_EXTENSION_CANDLES = 400
 
 TEHRAN = ZoneInfo("Asia/Tehran")
 
@@ -2834,6 +2962,69 @@ class MarketContext:
     chronology: object
     start_index: int
     end_index: int
+    index_offset: int = 0
+    initial_bullish_trend: bool = False
+    initial_bearish_trend: bool = False
+
+
+def market_segment(market, start, stop, *, initial_bullish_trend=None,
+                   initial_bearish_trend=None):
+    """Build a physically independent [start, stop) calculation context."""
+    if not 0 <= start < stop <= len(market.candles):
+        raise ValueError("Market segment must contain existing main candles.")
+    first_time = market.candles[start].timestamp
+    stop_time = (market.candles[stop].timestamp if stop < len(market.candles)
+                 else market.candles[-1].timestamp + market.chronology.timeframe)
+    left = bisect_left(market.chronology.second_times, first_time)
+    right = bisect_left(market.chronology.second_times, stop_time)
+    candles = [replace(row,index=index) for index,row in enumerate(market.candles[start:stop])]
+    seconds = [replace(row,index=index) for index,row in enumerate(market.seconds[left:right])]
+    chronology = type(market.chronology)(candles,seconds,
+        int(market.chronology.timeframe.total_seconds()))
+    return MarketContext(seconds,candles,chronology.lower_index,chronology,
+        max(0,market.start_index-start),min(stop-start-1,market.end_index-start),
+        market.index_offset+start,
+        (market.initial_bullish_trend and start == 0) if initial_bullish_trend is None
+            else initial_bullish_trend,
+        (market.initial_bearish_trend and start == 0) if initial_bearish_trend is None
+            else initial_bearish_trend)
+
+
+def absolute_payload_indexes(value, offset):
+    """Project independent local calculation indexes into the input's indexes."""
+    if isinstance(value,list):
+        return [absolute_payload_indexes(item,offset) for item in value]
+    if isinstance(value,dict):
+        return {key: (item+offset if (key == "index" or key.endswith("Index"))
+                and type(item) is int and item >= 0
+                else [part+offset if type(part) is int and part >= 0 else part for part in item]
+                if key in {"physicalOrderIdentity", "resetReactionIdentity"} and isinstance(item, (list, tuple))
+                else absolute_payload_indexes(item,offset))
+                for key,item in value.items()}
+    return value
+
+
+def serialize_trend_transition(transition, market):
+    """Expose the finalized event and actual fiftieth candle for presentation."""
+    source = market.candles[transition.index]
+    target_index = transition.index + 49
+    target = market.candles[target_index] if target_index < len(market.candles) else None
+    direction = getattr(transition, "target_direction", "bullish")
+    bullish = direction == "bullish"
+    prefix = "ph" if bullish else "pl"
+    return {
+        "id": f"{direction}:trend:{epoch(source.timestamp)}",
+        "direction": direction, "previousDirection": "bearish" if bullish else "bullish",
+        "sourceIndex": transition.index + market.index_offset,
+        "sourceTime": epoch(source.timestamp), "eventTime": epoch(transition.event_time),
+        "level": str(transition.level), f"{prefix}Number": 3,
+        f"{prefix}SourceIndex": transition.high.source_index + market.index_offset,
+        f"{prefix}SourceTime": epoch(transition.high.source_time),
+        "iconCandleIndex": target_index + market.index_offset if target is not None else None,
+        "iconCandleTime": epoch(target.timestamp) if target is not None else None,
+        "iconCandleHigh" if bullish else "iconCandleLow":
+            str(target.high if bullish else target.low) if target is not None else None,
+    }
 
 
 def parse_arguments(argv=None):
@@ -3047,6 +3238,7 @@ class PipelineState:
     invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]
     full_s_by_direction: dict[str, list[object]]
     full_s_candidates_by_direction: dict[str, list[object]]
+    primary_result: object | None = None
 
 
 @dataclass(slots=True)
@@ -3546,7 +3738,9 @@ def prepare_pipeline_state(
     if reusable_full_context:
         geometry_detectors = {
             direction: engine.UnifiedReactionDetector(
-                candles, seconds, 0, len(candles) - 1, direction
+                candles, seconds, 0, len(candles) - 1, direction,
+                initial_bullish_trend=market.initial_bullish_trend and direction == "bullish",
+                initial_bearish_trend=market.initial_bearish_trend and direction == "bearish",
             )
             for direction in ("bullish", "bearish")
         }
@@ -3579,7 +3773,7 @@ def prepare_pipeline_state(
         }
         calculation_directions = (
             ("bullish", "bearish")
-            if engines.primary is not None and "bearish" in directions
+            if engines.primary is not None
             else directions
         )
         for direction in calculation_directions:
@@ -3614,7 +3808,9 @@ def prepare_pipeline_state(
                 timings,
                 f"Reaction • {direction.title()}",
                 lambda direction=direction: engine.UnifiedReactionDetector(
-                    candles, seconds, 0, len(candles) - 1, direction
+                    candles, seconds, 0, len(candles) - 1, direction,
+                    initial_bullish_trend=market.initial_bullish_trend and direction == "bullish",
+                    initial_bearish_trend=market.initial_bearish_trend and direction == "bearish",
                 ).detect(),
             )
             for direction in required_directions
@@ -4189,21 +4385,32 @@ def serialize_primary_order(order, market, owner_direction):
 
 def serialize_primary_structures(primary, market):
     """Project finalized structure state without price or lifecycle decisions."""
-    from PL_PH_detector import resolve_primary_highs, relabel_primary_order, formed_matching_legs
-    final_highs = resolve_primary_highs(primary, through_index=market.end_index)
+    from PL_PH_detector import (resolve_primary_highs, resolve_primary_lows,
+                                relabel_primary_order, formed_matching_legs)
+    direction = getattr(primary, "direction", "bearish")
+    bullish = direction == "bullish"
+    offset = getattr(market, "index_offset", 0)
+    final_primary = (resolve_primary_lows if bullish else resolve_primary_highs)(
+        primary, through_index=market.end_index)
     cycles = getattr(primary, "cycles", None) or [primary]
     first_cycle_id = getattr(cycles[0], "cycle_id", None)
+    def cycle_identity(value):
+        if value and offset:
+            parts = value.split(":")
+            if len(parts) == 4 and parts[1] == "cycle":
+                return f"{parts[0]}:cycle:{int(parts[2])+offset}:{int(parts[3])+offset}"
+        return value
     def point(item):
-        order = relabel_primary_order(item.order, final_highs)
+        order = relabel_primary_order(item.order, final_primary)
         cycle_id = getattr(item, "cycle_id", None)
         origin = getattr(item, "identity_source", None) or item
-        identity = f"bearish:{origin.kind}:{origin.number}:{origin.trigger_index}:{origin.decision_index}"
+        identity = f"{direction}:{origin.kind}:{origin.number}:{origin.trigger_index+offset}:{origin.decision_index+offset}"
         origin_cycle_id = getattr(origin, "cycle_id", None)
         if origin_cycle_id is not None and origin_cycle_id != first_cycle_id:
-            identity += f":{origin_cycle_id}"
+            identity += f":{cycle_identity(origin_cycle_id)}"
         row = {
             "id": identity,
-            "direction": "bearish", "kind": item.kind, "number": item.number,
+            "direction": direction, "kind": item.kind, "number": item.number,
             "sourceIndex": item.source_index, "sourceTime": epoch(item.source_time),
             "price": str(item.price), "triggerIndex": item.trigger_index,
             "triggerTime": epoch(market.candles[item.trigger_index].timestamp),
@@ -4215,7 +4422,7 @@ def serialize_primary_structures(primary, market):
                                               "bearish" if item.kind == "PH" else "bullish"),
         }
         if cycle_id is not None:
-            row["cycleId"] = cycle_id
+            row["cycleId"] = cycle_identity(cycle_id)
         return row
     selected = lambda items: [point(item) for item in items
         if market.start_index <= item.source_index <= market.end_index
@@ -4230,8 +4437,8 @@ def serialize_primary_structures(primary, market):
     for cycle, confirmation in formed_matching_legs(primary, through_index=market.end_index):
         leg = cycle.mbl
         row = {
-            "id": f"bearish:MBL:{leg.reference_stopall_index}:{leg.second_behavior_index}",
-            "direction": "bearish", "sourceIndex": leg.source_index,
+            "id": f"{direction}:MBL:{leg.reference_stopall_index+offset}:{leg.second_behavior_index+offset}",
+            "direction": direction, "sourceIndex": leg.source_index,
             "sourceTime": epoch(leg.source_time), "price": str(leg.price),
             "referenceStopAllIndex": leg.reference_stopall_index,
             "secondBehaviorIndex": leg.second_behavior_index,
@@ -4250,36 +4457,42 @@ def serialize_primary_structures(primary, market):
             "stopEventTime": epoch(leg.stop_event_time) if leg.stop_index is not None and leg.stop_index <= market.end_index else None,
         }
         if getattr(cycle, "cycle_id", None) is not None:
-            row["cycleId"] = cycle.cycle_id
+            row["cycleId"] = cycle_identity(cycle.cycle_id)
         legs.append(row)
-    highs, lows = selected(final_highs), selected(primary.lows)
-    high_by_source = {(row["sourceIndex"], row["sourceTime"]): row for row in highs}
-    for row in highs:
+    highs = selected(primary.highs if bullish else final_primary)
+    lows = selected(final_primary if bullish else primary.lows)
+    main_rows = lows if bullish else highs
+    main_points = primary.lows if bullish else primary.highs
+    by_source = {(row["sourceIndex"], row["sourceTime"]): row for row in main_rows}
+    for row in main_rows:
         row["cycleIds"] = list(dict.fromkeys(
-            item.cycle_id for item in primary.highs
+            cycle_identity(item.cycle_id) for item in main_points
             if item.source_index == row["sourceIndex"] and epoch(item.source_time) == row["sourceTime"]
             and item.decision_index <= market.end_index and getattr(item, "cycle_id", None) is not None))
     cycle_rows = [{
-        "id": cycle.cycle_id, "direction": "bearish", "status": cycle.status,
+        "id": cycle_identity(cycle.cycle_id), "direction": direction, "status": cycle.status,
         "referenceStopAllIndex": cycle.mbl.reference_stopall_index,
         "secondBehaviorIndex": cycle.mbl.second_behavior_index,
         "triggerIndex": cycle.mbl.trigger_index,
         "triggerTime": epoch(market.candles[cycle.mbl.trigger_index].timestamp),
         "triggerEventTime": epoch(cycle.mbl.trigger_event_time),
         "highCount": len(selected(cycle.highs)),
-        "highIds": list(dict.fromkeys(high_by_source[(item.source_index, epoch(item.source_time))]["id"]
-            for item in cycle.highs if item.decision_index <= market.end_index
-            and (item.source_index, epoch(item.source_time)) in high_by_source)),
-        "lowCount": sum(row.get("cycleId") == cycle.cycle_id for row in lows),
+        "lowIds" if bullish else "highIds": list(dict.fromkeys(
+            by_source[(item.source_index, epoch(item.source_time))]["id"]
+            for item in (cycle.lows if bullish else cycle.highs) if item.decision_index <= market.end_index
+            and (item.source_index, epoch(item.source_time)) in by_source)),
+        "lowCount": len(selected(cycle.lows)) if bullish else
+            sum(row.get("cycleId") == cycle_identity(cycle.cycle_id) for row in lows),
     } for cycle in visible_cycles if getattr(cycle, "cycle_id", None) is not None]
     post_orders = []
     for cycle in visible_cycles:
         for order in cycle.post_pl3_orders:
             if order.stop_index > market.end_index:
                 continue
-            row = serialize_primary_order(relabel_primary_order(order, final_highs), market, "bullish")
+            row = serialize_primary_order(relabel_primary_order(order, final_primary), market,
+                                          "bearish" if bullish else "bullish")
             if getattr(cycle, "cycle_id", None) is not None:
-                row["cycleId"] = cycle.cycle_id
+                row["cycleId"] = cycle_identity(cycle.cycle_id)
             post_orders.append(row)
     qualification = getattr(primary, "qualification_event_time", None)
     horizon = market.candles[market.end_index].timestamp + market.chronology.timeframe
@@ -4288,19 +4501,22 @@ def serialize_primary_structures(primary, market):
               else "waiting-for-matching-behaviors")
     return {"primaryHighs": highs, "primaryLows": lows,
             "matchingBehaviorLegs": legs, "primaryStatus": status,
-            "primaryCycles": cycle_rows, "postPL3Orders": post_orders}
+            "primaryCycles": cycle_rows,
+            "postPH3Orders" if bullish else "postPL3Orders": post_orders}
 
 
-def calculate_primary_structures(args, engines, market, state, visibility, timings):
+def calculate_primary_structures(args, engines, market, state, visibility, timings,
+                                 direction="bearish"):
     """Connect finalized full-history behaviors to existing native Order services."""
-    groups = {"bearish": visibility.primary_groups}
+    opposite = market.chronology.opposite_direction(direction)
+    groups = {direction: visibility.primary_groups}
     opposite_state = calculate_direction_range_state(
-        "bullish", args, engines, market, state, timings
+        opposite, args, engines, market, state, timings
     )
     opposite_visibility = finalize_direction_visibility(
-        "bullish", args, engines, market, state, opposite_state, timings
+        opposite, args, engines, market, state, opposite_state, timings
     )
-    groups["bullish"] = opposite_visibility.primary_groups
+    groups[opposite] = opposite_visibility.primary_groups
     accepted_by_owner = {}
     for owner in ("bullish", "bearish"):
         detector = state.full_e_detectors[owner]
@@ -4313,26 +4529,31 @@ def calculate_primary_structures(args, engines, market, state, visibility, timin
             detector, 0, len(market.candles)-1, s_detector, accepted_sources
         )
     def commit_high(point):
-        detector = state.full_e_detectors["bearish"]
-        detector.register_primary_high(point)
-        groups["bearish"]["OrderAudit"] = engines.lifecycle.prepare_order_audit(
-            detector, 0, len(market.candles)-1, state.full_s_detectors["bearish"],
-            accepted_by_owner["bearish"],
+        detector = state.full_e_detectors[direction]
+        register = (detector.register_primary_low if direction == "bullish"
+                    else detector.register_primary_high)
+        register(point)
+        groups[direction]["OrderAudit"] = engines.lifecycle.prepare_order_audit(
+            detector, 0, len(market.candles)-1, state.full_s_detectors[direction],
+            accepted_by_owner[direction],
         )
 
-    resolver = engines.primary.NativePrimaryOrders(market.chronology, groups, on_high=commit_high)
-    primary = engines.primary.detect_bearish(
-        market.chronology, groups["bearish"]["S"], groups["bearish"]["E"],
-        groups["bearish"]["StopAll"], resolver,
+    resolver = engines.primary.NativePrimaryOrders(market.chronology, groups,
+        on_high=commit_high, direction=direction)
+    detect = engines.primary.detect_bullish if direction == "bullish" else engines.primary.detect_bearish
+    primary = detect(
+        market.chronology, groups[direction]["S"], groups[direction]["E"],
+        groups[direction]["StopAll"], resolver,
     )
-    state.full_e_detectors["bearish"].reconcile_primary_high_labels(
-        engines.primary.resolve_primary_highs(primary, through_index=market.end_index)
-    )
+    detector = state.full_e_detectors[direction]
+    resolve = engines.primary.resolve_primary_lows if direction == "bullish" else engines.primary.resolve_primary_highs
+    reconcile = detector.reconcile_primary_low_labels if direction == "bullish" else detector.reconcile_primary_high_labels
+    reconcile(resolve(primary, through_index=market.end_index))
     required = {order_identity(item["reaction"].first_idx, item["reaction"].break_idx)
                 for item in visibility.prepared_order_audit}
     visibility.prepared_order_audit = engines.lifecycle.prepare_order_audit(
-        state.full_e_detectors["bearish"], market.start_index, market.end_index,
-        state.full_s_detectors["bearish"], accepted_by_owner["bearish"], required,
+        detector, market.start_index, market.end_index,
+        state.full_s_detectors[direction], accepted_by_owner[direction], required,
     )
     return primary
 
@@ -4359,10 +4580,12 @@ def build_direction_output(
         timings,
     )
     primary = None
-    if (direction == "bearish" and engines.primary is not None
+    primary_direction = "bearish" if getattr(args, "direction", "both") == "both" else args.direction
+    if (direction == primary_direction and engines.primary is not None
             and direction in state.full_e_detectors and args.lifecycle_engine is not None):
-        primary = timed(timings, "PH/PL - Bearish", lambda: calculate_primary_structures(
-            args, engines, market, state, visibility, timings))
+        primary = timed(timings, f"PH/PL - {direction.title()}", lambda: calculate_primary_structures(
+            args, engines, market, state, visibility, timings, direction))
+        state.primary_result = primary
         visibility.stopalls = engines.primary.resolve_stopall_ownership(
             visibility.stopalls, primary, through_index=market.end_index,
         )
@@ -4376,6 +4599,104 @@ def build_direction_output(
     if primary is not None:
         payload.update(serialize_primary_structures(primary, market))
     return payload
+
+def merge_regime_outputs(regimes):
+    """Keep aggregate public arrays and independent historical render bounds."""
+    output = {}
+    grouped = {}
+    for direction, segment in regimes:
+        grouped.setdefault(direction, []).append(segment)
+    for direction, segments in grouped.items():
+        if len(segments) == 1:
+            output[direction] = segments[0]
+            continue
+        aggregate = dict(segments[-1])
+        # Array fields are finalized objects, never reconstructed by this merge.
+        keys = {key for segment in segments for key, value in segment.items()
+                if isinstance(value, list)}
+        for key in keys:
+            aggregate[key] = [row for segment in segments for row in segment.get(key, [])]
+        bridge_outputs = [segment.get("bridgeOutput", {}) for segment in segments]
+        if any(bridge_outputs):
+            bridge_keys = {key for item in bridge_outputs for key in item}
+            aggregate["bridgeOutput"] = {
+                key: [row for item in bridge_outputs for row in item.get(key, [])]
+                for key in bridge_keys
+            }
+        aggregate.pop("calculationEndTime", None)
+        aggregate["calculationSegments"] = segments
+        output[direction] = aggregate
+    return output
+
+
+def build_reversed_trend_outputs(args, engines, market, transition, timings):
+    """Alternate fresh directional regimes without carrying prior input/state."""
+    from copy import copy
+    regimes = []
+    current = market
+    incoming = None
+    current_direction = "bearish" if getattr(transition, "target_direction", "bullish") == "bullish" else "bullish"
+
+    def calculate(context, direction):
+        local_args = copy(args)
+        local_args.direction = direction
+        local_state = prepare_pipeline_state(local_args, engines, context, timings)
+        group = build_direction_output(direction, local_args, engines, context, local_state, timings)
+        return group, local_state
+
+    def publish(group, context, *, stopped=False):
+        group = absolute_payload_indexes(group, context.index_offset)
+        if context.index_offset != market.index_offset:
+            group["calculationStartTime"] = epoch(context.candles[0].timestamp)
+            group["calculationStartIndex"] = context.index_offset
+        if incoming is not None:
+            group["trendTransitions"] = [incoming]
+        if stopped:
+            end = epoch(current.candles[transition.index].timestamp)
+            group["calculationEndTime"] = end
+            group["primaryStatus"] = f"reversed-to-{transition.target_direction}"
+            for cycle in group.get("primaryCycles", []):
+                cycle["status"] = "stopped-on-trend-reversal"
+            for leg in group.get("matchingBehaviorLegs", []):
+                leg["capTime"] = min(leg["capTime"], end)
+        return group
+
+    while True:
+        boundary = transition.index
+        if not 0 < boundary < len(current.candles):
+            raise RuntimeError("A trend reversal must advance beyond its independent regime start.")
+        prefix = market_segment(current, 0, boundary)
+        has_history = prefix.start_index <= prefix.end_index
+        if not has_history:
+            prefix = replace(prefix, start_index=0, end_index=len(prefix.candles)-1)
+        history, historical_state = calculate(prefix, current_direction)
+        resolve = (engines.primary.resolve_primary_highs if current_direction == "bearish"
+                   else engines.primary.resolve_primary_lows)
+        confirmed = resolve(historical_state.primary_result, through_index=len(prefix.candles)-1)
+        if not any(point.number == 3 and point.source_time == transition.high.source_time
+                   and point.price == transition.level for point in confirmed):
+            raise RuntimeError("Primary3 reversal is not supported by its independent historical prefix.")
+        if not has_history:
+            def empty_lists(item):
+                if isinstance(item, list):
+                    return []
+                if isinstance(item, dict):
+                    return {key: empty_lists(value) for key, value in item.items()}
+                return item
+            history = empty_lists(history)
+        regimes.append((current_direction, publish(history, prefix, stopped=True)))
+        target = transition.target_direction
+        incoming = serialize_trend_transition(transition, current)
+        current = market_segment(current, boundary, len(current.candles),
+            initial_bullish_trend=target == "bullish", initial_bearish_trend=target == "bearish")
+        current_direction = target
+        group, state = calculate(current, current_direction)
+        transition = getattr(state.primary_result, "transition", None)
+        if transition is None or transition.index > current.end_index:
+            regimes.append((current_direction, publish(group, current)))
+            break
+    return merge_regime_outputs(regimes)
+
 
 def build_response_payload(
     args,
@@ -4422,6 +4743,15 @@ def build_response_payload(
         direction_payloads[direction] = build_direction_output(
             direction, args, engines, market, state, timings
         )
+    transition = getattr(state.primary_result,"transition",None)
+    if transition is not None and transition.index <= market.end_index:
+        payload["directions"] = build_reversed_trend_outputs(
+            args,engines,market,transition,timings)
+        candidates = [(segment.get("calculationStartIndex", -1), direction)
+            for direction, group in payload["directions"].items()
+            for segment in group.get("calculationSegments", [group])]
+        payload["activeDirection"] = max(candidates, default=(-1,
+            getattr(transition, "target_direction", "bullish")))[1]
     payload["timings"] = {
         "phasesMs": {
             label: round(duration, 2) for label, duration in timings.items()
@@ -8634,9 +8964,9 @@ def visible_a_zones(a_zones: Sequence[object], s_zones: Sequence[object]) -> lis
 
 ### 16.11 `pipeline/order_audit_engine.py` — Order / OrderAudit
 
-**SHA-256:** `f4e991a6a516ad84e0223c802f5baf611f5e20fb8d7965b9dcdf4ff949d89296`  
-**Bytes:** `89666`  
-**LF count:** `2175`
+**SHA-256:** `8e4da88b57a5a27f3a285c51ddeee2c396afa73de7a119c127ab30c2515494e4`  
+**Bytes:** `90511`  
+**LF count:** `2192`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/order_audit_engine.py -->
 ````python
@@ -8654,19 +8984,19 @@ from typing import Callable, Sequence
 
 from core_utils import as_decimal, order_identity, reaction_identity
 
-ORDER_AUDIT_ENGINE_VERSION = "1.7.1"
-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-10-24T23:30:27+03:30"
+ORDER_AUDIT_ENGINE_VERSION = "1.8.0"
+ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
 
 
 def relabel_primary_causes(causes, labels):
-    """Resolve PH aliases by physical source without changing Order provenance."""
+    """Resolve primary aliases by source without changing Order provenance."""
     result = []
     for cause in causes:
         row = deepcopy(cause)
         for name, source in (("parentType", "parentSourceTime"),
                              ("postBehaviorType", "postBehaviorSourceTime"),
                              ("anchorBehaviorType", "anchorBehaviorSourceTime")):
-            if str(row.get(name, "")).startswith("PH") and row.get(source) in labels:
+            if str(row.get(name, "")).startswith(("PH", "PL")) and row.get(source) in labels:
                 row[name] = labels[row[source]]
         if row not in result:
             result.append(row)
@@ -9652,8 +9982,8 @@ class OrderAuditEngineMixin:
 
 
     def _reparent_primary_high_causes(self, parent, stop_event, direct_identity):
-        """Replace only StopAll roles owned by an already confirmed PH."""
-        label = f"PH{parent.number}"
+        """Replace only StopAll roles owned by a confirmed primary point."""
+        label = f"{parent.kind}{parent.number}"
         source = (int(parent.source_index), parent.source_time)
         changed = False
         revoked = set()
@@ -9707,9 +10037,19 @@ class OrderAuditEngineMixin:
         """
         if self.direction != "bearish" or getattr(parent, "kind", None) != "PH":
             raise ValueError("Primary-High Order_A is specified for the bearish owner only.")
+        return self._register_primary_point(parent)
+
+    def register_primary_low(self, parent):
+        """Create native bullish-owner Order_A after a confirmed PL stop."""
+        if self.direction != "bullish" or getattr(parent, "kind", None) != "PL":
+            raise ValueError("Primary-Low Order_A is specified for the bullish owner only.")
+        return self._register_primary_point(parent)
+
+    def _register_primary_point(self, parent):
         left = bisect_right(self.lower_times, parent.decision_event_time)
         right = bisect_left(self.lower_times, self.range_end)
-        position = self._first_cross_position(left, right, as_decimal(parent.price), less=False)
+        position = self._first_cross_position(left, right, as_decimal(parent.price),
+                                              less=self.direction == "bullish")
         stop_event = self.lower_times[position] if position is not None else None
         direct = self._direct_parent_stop_order(
             stop_event, None, False, confirmation_after=stop_event,
@@ -9732,7 +10072,7 @@ class OrderAuditEngineMixin:
             }
             self.order_audit[identity] = entry
             self._index_order_audit_identity(identity, confirmation)
-        cause = ("parent-stop", f"PH{parent.number}", "", stop_event, parent.source_time)
+        cause = ("parent-stop", f"{parent.kind}{parent.number}", "", stop_event, parent.source_time)
         if cause not in entry["causes"]:
             entry["causes"].add(cause)
             self._invalidate_carried_order_caches()
@@ -9740,11 +10080,18 @@ class OrderAuditEngineMixin:
 
     def reconcile_primary_high_labels(self, highs):
         """Publish one final PH name without rediscovering or moving Orders."""
-        labels = {point.source_time: f"PH{point.number}" for point in highs}
+        self._reconcile_primary_labels(highs, "PH")
+
+    def reconcile_primary_low_labels(self, lows):
+        """Publish one final PL name without rediscovering or moving Orders."""
+        self._reconcile_primary_labels(lows, "PL")
+
+    def _reconcile_primary_labels(self, points, prefix):
+        labels = {point.source_time: f"{prefix}{point.number}" for point in points}
         changed = False
         for entry in self.order_audit.values():
             previous = entry.get("causes", set())
-            current = {(kind, labels.get(source, label) if str(label).startswith("PH") else label,
+            current = {(kind, labels.get(source, label) if str(label).startswith(prefix) else label,
                         family, event, source)
                        for kind, label, family, event, source in previous}
             if current != previous:
@@ -10820,17 +11167,18 @@ class SOrderAuditMixin:
 
 ### 16.12 `pipeline/PL_PH_detector.py` — Primary High / Low / Matching Behavior Leg
 
-**SHA-256:** `4c03c016762c55006cba98b9dd565a5e0d37c9420c6e0cacdd1a060d4e8bd989`  
-**Bytes:** `22048`  
-**LF count:** `490`
+**SHA-256:** `5107fe02c8314552f4c8e45bb84e23682e43d2d49d925cfdaf165eb6a30462d9`  
+**Bytes:** `29764`  
+**LF count:** `666`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/PL_PH_detector.py -->
 ````python
-"""Bearish Primary-High/Low state and the immutable matching behavior leg.
+"""Directional primary structure state and immutable matching behavior legs.
 
-Only the bearish algorithm has been specified. Native Reaction, Reset,
+The bullish path reflects the approved bearish primary state machine.
+Native Reaction, Reset,
 dominance, physical Order identity and stop geometry remain owned by their
-existing engines. No bullish primary calculation is inferred here.
+existing engines.
 """
 from __future__ import annotations
 
@@ -10845,8 +11193,8 @@ from core_utils import as_decimal
 from lifecycle_engine import advance_dominant_behavior
 from order_audit_engine import relabel_primary_causes
 
-PL_PH_VERSION = "1.2.2"
-PL_PH_LAST_MODIFIED = "2026-10-26T19:31:03+03:30"
+PL_PH_VERSION = "1.4.0"
+PL_PH_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -10896,6 +11244,21 @@ class MatchingBehaviorLeg:
     stop_event_time: datetime | None
 
 
+@dataclass(frozen=True, slots=True)
+class TrendTransition:
+    """The first strict stop of a confirmed primary3 ends every owner cycle."""
+    index: int
+    event_time: datetime
+    level: Decimal
+    high: PrimaryPoint
+    target_direction: str = "bullish"
+
+    @property
+    def point(self):
+        """Neutral stopped-point name; high remains positional compatibility."""
+        return self.high
+
+
 @dataclass(slots=True)
 class PrimaryResult:
     highs: list[PrimaryPoint] = field(default_factory=list)
@@ -10906,6 +11269,35 @@ class PrimaryResult:
     cycle_id: str | None = None
     cycles: list[PrimaryResult] = field(default_factory=list)
     qualification_event_time: datetime | None = None
+    transition: TrendTransition | None = None
+    direction: str = "bearish"
+
+
+def first_bullish_transition(chronology, primary):
+    """Select the earliest exact PH3 stop across all confirmed cycle owners."""
+    transitions = []
+    for point in resolve_primary_highs(primary, through_index=len(chronology.candles)-1):
+        if point.number != 3:
+            continue
+        crossed = strict_cross(chronology, point.decision_event_time, point.price, True)
+        if crossed is not None:
+            transitions.append(TrendTransition(*crossed, point.price, point))
+    return min(transitions, key=lambda item: (
+        item.event_time, item.high.source_index, item.high.cycle_id or ""
+    ), default=None)
+
+
+def first_bearish_transition(chronology, primary):
+    """Select the earliest confirmed physical PL3 stop across bullish cycles."""
+    transitions = []
+    for point in resolve_primary_lows(primary, through_index=len(chronology.candles)-1):
+        if point.number == 3:
+            crossed = strict_cross(chronology, point.decision_event_time, point.price, False)
+            if crossed is not None:
+                transitions.append(TrendTransition(*crossed, point.price, point, "bearish"))
+    return min(transitions, key=lambda item: (
+        item.event_time, item.high.source_index, item.high.cycle_id or ""
+    ), default=None)
 
 
 def resolve_primary_highs(primary, *, through_index):
@@ -10917,10 +11309,21 @@ def resolve_primary_highs(primary, *, through_index):
     Filter confirmations before reconciliation so future roles cannot rename
     an earlier requested horizon.
     """
+    return _resolve_primary_points(primary.highs, getattr(primary, "cycles", ()),
+                                   through_index, above=True)
+
+
+def resolve_primary_lows(primary, *, through_index):
+    """Reconcile bullish physical PL ownership without resetting local state."""
+    return _resolve_primary_points(primary.lows, getattr(primary, "cycles", ()),
+                                   through_index, above=False)
+
+
+def _resolve_primary_points(points, cycles, through_index, *, above):
     physical = {}
     cycle_order = {cycle.cycle_id: index for index, cycle in
-                   enumerate(getattr(primary, "cycles", ()))}
-    for point in primary.highs:
+                   enumerate(cycles)}
+    for point in points:
         if point.decision_index <= through_index:
             physical.setdefault((point.source_index, point.source_time), []).append(point)
     groups = sorted(physical.values(), key=lambda rows: (
@@ -10936,7 +11339,8 @@ def resolve_primary_highs(primary, *, through_index):
         identity = min(rows, key=role_order)
         winner = min(rows, key=lambda point: (-point.number, *role_order(point)))
         number = winner.number
-        if result and winner.price > result[-1].price:
+        if result and ((winner.price > result[-1].price) if above
+                       else (winner.price < result[-1].price)):
             number = max(number, result[-1].number + 1)
         result.append(replace(winner, number=number,
                               identity_source=identity.identity_source or identity))
@@ -10945,7 +11349,7 @@ def resolve_primary_highs(primary, *, through_index):
 
 def relabel_primary_order(order, highs):
     """Keep frozen structure Order snapshots aligned with final PH names."""
-    labels = {point.source_time: f"PH{point.number}" for point in highs}
+    labels = {point.source_time: f"{point.kind}{point.number}" for point in highs}
     return replace(order, audit_causes=tuple(relabel_primary_causes(order.audit_causes, labels)))
 
 
@@ -10958,7 +11362,8 @@ def formed_matching_legs(primary, *, through_index):
     for cycle in getattr(primary, "cycles", None) or [primary]:
         if cycle.mbl is None or cycle.mbl.trigger_index > through_index:
             continue
-        confirmation = min((point for point in cycle.highs
+        points = cycle.lows if getattr(primary, "direction", "bearish") == "bullish" else cycle.highs
+        confirmation = min((point for point in points
                             if point.decision_index <= through_index),
                            key=lambda point: point.decision_event_time, default=None)
         if confirmation is not None:
@@ -10971,7 +11376,8 @@ def resolve_stopall_ownership(stopalls, primary: PrimaryResult, *, through_index
     A future PH confirmation must not remove the StopAll from an earlier
     requested horizon. The supplied historical collection is never mutated.
     """
-    promoted = {(point.source_index, point.source_time) for point in primary.highs
+    points = primary.lows if getattr(primary, "direction", "bearish") == "bullish" else primary.highs
+    promoted = {(point.source_index, point.source_time) for point in points
                 if point.decision_index <= through_index}
     return [item for item in stopalls
             if (int(item.source_index), item.source_time) not in promoted]
@@ -11087,13 +11493,22 @@ def detect_bearish(
     pending = {}
     promoted_sources = set()
     activation_index = 0
+    transition = None
     while True:
         for index, checkpoint in enumerate(checkpoints):
             if index not in pending:
-                pending[index] = _next_point(chronology, checkpoint, orders)
+                pending[index] = _next_point(chronology, checkpoint, orders,
+                    before_event=transition.event_time if transition else None)
         decisions = [(point.decision_event_time, index)
                      for index, (_, point) in pending.items() if point is not None]
         decision = min(decisions, default=None)
+        next_activation = (activated[activation_index][0][1]
+            if activation_index < len(activated) else None)
+        if (transition is not None
+                and (decision is None or transition.event_time <= decision[0])
+                and (next_activation is None or transition.event_time <= next_activation)):
+            result.transition = transition
+            break
         if activation_index < len(activated) and (
             decision is None or activated[activation_index][0][1] <= decision[0]
         ):
@@ -11122,10 +11537,14 @@ def detect_bearish(
             if commit_high is not None:
                 commit_high(point)
                 pending.clear()
+            transition = first_bullish_transition(chronology, result)
 
-    result.cycles = [pending[index][0].result for index in range(len(checkpoints))]
+    result.cycles = [pending[index][0].result if index in pending else checkpoint.result
+                     for index, checkpoint in enumerate(checkpoints)]
     result.mbl = result.cycles[0].mbl
     result.status = result.cycles[-1].status
+    if result.transition is not None:
+        result.status = "reversed-to-bullish"
     physical_orders = {}
     for cycle in result.cycles:
         for order in cycle.post_pl3_orders:
@@ -11164,7 +11583,7 @@ def _activate_cycle(chronology, activation):
     return _CycleCheckpoint(result, reference_price, gate_index, cursor)
 
 
-def _next_point(chronology, checkpoint, orders):
+def _next_point(chronology, checkpoint, orders, *, before_event=None):
     """Prospect from committed state without changing shared native ownership.
 
     Cancel/seek transitions are replayable: a later global PH commitment may
@@ -11178,7 +11597,8 @@ def _next_point(chronology, checkpoint, orders):
     reference_price, floor = checkpoint.reference_price, result.mbl.price
     prospective = replace(checkpoint, result=result)
     # Every iteration consumes a strictly later RAW event. No arbitrary
-    # maximum PH/PL number or feedback-pass cap is part of this algorithm.
+    # feedback-pass cap is part of this algorithm. The PH3 transition is an
+    # authoritative event boundary, not an arbitrary loop limit.
     while True:
         high_level = result.highs[-1].price if result.highs else reference_price
         low_level = result.lows[-1].price if result.lows else floor
@@ -11196,6 +11616,9 @@ def _next_point(chronology, checkpoint, orders):
             phase = "PH" if up and (down is None or up[1] < down[1]) else "PL"
             gate_index, cursor = up if phase == "PH" else down
 
+        if before_event is not None and cursor >= before_event:
+            result.status = "waiting-for-trend-reversal"
+            return prospective, None
         number = high_number if phase == "PH" else low_number
         candidates = [item for item in orders(phase, number, gate_index, cursor)
                       if order_meets_structure_gate(phase, item.first_index,
@@ -11270,9 +11693,10 @@ class NativePrimaryOrders:
     structure crossings cannot manufacture physical Orders here.
     """
 
-    def __init__(self, chronology, groups, *, on_high=None):
+    def __init__(self, chronology, groups, *, on_high=None, direction="bearish"):
         self.chronology, self.groups = chronology, groups
         self.on_high = on_high
+        self.direction = direction
 
     def confirm_high(self, point):
         """Commit PH ownership before subsequent native Order selection."""
@@ -11281,6 +11705,7 @@ class NativePrimaryOrders:
 
     def __call__(self, kind, number, gate_index, event):
         owner = "bearish" if kind == "PH" else "bullish"
+        is_primary = kind == ("PL" if self.direction == "bullish" else "PH")
         physical_direction = self.chronology.opposite_direction(owner)
         eligible = []
         records = []
@@ -11290,12 +11715,13 @@ class NativePrimaryOrders:
             confirmation = self.chronology.reaction_confirmation(physical_direction, reaction)
             stopped = prepared["crossed"]
             causes = tuple(dict.fromkeys(cause["kind"] for cause in prepared["causes"]))
-            if not order_meets_structure_gate(kind, first, confirmation, gate_index, event):
+            if not order_meets_structure_gate("PH" if is_primary else "PL",
+                                             first, confirmation, gate_index, event):
                 continue
             # PL Order_A's first valid downward Reaction must be canonical.
-            if kind == "PL" and int(entry["reaction_number"]) <= 0:
+            if not is_primary and int(entry["reaction_number"]) <= 0:
                 continue
-            if kind == "PH" and number > 1 and "parent-stop" not in causes:
+            if is_primary and number > 1 and "parent-stop" not in causes:
                 continue
             records.append((prepared, first, breakout, confirmation, causes))
         direct = [row for row in records if "parent-stop" in row[4]]
@@ -11303,7 +11729,7 @@ class NativePrimaryOrders:
         for record in records:
             prepared, first, breakout, confirmation, causes = record
             reaction, entry, stopped = prepared["reaction"], prepared["entry"], prepared["crossed"]
-            if (kind == "PL" and "reset-leg" not in causes and record is not first_direct):
+            if (not is_primary and "reset-leg" not in causes and record is not first_direct):
                 continue
             if stopped is None or stopped[2] <= max(confirmation, event):
                 continue
@@ -11316,14 +11742,111 @@ class NativePrimaryOrders:
                 audit_causes=tuple(deepcopy(cause) for cause in prepared["causes"]),
             ))
         return eligible
+
+
+def _negate_price(value):
+    """Reflect a Decimal without context rounding, including long lexemes."""
+    return as_decimal(value).copy_negate()
+
+
+@dataclass(frozen=True, slots=True)
+class _ReflectedRow:
+    original: object
+
+    @property
+    def high(self):
+        return _negate_price(self.original.low)
+
+    @property
+    def low(self):
+        return _negate_price(self.original.high)
+
+
+class _ReflectedPriceIndex:
+    """Reuse immutable original RAW indexes rather than allocate a second tree."""
+    def __init__(self, original):
+        self.original = original
+
+    def first_greater(self, left, right, level):
+        return self.original.first_less(left, right, _negate_price(level))
+
+    def first_less(self, left, right, level):
+        return self.original.first_greater(left, right, _negate_price(level))
+
+
+class _ReflectedChronology:
+    def __init__(self, original):
+        self.candles = tuple(_ReflectedRow(row) for row in original.candles)
+        self.seconds = tuple(_ReflectedRow(row) for row in original.seconds)
+        self.times, self.second_times = original.times, original.second_times
+        self.lower_index = _ReflectedPriceIndex(original.lower_index)
+        self.main_index = original.main_index
+
+
+def _reflect_structure_order(order):
+    return replace(order,
+        direction="bearish" if order.direction == "bullish" else "bullish",
+        stop_level=_negate_price(order.stop_level),
+        box_top=_negate_price(order.box_bottom) if order.box_bottom is not None else None,
+        box_bottom=_negate_price(order.box_top) if order.box_top is not None else None)
+
+
+def detect_bullish(chronology, s_zones, e_zones, stopalls, orders):
+    """Apply the approved bullish mirror without reversing time or native state.
+
+    Only the primary state machine sees reflected price coordinates. Native
+    Orders and callbacks see original market prices, physical identities and
+    unchanged audit causes. Market candle colors and S/E families never swap.
+    """
+    point_cache = {}
+
+    def cycle_id(value):
+        return value.replace("bearish:cycle:", "bullish:cycle:", 1) if value else value
+
+    def point(item):
+        if id(item) not in point_cache:
+            point_cache[id(item)] = replace(item,
+                kind="PL" if item.kind == "PH" else "PH", price=_negate_price(item.price),
+                order=_reflect_structure_order(item.order), cycle_id=cycle_id(item.cycle_id),
+                identity_source=point(item.identity_source) if item.identity_source else None)
+        return point_cache[id(item)]
+
+    def status(value):
+        return value.replace("ph", "__primary_high__").replace("pl", "ph").replace(
+            "__primary_high__", "pl").replace("reversed-to-bullish", "reversed-to-bearish")
+
+    def result(item):
+        transition = item.transition
+        return replace(item, direction="bullish", highs=[point(row) for row in item.lows],
+            lows=[point(row) for row in item.highs],
+            mbl=replace(item.mbl, price=_negate_price(item.mbl.price)) if item.mbl else None,
+            cycle_id=cycle_id(item.cycle_id), status=status(item.status),
+            post_pl3_orders=[_reflect_structure_order(row) for row in item.post_pl3_orders],
+            cycles=[result(row) for row in item.cycles],
+            transition=(replace(transition, level=_negate_price(transition.level),
+                                high=point(transition.high), target_direction="bearish")
+                        if transition else None))
+
+    class ReflectedOrders:
+        def __call__(self, kind, number, gate, event):
+            actual_kind = "PL" if kind == "PH" else "PH"
+            return [_reflect_structure_order(row) for row in orders(actual_kind, number, gate, event)]
+
+        def confirm_high(self, item):
+            callback = getattr(orders, "confirm_high", None)
+            if callback is not None:
+                callback(point(item))
+
+    return result(detect_bearish(_ReflectedChronology(chronology), s_zones, e_zones,
+                                stopalls, ReflectedOrders()))
 ````
 <!-- EXACT-SOURCE-END:pipeline/PL_PH_detector.py -->
 
 ### 16.13 `pipeline/reaction_engine.py` — Reaction / Reset
 
-**SHA-256:** `f62f7e3c6480750068c4550a8489806030aac16f021f349930bd5efb3ce54198`  
-**Bytes:** `105073`  
-**LF count:** `2439`
+**SHA-256:** `2554a5609bb126206ad2b7c58eca6694d8b9623f3e5859487540fe9d49dad89b`  
+**Bytes:** `108353`  
+**LF count:** `2501`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/reaction_engine.py -->
 ````python
@@ -11347,9 +11870,9 @@ from typing import Iterable, Sequence
 from direction_policy import policy_for
 
 
-REACTION_ENGINE_VERSION = "9.8.1"
-REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.9.1"
-REACTION_ENGINE_LAST_MODIFIED = "2026-10-07 00:56:52 +03:30"
+REACTION_ENGINE_VERSION = "9.9.1"
+REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.11.0"
+REACTION_ENGINE_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
 
 _ORDER_GATE_CACHE_MAX_ENTRIES = 32_768
 
@@ -12722,9 +13245,14 @@ class UnifiedReactionDetector(DetectorBase):
         start_index: int,
         end_index: int,
         output_direction: str,
+        *,
+        initial_bullish_trend: bool = False,
+        initial_bearish_trend: bool = False,
     ) -> None:
         super().__init__(candles, one_second_candles, start_index, end_index)
         self.output_direction = output_direction
+        self.initial_bullish_trend = initial_bullish_trend
+        self.initial_bearish_trend = initial_bearish_trend
         # Directional helpers are created lazily: a bullish-only run must not
         # pay the BearishDetector mirroring cost and vice versa.
         self._bull: BullishDetector | None = None
@@ -12969,6 +13497,10 @@ class UnifiedReactionDetector(DetectorBase):
         )
 
     def _first_initial(self, direction: str) -> Candidate | None:
+        if direction == "bullish" and self.initial_bullish_trend:
+            return self._first_bullish_trend_reaction()
+        if direction == "bearish" and self.initial_bearish_trend:
+            return self._first_trend_reaction("bearish")
         initial_result = (
             self.bull.detect(first_only=True)
             if direction == "bullish"
@@ -12979,6 +13511,59 @@ class UnifiedReactionDetector(DetectorBase):
             if initial_result.reactions
             else None
         )
+
+    def _first_bullish_trend_reaction(self) -> Candidate | None:
+        """Keep the existing bullish bootstrap entry point."""
+        return self._first_trend_reaction("bullish")
+
+    def _first_trend_reaction(self, direction: str) -> Candidate | None:
+        """Bootstrap only the first Reaction of a newly isolated regime.
+
+        The boundary candle is eligible as First without an earlier context.
+        No previous leg/Reset boundary can invalidate this initial search.
+        Confirmation refinement and all later Reset handling remain native.
+        """
+        if self.start_index > self.end_index:
+            return None
+        bullish = direction == "bullish"
+        fixed_source = self.candles[self.start_index]
+        candidate = None
+        for index in range(self.start_index, self.end_index + 1):
+            candle = self.candles[index]
+            if candidate is None:
+                if ((candle.high > fixed_source.high) if bullish
+                        else (candle.low < fixed_source.low)):
+                    fixed_source = candle
+                if candle.tag == ("RED" if bullish else "GREEN"):
+                    top_source = fixed_source if bullish else candle
+                    bottom_source = candle if bullish else fixed_source
+                    candidate = Candidate(
+                        first_idx=index, first_time=candle.display_time,
+                        box_top_source_idx=top_source.index,
+                        box_top_source_time=top_source.display_time,
+                        box_top=top_source.high,
+                        box_bottom_source_idx=bottom_source.index,
+                        box_bottom_source_time=bottom_source.display_time,
+                        box_bottom=bottom_source.low, mode="A",
+                        leg_boundary_value=(self.candles[self.start_index].low if bullish
+                                            else self.candles[self.start_index].high),
+                    )
+                continue
+            if bullish and candle.low < candidate.box_bottom:
+                candidate.box_bottom = candle.low
+                candidate.box_bottom_source_idx = index
+                candidate.box_bottom_source_time = candle.display_time
+            elif not bullish and candle.high > candidate.box_top:
+                candidate.box_top = candle.high
+                candidate.box_top_source_idx = index
+                candidate.box_top_source_time = candle.display_time
+            if ((candle.high > candidate.box_top) if bullish
+                    else (candle.low < candidate.box_bottom)):
+                candidate.break_idx = index
+                candidate.break_time = candle.display_time
+                self._refine(direction, candidate, candle)
+                return candidate
+        return None
 
 
     def _first_direct_same_direction_after_reset(

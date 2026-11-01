@@ -151,8 +151,6 @@
       'docs/**',
       'engine/algorithms/**',
       '**/*.zip',
-      'engine/bridge/__init__.py',
-      'apps/chart/server/raw-integrity.js',
       '**/__pycache__/**',
       '**/*.pyc'
     )

@@ -13,7 +13,7 @@ import importlib.util
 import json
 import sys
 from bisect import bisect_left
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
@@ -39,10 +39,10 @@ from order_audit_engine import accepted_audit_entries, order_b_leg_identity
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.11.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.14.2"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-10-26T19:31:03+03:30"
-MBL_EXTENSION_CANDLES = 100
+TRADING_PIPELINE_VERSION = "1.13.0"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.16.0"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
+MBL_EXTENSION_CANDLES = 400
 
 TEHRAN = ZoneInfo("Asia/Tehran")
 
@@ -1593,6 +1593,69 @@ class MarketContext:
     chronology: object
     start_index: int
     end_index: int
+    index_offset: int = 0
+    initial_bullish_trend: bool = False
+    initial_bearish_trend: bool = False
+
+
+def market_segment(market, start, stop, *, initial_bullish_trend=None,
+                   initial_bearish_trend=None):
+    """Build a physically independent [start, stop) calculation context."""
+    if not 0 <= start < stop <= len(market.candles):
+        raise ValueError("Market segment must contain existing main candles.")
+    first_time = market.candles[start].timestamp
+    stop_time = (market.candles[stop].timestamp if stop < len(market.candles)
+                 else market.candles[-1].timestamp + market.chronology.timeframe)
+    left = bisect_left(market.chronology.second_times, first_time)
+    right = bisect_left(market.chronology.second_times, stop_time)
+    candles = [replace(row,index=index) for index,row in enumerate(market.candles[start:stop])]
+    seconds = [replace(row,index=index) for index,row in enumerate(market.seconds[left:right])]
+    chronology = type(market.chronology)(candles,seconds,
+        int(market.chronology.timeframe.total_seconds()))
+    return MarketContext(seconds,candles,chronology.lower_index,chronology,
+        max(0,market.start_index-start),min(stop-start-1,market.end_index-start),
+        market.index_offset+start,
+        (market.initial_bullish_trend and start == 0) if initial_bullish_trend is None
+            else initial_bullish_trend,
+        (market.initial_bearish_trend and start == 0) if initial_bearish_trend is None
+            else initial_bearish_trend)
+
+
+def absolute_payload_indexes(value, offset):
+    """Project independent local calculation indexes into the input's indexes."""
+    if isinstance(value,list):
+        return [absolute_payload_indexes(item,offset) for item in value]
+    if isinstance(value,dict):
+        return {key: (item+offset if (key == "index" or key.endswith("Index"))
+                and type(item) is int and item >= 0
+                else [part+offset if type(part) is int and part >= 0 else part for part in item]
+                if key in {"physicalOrderIdentity", "resetReactionIdentity"} and isinstance(item, (list, tuple))
+                else absolute_payload_indexes(item,offset))
+                for key,item in value.items()}
+    return value
+
+
+def serialize_trend_transition(transition, market):
+    """Expose the finalized event and actual fiftieth candle for presentation."""
+    source = market.candles[transition.index]
+    target_index = transition.index + 49
+    target = market.candles[target_index] if target_index < len(market.candles) else None
+    direction = getattr(transition, "target_direction", "bullish")
+    bullish = direction == "bullish"
+    prefix = "ph" if bullish else "pl"
+    return {
+        "id": f"{direction}:trend:{epoch(source.timestamp)}",
+        "direction": direction, "previousDirection": "bearish" if bullish else "bullish",
+        "sourceIndex": transition.index + market.index_offset,
+        "sourceTime": epoch(source.timestamp), "eventTime": epoch(transition.event_time),
+        "level": str(transition.level), f"{prefix}Number": 3,
+        f"{prefix}SourceIndex": transition.high.source_index + market.index_offset,
+        f"{prefix}SourceTime": epoch(transition.high.source_time),
+        "iconCandleIndex": target_index + market.index_offset if target is not None else None,
+        "iconCandleTime": epoch(target.timestamp) if target is not None else None,
+        "iconCandleHigh" if bullish else "iconCandleLow":
+            str(target.high if bullish else target.low) if target is not None else None,
+    }
 
 
 def parse_arguments(argv=None):
@@ -1806,6 +1869,7 @@ class PipelineState:
     invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]
     full_s_by_direction: dict[str, list[object]]
     full_s_candidates_by_direction: dict[str, list[object]]
+    primary_result: object | None = None
 
 
 @dataclass(slots=True)
@@ -2305,7 +2369,9 @@ def prepare_pipeline_state(
     if reusable_full_context:
         geometry_detectors = {
             direction: engine.UnifiedReactionDetector(
-                candles, seconds, 0, len(candles) - 1, direction
+                candles, seconds, 0, len(candles) - 1, direction,
+                initial_bullish_trend=market.initial_bullish_trend and direction == "bullish",
+                initial_bearish_trend=market.initial_bearish_trend and direction == "bearish",
             )
             for direction in ("bullish", "bearish")
         }
@@ -2338,7 +2404,7 @@ def prepare_pipeline_state(
         }
         calculation_directions = (
             ("bullish", "bearish")
-            if engines.primary is not None and "bearish" in directions
+            if engines.primary is not None
             else directions
         )
         for direction in calculation_directions:
@@ -2373,7 +2439,9 @@ def prepare_pipeline_state(
                 timings,
                 f"Reaction • {direction.title()}",
                 lambda direction=direction: engine.UnifiedReactionDetector(
-                    candles, seconds, 0, len(candles) - 1, direction
+                    candles, seconds, 0, len(candles) - 1, direction,
+                    initial_bullish_trend=market.initial_bullish_trend and direction == "bullish",
+                    initial_bearish_trend=market.initial_bearish_trend and direction == "bearish",
                 ).detect(),
             )
             for direction in required_directions
@@ -2948,21 +3016,32 @@ def serialize_primary_order(order, market, owner_direction):
 
 def serialize_primary_structures(primary, market):
     """Project finalized structure state without price or lifecycle decisions."""
-    from PL_PH_detector import resolve_primary_highs, relabel_primary_order, formed_matching_legs
-    final_highs = resolve_primary_highs(primary, through_index=market.end_index)
+    from PL_PH_detector import (resolve_primary_highs, resolve_primary_lows,
+                                relabel_primary_order, formed_matching_legs)
+    direction = getattr(primary, "direction", "bearish")
+    bullish = direction == "bullish"
+    offset = getattr(market, "index_offset", 0)
+    final_primary = (resolve_primary_lows if bullish else resolve_primary_highs)(
+        primary, through_index=market.end_index)
     cycles = getattr(primary, "cycles", None) or [primary]
     first_cycle_id = getattr(cycles[0], "cycle_id", None)
+    def cycle_identity(value):
+        if value and offset:
+            parts = value.split(":")
+            if len(parts) == 4 and parts[1] == "cycle":
+                return f"{parts[0]}:cycle:{int(parts[2])+offset}:{int(parts[3])+offset}"
+        return value
     def point(item):
-        order = relabel_primary_order(item.order, final_highs)
+        order = relabel_primary_order(item.order, final_primary)
         cycle_id = getattr(item, "cycle_id", None)
         origin = getattr(item, "identity_source", None) or item
-        identity = f"bearish:{origin.kind}:{origin.number}:{origin.trigger_index}:{origin.decision_index}"
+        identity = f"{direction}:{origin.kind}:{origin.number}:{origin.trigger_index+offset}:{origin.decision_index+offset}"
         origin_cycle_id = getattr(origin, "cycle_id", None)
         if origin_cycle_id is not None and origin_cycle_id != first_cycle_id:
-            identity += f":{origin_cycle_id}"
+            identity += f":{cycle_identity(origin_cycle_id)}"
         row = {
             "id": identity,
-            "direction": "bearish", "kind": item.kind, "number": item.number,
+            "direction": direction, "kind": item.kind, "number": item.number,
             "sourceIndex": item.source_index, "sourceTime": epoch(item.source_time),
             "price": str(item.price), "triggerIndex": item.trigger_index,
             "triggerTime": epoch(market.candles[item.trigger_index].timestamp),
@@ -2974,7 +3053,7 @@ def serialize_primary_structures(primary, market):
                                               "bearish" if item.kind == "PH" else "bullish"),
         }
         if cycle_id is not None:
-            row["cycleId"] = cycle_id
+            row["cycleId"] = cycle_identity(cycle_id)
         return row
     selected = lambda items: [point(item) for item in items
         if market.start_index <= item.source_index <= market.end_index
@@ -2989,8 +3068,8 @@ def serialize_primary_structures(primary, market):
     for cycle, confirmation in formed_matching_legs(primary, through_index=market.end_index):
         leg = cycle.mbl
         row = {
-            "id": f"bearish:MBL:{leg.reference_stopall_index}:{leg.second_behavior_index}",
-            "direction": "bearish", "sourceIndex": leg.source_index,
+            "id": f"{direction}:MBL:{leg.reference_stopall_index+offset}:{leg.second_behavior_index+offset}",
+            "direction": direction, "sourceIndex": leg.source_index,
             "sourceTime": epoch(leg.source_time), "price": str(leg.price),
             "referenceStopAllIndex": leg.reference_stopall_index,
             "secondBehaviorIndex": leg.second_behavior_index,
@@ -3009,36 +3088,42 @@ def serialize_primary_structures(primary, market):
             "stopEventTime": epoch(leg.stop_event_time) if leg.stop_index is not None and leg.stop_index <= market.end_index else None,
         }
         if getattr(cycle, "cycle_id", None) is not None:
-            row["cycleId"] = cycle.cycle_id
+            row["cycleId"] = cycle_identity(cycle.cycle_id)
         legs.append(row)
-    highs, lows = selected(final_highs), selected(primary.lows)
-    high_by_source = {(row["sourceIndex"], row["sourceTime"]): row for row in highs}
-    for row in highs:
+    highs = selected(primary.highs if bullish else final_primary)
+    lows = selected(final_primary if bullish else primary.lows)
+    main_rows = lows if bullish else highs
+    main_points = primary.lows if bullish else primary.highs
+    by_source = {(row["sourceIndex"], row["sourceTime"]): row for row in main_rows}
+    for row in main_rows:
         row["cycleIds"] = list(dict.fromkeys(
-            item.cycle_id for item in primary.highs
+            cycle_identity(item.cycle_id) for item in main_points
             if item.source_index == row["sourceIndex"] and epoch(item.source_time) == row["sourceTime"]
             and item.decision_index <= market.end_index and getattr(item, "cycle_id", None) is not None))
     cycle_rows = [{
-        "id": cycle.cycle_id, "direction": "bearish", "status": cycle.status,
+        "id": cycle_identity(cycle.cycle_id), "direction": direction, "status": cycle.status,
         "referenceStopAllIndex": cycle.mbl.reference_stopall_index,
         "secondBehaviorIndex": cycle.mbl.second_behavior_index,
         "triggerIndex": cycle.mbl.trigger_index,
         "triggerTime": epoch(market.candles[cycle.mbl.trigger_index].timestamp),
         "triggerEventTime": epoch(cycle.mbl.trigger_event_time),
         "highCount": len(selected(cycle.highs)),
-        "highIds": list(dict.fromkeys(high_by_source[(item.source_index, epoch(item.source_time))]["id"]
-            for item in cycle.highs if item.decision_index <= market.end_index
-            and (item.source_index, epoch(item.source_time)) in high_by_source)),
-        "lowCount": sum(row.get("cycleId") == cycle.cycle_id for row in lows),
+        "lowIds" if bullish else "highIds": list(dict.fromkeys(
+            by_source[(item.source_index, epoch(item.source_time))]["id"]
+            for item in (cycle.lows if bullish else cycle.highs) if item.decision_index <= market.end_index
+            and (item.source_index, epoch(item.source_time)) in by_source)),
+        "lowCount": len(selected(cycle.lows)) if bullish else
+            sum(row.get("cycleId") == cycle_identity(cycle.cycle_id) for row in lows),
     } for cycle in visible_cycles if getattr(cycle, "cycle_id", None) is not None]
     post_orders = []
     for cycle in visible_cycles:
         for order in cycle.post_pl3_orders:
             if order.stop_index > market.end_index:
                 continue
-            row = serialize_primary_order(relabel_primary_order(order, final_highs), market, "bullish")
+            row = serialize_primary_order(relabel_primary_order(order, final_primary), market,
+                                          "bearish" if bullish else "bullish")
             if getattr(cycle, "cycle_id", None) is not None:
-                row["cycleId"] = cycle.cycle_id
+                row["cycleId"] = cycle_identity(cycle.cycle_id)
             post_orders.append(row)
     qualification = getattr(primary, "qualification_event_time", None)
     horizon = market.candles[market.end_index].timestamp + market.chronology.timeframe
@@ -3047,19 +3132,22 @@ def serialize_primary_structures(primary, market):
               else "waiting-for-matching-behaviors")
     return {"primaryHighs": highs, "primaryLows": lows,
             "matchingBehaviorLegs": legs, "primaryStatus": status,
-            "primaryCycles": cycle_rows, "postPL3Orders": post_orders}
+            "primaryCycles": cycle_rows,
+            "postPH3Orders" if bullish else "postPL3Orders": post_orders}
 
 
-def calculate_primary_structures(args, engines, market, state, visibility, timings):
+def calculate_primary_structures(args, engines, market, state, visibility, timings,
+                                 direction="bearish"):
     """Connect finalized full-history behaviors to existing native Order services."""
-    groups = {"bearish": visibility.primary_groups}
+    opposite = market.chronology.opposite_direction(direction)
+    groups = {direction: visibility.primary_groups}
     opposite_state = calculate_direction_range_state(
-        "bullish", args, engines, market, state, timings
+        opposite, args, engines, market, state, timings
     )
     opposite_visibility = finalize_direction_visibility(
-        "bullish", args, engines, market, state, opposite_state, timings
+        opposite, args, engines, market, state, opposite_state, timings
     )
-    groups["bullish"] = opposite_visibility.primary_groups
+    groups[opposite] = opposite_visibility.primary_groups
     accepted_by_owner = {}
     for owner in ("bullish", "bearish"):
         detector = state.full_e_detectors[owner]
@@ -3072,26 +3160,31 @@ def calculate_primary_structures(args, engines, market, state, visibility, timin
             detector, 0, len(market.candles)-1, s_detector, accepted_sources
         )
     def commit_high(point):
-        detector = state.full_e_detectors["bearish"]
-        detector.register_primary_high(point)
-        groups["bearish"]["OrderAudit"] = engines.lifecycle.prepare_order_audit(
-            detector, 0, len(market.candles)-1, state.full_s_detectors["bearish"],
-            accepted_by_owner["bearish"],
+        detector = state.full_e_detectors[direction]
+        register = (detector.register_primary_low if direction == "bullish"
+                    else detector.register_primary_high)
+        register(point)
+        groups[direction]["OrderAudit"] = engines.lifecycle.prepare_order_audit(
+            detector, 0, len(market.candles)-1, state.full_s_detectors[direction],
+            accepted_by_owner[direction],
         )
 
-    resolver = engines.primary.NativePrimaryOrders(market.chronology, groups, on_high=commit_high)
-    primary = engines.primary.detect_bearish(
-        market.chronology, groups["bearish"]["S"], groups["bearish"]["E"],
-        groups["bearish"]["StopAll"], resolver,
+    resolver = engines.primary.NativePrimaryOrders(market.chronology, groups,
+        on_high=commit_high, direction=direction)
+    detect = engines.primary.detect_bullish if direction == "bullish" else engines.primary.detect_bearish
+    primary = detect(
+        market.chronology, groups[direction]["S"], groups[direction]["E"],
+        groups[direction]["StopAll"], resolver,
     )
-    state.full_e_detectors["bearish"].reconcile_primary_high_labels(
-        engines.primary.resolve_primary_highs(primary, through_index=market.end_index)
-    )
+    detector = state.full_e_detectors[direction]
+    resolve = engines.primary.resolve_primary_lows if direction == "bullish" else engines.primary.resolve_primary_highs
+    reconcile = detector.reconcile_primary_low_labels if direction == "bullish" else detector.reconcile_primary_high_labels
+    reconcile(resolve(primary, through_index=market.end_index))
     required = {order_identity(item["reaction"].first_idx, item["reaction"].break_idx)
                 for item in visibility.prepared_order_audit}
     visibility.prepared_order_audit = engines.lifecycle.prepare_order_audit(
-        state.full_e_detectors["bearish"], market.start_index, market.end_index,
-        state.full_s_detectors["bearish"], accepted_by_owner["bearish"], required,
+        detector, market.start_index, market.end_index,
+        state.full_s_detectors[direction], accepted_by_owner[direction], required,
     )
     return primary
 
@@ -3118,10 +3211,12 @@ def build_direction_output(
         timings,
     )
     primary = None
-    if (direction == "bearish" and engines.primary is not None
+    primary_direction = "bearish" if getattr(args, "direction", "both") == "both" else args.direction
+    if (direction == primary_direction and engines.primary is not None
             and direction in state.full_e_detectors and args.lifecycle_engine is not None):
-        primary = timed(timings, "PH/PL - Bearish", lambda: calculate_primary_structures(
-            args, engines, market, state, visibility, timings))
+        primary = timed(timings, f"PH/PL - {direction.title()}", lambda: calculate_primary_structures(
+            args, engines, market, state, visibility, timings, direction))
+        state.primary_result = primary
         visibility.stopalls = engines.primary.resolve_stopall_ownership(
             visibility.stopalls, primary, through_index=market.end_index,
         )
@@ -3135,6 +3230,104 @@ def build_direction_output(
     if primary is not None:
         payload.update(serialize_primary_structures(primary, market))
     return payload
+
+def merge_regime_outputs(regimes):
+    """Keep aggregate public arrays and independent historical render bounds."""
+    output = {}
+    grouped = {}
+    for direction, segment in regimes:
+        grouped.setdefault(direction, []).append(segment)
+    for direction, segments in grouped.items():
+        if len(segments) == 1:
+            output[direction] = segments[0]
+            continue
+        aggregate = dict(segments[-1])
+        # Array fields are finalized objects, never reconstructed by this merge.
+        keys = {key for segment in segments for key, value in segment.items()
+                if isinstance(value, list)}
+        for key in keys:
+            aggregate[key] = [row for segment in segments for row in segment.get(key, [])]
+        bridge_outputs = [segment.get("bridgeOutput", {}) for segment in segments]
+        if any(bridge_outputs):
+            bridge_keys = {key for item in bridge_outputs for key in item}
+            aggregate["bridgeOutput"] = {
+                key: [row for item in bridge_outputs for row in item.get(key, [])]
+                for key in bridge_keys
+            }
+        aggregate.pop("calculationEndTime", None)
+        aggregate["calculationSegments"] = segments
+        output[direction] = aggregate
+    return output
+
+
+def build_reversed_trend_outputs(args, engines, market, transition, timings):
+    """Alternate fresh directional regimes without carrying prior input/state."""
+    from copy import copy
+    regimes = []
+    current = market
+    incoming = None
+    current_direction = "bearish" if getattr(transition, "target_direction", "bullish") == "bullish" else "bullish"
+
+    def calculate(context, direction):
+        local_args = copy(args)
+        local_args.direction = direction
+        local_state = prepare_pipeline_state(local_args, engines, context, timings)
+        group = build_direction_output(direction, local_args, engines, context, local_state, timings)
+        return group, local_state
+
+    def publish(group, context, *, stopped=False):
+        group = absolute_payload_indexes(group, context.index_offset)
+        if context.index_offset != market.index_offset:
+            group["calculationStartTime"] = epoch(context.candles[0].timestamp)
+            group["calculationStartIndex"] = context.index_offset
+        if incoming is not None:
+            group["trendTransitions"] = [incoming]
+        if stopped:
+            end = epoch(current.candles[transition.index].timestamp)
+            group["calculationEndTime"] = end
+            group["primaryStatus"] = f"reversed-to-{transition.target_direction}"
+            for cycle in group.get("primaryCycles", []):
+                cycle["status"] = "stopped-on-trend-reversal"
+            for leg in group.get("matchingBehaviorLegs", []):
+                leg["capTime"] = min(leg["capTime"], end)
+        return group
+
+    while True:
+        boundary = transition.index
+        if not 0 < boundary < len(current.candles):
+            raise RuntimeError("A trend reversal must advance beyond its independent regime start.")
+        prefix = market_segment(current, 0, boundary)
+        has_history = prefix.start_index <= prefix.end_index
+        if not has_history:
+            prefix = replace(prefix, start_index=0, end_index=len(prefix.candles)-1)
+        history, historical_state = calculate(prefix, current_direction)
+        resolve = (engines.primary.resolve_primary_highs if current_direction == "bearish"
+                   else engines.primary.resolve_primary_lows)
+        confirmed = resolve(historical_state.primary_result, through_index=len(prefix.candles)-1)
+        if not any(point.number == 3 and point.source_time == transition.high.source_time
+                   and point.price == transition.level for point in confirmed):
+            raise RuntimeError("Primary3 reversal is not supported by its independent historical prefix.")
+        if not has_history:
+            def empty_lists(item):
+                if isinstance(item, list):
+                    return []
+                if isinstance(item, dict):
+                    return {key: empty_lists(value) for key, value in item.items()}
+                return item
+            history = empty_lists(history)
+        regimes.append((current_direction, publish(history, prefix, stopped=True)))
+        target = transition.target_direction
+        incoming = serialize_trend_transition(transition, current)
+        current = market_segment(current, boundary, len(current.candles),
+            initial_bullish_trend=target == "bullish", initial_bearish_trend=target == "bearish")
+        current_direction = target
+        group, state = calculate(current, current_direction)
+        transition = getattr(state.primary_result, "transition", None)
+        if transition is None or transition.index > current.end_index:
+            regimes.append((current_direction, publish(group, current)))
+            break
+    return merge_regime_outputs(regimes)
+
 
 def build_response_payload(
     args,
@@ -3181,6 +3374,15 @@ def build_response_payload(
         direction_payloads[direction] = build_direction_output(
             direction, args, engines, market, state, timings
         )
+    transition = getattr(state.primary_result,"transition",None)
+    if transition is not None and transition.index <= market.end_index:
+        payload["directions"] = build_reversed_trend_outputs(
+            args,engines,market,transition,timings)
+        candidates = [(segment.get("calculationStartIndex", -1), direction)
+            for direction, group in payload["directions"].items()
+            for segment in group.get("calculationSegments", [group])]
+        payload["activeDirection"] = max(candidates, default=(-1,
+            getattr(transition, "target_direction", "bullish")))[1]
     payload["timings"] = {
         "phasesMs": {
             label: round(duration, 2) for label, duration in timings.items()

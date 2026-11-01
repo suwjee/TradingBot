@@ -1,12 +1,15 @@
 ---
 title: TradingBot Local Verification
 document_role: procedure
-lifecycle: maintained
+lifecycle: historical
 owner: testing
-last_modified_at: 2026-09-30T10:14:08+03:30
+superseded_by: engineering/docs/development/testing.md
+last_modified_at: 2026-10-28T18:08:26+03:30
 ---
 
 # Component-local verification
+
+Historical snapshot retained for provenance. The maintained owner is [Testing](../../docs/development/testing.md). The body below records the former local-only test policy and must not be used as current runner or Git-tracking guidance.
 
 All test-only code is local and Git-ignored. A fresh clone needs the local test bundle before running these commands.
 

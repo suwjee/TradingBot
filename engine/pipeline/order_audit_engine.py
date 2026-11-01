@@ -12,19 +12,19 @@ from typing import Callable, Sequence
 
 from core_utils import as_decimal, order_identity, reaction_identity
 
-ORDER_AUDIT_ENGINE_VERSION = "1.7.1"
-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-10-24T23:30:27+03:30"
+ORDER_AUDIT_ENGINE_VERSION = "1.8.0"
+ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
 
 
 def relabel_primary_causes(causes, labels):
-    """Resolve PH aliases by physical source without changing Order provenance."""
+    """Resolve primary aliases by source without changing Order provenance."""
     result = []
     for cause in causes:
         row = deepcopy(cause)
         for name, source in (("parentType", "parentSourceTime"),
                              ("postBehaviorType", "postBehaviorSourceTime"),
                              ("anchorBehaviorType", "anchorBehaviorSourceTime")):
-            if str(row.get(name, "")).startswith("PH") and row.get(source) in labels:
+            if str(row.get(name, "")).startswith(("PH", "PL")) and row.get(source) in labels:
                 row[name] = labels[row[source]]
         if row not in result:
             result.append(row)
@@ -1010,8 +1010,8 @@ class OrderAuditEngineMixin:
 
 
     def _reparent_primary_high_causes(self, parent, stop_event, direct_identity):
-        """Replace only StopAll roles owned by an already confirmed PH."""
-        label = f"PH{parent.number}"
+        """Replace only StopAll roles owned by a confirmed primary point."""
+        label = f"{parent.kind}{parent.number}"
         source = (int(parent.source_index), parent.source_time)
         changed = False
         revoked = set()
@@ -1065,9 +1065,19 @@ class OrderAuditEngineMixin:
         """
         if self.direction != "bearish" or getattr(parent, "kind", None) != "PH":
             raise ValueError("Primary-High Order_A is specified for the bearish owner only.")
+        return self._register_primary_point(parent)
+
+    def register_primary_low(self, parent):
+        """Create native bullish-owner Order_A after a confirmed PL stop."""
+        if self.direction != "bullish" or getattr(parent, "kind", None) != "PL":
+            raise ValueError("Primary-Low Order_A is specified for the bullish owner only.")
+        return self._register_primary_point(parent)
+
+    def _register_primary_point(self, parent):
         left = bisect_right(self.lower_times, parent.decision_event_time)
         right = bisect_left(self.lower_times, self.range_end)
-        position = self._first_cross_position(left, right, as_decimal(parent.price), less=False)
+        position = self._first_cross_position(left, right, as_decimal(parent.price),
+                                              less=self.direction == "bullish")
         stop_event = self.lower_times[position] if position is not None else None
         direct = self._direct_parent_stop_order(
             stop_event, None, False, confirmation_after=stop_event,
@@ -1090,7 +1100,7 @@ class OrderAuditEngineMixin:
             }
             self.order_audit[identity] = entry
             self._index_order_audit_identity(identity, confirmation)
-        cause = ("parent-stop", f"PH{parent.number}", "", stop_event, parent.source_time)
+        cause = ("parent-stop", f"{parent.kind}{parent.number}", "", stop_event, parent.source_time)
         if cause not in entry["causes"]:
             entry["causes"].add(cause)
             self._invalidate_carried_order_caches()
@@ -1098,11 +1108,18 @@ class OrderAuditEngineMixin:
 
     def reconcile_primary_high_labels(self, highs):
         """Publish one final PH name without rediscovering or moving Orders."""
-        labels = {point.source_time: f"PH{point.number}" for point in highs}
+        self._reconcile_primary_labels(highs, "PH")
+
+    def reconcile_primary_low_labels(self, lows):
+        """Publish one final PL name without rediscovering or moving Orders."""
+        self._reconcile_primary_labels(lows, "PL")
+
+    def _reconcile_primary_labels(self, points, prefix):
+        labels = {point.source_time: f"{prefix}{point.number}" for point in points}
         changed = False
         for entry in self.order_audit.values():
             previous = entry.get("causes", set())
-            current = {(kind, labels.get(source, label) if str(label).startswith("PH") else label,
+            current = {(kind, labels.get(source, label) if str(label).startswith(prefix) else label,
                         family, event, source)
                        for kind, label, family, event, source in previous}
             if current != previous:

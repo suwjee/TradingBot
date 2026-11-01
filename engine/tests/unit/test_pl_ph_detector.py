@@ -74,10 +74,11 @@ def test_later_stopall_does_not_cancel_an_already_qualified_matching_leg():
     assert len(run(values,{("PH",8):[(10,)]}).highs) == 1
 
 
-def test_highs_continue_through_four_and_beyond():
+def test_third_high_strict_stop_ends_numbering_before_a_fourth_high():
     extra={12:("111","90"),13:("120","90"),16:("121","90"),17:("130","90"),20:("131","90"),21:("140","90")}
     result=run(fixture(initial(extra)),{("PH",8):[(10,)],("PH",12):[(14,)],("PH",16):[(18,)],("PH",20):[(22,)]})
-    assert [p.number for p in result.highs] == [1,2,3,4]
+    assert [p.number for p in result.highs] == [1,2,3]
+    assert result.transition.index == 20
 
 
 def test_first_stopped_order_wins_regardless_of_formation_order():
@@ -413,17 +414,17 @@ def serialized_leg(*, source=10, size=140, gap=False):
     return serialize_primary_structures(PrimaryResult(mbl=leg,highs=[high]),market)["matchingBehaviorLegs"][0]
 
 
-def test_mbl_extension_is_one_hundred_actual_candles_across_session_gap():
+def test_mbl_extension_is_four_hundred_actual_candles_across_session_gap():
     from zoneinfo import ZoneInfo
-    row=serialized_leg(gap=True)
-    expected=int((BASE+timedelta(seconds=176100)).replace(tzinfo=ZoneInfo("Asia/Tehran")).timestamp())
+    row=serialized_leg(gap=True,size=430)
+    expected=int((BASE+timedelta(seconds=185100)).replace(tzinfo=ZoneInfo("Asia/Tehran")).timestamp())
     assert row["capTime"]==expected
 
 
-def test_mbl_extension_extrapolates_one_hundred_slots_when_history_ends():
+def test_mbl_extension_extrapolates_four_hundred_slots_when_history_ends():
     from zoneinfo import ZoneInfo
     row=serialized_leg(source=28,size=30)
-    expected=int((BASE+timedelta(seconds=3840)).replace(tzinfo=ZoneInfo("Asia/Tehran")).timestamp())
+    expected=int((BASE+timedelta(seconds=12840)).replace(tzinfo=ZoneInfo("Asia/Tehran")).timestamp())
     assert row["capTime"]==expected
 
 

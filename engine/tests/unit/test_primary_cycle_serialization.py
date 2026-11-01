@@ -96,7 +96,7 @@ def test_cycle_metadata_and_leg_visibility_follow_each_activation_horizon():
     assert payload["primaryCycles"][0]["status"]=="waiting-for-structure-break"
     assert payload["primaryCycles"][0]["highCount"]==1
     assert payload["primaryStatus"]=="waiting-for-structure-break"
-    assert payload["matchingBehaviorLegs"][0]["capTime"]-payload["matchingBehaviorLegs"][0]["sourceTime"]==3000
+    assert payload["matchingBehaviorLegs"][0]["capTime"]-payload["matchingBehaviorLegs"][0]["sourceTime"]==12000
 
 
 def test_post_pl3_order_usage_retains_each_independent_cycle_identity():

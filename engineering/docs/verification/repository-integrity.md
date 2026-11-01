@@ -9,7 +9,7 @@ scope:
   - generated-content
   - archive
   - verification
-last_modified_at: 2026-10-26T20:53:36+03:30
+last_modified_at: 2026-10-28T18:08:26+03:30
 ---
 
 # TradingBot Repository Integrity
@@ -431,6 +431,8 @@ The verifier implements machine-checkable portions of the current governance/int
 Historical/archive evidence, Graphify output, Algorithm References, release manifests/evidence, lockfiles, and generated verification evidence are not subjected to general maintained-document snapshot heuristics. The gate does not encode current Engine file counts, test counts, repository totals, Source hashes, Reference versions, package versions, or Git HEAD as durable truth.
 
 The gate intentionally does **not** decide trading semantics, validate Reaction/Blue/A/S/E/Order correctness, read secret contents, scan RAW payload contents, replace the Testing owner, replace Algorithm Reference Maintenance, or replace the broader comprehensive semantic/manual documentation audit.
+
+Per-document metadata, link, and snapshot checks discover Markdown under `engineering/docs/`, plus the root README when its metadata marks it maintained. Root AGENTS links and required repository/roadmap paths also receive their explicit structural checks. Archive and verification bodies are outside that per-document surface. Maintained archive navigation and lifecycle labels in superseded historical documents therefore require manual review; a full-mode PASS does not establish their metadata, links, or Source accuracy.
 
 ### Tests and CI
 

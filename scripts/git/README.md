@@ -3,7 +3,7 @@ title: TradingBot Release Operations
 document_role: procedure
 lifecycle: maintained
 owner: release-tooling
-last_modified_at: 2026-10-26T19:57:46+03:30
+last_modified_at: 2026-11-01T20:51:27+03:30
 ---
 
 # TradingBot release operations
@@ -42,7 +42,7 @@ The main release stops if an excluded artifact is already tracked, including one
 
 `production` uses a dependency-derived runtime inventory from the exact committed main SHA. Every eligible file under the runtime-owned `apps/chart`, `engine`, and `scripts` roots is included, even if it is not imported yet. Import traversal validates dependencies and adds referenced paths; it does not decide whether a new runtime file is eligible. Tests, engineering evidence, Algorithm References, ZIP snapshots, local chart state, credentials, dependencies, and disposable artifacts remain excluded from production. The workflow replaces only a temporary worktree snapshot with the selected paths and checks policy, sensitive markers, PowerShell and JavaScript syntax, Python AST and bridge help, `npm ci`, and the chart build.
 
-A new `engine/pipeline/xyz.py`, a new configuration file, or a renamed runtime folder is picked up automatically. Additions, modifications, renames, and deletions appear in the branch previews. Main includes all eligible project files; eligible files accidentally matching `.gitignore` are explicitly staged after policy and sensitive-content checks. Individual detector filenames are not a permanent production allowlist.
+A new `engine/pipeline/xyz.py`, a new configuration file, or a renamed runtime folder is picked up automatically. Runtime package markers and helpers remain eligible even before a caller imports them; exclusions describe non-runtime categories rather than individual source filenames. Additions, modifications, renames, and deletions appear in the branch previews. Main includes all eligible project files; eligible files accidentally matching `.gitignore` are explicitly staged after policy and sensitive-content checks. Individual detector filenames are not a permanent production allowlist.
 
 The production inventory is passed to Git as a UTF-8, NUL-delimited file of literal paths. Its size is independent of Windows' native command-line length limit, and filenames containing spaces, Unicode, or brackets retain their exact identities.
 

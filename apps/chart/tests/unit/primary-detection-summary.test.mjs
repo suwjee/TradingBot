@@ -22,6 +22,9 @@ test("primary summary explains all published waiting and terminal statuses", asy
     ["waiting-for-structure-break", "Waiting for price to cross the latest PH or PL level."],
     ["waiting-for-pl-order-stop", "Waiting for a valid PL order to stop."],
     ["post-pl3-orders-only", "Evaluating valid orders after PL-3."],
+    ["post-ph3-orders-only", "Evaluating valid orders after PH-3."],
+    ["reversed-to-bullish", "Bullish trend started; bearish calculation stopped."],
+    ["reversed-to-bearish", "Bearish trend started; bullish calculation stopped."],
     ["ambiguous-raw-boundary-order", "The available RAW candles cannot determine which event happened first."],
   ];
   for (const [primaryStatus, expected] of cases) assert.equal(primaryDetectionSummary({ primaryStatus }).statusLabel, expected);

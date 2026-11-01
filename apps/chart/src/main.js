@@ -6,7 +6,7 @@ import {
 import "./platform/browser-compat.js";
 import { icon } from "./ui/icons.js";
 import { drawingArray, normalizeHistorySnapshot, CHART_TIMEFRAME_KEY, restoredTimeframe, indicatorControlId } from "./chart/state.js";
-import { PRIMARY_VISUAL_DEFAULTS, primaryVisualObjects, drawPrimaryStructures } from "./chart/primary-structure.js";
+import { PRIMARY_VISUAL_DEFAULTS, primaryVisualObjects, drawPrimaryStructures, drawTrendTransitions, clipHistoricalHitBoxes, indicatorCalculationSegments } from "./chart/primary-structure.js";
 import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart/lod.js";
 import { coordinateToRawTime, createViewAnchorCache, rawTimeToCoordinate, selectDensityMode } from "./chart/view-transform.js";
 import { updateStageAggregate } from "./chart/progress.js";
@@ -1114,8 +1114,8 @@ $(".indicator-body").innerHTML = `
     </div>
     </section>
     <section class="style-group" data-style-group="primary"><button type="button" class="style-group-header" aria-expanded="true"><span><strong>PH/PL</strong><small>Primary High • Primary Low • MBL</small></span><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div class="style-group-body">
-      ${styleModule("primary-arrow", "Primary arrows", [appearancePopup("primary-arrow", "Primary arrow appearance", "Arrow color and size", [swatchRow([["primaryArrowColor", "Arrow and label color", "color", "#056656"]]), rangeRow("primaryArrowSize", "Arrow size", 4, 32, 12, "px")], ["primaryArrowColor", "primaryArrowSize"])])}
-      ${styleModule("primary-circle", "Primary circles", [appearancePopup("primary-circle", "Primary circle appearance", "Circle color, opacity and radius", [swatchRow([["primaryCircleColor", "Circle and label color", "color", "#ec407a"]]), rangeRow("primaryCircleOpacity", "Circle opacity", 0, 100, 100, "%"), rangeRow("primaryCircleRadius", "Circle radius", 4, 28, 12, "px")], ["primaryCircleColor", "primaryCircleOpacity", "primaryCircleRadius"])])}
+      ${styleModule("primary-arrow", "Primary arrows", [appearancePopup("primary-arrow", "Primary arrow appearance", "PH color and arrow size", [swatchRow([["primaryArrowColor", "PH marker and label color", "color", "#056656"]]), rangeRow("primaryArrowSize", "Arrow size", 4, 32, 12, "px")], ["primaryArrowColor", "primaryArrowSize"])])}
+      ${styleModule("primary-circle", "Primary circles", [appearancePopup("primary-circle", "Primary circle appearance", "PL color, circle opacity and radius", [swatchRow([["primaryCircleColor", "PL marker and label color", "color", "#ec407a"]]), rangeRow("primaryCircleOpacity", "Circle opacity", 0, 100, 100, "%"), rangeRow("primaryCircleRadius", "Circle radius", 4, 28, 4, "px")], ["primaryCircleColor", "primaryCircleOpacity", "primaryCircleRadius"])])}
       ${styleModule("primary-label", "Primary labels and spacing", [fontSizeRow("primaryLabelSize", "Label font size", 12), rangeRow("primaryGap", "Distance from candle", 0, 48, 12, "px"), rangeRow("primaryLabelGap", "Distance from marker", 0, 48, 10, "px")], ["primaryLabelSize", "primaryGap", "primaryLabelGap"])}
       ${styleModule("mbl", "Matching behavior leg", [appearancePopup("mbl", "MBL appearance", "Line, label and dotted style", [swatchRow([["mblColor", "Line and label color", "color", "#b22833"]]), widthRow("mblWidth", "Line width", 2), lineStyleRow("mblLineStyle", "dot"), fontSizeRow("mblSize", "Label font size", PRIMARY_VISUAL_DEFAULTS.mblSize)], ["mblColor", "mblWidth", "mblLineStyle", "mblSize"])])}
     </div></section>
@@ -3219,9 +3219,10 @@ function drawIndicator() {
   if (!state.indicator.enabled || !state.indicator.results) return;
   const settings = state.indicator.settings,
     timeframe = Number(state.indicator.results.timeframe || state.tf);
-  for (const direction of Object.keys(state.indicator.results.directions)) {
-    const group = state.indicator.results.directions[direction],
-      bullish = direction === "bullish",
+  for (const { direction, group, objectOffsets } of indicatorCalculationSegments(state.indicator.results)) {
+    ctx.save();
+    const firstHitIndex = state.indicator.hitBoxes.length;
+    const bullish = direction === "bullish",
       eSourceIndices = group.__eSourceIndices ||= new Set(
         (group.eZones || []).map((zone) => Number(zone.sourceIndex)),
       ),
@@ -3237,6 +3238,13 @@ function drawIndicator() {
       border = bullish ? settings.bullBorder : settings.bearBorder,
       opacity = (bullish ? settings.bullOpacity : settings.bearOpacity) / 100,
       width = bullish ? settings.bullWidth : settings.bearWidth;
+    const historicalEndX = group.calculationEndTime != null
+      ? indicatorTimeToCoordinate(group.calculationEndTime) : null;
+    if (Number.isFinite(historicalEndX)) {
+      ctx.beginPath();
+      ctx.rect(0, 0, Math.max(0, historicalEndX), canvas.clientHeight);
+      ctx.clip();
+    }
     let count = 0,
       lastFirst = -1,
       resetCursor = 0,
@@ -3272,7 +3280,7 @@ function drawIndicator() {
         count = restart ? 1 : count + 1;
       } else count++;
       lastFirst = reaction.firstIndex;
-      const reactionObjectId = `indicator:${direction}:reaction:${reactionIndex}`;
+      const reactionObjectId = `indicator:${direction}:reaction:${reactionIndex + objectOffsets.reactions}`;
       if (!settings.reactionVisible || !indicatorObjectVisible(reactionObjectId)) continue;
       const reactionObject = indicatorObject(reactionObjectId);
       const startTime = bullish
@@ -3331,7 +3339,7 @@ function drawIndicator() {
     }
     if (settings.blueLineEnabled) {
       for (const [blueIndex, blueLine] of (group.blueLines || []).entries()) {
-        const blueObjectId = `indicator:${direction}:blue:${blueIndex}`,
+        const blueObjectId = `indicator:${direction}:blue:${blueIndex + objectOffsets.blueLines}`,
           blueObject = indicatorObject(blueObjectId);
         if (blueObject?.hidden) continue;
         const x1 = indicatorTimeToCoordinate(blueLine.startTime),
@@ -3357,7 +3365,7 @@ function drawIndicator() {
       }
     }
     for (const [zoneIndex, zone] of (group.aZones || []).entries()) {
-      const labelObject = indicatorObject(`indicator:${direction}:a:${zoneIndex}`);
+      const labelObject = indicatorObject(`indicator:${direction}:a:${zoneIndex + objectOffsets.aZones}`);
       if (!settings.aVisible) continue;
       if (labelObject?.hidden) continue;
       if (
@@ -3370,7 +3378,7 @@ function drawIndicator() {
         y = series.priceToCoordinate(+zone.price);
       if (x == null || y == null) continue;
       const shifted = offsetIndicatorPoint(labelObject, x, bullish ? y + settings.aGap : y - settings.aGap);
-      state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:a:${zoneIndex}`, shape: "point", x: shifted.x, y: shifted.y, radius: 14 });
+      state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:a:${zoneIndex + objectOffsets.aZones}`, shape: "point", x: shifted.x, y: shifted.y, radius: 14 });
       ctx.save();
       ctx.fillStyle = labelObject?.customized
         ? labelObject.color
@@ -3385,8 +3393,8 @@ function drawIndicator() {
     }
     for (const [zoneIndex, zone] of (group.sZones || []).entries()) {
       const hasOrder = zone.calculationValid !== false && zone.orderFirstTime != null;
-      const orderObject = indicatorObject(`indicator:${direction}:s-order:${zoneIndex}`),
-        labelObject = indicatorObject(`indicator:${direction}:s:${zoneIndex}`);
+      const orderObject = indicatorObject(`indicator:${direction}:s-order:${zoneIndex + objectOffsets.sZones}`),
+        labelObject = indicatorObject(`indicator:${direction}:s:${zoneIndex + objectOffsets.sZones}`);
       const orderBullish = zone.orderDirection === "bullish",
         orderStartTime = orderBullish
           ? zone.orderBoxTopSourceTime
@@ -3401,7 +3409,7 @@ function drawIndicator() {
           right = Math.max(shifted.x1, shifted.x2),
           top = Math.min(shifted.y1, shifted.y2),
           bottom = Math.max(shifted.y1, shifted.y2);
-        state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:s-order:${zoneIndex}`, shape: "rect", left, right, top, bottom });
+        state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:s-order:${zoneIndex + objectOffsets.sZones}`, shape: "rect", left, right, top, bottom });
         ctx.save();
         ctx.fillStyle = rgba(orderObject?.customized ? orderObject.fill : settings.orderFill, orderObject?.customized ? orderObject.opacity : settings.orderOpacity / 100);
         ctx.strokeStyle = orderObject?.customized ? orderObject.color : settings.orderColor;
@@ -3421,7 +3429,7 @@ function drawIndicator() {
         y = series.priceToCoordinate(+zone.price);
       if (x == null || y == null) continue;
       const shiftedLabel = offsetIndicatorPoint(labelObject, x, bullish ? y + settings.sGap : y - settings.sGap);
-      state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:s:${zoneIndex}`, shape: "point", x: shiftedLabel.x, y: shiftedLabel.y, radius: 14 });
+      state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:s:${zoneIndex + objectOffsets.sZones}`, shape: "point", x: shiftedLabel.x, y: shiftedLabel.y, radius: 14 });
       if (eSourceIndices.has(Number(zone.sourceIndex)) || stopAllSourceIndices.has(Number(zone.sourceIndex))) continue;
       if (!settings.sVisible) continue;
       if (labelObject?.hidden) continue;
@@ -3440,8 +3448,8 @@ function drawIndicator() {
       ctx.restore();
     }
     for (const [zoneIndex, zone] of (group.eZones || []).entries()) {
-      const orderObject = indicatorObject(`indicator:${direction}:e-order:${zoneIndex}`),
-        labelObject = indicatorObject(`indicator:${direction}:e:${zoneIndex}`);
+      const orderObject = indicatorObject(`indicator:${direction}:e-order:${zoneIndex + objectOffsets.eZones}`),
+        labelObject = indicatorObject(`indicator:${direction}:e:${zoneIndex + objectOffsets.eZones}`);
       const orderBullish = zone.orderDirection === "bullish",
         orderStartTime = orderBullish
           ? zone.orderBoxTopSourceTime
@@ -3456,7 +3464,7 @@ function drawIndicator() {
           right = Math.max(shifted.x1, shifted.x2),
           top = Math.min(shifted.y1, shifted.y2),
           bottom = Math.max(shifted.y1, shifted.y2);
-        state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:e-order:${zoneIndex}`, shape: "rect", left, right, top, bottom });
+        state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:e-order:${zoneIndex + objectOffsets.eZones}`, shape: "rect", left, right, top, bottom });
         ctx.save();
         ctx.fillStyle = rgba(orderObject?.customized ? orderObject.fill : settings.orderFill, orderObject?.customized ? orderObject.opacity : settings.orderOpacity / 100);
         ctx.strokeStyle = orderObject?.customized ? orderObject.color : settings.orderColor;
@@ -3476,7 +3484,7 @@ function drawIndicator() {
         y = series.priceToCoordinate(+zone.price);
       if (x == null || y == null) continue;
       const shiftedLabel = offsetIndicatorPoint(labelObject, x, bullish ? y + settings.eGap : y - settings.eGap);
-      state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:e:${zoneIndex}`, shape: "point", x: shiftedLabel.x, y: shiftedLabel.y, radius: 14 });
+      state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:e:${zoneIndex + objectOffsets.eZones}`, shape: "point", x: shiftedLabel.x, y: shiftedLabel.y, radius: 14 });
       if (!settings.eVisible) continue;
       if (labelObject?.hidden) continue;
       ctx.save();
@@ -3492,9 +3500,9 @@ function drawIndicator() {
       ctx.restore();
     }
     for (const [zoneIndex, zone] of (group.stopAlls || []).entries()) {
-      const objectId = `indicator:${direction}:stopall:${zoneIndex}`,
+      const objectId = `indicator:${direction}:stopall:${zoneIndex + objectOffsets.stopAlls}`,
         object = indicatorObject(objectId),
-        orderObject = indicatorObject(`indicator:${direction}:stopall-order:${zoneIndex}`),
+        orderObject = indicatorObject(`indicator:${direction}:stopall-order:${zoneIndex + objectOffsets.stopAlls}`),
         orderBullish = zone.orderDirection === "bullish",
         orderStartTime = orderBullish
           ? zone.orderBoxTopSourceTime
@@ -3511,7 +3519,7 @@ function drawIndicator() {
           right = Math.max(shifted.x1, shifted.x2),
           top = Math.min(shifted.y1, shifted.y2),
           bottom = Math.max(shifted.y1, shifted.y2);
-        state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:stopall-order:${zoneIndex}`, shape: "rect", left, right, top, bottom });
+        state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:stopall-order:${zoneIndex + objectOffsets.stopAlls}`, shape: "rect", left, right, top, bottom });
         ctx.save();
         ctx.fillStyle = rgba(orderObject?.customized ? orderObject.fill : settings.orderFill, orderObject?.customized ? orderObject.opacity : settings.orderOpacity / 100);
         ctx.strokeStyle = orderObject?.customized ? orderObject.color : settings.orderColor;
@@ -3636,7 +3644,7 @@ function drawIndicator() {
           parentStopIndex - parentSourceIndex <= 350
         )
           continue;
-        const objectId = `indicator:${direction}:e-stop:${zoneIndex}`,
+        const objectId = `indicator:${direction}:e-stop:${zoneIndex + objectOffsets.eZones}`,
           stopObject = indicatorObject(objectId);
         if (stopObject?.hidden) continue;
         const x1 = indicatorTimeToCoordinate(zone.parentSourceTime),
@@ -3683,6 +3691,16 @@ function drawIndicator() {
       offsetRect: offsetIndicatorRect,
       onHit: (hit) => state.indicator.hitBoxes.push(hit),
     });
+    if (Number.isFinite(historicalEndX)) {
+      state.indicator.hitBoxes.push(...clipHistoricalHitBoxes(
+        state.indicator.hitBoxes.splice(firstHitIndex), historicalEndX));
+    }
+    ctx.restore();
+    drawTrendTransitions(ctx, group, {
+      timeToX: indicatorTimeToCoordinate,
+      priceToY: (price) => series.priceToCoordinate(price),
+      height: canvas.clientHeight,
+    });
   }
 }
 function drawIndicatorSelection() {
@@ -3692,6 +3710,11 @@ function drawIndicatorSelection() {
   );
   if (!hit) return;
   ctx.save();
+  if (Number.isFinite(hit.clipRight)) {
+    ctx.beginPath();
+    ctx.rect(0, 0, Math.max(0, hit.clipRight), canvas.clientHeight);
+    ctx.clip();
+  }
   ctx.strokeStyle = "#3157d5";
   ctx.lineWidth = 1;
   ctx.setLineDash([3, 3]);
@@ -3852,6 +3875,7 @@ function indicatorHitTest(p) {
     const hit = state.indicator.hitBoxes[index],
       item = indicatorObject(hit.objectId);
     if (hit.viewRevision !== state.chartViewRevision) continue;
+    if (hit.clipRight != null && p.x > hit.clipRight) continue;
     if (!item) continue;
     if (hit.shape === "point" && Math.hypot(p.x - hit.x, p.y - hit.y) <= (hit.radius || 12))
       return item;

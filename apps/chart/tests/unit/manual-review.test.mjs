@@ -72,12 +72,24 @@ test("primary report colors follow chart defaults direction appearance and objec
   assert.equal(reviewColor(ph), "#056656");
   assert.equal(reviewColor(pl), "#ec407a");
   assert.equal(reviewColor(mbl), "#b22833");
-  assert.equal(reviewColor(record("primaryHighs", "PH", "bullish")), "#ec407a");
-  assert.equal(reviewColor(record("primaryLows", "PL", "bullish")), "#056656");
+  assert.equal(reviewColor(record("primaryHighs", "PH", "bullish")), "#056656");
+  assert.equal(reviewColor(record("primaryLows", "PL", "bullish")), "#ec407a");
   assert.equal(reviewColor(ph, { settings: { primaryArrowColor: "#123456" } }), "#123456");
   assert.equal(reviewColor(ph, { indicatorObjects: [
     { id: "indicator:bearish:primary:PH:point", customized: true, color: "#abcdef" },
   ] }), "#abcdef");
+});
+
+test("repeated regime metadata never creates extra manual-review records or filters", async () => {
+  const first = { reactions: [{ firstTime: 100 }], calculationEndTime: 150 };
+  const last = { reactions: [{ firstTime: 200 }], calculationStartTime: 200 };
+  const group = { reactions: [...first.reactions, ...last.reactions],
+    calculationSegments: [first, last] };
+  const records = reviewRecords({ directions: { bearish: group } });
+  assert.equal(records.length, 2);
+  assert.deepEqual(records.map(row => row.group), ["reactions", "reactions"]);
+  const { body } = await buildReviewBody({ directions: { bearish: group } });
+  assert.doesNotMatch(body, /data-filter-family="calculationSegments"/);
 });
 
 test("default report controls and rows hide Reaction Reset and Blue Line only", async () => {
