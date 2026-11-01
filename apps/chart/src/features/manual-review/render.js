@@ -167,7 +167,7 @@ export function reviewRecords(payload) {
   const records = [];
   for (const [direction, groups] of Object.entries(payload.directions || {})) {
     for (const [group, rows] of Object.entries(groups)) {
-      if (!Array.isArray(rows) || group === "primaryCycles") continue;
+      if (!Array.isArray(rows) || group === "primaryCycles" || group === "calculationSegments") continue;
       rows.forEach((row, index) => {
         const epoch = row?.[collections[group]?.[1] || "sourceTime"];
         records.push({ id: `${direction}:${group}:${index}`, direction, group, row, index, groups,
