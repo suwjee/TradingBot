@@ -3188,6 +3188,8 @@ function indicatorTimeToCoordinate(time) {
   return anchorX + ((target - Number(anchor.time)) / timeframe) * spacing;
 }
 function drawIndicator() {
+  // Keep nullish and finite coordinate guards allocation-free during redraw.
+  // These comparisons preserve Array#some checks for all numeric edge cases.
   state.indicator.hitBoxes = [];
   if (!state.indicator.enabled || !state.indicator.results) return;
   const settings = state.indicator.settings,
@@ -3263,7 +3265,7 @@ function drawIndicator() {
         x2 = indicatorTimeToCoordinate(reaction.breakTime),
         yTop = series.priceToCoordinate(+reaction.boxTop),
         yBottom = series.priceToCoordinate(+reaction.boxBottom);
-      if ([x1, x2, yTop, yBottom].some((v) => v == null)) continue;
+      if ((x1 == null || x2 == null || yTop == null || yBottom == null)) continue;
       const shifted = offsetIndicatorRect(reactionObject, x1, yTop, x2, yBottom),
         left = Math.min(shifted.x1, shifted.x2),
         right = Math.max(shifted.x1, shifted.x2),
@@ -3318,7 +3320,7 @@ function drawIndicator() {
         const x1 = indicatorTimeToCoordinate(blueLine.startTime),
           x2 = indicatorTimeToCoordinate(blueLine.endTime),
           y = series.priceToCoordinate(+blueLine.linePrice);
-        if ([x1, x2, y].some((value) => value == null)) continue;
+        if ((x1 == null || x2 == null || y == null)) continue;
         const shifted = offsetIndicatorRect(blueObject, x1, y, x2, y);
         state.indicator.hitBoxes.push({ objectId: blueObjectId, shape: "line", x1: shifted.x1, y1: shifted.y1, x2: shifted.x2, y2: shifted.y2 });
         ctx.save();
@@ -3376,7 +3378,7 @@ function drawIndicator() {
         boxX2 = hasOrder ? indicatorTimeToCoordinate(zone.orderBreakTime) : null,
         boxYTop = hasOrder ? series.priceToCoordinate(+zone.orderBoxTop) : null,
         boxYBottom = hasOrder ? series.priceToCoordinate(+zone.orderBoxBottom) : null;
-      if (hasOrder && settings.orderVisible && !orderObject?.hidden && ![boxX1, boxX2, boxYTop, boxYBottom].some((v) => v == null)) {
+      if (hasOrder && settings.orderVisible && !orderObject?.hidden && (boxX1 != null && boxX2 != null && boxYTop != null && boxYBottom != null)) {
         const shifted = offsetIndicatorRect(orderObject, boxX1, boxYTop, boxX2, boxYBottom),
           left = Math.min(shifted.x1, shifted.x2),
           right = Math.max(shifted.x1, shifted.x2),
@@ -3431,7 +3433,7 @@ function drawIndicator() {
         boxX2 = indicatorTimeToCoordinate(zone.orderBreakTime),
         boxYTop = series.priceToCoordinate(+zone.orderBoxTop),
         boxYBottom = series.priceToCoordinate(+zone.orderBoxBottom);
-      if (settings.orderVisible && !orderObject?.hidden && ![boxX1, boxX2, boxYTop, boxYBottom].some((v) => v == null)) {
+      if (settings.orderVisible && !orderObject?.hidden && (boxX1 != null && boxX2 != null && boxYTop != null && boxYBottom != null)) {
         const shifted = offsetIndicatorRect(orderObject, boxX1, boxYTop, boxX2, boxYBottom),
           left = Math.min(shifted.x1, shifted.x2),
           right = Math.max(shifted.x1, shifted.x2),
@@ -3486,7 +3488,7 @@ function drawIndicator() {
         boxYBottom = series.priceToCoordinate(+zone.orderBoxBottom),
         x = indicatorTimeToCoordinate(zone.sourceTime),
         y = series.priceToCoordinate(+zone.price);
-      if (settings.orderVisible && !orderObject?.hidden && ![boxX1, boxX2, boxYTop, boxYBottom].some((value) => value == null)) {
+      if (settings.orderVisible && !orderObject?.hidden && (boxX1 != null && boxX2 != null && boxYTop != null && boxYBottom != null)) {
         const shifted = offsetIndicatorRect(orderObject, boxX1, boxYTop, boxX2, boxYBottom),
           left = Math.min(shifted.x1, shifted.x2),
           right = Math.max(shifted.x1, shifted.x2),
@@ -3551,7 +3553,7 @@ function drawIndicator() {
           x1 = indicatorTimeToCoordinate(startTime),
           x2 = indicatorTimeToCoordinate(visibleEndTime),
           y = series.priceToCoordinate(+zone.orderStopLevel);
-        if ([x1, x2, y].some((value) => value == null)) continue;
+        if ((x1 == null || x2 == null || y == null)) continue;
         const shifted = offsetIndicatorRect(stopObject, x1, y, x2, y);
         state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:stop:${key}`, shape: "line", x1: shifted.x1, y1: shifted.y1, x2: shifted.x2, y2: shifted.y2 });
         ctx.save();
@@ -3586,7 +3588,7 @@ function drawIndicator() {
         x2 = indicatorTimeToCoordinate(order.breakTime),
         yTop = series.priceToCoordinate(+order.boxTop),
         yBottom = series.priceToCoordinate(+order.boxBottom);
-      if (!settings.orderVisible || object?.hidden || [x1, x2, yTop, yBottom].some((value) => !Number.isFinite(value))) continue;
+      if (!settings.orderVisible || object?.hidden || (!Number.isFinite(x1) || !Number.isFinite(x2) || !Number.isFinite(yTop) || !Number.isFinite(yBottom))) continue;
       const shifted = offsetIndicatorRect(object, x1, yTop, x2, yBottom),
         left = Math.min(shifted.x1, shifted.x2),
         right = Math.max(shifted.x1, shifted.x2),
@@ -3621,7 +3623,7 @@ function drawIndicator() {
         const x1 = indicatorTimeToCoordinate(zone.parentSourceTime),
           x2 = indicatorTimeToCoordinate(zone.parentStopTime),
           y = series.priceToCoordinate(+zone.parentPrice);
-        if ([x1, x2, y].some((value) => value == null)) continue;
+        if ((x1 == null || x2 == null || y == null)) continue;
         const shifted = offsetIndicatorRect(stopObject, x1, y, x2, y);
         state.indicator.hitBoxes.push({
           objectId,
