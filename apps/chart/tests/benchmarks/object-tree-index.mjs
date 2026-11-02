@@ -59,13 +59,14 @@ const directVisible = () => {
   }
   return sum;
 };
-assert.equal(legacyVisible(), directVisible());
+const expectedVisible = legacyVisible();
+assert.equal(expectedVisible, directVisible());
 function measureTraversal(label, walk) {
   const samples = [];
   for (let i = 0; i < repetitions; i++) {
     globalThis.gc?.();
     const started = performance.now();
-    assert.equal(walk(), legacyVisible());
+    assert.equal(walk(), expectedVisible);
     samples.push(Number((performance.now() - started).toFixed(3)));
   }
   return { label, medianMs: [...samples].sort((a, b) => a - b)[Math.floor(samples.length / 2)], samplesMs: samples };
