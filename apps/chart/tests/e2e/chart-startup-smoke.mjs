@@ -17,6 +17,9 @@ const chrome = [
   "/usr/bin/google-chrome-stable",
   "/usr/bin/chromium",
   "/usr/bin/chromium-browser",
+  process.env.ProgramFiles && path.join(process.env.ProgramFiles, "Google", "Chrome", "Application", "chrome.exe"),
+  process.env["ProgramFiles(x86)"] && path.join(process.env["ProgramFiles(x86)"], "Google", "Chrome", "Application", "chrome.exe"),
+  process.env.LOCALAPPDATA && path.join(process.env.LOCALAPPDATA, "Google", "Chrome", "Application", "chrome.exe"),
 ].find((candidate) => candidate && fs.existsSync(candidate));
 
 assert.ok(chrome, "This CI smoke requires the runner's installed Chromium/Google Chrome binary.");
