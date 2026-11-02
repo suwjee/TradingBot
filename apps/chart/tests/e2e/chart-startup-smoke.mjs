@@ -159,6 +159,15 @@ try {
       ]));
       assert.ok(Number.isFinite(measurement.timing.canvasRenderMs));
       assert.ok(Number.isFinite(measurement.timing.objectPreparationMs));
+      // Validate that real Engine objects passed through the actual visual
+      // object pipeline, not just through the JSON response parser.
+      await page.locator("#objectTreeBtn").click();
+      const indicatorRows = page.locator("#objectList [data-indicator-object]");
+      await indicatorRows.first().waitFor({ state: "attached" });
+      const renderedIds = await indicatorRows.evaluateAll((rows) => rows.map((row) => row.dataset.indicatorObject));
+      assert.ok(renderedIds.some((id) => id.includes(`:${direction}:reaction:`)),
+        `${direction} Engine reactions must become visible Indicator object rows`);
+      await page.locator("#closeObjectTree").click();
       // Force real overlay redraws on a series of viewport gestures.
       const frameTimes = await page.evaluate(async () => {
         const canvas = document.querySelector("#draw");
@@ -191,6 +200,7 @@ try {
         overlayDrawMs: measurement.timing.canvasRenderMs,
         objectPreparationMs: measurement.timing.objectPreparationMs,
         redrawCount: frameTimes.redrawCount,
+        visibleIndicatorObjectCount: renderedIds.length,
         observedDrawIntervalsMs: frameTimes.intervalsMs,
       });
     }
