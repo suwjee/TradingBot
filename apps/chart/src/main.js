@@ -9,6 +9,7 @@ import { drawingArray, normalizeHistorySnapshot, CHART_TIMEFRAME_KEY, restoredTi
 import { PRIMARY_VISUAL_DEFAULTS, primaryVisualObjects, drawPrimaryStructures, drawTrendTransitions, clipHistoricalHitBoxes, indicatorCalculationSegments } from "./chart/primary-structure.js";
 import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart/lod.js";
 import { aggregate } from "./chart/candle-aggregation.js";
+import { groupDrawingsForTree } from "./chart/object-tree-groups.js";
 import { startVisibleClock } from "./features/visible-clock.js";
 import { coordinateToRawTime, createViewAnchorCache, rawTimeToCoordinate, selectDensityMode } from "./chart/view-transform.js";
 import { updateStageAggregate } from "./chart/progress.js";
@@ -4018,11 +4019,9 @@ function renderObjectTree() {
   const indicatorRow = (item) =>
     `<div class="object-row indicator-object ${treeSelected(item.id) ? "selected" : ""} ${item.hidden ? "muted" : ""}" data-indicator-object="${item.id}"><span class="object-color" style="background:${item.color}"></span><div class="object-name"><strong>${item.name}</strong><small>Indicator • ${formatTehran(item.time, false)} • ${Number(item.price).toFixed(3)}</small></div>${rowActions(item, "Hide object")}</div>`;
   const manualFolders = [{ id: "manual-unfiled", name: "Drawings" }, ...state.objectFolders];
+  const groupedDrawings = groupDrawingsForTree(state.drawings, manualFolders, query, names);
   const manualTree = manualFolders.map((folder) => {
-    const items = state.drawings.filter((drawing) =>
-      (drawing.folderId || "manual-unfiled") === folder.id &&
-      (!query || `${names[drawing.type] || drawing.type}`.toLowerCase().includes(query)),
-    );
+    const items = groupedDrawings.get(folder.id) || [];
     if (!items.length && query) return "";
     return `<section class="tree-folder" data-folder-drop="${folder.id}">${folderHeader(folder.id, folder.name, items.length, false, false, folder.id !== "manual-unfiled")}${folderCollapsed(folder.id) ? "" : `<div class="tree-folder-items">${items.map(drawingRow).join("") || '<div class="folder-empty">Drop drawings here</div>'}</div>`}</section>`;
   }).join("");
