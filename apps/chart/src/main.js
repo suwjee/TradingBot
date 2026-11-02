@@ -9,6 +9,7 @@ import { drawingArray, normalizeHistorySnapshot, CHART_TIMEFRAME_KEY, restoredTi
 import { PRIMARY_VISUAL_DEFAULTS, primaryVisualObjects, drawPrimaryStructures, drawTrendTransitions, clipHistoricalHitBoxes, indicatorCalculationSegments } from "./chart/primary-structure.js";
 import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart/lod.js";
 import { aggregate } from "./chart/candle-aggregation.js";
+import { startVisibleClock } from "./features/visible-clock.js";
 import { coordinateToRawTime, createViewAnchorCache, rawTimeToCoordinate, selectDensityMode } from "./chart/view-transform.js";
 import { updateStageAggregate } from "./chart/progress.js";
 import { cacheClearLayers, clearIndicatorBrowserState } from "./features/indicator-cache.js";
@@ -6950,11 +6951,10 @@ document.addEventListener("keydown", (e) => {
     $("#redoBtn").click();
   }
 }, true);
-setInterval(
-  () => ($("#clock").textContent = formatSystemDateTime(new Date())),
-  1000,
-);
-$("#clock").textContent = formatSystemDateTime(new Date());
+startVisibleClock({
+  document,
+  tick: () => { $("#clock").textContent = formatSystemDateTime(new Date()); },
+});
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !$("#errorLogModal").classList.contains("hidden")) closeErrorLog();
 });
