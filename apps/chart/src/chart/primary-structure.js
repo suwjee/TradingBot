@@ -28,26 +28,54 @@ const BEARISH_TREND_COLOR = "#f23645";
 const TREND_ICON_SIZE = 28;
 const TREND_ICON_CLEARANCE = 100;
 
+function clipOneHistoricalHitBox(hit, right) {
+  const clipped = { ...hit, clipRight: right };
+  if (hit.shape === "rect") {
+    if (hit.left >= right) return null;
+    clipped.right = Math.min(hit.right, right);
+  } else if (hit.shape === "point") {
+    if (hit.x - (hit.radius || 12) >= right) return null;
+  } else if (hit.shape === "line") {
+    if (Math.min(hit.x1, hit.x2) >= right) return null;
+    if (Math.max(hit.x1, hit.x2) > right) {
+      const y = hit.y1 + (right - hit.x1) * (hit.y2 - hit.y1) / (hit.x2 - hit.x1);
+      const end = hit.x1 > right ? "1" : "2";
+      clipped[`x${end}`] = right;
+      clipped[`y${end}`] = y;
+    }
+  }
+  return clipped;
+}
+
+// Keep the original exported, array-producing contract for its existing users.
 export function clipHistoricalHitBoxes(hits, right) {
   if (right < 0) return [];
-  return hits.flatMap(hit => {
-    const clipped = { ...hit, clipRight: right };
-    if (hit.shape === "rect") {
-      if (hit.left >= right) return [];
-      clipped.right = Math.min(hit.right, right);
-    } else if (hit.shape === "point") {
-      if (hit.x - (hit.radius || 12) >= right) return [];
-    } else if (hit.shape === "line") {
-      if (Math.min(hit.x1, hit.x2) >= right) return [];
-      if (Math.max(hit.x1, hit.x2) > right) {
-        const y = hit.y1 + (right - hit.x1) * (hit.y2 - hit.y1) / (hit.x2 - hit.x1);
-        const end = hit.x1 > right ? "1" : "2";
-        clipped[`x${end}`] = right;
-        clipped[`y${end}`] = y;
-      }
-    }
-    return [clipped];
+  return hits.flatMap((hit) => {
+    const clipped = clipOneHistoricalHitBox(hit, right);
+    return clipped === null ? [] : [clipped];
   });
+}
+
+/**
+ * Replace only the newly rendered segment of a hitbox buffer in place.
+ * The stable prefix and source hitbox objects are preserved. The clipped
+ * segment consists of the same clones and order as clipHistoricalHitBoxes.
+ * No segment array, flatMap arrays, or unbounded push(...items) is needed.
+ */
+export function clipHistoricalHitBoxesInPlace(hits, startIndex, right) {
+  const originalLength = hits.length;
+  if (right < 0) {
+    hits.length = startIndex;
+    return hits;
+  }
+  let writeIndex = startIndex;
+  for (let readIndex = startIndex; readIndex < originalLength; readIndex++) {
+    if (!(readIndex in hits)) continue; // Match flatMap's sparse-slot policy.
+    const clipped = clipOneHistoricalHitBox(hits[readIndex], right);
+    if (clipped !== null) hits[writeIndex++] = clipped;
+  }
+  hits.length = writeIndex;
+  return hits;
 }
 
 export function trendTransitionLayout(transition, { timeToX, priceToY, height }) {
