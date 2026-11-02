@@ -1,10 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import os from "node:os";
+import { randomUUID } from "node:crypto";
+import { fileURLToPath } from "node:url";
 import path from "node:path";
 
-const stateRoot = fs.mkdtempSync(path.join(os.tmpdir(), "tradingbot-vite-phase3-"));
+const chartRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const stateRoot = path.join(chartRoot, "state", `refactor-phase3-${randomUUID()}`);
 process.env.TRADINGBOT_LOCAL_STATE_ROOT = stateRoot;
 const { default: viteConfig } = await import("../../vite.config.js");
 
