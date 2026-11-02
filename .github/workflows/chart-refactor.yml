@@ -1,0 +1,60 @@
+# Non-Engine refactor gate: tests must pass without writing or changing engine/.
+name: TradingBot Chart Refactor Verification
+
+on:
+  push:
+    branches: [refactor]
+  pull_request:
+    paths:
+      - "apps/chart/**"
+      - ".github/workflows/chart-refactor.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  chart:
+    name: Chart tests and build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - name: Check out refactor sources
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify no engine files changed on this branch
+        shell: bash
+        run: |
+          git fetch --no-tags origin main
+          base="$(git merge-base HEAD origin/main)"
+          changes="$(git diff --name-only "$base" HEAD -- engine/)"
+          if [ -n "$changes" ]; then
+            echo "::error::Changes inside engine/ are prohibited"
+            printf '%s\n' "$changes"
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/chart/package-lock.json
+
+      - name: Install locked Chart dependencies
+        working-directory: apps/chart
+        run: npm ci --no-audit --no-fund
+
+      - name: Run Chart unit and API regressions
+        working-directory: apps/chart
+        run: npm test
+
+      - name: Verify production build
+        working-directory: apps/chart
+        run: npm run build
