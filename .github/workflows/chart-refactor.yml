@@ -85,6 +85,10 @@ jobs:
         working-directory: apps/chart
         run: node --expose-gc tests/benchmarks/stroke-projection.mjs
 
+      - name: Benchmark historical Indicator hitbox compaction
+        working-directory: apps/chart
+        run: node --expose-gc tests/benchmarks/historical-hitbox-buffer.mjs
+
       - name: Verify production build
         working-directory: apps/chart
         run: npm run build
