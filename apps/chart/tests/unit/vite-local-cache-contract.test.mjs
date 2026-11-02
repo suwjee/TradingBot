@@ -79,4 +79,39 @@ test("Vite cache API rejects invalid methods without clearing cache", () => {
   assert.equal(result.json.error, "DELETE is required");
 });
 
+test("symbol-scoped cache clear deletes only its calculation and drawing data", () => {
+  const routes = registerLocalRoutes();
+  const cache = path.join(stateRoot, "cache");
+  const pairCalc = path.join(cache, "indicator-calculations", "PAIR", "5s", "bullish");
+  const otherCalc = path.join(cache, "indicator-calculations", "OTHER", "5s", "bullish");
+  const pairDraw = path.join(cache, "drawings", "PAIR");
+  const otherDraw = path.join(cache, "drawings", "OTHER");
+  for (const folder of [pairCalc, otherCalc, pairDraw, otherDraw]) fs.mkdirSync(folder, { recursive: true });
+  for (const file of [path.join(pairCalc, "one.json"), path.join(otherCalc, "two.json"), path.join(pairDraw, "a.json"), path.join(otherDraw, "b.json")]) fs.writeFileSync(file, "{}");
+  const handler = routes.get("/api/reactions/cache");
+  const result = invoke(handler, { method: "DELETE", url: "/api/reactions/cache?scope=symbol&symbol=PAIR&layers=calculations,drawings" });
+  assert.equal(result.response.statusCode, 200);
+  assert.deepEqual(result.json, { filesCleared: 1, drawingsCleared: 1, localSessionCleared: false, layers: ["calculations", "drawings"], scope: "symbol", symbol: "PAIR" });
+  assert.equal(fs.existsSync(pairCalc), false);
+  assert.equal(fs.existsSync(pairDraw), false);
+  assert.equal(fs.existsSync(path.join(otherCalc, "two.json")), true);
+  assert.equal(fs.existsSync(path.join(otherDraw, "b.json")), true);
+});
+
+test("symbol-scoped cache clear never removes FARAZ session credentials", () => {
+  const routes = registerLocalRoutes();
+  const secret = path.join(stateRoot, "secret");
+  fs.mkdirSync(secret, { recursive: true });
+  const session = path.join(secret, "faraz-session.dpapi.json");
+  fs.writeFileSync(session, "session-sentinel");
+  const handler = routes.get("/api/reactions/cache");
+  const invalid = invoke(handler, { method: "DELETE", url: "/api/reactions/cache?scope=symbol&symbol=PAIR&layers=secret" });
+  assert.equal(invalid.response.statusCode, 400);
+  assert.equal(fs.readFileSync(session, "utf8"), "session-sentinel");
+  const scoped = invoke(handler, { method: "DELETE", url: "/api/reactions/cache?scope=symbol&symbol=PAIR" });
+  assert.equal(scoped.response.statusCode, 200);
+  assert.equal(scoped.json.localSessionCleared, false);
+  assert.equal(fs.readFileSync(session, "utf8"), "session-sentinel");
+});
+
 test.after(() => fs.rmSync(stateRoot, { recursive: true, force: true }));
