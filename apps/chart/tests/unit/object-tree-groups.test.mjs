@@ -82,3 +82,14 @@ test("Object Tree selection Set membership preserves Array#includes semantics fo
     assert.equal(selectedSet.has(id), selected.includes(id));
   }
 });
+
+test("indicator Object Tree grouping skips sparse slots like the original Array#filter", () => {
+  const objects = new Array(5);
+  objects[1] = { id: "indicator:bullish:blue:1", name: "Blue", type: "indicator-blue" };
+  objects[4] = { id: "indicator:bearish:reaction:2", name: "Reaction", type: "indicator-reaction" };
+  const original = objects.filter((item) => Boolean(item));
+  const grouped = groupIndicatorRowsForTree(objects);
+  assert.deepEqual(grouped.visible, original);
+  assert.deepEqual(grouped.byDirection.bullish, [objects[1]]);
+  assert.deepEqual(grouped.byDirection.bearish, [objects[4]]);
+});
