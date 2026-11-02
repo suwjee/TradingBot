@@ -89,6 +89,10 @@ jobs:
         working-directory: apps/chart
         run: node --expose-gc tests/benchmarks/object-tree-index.mjs
 
+      - name: Benchmark Object Tree multi-selection partition
+        working-directory: apps/chart
+        run: node --expose-gc tests/benchmarks/object-tree-selection.mjs
+
       - name: Compare brush and path projection allocations
         working-directory: apps/chart
         run: node --expose-gc tests/benchmarks/stroke-projection.mjs
