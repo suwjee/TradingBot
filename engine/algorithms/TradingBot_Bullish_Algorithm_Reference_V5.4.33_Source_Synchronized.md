@@ -1,8 +1,8 @@
 # TradingBot Bullish Algorithm Reference — Current Standalone Specification
 
 **Document Version:** `5.4.33`  
-**Last Modified:** `2026-11-01T20:28:25+03:30`  
-**last_modified_at:** `2026-11-01T20:28:25+03:30`  
+**Last Modified:** `2026-11-02T07:13:10+03:30`  
+**last_modified_at:** `2026-11-02T07:13:10+03:30`  
 **document_role:** `reference`  
 **lifecycle:** `maintained`  
 **owner:** `engine/algorithms`  
@@ -16,6 +16,14 @@
 > **Historical baseline source lineage:** V5.4.33 starts from the exact newly uploaded V5.4.32 `engine(1).zip`. V5.4.32 remains the historical baseline; older unmerged branches are not silently introduced.
 
 ## 0. Revision scope
+
+### Current local correction - accepted E source ownership (UNRELEASED)
+
+- An accepted E owns its physical source before a provisional same-source S can override it or open a competing root. Distinct-source Red S precedence and independent qualified roots remain unchanged.
+- Native E Order selection excludes identities whose sole creator is such a disowned S, including prospective self-invalidating sources. The complete strict-stop/First-index race selects the next valid Order; recalculated later sources and descendants remain chronological.
+- Recursive consumed-S continuation, independent-root restoration and hard-reset parent gates use the same creator/ownership contract. Replaced or restored accepted state republishes its physical source identities.
+- OrderAudit removes only the rejected S creation cause and retains independently valid A/E parent-stop and reset-leg causes, physical identity, exact confirmation and strict stop. Public field names and directional price predicates remain unchanged.
+- Focused regressions cover both directions; independent real-market and browser checks must be reported separately from unit and reflection evidence.
 
 ### Current local extension — bidirectional PH/PL/MBL (UNRELEASED)
 <!-- PRIMARY-REVISION-BEGIN -->
@@ -111,9 +119,9 @@ The Source manifest and exact embedded Source are regenerated from the authorita
 | `pipeline/blue_line_detector.py` | Blue | `2.4.1` | 481 | 16945 | `c6466c280504f82d8f2b189263ed0e9b9581c2f48edd8aaa12f016e55effc98c` |
 | `pipeline/core_utils.py` | Core Utilities | `1.0.0` | 26 | 832 | `007e5329e14ab9695e555c630527badc84dd35a239dea1cf685141e4278265eb` |
 | `pipeline/direction_policy.py` | Direction Policy | `1.0.0` | 70 | 2282 | `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea` |
-| `pipeline/e_zone_detector.py` | E | `6.16.2 (impl 6.18.5)` | 1144 | 48992 | `96ea351ff88c195937da5c32c5712356b9b876ba6f509d68cb16d37012958ad5` |
+| `pipeline/e_zone_detector.py` | E | `6.16.2 (impl 6.18.6)` | 1261 | 56097 | `6736628d9b3c36473f30a548ea8f652a6127ff1c461cceafe352227d223b5690` |
 | `pipeline/lifecycle_engine.py` | Lifecycle / StopAll | `1.18.6 (impl 1.20.7)` | 1529 | 63174 | `760928f5480efad446b42bc6aa2fbea3e431de13ab92714bac05c09188519c26` |
-| `pipeline/order_audit_engine.py` | Order / OrderAudit | `1.8.0` | 2192 | 90511 | `8e4da88b57a5a27f3a285c51ddeee2c396afa73de7a119c127ab30c2515494e4` |
+| `pipeline/order_audit_engine.py` | Order / OrderAudit | `1.8.1` | 2222 | 92027 | `84201f1784fe9a1c924c8c6d3a8f67999d629032c6987c4384a4330954acf2af` |
 | `pipeline/PL_PH_detector.py` | Primary High / Low / Matching Behavior Leg | `1.4.0` | 666 | 29764 | `5107fe02c8314552f4c8e45bb84e23682e43d2d49d925cfdaf165eb6a30462d9` |
 | `pipeline/reaction_engine.py` | Reaction / Reset | `9.9.1 (impl 9.11.0)` | 2501 | 108353 | `2554a5609bb126206ad2b7c58eca6694d8b9623f3e5859487540fe9d49dad89b` |
 | `pipeline/s_zone_detector.py` | S | `4.20.1 (impl 4.21.1)` | 1445 | 60942 | `0c5864bc3bc6c17f72c5c38b04a1cd0b5b38c726d8834207a55d5351fdfa38fe` |
@@ -292,7 +300,7 @@ Every fully formed accepted S starts a provisional E1 chain in S color. Recursiv
 
 ### 8.5 Consumed S evidence and independent roots
 
-A suppressed/non-public S can remain calculation evidence for continuation of a stopped larger E when lifecycle ownership proves it belongs to that continuation. Its first E inherits the stopped larger E's reconciled family and next number, then recursive children are rebuilt natively. Separately, each accepted stopped S may retain an independent direct E1 root. A same-source accepted E owns that physical source and prevents a provisional S at that source from manufacturing a competing later root. Explicitly invalid S evidence cannot create cross-family competing root provenance when native E continuation already owns the source.
+A suppressed/non-public S can remain calculation evidence for continuation of a stopped larger E when lifecycle ownership proves it belongs to that continuation. Its first E inherits the stopped larger E's reconciled family and next number, then recursive children are rebuilt natively. Separately, each accepted stopped S may retain an independent direct E1 root. A same-source accepted E owns that physical source and prevents a provisional S at that source from manufacturing a competing later root. Explicitly invalid S evidence cannot create cross-family competing root provenance when native E continuation already owns the source. A provisional S at an E-owned source also loses Order creation rights. Every E route selects from the complete remaining native Order set; an invalid first choice does not discard a later valid alternative. An E source cannot qualify itself by invalidating its Order's only creator.
 
 ### 8.6 Same-source reconciliation and OrderAudit rebuild
 
@@ -857,16 +865,16 @@ The index is descriptive integrity/navigation evidence, not trading-semantic aut
 - **Nested implementation functions/closures:** _none_
 
 #### `pipeline/e_zone_detector.py`
-- **Module-level symbols/assignments:** `E_ZONE_VERSION` (L25–L25), `E_ZONE_IMPLEMENTATION_VERSION` (L26–L26), `E_ZONE_LAST_MODIFIED` (L27–L27)
-- **Top-level functions:** `detect_e_zones(direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], s_zones: Sequence[object], opposite_resets: Sequence[object], chronology: object, start_index: int=0, end_index: int | None=None, direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None=None, blocked_order_first_times: set[datetime] | None=None, initial_order_audit: dict[tuple[int, int], dict[str, object]] | None=None, sequence_priority: Callable[[str, str], int] | None=None, invalid_s_root_identities: set[tuple[datetime, int]] | None=None) -> list[EZone]` (L1115–L1144)
+- **Module-level symbols/assignments:** `E_ZONE_VERSION` (L26), `E_ZONE_IMPLEMENTATION_VERSION` (L27), `E_ZONE_LAST_MODIFIED` (L28)
+- **Top-level functions:** `detect_e_zones(direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], s_zones: Sequence[object], opposite_resets: Sequence[object], chronology: object, start_index: int=0, end_index: int | None=None, direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None=None, blocked_order_first_times: set[datetime] | None=None, initial_order_audit: dict[tuple[int, int], dict[str, object]] | None=None, sequence_priority: Callable[[str, str], int] | None=None, invalid_s_root_identities: set[tuple[datetime, int]] | None=None)` (L1232)
 - **Classes / schemas:**
-  - `EZone` (L31–L66)
-    - Fields: `direction: str` (L32), `family: str` (L33), `number: int` (L34), `parent_type: str` (L35), `parent_source_index: int` (L36), `parent_source_time: datetime` (L37), `parent_price: Decimal` (L38), `parent_stop_index: int` (L39), `parent_stop_time: datetime` (L40), `parent_stop_event_time: datetime` (L41), `order_direction: str` (L42), `order_reaction_number: int` (L43), `order_mode: str` (L44), `order_causes: tuple[str, ...]` (L45), `order_parent_stop_cause_time: datetime | None` (L46), `order_first_index: int` (L47), `order_first_time: datetime` (L48), `order_break_index: int` (L49), `order_break_time: datetime` (L50), `order_confirmation_time: datetime` (L51), `order_box_top: Decimal` (L52), `order_box_top_source_index: int` (L53), `order_box_top_source_time: datetime` (L54), `order_box_bottom: Decimal` (L55), `order_box_bottom_source_index: int` (L56), `order_box_bottom_source_time: datetime` (L57), `order_stop_level: Decimal` (L58), `order_stop_source_index: int` (L59), `order_stop_source_time: datetime` (L60), `source_index: int` (L61), `source_time: datetime` (L62), `price: Decimal` (L63), `decision_index: int` (L64), `decision_time: datetime` (L65), `decision_event_time: datetime` (L66)
+  - `EZone` (L32)
+    - Fields: `direction: str`, `family: str`, `number: int`, `parent_type: str`, `parent_source_index: int`, `parent_source_time: datetime`, `parent_price: Decimal`, `parent_stop_index: int`, `parent_stop_time: datetime`, `parent_stop_event_time: datetime`, `order_direction: str`, `order_reaction_number: int`, `order_mode: str`, `order_causes: tuple[str, ...]`, `order_parent_stop_cause_time: datetime | None`, `order_first_index: int`, `order_first_time: datetime`, `order_break_index: int`, `order_break_time: datetime`, `order_confirmation_time: datetime`, `order_box_top: Decimal`, `order_box_top_source_index: int`, `order_box_top_source_time: datetime`, `order_box_bottom: Decimal`, `order_box_bottom_source_index: int`, `order_box_bottom_source_time: datetime`, `order_stop_level: Decimal`, `order_stop_source_index: int`, `order_stop_source_time: datetime`, `source_index: int`, `source_time: datetime`, `price: Decimal`, `decision_index: int`, `decision_time: datetime`, `decision_event_time: datetime`
     - Methods/properties: _none_
-  - `EZoneDetector` (L69–L1112)
+  - `EZoneDetector` (L70)
     - Fields: _none_
-    - Methods/properties: `__init__(self, direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], s_zones: Sequence[object], opposite_resets: Sequence[object], chronology: object, start_index: int=0, end_index: int | None=None, direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None=None, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), initial_order_audit: dict[tuple[int, int], dict[str, object]] | None=None, sequence_resets: dict[datetime, int] | None=None, sequence_priority: Callable[[str, str], int] | None=None, invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[OrderBResetLeg]=()) -> None` (L70–L225), `sequence_resets(self) -> dict[datetime, int]` (L228–L229), `sequence_resets(self, resets: dict[datetime, int]) -> None` (L232–L244), `_reset_time(self, reset: object) -> datetime` (L246–L247), `_main_index(self, value: datetime) -> int` (L249–L250), `_first_cross_position(self, left: int, right: int, level: Decimal, *, less: bool) -> int | None` (L253–L268), `_stop_value(self, item: object) -> Decimal` (L270–L271), `_build_extreme_sparse(self) -> list[list[int]]` (L273–L300), `_extreme_position(self, left: int, right: int) -> int` (L302–L319), `_first_parent_stop(self, source_time: datetime, level: Decimal) -> tuple[int, datetime] | None` (L322–L333), `_confirmation_for(self, reaction: object, direction: str) -> datetime` (L335–L336), `_confirmation(self, reaction: object) -> datetime` (L338–L339), `_reaction_first_time(self, reaction: object) -> datetime` (L341–L342), `_parent_stop(self, parent_type: str, parent: object) -> tuple[int, datetime] | None` (L345–L351), `parent_stop(self, parent_type: str, parent: object) -> tuple[int, datetime] | None` (L353–L357), `_extreme_between(self, start: datetime, end: datetime) -> tuple[int, datetime, Decimal]` (L360–L374), `_zone(self, family: str, number: int, parent_type: str, parent: object, stop_event: datetime) -> EZone | None` (L376–L479), `set_consumed_s_evidence(self, evidence: Sequence[tuple[object, object]]) -> None` (L481–L491), `_apply_consumed_s_evidence(self, zones: Sequence[EZone]) -> list[EZone]` (L493–L509), `continuation_chain_from_s(self, owner: EZone, s_zone: object, independent_a_order_identities: frozenset[tuple[int, int]]=frozenset()) -> list[EZone]` (L511–L559), `replace_with_earlier_continuation(self, base_zones: Sequence[EZone], owner: EZone, continuation: Sequence[EZone]) -> list[EZone]` (L561–L602), `resolve_same_source_conflicts(self, zones: Sequence[EZone]) -> list[EZone]` (L604–L646), `restore_independent_s_roots(self, dominant_zones: Sequence[EZone]) -> list[EZone]` (L648–L707), `_invalid_s_without_order_cause(self, zone: EZone) -> bool` (L709–L731), `_discover_candidate_chains(self) -> list[EZone]` (L733–L823), `_reconcile_candidate_chains(self, candidates: list[EZone]) -> list[EZone]` (L825–L1099), `detect(self) -> list[EZone]` (L1102–L1112)
-- **Nested implementation functions/closures:** `EZoneDetector.replace_with_earlier_continuation.descends_from_owner(item: EZone) -> bool` (L570–L584), `EZoneDetector.resolve_same_source_conflicts.outranks(candidate: EZone, current: EZone) -> bool` (L622–L629), `EZoneDetector._reconcile_candidate_chains.valid_order(zone: EZone) -> bool` (L856–L860), `EZoneDetector._reconcile_candidate_chains.parent_active(zone: EZone, seen: set[tuple[int, datetime]] | None=None) -> bool` (L862–L933), `EZoneDetector._reconcile_candidate_chains.stopped_by(zone: EZone, prior: EZone) -> bool` (L935–L940), `EZoneDetector._reconcile_candidate_chains.ownership_priority(item: EZone) -> int` (L991–L996), `EZoneDetector._reconcile_candidate_chains.collect_lineage(zone: EZone, seen: set[tuple[int, datetime]]) -> None` (L1077–L1089)
+    - Methods/properties: `__init__(self, direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], s_zones: Sequence[object], opposite_resets: Sequence[object], chronology: object, start_index: int=0, end_index: int | None=None, direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None=None, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), initial_order_audit: dict[tuple[int, int], dict[str, object]] | None=None, sequence_resets: dict[datetime, int] | None=None, sequence_priority: Callable[[str, str], int] | None=None, invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[OrderBResetLeg]=())` (L71), `sequence_resets(self)` (L230), `sequence_resets(self, resets: dict[datetime, int])` (L234), `_reset_time(self, reset: object)` (L248), `_main_index(self, value: datetime)` (L251), `_first_cross_position(self, left: int, right: int, level: Decimal, *, less: bool)` (L255), `_stop_value(self, item: object)` (L272), `_build_extreme_sparse(self)` (L275), `_extreme_position(self, left: int, right: int)` (L304), `_first_parent_stop(self, source_time: datetime, level: Decimal)` (L324), `_confirmation_for(self, reaction: object, direction: str)` (L337), `_confirmation(self, reaction: object)` (L340), `_reaction_first_time(self, reaction: object)` (L343), `_parent_stop(self, parent_type: str, parent: object)` (L347), `parent_stop(self, parent_type: str, parent: object)` (L355), `_extreme_between(self, start: datetime, end: datetime)` (L362), `_zone(self, family: str, number: int, parent_type: str, parent: object, stop_event: datetime, *, e_owned_source_times: set[datetime] | None=None)` (L378), `set_consumed_s_evidence(self, evidence: Sequence[tuple[object, object]])` (L492), `_apply_consumed_s_evidence(self, zones: Sequence[EZone])` (L504), `continuation_chain_from_s(self, owner: EZone, s_zone: object, independent_a_order_identities: frozenset[tuple[int, int]]=frozenset())` (L522), `replace_with_earlier_continuation(self, base_zones: Sequence[EZone], owner: EZone, continuation: Sequence[EZone])` (L581), `resolve_same_source_conflicts(self, zones: Sequence[EZone])` (L628), `restore_independent_s_roots(self, dominant_zones: Sequence[EZone])` (L672), `_invalid_s_without_order_cause(self, zone: EZone)` (L764), `_discover_candidate_chains(self)` (L788), `_reconcile_candidate_chains(self, candidates: list[EZone])` (L883), `detect(self)` (L1218)
+- **Nested implementation functions/closures:** `EZoneDetector.replace_with_earlier_continuation.descends_from_owner` (L590), `EZoneDetector.resolve_same_source_conflicts.outranks` (L646), `EZoneDetector._reconcile_candidate_chains.enqueue` (L918), `EZoneDetector._reconcile_candidate_chains.valid_order` (L930), `EZoneDetector._reconcile_candidate_chains.parent_active` (L939), `EZoneDetector._reconcile_candidate_chains.stopped_by` (L1014), `EZoneDetector._reconcile_candidate_chains.ownership_priority` (L1093), `EZoneDetector._reconcile_candidate_chains.collect_lineage` (L1191)
 
 #### `pipeline/lifecycle_engine.py`
 - **Module-level symbols/assignments:** `STOP_ALL_VERSION` (L24–L24), `STOP_ALL_IMPLEMENTATION_VERSION` (L25–L25), `STOP_ALL_LAST_MODIFIED` (L26–L26), `SEQUENCE_PRIORITY` (L29–L34)
@@ -884,25 +892,25 @@ The index is descriptive integrity/navigation evidence, not trading-semantic aut
 - **Nested implementation functions/closures:** `StopAllDetector.detect.armed_stop_before(boundary: datetime, donor_e: object | None=None) -> datetime | None` (L356–L404), `StopAllDetector.detect.accept(kind: str, family: str, number: int | None, item: object) -> None` (L406–L408), `StopAllDetector.detect.process_s_event(s_item: object) -> None` (L410–L461), `visible_s_zones_after_module_resets.cached_stop_event(module: object) -> datetime | None` (L1149–L1153)
 
 #### `pipeline/order_audit_engine.py`
-- **Module-level symbols/assignments:** `ORDER_AUDIT_ENGINE_VERSION` (L15–L15), `ORDER_AUDIT_ENGINE_LAST_MODIFIED` (L16–L16), `OrderMatch` (L430–L434)
-- **Top-level functions:** `relabel_primary_causes(causes, labels)` (L19–L31), `dominant_post_behavior_stops(chronology: object, lifetimes: Sequence[tuple[str, object, datetime | None]], priority: Callable[[object], int]) -> list[PostBehaviorStop]` (L71–L114), `order_b_reset_event_time(direction: str, chronology: object, reset: object) -> datetime | None` (L117–L145), `discover_order_b_reset_legs(direction: str, chronology: object, trend_reactions: Sequence[object], resets: Sequence[object], opposite_reactions: Sequence[object], post_stops: Sequence[PostBehaviorStop], a_formation_times: Sequence[datetime], *, behavior_anchors: Sequence[OrderBBehaviorAnchor]=()) -> list[OrderBResetLeg]` (L148–L349), `discover_accepted_order_b_reset_legs(direction: str, chronology: object, trend_reactions: Sequence[object], trend_resets: Sequence[object], opposite_reactions: Sequence[object], a_zones: Sequence[object], invalid_a_identities: set[tuple[datetime, int]], s_zones: Sequence[object], e_zones: Sequence[object], stopalls: Sequence[object], s_detector: object, e_detector: object, priority: Callable[[object], int]) -> list[OrderBResetLeg]` (L352–L427), `order_b_leg_identity(items: Sequence[object]) -> tuple[object, ...]` (L437–L457), `_parent_stop_cause_key(cause: dict[str, object]) -> tuple[object, object, object, object]` (L1794–L1800), `_collect_s_ledger_entries(s_detector, accepted_a_sources: set[datetime] | None) -> list[tuple[dict[str, object], list[dict[str, object]]]]` (L1803–L1832), `_collect_e_ledger_entries(detector, accepted_a_sources: set[datetime] | None=None) -> list[tuple[dict[str, object], list[dict[str, object]]]]` (L1835–L1861), `_merge_prepared_identities(combined: list[tuple[dict[str, object], list[dict[str, object]]]], detector, start_index: int, end_index: int, required_identities: set[tuple[int, int]]) -> list[dict[str, object]]` (L1864–L1904), `_single_owner_parent_stop_causes(output: list[dict[str, object]]) -> list[dict[str, object]]` (L1907–L1942), `prepare_order_audit(detector, start_index: int, end_index: int, s_detector=None, accepted_a_sources: set[datetime] | None=None, required_identities: set[tuple[int, int]] | None=None)` (L1945–L1962), `accepted_audit_entry(entry: dict[str, object], accepted_sources: set) -> dict[str, object] | None` (L1965–L1995), `accepted_audit_entries(order_audit: dict[tuple[int, int], dict[str, object]], accepted_sources: set[datetime]) -> dict[tuple[int, int], dict[str, object]]` (L1998–L2008), `order_identity_is_internal(item, internal_identities)` (L2011–L2017)
+- **Module-level symbols/assignments:** `ORDER_AUDIT_ENGINE_VERSION` (L15), `ORDER_AUDIT_ENGINE_LAST_MODIFIED` (L16), `OrderMatch` (L430)
+- **Top-level functions:** `relabel_primary_causes(causes, labels)` (L19), `dominant_post_behavior_stops(chronology: object, lifetimes: Sequence[tuple[str, object, datetime | None]], priority: Callable[[object], int])` (L71), `order_b_reset_event_time(direction: str, chronology: object, reset: object)` (L117), `discover_order_b_reset_legs(direction: str, chronology: object, trend_reactions: Sequence[object], resets: Sequence[object], opposite_reactions: Sequence[object], post_stops: Sequence[PostBehaviorStop], a_formation_times: Sequence[datetime], *, behavior_anchors: Sequence[OrderBBehaviorAnchor]=())` (L148), `discover_accepted_order_b_reset_legs(direction: str, chronology: object, trend_reactions: Sequence[object], trend_resets: Sequence[object], opposite_reactions: Sequence[object], a_zones: Sequence[object], invalid_a_identities: set[tuple[datetime, int]], s_zones: Sequence[object], e_zones: Sequence[object], stopalls: Sequence[object], s_detector: object, e_detector: object, priority: Callable[[object], int])` (L352), `order_b_leg_identity(items: Sequence[object])` (L437), `_parent_stop_cause_key(cause: dict[str, object])` (L1824), `_collect_s_ledger_entries(s_detector, accepted_a_sources: set[datetime] | None)` (L1833), `_collect_e_ledger_entries(detector, accepted_a_sources: set[datetime] | None=None)` (L1865), `_merge_prepared_identities(combined: list[tuple[dict[str, object], list[dict[str, object]]]], detector, start_index: int, end_index: int, required_identities: set[tuple[int, int]])` (L1894), `_single_owner_parent_stop_causes(output: list[dict[str, object]])` (L1937), `prepare_order_audit(detector, start_index: int, end_index: int, s_detector=None, accepted_a_sources: set[datetime] | None=None, required_identities: set[tuple[int, int]] | None=None)` (L1975), `accepted_audit_entry(entry: dict[str, object], accepted_sources: set)` (L1995), `accepted_audit_entries(order_audit: dict[tuple[int, int], dict[str, object]], accepted_sources: set[datetime])` (L2028), `order_identity_is_internal(item, internal_identities)` (L2041)
 - **Classes / schemas:**
-  - `PostBehaviorStop` (L34–L38)
-    - Fields: `behavior_type: str` (L35), `behavior_source_index: int` (L36), `behavior_source_time: datetime` (L37), `event_time: datetime` (L38)
+  - `PostBehaviorStop` (L34)
+    - Fields: `behavior_type: str`, `behavior_source_index: int`, `behavior_source_time: datetime`, `event_time: datetime`
     - Methods/properties: _none_
-  - `OrderBBehaviorAnchor` (L42–L47)
-    - Fields: `behavior_type: str` (L43), `behavior_source_index: int` (L44), `behavior_source_time: datetime` (L45), `priority: int` (L46), `number: int` (L47)
+  - `OrderBBehaviorAnchor` (L42)
+    - Fields: `behavior_type: str`, `behavior_source_index: int`, `behavior_source_time: datetime`, `priority: int`, `number: int`
     - Methods/properties: _none_
-  - `OrderBResetLeg` (L51–L68)
-    - Fields: `post_stop: PostBehaviorStop` (L52), `anchor_behavior_type: str` (L53), `anchor_behavior_source_index: int` (L54), `anchor_behavior_source_time: datetime` (L55), `anchor_behavior_extreme: Decimal` (L56), `reset_reaction: object` (L57), `reset_confirmation_time: datetime` (L58), `reset_source_index: int` (L59), `reset_broken_level: Decimal` (L60), `reset_time: datetime` (L61), `leg_boundary: Decimal` (L62), `leg_source_index: int` (L63), `leg_source_time: datetime` (L64), `strict_break_time: datetime` (L65), `reaction_number: int` (L66), `physical_reaction: object` (L67), `physical_confirmation_time: datetime` (L68)
+  - `OrderBResetLeg` (L51)
+    - Fields: `post_stop: PostBehaviorStop`, `anchor_behavior_type: str`, `anchor_behavior_source_index: int`, `anchor_behavior_source_time: datetime`, `anchor_behavior_extreme: Decimal`, `reset_reaction: object`, `reset_confirmation_time: datetime`, `reset_source_index: int`, `reset_broken_level: Decimal`, `reset_time: datetime`, `leg_boundary: Decimal`, `leg_source_index: int`, `leg_source_time: datetime`, `strict_break_time: datetime`, `reaction_number: int`, `physical_reaction: object`, `physical_confirmation_time: datetime`
     - Methods/properties: _none_
-  - `OrderAuditEngineMixin` (L461–L1791)
+  - `OrderAuditEngineMixin` (L461)
     - Fields: _none_
-    - Methods/properties: `_order_stop(self, number: int, reaction: object, context_start: datetime | None=None) -> tuple[Decimal, int, datetime]` (L464–L490), `order_stop(self, reaction_number: int, reaction: object) -> tuple[Decimal, int, datetime]` (L493–L497), `_first_healthy_direct_geometry(self, start: datetime, allow_bounded_continue: bool=False) -> tuple[int, object, datetime] | None` (L500–L572), `_trend_leg_direct_order(self, start: datetime) -> tuple[int, object, datetime] | None` (L575–L624), `_direct_parent_stop_order(self, start: datetime, continuous_deadline: datetime | None, allow_bounded_continue: bool, e_parent: bool=False, *, confirmation_after: datetime | None=None) -> tuple[int, object, datetime] | None` (L627–L645), `_compute_direct_parent_stop_order(self, start: datetime, continuous_deadline: datetime | None, allow_bounded_continue: bool, e_parent: bool=False, *, confirmation_after: datetime | None=None) -> tuple[int, object, datetime] | None` (L647–L736), `_merge_order_candidate(self, by_geometry: dict[tuple[int, int], OrderMatch], number: int, reaction: object, confirmation: datetime, *, parent_stop_cause_time: datetime) -> OrderMatch` (L739–L770), `_enforce_single_parent_stop_owner(self, by_geometry: dict[tuple[int, int], OrderMatch]) -> None` (L773–L797), `order_candidates(self, start: datetime, continuous_deadline: datetime | None=None, allow_bounded_continue: bool=False, allow_trend_leg_continue: bool=False, e_parent: bool=False) -> list[OrderMatch]` (L800–L888), `_first_order(self, start: datetime, continuous_deadline: datetime | None=None, allow_bounded_continue: bool=False, allow_trend_leg_continue: bool=False) -> OrderMatch | None` (L891–L904), `_has_sequence_reset_between(self, start: datetime, end: datetime) -> bool` (L907–L915), `_index_order_audit_identity(self, identity: tuple[int, int], confirmation: datetime) -> None` (L918–L925), `_clear_order_audit(self) -> None` (L928–L932), `_invalidate_carried_order_caches(self) -> None` (L934–L939), `_invalidate_post_stop_order_cache(self) -> None` (L941–L942), `register_order_b_reset_legs(self, legs: Sequence[OrderBResetLeg]) -> None` (L945–L1009), `_reparent_primary_high_causes(self, parent, stop_event, direct_identity)` (L1012–L1058), `register_primary_high(self, parent)` (L1060–L1068), `register_primary_low(self, parent)` (L1070–L1074), `_register_primary_point(self, parent)` (L1076–L1107), `reconcile_primary_high_labels(self, highs)` (L1109–L1111), `reconcile_primary_low_labels(self, lows)` (L1113–L1115), `_reconcile_primary_labels(self, points, prefix)` (L1117–L1134), `_register_order_audit(self, parent_type: str, parent: object, parent_stop: datetime) -> None` (L1136–L1207), `visual_order_lifecycle(self, start: datetime) -> list[tuple[int, object, datetime, Decimal, int, datetime, tuple[int, datetime, datetime] | None, bool]]` (L1211–L1230), `_cross_order(self, start: datetime, level: Decimal) -> tuple[int, datetime, datetime] | None` (L1233–L1251), `cross_order(self, confirmation_time: datetime, stop_level: Decimal) -> tuple[int, datetime, datetime] | None` (L1254–L1258), `_unconsumed_s_orders(self, parent: object, parent_stop: datetime) -> list[OrderMatch]` (L1261–L1295), `_initial_order_records(self) -> tuple[tuple[datetime, datetime, int, object, Decimal, int, datetime, tuple[int, datetime, datetime] | None], ...]` (L1298–L1353), `_initial_record_match(record: tuple[datetime, datetime, int, object, Decimal, int, datetime, tuple[int, datetime, datetime] | None], causes: tuple[str, ...]) -> OrderMatch` (L1357–L1368), `_initial_order_match(self, entry: dict[str, object], causes: tuple[str, ...]) -> OrderMatch` (L1371–L1383), `_gate_owned_initial_order(self, parent_stop: datetime) -> OrderMatch | None` (L1386–L1406), `_carried_orders_for_parent(self, parent: object, parent_stop: datetime) -> list[OrderMatch]` (L1409–L1467), `_post_stop_accepted_orders_for_parent(self, parent: object, parent_stop: datetime) -> list[OrderMatch]` (L1470–L1549), `_blocked_by_gate_owned_order(self, zone: EZone) -> bool` (L1552–L1560), `_rebuild_accepted_order_audit(self, numbered: list[EZone], supplemental_s_zones: Sequence[object]=()) -> list[EZone]` (L1563–L1746), `rebuild_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=()) -> list[EZone]` (L1749–L1761), `ensure_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=()) -> list[EZone]` (L1764–L1791)
-  - `SOrderAuditMixin` (L2020–L2191)
+    - Methods/properties: `_order_stop(self, number: int, reaction: object, context_start: datetime | None=None)` (L464), `order_stop(self, reaction_number: int, reaction: object)` (L493), `_first_healthy_direct_geometry(self, start: datetime, allow_bounded_continue: bool=False)` (L500), `_trend_leg_direct_order(self, start: datetime)` (L575), `_direct_parent_stop_order(self, start: datetime, continuous_deadline: datetime | None, allow_bounded_continue: bool, e_parent: bool=False, *, confirmation_after: datetime | None=None)` (L627), `_compute_direct_parent_stop_order(self, start: datetime, continuous_deadline: datetime | None, allow_bounded_continue: bool, e_parent: bool=False, *, confirmation_after: datetime | None=None)` (L647), `_merge_order_candidate(self, by_geometry: dict[tuple[int, int], OrderMatch], number: int, reaction: object, confirmation: datetime, *, parent_stop_cause_time: datetime)` (L739), `_enforce_single_parent_stop_owner(self, by_geometry: dict[tuple[int, int], OrderMatch])` (L773), `order_candidates(self, start: datetime, continuous_deadline: datetime | None=None, allow_bounded_continue: bool=False, allow_trend_leg_continue: bool=False, e_parent: bool=False)` (L800), `_first_order(self, start: datetime, continuous_deadline: datetime | None=None, allow_bounded_continue: bool=False, allow_trend_leg_continue: bool=False)` (L891), `_has_sequence_reset_between(self, start: datetime, end: datetime)` (L907), `_index_order_audit_identity(self, identity: tuple[int, int], confirmation: datetime)` (L918), `_clear_order_audit(self)` (L928), `_invalidate_carried_order_caches(self)` (L934), `_invalidate_post_stop_order_cache(self)` (L941), `register_order_b_reset_legs(self, legs: Sequence[OrderBResetLeg])` (L945), `_reparent_primary_high_causes(self, parent, stop_event, direct_identity)` (L1012), `register_primary_high(self, parent)` (L1060), `register_primary_low(self, parent)` (L1070), `_register_primary_point(self, parent)` (L1076), `reconcile_primary_high_labels(self, highs)` (L1109), `reconcile_primary_low_labels(self, lows)` (L1113), `_reconcile_primary_labels(self, points, prefix)` (L1117), `_register_order_audit(self, parent_type: str, parent: object, parent_stop: datetime)` (L1136), `visual_order_lifecycle(self, start: datetime)` (L1212), `_cross_order(self, start: datetime, level: Decimal)` (L1234), `cross_order(self, confirmation_time: datetime, stop_level: Decimal)` (L1255), `_unconsumed_s_orders(self, parent: object, parent_stop: datetime)` (L1262), `_initial_order_records(self)` (L1299), `_initial_record_match(record: tuple[datetime, datetime, int, object, Decimal, int, datetime, tuple[int, datetime, datetime] | None], causes: tuple[str, ...])` (L1358), `_initial_order_match(self, entry: dict[str, object], causes: tuple[str, ...])` (L1372), `_gate_owned_initial_order(self, parent_stop: datetime)` (L1387), `_carried_orders_for_parent(self, parent: object, parent_stop: datetime)` (L1410), `_post_stop_accepted_orders_for_parent(self, parent: object, parent_stop: datetime)` (L1471), `_order_created_only_by_disowned_s(self, identity: tuple[int, int], source_times: set[datetime], prospective_source_time: datetime | None=None)` (L1553), `_blocked_by_gate_owned_order(self, zone: EZone)` (L1568), `_rebuild_accepted_order_audit(self, numbered: list[EZone], supplemental_s_zones: Sequence[object]=())` (L1579), `rebuild_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=())` (L1767), `ensure_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=())` (L1782)
+  - `SOrderAuditMixin` (L2050)
     - Fields: _none_
-    - Methods/properties: `_first_order_after(self, a_stop_event_time: datetime) -> tuple[int, object, datetime] | None` (L2023–L2076), `_order_matches_after(self, a_stop_event_time: datetime) -> list[tuple[int, object, datetime]]` (L2079–L2098), `_record_a_order_audit(self, zone: object, a_stop_event_time: datetime, order_match: tuple[int, object, datetime]) -> None` (L2101–L2133), `_audit_stopped_a(self, zone: object) -> None` (L2136–L2146), `_order_stop(self, order_number: int, reaction: object) -> tuple[Decimal, int, datetime]` (L2149–L2158), `_order_stop_crossed(self, candle: object, level: Decimal) -> bool` (L2161–L2164), `_shared_order_stop_cross(self, confirmation: datetime, level: Decimal) -> tuple[int, datetime, datetime] | None` (L2167–L2191)
-- **Nested implementation functions/closures:** `OrderAuditEngineMixin._post_stop_accepted_orders_for_parent.add_match(match: OrderMatch) -> None` (L1484–L1501), `OrderAuditEngineMixin._rebuild_accepted_order_audit.valid_parent_stop_cause(cause: tuple[object, ...]) -> bool` (L1574–L1587)
+    - Methods/properties: `_first_order_after(self, a_stop_event_time: datetime)` (L2053), `_order_matches_after(self, a_stop_event_time: datetime)` (L2109), `_record_a_order_audit(self, zone: object, a_stop_event_time: datetime, order_match: tuple[int, object, datetime])` (L2131), `_audit_stopped_a(self, zone: object)` (L2166), `_order_stop(self, order_number: int, reaction: object)` (L2179), `_order_stop_crossed(self, candle: object, level: Decimal)` (L2191), `_shared_order_stop_cross(self, confirmation: datetime, level: Decimal)` (L2197)
+- **Nested implementation functions/closures:** `OrderAuditEngineMixin._post_stop_accepted_orders_for_parent.add_match` (L1485), `OrderAuditEngineMixin._rebuild_accepted_order_audit.valid_parent_stop_cause` (L1593)
 
 #### `pipeline/PL_PH_detector.py`
 - **Module-level symbols/assignments:** `PL_PH_VERSION` (L21–L21), `PL_PH_LAST_MODIFIED` (L22–L22)
@@ -6269,9 +6277,9 @@ BEARISH = DirectionPolicy(
 
 ### 16.9 `pipeline/e_zone_detector.py` — E
 
-**SHA-256:** `96ea351ff88c195937da5c32c5712356b9b876ba6f509d68cb16d37012958ad5`  
-**Bytes:** `48992`  
-**LF count:** `1144`
+**SHA-256:** `6736628d9b3c36473f30a548ea8f652a6127ff1c461cceafe352227d223b5690`  
+**Bytes:** `56097`  
+**LF count:** `1261`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/e_zone_detector.py -->
 ````python
@@ -6288,6 +6296,7 @@ from bisect import bisect_left
 from dataclasses import dataclass, replace
 from datetime import datetime
 from decimal import Decimal
+from heapq import heapify, heappop, heappush
 from typing import Callable, Sequence
 
 from core_utils import as_decimal, reaction_identity
@@ -6300,8 +6309,8 @@ from order_audit_engine import (
 
 
 E_ZONE_VERSION = "6.16.2"
-E_ZONE_IMPLEMENTATION_VERSION = "6.18.5"
-E_ZONE_LAST_MODIFIED = "2026-10-24T17:28:55+03:30"
+E_ZONE_IMPLEMENTATION_VERSION = "6.18.6"
+E_ZONE_LAST_MODIFIED = "2026-11-02T07:13:10+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -6373,6 +6382,7 @@ class EZoneDetector(OrderAuditEngineMixin):
             raise ValueError("EZoneDetector requires the shared sequence-priority resolver.")
         self.sequence_priority = sequence_priority
         self.invalid_s_root_identities = set(invalid_s_root_identities or set())
+        self._accepted_e_source_identities: set[tuple[datetime, int]] = set()
         self.sequence_resets = sequence_resets or {}
         self.order_direction = chronology.opposite_direction(direction)
         self.chronology = chronology
@@ -6653,6 +6663,7 @@ class EZoneDetector(OrderAuditEngineMixin):
     def _zone(
         self, family: str, number: int, parent_type: str,
         parent: object, stop_event: datetime,
+        *, e_owned_source_times: set[datetime] | None = None,
     ) -> EZone | None:
         # Every E-space cycle starts at the strict parent stop. Parent-stop
         # and reset-leg are creation causes; carried/accepted are use routes.
@@ -6693,11 +6704,19 @@ class EZoneDetector(OrderAuditEngineMixin):
             for item in route
             if item[6] is not None
         ]
-        order_match = min(
-            choices,
-            key=lambda item: (item[6][2], -int(getattr(item[1], "first_idx"))),
-            default=None,
-        )
+        owned_sources = e_owned_source_times if e_owned_source_times is not None else {
+            source_time for source_time, _index in self._accepted_e_source_identities
+        }
+        order_match = None
+        for match in sorted(choices, key=lambda item: (item[6][2], -int(item[1].first_idx))):
+            prospective_source = self._extreme_between(stop_event, max(stop_event, match[6][2]))
+            if self._order_created_only_by_disowned_s(
+                (int(match[1].first_idx), int(match[1].break_idx)),
+                owned_sources, prospective_source[1],
+            ):
+                continue
+            order_match = match
+            break
         if order_match is None:
             return None
         (
@@ -6711,7 +6730,7 @@ class EZoneDetector(OrderAuditEngineMixin):
         decision_event = max(stop_event, order_decision_event)
         decision_index = self._main_index(decision_event)
         decision_time = self.times[decision_index]
-        source_index, source_time, price = self._extreme_between(stop_event, decision_event)
+        source_index, source_time, price = prospective_source
         parent_stop_index = self._main_index(stop_event)
         order_first_index = int(getattr(order, "first_idx"))
         top_source = int(getattr(order, "box_top_source_idx"))
@@ -6796,6 +6815,11 @@ class EZoneDetector(OrderAuditEngineMixin):
         number.  Recursive children are then rebuilt from the promoted E so
         Order discovery and stop chronology remain native E calculations.
         """
+        source_identity = (s_zone.source_time, int(s_zone.source_index))
+        if source_identity == (owner.source_time, int(owner.source_index)) or (
+            source_identity in self._accepted_e_source_identities
+        ):
+            return []
         stopped = self._parent_stop("S", s_zone)
         if stopped is None:
             return []
@@ -6806,8 +6830,11 @@ class EZoneDetector(OrderAuditEngineMixin):
         parent: object = s_zone
         chain: list[EZone] = []
         seen_sources: set[int] = set()
+        owned_sources = {source_time for source_time, _index in self._accepted_e_source_identities}
+        owned_sources.add(owner.source_time)
         while True:
-            zone = self._zone(family, number, parent_type, parent, stop_event)
+            zone = self._zone(family, number, parent_type, parent, stop_event,
+                              e_owned_source_times=owned_sources)
             if zone is None or zone.source_index in seen_sources:
                 break
             # The stopped-A ledger can hold a physical Order before that
@@ -6827,6 +6854,7 @@ class EZoneDetector(OrderAuditEngineMixin):
                 break
             chain.append(zone)
             seen_sources.add(zone.source_index)
+            owned_sources.add(zone.source_time)
             next_stop = self._parent_stop("E", zone)
             if next_stop is None:
                 break
@@ -6876,7 +6904,11 @@ class EZoneDetector(OrderAuditEngineMixin):
 
         kept = [item for item in base_zones if not descends_from_owner(item)]
         merged = [*kept, *continuation]
-        return self.resolve_same_source_conflicts(merged)
+        selected = self.resolve_same_source_conflicts(merged)
+        self._accepted_e_source_identities = {
+            (item.source_time, int(item.source_index)) for item in selected
+        }
+        return selected
 
     def resolve_same_source_conflicts(
         self, zones: Sequence[EZone],
@@ -6958,8 +6990,34 @@ class EZoneDetector(OrderAuditEngineMixin):
             and not self._invalid_s_without_order_cause(item)
         ]
         result = list(dominant_zones)
-        for root in roots:
+        pending_roots = [(root.source_time, root.source_index, ordinal, root)
+                         for ordinal, root in enumerate(roots)]
+        heapify(pending_roots)
+        known_roots = set(roots)
+        root_ordinal = len(roots)
+        while pending_roots:
+            _time, _index, _ordinal, root = heappop(pending_roots)
             parent_id = (root.parent_source_index, root.parent_source_time)
+            # A root restored earlier in this pass can itself occupy the
+            # physical source of another provisional S parent.
+            if parent_id in dominant_sources:
+                continue
+            if self._order_created_only_by_disowned_s(
+                (root.order_first_index, root.order_break_index),
+                {source_time for _index, source_time in dominant_sources}, root.source_time,
+            ):
+                parent = next(item for item in self.s_zones
+                              if (int(item.source_index), item.source_time) == parent_id)
+                replacement = self._zone(
+                    root.family, 1, "S", parent, root.parent_stop_event_time,
+                    e_owned_source_times={time for _index, time in dominant_sources},
+                )
+                if replacement is not None and replacement not in known_roots:
+                    known_roots.add(replacement)
+                    heappush(pending_roots, (replacement.source_time, replacement.source_index,
+                                             root_ordinal, replacement))
+                    root_ordinal += 1
+                continue
             same_parent = [
                 item for item in result
                 if item.parent_type == "S"
@@ -6981,7 +7039,12 @@ class EZoneDetector(OrderAuditEngineMixin):
                 for item in result
             ):
                 result.append(root)
-        return self.resolve_same_source_conflicts(result)
+            dominant_sources.add((root.source_index, root.source_time))
+        selected = self.resolve_same_source_conflicts(result)
+        self._accepted_e_source_identities = {
+            (item.source_time, int(item.source_index)) for item in selected
+        }
+        return selected
 
     def _invalid_s_without_order_cause(self, zone: EZone) -> bool:
         """Reject an invalid S root unless its Order has another creation cause."""
@@ -7043,8 +7106,10 @@ class EZoneDetector(OrderAuditEngineMixin):
             parent: object = s_zone
             chain_sources: set[int] = set()
             chain: list[EZone] = []
+            owned_sources = {source_time for source_time, _index in self._accepted_e_source_identities}
             while True:
-                zone = self._zone(family, number, parent_type, parent, stop_event)
+                zone = self._zone(family, number, parent_type, parent, stop_event,
+                                  e_owned_source_times=owned_sources)
                 if zone is None:
                     break
                 if zone.source_index in chain_sources:
@@ -7052,6 +7117,7 @@ class EZoneDetector(OrderAuditEngineMixin):
                 chain.append(zone)
                 candidates.append(zone)
                 chain_sources.add(zone.source_index)
+                owned_sources.add(zone.source_time)
                 parent_type, parent = "E", zone
                 next_stop = self._parent_stop("E", zone)
                 if next_stop is None:
@@ -7106,6 +7172,7 @@ class EZoneDetector(OrderAuditEngineMixin):
         # Resolve competing chains chronologically.  A stopped E is removed
         # from the active set immediately; it remains only as historical
         # output and cannot affect a later family or number.
+        candidates = list(candidates)
         by_source: dict[int, list[EZone]] = {}
         for zone in candidates:
             by_source.setdefault(zone.source_index, []).append(zone)
@@ -7114,15 +7181,18 @@ class EZoneDetector(OrderAuditEngineMixin):
         # Keep the later, deeper (bullish) / higher (bearish) structure.  This
         # This prevents a provisional S-owned object from consuming the active
         # chain before the later confirmed continuation.
-        pending = sorted(
-            by_source.values(),
-            key=lambda item: (
-                min(zone.source_time for zone in item),
-                min(zone.decision_event_time for zone in item),
-            ),
-        )
+        pending = [(min(item.source_time for item in group),
+                    min(item.decision_event_time for item in group), source)
+                   for source, group in by_source.items()]
+        heapify(pending)
+        scheduled = set(by_source)
+        known = set(candidates)
+        regenerated: set[EZone] = set()
         numbered: list[EZone] = []
         active: list[EZone] = []
+        accepted_sources: set[tuple[datetime, int]] = set()
+        accepted_source_times: set[datetime] = set()
+        self._accepted_e_source_identities = accepted_sources
         sequence_start: datetime | None = None
 
         candidates_by_source_time = {
@@ -7130,7 +7200,22 @@ class EZoneDetector(OrderAuditEngineMixin):
             for item in candidates
         }
 
+        def enqueue(zone: EZone | None, current_source: int) -> None:
+            if zone is None or zone in known:
+                return
+            known.add(zone)
+            regenerated.add(zone)
+            candidates.append(zone)
+            candidates_by_source_time[(zone.source_index, zone.source_time)] = zone
+            by_source.setdefault(zone.source_index, []).append(zone)
+            if zone.source_index != current_source and zone.source_index not in scheduled:
+                heappush(pending, (zone.source_time, zone.decision_event_time, zone.source_index))
+                scheduled.add(zone.source_index)
+
         def valid_order(zone: EZone) -> bool:
+            identity = (zone.order_first_index, zone.order_break_index)
+            if self._order_created_only_by_disowned_s(identity, accepted_source_times, zone.source_time):
+                return False
             return (
                 not self._blocked_by_gate_owned_order(zone)
                 and not self._invalid_s_without_order_cause(zone)
@@ -7148,7 +7233,9 @@ class EZoneDetector(OrderAuditEngineMixin):
                     ),
                     None,
                 )
-                if parent_s is None:
+                if parent_s is None or (
+                    parent_s.source_time, int(parent_s.source_index)
+                ) in accepted_sources:
                     return False
                 if sequence_start is not None and (
                     parent_s.source_time <= sequence_start
@@ -7216,7 +7303,28 @@ class EZoneDetector(OrderAuditEngineMixin):
                 return zone.price < prior.price
             return zone.price > prior.price
 
-        for group in pending:
+        while pending:
+            _source_time, _decision_time, current_source = heappop(pending)
+            scheduled.remove(current_source)
+            group = by_source[current_source]
+            # Another source can disown an Order after its E parent was
+            # accepted. Reopen that parent's complete native race here.
+            for item in group:
+                if (self._order_created_only_by_disowned_s(
+                            (item.order_first_index, item.order_break_index),
+                            accepted_source_times, item.source_time)
+                        and parent_active(item)):
+                    parents = self.s_zones if item.parent_type == "S" else numbered
+                    parent = next((parent for parent in parents
+                                   if (parent.source_time, int(parent.source_index)) ==
+                                   (item.parent_source_time, item.parent_source_index)), None)
+                    if parent is None:
+                        continue
+                    family = item.family if item.parent_type == "S" else parent.family
+                    number = item.number if item.parent_type == "S" else parent.number + 1
+                    enqueue(self._zone(family, number, item.parent_type, parent,
+                                       item.parent_stop_event_time,
+                                       e_owned_source_times=accepted_source_times), current_source)
             eligible = [
                 item for item in group
                 if valid_order(item) and parent_active(item)
@@ -7255,6 +7363,8 @@ class EZoneDetector(OrderAuditEngineMixin):
                     and item.family == "blue"
                     and any(
                         str(getattr(s_zone, "color")) == "red"
+                        and (s_zone.source_time, int(s_zone.source_index))
+                        not in accepted_sources
                         and getattr(s_zone, "source_time")
                         > item.parent_source_time
                         and getattr(s_zone, "decision_event_time")
@@ -7346,11 +7456,23 @@ class EZoneDetector(OrderAuditEngineMixin):
             ]
             numbered_zone = replace(zone, family=family, number=number)
             numbered.append(numbered_zone)
+            accepted_sources.add((numbered_zone.source_time, numbered_zone.source_index))
+            accepted_source_times.add(numbered_zone.source_time)
             if zone.source_time in self.sequence_resets:
                 active.clear()
                 sequence_start = zone.source_time
             else:
                 active.append(numbered_zone)
+            # Original native children already participate in pending. Only
+            # a regenerated parent needs a fresh descendant chain, including
+            # when that parent's source is a hard-reset boundary.
+            next_stop = self._parent_stop("E", numbered_zone) if zone in regenerated else None
+            if next_stop is not None:
+                child = self._zone(numbered_zone.family, numbered_zone.number + 1,
+                                   "E", numbered_zone, next_stop[1],
+                                   e_owned_source_times=accepted_source_times)
+                if child is not None and child.source_index > current_source:
+                    enqueue(child, current_source)
         def collect_lineage(zone: EZone, seen: set[tuple[int, datetime]]) -> None:
             identity = (zone.source_index, zone.source_time)
             if identity in seen:
@@ -7373,11 +7495,14 @@ class EZoneDetector(OrderAuditEngineMixin):
                     if item.parent_type == "E"
                     and item.parent_source_time in self.sequence_resets
                     else item for item in numbered]
+        self._accepted_e_source_identities = accepted_sources
+        self._last_candidate_zones = list(candidates)
         return numbered
 
 
     def detect(self) -> list[EZone]:
         """Discover, reconcile and audit recursive E lifecycles."""
+        self._accepted_e_source_identities.clear()
         self._clear_order_audit()
         self.register_order_b_reset_legs(self.order_b_legs)
         self.visual_lifecycle_starts.clear()
@@ -8964,9 +9089,9 @@ def visible_a_zones(a_zones: Sequence[object], s_zones: Sequence[object]) -> lis
 
 ### 16.11 `pipeline/order_audit_engine.py` — Order / OrderAudit
 
-**SHA-256:** `8e4da88b57a5a27f3a285c51ddeee2c396afa73de7a119c127ab30c2515494e4`  
-**Bytes:** `90511`  
-**LF count:** `2192`
+**SHA-256:** `84201f1784fe9a1c924c8c6d3a8f67999d629032c6987c4384a4330954acf2af`  
+**Bytes:** `92027`  
+**LF count:** `2222`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/order_audit_engine.py -->
 ````python
@@ -8984,8 +9109,8 @@ from typing import Callable, Sequence
 
 from core_utils import as_decimal, order_identity, reaction_identity
 
-ORDER_AUDIT_ENGINE_VERSION = "1.8.0"
-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
+ORDER_AUDIT_ENGINE_VERSION = "1.8.1"
+ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-01T22:46:39+03:30"
 
 
 def relabel_primary_causes(causes, labels):
@@ -10109,10 +10234,11 @@ class OrderAuditEngineMixin:
         self, parent_type: str, parent: object, parent_stop: datetime,
     ) -> None:
         """Register only the physical Order_A created by this parent stop."""
-        if parent_type == "S" and (
-            parent.source_time, int(parent.source_index)
-        ) in self.invalid_s_root_identities:
-            return
+        if parent_type == "S":
+            source_identity = (parent.source_time, int(parent.source_index))
+            if (source_identity in self.invalid_s_root_identities
+                    or source_identity in self._accepted_e_source_identities):
+                return
         if self._has_sequence_reset_between(parent.source_time, parent_stop):
             return
         matches = self.order_candidates(
@@ -10521,6 +10647,21 @@ class OrderAuditEngineMixin:
         return list(result)
 
 
+    def _order_created_only_by_disowned_s(
+        self, identity: tuple[int, int], source_times: set[datetime],
+        prospective_source_time: datetime | None = None,
+    ) -> bool:
+        """A physical use route requires an independently valid creator."""
+        entry = self.order_audit.get(identity)
+        if (entry is None or not entry.get("causes")
+                or entry.get("order_b_causes") or identity in self.initial_order_audit):
+            return False
+        return all(
+            cause[0] == "parent-stop" and cause[1] == "S" and len(cause) > 4
+            and (cause[4] in source_times or cause[4] == prospective_source_time)
+            for cause in entry["causes"]
+        )
+
     def _blocked_by_gate_owned_order(self, zone: EZone) -> bool:
         """Reject a nested parent-stop Order_A when the gate-owned A Order wins."""
         if "parent-stop" not in zone.order_causes:
@@ -10536,12 +10677,15 @@ class OrderAuditEngineMixin:
         self, numbered: list[EZone], supplemental_s_zones: Sequence[object] = (),
     ) -> list[EZone]:
         """Rebuild accepted parent-stop and reset-leg physical provenance."""
+        self._accepted_e_source_identities = {
+            (item.source_time, int(item.source_index)) for item in numbered
+        }
         invalid_s_source_times = {
             source_time
             for source_time, _source_index in getattr(
                 self, "invalid_s_root_identities", set()
             )
-        }
+        } | {source_time for source_time, _index in self._accepted_e_source_identities}
 
         def valid_parent_stop_cause(cause: tuple[object, ...]) -> bool:
             if not cause or cause[0] != "parent-stop":
@@ -10549,9 +10693,8 @@ class OrderAuditEngineMixin:
             # Suppressed/invalid S evidence may remain available internally for
             # E continuation geometry, but it never became an accepted S
             # behavior and therefore cannot create a physical parent-stop
-            # Order_A.  Valid historical/non-public accepted S behaviors are
-            # unaffected because only explicitly invalid S identities are
-            # rejected here.
+            # Order_A. This includes S sources owned by accepted E. Valid
+            # historical S causes at other sources remain authoritative.
             return not (
                 cause[1] == "S"
                 and len(cause) > 4
@@ -10751,8 +10894,20 @@ class OrderAuditEngineMixin:
         rebuilt = self._rebuild_accepted_order_audit(
             list(zones), supplemental_s_zones=supplemental_s_zones
         )
+        invalid_s_source_times = {
+            source_time for source_time, _index in (
+                self.invalid_s_root_identities | self._accepted_e_source_identities
+            )
+        }
         for identity, entry in preserved.items():
             if identity in self.order_audit:
+                continue
+            entry["causes"] = {
+                cause for cause in entry["causes"]
+                if not (cause[1] == "S" and len(cause) > 4
+                        and cause[4] in invalid_s_source_times)
+            }
+            if not entry["causes"] and not entry.get("order_b_causes"):
                 continue
             self.order_audit[identity] = entry
             # The rebuild clears both ledger and index. Restoring only the

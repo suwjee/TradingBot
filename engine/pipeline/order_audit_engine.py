@@ -12,8 +12,8 @@ from typing import Callable, Sequence
 
 from core_utils import as_decimal, order_identity, reaction_identity
 
-ORDER_AUDIT_ENGINE_VERSION = "1.8.0"
-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
+ORDER_AUDIT_ENGINE_VERSION = "1.8.1"
+ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-01T22:46:39+03:30"
 
 
 def relabel_primary_causes(causes, labels):
@@ -1137,10 +1137,11 @@ class OrderAuditEngineMixin:
         self, parent_type: str, parent: object, parent_stop: datetime,
     ) -> None:
         """Register only the physical Order_A created by this parent stop."""
-        if parent_type == "S" and (
-            parent.source_time, int(parent.source_index)
-        ) in self.invalid_s_root_identities:
-            return
+        if parent_type == "S":
+            source_identity = (parent.source_time, int(parent.source_index))
+            if (source_identity in self.invalid_s_root_identities
+                    or source_identity in self._accepted_e_source_identities):
+                return
         if self._has_sequence_reset_between(parent.source_time, parent_stop):
             return
         matches = self.order_candidates(
@@ -1549,6 +1550,21 @@ class OrderAuditEngineMixin:
         return list(result)
 
 
+    def _order_created_only_by_disowned_s(
+        self, identity: tuple[int, int], source_times: set[datetime],
+        prospective_source_time: datetime | None = None,
+    ) -> bool:
+        """A physical use route requires an independently valid creator."""
+        entry = self.order_audit.get(identity)
+        if (entry is None or not entry.get("causes")
+                or entry.get("order_b_causes") or identity in self.initial_order_audit):
+            return False
+        return all(
+            cause[0] == "parent-stop" and cause[1] == "S" and len(cause) > 4
+            and (cause[4] in source_times or cause[4] == prospective_source_time)
+            for cause in entry["causes"]
+        )
+
     def _blocked_by_gate_owned_order(self, zone: EZone) -> bool:
         """Reject a nested parent-stop Order_A when the gate-owned A Order wins."""
         if "parent-stop" not in zone.order_causes:
@@ -1564,12 +1580,15 @@ class OrderAuditEngineMixin:
         self, numbered: list[EZone], supplemental_s_zones: Sequence[object] = (),
     ) -> list[EZone]:
         """Rebuild accepted parent-stop and reset-leg physical provenance."""
+        self._accepted_e_source_identities = {
+            (item.source_time, int(item.source_index)) for item in numbered
+        }
         invalid_s_source_times = {
             source_time
             for source_time, _source_index in getattr(
                 self, "invalid_s_root_identities", set()
             )
-        }
+        } | {source_time for source_time, _index in self._accepted_e_source_identities}
 
         def valid_parent_stop_cause(cause: tuple[object, ...]) -> bool:
             if not cause or cause[0] != "parent-stop":
@@ -1577,9 +1596,8 @@ class OrderAuditEngineMixin:
             # Suppressed/invalid S evidence may remain available internally for
             # E continuation geometry, but it never became an accepted S
             # behavior and therefore cannot create a physical parent-stop
-            # Order_A.  Valid historical/non-public accepted S behaviors are
-            # unaffected because only explicitly invalid S identities are
-            # rejected here.
+            # Order_A. This includes S sources owned by accepted E. Valid
+            # historical S causes at other sources remain authoritative.
             return not (
                 cause[1] == "S"
                 and len(cause) > 4
@@ -1779,8 +1797,20 @@ class OrderAuditEngineMixin:
         rebuilt = self._rebuild_accepted_order_audit(
             list(zones), supplemental_s_zones=supplemental_s_zones
         )
+        invalid_s_source_times = {
+            source_time for source_time, _index in (
+                self.invalid_s_root_identities | self._accepted_e_source_identities
+            )
+        }
         for identity, entry in preserved.items():
             if identity in self.order_audit:
+                continue
+            entry["causes"] = {
+                cause for cause in entry["causes"]
+                if not (cause[1] == "S" and len(cause) > 4
+                        and cause[4] in invalid_s_source_times)
+            }
+            if not entry["causes"] and not entry.get("order_b_causes"):
                 continue
             self.order_audit[identity] = entry
             # The rebuild clears both ledger and index. Restoring only the
