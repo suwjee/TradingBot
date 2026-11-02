@@ -9,7 +9,7 @@ import { drawingArray, normalizeHistorySnapshot, CHART_TIMEFRAME_KEY, restoredTi
 import { PRIMARY_VISUAL_DEFAULTS, primaryVisualObjects, drawPrimaryStructures, drawTrendTransitions, clipHistoricalHitBoxes, indicatorCalculationSegments } from "./chart/primary-structure.js";
 import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart/lod.js";
 import { aggregate } from "./chart/candle-aggregation.js";
-import { groupDrawingsForTree } from "./chart/object-tree-groups.js";
+import { groupDrawingsForTree, groupIndicatorRowsForTree } from "./chart/object-tree-groups.js";
 import { collectProjectedStrokePoints } from "./drawings/stroke-projection.js";
 import { bindViewportEvents, createViewportScheduler } from "./chart/viewport-events.js";
 import { startVisibleClock } from "./features/visible-clock.js";
@@ -3999,12 +3999,11 @@ function renderObjectTree() {
     if (!items.length && query) return "";
     return `<section class="tree-folder" data-folder-drop="${folder.id}">${folderHeader(folder.id, folder.name, items.length, false, false, folder.id !== "manual-unfiled")}${folderCollapsed(folder.id) ? "" : `<div class="tree-folder-items">${items.map(drawingRow).join("") || '<div class="folder-empty">Drop drawings here</div>'}</div>`}</section>`;
   }).join("");
-  const visibleIndicators = state.indicator.objects.filter((item) =>
-    !query || `${item.name} ${item.type}`.toLowerCase().includes(query),
-  );
+  const { visible: visibleIndicators, byDirection: groupedIndicators } =
+    groupIndicatorRowsForTree(state.indicator.objects, query);
   const indicatorTree = visibleIndicators.length ? ["bullish", "bearish"].map((direction) => {
     const id = `indicator-${direction}`;
-    const items = visibleIndicators.filter((item) => item.id.includes(`:${direction}:`));
+    const items = groupedIndicators[direction];
     if (!items.length) return "";
     return `${folderHeader(id, direction[0].toUpperCase() + direction.slice(1), items.length, true, true)}${folderCollapsed(id) ? "" : `<div class="tree-folder-items nested-items">${items.map(indicatorRow).join("")}</div>`}`;
   }).join("") : "";
