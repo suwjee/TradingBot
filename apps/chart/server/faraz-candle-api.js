@@ -632,7 +632,8 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     } catch {}
   }
 
-  function captureHistoryResponse(response) {
+  // This browser event handler captures an authenticated login session, not an export audit.
+  function captureHistoryAuthResponse(response) {
     try {
       const url = new URL(response.url());
       if (!ALLOWED_HOSTS.has(url.host) || url.pathname !== HISTORY_PATH || !response.ok) return;
@@ -647,7 +648,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     if (!page || observedHistoryPages.has(page)) return;
     observedHistoryPages.add(page);
     page.on("request", captureHistoryRequest);
-    page.on("response", captureHistoryResponse);
+    page.on("response", captureHistoryAuthResponse);
   }
 
   function endpointSymbolName(symbolName) {
@@ -816,7 +817,8 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     job.updatedAt = Date.now();
   }
 
-  function captureHistoryResponse(job, chunk, response, text) {
+  // Export diagnostics are independent of browser session capture.
+  function writeHistoryResponseAudit(job, chunk, response, text) {
     if (!job.responseAuditPath) return;
     try {
       const record = {
@@ -920,7 +922,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       job.requestControllers?.delete(requestController);
     }
     const text = await response.text();
-    captureHistoryResponse(job, chunk, response, text);
+    writeHistoryResponseAudit(job, chunk, response, text);
     if (!response.ok) {
       const error = new Error(`FARAZ history request failed with HTTP ${response.status}: ${text}`);
       error.status = response.status;
