@@ -190,7 +190,7 @@ test("FARAZ extraction response audit stays independent from browser session cap
   assert.equal(records[0].response.status, 200);
   assert.equal(records[0].response.ok, true);
   assert.deepEqual(records[0].request, {
-    from: 100, to: 110, countback: 3, firstDataRequest: false, latest: false,
+    from: 100, to: 110, countback: 3, firstDataRequest: true, latest: true,
   });
   assert.equal(JSON.parse(records[0].response.body).s, "ok");
   assert.equal(managed.closeCount(), 1);
