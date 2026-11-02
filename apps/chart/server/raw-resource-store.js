@@ -15,10 +15,17 @@ function assertCandles(candles) {
   if (!Array.isArray(candles) || !candles.length) throw new Error("RAW candles must be a non-empty array.");
   candles.forEach((row, index) => {
     if (!row || Object.keys(row).length !== CANDLE_KEYS.length || !CANDLE_KEYS.every((key) => Object.hasOwn(row, key))) throw new Error(`RAW candle ${index + 1} has an invalid schema.`);
-    const candle = Object.fromEntries(CANDLE_KEYS.map((key) => [key, Number(row[key])]));
-    if (!Number.isSafeInteger(candle.time) || candle.time <= 0 || ![candle.open, candle.high, candle.low, candle.close].every(Number.isFinite)
-      || candle.high < Math.max(candle.open, candle.close, candle.low) || candle.low > Math.min(candle.open, candle.close, candle.high)
-      || (index && candle.time <= Number(candles[index - 1].time))) throw new Error(`RAW candle ${index + 1} failed chronology or OHLC validation.`);
+    // Preserve all numeric coercion and boundary rules without allocating a
+    // temporary object, key/value pairs, and an OHLC array for every RAW row.
+    const time = Number(row.time);
+    const open = Number(row.open);
+    const high = Number(row.high);
+    const low = Number(row.low);
+    const close = Number(row.close);
+    if (!Number.isSafeInteger(time) || time <= 0
+      || !Number.isFinite(open) || !Number.isFinite(high) || !Number.isFinite(low) || !Number.isFinite(close)
+      || high < Math.max(open, close, low) || low > Math.min(open, close, high)
+      || (index && time <= Number(candles[index - 1].time))) throw new Error(`RAW candle ${index + 1} failed chronology or OHLC validation.`);
   });
 }
 
