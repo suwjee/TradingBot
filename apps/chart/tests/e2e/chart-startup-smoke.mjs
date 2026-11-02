@@ -30,6 +30,17 @@ const drawings = Array.from({ length: 6 }, (_, index) => ({
   style: { stroke: "#2962ff", fill: "#2962ff", width: 0.5, style: "solid", opacity: 0.1 },
   locked: false, hidden: false,
 }));
+for (const type of ["brush", "path"]) {
+  const points = Array.from({ length: 100 }, (_, i) => ({
+    time: candles[200 + i].time, price: 102 + Math.sin(i / 9) * 0.4,
+  }));
+  drawings.push({
+    id: `drawing-${type}`, type,
+    a: points[0], b: points.at(-1), points,
+    style: { stroke: "#2962ff", fill: "#2962ff", width: 0.5, style: "solid", opacity: 0.1 },
+    locked: false, hidden: false,
+  });
+}
 const port = 5173;
 const url = `http://127.0.0.1:${port}`;
 const chrome = [
@@ -109,6 +120,10 @@ try {
   await page.locator("#objectSearch").fill("line");
   const filteredIds = await page.locator("#objectList [data-object]").evaluateAll((elements) => elements.map((row) => row.dataset.object));
   assert.deepEqual(filteredIds, ["drawing-0", "drawing-2", "drawing-4"], "Search must preserve folder row order");
+  await page.locator("#objectSearch").fill("Brush");
+  assert.deepEqual(await page.locator("#objectList [data-object]").evaluateAll((elements) => elements.map((row) => row.dataset.object)), ["drawing-brush"]);
+  await page.locator("#objectSearch").fill("Path");
+  assert.deepEqual(await page.locator("#objectList [data-object]").evaluateAll((elements) => elements.map((row) => row.dataset.object)), ["drawing-path"]);
   await page.locator("#objectSearch").fill("");
   await page.locator("#closeObjectTree").click();
   // Real pointer and resize events must remain safe after handler extraction.
