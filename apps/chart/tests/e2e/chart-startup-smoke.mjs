@@ -133,7 +133,7 @@ try {
     // through Vite's production API. No handcrafted trading results are used.
     for (const direction of ["bullish", "bearish"]) {
       await page.locator("#indicatorBtn").click();
-      await page.locator(`[data-direction="${direction}"]`).click();
+      await page.locator(`.trend-segment button[data-direction="${direction}"]`).click();
       await page.locator("#indicatorEnabled").check();
       await page.evaluate(() => { window.__phase7LastIndicator = window.__QG_PERF__?.indicator || null; });
       const responsePromise = page.waitForResponse(
