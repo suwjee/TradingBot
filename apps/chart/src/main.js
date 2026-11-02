@@ -8,6 +8,7 @@ import { icon } from "./ui/icons.js";
 import { drawingArray, normalizeHistorySnapshot, CHART_TIMEFRAME_KEY, restoredTimeframe, indicatorControlId } from "./chart/state.js";
 import { PRIMARY_VISUAL_DEFAULTS, primaryVisualObjects, drawPrimaryStructures, drawTrendTransitions, clipHistoricalHitBoxes, indicatorCalculationSegments } from "./chart/primary-structure.js";
 import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart/lod.js";
+import { aggregate } from "./chart/candle-aggregation.js";
 import { coordinateToRawTime, createViewAnchorCache, rawTimeToCoordinate, selectDensityMode } from "./chart/view-transform.js";
 import { updateStageAggregate } from "./chart/progress.js";
 import { cacheClearLayers, clearIndicatorBrowserState } from "./features/indicator-cache.js";
@@ -1458,30 +1459,6 @@ chart.applyOptions({
   timeScale: { tickMarkFormatter: (time) => formatChartAxisTime(time) },
 });
 
-function aggregate(rows, seconds) {
-  if (seconds === 1) return rows;
-  const out = [];
-  let bar = null;
-  for (const r of rows) {
-    const time = Math.floor(Number(r.time) / seconds) * seconds;
-    if (!bar || bar.time !== time) {
-      if (bar) out.push(bar);
-      bar = {
-        time,
-        open: +r.open,
-        high: +r.high,
-        low: +r.low,
-        close: +r.close,
-      };
-    } else {
-      bar.high = Math.max(bar.high, +r.high);
-      bar.low = Math.min(bar.low, +r.low);
-      bar.close = +r.close;
-    }
-  }
-  if (bar) out.push(bar);
-  return out;
-}
 const CHART_LOD_TARGET_CANDLES = 4_000;
 const CHART_LOD_BARS_PER_PIXEL = 2;
 const CHART_LOD_STABLE_DATA_LIMIT = 100_000;
