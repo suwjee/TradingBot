@@ -11,6 +11,7 @@ import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart/lod.js"
 import { aggregate } from "./chart/candle-aggregation.js";
 import { groupDrawingsForTree, groupIndicatorRowsForTree } from "./chart/object-tree-groups.js";
 import { collectProjectedStrokePoints } from "./drawings/stroke-projection.js";
+import { representedOrderKeys as buildRepresentedOrderKeys } from "./chart/indicator-order-keys.js";
 import { bindViewportEvents, createViewportScheduler } from "./chart/viewport-events.js";
 import { startVisibleClock } from "./features/visible-clock.js";
 import { coordinateToRawTime, createViewAnchorCache, rawTimeToCoordinate, selectDensityMode } from "./chart/view-transform.js";
@@ -3571,11 +3572,9 @@ function drawIndicator() {
         ctx.restore();
       }
     }
-    const representedOrderKeys = new Set(
-      [...(group.sZones || []), ...(group.eZones || []), ...(group.stopAlls || [])]
-        .filter((item) => item.calculationValid !== false && item.orderFirstIndex != null && item.orderBreakIndex != null)
-        .map((item) => `${item.orderFirstIndex}:${item.orderBreakIndex}`),
-    );
+    // A presentation-only, per-render suppression index. Do not cache across
+    // Engine result/segment mutations or alter original order-audit decisions.
+    const representedOrderKeys = buildRepresentedOrderKeys(group);
     for (const [auditIndex, order] of (group.orderAudit || []).entries()) {
       const key = `${order.firstIndex}:${order.breakIndex}`;
       if (representedOrderKeys.has(key)) continue;
