@@ -81,6 +81,10 @@ jobs:
         working-directory: apps/chart
         run: node --expose-gc tests/benchmarks/object-tree-index.mjs
 
+      - name: Compare brush and path projection allocations
+        working-directory: apps/chart
+        run: node --expose-gc tests/benchmarks/stroke-projection.mjs
+
       - name: Verify production build
         working-directory: apps/chart
         run: npm run build
