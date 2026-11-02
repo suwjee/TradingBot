@@ -216,6 +216,18 @@ try {
   await page.locator("#objectList [data-object]").first().waitFor({ state: "attached" });
   const objectIds = await page.locator("#objectList [data-object]").evaluateAll((elements) => elements.map((row) => row.dataset.object));
   assert.deepEqual(objectIds, drawings.map((item) => item.id), "Persisted drawing order must remain unchanged");
+  // Actual DOM multi-selection should preserve row order and toggling.
+  await page.locator('#objectList [data-object="drawing-0"]').click();
+  await page.locator('#objectList [data-object="drawing-2"]').click({ modifiers: ["Shift"] });
+  assert.deepEqual(
+    await page.locator("#objectList [data-object].selected").evaluateAll((rows) => rows.map((row) => row.dataset.object)),
+    ["drawing-0", "drawing-2"],
+  );
+  await page.locator('#objectList [data-object="drawing-0"]').click({ modifiers: ["Shift"] });
+  assert.deepEqual(
+    await page.locator("#objectList [data-object].selected").evaluateAll((rows) => rows.map((row) => row.dataset.object)),
+    ["drawing-2"],
+  );
   await page.locator("#objectSearch").fill("line");
   const filteredIds = await page.locator("#objectList [data-object]").evaluateAll((elements) => elements.map((row) => row.dataset.object));
   assert.deepEqual(filteredIds, ["drawing-0", "drawing-2", "drawing-4"], "Search must preserve folder row order");
