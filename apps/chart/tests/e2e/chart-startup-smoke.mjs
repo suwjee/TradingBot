@@ -134,7 +134,10 @@ try {
     for (const direction of ["bullish", "bearish"]) {
       await page.locator("#indicatorBtn").click();
       await page.locator(`.trend-segment button[data-direction="${direction}"]`).click();
-      await page.locator("#indicatorEnabled").check();
+      if (!(await page.locator("#indicatorEnabled").isChecked())) {
+        await page.locator(".master-switch").click();
+      }
+      assert.equal(await page.locator("#indicatorEnabled").isChecked(), true);
       await page.evaluate(() => { window.__phase7LastIndicator = window.__QG_PERF__?.indicator || null; });
       const responsePromise = page.waitForResponse(
         (response) => response.url().endsWith("/api/reactions") && response.request().method() === "POST",
