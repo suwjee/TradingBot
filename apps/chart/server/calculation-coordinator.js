@@ -15,6 +15,7 @@ export function createCalculationCoordinator({ maxActive = 1 } = {}) {
   }
 
   const pending = [];
+  let pendingHead = 0;
   const inFlight = new Map();
   const activeJobs = new Set();
   let closed = false;
@@ -37,10 +38,25 @@ export function createCalculationCoordinator({ maxActive = 1 } = {}) {
     }
   }
 
+  // Avoid an O(n) Array.shift() for each queued request under large backlogs.
+  // Clear consumed slots immediately, compact only when enough have been drained.
+  function dequeuePending() {
+    const job = pending[pendingHead];
+    pending[pendingHead++] = undefined;
+    if (pendingHead === pending.length) {
+      pending.length = 0;
+      pendingHead = 0;
+    } else if (pendingHead >= 1024 && pendingHead * 2 >= pending.length) {
+      pending.splice(0, pendingHead);
+      pendingHead = 0;
+    }
+    return job;
+  }
+
   function drain() {
     if (closed) return;
-    while (activeJobs.size < maxActive && pending.length) {
-      const job = pending.shift();
+    while (activeJobs.size < maxActive && pendingHead < pending.length) {
+      const job = dequeuePending();
       const controller = new AbortController();
       job.controller = controller;
       activeJobs.add(job);
@@ -85,7 +101,10 @@ export function createCalculationCoordinator({ maxActive = 1 } = {}) {
   function close() {
     if (closed) return;
     closed = true;
-    for (const job of pending.splice(0)) {
+    const queuedJobs = pending.splice(pendingHead);
+    pending.length = 0;
+    pendingHead = 0;
+    for (const job of queuedJobs) {
       inFlight.delete(job.key);
       job.subscribers.clear();
       job.events.length = 0;
@@ -95,7 +114,7 @@ export function createCalculationCoordinator({ maxActive = 1 } = {}) {
   }
 
   function stats() {
-    return { active: activeJobs.size, pending: pending.length, inFlight: inFlight.size };
+    return { active: activeJobs.size, pending: pending.length - pendingHead, inFlight: inFlight.size };
   }
 
   return { run, close, stats };
