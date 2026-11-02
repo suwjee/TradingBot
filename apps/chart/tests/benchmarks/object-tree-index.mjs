@@ -86,7 +86,7 @@ const indicatorObjects = Array.from({ length: 30_000 }, (_, index) => ({
   type: "indicator-reaction",
 }));
 const priorIndicators = () => {
-  const visible = indicatorObjects.filter((item) => !("blue") || `${item.name} ${item.type}`.toLowerCase().includes("blue"));
+  const visible = indicatorObjects.filter((item) => `${item.name} ${item.type}`.toLowerCase().includes("blue"));
   return { visible, byDirection: {
     bullish: visible.filter((item) => item.id.includes(":bullish:")),
     bearish: visible.filter((item) => item.id.includes(":bearish:")),
