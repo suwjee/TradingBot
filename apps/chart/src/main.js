@@ -10,6 +10,7 @@ import { PRIMARY_VISUAL_DEFAULTS, primaryVisualObjects, drawPrimaryStructures, d
 import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart/lod.js";
 import { aggregate } from "./chart/candle-aggregation.js";
 import { groupDrawingsForTree } from "./chart/object-tree-groups.js";
+import { collectProjectedStrokePoints } from "./drawings/stroke-projection.js";
 import { bindViewportEvents, createViewportScheduler } from "./chart/viewport-events.js";
 import { startVisibleClock } from "./features/visible-clock.js";
 import { coordinateToRawTime, createViewAnchorCache, rawTimeToCoordinate, selectDensityMode } from "./chart/view-transform.js";
@@ -2628,11 +2629,7 @@ function drawOne(d, selected = false) {
   // endpoints are metadata only; rejecting either endpoint used to hide the
   // entire stroke while it was being moved.
   if (["brush", "path"].includes(d.type)) {
-    const pts = (d.points || []).map(xy).filter(valid);
-    if (d.type === "path" && d.preview) {
-      const preview = xy(d.preview);
-      if (valid(preview)) pts.push(preview);
-    }
+    const pts = collectProjectedStrokePoints(d, xy, valid);
     if (!pts.length) return;
     ctx.save();
     ctx.strokeStyle = s.stroke;
@@ -2640,10 +2637,15 @@ function drawOne(d, selected = false) {
     ctx.setLineDash(dash(s.style));
     ctx.beginPath();
     ctx.moveTo(pts[0].x, pts[0].y);
-    pts.slice(1).forEach((q) => ctx.lineTo(q.x, q.y));
+    for (let index = 1; index < pts.length; index++) {
+      const point = pts[index];
+      ctx.lineTo(point.x, point.y);
+    }
     ctx.stroke();
     ctx.restore();
-    if (selected && !d.locked && d.type === "path") pts.forEach(handle);
+    if (selected && !d.locked && d.type === "path") {
+      for (const point of pts) handle(point);
+    }
     return;
   }
   const a = xy(d.a),
