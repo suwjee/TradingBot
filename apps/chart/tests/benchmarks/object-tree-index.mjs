@@ -42,4 +42,39 @@ for (const query of ["", "long"]) {
 }
 const baseline = measure("original_repeated_filter", () => legacyGroup(""));
 const candidate = measure("transient_group_index", () => groupDrawingsForTree(drawings, folders, "", names));
-console.log(JSON.stringify({ type: "chart-object-tree-index", folderCount, drawingCount, repetitions, measurements: [baseline, candidate], note: "Synthetic runner-local microbenchmark; no Engine/RAW files or full browser painting included." }, null, 2));
+
+// Additional allocation-sensitive render traversal comparison. This measures
+// iteration only (not canvas paint); drawOne is presentation-only.
+const renderDrawings = drawings.map((drawing, index) => ({ ...drawing, hidden: index % 4 === 0 }));
+const legacyVisible = () => {
+  let sum = 0;
+  renderDrawings.filter((drawing) => !drawing.hidden).forEach((drawing) => { sum += drawing.id.length; });
+  return sum;
+};
+const directVisible = () => {
+  let sum = 0;
+  for (const drawing of renderDrawings) {
+    if (drawing.hidden) continue;
+    sum += drawing.id.length;
+  }
+  return sum;
+};
+assert.equal(legacyVisible(), directVisible());
+function measureTraversal(label, walk) {
+  const samples = [];
+  for (let i = 0; i < repetitions; i++) {
+    globalThis.gc?.();
+    const started = performance.now();
+    assert.equal(walk(), legacyVisible());
+    samples.push(Number((performance.now() - started).toFixed(3)));
+  }
+  return { label, medianMs: [...samples].sort((a, b) => a - b)[Math.floor(samples.length / 2)], samplesMs: samples };
+}
+const oldTraversal = measureTraversal("visible_drawings_filter_array", legacyVisible);
+const newTraversal = measureTraversal("visible_drawings_direct_iteration", directVisible);
+console.log(JSON.stringify({
+  type: "chart-presentation-loop",
+  folderCount, drawingCount, repetitions,
+  measurements: [baseline, candidate, oldTraversal, newTraversal],
+  note: "Synthetic same-run microbenchmark for indexing/iteration only; excludes canvas painting, full browser, Engine and RAW files.",
+}, null, 2));
