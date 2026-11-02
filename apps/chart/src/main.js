@@ -10,6 +10,7 @@ import { PRIMARY_VISUAL_DEFAULTS, primaryVisualObjects, drawPrimaryStructures, d
 import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart/lod.js";
 import { aggregate } from "./chart/candle-aggregation.js";
 import { groupDrawingsForTree } from "./chart/object-tree-groups.js";
+import { bindViewportEvents, createViewportScheduler } from "./chart/viewport-events.js";
 import { startVisibleClock } from "./features/visible-clock.js";
 import { coordinateToRawTime, createViewAnchorCache, rawTimeToCoordinate, selectDensityMode } from "./chart/view-transform.js";
 import { updateStageAggregate } from "./chart/progress.js";
@@ -1519,22 +1520,12 @@ function renderChartViewport(range, { preserveRange = false, force = false } = {
   if (preserveRange && range?.from != null && range?.to != null)
     chart.timeScale().setVisibleRange({ from: range.from, to: range.to });
 }
-let chartViewportFrame = 0,
-  chartViewportTimer = 0;
-function scheduleChartViewport(delay = 140) {
-  if (!state.data.length) return;
-  clearTimeout(chartViewportTimer);
-  chartViewportTimer = setTimeout(() => {
-    if (chartViewportFrame) return;
-    chartViewportFrame = requestAnimationFrame(() => {
-      chartViewportFrame = 0;
-      // Never replace series data while the pointer is still dragging the
-      // chart. A stale range would make the viewport jump under the cursor.
-      if (state.pointerIsPanning) return;
-      renderChartViewport(chart.timeScale().getVisibleRange(), { preserveRange: true });
-    });
-  }, delay);
-}
+const scheduleChartViewport = createViewportScheduler({
+  hasData: () => Boolean(state.data.length),
+  isPointerPanning: () => state.pointerIsPanning,
+  getVisibleRange: () => chart.timeScale().getVisibleRange(),
+  render: renderChartViewport,
+});
 function sourceCandleAt(time) {
   if (!state.data.length || time == null) return null;
   const index = lowerBoundTime(state.data, Number(time));
@@ -3745,38 +3736,14 @@ function scheduleDraw() {
     drawAll();
   });
 }
-chart
-  .timeScale()
-  .subscribeVisibleLogicalRangeChange(() => {
-    viewAnchorCache.invalidate();
-    scheduleDraw();
-    scheduleChartViewport();
-  });
-chart.timeScale().subscribeVisibleTimeRangeChange(() => {
-  viewAnchorCache.invalidate();
-  scheduleDraw();
-  scheduleChartViewport();
+bindViewportEvents({
+  timeScale: chart.timeScale(),
+  shell,
+  invalidateAnchors: () => viewAnchorCache.invalidate(),
+  scheduleDraw,
+  scheduleViewport: scheduleChartViewport,
+  setPointerPanning: (value) => { state.pointerIsPanning = value; },
 });
-chart.timeScale().subscribeSizeChange(() => {
-  viewAnchorCache.invalidate();
-  scheduleDraw();
-  scheduleChartViewport(0);
-});
-shell.addEventListener("pointermove", (event) => {
-  if (event.buttons) scheduleDraw();
-}, { passive: true });
-shell.addEventListener("pointerdown", (event) => {
-  if (event.button === 0) state.pointerIsPanning = true;
-}, { passive: true });
-shell.addEventListener("pointerup", () => {
-  state.pointerIsPanning = false;
-  scheduleDraw();
-  scheduleChartViewport(90);
-}, { passive: true });
-shell.addEventListener("pointercancel", () => {
-  state.pointerIsPanning = false;
-  scheduleChartViewport(90);
-}, { passive: true });
 function distSeg(p, a, b) {
   const dx = b.x - a.x,
     dy = b.y - a.y,
