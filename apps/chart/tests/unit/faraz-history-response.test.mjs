@@ -58,6 +58,20 @@ async function startFixture(t) {
     workspaceRoot,
     localStateRoot: path.join(workspaceRoot, "apps", "chart", "state"),
     launchBrowser: async () => ({ browser: managed.browser, context: managed.context }),
+    fetchImpl: async (requestedUrl) => {
+      const url = new URL(requestedUrl);
+      const from = Number(url.searchParams.get("from"));
+      const to = Number(url.searchParams.get("to"));
+      const times = [100, 105, 110].filter((time) => time >= from && time <= to);
+      return new Response(JSON.stringify({
+        s: times.length ? "ok" : "no_data",
+        t: times,
+        o: times.map(() => 10),
+        h: times.map(() => 11),
+        l: times.map(() => 9),
+        c: times.map(() => 10),
+      }), { headers: { "content-type": "application/json" } });
+    },
   });
   const routes = new Map();
   api.configureServer({ middlewares: { use(route, handler) { routes.set(route, handler); } } });
@@ -73,13 +87,14 @@ async function startFixture(t) {
     await new Promise((resolve) => server.close(resolve));
     fs.rmSync(workspaceRoot, { recursive: true, force: true });
   });
-  const url = `http://127.0.0.1:${server.address().port}/api/faraz/auth/open`;
-  const opened = await fetch(url, { method: "POST" });
+  const origin = `http://127.0.0.1:${server.address().port}`;
+  const opened = await fetch(`${origin}/api/faraz/auth/open`, { method: "POST" });
   assert.equal(opened.status, 200);
   assert.equal(managed.listenerCount("request"), 1);
   assert.equal(managed.listenerCount("response"), 1);
   return {
     managed,
+    origin,
     secretPath: path.join(workspaceRoot, "apps", "chart", "state", "secret", "faraz-session.dpapi.json"),
   };
 }
@@ -132,5 +147,51 @@ test("concurrent successful browser response callbacks finalize one session only
   managed.emit("response", response);
   await waitFor(() => managed.isClosed(), "single browser finalization");
   assert.equal(fs.existsSync(secretPath), true);
+  assert.equal(managed.closeCount(), 1);
+});
+
+test("FARAZ extraction response audit stays independent from browser session capture", async (t) => {
+  const { managed, origin, secretPath } = await startFixture(t);
+  managed.emit("request", {
+    url: () => HISTORY_URL,
+    headers: () => ({ "x-access-token": "unit-token", cookie: "farazSession=unit-cookie" }),
+  });
+  managed.emit("response", { url: () => HISTORY_URL, ok: true });
+  await waitFor(() => managed.isClosed(), "authenticated browser closure");
+  assert.equal(fs.existsSync(secretPath), true);
+
+  const started = await fetch(`${origin}/api/faraz/candles/start`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      symbolName: "FXCM:USOIL", resolution: "5S", mode: "range",
+      from: 100, to: 110, packetSize: 1000, captureResponses: true,
+    }),
+  });
+  assert.equal(started.status, 202);
+  const { id } = await started.json();
+  assert.ok(id);
+
+  let job;
+  const deadline = Date.now() + 5000;
+  do {
+    const response = await fetch(`${origin}/api/faraz/candles/status?id=${encodeURIComponent(id)}`);
+    assert.equal(response.status, 200);
+    job = await response.json();
+    if (!job.running) break;
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  } while (Date.now() < deadline);
+
+  assert.equal(job?.done, true, job?.error || "export did not finish");
+  assert.ok(job.capturedResponseCount >= 1);
+  assert.equal(fs.existsSync(job.responseAuditPath), true);
+  const records = fs.readFileSync(job.responseAuditPath, "utf8").trim().split("\n").map((line) => JSON.parse(line));
+  assert.equal(records.length, job.capturedResponseCount);
+  assert.equal(records[0].response.status, 200);
+  assert.equal(records[0].response.ok, true);
+  assert.deepEqual(records[0].request, {
+    from: 100, to: 110, countback: 3, firstDataRequest: false, latest: false,
+  });
+  assert.equal(JSON.parse(records[0].response.body).s, "ok");
   assert.equal(managed.closeCount(), 1);
 });
