@@ -77,6 +77,10 @@ jobs:
         working-directory: apps/chart
         run: node --expose-gc tests/benchmarks/server-hot-paths.mjs
 
+      - name: Compare Object Tree repeated filtering against transient index
+        working-directory: apps/chart
+        run: node --expose-gc tests/benchmarks/object-tree-index.mjs
+
       - name: Verify production build
         working-directory: apps/chart
         run: npm run build
