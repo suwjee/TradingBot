@@ -69,6 +69,10 @@ jobs:
         working-directory: apps/chart
         run: npm test
 
+      - name: Record non-Engine hot-path benchmark
+        working-directory: apps/chart
+        run: node --expose-gc tests/benchmarks/server-hot-paths.mjs
+
       - name: Verify production build
         working-directory: apps/chart
         run: npm run build
