@@ -97,6 +97,10 @@ jobs:
         working-directory: apps/chart
         run: node --expose-gc tests/benchmarks/historical-hitbox-buffer.mjs
 
+      - name: Compare Engine order-audit overlay key-index allocations
+        working-directory: apps/chart
+        run: node --expose-gc tests/benchmarks/indicator-order-keys.mjs
+
       - name: Verify production build
         working-directory: apps/chart
         run: npm run build
