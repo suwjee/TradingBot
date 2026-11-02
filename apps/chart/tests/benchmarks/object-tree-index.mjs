@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { performance } from "node:perf_hooks";
-import { groupDrawingsForTree } from "../../src/chart/object-tree-groups.js";
+import { groupDrawingsForTree, groupIndicatorRowsForTree } from "../../src/chart/object-tree-groups.js";
 
 // Deterministic synthetic UI indexing work. The original unmodified Chart
 // implementation filters the entire drawing array for each folder.
@@ -78,4 +78,52 @@ console.log(JSON.stringify({
   folderCount, drawingCount, repetitions,
   measurements: [baseline, candidate, oldTraversal, newTraversal],
   note: "Synthetic same-run microbenchmark for indexing/iteration only; excludes canvas painting, full browser, Engine and RAW files.",
+}, null, 2));
+
+const indicatorObjects = Array.from({ length: 30_000 }, (_, index) => ({
+  id: `indicator:${index % 2 ? "bullish" : "bearish"}:reaction:${index}`,
+  name: index % 4 === 0 ? "Blue" : "Reaction",
+  type: "indicator-reaction",
+}));
+const priorIndicators = () => {
+  const visible = indicatorObjects.filter((item) => !("blue") || `${item.name} ${item.type}`.toLowerCase().includes("blue"));
+  return { visible, byDirection: {
+    bullish: visible.filter((item) => item.id.includes(":bullish:")),
+    bearish: visible.filter((item) => item.id.includes(":bearish:")),
+  } };
+};
+const nextIndicators = () => groupIndicatorRowsForTree(indicatorObjects, "blue");
+assert.deepEqual(nextIndicators(), priorIndicators());
+function timeValue(label, work) {
+  const elapsed = [];
+  for (let index = 0; index < repetitions; index++) {
+    globalThis.gc?.();
+    const started = performance.now();
+    const result = work();
+    assert.ok(result);
+    elapsed.push(Number((performance.now() - started).toFixed(3)));
+  }
+  return { label, medianMs: [...elapsed].sort((a, b) => a - b)[Math.floor(repetitions / 2)], samplesMs: elapsed };
+}
+const oldIndicators = timeValue("indicator_original_filters", priorIndicators);
+const groupedIndicators = timeValue("indicator_single_pass_groups", nextIndicators);
+
+const allIds = drawings.slice(0, 8_000).map((item) => item.id);
+const selectedIds = drawings.slice(0, 800).map((item) => item.id);
+const priorSelection = () => allIds.filter((id) => selectedIds.includes(id));
+const nextSelection = () => {
+  const selected = new Set(selectedIds);
+  return allIds.filter((id) => selected.has(id));
+};
+assert.deepEqual(nextSelection(), priorSelection());
+const oldSelection = timeValue("tree_selection_array_includes", priorSelection);
+const newSelection = timeValue("tree_selection_set_membership", nextSelection);
+console.log(JSON.stringify({
+  type: "chart-tree-indicator-selection",
+  indicatorCount: indicatorObjects.length,
+  selectionCandidates: allIds.length,
+  selectedCount: selectedIds.length,
+  repetitions,
+  measurements: [oldIndicators, groupedIndicators, oldSelection, newSelection],
+  note: "Same-run synthetic presentation-only comparison; no chart DOM/canvas paint or Engine behavior included.",
 }, null, 2));
