@@ -3708,11 +3708,12 @@ function drawAll() {
   drawIndicator();
   for (const hitBox of state.indicator.hitBoxes) hitBox.viewRevision = state.chartViewRevision;
   drawIndicatorSelection();
-  state.drawings
-    .filter((d) => !d.hidden)
-    .forEach((d) =>
-      drawOne(d, d.id === state.selected || state.selectedIds.includes(d.id)),
-    );
+  // Drawing presentation is read-only; avoid allocating a filtered array on
+  // every pointer-driven redraw while keeping source order and visibility.
+  for (const drawing of state.drawings) {
+    if (drawing.hidden) continue;
+    drawOne(drawing, drawing.id === state.selected || state.selectedIds.includes(drawing.id));
+  }
   if (state.draft) drawOne(state.draft);
   if (state.selectionBox) {
     const { a, b } = state.selectionBox;
