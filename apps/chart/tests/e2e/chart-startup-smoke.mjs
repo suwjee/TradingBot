@@ -126,6 +126,21 @@ try {
   assert.deepEqual(await page.locator("#objectList [data-object]").evaluateAll((elements) => elements.map((row) => row.dataset.object)), ["drawing-path"]);
   await page.locator("#objectSearch").fill("");
   await page.locator("#closeObjectTree").click();
+  // Repeated panel lifecycles must rebuild a bounded, current DOM tree, not
+  // append duplicate rows or accumulate obsolete drawing references.
+  const repeatedTreeCounts = await page.evaluate(() => {
+    const opener = document.querySelector("#objectTreeBtn");
+    const closer = document.querySelector("#closeObjectTree");
+    const list = document.querySelector("#objectList");
+    const counts = [];
+    for (let cycle = 0; cycle < 30; cycle++) {
+      opener.click();
+      counts.push(list.querySelectorAll("[data-object]").length);
+      closer.click();
+    }
+    return counts;
+  });
+  assert.deepEqual(repeatedTreeCounts, Array(30).fill(drawings.length));
   // Real pointer and resize events must remain safe after handler extraction.
   const chartBox = await page.locator(".chart-shell").boundingBox();
   assert.ok(chartBox, "Chart shell must exist");
