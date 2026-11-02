@@ -20,7 +20,10 @@ export function groupDrawingsForTree(drawings, folders, query = "", names = {}) 
 export function groupIndicatorRowsForTree(objects, query = "") {
   const visible = [];
   const byDirection = { bullish: [], bearish: [] };
-  for (const item of objects) {
+  // Array#filter (the historical implementation) skips sparse slots.
+  for (let index = 0; index < objects.length; index++) {
+    if (!(index in objects)) continue;
+    const item = objects[index];
     if (query && !`${item.name} ${item.type}`.toLowerCase().includes(query)) continue;
     visible.push(item);
     if (item.id.includes(":bullish:")) byDirection.bullish.push(item);
