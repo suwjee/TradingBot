@@ -15,7 +15,9 @@ const chartRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..
 const stateParent = path.join(chartRoot, "state");
 fs.mkdirSync(stateParent, { recursive: true });
 const stateRoot = fs.mkdtempSync(path.join(stateParent, "refactor-phase4-smoke-"));
-const candles = Array.from({ length: 900 }, (_, index) => {
+const profileMemory = process.argv.includes("--profile-memory");
+const candleCount = profileMemory ? 12_000 : 900;
+const candles = Array.from({ length: candleCount }, (_, index) => {
   const open = 100 + index / 100;
   return { time: 1700000000 + index * 5, open, high: open + 1, low: open - 1, close: open + 0.2 };
 });
@@ -112,7 +114,7 @@ try {
   assert.notEqual(afterResume, hiddenValue, "Visible clock must refresh immediately on return");
 
   // Exercise real Vite RAW inventory, chart viewport and Object Tree presentation.
-  await page.waitForFunction(() => window.__QG_PERF__?.chart?.sourceCandles === 900, { timeout: 15_000 });
+  await page.waitForFunction((expected) => window.__QG_PERF__?.chart?.sourceCandles === expected, candleCount, { timeout: 30_000 });
   await page.locator("#objectTreeBtn").click();
   await page.locator("#objectList [data-object]").first().waitFor({ state: "attached" });
   const objectIds = await page.locator("#objectList [data-object]").evaluateAll((elements) => elements.map((row) => row.dataset.object));
@@ -150,6 +152,49 @@ try {
   await page.mouse.up();
   await page.evaluate(() => window.dispatchEvent(new Event("resize")));
   await sleep(300);
+  if (profileMemory) {
+    // CDP measures retained JS heap and DOM/event listener counts after GC,
+    // not GPU memory or system RSS. Report all absolute values rather than
+    // asserting a universal MB cap across differently provisioned CI runners.
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send("Performance.enable");
+    async function snapshot() {
+      await cdp.send("HeapProfiler.collectGarbage");
+      const { metrics } = await cdp.send("Performance.getMetrics");
+      const names = ["JSHeapUsedSize", "Nodes", "JSEventListeners"];
+      return Object.fromEntries(names.map((name) => [name, metrics.find((item) => item.name === name)?.value ?? null]));
+    }
+    const previous = await snapshot();
+    const cycles = 100;
+    const stress = await page.evaluate((count) => {
+      const opener = document.querySelector("#objectTreeBtn");
+      const closer = document.querySelector("#closeObjectTree");
+      const input = document.querySelector("#objectSearch");
+      const list = document.querySelector("#objectList");
+      const counts = [];
+      for (let i = 0; i < count; i++) {
+        opener.click();
+        input.value = i % 2 ? "brush" : "";
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        counts.push(list.querySelectorAll("[data-object]").length);
+        closer.click();
+      }
+      return counts;
+    }, cycles);
+    assert.deepEqual(stress, Array.from({ length: cycles }, (_, index) => index % 2 ? 1 : drawings.length));
+    const current = await snapshot();
+    assert.ok(current.Nodes != null && current.JSHeapUsedSize != null);
+    assert.ok(current.Nodes <= previous.Nodes + 1000, "Repeated panel ownership must not retain unbounded DOM nodes");
+    assert.ok(current.JSEventListeners == null || previous.JSEventListeners == null
+      || current.JSEventListeners <= previous.JSEventListeners + 100, "Panel event listeners must not accumulate per cycle");
+    console.log(JSON.stringify({
+      type: "chart-browser-retained-heap",
+      candleCount, drawingCount: drawings.length, cycles, before: previous, after: current,
+      jsHeapDeltaBytes: current.JSHeapUsedSize - previous.JSHeapUsedSize,
+      caveat: "One CI browser process, forced GC, no workload-wide leak conclusion or OS/GPU RSS measurement.",
+    }, null, 2));
+    await cdp.detach();
+  }
   assert.deepEqual(pageErrors, [], "Loaded RAW chart and Drawing Tree interactions should produce no uncaught errors");
   console.log("PASS Chart browser initialization and visibility-aware UI clock.");
 } finally {
