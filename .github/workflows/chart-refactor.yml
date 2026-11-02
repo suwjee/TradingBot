@@ -17,6 +17,8 @@ jobs:
     name: Chart tests and build (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
     strategy:
       fail-fast: false
       matrix:
@@ -39,6 +41,10 @@ jobs:
             printf '%s\n' "$changes"
             exit 1
           fi
+
+      - name: Snapshot every Engine file before any tests
+        shell: bash
+        run: find engine -type f -print0 | sort -z | xargs -0 sha256sum > .refactor-engine.before.sha256
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -66,3 +72,10 @@ jobs:
       - name: Verify production build
         working-directory: apps/chart
         run: npm run build
+
+      - name: Verify immutable Engine files after tests and build
+        if: always()
+        shell: bash
+        run: |
+          find engine -type f -print0 | sort -z | xargs -0 sha256sum > .refactor-engine.after.sha256
+          diff -u .refactor-engine.before.sha256 .refactor-engine.after.sha256
