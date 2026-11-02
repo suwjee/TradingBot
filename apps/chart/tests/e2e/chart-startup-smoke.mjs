@@ -7,8 +7,29 @@ import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { setTimeout as sleep } from "node:timers/promises";
 import { chromium } from "playwright-core";
+import { createRawResourceStore } from "../../server/raw-resource-store.js";
 
 const chartRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+// All browser fixtures are generated under a unique, chart-owned state sandbox.
+// Production RAW and workspace-local credentials are never read or modified.
+const stateParent = path.join(chartRoot, "state");
+fs.mkdirSync(stateParent, { recursive: true });
+const stateRoot = fs.mkdtempSync(path.join(stateParent, "refactor-phase4-smoke-"));
+const candles = Array.from({ length: 900 }, (_, index) => {
+  const open = 100 + index / 100;
+  return { time: 1700000000 + index * 5, open, high: open + 1, low: open - 1, close: open + 0.2 };
+});
+const fixture = createRawResourceStore({ rootDir: path.join(stateRoot, "data", "raw") }).write({
+  broker: "TEST", symbol: "PHASE4", timeframe: "5S", candles,
+});
+const drawings = Array.from({ length: 6 }, (_, index) => ({
+  id: `drawing-${index}`,
+  type: index % 2 ? "rect" : "line",
+  a: { time: candles[100 + index * 3].time, price: 101 + index },
+  b: { time: candles[130 + index * 3].time, price: 103 + index },
+  style: { stroke: "#2962ff", fill: "#2962ff", width: 0.5, style: "solid", opacity: 0.1 },
+  locked: false, hidden: false,
+}));
 const port = 5173;
 const url = `http://127.0.0.1:${port}`;
 const chrome = [
@@ -27,7 +48,7 @@ assert.ok(chrome, "This CI smoke requires the runner's installed Chromium/Google
 const server = spawn(process.execPath, [
   path.join(chartRoot, "node_modules", "vite", "bin", "vite.js"),
   "--configLoader", "native", "--host", "127.0.0.1", "--port", String(port), "--strictPort",
-], { cwd: chartRoot, env: { ...process.env, TRADINGBOT_VITE_POLLING: "" }, stdio: ["ignore", "pipe", "pipe"] });
+], { cwd: chartRoot, env: { ...process.env, TRADINGBOT_VITE_POLLING: "", TRADINGBOT_LOCAL_STATE_ROOT: stateRoot }, stdio: ["ignore", "pipe", "pipe"] });
 let output = "";
 server.stdout.on("data", (chunk) => { output += String(chunk); });
 server.stderr.on("data", (chunk) => { output += String(chunk); });
@@ -48,6 +69,12 @@ async function waitForServer() {
 
 try {
   await waitForServer();
+  const stored = await fetch(`${url}/api/drawings`, {
+    method: "PUT",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ id: fixture.id, chartId: fixture.chartId, drawings }),
+  });
+  assert.equal(stored.status, 200, "Synthetic chart drawings must persist before browser load");
   browser = await chromium.launch({ executablePath: chrome, headless: true, args: ["--no-sandbox"] });
   const page = await browser.newPage();
   const pageErrors = [];
@@ -72,7 +99,28 @@ try {
   });
   const afterResume = await page.locator("#clock").textContent();
   assert.notEqual(afterResume, hiddenValue, "Visible clock must refresh immediately on return");
-  assert.deepEqual(pageErrors, [], "Chart startup should have no uncaught page errors");
+
+  // Exercise real Vite RAW inventory, chart viewport and Object Tree presentation.
+  await page.waitForFunction(() => window.__QG_PERF__?.chart?.sourceCandles === 900, { timeout: 15_000 });
+  await page.locator("#objectTreeBtn").click();
+  await page.locator("#objectList [data-object]").first().waitFor({ state: "attached" });
+  const objectIds = await page.locator("#objectList [data-object]").evaluateAll((elements) => elements.map((row) => row.dataset.object));
+  assert.deepEqual(objectIds, drawings.map((item) => item.id), "Persisted drawing order must remain unchanged");
+  await page.locator("#objectSearch").fill("line");
+  const filteredIds = await page.locator("#objectList [data-object]").evaluateAll((elements) => elements.map((row) => row.dataset.object));
+  assert.deepEqual(filteredIds, ["drawing-0", "drawing-2", "drawing-4"], "Search must preserve folder row order");
+  await page.locator("#objectSearch").fill("");
+  await page.locator("#closeObjectTree").click();
+  // Real pointer and resize events must remain safe after handler extraction.
+  const chartBox = await page.locator(".chart-shell").boundingBox();
+  assert.ok(chartBox, "Chart shell must exist");
+  await page.mouse.move(chartBox.x + chartBox.width / 2, chartBox.y + chartBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(chartBox.x + chartBox.width / 2 + 12, chartBox.y + chartBox.height / 2);
+  await page.mouse.up();
+  await page.evaluate(() => window.dispatchEvent(new Event("resize")));
+  await sleep(300);
+  assert.deepEqual(pageErrors, [], "Loaded RAW chart and Drawing Tree interactions should produce no uncaught errors");
   console.log("PASS Chart browser initialization and visibility-aware UI clock.");
 } finally {
   await browser?.close();
@@ -82,4 +130,5 @@ try {
     new Promise((resolve) => server.once("exit", resolve)),
     sleep(3_000),
   ]);
+  fs.rmSync(stateRoot, { recursive: true, force: true });
 }
