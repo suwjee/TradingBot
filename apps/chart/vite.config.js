@@ -18,6 +18,7 @@ import { createProgressChannels } from './server/progress-channels.js';
 import { assertRawInputUnchanged, captureRawInputIdentity } from './server/raw-input-identity.js';
 import { cachePathForRaw, readCalculationCache, writeCalculationCache } from './server/calculation-cache.js';
 import { createLocalCacheClearHandler } from './server/local-cache-clear.js';
+import { calculateSourceFingerprint } from './server/calculation-source-fingerprint.js';
 
 // Anchor source paths to this config and local state to the chart-owned subtree.
 // Vite may be launched from either the repository root or apps/chart.
@@ -51,16 +52,7 @@ const viteWatchOptions = useVitePolling
   : { ignored: ['**/*'] };
 
 function calculationSourceFingerprint() {
-  const hash = createHash('sha256');
-  for (const file of calculationSources) {
-    // Content, not mtimes or version labels: same-size edits and preserved file
-    // timestamps must invalidate both memory and disk entries. Basenames keep
-    // the identity portable between real checkouts of these maintained files.
-    hash.update(path.basename(file));
-    hash.update('\0');
-    hash.update(createHash('sha256').update(fs.readFileSync(file)).digest());
-  }
-  return hash.digest('hex');
+  return calculateSourceFingerprint(calculationSources);
 }
 const inventoryMeta = new Map();
 // Durable, human-navigable cache root.  Calculation results must never rely on
