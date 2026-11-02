@@ -3951,9 +3951,7 @@ function updateToolbar() {
   $("#lockDrawing").innerHTML = icon(target.locked ? "lock" : "unlock", 18);
   scheduleDrawingToolbarPosition();
 }
-function renderObjectTree() {
-  if (!$("#objectList")) return;
-  const names = {
+const OBJECT_TREE_DRAWING_NAMES = Object.freeze({
     line: "Line",
     trend: "Trend Line",
     ray: "Ray",
@@ -3971,7 +3969,10 @@ function renderObjectTree() {
     measure: "Measure",
     long: "Long Position",
     short: "Short Position",
-  };
+});
+function renderObjectTree() {
+  if (!$("#objectList")) return;
+  const names = OBJECT_TREE_DRAWING_NAMES;
   const total = state.drawings.length + state.indicator.objects.length;
   $("#objectCount").textContent = `${total} object${total === 1 ? "" : "s"}`;
   if ($("#objectTree").classList.contains("hidden")) {
@@ -3979,7 +3980,10 @@ function renderObjectTree() {
     return;
   }
   const query = ($("#objectSearch")?.value || "").trim().toLowerCase();
-  const treeSelected = (id) => state.treeSelectedIds.includes(id);
+  // Multiple row selections should not repeatedly scan selected IDs while
+  // building the complete Object Tree markup.
+  const treeSelectedIds = new Set(state.treeSelectedIds);
+  const treeSelected = (id) => treeSelectedIds.has(id);
   const folderCollapsed = (id) => !query && state.collapsedObjectFolders.includes(id);
   const folderHeader = (id, label, count, locked = false, nested = false, removable = false) =>
     `<div class="tree-folder-heading"><button class="tree-folder-row ${nested ? "nested" : ""}" type="button" data-folder-toggle="${id}" aria-expanded="${!folderCollapsed(id)}"><span class="tree-chevron">${icon("chevron", 14)}</span>${icon("folder", 16)}<strong>${label}</strong><small>${count}</small>${locked ? icon("lock", 13) : ""}</button>${removable ? `<button class="tree-folder-delete" type="button" data-folder-delete="${id}" title="Delete folder" aria-label="Delete folder">${icon("trash", 14)}</button>` : ""}</div>`;
