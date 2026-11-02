@@ -11,6 +11,7 @@ from bisect import bisect_left
 from dataclasses import dataclass, replace
 from datetime import datetime
 from decimal import Decimal
+from heapq import heapify, heappop, heappush
 from typing import Callable, Sequence
 
 from core_utils import as_decimal, reaction_identity
@@ -23,8 +24,8 @@ from order_audit_engine import (
 
 
 E_ZONE_VERSION = "6.16.2"
-E_ZONE_IMPLEMENTATION_VERSION = "6.18.5"
-E_ZONE_LAST_MODIFIED = "2026-10-24T17:28:55+03:30"
+E_ZONE_IMPLEMENTATION_VERSION = "6.18.6"
+E_ZONE_LAST_MODIFIED = "2026-11-02T07:13:10+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -96,6 +97,7 @@ class EZoneDetector(OrderAuditEngineMixin):
             raise ValueError("EZoneDetector requires the shared sequence-priority resolver.")
         self.sequence_priority = sequence_priority
         self.invalid_s_root_identities = set(invalid_s_root_identities or set())
+        self._accepted_e_source_identities: set[tuple[datetime, int]] = set()
         self.sequence_resets = sequence_resets or {}
         self.order_direction = chronology.opposite_direction(direction)
         self.chronology = chronology
@@ -376,6 +378,7 @@ class EZoneDetector(OrderAuditEngineMixin):
     def _zone(
         self, family: str, number: int, parent_type: str,
         parent: object, stop_event: datetime,
+        *, e_owned_source_times: set[datetime] | None = None,
     ) -> EZone | None:
         # Every E-space cycle starts at the strict parent stop. Parent-stop
         # and reset-leg are creation causes; carried/accepted are use routes.
@@ -416,11 +419,19 @@ class EZoneDetector(OrderAuditEngineMixin):
             for item in route
             if item[6] is not None
         ]
-        order_match = min(
-            choices,
-            key=lambda item: (item[6][2], -int(getattr(item[1], "first_idx"))),
-            default=None,
-        )
+        owned_sources = e_owned_source_times if e_owned_source_times is not None else {
+            source_time for source_time, _index in self._accepted_e_source_identities
+        }
+        order_match = None
+        for match in sorted(choices, key=lambda item: (item[6][2], -int(item[1].first_idx))):
+            prospective_source = self._extreme_between(stop_event, max(stop_event, match[6][2]))
+            if self._order_created_only_by_disowned_s(
+                (int(match[1].first_idx), int(match[1].break_idx)),
+                owned_sources, prospective_source[1],
+            ):
+                continue
+            order_match = match
+            break
         if order_match is None:
             return None
         (
@@ -434,7 +445,7 @@ class EZoneDetector(OrderAuditEngineMixin):
         decision_event = max(stop_event, order_decision_event)
         decision_index = self._main_index(decision_event)
         decision_time = self.times[decision_index]
-        source_index, source_time, price = self._extreme_between(stop_event, decision_event)
+        source_index, source_time, price = prospective_source
         parent_stop_index = self._main_index(stop_event)
         order_first_index = int(getattr(order, "first_idx"))
         top_source = int(getattr(order, "box_top_source_idx"))
@@ -519,6 +530,11 @@ class EZoneDetector(OrderAuditEngineMixin):
         number.  Recursive children are then rebuilt from the promoted E so
         Order discovery and stop chronology remain native E calculations.
         """
+        source_identity = (s_zone.source_time, int(s_zone.source_index))
+        if source_identity == (owner.source_time, int(owner.source_index)) or (
+            source_identity in self._accepted_e_source_identities
+        ):
+            return []
         stopped = self._parent_stop("S", s_zone)
         if stopped is None:
             return []
@@ -529,8 +545,11 @@ class EZoneDetector(OrderAuditEngineMixin):
         parent: object = s_zone
         chain: list[EZone] = []
         seen_sources: set[int] = set()
+        owned_sources = {source_time for source_time, _index in self._accepted_e_source_identities}
+        owned_sources.add(owner.source_time)
         while True:
-            zone = self._zone(family, number, parent_type, parent, stop_event)
+            zone = self._zone(family, number, parent_type, parent, stop_event,
+                              e_owned_source_times=owned_sources)
             if zone is None or zone.source_index in seen_sources:
                 break
             # The stopped-A ledger can hold a physical Order before that
@@ -550,6 +569,7 @@ class EZoneDetector(OrderAuditEngineMixin):
                 break
             chain.append(zone)
             seen_sources.add(zone.source_index)
+            owned_sources.add(zone.source_time)
             next_stop = self._parent_stop("E", zone)
             if next_stop is None:
                 break
@@ -599,7 +619,11 @@ class EZoneDetector(OrderAuditEngineMixin):
 
         kept = [item for item in base_zones if not descends_from_owner(item)]
         merged = [*kept, *continuation]
-        return self.resolve_same_source_conflicts(merged)
+        selected = self.resolve_same_source_conflicts(merged)
+        self._accepted_e_source_identities = {
+            (item.source_time, int(item.source_index)) for item in selected
+        }
+        return selected
 
     def resolve_same_source_conflicts(
         self, zones: Sequence[EZone],
@@ -681,8 +705,34 @@ class EZoneDetector(OrderAuditEngineMixin):
             and not self._invalid_s_without_order_cause(item)
         ]
         result = list(dominant_zones)
-        for root in roots:
+        pending_roots = [(root.source_time, root.source_index, ordinal, root)
+                         for ordinal, root in enumerate(roots)]
+        heapify(pending_roots)
+        known_roots = set(roots)
+        root_ordinal = len(roots)
+        while pending_roots:
+            _time, _index, _ordinal, root = heappop(pending_roots)
             parent_id = (root.parent_source_index, root.parent_source_time)
+            # A root restored earlier in this pass can itself occupy the
+            # physical source of another provisional S parent.
+            if parent_id in dominant_sources:
+                continue
+            if self._order_created_only_by_disowned_s(
+                (root.order_first_index, root.order_break_index),
+                {source_time for _index, source_time in dominant_sources}, root.source_time,
+            ):
+                parent = next(item for item in self.s_zones
+                              if (int(item.source_index), item.source_time) == parent_id)
+                replacement = self._zone(
+                    root.family, 1, "S", parent, root.parent_stop_event_time,
+                    e_owned_source_times={time for _index, time in dominant_sources},
+                )
+                if replacement is not None and replacement not in known_roots:
+                    known_roots.add(replacement)
+                    heappush(pending_roots, (replacement.source_time, replacement.source_index,
+                                             root_ordinal, replacement))
+                    root_ordinal += 1
+                continue
             same_parent = [
                 item for item in result
                 if item.parent_type == "S"
@@ -704,7 +754,12 @@ class EZoneDetector(OrderAuditEngineMixin):
                 for item in result
             ):
                 result.append(root)
-        return self.resolve_same_source_conflicts(result)
+            dominant_sources.add((root.source_index, root.source_time))
+        selected = self.resolve_same_source_conflicts(result)
+        self._accepted_e_source_identities = {
+            (item.source_time, int(item.source_index)) for item in selected
+        }
+        return selected
 
     def _invalid_s_without_order_cause(self, zone: EZone) -> bool:
         """Reject an invalid S root unless its Order has another creation cause."""
@@ -766,8 +821,10 @@ class EZoneDetector(OrderAuditEngineMixin):
             parent: object = s_zone
             chain_sources: set[int] = set()
             chain: list[EZone] = []
+            owned_sources = {source_time for source_time, _index in self._accepted_e_source_identities}
             while True:
-                zone = self._zone(family, number, parent_type, parent, stop_event)
+                zone = self._zone(family, number, parent_type, parent, stop_event,
+                                  e_owned_source_times=owned_sources)
                 if zone is None:
                     break
                 if zone.source_index in chain_sources:
@@ -775,6 +832,7 @@ class EZoneDetector(OrderAuditEngineMixin):
                 chain.append(zone)
                 candidates.append(zone)
                 chain_sources.add(zone.source_index)
+                owned_sources.add(zone.source_time)
                 parent_type, parent = "E", zone
                 next_stop = self._parent_stop("E", zone)
                 if next_stop is None:
@@ -829,6 +887,7 @@ class EZoneDetector(OrderAuditEngineMixin):
         # Resolve competing chains chronologically.  A stopped E is removed
         # from the active set immediately; it remains only as historical
         # output and cannot affect a later family or number.
+        candidates = list(candidates)
         by_source: dict[int, list[EZone]] = {}
         for zone in candidates:
             by_source.setdefault(zone.source_index, []).append(zone)
@@ -837,15 +896,18 @@ class EZoneDetector(OrderAuditEngineMixin):
         # Keep the later, deeper (bullish) / higher (bearish) structure.  This
         # This prevents a provisional S-owned object from consuming the active
         # chain before the later confirmed continuation.
-        pending = sorted(
-            by_source.values(),
-            key=lambda item: (
-                min(zone.source_time for zone in item),
-                min(zone.decision_event_time for zone in item),
-            ),
-        )
+        pending = [(min(item.source_time for item in group),
+                    min(item.decision_event_time for item in group), source)
+                   for source, group in by_source.items()]
+        heapify(pending)
+        scheduled = set(by_source)
+        known = set(candidates)
+        regenerated: set[EZone] = set()
         numbered: list[EZone] = []
         active: list[EZone] = []
+        accepted_sources: set[tuple[datetime, int]] = set()
+        accepted_source_times: set[datetime] = set()
+        self._accepted_e_source_identities = accepted_sources
         sequence_start: datetime | None = None
 
         candidates_by_source_time = {
@@ -853,7 +915,22 @@ class EZoneDetector(OrderAuditEngineMixin):
             for item in candidates
         }
 
+        def enqueue(zone: EZone | None, current_source: int) -> None:
+            if zone is None or zone in known:
+                return
+            known.add(zone)
+            regenerated.add(zone)
+            candidates.append(zone)
+            candidates_by_source_time[(zone.source_index, zone.source_time)] = zone
+            by_source.setdefault(zone.source_index, []).append(zone)
+            if zone.source_index != current_source and zone.source_index not in scheduled:
+                heappush(pending, (zone.source_time, zone.decision_event_time, zone.source_index))
+                scheduled.add(zone.source_index)
+
         def valid_order(zone: EZone) -> bool:
+            identity = (zone.order_first_index, zone.order_break_index)
+            if self._order_created_only_by_disowned_s(identity, accepted_source_times, zone.source_time):
+                return False
             return (
                 not self._blocked_by_gate_owned_order(zone)
                 and not self._invalid_s_without_order_cause(zone)
@@ -871,7 +948,9 @@ class EZoneDetector(OrderAuditEngineMixin):
                     ),
                     None,
                 )
-                if parent_s is None:
+                if parent_s is None or (
+                    parent_s.source_time, int(parent_s.source_index)
+                ) in accepted_sources:
                     return False
                 if sequence_start is not None and (
                     parent_s.source_time <= sequence_start
@@ -939,7 +1018,28 @@ class EZoneDetector(OrderAuditEngineMixin):
                 return zone.price < prior.price
             return zone.price > prior.price
 
-        for group in pending:
+        while pending:
+            _source_time, _decision_time, current_source = heappop(pending)
+            scheduled.remove(current_source)
+            group = by_source[current_source]
+            # Another source can disown an Order after its E parent was
+            # accepted. Reopen that parent's complete native race here.
+            for item in group:
+                if (self._order_created_only_by_disowned_s(
+                            (item.order_first_index, item.order_break_index),
+                            accepted_source_times, item.source_time)
+                        and parent_active(item)):
+                    parents = self.s_zones if item.parent_type == "S" else numbered
+                    parent = next((parent for parent in parents
+                                   if (parent.source_time, int(parent.source_index)) ==
+                                   (item.parent_source_time, item.parent_source_index)), None)
+                    if parent is None:
+                        continue
+                    family = item.family if item.parent_type == "S" else parent.family
+                    number = item.number if item.parent_type == "S" else parent.number + 1
+                    enqueue(self._zone(family, number, item.parent_type, parent,
+                                       item.parent_stop_event_time,
+                                       e_owned_source_times=accepted_source_times), current_source)
             eligible = [
                 item for item in group
                 if valid_order(item) and parent_active(item)
@@ -978,6 +1078,8 @@ class EZoneDetector(OrderAuditEngineMixin):
                     and item.family == "blue"
                     and any(
                         str(getattr(s_zone, "color")) == "red"
+                        and (s_zone.source_time, int(s_zone.source_index))
+                        not in accepted_sources
                         and getattr(s_zone, "source_time")
                         > item.parent_source_time
                         and getattr(s_zone, "decision_event_time")
@@ -1069,11 +1171,23 @@ class EZoneDetector(OrderAuditEngineMixin):
             ]
             numbered_zone = replace(zone, family=family, number=number)
             numbered.append(numbered_zone)
+            accepted_sources.add((numbered_zone.source_time, numbered_zone.source_index))
+            accepted_source_times.add(numbered_zone.source_time)
             if zone.source_time in self.sequence_resets:
                 active.clear()
                 sequence_start = zone.source_time
             else:
                 active.append(numbered_zone)
+            # Original native children already participate in pending. Only
+            # a regenerated parent needs a fresh descendant chain, including
+            # when that parent's source is a hard-reset boundary.
+            next_stop = self._parent_stop("E", numbered_zone) if zone in regenerated else None
+            if next_stop is not None:
+                child = self._zone(numbered_zone.family, numbered_zone.number + 1,
+                                   "E", numbered_zone, next_stop[1],
+                                   e_owned_source_times=accepted_source_times)
+                if child is not None and child.source_index > current_source:
+                    enqueue(child, current_source)
         def collect_lineage(zone: EZone, seen: set[tuple[int, datetime]]) -> None:
             identity = (zone.source_index, zone.source_time)
             if identity in seen:
@@ -1096,11 +1210,14 @@ class EZoneDetector(OrderAuditEngineMixin):
                     if item.parent_type == "E"
                     and item.parent_source_time in self.sequence_resets
                     else item for item in numbered]
+        self._accepted_e_source_identities = accepted_sources
+        self._last_candidate_zones = list(candidates)
         return numbered
 
 
     def detect(self) -> list[EZone]:
         """Discover, reconcile and audit recursive E lifecycles."""
+        self._accepted_e_source_identities.clear()
         self._clear_order_audit()
         self.register_order_b_reset_legs(self.order_b_legs)
         self.visual_lifecycle_starts.clear()
