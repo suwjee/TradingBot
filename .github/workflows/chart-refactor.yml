@@ -73,6 +73,10 @@ jobs:
         working-directory: apps/chart
         run: node tests/e2e/chart-startup-smoke.mjs
 
+      - name: Profile Chart retained heap under 12k candle and repeated panel stress
+        working-directory: apps/chart
+        run: node tests/e2e/chart-startup-smoke.mjs --profile-memory
+
       - name: Record non-Engine hot-path benchmark
         working-directory: apps/chart
         run: node --expose-gc tests/benchmarks/server-hot-paths.mjs
