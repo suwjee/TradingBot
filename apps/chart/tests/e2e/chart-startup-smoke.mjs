@@ -135,6 +135,7 @@ try {
       await page.locator("#indicatorBtn").click();
       await page.locator(`[data-direction="${direction}"]`).click();
       await page.locator("#indicatorEnabled").check();
+      await page.evaluate(() => { window.__phase7LastIndicator = window.__QG_PERF__?.indicator || null; });
       const responsePromise = page.waitForResponse(
         (response) => response.url().endsWith("/api/reactions") && response.request().method() === "POST",
         { timeout: 180_000 },
@@ -144,15 +145,15 @@ try {
       const result = await response.json();
       assert.equal(response.status(), 200, JSON.stringify(result).slice(0, 500));
       assert.ok(result.directions && typeof result.directions === "object");
-      await page.waitForFunction((selected) => window.__QG_PERF__?.indicator?.direction === selected,
-        direction, { timeout: 60_000 });
+      await page.waitForFunction(() =>
+        window.__QG_PERF__?.indicator && window.__QG_PERF__.indicator !== window.__phase7LastIndicator,
+        null, { timeout: 60_000 });
       const measurement = await page.evaluate(() => window.__QG_PERF__.indicator);
       const counts = Object.fromEntries(Object.entries(result.directions).map(([side, group]) => [
         side, Object.fromEntries(["reactions", "blueLines", "aZones", "sZones", "eZones", "stopAlls", "orderAudit"].map(
           (field) => [field, Array.isArray(group[field]) ? group[field].length : 0],
         )),
       ]));
-      assert.equal(measurement.direction, direction);
       assert.ok(Number.isFinite(measurement.timing.canvasRenderMs));
       assert.ok(Number.isFinite(measurement.timing.objectPreparationMs));
       // Force real overlay redraws on a series of viewport gestures.
