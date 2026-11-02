@@ -6,7 +6,7 @@ import {
 import "./platform/browser-compat.js";
 import { icon } from "./ui/icons.js";
 import { drawingArray, normalizeHistorySnapshot, CHART_TIMEFRAME_KEY, restoredTimeframe, indicatorControlId } from "./chart/state.js";
-import { PRIMARY_VISUAL_DEFAULTS, primaryVisualObjects, drawPrimaryStructures, drawTrendTransitions, clipHistoricalHitBoxes, indicatorCalculationSegments } from "./chart/primary-structure.js";
+import { PRIMARY_VISUAL_DEFAULTS, primaryVisualObjects, drawPrimaryStructures, drawTrendTransitions, clipHistoricalHitBoxesInPlace, indicatorCalculationSegments } from "./chart/primary-structure.js";
 import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart/lod.js";
 import { aggregate } from "./chart/candle-aggregation.js";
 import { groupDrawingsForTree, groupIndicatorRowsForTree } from "./chart/object-tree-groups.js";
@@ -3664,8 +3664,10 @@ function drawIndicator() {
       onHit: (hit) => state.indicator.hitBoxes.push(hit),
     });
     if (Number.isFinite(historicalEndX)) {
-      state.indicator.hitBoxes.push(...clipHistoricalHitBoxes(
-        state.indicator.hitBoxes.splice(firstHitIndex), historicalEndX));
+      // Keep the existing direction/segment prefix and append identical clipped
+      // clones in-place, without flatMap, splice or unbounded spread arguments.
+      clipHistoricalHitBoxesInPlace(
+        state.indicator.hitBoxes, firstHitIndex, historicalEndX);
     }
     ctx.restore();
     drawTrendTransitions(ctx, group, {
