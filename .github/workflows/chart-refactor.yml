@@ -69,8 +69,7 @@ jobs:
         working-directory: apps/chart
         run: npm test
 
-      - name: Browser startup and visibility lifecycle smoke (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
+      - name: Browser startup and visibility lifecycle smoke
         working-directory: apps/chart
         run: node tests/e2e/chart-startup-smoke.mjs
 
