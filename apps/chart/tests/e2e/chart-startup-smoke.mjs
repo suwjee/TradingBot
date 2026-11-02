@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { spawn } from "node:child_process";
+import { spawn, execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { setTimeout as sleep } from "node:timers/promises";
 import { chromium } from "playwright-core";
@@ -16,11 +16,23 @@ const stateParent = path.join(chartRoot, "state");
 fs.mkdirSync(stateParent, { recursive: true });
 const stateRoot = fs.mkdtempSync(path.join(stateParent, "refactor-phase4-smoke-"));
 const profileMemory = process.argv.includes("--profile-memory");
-const candleCount = profileMemory ? 12_000 : 900;
-const candles = Array.from({ length: candleCount }, (_, index) => {
-  const open = 100 + index / 100;
-  return { time: 1700000000 + index * 5, open, high: open + 1, low: open - 1, close: open + 0.2 };
-});
+const engineOverlay = process.argv.includes("--engine-overlay");
+const candleCount = engineOverlay ? 6_000 : profileMemory ? 12_000 : 900;
+// The Engine benchmark generator owns synthetic input construction. Its output
+// is passed unaltered to the current production bridge via /api/reactions.
+const candles = engineOverlay
+  ? (() => {
+      const repoRoot = path.resolve(chartRoot, "../..");
+      execFileSync("python", [
+        path.join(repoRoot, "engine", "tests", "benchmarks", "generate_fixture.py"),
+        stateRoot, String(candleCount),
+      ], { cwd: repoRoot, encoding: "utf8" });
+      return JSON.parse(fs.readFileSync(path.join(stateRoot, `synthetic-${candleCount}.json`), "utf8"));
+    })()
+  : Array.from({ length: candleCount }, (_, index) => {
+      const open = 100 + index / 100;
+      return { time: 1700000000 + index * 5, open, high: open + 1, low: open - 1, close: open + 0.2 };
+    });
 const fixture = createRawResourceStore({ rootDir: path.join(stateRoot, "data", "raw") }).write({
   broker: "TEST", symbol: "PHASE4", timeframe: "5S", candles,
 });
@@ -115,6 +127,77 @@ try {
 
   // Exercise real Vite RAW inventory, chart viewport and Object Tree presentation.
   await page.waitForFunction((expected) => window.__QG_PERF__?.chart?.sourceCandles === expected, candleCount, { timeout: 30_000 });
+  if (engineOverlay) {
+    const runs = [];
+    // This invokes the existing UI Apply action and real, immutable Engine
+    // through Vite's production API. No handcrafted trading results are used.
+    for (const direction of ["bullish", "bearish"]) {
+      await page.locator("#indicatorBtn").click();
+      await page.locator(`[data-direction="${direction}"]`).click();
+      await page.locator("#indicatorEnabled").check();
+      const responsePromise = page.waitForResponse(
+        (response) => response.url().endsWith("/api/reactions") && response.request().method() === "POST",
+        { timeout: 180_000 },
+      );
+      await page.locator("#applyIndicator").click();
+      const response = await responsePromise;
+      const result = await response.json();
+      assert.equal(response.status(), 200, JSON.stringify(result).slice(0, 500));
+      assert.ok(result.directions && typeof result.directions === "object");
+      await page.waitForFunction((selected) => window.__QG_PERF__?.indicator?.direction === selected,
+        direction, { timeout: 60_000 });
+      const measurement = await page.evaluate(() => window.__QG_PERF__.indicator);
+      const counts = Object.fromEntries(Object.entries(result.directions).map(([side, group]) => [
+        side, Object.fromEntries(["reactions", "blueLines", "aZones", "sZones", "eZones", "stopAlls", "orderAudit"].map(
+          (field) => [field, Array.isArray(group[field]) ? group[field].length : 0],
+        )),
+      ]));
+      assert.equal(measurement.direction, direction);
+      assert.ok(Number.isFinite(measurement.timing.canvasRenderMs));
+      assert.ok(Number.isFinite(measurement.timing.objectPreparationMs));
+      // Force real overlay redraws on a series of viewport gestures.
+      const frameTimes = await page.evaluate(async () => {
+        const canvas = document.querySelector("#draw");
+        const context = canvas.getContext("2d");
+        const previous = context.clearRect;
+        let count = 0;
+        const timings = [];
+        context.clearRect = function(...args) {
+          const now = performance.now();
+          if (count > 0) timings.push(now - this.__lastOverlayDrawAt);
+          this.__lastOverlayDrawAt = now;
+          count++;
+          return previous.apply(this, args);
+        };
+        try {
+          for (let index = 0; index < 16; index++) {
+            const shell = document.querySelector(".chart-shell");
+            shell.dispatchEvent(new PointerEvent("pointermove", { bubbles: true, buttons: 1 }));
+            await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+          }
+          return { redrawCount: count, intervalsMs: timings };
+        } finally {
+          context.clearRect = previous;
+        }
+      });
+      runs.push({
+        direction, engine: result.engine, pipelineVersion: result.pipelineVersion,
+        countByEngineDirection: counts,
+        serverCache: response.headers()["x-qg-cache"],
+        overlayDrawMs: measurement.timing.canvasRenderMs,
+        objectPreparationMs: measurement.timing.objectPreparationMs,
+        redrawCount: frameTimes.redrawCount,
+        observedDrawIntervalsMs: frameTimes.intervalsMs,
+      });
+    }
+    assert.deepEqual(pageErrors, [], "Genuine Engine-fed overlay render must produce no uncaught JavaScript errors");
+    console.log(JSON.stringify({
+      type: "chart-engine-output-overlay-profile", candleCount,
+      source: "Current read-only production Engine through /api/reactions on Engine-benchmark synthetic candles",
+      results: runs,
+      caveat: "This validates actual Engine-produced outputs with synthetic prices, not real-market RAW regression or full canvas paint latency.",
+    }, null, 2));
+  }
   await page.locator("#objectTreeBtn").click();
   await page.locator("#objectList [data-object]").first().waitFor({ state: "attached" });
   const objectIds = await page.locator("#objectList [data-object]").evaluateAll((elements) => elements.map((row) => row.dataset.object));
