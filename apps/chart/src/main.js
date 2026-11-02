@@ -10,6 +10,7 @@ import { PRIMARY_VISUAL_DEFAULTS, primaryVisualObjects, drawPrimaryStructures, d
 import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart/lod.js";
 import { aggregate } from "./chart/candle-aggregation.js";
 import { groupDrawingsForTree, groupIndicatorRowsForTree } from "./chart/object-tree-groups.js";
+import { partitionObjectTreeSelection } from "./chart/object-tree-selection.js";
 import { collectProjectedStrokePoints } from "./drawings/stroke-projection.js";
 import { representedOrderKeys as buildRepresentedOrderKeys } from "./chart/indicator-order-keys.js";
 import { bindViewportEvents, createViewportScheduler } from "./chart/viewport-events.js";
@@ -4907,8 +4908,8 @@ function selectTreeObject(id, append = false) {
   state.treeSelectedIds = append
     ? (exists ? current.filter((selectedId) => selectedId !== id) : [...current, id])
     : [id];
-  const manualIds = state.treeSelectedIds.filter((selectedId) => state.drawings.some((drawing) => drawing.id === selectedId));
-  const indicatorIds = state.treeSelectedIds.filter((selectedId) => state.indicator.objectMap.has(selectedId));
+  const { manualIds, indicatorIds } = partitionObjectTreeSelection(
+    state.treeSelectedIds, state.drawings, state.indicator.objectMap);
   state.selectedIds = manualIds;
   state.selected = manualIds[0] || null;
   state.indicator.selectedObjectId = indicatorIds[0] || null;
