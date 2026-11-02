@@ -77,6 +77,10 @@ jobs:
         working-directory: apps/chart
         run: node tests/e2e/chart-startup-smoke.mjs --profile-memory
 
+      - name: Profile genuine Engine-fed Indicator overlays in Chrome
+        working-directory: apps/chart
+        run: node tests/e2e/chart-startup-smoke.mjs --engine-overlay
+
       - name: Record non-Engine hot-path benchmark
         working-directory: apps/chart
         run: node --expose-gc tests/benchmarks/server-hot-paths.mjs
