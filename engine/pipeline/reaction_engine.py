@@ -19,8 +19,8 @@ from direction_policy import policy_for
 
 
 REACTION_ENGINE_VERSION = "9.9.1"
-REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.11.0"
-REACTION_ENGINE_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
+REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.12.0"
+REACTION_ENGINE_LAST_MODIFIED = "2026-11-11T14:49:03+03:30"
 
 _ORDER_GATE_CACHE_MAX_ENTRIES = 32_768
 
@@ -89,6 +89,45 @@ class DetectionResult:
     resets: list[ResetEvent]
     start_index: int
     end_index: int
+
+
+@dataclass(slots=True)
+class _NormalReactionCursor:
+    next_index: int
+    previous: Candidate
+    candidate: Candidate | None
+    running_value: Decimal
+    running_source: int
+    pending_reset_index: int | None
+
+
+@dataclass(slots=True)
+class _ReactionCheckpoint:
+    cursor: _NormalReactionCursor
+    reaction_count: int
+    reset_count: int
+
+
+@dataclass(slots=True)
+class _InitialLegCursor:
+    next_index: int
+    state: str
+    leg_open_low: Decimal | None
+    leg_just_started: bool
+    anchor: Candle | None
+    anchor_origin: str | None
+    candidate: Candidate | None
+
+
+@dataclass(slots=True)
+class _TrendLegCursor:
+    next_index: int
+    fixed_source: Candle
+    candidate: Candidate | None
+
+
+class LiveReactionUnavailable(RuntimeError):
+    """The supplied prefix cannot seed or extend a live Reaction calculation."""
 
 
 def classify_candle_color(open_price: Decimal, close_price: Decimal) -> str:
@@ -283,6 +322,12 @@ class BullishDetector(DetectorBase):
         return None if position is None else self.seconds[position]
 
     def detect(self, *, first_only: bool = False) -> DetectionResult:
+        return self._scan(first_only=first_only)
+
+    def _scan(
+        self, *, first_only: bool, initial: _InitialLegCursor | None = None,
+        retain_initial: bool = False,
+    ) -> DetectionResult:
         reactions: list[Candidate] = []
         resets: list[ResetEvent] = []
         mode = "A"
@@ -297,8 +342,18 @@ class BullishDetector(DetectorBase):
         anchor_red_origin: str | None = None
         reset_context: Candle | None = None
         candidate: Candidate | None = None
+        first_index = self.start_index
+        self._initial_cursor: _InitialLegCursor | None = None
+        if initial is not None:
+            first_index = initial.next_index
+            state = initial.state
+            leg_open_low = initial.leg_open_low
+            leg_just_started = initial.leg_just_started
+            anchor_red = initial.anchor
+            anchor_red_origin = initial.anchor_origin
+            candidate = replace(initial.candidate) if initial.candidate is not None else None
 
-        for index in range(self.start_index, self.end_index + 1):
+        for index in range(first_index, self.end_index + 1):
             candle = self.candles[index]
             reset_detected = (
                 last_confirmed_bottom is not None and candle.low < last_confirmed_bottom
@@ -551,6 +606,11 @@ class BullishDetector(DetectorBase):
                     running_peak = candle.high
                     running_peak_src = candle.index
 
+        if retain_initial:
+            self._initial_cursor = _InitialLegCursor(
+                self.end_index + 1, state, leg_open_low, leg_just_started,
+                anchor_red, anchor_red_origin, candidate,
+            )
         return DetectionResult(
             direction="bullish",
             reactions=reactions,
@@ -1202,115 +1262,172 @@ class MarketChronology:
         )
 
 
-def build_behavior_reaction_views(
-    full_results: dict[str, object],
-    chronology: MarketChronology,
-):
-    """Mark true cross-direction Reaction interiors for downstream behavior."""
-    candles = chronology.candles
-    seconds = chronology.seconds
-    second_times = chronology.second_times
-    public: dict[str, list[Candidate]] = {}
-    confirmation: dict[str, list[datetime]] = {}
-    for direction in ("bullish", "bearish"):
-        public[direction] = [
-            published_reaction_candidate(direction, item, chronology)
-            for item in full_results[direction].reactions
-        ]
-        confirmation[direction] = [
-            chronology.reaction_confirmation(direction, item)
-            for item in full_results[direction].reactions
-        ]
+@dataclass(frozen=True, slots=True)
+class _BehaviorReactionSpan:
+    identity: tuple[int, int]
+    first_time: datetime
+    confirmed_at: datetime
+    top: Decimal
+    bottom: Decimal
 
-    def path_is_contained(
-        first_time: datetime,
-        confirmed_at: datetime,
-        bottom: Decimal,
-        top: Decimal,
-    ) -> bool:
-        left = bisect.bisect_left(second_times, first_time)
-        right = bisect.bisect_right(second_times, confirmed_at)
+    @classmethod
+    def from_reaction(cls, direction, reaction, chronology):
+        published = published_reaction_candidate(direction, reaction, chronology)
+        first, end = int(reaction.first_idx), int(reaction.break_idx)
+        return cls(
+            (first, end), chronology.candles[first].timestamp,
+            chronology.reaction_confirmation(direction, reaction),
+            _decimal_value(published.box_top), _decimal_value(published.box_bottom),
+        )
+
+    def may_contain(self, inner: _BehaviorReactionSpan) -> bool:
+        return (
+            self.first_time < inner.first_time
+            and self.confirmed_at >= inner.confirmed_at
+            and self.top >= inner.top
+            and self.bottom <= inner.bottom
+        )
+
+    def path_extremes(self, chronology: MarketChronology) -> tuple[Decimal, Decimal] | None:
+        left = bisect.bisect_left(chronology.second_times, self.first_time)
+        right = bisect.bisect_right(chronology.second_times, self.confirmed_at)
         if left >= right:
-            return False
-        # Algorithm requirement: every physical lower-timeframe candle must
-        # remain inside [bottom, top].  The immutable lower-timeframe range
-        # index proves the exact same predicate via min(Low) and max(High),
-        # without allocating/scanning the full slice for every Reaction pair.
+            return None
         minimum_low, _ = chronology.lower_index.range_minimum(left, right)
-        if minimum_low < bottom:
-            return False
         maximum_high, _ = chronology.lower_index.range_maximum(left, right)
-        return maximum_high <= top
+        return minimum_low, maximum_high
 
-    blocked: dict[str, set[tuple[int, int]]] = {
-        "bullish": set(),
-        "bearish": set(),
-    }
-    for direction in ("bullish", "bearish"):
-        opposite = opposite_direction(direction)
-        for number, reaction in enumerate(full_results[direction].reactions, start=1):
-            reaction.behavior_public_number = number
-            published = public[direction][number - 1]
-            reaction.behavior_public_box_top = _decimal_value(published.box_top)
-            reaction.behavior_public_box_bottom = _decimal_value(published.box_bottom)
-            reaction.behavior_confirmation_time = confirmation[direction][number - 1]
-            reaction.behavior_first_time = candles[int(getattr(reaction, "first_idx"))].timestamp
+    def contains_path(self, extremes: tuple[Decimal, Decimal] | None) -> bool:
+        return extremes is not None and self.bottom <= extremes[0] and self.top >= extremes[1]
 
-        for reaction, published, confirmed_at in zip(
-            full_results[direction].reactions,
-            public[direction],
-            confirmation[direction],
-        ):
-            inner_first = candles[int(getattr(reaction, "first_idx"))].timestamp
-            inner_top = _decimal_value(published.box_top)
-            inner_bottom = _decimal_value(published.box_bottom)
-            for outer, outer_published, outer_confirmed_at in zip(
-                full_results[opposite].reactions,
-                public[opposite],
-                confirmation[opposite],
-            ):
-                outer_first = candles[int(getattr(outer, "first_idx"))].timestamp
-                if inner_first <= outer_first or confirmed_at > outer_confirmed_at:
-                    continue
-                outer_top = _decimal_value(outer_published.box_top)
-                outer_bottom = _decimal_value(outer_published.box_bottom)
-                if (
-                    inner_top <= outer_top
-                    and inner_bottom >= outer_bottom
-                    and path_is_contained(
-                        inner_first,
-                        confirmed_at,
-                        outer_bottom,
-                        outer_top,
-                    )
-                ):
-                    blocked[direction].add(
-                        (
-                            int(getattr(reaction, "first_idx")),
-                            int(getattr(reaction, "break_idx")),
-                        )
-                    )
-                    break
+
+def _apply_behavior_reaction_views(full_results, chronology, spans, blocked):
 
     behavior_results = {}
     number_maps = {}
     blocked_first_times = {"bullish": set(), "bearish": set()}
     for direction in ("bullish", "bearish"):
         full = full_results[direction]
-        for item in full.reactions:
-            identity = (
-                int(getattr(item, "first_idx")),
-                int(getattr(item, "break_idx")),
-            )
-            item.behavior_internal = identity in blocked[direction]
+        for number, (item, span) in enumerate(zip(full.reactions, spans[direction]), start=1):
+            item.behavior_public_number = number
+            item.behavior_public_box_top = span.top
+            item.behavior_public_box_bottom = span.bottom
+            item.behavior_confirmation_time = span.confirmed_at
+            item.behavior_first_time = span.first_time
+            item.behavior_internal = span.identity in blocked[direction]
         behavior_results[direction] = full
         number_maps[direction] = {
             number: number for number, _item in enumerate(full.reactions, start=1)
         }
         blocked_first_times[direction] = {
-            candles[first_idx].timestamp for first_idx, _ in blocked[direction]
+            chronology.candles[first_idx].timestamp for first_idx, _ in blocked[direction]
         }
     return behavior_results, number_maps, blocked, blocked_first_times
+
+
+def build_behavior_reaction_views(
+    full_results: dict[str, object],
+    chronology: MarketChronology,
+):
+    """Mark true cross-direction Reaction interiors for downstream behavior."""
+    spans = {
+        direction: [
+            _BehaviorReactionSpan.from_reaction(direction, reaction, chronology)
+            for reaction in full_results[direction].reactions
+        ]
+        for direction in ("bullish", "bearish")
+    }
+    blocked = {}
+    for direction, inner_spans in spans.items():
+        outer_spans = spans[opposite_direction(direction)]
+        identities = set()
+        for inner in inner_spans:
+            extremes = None
+            for outer in outer_spans:
+                if not outer.may_contain(inner):
+                    continue
+                if extremes is None:
+                    extremes = inner.path_extremes(chronology)
+                    if extremes is None:
+                        break
+                if outer.contains_path(extremes):
+                    identities.add(inner.identity)
+                    break
+        blocked[direction] = identities
+    return _apply_behavior_reaction_views(full_results, chronology, spans, blocked)
+
+
+@dataclass(frozen=True, slots=True)
+class _LiveBehaviorReactionEntry:
+    geometry: tuple
+    span: _BehaviorReactionSpan
+    extremes: tuple[Decimal, Decimal] | None
+
+
+class LiveBehaviorReactionViews:
+    """Keep established containment and re-evaluate pairs affected by an append.
+
+    A new opposite-direction Reaction can enclose an already confirmed
+    Reaction. Keep all successful owner pairs so removing a provisional
+    outer Reaction cannot release an inner Reaction with another owner.
+    """
+
+    def __init__(self, full_results: dict[str, object], chronology: MarketChronology):
+        self._entries = {"bullish": [], "bearish": []}
+        self._matches = {"bullish": set(), "bearish": set()}
+        self.update(full_results, chronology, first_dirty_main=0)
+
+    def update(
+        self, full_results: dict[str, object], chronology: MarketChronology,
+        *, first_dirty_main: int,
+    ):
+        if not 0 <= first_dirty_main <= len(chronology.candles):
+            raise ValueError("The changed market index is outside the current chronology.")
+        entries = {}
+        changed = {}
+        for direction, old_entries in self._entries.items():
+            entries[direction] = current = []
+            changed[direction] = changed_positions = set()
+            for position, reaction in enumerate(full_results[direction].reactions):
+                geometry = (
+                    reaction.first_idx, reaction.break_idx, reaction.intrabar_start,
+                    str(reaction.box_top), reaction.box_top_source_idx,
+                    str(reaction.box_bottom), reaction.box_bottom_source_idx,
+                )
+                old = old_entries[position] if position < len(old_entries) else None
+                if old is not None and old.geometry == geometry and reaction.break_idx < first_dirty_main:
+                    current.append(old)
+                    continue
+                span = _BehaviorReactionSpan.from_reaction(direction, reaction, chronology)
+                entry = _LiveBehaviorReactionEntry(geometry, span, span.path_extremes(chronology))
+                if entry != old:
+                    changed_positions.add(position)
+                current.append(entry)
+
+        matches = {}
+        blocked = {}
+        for direction, inner_entries in entries.items():
+            opposite = opposite_direction(direction)
+            outer_entries = entries[opposite]
+            inner_changed, outer_changed = changed[direction], changed[opposite]
+            pairs = {
+                (i, j) for i, j in self._matches[direction]
+                if i < len(inner_entries) and i not in inner_changed
+                and j < len(outer_entries) and j not in outer_changed
+            }
+            for i, inner in enumerate(inner_entries):
+                possible_owners = range(len(outer_entries)) if i in inner_changed else outer_changed
+                for j in possible_owners:
+                    outer = outer_entries[j].span
+                    if outer.may_contain(inner.span) and outer.contains_path(inner.extremes):
+                        pairs.add((i, j))
+            matches[direction] = pairs
+            blocked[direction] = {inner_entries[i].span.identity for i, _ in pairs}
+
+        spans = {direction: [item.span for item in current] for direction, current in entries.items()}
+        result = _apply_behavior_reaction_views(full_results, chronology, spans, blocked)
+        self._entries, self._matches = entries, matches
+        return result
 
 
 def directional_a_stop_order_finder(
@@ -1421,6 +1538,8 @@ class UnifiedReactionDetector(DetectorBase):
         self._order_gate_geometry_cache: dict[
             tuple[str, int, int, datetime | None], Candidate | None
         ] = {}
+        self._live_checkpoint: _ReactionCheckpoint | None = None
+        self._initial_cursor: _InitialLegCursor | _TrendLegCursor | None = None
 
     @property
     def bull(self) -> BullishDetector:
@@ -1644,7 +1763,25 @@ class UnifiedReactionDetector(DetectorBase):
             intrabar_start=remainder_start,
         )
 
-    def _first_initial(self, direction: str) -> Candidate | None:
+    def _first_initial(
+        self, direction: str, *, initial_cursor: _InitialLegCursor | _TrendLegCursor | None = None,
+        retain_initial: bool = False,
+    ) -> Candidate | None:
+        if retain_initial:
+            is_trend_start = (
+                self.initial_bullish_trend if direction == "bullish" else self.initial_bearish_trend
+            )
+            if is_trend_start:
+                assert initial_cursor is None or isinstance(initial_cursor, _TrendLegCursor)
+                return self._first_trend_reaction(direction, initial=initial_cursor, retain_initial=True)
+            assert initial_cursor is None or isinstance(initial_cursor, _InitialLegCursor)
+            helper = self.bull if direction == "bullish" else self.bear.reference
+            result = helper._scan(first_only=True, initial=initial_cursor, retain_initial=True)
+            self._initial_cursor = helper._initial_cursor
+            if not result.reactions:
+                return None
+            candidate = result.reactions[0]
+            return replace(candidate) if direction == "bullish" else mirror_candidate(candidate)
         if direction == "bullish" and self.initial_bullish_trend:
             return self._first_bullish_trend_reaction()
         if direction == "bearish" and self.initial_bearish_trend:
@@ -1664,7 +1801,10 @@ class UnifiedReactionDetector(DetectorBase):
         """Keep the existing bullish bootstrap entry point."""
         return self._first_trend_reaction("bullish")
 
-    def _first_trend_reaction(self, direction: str) -> Candidate | None:
+    def _first_trend_reaction(
+        self, direction: str, *, initial: _TrendLegCursor | None = None,
+        retain_initial: bool = False,
+    ) -> Candidate | None:
         """Bootstrap only the first Reaction of a newly isolated regime.
 
         The boundary candle is eligible as First without an earlier context.
@@ -1674,9 +1814,10 @@ class UnifiedReactionDetector(DetectorBase):
         if self.start_index > self.end_index:
             return None
         bullish = direction == "bullish"
-        fixed_source = self.candles[self.start_index]
-        candidate = None
-        for index in range(self.start_index, self.end_index + 1):
+        fixed_source = initial.fixed_source if initial is not None else self.candles[self.start_index]
+        candidate = replace(initial.candidate) if initial is not None and initial.candidate is not None else None
+        first_index = initial.next_index if initial is not None else self.start_index
+        for index in range(first_index, self.end_index + 1):
             candle = self.candles[index]
             if candidate is None:
                 if ((candle.high > fixed_source.high) if bullish
@@ -1711,6 +1852,8 @@ class UnifiedReactionDetector(DetectorBase):
                 candidate.break_time = candle.display_time
                 self._refine(direction, candidate, candle)
                 return candidate
+        if retain_initial:
+            self._initial_cursor = _TrendLegCursor(self.end_index + 1, fixed_source, candidate)
         return None
 
 
@@ -1725,9 +1868,16 @@ class UnifiedReactionDetector(DetectorBase):
         breaks first, restart strictly after that event. Bearish is the exact
         price/color mirror of Bullish.
         """
+        return self._direct_reset_search(direction, reset_index)[0]
+
+    def _direct_reset_search(
+        self, direction: str, reset_index: int,
+    ) -> tuple[Candidate | None, bool]:
+        """Report whether a bounded result can still be displaced by a later row."""
         context_tag = "GREEN" if direction == "bullish" else "RED"
         first_tag = "RED" if direction == "bullish" else "GREEN"
         blocked_through = reset_index
+        has_earlier_pending = False
 
         for first_index in range(reset_index + 1, self.end_index + 1):
             first = self.candles[first_index]
@@ -1745,12 +1895,13 @@ class UnifiedReactionDetector(DetectorBase):
                 direction, candidate, self.end_index
             )
             if confirmed is not None:
-                return confirmed
+                return confirmed, has_earlier_pending
             if invalidation_index is None:
+                has_earlier_pending = True
                 continue
             blocked_through = invalidation_index
 
-        return None
+        return None, True
 
     def _first_geometry_after_reset(
         self, direction: str, reset_index: int, end_index: int | None = None,
@@ -2191,8 +2342,17 @@ class UnifiedReactionDetector(DetectorBase):
     def detect(
         self, *, stop_after_first_at_or_after: int | None = None
     ) -> DetectionResult:
+        return self._detect(stop_after_first_at_or_after, retain_cursor=False)
+
+    def _detect(
+        self, stop_after_first_at_or_after: int | None, *, retain_cursor: bool,
+        initial_cursor: _InitialLegCursor | _TrendLegCursor | None = None,
+    ) -> DetectionResult:
         direction = self.output_direction
-        initial = self._first_initial(direction)
+        initial = (
+            self._first_initial(direction, initial_cursor=initial_cursor, retain_initial=True)
+            if retain_cursor else self._first_initial(direction)
+        )
         if initial is None:
             return DetectionResult(
                 direction=direction,
@@ -2262,6 +2422,23 @@ class UnifiedReactionDetector(DetectorBase):
                 direction, initial, initial_break_candle, initial_analysis
             )
 
+        return self._scan_normal(
+            _NormalReactionCursor(index, previous, candidate, running_value, running_source, pending_reset_index),
+            stop_after_first_at_or_after, retain_cursor=retain_cursor,
+        )
+
+    def _scan_normal(
+        self, cursor: _NormalReactionCursor, stop_after_first_at_or_after: int | None,
+        *, retain_cursor: bool,
+    ) -> DetectionResult:
+        direction = self.output_direction
+        index = cursor.next_index
+        previous = cursor.previous
+        candidate = cursor.candidate
+        running_value = cursor.running_value
+        running_source = cursor.running_source
+        pending_reset_index = cursor.pending_reset_index
+        earliest_open = None
         while index <= self.end_index:
             candle = self.candles[index]
             reset = pending_reset_index is not None or (
@@ -2290,6 +2467,16 @@ class UnifiedReactionDetector(DetectorBase):
                     else index
                 )
                 reset_candle = self.candles[reset_index]
+                if retain_cursor and earliest_open is None:
+                    before_reset = _ReactionCheckpoint(
+                        _NormalReactionCursor(
+                            index, replace(previous), replace(candidate) if candidate is not None else None,
+                            running_value, running_source, pending_reset_index,
+                        ),
+                        len(self.all_reactions[direction]), len(self.all_resets[direction]),
+                    )
+                else:
+                    before_reset = None
                 pending_reset_index = None
                 level = previous.box_bottom if direction == "bullish" else previous.box_top
                 already_recorded = (
@@ -2304,9 +2491,12 @@ class UnifiedReactionDetector(DetectorBase):
                 # A Reset reopens the ordinary same-direction ownership gate.
                 # The geometric relaxation belongs only to the cross-direction
                 # structural/E path and must not relabel every normal Reset.
-                direct_candidate = self._first_direct_same_direction_after_reset(
-                    direction, reset_index
-                )
+                if before_reset is not None:
+                    direct_candidate, still_open = self._direct_reset_search(direction, reset_index)
+                    if still_open:
+                        earliest_open = before_reset
+                else:
+                    direct_candidate = self._first_direct_same_direction_after_reset(direction, reset_index)
                 # Both paths are valid interpretations of the same requested-
                 # direction restart. The chronologically first confirmation
                 # wins; a later Anchor-based candidate must never hide an
@@ -2496,6 +2686,139 @@ class UnifiedReactionDetector(DetectorBase):
                 running_value, running_source = candle.low, candle.index
             index += 1
 
+        if retain_cursor:
+            self._live_checkpoint = earliest_open or _ReactionCheckpoint(
+                _NormalReactionCursor(index, previous, candidate, running_value, running_source, pending_reset_index),
+                len(self.all_reactions[direction]), len(self.all_resets[direction]),
+            )
         return self._result()
+
+
+class LiveReactionContinuation:
+    """Extend a confirmed Reaction calculation using committed market candles.
+
+    Normal searches preserve their candidate and next index. An unresolved
+    Reset search keeps the checkpoint preceding it, because a later candle
+    can displace a bounded restart and its dependent suffix.
+    """
+
+    def __init__(
+        self, candles: Sequence[Candle], lower: Sequence[Candle], direction: str,
+        *, timeframe_seconds: int,
+        initial_bullish_trend: bool = False, initial_bearish_trend: bool = False,
+    ) -> None:
+        policy_for(direction)
+        if len(candles) < 2:
+            raise LiveReactionUnavailable("A live Reaction seed requires at least two committed main candles.")
+        self._direction = direction
+        self._options = {
+            "initial_bullish_trend": initial_bullish_trend,
+            "initial_bearish_trend": initial_bearish_trend,
+        }
+        self._candles = list(candles)
+        self._lower = list(lower)
+        self._timeframe = timedelta(seconds=timeframe_seconds)
+        self._validate_extension(self._candles, self._lower, None, None)
+        detector = self._detector(self._candles, self._lower)
+        try:
+            result = detector._detect(None, retain_cursor=True)
+        finally:
+            self._release_indexes(self._candles, self._lower)
+        self._result = result
+        self._checkpoint = detector._live_checkpoint
+        self._initial_cursor = detector._initial_cursor
+        # Sum the main-candle spans supplied to the searches after seeding.
+        # The span can include an earlier unresolved Reset.
+        self.processed_main_candles = 0
+
+    @property
+    def result(self) -> DetectionResult:
+        return self._snapshot(self._result)
+
+    @staticmethod
+    def _snapshot(result: DetectionResult) -> DetectionResult:
+        return replace(
+            result,
+            reactions=[replace(candidate) for candidate in result.reactions],
+            resets=list(result.resets),
+        )
+
+    def _detector(self, candles: list[Candle], lower: list[Candle]) -> UnifiedReactionDetector:
+        return UnifiedReactionDetector(candles, lower, 0, len(candles) - 1, self._direction, **self._options)
+
+    @staticmethod
+    def _release_indexes(*sequences: list[Candle]) -> None:
+        # These snapshots belong only to this session. The batch caches keep
+        # a strong reference by list identity and must not retain every poll.
+        for sequence in sequences:
+            for cache in (_SEQUENCE_TIME_INDEXES, _LOWER_TIMEFRAME_INDEXES, _REFLECTED_VIEWS):
+                cache.pop(id(sequence), None)
+
+    def _validate_extension(
+        self, candles: Sequence[Candle], lower: Sequence[Candle],
+        previous_main: Candle | None, previous_lower: Candle | None,
+    ) -> None:
+        if self._timeframe <= timedelta(0) or not candles or not lower:
+            raise LiveReactionUnavailable("A live batch must contain committed main and lower candles.")
+        for candle in candles:
+            if previous_main is None:
+                valid = candle.index == 0
+            else:
+                gap = candle.timestamp - previous_main.timestamp
+                valid = candle.index == previous_main.index + 1 and gap > timedelta(0) and gap % self._timeframe == timedelta(0)
+            if not valid:
+                raise LiveReactionUnavailable("Main candles must extend the committed timeframe grid.")
+            previous_main = candle
+        for candle in lower:
+            if previous_lower is None:
+                valid = candle.index == 0
+            else:
+                valid = candle.index == previous_lower.index + 1 and candle.timestamp > previous_lower.timestamp
+            if not valid:
+                raise LiveReactionUnavailable("Lower candles must extend the committed chronology.")
+            previous_lower = candle
+        if lower[0].timestamp < candles[0].timestamp or lower[-1].timestamp >= candles[-1].timestamp + self._timeframe:
+            raise LiveReactionUnavailable("Lower candles must fall inside the newly committed main range.")
+
+    def advance(self, candles: Sequence[Candle], lower: Sequence[Candle]) -> DetectionResult:
+        return self._extend(candles, lower, commit=True)
+
+    def preview(self, candles: Sequence[Candle], lower: Sequence[Candle]) -> DetectionResult:
+        """Evaluate the current tail without advancing the committed checkpoint."""
+        return self._extend(candles, lower, commit=False)
+
+    def _extend(
+        self, candles: Sequence[Candle], lower: Sequence[Candle], *, commit: bool,
+    ) -> DetectionResult:
+        if not candles and not lower:
+            return self.result
+        self._validate_extension(candles, lower, self._candles[-1], self._lower[-1])
+        next_main = [*self._candles, *candles]
+        next_lower = [*self._lower, *lower]
+        detector = self._detector(next_main, next_lower)
+        checkpoint = self._checkpoint
+        try:
+            if checkpoint is None:
+                processed = len(candles)
+                result = detector._detect(None, retain_cursor=True, initial_cursor=self._initial_cursor)
+            else:
+                detector.all_reactions[self._direction] = self._result.reactions[:checkpoint.reaction_count]
+                detector.all_resets[self._direction] = self._result.resets[:checkpoint.reset_count]
+                cursor = replace(
+                    checkpoint.cursor, previous=replace(checkpoint.cursor.previous),
+                    candidate=replace(checkpoint.cursor.candidate) if checkpoint.cursor.candidate is not None else None,
+                )
+                processed = len(next_main) - cursor.next_index
+                result = detector._scan_normal(cursor, None, retain_cursor=True)
+        finally:
+            self._release_indexes(next_main, next_lower)
+        if commit:
+            self._candles = next_main
+            self._lower = next_lower
+            self._result = result
+            self._checkpoint = detector._live_checkpoint
+            self._initial_cursor = detector._initial_cursor
+            self.processed_main_candles += processed
+        return self._snapshot(result)
 
 

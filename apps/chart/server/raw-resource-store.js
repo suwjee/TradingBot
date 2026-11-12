@@ -5,21 +5,25 @@ import { mergeFarazCoverageRanges } from "../src/features/candle-update.js";
 import { buildRawFilename, formatTehranMetadataTime, parseRawFilename, parseTehranMetadataTime } from "../src/features/raw-file-contract.js";
 
 const CANDLE_KEYS = ["time", "open", "high", "low", "close"];
+const UNIT_SECONDS = { S: 1, M: 60, H: 3600, D: 86400 };
 
 function segment(value, fallback) {
   const result = String(value || "").trim().replace(/[^a-zA-Z0-9._-]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 80);
   return result || fallback;
 }
 
-function assertCandles(candles) {
+function assertCandles(candles, timeframeSeconds) {
   if (!Array.isArray(candles) || !candles.length) throw new Error("RAW candles must be a non-empty array.");
+  let matchesGrid = Number.isSafeInteger(timeframeSeconds) && timeframeSeconds > 0;
   candles.forEach((row, index) => {
     if (!row || Object.keys(row).length !== CANDLE_KEYS.length || !CANDLE_KEYS.every((key) => Object.hasOwn(row, key))) throw new Error(`RAW candle ${index + 1} has an invalid schema.`);
-    const candle = Object.fromEntries(CANDLE_KEYS.map((key) => [key, Number(row[key])]));
-    if (!Number.isSafeInteger(candle.time) || candle.time <= 0 || ![candle.open, candle.high, candle.low, candle.close].every(Number.isFinite)
-      || candle.high < Math.max(candle.open, candle.close, candle.low) || candle.low > Math.min(candle.open, candle.close, candle.high)
-      || (index && candle.time <= Number(candles[index - 1].time))) throw new Error(`RAW candle ${index + 1} failed chronology or OHLC validation.`);
+    const time = Number(row.time), open = Number(row.open), high = Number(row.high), low = Number(row.low), close = Number(row.close);
+    if (!Number.isSafeInteger(time) || time <= 0 || ![open, high, low, close].every(Number.isFinite)
+      || high < Math.max(open, close, low) || low > Math.min(open, close, high)
+      || (index && time <= Number(candles[index - 1].time))) throw new Error(`RAW candle ${index + 1} failed chronology or OHLC validation.`);
+    matchesGrid = matchesGrid && CANDLE_KEYS.every((key) => typeof row[key] === "number") && (time - candles[0].time) % timeframeSeconds === 0;
   });
+  return matchesGrid;
 }
 
 function atomicWrite(filePath, text) {
@@ -89,9 +93,16 @@ function runtimeMetadata(metadata) {
   return { ...metadata, actualRange, effectiveRange: actualRange, requestedRange: runtimeRange(metadata.requestedRange), farazCoverage: runtimeCoverage(metadata.farazCoverage) };
 }
 
-function persistedMetadata({ broker, symbol, timeframe, source, filename, candles, serialized, requestedRange = null, farazCoverage, createdAt, updatedAt, previousSha256, chartId }) {
+function snapshotData(candles, serialized) {
+  return {
+    from: candles[0].time, to: candles.at(-1).time, count: candles.length,
+    dataBytes: Buffer.byteLength(serialized), dataSha256: createHash("sha256").update(serialized).digest("hex"),
+  };
+}
+
+function persistedMetadata({ broker, symbol, timeframe, source, filename, snapshot, requestedRange = null, farazCoverage, createdAt, updatedAt, previousSha256, chartId }) {
   const now = formatTehranMetadataTime(Math.floor(Date.now() / 1000));
-  const dataSha256 = createHash("sha256").update(serialized).digest("hex");
+  const { from, to, count, dataBytes, dataSha256 } = snapshot;
   return {
     schemaVersion: 2,
     chartId: validChartId(chartId) || randomUUID(),
@@ -100,12 +111,12 @@ function persistedMetadata({ broker, symbol, timeframe, source, filename, candle
     timeframe,
     source,
     filename,
-    candleCount: candles.length,
-    count: candles.length,
-    dataBytes: Buffer.byteLength(serialized),
+    candleCount: count,
+    count,
+    dataBytes,
     dataSha256,
     requestedRange: readableRange(requestedRange),
-    actualRange: readableRange({ from: candles[0].time, to: candles.at(-1).time }),
+    actualRange: readableRange({ from, to }),
     createdAt: createdAt || now,
     updatedAt: previousSha256 === dataSha256 && typeof updatedAt === "string" ? updatedAt : now,
     ...(farazCoverage ? { farazCoverage: readableCoverage(runtimeCoverage(farazCoverage)) } : {}),
@@ -116,10 +127,14 @@ export function createRawResourceStore({ rootDir }) {
   const root = path.resolve(rootDir);
   const inventoryCache = new Map();
 
+  function fileVersion(stat) {
+    return `${stat.dev}:${stat.ino}:${stat.size}:${stat.birthtimeMs}:${stat.mtimeMs}:${stat.ctimeMs}`;
+  }
+
   function inventorySignature(dataPath, metaPath) {
     const data = fs.statSync(dataPath);
     const metadata = fs.existsSync(metaPath) ? fs.statSync(metaPath) : null;
-    return `${data.size}:${data.mtimeMs}:${metadata?.size || 0}:${metadata?.mtimeMs || 0}`;
+    return `${fileVersion(data)}:${metadata ? fileVersion(metadata) : ""}`;
   }
 
   function resolve(id) {
@@ -128,6 +143,12 @@ export function createRawResourceStore({ rootDir }) {
     const dataPath = path.resolve(root, ...logicalId.split("/"));
     if (!dataPath.startsWith(`${root}${path.sep}`) || !fs.existsSync(dataPath)) return null;
     return { id: logicalId, dataPath, metaPath: sidecarPath(dataPath) };
+  }
+
+  function version(id) {
+    const item = resolve(id);
+    const stat = item && fs.statSync(item.dataPath, { throwIfNoEntry: false });
+    return stat ? fileVersion(stat) : null;
   }
 
   function write({ broker, symbol, timeframe, candles, requestedRange = null, source = "local", chartId = null, farazCoverage = undefined, createdAt = undefined }) {
@@ -150,13 +171,51 @@ export function createRawResourceStore({ rootDir }) {
       try { existing = JSON.parse(fs.readFileSync(metadataPath, "utf8")) || {}; } catch { existing = {}; }
     }
     const metadata = persistedMetadata({
-      broker: brokerSegment, symbol: symbolSegment, timeframe: normalizedTimeframe, source, filename, candles, serialized, requestedRange,
+      broker: brokerSegment, symbol: symbolSegment, timeframe: normalizedTimeframe, source, filename, snapshot: snapshotData(candles, serialized), requestedRange,
       farazCoverage: farazCoverage ?? existing.farazCoverage, chartId: chartId || existing.chartId, createdAt: createdAt || existing.createdAt,
       updatedAt: existing.updatedAt, previousSha256: existing.dataSha256,
     });
     atomicWrite(sidecarPath(dataPath), `${JSON.stringify(metadata, null, 2)}\n`);
     inventoryCache.delete(id);
     return { id, dataPath, metaPath: sidecarPath(dataPath), ...runtimeMetadata(metadata), chartId: metadata.chartId, count: candles.length, bytes: Buffer.byteLength(serialized) };
+  }
+
+  function cacheItem(resource, metadata, snapshot, timeframeSeconds) {
+    const stat = fs.statSync(resource.dataPath);
+    const item = { ...resource, broker: metadata.broker, symbol: metadata.symbol, timeframe: metadata.timeframe, chartId: metadata.chartId, from: snapshot.from, to: snapshot.to, count: snapshot.count, bytes: stat.size, savedAt: stat.mtimeMs, metadata: runtimeMetadata(metadata), createdAt: metadata.createdAt, updatedAt: metadata.updatedAt };
+    inventoryCache.set(item.id, { signature: inventorySignature(item.dataPath, item.metaPath), item, timeframeSeconds });
+    return item;
+  }
+
+  function get(id) {
+    const resource = resolve(id);
+    if (!resource) return null;
+    const { dataPath, metaPath } = resource;
+    const filename = path.basename(dataPath);
+    const identity = parseRawFilename(filename);
+    if (!identity) return null;
+    const signature = inventorySignature(dataPath, metaPath);
+    const cached = inventoryCache.get(resource.id);
+    if (cached?.signature === signature) return cached.item;
+    try {
+      const serialized = fs.readFileSync(dataPath);
+      const candles = JSON.parse(serialized);
+      const unit = identity.timeframe.at(-1);
+      const timeframeSeconds = Number(identity.timeframe.slice(0, -1)) * UNIT_SECONDS[unit];
+      const matchesGrid = assertCandles(candles, timeframeSeconds);
+      const snapshot = snapshotData(candles, serialized);
+      let previous = {};
+      if (fs.existsSync(metaPath)) {
+        try { previous = JSON.parse(fs.readFileSync(metaPath, "utf8")) || {}; } catch { previous = {}; }
+      }
+      const hydratedPrevious = runtimeMetadata(previous);
+      const metadata = persistedMetadata({ ...identity, source: previous.source || "import", filename, snapshot, requestedRange: hydratedPrevious.requestedRange, farazCoverage: previous.farazCoverage, chartId: previous.chartId, createdAt: typeof previous.createdAt === "string" ? previous.createdAt : undefined, updatedAt: previous.updatedAt, previousSha256: previous.dataSha256 });
+      if (JSON.stringify(previous) !== JSON.stringify(metadata)) atomicWrite(metaPath, `${JSON.stringify(metadata, null, 2)}\n`);
+      return cacheItem(resource, metadata, snapshot, matchesGrid ? timeframeSeconds : null);
+    } catch {
+      inventoryCache.set(resource.id, { signature, item: null });
+      return null;
+    }
   }
 
   function list() {
@@ -168,34 +227,9 @@ export function createRawResourceStore({ rootDir }) {
       if (entry.isDirectory()) return walk(target);
       if (!entry.isFile() || !entry.name.endsWith(".json") || entry.name.endsWith(".meta.json")) return;
       const id = path.relative(root, target).split(path.sep).join("/");
-      const identity = parseRawFilename(entry.name);
-      if (!safeId(id) || !identity) return;
+      const item = get(id);
       seen.add(id);
-      const metaPath = sidecarPath(target);
-      const signature = inventorySignature(target, metaPath);
-      const cached = inventoryCache.get(id);
-      if (cached?.signature === signature) {
-        if (cached.item) items.push(cached.item);
-        return;
-      }
-      try {
-        const serialized = fs.readFileSync(target, "utf8");
-        const candles = JSON.parse(serialized);
-        assertCandles(candles);
-        let previous = {};
-        if (fs.existsSync(metaPath)) {
-          try { previous = JSON.parse(fs.readFileSync(metaPath, "utf8")) || {}; } catch { previous = {}; }
-        }
-        const hydratedPrevious = runtimeMetadata(previous);
-        const metadata = persistedMetadata({ broker: identity.broker, symbol: identity.symbol, timeframe: identity.timeframe, source: previous.source || "import", filename: entry.name, candles, serialized, requestedRange: hydratedPrevious.requestedRange, farazCoverage: previous.farazCoverage, chartId: previous.chartId, createdAt: typeof previous.createdAt === "string" ? previous.createdAt : undefined, updatedAt: previous.updatedAt, previousSha256: previous.dataSha256 });
-        if (JSON.stringify(previous) !== JSON.stringify(metadata)) atomicWrite(metaPath, `${JSON.stringify(metadata, null, 2)}\n`);
-        const stat = fs.statSync(target);
-        const item = { id, dataPath: target, metaPath, broker: identity.broker, symbol: identity.symbol, timeframe: identity.timeframe, chartId: metadata.chartId, from: candles[0].time, to: candles.at(-1).time, count: candles.length, bytes: stat.size, savedAt: stat.mtimeMs, metadata: runtimeMetadata(metadata), createdAt: metadata.createdAt, updatedAt: metadata.updatedAt };
-        inventoryCache.set(id, { signature: inventorySignature(target, metaPath), item });
-        items.push(item);
-      } catch {
-        inventoryCache.set(id, { signature, item: null });
-      }
+      if (item) items.push(item);
     });
     walk(root);
     for (const id of inventoryCache.keys()) {
@@ -210,6 +244,80 @@ export function createRawResourceStore({ rootDir }) {
     const candles = JSON.parse(fs.readFileSync(item.dataPath, "utf8"));
     assertCandles(candles);
     return candles;
+  }
+
+  async function appendLatest(file, incoming, timeframeSeconds, expectedVersion, signal) {
+    const cached = inventoryCache.get(file.id);
+    if (cached?.item !== file || cached.timeframeSeconds !== timeframeSeconds
+      || !assertCandles(incoming, timeframeSeconds) || incoming[0].time <= file.to
+      || (incoming[0].time - file.from) % timeframeSeconds !== 0) {
+      throw new Error("The appended candles do not match the RAW chronology and timeframe.");
+    }
+    const signature = inventorySignature(file.dataPath, file.metaPath);
+    let contents;
+    try {
+      contents = await fs.promises.readFile(file.dataPath, { signal });
+    } catch (error) {
+      if (error.code === "ENOENT") return null;
+      throw error;
+    }
+    signal.throwIfAborted();
+    if (version(file.id) !== expectedVersion) return null;
+    const previous = file.metadata;
+    if (createHash("sha256").update(contents).digest("hex") !== previous.dataSha256) {
+      inventoryCache.delete(file.id);
+      return null;
+    }
+    // The exact bytes passed JSON and native grid validation in get(). Replace
+    // only the closing array bracket and keep surrounding whitespace intact.
+    const closingBracket = contents.lastIndexOf(0x5d);
+    const prefix = contents.subarray(0, closingBracket);
+    const suffix = Buffer.from(`,${JSON.stringify(incoming).slice(1)}`);
+    const trailing = contents.subarray(closingBracket + 1);
+    const snapshot = {
+      from: file.from, to: incoming.at(-1).time, count: file.count + incoming.length,
+      dataBytes: prefix.length + suffix.length + trailing.length,
+      dataSha256: createHash("sha256").update(prefix).update(suffix).update(trailing).digest("hex"),
+    };
+    const filename = buildRawFilename({ ...file, firstTime: snapshot.from, lastTime: snapshot.to });
+    const directory = path.dirname(file.dataPath);
+    const dataPath = path.join(directory, filename);
+    const metaPath = sidecarPath(dataPath);
+    if (fs.existsSync(dataPath) || fs.existsSync(metaPath)) throw new Error("A RAW file with the updated name already exists.");
+    const id = path.relative(root, dataPath).split(path.sep).join("/");
+    const metadata = persistedMetadata({ ...file, filename, snapshot, source: previous.source,
+      requestedRange: previous.requestedRange, farazCoverage: previous.farazCoverage, createdAt: previous.createdAt,
+      updatedAt: previous.updatedAt, previousSha256: previous.dataSha256 });
+    const temporary = path.join(directory, `.update-${randomUUID()}`);
+    const stagedData = `${temporary}.data.tmp`;
+    const stagedMeta = `${temporary}.meta.tmp`;
+    let publishedMeta = false;
+    let publishedData = false;
+    try {
+      signal.throwIfAborted();
+      await fs.promises.writeFile(stagedData, [prefix, suffix, trailing], { flag: "wx", signal });
+      await fs.promises.writeFile(stagedMeta, `${JSON.stringify(metadata, null, 2)}\n`, { encoding: "utf8", flag: "wx", signal });
+      signal.throwIfAborted();
+      if (version(file.id) !== expectedVersion || inventorySignature(file.dataPath, file.metaPath) !== signature) return null;
+      if (fs.existsSync(dataPath) || fs.existsSync(metaPath)) throw new Error("A RAW file with the updated name already exists.");
+      // Inventory discovers a resource through its data file. Install its sidecar first.
+      fs.renameSync(stagedMeta, metaPath);
+      publishedMeta = true;
+      fs.renameSync(stagedData, dataPath);
+      publishedData = true;
+      fs.unlinkSync(file.dataPath);
+    } catch (error) {
+      if (publishedData) fs.unlinkSync(dataPath);
+      if (publishedMeta) fs.unlinkSync(metaPath);
+      throw error;
+    } finally {
+      fs.rmSync(stagedData, { force: true });
+      fs.rmSync(stagedMeta, { force: true });
+    }
+    // A sidecar whose old RAW path no longer exists is invisible to inventory.
+    try { fs.rmSync(file.metaPath, { force: true }); } catch { /* The new pair is already committed. */ }
+    inventoryCache.delete(file.id);
+    return cacheItem({ id, dataPath, metaPath }, metadata, snapshot, timeframeSeconds);
   }
 
   function cut(id, { from, to, mode = "replace" } = {}) {
@@ -286,7 +394,7 @@ export function createRawResourceStore({ rootDir }) {
     const coverage = { schemaVersion: 2, timeframeSeconds: timeframe, chartUpToDate, status: chartUpToDate ? "faraz_checked" : "unchecked_ranges_remain", checkedFrom, checkedTo, checkedThrough: durableCheckpoint, lastMode: mode || hydrated.farazCoverage?.lastMode || null, retryCount: Math.max(0, Math.trunc(Number(retryCount) || 0)), ranges: mergedRanges };
     const identity = parseRawFilename(path.basename(item.dataPath));
     const serialized = fs.readFileSync(item.dataPath, "utf8");
-    const metadata = persistedMetadata({ broker: identity.broker, symbol: identity.symbol, timeframe: identity.timeframe, source: previous.source || "local", filename: path.basename(item.dataPath), candles, serialized, requestedRange: hydrated.requestedRange, farazCoverage: coverage, chartId: previous.chartId, createdAt: previous.createdAt });
+    const metadata = persistedMetadata({ broker: identity.broker, symbol: identity.symbol, timeframe: identity.timeframe, source: previous.source || "local", filename: path.basename(item.dataPath), snapshot: snapshotData(candles, serialized), requestedRange: hydrated.requestedRange, farazCoverage: coverage, chartId: previous.chartId, createdAt: previous.createdAt });
     atomicWrite(item.metaPath, `${JSON.stringify(metadata, null, 2)}\n`);
     inventoryCache.delete(item.id);
     return runtimeMetadata(metadata);
@@ -300,5 +408,5 @@ export function createRawResourceStore({ rootDir }) {
     inventoryCache.delete(item.id);
     return true;
   }
-  return { root, resolve, write, list, read, cut, recordFarazCoverage, remove };
+  return { root, resolve, version, get, write, list, read, appendLatest, cut, recordFarazCoverage, remove };
 }

@@ -18,7 +18,7 @@ from direction_policy import policy_for
 
 
 A_ZONE_VERSION = "1.7.0"
-A_ZONE_LAST_MODIFIED_DATE = "2026-09-30"
+A_ZONE_LAST_MODIFIED_DATE = "2026-11-12"
 
 
 @dataclass(frozen=True, slots=True)
@@ -291,7 +291,7 @@ class AZoneDetector:
                 continue
             source_index, a_source_time, price = source
             result.append(
-                AZone(
+                self._zone(
                     direction=self.direction,
                     blue_1_ordinal=previous_ordinal,
                     blue_2_ordinal=ordinal,
@@ -489,11 +489,12 @@ class AZoneDetector:
         trigger_event_time: datetime,
         *,
         not_before: datetime | None = None,
+        start_position: int = 0,
     ) -> tuple[int, object] | None:
         reactions = self.reactions
         first_times = self._reaction_first_times
         confirmations = self._reaction_confirmations
-        for number in range(len(reactions)):
+        for number in range(start_position, len(reactions)):
             if (
                 confirmations[number] >= trigger_event_time
                 and (not_before is None or first_times[number] >= not_before)
@@ -632,7 +633,7 @@ class AZoneDetector:
             source_index, source_time, price = source
             break_index = int(getattr(reaction, "break_idx"))
             output.append(
-                AZone(
+                self._zone(
                     direction=self.direction,
                     blue_1_ordinal=previous.ordinal,
                     blue_2_ordinal=current.ordinal,
@@ -769,6 +770,9 @@ class AZoneDetector:
             key=lambda item: (item.source_time, item.trigger_event_time),
         )
 
+    def _zone(self, **fields) -> AZone:
+        return AZone(**fields)
+
     def _a_was_stopped_before(
         self,
         zone: AZone,
@@ -802,3 +806,227 @@ def detect_a_zones(
     chronology: object,
 ) -> list[AZone]:
     return AZoneDetector(direction, reactions, blue_lines, chronology).detect()
+
+
+_MarketEvent = tuple[int, datetime, Decimal]
+_EventKey = tuple[object, ...]
+
+
+@dataclass(slots=True)
+class _AHistory:
+    confirmations: dict[_EventKey, datetime] = field(default_factory=dict)
+    reset_formations: dict[_EventKey, datetime] = field(default_factory=dict)
+    crossings: dict[_EventKey, tuple[_MarketEvent | None, bool]] = field(default_factory=dict)
+    extremes: dict[_EventKey, tuple[Decimal, int, datetime]] = field(default_factory=dict)
+    matches: dict[_EventKey, int | None] = field(default_factory=dict)
+    inherited_stops: dict[_EventKey, tuple | None] = field(default_factory=dict)
+    triggers: dict[_EventKey, tuple | None] = field(default_factory=dict)
+    sources: dict[_EventKey, _MarketEvent | None] = field(default_factory=dict)
+    zones: dict[_EventKey, AZone] = field(default_factory=dict)
+
+
+class _LiveAZoneDetector(AZoneDetector):
+    """Reuse settled native decisions and advance open searches from the changed main."""
+
+    def __init__(self, direction, reactions, blue_lines, chronology, previous, dirty_time):
+        self.history = _AHistory()
+        self._previous = previous.history if previous is not None else _AHistory()
+        self._dirty_time = dirty_time
+        super().__init__(direction, reactions, blue_lines, chronology)
+        self.reaction_inputs = list(zip(
+            self._reaction_first_times, self._reaction_break_times, self._reaction_confirmations,
+        ))
+        old_inputs = previous.reaction_inputs if previous is not None else []
+        self._same_reactions = len(self.reaction_inputs) == len(old_inputs)
+        self._common_reactions = 0
+        for old, new in zip(old_inputs, self.reaction_inputs):
+            if old != new:
+                self._same_reactions = False
+                break
+            self._common_reactions += 1
+        self._changed_reaction_time = min(
+            (item[1] for suffix in (old_inputs, self.reaction_inputs)
+             for item in suffix[self._common_reactions:]),
+            default=None,
+        )
+
+    def _settled(self, event_time: datetime) -> bool:
+        return self._dirty_time is not None and event_time < self._dirty_time
+
+    def _settled_reaction_window(self, end: datetime) -> bool:
+        return self._settled(end) and (
+            self._changed_reaction_time is None or end <= self._changed_reaction_time
+        )
+
+    def _reaction_confirmation_time(self, reaction):
+        index = int(getattr(reaction, "break_idx"))
+        level = getattr(reaction, "box_top" if self.direction == "bullish" else "box_bottom")
+        key = index, str(level)
+        cache = self.history.confirmations
+        if key not in cache:
+            if self._settled(self.candle_times[index]) and key in self._previous.confirmations:
+                cache[key] = self._previous.confirmations[key]
+            else:
+                cache[key] = super()._reaction_confirmation_time(reaction)
+        return cache[key]
+
+    def _reset_formation_time(self, line, source_index):
+        key = source_index, str(getattr(line, "broken_level"))
+        if self._settled(self.candle_times[source_index]) and key in self._previous.reset_formations:
+            result = self._previous.reset_formations[key]
+        else:
+            result = super()._reset_formation_time(line, source_index)
+        self.history.reset_formations[key] = result
+        return result
+
+    def _first_crossing(self, level, start, end):
+        key = str(level), start, end
+        cache = self.history.crossings
+        if key in cache:
+            return cache[key][0]
+        left, right = self.chronology.lower_bounds(start, end)
+        has_lower = left < right
+        previous = self._previous.crossings.get(key)
+        dirty_time = self._dirty_time
+        scan_start = start
+        if previous is not None and dirty_time is not None and start < dirty_time:
+            old_hit, old_had_lower = previous
+            if (end is not None and end <= dirty_time) or (
+                old_hit is not None and old_hit[1] < dirty_time and old_had_lower == has_lower
+            ):
+                cache[key] = previous
+                return old_hit
+
+            dirty_position = min(right, bisect_left(self.lower_times, dirty_time))
+            if old_had_lower and left < dirty_position:
+                # An unchanged lower row suppresses the main-candle fallback
+                # even when no lower rows remain after the continuation point.
+                if dirty_position == right:
+                    cache[key] = None, True
+                    return None
+                scan_start = dirty_time
+            elif not old_had_lower and not has_lower:
+                scan_start = dirty_time
+        result = super()._first_crossing(level, scan_start, end)
+        cache[key] = result, has_lower
+        return result
+
+    def _range_extreme(self, start, end):
+        key = start, end
+        if self._settled(end) and key in self._previous.extremes:
+            result = self._previous.extremes[key]
+        elif key in self.history.extremes:
+            return self.history.extremes[key]
+        else:
+            result = super()._range_extreme(start, end)
+        self.history.extremes[key] = result
+        return result
+
+    def _first_reaction_after(self, trigger_event_time, *, not_before=None):
+        key = trigger_event_time, not_before
+        old_match = self._previous.matches.get(key)
+        if key in self.history.matches:
+            match = self.history.matches[key]
+        elif old_match is not None and old_match <= self._common_reactions:
+            match = old_match
+        elif key in self._previous.matches and old_match is None and self._same_reactions:
+            match = None
+        else:
+            result = super()._first_reaction_after(
+                trigger_event_time,
+                not_before=not_before,
+                start_position=self._common_reactions if key in self._previous.matches else 0,
+            )
+            match = result[0] if result is not None else None
+        self.history.matches[key] = match
+        return (match, self.reactions[match - 1]) if match is not None else None
+
+    @staticmethod
+    def _blue_key(state):
+        return (
+            state.formation_index, state.formation_time,
+            state.stop_index, state.stop_time, state.stop_event_time,
+            str(state.stop_level), str(state.stop_event_extreme),
+            getattr(state.line, "kind"), bool(getattr(state.line, "behavior_internal", False)),
+        )
+
+    def _inherited_stop(self, previous, current):
+        key = self._blue_key(previous), self._blue_key(current)
+        if self._settled_reaction_window(current.formation_time) and key in self._previous.inherited_stops:
+            result = self._previous.inherited_stops[key]
+        else:
+            result = super()._inherited_stop(previous, current)
+        self.history.inherited_stops[key] = result
+        return result
+
+    def _pair_trigger(self, previous, current, expires_at):
+        key = self._blue_key(previous), self._blue_key(current), expires_at
+        if (
+            expires_at is not None and self._settled_reaction_window(current.formation_time)
+            and all(self._settled(event) for event in (
+                expires_at, previous.formation_time, previous.stop_event_time, current.stop_event_time,
+            ) if event is not None)
+            and key in self._previous.triggers
+        ):
+            result = self._previous.triggers[key]
+        else:
+            result = super()._pair_trigger(previous, current, expires_at)
+        self.history.triggers[key] = result
+        return result
+
+    def _a_source(self, trigger_index, reaction):
+        end = self._reaction_confirmation_time(reaction)
+        key = trigger_index, end
+        if (
+            self._settled(end) and self._settled(self.candle_times[trigger_index])
+            and key in self._previous.sources
+        ):
+            result = self._previous.sources[key]
+        else:
+            result = super()._a_source(trigger_index, reaction)
+        self.history.sources[key] = result
+        return result
+
+    def _zone(self, **fields):
+        key = tuple(
+            (name, value.as_tuple() if isinstance(value, Decimal) else value)
+            for name, value in fields.items()
+        )
+        zone = self._previous.zones.get(key)
+        if zone is None:
+            zone = super()._zone(**fields)
+        self.history.zones[key] = zone
+        return zone
+
+
+class LiveAZoneContinuation:
+    """Continue A from the first mutable main candle and revised upstream inputs."""
+
+    def __init__(self, direction, reactions, blue_lines, chronology):
+        self._direction = direction
+        detector = _LiveAZoneDetector(direction, reactions, blue_lines, chronology, None, None)
+        self._result = detector.detect()
+        self._detector = detector
+
+    @property
+    def result(self) -> list[AZone]:
+        return list(self._result)
+
+    def update(self, reactions, blue_lines, chronology, *, first_dirty_main: int) -> list[AZone]:
+        previous = self._detector
+        if chronology.timeframe != previous.timeframe:
+            raise ValueError("A continuation requires the original analysis timeframe.")
+        if not 0 <= first_dirty_main <= min(len(previous.candles), len(chronology.candles)):
+            raise ValueError("The changed market index is outside the A continuation.")
+        dirty_time = min(
+            (times[first_dirty_main] for times in (previous.candle_times, chronology.times)
+             if first_dirty_main < len(times)),
+            default=chronology.times[-1] + chronology.timeframe if chronology.times else None,
+        )
+        detector = _LiveAZoneDetector(
+            self._direction, reactions, blue_lines, chronology, previous, dirty_time,
+        )
+        result = detector.detect()
+        detector._previous = _AHistory()
+        self._detector, self._result = detector, result
+        return self.result

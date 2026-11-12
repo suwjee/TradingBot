@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from bisect import bisect_left, bisect_right
 from dataclasses import dataclass, field, replace
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import Sequence
 
@@ -22,8 +22,8 @@ from direction_policy import policy_for
 
 
 STOP_ALL_VERSION = "1.18.6"
-STOP_ALL_IMPLEMENTATION_VERSION = "1.20.7"
-STOP_ALL_LAST_MODIFIED = "2026-10-24T12:06:51+03:30"
+STOP_ALL_IMPLEMENTATION_VERSION = "1.21.0"
+STOP_ALL_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -139,6 +139,14 @@ def advance_dominant_behavior(
     return owner
 
 
+@dataclass(frozen=True, slots=True)
+class _StopAllCheckpoint:
+    owner: _DominantBehavior | None = None
+    pending_stop: tuple[_DominantBehavior, datetime] | None = None
+    active: tuple[StopAll, ...] = ()
+    output_count: int = 0
+
+
 class StopAllDetector:
     def __init__(
         self,
@@ -151,9 +159,7 @@ class StopAllDetector:
             raise ValueError("Direction must be 'bullish' or 'bearish'.")
         self.direction = direction
         self.s_zones = list(s_zones)
-        self.e_zones = sorted(
-            e_zones, key=lambda item: (item.source_time, item.source_index)
-        )
+        self.e_zones = list(e_zones)
         self.chronology = chronology
         self.candles = chronology.candles
         self.lower = chronology.seconds
@@ -341,17 +347,23 @@ class StopAllDetector:
             donor_price=as_decimal(item.price),
         )
 
-    def detect(self) -> list[StopAll]:
-        s_events = sorted(
-            self.s_zones, key=lambda item: (item.source_time, item.source_index)
+    def _events(self) -> list[tuple[str, object]]:
+        return sorted(
+            [("S", item) for item in self.s_zones] + [("E", item) for item in self.e_zones],
+            key=lambda event: (event[1].source_time, event[0], event[1].source_index),
         )
-        s_position = 0
-        owner: _DominantBehavior | None = None
+
+    def detect(self) -> list[StopAll]:
+        output: list[StopAll] = []
+        self._detect_events(self._events(), _StopAllCheckpoint(), output)
+        return [self._resolve_stop(item) for item in output]
+
+    def _detect_events(self, events, checkpoint, output, checkpoints=None) -> None:
+        owner = checkpoint.owner
         # A completed stop is frozen historical evidence awaiting an existing
         # S-Red Mode-B or E donor. It cannot arm a displaced behavior again.
-        pending_stop: tuple[_DominantBehavior, datetime] | None = None
-        active: list[StopAll] = []
-        output: list[StopAll] = []
+        pending_stop = checkpoint.pending_stop
+        active = checkpoint.active
 
         def armed_stop_before(
             boundary: datetime, donor_e: object | None = None,
@@ -428,7 +440,7 @@ class StopAllDetector:
                     s_item.decision_event_time,
                 )
                 output.append(zone)
-                active = [zone]
+                active = (zone,)
                 owner = None
                 pending_stop = None
                 return
@@ -452,7 +464,7 @@ class StopAllDetector:
                     stopped_at,
                 )
                 output.append(zone)
-                active = [zone]
+                active = (zone,)
                 owner = None
                 pending_stop = None
                 return
@@ -460,13 +472,8 @@ class StopAllDetector:
                 pending_stop = completed
             accept("S", color, None, s_item)
 
-        for e_item in self.e_zones:
-            while s_position < len(s_events) and (
-                s_events[s_position].source_time < e_item.source_time
-            ):
-                process_s_event(s_events[s_position])
-                s_position += 1
-
+        def process_e_event(e_item: object) -> None:
+            nonlocal owner, pending_stop, active
             e_decision = e_item.decision_event_time
             stopped_active = []
             for item in active:
@@ -481,12 +488,12 @@ class StopAllDetector:
                     "StopAll", f"StopAll{highest}", len(stopped_active),
                 )
                 stopped_ids = {id(item) for item, _ in stopped_active}
-                active = [item for item in active if id(item) not in stopped_ids]
+                active = tuple(item for item in active if id(item) not in stopped_ids)
                 output.append(zone)
-                active.append(zone)
+                active += (zone,)
                 owner = None
                 pending_stop = None
-                continue
+                return
 
             gate_event = armed_stop_before(e_item.source_time, e_item)
             completed = pending_stop or (
@@ -500,31 +507,87 @@ class StopAllDetector:
                     stopped_owner.kind, stopped_owner.key, stopped_owner.count,
                 )
                 output.append(zone)
-                active.append(zone)
+                active += (zone,)
                 owner = None
                 pending_stop = None
-                continue
+                return
 
             accept("E", str(e_item.family).lower(), int(e_item.number), e_item)
 
-        # The reversal rule is driven by accepted S itself, so it must still
-        # fire when the triggering S occurs after the final accepted E.
-        while s_position < len(s_events):
-            process_s_event(s_events[s_position])
-            s_position += 1
+        for kind, item in events:
+            if kind == "S":
+                process_s_event(item)
+            else:
+                process_e_event(item)
+            if checkpoints is not None:
+                checkpoints.append(_StopAllCheckpoint(owner, pending_stop, active, len(output)))
 
-        completed = []
-        for item in output:
-            stop = self._strict_stop(item.decision_event_time, item.price)
-            completed.append(
-                replace(
-                    item,
-                    stop_index=stop[0] if stop else None,
-                    stop_time=stop[1] if stop else None,
-                    stop_event_time=stop[2] if stop else None,
-                )
-            )
-        return completed
+    def _resolve_stop(self, item: StopAll, *, after: datetime | None = None) -> StopAll:
+        start = item.decision_event_time
+        stop = self._strict_stop(max(start, after) if after is not None else start, item.price)
+        return replace(
+            item, stop_index=stop[0] if stop else None, stop_time=stop[1] if stop else None,
+            stop_event_time=stop[2] if stop else None,
+        )
+
+
+class LiveStopAllContinuation:
+    """Continue accepted S/E ownership and keep StopAlls awaiting a strict stop."""
+
+    def __init__(self, direction, s_zones, e_zones, chronology):
+        self._direction = direction
+        self._checkpoints = [_StopAllCheckpoint()]
+        self._event_keys = []
+        self._output = []
+        self._result = []
+        self._covered_until = None
+        self.update(s_zones, e_zones, chronology, first_dirty_main=0)
+
+    @property
+    def result(self) -> list[StopAll]:
+        return self._result.copy()
+
+    def update(self, s_zones, e_zones, chronology, *, first_dirty_main: int) -> list[StopAll]:
+        if not 0 <= first_dirty_main <= len(chronology.times):
+            raise ValueError("The changed market index is outside the StopAll chronology.")
+        dirty = chronology.times[first_dirty_main] if first_dirty_main < len(chronology.times) else None
+        # Only the prior observed RAW prefix can be known to contain no stop.
+        if self._covered_until is not None and (dirty is None or self._covered_until < dirty):
+            dirty = self._covered_until
+        detector = StopAllDetector(self._direction, s_zones, e_zones, chronology)
+        events = detector._events()
+        # Native immutable S/E records include exact Decimal representations.
+        event_keys = [(kind, repr(item)) for kind, item in events]
+        unchanged = 0
+        for (_, item), old_key, new_key in zip(events, self._event_keys, event_keys):
+            if old_key != new_key or (
+                dirty is not None and max(item.source_time, item.decision_event_time) >= dirty
+            ):
+                break
+            unchanged += 1
+        checkpoint = self._checkpoints[unchanged]
+        checkpoints = self._checkpoints[:unchanged + 1]
+        output = self._output[:checkpoint.output_count]
+        detector._detect_events(events[unchanged:], checkpoint, output, checkpoints)
+        result = []
+        for i, item in enumerate(output):
+            if i < checkpoint.output_count:
+                old = self._result[i]
+                if old.stop_event_time is not None and (dirty is None or old.stop_event_time < dirty):
+                    result.append(old)
+                    continue
+                result.append(detector._resolve_stop(item, after=dirty))
+            else:
+                result.append(detector._resolve_stop(item))
+        self._checkpoints = checkpoints
+        self._event_keys = event_keys
+        self._output = output
+        self._result = result
+        self._covered_until = (
+            chronology.second_times[-1] + timedelta(microseconds=1)
+            if chronology.second_times else None
+        )
+        return self.result
 
 
 def detect_stopalls(
@@ -1296,7 +1359,8 @@ def visible_s_zones_after_module_resets(
     return visible
 
 def reconcile_stopall_lifecycle(
-    detector, s_zones, e_zones, chronology, direction, timed_step=None
+    detector, s_zones, e_zones, chronology, direction, timed_step=None,
+    *, stopall_finder=None,
 ):
     """Freeze StopAll boundaries from the accepted chronological E state.
 
@@ -1314,13 +1378,14 @@ def reconcile_stopall_lifecycle(
     semantics, but never retroactively rebuild the E prefix from that map.
     """
     measure = timed_step or (lambda _label, work: work())
+    find_stopalls = stopall_finder or detect_stopalls
     visible_s = measure(
         f"Reconcile S visibility - {direction.title()}",
         lambda: s_zones_for_stopall(s_zones, e_zones, direction),
     )
     stopalls = measure(
         f"StopAll - {direction.title()}",
-        lambda: detect_stopalls(direction, visible_s, e_zones, chronology),
+        lambda: find_stopalls(direction, visible_s, e_zones, chronology),
     )
     detector.sequence_resets = {
         item.source_time: item.number for item in stopalls

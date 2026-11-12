@@ -24,8 +24,8 @@ from order_audit_engine import (
 
 
 E_ZONE_VERSION = "6.16.2"
-E_ZONE_IMPLEMENTATION_VERSION = "6.18.6"
-E_ZONE_LAST_MODIFIED = "2026-11-02T07:13:10+03:30"
+E_ZONE_IMPLEMENTATION_VERSION = "6.19.0"
+E_ZONE_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -67,6 +67,244 @@ class EZone:
     decision_event_time: datetime
 
 
+@dataclass(frozen=True, slots=True)
+class _ParentStopProgress:
+    scanned_until: datetime
+    event: datetime | None
+
+
+@dataclass(frozen=True, slots=True)
+class _EReconciliationStep:
+    source: int
+    count: int
+    active: tuple[EZone, ...]
+    sequence_start: datetime | None
+
+
+class _ReopenedERace(Exception):
+    pass
+
+
+@dataclass(frozen=True, slots=True)
+class _ReconciledE:
+    candidates: tuple[EZone, ...]
+    numbered: tuple[EZone, ...]
+    accepted: frozenset[tuple[datetime, int]]
+    lifecycle_starts: frozenset[datetime]
+    evidence: tuple
+    steps: tuple[_EReconciliationStep, ...]
+    native_numbered: tuple[EZone, ...]
+
+
+class LiveEContinuation:
+    """Retain exact E geometry and decisions across market updates.
+
+    The active Order ledger is authoritative every time. A candidate can be
+    reused only after selecting the same Order with the current ledger. The
+    recursive ownership result is reusable only with the same candidates and
+    ownership evidence, and without a dynamically reopened parent race.
+    """
+
+    def __init__(self) -> None:
+        self._chronology: object | None = None
+        self._scope: tuple | None = None
+        self._dirty: datetime | None = None
+        self._stops: dict[tuple, _ParentStopProgress] = {}
+        self._previous_stops: dict[tuple, _ParentStopProgress] = {}
+        self._extremes: dict[tuple, tuple[int, datetime, Decimal]] = {}
+        self._previous_extremes: dict[tuple, tuple[int, datetime, Decimal]] = {}
+        self._zones: dict[tuple, EZone] = {}
+        self._previous_zones: dict[tuple, EZone] = {}
+        self._reconciled: dict[tuple, _ReconciledE] = {}
+        self._previous_reconciled: dict[tuple, _ReconciledE] = {}
+        self._scoped_reconciliations: dict[tuple, _ReconciledE] = {}
+        self._previous_scoped: dict[tuple, _ReconciledE] = {}
+        self._main_index = None
+
+    def advance(self, chronology: object, *, first_dirty_main: int) -> None:
+        times = chronology.times
+        if not times or not 0 <= first_dirty_main <= len(times):
+            raise ValueError("The changed market index is outside the current chronology.")
+        scope = (times[0], chronology.timeframe)
+        self._dirty = (
+            times[first_dirty_main] if first_dirty_main < len(times)
+            else times[-1] + chronology.timeframe
+        )
+        same_market = scope == self._scope
+        self._previous_stops, self._stops = (self._stops if same_market else {}), {}
+        self._previous_extremes, self._extremes = (self._extremes if same_market else {}), {}
+        self._previous_zones, self._zones = (self._zones if same_market else {}), {}
+        self._previous_reconciled, self._reconciled = (self._reconciled if same_market else {}), {}
+        self._previous_scoped, self._scoped_reconciliations = (
+            self._scoped_reconciliations if same_market else {}
+        ), {}
+        self._main_index = None
+        self._chronology, self._scope = chronology, scope
+
+    def _dirty_time(self, detector: EZoneDetector) -> datetime:
+        if detector.chronology is not self._chronology or self._dirty is None:
+            raise ValueError("Advance the live E state to the detector's chronology.")
+        return self._dirty
+
+    def first_stop(
+        self, detector: EZoneDetector, start: datetime, level: Decimal,
+        *, less: bool, search: Callable[[datetime, datetime, Decimal], datetime | None],
+    ) -> datetime | None:
+        dirty = self._dirty_time(detector)
+        key = (less, start, level)
+        progress = self._stops.get(key)
+        if progress is None:
+            progress = self._previous_stops.get(key)
+            if progress is not None and (progress.event is None or progress.event >= dirty):
+                progress = _ParentStopProgress(min(progress.scanned_until, dirty), None)
+        if progress is not None:
+            self._stops[key] = progress
+            if progress.event is not None:
+                return progress.event if progress.event < detector.range_end else None
+            start = max(start, progress.scanned_until)
+
+        if start >= detector.range_end:
+            return None
+        event = search(start, detector.range_end, level)
+        self._stops[key] = _ParentStopProgress(event or detector.range_end, event)
+        return event
+
+    def extreme(
+        self, detector: EZoneDetector, start_index: int, end_index: int,
+    ) -> tuple[int, datetime, Decimal]:
+        dirty = self._dirty_time(detector)
+        key = (detector.direction, start_index, end_index)
+        result = self._extremes.get(key)
+        if result is None and detector.times[end_index] < dirty:
+            result = self._previous_extremes.get(key)
+        if result is None:
+            if self._main_index is None:
+                from reaction_engine import LowerTimeframeIndex
+
+                self._main_index = LowerTimeframeIndex(detector.candles)
+            query = (self._main_index.range_minimum if detector.direction == "bullish"
+                     else self._main_index.range_maximum)
+            price, position = query(start_index, end_index + 1)
+            result = (int(detector.candles[position].index), detector.times[position], price)
+        self._extremes[key] = result
+        return result
+
+    def zone(
+        self, detector: EZoneDetector, family: str, number: int, parent_type: str,
+        parent: object, stop_event: datetime, match: OrderMatch,
+        source: tuple[int, datetime, Decimal],
+    ) -> EZone:
+        dirty = self._dirty_time(detector)
+        order_number, order, confirmation, level, stop_index, stop_time, crossed, causes, cause_time = match
+        assert crossed is not None
+        key = (
+            detector.direction, family, number, parent_type, parent.source_index,
+            parent.source_time, str(parent.price), stop_event, order_number,
+            order.first_idx, order.break_idx, order.mode, order.box_top_source_idx,
+            str(order.box_top), order.box_bottom_source_idx, str(order.box_bottom),
+            confirmation, str(level), stop_index, stop_time, crossed, causes, cause_time,
+            source[0], source[1], str(source[2]),
+        )
+        zone = self._zones.get(key)
+        if zone is None and max(stop_event, crossed[2], confirmation) < dirty:
+            zone = self._previous_zones.get(key)
+        if zone is None:
+            zone = detector._build_zone(family, number, parent_type, parent, stop_event, match, source)
+        self._zones[key] = zone
+        return zone
+
+    def reconcile(self, detector: EZoneDetector, candidates: list[EZone]) -> list[EZone]:
+        self._dirty_time(detector)
+        if not candidates:
+            return detector._compute_reconciliation(candidates)[0]
+
+        identities = {(zone.order_first_index, zone.order_break_index) for zone in candidates}
+        ledger = {}
+        for identity in sorted(identities):
+            entry = detector.order_audit.get(identity)
+            ledger[identity] = (
+                entry is not None, identity in detector.initial_order_audit,
+                bool(entry and entry.get("order_b_causes")), frozenset(entry.get("causes", ())) if entry else (),
+            )
+        grouped = {}
+        for zone in candidates:
+            order = (zone.order_first_index, zone.order_break_index)
+            dependency = (
+                repr(zone), ledger[order], detector._blocked_by_gate_owned_order(zone),
+                detector.sequence_priority(zone.parent_type, "red"),
+                detector.sequence_priority(zone.parent_type, "blue"),
+                zone.parent_source_index if zone.parent_type == "E" else zone.source_index,
+            )
+            grouped.setdefault(zone.source_index, []).append(dependency)
+        parents = {}
+        for item in detector.s_zones:
+            parents.setdefault(item.source_index, []).append(
+                (item.source_time, item.a_source_time, item.decision_event_time, item.color),
+            )
+        resets = frozenset(detector.sequence_resets.items())
+        validity = frozenset(detector.invalid_s_root_identities), frozenset(detector.visual_lifecycle_starts)
+        evidence = (grouped, parents, resets, validity)
+        scope = (detector.direction, detector._live_scope)
+        key = (
+            tuple(map(id, candidates)),
+            tuple((source, tuple(rows)) for source, rows in grouped.items()),
+            tuple((source, tuple(rows)) for source, rows in parents.items()),
+            resets, validity,
+        )
+        saved = self._reconciled.get(key) or self._previous_reconciled.get(key)
+        if saved is not None:
+            self._reconciled[key] = saved
+            self._scoped_reconciliations[scope] = saved
+            detector._last_candidate_zones = list(saved.candidates)
+            detector._accepted_e_source_identities = set(saved.accepted)
+            detector.visual_lifecycle_starts.update(saved.lifecycle_starts)
+            return list(saved.numbered)
+
+        previous = self._previous_scoped.get(scope)
+        steps = []
+        frontier = 0
+        checkpoint = None
+        if previous is not None and previous.evidence[3] == validity:
+            old_groups, old_parents, old_resets, _ = previous.evidence
+            frontier = detector._main_index(self._dirty)
+            for source in grouped.keys() | old_groups.keys():
+                before, after = old_groups.get(source, []), grouped.get(source, [])
+                if before != after:
+                    # A newly confirmed child can change the race of an
+                    # already active parent before the child's source.
+                    frontier = min(frontier, source, *(row[-1] for row in before + after))
+            for source in parents.keys() | old_parents.keys():
+                if parents.get(source) != old_parents.get(source):
+                    frontier = min(frontier, source)
+            for instant, _ in resets ^ old_resets:
+                frontier = min(frontier, detector._main_index(instant))
+            position = bisect_left(previous.steps, frontier, key=lambda step: step.source)
+            steps.extend(previous.steps[:position])
+            if position < len(previous.steps):
+                checkpoint = previous.steps[position]
+            else:
+                checkpoint = previous.steps[-1]
+                steps.pop()
+        try:
+            numbered, native = detector._compute_reconciliation(
+                candidates, steps=steps, checkpoint=checkpoint, previous=previous, frontier=frontier,
+            )
+        except _ReopenedERace:
+            # Dynamic Order races can insert a candidate before the apparent
+            # frontier. Restart before mutating any native Order provenance.
+            steps.clear()
+            numbered, native = detector._compute_reconciliation(candidates, steps=steps)
+        if not detector._reconciliation_reopened:
+            saved = _ReconciledE(
+                tuple(candidates), tuple(numbered),
+                frozenset(detector._accepted_e_source_identities),
+                frozenset(detector.visual_lifecycle_starts),
+                evidence, tuple(steps), native,
+            )
+            self._reconciled[key] = self._scoped_reconciliations[scope] = saved
+        return numbered
+
+
 class EZoneDetector(OrderAuditEngineMixin):
     def __init__(
         self,
@@ -88,6 +326,8 @@ class EZoneDetector(OrderAuditEngineMixin):
         sequence_priority: Callable[[str, str], int] | None = None,
         invalid_s_root_identities: set[tuple[datetime, int]] | None = None,
         order_b_legs: Sequence[OrderBResetLeg] = (),
+        live_continuation: LiveEContinuation | None = None,
+        live_scope: tuple = (),
     ) -> None:
         if direction not in {"bullish", "bearish"}:
             raise ValueError("Direction must be 'bullish' or 'bearish'.")
@@ -121,17 +361,20 @@ class EZoneDetector(OrderAuditEngineMixin):
         self.end_index = len(self.candles) - 1 if end_index is None else int(end_index)
         self.range_start = self.times[self.start_index]
         self.range_end = self.times[self.end_index] + self.timeframe
-        self._stop_values = [
-            as_decimal(getattr(candle, self.policy.extreme_attr))
-            for candle in self.candles
-        ]
-        self._candle_codes = [int(getattr(candle, "index")) for candle in self.candles]
-        self._extreme_sparse = self._build_extreme_sparse()
+        if live_continuation is None:
+            self._stop_values = [
+                as_decimal(getattr(candle, self.policy.extreme_attr))
+                for candle in self.candles
+            ]
+            self._candle_codes = [int(getattr(candle, "index")) for candle in self.candles]
+            self._extreme_sparse = self._build_extreme_sparse()
         self.direct_geometry_finder = direct_geometry_finder
         self.blocked_order_first_times = blocked_order_first_times or set()
         self.e_parent_order_first_exceptions = e_parent_order_first_exceptions
         self.initial_order_audit = initial_order_audit or {}
         self.order_b_legs = tuple(order_b_legs)
+        self._live_continuation = live_continuation
+        self._live_scope = live_scope
         self._cross_order_cache: dict[
             tuple[datetime, Decimal], tuple[int, datetime, datetime] | None
         ] = {}
@@ -324,15 +567,46 @@ class EZoneDetector(OrderAuditEngineMixin):
     def _first_parent_stop(
         self, source_time: datetime, level: Decimal
     ) -> tuple[int, datetime] | None:
-        left = bisect_left(self.lower_times, max(source_time, self.range_start))
-        right = bisect_left(self.lower_times, self.range_end)
-        position = self._first_cross_position(
-            left, right, level, less=self.direction == "bullish"
+        start = max(source_time, self.range_start)
+        if self._live_continuation is None:
+            event = self._search_parent_stop(start, self.range_end, level)
+        else:
+            event = self._live_continuation.first_stop(
+                self, start, level, less=self.direction == "bullish", search=self._search_parent_stop,
+            )
+        return (self._main_index(event), event) if event is not None else None
+
+    def _search_parent_stop(
+        self, start: datetime, end: datetime, level: Decimal,
+    ) -> datetime | None:
+        return self._search_strict_cross(start, end, level, less=self.direction == "bullish")
+
+    def _search_order_stop(
+        self, start: datetime, end: datetime, level: Decimal,
+    ) -> datetime | None:
+        return self._search_strict_cross(start, end, level, less=self.order_direction != "bearish")
+
+    def _search_strict_cross(
+        self, start: datetime, end: datetime, level: Decimal, *, less: bool,
+    ) -> datetime | None:
+        left = bisect_left(self.lower_times, start)
+        right = bisect_left(self.lower_times, end)
+        position = self._first_cross_position(left, right, level, less=less)
+        return self.lower_times[position] if position is not None else None
+
+    def _cross_order(
+        self, start: datetime, level: Decimal,
+    ) -> tuple[int, datetime, datetime] | None:
+        if self._live_continuation is None:
+            return super()._cross_order(start, level)
+        event = self._live_continuation.first_stop(
+            self, max(start, self.range_start), level,
+            less=self.order_direction != "bearish", search=self._search_order_stop,
         )
-        if position is None:
+        if event is None:
             return None
-        event = self.lower_times[position]
-        return self._main_index(event), event
+        index = self._main_index(event)
+        return index, self.times[index], event
 
     def _confirmation_for(self, reaction: object, direction: str) -> datetime:
         return self.chronology.reaction_confirmation(direction, reaction)
@@ -368,6 +642,11 @@ class EZoneDetector(OrderAuditEngineMixin):
         end_index = min(self.end_index, self._main_index(end))
         if end_index < start_index:
             end_index = start_index
+        if self._live_continuation is not None:
+            return self._live_continuation.extreme(self, start_index, end_index)
+        return self._find_extreme(start_index, end_index)
+
+    def _find_extreme(self, start_index: int, end_index: int) -> tuple[int, datetime, Decimal]:
         position = self._extreme_position(start_index, end_index)
         return (
             self._candle_codes[position],
@@ -434,15 +713,24 @@ class EZoneDetector(OrderAuditEngineMixin):
             break
         if order_match is None:
             return None
+        if self._live_continuation is not None:
+            return self._live_continuation.zone(
+                self, family, number, parent_type, parent, stop_event, order_match, prospective_source,
+            )
+        return self._build_zone(family, number, parent_type, parent, stop_event, order_match, prospective_source)
+
+    def _build_zone(
+        self, family: str, number: int, parent_type: str, parent: object,
+        stop_event: datetime, order_match: OrderMatch,
+        prospective_source: tuple[int, datetime, Decimal],
+    ) -> EZone:
         (
             order_number, order, order_confirmation, order_stop,
             stop_source, stop_source_time, crossed, order_causes,
             order_parent_stop_cause_time,
         ) = order_match
-        if crossed is None:
-            return None
-        order_decision_index, order_decision_time, order_decision_event = crossed
-        decision_event = max(stop_event, order_decision_event)
+        assert crossed is not None
+        decision_event = max(stop_event, crossed[2])
         decision_index = self._main_index(decision_event)
         decision_time = self.times[decision_index]
         source_index, source_time, price = prospective_source
@@ -884,6 +1172,13 @@ class EZoneDetector(OrderAuditEngineMixin):
         self, candidates: list[EZone]
     ) -> list[EZone]:
         """Resolve competing E chains into the accepted chronological lifecycle."""
+        if self._live_continuation is not None:
+            return self._live_continuation.reconcile(self, candidates)
+        return self._compute_reconciliation(candidates)[0]
+
+    def _compute_reconciliation(
+        self, candidates: list[EZone], *, steps=None, checkpoint=None, previous=None, frontier=0,
+    ) -> tuple[list[EZone], tuple[EZone, ...]]:
         # Resolve competing chains chronologically.  A stopped E is removed
         # from the active set immediately; it remains only as historical
         # output and cannot affect a later family or number.
@@ -898,17 +1193,18 @@ class EZoneDetector(OrderAuditEngineMixin):
         # chain before the later confirmed continuation.
         pending = [(min(item.source_time for item in group),
                     min(item.decision_event_time for item in group), source)
-                   for source, group in by_source.items()]
+                   for source, group in by_source.items() if source >= frontier]
         heapify(pending)
-        scheduled = set(by_source)
+        scheduled = {source for _, _, source in pending}
         known = set(candidates)
         regenerated: set[EZone] = set()
-        numbered: list[EZone] = []
-        active: list[EZone] = []
-        accepted_sources: set[tuple[datetime, int]] = set()
-        accepted_source_times: set[datetime] = set()
+        self._reconciliation_reopened = False
+        numbered = list(previous.native_numbered[:checkpoint.count]) if checkpoint is not None else []
+        active = list(checkpoint.active) if checkpoint is not None else []
+        accepted_sources = {(item.source_time, item.source_index) for item in numbered}
+        accepted_source_times = {item.source_time for item in numbered}
         self._accepted_e_source_identities = accepted_sources
-        sequence_start: datetime | None = None
+        sequence_start = checkpoint.sequence_start if checkpoint is not None else None
 
         candidates_by_source_time = {
             (item.source_index, item.source_time): item
@@ -1021,6 +1317,8 @@ class EZoneDetector(OrderAuditEngineMixin):
         while pending:
             _source_time, _decision_time, current_source = heappop(pending)
             scheduled.remove(current_source)
+            if steps is not None:
+                steps.append(_EReconciliationStep(current_source, len(numbered), tuple(active), sequence_start))
             group = by_source[current_source]
             # Another source can disown an Order after its E parent was
             # accepted. Reopen that parent's complete native race here.
@@ -1035,8 +1333,11 @@ class EZoneDetector(OrderAuditEngineMixin):
                                    (item.parent_source_time, item.parent_source_index)), None)
                     if parent is None:
                         continue
+                    if checkpoint is not None:
+                        raise _ReopenedERace
                     family = item.family if item.parent_type == "S" else parent.family
                     number = item.number if item.parent_type == "S" else parent.number + 1
+                    self._reconciliation_reopened = True
                     enqueue(self._zone(family, number, item.parent_type, parent,
                                        item.parent_stop_event_time,
                                        e_owned_source_times=accepted_source_times), current_source)
@@ -1183,6 +1484,7 @@ class EZoneDetector(OrderAuditEngineMixin):
             # when that parent's source is a hard-reset boundary.
             next_stop = self._parent_stop("E", numbered_zone) if zone in regenerated else None
             if next_stop is not None:
+                self._reconciliation_reopened = True
                 child = self._zone(numbered_zone.family, numbered_zone.number + 1,
                                    "E", numbered_zone, next_stop[1],
                                    e_owned_source_times=accepted_source_times)
@@ -1206,13 +1508,16 @@ class EZoneDetector(OrderAuditEngineMixin):
         for zone in numbered:
             collect_lineage(zone, lineage_seen)
 
+        if steps is not None:
+            steps.append(_EReconciliationStep(len(self.candles), len(numbered), tuple(active), sequence_start))
+        native = tuple(numbered)
         numbered = [replace(item, parent_type="StopAll")
                     if item.parent_type == "E"
                     and item.parent_source_time in self.sequence_resets
                     else item for item in numbered]
         self._accepted_e_source_identities = accepted_sources
         self._last_candidate_zones = list(candidates)
-        return numbered
+        return numbered, native
 
 
     def detect(self) -> list[EZone]:

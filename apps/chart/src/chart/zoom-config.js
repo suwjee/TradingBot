@@ -1,7 +1,6 @@
-// 0.25px keeps the scale finite while exposing twice as many candles as the
-// previous 0.5px floor. Dense views are handled by the display-only LOD path;
-// raw timestamps remain the authority for drawings and hit testing.
-export const MIN_SAFE_BAR_SPACING = 0.25;
+// Keep a positive floor while allowing 2.5 times the visible span of 0.25px.
+// Display density may change, but the time axis still uses candle coordinates.
+export const MIN_SAFE_BAR_SPACING = 0.10;
 
 export function zoomOutCapacityGain(previousSpacing, nextSpacing) {
   const previous = Number(previousSpacing);

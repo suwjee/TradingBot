@@ -31,9 +31,12 @@ export function rawIndexAtTime(rows, time) {
 function interpolate(value, anchors, inputKey, outputKey) {
   if (!anchors?.length) return null;
   if (anchors.length === 1) return Number(anchors[0][outputKey]);
-  let upper = anchors.findIndex((anchor) => Number(anchor[inputKey]) >= value);
-  if (upper < 0) upper = anchors.length - 1;
-  if (upper === 0) upper = 1;
+  let upper = 1;
+  if (anchors.length > 2) {
+    upper = anchors.findIndex((anchor) => Number(anchor[inputKey]) >= value);
+    if (upper < 0) upper = anchors.length - 1;
+    if (upper === 0) upper = 1;
+  }
   const left = anchors[upper - 1];
   const right = anchors[upper];
   const from = Number(left[inputKey]);
@@ -44,8 +47,21 @@ function interpolate(value, anchors, inputKey, outputKey) {
 }
 
 export function rawTimeToCoordinate(rows, time, anchors) {
-  const rawIndex = rawIndexAtTime(rows, time);
+  return rawIndexToCoordinate(rawIndexAtTime(rows, time), anchors);
+}
+
+export function rawIndexToCoordinate(rawIndex, anchors) {
   return rawIndex == null ? null : interpolate(rawIndex, anchors, "rawIndex", "coordinate");
+}
+
+export function remapCandleLogicalRange(range, previous, next) {
+  const center = (range.from + range.to) / 2;
+  const nextCenter = (previous.start + center * previous.stride - next.start) / next.stride;
+  // Logical ranges include both endpoints. Preserve the span in raw candle
+  // slots, including fractions and any empty space at the edge of the chart.
+  const span = Math.max(1, (range.to - range.from + 1) * previous.stride / next.stride);
+  const half = (span - 1) / 2;
+  return { from: nextCenter - half, to: nextCenter + half };
 }
 
 export function coordinateToRawTime(rows, coordinate, anchors) {

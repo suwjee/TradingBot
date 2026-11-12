@@ -7,7 +7,7 @@ existing engines.
 """
 from __future__ import annotations
 
-from bisect import bisect_right
+from bisect import bisect_left, bisect_right
 from copy import deepcopy
 from dataclasses import dataclass, field, replace
 from datetime import datetime
@@ -19,7 +19,7 @@ from lifecycle_engine import advance_dominant_behavior
 from order_audit_engine import relabel_primary_causes
 
 PL_PH_VERSION = "1.4.0"
-PL_PH_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
+PL_PH_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -98,13 +98,13 @@ class PrimaryResult:
     direction: str = "bearish"
 
 
-def first_bullish_transition(chronology, primary):
+def first_bullish_transition(chronology, primary, *, cross=None):
     """Select the earliest exact PH3 stop across all confirmed cycle owners."""
     transitions = []
     for point in resolve_primary_highs(primary, through_index=len(chronology.candles)-1):
         if point.number != 3:
             continue
-        crossed = strict_cross(chronology, point.decision_event_time, point.price, True)
+        crossed = (cross or strict_cross)(chronology, point.decision_event_time, point.price, True)
         if crossed is not None:
             transitions.append(TrendTransition(*crossed, point.price, point))
     return min(transitions, key=lambda item: (
@@ -222,6 +222,10 @@ def order_meets_structure_gate(kind, first_index, confirmation, gate_index, even
 def strict_cross(chronology, event: datetime, level: Decimal, above: bool):
     """Find the first strictly later selected-RAW crossing, preserving equality."""
     left = bisect_right(chronology.second_times, event)
+    return _cross_from(chronology, left, level, above)
+
+
+def _cross_from(chronology, left, level, above):
     index = chronology.lower_index
     position = (index.first_greater if above else index.first_less)(
         left, len(chronology.seconds), level
@@ -284,6 +288,8 @@ def detect_bearish(
     chronology, s_zones: Sequence[object], e_zones: Sequence[object],
     stopalls: Sequence[object],
     orders: Callable[[str, int, int, datetime], Sequence[StructureOrder]],
+    *,
+    _run: _PrimaryRun | None = None,
 ) -> PrimaryResult:
     """Merge independent cycles on exact chronology and one native Order ledger.
 
@@ -292,6 +298,7 @@ def detect_bearish(
     proposal, including cycles waiting without an accepted Order.
     """
     result = PrimaryResult()
+    cross = _run.cross if _run is not None else strict_cross
     activated = []
     qualified = False
     seen = set()
@@ -304,26 +311,47 @@ def detect_bearish(
             continue
         seen.add(identity)
         level = as_decimal(chronology.candles[int(reference.source_index)].high)
-        crossed = strict_cross(chronology, qualification, level, True)
+        crossed = cross(chronology, qualification, level, True)
         if crossed is not None:
             activated.append((crossed, reference, second, qualification))
+    activated.sort(key=lambda row: (
+        row[0][1], row[3], row[1].source_index, row[2].source_index,
+    ))
+    if _run is not None:
+        _run.schedule = tuple(_activation_identity(row) for row in activated)
     if not activated:
         if qualified:
             result.status = "waiting-for-stopall-break"
         return result
-    activated.sort(key=lambda row: (
-        row[0][1], row[3], row[1].source_index, row[2].source_index,
-    ))
     checkpoints = []
     pending = {}
     promoted_sources = set()
     activation_index = 0
-    transition = None
+    commit_high = getattr(orders, "confirm_high", None)
+    if _run is not None:
+        for step in _run.retained_steps():
+            activation_index = step.activations
+            index, checkpoint, point = step.cycle_index, step.checkpoint, step.point
+            if index is None:
+                continue
+            if index == len(checkpoints):
+                checkpoints.append(checkpoint)
+            else:
+                checkpoints[index] = checkpoint
+            if point is None:
+                continue
+            (result.highs if point.kind == "PH" else result.lows).append(point)
+            if point.kind == "PH":
+                promoted_sources.add((point.source_index, point.source_time))
+                if commit_high is not None:
+                    commit_high(point)
+        checkpoints = [_refresh_cycle_mbl(chronology, checkpoint, cross) for checkpoint in checkpoints]
+    transition = first_bullish_transition(chronology, result, cross=cross) if result.highs else None
     while True:
         for index, checkpoint in enumerate(checkpoints):
             if index not in pending:
                 pending[index] = _next_point(chronology, checkpoint, orders,
-                    before_event=transition.event_time if transition else None)
+                    before_event=transition.event_time if transition else None, cross=cross)
         decisions = [(point.decision_event_time, index)
                      for index, (_, point) in pending.items() if point is not None]
         decision = min(decisions, default=None)
@@ -345,8 +373,15 @@ def detect_bearish(
             if (int(reference.source_index), reference.source_time) in promoted_sources:
                 # The historical StopAll is already a confirmed PH. Its stop
                 # belongs to PH continuation, not an independent matching leg.
+                if _run is not None:
+                    _run.steps.append(_PrimaryStep(activation[0][1], activation_index))
                 continue
-            checkpoints.append(_activate_cycle(chronology, activation))
+            checkpoint = _activate_cycle(chronology, activation, cross=cross)
+            if _run is not None:
+                _run.steps.append(_PrimaryStep(
+                    activation[0][1], activation_index, len(checkpoints), checkpoint,
+                ))
+            checkpoints.append(checkpoint)
             continue
         if decision is None:
             break
@@ -356,13 +391,16 @@ def detect_bearish(
         target = checkpoint.result.highs if point.kind == "PH" else checkpoint.result.lows
         target.append(point)
         (result.highs if point.kind == "PH" else result.lows).append(point)
+        if _run is not None:
+            _run.steps.append(_PrimaryStep(
+                point.decision_event_time, activation_index, index, checkpoint, point,
+            ))
         if point.kind == "PH":
             promoted_sources.add((point.source_index, point.source_time))
-            commit_high = getattr(orders, "confirm_high", None)
             if commit_high is not None:
                 commit_high(point)
                 pending.clear()
-            transition = first_bullish_transition(chronology, result)
+            transition = first_bullish_transition(chronology, result, cross=cross)
 
     result.cycles = [pending[index][0].result if index in pending else checkpoint.result
                      for index, checkpoint in enumerate(checkpoints)]
@@ -390,7 +428,76 @@ class _CycleCheckpoint:
     reset_high: bool = False
 
 
-def _activate_cycle(chronology, activation):
+def _activation_identity(activation):
+    crossed, reference, second, qualification = activation
+    return (
+        crossed[1], crossed[0], int(reference.source_index), reference.source_time,
+        int(second.source_index), second.source_time, qualification,
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class _PrimaryStep:
+    event_time: datetime
+    activations: int
+    cycle_index: int | None = None
+    checkpoint: _CycleCheckpoint | None = None
+    point: PrimaryPoint | None = None
+
+
+@dataclass(slots=True)
+class _PrimaryRun:
+    previous: _PrimaryRun | None = None
+    dirty_event: datetime | None = None
+    schedule: tuple = ()
+    steps: list[_PrimaryStep] = field(default_factory=list)
+    crossings: dict[tuple, tuple[int, datetime] | None] = field(default_factory=dict)
+    projected_points: dict[int, tuple[PrimaryPoint, PrimaryPoint]] = field(default_factory=dict)
+
+    def retained_steps(self):
+        if self.previous is None:
+            return self.steps
+        frontier = self.dirty_event
+        old = self.previous.schedule
+        position = 0
+        while position < min(len(old), len(self.schedule)) and old[position] == self.schedule[position]:
+            position += 1
+        for schedule in (old, self.schedule):
+            if position < len(schedule):
+                frontier = min(frontier, schedule[position][0])
+        for step in self.previous.steps:
+            if step.event_time >= frontier:
+                break
+            self.steps.append(step)
+        return self.steps
+
+    def cross(self, chronology, event, level, above):
+        key = event, str(level), above
+        if key in self.crossings:
+            return self.crossings[key]
+        left = bisect_right(chronology.second_times, event)
+        if self.previous is not None and key in self.previous.crossings:
+            old = self.previous.crossings[key]
+            if old is not None and old[1] < self.dirty_event:
+                self.crossings[key] = old
+                return old
+            left = max(left, bisect_left(chronology.second_times, self.dirty_event))
+        result = _cross_from(chronology, left, level, above)
+        self.crossings[key] = result
+        return result
+
+
+def _refresh_cycle_mbl(chronology, checkpoint, cross):
+    mbl = checkpoint.result.mbl
+    stop = cross(chronology, mbl.trigger_event_time, mbl.price, False)
+    stop_index, stop_time = stop or (None, None)
+    if (stop_index, stop_time) == (mbl.stop_index, mbl.stop_event_time):
+        return checkpoint
+    mbl = replace(mbl, stop_index=stop_index, stop_event_time=stop_time)
+    return replace(checkpoint, result=replace(checkpoint.result, mbl=mbl))
+
+
+def _activate_cycle(chronology, activation, *, cross=strict_cross):
     crossed, reference, second, qualification = activation
     result = PrimaryResult(
         cycle_id=f"bearish:cycle:{reference.source_index}:{second.source_index}",
@@ -399,7 +506,7 @@ def _activate_cycle(chronology, activation):
     reference_price = as_decimal(chronology.candles[int(reference.source_index)].high)
     gate_index, cursor = crossed
     source, floor = _extreme(chronology, int(second.source_index), gate_index, False)
-    broken = strict_cross(chronology, cursor, floor, False)
+    broken = cross(chronology, cursor, floor, False)
     result.mbl = MatchingBehaviorLeg(
         source, chronology.times[source], floor, int(reference.source_index),
         int(second.source_index), gate_index, cursor,
@@ -408,7 +515,7 @@ def _activate_cycle(chronology, activation):
     return _CycleCheckpoint(result, reference_price, gate_index, cursor)
 
 
-def _next_point(chronology, checkpoint, orders, *, before_event=None):
+def _next_point(chronology, checkpoint, orders, *, before_event=None, cross=strict_cross):
     """Prospect from committed state without changing shared native ownership.
 
     Cancel/seek transitions are replayable: a later global PH commitment may
@@ -430,8 +537,8 @@ def _next_point(chronology, checkpoint, orders, *, before_event=None):
         high_number = 1 if reset_high or not result.highs else result.highs[-1].number + 1
         low_number = result.lows[-1].number + 1 if result.lows else 1
         if phase == "seek":
-            up = strict_cross(chronology, cursor, high_level, True)
-            down = strict_cross(chronology, cursor, low_level, False)
+            up = cross(chronology, cursor, high_level, True)
+            down = cross(chronology, cursor, low_level, False)
             if up is None and down is None:
                 result.status = "waiting-for-structure-break"
                 return prospective, None
@@ -452,9 +559,7 @@ def _next_point(chronology, checkpoint, orders, *, before_event=None):
         winner = min(candidates, key=lambda item: (
             item.stop_event_time, -item.first_index, item.break_index
         ), default=None)
-        cancel = strict_cross(chronology, cursor,
-                              floor if phase == "PH" else high_level,
-                              phase == "PL")
+        cancel = cross(chronology, cursor, floor if phase == "PH" else high_level, phase == "PL")
         cancel_is_next = cancel and (
             (phase == "PL" and number > 3)
             or winner is None or cancel[1] < winner.stop_event_time
@@ -616,7 +721,7 @@ def _reflect_structure_order(order):
         box_bottom=_negate_price(order.box_top) if order.box_top is not None else None)
 
 
-def detect_bullish(chronology, s_zones, e_zones, stopalls, orders):
+def detect_bullish(chronology, s_zones, e_zones, stopalls, orders, *, _run=None):
     """Apply the approved bullish mirror without reversing time or native state.
 
     Only the primary state machine sees reflected price coordinates. Native
@@ -630,10 +735,17 @@ def detect_bullish(chronology, s_zones, e_zones, stopalls, orders):
 
     def point(item):
         if id(item) not in point_cache:
-            point_cache[id(item)] = replace(item,
-                kind="PL" if item.kind == "PH" else "PH", price=_negate_price(item.price),
-                order=_reflect_structure_order(item.order), cycle_id=cycle_id(item.cycle_id),
-                identity_source=point(item.identity_source) if item.identity_source else None)
+            old = _run.previous.projected_points.get(id(item)) if _run and _run.previous else None
+            if old is not None and old[0] is item:
+                projected = old[1]
+            else:
+                projected = replace(item,
+                    kind="PL" if item.kind == "PH" else "PH", price=_negate_price(item.price),
+                    order=_reflect_structure_order(item.order), cycle_id=cycle_id(item.cycle_id),
+                    identity_source=point(item.identity_source) if item.identity_source else None)
+            point_cache[id(item)] = projected
+            if _run is not None:
+                _run.projected_points[id(item)] = item, projected
         return point_cache[id(item)]
 
     def status(value):
@@ -663,4 +775,46 @@ def detect_bullish(chronology, s_zones, e_zones, stopalls, orders):
                 callback(point(item))
 
     return result(detect_bearish(_ReflectedChronology(chronology), s_zones, e_zones,
-                                stopalls, ReflectedOrders()))
+                                stopalls, ReflectedOrders(), _run=_run))
+
+
+class LivePrimaryContinuation:
+    """Carry confirmed primary cycles and revalidate the open Order proposal."""
+
+    def __init__(self, direction, chronology, s_zones, e_zones, stopalls, orders):
+        if direction not in {"bearish", "bullish"}:
+            raise ValueError("Primary continuation requires a trading direction.")
+        self._detect = detect_bullish if direction == "bullish" else detect_bearish
+        self._timeframe = chronology.timeframe
+        self._times = chronology.times
+        self._run = _PrimaryRun()
+        self._result = self._detect(chronology, s_zones, e_zones, stopalls, orders, _run=self._run)
+
+    @property
+    def result(self) -> PrimaryResult:
+        return self._result
+
+    def update(self, chronology, s_zones, e_zones, stopalls, orders, *, first_dirty_event: datetime):
+        """Continue with fresh Orders and the earliest revised market/Order event.
+
+        Matching-seed changes can rewind the schedule further. Retained point
+        registrations rebuild the accepted native ledger in their original
+        order before any newly open proposal is evaluated.
+        """
+        if chronology.timeframe != self._timeframe:
+            raise ValueError("Primary continuation requires the original analysis timeframe.")
+        if not isinstance(first_dirty_event, datetime):
+            raise TypeError("Primary continuation requires an exact changed event time.")
+        frontier = first_dirty_event
+        # Point and MBL source selection includes the complete decision or
+        # trigger main. A later lower row in that candle can revise its price.
+        for times in (self._times, chronology.times):
+            index = bisect_right(times, first_dirty_event) - 1
+            if index >= 0 and first_dirty_event < times[index] + self._timeframe:
+                frontier = min(frontier, times[index])
+        run = _PrimaryRun(self._run, frontier)
+        result = self._detect(chronology, s_zones, e_zones, stopalls, orders, _run=run)
+        run.previous = None
+        self._run, self._result = run, result
+        self._times = chronology.times
+        return result

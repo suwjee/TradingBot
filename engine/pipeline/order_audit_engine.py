@@ -12,8 +12,8 @@ from typing import Callable, Sequence
 
 from core_utils import as_decimal, order_identity, reaction_identity
 
-ORDER_AUDIT_ENGINE_VERSION = "1.8.1"
-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-01T22:46:39+03:30"
+ORDER_AUDIT_ENGINE_VERSION = "1.8.2"
+ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
 
 
 def relabel_primary_causes(causes, labels):
@@ -145,6 +145,34 @@ def order_b_reset_event_time(
     return None if crossing is None else chronology.second_times[crossing]
 
 
+def _order_b_boundary(chronology, first: int, last: int, attribute: str):
+    anchor = as_decimal(getattr(chronology.candles[first], attribute))
+    source_index, boundary = first, anchor
+    for index in range(first + 1, last + 1):
+        value = as_decimal(getattr(chronology.candles[index], attribute))
+        if (value < boundary if attribute == "low" else value > boundary):
+            boundary, source_index = value, index
+    return anchor, boundary, source_index
+
+
+def _order_b_crossing(chronology, attribute: str, left: int, boundary: Decimal):
+    right = len(chronology.second_times)
+    if left >= right:
+        return None
+    index = chronology.lower_index
+    if index is not None:
+        find = index.first_less if attribute == "low" else index.first_greater
+        position = find(left, right, boundary)
+    else:
+        position = None
+        for cursor in range(left, right):
+            value = as_decimal(getattr(chronology.seconds[cursor], attribute))
+            if (value < boundary if attribute == "low" else value > boundary):
+                position = cursor
+                break
+    return chronology.second_times[position] if position is not None else None
+
+
 def discover_order_b_reset_legs(
     direction: str,
     chronology: object,
@@ -155,6 +183,8 @@ def discover_order_b_reset_legs(
     a_formation_times: Sequence[datetime],
     *,
     behavior_anchors: Sequence[OrderBBehaviorAnchor] = (),
+    _boundary=None,
+    _crossing=None,
 ) -> list[OrderBResetLeg]:
     """Find Order_B from post-stop HH/LL reset-leg geometry.
 
@@ -177,12 +207,13 @@ def discover_order_b_reset_legs(
     if not post_stops or not behavior_anchors:
         return []
 
-    candles = chronology.candles
-    lower = chronology.seconds
     lower_times = chronology.second_times
-    lower_index = chronology.lower_index
     opposite = chronology.opposite_direction(direction)
     attribute = "low" if direction == "bullish" else "high"
+    boundary_at = _boundary or (lambda first, last: _order_b_boundary(chronology, first, last, attribute))
+    crossing_after = _crossing or (
+        lambda time, level: _order_b_crossing(chronology, attribute, bisect_right(lower_times, time), level)
+    )
 
     same_direction = sorted(
         (
@@ -258,15 +289,7 @@ def discover_order_b_reset_legs(
         if anchor.behavior_source_index > current[1]:
             continue
 
-        anchor_extreme = as_decimal(
-            getattr(candles[anchor.behavior_source_index], attribute)
-        )
-        source_index = anchor.behavior_source_index
-        boundary = anchor_extreme
-        for index in range(anchor.behavior_source_index + 1, current[1] + 1):
-            value = as_decimal(getattr(candles[index], attribute))
-            if (value < boundary if direction == "bullish" else value > boundary):
-                boundary, source_index = value, index
+        anchor_extreme, boundary, source_index = boundary_at(anchor.behavior_source_index, current[1])
 
         extends_anchor = (
             boundary < anchor_extreme
@@ -278,28 +301,9 @@ def discover_order_b_reset_legs(
         if source_index >= current[1]:
             continue
 
-        left = bisect_right(lower_times, reset_time)
-        right = len(lower_times)
-        if left >= right:
+        strict_break_time = crossing_after(reset_time, boundary)
+        if strict_break_time is None:
             continue
-        if lower_index is not None:
-            crossing = (
-                lower_index.first_less(left, right, boundary)
-                if direction == "bullish"
-                else lower_index.first_greater(left, right, boundary)
-            )
-        else:
-            crossing = next((
-                index for index in range(left, right)
-                if (
-                    as_decimal(getattr(lower[index], attribute)) < boundary
-                    if direction == "bullish" else
-                    as_decimal(getattr(lower[index], attribute)) > boundary
-                )
-            ), None)
-        if crossing is None:
-            continue
-        strict_break_time = lower_times[crossing]
         strict_break_index = chronology.main_index(strict_break_time, clamp=True)
 
         # Order_B is a calculation-timeframe rule.  The exact lower-TF crossing
@@ -349,6 +353,70 @@ def discover_order_b_reset_legs(
     return found
 
 
+class LiveOrderBResetLegs:
+    """Reuse settled Order_B market geometry and extend pending strict crossings."""
+
+    def __init__(self, direction: str):
+        if direction not in {"bullish", "bearish"}:
+            raise ValueError("Direction must be 'bullish' or 'bearish'.")
+        self._direction = direction
+        self._attribute = "low" if direction == "bullish" else "high"
+        self._boundaries = {}
+        self._crossings = {}
+        self._last_lower_time = None
+
+    def update(
+        self, chronology, trend_reactions, resets, opposite_reactions, post_stops, a_formation_times,
+        *, behavior_anchors, first_dirty_main: int,
+    ) -> list[OrderBResetLeg]:
+        if not 0 <= first_dirty_main <= len(chronology.times):
+            raise ValueError("The changed market index is outside the Order_B chronology.")
+        dirty = chronology.times[first_dirty_main] if first_dirty_main < len(chronology.times) else None
+        lower_times = chronology.second_times
+        last_lower = lower_times[-1] if lower_times else None
+        dirty_lower = bisect_left(lower_times, dirty) if dirty is not None else len(lower_times)
+        old_limit = (
+            bisect_right(lower_times, self._last_lower_time)
+            if self._last_lower_time is not None else 0
+        )
+        boundaries, crossings = {}, {}
+
+        def boundary(first, last):
+            key = (first, last)
+            cached = boundaries.get(key)
+            if cached is None and last < first_dirty_main:
+                cached = self._boundaries.get(key)
+            if cached is None:
+                cached = _order_b_boundary(chronology, first, last, self._attribute)
+            boundaries[key] = cached
+            return cached
+
+        def crossing(reset_time, level):
+            key = (reset_time, level)
+            if key in crossings:
+                return crossings[key]
+            old = self._crossings.get(key)
+            if old is not None and (dirty is None or old < dirty) and last_lower is not None and old <= last_lower:
+                found = old
+            else:
+                left = bisect_right(lower_times, reset_time)
+                if key in self._crossings:
+                    left = max(left, min(old_limit, dirty_lower))
+                found = _order_b_crossing(chronology, self._attribute, left, level)
+            crossings[key] = found
+            return found
+
+        found = discover_order_b_reset_legs(
+            self._direction, chronology, trend_reactions, resets, opposite_reactions,
+            post_stops, a_formation_times, behavior_anchors=behavior_anchors,
+            _boundary=boundary, _crossing=crossing,
+        )
+        self._boundaries = boundaries
+        self._crossings = crossings
+        self._last_lower_time = last_lower
+        return found
+
+
 def discover_accepted_order_b_reset_legs(
     direction: str,
     chronology: object,
@@ -363,6 +431,8 @@ def discover_accepted_order_b_reset_legs(
     s_detector: object,
     e_detector: object,
     priority: Callable[[object], int],
+    *,
+    reset_leg_finder=None,
 ) -> list[OrderBResetLeg]:
     """Build reset legs from calculation-accepted lifecycle owners."""
     accepted_a = [
@@ -419,7 +489,8 @@ def discover_accepted_order_b_reset_legs(
         ):
             anchors_by_source[key] = anchor
 
-    return discover_order_b_reset_legs(
+    finder = reset_leg_finder or discover_order_b_reset_legs
+    return finder(
         direction, chronology, trend_reactions, trend_resets,
         opposite_reactions, dominant,
         [item.trigger_event_time for item in accepted_a],
@@ -1073,7 +1144,7 @@ class OrderAuditEngineMixin:
             raise ValueError("Primary-Low Order_A is specified for the bullish owner only.")
         return self._register_primary_point(parent)
 
-    def _register_primary_point(self, parent):
+    def _primary_parent_order(self, parent):
         left = bisect_right(self.lower_times, parent.decision_event_time)
         right = bisect_left(self.lower_times, self.range_end)
         position = self._first_cross_position(left, right, as_decimal(parent.price),
@@ -1082,6 +1153,19 @@ class OrderAuditEngineMixin:
         direct = self._direct_parent_stop_order(
             stop_event, None, False, confirmation_after=stop_event,
         ) if stop_event is not None else None
+        return stop_event, direct
+
+    def primary_order_dependency(self, parent):
+        """Describe the current market inputs of one primary Order registration."""
+        stop, direct = self._primary_parent_order(parent)
+        if direct is None:
+            return stop, None
+        number, reaction, confirmation = direct
+        level, source, source_time = self._order_stop(number, reaction)
+        return stop, repr(direct), str(level), source, source_time, self._cross_order(confirmation, level)
+
+    def _register_primary_point(self, parent):
+        stop_event, direct = self._primary_parent_order(parent)
         self._reparent_primary_high_causes(
             parent, stop_event, reaction_identity(direct[1]) if direct is not None else None,
         )
@@ -1420,16 +1504,16 @@ class OrderAuditEngineMixin:
             return list(cached)
         matches: list[OrderMatch] = []
         for entry in self.order_audit.values():
-            a_created_events = [
+            created_events: list[datetime] = [
                 cause[3]
-                for cause in entry.get("causes", set())
+                for cause in entry.get("causes", ())
                 if cause[0] == "parent-stop"
             ]
-            created_events = [min(a_created_events)] if a_created_events else []
-            created_events.extend(
-                cause["physicalOrderConfirmationTime"]
-                for cause in entry.get("order_b_causes", ())
-            )
+            # Only earliest A creation competes; every B cause stays eager.
+            if len(created_events) > 1:
+                created_events = [min(created_events)]
+            for cause in entry.get("order_b_causes", ()):
+                created_events.append(cause["physicalOrderConfirmationTime"])
             if not created_events:
                 continue
             confirmation = entry["confirmation_time"]

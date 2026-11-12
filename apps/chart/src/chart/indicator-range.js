@@ -1,17 +1,15 @@
+import { lowerBoundTime } from "./lod.js";
+
 function nearestIndex(value, candles) {
   if (!Array.isArray(candles) || !candles.length) return -1;
   const target = Number(value);
   if (!Number.isFinite(target)) return 0;
-  let best = 0;
-  let distance = Math.abs(Number(candles[0].time) - target);
-  for (let index = 1; index < candles.length; index++) {
-    const nextDistance = Math.abs(Number(candles[index].time) - target);
-    if (nextDistance < distance) {
-      best = index;
-      distance = nextDistance;
-    }
-  }
-  return best;
+  // Chart candles are strictly ordered by time. Keep the earlier bar on ties.
+  const right = lowerBoundTime(candles, target);
+  if (right === 0) return 0;
+  if (right === candles.length) return right - 1;
+  return target - Number(candles[right - 1].time) <= Number(candles[right].time) - target
+    ? right - 1 : right;
 }
 
 export function normalizeIndicatorRange(from, to, candles) {

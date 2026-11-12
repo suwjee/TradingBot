@@ -18,7 +18,7 @@ from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
 from time import perf_counter
-from typing import Sequence
+from typing import Callable, Iterable, Sequence
 from zoneinfo import ZoneInfo
 
 # This bridge lives in ``engine/bridge`` while the calculation modules live in
@@ -39,9 +39,9 @@ from order_audit_engine import accepted_audit_entries, order_b_leg_identity
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.13.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.16.0"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
+TRADING_PIPELINE_VERSION = "1.14.0"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.18.0"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
 MBL_EXTENSION_CANDLES = 400
 
 TEHRAN = ZoneInfo("Asia/Tehran")
@@ -120,28 +120,14 @@ def display_epoch(value: str | datetime) -> int:
     return result
 
 
-def build_candle_buckets(rows: list[dict], timeframe: int):
-    """Normalize raw rows once, preserving lower and selected-timeframe buckets."""
-    second_buckets: list[dict] = []
-    current_second = None
-    buckets: list[dict] = []
-    current = None
-    to_decimal = as_decimal
-    decimal_cache: dict[tuple[type, object], Decimal] = {}
-
-    def cached_decimal(value: object) -> Decimal:
-        # Raw prices repeat heavily. Cache by both type and value so values
-        # such as ``10`` and ``10.0`` retain their exact string-normalized
-        # Decimal representation instead of being conflated by Python's
-        # numeric equality rules.
-        key = (type(value), value)
-        try:
-            return decimal_cache[key]
-        except KeyError:
-            normalized = to_decimal(value)
-            decimal_cache[key] = normalized
-            return normalized
-
+def _aggregate_candle_buckets(
+    rows: Iterable[dict], timeframe: int, cached_decimal: Callable[[object], Decimal],
+    *, second_tail: dict | None = None, main_tail: dict | None = None,
+) -> tuple[list[dict], list[dict]]:
+    current_second = second_tail
+    second_buckets = [] if second_tail is None else [second_tail]
+    current = main_tail
+    buckets = [] if main_tail is None else [main_tail]
     for row in rows:
         timestamp = int(row["time"])
         o = cached_decimal(row["open"])
@@ -178,7 +164,103 @@ def build_candle_buckets(rows: list[dict], timeframe: int):
     return second_buckets, buckets
 
 
-def build_candle_objects(engine, buckets: list[dict]):
+def build_candle_buckets(rows: list[dict], timeframe: int):
+    """Normalize raw rows once, preserving lower and selected-timeframe buckets."""
+    to_decimal = as_decimal
+    decimal_cache: dict[tuple[type, object], Decimal] = {}
+
+    def cached_decimal(value: object) -> Decimal:
+        # Keep the first normalized representation for each type/value pair.
+        key = (type(value), value)
+        try:
+            return decimal_cache[key]
+        except KeyError:
+            normalized = to_decimal(value)
+            decimal_cache[key] = normalized
+            return normalized
+
+    return _aggregate_candle_buckets(rows, timeframe, cached_decimal)
+
+
+@dataclass(frozen=True, slots=True)
+class BucketAppend:
+    first_dirty_second: int
+    first_dirty_main: int
+    settled_seconds: int
+    settled_main: int
+
+
+class LiveMarketBuckets:
+    """Hold normalized history and recompute only buckets touched by new RAW."""
+
+    def __init__(self, timeframe: int):
+        if type(timeframe) is not int or timeframe < 1:
+            raise ValueError("Live timeframe must be a positive integer number of seconds.")
+        self.timeframe = timeframe
+        self.second_buckets: list[dict] = []
+        self.main_buckets: list[dict] = []
+        self.last_raw_time: int | None = None
+        self._prices: dict[tuple[type, object], Decimal] = {}
+
+    def append(self, rows: Sequence[dict]) -> BucketAppend:
+        dirty_second = len(self.second_buckets)
+        dirty_main = len(self.main_buckets)
+        if not rows:
+            return self._delta(dirty_second, dirty_main)
+
+        first_time = int(rows[0]["time"])
+        first_bucket = first_time // self.timeframe * self.timeframe
+        second_tail = None
+        main_tail = None
+        if self.second_buckets and self.last_raw_time == first_time:
+            dirty_second -= 1
+            second_tail = self.second_buckets[-1].copy()
+        if self.main_buckets and self.main_buckets[-1]["time"] == first_bucket:
+            dirty_main -= 1
+            main_tail = self.main_buckets[-1].copy()
+
+        previous_time = self.last_raw_time
+        new_prices: dict[tuple[type, object], Decimal] = {}
+
+        def checked_rows():
+            nonlocal previous_time
+            for row in rows:
+                time = int(row["time"])
+                if time != row["time"] or time <= 0:
+                    raise ValueError("Live RAW requires positive integer times.")
+                if previous_time is not None and time < previous_time:
+                    raise ValueError("Live RAW must be appended in chronological order.")
+                previous_time = time
+                yield row
+
+        def cached_decimal(value: object) -> Decimal:
+            key = (type(value), value)
+            if key in self._prices:
+                return self._prices[key]
+            if key not in new_prices:
+                new_prices[key] = as_decimal(value)
+            return new_prices[key]
+
+        seconds, main = _aggregate_candle_buckets(
+            checked_rows(), self.timeframe, cached_decimal,
+            second_tail=second_tail, main_tail=main_tail,
+        )
+        self._prices.update(new_prices)
+        self.second_buckets[dirty_second:] = seconds
+        self.main_buckets[dirty_main:] = main
+        self.last_raw_time = previous_time
+        return self._delta(dirty_second, dirty_main)
+
+    def _delta(self, dirty_second: int, dirty_main: int) -> BucketAppend:
+        # The final bucket remains mutable until a later bucket starts. The
+        # counts are exclusive boundaries, safe even across missing RAW slots.
+        return BucketAppend(
+            dirty_second, dirty_main,
+            max(0, len(self.second_buckets) - 1), max(0, len(self.main_buckets) - 1),
+        )
+
+
+def build_candle_objects(engine, buckets: list[dict], *, start_index: int = 0):
     """Create maintained engine candles from already-normalized buckets."""
     candles = []
     append = candles.append
@@ -186,7 +268,7 @@ def build_candle_objects(engine, buckets: list[dict]):
     classify = engine.classify_candle_color
     local = local_datetime
     fmt = _DTFMT.format
-    for index, item in enumerate(buckets):
+    for index, item in enumerate(buckets, start=start_index):
         stamp = local(item["time"])
         append(candle_type(
             index=index,
@@ -1870,6 +1952,7 @@ class PipelineState:
     full_s_by_direction: dict[str, list[object]]
     full_s_candidates_by_direction: dict[str, list[object]]
     primary_result: object | None = None
+    live_stages: object | None = None
 
 
 @dataclass(slots=True)
@@ -1902,6 +1985,9 @@ def create_e_detector(
     e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]] = frozenset(),
     invalid_s_root_identities: set[tuple[datetime, int]] | None = None,
     order_b_legs: Sequence[object] = (),
+    live_continuation=None,
+    order_geometry=None,
+    live_scope=(),
 ):
     """Construct one E detector from shared geometry and physical Orders."""
     opposite = chronology.opposite_direction(direction)
@@ -1910,6 +1996,11 @@ def create_e_detector(
     def direct_geometry(
         geometry_direction, geometry_start, geometry_end, gate_event
     ):
+        if order_geometry is not None:
+            return order_geometry(
+                geometry_detectors[geometry_direction],
+                geometry_direction, geometry_start, geometry_end, gate_event,
+            )
         return geometry_detectors[geometry_direction].first_order_reaction_after_gate(
             geometry_direction,
             geometry_start,
@@ -1933,6 +2024,8 @@ def create_e_detector(
         sequence_priority=lifecycle_engine.sequence_priority,
         invalid_s_root_identities=invalid_s_root_identities,
         order_b_legs=order_b_legs,
+        **({"live_continuation": live_continuation, "live_scope": live_scope}
+           if live_continuation is not None else {}),
     )
 
 
@@ -1946,6 +2039,8 @@ def calculate_full_direction_state(
     timings: dict[str, float],
     order_b_legs: Sequence[object] = (),
     shared_stages: FullDirectionState | None = None,
+    live=None,
+    feedback_index: int = 0,
 ) -> FullDirectionState:
     """Run Blue→A→S→E calculation and lifecycle reconciliation for one direction."""
     blue_engine = engines.blue_line
@@ -1962,7 +2057,7 @@ def calculate_full_direction_state(
         blue_lines = timed(
             timings,
             f"Blue Line • {direction.title()}",
-            lambda: blue_engine.detect_blue_lines(
+            lambda: live.blue_lines(direction, full_results[direction]) if live is not None else blue_engine.detect_blue_lines(
                 direction,
                 full_results[direction].reactions,
                 chronology,
@@ -1972,7 +2067,7 @@ def calculate_full_direction_state(
         a_zones = timed(
             timings,
             f"A • {direction.title()}",
-            lambda: a_engine.detect_a_zones(
+            lambda: live.a_zones(direction, full_results[direction].reactions, blue_lines) if live is not None else a_engine.detect_a_zones(
                 direction,
                 full_results[direction].reactions,
                 blue_lines,
@@ -1991,7 +2086,10 @@ def calculate_full_direction_state(
             full_results[opposite].resets,
             initial_order_geometry=initial_order_geometry[direction],
         )
-        s_zones = timed(timings, f"S • {direction.title()}", s_detector.detect)
+        s_zones = timed(
+            timings, f"S • {direction.title()}",
+            s_detector.detect if live is None else lambda: live.s_zones(direction, s_detector),
+        )
         initial_s_zones = list(s_zones)
     else:
         # Reaction, Blue, A and the initial S pass do not depend on Order_B.
@@ -2001,6 +2099,8 @@ def calculate_full_direction_state(
         s_zones = list(shared_stages.initial_s_zones)
         initial_s_zones = shared_stages.initial_s_zones
     s_candidates = list(s_zones)
+    live_e = live.e_continuation if live is not None else None
+    order_geometry = live.order_geometry if live is not None else None
 
     # A detection is provisional. Only A that survives S ownership may create
     # a parent-stop Order_A used by downstream E/Order state. Later lifecycle
@@ -2022,6 +2122,9 @@ def calculate_full_direction_state(
         s_accepted_order_audit,
         lifecycle_engine,
         order_b_legs=order_b_legs,
+        live_continuation=live_e,
+        order_geometry=order_geometry,
+        live_scope=(feedback_index, "initial"),
     )
     e_zones = timed(
         timings, f"E • {direction.title()} • initial", e_detector.detect
@@ -2045,6 +2148,9 @@ def calculate_full_direction_state(
                 if item not in valid_s_zones
             },
             order_b_legs=order_b_legs,
+            live_continuation=live_e,
+            order_geometry=order_geometry,
+            live_scope=(feedback_index, "s-reconciliation"),
         )
         e_zones = timed(
             timings,
@@ -2160,6 +2266,9 @@ def calculate_full_direction_state(
         e_parent_order_first_exceptions=e_parent_exceptions,
         invalid_s_root_identities=invalid_s_identities,
         order_b_legs=order_b_legs,
+        live_continuation=live_e,
+        order_geometry=order_geometry,
+        live_scope=(feedback_index, "final"),
     )
     e_zones = timed(
         timings, f"E • {direction.title()} • final audit", e_detector.detect
@@ -2203,6 +2312,9 @@ def calculate_full_direction_state(
             e_parent_order_first_exceptions=e_parent_exceptions,
             invalid_s_root_identities=invalid_s_identities,
             order_b_legs=order_b_legs,
+            live_continuation=live_e,
+            order_geometry=order_geometry,
+            live_scope=(feedback_index, "shared-order"),
         )
         e_zones = timed(
             timings,
@@ -2281,6 +2393,7 @@ def calculate_direction_with_order_b_feedback(
     timings: dict[str, float],
     *,
     stopall_enabled: bool,
+    live=None,
 ) -> FullDirectionState:
     """Recalculate only while proven Order_B causes change accepted state."""
     opposite = engines.reaction.opposite_direction(direction)
@@ -2292,6 +2405,8 @@ def calculate_direction_with_order_b_feedback(
             direction, engines, market, full_results, geometry_detectors,
             initial_order_geometry, timings, order_b_legs=order_b_legs,
             shared_stages=shared_stages,
+            live=live,
+            feedback_index=_pass,
         )
         if shared_stages is None:
             shared_stages = state
@@ -2302,6 +2417,7 @@ def calculate_direction_with_order_b_feedback(
             e_zones, stopalls = engines.lifecycle.reconcile_stopall_lifecycle(
                 state.e_detector, state.s_zones, state.e_zones,
                 market.chronology, direction,
+                stopall_finder=live.stopall_finder(("feedback", _pass)) if live is not None else None,
             )
         else:
             e_zones, stopalls = list(state.e_zones), []
@@ -2321,6 +2437,7 @@ def calculate_direction_with_order_b_feedback(
             state.s_detector,
             state.e_detector,
             engines.lifecycle.module_priority,
+            reset_leg_finder=live.order_b_finder(("feedback", _pass)) if live is not None else None,
         )
         old_identity = order_b_leg_identity(order_b_legs)
         new_identity = order_b_leg_identity(discovered)
@@ -2338,6 +2455,8 @@ def prepare_pipeline_state(
     engines: EngineBundle,
     market: MarketContext,
     timings: dict[str, float],
+    *,
+    live=None,
 ) -> PipelineState:
     """Run shared calculation stages once and retain reusable detector state."""
     engine = engines.reaction
@@ -2375,18 +2494,21 @@ def prepare_pipeline_state(
             )
             for direction in ("bullish", "bearish")
         }
-        results = {
-            direction: timed(
-                timings,
-                f"Reaction geometry • {direction.title()}",
-                detector.detect,
-            )
-            for direction, detector in geometry_detectors.items()
-        }
-        _, _, internal_reaction_identities, _ = timed(
+        if live is None:
+            results = {
+                direction: timed(
+                    timings,
+                    f"Reaction geometry • {direction.title()}",
+                    detector.detect,
+                )
+                for direction, detector in geometry_detectors.items()
+            }
+        else:
+            results = timed(timings, "Continue Reaction geometry", lambda: live.reactions(geometry_detectors))
+        internal_reaction_identities = timed(
             timings,
             "Internal Reaction ownership",
-            lambda: engine.build_behavior_reaction_views(results, chronology),
+            lambda: live.ownership(results) if live is not None else engine.build_behavior_reaction_views(results, chronology)[2],
         )
         # A-stop Order_A geometry has its own independent post-stop First gate.
         # Reuse the already-detected opposite-direction engine and its cached
@@ -2396,7 +2518,9 @@ def prepare_pipeline_state(
             direction: (
                 lambda gate_index, gate_event, end_index,
                 order_direction=engine.opposite_direction(direction):
-                    geometry_detectors[order_direction].first_order_reaction_after_gate(
+                    live.order_geometry(
+                        geometry_detectors[order_direction], order_direction, gate_index, end_index, gate_event
+                    ) if live is not None else geometry_detectors[order_direction].first_order_reaction_after_gate(
                         order_direction, gate_index, end_index, gate_event
                     )
             )
@@ -2417,6 +2541,7 @@ def prepare_pipeline_state(
                 initial_order_geometry,
                 timings,
                 stopall_enabled=(args.lifecycle_engine is not None),
+                live=live,
             )
             full_e_zones[direction] = state.e_zones
             full_e_detectors[direction] = state.e_detector
@@ -2470,6 +2595,7 @@ def prepare_pipeline_state(
         invalid_s_identities_by_direction=invalid_s_identities_by_direction,
         full_s_by_direction=full_s_by_direction,
         full_s_candidates_by_direction=full_s_candidates_by_direction,
+        live_stages=live,
     )
 
 
@@ -2664,6 +2790,7 @@ def finalize_direction_visibility(
             market.chronology,
             direction,
             lambda label, work: timed(timings, label, work),
+            stopall_finder=state.live_stages.stopall_finder("final") if state.live_stages is not None else None,
         )
 
     if direction in state.full_e_detectors:
@@ -2695,6 +2822,7 @@ def finalize_direction_visibility(
                 state.full_s_detectors[direction],
                 detector,
                 lifecycle_engine.module_priority,
+                reset_leg_finder=state.live_stages.order_b_finder("final") if state.live_stages is not None else None,
             ),
         )
         if order_b_leg_identity(reset_legs) != order_b_leg_identity(detector.order_b_legs):
@@ -3172,11 +3300,14 @@ def calculate_primary_structures(args, engines, market, state, visibility, timin
     resolver = engines.primary.NativePrimaryOrders(market.chronology, groups,
         on_high=commit_high, direction=direction)
     detect = engines.primary.detect_bullish if direction == "bullish" else engines.primary.detect_bearish
-    primary = detect(
-        market.chronology, groups[direction]["S"], groups[direction]["E"],
-        groups[direction]["StopAll"], resolver,
-    )
     detector = state.full_e_detectors[direction]
+    primary = (
+        state.live_stages.primary(direction, groups, resolver, detector)
+        if state.live_stages is not None else detect(
+            market.chronology, groups[direction]["S"], groups[direction]["E"],
+            groups[direction]["StopAll"], resolver,
+        )
+    )
     resolve = engines.primary.resolve_primary_lows if direction == "bullish" else engines.primary.resolve_primary_highs
     reconcile = detector.reconcile_primary_low_labels if direction == "bullish" else detector.reconcile_primary_high_labels
     reconcile(resolve(primary, through_index=market.end_index))
@@ -3187,6 +3318,47 @@ def calculate_primary_structures(args, engines, market, state, visibility, timin
         state.full_s_detectors[direction], accepted_by_owner[direction], required,
     )
     return primary
+
+
+def serialize_setup_annotations(result, market):
+    """Project finalized chart annotations; price/state decisions stay in Engine."""
+    from dataclasses import fields
+    from bullish_setup_engine import SETUP_VERSION
+
+    def value(item):
+        if isinstance(item, datetime):
+            return epoch(item)
+        if isinstance(item, Decimal):
+            return str(item)
+        return item
+
+    def row(item):
+        projected = {}
+        for field in fields(item):
+            parts = field.name.split("_")
+            key = parts[0] + "".join(part.title() for part in parts[1:])
+            content = getattr(item, field.name)
+            if field.name == "cycle_id" and content and getattr(market,"index_offset",0):
+                parts = content.split(":")
+                if len(parts) == 4 and parts[1] == "cycle":
+                    offset = market.index_offset
+                    content = f"{parts[0]}:cycle:{int(parts[2])+offset}:{int(parts[3])+offset}"
+            projected[key] = ([{"sourceIndex": index} for index in content]
+                              if field.name == "predecessor_source_indexes" else value(content))
+        return projected
+
+    def visible(items, index):
+        return [row(item) for item in items
+                if market.start_index <= getattr(item, index) <= market.end_index]
+
+    return {
+        "setupVersion": SETUP_VERSION,
+        "setupPhase": result.phase,
+        "positionSetups": visible(result.setups, "entry_index"),
+        "stopAllAssessments": visible(result.assessments, "source_index"),
+        "behaviorAssessments": visible(result.behaviors, "source_index"),
+        "setupReferenceBreaks": visible(result.breakouts, "source_index"),
+    }
 
 
 def build_direction_output(
@@ -3224,11 +3396,27 @@ def build_direction_output(
             visibility.prepared_order_audit, visibility.s_zones,
             visibility.e_zones, visibility.stopalls,
         )
+    setup_result = None
+    if (direction == "bullish" and direction == primary_direction
+            and args.lifecycle_engine is not None
+            and args.s_zones == "enabled"):
+        from bullish_setup_engine import calculate_bullish_setups
+        groups = visibility.primary_groups
+        primary_lows = primary.lows if primary is not None else []
+        live = getattr(state, "live_stages", None)
+        setup_result = timed(timings, "Bullish setup annotations", lambda:
+            live.bullish_setups(groups, primary_lows)
+            if live is not None else calculate_bullish_setups(
+                market.chronology, groups["S"], groups["E"], groups["StopAll"],
+                primary_lows, through_index=market.end_index,
+            ))
     payload = serialize_direction_payload(
         direction, args, engines, market, state, visibility, timings
     )
     if primary is not None:
         payload.update(serialize_primary_structures(primary, market))
+    if setup_result is not None:
+        payload.update(serialize_setup_annotations(setup_result, market))
     return payload
 
 def merge_regime_outputs(regimes):
@@ -3249,7 +3437,7 @@ def merge_regime_outputs(regimes):
             aggregate[key] = [row for segment in segments for row in segment.get(key, [])]
         bridge_outputs = [segment.get("bridgeOutput", {}) for segment in segments]
         if any(bridge_outputs):
-            bridge_keys = {key for item in bridge_outputs for key in item}
+            bridge_keys = dict.fromkeys(key for item in bridge_outputs for key in item)
             aggregate["bridgeOutput"] = {
                 key: [row for item in bridge_outputs for row in item.get(key, [])]
                 for key in bridge_keys
@@ -3260,7 +3448,7 @@ def merge_regime_outputs(regimes):
     return output
 
 
-def build_reversed_trend_outputs(args, engines, market, transition, timings):
+def build_reversed_trend_outputs(args, engines, market, transition, timings, *, live=None):
     """Alternate fresh directional regimes without carrying prior input/state."""
     from copy import copy
     regimes = []
@@ -3268,10 +3456,13 @@ def build_reversed_trend_outputs(args, engines, market, transition, timings):
     incoming = None
     current_direction = "bearish" if getattr(transition, "target_direction", "bullish") == "bullish" else "bullish"
 
-    def calculate(context, direction):
+    def calculate(context, direction, continuation=None):
         local_args = copy(args)
         local_args.direction = direction
-        local_state = prepare_pipeline_state(local_args, engines, context, timings)
+        if continuation is None:
+            local_state = prepare_pipeline_state(local_args, engines, context, timings)
+        else:
+            local_state = prepare_pipeline_state(local_args, engines, context, timings, live=continuation)
         group = build_direction_output(direction, local_args, engines, context, local_state, timings)
         return group, local_state
 
@@ -3296,14 +3487,25 @@ def build_reversed_trend_outputs(args, engines, market, transition, timings):
         boundary = transition.index
         if not 0 < boundary < len(current.candles):
             raise RuntimeError("A trend reversal must advance beyond its independent regime start.")
-        prefix = market_segment(current, 0, boundary)
-        has_history = prefix.start_index <= prefix.end_index
-        if not has_history:
-            prefix = replace(prefix, start_index=0, end_index=len(prefix.candles)-1)
-        history, historical_state = calculate(prefix, current_direction)
-        resolve = (engines.primary.resolve_primary_highs if current_direction == "bearish"
-                   else engines.primary.resolve_primary_lows)
-        confirmed = resolve(historical_state.primary_result, through_index=len(prefix.candles)-1)
+        def calculate_closed():
+            prefix = market_segment(current, 0, boundary)
+            has_history = prefix.start_index <= prefix.end_index
+            if not has_history:
+                prefix = replace(prefix, start_index=0, end_index=len(prefix.candles)-1)
+            try:
+                history, historical_state = calculate(prefix, current_direction)
+                resolve = (engines.primary.resolve_primary_highs if current_direction == "bearish"
+                           else engines.primary.resolve_primary_lows)
+                confirmed = resolve(historical_state.primary_result, through_index=len(prefix.candles)-1)
+                return prefix, has_history, history, confirmed
+            finally:
+                if live is not None:
+                    engines.reaction.LiveReactionContinuation._release_indexes(prefix.candles, prefix.seconds)
+
+        prefix, has_history, history, confirmed = (
+            calculate_closed() if live is None
+            else live.closed_regime(current_direction, current, boundary, calculate_closed)
+        )
         if not any(point.number == 3 and point.source_time == transition.high.source_time
                    and point.price == transition.level for point in confirmed):
             raise RuntimeError("Primary3 reversal is not supported by its independent historical prefix.")
@@ -3321,7 +3523,12 @@ def build_reversed_trend_outputs(args, engines, market, transition, timings):
         current = market_segment(current, boundary, len(current.candles),
             initial_bullish_trend=target == "bullish", initial_bearish_trend=target == "bearish")
         current_direction = target
-        group, state = calculate(current, current_direction)
+        try:
+            continuation = live.active_regime(current, current_direction) if live is not None else None
+            group, state = calculate(current, current_direction, continuation)
+        finally:
+            if live is not None:
+                engines.reaction.LiveReactionContinuation._release_indexes(current.candles, current.seconds)
         transition = getattr(state.primary_result, "transition", None)
         if transition is None or transition.index > current.end_index:
             regimes.append((current_direction, publish(group, current)))
@@ -3377,7 +3584,7 @@ def build_response_payload(
     transition = getattr(state.primary_result,"transition",None)
     if transition is not None and transition.index <= market.end_index:
         payload["directions"] = build_reversed_trend_outputs(
-            args,engines,market,transition,timings)
+            args,engines,market,transition,timings,live=state.live_stages)
         candidates = [(segment.get("calculationStartIndex", -1), direction)
             for direction, group in payload["directions"].items()
             for segment in group.get("calculationSegments", [group])]
