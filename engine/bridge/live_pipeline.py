@@ -21,7 +21,7 @@ from trading_pipeline import (
 from order_audit_engine import LiveOrderBResetLegs
 
 
-LIVE_PIPELINE_VERSION = "1.0.0"
+LIVE_PIPELINE_VERSION = "1.0.1"
 
 
 def _blue_dependencies(result):
@@ -420,14 +420,20 @@ def main():
         payload = pipeline.append(selected)
         del selected, original, selected_data, original_data
         _send_worker_message("seed", ready=True, payload=payload)
-        for line in sys.stdin:
-            request = json.loads(line)
-            try:
-                raw = Path(request["data"]).read_bytes()
-            except FileNotFoundError:
-                raw = None
-            if raw is None or (request.get("sha256") is not None
-                               and hashlib.sha256(raw).hexdigest() != request["sha256"]):
+        # Updates carry a short JSON header followed by the unchanged RAW bytes.
+        pipe = sys.stdin.buffer
+        while header := pipe.readline(256):
+            if not header.endswith(b"\n"):
+                raise ValueError("Invalid live RAW update header.")
+            request = json.loads(header)
+            size = request.get("bytes")
+            digest = request.get("sha256")
+            if type(size) is not int or size <= 0 or not isinstance(digest, str) or len(digest) != 64:
+                raise ValueError("Invalid live RAW update header.")
+            raw = pipe.read(size)
+            if len(raw) != size:
+                raise ValueError("Incomplete live RAW update.")
+            if hashlib.sha256(raw).hexdigest() != digest:
                 _send_worker_message("error", code="RAW_RETRY",
                                      message="RAW changed during the indicator update. Retrying at the next check.")
                 continue

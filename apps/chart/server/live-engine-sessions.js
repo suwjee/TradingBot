@@ -48,7 +48,9 @@ export function startLiveEngineWorker({ command, args, env, onProgress, timeoutM
       timer.unref();
       pending = { type, resolve, reject, timer };
       if (request) {
-        child.stdin.write(`${JSON.stringify(request)}\n`, error => {
+        const { bytes, sha256 } = request;
+        child.stdin.write(`${JSON.stringify({ bytes: bytes.length, sha256 })}\n`);
+        child.stdin.write(bytes, error => {
           if (error) close();
         });
       }
@@ -91,7 +93,10 @@ export function startLiveEngineWorker({ command, args, env, onProgress, timeoutM
 
   return {
     seed: receive("seed"),
-    async update(data, sha256) { return (await receive("update", { data, sha256 })).payload; },
+    async update(bytes, sha256) {
+      if (!Buffer.isBuffer(bytes)) throw new TypeError("The live Engine requires RAW bytes.");
+      return (await receive("update", { bytes, sha256 })).payload;
+    },
     close,
   };
 }
@@ -172,11 +177,12 @@ export function createLiveEngineSessions({ maxSessions = 4, idleTtlMs = 30 * 60_
       if (sessions.get(sessionId) !== session) throw new LiveEngineError(410, EXPIRED, "LIVE_SESSION_EXPIRED");
     };
     async function update() {
-      await validate();
+      const needsUpdate = session.latest?.rawSha256 !== rawSha256;
+      const bytes = await validate(needsUpdate);
       isActive();
-      if (session.latest?.rawSha256 !== rawSha256) {
+      if (needsUpdate) {
         let payload;
-        try { payload = await session.worker.update(data, rawSha256); }
+        try { payload = await session.worker.update(bytes, rawSha256); }
         catch (error) {
           if (error.code !== "RAW_RETRY") discard(sessionId);
           throw error;

@@ -12,7 +12,7 @@ function fixture(t, options = {}) {
   const paths = [];
   const worker = (ready = true) => ({
     seed: Promise.resolve({ type: "seed", payload: indicator("seed"), ready }),
-    async update(path) { paths.push(path); return indicator(path); },
+    async update(bytes) { const marker = bytes.toString(); paths.push(marker); return indicator(marker); },
     close() { closes += 1; },
   });
   return { sessions, paths, worker, get closes() { return closes; } };
@@ -24,7 +24,7 @@ function snapshot(sessionId, overrides = {}) {
 }
 
 const publishPayload = (payload, request) => ({ payload, request });
-const validate = async () => {};
+const validate = async includeBytes => includeBytes ? Buffer.from("current.json") : undefined;
 const defaultHooks = { validate, publish: publishPayload };
 
 test("an unsupported seed returns its ordinary result without issuing a live token", async t => {
@@ -50,7 +50,7 @@ test("a same-RAW retry replays the complete response without advancing the worke
   const f = fixture(t);
   const { sessionId } = await f.sessions.seed(seedArgs, f.worker);
   let validated = 0, published = 0;
-  const hooks = { validate: async () => { validated += 1; }, publish: (...args) => {
+  const hooks = { validate: async includeBytes => { validated += 1; return validate(includeBytes); }, publish: (...args) => {
     published += 1;
     return publishPayload(...args);
   } };
@@ -80,7 +80,7 @@ test("a transient RAW race retains the same Engine checkpoint for retry", async 
   let calls = 0;
   const { sessionId } = await f.sessions.seed(seedArgs, () => ({
     ...f.worker(),
-    async update(_path, sha256) {
+    async update(_bytes, sha256) {
       assert.equal(sha256, "digest");
       if (++calls === 1) throw Object.assign(new Error("RAW changed"), { code: "RAW_RETRY" });
       return indicator("accepted");
@@ -130,19 +130,33 @@ test("an active market can keep its checkpoint while no candles arrive", async t
   assert.throws(() => f.sessions.keepAlive(snapshot(sessionId)), { status: 410 });
 });
 
-test("a child sends a JSON-line seed and accepts exactly one absolute RAW update argument", async t => {
+test("a worker update sends the exact RAW bytes and digest without a file path", async t => {
   const source = `
     const emit = payload => console.log(JSON.stringify(payload));
     emit({ type: "seed", ready: true, payload: { directions: {} } });
-    const input = require("node:readline").createInterface({ input: process.stdin });
-    input.on("line", line => {
-      const request = JSON.parse(line);
-      emit({ type: "update", payload: { directions: {}, data: request.data } });
+    let input = Buffer.alloc(0);
+    process.stdin.on("data", chunk => {
+      input = Buffer.concat([input, chunk]);
+      const newline = input.indexOf(10);
+      if (newline < 0) return;
+      const header = JSON.parse(input.subarray(0, newline));
+      if (!Number.isSafeInteger(header.bytes)) process.exit(1);
+      if (input.length - newline - 1 < header.bytes) return;
+      const end = newline + 1 + header.bytes;
+      const raw = input.subarray(newline + 1, end).toString("hex");
+      input = input.subarray(end);
+      emit({ type: "update", payload: { directions: {}, header, raw } });
     });
   `;
   const worker = startLiveEngineWorker({ command: process.execPath, args: ["-e", source] });
   t.after(worker.close);
   assert.equal((await worker.seed).ready, true);
-  const result = await worker.update("X:/current RAW.json");
-  assert.equal(result.data, "X:/current RAW.json");
+  await assert.rejects(worker.update("X:/current RAW.json", "a".repeat(64)), TypeError);
+  const raw = Buffer.from('\ufeff[\r\n {"close":1.00,"note":"نفت"}\r\n]\n');
+  for (const bytes of [raw, Buffer.from("[1]")]) {
+    const sha256 = "a".repeat(64);
+    const result = await worker.update(bytes, sha256);
+    assert.deepEqual(result.header, { bytes: bytes.length, sha256 });
+    assert.equal(result.raw, bytes.toString("hex"));
+  }
 });

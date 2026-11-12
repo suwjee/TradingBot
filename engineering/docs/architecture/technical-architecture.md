@@ -10,7 +10,7 @@ scope:
   - engine
   - runtime-boundaries
   - state-and-transport
-last_modified_at: 2026-11-12T01:34:50+03:30
+last_modified_at: 2026-11-12T07:41:28+03:30
 ---
 
 # TradingBot Technical Architecture
@@ -110,7 +110,7 @@ Acquisition creates or updates input data. It does not execute Engine trading se
 
 Real-time Chart polls the latest closed candles for one stable chart identity. The server derives the request from the resolved RAW tail and native timeframe. It rejects a stale source, serializes concurrent live requests for the same chart, and stages the validated RAW and sidecar before publishing the renamed pair. The browser receives the committed delta and updates its existing chart view.
 
-The continuation API authorizes an update with the chart identity, Engine source fingerprint and a session token returned by Apply. It follows the RAW rename, verifies the current file digest and replays the same response on retries. The server keeps bounded worker sessions in memory. Active clients keep their session open through market closures. A restart, expired session or historical RAW rewrite requires a new Apply.
+The continuation API authorizes an update with the chart identity, Engine source fingerprint and a session token returned by Apply. It follows the RAW rename, verifies the current file digest and replays the same response on retries. The server sends the validated RAW bytes and their digest over the private worker pipe. The worker checks the digest and the previously observed RAW prefix. The server keeps bounded worker sessions in memory. Active clients keep their session open through market closures. A restart, expired session or historical RAW rewrite requires a new Apply.
 
 ## 6. Chart architecture
 

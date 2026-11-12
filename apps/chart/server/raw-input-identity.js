@@ -9,15 +9,23 @@ function sameStat(left, right) {
     && identityFields.every((field) => left[field] === right[field]);
 }
 
-export async function captureRawInputIdentity(sourcePath) {
+export async function captureRawInputIdentity(sourcePath, { includeBytes = false } = {}) {
   try {
     const before = fs.statSync(sourcePath);
     if (!before.isFile()) throw new Error(changedMessage);
     const hash = createHash("sha256");
-    for await (const chunk of fs.createReadStream(sourcePath)) hash.update(chunk);
+    let bytes;
+    if (includeBytes) {
+      bytes = await fs.promises.readFile(sourcePath);
+      hash.update(bytes);
+    } else {
+      for await (const chunk of fs.createReadStream(sourcePath)) hash.update(chunk);
+    }
     const after = fs.statSync(sourcePath);
     if (!sameStat(before, after)) throw new Error(changedMessage);
-    return { stat: after, sha256: hash.digest("hex") };
+    const identity = { stat: after, sha256: hash.digest("hex") };
+    if (includeBytes) identity.bytes = bytes;
+    return identity;
   } catch {
     throw new Error(changedMessage);
   }

@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -12,6 +13,10 @@ test("queued calculations reject a RAW file changed after selection", async () =
   try {
     fs.writeFileSync(sourcePath, "[]");
     const selected = await captureRawInputIdentity(sourcePath);
+    const captured = await captureRawInputIdentity(sourcePath, { includeBytes: true });
+    assert.deepEqual(captured.bytes, Buffer.from("[]"));
+    assert.equal(captured.sha256, createHash("sha256").update(captured.bytes).digest("hex"));
+    assert.equal(captured.sha256, selected.sha256);
     await assert.doesNotReject(assertRawInputUnchanged(sourcePath, selected));
     fs.writeFileSync(sourcePath, "[1]");
     await assert.rejects(assertRawInputUnchanged(sourcePath, selected), /RAW file changed/i);

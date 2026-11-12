@@ -625,15 +625,20 @@ function localDataApi() {
           }
           const { dataPath, metadata } = selected;
           let rawIdentity;
-          async function validate() {
+          async function validate(includeBytes = false) {
             if (liveSourceFingerprint(calculationSourceFingerprint()) !== workerFingerprint) {
               liveEngineSessions.discard(sessionId);
               throw new LiveEngineError(409, 'Calculation sources changed. Use Apply again.', 'ENGINE_CHANGED');
             }
             try {
-              if (rawIdentity) await assertRawInputUnchanged(dataPath, rawIdentity);
-              else rawIdentity = await captureRawInputIdentity(dataPath);
-              if (rawIdentity.sha256 !== metadata.dataSha256) throw new Error('The selected RAW changed.');
+              if (rawIdentity) {
+                await assertRawInputUnchanged(dataPath, rawIdentity);
+                return;
+              }
+              const { bytes, ...identity } = await captureRawInputIdentity(dataPath, { includeBytes });
+              if (identity.sha256 !== metadata.dataSha256) throw new Error('The selected RAW changed.');
+              rawIdentity = identity;
+              return bytes;
             } catch {
               throw new LiveEngineError(503, 'The selected RAW changed during the indicator update. The next poll will retry.');
             }

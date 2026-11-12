@@ -74,3 +74,35 @@ def test_raw_lineage_catches_up_once_and_accepts_only_an_exact_append():
     assert live.append(extended, engine) == [{"time": 20, "open": Decimal("3.000")}]
     with pytest.raises(LiveRawChanged, match="Existing RAW candles changed"):
         live.append(extended.replace(b"1.00", b"1.20"), engine)
+
+
+def test_worker_rejects_a_path_supplied_over_stdin(tmp_path, monkeypatch, capsys):
+    from io import BytesIO, TextIOWrapper
+    from types import SimpleNamespace
+
+    import live_pipeline
+
+    source = tmp_path / "raw.json"
+    source.write_bytes(b'[{"time":10}]')
+    external = tmp_path / "other" / "external.json"
+    external.parent.mkdir()
+    external.write_bytes(b'[{"time":10},{"time":15}]')
+    request = json.dumps({"data": str(external)}) + "\n"
+    monkeypatch.setenv("TRADINGBOT_LIVE_RAW_SOURCE", str(source))
+    monkeypatch.setattr(sys, "stdin", TextIOWrapper(BytesIO(request.encode())))
+    monkeypatch.setattr(live_pipeline, "parse_arguments", lambda: SimpleNamespace(data=source))
+    monkeypatch.setattr(live_pipeline, "load_engines", lambda *_: {})
+
+    class Engine:
+        def __init__(self, *_):
+            pass
+
+        def append(self, rows):
+            return rows
+
+    monkeypatch.setattr(live_pipeline, "LivePipelineContinuation", Engine)
+
+    assert live_pipeline.main() == 1
+    messages = [json.loads(line) for line in capsys.readouterr().out.splitlines()]
+    assert [message["type"] for message in messages] == ["seed", "error"]
+    assert messages[-1]["code"] == "LIVE_ENGINE_FAILED"

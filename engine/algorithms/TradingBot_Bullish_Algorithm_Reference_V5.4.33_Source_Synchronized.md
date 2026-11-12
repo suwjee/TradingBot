@@ -1,8 +1,8 @@
 # TradingBot Bullish Algorithm Reference — Current Standalone Specification
 
 **Document Version:** `5.4.33`  
-**Last Modified:** `2026-11-12T01:35:10+03:30`  
-**last_modified_at:** `2026-11-12T01:35:10+03:30`  
+**Last Modified:** `2026-11-12T07:41:28+03:30`  
+**last_modified_at:** `2026-11-12T07:41:28+03:30`  
 **document_role:** `reference`  
 **lifecycle:** `maintained`  
 **owner:** `engine/algorithms`  
@@ -127,7 +127,7 @@ The Source manifest and exact embedded Source are regenerated from the authorita
 |---|---|---|---:|---:|---|
 | `__init__.py` | Engine package marker | `unversioned` | 0 | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 | `bridge/__init__.py` | Bridge package marker | `unversioned` | 1 | 64 | `2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8` |
-| `bridge/live_pipeline.py` | Production module | `1.0.0` | 450 | 20646 | `117cf9a20c3ee9a9f8d992d4a018c2b9e2ca94946391633ecfde0edc8ee189e2` |
+| `bridge/live_pipeline.py` | Production module | `1.0.1` | 456 | 21034 | `818c9e84a1821496b37bdb6d2e23f845b500cd063ca75d6c5c15e99933c08e78` |
 | `bridge/trading_pipeline.py` | Final reconciled calculation objects | `1.14.0 (impl 1.18.0)` | 3640 | 144164 | `93ef7539f1e7122c19eb7fc05ec735b725a58574c06e09b67d2c9d614b99f86e` |
 | `pipeline/__init__.py` | Compatibility package wrapper | `unversioned` | 28 | 653 | `d22a1b81495a6c97b5eccc4d921b1ba4b709bfbcd39be6ef34b9014690b9f460` |
 | `pipeline/a_zone_detector.py` | BlueState and first-stop/inherited/double-stop routes | `1.7.0` | 1032 | 41496 | `4997debfb510803d35b77816bd9e9d7f84d0aec2c7ac9c7a0accb34bc374754a` |
@@ -802,7 +802,7 @@ Generated from current production AST; implementation bodies remain exact in Sec
 - Class `LiveRawSource` (L363-L402).
   - Methods: `__init__(self, selected, data, original)`, `_remember_prefix(self, data)`, `append(self, data, pipeline)`.
 - Function `_send_worker_message(kind, **fields)` (L405-L406).
-- Function `main()` (L409-L446).
+- Function `main()` (L409-L452).
 
 #### `bridge/trading_pipeline.py`
 - Function `emit_progress(status: str, label: str, duration_ms: float | None=None)` (L50-L55).
@@ -1549,9 +1549,9 @@ Every currently discovered production Python file in the live Engine package, Br
 
 ### 16.3 `bridge/live_pipeline.py` — Production module
 
-**SHA-256:** `117cf9a20c3ee9a9f8d992d4a018c2b9e2ca94946391633ecfde0edc8ee189e2`  
-**Bytes:** `20646`  
-**LF count:** `450`
+**SHA-256:** `818c9e84a1821496b37bdb6d2e23f845b500cd063ca75d6c5c15e99933c08e78`  
+**Bytes:** `21034`  
+**LF count:** `456`
 
 <!-- EXACT-SOURCE-BEGIN:bridge/live_pipeline.py -->
 ````python
@@ -1578,7 +1578,7 @@ from trading_pipeline import (
 from order_audit_engine import LiveOrderBResetLegs
 
 
-LIVE_PIPELINE_VERSION = "1.0.0"
+LIVE_PIPELINE_VERSION = "1.0.1"
 
 
 def _blue_dependencies(result):
@@ -1977,14 +1977,20 @@ def main():
         payload = pipeline.append(selected)
         del selected, original, selected_data, original_data
         _send_worker_message("seed", ready=True, payload=payload)
-        for line in sys.stdin:
-            request = json.loads(line)
-            try:
-                raw = Path(request["data"]).read_bytes()
-            except FileNotFoundError:
-                raw = None
-            if raw is None or (request.get("sha256") is not None
-                               and hashlib.sha256(raw).hexdigest() != request["sha256"]):
+        # Updates carry a short JSON header followed by the unchanged RAW bytes.
+        pipe = sys.stdin.buffer
+        while header := pipe.readline(256):
+            if not header.endswith(b"\n"):
+                raise ValueError("Invalid live RAW update header.")
+            request = json.loads(header)
+            size = request.get("bytes")
+            digest = request.get("sha256")
+            if type(size) is not int or size <= 0 or not isinstance(digest, str) or len(digest) != 64:
+                raise ValueError("Invalid live RAW update header.")
+            raw = pipe.read(size)
+            if len(raw) != size:
+                raise ValueError("Incomplete live RAW update.")
+            if hashlib.sha256(raw).hexdigest() != digest:
                 _send_worker_message("error", code="RAW_RETRY",
                                      message="RAW changed during the indicator update. Retrying at the next check.")
                 continue
