@@ -130,6 +130,7 @@ function New-ProductionFixture {
   Write-FixtureFile $fixture 'apps/chart/server/api.js' "import '../src/shared.js';"
   Write-FixtureFile $fixture 'apps/chart/server/unused.js'
   Write-FixtureFile $fixture 'engine/bridge/trading_pipeline.py' "from core_utils import helper\n"
+  Write-FixtureFile $fixture 'engine/bridge/live_pipeline.py' '# live worker entry point'
   Write-FixtureFile $fixture 'engine/pipeline/detector.py' "from helper_module import helper\n"
   Write-FixtureFile $fixture 'engine/pipeline/core_utils.py' "def helper(): pass\n"
   Write-FixtureFile $fixture 'engine/pipeline/helper_module.py' "def helper(): pass\n"
@@ -138,6 +139,9 @@ function New-ProductionFixture {
   Write-FixtureFile $fixture 'engine/bridge/__init__.py' '# bridge package marker'
   Write-FixtureFile $fixture 'apps/chart/server/raw-integrity.js' 'export const helper = true;'
   Write-FixtureFile $fixture 'apps/chart/scripts/dev-server.mjs' '// development server entry point'
+  Write-FixtureFile $fixture 'apps/chart/src/nested/runtime.test.js' '// colocated unit test'
+  Write-FixtureFile $fixture 'engine/pipeline/nested/tests/support.py' '# colocated test support'
+  Write-FixtureFile $fixture 'engine/pipeline/docs/design.md' '# development documentation'
   $sha = Commit-Fixture $fixture
   return [pscustomobject]@{ Root = $fixture; Sha = $sha }
 }
@@ -273,11 +277,18 @@ function Invoke-ProductionClosureTests {
     Assert-True ((Test-ProductionFileSet -FileSet $fileSet -Policy $policy).Errors.Count -eq 0) 'fixture file set passes integrity checks'
     $currentPolicy = Import-PowerShellDataFile (Join-Path $PSScriptRoot 'production-policy.psd1')
     $currentSet = Get-ProductionFileSet -Root $fixture.Root -MainSha $fixture.Sha -Policy $currentPolicy
-    foreach ($path in @('engine/bridge/__init__.py', 'apps/chart/server/raw-integrity.js')) {
+    foreach ($path in @('engine/bridge/__init__.py', 'engine/bridge/live_pipeline.py', 'apps/chart/server/raw-integrity.js')) {
       Assert-True ($currentSet.Paths -contains $path) "maintained policy includes runtime-owned package markers and helpers: $path"
     }
     Assert-True ($currentSet.Errors.Count -eq 0) 'maintained policy fixture has no missing runtime dependencies'
     Assert-True ((Test-ProductionFileSet -FileSet $currentSet -Policy $currentPolicy).Errors.Count -eq 0) 'maintained runtime inventory passes category exclusions'
+    foreach ($path in @('apps/chart/src/nested/runtime.test.js', 'engine/pipeline/nested/tests/support.py', 'engine/pipeline/docs/design.md')) {
+      Assert-True ($currentSet.Paths -notcontains $path) "nested non-runtime file stays in main: $path"
+    }
+    & git -C $fixture.Root rm --quiet -- engine/bridge/live_pipeline.py
+    $withoutWorker = Commit-Fixture $fixture.Root
+    $invalid = Get-ProductionFileSet -Root $fixture.Root -MainSha $withoutWorker -Policy $currentPolicy
+    Assert-True ($invalid.Errors -contains 'Required production seed is missing: engine/bridge/live_pipeline.py') 'a missing Vite-spawned Engine worker blocks production'
   } finally {
     Remove-TestFixturePath $fixture.Root
   }
@@ -424,7 +435,7 @@ function Invoke-PublicationTests {
     $fixtures += $partialFixture
     $partialTag = New-ReleaseTag -Root $partialFixture.Root -Tag 'fixture-partial' -ProductionSha $partialFixture.ProductionSha -MainSha $partialFixture.MainSha
     $partialPrepared = [pscustomobject]@{ MainSha=$partialFixture.MainSha; ProductionSha=$partialFixture.ProductionSha; Tag='fixture-partial'; TagObjectSha=$partialTag.TagObjectSha; RemoteMainSha=$partialFixture.ProductionSha; RemoteProductionSha=$partialFixture.ProductionSha; RemoteTagSha=$null }
-    $partialAdapter = { param($root, $gitArgs) if ($gitArgs -contains '--atomic') { return [pscustomobject]@{ ExitCode=1; StdOut=''; StdErr='fatal: the receiving end does not support --atomic push'; Arguments=$gitArgs } }; if ($gitArgs -contains 'refs/heads/production:refs/heads/production') { return [pscustomobject]@{ ExitCode=1; StdOut=''; StdErr='simulated production rejection'; Arguments=$gitArgs } }; Invoke-ReleaseGit -Root $root -Arguments $gitArgs }
+    $partialAdapter = { param($root, $gitArgs) if ($gitArgs -contains '--atomic') { return [pscustomobject]@{ ExitCode=1; StdOut=''; StdErr='fatal: the receiving end does not support --atomic push'; Arguments=$gitArgs } }; if ($gitArgs -contains "$($partialPrepared.ProductionSha):refs/heads/production") { return [pscustomobject]@{ ExitCode=1; StdOut=''; StdErr='simulated production rejection'; Arguments=$gitArgs } }; Invoke-ReleaseGit -Root $root -Arguments $gitArgs }
     $partial = Publish-ReleaseRefs -Root $partialFixture.Root -PreparedRelease $partialPrepared -CommandAdapter $partialAdapter
     Assert-True ($partial.Status -eq 'PARTIAL_FAILURE') 'fallback stops and reports a partial publication'
     $remotePartialTag = & git -C $partialFixture.Root ls-remote --exit-code origin refs/tags/fixture-partial

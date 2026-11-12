@@ -3,7 +3,7 @@ title: TradingBot Release Operations
 document_role: procedure
 lifecycle: maintained
 owner: release-tooling
-last_modified_at: 2026-11-01T20:51:27+03:30
+last_modified_at: 2026-11-12T07:27:00+03:30
 ---
 
 # TradingBot release operations
@@ -14,6 +14,12 @@ Open the interactive manager with:
 
 ```powershell
 .\scripts\git\git.bat
+```
+
+Run a two-branch release from the same launcher by passing the release tag first. Supply an explicit commit message. Add `-DryRun` to validate both candidate trees without publication.
+
+```powershell
+.\scripts\git\git.bat -ReleaseTag "vX.Y.Z" -CommitMessage "Release vX.Y.Z"
 ```
 
 `AGENTS.md` is optional. The launcher checks the menu file; PowerShell verifies the Git root and the `apps/chart` and `engine` directories. Paths containing spaces, parentheses, ampersands, and exclamation marks are supported. Git for Windows must be installed and `git.exe` must be on PATH.
@@ -38,13 +44,17 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\git\Invoke-Tradi
 
 Only narrowly proven disposable material is excluded: dependencies restored from manifests, build products, interpreter caches, temporary files, local secrets, and machine-local chart state. `apps/chart/state` is never copied to production; the launcher creates required directories at runtime without deploying current local contents.
 
+The Engine audit reports, manifests, review notes and reproduction scripts remain eligible for main. The audit's full market captures, repeated benchmark outputs, derived market fixtures, local prompt and connector captures stay on the workstation. Their policy paths match the exclusions in `.gitignore`.
+
 The main release stops if an excluded artifact is already tracked, including one staged for modification. Staged removal of such an artifact is allowed. Eligible ZIP archives are checked for embedded cache, build, temporary, dependency, or unsafe parent-directory paths. The two historical project snapshots containing those entries remain on the workstation but are excluded from Git; archived test logs remain eligible as verification evidence.
 
-`production` uses a dependency-derived runtime inventory from the exact committed main SHA. Every eligible file under the runtime-owned `apps/chart`, `engine`, and `scripts` roots is included, even if it is not imported yet. Import traversal validates dependencies and adds referenced paths; it does not decide whether a new runtime file is eligible. Tests, engineering evidence, Algorithm References, ZIP snapshots, local chart state, credentials, dependencies, and disposable artifacts remain excluded from production. The workflow replaces only a temporary worktree snapshot with the selected paths and checks policy, sensitive markers, PowerShell and JavaScript syntax, Python AST and bridge help, `npm ci`, and the chart build.
+`production` uses a dependency-derived runtime inventory from the exact committed main SHA. Every eligible file under the runtime-owned `apps/chart`, `engine`, and `scripts` roots is included, even if it is not imported yet. Import traversal validates dependencies and adds referenced paths; it does not decide whether a new runtime file is eligible. Dedicated and colocated tests, engineering evidence, development documentation, Algorithm References, ZIP snapshots, local chart state, credentials, dependencies, and disposable artifacts stay outside production. The workflow validates policy, sensitive markers, PowerShell and JavaScript syntax, Python AST, both Engine entry points, `npm ci`, and the chart build in an isolated worktree.
+
+On startup, the launcher runs `npm ci` when the chart lockfile differs from the last successful launcher installation. It stores the lockfile digest in the local `node_modules` directory and reuses the installation on subsequent launches with the same lockfile.
 
 A new `engine/pipeline/xyz.py`, a new configuration file, or a renamed runtime folder is picked up automatically. Runtime package markers and helpers remain eligible even before a caller imports them; exclusions describe non-runtime categories rather than individual source filenames. Additions, modifications, renames, and deletions appear in the branch previews. Main includes all eligible project files; eligible files accidentally matching `.gitignore` are explicitly staged after policy and sensitive-content checks. Individual detector filenames are not a permanent production allowlist.
 
-The production inventory is passed to Git as a UTF-8, NUL-delimited file of literal paths. Its size is independent of Windows' native command-line length limit, and filenames containing spaces, Unicode, or brackets retain their exact identities.
+Both branch inventories are passed to Git as UTF-8, NUL-delimited files of literal paths. Their size is independent of Windows' native command-line length limit, and filenames containing spaces, Unicode, or brackets retain their exact identities.
 
 ## Branch and authentication safety
 
@@ -54,7 +64,7 @@ The workflow reuses existing Git and GitHub CLI authentication without reading o
 
 If local `production` has independent commits, the validated runtime snapshot gains a second parent that preserves that local history. Its tree remains the exact dependency-derived runtime file set. Promotion checks both parent histories and the unchanged local ref before advancing `production`; an operation without a new snapshot still requires a fast-forward production target.
 
-Publication first uses one `git push --atomic` for `main`, `production`, and the annotated tag. If atomic push is unsupported, fallback is allowed only after every target remote ref is proven unchanged. The fallback verifies each ref immediately and stops with explicit partial-failure reporting; it never hides a partial result.
+The scripted release validates temporary main and production candidates before committing and verifies both resulting tree IDs against the validated candidates. Publication first uses one `git push --atomic` with exact commit and tag object IDs for `main`, `production`, and the annotated tag. If atomic push is unsupported, fallback is allowed only after every target remote ref is proven unchanged. The fallback verifies each ref immediately and stops with explicit partial-failure reporting; it never hides a partial result.
 
 ## Traceability and Recovery
 

@@ -193,10 +193,21 @@ function Ensure-NpmDependencies([string]$Npm) {
         -not (Test-Path -LiteralPath (Join-Path $ChartRoot ("node_modules\{0}" -f $_)))
       }
     )
+    $lockPath = Join-Path $ChartRoot 'package-lock.json'
+    $lockStampPath = Join-Path $ChartRoot 'node_modules\.tradingbot-lock-sha256'
+    $lockHash = $null
+    $installedLockHash = $null
+    if (Test-Path -LiteralPath $lockPath) {
+      $lockHash = (Get-FileHash -LiteralPath $lockPath -Algorithm SHA256).Hash
+      if (Test-Path -LiteralPath $lockStampPath) {
+        $installedLockHash = [IO.File]::ReadAllText($lockStampPath).Trim()
+      }
+    }
 
-    if ($missing.Count -gt 0) {
-      Write-Step ("Installing npm dependencies (missing: {0})..." -f ($missing -join ', ')) Yellow
-      if (Test-Path -LiteralPath (Join-Path $ChartRoot 'package-lock.json')) {
+    $needsInstall = $missing.Count -gt 0 -or $lockHash -ne $installedLockHash
+    if ($needsInstall) {
+      Write-Step 'Installing npm dependencies for this checkout...' Yellow
+      if ($lockHash) {
         & $Npm ci
       } else {
         & $Npm install
@@ -210,6 +221,9 @@ function Ensure-NpmDependencies([string]$Npm) {
       if (-not (Test-Path -LiteralPath (Join-Path $ChartRoot ("node_modules\{0}" -f $module)))) {
         throw "npm dependency is still missing after installation: $module"
       }
+    }
+    if ($needsInstall -and $lockHash) {
+      Set-Content -LiteralPath $lockStampPath -Value $lockHash -Encoding ASCII
     }
   } finally {
     Pop-Location

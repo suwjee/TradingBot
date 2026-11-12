@@ -12,7 +12,7 @@ scope:
   - faraz-ui
   - algorithm-reference-ui
   - responsive-accessibility
-last_modified_at: 2026-11-01T19:22:42+03:30
+last_modified_at: 2026-11-12T01:34:50+03:30
 ---
 
 # TradingBot UI/UX Reference
@@ -248,6 +248,8 @@ For repeated directional regimes, Chart renders each Engine-finalized calculatio
 
 Users can control presentation properties such as visibility, line/fill appearance, label styling, and selected object appearance.
 
+Indicator Configure provides independent T-label, F-label and setup-position visibility switches under Setup annotations. Appearance provides separate T and F colors, font sizes and distances from their owning object labels. These controls update the existing finalized result immediately, participate in saved preferences and templates, and reset through the standard style controls. Older saved forms use the original appearance defaults. Individual object overrides remain effective, and hiding indicator positions leaves standalone manual Long/Short drawings visible.
+
 Presentation objects may support UI-only customization such as:
 
 - hidden/visible state;
@@ -269,6 +271,12 @@ Selecting an object can focus it in the Chart context. Object visibility, lockin
 ### 10.1 Creation
 
 Chart provides user drawing/annotation tools for line/shape/freehand/measurement/position-style workflows and related annotations implemented by the current toolset.
+
+Manual Long Position and Short Position tools appear immediately after Measure in the default/restored drawing toolbar. They work independently of the indicator: click an entry location, then click the target level to complete the schematic. New schematics start at 4R with an initial width of 50 chart-candle intervals, including across market gaps and into future chart space. They do not execute or manage trades.
+
+Both directions use a green target region and a red stop region with 10% fill opacity. The compact boxed R:R label uses 10px text and reflects the current price distances. Target and stop corner handles resize their own region independently; changing one does not resize the other. Left/right handles on the entry line shorten or extend the whole schematic horizontally without changing its price levels or R:R. The selected drawing's contextual toolbar also provides Target and Stop price fields and a Bars width field for precise keyboard editing. Moving the whole schematic translates all price levels together and preserves its edited time span.
+
+The indicator also presents Engine-calculated bullish setup schematics and T/F labels. These are indicator objects, separate from manual drawings, using the same initial 50-candle width, 10px R:R text, colors and independent geometry handles. Selected position handles take precedence over overlapping indicator bodies. Hide, lock, undo/redo and explicit context restoration use the existing indicator-object workflow; a fresh calculation creates a fresh presentation as elsewhere in the indicator. Geometry edits do not change the Engine's original setup levels or classification. Disabling the indicator hides its schematics while independent manual drawings remain visible. T/F setup assessments are distinct from native calculation-validity flags.
 
 Drawing points are stored in canonical chart time/price coordinates so presentation-density changes do not redefine their market position.
 
@@ -411,6 +419,10 @@ The FARAZ workspace shows the local RAW inventory with sorting, refresh, and con
 Chart also exposes an update-data workflow for the currently loaded RAW resource. That workflow can check/repair gaps or obtain newer closed candles, shows staged progress, and reports success/warning/failure without inventing missing candles.
 
 FARAZ acquisition and Chart update affect input data availability. They do not define trading semantics.
+
+The Real-time Chart control sits before Cut Candles. Enable starts a catch-up on the selected RAW file, then checks for closed candles at the configured interval. The green ring fills until the next check. Disable stops the timer and disables the other options. Changing the selected RAW file ends the current live session. New candles retain the RAW source timeframe and are displayed using the current chart timeframe. The chart follows incoming candles when already at the latest edge and preserves a historical viewport when browsing older candles.
+
+Indicator Calculation requires a manual Apply with the intended start and direction. Enabling it first catches up from that calculation, then processes new closed RAW candles on each check. It retains the analysis timeframe, updates behaviors whose remaining conditions resolve and keeps the current chart and drawings in place. If the Engine session expires or the earlier RAW changes, the chart retains the last indicator result and prompts for a new Apply.
 
 ## 13. Algorithm reference workspace
 
@@ -584,7 +596,9 @@ The contract is:
 
 - the original candle collection remains canonical for calculation, export, exact date/OHLC lookup, drawings, and hit testing;
 - display LOD changes only what is rendered for performance;
+- at subpixel zoom, the candlestick renderer can group bars for paint while keeping candle slots on the time axis;
 - raw-time-to-screen mapping preserves interaction with omitted display candles;
+- when a display window changes, the viewport keeps its center and span in raw candle slots; drawings and indicator overlays use the same mapping, including past and future space;
 - display-density mode uses hysteresis/stability behavior to avoid unnecessary mode flapping during gestures;
 - active gesture handling avoids changing density mode mid-interaction when doing so would destabilize the view.
 

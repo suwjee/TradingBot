@@ -1,12 +1,12 @@
 # TradingBot Bearish Algorithm Reference — Current Standalone Specification
 
 **Document Version:** `5.4.33`  
-**Last Modified:** `2026-11-02T07:13:10+03:30`  
-**last_modified_at:** `2026-11-02T07:13:10+03:30`  
+**Last Modified:** `2026-11-12T01:35:09+03:30`  
+**last_modified_at:** `2026-11-12T01:35:09+03:30`  
 **document_role:** `reference`  
 **lifecycle:** `maintained`  
 **owner:** `engine/algorithms`  
-**scope:** `accepted directional specification and exact Source; bidirectional primary structures and isolated alternating regimes`  
+**scope:** `accepted directional specification and exact Source; bidirectional primary structures and isolated alternating regimes; bullish setup annotations`  
 **Status:** `ACTIVE SOURCE-SYNCHRONIZED LOCAL EXTENSION — bullish primary mirror and alternating regimes; UNRELEASED`  
 **Target Direction:** `bearish`  
 **Opposite Direction:** `bullish`  
@@ -17,6 +17,10 @@
 
 ## 0. Revision scope
 
+### Current local addition - bullish setup annotations (UNRELEASED)
+
+The approved bullish chart-schematic rules are implemented by the new setup Engine stage; see Section13.10. Native detector outputs retain their existing authority. This addition does not execute or simulate trades and has no authorized bearish setup mirror.
+
 ### Current local correction - accepted E source ownership (UNRELEASED)
 
 - An accepted E owns its physical source before a provisional same-source S can override it or open a competing root. Distinct-source Red S precedence and independent qualified roots remain unchanged.
@@ -24,6 +28,16 @@
 - Recursive consumed-S continuation, independent-root restoration and hard-reset parent gates use the same creator/ownership contract. Replaced or restored accepted state republishes its physical source identities.
 - OrderAudit removes only the rejected S creation cause and retains independently valid A/E parent-stop and reset-leg causes, physical identity, exact confirmation and strict stop. Public field names and directional price predicates remain unchanged.
 - Focused regressions cover both directions; independent real-market and browser checks must be reported separately from unit and reflection evidence.
+
+<!-- ENGINE-AUDIT-IMPLEMENTATION-BEGIN -->
+### Current Engine implementation audit (UNRELEASED)
+
+- **Preparatory serialization repair:** the merged multi-regime Bridge projection preserves first-appearance field order using an ordered key collector. This removes process-hash-dependent mapping order; calculation values, types, Decimal strings, physical identities, provenance and arrays are unchanged by this repair. Public API version fields remain unchanged.
+- **Implementation-only optimization:** the carried-Order query reuses its eagerly extracted parent creation list, reduces multiple parents to their original earliest event and appends every B confirmation eagerly. This reduces redundant temporary allocation and generator work without changing native selection, time boundaries, error precedence, Order identity, cache validity, result order or public output. No new retained cache or trading rule is introduced.
+- **Authority:** the user delegated this separately disclosed repair after the original exact baseline exposed two mapping-order failures. The original failed baseline is preserved; it is not relabeled zero-difference. Optimization, if retained, must compare against a separately named stable post-repair baseline.
+- **Evidence:** `engineering/verification/engine-zero-diff-20261102T043157Z/` contains original outputs, first differences, independent review and actual test/measurement records. No release/publication is claimed. Final optimization/RAW status must be read from that run's final report, not inferred from Source synchronization.
+- **Source synchronization timestamp:** `2026-11-02T12:11:44+03:30`. Only implementation evidence and exact embedded Source/index/manifest representation are synchronized here; existing trading-rule text and pre-existing documented ambiguities remain unchanged.
+<!-- ENGINE-AUDIT-IMPLEMENTATION-END -->
 
 ### Current local extension — bidirectional PH/PL/MBL (UNRELEASED)
 <!-- PRIMARY-REVISION-BEGIN -->
@@ -113,20 +127,22 @@ The Source manifest and exact embedded Source are regenerated from the authorita
 |---|---|---|---:|---:|---|
 | `__init__.py` | Engine package marker | `unversioned` | 0 | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 | `bridge/__init__.py` | Bridge package marker | `unversioned` | 1 | 64 | `2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8` |
-| `bridge/trading_pipeline.py` | Pipeline / Serialization | `1.13.0 (impl 1.16.0)` | 3433 | 134613 | `6d93dbaf67e4dce02060575b92dda5de6eaf6de0148f6db54056015c072181dc` |
+| `bridge/live_pipeline.py` | Production module | `1.0.0` | 450 | 20646 | `117cf9a20c3ee9a9f8d992d4a018c2b9e2ca94946391633ecfde0edc8ee189e2` |
+| `bridge/trading_pipeline.py` | Final reconciled calculation objects | `1.14.0 (impl 1.18.0)` | 3640 | 144164 | `93ef7539f1e7122c19eb7fc05ec735b725a58574c06e09b67d2c9d614b99f86e` |
 | `pipeline/__init__.py` | Compatibility package wrapper | `unversioned` | 28 | 653 | `d22a1b81495a6c97b5eccc4d921b1ba4b709bfbcd39be6ef34b9014690b9f460` |
-| `pipeline/a_zone_detector.py` | A | `1.7.0` | 804 | 31373 | `83f08b06556eb59c6d1b3afd22b51c280315bd80f3a31bc3044ada349251a115` |
-| `pipeline/blue_line_detector.py` | Blue | `2.4.1` | 481 | 16945 | `c6466c280504f82d8f2b189263ed0e9b9581c2f48edd8aaa12f016e55effc98c` |
+| `pipeline/a_zone_detector.py` | BlueState and first-stop/inherited/double-stop routes | `1.7.0` | 1032 | 41496 | `4997debfb510803d35b77816bd9e9d7f84d0aec2c7ac9c7a0accb34bc374754a` |
+| `pipeline/blue_line_detector.py` | Confirmed Reaction/Reset, Fibonacci, exact confirmation prefix | `2.4.1` | 566 | 20309 | `e5b34d577c2ba33e49183aa1419aa3dec44ddf51434b4bb3db1b720d1449db34` |
+| `pipeline/bullish_setup_engine.py` | Bullish setup annotations | `1.0.0` | 503 | 23028 | `e8fa440f01e51b31f005b6968803c88eaae95eeef9de0bc5c52c5366582a12bb` |
 | `pipeline/core_utils.py` | Core Utilities | `1.0.0` | 26 | 832 | `007e5329e14ab9695e555c630527badc84dd35a239dea1cf685141e4278265eb` |
 | `pipeline/direction_policy.py` | Direction Policy | `1.0.0` | 70 | 2282 | `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea` |
-| `pipeline/e_zone_detector.py` | E | `6.16.2 (impl 6.18.6)` | 1261 | 56097 | `6736628d9b3c36473f30a548ea8f652a6127ff1c461cceafe352227d223b5690` |
-| `pipeline/lifecycle_engine.py` | Lifecycle / StopAll | `1.18.6 (impl 1.20.7)` | 1529 | 63174 | `760928f5480efad446b42bc6aa2fbea3e431de13ab92714bac05c09188519c26` |
-| `pipeline/order_audit_engine.py` | Order / OrderAudit | `1.8.1` | 2222 | 92027 | `84201f1784fe9a1c924c8c6d3a8f67999d629032c6987c4384a4330954acf2af` |
-| `pipeline/PL_PH_detector.py` | Primary High / Low / Matching Behavior Leg | `1.4.0` | 666 | 29764 | `5107fe02c8314552f4c8e45bb84e23682e43d2d49d925cfdaf165eb6a30462d9` |
-| `pipeline/reaction_engine.py` | Reaction / Reset | `9.9.1 (impl 9.11.0)` | 2501 | 108353 | `2554a5609bb126206ad2b7c58eca6694d8b9623f3e5859487540fe9d49dad89b` |
-| `pipeline/s_zone_detector.py` | S | `4.20.1 (impl 4.21.1)` | 1445 | 60942 | `0c5864bc3bc6c17f72c5c38b04a1cd0b5b38c726d8834207a55d5351fdfa38fe` |
+| `pipeline/e_zone_detector.py` | S/E/Order lineage and parent stops | `6.16.2 (impl 6.19.0)` | 1566 | 70941 | `d6c3ae7fff57fabc11e12a4993b6554aa4e532dbae813a7583110c02d5d9d02a` |
+| `pipeline/lifecycle_engine.py` | Final S/E dominance, accepted strict behavior stops | `1.18.6 (impl 1.21.0)` | 1594 | 66282 | `65da2e6b0801c8cd9ecd27c09f2af4253a8a2fd72853c6eac534edbe30a58621` |
+| `pipeline/order_audit_engine.py` | Physical Order identity and cause ledger | `1.8.2` | 2306 | 95898 | `7196e2778d2f2f41c8f4afdc6911bdd548ccca47d11ef88805dd9e1b7cd579ec` |
+| `pipeline/PL_PH_detector.py` | Primary High / Low / Matching Behavior Leg | `1.4.0` | 820 | 36724 | `fc2b4ba3d15352831dcf63f34ee04d3da42b0751ca83c0f37e727371c41dabd1` |
+| `pipeline/reaction_engine.py` | Canonical First candidate, Break, strict Reset, lower-TF chronology | `9.9.1 (impl 9.12.0)` | 2824 | 123240 | `8263ad04295eca35d358e7468b42aaad28b47a8a74f9832c1d73b8d6bdb3e23e` |
+| `pipeline/s_zone_detector.py` | Accepted A stop, aligned Reaction, physical opposite Order | `4.20.1 (impl 4.22.0)` | 1554 | 66030 | `029a52fff2f6fd618b8e67a9fd99229bd1b2ffccf91dbd9656baf06aef0989a8` |
 
-Generated Source-inventory evidence at `2026-11-01T19:15:08+03:30`. Discovery recursively reviews the live Engine tree, current runtime loading and imports; the current reconstruction closure includes its package markers and all production Python under the Bridge and Pipeline owners. Test, verification, benchmark, cache and historical material are excluded. This observed inventory is not a permanent file-count requirement.
+Generated Source-inventory evidence at `2026-11-12T01:35:09+03:30`. Discovery recursively reviews the live Engine tree, current runtime loading and imports; the current reconstruction closure includes its package markers and all production Python under the Bridge and Pipeline owners. Test, verification, benchmark, cache and historical material are excluded. This observed inventory is not a permanent file-count requirement.
 
 The empty live `engine/__init__.py` is included as zero exact bytes. Earlier package revisions that omitted that marker remain historical lineage; their omission is not applied to the current live tree.
 
@@ -769,244 +785,392 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 
 ### 13.5 Complete module/class symbol and schema coverage
 
-This index is regenerated mechanically from the exact current Source AST. It covers module assignments/type aliases, top-level functions, classes, annotated schema fields, methods/properties and nested class/function definitions. Imports, local variables and lambda bodies remain preserved in the exact Source snapshot. Line numbers address each Source file, not this Reference.
-
-The index is descriptive integrity/navigation evidence, not trading-semantic authority.
+Generated from current production AST; implementation bodies remain exact in Section16.
 
 #### `__init__.py`
-- **Module-level symbols/assignments:** _none_
-- **Top-level functions:** _none_
-- **Classes / schemas:**
-  - _none_
-- **Nested implementation functions/closures:** _none_
 
 #### `bridge/__init__.py`
-- **Module-level symbols/assignments:** _none_
-- **Top-level functions:** _none_
-- **Classes / schemas:**
-  - _none_
-- **Nested implementation functions/closures:** _none_
+
+#### `bridge/live_pipeline.py`
+- Function `_blue_dependencies(result)` (L27-L31).
+- Class `LivePipelineStages` (L34-L303).
+  - Methods: `__init__(self, engines)`, `begin(self, market, first_dirty_main)`, `_dirty_absolute(self)`, `closed_regime(self, direction, context, boundary, work)`, `active_regime(self, context, direction)`, `finish_regimes(self)`, `reactions(self, detectors)`, `_update_order_dependencies(self, results)`, `order_geometry(self, detector, direction, gate, limit, event)`, `ownership(self, results)`, `blue_lines(self, direction, result)`, `a_zones(self, direction, reactions, blue_lines)`, `s_zones(self, direction, detector)`, `stopall_finder(self, scope)`, `order_b_finder(self, scope)`, `primary(self, direction, groups, orders, detector)`, `bullish_setups(self, groups, primary_lows)`.
+- Class `LivePipelineContinuation` (L306-L349).
+  - Methods: `__init__(self, args, engines)`, `append(self, rows)`.
+- Class `LiveRawChanged` (L352-L353).
+- Function `_decode_raw(data)` (L356-L360).
+- Class `LiveRawSource` (L363-L402).
+  - Methods: `__init__(self, selected, data, original)`, `_remember_prefix(self, data)`, `append(self, data, pipeline)`.
+- Function `_send_worker_message(kind, **fields)` (L405-L406).
+- Function `main()` (L409-L446).
 
 #### `bridge/trading_pipeline.py`
-- **Module-level symbols/assignments:** `_ENGINE_ROOT` (L30–L30), `_PIPELINE_DIR` (L31–L31), `_pipeline_dir_text` (L32–L32), `_DTFMT` (L39–L39), `TRADING_PIPELINE_VERSION` (L42–L42), `TRADING_PIPELINE_IMPLEMENTATION_VERSION` (L43–L43), `TRADING_PIPELINE_LAST_MODIFIED` (L44–L44), `MBL_EXTENSION_CANDLES` (L45–L45), `TEHRAN` (L47–L47), `_local_dt_cache` (L84–L84), `_epoch_cache` (L96–L96), `_display_epoch_cache` (L108–L108)
-- **Top-level functions:** `emit_progress(status: str, label: str, duration_ms: float | None=None)` (L50–L55), `timed(timings: dict[str, float], label: str, work)` (L58–L67), `load_module(name: str, path: Path)` (L70–L77), `load_engine(path: Path)` (L80–L81), `local_datetime(epoch: int) -> datetime` (L87–L93), `epoch(local: datetime) -> int` (L99–L105), `display_epoch(value: str | datetime) -> int` (L111–L120), `build_candle_buckets(rows: list[dict], timeframe: int)` (L123–L178), `build_candle_objects(engine, buckets: list[dict])` (L181–L208), `_index_selected(index: object, start_index: int | None, end_index: int | None) -> bool` (L211–L216), `select_reaction_serialization_items(result, start_index=None, end_index=None, reaction_transform=None)` (L219–L239), `serialize(result, start_index=None, end_index=None, reaction_transform=None, selected_items=None)` (L242–L283), `serialize_blue_lines(items, start_index=None, end_index=None)` (L286–L303), `serialize_a_zones(items)` (L306–L330), `serialize_s_zones(items)` (L333–L395), `serialize_e_zones(items)` (L398–L438), `serialize_stopalls(items)` (L441–L505), `bridge_datetime(value: object | None) -> str | None` (L508–L519), `bridge_direction(direction: str) -> str` (L522–L523), `bridge_mode(mode: object) -> str | None` (L526–L527), `bridge_color(value: object | None) -> str | None` (L530–L533), `_bridge_horizon(market: MarketContext) -> datetime` (L536–L540), `_bridge_in_horizon(market: MarketContext, value: datetime | None) -> bool` (L543–L544), `_bridge_proven_strict_event(market: MarketContext, direction: str, level: object | None, event_time: datetime | None) -> datetime | None` (L547–L584), `_bridge_stop_view(market: MarketContext, direction: str, price: object | None, stop_time: datetime | None, stop_event_time: datetime | None) -> dict[str, object]` (L587–L604), `_bridge_reaction_confirmation(market: MarketContext, direction: str, reaction: object, *, use_intrabar_start: bool=True) -> datetime | None` (L607–L628), `_bridge_order_identity(item: object) -> tuple[int, int] | None` (L631–L636), `_bridge_parent_stop(projection: BridgeProjection, detector: object | None, parent_type: str, item: object) -> tuple[datetime | None, datetime | None]` (L833–L851), `_bridge_a_stop(projection: BridgeProjection, s_detector: object | None, item: object) -> tuple[datetime | None, datetime | None]` (L854–L872), `_bridge_behavior_stop(projection: BridgeProjection, direction: str, price: object, stop_time: datetime | None, stop_event_time: datetime | None) -> dict[str, object]` (L875–L887), `_bridge_blue_formation(projection: BridgeProjection, direction: str, line: object, reactions: list[object]) -> tuple[datetime | None, datetime | None]` (L890–L910), `_bridge_project_reaction(projection: BridgeProjection, direction: str, raw: object, public: object) -> dict[str, object]` (L913–L953), `_bridge_project_reset(projection: BridgeProjection, direction: str, reset: object) -> dict[str, object]` (L956–L976), `_bridge_project_blue(projection: BridgeProjection, direction: str, line: object, reactions: list[object]) -> dict[str, object]` (L979–L1012), `_bridge_full_lines_by_ordinal(lines: list[object]) -> dict[int, object]` (L1015–L1024), `_bridge_project_a(projection: BridgeProjection, direction: str, item: object, lines_by_ordinal: dict[int, object], reactions: list[object], s_detector: object | None) -> dict[str, object]` (L1027–L1114), `_bridge_project_s(projection: BridgeProjection, direction: str, item: object, e_detector: object | None) -> dict[str, object]` (L1117–L1170), `_bridge_source_index(item: object) -> tuple[int, datetime] | None` (L1173–L1178), `_bridge_parent_behavior_for_e(projection: BridgeProjection, direction: str, item: object, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object]) -> dict[str, object]` (L1181–L1222), `_bridge_project_e(projection: BridgeProjection, direction: str, item: object, e_detector: object | None, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object]) -> dict[str, object]` (L1225–L1269), `_bridge_project_stopall(projection: BridgeProjection, direction: str, item: object) -> dict[str, object]` (L1272–L1338), `_bridge_audit_order_key(prepared: object, detector: object) -> tuple[int, int]` (L1341–L1348), `build_bridge_output(direction: str, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, selected_reactions: list[tuple[object, object]], selected_resets: list[object], selected_blue_lines: list[object], selected_a_zones: list[object], selected_s_zones: list[object], selected_e_zones: list[object], selected_stopalls: list[object], selected_order_audit: list[object]) -> dict[str, list[dict[str, object]]]` (L1351–L1453), `validate_order_audit_bridge(prepared_items, s_zones, e_zones, stopalls) -> None` (L1456–L1521), `serialize_order_audit(prepared_items, detector)` (L1524–L1574), `market_segment(market, start, stop, *, initial_bullish_trend=None, initial_bearish_trend=None)` (L1601–L1621), `absolute_payload_indexes(value, offset)` (L1624–L1635), `serialize_trend_transition(transition, market)` (L1638–L1658), `parse_arguments(argv=None)` (L1661–L1731), `load_engines(args, timings: dict[str, float]) -> EngineBundle` (L1734–L1769), `prepare_market_context(args, engines: EngineBundle, timings: dict[str, float]) -> MarketContext` (L1772–L1852), `create_e_detector(direction: str, e_engine, full_results: dict[str, object], s_zones: list[object], chronology, geometry_detectors: dict[str, object], initial_order_audit, lifecycle_engine, *, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[object]=())` (L1891–L1936), `calculate_full_direction_state(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], order_b_legs: Sequence[object]=(), shared_stages: FullDirectionState | None=None) -> FullDirectionState` (L1939–L2271), `calculate_direction_with_order_b_feedback(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], *, stopall_enabled: bool) -> FullDirectionState` (L2274–L2333), `prepare_pipeline_state(args, engines: EngineBundle, market: MarketContext, timings: dict[str, float]) -> PipelineState` (L2336–L2473), `calculate_direction_range_state(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float]) -> DirectionRangeState` (L2508–L2607), `finalize_direction_visibility(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, direction_state: DirectionRangeState, timings: dict[str, float]) -> DirectionVisibilityState` (L2610–L2844), `serialize_direction_payload(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, timings: dict[str, float])` (L2847–L2985), `serialize_primary_order(order, market, owner_direction)` (L2988–L3014), `serialize_primary_structures(primary, market)` (L3017–L3136), `calculate_primary_structures(args, engines, market, state, visibility, timings, direction='bearish')` (L3139–L3189), `build_direction_output(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L3192–L3232), `merge_regime_outputs(regimes)` (L3234–L3260), `build_reversed_trend_outputs(args, engines, market, transition, timings)` (L3263–L3329), `build_response_payload(args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float], pipeline_started: float) -> dict[str, object]` (L3332–L3392), `main() -> int` (L3395–L3425)
-- **Classes / schemas:**
-  - `BridgeProjection` (L639–L830)
-    - Fields: _none_
-    - Methods/properties: `__init__(self, *, direction: str, market: MarketContext, prepared_order_audit: list[object], order_direction: str) -> None` (L647–L664), `physical_order(self, prepared: object | None) -> dict[str, object] | None` (L666–L709), `parent_order(self, behavior: object) -> dict[str, object] | None` (L711–L716), `current_order(self, behavior: object, parent_type: str, parent_family: str | None, strict_stop_event: datetime | None) -> dict[str, object] | None` (L718–L771), `order_audit(self, prepared: object) -> dict[str, object]` (L773–L830)
-  - `EngineBundle` (L1578–L1585)
-    - Fields: `reaction: object` (L1579), `blue_line: object` (L1580), `a_zone: object` (L1581), `s_zone: object` (L1582), `e_zone: object | None` (L1583), `lifecycle: object | None` (L1584), `primary: object | None` (L1585)
-    - Methods/properties: _none_
-  - `MarketContext` (L1589–L1598)
-    - Fields: `seconds: list[object]` (L1590), `candles: list[object]` (L1591), `lower_index: object` (L1592), `chronology: object` (L1593), `start_index: int` (L1594), `end_index: int` (L1595), `index_offset: int` (L1596), `initial_bullish_trend: bool` (L1597), `initial_bearish_trend: bool` (L1598)
-    - Methods/properties: _none_
-  - `PipelineState` (L1855–L1872)
-    - Fields: `directions: tuple[str, ...]` (L1858), `results: dict[str, object]` (L1859), `reusable_full_context: bool` (L1860), `initial_order_geometry: dict[str, object]` (L1861), `internal_reaction_identities: dict[str, set[tuple[int, int]]]` (L1862), `full_e_zones: dict[str, list[object]]` (L1863), `full_e_detectors: dict[str, object]` (L1864), `full_s_detectors: dict[str, object]` (L1865), `full_lines_by_direction: dict[str, list[object]]` (L1866), `full_a_by_direction: dict[str, list[object]]` (L1867), `invalid_a_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L1868), `invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L1869), `full_s_by_direction: dict[str, list[object]]` (L1870), `full_s_candidates_by_direction: dict[str, list[object]]` (L1871), `primary_result: object | None` (L1872)
-    - Methods/properties: _none_
-  - `FullDirectionState` (L1876–L1888)
-    - Fields: `e_zones: list[object]` (L1879), `e_detector: object` (L1880), `s_detector: object` (L1881), `blue_lines: list[object]` (L1882), `a_zones: list[object]` (L1883), `invalid_a_identities: set[tuple[datetime, int]]` (L1884), `invalid_s_identities: set[tuple[datetime, int]]` (L1885), `s_zones: list[object]` (L1886), `s_candidates: list[object]` (L1887), `initial_s_zones: list[object]` (L1888)
-    - Methods/properties: _none_
-  - `DirectionRangeState` (L2477–L2486)
-    - Fields: `blue_lines: list[object]` (L2480), `a_zones: list[object]` (L2481), `s_candidates: list[object]` (L2482), `accepted_s_zones: list[object]` (L2483), `e_zones: list[object]` (L2484), `invalid_a_identities: set[tuple[datetime, int]]` (L2485), `invalid_s_identities: set[tuple[datetime, int]]` (L2486)
-    - Methods/properties: _none_
-  - `DirectionVisibilityState` (L2490–L2505)
-    - Fields: `blue_lines: list[object]` (L2493), `a_zones: list[object]` (L2494), `s_zones: list[object]` (L2495), `e_zones: list[object]` (L2496), `stopalls: list[object]` (L2497), `prepared_order_audit: list[object]` (L2498), `projection_s_zones: list[object]` (L2502), `projection_e_zones: list[object]` (L2503), `projection_stopalls: list[object]` (L2504), `primary_groups: dict[str, list[object]]` (L2505)
-    - Methods/properties: _none_
-- **Nested implementation functions/closures:** `build_candle_buckets.cached_decimal(value: object) -> Decimal` (L132–L143), `create_e_detector.direct_geometry(geometry_direction, geometry_start, geometry_end, gate_event)` (L1910–L1918), `serialize_direction_payload.build_legacy_payload()` (L2874–L2897), `serialize_direction_payload.serialize_reactions_from_one_selection()` (L2906–L2914), `serialize_direction_payload.build_payload()` (L2947–L2981), `serialize_primary_order.value(item)` (L2991–L2996), `serialize_primary_structures.cycle_identity(value)` (L3028–L3033), `serialize_primary_structures.point(item)` (L3034–L3057), `calculate_primary_structures.commit_high(point)` (L3162–L3170), `build_reversed_trend_outputs.calculate(context, direction)` (L3271–L3276), `build_reversed_trend_outputs.publish(group, context, *, stopped=False)` (L3278–L3293), `build_reversed_trend_outputs.empty_lists(item)` (L3311–L3316)
+- Function `emit_progress(status: str, label: str, duration_ms: float | None=None)` (L50-L55).
+- Function `timed(timings: dict[str, float], label: str, work)` (L58-L67).
+- Function `load_module(name: str, path: Path)` (L70-L77).
+- Function `load_engine(path: Path)` (L80-L81).
+- Function `local_datetime(epoch: int) -> datetime` (L87-L93).
+- Function `epoch(local: datetime) -> int` (L99-L105).
+- Function `display_epoch(value: str | datetime) -> int` (L111-L120).
+- Function `_aggregate_candle_buckets(rows: Iterable[dict], timeframe: int, cached_decimal: Callable[[object], Decimal], *, second_tail: dict | None=None, main_tail: dict | None=None) -> tuple[list[dict], list[dict]]` (L123-L164).
+- Function `build_candle_buckets(rows: list[dict], timeframe: int)` (L167-L182).
+- Class `BucketAppend` (L186-L190).
+  - Fields: `first_dirty_second: int`, `first_dirty_main: int`, `settled_seconds: int`, `settled_main: int`.
+- Class `LiveMarketBuckets` (L193-L260).
+  - Methods: `__init__(self, timeframe: int)`, `append(self, rows: Sequence[dict])`, `_delta(self, dirty_second: int, dirty_main: int)`.
+- Function `build_candle_objects(engine, buckets: list[dict], *, start_index: int=0)` (L263-L290).
+- Function `_index_selected(index: object, start_index: int | None, end_index: int | None) -> bool` (L293-L298).
+- Function `select_reaction_serialization_items(result, start_index=None, end_index=None, reaction_transform=None)` (L301-L321).
+- Function `serialize(result, start_index=None, end_index=None, reaction_transform=None, selected_items=None)` (L324-L365).
+- Function `serialize_blue_lines(items, start_index=None, end_index=None)` (L368-L385).
+- Function `serialize_a_zones(items)` (L388-L412).
+- Function `serialize_s_zones(items)` (L415-L477).
+- Function `serialize_e_zones(items)` (L480-L520).
+- Function `serialize_stopalls(items)` (L523-L587).
+- Function `bridge_datetime(value: object | None) -> str | None` (L590-L601).
+- Function `bridge_direction(direction: str) -> str` (L604-L605).
+- Function `bridge_mode(mode: object) -> str | None` (L608-L609).
+- Function `bridge_color(value: object | None) -> str | None` (L612-L615).
+- Function `_bridge_horizon(market: MarketContext) -> datetime` (L618-L622).
+- Function `_bridge_in_horizon(market: MarketContext, value: datetime | None) -> bool` (L625-L626).
+- Function `_bridge_proven_strict_event(market: MarketContext, direction: str, level: object | None, event_time: datetime | None) -> datetime | None` (L629-L666).
+- Function `_bridge_stop_view(market: MarketContext, direction: str, price: object | None, stop_time: datetime | None, stop_event_time: datetime | None) -> dict[str, object]` (L669-L686).
+- Function `_bridge_reaction_confirmation(market: MarketContext, direction: str, reaction: object, *, use_intrabar_start: bool=True) -> datetime | None` (L689-L710).
+- Function `_bridge_order_identity(item: object) -> tuple[int, int] | None` (L713-L718).
+- Class `BridgeProjection` (L721-L912).
+  - Methods: `__init__(self, *, direction: str, market: MarketContext, prepared_order_audit: list[object], order_direction: str)`, `physical_order(self, prepared: object | None)`, `parent_order(self, behavior: object)`, `current_order(self, behavior: object, parent_type: str, parent_family: str | None, strict_stop_event: datetime | None)`, `order_audit(self, prepared: object)`.
+- Function `_bridge_parent_stop(projection: BridgeProjection, detector: object | None, parent_type: str, item: object) -> tuple[datetime | None, datetime | None]` (L915-L933).
+- Function `_bridge_a_stop(projection: BridgeProjection, s_detector: object | None, item: object) -> tuple[datetime | None, datetime | None]` (L936-L954).
+- Function `_bridge_behavior_stop(projection: BridgeProjection, direction: str, price: object, stop_time: datetime | None, stop_event_time: datetime | None) -> dict[str, object]` (L957-L969).
+- Function `_bridge_blue_formation(projection: BridgeProjection, direction: str, line: object, reactions: list[object]) -> tuple[datetime | None, datetime | None]` (L972-L992).
+- Function `_bridge_project_reaction(projection: BridgeProjection, direction: str, raw: object, public: object) -> dict[str, object]` (L995-L1035).
+- Function `_bridge_project_reset(projection: BridgeProjection, direction: str, reset: object) -> dict[str, object]` (L1038-L1058).
+- Function `_bridge_project_blue(projection: BridgeProjection, direction: str, line: object, reactions: list[object]) -> dict[str, object]` (L1061-L1094).
+- Function `_bridge_full_lines_by_ordinal(lines: list[object]) -> dict[int, object]` (L1097-L1106).
+- Function `_bridge_project_a(projection: BridgeProjection, direction: str, item: object, lines_by_ordinal: dict[int, object], reactions: list[object], s_detector: object | None) -> dict[str, object]` (L1109-L1196).
+- Function `_bridge_project_s(projection: BridgeProjection, direction: str, item: object, e_detector: object | None) -> dict[str, object]` (L1199-L1252).
+- Function `_bridge_source_index(item: object) -> tuple[int, datetime] | None` (L1255-L1260).
+- Function `_bridge_parent_behavior_for_e(projection: BridgeProjection, direction: str, item: object, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object]) -> dict[str, object]` (L1263-L1304).
+- Function `_bridge_project_e(projection: BridgeProjection, direction: str, item: object, e_detector: object | None, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object]) -> dict[str, object]` (L1307-L1351).
+- Function `_bridge_project_stopall(projection: BridgeProjection, direction: str, item: object) -> dict[str, object]` (L1354-L1420).
+- Function `_bridge_audit_order_key(prepared: object, detector: object) -> tuple[int, int]` (L1423-L1430).
+- Function `build_bridge_output(direction: str, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, selected_reactions: list[tuple[object, object]], selected_resets: list[object], selected_blue_lines: list[object], selected_a_zones: list[object], selected_s_zones: list[object], selected_e_zones: list[object], selected_stopalls: list[object], selected_order_audit: list[object]) -> dict[str, list[dict[str, object]]]` (L1433-L1535).
+- Function `validate_order_audit_bridge(prepared_items, s_zones, e_zones, stopalls) -> None` (L1538-L1603).
+- Function `serialize_order_audit(prepared_items, detector)` (L1606-L1656).
+- Class `EngineBundle` (L1660-L1667).
+  - Fields: `reaction: object`, `blue_line: object`, `a_zone: object`, `s_zone: object`, `e_zone: object | None`, `lifecycle: object | None`, `primary: object | None`.
+- Class `MarketContext` (L1671-L1680).
+  - Fields: `seconds: list[object]`, `candles: list[object]`, `lower_index: object`, `chronology: object`, `start_index: int`, `end_index: int`, `index_offset: int`, `initial_bullish_trend: bool`, `initial_bearish_trend: bool`.
+- Function `market_segment(market, start, stop, *, initial_bullish_trend=None, initial_bearish_trend=None)` (L1683-L1703).
+- Function `absolute_payload_indexes(value, offset)` (L1706-L1717).
+- Function `serialize_trend_transition(transition, market)` (L1720-L1740).
+- Function `parse_arguments(argv=None)` (L1743-L1813).
+- Function `load_engines(args, timings: dict[str, float]) -> EngineBundle` (L1816-L1851).
+- Function `prepare_market_context(args, engines: EngineBundle, timings: dict[str, float]) -> MarketContext` (L1854-L1934).
+- Class `PipelineState` (L1937-L1955).
+  - Fields: `directions: tuple[str, ...]`, `results: dict[str, object]`, `reusable_full_context: bool`, `initial_order_geometry: dict[str, object]`, `internal_reaction_identities: dict[str, set[tuple[int, int]]]`, `full_e_zones: dict[str, list[object]]`, `full_e_detectors: dict[str, object]`, `full_s_detectors: dict[str, object]`, `full_lines_by_direction: dict[str, list[object]]`, `full_a_by_direction: dict[str, list[object]]`, `invalid_a_identities_by_direction: dict[str, set[tuple[datetime, int]]]`, `invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]`, `full_s_by_direction: dict[str, list[object]]`, `full_s_candidates_by_direction: dict[str, list[object]]`, `primary_result: object | None`, `live_stages: object | None`.
+- Class `FullDirectionState` (L1959-L1971).
+  - Fields: `e_zones: list[object]`, `e_detector: object`, `s_detector: object`, `blue_lines: list[object]`, `a_zones: list[object]`, `invalid_a_identities: set[tuple[datetime, int]]`, `invalid_s_identities: set[tuple[datetime, int]]`, `s_zones: list[object]`, `s_candidates: list[object]`, `initial_s_zones: list[object]`.
+- Function `create_e_detector(direction: str, e_engine, full_results: dict[str, object], s_zones: list[object], chronology, geometry_detectors: dict[str, object], initial_order_audit, lifecycle_engine, *, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[object]=(), live_continuation=None, order_geometry=None, live_scope=())` (L1974-L2029).
+- Function `calculate_full_direction_state(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], order_b_legs: Sequence[object]=(), shared_stages: FullDirectionState | None=None, live=None, feedback_index: int=0) -> FullDirectionState` (L2032-L2383).
+- Function `calculate_direction_with_order_b_feedback(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], *, stopall_enabled: bool, live=None) -> FullDirectionState` (L2386-L2450).
+- Function `prepare_pipeline_state(args, engines: EngineBundle, market: MarketContext, timings: dict[str, float], *, live=None) -> PipelineState` (L2453-L2599).
+- Class `DirectionRangeState` (L2603-L2612).
+  - Fields: `blue_lines: list[object]`, `a_zones: list[object]`, `s_candidates: list[object]`, `accepted_s_zones: list[object]`, `e_zones: list[object]`, `invalid_a_identities: set[tuple[datetime, int]]`, `invalid_s_identities: set[tuple[datetime, int]]`.
+- Class `DirectionVisibilityState` (L2616-L2631).
+  - Fields: `blue_lines: list[object]`, `a_zones: list[object]`, `s_zones: list[object]`, `e_zones: list[object]`, `stopalls: list[object]`, `prepared_order_audit: list[object]`, `projection_s_zones: list[object]`, `projection_e_zones: list[object]`, `projection_stopalls: list[object]`, `primary_groups: dict[str, list[object]]`.
+- Function `calculate_direction_range_state(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float]) -> DirectionRangeState` (L2634-L2733).
+- Function `finalize_direction_visibility(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, direction_state: DirectionRangeState, timings: dict[str, float]) -> DirectionVisibilityState` (L2736-L2972).
+- Function `serialize_direction_payload(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, timings: dict[str, float])` (L2975-L3113).
+- Function `serialize_primary_order(order, market, owner_direction)` (L3116-L3142).
+- Function `serialize_primary_structures(primary, market)` (L3145-L3264).
+- Function `calculate_primary_structures(args, engines, market, state, visibility, timings, direction='bearish')` (L3267-L3320).
+- Function `serialize_setup_annotations(result, market)` (L3323-L3361).
+- Function `build_direction_output(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L3364-L3420).
+- Function `merge_regime_outputs(regimes)` (L3422-L3448).
+- Function `build_reversed_trend_outputs(args, engines, market, transition, timings, *, live=None)` (L3451-L3536).
+- Function `build_response_payload(args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float], pipeline_started: float) -> dict[str, object]` (L3539-L3599).
+- Function `main() -> int` (L3602-L3632).
 
 #### `pipeline/__init__.py`
-- **Module-level symbols/assignments:** `_pipeline_dir` (L10–L10), `__all__` (L22–L28)
-- **Top-level functions:** _none_
-- **Classes / schemas:**
-  - _none_
-- **Nested implementation functions/closures:** _none_
 
 #### `pipeline/a_zone_detector.py`
-- **Module-level symbols/assignments:** `A_ZONE_VERSION` (L20–L20), `A_ZONE_LAST_MODIFIED_DATE` (L21–L21)
-- **Top-level functions:** `detect_a_zones(direction: str, reactions: Sequence[object], blue_lines: Sequence[object], chronology: object) -> list[AZone]` (L798–L804)
-- **Classes / schemas:**
-  - `BlueState` (L25–L34)
-    - Fields: `ordinal: int` (L26), `line: object` (L27), `formation_index: int` (L28), `formation_time: datetime` (L29), `stop_index: int | None` (L30), `stop_time: datetime | None` (L31), `stop_event_time: datetime | None` (L32), `stop_level: Decimal` (L33), `stop_event_extreme: Decimal | None` (L34)
-    - Methods/properties: _none_
-  - `AZone` (L38–L64)
-    - Fields: `direction: str` (L39), `blue_1_ordinal: int` (L40), `blue_2_ordinal: int` (L41), `blue_1_source_time: datetime` (L42), `blue_2_source_time: datetime` (L43), `blue_1_stop_time: datetime` (L44), `blue_2_stop_time: datetime` (L45), `blue_1_stop_level: Decimal` (L46), `blue_2_stop_level: Decimal` (L47), `continuation_level: Decimal` (L48), `continuation_source_index: int` (L49), `continuation_source_time: datetime` (L50), `trigger_index: int` (L51), `trigger_time: datetime` (L52), `trigger_event_time: datetime` (L53), `reaction_number: int` (L54), `reaction_first_time: datetime` (L55), `reaction_break_time: datetime` (L56), `source_index: int` (L57), `source_time: datetime` (L58), `price: Decimal` (L59), `formation_route: str | None` (L62), `blue_1_stop_event_time: datetime | None` (L63), `blue_2_stop_event_time: datetime | None` (L64)
-    - Methods/properties: _none_
-  - `AZoneDetector` (L67–L795)
-    - Fields: _none_
-    - Methods/properties: `__init__(self, direction: str, reactions: Sequence[object], blue_lines: Sequence[object], chronology: object) -> None` (L68–L105), `extreme_name(self) -> str` (L108–L109), `_strict_cross(self, value: Decimal, level: Decimal) -> bool` (L111–L112), `_better(self, value: Decimal, current: Decimal) -> bool` (L114–L115), `_main_index(self, timestamp: datetime) -> int` (L117–L118), `_lower_window(self, start: datetime, end: datetime | None) -> Sequence[object]` (L120–L123), `_first_crossing(self, level: Decimal, start: datetime, end: datetime | None) -> tuple[int, datetime, Decimal] | None` (L125–L165), `_range_extreme(self, start: datetime, end: datetime) -> tuple[Decimal, int, datetime]` (L167–L199), `_formation(self, line: object) -> tuple[int, datetime, datetime]` (L201–L216), `_reset_formation_time(self, line: object, source_index: int) -> datetime` (L218–L228), `_build_blue_states(self) -> list[BlueState]` (L230–L257), `_double_stop_a_candidates(self) -> list[AZone]` (L259–L320), `_pair_trigger(self, previous: BlueState, current: BlueState, expires_at: datetime | None) -> tuple[Decimal, int, datetime, int, datetime, datetime, datetime, datetime] | None` (L322–L480), `_reaction_confirmation_time(self, reaction: object) -> datetime` (L482–L485), `_first_reaction_after(self, trigger_event_time: datetime, *, not_before: datetime | None=None) -> tuple[int, object] | None` (L487–L502), `_inherited_stop(self, previous: BlueState, current: BlueState) -> tuple[Decimal, int, datetime, datetime] | None` (L504–L552), `_a_source(self, trigger_index: int, reaction: object) -> tuple[int, datetime, Decimal] | None` (L554–L573), `_detect_ordinary_a(self, states: list[BlueState]) -> list[AZone]` (L575–L694), `_filter_special_a(self, special: list[AZone], ordinary: list[AZone]) -> tuple[list[AZone], list[AZone]]` (L696–L758), `detect(self) -> list[AZone]` (L760–L770), `_a_was_stopped_before(self, zone: AZone, end_time: datetime, *, not_before: datetime | None=None) -> bool` (L772–L795)
-- **Nested implementation functions/closures:** _none_
+- Class `BlueState` (L25-L34).
+  - Fields: `ordinal: int`, `line: object`, `formation_index: int`, `formation_time: datetime`, `stop_index: int | None`, `stop_time: datetime | None`, `stop_event_time: datetime | None`, `stop_level: Decimal`, `stop_event_extreme: Decimal | None`.
+- Class `AZone` (L38-L64).
+  - Fields: `direction: str`, `blue_1_ordinal: int`, `blue_2_ordinal: int`, `blue_1_source_time: datetime`, `blue_2_source_time: datetime`, `blue_1_stop_time: datetime`, `blue_2_stop_time: datetime`, `blue_1_stop_level: Decimal`, `blue_2_stop_level: Decimal`, `continuation_level: Decimal`, `continuation_source_index: int`, `continuation_source_time: datetime`, `trigger_index: int`, `trigger_time: datetime`, `trigger_event_time: datetime`, `reaction_number: int`, `reaction_first_time: datetime`, `reaction_break_time: datetime`, `source_index: int`, `source_time: datetime`, `price: Decimal`, `formation_route: str | None`, `blue_1_stop_event_time: datetime | None`, `blue_2_stop_event_time: datetime | None`.
+- Class `AZoneDetector` (L67-L799).
+  - Methods: `__init__(self, direction: str, reactions: Sequence[object], blue_lines: Sequence[object], chronology: object)`, `extreme_name(self)`, `_strict_cross(self, value: Decimal, level: Decimal)`, `_better(self, value: Decimal, current: Decimal)`, `_main_index(self, timestamp: datetime)`, `_lower_window(self, start: datetime, end: datetime | None)`, `_first_crossing(self, level: Decimal, start: datetime, end: datetime | None)`, `_range_extreme(self, start: datetime, end: datetime)`, `_formation(self, line: object)`, `_reset_formation_time(self, line: object, source_index: int)`, `_build_blue_states(self)`, `_double_stop_a_candidates(self)`, `_pair_trigger(self, previous: BlueState, current: BlueState, expires_at: datetime | None)`, `_reaction_confirmation_time(self, reaction: object)`, `_first_reaction_after(self, trigger_event_time: datetime, *, not_before: datetime | None=None, start_position: int=0)`, `_inherited_stop(self, previous: BlueState, current: BlueState)`, `_a_source(self, trigger_index: int, reaction: object)`, `_detect_ordinary_a(self, states: list[BlueState])`, `_filter_special_a(self, special: list[AZone], ordinary: list[AZone])`, `detect(self)`, `_zone(self, **fields)`, `_a_was_stopped_before(self, zone: AZone, end_time: datetime, *, not_before: datetime | None=None)`.
+- Function `detect_a_zones(direction: str, reactions: Sequence[object], blue_lines: Sequence[object], chronology: object) -> list[AZone]` (L802-L808).
+- Class `_AHistory` (L816-L825).
+  - Fields: `confirmations: dict[_EventKey, datetime]`, `reset_formations: dict[_EventKey, datetime]`, `crossings: dict[_EventKey, tuple[_MarketEvent | None, bool]]`, `extremes: dict[_EventKey, tuple[Decimal, int, datetime]]`, `matches: dict[_EventKey, int | None]`, `inherited_stops: dict[_EventKey, tuple | None]`, `triggers: dict[_EventKey, tuple | None]`, `sources: dict[_EventKey, _MarketEvent | None]`, `zones: dict[_EventKey, AZone]`.
+- Class `_LiveAZoneDetector` (L828-L999).
+  - Methods: `__init__(self, direction, reactions, blue_lines, chronology, previous, dirty_time)`, `_settled(self, event_time: datetime)`, `_settled_reaction_window(self, end: datetime)`, `_reaction_confirmation_time(self, reaction)`, `_reset_formation_time(self, line, source_index)`, `_first_crossing(self, level, start, end)`, `_range_extreme(self, start, end)`, `_first_reaction_after(self, trigger_event_time, *, not_before=None)`, `_blue_key(state)`, `_inherited_stop(self, previous, current)`, `_pair_trigger(self, previous, current, expires_at)`, `_a_source(self, trigger_index, reaction)`, `_zone(self, **fields)`.
+- Class `LiveAZoneContinuation` (L1002-L1032).
+  - Methods: `__init__(self, direction, reactions, blue_lines, chronology)`, `result(self)`, `update(self, reactions, blue_lines, chronology, *, first_dirty_main: int)`.
 
 #### `pipeline/blue_line_detector.py`
-- **Module-level symbols/assignments:** `BLUE_LINE_VERSION` (L18–L18), `FIBONACCI_RATIO` (L19–L19)
-- **Top-level functions:** `_is_color(candle: object, color: str) -> bool` (L48–L49), `_main_candle(candles_by_index: dict[int, object], index: int) -> object` (L52–L56), `_stops_on_index(direction: str, line: object, candles: Sequence[object], start_index: int, end_index: int) -> bool` (L59–L72), `fibonacci_level(direction: str, reaction: object, reference: Decimal) -> Decimal` (L75–L81), `_intrabar_pending_confirmation(direction: str, chronology: object, reaction: object, comparison_extreme: Decimal, start_time: datetime, break_time: datetime, candles_by_index: dict[int, object]) -> ScaleStrike | None` (L84–L139), `count_scale_strikes(direction: str, reaction: object, chronology: object, reference: Decimal, candles_by_index: dict[int, object] | None=None) -> tuple[Decimal, list[ScaleStrike]]` (L142–L227), `_build_scale_blue_line(direction: str, reaction_number: int, previous_count: int, level: Decimal, strikes: Sequence[ScaleStrike], candles_by_index: dict[int, object], chronology: object, behavior_internal: bool) -> BlueLine` (L230–L265), `_build_reset_blue_line(direction: str, reaction_number: int, reset: object, previous_line: BlueLine | None, candles: Sequence[object], candles_by_index: dict[int, object], chronology: object, behavior_internal: bool) -> BlueLine` (L268–L320), `detect_blue_lines(direction: str, reactions: Sequence[object], chronology: object, resets: Sequence[object]=()) -> list[BlueLine]` (L322–L427), `public_blue_lines(lines: Sequence[BlueLine]) -> list[BlueLine]` (L430–L437), `mark_internal_blue_lines(lines: Sequence[BlueLine], owner_reactions: Sequence[object], all_behavior_reactions: Sequence[object]) -> None` (L439–L481)
-- **Classes / schemas:**
-  - `ScaleStrike` (L23–L26)
-    - Fields: `source_index: int` (L24), `source_time: datetime` (L25), `extreme: Decimal` (L26)
-    - Methods/properties: _none_
-  - `BlueLine` (L30–L45)
-    - Fields: `direction: str` (L31), `kind: str` (L32), `reaction_number: int` (L33), `previous_strike_count: int | None` (L34), `strike_count: int | None` (L35), `fibonacci_level: Decimal | None` (L36), `source_index: int` (L37), `source_time: datetime` (L38), `source_extreme: Decimal` (L39), `broken_level: Decimal | None` (L40), `line_price: Decimal` (L41), `start_time: datetime` (L42), `end_time: datetime` (L43), `calculation_valid: bool` (L44), `behavior_internal: bool` (L45)
-    - Methods/properties: _none_
-- **Nested implementation functions/closures:** `mark_internal_blue_lines.owner_is_internal(line: BlueLine) -> bool` (L452–L456), `mark_internal_blue_lines.geometry_is_internal(line: BlueLine) -> bool` (L458–L477)
+- Class `ScaleStrike` (L24-L27).
+  - Fields: `source_index: int`, `source_time: datetime`, `extreme: Decimal`.
+- Class `BlueLine` (L31-L46).
+  - Fields: `direction: str`, `kind: str`, `reaction_number: int`, `previous_strike_count: int | None`, `strike_count: int | None`, `fibonacci_level: Decimal | None`, `source_index: int`, `source_time: datetime`, `source_extreme: Decimal`, `broken_level: Decimal | None`, `line_price: Decimal`, `start_time: datetime`, `end_time: datetime`, `calculation_valid: bool`, `behavior_internal: bool`.
+- Function `_is_color(candle: object, color: str) -> bool` (L49-L50).
+- Function `_main_candle(candles_by_index: dict[int, object], index: int) -> object` (L53-L57).
+- Function `_stops_on_index(direction: str, line: object, candles: Sequence[object], start_index: int, end_index: int) -> bool` (L60-L73).
+- Function `fibonacci_level(direction: str, reaction: object, reference: Decimal) -> Decimal` (L76-L82).
+- Function `_intrabar_pending_confirmation(direction: str, chronology: object, reaction: object, comparison_extreme: Decimal, start_time: datetime, break_time: datetime, candles_by_index: dict[int, object]) -> ScaleStrike | None` (L85-L140).
+- Function `count_scale_strikes(direction: str, reaction: object, chronology: object, reference: Decimal, candles_by_index: dict[int, object] | None=None) -> tuple[Decimal, list[ScaleStrike]]` (L143-L228).
+- Function `_build_scale_blue_line(direction: str, reaction_number: int, previous_count: int, level: Decimal, strikes: Sequence[ScaleStrike], candles_by_index: dict[int, object], chronology: object, behavior_internal: bool) -> BlueLine` (L231-L266).
+- Function `_build_reset_blue_line(direction: str, reaction_number: int, reset: object, previous_line: BlueLine | None, candles: Sequence[object], candles_by_index: dict[int, object], chronology: object, behavior_internal: bool) -> BlueLine` (L269-L321).
+- Class `_BlueCheckpoint` (L324-L328).
+  - Fields: `previous_reaction: object | None`, `previous_count: int | None`, `healthy_since_blue: int`, `line_count: int`.
+- Function `_calculate_blue_tail(direction: str, reactions: Sequence[object], chronology: object, resets: Sequence[object], *, start: int, checkpoint: _BlueCheckpoint, output: list[BlueLine], checkpoints: list[_BlueCheckpoint] | None=None) -> list[BlueLine]` (L331-L442).
+- Function `detect_blue_lines(direction: str, reactions: Sequence[object], chronology: object, resets: Sequence[object]=()) -> list[BlueLine]` (L445-L457).
+- Class `LiveBlueLineContinuation` (L460-L512).
+  - Methods: `__init__(self, direction: str, reactions: Sequence[object], chronology: object, resets: Sequence[object]=())`, `result(self)`, `update(self, reactions: Sequence[object], chronology: object, resets: Sequence[object], *, first_changed: int, first_dirty_main: int | None=None)`.
+- Function `public_blue_lines(lines: Sequence[BlueLine]) -> list[BlueLine]` (L515-L522).
+- Function `mark_internal_blue_lines(lines: Sequence[BlueLine], owner_reactions: Sequence[object], all_behavior_reactions: Sequence[object]) -> None` (L524-L566).
+
+#### `pipeline/bullish_setup_engine.py`
+- Class `StopAllAssessment` (L25-L37).
+  - Fields: `source_index: int`, `source_time: datetime`, `number: int`, `decision_event_time: datetime`, `scope_id: str`, `ignored_prefix: bool`, `reference_high: Decimal`, `reference_source_index: int`, `status: str | None`, `status_event_time: datetime | None`, `reason: str`, `predecessor_source_indexes: tuple[int, ...]`.
+- Class `BehaviorAssessment` (L41-L48).
+  - Fields: `kind: str`, `source_index: int`, `source_time: datetime`, `decision_event_time: datetime`, `anchor_source_index: int`, `status: str | None`, `status_event_time: datetime | None`.
+- Class `SetupAnnotation` (L52-L71).
+  - Fields: `id: str`, `anchor_kind: str`, `anchor_number: int`, `anchor_source_index: int`, `anchor_source_time: datetime`, `anchor_decision_event_time: datetime`, `cycle_id: str | None`, `behavior_kind: str | None`, `behavior_source_index: int | None`, `behavior_source_time: datetime | None`, `confirmation_event_time: datetime`, `entry_index: int`, `entry_time: datetime`, `close_event_time: datetime`, `entry_price: Decimal`, `stop_price: Decimal`, `target_price: Decimal`, `width_bars: int`, `risk_reward: Decimal`.
+- Class `ReferenceBreak` (L75-L80).
+  - Fields: `scope_id: str`, `event_time: datetime`, `source_index: int`, `reference_high: Decimal`, `reference_source_index: int`.
+- Class `SetupResult` (L84-L89).
+  - Fields: `assessments: list[StopAllAssessment]`, `behaviors: list[BehaviorAssessment]`, `setups: list[SetupAnnotation]`, `breakouts: list[ReferenceBreak]`, `phase: str`.
+- Class `_Scope` (L93-L100).
+  - Fields: `identity: str`, `rows: list`, `behaviors: list`, `parity: dict`, `priority: int | None`, `break_scheduled: bool`, `blocked: bool`.
+- Class `_Movement` (L104-L112).
+  - Fields: `root: int`, `epoch: int`, `prefix: int`, `reference_high: Decimal`, `reference_source_index: int`, `source_time: datetime`, `extent: int`, `scopes: dict`.
+- Function `_native_chains(stopalls, stop_times)` (L115-L135).
+- Class `_SetupMarket` (L138-L153).
+  - Methods: `__init__(self, chronology, through_index)`, `crossing(self, event, price, *, above=False, inclusive=False)`.
+- Function `_setup_input_events(market, s_zones, e_zones, stopalls, primary_lows)` (L156-L188).
+- Class `_SetupState` (L191-L234).
+  - Methods: `__init__(self, *, retain=False)`, `attr(self, target, key, value)`, `put(self, target, key, value)`, `remove(self, target, key)`, `append(self, target, value)`, `add(self, target, value)`, `rewind(self, frontier)`.
+- Function `_run_setup_events(market, state, inputs, *, frontier=None)` (L237-L433).
+- Function `calculate_bullish_setups(chronology, s_zones, e_zones, stopalls, primary_lows, *, through_index=None)` (L436-L443).
+- Function `_setup_event_keys(inputs)` (L446-L460).
+- Class `LiveBullishSetupContinuation` (L463-L503).
+  - Methods: `__init__(self, chronology, s_zones, e_zones, stopalls, primary_lows, *, through_index=None)`, `result(self)`, `update(self, chronology, s_zones, e_zones, stopalls, primary_lows, *, first_dirty_event: datetime, through_index=None)`.
 
 #### `pipeline/core_utils.py`
-- **Module-level symbols/assignments:** `CORE_UTILS_VERSION` (L5–L5), `OrderIdentity` (L16–L16)
-- **Top-level functions:** `as_decimal(value: object) -> Decimal` (L11–L13), `order_identity(first_index: object, break_index: object) -> OrderIdentity` (L19–L21), `reaction_identity(reaction: object) -> OrderIdentity` (L24–L26)
-- **Classes / schemas:**
-  - _none_
-- **Nested implementation functions/closures:** _none_
+- Function `as_decimal(value: object) -> Decimal` (L11-L13).
+- Function `order_identity(first_index: object, break_index: object) -> OrderIdentity` (L19-L21).
+- Function `reaction_identity(reaction: object) -> OrderIdentity` (L24-L26).
 
 #### `pipeline/direction_policy.py`
-- **Module-level symbols/assignments:** `DIRECTION_POLICY_VERSION` (L11–L11), `Direction` (L17–L17), `BULLISH` (L57–L63), `BEARISH` (L64–L70)
-- **Top-level functions:** `policy_for(direction: str) -> DirectionPolicy` (L49–L54)
-- **Classes / schemas:**
-  - `DirectionPolicy` (L21–L46)
-    - Fields: `direction: Direction` (L22), `extreme_attr: Literal['low', 'high']` (L23), `opposite_extreme_attr: Literal['high', 'low']` (L24), `first_reaction_tag: Literal['RED', 'GREEN']` (L25), `context_tag: Literal['GREEN', 'RED']` (L26)
-    - Methods/properties: `opposite_direction(self) -> Direction` (L29–L30), `strict_cross(self, value: Decimal, level: Decimal) -> bool` (L32–L33), `better_extreme(self, value: Decimal, current: Decimal) -> bool` (L35–L36), `choose_extreme(self, left: Decimal, right: Decimal) -> Decimal` (L38–L39), `confirmation_cross(self, value: Decimal, level: Decimal) -> bool` (L41–L46)
-- **Nested implementation functions/closures:** _none_
+- Class `DirectionPolicy` (L21-L46).
+  - Fields: `direction: Direction`, `extreme_attr: Literal['low', 'high']`, `opposite_extreme_attr: Literal['high', 'low']`, `first_reaction_tag: Literal['RED', 'GREEN']`, `context_tag: Literal['GREEN', 'RED']`.
+  - Methods: `opposite_direction(self)`, `strict_cross(self, value: Decimal, level: Decimal)`, `better_extreme(self, value: Decimal, current: Decimal)`, `choose_extreme(self, left: Decimal, right: Decimal)`, `confirmation_cross(self, value: Decimal, level: Decimal)`.
+- Function `policy_for(direction: str) -> DirectionPolicy` (L49-L54).
 
 #### `pipeline/e_zone_detector.py`
-- **Module-level symbols/assignments:** `E_ZONE_VERSION` (L26), `E_ZONE_IMPLEMENTATION_VERSION` (L27), `E_ZONE_LAST_MODIFIED` (L28)
-- **Top-level functions:** `detect_e_zones(direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], s_zones: Sequence[object], opposite_resets: Sequence[object], chronology: object, start_index: int=0, end_index: int | None=None, direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None=None, blocked_order_first_times: set[datetime] | None=None, initial_order_audit: dict[tuple[int, int], dict[str, object]] | None=None, sequence_priority: Callable[[str, str], int] | None=None, invalid_s_root_identities: set[tuple[datetime, int]] | None=None)` (L1232)
-- **Classes / schemas:**
-  - `EZone` (L32)
-    - Fields: `direction: str`, `family: str`, `number: int`, `parent_type: str`, `parent_source_index: int`, `parent_source_time: datetime`, `parent_price: Decimal`, `parent_stop_index: int`, `parent_stop_time: datetime`, `parent_stop_event_time: datetime`, `order_direction: str`, `order_reaction_number: int`, `order_mode: str`, `order_causes: tuple[str, ...]`, `order_parent_stop_cause_time: datetime | None`, `order_first_index: int`, `order_first_time: datetime`, `order_break_index: int`, `order_break_time: datetime`, `order_confirmation_time: datetime`, `order_box_top: Decimal`, `order_box_top_source_index: int`, `order_box_top_source_time: datetime`, `order_box_bottom: Decimal`, `order_box_bottom_source_index: int`, `order_box_bottom_source_time: datetime`, `order_stop_level: Decimal`, `order_stop_source_index: int`, `order_stop_source_time: datetime`, `source_index: int`, `source_time: datetime`, `price: Decimal`, `decision_index: int`, `decision_time: datetime`, `decision_event_time: datetime`
-    - Methods/properties: _none_
-  - `EZoneDetector` (L70)
-    - Fields: _none_
-    - Methods/properties: `__init__(self, direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], s_zones: Sequence[object], opposite_resets: Sequence[object], chronology: object, start_index: int=0, end_index: int | None=None, direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None=None, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), initial_order_audit: dict[tuple[int, int], dict[str, object]] | None=None, sequence_resets: dict[datetime, int] | None=None, sequence_priority: Callable[[str, str], int] | None=None, invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[OrderBResetLeg]=())` (L71), `sequence_resets(self)` (L230), `sequence_resets(self, resets: dict[datetime, int])` (L234), `_reset_time(self, reset: object)` (L248), `_main_index(self, value: datetime)` (L251), `_first_cross_position(self, left: int, right: int, level: Decimal, *, less: bool)` (L255), `_stop_value(self, item: object)` (L272), `_build_extreme_sparse(self)` (L275), `_extreme_position(self, left: int, right: int)` (L304), `_first_parent_stop(self, source_time: datetime, level: Decimal)` (L324), `_confirmation_for(self, reaction: object, direction: str)` (L337), `_confirmation(self, reaction: object)` (L340), `_reaction_first_time(self, reaction: object)` (L343), `_parent_stop(self, parent_type: str, parent: object)` (L347), `parent_stop(self, parent_type: str, parent: object)` (L355), `_extreme_between(self, start: datetime, end: datetime)` (L362), `_zone(self, family: str, number: int, parent_type: str, parent: object, stop_event: datetime, *, e_owned_source_times: set[datetime] | None=None)` (L378), `set_consumed_s_evidence(self, evidence: Sequence[tuple[object, object]])` (L492), `_apply_consumed_s_evidence(self, zones: Sequence[EZone])` (L504), `continuation_chain_from_s(self, owner: EZone, s_zone: object, independent_a_order_identities: frozenset[tuple[int, int]]=frozenset())` (L522), `replace_with_earlier_continuation(self, base_zones: Sequence[EZone], owner: EZone, continuation: Sequence[EZone])` (L581), `resolve_same_source_conflicts(self, zones: Sequence[EZone])` (L628), `restore_independent_s_roots(self, dominant_zones: Sequence[EZone])` (L672), `_invalid_s_without_order_cause(self, zone: EZone)` (L764), `_discover_candidate_chains(self)` (L788), `_reconcile_candidate_chains(self, candidates: list[EZone])` (L883), `detect(self)` (L1218)
-- **Nested implementation functions/closures:** `EZoneDetector.replace_with_earlier_continuation.descends_from_owner` (L590), `EZoneDetector.resolve_same_source_conflicts.outranks` (L646), `EZoneDetector._reconcile_candidate_chains.enqueue` (L918), `EZoneDetector._reconcile_candidate_chains.valid_order` (L930), `EZoneDetector._reconcile_candidate_chains.parent_active` (L939), `EZoneDetector._reconcile_candidate_chains.stopped_by` (L1014), `EZoneDetector._reconcile_candidate_chains.ownership_priority` (L1093), `EZoneDetector._reconcile_candidate_chains.collect_lineage` (L1191)
+- Class `EZone` (L32-L67).
+  - Fields: `direction: str`, `family: str`, `number: int`, `parent_type: str`, `parent_source_index: int`, `parent_source_time: datetime`, `parent_price: Decimal`, `parent_stop_index: int`, `parent_stop_time: datetime`, `parent_stop_event_time: datetime`, `order_direction: str`, `order_reaction_number: int`, `order_mode: str`, `order_causes: tuple[str, ...]`, `order_parent_stop_cause_time: datetime | None`, `order_first_index: int`, `order_first_time: datetime`, `order_break_index: int`, `order_break_time: datetime`, `order_confirmation_time: datetime`, `order_box_top: Decimal`, `order_box_top_source_index: int`, `order_box_top_source_time: datetime`, `order_box_bottom: Decimal`, `order_box_bottom_source_index: int`, `order_box_bottom_source_time: datetime`, `order_stop_level: Decimal`, `order_stop_source_index: int`, `order_stop_source_time: datetime`, `source_index: int`, `source_time: datetime`, `price: Decimal`, `decision_index: int`, `decision_time: datetime`, `decision_event_time: datetime`.
+- Class `_ParentStopProgress` (L71-L73).
+  - Fields: `scanned_until: datetime`, `event: datetime | None`.
+- Class `_EReconciliationStep` (L77-L81).
+  - Fields: `source: int`, `count: int`, `active: tuple[EZone, ...]`, `sequence_start: datetime | None`.
+- Class `_ReopenedERace` (L84-L85).
+- Class `_ReconciledE` (L89-L96).
+  - Fields: `candidates: tuple[EZone, ...]`, `numbered: tuple[EZone, ...]`, `accepted: frozenset[tuple[datetime, int]]`, `lifecycle_starts: frozenset[datetime]`, `evidence: tuple`, `steps: tuple[_EReconciliationStep, ...]`, `native_numbered: tuple[EZone, ...]`.
+- Class `LiveEContinuation` (L99-L305).
+  - Methods: `__init__(self)`, `advance(self, chronology: object, *, first_dirty_main: int)`, `_dirty_time(self, detector: EZoneDetector)`, `first_stop(self, detector: EZoneDetector, start: datetime, level: Decimal, *, less: bool, search: Callable[[datetime, datetime, Decimal], datetime | None])`, `extreme(self, detector: EZoneDetector, start_index: int, end_index: int)`, `zone(self, detector: EZoneDetector, family: str, number: int, parent_type: str, parent: object, stop_event: datetime, match: OrderMatch, source: tuple[int, datetime, Decimal])`, `reconcile(self, detector: EZoneDetector, candidates: list[EZone])`.
+- Class `EZoneDetector` (L308-L1534).
+  - Methods: `__init__(self, direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], s_zones: Sequence[object], opposite_resets: Sequence[object], chronology: object, start_index: int=0, end_index: int | None=None, direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None=None, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), initial_order_audit: dict[tuple[int, int], dict[str, object]] | None=None, sequence_resets: dict[datetime, int] | None=None, sequence_priority: Callable[[str, str], int] | None=None, invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[OrderBResetLeg]=(), live_continuation: LiveEContinuation | None=None, live_scope: tuple=())`, `sequence_resets(self)`, `sequence_resets(self, resets: dict[datetime, int])`, `_reset_time(self, reset: object)`, `_main_index(self, value: datetime)`, `_first_cross_position(self, left: int, right: int, level: Decimal, *, less: bool)`, `_stop_value(self, item: object)`, `_build_extreme_sparse(self)`, `_extreme_position(self, left: int, right: int)`, `_first_parent_stop(self, source_time: datetime, level: Decimal)`, `_search_parent_stop(self, start: datetime, end: datetime, level: Decimal)`, `_search_order_stop(self, start: datetime, end: datetime, level: Decimal)`, `_search_strict_cross(self, start: datetime, end: datetime, level: Decimal, *, less: bool)`, `_cross_order(self, start: datetime, level: Decimal)`, `_confirmation_for(self, reaction: object, direction: str)`, `_confirmation(self, reaction: object)`, `_reaction_first_time(self, reaction: object)`, `_parent_stop(self, parent_type: str, parent: object)`, `parent_stop(self, parent_type: str, parent: object)`, `_extreme_between(self, start: datetime, end: datetime)`, `_find_extreme(self, start_index: int, end_index: int)`, `_zone(self, family: str, number: int, parent_type: str, parent: object, stop_event: datetime, *, e_owned_source_times: set[datetime] | None=None)`, `_build_zone(self, family: str, number: int, parent_type: str, parent: object, stop_event: datetime, order_match: OrderMatch, prospective_source: tuple[int, datetime, Decimal])`, `set_consumed_s_evidence(self, evidence: Sequence[tuple[object, object]])`, `_apply_consumed_s_evidence(self, zones: Sequence[EZone])`, `continuation_chain_from_s(self, owner: EZone, s_zone: object, independent_a_order_identities: frozenset[tuple[int, int]]=frozenset())`, `replace_with_earlier_continuation(self, base_zones: Sequence[EZone], owner: EZone, continuation: Sequence[EZone])`, `resolve_same_source_conflicts(self, zones: Sequence[EZone])`, `restore_independent_s_roots(self, dominant_zones: Sequence[EZone])`, `_invalid_s_without_order_cause(self, zone: EZone)`, `_discover_candidate_chains(self)`, `_reconcile_candidate_chains(self, candidates: list[EZone])`, `_compute_reconciliation(self, candidates: list[EZone], *, steps=None, checkpoint=None, previous=None, frontier=0)`, `detect(self)`.
+- Function `detect_e_zones(direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], s_zones: Sequence[object], opposite_resets: Sequence[object], chronology: object, start_index: int=0, end_index: int | None=None, direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None=None, blocked_order_first_times: set[datetime] | None=None, initial_order_audit: dict[tuple[int, int], dict[str, object]] | None=None, sequence_priority: Callable[[str, str], int] | None=None, invalid_s_root_identities: set[tuple[datetime, int]] | None=None) -> list[EZone]` (L1537-L1566).
 
 #### `pipeline/lifecycle_engine.py`
-- **Module-level symbols/assignments:** `STOP_ALL_VERSION` (L24–L24), `STOP_ALL_IMPLEMENTATION_VERSION` (L25–L25), `STOP_ALL_LAST_MODIFIED` (L26–L26), `SEQUENCE_PRIORITY` (L29–L34)
-- **Top-level functions:** `sequence_priority(kind: str, family: str) -> int` (L37–L39), `advance_dominant_behavior(owner: _DominantBehavior | None, kind: str, family: str, number: int | None, item: object) -> _DominantBehavior` (L121–L139), `detect_stopalls(direction: str, s_zones: Sequence[object], e_zones: Sequence[object], chronology: object) -> list[StopAll]` (L530–L536), `resolve_order_context(order_audit: dict, accepted_a_sources: set[datetime], inherited_blocked_first_times: set[datetime], invalid_a_zones: Sequence[object], pending_s_a_sources: set[datetime], opposite_reactions: Sequence[object], candles: Sequence[object], direction: str, stop_finder, *, accepted_e_stop_events: set[datetime] | None=None, opposite_confirmation_finder=None, e_parent_order_first_exceptions_out: set[tuple[datetime, datetime]] | None=None) -> tuple[dict, set[datetime]]` (L543–L629), `visible_a_zones_after_s_stops(a_zones, s_zones, candles)` (L632–L647), `module_priority(item: object) -> int` (L649–L661), `module_identity(item: object) -> tuple[object, ...]` (L663–L670), `module_stop_event(item: object, stop_event_finder=None) -> datetime | None` (L672–L684), `strictly_beyond_boundary(price: Decimal, boundary: Decimal, direction: str) -> bool` (L686–L689), `dominant_module(modules: Sequence[object]) -> object` (L691–L700), `split_a_zones_by_dominant_stops(a_zones, s_zones, e_zones, stopalls, candles, direction, stop_event_finder=None, trend_reactions=None, confirmation_finder=None, a_stop_event_finder=None, stage_invalid_a_identities=None)` (L703–L904), `blocked_orders_while_invalid_leg_heads_are_live(invalid_a_zones, opposite_reactions, candles, direction, stop_finder)` (L906–L926), `consumed_s_evidence_after_larger_stop(s_candidates, accepted_s_zones, e_zones, direction, stop_event_finder, candles)` (L929–L1069), `s_zones_for_module_engines(s_zones, e_zones, direction)` (L1071–L1099), `s_zones_for_stopall(s_zones, e_zones, direction)` (L1101–L1118), `visible_s_zones_after_module_resets(s_zones, e_zones, direction, stop_event_finder=None, source_event_finder=None, candles=None)` (L1120–L1296), `reconcile_stopall_lifecycle(detector, s_zones, e_zones, chronology, direction, timed_step=None)` (L1298–L1328), `visible_a_zones_after_module_boundaries(a_zones, s_zones, e_zones, direction, stop_event_finder=None)` (L1331–L1376), `reaction_number_is_internal(items, number, identities)` (L1378–L1389), `point_is_inside_healthy_reaction(source_time, price, reactions)` (L1392–L1412), `filter_internal_behavior_outputs(a_zones, s_zones, e_zones, stopalls, opposite_reactions, opposite_internal_identities, all_behavior_reactions)` (L1415–L1426), `finalize_behavior_visibility(a_zones, s_zones, e_zones, stopalls, direction, invalid_s_identities, stop_event_finder, source_event_finder, candles, *, all_a_zones=None)` (L1428–L1520), `visible_a_zones(a_zones: Sequence[object], s_zones: Sequence[object]) -> list[object]` (L1523–L1529)
-- **Classes / schemas:**
-  - `StopAll` (L43–L92)
-    - Fields: `direction: str` (L44), `number: int` (L45), `source_index: int` (L46), `source_time: datetime` (L47), `price: Decimal` (L48), `decision_index: int` (L49), `decision_time: datetime` (L50), `decision_event_time: datetime` (L51), `gate_type: str` (L52), `gate_event_time: datetime` (L53), `stopped_behavior_type: str` (L54), `stopped_behavior_key: str` (L55), `stopped_behavior_count: int` (L56), `underlying_e_family: str | None` (L57), `underlying_e_number: int | None` (L58), `order_direction: str | None` (L59), `order_reaction_number: int | None` (L60), `order_mode: str | None` (L61), `order_causes: tuple[str, ...]` (L62), `order_parent_stop_cause_time: datetime | None` (L63), `order_first_index: int | None` (L64), `order_first_time: datetime | None` (L65), `order_break_index: int | None` (L66), `order_break_time: datetime | None` (L67), `order_confirmation_time: datetime | None` (L68), `order_box_top: Decimal | None` (L69), `order_box_top_source_index: int | None` (L70), `order_box_top_source_time: datetime | None` (L71), `order_box_bottom: Decimal | None` (L72), `order_box_bottom_source_index: int | None` (L73), `order_box_bottom_source_time: datetime | None` (L74), `order_stop_level: Decimal | None` (L75), `order_stop_source_index: int | None` (L76), `order_stop_source_time: datetime | None` (L77), `stop_index: int | None` (L78), `stop_time: datetime | None` (L79), `stop_event_time: datetime | None` (L80), `donor_type: str | None` (L85), `donor_source_index: int | None` (L86), `donor_source_time: datetime | None` (L87), `donor_color: str | None` (L88), `donor_number: int | None` (L89), `donor_price: Decimal | None` (L90), `donor_stop_time: datetime | None` (L91), `donor_stop_event_time: datetime | None` (L92)
-    - Methods/properties: _none_
-  - `_DominantBehavior` (L96–L118)
-    - Fields: `kind: str` (L99), `family: str` (L100), `number: int | None` (L101), `count: int` (L102), `latest: object` (L103)
-    - Methods/properties: `priority(self) -> int` (L106–L107), `armed(self) -> bool` (L110–L111), `key(self) -> str` (L114–L118)
-  - `StopAllDetector` (L142–L527)
-    - Fields: _none_
-    - Methods/properties: `__init__(self, direction: str, s_zones: Sequence[object], e_zones: Sequence[object], chronology: object) -> None` (L143–L162), `_strict_stop(self, start: datetime, level: Decimal) -> tuple[int, datetime, datetime] | None` (L164–L178), `_dominates_e(new: tuple[str, int], old: tuple[str, int]) -> bool` (L181–L188), `_stopall_from_e(self, item: object, number: int, gate_type: str, gate_event: datetime, behavior_type: str, behavior_key: str, behavior_count: int) -> StopAll` (L190–L246), `_optional_int(value: object | None) -> int | None` (L249–L250), `_optional_decimal(value: object | None) -> Decimal | None` (L253–L254), `_stopall_from_s(self, item: object, behavior_type: str, behavior_key: str, behavior_count: int, underlying_e_key: tuple[str, int] | None, gate_event: datetime) -> StopAll` (L256–L342), `detect(self) -> list[StopAll]` (L344–L527)
-- **Nested implementation functions/closures:** `StopAllDetector.detect.armed_stop_before(boundary: datetime, donor_e: object | None=None) -> datetime | None` (L356–L404), `StopAllDetector.detect.accept(kind: str, family: str, number: int | None, item: object) -> None` (L406–L408), `StopAllDetector.detect.process_s_event(s_item: object) -> None` (L410–L461), `visible_s_zones_after_module_resets.cached_stop_event(module: object) -> datetime | None` (L1149–L1153)
+- Function `sequence_priority(kind: str, family: str) -> int` (L37-L39).
+- Class `StopAll` (L43-L92).
+  - Fields: `direction: str`, `number: int`, `source_index: int`, `source_time: datetime`, `price: Decimal`, `decision_index: int`, `decision_time: datetime`, `decision_event_time: datetime`, `gate_type: str`, `gate_event_time: datetime`, `stopped_behavior_type: str`, `stopped_behavior_key: str`, `stopped_behavior_count: int`, `underlying_e_family: str | None`, `underlying_e_number: int | None`, `order_direction: str | None`, `order_reaction_number: int | None`, `order_mode: str | None`, `order_causes: tuple[str, ...]`, `order_parent_stop_cause_time: datetime | None`, `order_first_index: int | None`, `order_first_time: datetime | None`, `order_break_index: int | None`, `order_break_time: datetime | None`, `order_confirmation_time: datetime | None`, `order_box_top: Decimal | None`, `order_box_top_source_index: int | None`, `order_box_top_source_time: datetime | None`, `order_box_bottom: Decimal | None`, `order_box_bottom_source_index: int | None`, `order_box_bottom_source_time: datetime | None`, `order_stop_level: Decimal | None`, `order_stop_source_index: int | None`, `order_stop_source_time: datetime | None`, `stop_index: int | None`, `stop_time: datetime | None`, `stop_event_time: datetime | None`, `donor_type: str | None`, `donor_source_index: int | None`, `donor_source_time: datetime | None`, `donor_color: str | None`, `donor_number: int | None`, `donor_price: Decimal | None`, `donor_stop_time: datetime | None`, `donor_stop_event_time: datetime | None`.
+- Class `_DominantBehavior` (L96-L118).
+  - Fields: `kind: str`, `family: str`, `number: int | None`, `count: int`, `latest: object`.
+  - Methods: `priority(self)`, `armed(self)`, `key(self)`.
+- Function `advance_dominant_behavior(owner: _DominantBehavior | None, kind: str, family: str, number: int | None, item: object) -> _DominantBehavior` (L121-L139).
+- Class `_StopAllCheckpoint` (L143-L147).
+  - Fields: `owner: _DominantBehavior | None`, `pending_stop: tuple[_DominantBehavior, datetime] | None`, `active: tuple[StopAll, ...]`, `output_count: int`.
+- Class `StopAllDetector` (L150-L531).
+  - Methods: `__init__(self, direction: str, s_zones: Sequence[object], e_zones: Sequence[object], chronology: object)`, `_strict_stop(self, start: datetime, level: Decimal)`, `_dominates_e(new: tuple[str, int], old: tuple[str, int])`, `_stopall_from_e(self, item: object, number: int, gate_type: str, gate_event: datetime, behavior_type: str, behavior_key: str, behavior_count: int)`, `_optional_int(value: object | None)`, `_optional_decimal(value: object | None)`, `_stopall_from_s(self, item: object, behavior_type: str, behavior_key: str, behavior_count: int, underlying_e_key: tuple[str, int] | None, gate_event: datetime)`, `_events(self)`, `detect(self)`, `_detect_events(self, events, checkpoint, output, checkpoints=None)`, `_resolve_stop(self, item: StopAll, *, after: datetime | None=None)`.
+- Class `LiveStopAllContinuation` (L534-L590).
+  - Methods: `__init__(self, direction, s_zones, e_zones, chronology)`, `result(self)`, `update(self, s_zones, e_zones, chronology, *, first_dirty_main: int)`.
+- Function `detect_stopalls(direction: str, s_zones: Sequence[object], e_zones: Sequence[object], chronology: object) -> list[StopAll]` (L593-L599).
+- Function `resolve_order_context(order_audit: dict, accepted_a_sources: set[datetime], inherited_blocked_first_times: set[datetime], invalid_a_zones: Sequence[object], pending_s_a_sources: set[datetime], opposite_reactions: Sequence[object], candles: Sequence[object], direction: str, stop_finder, *, accepted_e_stop_events: set[datetime] | None=None, opposite_confirmation_finder=None, e_parent_order_first_exceptions_out: set[tuple[datetime, datetime]] | None=None) -> tuple[dict, set[datetime]]` (L606-L692).
+- Function `visible_a_zones_after_s_stops(a_zones, s_zones, candles)` (L695-L710).
+- Function `module_priority(item: object) -> int` (L712-L724).
+- Function `module_identity(item: object) -> tuple[object, ...]` (L726-L733).
+- Function `module_stop_event(item: object, stop_event_finder=None) -> datetime | None` (L735-L747).
+- Function `strictly_beyond_boundary(price: Decimal, boundary: Decimal, direction: str) -> bool` (L749-L752).
+- Function `dominant_module(modules: Sequence[object]) -> object` (L754-L763).
+- Function `split_a_zones_by_dominant_stops(a_zones, s_zones, e_zones, stopalls, candles, direction, stop_event_finder=None, trend_reactions=None, confirmation_finder=None, a_stop_event_finder=None, stage_invalid_a_identities=None)` (L766-L967).
+- Function `blocked_orders_while_invalid_leg_heads_are_live(invalid_a_zones, opposite_reactions, candles, direction, stop_finder)` (L969-L989).
+- Function `consumed_s_evidence_after_larger_stop(s_candidates, accepted_s_zones, e_zones, direction, stop_event_finder, candles)` (L992-L1132).
+- Function `s_zones_for_module_engines(s_zones, e_zones, direction)` (L1134-L1162).
+- Function `s_zones_for_stopall(s_zones, e_zones, direction)` (L1164-L1181).
+- Function `visible_s_zones_after_module_resets(s_zones, e_zones, direction, stop_event_finder=None, source_event_finder=None, candles=None)` (L1183-L1359).
+- Function `reconcile_stopall_lifecycle(detector, s_zones, e_zones, chronology, direction, timed_step=None, *, stopall_finder=None)` (L1361-L1393).
+- Function `visible_a_zones_after_module_boundaries(a_zones, s_zones, e_zones, direction, stop_event_finder=None)` (L1396-L1441).
+- Function `reaction_number_is_internal(items, number, identities)` (L1443-L1454).
+- Function `point_is_inside_healthy_reaction(source_time, price, reactions)` (L1457-L1477).
+- Function `filter_internal_behavior_outputs(a_zones, s_zones, e_zones, stopalls, opposite_reactions, opposite_internal_identities, all_behavior_reactions)` (L1480-L1491).
+- Function `finalize_behavior_visibility(a_zones, s_zones, e_zones, stopalls, direction, invalid_s_identities, stop_event_finder, source_event_finder, candles, *, all_a_zones=None)` (L1493-L1585).
+- Function `visible_a_zones(a_zones: Sequence[object], s_zones: Sequence[object]) -> list[object]` (L1588-L1594).
 
 #### `pipeline/order_audit_engine.py`
-- **Module-level symbols/assignments:** `ORDER_AUDIT_ENGINE_VERSION` (L15), `ORDER_AUDIT_ENGINE_LAST_MODIFIED` (L16), `OrderMatch` (L430)
-- **Top-level functions:** `relabel_primary_causes(causes, labels)` (L19), `dominant_post_behavior_stops(chronology: object, lifetimes: Sequence[tuple[str, object, datetime | None]], priority: Callable[[object], int])` (L71), `order_b_reset_event_time(direction: str, chronology: object, reset: object)` (L117), `discover_order_b_reset_legs(direction: str, chronology: object, trend_reactions: Sequence[object], resets: Sequence[object], opposite_reactions: Sequence[object], post_stops: Sequence[PostBehaviorStop], a_formation_times: Sequence[datetime], *, behavior_anchors: Sequence[OrderBBehaviorAnchor]=())` (L148), `discover_accepted_order_b_reset_legs(direction: str, chronology: object, trend_reactions: Sequence[object], trend_resets: Sequence[object], opposite_reactions: Sequence[object], a_zones: Sequence[object], invalid_a_identities: set[tuple[datetime, int]], s_zones: Sequence[object], e_zones: Sequence[object], stopalls: Sequence[object], s_detector: object, e_detector: object, priority: Callable[[object], int])` (L352), `order_b_leg_identity(items: Sequence[object])` (L437), `_parent_stop_cause_key(cause: dict[str, object])` (L1824), `_collect_s_ledger_entries(s_detector, accepted_a_sources: set[datetime] | None)` (L1833), `_collect_e_ledger_entries(detector, accepted_a_sources: set[datetime] | None=None)` (L1865), `_merge_prepared_identities(combined: list[tuple[dict[str, object], list[dict[str, object]]]], detector, start_index: int, end_index: int, required_identities: set[tuple[int, int]])` (L1894), `_single_owner_parent_stop_causes(output: list[dict[str, object]])` (L1937), `prepare_order_audit(detector, start_index: int, end_index: int, s_detector=None, accepted_a_sources: set[datetime] | None=None, required_identities: set[tuple[int, int]] | None=None)` (L1975), `accepted_audit_entry(entry: dict[str, object], accepted_sources: set)` (L1995), `accepted_audit_entries(order_audit: dict[tuple[int, int], dict[str, object]], accepted_sources: set[datetime])` (L2028), `order_identity_is_internal(item, internal_identities)` (L2041)
-- **Classes / schemas:**
-  - `PostBehaviorStop` (L34)
-    - Fields: `behavior_type: str`, `behavior_source_index: int`, `behavior_source_time: datetime`, `event_time: datetime`
-    - Methods/properties: _none_
-  - `OrderBBehaviorAnchor` (L42)
-    - Fields: `behavior_type: str`, `behavior_source_index: int`, `behavior_source_time: datetime`, `priority: int`, `number: int`
-    - Methods/properties: _none_
-  - `OrderBResetLeg` (L51)
-    - Fields: `post_stop: PostBehaviorStop`, `anchor_behavior_type: str`, `anchor_behavior_source_index: int`, `anchor_behavior_source_time: datetime`, `anchor_behavior_extreme: Decimal`, `reset_reaction: object`, `reset_confirmation_time: datetime`, `reset_source_index: int`, `reset_broken_level: Decimal`, `reset_time: datetime`, `leg_boundary: Decimal`, `leg_source_index: int`, `leg_source_time: datetime`, `strict_break_time: datetime`, `reaction_number: int`, `physical_reaction: object`, `physical_confirmation_time: datetime`
-    - Methods/properties: _none_
-  - `OrderAuditEngineMixin` (L461)
-    - Fields: _none_
-    - Methods/properties: `_order_stop(self, number: int, reaction: object, context_start: datetime | None=None)` (L464), `order_stop(self, reaction_number: int, reaction: object)` (L493), `_first_healthy_direct_geometry(self, start: datetime, allow_bounded_continue: bool=False)` (L500), `_trend_leg_direct_order(self, start: datetime)` (L575), `_direct_parent_stop_order(self, start: datetime, continuous_deadline: datetime | None, allow_bounded_continue: bool, e_parent: bool=False, *, confirmation_after: datetime | None=None)` (L627), `_compute_direct_parent_stop_order(self, start: datetime, continuous_deadline: datetime | None, allow_bounded_continue: bool, e_parent: bool=False, *, confirmation_after: datetime | None=None)` (L647), `_merge_order_candidate(self, by_geometry: dict[tuple[int, int], OrderMatch], number: int, reaction: object, confirmation: datetime, *, parent_stop_cause_time: datetime)` (L739), `_enforce_single_parent_stop_owner(self, by_geometry: dict[tuple[int, int], OrderMatch])` (L773), `order_candidates(self, start: datetime, continuous_deadline: datetime | None=None, allow_bounded_continue: bool=False, allow_trend_leg_continue: bool=False, e_parent: bool=False)` (L800), `_first_order(self, start: datetime, continuous_deadline: datetime | None=None, allow_bounded_continue: bool=False, allow_trend_leg_continue: bool=False)` (L891), `_has_sequence_reset_between(self, start: datetime, end: datetime)` (L907), `_index_order_audit_identity(self, identity: tuple[int, int], confirmation: datetime)` (L918), `_clear_order_audit(self)` (L928), `_invalidate_carried_order_caches(self)` (L934), `_invalidate_post_stop_order_cache(self)` (L941), `register_order_b_reset_legs(self, legs: Sequence[OrderBResetLeg])` (L945), `_reparent_primary_high_causes(self, parent, stop_event, direct_identity)` (L1012), `register_primary_high(self, parent)` (L1060), `register_primary_low(self, parent)` (L1070), `_register_primary_point(self, parent)` (L1076), `reconcile_primary_high_labels(self, highs)` (L1109), `reconcile_primary_low_labels(self, lows)` (L1113), `_reconcile_primary_labels(self, points, prefix)` (L1117), `_register_order_audit(self, parent_type: str, parent: object, parent_stop: datetime)` (L1136), `visual_order_lifecycle(self, start: datetime)` (L1212), `_cross_order(self, start: datetime, level: Decimal)` (L1234), `cross_order(self, confirmation_time: datetime, stop_level: Decimal)` (L1255), `_unconsumed_s_orders(self, parent: object, parent_stop: datetime)` (L1262), `_initial_order_records(self)` (L1299), `_initial_record_match(record: tuple[datetime, datetime, int, object, Decimal, int, datetime, tuple[int, datetime, datetime] | None], causes: tuple[str, ...])` (L1358), `_initial_order_match(self, entry: dict[str, object], causes: tuple[str, ...])` (L1372), `_gate_owned_initial_order(self, parent_stop: datetime)` (L1387), `_carried_orders_for_parent(self, parent: object, parent_stop: datetime)` (L1410), `_post_stop_accepted_orders_for_parent(self, parent: object, parent_stop: datetime)` (L1471), `_order_created_only_by_disowned_s(self, identity: tuple[int, int], source_times: set[datetime], prospective_source_time: datetime | None=None)` (L1553), `_blocked_by_gate_owned_order(self, zone: EZone)` (L1568), `_rebuild_accepted_order_audit(self, numbered: list[EZone], supplemental_s_zones: Sequence[object]=())` (L1579), `rebuild_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=())` (L1767), `ensure_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=())` (L1782)
-  - `SOrderAuditMixin` (L2050)
-    - Fields: _none_
-    - Methods/properties: `_first_order_after(self, a_stop_event_time: datetime)` (L2053), `_order_matches_after(self, a_stop_event_time: datetime)` (L2109), `_record_a_order_audit(self, zone: object, a_stop_event_time: datetime, order_match: tuple[int, object, datetime])` (L2131), `_audit_stopped_a(self, zone: object)` (L2166), `_order_stop(self, order_number: int, reaction: object)` (L2179), `_order_stop_crossed(self, candle: object, level: Decimal)` (L2191), `_shared_order_stop_cross(self, confirmation: datetime, level: Decimal)` (L2197)
-- **Nested implementation functions/closures:** `OrderAuditEngineMixin._post_stop_accepted_orders_for_parent.add_match` (L1485), `OrderAuditEngineMixin._rebuild_accepted_order_audit.valid_parent_stop_cause` (L1593)
+- Function `relabel_primary_causes(causes, labels)` (L19-L31).
+- Class `PostBehaviorStop` (L34-L38).
+  - Fields: `behavior_type: str`, `behavior_source_index: int`, `behavior_source_time: datetime`, `event_time: datetime`.
+- Class `OrderBBehaviorAnchor` (L42-L47).
+  - Fields: `behavior_type: str`, `behavior_source_index: int`, `behavior_source_time: datetime`, `priority: int`, `number: int`.
+- Class `OrderBResetLeg` (L51-L68).
+  - Fields: `post_stop: PostBehaviorStop`, `anchor_behavior_type: str`, `anchor_behavior_source_index: int`, `anchor_behavior_source_time: datetime`, `anchor_behavior_extreme: Decimal`, `reset_reaction: object`, `reset_confirmation_time: datetime`, `reset_source_index: int`, `reset_broken_level: Decimal`, `reset_time: datetime`, `leg_boundary: Decimal`, `leg_source_index: int`, `leg_source_time: datetime`, `strict_break_time: datetime`, `reaction_number: int`, `physical_reaction: object`, `physical_confirmation_time: datetime`.
+- Function `dominant_post_behavior_stops(chronology: object, lifetimes: Sequence[tuple[str, object, datetime | None]], priority: Callable[[object], int]) -> list[PostBehaviorStop]` (L71-L114).
+- Function `order_b_reset_event_time(direction: str, chronology: object, reset: object) -> datetime | None` (L117-L145).
+- Function `_order_b_boundary(chronology, first: int, last: int, attribute: str)` (L148-L155).
+- Function `_order_b_crossing(chronology, attribute: str, left: int, boundary: Decimal)` (L158-L173).
+- Function `discover_order_b_reset_legs(direction: str, chronology: object, trend_reactions: Sequence[object], resets: Sequence[object], opposite_reactions: Sequence[object], post_stops: Sequence[PostBehaviorStop], a_formation_times: Sequence[datetime], *, behavior_anchors: Sequence[OrderBBehaviorAnchor]=(), _boundary=None, _crossing=None) -> list[OrderBResetLeg]` (L176-L353).
+- Class `LiveOrderBResetLegs` (L356-L417).
+  - Methods: `__init__(self, direction: str)`, `update(self, chronology, trend_reactions, resets, opposite_reactions, post_stops, a_formation_times, *, behavior_anchors, first_dirty_main: int)`.
+- Function `discover_accepted_order_b_reset_legs(direction: str, chronology: object, trend_reactions: Sequence[object], trend_resets: Sequence[object], opposite_reactions: Sequence[object], a_zones: Sequence[object], invalid_a_identities: set[tuple[datetime, int]], s_zones: Sequence[object], e_zones: Sequence[object], stopalls: Sequence[object], s_detector: object, e_detector: object, priority: Callable[[object], int], *, reset_leg_finder=None) -> list[OrderBResetLeg]` (L420-L498).
+- Function `order_b_leg_identity(items: Sequence[object]) -> tuple[object, ...]` (L508-L528).
+- Class `OrderAuditEngineMixin` (L532-L1905).
+  - Methods: `_order_stop(self, number: int, reaction: object, context_start: datetime | None=None)`, `order_stop(self, reaction_number: int, reaction: object)`, `_first_healthy_direct_geometry(self, start: datetime, allow_bounded_continue: bool=False)`, `_trend_leg_direct_order(self, start: datetime)`, `_direct_parent_stop_order(self, start: datetime, continuous_deadline: datetime | None, allow_bounded_continue: bool, e_parent: bool=False, *, confirmation_after: datetime | None=None)`, `_compute_direct_parent_stop_order(self, start: datetime, continuous_deadline: datetime | None, allow_bounded_continue: bool, e_parent: bool=False, *, confirmation_after: datetime | None=None)`, `_merge_order_candidate(self, by_geometry: dict[tuple[int, int], OrderMatch], number: int, reaction: object, confirmation: datetime, *, parent_stop_cause_time: datetime)`, `_enforce_single_parent_stop_owner(self, by_geometry: dict[tuple[int, int], OrderMatch])`, `order_candidates(self, start: datetime, continuous_deadline: datetime | None=None, allow_bounded_continue: bool=False, allow_trend_leg_continue: bool=False, e_parent: bool=False)`, `_first_order(self, start: datetime, continuous_deadline: datetime | None=None, allow_bounded_continue: bool=False, allow_trend_leg_continue: bool=False)`, `_has_sequence_reset_between(self, start: datetime, end: datetime)`, `_index_order_audit_identity(self, identity: tuple[int, int], confirmation: datetime)`, `_clear_order_audit(self)`, `_invalidate_carried_order_caches(self)`, `_invalidate_post_stop_order_cache(self)`, `register_order_b_reset_legs(self, legs: Sequence[OrderBResetLeg])`, `_reparent_primary_high_causes(self, parent, stop_event, direct_identity)`, `register_primary_high(self, parent)`, `register_primary_low(self, parent)`, `_primary_parent_order(self, parent)`, `primary_order_dependency(self, parent)`, `_register_primary_point(self, parent)`, `reconcile_primary_high_labels(self, highs)`, `reconcile_primary_low_labels(self, lows)`, `_reconcile_primary_labels(self, points, prefix)`, `_register_order_audit(self, parent_type: str, parent: object, parent_stop: datetime)`, `visual_order_lifecycle(self, start: datetime)`, `_cross_order(self, start: datetime, level: Decimal)`, `cross_order(self, confirmation_time: datetime, stop_level: Decimal)`, `_unconsumed_s_orders(self, parent: object, parent_stop: datetime)`, `_initial_order_records(self)`, `_initial_record_match(record: tuple[datetime, datetime, int, object, Decimal, int, datetime, tuple[int, datetime, datetime] | None], causes: tuple[str, ...])`, `_initial_order_match(self, entry: dict[str, object], causes: tuple[str, ...])`, `_gate_owned_initial_order(self, parent_stop: datetime)`, `_carried_orders_for_parent(self, parent: object, parent_stop: datetime)`, `_post_stop_accepted_orders_for_parent(self, parent: object, parent_stop: datetime)`, `_order_created_only_by_disowned_s(self, identity: tuple[int, int], source_times: set[datetime], prospective_source_time: datetime | None=None)`, `_blocked_by_gate_owned_order(self, zone: EZone)`, `_rebuild_accepted_order_audit(self, numbered: list[EZone], supplemental_s_zones: Sequence[object]=())`, `rebuild_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=())`, `ensure_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=())`.
+- Function `_parent_stop_cause_key(cause: dict[str, object]) -> tuple[object, object, object, object]` (L1908-L1914).
+- Function `_collect_s_ledger_entries(s_detector, accepted_a_sources: set[datetime] | None) -> list[tuple[dict[str, object], list[dict[str, object]]]]` (L1917-L1946).
+- Function `_collect_e_ledger_entries(detector, accepted_a_sources: set[datetime] | None=None) -> list[tuple[dict[str, object], list[dict[str, object]]]]` (L1949-L1975).
+- Function `_merge_prepared_identities(combined: list[tuple[dict[str, object], list[dict[str, object]]]], detector, start_index: int, end_index: int, required_identities: set[tuple[int, int]]) -> list[dict[str, object]]` (L1978-L2018).
+- Function `_single_owner_parent_stop_causes(output: list[dict[str, object]]) -> list[dict[str, object]]` (L2021-L2056).
+- Function `prepare_order_audit(detector, start_index: int, end_index: int, s_detector=None, accepted_a_sources: set[datetime] | None=None, required_identities: set[tuple[int, int]] | None=None)` (L2059-L2076).
+- Function `accepted_audit_entry(entry: dict[str, object], accepted_sources: set) -> dict[str, object] | None` (L2079-L2109).
+- Function `accepted_audit_entries(order_audit: dict[tuple[int, int], dict[str, object]], accepted_sources: set[datetime]) -> dict[tuple[int, int], dict[str, object]]` (L2112-L2122).
+- Function `order_identity_is_internal(item, internal_identities)` (L2125-L2131).
+- Class `SOrderAuditMixin` (L2134-L2305).
+  - Methods: `_first_order_after(self, a_stop_event_time: datetime)`, `_order_matches_after(self, a_stop_event_time: datetime)`, `_record_a_order_audit(self, zone: object, a_stop_event_time: datetime, order_match: tuple[int, object, datetime])`, `_audit_stopped_a(self, zone: object)`, `_order_stop(self, order_number: int, reaction: object)`, `_order_stop_crossed(self, candle: object, level: Decimal)`, `_shared_order_stop_cross(self, confirmation: datetime, level: Decimal)`.
 
 #### `pipeline/PL_PH_detector.py`
-- **Module-level symbols/assignments:** `PL_PH_VERSION` (L21–L21), `PL_PH_LAST_MODIFIED` (L22–L22)
-- **Top-level functions:** `first_bullish_transition(chronology, primary)` (L101–L112), `first_bearish_transition(chronology, primary)` (L115–L125), `resolve_primary_highs(primary, *, through_index)` (L128–L138), `resolve_primary_lows(primary, *, through_index)` (L141–L144), `_resolve_primary_points(points, cycles, through_index, *, above)` (L147–L172), `relabel_primary_order(order, highs)` (L175–L178), `formed_matching_legs(primary, *, through_index)` (L181–L195), `resolve_stopall_ownership(stopalls, primary: PrimaryResult, *, through_index: int)` (L198–L208), `order_meets_structure_gate(kind, first_index, confirmation, gate_index, event)` (L211–L219), `strict_cross(chronology, event: datetime, level: Decimal, above: bool)` (L222–L232), `_extreme(chronology, left: int, right: int, high: bool)` (L235–L241), `_matching_seeds(s_zones, e_zones, stopalls)` (L244–L280), `detect_bearish(chronology, s_zones: Sequence[object], e_zones: Sequence[object], stopalls: Sequence[object], orders: Callable[[str, int, int, datetime], Sequence[StructureOrder]]) -> PrimaryResult` (L283–L380), `_activate_cycle(chronology, activation)` (L393–L408), `_next_point(chronology, checkpoint, orders, *, before_event=None)` (L411–L508), `_negate_price(value)` (L572–L574), `_reflect_structure_order(order)` (L611–L616), `detect_bullish(chronology, s_zones, e_zones, stopalls, orders)` (L619–L666)
-- **Classes / schemas:**
-  - `StructureOrder` (L26–L40)
-    - Fields: `direction: str` (L27), `reaction_number: int` (L28), `first_index: int` (L29), `break_index: int` (L30), `confirmation_event_time: datetime` (L31), `stop_level: Decimal` (L32), `stop_source_index: int` (L33), `stop_index: int` (L34), `stop_event_time: datetime` (L35), `causes: tuple[str, ...]` (L36), `box_top: Decimal | None` (L37), `box_bottom: Decimal | None` (L38), `reaction_mode: str | None` (L39), `audit_causes: tuple[dict[str, object], ...]` (L40)
-    - Methods/properties: _none_
-  - `PrimaryPoint` (L44–L56)
-    - Fields: `kind: str` (L45), `number: int` (L46), `source_index: int` (L47), `source_time: datetime` (L48), `price: Decimal` (L49), `trigger_index: int` (L50), `trigger_event_time: datetime` (L51), `decision_index: int` (L52), `decision_event_time: datetime` (L53), `order: StructureOrder` (L54), `cycle_id: str | None` (L55), `identity_source: PrimaryPoint | None` (L56)
-    - Methods/properties: _none_
-  - `MatchingBehaviorLeg` (L60–L69)
-    - Fields: `source_index: int` (L61), `source_time: datetime` (L62), `price: Decimal` (L63), `reference_stopall_index: int` (L64), `second_behavior_index: int` (L65), `trigger_index: int` (L66), `trigger_event_time: datetime` (L67), `stop_index: int | None` (L68), `stop_event_time: datetime | None` (L69)
-    - Methods/properties: _none_
-  - `TrendTransition` (L73–L84)
-    - Fields: `index: int` (L75), `event_time: datetime` (L76), `level: Decimal` (L77), `high: PrimaryPoint` (L78), `target_direction: str` (L79)
-    - Methods/properties: `point(self)` (L82–L84)
-  - `PrimaryResult` (L88–L98)
-    - Fields: `highs: list[PrimaryPoint]` (L89), `lows: list[PrimaryPoint]` (L90), `mbl: MatchingBehaviorLeg | None` (L91), `status: str` (L92), `post_pl3_orders: list[StructureOrder]` (L93), `cycle_id: str | None` (L94), `cycles: list[PrimaryResult]` (L95), `qualification_event_time: datetime | None` (L96), `transition: TrendTransition | None` (L97), `direction: str` (L98)
-    - Methods/properties: _none_
-  - `_CycleCheckpoint` (L384–L390)
-    - Fields: `result: PrimaryResult` (L385), `reference_price: Decimal` (L386), `gate_index: int` (L387), `cursor: datetime` (L388), `phase: str` (L389), `reset_high: bool` (L390)
-    - Methods/properties: _none_
-  - `NativePrimaryOrders` (L511–L569)
-    - Fields: _none_
-    - Methods/properties: `__init__(self, chronology, groups, *, on_high=None, direction='bearish')` (L521–L524), `confirm_high(self, point)` (L526–L529), `__call__(self, kind, number, gate_index, event)` (L531–L569)
-  - `_ReflectedRow` (L578–L587)
-    - Fields: `original: object` (L579)
-    - Methods/properties: `high(self)` (L582–L583), `low(self)` (L586–L587)
-  - `_ReflectedPriceIndex` (L590–L599)
-    - Fields: _none_
-    - Methods/properties: `__init__(self, original)` (L592–L593), `first_greater(self, left, right, level)` (L595–L596), `first_less(self, left, right, level)` (L598–L599)
-  - `_ReflectedChronology` (L602–L608)
-    - Fields: _none_
-    - Methods/properties: `__init__(self, original)` (L603–L608)
-  - `detect_bullish.ReflectedOrders` (L655–L663)
-    - Fields: _none_
-    - Methods/properties: `__call__(self, kind, number, gate, event)` (L656–L658), `confirm_high(self, item)` (L660–L663)
-- **Nested implementation functions/closures:** `_resolve_primary_points.role_order(point)` (L160–L163), `detect_bullish.cycle_id(value)` (L628–L629), `detect_bullish.point(item)` (L631–L637), `detect_bullish.status(value)` (L639–L641), `detect_bullish.result(item)` (L643–L653)
+- Class `StructureOrder` (L26-L40).
+  - Fields: `direction: str`, `reaction_number: int`, `first_index: int`, `break_index: int`, `confirmation_event_time: datetime`, `stop_level: Decimal`, `stop_source_index: int`, `stop_index: int`, `stop_event_time: datetime`, `causes: tuple[str, ...]`, `box_top: Decimal | None`, `box_bottom: Decimal | None`, `reaction_mode: str | None`, `audit_causes: tuple[dict[str, object], ...]`.
+- Class `PrimaryPoint` (L44-L56).
+  - Fields: `kind: str`, `number: int`, `source_index: int`, `source_time: datetime`, `price: Decimal`, `trigger_index: int`, `trigger_event_time: datetime`, `decision_index: int`, `decision_event_time: datetime`, `order: StructureOrder`, `cycle_id: str | None`, `identity_source: PrimaryPoint | None`.
+- Class `MatchingBehaviorLeg` (L60-L69).
+  - Fields: `source_index: int`, `source_time: datetime`, `price: Decimal`, `reference_stopall_index: int`, `second_behavior_index: int`, `trigger_index: int`, `trigger_event_time: datetime`, `stop_index: int | None`, `stop_event_time: datetime | None`.
+- Class `TrendTransition` (L73-L84).
+  - Fields: `index: int`, `event_time: datetime`, `level: Decimal`, `high: PrimaryPoint`, `target_direction: str`.
+  - Methods: `point(self)`.
+- Class `PrimaryResult` (L88-L98).
+  - Fields: `highs: list[PrimaryPoint]`, `lows: list[PrimaryPoint]`, `mbl: MatchingBehaviorLeg | None`, `status: str`, `post_pl3_orders: list[StructureOrder]`, `cycle_id: str | None`, `cycles: list[PrimaryResult]`, `qualification_event_time: datetime | None`, `transition: TrendTransition | None`, `direction: str`.
+- Function `first_bullish_transition(chronology, primary, *, cross=None)` (L101-L112).
+- Function `first_bearish_transition(chronology, primary)` (L115-L125).
+- Function `resolve_primary_highs(primary, *, through_index)` (L128-L138).
+- Function `resolve_primary_lows(primary, *, through_index)` (L141-L144).
+- Function `_resolve_primary_points(points, cycles, through_index, *, above)` (L147-L172).
+- Function `relabel_primary_order(order, highs)` (L175-L178).
+- Function `formed_matching_legs(primary, *, through_index)` (L181-L195).
+- Function `resolve_stopall_ownership(stopalls, primary: PrimaryResult, *, through_index: int)` (L198-L208).
+- Function `order_meets_structure_gate(kind, first_index, confirmation, gate_index, event)` (L211-L219).
+- Function `strict_cross(chronology, event: datetime, level: Decimal, above: bool)` (L222-L225).
+- Function `_cross_from(chronology, left, level, above)` (L228-L236).
+- Function `_extreme(chronology, left: int, right: int, high: bool)` (L239-L245).
+- Function `_matching_seeds(s_zones, e_zones, stopalls)` (L248-L284).
+- Function `detect_bearish(chronology, s_zones: Sequence[object], e_zones: Sequence[object], stopalls: Sequence[object], orders: Callable[[str, int, int, datetime], Sequence[StructureOrder]], *, _run: _PrimaryRun | None=None) -> PrimaryResult` (L287-L418).
+- Class `_CycleCheckpoint` (L422-L428).
+  - Fields: `result: PrimaryResult`, `reference_price: Decimal`, `gate_index: int`, `cursor: datetime`, `phase: str`, `reset_high: bool`.
+- Function `_activation_identity(activation)` (L431-L436).
+- Class `_PrimaryStep` (L440-L445).
+  - Fields: `event_time: datetime`, `activations: int`, `cycle_index: int | None`, `checkpoint: _CycleCheckpoint | None`, `point: PrimaryPoint | None`.
+- Class `_PrimaryRun` (L449-L487).
+  - Fields: `previous: _PrimaryRun | None`, `dirty_event: datetime | None`, `schedule: tuple`, `steps: list[_PrimaryStep]`, `crossings: dict[tuple, tuple[int, datetime] | None]`, `projected_points: dict[int, tuple[PrimaryPoint, PrimaryPoint]]`.
+  - Methods: `retained_steps(self)`, `cross(self, chronology, event, level, above)`.
+- Function `_refresh_cycle_mbl(chronology, checkpoint, cross)` (L490-L497).
+- Function `_activate_cycle(chronology, activation, *, cross=strict_cross)` (L500-L515).
+- Function `_next_point(chronology, checkpoint, orders, *, before_event=None, cross=strict_cross)` (L518-L613).
+- Class `NativePrimaryOrders` (L616-L674).
+  - Methods: `__init__(self, chronology, groups, *, on_high=None, direction='bearish')`, `confirm_high(self, point)`, `__call__(self, kind, number, gate_index, event)`.
+- Function `_negate_price(value)` (L677-L679).
+- Class `_ReflectedRow` (L683-L692).
+  - Fields: `original: object`.
+  - Methods: `high(self)`, `low(self)`.
+- Class `_ReflectedPriceIndex` (L695-L704).
+  - Methods: `__init__(self, original)`, `first_greater(self, left, right, level)`, `first_less(self, left, right, level)`.
+- Class `_ReflectedChronology` (L707-L713).
+  - Methods: `__init__(self, original)`.
+- Function `_reflect_structure_order(order)` (L716-L721).
+- Function `detect_bullish(chronology, s_zones, e_zones, stopalls, orders, *, _run=None)` (L724-L778).
+- Class `LivePrimaryContinuation` (L781-L820).
+  - Methods: `__init__(self, direction, chronology, s_zones, e_zones, stopalls, orders)`, `result(self)`, `update(self, chronology, s_zones, e_zones, stopalls, orders, *, first_dirty_event: datetime)`.
 
 #### `pipeline/reaction_engine.py`
-- **Module-level symbols/assignments:** `REACTION_ENGINE_VERSION` (L21–L21), `REACTION_ENGINE_IMPLEMENTATION_VERSION` (L22–L22), `REACTION_ENGINE_LAST_MODIFIED` (L23–L23), `_ORDER_GATE_CACHE_MAX_ENTRIES` (L25–L25), `_SEQUENCE_TIME_INDEXES` (L27–L27), `_REFLECTED_VIEWS` (L636–L636), `_LOWER_TIMEFRAME_INDEXES` (L932–L934)
-- **Top-level functions:** `classify_candle_color(open_price: Decimal, close_price: Decimal) -> str` (L94–L96), `opposite_direction(direction: str) -> str` (L99–L101), `mirror_candle(candle: Candle) -> Candle` (L563–L580), `mirror_candidate(candidate: Candidate | None) -> Candidate | None` (L583–L600), `mirror_analysis(analysis: IntrabarAnalysis | None) -> IntrabarAnalysis | None` (L602–L608), `_reflected_view(source: Sequence[Candle]) -> _ReflectedCandles` (L639–L646), `published_reaction_candidate(direction: str, candidate: Candidate, chronology: object) -> Candidate` (L709–L804), `_decimal_value(value: object) -> Decimal` (L807–L809), `shared_lower_timeframe_index(candles: Sequence[Candle]) -> LowerTimeframeIndex` (L937–L947), `build_behavior_reaction_views(full_results: dict[str, object], chronology: MarketChronology)` (L1205–L1313), `directional_a_stop_order_finder(candles: Sequence[Candle], seconds: Sequence[Candle], direction: str)` (L1316–L1376)
-- **Classes / schemas:**
-  - `Candle` (L30–L38)
-    - Fields: `index: int` (L31), `timestamp: datetime` (L32), `display_time: str` (L33), `tag: str` (L34), `open: Decimal` (L35), `high: Decimal` (L36), `low: Decimal` (L37), `close: Decimal` (L38)
-    - Methods/properties: _none_
-  - `Candidate` (L42–L66)
-    - Fields: `first_idx: int` (L43), `first_time: str` (L44), `box_top_source_idx: int` (L45), `box_top_source_time: str` (L46), `box_top: Decimal` (L47), `box_bottom_source_idx: int` (L48), `box_bottom_source_time: str` (L49), `box_bottom: Decimal` (L50), `mode: str` (L51), `anchor_idx: int | None` (L52), `anchor_value: Decimal | None` (L53), `leg_boundary_value: Decimal | None` (L54), `break_idx: int | None` (L55), `break_time: str | None` (L56), `intrabar_start: datetime | None` (L57), `cross_direction_origin: bool` (L58), `cross_direction_chain_owner: bool` (L59), `order_gate_decision: str | None` (L60), `behavior_public_number: int | None` (L61), `behavior_public_box_top: Decimal | None` (L62), `behavior_public_box_bottom: Decimal | None` (L63), `behavior_confirmation_time: datetime | None` (L64), `behavior_first_time: datetime | None` (L65), `behavior_internal: bool` (L66)
-    - Methods/properties: _none_
-  - `ResetEvent` (L70–L75)
-    - Fields: `index: int` (L71), `display_time: str` (L72), `second_time: str | None` (L73), `broken_level: Decimal` (L74), `from_first_idx: int` (L75)
-    - Methods/properties: _none_
-  - `IntrabarAnalysis` (L79–L82)
-    - Fields: `event_second: Candle` (L80), `extreme: Decimal` (L81), `extreme_source: Candle` (L82)
-    - Methods/properties: _none_
-  - `DetectionResult` (L86–L91)
-    - Fields: `direction: str` (L87), `reactions: list[Candidate]` (L88), `resets: list[ResetEvent]` (L89), `start_index: int` (L90), `end_index: int` (L91)
-    - Methods/properties: _none_
-  - `DetectorBase` (L104–L174)
-    - Fields: _none_
-    - Methods/properties: `__init__(self, candles: Sequence[Candle], one_second_candles: Sequence[Candle], start_index: int, end_index: int) -> None` (L105–L127), `_shared_time_index(candles: Sequence[Candle]) -> list[datetime]` (L130–L138), `seconds_between(self, start: datetime, end: datetime) -> Iterable[Candle]` (L140–L143), `main_source_for_time(self, timestamp: datetime) -> Candle | None` (L145–L156), `minimum_low(self, start_index: int, end_index: int) -> tuple[Decimal, Candle]` (L158–L165), `maximum_high(self, start_index: int, end_index: int) -> tuple[Decimal, Candle]` (L167–L174)
-  - `BullishDetector` (L177–L560)
-    - Fields: _none_
-    - Methods/properties: `green_run_peak_before(self, first_red_index: int) -> tuple[Decimal, Candle]` (L178–L186), `breakout_analysis(self, candidate: Candidate, breakout_candle: Candle) -> IntrabarAnalysis | None` (L188–L212), `mode_a_invalidation_before_breakout(self, candidate: Candidate, candle: Candle) -> bool` (L214–L248), `confirmed_reset_before_breakout(self, candidate: Candidate | None, candle: Candle, confirmed_bottom: Decimal) -> bool` (L250–L268), `post_breakout_reset(self, analysis: IntrabarAnalysis | None, box_bottom: Decimal, breakout_candle: Candle) -> Candle | None` (L270–L283), `detect(self, *, first_only: bool=False) -> DetectionResult` (L285–L560)
-  - `_ReflectedCandles` (L611–L633)
-    - Fields: _none_
-    - Methods/properties: `__init__(self, source: Sequence[Candle]) -> None` (L619–L621), `__len__(self) -> int` (L623–L624), `__getitem__(self, index)` (L626–L633)
-  - `BearishDetector` (L649–L706)
-    - Fields: _none_
-    - Methods/properties: `__init__(self, candles, one_second_candles, start_index, end_index)` (L657–L669), `red_run_bottom_before(self, first_green_index)` (L671–L673), `breakdown_analysis(self, candidate, breakdown_candle)` (L675–L678), `invalidation_high_break_before_breakdown(self, candidate, candle)` (L680–L683), `confirmed_reset_before_breakdown(self, candidate, candle, confirmed_top)` (L685–L689), `post_breakdown_reset(self, analysis, box_top, breakdown_candle)` (L691–L696), `detect(self, *, first_only: bool=False) -> DetectionResult` (L698–L706)
-  - `LowerTimeframeIndex` (L812–L929)
-    - Fields: _none_
-    - Methods/properties: `__init__(self, candles: Sequence[Candle]) -> None` (L819–L858), `first_less(self, left: int, right: int, level: Decimal) -> int | None` (L860–L861), `first_greater(self, left: int, right: int, level: Decimal) -> int | None` (L863–L864), `range_minimum(self, left: int, right: int) -> tuple[Decimal, int]` (L866–L868), `range_maximum(self, left: int, right: int) -> tuple[Decimal, int]` (L870–L872), `_range_query(self, left: int, right: int, *, minimum: bool) -> tuple[Decimal, int]` (L874–L910), `_first(self, node: int, start: int, end: int, left: int, right: int, level: Decimal, less: bool) -> int | None` (L912–L929)
-  - `ReflectedLowerTimeframeIndex` (L950–L971)
-    - Fields: _none_
-    - Methods/properties: `__init__(self, base: LowerTimeframeIndex) -> None` (L955–L957), `first_less(self, left: int, right: int, level: Decimal) -> int | None` (L959–L960), `first_greater(self, left: int, right: int, level: Decimal) -> int | None` (L962–L963), `range_minimum(self, left: int, right: int) -> tuple[Decimal, int]` (L965–L967), `range_maximum(self, left: int, right: int) -> tuple[Decimal, int]` (L969–L971)
-  - `MarketChronology` (L974–L1202)
-    - Fields: _none_
-    - Methods/properties: `__init__(self, candles: Sequence[Candle], seconds: Sequence[Candle], timeframe_seconds: int, lower_index: LowerTimeframeIndex | None=None) -> None` (L993–L1013), `opposite_direction(direction: str) -> str` (L1016–L1018), `main_index(self, timestamp: datetime, *, clamp: bool=False) -> int` (L1020–L1027), `lower_bounds(self, start: datetime, end: datetime | None=None) -> tuple[int, int]` (L1029–L1038), `lower_window(self, start: datetime, end: datetime | None=None) -> Sequence[Candle]` (L1040–L1044), `_reset_cache_key(reset: object) -> tuple[object, ...]` (L1047–L1056), `_reaction_cache_key(reaction: object, direction: str, use_intrabar_start: bool) -> tuple[object, ...]` (L1059–L1071), `reset_time(self, reset: object) -> datetime` (L1073–L1090), `reaction_confirmation(self, direction: str, reaction: object, *, use_intrabar_start: bool=True) -> datetime` (L1092–L1137), `canonical_order_stop(self, order_direction: str, reaction_number: int, reaction: object, opposite_reactions: Sequence[object], *, start_index: int=0) -> tuple[Decimal, int, datetime]` (L1140–L1202)
-  - `UnifiedReactionDetector` (L1379–L2499)
-    - Fields: _none_
-    - Methods/properties: `__init__(self, candles: Sequence[Candle], one_second_candles: Sequence[Candle], start_index: int, end_index: int, output_direction: str, *, initial_bullish_trend: bool=False, initial_bearish_trend: bool=False) -> None` (L1389–L1423), `bull(self) -> BullishDetector` (L1426–L1431), `bear(self) -> BearishDetector` (L1434–L1439), `_append_reaction(self, direction: str, candidate: Candidate) -> bool` (L1441–L1521), `_append_reset(self, direction: str, candle: Candle, level: Decimal, first_idx: int, second_time: str | None=None) -> None` (L1523–L1539), `_refine(self, direction: str, candidate: Candidate, candle: Candle) -> IntrabarAnalysis | None` (L1541–L1560), `_candidate_from_confirmation_remainder(self, direction: str, confirmed: Candidate, candle: Candle, analysis: IntrabarAnalysis | None) -> Candidate | None` (L1562–L1645), `_first_initial(self, direction: str) -> Candidate | None` (L1647–L1661), `_first_bullish_trend_reaction(self) -> Candidate | None` (L1663–L1665), `_first_trend_reaction(self, direction: str) -> Candidate | None` (L1667–L1714), `_first_direct_same_direction_after_reset(self, direction: str, reset_index: int) -> Candidate | None` (L1717–L1753), `_first_geometry_after_reset(self, direction: str, reset_index: int, end_index: int | None=None) -> Candidate | None` (L1755–L1806), `first_geometry_after_reset(self, direction: str, reset_index: int, end_index: int) -> Candidate | None` (L1808–L1812), `_reaction_break_indices(self, direction: str) -> list[int]` (L1815–L1828), `first_order_reaction_after_gate(self, direction: str, gate_index: int, end_index: int | None=None, gate_event_time: datetime | None=None) -> Candidate | None` (L1830–L1977), `_earliest_confirmed_geometry(self, direction: str, start_index: int, end_index: int | None=None) -> Candidate | None` (L1979–L2051), `_build_direct_candidate(self, direction: str, reset_index: int, first_index: int) -> Candidate | None` (L2053–L2108), `_scan_direct_candidate(self, direction: str, candidate: Candidate, stop_index: int) -> tuple[Candidate | None, int | None]` (L2111–L2139), `_owner_boundary_before_confirmation(self, direction: str, candidate: Candidate, candle: Candle) -> bool` (L2141–L2179), `_result(self) -> DetectionResult` (L2182–L2189), `detect(self, *, stop_after_first_at_or_after: int | None=None) -> DetectionResult` (L2191–L2499)
-- **Nested implementation functions/closures:** `build_behavior_reaction_views.path_is_contained(first_time: datetime, confirmed_at: datetime, bottom: Decimal, top: Decimal) -> bool` (L1225–L1243), `directional_a_stop_order_finder.find(gate_index: int, gate_event: datetime, end_index: int)` (L1330–L1374), `UnifiedReactionDetector.first_order_reaction_after_gate.cache_result(result: Candidate | None) -> Candidate | None` (L1846–L1855), `UnifiedReactionDetector.first_order_reaction_after_gate.confirmed_no_later_than_gate(reaction: Candidate) -> bool` (L1857–L1875)
+- Class `Candle` (L30-L38).
+  - Fields: `index: int`, `timestamp: datetime`, `display_time: str`, `tag: str`, `open: Decimal`, `high: Decimal`, `low: Decimal`, `close: Decimal`.
+- Class `Candidate` (L42-L66).
+  - Fields: `first_idx: int`, `first_time: str`, `box_top_source_idx: int`, `box_top_source_time: str`, `box_top: Decimal`, `box_bottom_source_idx: int`, `box_bottom_source_time: str`, `box_bottom: Decimal`, `mode: str`, `anchor_idx: int | None`, `anchor_value: Decimal | None`, `leg_boundary_value: Decimal | None`, `break_idx: int | None`, `break_time: str | None`, `intrabar_start: datetime | None`, `cross_direction_origin: bool`, `cross_direction_chain_owner: bool`, `order_gate_decision: str | None`, `behavior_public_number: int | None`, `behavior_public_box_top: Decimal | None`, `behavior_public_box_bottom: Decimal | None`, `behavior_confirmation_time: datetime | None`, `behavior_first_time: datetime | None`, `behavior_internal: bool`.
+- Class `ResetEvent` (L70-L75).
+  - Fields: `index: int`, `display_time: str`, `second_time: str | None`, `broken_level: Decimal`, `from_first_idx: int`.
+- Class `IntrabarAnalysis` (L79-L82).
+  - Fields: `event_second: Candle`, `extreme: Decimal`, `extreme_source: Candle`.
+- Class `DetectionResult` (L86-L91).
+  - Fields: `direction: str`, `reactions: list[Candidate]`, `resets: list[ResetEvent]`, `start_index: int`, `end_index: int`.
+- Class `_NormalReactionCursor` (L95-L101).
+  - Fields: `next_index: int`, `previous: Candidate`, `candidate: Candidate | None`, `running_value: Decimal`, `running_source: int`, `pending_reset_index: int | None`.
+- Class `_ReactionCheckpoint` (L105-L108).
+  - Fields: `cursor: _NormalReactionCursor`, `reaction_count: int`, `reset_count: int`.
+- Class `_InitialLegCursor` (L112-L119).
+  - Fields: `next_index: int`, `state: str`, `leg_open_low: Decimal | None`, `leg_just_started: bool`, `anchor: Candle | None`, `anchor_origin: str | None`, `candidate: Candidate | None`.
+- Class `_TrendLegCursor` (L123-L126).
+  - Fields: `next_index: int`, `fixed_source: Candle`, `candidate: Candidate | None`.
+- Class `LiveReactionUnavailable` (L129-L130).
+- Function `classify_candle_color(open_price: Decimal, close_price: Decimal) -> str` (L133-L135).
+- Function `opposite_direction(direction: str) -> str` (L138-L140).
+- Class `DetectorBase` (L143-L213).
+  - Methods: `__init__(self, candles: Sequence[Candle], one_second_candles: Sequence[Candle], start_index: int, end_index: int)`, `_shared_time_index(candles: Sequence[Candle])`, `seconds_between(self, start: datetime, end: datetime)`, `main_source_for_time(self, timestamp: datetime)`, `minimum_low(self, start_index: int, end_index: int)`, `maximum_high(self, start_index: int, end_index: int)`.
+- Class `BullishDetector` (L216-L620).
+  - Methods: `green_run_peak_before(self, first_red_index: int)`, `breakout_analysis(self, candidate: Candidate, breakout_candle: Candle)`, `mode_a_invalidation_before_breakout(self, candidate: Candidate, candle: Candle)`, `confirmed_reset_before_breakout(self, candidate: Candidate | None, candle: Candle, confirmed_bottom: Decimal)`, `post_breakout_reset(self, analysis: IntrabarAnalysis | None, box_bottom: Decimal, breakout_candle: Candle)`, `detect(self, *, first_only: bool=False)`, `_scan(self, *, first_only: bool, initial: _InitialLegCursor | None=None, retain_initial: bool=False)`.
+- Function `mirror_candle(candle: Candle) -> Candle` (L623-L640).
+- Function `mirror_candidate(candidate: Candidate | None) -> Candidate | None` (L643-L660).
+- Function `mirror_analysis(analysis: IntrabarAnalysis | None) -> IntrabarAnalysis | None` (L662-L668).
+- Class `_ReflectedCandles` (L671-L693).
+  - Methods: `__init__(self, source: Sequence[Candle])`, `__len__(self)`, `__getitem__(self, index)`.
+- Function `_reflected_view(source: Sequence[Candle]) -> _ReflectedCandles` (L699-L706).
+- Class `BearishDetector` (L709-L766).
+  - Methods: `__init__(self, candles, one_second_candles, start_index, end_index)`, `red_run_bottom_before(self, first_green_index)`, `breakdown_analysis(self, candidate, breakdown_candle)`, `invalidation_high_break_before_breakdown(self, candidate, candle)`, `confirmed_reset_before_breakdown(self, candidate, candle, confirmed_top)`, `post_breakdown_reset(self, analysis, box_top, breakdown_candle)`, `detect(self, *, first_only: bool=False)`.
+- Function `published_reaction_candidate(direction: str, candidate: Candidate, chronology: object) -> Candidate` (L769-L864).
+- Function `_decimal_value(value: object) -> Decimal` (L867-L869).
+- Class `LowerTimeframeIndex` (L872-L989).
+  - Methods: `__init__(self, candles: Sequence[Candle])`, `first_less(self, left: int, right: int, level: Decimal)`, `first_greater(self, left: int, right: int, level: Decimal)`, `range_minimum(self, left: int, right: int)`, `range_maximum(self, left: int, right: int)`, `_range_query(self, left: int, right: int, *, minimum: bool)`, `_first(self, node: int, start: int, end: int, left: int, right: int, level: Decimal, less: bool)`.
+- Function `shared_lower_timeframe_index(candles: Sequence[Candle]) -> LowerTimeframeIndex` (L997-L1007).
+- Class `ReflectedLowerTimeframeIndex` (L1010-L1031).
+  - Methods: `__init__(self, base: LowerTimeframeIndex)`, `first_less(self, left: int, right: int, level: Decimal)`, `first_greater(self, left: int, right: int, level: Decimal)`, `range_minimum(self, left: int, right: int)`, `range_maximum(self, left: int, right: int)`.
+- Class `MarketChronology` (L1034-L1262).
+  - Methods: `__init__(self, candles: Sequence[Candle], seconds: Sequence[Candle], timeframe_seconds: int, lower_index: LowerTimeframeIndex | None=None)`, `opposite_direction(direction: str)`, `main_index(self, timestamp: datetime, *, clamp: bool=False)`, `lower_bounds(self, start: datetime, end: datetime | None=None)`, `lower_window(self, start: datetime, end: datetime | None=None)`, `_reset_cache_key(reset: object)`, `_reaction_cache_key(reaction: object, direction: str, use_intrabar_start: bool)`, `reset_time(self, reset: object)`, `reaction_confirmation(self, direction: str, reaction: object, *, use_intrabar_start: bool=True)`, `canonical_order_stop(self, order_direction: str, reaction_number: int, reaction: object, opposite_reactions: Sequence[object], *, start_index: int=0)`.
+- Class `_BehaviorReactionSpan` (L1266-L1301).
+  - Fields: `identity: tuple[int, int]`, `first_time: datetime`, `confirmed_at: datetime`, `top: Decimal`, `bottom: Decimal`.
+  - Methods: `from_reaction(cls, direction, reaction, chronology)`, `may_contain(self, inner: _BehaviorReactionSpan)`, `path_extremes(self, chronology: MarketChronology)`, `contains_path(self, extremes: tuple[Decimal, Decimal] | None)`.
+- Function `_apply_behavior_reaction_views(full_results, chronology, spans, blocked)` (L1304-L1325).
+- Function `build_behavior_reaction_views(full_results: dict[str, object], chronology: MarketChronology)` (L1328-L1357).
+- Class `_LiveBehaviorReactionEntry` (L1361-L1364).
+  - Fields: `geometry: tuple`, `span: _BehaviorReactionSpan`, `extremes: tuple[Decimal, Decimal] | None`.
+- Class `LiveBehaviorReactionViews` (L1367-L1430).
+  - Methods: `__init__(self, full_results: dict[str, object], chronology: MarketChronology)`, `update(self, full_results: dict[str, object], chronology: MarketChronology, *, first_dirty_main: int)`.
+- Function `directional_a_stop_order_finder(candles: Sequence[Candle], seconds: Sequence[Candle], direction: str)` (L1433-L1493).
+- Class `UnifiedReactionDetector` (L1496-L2694).
+  - Methods: `__init__(self, candles: Sequence[Candle], one_second_candles: Sequence[Candle], start_index: int, end_index: int, output_direction: str, *, initial_bullish_trend: bool=False, initial_bearish_trend: bool=False)`, `bull(self)`, `bear(self)`, `_append_reaction(self, direction: str, candidate: Candidate)`, `_append_reset(self, direction: str, candle: Candle, level: Decimal, first_idx: int, second_time: str | None=None)`, `_refine(self, direction: str, candidate: Candidate, candle: Candle)`, `_candidate_from_confirmation_remainder(self, direction: str, confirmed: Candidate, candle: Candle, analysis: IntrabarAnalysis | None)`, `_first_initial(self, direction: str, *, initial_cursor: _InitialLegCursor | _TrendLegCursor | None=None, retain_initial: bool=False)`, `_first_bullish_trend_reaction(self)`, `_first_trend_reaction(self, direction: str, *, initial: _TrendLegCursor | None=None, retain_initial: bool=False)`, `_first_direct_same_direction_after_reset(self, direction: str, reset_index: int)`, `_direct_reset_search(self, direction: str, reset_index: int)`, `_first_geometry_after_reset(self, direction: str, reset_index: int, end_index: int | None=None)`, `first_geometry_after_reset(self, direction: str, reset_index: int, end_index: int)`, `_reaction_break_indices(self, direction: str)`, `first_order_reaction_after_gate(self, direction: str, gate_index: int, end_index: int | None=None, gate_event_time: datetime | None=None)`, `_earliest_confirmed_geometry(self, direction: str, start_index: int, end_index: int | None=None)`, `_build_direct_candidate(self, direction: str, reset_index: int, first_index: int)`, `_scan_direct_candidate(self, direction: str, candidate: Candidate, stop_index: int)`, `_owner_boundary_before_confirmation(self, direction: str, candidate: Candidate, candle: Candle)`, `_result(self)`, `detect(self, *, stop_after_first_at_or_after: int | None=None)`, `_detect(self, stop_after_first_at_or_after: int | None, *, retain_cursor: bool, initial_cursor: _InitialLegCursor | _TrendLegCursor | None=None)`, `_scan_normal(self, cursor: _NormalReactionCursor, stop_after_first_at_or_after: int | None, *, retain_cursor: bool)`.
+- Class `LiveReactionContinuation` (L2697-L2822).
+  - Methods: `__init__(self, candles: Sequence[Candle], lower: Sequence[Candle], direction: str, *, timeframe_seconds: int, initial_bullish_trend: bool=False, initial_bearish_trend: bool=False)`, `result(self)`, `_snapshot(result: DetectionResult)`, `_detector(self, candles: list[Candle], lower: list[Candle])`, `_release_indexes(*sequences: list[Candle])`, `_validate_extension(self, candles: Sequence[Candle], lower: Sequence[Candle], previous_main: Candle | None, previous_lower: Candle | None)`, `advance(self, candles: Sequence[Candle], lower: Sequence[Candle])`, `preview(self, candles: Sequence[Candle], lower: Sequence[Candle])`, `_extend(self, candles: Sequence[Candle], lower: Sequence[Candle], *, commit: bool)`.
 
 #### `pipeline/s_zone_detector.py`
-- **Module-level symbols/assignments:** `S_ZONE_VERSION` (L22–L22), `S_ZONE_IMPLEMENTATION_VERSION` (L23–L23), `S_ZONE_LAST_MODIFIED` (L24–L24)
-- **Top-level functions:** `detect_s_zones(direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], trend_blue_lines: Sequence[object], a_zones: Sequence[object], chronology: object, start_index: int | None=None, end_index: int | None=None, opposite_resets: Sequence[object]=(), initial_order_geometry: Callable[[int, datetime, int], object | None] | None=None) -> list[SZone]` (L1422–L1445)
-- **Classes / schemas:**
-  - `SZone` (L28–L63)
-    - Fields: `direction: str` (L29), `color: str` (L30), `formation_type: str` (L31), `a_ordinal: int` (L32), `a_source_index: int` (L33), `a_source_time: datetime` (L34), `a_price: Decimal` (L35), `a_stop_index: int` (L36), `a_stop_time: datetime` (L37), `a_stop_event_time: datetime` (L38), `order_direction: str | None` (L39), `order_reaction_number: int | None` (L40), `order_mode: str | None` (L41), `order_first_index: int | None` (L42), `order_first_time: datetime | None` (L43), `order_break_index: int | None` (L44), `order_break_time: datetime | None` (L45), `order_confirmation_time: datetime | None` (L46), `order_box_top: Decimal | None` (L47), `order_box_top_source_index: int | None` (L48), `order_box_top_source_time: datetime | None` (L49), `order_box_bottom: Decimal | None` (L50), `order_box_bottom_source_index: int | None` (L51), `order_box_bottom_source_time: datetime | None` (L52), `order_stop_level: Decimal | None` (L53), `order_stop_source_index: int | None` (L54), `order_stop_source_time: datetime | None` (L55), `reset_reaction_number: int | None` (L56), `reset_time: datetime | None` (L57), `source_index: int` (L58), `source_time: datetime` (L59), `price: Decimal` (L60), `decision_index: int` (L61), `decision_time: datetime` (L62), `decision_event_time: datetime` (L63)
-    - Methods/properties: _none_
-  - `SZoneDetector` (L66–L1419)
-    - Fields: _none_
-    - Methods/properties: `__init__(self, direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], trend_blue_lines: Sequence[object], a_zones: Sequence[object], chronology: object, start_index: int | None=None, end_index: int | None=None, opposite_resets: Sequence[object]=(), initial_order_geometry: Callable[[int, datetime, int], object | None] | None=None) -> None` (L67–L192), `_main_index(self, timestamp: datetime) -> int` (L194–L195), `_lower_window(self, start: datetime, end: datetime | None) -> Sequence[object]` (L197–L200), `_reaction_confirmation_time(self, reaction: object, direction: str) -> datetime` (L202–L205), `reaction_confirmation_time(self, reaction: object, direction: str) -> datetime` (L207–L211), `_reset_time(self, reset: object) -> datetime` (L214–L215), `_a_confirmation_time(self, zone: object) -> datetime` (L217–L223), `_trend_extreme(self, candle: object) -> Decimal` (L225–L228), `_a_stopped(self, value: Decimal, level: Decimal) -> bool` (L230–L231), `_first_a_stop(self, level: Decimal, start: datetime) -> tuple[int, datetime, datetime] | None` (L233–L267), `first_a_stop(self, level: Decimal, start: datetime) -> tuple[int, datetime, datetime] | None` (L269–L273), `_resolved_order_backed_zone(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], first_order_match: tuple[int, object, datetime]) -> SZone | None` (L276–L292), `_candidate_source(self, start_index: int, end_index: int) -> tuple[int, datetime, Decimal]` (L295–L308), `_candidate_source_last(self, start_index: int, end_index: int) -> tuple[int, datetime, Decimal]` (L310–L328), `_first_trend_reaction_after_order(self, order_confirmation_time: datetime) -> tuple[int, object, datetime] | None` (L330–L339), `_nested_trend_reaction(self, order: object, order_confirmation_time: datetime) -> tuple[int, object, datetime] | None` (L342–L370), `_simple_candidate(self, order: object, reaction: object) -> tuple[int, datetime, Decimal]` (L372–L379), `_type3_reset_leg(self, reset: object) -> tuple[int, datetime, Decimal] | None` (L381–L395), `_type3_has_trend_reaction(self, a_stop_event: datetime, crossing: datetime) -> bool` (L397–L404), `_first_type3(self, a_stop_event: datetime, deadline: datetime) -> tuple[int, datetime, Decimal, int, datetime, int, datetime, datetime] | None` (L406–L453), `_type4_has_blue(self, candidate_source_index: int, crossing_event: datetime) -> bool` (L456–L465), `_first_type4(self, a_stop: tuple[int, datetime, datetime], deadline: datetime) -> tuple[int, datetime, Decimal, int, datetime, int, datetime] | None` (L467–L535), `_build_type4_zone(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], type4: tuple[int, datetime, Decimal, int, datetime, int, datetime]) -> SZone` (L537–L587), `_candidate_after_order(self, order_confirmation_time: datetime, reaction: object) -> tuple[int, datetime, Decimal]` (L590–L629), `_a_source_event_time(self, zone: object) -> datetime` (L631–L638), `_a_owned_by_s(self, zone: object) -> bool` (L640–L679), `_a_pair_is_reset_reset(self, zone: object) -> bool` (L681–L692), `eligible_a_zones(self) -> list[object]` (L695–L697), `_candidate_timing(self, a_stop_index: int, order: object, order_confirmation_time: datetime, a_stop_event_time: datetime | None=None) -> str` (L699–L742), `_candidate_before_order(self, a_stop_index: int, order: object, a_stop_event_time: datetime | None=None) -> tuple[int, datetime, Decimal]` (L744–L786), `_candidate_event_time(self, source_index: int, level: Decimal, not_before: datetime) -> datetime` (L788–L801), `candidate_event_time(self, source_index: int, price: Decimal, fallback: datetime) -> datetime` (L803–L807), `_blue_formation_time(self, line: object) -> datetime` (L810–L838), `_candidate_cross_has_blue(self, reaction_number: int, event_time: datetime) -> bool` (L840–L855), `_has_ordinary_trend_reaction(self, behavior_start: datetime, event_time: datetime) -> bool` (L857–L865), `_candidate_crossed(self, candle: object, level: Decimal) -> bool` (L868–L870), `_decision(self, candidate_level: Decimal, order_stop_level: Decimal, start: datetime, trend_reaction_number: int, behavior_start: datetime, candidate_start: datetime | None=None, fallback_on_unqualified_cross: bool=False) -> tuple[str, int, datetime, datetime] | None` (L873–L996), `_build_type3_zone(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], type3: tuple[int, datetime, Decimal, int, datetime, int, datetime, datetime]) -> SZone` (L999–L1055), `_build_order_backed_zone(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], order_match: tuple[int, object, datetime]) -> SZone | None` (L1057–L1226), `detect(self) -> list[SZone]` (L1228–L1302), `reconcile_shared_order_stops(self, zones: Sequence[SZone], order_entries: Sequence[dict[str, object]]) -> list[SZone]` (L1305–L1419)
-- **Nested implementation functions/closures:** _none_
+- Class `SZone` (L28-L63).
+  - Fields: `direction: str`, `color: str`, `formation_type: str`, `a_ordinal: int`, `a_source_index: int`, `a_source_time: datetime`, `a_price: Decimal`, `a_stop_index: int`, `a_stop_time: datetime`, `a_stop_event_time: datetime`, `order_direction: str | None`, `order_reaction_number: int | None`, `order_mode: str | None`, `order_first_index: int | None`, `order_first_time: datetime | None`, `order_break_index: int | None`, `order_break_time: datetime | None`, `order_confirmation_time: datetime | None`, `order_box_top: Decimal | None`, `order_box_top_source_index: int | None`, `order_box_top_source_time: datetime | None`, `order_box_bottom: Decimal | None`, `order_box_bottom_source_index: int | None`, `order_box_bottom_source_time: datetime | None`, `order_stop_level: Decimal | None`, `order_stop_source_index: int | None`, `order_stop_source_time: datetime | None`, `reset_reaction_number: int | None`, `reset_time: datetime | None`, `source_index: int`, `source_time: datetime`, `price: Decimal`, `decision_index: int`, `decision_time: datetime`, `decision_event_time: datetime`.
+- Class `SZoneDetector` (L66-L1424).
+  - Methods: `__init__(self, direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], trend_blue_lines: Sequence[object], a_zones: Sequence[object], chronology: object, start_index: int | None=None, end_index: int | None=None, opposite_resets: Sequence[object]=(), initial_order_geometry: Callable[[int, datetime, int], object | None] | None=None)`, `_main_index(self, timestamp: datetime)`, `_lower_window(self, start: datetime, end: datetime | None)`, `_reaction_confirmation_time(self, reaction: object, direction: str)`, `reaction_confirmation_time(self, reaction: object, direction: str)`, `_reset_time(self, reset: object)`, `_a_confirmation_time(self, zone: object)`, `_trend_extreme(self, candle: object)`, `_a_stopped(self, value: Decimal, level: Decimal)`, `_first_a_stop(self, level: Decimal, start: datetime)`, `first_a_stop(self, level: Decimal, start: datetime)`, `_resolved_order_backed_zone(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], first_order_match: tuple[int, object, datetime])`, `_candidate_source(self, start_index: int, end_index: int)`, `_candidate_source_last(self, start_index: int, end_index: int)`, `_first_trend_reaction_after_order(self, order_confirmation_time: datetime)`, `_nested_trend_reaction(self, order: object, order_confirmation_time: datetime)`, `_simple_candidate(self, order: object, reaction: object)`, `_type3_reset_leg(self, reset: object)`, `_type3_has_trend_reaction(self, a_stop_event: datetime, crossing: datetime)`, `_first_type3(self, a_stop_event: datetime, deadline: datetime)`, `_type4_has_blue(self, candidate_source_index: int, crossing_event: datetime)`, `_first_type4(self, a_stop: tuple[int, datetime, datetime], deadline: datetime)`, `_build_type4_zone(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], type4: tuple[int, datetime, Decimal, int, datetime, int, datetime])`, `_candidate_after_order(self, order_confirmation_time: datetime, reaction: object)`, `_a_source_event_time(self, zone: object)`, `_a_owned_by_s(self, zone: object)`, `_a_pair_is_reset_reset(self, zone: object)`, `eligible_a_zones(self)`, `_candidate_timing(self, a_stop_index: int, order: object, order_confirmation_time: datetime, a_stop_event_time: datetime | None=None)`, `_candidate_before_order(self, a_stop_index: int, order: object, a_stop_event_time: datetime | None=None)`, `_candidate_event_time(self, source_index: int, level: Decimal, not_before: datetime)`, `candidate_event_time(self, source_index: int, price: Decimal, fallback: datetime)`, `_blue_formation_time(self, line: object)`, `_candidate_cross_has_blue(self, reaction_number: int, event_time: datetime)`, `_has_ordinary_trend_reaction(self, behavior_start: datetime, event_time: datetime)`, `_candidate_crossed(self, candle: object, level: Decimal)`, `_decision(self, candidate_level: Decimal, order_stop_level: Decimal, start: datetime, trend_reaction_number: int, behavior_start: datetime, candidate_start: datetime | None=None, fallback_on_unqualified_cross: bool=False)`, `_build_type3_zone(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], type3: tuple[int, datetime, Decimal, int, datetime, int, datetime, datetime])`, `_build_order_backed_zone(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], order_match: tuple[int, object, datetime])`, `_resolve_candidate(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], order_match: tuple[int, object, datetime] | None)`, `detect(self)`, `_detect(self, resolve_candidate: Callable[..., SZone | None])`, `reconcile_shared_order_stops(self, zones: Sequence[SZone], order_entries: Sequence[dict[str, object]])`.
+- Function `_s_reaction_inputs(item: object) -> tuple` (L1427-L1433).
+- Class `LiveSZoneContinuation` (L1436-L1528).
+  - Methods: `__init__(self)`, `_current_dependencies(detector: SZoneDetector)`, `_settled_through(detector: SZoneDetector, zone: SZone, order_match: tuple[int, object, datetime] | None)`, `update(self, detector: SZoneDetector, *, first_dirty_main: int)`.
+- Function `detect_s_zones(direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], trend_blue_lines: Sequence[object], a_zones: Sequence[object], chronology: object, start_index: int | None=None, end_index: int | None=None, opposite_resets: Sequence[object]=(), initial_order_geometry: Callable[[int, datetime, int], object | None] | None=None) -> list[SZone]` (L1531-L1554).
 
 ### 13.6 Master Bullish ↔ Bearish directional mirror matrix
 
@@ -1115,6 +1279,22 @@ This table makes the stage chain reconstructable without relying on examples. Th
 2. Section 16 embeds each current production Python file byte-for-byte.
 3. The historical missing `run_blue_line` package wrapper import is repaired in 5.4.32. The production Bridge path is the supported calculation entry.
 4. Unit, targeted and full RAW regression evidence for this revision is recorded in Section 14. Prior verification claims remain historical evidence for their own Source revisions.
+
+### 13.10 Approved bullish setup annotations (UNRELEASED)
+
+This user-approved addition is bullish only. It produces chart schematics, T/F assessments and reference-break provenance; it does not execute, simulate, size, close or manage trades. Existing Reaction/Reset/Blue/A/S/E/StopAll/Order/primary formation remains authoritative and unchanged. `pipeline/bullish_setup_engine.py` owns these new calculations; the Bridge only projects their finalized results.
+
+1. Consume native accepted full-history S/E/StopAll groups and logical primary-low cycle events. Confirmation events determine eligibility; retrospective source timestamps identify anchors and never substitute for confirmation. Keep independent cycle identity, overlapping StopAll ancestry and native S-donor resets. StopAll's native strict-stop event is inclusive of its confirmation RAW row. A successor must be strictly before the current stop to confirm T.
+2. The initial StopAll-1 may draw a Buy schematic on its first confirmed S/E. Entry is the Close of the candle containing that confirmation; SL is the StopAll Low. Every accepted S/E family/color/number qualifies as a behavior.
+3. The ONLY direct-StopAll-confirmation exception is StopAll-1 with a behavior, followed by its F outcome and confirmation of its StopAll-2. Draw that StopAll-2 schematic at its confirmation candle Close with its own Low as SL, without waiting for another S/E. Do not generalize this exception to 4/6 or ignored repeated-prefix candidates.
+4. StopAll stopped after behavior becomes F; stopped without behavior remains T. Behavior alone never confirms F. A successor confirmed before the stop confirms T. Within the evaluated scope, F propagates through its parity immediately to new members and retrospectively to prior members, including earlier T labels. Inherited F still records its later actual stop. Failed behavior labels receive red F. Historical schematics are retained; no position lifecycle is inferred from their later classifications.
+5. A later movement repeats the prior movement's full reached StopAll extent, including its F final member. Ignore that repeated prefix for new entry/parity decisions; begin independent examination at n+1. Maintain causal native predecessor sets rather than flattening interleaved StopAll numbering. The first confirmed T family has entry priority until it fails; the independently valid second family then becomes eligible. An ignored prefix's F cannot contaminate the fresh scope. Eligible later StopAlls wait for their first post-confirmation S/E and use its confirmation Close and their own Low.
+6. Freeze H_ref as maximum High from the preceding PL confirmation candle through StopAll-1 confirmation candle, inclusive. Before any PL, use the bullish regime's initial candle as the start. Equality never crosses. Both evaluated parities F and a subsequent strict High > H_ref require a larger movement. New native StopAll numbering is not created by that reference break.
+7. A larger StopAll examination beyond the repeated extent, or an eligible larger confirmed PL, can advance the movement. If PL arrives before the waiting StopAll entry, enter the PL phase. Wait for the first confirmed post-PL S/E; entry is its confirmation candle Close and SL is that PL Low. Advance PL numbers within a native cycle; retain independent cycles. For coincident physical PL roles already confirmed at the same instant, use the largest known logical number. A later role promotion cannot rewrite an earlier physical setup decision.
+8. Initial R = Entry - SL must be positive; target = Entry + 4R using Decimal prices. Outputs contain `positionSetups`, `stopAllAssessments`, `behaviorAssessments`, `setupReferenceBreaks`, `setupPhase` and `setupVersion`. Entry candle time, actual confirmation event and candle-close event remain separate. Projected cycle IDs match absolute regime identities. Calculate before presentation clipping.
+9. Chart presentation uses existing position geometry: initial width50 chart intervals, editable time span, independent TP/SL, green target/red stop at10% opacity, dynamic10px boxed R:R. These are indicator-owned objects and user edits are presentation overrides; they do not alter calculated levels or independent manual drawings. Source fingerprinting includes the new Engine module.
+
+Verification evidence and reproduction helpers: `engineering/verification/bullish-setups-20261102/`. Market timestamps appear only in verification fixtures, never in production rules. Source/Reference fidelity, unit tests, scoped RAW acceptance and browser interaction are distinct evidence layers; no universal error-free result is claimed.
 
 ## 14. Verification scope and historical evidence
 
@@ -1367,11 +1547,472 @@ Every currently discovered production Python file in the live Engine package, Br
 ````
 <!-- EXACT-SOURCE-END:bridge/__init__.py -->
 
-### 16.3 `bridge/trading_pipeline.py` — Pipeline / Serialization
+### 16.3 `bridge/live_pipeline.py` — Production module
 
-**SHA-256:** `6d93dbaf67e4dce02060575b92dda5de6eaf6de0148f6db54056015c072181dc`  
-**Bytes:** `134613`  
-**LF count:** `3433`
+**SHA-256:** `117cf9a20c3ee9a9f8d992d4a018c2b9e2ca94946391633ecfde0edc8ee189e2`  
+**Bytes:** `20646`  
+**LF count:** `450`
+
+<!-- EXACT-SOURCE-BEGIN:bridge/live_pipeline.py -->
+````python
+"""Stateful market and detector continuation for the existing indicator pipeline."""
+
+from __future__ import annotations
+
+from bisect import bisect_left
+from collections import defaultdict
+from copy import copy
+from dataclasses import replace
+from decimal import Decimal
+import hashlib
+import json
+import os
+from pathlib import Path
+import sys
+from time import perf_counter
+
+from trading_pipeline import (
+    LiveMarketBuckets, MarketContext, build_candle_objects, build_response_payload,
+    load_engines, parse_arguments, prepare_pipeline_state,
+)
+from order_audit_engine import LiveOrderBResetLegs
+
+
+LIVE_PIPELINE_VERSION = "1.0.0"
+
+
+def _blue_dependencies(result):
+    resets = defaultdict(list)
+    for item in result.resets:
+        resets[item.from_first_idx].append(item)
+    return [repr((item, resets[item.first_idx])) for item in result.reactions]
+
+
+class LivePipelineStages:
+    """Own stage state for one independently clocked calculation regime."""
+
+    def __init__(self, engines):
+        self.engines = engines
+        self._reactions = {}
+        self._reaction_inputs = {}
+        self._order_gates = {}
+        self._previous_order_gates = {}
+        self._gate_dirty = {}
+        self._ownership = None
+        self._blue = {}
+        self._blue_inputs = {}
+        self._a = {}
+        self._s = {}
+        self._stopall = {}
+        self._order_b = {}
+        self._primary = {}
+        self._primary_ledger = {}
+        self._primary_dependencies = {}
+        self._setup = None
+        self._active_regimes = {}
+        self._closed_regimes = {}
+        self._used_regimes = set()
+        self._committed_main = self._committed_lower = 0
+        self.e_continuation = engines.e_zone.LiveEContinuation()
+
+    def begin(self, market, first_dirty_main):
+        self._market = market
+        self.first_dirty_main = first_dirty_main
+        self._used_regimes.clear()
+        self._previous_order_gates, self._order_gates = self._order_gates, {}
+        self.e_continuation.advance(market.chronology, first_dirty_main=first_dirty_main)
+
+    def _dirty_absolute(self):
+        return self._market.index_offset + self.first_dirty_main
+
+    def closed_regime(self, direction, context, boundary, work):
+        end = context.index_offset + boundary
+        key = (direction, context.index_offset, end, context.start_index,
+               min(context.end_index, boundary - 1))
+        self._used_regimes.add(key)
+        if key not in self._closed_regimes or self._dirty_absolute() < end:
+            self._closed_regimes[key] = work()
+        return self._closed_regimes[key]
+
+    def active_regime(self, context, direction):
+        key = (direction, context.index_offset)
+        self._used_regimes.add(key)
+        dirty = max(0, min(len(context.candles), self._dirty_absolute() - context.index_offset))
+        stage = self._active_regimes.get(key)
+        if stage is None or dirty < stage._committed_main:
+            stage = self._active_regimes[key] = LivePipelineStages(self.engines)
+            dirty = 0
+        stage.begin(context, dirty)
+        return stage
+
+    def finish_regimes(self):
+        self._active_regimes = {key: value for key, value in self._active_regimes.items() if key in self._used_regimes}
+        self._closed_regimes = {key: value for key, value in self._closed_regimes.items() if key in self._used_regimes}
+
+    def reactions(self, detectors):
+        engine = self.engines.reaction
+        market = self._market
+        chronology = market.chronology
+        timeframe = int(chronology.timeframe.total_seconds())
+        committed_main = len(market.candles) - 1
+        if committed_main < 2:
+            results = {direction: detector.detect() for direction, detector in detectors.items()}
+            self._update_order_dependencies(results)
+            return results
+        if self.first_dirty_main < self._committed_main:
+            raise ValueError("Previously committed Reaction candles were revised.")
+        committed_lower = bisect_left(chronology.second_times, chronology.times[committed_main])
+        new_main = market.candles[self._committed_main:committed_main]
+        new_lower = market.seconds[self._committed_lower:committed_lower]
+        preview_main = market.candles[committed_main:]
+        preview_lower = market.seconds[committed_lower:]
+        results = {}
+        for direction, detector in detectors.items():
+            stage = self._reactions.get(direction)
+            if stage is None:
+                stage = self._reactions[direction] = engine.LiveReactionContinuation(
+                    new_main, new_lower, direction, timeframe_seconds=timeframe,
+                    initial_bullish_trend=market.initial_bullish_trend and direction == "bullish",
+                    initial_bearish_trend=market.initial_bearish_trend and direction == "bearish",
+                )
+            else:
+                stage.advance(new_main, new_lower)
+            result = results[direction] = stage.preview(preview_main, preview_lower)
+            # The bounded native Order_A finder reads the accepted continuous
+            # Reaction context from this detector.
+            detector.all_reactions[direction] = result.reactions
+            detector.all_resets[direction] = result.resets
+        self._committed_main, self._committed_lower = committed_main, committed_lower
+        self._update_order_dependencies(results)
+        return results
+
+    def _update_order_dependencies(self, results):
+        for direction, result in results.items():
+            current = (
+                [(repr(item), item.break_idx) for item in result.reactions],
+                {(repr(item), item.index) for item in result.resets},
+            )
+            previous = self._reaction_inputs.get(direction)
+            dirty = self.first_dirty_main
+            if previous is not None:
+                for before, after in zip(previous[0], current[0]):
+                    if before != after:
+                        dirty = min(dirty, before[1], after[1])
+                        break
+                shared = min(len(previous[0]), len(current[0]))
+                for sequence in (previous[0], current[0]):
+                    if shared < len(sequence):
+                        dirty = min(dirty, sequence[shared][1])
+                for _, index in previous[1] ^ current[1]:
+                    dirty = min(dirty, index)
+            self._reaction_inputs[direction] = current
+            self._gate_dirty[direction] = dirty
+
+    def order_geometry(self, detector, direction, gate, limit, event):
+        key = (direction, gate, event)
+        current = self._order_gates.get(key)
+        if current is None:
+            previous = self._previous_order_gates.get(key)
+            if previous is not None and previous.break_idx < self._gate_dirty[direction]:
+                current = previous
+        if current is not None and gate < limit and current.break_idx <= limit:
+            self._order_gates[key] = current
+            return replace(current)
+        result = detector.first_order_reaction_after_gate(direction, gate, limit, event)
+        if result is not None and len(self._order_gates) < 32_768:
+            self._order_gates[key] = replace(result)
+        return result
+
+    def ownership(self, results):
+        chronology = self._market.chronology
+        if self._ownership is None:
+            self._ownership = self.engines.reaction.LiveBehaviorReactionViews(results, chronology)
+            return {
+                direction: {(item.first_idx, item.break_idx) for item in group.reactions if item.behavior_internal}
+                for direction, group in results.items()
+            }
+        return self._ownership.update(results, chronology, first_dirty_main=self.first_dirty_main)[2]
+
+    def blue_lines(self, direction, result):
+        chronology = self._market.chronology
+        stage = self._blue.get(direction)
+        current = _blue_dependencies(result)
+        if stage is None:
+            stage = self._blue[direction] = self.engines.blue_line.LiveBlueLineContinuation(
+                direction, result.reactions, chronology, result.resets,
+            )
+            lines = stage.result
+        else:
+            previous = self._blue_inputs[direction]
+            first = next((i for i, (old, new) in enumerate(zip(previous, current)) if old != new),
+                         min(len(previous), len(current)))
+            lines = stage.update(
+                result.reactions, chronology, result.resets,
+                first_changed=first, first_dirty_main=self.first_dirty_main,
+            )
+        self._blue_inputs[direction] = current
+        return lines
+
+    def a_zones(self, direction, reactions, blue_lines):
+        chronology = self._market.chronology
+        stage = self._a.get(direction)
+        if stage is None:
+            stage = self._a[direction] = self.engines.a_zone.LiveAZoneContinuation(
+                direction, reactions, blue_lines, chronology,
+            )
+            return stage.result
+        return stage.update(reactions, blue_lines, chronology, first_dirty_main=self.first_dirty_main)
+
+    def s_zones(self, direction, detector):
+        stage = self._s.get(direction)
+        if stage is None:
+            stage = self._s[direction] = self.engines.s_zone.LiveSZoneContinuation()
+        return stage.update(detector, first_dirty_main=self.first_dirty_main)
+
+    def stopall_finder(self, scope):
+        def find(direction, s_zones, e_zones, chronology):
+            key = (scope, direction)
+            stage = self._stopall.get(key)
+            if stage is None:
+                stage = self._stopall[key] = self.engines.lifecycle.LiveStopAllContinuation(
+                    direction, s_zones, e_zones, chronology,
+                )
+                return stage.result
+            return stage.update(s_zones, e_zones, chronology, first_dirty_main=self.first_dirty_main)
+        return find
+
+    def order_b_finder(self, scope):
+        def find(direction, chronology, trend, resets, opposite, stops, formations, *, behavior_anchors):
+            key = (scope, direction)
+            stage = self._order_b.get(key)
+            if stage is None:
+                stage = self._order_b[key] = LiveOrderBResetLegs(direction)
+            return stage.update(
+                chronology, trend, resets, opposite, stops, formations,
+                behavior_anchors=behavior_anchors, first_dirty_main=self.first_dirty_main,
+            )
+        return find
+
+    def primary(self, direction, groups, orders, detector):
+        market = self._market
+        chronology = market.chronology
+        stage = self._primary.get(direction)
+        ledger = {}
+        for owner, group in groups.items():
+            physical = chronology.opposite_direction(owner)
+            for item in group["OrderAudit"]:
+                reaction = item["reaction"]
+                entry = item["entry"]
+                first, end = reaction.first_idx, reaction.break_idx
+                key = (owner, first, end)
+                ledger[key] = (
+                    repr((reaction, entry["reaction_number"], entry["stop_level"],
+                          entry["stop_source_index"], item["causes"])),
+                    chronology.reaction_confirmation(physical, reaction),
+                    item["crossed"],
+                )
+        previous_dependencies = self._primary_dependencies.get(direction, ())
+        if stage is None:
+            stage = self._primary[direction] = self.engines.primary.LivePrimaryContinuation(
+                direction, chronology, groups[direction]["S"], groups[direction]["E"],
+                groups[direction]["StopAll"], orders,
+            )
+            result = stage.result
+        else:
+            dirty = (chronology.times[self.first_dirty_main]
+                     if self.first_dirty_main < len(chronology.times)
+                     else chronology.times[-1] + chronology.timeframe)
+            previous = self._primary_ledger[direction]
+            for key in previous.keys() | ledger.keys():
+                before, after = previous.get(key), ledger.get(key)
+                if before == after:
+                    continue
+                if before is not None and after is not None and before[:2] == after[:2]:
+                    dirty = min(dirty, *(row[2][2] for row in (before, after) if row[2] is not None))
+                else:
+                    dirty = min(dirty, chronology.times[key[1]])
+            for point, dependency in previous_dependencies:
+                if point.decision_event_time < dirty and detector.primary_order_dependency(point) != dependency:
+                    dirty = point.decision_event_time
+            result = stage.update(
+                chronology, groups[direction]["S"], groups[direction]["E"],
+                groups[direction]["StopAll"], orders, first_dirty_event=dirty,
+            )
+        self._primary_ledger[direction] = ledger
+        points = result.lows if direction == "bullish" else result.highs
+        self._primary_dependencies[direction] = [
+            (point, detector.primary_order_dependency(point)) for point in points
+        ]
+        return result
+
+    def bullish_setups(self, groups, primary_lows):
+        from bullish_setup_engine import LiveBullishSetupContinuation
+
+        market = self._market
+        chronology = market.chronology
+        inputs = (chronology, groups["S"], groups["E"], groups["StopAll"], primary_lows)
+        if self._setup is None:
+            self._setup = LiveBullishSetupContinuation(*inputs, through_index=market.end_index)
+            return self._setup.result
+        dirty = (chronology.times[self.first_dirty_main]
+                 if self.first_dirty_main < len(chronology.times)
+                 else chronology.times[-1] + chronology.timeframe)
+        return self._setup.update(*inputs, first_dirty_event=dirty, through_index=market.end_index)
+
+
+class LivePipelineContinuation:
+    """Build the standard indicator payload over append-only market input."""
+
+    def __init__(self, args, engines):
+        if engines.e_zone is None or args.s_zones != "enabled":
+            raise ValueError("Live indicator requires the complete behavior pipeline.")
+        self.args = copy(args)
+        self.engines = engines
+        self._buckets = LiveMarketBuckets(args.timeframe)
+        self._main = []
+        self._seconds = []
+        self._stages = LivePipelineStages(engines)
+
+    def append(self, rows):
+        started = perf_counter()
+        timings = {}
+        engine = self.engines.reaction
+        delta = self._buckets.append(rows)
+        self._main = [
+            *self._main[:delta.first_dirty_main],
+            *build_candle_objects(engine, self._buckets.main_buckets[delta.first_dirty_main:],
+                                  start_index=delta.first_dirty_main),
+        ]
+        self._seconds = [
+            *self._seconds[:delta.first_dirty_second],
+            *build_candle_objects(engine, self._buckets.second_buckets[delta.first_dirty_second:],
+                                  start_index=delta.first_dirty_second),
+        ]
+        timeframe = self.args.timeframe
+        candles = self._seconds if timeframe == 1 else self._main
+        first_bucket = self.args.from_time if timeframe == 1 else self.args.from_time // timeframe * timeframe
+        start = bisect_left(self._buckets.main_buckets, first_bucket, key=lambda bucket: bucket["time"])
+        if start >= len(candles):
+            raise ValueError("The selected range contains no timeframe candles.")
+        chronology = engine.MarketChronology(candles, self._seconds, timeframe)
+        market = MarketContext(self._seconds, candles, chronology.lower_index, chronology, start, len(candles) - 1)
+        try:
+            self._stages.begin(market, delta.first_dirty_main)
+            state = prepare_pipeline_state(self.args, self.engines, market, timings, live=self._stages)
+            payload = build_response_payload(self.args, self.engines, market, state, timings, started)
+            self._stages.finish_regimes()
+            return payload
+        finally:
+            engine.LiveReactionContinuation._release_indexes(candles, self._seconds)
+
+
+class LiveRawChanged(ValueError):
+    """A previously observed source candle was removed or revised."""
+
+
+def _decode_raw(data):
+    rows = json.loads(data, parse_float=Decimal)
+    if not isinstance(rows, list) or not rows:
+        raise LiveRawChanged("The RAW source is empty. Use Apply again.")
+    return rows
+
+
+class LiveRawSource:
+    """Bind a manual range to its exact original RAW prefix across renames."""
+
+    def __init__(self, selected, data, original):
+        start = bisect_left(original, selected[0]["time"], key=lambda item: item["time"])
+        end = start + len(selected)
+        if selected != original[start:end]:
+            raise LiveRawChanged("The selected range differs from the original RAW precision. Use Apply again.")
+        self._catchup = original[end:]
+        self._last_time = original[-1]["time"]
+        self._remember_prefix(data)
+
+    def _remember_prefix(self, data):
+        # The RAW writer preserves everything before the closing bracket.
+        # Hash the bytes without parsing or normalizing the previous candles.
+        self._end = data.rfind(b"]")
+        self._signature = hashlib.sha256(memoryview(data)[:self._end]).digest()
+
+    def append(self, data, pipeline):
+        if len(data) <= self._end or hashlib.sha256(memoryview(data)[:self._end]).digest() != self._signature:
+            raise LiveRawChanged("Existing RAW candles changed. Use Apply again.")
+        tail = data[self._end:].lstrip()
+        if tail.startswith(b","):
+            new_rows = _decode_raw(b"[" + tail[1:])
+            previous = self._last_time
+            for row in new_rows:
+                if row["time"] <= previous:
+                    raise LiveRawChanged("RAW candles no longer extend the previous history. Use Apply again.")
+                previous = row["time"]
+        elif tail.rstrip() == b"]":
+            new_rows = []
+        else:
+            raise LiveRawChanged("The RAW file is no longer an append of the original source. Use Apply again.")
+        batch = self._catchup + new_rows
+        result = pipeline.append(batch) if batch else None
+        self._catchup = []
+        if new_rows:
+            self._last_time = new_rows[-1]["time"]
+            self._remember_prefix(data)
+        return result
+
+
+def _send_worker_message(kind, **fields):
+    print(json.dumps({"type": kind, **fields}, separators=(",", ":")), flush=True)
+
+
+def main():
+    """Keep one exact manual calculation alive over the server's private pipe."""
+    try:
+        args = parse_arguments()
+        original_path = Path(os.environ["TRADINGBOT_LIVE_RAW_SOURCE"])
+        selected_data = args.data.read_bytes()
+        selected = _decode_raw(selected_data)
+        original_data = selected_data if args.data == original_path else original_path.read_bytes()
+        original = selected if args.data == original_path else _decode_raw(original_data)
+        lineage = LiveRawSource(selected, original_data, original)
+        pipeline = LivePipelineContinuation(args, load_engines(args, {}))
+        payload = pipeline.append(selected)
+        del selected, original, selected_data, original_data
+        _send_worker_message("seed", ready=True, payload=payload)
+        for line in sys.stdin:
+            request = json.loads(line)
+            try:
+                raw = Path(request["data"]).read_bytes()
+            except FileNotFoundError:
+                raw = None
+            if raw is None or (request.get("sha256") is not None
+                               and hashlib.sha256(raw).hexdigest() != request["sha256"]):
+                _send_worker_message("error", code="RAW_RETRY",
+                                     message="RAW changed during the indicator update. Retrying at the next check.")
+                continue
+            updated = lineage.append(raw, pipeline)
+            if updated is not None:
+                payload = updated
+            _send_worker_message("update", payload=payload)
+    except LiveRawChanged as exc:
+        _send_worker_message("error", code="RAW_CHANGED", message=str(exc))
+        return 1
+    except Exception as exc:
+        print(f"Live Engine: {exc}", file=sys.stderr, flush=True)
+        _send_worker_message("error", code="LIVE_ENGINE_FAILED",
+                             message="The live Engine could not continue this calculation. Use Apply again.")
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+````
+<!-- EXACT-SOURCE-END:bridge/live_pipeline.py -->
+
+### 16.4 `bridge/trading_pipeline.py` — Final reconciled calculation objects
+
+**SHA-256:** `93ef7539f1e7122c19eb7fc05ec735b725a58574c06e09b67d2c9d614b99f86e`  
+**Bytes:** `144164`  
+**LF count:** `3640`
 
 <!-- EXACT-SOURCE-BEGIN:bridge/trading_pipeline.py -->
 ````python
@@ -1395,7 +2036,7 @@ from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
 from time import perf_counter
-from typing import Sequence
+from typing import Callable, Iterable, Sequence
 from zoneinfo import ZoneInfo
 
 # This bridge lives in ``engine/bridge`` while the calculation modules live in
@@ -1416,9 +2057,9 @@ from order_audit_engine import accepted_audit_entries, order_b_leg_identity
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.13.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.16.0"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
+TRADING_PIPELINE_VERSION = "1.14.0"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.18.0"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
 MBL_EXTENSION_CANDLES = 400
 
 TEHRAN = ZoneInfo("Asia/Tehran")
@@ -1497,28 +2138,14 @@ def display_epoch(value: str | datetime) -> int:
     return result
 
 
-def build_candle_buckets(rows: list[dict], timeframe: int):
-    """Normalize raw rows once, preserving lower and selected-timeframe buckets."""
-    second_buckets: list[dict] = []
-    current_second = None
-    buckets: list[dict] = []
-    current = None
-    to_decimal = as_decimal
-    decimal_cache: dict[tuple[type, object], Decimal] = {}
-
-    def cached_decimal(value: object) -> Decimal:
-        # Raw prices repeat heavily. Cache by both type and value so values
-        # such as ``10`` and ``10.0`` retain their exact string-normalized
-        # Decimal representation instead of being conflated by Python's
-        # numeric equality rules.
-        key = (type(value), value)
-        try:
-            return decimal_cache[key]
-        except KeyError:
-            normalized = to_decimal(value)
-            decimal_cache[key] = normalized
-            return normalized
-
+def _aggregate_candle_buckets(
+    rows: Iterable[dict], timeframe: int, cached_decimal: Callable[[object], Decimal],
+    *, second_tail: dict | None = None, main_tail: dict | None = None,
+) -> tuple[list[dict], list[dict]]:
+    current_second = second_tail
+    second_buckets = [] if second_tail is None else [second_tail]
+    current = main_tail
+    buckets = [] if main_tail is None else [main_tail]
     for row in rows:
         timestamp = int(row["time"])
         o = cached_decimal(row["open"])
@@ -1555,7 +2182,103 @@ def build_candle_buckets(rows: list[dict], timeframe: int):
     return second_buckets, buckets
 
 
-def build_candle_objects(engine, buckets: list[dict]):
+def build_candle_buckets(rows: list[dict], timeframe: int):
+    """Normalize raw rows once, preserving lower and selected-timeframe buckets."""
+    to_decimal = as_decimal
+    decimal_cache: dict[tuple[type, object], Decimal] = {}
+
+    def cached_decimal(value: object) -> Decimal:
+        # Keep the first normalized representation for each type/value pair.
+        key = (type(value), value)
+        try:
+            return decimal_cache[key]
+        except KeyError:
+            normalized = to_decimal(value)
+            decimal_cache[key] = normalized
+            return normalized
+
+    return _aggregate_candle_buckets(rows, timeframe, cached_decimal)
+
+
+@dataclass(frozen=True, slots=True)
+class BucketAppend:
+    first_dirty_second: int
+    first_dirty_main: int
+    settled_seconds: int
+    settled_main: int
+
+
+class LiveMarketBuckets:
+    """Hold normalized history and recompute only buckets touched by new RAW."""
+
+    def __init__(self, timeframe: int):
+        if type(timeframe) is not int or timeframe < 1:
+            raise ValueError("Live timeframe must be a positive integer number of seconds.")
+        self.timeframe = timeframe
+        self.second_buckets: list[dict] = []
+        self.main_buckets: list[dict] = []
+        self.last_raw_time: int | None = None
+        self._prices: dict[tuple[type, object], Decimal] = {}
+
+    def append(self, rows: Sequence[dict]) -> BucketAppend:
+        dirty_second = len(self.second_buckets)
+        dirty_main = len(self.main_buckets)
+        if not rows:
+            return self._delta(dirty_second, dirty_main)
+
+        first_time = int(rows[0]["time"])
+        first_bucket = first_time // self.timeframe * self.timeframe
+        second_tail = None
+        main_tail = None
+        if self.second_buckets and self.last_raw_time == first_time:
+            dirty_second -= 1
+            second_tail = self.second_buckets[-1].copy()
+        if self.main_buckets and self.main_buckets[-1]["time"] == first_bucket:
+            dirty_main -= 1
+            main_tail = self.main_buckets[-1].copy()
+
+        previous_time = self.last_raw_time
+        new_prices: dict[tuple[type, object], Decimal] = {}
+
+        def checked_rows():
+            nonlocal previous_time
+            for row in rows:
+                time = int(row["time"])
+                if time != row["time"] or time <= 0:
+                    raise ValueError("Live RAW requires positive integer times.")
+                if previous_time is not None and time < previous_time:
+                    raise ValueError("Live RAW must be appended in chronological order.")
+                previous_time = time
+                yield row
+
+        def cached_decimal(value: object) -> Decimal:
+            key = (type(value), value)
+            if key in self._prices:
+                return self._prices[key]
+            if key not in new_prices:
+                new_prices[key] = as_decimal(value)
+            return new_prices[key]
+
+        seconds, main = _aggregate_candle_buckets(
+            checked_rows(), self.timeframe, cached_decimal,
+            second_tail=second_tail, main_tail=main_tail,
+        )
+        self._prices.update(new_prices)
+        self.second_buckets[dirty_second:] = seconds
+        self.main_buckets[dirty_main:] = main
+        self.last_raw_time = previous_time
+        return self._delta(dirty_second, dirty_main)
+
+    def _delta(self, dirty_second: int, dirty_main: int) -> BucketAppend:
+        # The final bucket remains mutable until a later bucket starts. The
+        # counts are exclusive boundaries, safe even across missing RAW slots.
+        return BucketAppend(
+            dirty_second, dirty_main,
+            max(0, len(self.second_buckets) - 1), max(0, len(self.main_buckets) - 1),
+        )
+
+
+def build_candle_objects(engine, buckets: list[dict], *, start_index: int = 0):
     """Create maintained engine candles from already-normalized buckets."""
     candles = []
     append = candles.append
@@ -1563,7 +2286,7 @@ def build_candle_objects(engine, buckets: list[dict]):
     classify = engine.classify_candle_color
     local = local_datetime
     fmt = _DTFMT.format
-    for index, item in enumerate(buckets):
+    for index, item in enumerate(buckets, start=start_index):
         stamp = local(item["time"])
         append(candle_type(
             index=index,
@@ -3247,6 +3970,7 @@ class PipelineState:
     full_s_by_direction: dict[str, list[object]]
     full_s_candidates_by_direction: dict[str, list[object]]
     primary_result: object | None = None
+    live_stages: object | None = None
 
 
 @dataclass(slots=True)
@@ -3279,6 +4003,9 @@ def create_e_detector(
     e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]] = frozenset(),
     invalid_s_root_identities: set[tuple[datetime, int]] | None = None,
     order_b_legs: Sequence[object] = (),
+    live_continuation=None,
+    order_geometry=None,
+    live_scope=(),
 ):
     """Construct one E detector from shared geometry and physical Orders."""
     opposite = chronology.opposite_direction(direction)
@@ -3287,6 +4014,11 @@ def create_e_detector(
     def direct_geometry(
         geometry_direction, geometry_start, geometry_end, gate_event
     ):
+        if order_geometry is not None:
+            return order_geometry(
+                geometry_detectors[geometry_direction],
+                geometry_direction, geometry_start, geometry_end, gate_event,
+            )
         return geometry_detectors[geometry_direction].first_order_reaction_after_gate(
             geometry_direction,
             geometry_start,
@@ -3310,6 +4042,8 @@ def create_e_detector(
         sequence_priority=lifecycle_engine.sequence_priority,
         invalid_s_root_identities=invalid_s_root_identities,
         order_b_legs=order_b_legs,
+        **({"live_continuation": live_continuation, "live_scope": live_scope}
+           if live_continuation is not None else {}),
     )
 
 
@@ -3323,6 +4057,8 @@ def calculate_full_direction_state(
     timings: dict[str, float],
     order_b_legs: Sequence[object] = (),
     shared_stages: FullDirectionState | None = None,
+    live=None,
+    feedback_index: int = 0,
 ) -> FullDirectionState:
     """Run Blue→A→S→E calculation and lifecycle reconciliation for one direction."""
     blue_engine = engines.blue_line
@@ -3339,7 +4075,7 @@ def calculate_full_direction_state(
         blue_lines = timed(
             timings,
             f"Blue Line • {direction.title()}",
-            lambda: blue_engine.detect_blue_lines(
+            lambda: live.blue_lines(direction, full_results[direction]) if live is not None else blue_engine.detect_blue_lines(
                 direction,
                 full_results[direction].reactions,
                 chronology,
@@ -3349,7 +4085,7 @@ def calculate_full_direction_state(
         a_zones = timed(
             timings,
             f"A • {direction.title()}",
-            lambda: a_engine.detect_a_zones(
+            lambda: live.a_zones(direction, full_results[direction].reactions, blue_lines) if live is not None else a_engine.detect_a_zones(
                 direction,
                 full_results[direction].reactions,
                 blue_lines,
@@ -3368,7 +4104,10 @@ def calculate_full_direction_state(
             full_results[opposite].resets,
             initial_order_geometry=initial_order_geometry[direction],
         )
-        s_zones = timed(timings, f"S • {direction.title()}", s_detector.detect)
+        s_zones = timed(
+            timings, f"S • {direction.title()}",
+            s_detector.detect if live is None else lambda: live.s_zones(direction, s_detector),
+        )
         initial_s_zones = list(s_zones)
     else:
         # Reaction, Blue, A and the initial S pass do not depend on Order_B.
@@ -3378,6 +4117,8 @@ def calculate_full_direction_state(
         s_zones = list(shared_stages.initial_s_zones)
         initial_s_zones = shared_stages.initial_s_zones
     s_candidates = list(s_zones)
+    live_e = live.e_continuation if live is not None else None
+    order_geometry = live.order_geometry if live is not None else None
 
     # A detection is provisional. Only A that survives S ownership may create
     # a parent-stop Order_A used by downstream E/Order state. Later lifecycle
@@ -3399,6 +4140,9 @@ def calculate_full_direction_state(
         s_accepted_order_audit,
         lifecycle_engine,
         order_b_legs=order_b_legs,
+        live_continuation=live_e,
+        order_geometry=order_geometry,
+        live_scope=(feedback_index, "initial"),
     )
     e_zones = timed(
         timings, f"E • {direction.title()} • initial", e_detector.detect
@@ -3422,6 +4166,9 @@ def calculate_full_direction_state(
                 if item not in valid_s_zones
             },
             order_b_legs=order_b_legs,
+            live_continuation=live_e,
+            order_geometry=order_geometry,
+            live_scope=(feedback_index, "s-reconciliation"),
         )
         e_zones = timed(
             timings,
@@ -3537,6 +4284,9 @@ def calculate_full_direction_state(
         e_parent_order_first_exceptions=e_parent_exceptions,
         invalid_s_root_identities=invalid_s_identities,
         order_b_legs=order_b_legs,
+        live_continuation=live_e,
+        order_geometry=order_geometry,
+        live_scope=(feedback_index, "final"),
     )
     e_zones = timed(
         timings, f"E • {direction.title()} • final audit", e_detector.detect
@@ -3580,6 +4330,9 @@ def calculate_full_direction_state(
             e_parent_order_first_exceptions=e_parent_exceptions,
             invalid_s_root_identities=invalid_s_identities,
             order_b_legs=order_b_legs,
+            live_continuation=live_e,
+            order_geometry=order_geometry,
+            live_scope=(feedback_index, "shared-order"),
         )
         e_zones = timed(
             timings,
@@ -3658,6 +4411,7 @@ def calculate_direction_with_order_b_feedback(
     timings: dict[str, float],
     *,
     stopall_enabled: bool,
+    live=None,
 ) -> FullDirectionState:
     """Recalculate only while proven Order_B causes change accepted state."""
     opposite = engines.reaction.opposite_direction(direction)
@@ -3669,6 +4423,8 @@ def calculate_direction_with_order_b_feedback(
             direction, engines, market, full_results, geometry_detectors,
             initial_order_geometry, timings, order_b_legs=order_b_legs,
             shared_stages=shared_stages,
+            live=live,
+            feedback_index=_pass,
         )
         if shared_stages is None:
             shared_stages = state
@@ -3679,6 +4435,7 @@ def calculate_direction_with_order_b_feedback(
             e_zones, stopalls = engines.lifecycle.reconcile_stopall_lifecycle(
                 state.e_detector, state.s_zones, state.e_zones,
                 market.chronology, direction,
+                stopall_finder=live.stopall_finder(("feedback", _pass)) if live is not None else None,
             )
         else:
             e_zones, stopalls = list(state.e_zones), []
@@ -3698,6 +4455,7 @@ def calculate_direction_with_order_b_feedback(
             state.s_detector,
             state.e_detector,
             engines.lifecycle.module_priority,
+            reset_leg_finder=live.order_b_finder(("feedback", _pass)) if live is not None else None,
         )
         old_identity = order_b_leg_identity(order_b_legs)
         new_identity = order_b_leg_identity(discovered)
@@ -3715,6 +4473,8 @@ def prepare_pipeline_state(
     engines: EngineBundle,
     market: MarketContext,
     timings: dict[str, float],
+    *,
+    live=None,
 ) -> PipelineState:
     """Run shared calculation stages once and retain reusable detector state."""
     engine = engines.reaction
@@ -3752,18 +4512,21 @@ def prepare_pipeline_state(
             )
             for direction in ("bullish", "bearish")
         }
-        results = {
-            direction: timed(
-                timings,
-                f"Reaction geometry • {direction.title()}",
-                detector.detect,
-            )
-            for direction, detector in geometry_detectors.items()
-        }
-        _, _, internal_reaction_identities, _ = timed(
+        if live is None:
+            results = {
+                direction: timed(
+                    timings,
+                    f"Reaction geometry • {direction.title()}",
+                    detector.detect,
+                )
+                for direction, detector in geometry_detectors.items()
+            }
+        else:
+            results = timed(timings, "Continue Reaction geometry", lambda: live.reactions(geometry_detectors))
+        internal_reaction_identities = timed(
             timings,
             "Internal Reaction ownership",
-            lambda: engine.build_behavior_reaction_views(results, chronology),
+            lambda: live.ownership(results) if live is not None else engine.build_behavior_reaction_views(results, chronology)[2],
         )
         # A-stop Order_A geometry has its own independent post-stop First gate.
         # Reuse the already-detected opposite-direction engine and its cached
@@ -3773,7 +4536,9 @@ def prepare_pipeline_state(
             direction: (
                 lambda gate_index, gate_event, end_index,
                 order_direction=engine.opposite_direction(direction):
-                    geometry_detectors[order_direction].first_order_reaction_after_gate(
+                    live.order_geometry(
+                        geometry_detectors[order_direction], order_direction, gate_index, end_index, gate_event
+                    ) if live is not None else geometry_detectors[order_direction].first_order_reaction_after_gate(
                         order_direction, gate_index, end_index, gate_event
                     )
             )
@@ -3794,6 +4559,7 @@ def prepare_pipeline_state(
                 initial_order_geometry,
                 timings,
                 stopall_enabled=(args.lifecycle_engine is not None),
+                live=live,
             )
             full_e_zones[direction] = state.e_zones
             full_e_detectors[direction] = state.e_detector
@@ -3847,6 +4613,7 @@ def prepare_pipeline_state(
         invalid_s_identities_by_direction=invalid_s_identities_by_direction,
         full_s_by_direction=full_s_by_direction,
         full_s_candidates_by_direction=full_s_candidates_by_direction,
+        live_stages=live,
     )
 
 
@@ -4041,6 +4808,7 @@ def finalize_direction_visibility(
             market.chronology,
             direction,
             lambda label, work: timed(timings, label, work),
+            stopall_finder=state.live_stages.stopall_finder("final") if state.live_stages is not None else None,
         )
 
     if direction in state.full_e_detectors:
@@ -4072,6 +4840,7 @@ def finalize_direction_visibility(
                 state.full_s_detectors[direction],
                 detector,
                 lifecycle_engine.module_priority,
+                reset_leg_finder=state.live_stages.order_b_finder("final") if state.live_stages is not None else None,
             ),
         )
         if order_b_leg_identity(reset_legs) != order_b_leg_identity(detector.order_b_legs):
@@ -4549,11 +5318,14 @@ def calculate_primary_structures(args, engines, market, state, visibility, timin
     resolver = engines.primary.NativePrimaryOrders(market.chronology, groups,
         on_high=commit_high, direction=direction)
     detect = engines.primary.detect_bullish if direction == "bullish" else engines.primary.detect_bearish
-    primary = detect(
-        market.chronology, groups[direction]["S"], groups[direction]["E"],
-        groups[direction]["StopAll"], resolver,
-    )
     detector = state.full_e_detectors[direction]
+    primary = (
+        state.live_stages.primary(direction, groups, resolver, detector)
+        if state.live_stages is not None else detect(
+            market.chronology, groups[direction]["S"], groups[direction]["E"],
+            groups[direction]["StopAll"], resolver,
+        )
+    )
     resolve = engines.primary.resolve_primary_lows if direction == "bullish" else engines.primary.resolve_primary_highs
     reconcile = detector.reconcile_primary_low_labels if direction == "bullish" else detector.reconcile_primary_high_labels
     reconcile(resolve(primary, through_index=market.end_index))
@@ -4564,6 +5336,47 @@ def calculate_primary_structures(args, engines, market, state, visibility, timin
         state.full_s_detectors[direction], accepted_by_owner[direction], required,
     )
     return primary
+
+
+def serialize_setup_annotations(result, market):
+    """Project finalized chart annotations; price/state decisions stay in Engine."""
+    from dataclasses import fields
+    from bullish_setup_engine import SETUP_VERSION
+
+    def value(item):
+        if isinstance(item, datetime):
+            return epoch(item)
+        if isinstance(item, Decimal):
+            return str(item)
+        return item
+
+    def row(item):
+        projected = {}
+        for field in fields(item):
+            parts = field.name.split("_")
+            key = parts[0] + "".join(part.title() for part in parts[1:])
+            content = getattr(item, field.name)
+            if field.name == "cycle_id" and content and getattr(market,"index_offset",0):
+                parts = content.split(":")
+                if len(parts) == 4 and parts[1] == "cycle":
+                    offset = market.index_offset
+                    content = f"{parts[0]}:cycle:{int(parts[2])+offset}:{int(parts[3])+offset}"
+            projected[key] = ([{"sourceIndex": index} for index in content]
+                              if field.name == "predecessor_source_indexes" else value(content))
+        return projected
+
+    def visible(items, index):
+        return [row(item) for item in items
+                if market.start_index <= getattr(item, index) <= market.end_index]
+
+    return {
+        "setupVersion": SETUP_VERSION,
+        "setupPhase": result.phase,
+        "positionSetups": visible(result.setups, "entry_index"),
+        "stopAllAssessments": visible(result.assessments, "source_index"),
+        "behaviorAssessments": visible(result.behaviors, "source_index"),
+        "setupReferenceBreaks": visible(result.breakouts, "source_index"),
+    }
 
 
 def build_direction_output(
@@ -4601,11 +5414,27 @@ def build_direction_output(
             visibility.prepared_order_audit, visibility.s_zones,
             visibility.e_zones, visibility.stopalls,
         )
+    setup_result = None
+    if (direction == "bullish" and direction == primary_direction
+            and args.lifecycle_engine is not None
+            and args.s_zones == "enabled"):
+        from bullish_setup_engine import calculate_bullish_setups
+        groups = visibility.primary_groups
+        primary_lows = primary.lows if primary is not None else []
+        live = getattr(state, "live_stages", None)
+        setup_result = timed(timings, "Bullish setup annotations", lambda:
+            live.bullish_setups(groups, primary_lows)
+            if live is not None else calculate_bullish_setups(
+                market.chronology, groups["S"], groups["E"], groups["StopAll"],
+                primary_lows, through_index=market.end_index,
+            ))
     payload = serialize_direction_payload(
         direction, args, engines, market, state, visibility, timings
     )
     if primary is not None:
         payload.update(serialize_primary_structures(primary, market))
+    if setup_result is not None:
+        payload.update(serialize_setup_annotations(setup_result, market))
     return payload
 
 def merge_regime_outputs(regimes):
@@ -4626,7 +5455,7 @@ def merge_regime_outputs(regimes):
             aggregate[key] = [row for segment in segments for row in segment.get(key, [])]
         bridge_outputs = [segment.get("bridgeOutput", {}) for segment in segments]
         if any(bridge_outputs):
-            bridge_keys = {key for item in bridge_outputs for key in item}
+            bridge_keys = dict.fromkeys(key for item in bridge_outputs for key in item)
             aggregate["bridgeOutput"] = {
                 key: [row for item in bridge_outputs for row in item.get(key, [])]
                 for key in bridge_keys
@@ -4637,7 +5466,7 @@ def merge_regime_outputs(regimes):
     return output
 
 
-def build_reversed_trend_outputs(args, engines, market, transition, timings):
+def build_reversed_trend_outputs(args, engines, market, transition, timings, *, live=None):
     """Alternate fresh directional regimes without carrying prior input/state."""
     from copy import copy
     regimes = []
@@ -4645,10 +5474,13 @@ def build_reversed_trend_outputs(args, engines, market, transition, timings):
     incoming = None
     current_direction = "bearish" if getattr(transition, "target_direction", "bullish") == "bullish" else "bullish"
 
-    def calculate(context, direction):
+    def calculate(context, direction, continuation=None):
         local_args = copy(args)
         local_args.direction = direction
-        local_state = prepare_pipeline_state(local_args, engines, context, timings)
+        if continuation is None:
+            local_state = prepare_pipeline_state(local_args, engines, context, timings)
+        else:
+            local_state = prepare_pipeline_state(local_args, engines, context, timings, live=continuation)
         group = build_direction_output(direction, local_args, engines, context, local_state, timings)
         return group, local_state
 
@@ -4673,14 +5505,25 @@ def build_reversed_trend_outputs(args, engines, market, transition, timings):
         boundary = transition.index
         if not 0 < boundary < len(current.candles):
             raise RuntimeError("A trend reversal must advance beyond its independent regime start.")
-        prefix = market_segment(current, 0, boundary)
-        has_history = prefix.start_index <= prefix.end_index
-        if not has_history:
-            prefix = replace(prefix, start_index=0, end_index=len(prefix.candles)-1)
-        history, historical_state = calculate(prefix, current_direction)
-        resolve = (engines.primary.resolve_primary_highs if current_direction == "bearish"
-                   else engines.primary.resolve_primary_lows)
-        confirmed = resolve(historical_state.primary_result, through_index=len(prefix.candles)-1)
+        def calculate_closed():
+            prefix = market_segment(current, 0, boundary)
+            has_history = prefix.start_index <= prefix.end_index
+            if not has_history:
+                prefix = replace(prefix, start_index=0, end_index=len(prefix.candles)-1)
+            try:
+                history, historical_state = calculate(prefix, current_direction)
+                resolve = (engines.primary.resolve_primary_highs if current_direction == "bearish"
+                           else engines.primary.resolve_primary_lows)
+                confirmed = resolve(historical_state.primary_result, through_index=len(prefix.candles)-1)
+                return prefix, has_history, history, confirmed
+            finally:
+                if live is not None:
+                    engines.reaction.LiveReactionContinuation._release_indexes(prefix.candles, prefix.seconds)
+
+        prefix, has_history, history, confirmed = (
+            calculate_closed() if live is None
+            else live.closed_regime(current_direction, current, boundary, calculate_closed)
+        )
         if not any(point.number == 3 and point.source_time == transition.high.source_time
                    and point.price == transition.level for point in confirmed):
             raise RuntimeError("Primary3 reversal is not supported by its independent historical prefix.")
@@ -4698,7 +5541,12 @@ def build_reversed_trend_outputs(args, engines, market, transition, timings):
         current = market_segment(current, boundary, len(current.candles),
             initial_bullish_trend=target == "bullish", initial_bearish_trend=target == "bearish")
         current_direction = target
-        group, state = calculate(current, current_direction)
+        try:
+            continuation = live.active_regime(current, current_direction) if live is not None else None
+            group, state = calculate(current, current_direction, continuation)
+        finally:
+            if live is not None:
+                engines.reaction.LiveReactionContinuation._release_indexes(current.candles, current.seconds)
         transition = getattr(state.primary_result, "transition", None)
         if transition is None or transition.index > current.end_index:
             regimes.append((current_direction, publish(group, current)))
@@ -4754,7 +5602,7 @@ def build_response_payload(
     transition = getattr(state.primary_result,"transition",None)
     if transition is not None and transition.index <= market.end_index:
         payload["directions"] = build_reversed_trend_outputs(
-            args,engines,market,transition,timings)
+            args,engines,market,transition,timings,live=state.live_stages)
         candidates = [(segment.get("calculationStartIndex", -1), direction)
             for direction, group in payload["directions"].items()
             for segment in group.get("calculationSegments", [group])]
@@ -4811,7 +5659,7 @@ if __name__ == "__main__":
 ````
 <!-- EXACT-SOURCE-END:bridge/trading_pipeline.py -->
 
-### 16.4 `pipeline/__init__.py` — Compatibility package wrapper
+### 16.5 `pipeline/__init__.py` — Compatibility package wrapper
 
 **SHA-256:** `d22a1b81495a6c97b5eccc4d921b1ba4b709bfbcd39be6ef34b9014690b9f460`  
 **Bytes:** `653`  
@@ -4850,11 +5698,11 @@ __all__ = [
 ````
 <!-- EXACT-SOURCE-END:pipeline/__init__.py -->
 
-### 16.5 `pipeline/a_zone_detector.py` — A
+### 16.6 `pipeline/a_zone_detector.py` — BlueState and first-stop/inherited/double-stop routes
 
-**SHA-256:** `83f08b06556eb59c6d1b3afd22b51c280315bd80f3a31bc3044ada349251a115`  
-**Bytes:** `31373`  
-**LF count:** `804`
+**SHA-256:** `4997debfb510803d35b77816bd9e9d7f84d0aec2c7ac9c7a0accb34bc374754a`  
+**Bytes:** `41496`  
+**LF count:** `1032`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/a_zone_detector.py -->
 ````python
@@ -4878,7 +5726,7 @@ from direction_policy import policy_for
 
 
 A_ZONE_VERSION = "1.7.0"
-A_ZONE_LAST_MODIFIED_DATE = "2026-09-30"
+A_ZONE_LAST_MODIFIED_DATE = "2026-11-12"
 
 
 @dataclass(frozen=True, slots=True)
@@ -5151,7 +5999,7 @@ class AZoneDetector:
                 continue
             source_index, a_source_time, price = source
             result.append(
-                AZone(
+                self._zone(
                     direction=self.direction,
                     blue_1_ordinal=previous_ordinal,
                     blue_2_ordinal=ordinal,
@@ -5349,11 +6197,12 @@ class AZoneDetector:
         trigger_event_time: datetime,
         *,
         not_before: datetime | None = None,
+        start_position: int = 0,
     ) -> tuple[int, object] | None:
         reactions = self.reactions
         first_times = self._reaction_first_times
         confirmations = self._reaction_confirmations
-        for number in range(len(reactions)):
+        for number in range(start_position, len(reactions)):
             if (
                 confirmations[number] >= trigger_event_time
                 and (not_before is None or first_times[number] >= not_before)
@@ -5492,7 +6341,7 @@ class AZoneDetector:
             source_index, source_time, price = source
             break_index = int(getattr(reaction, "break_idx"))
             output.append(
-                AZone(
+                self._zone(
                     direction=self.direction,
                     blue_1_ordinal=previous.ordinal,
                     blue_2_ordinal=current.ordinal,
@@ -5629,6 +6478,9 @@ class AZoneDetector:
             key=lambda item: (item.source_time, item.trigger_event_time),
         )
 
+    def _zone(self, **fields) -> AZone:
+        return AZone(**fields)
+
     def _a_was_stopped_before(
         self,
         zone: AZone,
@@ -5662,14 +6514,238 @@ def detect_a_zones(
     chronology: object,
 ) -> list[AZone]:
     return AZoneDetector(direction, reactions, blue_lines, chronology).detect()
+
+
+_MarketEvent = tuple[int, datetime, Decimal]
+_EventKey = tuple[object, ...]
+
+
+@dataclass(slots=True)
+class _AHistory:
+    confirmations: dict[_EventKey, datetime] = field(default_factory=dict)
+    reset_formations: dict[_EventKey, datetime] = field(default_factory=dict)
+    crossings: dict[_EventKey, tuple[_MarketEvent | None, bool]] = field(default_factory=dict)
+    extremes: dict[_EventKey, tuple[Decimal, int, datetime]] = field(default_factory=dict)
+    matches: dict[_EventKey, int | None] = field(default_factory=dict)
+    inherited_stops: dict[_EventKey, tuple | None] = field(default_factory=dict)
+    triggers: dict[_EventKey, tuple | None] = field(default_factory=dict)
+    sources: dict[_EventKey, _MarketEvent | None] = field(default_factory=dict)
+    zones: dict[_EventKey, AZone] = field(default_factory=dict)
+
+
+class _LiveAZoneDetector(AZoneDetector):
+    """Reuse settled native decisions and advance open searches from the changed main."""
+
+    def __init__(self, direction, reactions, blue_lines, chronology, previous, dirty_time):
+        self.history = _AHistory()
+        self._previous = previous.history if previous is not None else _AHistory()
+        self._dirty_time = dirty_time
+        super().__init__(direction, reactions, blue_lines, chronology)
+        self.reaction_inputs = list(zip(
+            self._reaction_first_times, self._reaction_break_times, self._reaction_confirmations,
+        ))
+        old_inputs = previous.reaction_inputs if previous is not None else []
+        self._same_reactions = len(self.reaction_inputs) == len(old_inputs)
+        self._common_reactions = 0
+        for old, new in zip(old_inputs, self.reaction_inputs):
+            if old != new:
+                self._same_reactions = False
+                break
+            self._common_reactions += 1
+        self._changed_reaction_time = min(
+            (item[1] for suffix in (old_inputs, self.reaction_inputs)
+             for item in suffix[self._common_reactions:]),
+            default=None,
+        )
+
+    def _settled(self, event_time: datetime) -> bool:
+        return self._dirty_time is not None and event_time < self._dirty_time
+
+    def _settled_reaction_window(self, end: datetime) -> bool:
+        return self._settled(end) and (
+            self._changed_reaction_time is None or end <= self._changed_reaction_time
+        )
+
+    def _reaction_confirmation_time(self, reaction):
+        index = int(getattr(reaction, "break_idx"))
+        level = getattr(reaction, "box_top" if self.direction == "bullish" else "box_bottom")
+        key = index, str(level)
+        cache = self.history.confirmations
+        if key not in cache:
+            if self._settled(self.candle_times[index]) and key in self._previous.confirmations:
+                cache[key] = self._previous.confirmations[key]
+            else:
+                cache[key] = super()._reaction_confirmation_time(reaction)
+        return cache[key]
+
+    def _reset_formation_time(self, line, source_index):
+        key = source_index, str(getattr(line, "broken_level"))
+        if self._settled(self.candle_times[source_index]) and key in self._previous.reset_formations:
+            result = self._previous.reset_formations[key]
+        else:
+            result = super()._reset_formation_time(line, source_index)
+        self.history.reset_formations[key] = result
+        return result
+
+    def _first_crossing(self, level, start, end):
+        key = str(level), start, end
+        cache = self.history.crossings
+        if key in cache:
+            return cache[key][0]
+        left, right = self.chronology.lower_bounds(start, end)
+        has_lower = left < right
+        previous = self._previous.crossings.get(key)
+        dirty_time = self._dirty_time
+        scan_start = start
+        if previous is not None and dirty_time is not None and start < dirty_time:
+            old_hit, old_had_lower = previous
+            if (end is not None and end <= dirty_time) or (
+                old_hit is not None and old_hit[1] < dirty_time and old_had_lower == has_lower
+            ):
+                cache[key] = previous
+                return old_hit
+
+            dirty_position = min(right, bisect_left(self.lower_times, dirty_time))
+            if old_had_lower and left < dirty_position:
+                # An unchanged lower row suppresses the main-candle fallback
+                # even when no lower rows remain after the continuation point.
+                if dirty_position == right:
+                    cache[key] = None, True
+                    return None
+                scan_start = dirty_time
+            elif not old_had_lower and not has_lower:
+                scan_start = dirty_time
+        result = super()._first_crossing(level, scan_start, end)
+        cache[key] = result, has_lower
+        return result
+
+    def _range_extreme(self, start, end):
+        key = start, end
+        if self._settled(end) and key in self._previous.extremes:
+            result = self._previous.extremes[key]
+        elif key in self.history.extremes:
+            return self.history.extremes[key]
+        else:
+            result = super()._range_extreme(start, end)
+        self.history.extremes[key] = result
+        return result
+
+    def _first_reaction_after(self, trigger_event_time, *, not_before=None):
+        key = trigger_event_time, not_before
+        old_match = self._previous.matches.get(key)
+        if key in self.history.matches:
+            match = self.history.matches[key]
+        elif old_match is not None and old_match <= self._common_reactions:
+            match = old_match
+        elif key in self._previous.matches and old_match is None and self._same_reactions:
+            match = None
+        else:
+            result = super()._first_reaction_after(
+                trigger_event_time,
+                not_before=not_before,
+                start_position=self._common_reactions if key in self._previous.matches else 0,
+            )
+            match = result[0] if result is not None else None
+        self.history.matches[key] = match
+        return (match, self.reactions[match - 1]) if match is not None else None
+
+    @staticmethod
+    def _blue_key(state):
+        return (
+            state.formation_index, state.formation_time,
+            state.stop_index, state.stop_time, state.stop_event_time,
+            str(state.stop_level), str(state.stop_event_extreme),
+            getattr(state.line, "kind"), bool(getattr(state.line, "behavior_internal", False)),
+        )
+
+    def _inherited_stop(self, previous, current):
+        key = self._blue_key(previous), self._blue_key(current)
+        if self._settled_reaction_window(current.formation_time) and key in self._previous.inherited_stops:
+            result = self._previous.inherited_stops[key]
+        else:
+            result = super()._inherited_stop(previous, current)
+        self.history.inherited_stops[key] = result
+        return result
+
+    def _pair_trigger(self, previous, current, expires_at):
+        key = self._blue_key(previous), self._blue_key(current), expires_at
+        if (
+            expires_at is not None and self._settled_reaction_window(current.formation_time)
+            and all(self._settled(event) for event in (
+                expires_at, previous.formation_time, previous.stop_event_time, current.stop_event_time,
+            ) if event is not None)
+            and key in self._previous.triggers
+        ):
+            result = self._previous.triggers[key]
+        else:
+            result = super()._pair_trigger(previous, current, expires_at)
+        self.history.triggers[key] = result
+        return result
+
+    def _a_source(self, trigger_index, reaction):
+        end = self._reaction_confirmation_time(reaction)
+        key = trigger_index, end
+        if (
+            self._settled(end) and self._settled(self.candle_times[trigger_index])
+            and key in self._previous.sources
+        ):
+            result = self._previous.sources[key]
+        else:
+            result = super()._a_source(trigger_index, reaction)
+        self.history.sources[key] = result
+        return result
+
+    def _zone(self, **fields):
+        key = tuple(
+            (name, value.as_tuple() if isinstance(value, Decimal) else value)
+            for name, value in fields.items()
+        )
+        zone = self._previous.zones.get(key)
+        if zone is None:
+            zone = super()._zone(**fields)
+        self.history.zones[key] = zone
+        return zone
+
+
+class LiveAZoneContinuation:
+    """Continue A from the first mutable main candle and revised upstream inputs."""
+
+    def __init__(self, direction, reactions, blue_lines, chronology):
+        self._direction = direction
+        detector = _LiveAZoneDetector(direction, reactions, blue_lines, chronology, None, None)
+        self._result = detector.detect()
+        self._detector = detector
+
+    @property
+    def result(self) -> list[AZone]:
+        return list(self._result)
+
+    def update(self, reactions, blue_lines, chronology, *, first_dirty_main: int) -> list[AZone]:
+        previous = self._detector
+        if chronology.timeframe != previous.timeframe:
+            raise ValueError("A continuation requires the original analysis timeframe.")
+        if not 0 <= first_dirty_main <= min(len(previous.candles), len(chronology.candles)):
+            raise ValueError("The changed market index is outside the A continuation.")
+        dirty_time = min(
+            (times[first_dirty_main] for times in (previous.candle_times, chronology.times)
+             if first_dirty_main < len(times)),
+            default=chronology.times[-1] + chronology.timeframe if chronology.times else None,
+        )
+        detector = _LiveAZoneDetector(
+            self._direction, reactions, blue_lines, chronology, previous, dirty_time,
+        )
+        result = detector.detect()
+        detector._previous = _AHistory()
+        self._detector, self._result = detector, result
+        return self.result
 ````
 <!-- EXACT-SOURCE-END:pipeline/a_zone_detector.py -->
 
-### 16.6 `pipeline/blue_line_detector.py` — Blue
+### 16.7 `pipeline/blue_line_detector.py` — Confirmed Reaction/Reset, Fibonacci, exact confirmation prefix
 
-**SHA-256:** `c6466c280504f82d8f2b189263ed0e9b9581c2f48edd8aaa12f016e55effc98c`  
-**Bytes:** `16945`  
-**LF count:** `481`
+**SHA-256:** `e5b34d577c2ba33e49183aa1419aa3dec44ddf51434b4bb3db1b720d1449db34`  
+**Bytes:** `20309`  
+**LF count:** `566`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/blue_line_detector.py -->
 ````python
@@ -5682,6 +6758,7 @@ does not decide A/S/E lifecycle ownership.
 
 from __future__ import annotations
 
+from copy import copy
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
@@ -5994,15 +7071,25 @@ def _build_reset_blue_line(
         behavior_internal=behavior_internal,
     )
 
-def detect_blue_lines(
+@dataclass(frozen=True, slots=True)
+class _BlueCheckpoint:
+    previous_reaction: object | None = None
+    previous_count: int | None = None
+    healthy_since_blue: int = 0
+    line_count: int = 0
+
+
+def _calculate_blue_tail(
     direction: str,
     reactions: Sequence[object],
     chronology: object,
-    resets: Sequence[object] = (),
+    resets: Sequence[object],
+    *,
+    start: int,
+    checkpoint: _BlueCheckpoint,
+    output: list[BlueLine],
+    checkpoints: list[_BlueCheckpoint] | None = None,
 ) -> list[BlueLine]:
-    """Detect scale and Reset Blue Lines over authoritative engine events."""
-    if direction not in {"bullish", "bearish"}:
-        raise ValueError("Direction must be 'bullish' or 'bearish'.")
     candles = chronology.candles
     candles_by_index = {
         int(getattr(candle, "index")): candle for candle in candles
@@ -6013,13 +7100,13 @@ def detect_blue_lines(
             int(getattr(reset, "from_first_idx")), []
         ).append(reset)
 
-    output: list[BlueLine] = []
-    previous_reaction: object | None = None
-    previous_count: int | None = None
-    has_blue_line = False
-    healthy_reactions_since_blue = 0
+    previous_reaction = checkpoint.previous_reaction
+    previous_count = checkpoint.previous_count
+    has_blue_line = bool(output)
+    healthy_reactions_since_blue = checkpoint.healthy_since_blue
 
-    for reaction_number, reaction in enumerate(reactions, start=1):
+    suffix = reactions[start:] if start else reactions
+    for reaction_number, reaction in enumerate(suffix, start=start + 1):
         behavior_internal = bool(getattr(reaction, "behavior_internal", False))
         if str(getattr(reaction, "mode")) == "A":
             boundary = getattr(reaction, "anchor_value", None)
@@ -6098,8 +7185,82 @@ def detect_blue_lines(
 
         previous_reaction = reaction
         previous_count = len(strikes)
+        if checkpoints is not None:
+            checkpoints.append(_BlueCheckpoint(
+                copy(reaction), previous_count, healthy_reactions_since_blue, len(output),
+            ))
 
     return output
+
+
+def detect_blue_lines(
+    direction: str,
+    reactions: Sequence[object],
+    chronology: object,
+    resets: Sequence[object] = (),
+) -> list[BlueLine]:
+    """Detect scale and Reset Blue Lines over authoritative engine events."""
+    if direction not in {"bullish", "bearish"}:
+        raise ValueError("Direction must be 'bullish' or 'bearish'.")
+    return _calculate_blue_tail(
+        direction, reactions, chronology, resets,
+        start=0, checkpoint=_BlueCheckpoint(), output=[],
+    )
+
+
+class LiveBlueLineContinuation:
+    """Reuse Blue decisions before the earliest changed Reaction.
+
+    The event owner supplies the first revised Reaction or Reset owner. The
+    market owner can also supply the first changed candle, since Blue reads
+    its source candle even when the Reaction and Reset records stay equal.
+    """
+
+    def __init__(
+        self, direction: str, reactions: Sequence[object], chronology: object,
+        resets: Sequence[object] = (),
+    ) -> None:
+        if direction not in {"bullish", "bearish"}:
+            raise ValueError("Direction must be 'bullish' or 'bearish'.")
+        self.direction = direction
+        self._checkpoints = [_BlueCheckpoint()]
+        self._lines = _calculate_blue_tail(
+            direction, reactions, chronology, resets,
+            start=0, checkpoint=self._checkpoints[0], output=[], checkpoints=self._checkpoints,
+        )
+
+    @property
+    def result(self) -> list[BlueLine]:
+        return self._lines.copy()
+
+    def update(
+        self, reactions: Sequence[object], chronology: object, resets: Sequence[object],
+        *, first_changed: int, first_dirty_main: int | None = None,
+    ) -> list[BlueLine]:
+        if not 0 <= first_changed < len(self._checkpoints) or first_changed > len(reactions):
+            raise ValueError("The Blue continuation must start at an existing checkpoint.")
+        if first_dirty_main is not None:
+            reset_owners = {
+                int(getattr(reset, "from_first_idx")) for reset in resets
+                if int(getattr(reset, "index")) >= first_dirty_main
+            }
+            for index in range(first_changed):
+                reaction = reactions[index]
+                if (int(getattr(reaction, "break_idx")) >= first_dirty_main
+                        or int(getattr(reaction, "first_idx")) in reset_owners):
+                    first_changed = index
+                    break
+        checkpoint = self._checkpoints[first_changed]
+        checkpoints = self._checkpoints[:first_changed + 1]
+        lines = self._lines[:checkpoint.line_count]
+        if first_changed < len(reactions):
+            _calculate_blue_tail(
+                self.direction, reactions, chronology, resets, start=first_changed,
+                checkpoint=checkpoint, output=lines, checkpoints=checkpoints,
+            )
+        self._checkpoints = checkpoints
+        self._lines = lines
+        return self.result
 
 
 def public_blue_lines(lines: Sequence[BlueLine]) -> list[BlueLine]:
@@ -6157,7 +7318,521 @@ def mark_internal_blue_lines(
 ````
 <!-- EXACT-SOURCE-END:pipeline/blue_line_detector.py -->
 
-### 16.7 `pipeline/core_utils.py` — Core Utilities
+### 16.8 `pipeline/bullish_setup_engine.py` — Bullish setup annotations
+
+**SHA-256:** `e8fa440f01e51b31f005b6968803c88eaae95eeef9de0bc5c52c5366582a12bb`  
+**Bytes:** `23028`  
+**LF count:** `503`
+
+<!-- EXACT-SOURCE-BEGIN:pipeline/bullish_setup_engine.py -->
+````python
+"""Calculation-owned bullish chart schematics; no order execution or trade ledger.
+
+Native detectors retain formation, numbering and ownership. This stage consumes
+their accepted immutable events and classifies the user's movement/entry rules.
+"""
+from __future__ import annotations
+
+from bisect import bisect_left, bisect_right
+from copy import deepcopy
+from dataclasses import dataclass, field
+from datetime import datetime
+from decimal import Decimal
+from functools import partial
+import heapq
+from operator import delitem, setitem
+
+from core_utils import as_decimal
+from lifecycle_engine import sequence_priority
+from reaction_engine import LowerTimeframeIndex
+
+SETUP_VERSION = "1.0.0"
+
+
+@dataclass(slots=True)
+class StopAllAssessment:
+    source_index: int
+    source_time: datetime
+    number: int
+    decision_event_time: datetime
+    scope_id: str
+    ignored_prefix: bool
+    reference_high: Decimal
+    reference_source_index: int
+    status: str | None = None
+    status_event_time: datetime | None = None
+    reason: str = "awaiting-stop-or-successor"
+    predecessor_source_indexes: tuple[int, ...] = ()
+
+
+@dataclass(slots=True)
+class BehaviorAssessment:
+    kind: str
+    source_index: int
+    source_time: datetime
+    decision_event_time: datetime
+    anchor_source_index: int
+    status: str | None = None
+    status_event_time: datetime | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class SetupAnnotation:
+    id: str
+    anchor_kind: str
+    anchor_number: int
+    anchor_source_index: int
+    anchor_source_time: datetime
+    anchor_decision_event_time: datetime
+    cycle_id: str | None
+    behavior_kind: str | None
+    behavior_source_index: int | None
+    behavior_source_time: datetime | None
+    confirmation_event_time: datetime
+    entry_index: int
+    entry_time: datetime
+    close_event_time: datetime
+    entry_price: Decimal
+    stop_price: Decimal
+    target_price: Decimal
+    width_bars: int = 50
+    risk_reward: Decimal = Decimal(4)
+
+
+@dataclass(frozen=True, slots=True)
+class ReferenceBreak:
+    scope_id: str
+    event_time: datetime
+    source_index: int
+    reference_high: Decimal
+    reference_source_index: int
+
+
+@dataclass(slots=True)
+class SetupResult:
+    assessments: list[StopAllAssessment] = field(default_factory=list)
+    behaviors: list[BehaviorAssessment] = field(default_factory=list)
+    setups: list[SetupAnnotation] = field(default_factory=list)
+    breakouts: list[ReferenceBreak] = field(default_factory=list)
+    phase: str = "stopall"
+
+
+@dataclass(slots=True)
+class _Scope:
+    identity: str
+    rows: list = field(default_factory=list)
+    behaviors: list = field(default_factory=list)
+    parity: dict = field(default_factory=lambda: {0: None, 1: None})
+    priority: int | None = None
+    break_scheduled: bool = False
+    blocked: bool = False
+
+
+@dataclass(slots=True)
+class _Movement:
+    root: int
+    epoch: int
+    prefix: int
+    reference_high: Decimal
+    reference_source_index: int
+    source_time: datetime
+    extent: int = 0
+    scopes: dict = field(default_factory=dict)
+
+
+def _native_chains(stopalls, stop_times):
+    """Reproduce native max-stopped ancestry, including multi-chain joins."""
+    active, roots, predecessors = [], {}, {}
+    for item in sorted(stopalls, key=lambda r: (r.source_time, r.source_index)):
+        key = int(item.source_index)
+        if int(item.number) > 1:
+            consumed = [r for r in active if stop_times[r.source_index] is not None
+                        and stop_times[r.source_index] <= item.decision_event_time]
+            candidates = [r for r in consumed if int(r.number) == int(item.number)-1]
+            parent = max(candidates, key=lambda r: (r.source_time, r.source_index), default=None)
+            roots[key] = roots[parent.source_index] if parent is not None else key
+            predecessors[key] = tuple(r.source_index for r in consumed)
+            consumed_ids = {r.source_index for r in consumed}
+            active = [r for r in active if r.source_index not in consumed_ids]
+        else:
+            roots[key], predecessors[key] = key, ()
+            if (str(getattr(item,"donor_type","")).upper() == "S"
+                    or getattr(item,"gate_type",None) == "opposite-s-group-stop"):
+                active = []
+        active.append(item)
+    return roots, predecessors
+
+
+class _SetupMarket:
+    def __init__(self, chronology, through_index):
+        self.chronology = chronology
+        last = len(chronology.candles) - 1
+        end = last if through_index is None else min(last, int(through_index))
+        self.horizon = chronology.times[end] + chronology.timeframe if end >= 0 else None
+        self.lower_end = bisect_left(chronology.second_times, self.horizon) if self.horizon is not None else 0
+
+    def crossing(self, event, price, *, above=False, inclusive=False):
+        chronology = self.chronology
+        left = (bisect_left if inclusive else bisect_right)(chronology.second_times, event)
+        if left >= self.lower_end:
+            return None
+        query = chronology.lower_index.first_greater if above else chronology.lower_index.first_less
+        position = query(left, self.lower_end, as_decimal(price))
+        return None if position is None else chronology.second_times[position]
+
+
+def _setup_input_events(market, s_zones, e_zones, stopalls, primary_lows):
+    horizon = market.horizon
+    if horizon is None:
+        return [], {}, {}, {}
+    native = [r for r in stopalls if r.direction == "bullish"
+              and r.decision_event_time < horizon]
+    stop_times = {r.source_index: getattr(r, "stop_event_time", None)
+                  or market.crossing(r.decision_event_time, r.price, inclusive=True) for r in native}
+    roots, predecessors = _native_chains(native, stop_times)
+    events, serial = [], 0
+
+    def push(instant, priority, kind, item):
+        nonlocal serial
+        if instant is not None and instant < horizon:
+            events.append((instant, priority, serial, kind, item))
+            serial += 1
+
+    for item in sorted(native, key=lambda r: (r.decision_event_time, r.source_time, r.source_index)):
+        push(item.decision_event_time, 2, "stopall", item)
+        push(stop_times[item.source_index], 0, "stop", item)
+    for item in sorted(primary_lows, key=lambda r: (r.decision_event_time, r.source_time,
+                                                   r.source_index, -int(r.number), r.cycle_id or "")):
+        push(item.decision_event_time, 1, "pl", item)
+    behavior_events = [(kind, r) for kind, rows in (("S", s_zones), ("E", e_zones))
+                       for r in rows if getattr(r, "direction", "bullish") == "bullish"
+                       and getattr(r, "calculation_valid", True)]
+    for kind, item in sorted(behavior_events, key=lambda pair: (
+            pair[1].decision_event_time,
+            -sequence_priority(pair[0], getattr(pair[1], "color" if pair[0] == "S" else "family")),
+            pair[1].source_time, pair[1].source_index, pair[0])):
+        push(item.decision_event_time, 3, "behavior", (kind, item))
+
+    return sorted(events), stop_times, roots, predecessors
+
+
+class _SetupState:
+    def __init__(self, *, retain=False):
+        self.result = SetupResult()
+        self.movements, self.states, self.seen_pl, self.pl_numbers = {}, {}, set(), {}
+        self.current = self.latest_movement = self.pl_anchor = None
+        self.epoch_id = self.pl_start = self.watch_number = 0
+        self.watches = {}
+        self.undo = [] if retain else None
+        self.marks = []
+
+    def attr(self, target, key, value):
+        if self.undo is not None:
+            self.undo.append(partial(setattr, target, key, getattr(target, key)))
+        setattr(target, key, value)
+
+    def put(self, target, key, value):
+        if self.undo is not None:
+            self.undo.append(partial(setitem, target, key, target[key]) if key in target
+                             else partial(delitem, target, key))
+        target[key] = value
+
+    def remove(self, target, key):
+        if self.undo is not None:
+            self.undo.append(partial(setitem, target, key, target[key]))
+        del target[key]
+
+    def append(self, target, value):
+        if self.undo is not None:
+            self.undo.append(target.pop)
+        target.append(value)
+
+    def add(self, target, value):
+        if self.undo is not None:
+            self.undo.append(partial(target.remove, value))
+        target.add(value)
+
+    def rewind(self, frontier):
+        position = bisect_left(self.marks, frontier, key=lambda mark: mark[0])
+        if position < len(self.marks):
+            undo_position = self.marks[position][1]
+            for reverse in reversed(self.undo[undo_position:]):
+                reverse()
+            del self.undo[undo_position:]
+            del self.marks[position:]
+
+
+def _run_setup_events(market, state, inputs, *, frontier=None):
+    chronology = market.chronology
+    result = state.result
+    external, stop_times, roots, predecessors = inputs
+    events = [event for event in external if frontier is None or event[0] >= frontier]
+    heapq.heapify(events)
+    # All static events retain priority over later-created watches on a tie.
+    watch_offset = len(external)
+    main_prices = None
+
+    def queue_watch(number, watch):
+        instant, level, kind, item = watch
+        crossing = market.crossing(instant, level, above=kind == "break")
+        if crossing is not None:
+            heapq.heappush(events, (crossing, 4 if kind == "break" else 0,
+                                    watch_offset + number, kind, (number, item)))
+
+    for number, watch in state.watches.items():
+        queue_watch(number, watch)
+
+    def watch(instant, level, kind, item):
+        number = state.watch_number
+        state.attr(state, "watch_number", number + 1)
+        event = (instant, level, kind, item)
+        state.put(state.watches, number, event)
+        queue_watch(number, event)
+
+    def enter(anchor, anchor_kind, instant, behavior=None):
+        if anchor.get("entered"):
+            return
+        state.put(anchor, "entered", True)
+        item = anchor["item"]
+        index = chronology.main_index(instant, clamp=True)
+        candle = chronology.candles[index]
+        entry, stop = as_decimal(candle.close), as_decimal(item.price)
+        if entry <= stop:
+            return
+        state.attr(result, "phase", "pl" if anchor_kind == "PL" else "stopall")
+        kind, source = behavior if behavior is not None else (None, None)
+        identity = f"bullish:setup:{anchor_kind}:{item.source_time.isoformat()}:{item.decision_event_time.isoformat()}"
+        state.append(result.setups, SetupAnnotation(identity, anchor_kind, int(item.number),
+            int(item.source_index), item.source_time, item.decision_event_time,
+            getattr(item, "cycle_id", None), kind,
+            int(source.source_index) if source else None, source.source_time if source else None,
+            instant, index, candle.timestamp, candle.timestamp + chronology.timeframe,
+            entry, stop, entry + Decimal(4)*(entry-stop)))
+
+    def classify(anchor, status, instant, reason):
+        row, scope, movement = anchor["row"], anchor["scope"], anchor["movement"]
+        parity = row.number % 2
+        if status == "F":
+            state.put(scope.parity, parity, "F")
+            for other in scope.rows:
+                if other.number % 2 == parity:
+                    state.attr(other, "status", "F")
+                    state.attr(other, "status_event_time", instant)
+                    state.attr(other, "reason", reason if other is row else "inherited-parity-failure")
+            for owner_parity, behavior in scope.behaviors:
+                if owner_parity == parity:
+                    state.attr(behavior, "status", "F")
+                    state.attr(behavior, "status_event_time", instant)
+            if scope.priority == parity:
+                state.attr(scope, "priority", 1-parity if scope.parity[1-parity] == "T" else None)
+            if all(value == "F" for value in scope.parity.values()) and not scope.break_scheduled:
+                state.attr(scope, "break_scheduled", True)
+                if not row.ignored_prefix and movement.epoch == state.epoch_id:
+                    watch(instant, movement.reference_high, "break", (scope, movement))
+        else:
+            if scope.parity[parity] != "F":
+                state.put(scope.parity, parity, "T")
+                state.attr(row, "status", "T")
+                state.attr(row, "status_event_time", instant)
+                state.attr(row, "reason", reason)
+                if scope.priority is None:
+                    state.attr(scope, "priority", parity)
+
+    def stop(anchor, instant):
+        state.put(anchor, "stopped", True)
+        if anchor["retired"] or anchor["row"].status == "F":
+            return
+        classify(anchor, "F" if anchor["had_behavior"] else "T", instant,
+                 "behavior-then-stop" if anchor["had_behavior"] else "stop-without-behavior")
+
+    while events:
+        instant, _, _, kind, item = heapq.heappop(events)
+        if state.undo is not None:
+            state.marks.append((instant, len(state.undo)))
+        if kind in {"pl-stop", "break"}:
+            number, item = item
+            state.remove(state.watches, number)
+        current, pl_anchor = state.current, state.pl_anchor
+        if kind == "stop":
+            if item.source_index in state.states:
+                stop(state.states[item.source_index], instant)
+        elif kind == "pl-stop":
+            if pl_anchor is not None and pl_anchor["item"] is item:
+                state.put(pl_anchor, "stopped", True)
+        elif kind == "break":
+            scope, movement = item
+            if movement.epoch == state.epoch_id and not scope.blocked:
+                state.attr(scope, "blocked", True)
+                state.attr(result, "phase", "waiting-for-larger-movement")
+                state.append(result.breakouts, ReferenceBreak(scope.identity, instant,
+                    chronology.main_index(instant, clamp=True), movement.reference_high,
+                    movement.reference_source_index))
+        elif kind == "pl":
+            physical = (item.source_index, item.source_time)
+            cycle = getattr(item, "cycle_id", None)
+            if physical in state.seen_pl or int(item.number) <= state.pl_numbers.get(cycle, 0):
+                continue
+            state.add(state.seen_pl, physical)
+            state.put(state.pl_numbers, cycle, int(item.number))
+            state.attr(state, "epoch_id", state.epoch_id + 1)
+            state.attr(state, "pl_start", chronology.main_index(instant, clamp=True))
+            state.attr(state, "pl_anchor", {"item": item, "entered": False, "stopped": False})
+            state.attr(state, "current", None)
+            state.attr(state, "latest_movement", None)
+            state.attr(result, "phase", "pl")
+            watch(instant, item.price, "pl-stop", item)
+        elif kind == "stopall":
+            if current is not None and not current["stopped"] and not current["retired"]:
+                old_stop = stop_times.get(current["item"].source_index)
+                if old_stop is None or instant < old_stop:
+                    classify(current, "T", instant, "successor-before-stop")
+                    state.put(current, "retired", True)
+            root = roots[item.source_index]
+            movement = state.movements.get(root)
+            if movement is None:
+                latest = state.latest_movement
+                prefix = latest.extent if latest is not None else 0
+                if main_prices is None:
+                    main_prices = LowerTimeframeIndex(chronology.candles)
+                high, source = main_prices.range_maximum(state.pl_start,
+                    chronology.main_index(instant, clamp=True)+1)
+                movement = _Movement(root, state.epoch_id, prefix, high, source, item.source_time)
+                state.put(state.movements, root, movement)
+                state.attr(state, "latest_movement", movement)
+            state.attr(movement, "extent", max(movement.extent, int(item.number)))
+            ignored = int(item.number) <= movement.prefix
+            scope = movement.scopes.get(ignored)
+            if scope is None:
+                suffix = "prefix" if ignored else "candidate"
+                scope = _Scope(f"bullish:setup-scope:{movement.source_time.isoformat()}:{suffix}")
+                state.put(movement.scopes, ignored, scope)
+            row = StopAllAssessment(item.source_index, item.source_time, int(item.number),
+                instant, scope.identity, ignored, movement.reference_high,
+                movement.reference_source_index, predecessor_source_indexes=predecessors[item.source_index])
+            state.append(scope.rows, row)
+            state.append(result.assessments, row)
+            current = {"item": item, "row": row, "scope": scope, "movement": movement,
+                       "had_behavior": False, "stopped": False, "retired": False, "entered": False}
+            state.put(state.states, item.source_index, current)
+            state.attr(state, "current", current)
+            if scope.parity[row.number % 2] == "F":
+                state.attr(row, "status", "F")
+                state.attr(row, "status_event_time", instant)
+                state.attr(row, "reason", "inherited-parity-failure")
+            native_stop = stop_times[item.source_index]
+            if native_stop is not None and native_stop <= instant:
+                stop(current, instant)
+            first = state.states.get(root)
+            if (row.number == 2 and movement.prefix == 0 and first is not None
+                    and first["had_behavior"] and first["row"].reason == "behavior-then-stop"
+                    and movement.epoch == state.epoch_id
+                    and not scope.blocked and not (pl_anchor and not pl_anchor["entered"])
+                    and not current["stopped"]):
+                state.attr(scope, "priority", 0)
+                enter(current, "StopAll", instant)
+        else:
+            behavior_kind, behavior = item
+            pl_entry = False
+            if pl_anchor and not pl_anchor["entered"] and not pl_anchor["stopped"]:
+                if instant > pl_anchor["item"].decision_event_time:
+                    enter(pl_anchor, "PL", instant, item)
+                    pl_entry = True
+            if current is None or current["stopped"] or current["retired"]:
+                continue
+            anchor, row, scope = current["item"], current["row"], current["scope"]
+            if instant <= anchor.decision_event_time:
+                continue
+            first_behavior = not current["had_behavior"]
+            state.put(current, "had_behavior", True)
+            record = BehaviorAssessment(behavior_kind, behavior.source_index, behavior.source_time,
+                                        instant, anchor.source_index)
+            if row.status == "F":
+                record.status, record.status_event_time = "F", instant
+            state.append(result.behaviors, record)
+            parity = row.number % 2
+            state.append(scope.behaviors, (parity, record))
+            initial = row.number == 1 and current["movement"].prefix == 0
+            allowed = scope.parity[parity] != "F" and (initial or
+                (scope.parity[parity] == "T" and scope.priority == parity))
+            if (first_behavior and not pl_entry and allowed and not row.ignored_prefix and not scope.blocked
+                    and current["movement"].epoch == state.epoch_id):
+                if scope.priority is None:
+                    state.attr(scope, "priority", parity)
+                enter(current, "StopAll", instant, item)
+
+
+def calculate_bullish_setups(chronology, s_zones, e_zones, stopalls, primary_lows,
+                             *, through_index=None):
+    """Evaluate complete accepted history up to an inclusive main-candle horizon."""
+    market = _SetupMarket(chronology, through_index)
+    state = _SetupState()
+    inputs = _setup_input_events(market, s_zones, e_zones, stopalls, primary_lows)
+    _run_setup_events(market, state, inputs)
+    return state.result
+
+
+def _setup_event_keys(inputs):
+    events, _, roots, predecessors = inputs
+    keys = []
+    for instant, priority, _, kind, item in events:
+        behavior = None
+        if kind == "behavior":
+            behavior, item = item
+        geometry = (item.source_index, item.source_time, item.decision_event_time)
+        if kind == "stopall":
+            geometry += (int(item.number), str(item.price), roots[item.source_index],
+                         predecessors[item.source_index])
+        elif kind == "pl":
+            geometry += (int(item.number), str(item.price), getattr(item, "cycle_id", None))
+        keys.append((instant, priority, kind, behavior, geometry))
+    return keys
+
+
+class LiveBullishSetupContinuation:
+    """Keep movement state, parity assessments and pending strict watches."""
+
+    def __init__(self, chronology, s_zones, e_zones, stopalls, primary_lows, *, through_index=None):
+        self._state = _SetupState(retain=True)
+        market = _SetupMarket(chronology, through_index)
+        inputs = _setup_input_events(market, s_zones, e_zones, stopalls, primary_lows)
+        self._timeframe = chronology.timeframe
+        self._horizon = market.horizon
+        self._keys = _setup_event_keys(inputs)
+        _run_setup_events(market, self._state, inputs)
+
+    @property
+    def result(self):
+        return deepcopy(self._state.result)
+
+    def update(self, chronology, s_zones, e_zones, stopalls, primary_lows,
+               *, first_dirty_event: datetime, through_index=None):
+        if chronology.timeframe != self._timeframe:
+            raise ValueError("Setup continuation requires the original analysis timeframe.")
+        market = _SetupMarket(chronology, through_index)
+        inputs = _setup_input_events(market, s_zones, e_zones, stopalls, primary_lows)
+        keys = _setup_event_keys(inputs)
+        frontier = first_dirty_event
+        owner = bisect_right(chronology.times, frontier) - 1
+        if owner >= 0 and frontier < chronology.times[owner] + chronology.timeframe:
+            frontier = chronology.times[owner]
+        if self._horizon is not None:
+            frontier = min(frontier, self._horizon)
+        if market.horizon is not None:
+            frontier = min(frontier, market.horizon)
+        for index in range(max(len(self._keys), len(keys))):
+            before = self._keys[index] if index < len(self._keys) else None
+            after = keys[index] if index < len(keys) else None
+            if before != after:
+                frontier = min(frontier, *(key[0] for key in (before, after) if key is not None))
+                break
+        self._state.rewind(frontier)
+        _run_setup_events(market, self._state, inputs, frontier=frontier)
+        self._keys, self._horizon = keys, market.horizon
+        return self.result
+````
+<!-- EXACT-SOURCE-END:pipeline/bullish_setup_engine.py -->
+
+### 16.9 `pipeline/core_utils.py` — Core Utilities
 
 **SHA-256:** `007e5329e14ab9695e555c630527badc84dd35a239dea1cf685141e4278265eb`  
 **Bytes:** `832`  
@@ -6194,7 +7869,7 @@ def reaction_identity(reaction: object) -> OrderIdentity:
 ````
 <!-- EXACT-SOURCE-END:pipeline/core_utils.py -->
 
-### 16.8 `pipeline/direction_policy.py` — Direction Policy
+### 16.10 `pipeline/direction_policy.py` — Direction Policy
 
 **SHA-256:** `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea`  
 **Bytes:** `2282`  
@@ -6275,11 +7950,11 @@ BEARISH = DirectionPolicy(
 ````
 <!-- EXACT-SOURCE-END:pipeline/direction_policy.py -->
 
-### 16.9 `pipeline/e_zone_detector.py` — E
+### 16.11 `pipeline/e_zone_detector.py` — S/E/Order lineage and parent stops
 
-**SHA-256:** `6736628d9b3c36473f30a548ea8f652a6127ff1c461cceafe352227d223b5690`  
-**Bytes:** `56097`  
-**LF count:** `1261`
+**SHA-256:** `d6c3ae7fff57fabc11e12a4993b6554aa4e532dbae813a7583110c02d5d9d02a`  
+**Bytes:** `70941`  
+**LF count:** `1566`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/e_zone_detector.py -->
 ````python
@@ -6309,8 +7984,8 @@ from order_audit_engine import (
 
 
 E_ZONE_VERSION = "6.16.2"
-E_ZONE_IMPLEMENTATION_VERSION = "6.18.6"
-E_ZONE_LAST_MODIFIED = "2026-11-02T07:13:10+03:30"
+E_ZONE_IMPLEMENTATION_VERSION = "6.19.0"
+E_ZONE_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -6352,6 +8027,244 @@ class EZone:
     decision_event_time: datetime
 
 
+@dataclass(frozen=True, slots=True)
+class _ParentStopProgress:
+    scanned_until: datetime
+    event: datetime | None
+
+
+@dataclass(frozen=True, slots=True)
+class _EReconciliationStep:
+    source: int
+    count: int
+    active: tuple[EZone, ...]
+    sequence_start: datetime | None
+
+
+class _ReopenedERace(Exception):
+    pass
+
+
+@dataclass(frozen=True, slots=True)
+class _ReconciledE:
+    candidates: tuple[EZone, ...]
+    numbered: tuple[EZone, ...]
+    accepted: frozenset[tuple[datetime, int]]
+    lifecycle_starts: frozenset[datetime]
+    evidence: tuple
+    steps: tuple[_EReconciliationStep, ...]
+    native_numbered: tuple[EZone, ...]
+
+
+class LiveEContinuation:
+    """Retain exact E geometry and decisions across market updates.
+
+    The active Order ledger is authoritative every time. A candidate can be
+    reused only after selecting the same Order with the current ledger. The
+    recursive ownership result is reusable only with the same candidates and
+    ownership evidence, and without a dynamically reopened parent race.
+    """
+
+    def __init__(self) -> None:
+        self._chronology: object | None = None
+        self._scope: tuple | None = None
+        self._dirty: datetime | None = None
+        self._stops: dict[tuple, _ParentStopProgress] = {}
+        self._previous_stops: dict[tuple, _ParentStopProgress] = {}
+        self._extremes: dict[tuple, tuple[int, datetime, Decimal]] = {}
+        self._previous_extremes: dict[tuple, tuple[int, datetime, Decimal]] = {}
+        self._zones: dict[tuple, EZone] = {}
+        self._previous_zones: dict[tuple, EZone] = {}
+        self._reconciled: dict[tuple, _ReconciledE] = {}
+        self._previous_reconciled: dict[tuple, _ReconciledE] = {}
+        self._scoped_reconciliations: dict[tuple, _ReconciledE] = {}
+        self._previous_scoped: dict[tuple, _ReconciledE] = {}
+        self._main_index = None
+
+    def advance(self, chronology: object, *, first_dirty_main: int) -> None:
+        times = chronology.times
+        if not times or not 0 <= first_dirty_main <= len(times):
+            raise ValueError("The changed market index is outside the current chronology.")
+        scope = (times[0], chronology.timeframe)
+        self._dirty = (
+            times[first_dirty_main] if first_dirty_main < len(times)
+            else times[-1] + chronology.timeframe
+        )
+        same_market = scope == self._scope
+        self._previous_stops, self._stops = (self._stops if same_market else {}), {}
+        self._previous_extremes, self._extremes = (self._extremes if same_market else {}), {}
+        self._previous_zones, self._zones = (self._zones if same_market else {}), {}
+        self._previous_reconciled, self._reconciled = (self._reconciled if same_market else {}), {}
+        self._previous_scoped, self._scoped_reconciliations = (
+            self._scoped_reconciliations if same_market else {}
+        ), {}
+        self._main_index = None
+        self._chronology, self._scope = chronology, scope
+
+    def _dirty_time(self, detector: EZoneDetector) -> datetime:
+        if detector.chronology is not self._chronology or self._dirty is None:
+            raise ValueError("Advance the live E state to the detector's chronology.")
+        return self._dirty
+
+    def first_stop(
+        self, detector: EZoneDetector, start: datetime, level: Decimal,
+        *, less: bool, search: Callable[[datetime, datetime, Decimal], datetime | None],
+    ) -> datetime | None:
+        dirty = self._dirty_time(detector)
+        key = (less, start, level)
+        progress = self._stops.get(key)
+        if progress is None:
+            progress = self._previous_stops.get(key)
+            if progress is not None and (progress.event is None or progress.event >= dirty):
+                progress = _ParentStopProgress(min(progress.scanned_until, dirty), None)
+        if progress is not None:
+            self._stops[key] = progress
+            if progress.event is not None:
+                return progress.event if progress.event < detector.range_end else None
+            start = max(start, progress.scanned_until)
+
+        if start >= detector.range_end:
+            return None
+        event = search(start, detector.range_end, level)
+        self._stops[key] = _ParentStopProgress(event or detector.range_end, event)
+        return event
+
+    def extreme(
+        self, detector: EZoneDetector, start_index: int, end_index: int,
+    ) -> tuple[int, datetime, Decimal]:
+        dirty = self._dirty_time(detector)
+        key = (detector.direction, start_index, end_index)
+        result = self._extremes.get(key)
+        if result is None and detector.times[end_index] < dirty:
+            result = self._previous_extremes.get(key)
+        if result is None:
+            if self._main_index is None:
+                from reaction_engine import LowerTimeframeIndex
+
+                self._main_index = LowerTimeframeIndex(detector.candles)
+            query = (self._main_index.range_minimum if detector.direction == "bullish"
+                     else self._main_index.range_maximum)
+            price, position = query(start_index, end_index + 1)
+            result = (int(detector.candles[position].index), detector.times[position], price)
+        self._extremes[key] = result
+        return result
+
+    def zone(
+        self, detector: EZoneDetector, family: str, number: int, parent_type: str,
+        parent: object, stop_event: datetime, match: OrderMatch,
+        source: tuple[int, datetime, Decimal],
+    ) -> EZone:
+        dirty = self._dirty_time(detector)
+        order_number, order, confirmation, level, stop_index, stop_time, crossed, causes, cause_time = match
+        assert crossed is not None
+        key = (
+            detector.direction, family, number, parent_type, parent.source_index,
+            parent.source_time, str(parent.price), stop_event, order_number,
+            order.first_idx, order.break_idx, order.mode, order.box_top_source_idx,
+            str(order.box_top), order.box_bottom_source_idx, str(order.box_bottom),
+            confirmation, str(level), stop_index, stop_time, crossed, causes, cause_time,
+            source[0], source[1], str(source[2]),
+        )
+        zone = self._zones.get(key)
+        if zone is None and max(stop_event, crossed[2], confirmation) < dirty:
+            zone = self._previous_zones.get(key)
+        if zone is None:
+            zone = detector._build_zone(family, number, parent_type, parent, stop_event, match, source)
+        self._zones[key] = zone
+        return zone
+
+    def reconcile(self, detector: EZoneDetector, candidates: list[EZone]) -> list[EZone]:
+        self._dirty_time(detector)
+        if not candidates:
+            return detector._compute_reconciliation(candidates)[0]
+
+        identities = {(zone.order_first_index, zone.order_break_index) for zone in candidates}
+        ledger = {}
+        for identity in sorted(identities):
+            entry = detector.order_audit.get(identity)
+            ledger[identity] = (
+                entry is not None, identity in detector.initial_order_audit,
+                bool(entry and entry.get("order_b_causes")), frozenset(entry.get("causes", ())) if entry else (),
+            )
+        grouped = {}
+        for zone in candidates:
+            order = (zone.order_first_index, zone.order_break_index)
+            dependency = (
+                repr(zone), ledger[order], detector._blocked_by_gate_owned_order(zone),
+                detector.sequence_priority(zone.parent_type, "red"),
+                detector.sequence_priority(zone.parent_type, "blue"),
+                zone.parent_source_index if zone.parent_type == "E" else zone.source_index,
+            )
+            grouped.setdefault(zone.source_index, []).append(dependency)
+        parents = {}
+        for item in detector.s_zones:
+            parents.setdefault(item.source_index, []).append(
+                (item.source_time, item.a_source_time, item.decision_event_time, item.color),
+            )
+        resets = frozenset(detector.sequence_resets.items())
+        validity = frozenset(detector.invalid_s_root_identities), frozenset(detector.visual_lifecycle_starts)
+        evidence = (grouped, parents, resets, validity)
+        scope = (detector.direction, detector._live_scope)
+        key = (
+            tuple(map(id, candidates)),
+            tuple((source, tuple(rows)) for source, rows in grouped.items()),
+            tuple((source, tuple(rows)) for source, rows in parents.items()),
+            resets, validity,
+        )
+        saved = self._reconciled.get(key) or self._previous_reconciled.get(key)
+        if saved is not None:
+            self._reconciled[key] = saved
+            self._scoped_reconciliations[scope] = saved
+            detector._last_candidate_zones = list(saved.candidates)
+            detector._accepted_e_source_identities = set(saved.accepted)
+            detector.visual_lifecycle_starts.update(saved.lifecycle_starts)
+            return list(saved.numbered)
+
+        previous = self._previous_scoped.get(scope)
+        steps = []
+        frontier = 0
+        checkpoint = None
+        if previous is not None and previous.evidence[3] == validity:
+            old_groups, old_parents, old_resets, _ = previous.evidence
+            frontier = detector._main_index(self._dirty)
+            for source in grouped.keys() | old_groups.keys():
+                before, after = old_groups.get(source, []), grouped.get(source, [])
+                if before != after:
+                    # A newly confirmed child can change the race of an
+                    # already active parent before the child's source.
+                    frontier = min(frontier, source, *(row[-1] for row in before + after))
+            for source in parents.keys() | old_parents.keys():
+                if parents.get(source) != old_parents.get(source):
+                    frontier = min(frontier, source)
+            for instant, _ in resets ^ old_resets:
+                frontier = min(frontier, detector._main_index(instant))
+            position = bisect_left(previous.steps, frontier, key=lambda step: step.source)
+            steps.extend(previous.steps[:position])
+            if position < len(previous.steps):
+                checkpoint = previous.steps[position]
+            else:
+                checkpoint = previous.steps[-1]
+                steps.pop()
+        try:
+            numbered, native = detector._compute_reconciliation(
+                candidates, steps=steps, checkpoint=checkpoint, previous=previous, frontier=frontier,
+            )
+        except _ReopenedERace:
+            # Dynamic Order races can insert a candidate before the apparent
+            # frontier. Restart before mutating any native Order provenance.
+            steps.clear()
+            numbered, native = detector._compute_reconciliation(candidates, steps=steps)
+        if not detector._reconciliation_reopened:
+            saved = _ReconciledE(
+                tuple(candidates), tuple(numbered),
+                frozenset(detector._accepted_e_source_identities),
+                frozenset(detector.visual_lifecycle_starts),
+                evidence, tuple(steps), native,
+            )
+            self._reconciled[key] = self._scoped_reconciliations[scope] = saved
+        return numbered
+
+
 class EZoneDetector(OrderAuditEngineMixin):
     def __init__(
         self,
@@ -6373,6 +8286,8 @@ class EZoneDetector(OrderAuditEngineMixin):
         sequence_priority: Callable[[str, str], int] | None = None,
         invalid_s_root_identities: set[tuple[datetime, int]] | None = None,
         order_b_legs: Sequence[OrderBResetLeg] = (),
+        live_continuation: LiveEContinuation | None = None,
+        live_scope: tuple = (),
     ) -> None:
         if direction not in {"bullish", "bearish"}:
             raise ValueError("Direction must be 'bullish' or 'bearish'.")
@@ -6406,17 +8321,20 @@ class EZoneDetector(OrderAuditEngineMixin):
         self.end_index = len(self.candles) - 1 if end_index is None else int(end_index)
         self.range_start = self.times[self.start_index]
         self.range_end = self.times[self.end_index] + self.timeframe
-        self._stop_values = [
-            as_decimal(getattr(candle, self.policy.extreme_attr))
-            for candle in self.candles
-        ]
-        self._candle_codes = [int(getattr(candle, "index")) for candle in self.candles]
-        self._extreme_sparse = self._build_extreme_sparse()
+        if live_continuation is None:
+            self._stop_values = [
+                as_decimal(getattr(candle, self.policy.extreme_attr))
+                for candle in self.candles
+            ]
+            self._candle_codes = [int(getattr(candle, "index")) for candle in self.candles]
+            self._extreme_sparse = self._build_extreme_sparse()
         self.direct_geometry_finder = direct_geometry_finder
         self.blocked_order_first_times = blocked_order_first_times or set()
         self.e_parent_order_first_exceptions = e_parent_order_first_exceptions
         self.initial_order_audit = initial_order_audit or {}
         self.order_b_legs = tuple(order_b_legs)
+        self._live_continuation = live_continuation
+        self._live_scope = live_scope
         self._cross_order_cache: dict[
             tuple[datetime, Decimal], tuple[int, datetime, datetime] | None
         ] = {}
@@ -6609,15 +8527,46 @@ class EZoneDetector(OrderAuditEngineMixin):
     def _first_parent_stop(
         self, source_time: datetime, level: Decimal
     ) -> tuple[int, datetime] | None:
-        left = bisect_left(self.lower_times, max(source_time, self.range_start))
-        right = bisect_left(self.lower_times, self.range_end)
-        position = self._first_cross_position(
-            left, right, level, less=self.direction == "bullish"
+        start = max(source_time, self.range_start)
+        if self._live_continuation is None:
+            event = self._search_parent_stop(start, self.range_end, level)
+        else:
+            event = self._live_continuation.first_stop(
+                self, start, level, less=self.direction == "bullish", search=self._search_parent_stop,
+            )
+        return (self._main_index(event), event) if event is not None else None
+
+    def _search_parent_stop(
+        self, start: datetime, end: datetime, level: Decimal,
+    ) -> datetime | None:
+        return self._search_strict_cross(start, end, level, less=self.direction == "bullish")
+
+    def _search_order_stop(
+        self, start: datetime, end: datetime, level: Decimal,
+    ) -> datetime | None:
+        return self._search_strict_cross(start, end, level, less=self.order_direction != "bearish")
+
+    def _search_strict_cross(
+        self, start: datetime, end: datetime, level: Decimal, *, less: bool,
+    ) -> datetime | None:
+        left = bisect_left(self.lower_times, start)
+        right = bisect_left(self.lower_times, end)
+        position = self._first_cross_position(left, right, level, less=less)
+        return self.lower_times[position] if position is not None else None
+
+    def _cross_order(
+        self, start: datetime, level: Decimal,
+    ) -> tuple[int, datetime, datetime] | None:
+        if self._live_continuation is None:
+            return super()._cross_order(start, level)
+        event = self._live_continuation.first_stop(
+            self, max(start, self.range_start), level,
+            less=self.order_direction != "bearish", search=self._search_order_stop,
         )
-        if position is None:
+        if event is None:
             return None
-        event = self.lower_times[position]
-        return self._main_index(event), event
+        index = self._main_index(event)
+        return index, self.times[index], event
 
     def _confirmation_for(self, reaction: object, direction: str) -> datetime:
         return self.chronology.reaction_confirmation(direction, reaction)
@@ -6653,6 +8602,11 @@ class EZoneDetector(OrderAuditEngineMixin):
         end_index = min(self.end_index, self._main_index(end))
         if end_index < start_index:
             end_index = start_index
+        if self._live_continuation is not None:
+            return self._live_continuation.extreme(self, start_index, end_index)
+        return self._find_extreme(start_index, end_index)
+
+    def _find_extreme(self, start_index: int, end_index: int) -> tuple[int, datetime, Decimal]:
         position = self._extreme_position(start_index, end_index)
         return (
             self._candle_codes[position],
@@ -6719,15 +8673,24 @@ class EZoneDetector(OrderAuditEngineMixin):
             break
         if order_match is None:
             return None
+        if self._live_continuation is not None:
+            return self._live_continuation.zone(
+                self, family, number, parent_type, parent, stop_event, order_match, prospective_source,
+            )
+        return self._build_zone(family, number, parent_type, parent, stop_event, order_match, prospective_source)
+
+    def _build_zone(
+        self, family: str, number: int, parent_type: str, parent: object,
+        stop_event: datetime, order_match: OrderMatch,
+        prospective_source: tuple[int, datetime, Decimal],
+    ) -> EZone:
         (
             order_number, order, order_confirmation, order_stop,
             stop_source, stop_source_time, crossed, order_causes,
             order_parent_stop_cause_time,
         ) = order_match
-        if crossed is None:
-            return None
-        order_decision_index, order_decision_time, order_decision_event = crossed
-        decision_event = max(stop_event, order_decision_event)
+        assert crossed is not None
+        decision_event = max(stop_event, crossed[2])
         decision_index = self._main_index(decision_event)
         decision_time = self.times[decision_index]
         source_index, source_time, price = prospective_source
@@ -7169,6 +9132,13 @@ class EZoneDetector(OrderAuditEngineMixin):
         self, candidates: list[EZone]
     ) -> list[EZone]:
         """Resolve competing E chains into the accepted chronological lifecycle."""
+        if self._live_continuation is not None:
+            return self._live_continuation.reconcile(self, candidates)
+        return self._compute_reconciliation(candidates)[0]
+
+    def _compute_reconciliation(
+        self, candidates: list[EZone], *, steps=None, checkpoint=None, previous=None, frontier=0,
+    ) -> tuple[list[EZone], tuple[EZone, ...]]:
         # Resolve competing chains chronologically.  A stopped E is removed
         # from the active set immediately; it remains only as historical
         # output and cannot affect a later family or number.
@@ -7183,17 +9153,18 @@ class EZoneDetector(OrderAuditEngineMixin):
         # chain before the later confirmed continuation.
         pending = [(min(item.source_time for item in group),
                     min(item.decision_event_time for item in group), source)
-                   for source, group in by_source.items()]
+                   for source, group in by_source.items() if source >= frontier]
         heapify(pending)
-        scheduled = set(by_source)
+        scheduled = {source for _, _, source in pending}
         known = set(candidates)
         regenerated: set[EZone] = set()
-        numbered: list[EZone] = []
-        active: list[EZone] = []
-        accepted_sources: set[tuple[datetime, int]] = set()
-        accepted_source_times: set[datetime] = set()
+        self._reconciliation_reopened = False
+        numbered = list(previous.native_numbered[:checkpoint.count]) if checkpoint is not None else []
+        active = list(checkpoint.active) if checkpoint is not None else []
+        accepted_sources = {(item.source_time, item.source_index) for item in numbered}
+        accepted_source_times = {item.source_time for item in numbered}
         self._accepted_e_source_identities = accepted_sources
-        sequence_start: datetime | None = None
+        sequence_start = checkpoint.sequence_start if checkpoint is not None else None
 
         candidates_by_source_time = {
             (item.source_index, item.source_time): item
@@ -7306,6 +9277,8 @@ class EZoneDetector(OrderAuditEngineMixin):
         while pending:
             _source_time, _decision_time, current_source = heappop(pending)
             scheduled.remove(current_source)
+            if steps is not None:
+                steps.append(_EReconciliationStep(current_source, len(numbered), tuple(active), sequence_start))
             group = by_source[current_source]
             # Another source can disown an Order after its E parent was
             # accepted. Reopen that parent's complete native race here.
@@ -7320,8 +9293,11 @@ class EZoneDetector(OrderAuditEngineMixin):
                                    (item.parent_source_time, item.parent_source_index)), None)
                     if parent is None:
                         continue
+                    if checkpoint is not None:
+                        raise _ReopenedERace
                     family = item.family if item.parent_type == "S" else parent.family
                     number = item.number if item.parent_type == "S" else parent.number + 1
+                    self._reconciliation_reopened = True
                     enqueue(self._zone(family, number, item.parent_type, parent,
                                        item.parent_stop_event_time,
                                        e_owned_source_times=accepted_source_times), current_source)
@@ -7468,6 +9444,7 @@ class EZoneDetector(OrderAuditEngineMixin):
             # when that parent's source is a hard-reset boundary.
             next_stop = self._parent_stop("E", numbered_zone) if zone in regenerated else None
             if next_stop is not None:
+                self._reconciliation_reopened = True
                 child = self._zone(numbered_zone.family, numbered_zone.number + 1,
                                    "E", numbered_zone, next_stop[1],
                                    e_owned_source_times=accepted_source_times)
@@ -7491,13 +9468,16 @@ class EZoneDetector(OrderAuditEngineMixin):
         for zone in numbered:
             collect_lineage(zone, lineage_seen)
 
+        if steps is not None:
+            steps.append(_EReconciliationStep(len(self.candles), len(numbered), tuple(active), sequence_start))
+        native = tuple(numbered)
         numbered = [replace(item, parent_type="StopAll")
                     if item.parent_type == "E"
                     and item.parent_source_time in self.sequence_resets
                     else item for item in numbered]
         self._accepted_e_source_identities = accepted_sources
         self._last_candidate_zones = list(candidates)
-        return numbered
+        return numbered, native
 
 
     def detect(self) -> list[EZone]:
@@ -7547,11 +9527,11 @@ def detect_e_zones(
 ````
 <!-- EXACT-SOURCE-END:pipeline/e_zone_detector.py -->
 
-### 16.10 `pipeline/lifecycle_engine.py` — Lifecycle / StopAll
+### 16.12 `pipeline/lifecycle_engine.py` — Final S/E dominance, accepted strict behavior stops
 
-**SHA-256:** `760928f5480efad446b42bc6aa2fbea3e431de13ab92714bac05c09188519c26`  
-**Bytes:** `63174`  
-**LF count:** `1529`
+**SHA-256:** `65da2e6b0801c8cd9ecd27c09f2af4253a8a2fd72853c6eac534edbe30a58621`  
+**Bytes:** `66282`  
+**LF count:** `1594`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/lifecycle_engine.py -->
 ````python
@@ -7567,7 +9547,7 @@ from __future__ import annotations
 
 from bisect import bisect_left, bisect_right
 from dataclasses import dataclass, field, replace
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import Sequence
 
@@ -7579,8 +9559,8 @@ from direction_policy import policy_for
 
 
 STOP_ALL_VERSION = "1.18.6"
-STOP_ALL_IMPLEMENTATION_VERSION = "1.20.7"
-STOP_ALL_LAST_MODIFIED = "2026-10-24T12:06:51+03:30"
+STOP_ALL_IMPLEMENTATION_VERSION = "1.21.0"
+STOP_ALL_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -7696,6 +9676,14 @@ def advance_dominant_behavior(
     return owner
 
 
+@dataclass(frozen=True, slots=True)
+class _StopAllCheckpoint:
+    owner: _DominantBehavior | None = None
+    pending_stop: tuple[_DominantBehavior, datetime] | None = None
+    active: tuple[StopAll, ...] = ()
+    output_count: int = 0
+
+
 class StopAllDetector:
     def __init__(
         self,
@@ -7708,9 +9696,7 @@ class StopAllDetector:
             raise ValueError("Direction must be 'bullish' or 'bearish'.")
         self.direction = direction
         self.s_zones = list(s_zones)
-        self.e_zones = sorted(
-            e_zones, key=lambda item: (item.source_time, item.source_index)
-        )
+        self.e_zones = list(e_zones)
         self.chronology = chronology
         self.candles = chronology.candles
         self.lower = chronology.seconds
@@ -7898,17 +9884,23 @@ class StopAllDetector:
             donor_price=as_decimal(item.price),
         )
 
-    def detect(self) -> list[StopAll]:
-        s_events = sorted(
-            self.s_zones, key=lambda item: (item.source_time, item.source_index)
+    def _events(self) -> list[tuple[str, object]]:
+        return sorted(
+            [("S", item) for item in self.s_zones] + [("E", item) for item in self.e_zones],
+            key=lambda event: (event[1].source_time, event[0], event[1].source_index),
         )
-        s_position = 0
-        owner: _DominantBehavior | None = None
+
+    def detect(self) -> list[StopAll]:
+        output: list[StopAll] = []
+        self._detect_events(self._events(), _StopAllCheckpoint(), output)
+        return [self._resolve_stop(item) for item in output]
+
+    def _detect_events(self, events, checkpoint, output, checkpoints=None) -> None:
+        owner = checkpoint.owner
         # A completed stop is frozen historical evidence awaiting an existing
         # S-Red Mode-B or E donor. It cannot arm a displaced behavior again.
-        pending_stop: tuple[_DominantBehavior, datetime] | None = None
-        active: list[StopAll] = []
-        output: list[StopAll] = []
+        pending_stop = checkpoint.pending_stop
+        active = checkpoint.active
 
         def armed_stop_before(
             boundary: datetime, donor_e: object | None = None,
@@ -7985,7 +9977,7 @@ class StopAllDetector:
                     s_item.decision_event_time,
                 )
                 output.append(zone)
-                active = [zone]
+                active = (zone,)
                 owner = None
                 pending_stop = None
                 return
@@ -8009,7 +10001,7 @@ class StopAllDetector:
                     stopped_at,
                 )
                 output.append(zone)
-                active = [zone]
+                active = (zone,)
                 owner = None
                 pending_stop = None
                 return
@@ -8017,13 +10009,8 @@ class StopAllDetector:
                 pending_stop = completed
             accept("S", color, None, s_item)
 
-        for e_item in self.e_zones:
-            while s_position < len(s_events) and (
-                s_events[s_position].source_time < e_item.source_time
-            ):
-                process_s_event(s_events[s_position])
-                s_position += 1
-
+        def process_e_event(e_item: object) -> None:
+            nonlocal owner, pending_stop, active
             e_decision = e_item.decision_event_time
             stopped_active = []
             for item in active:
@@ -8038,12 +10025,12 @@ class StopAllDetector:
                     "StopAll", f"StopAll{highest}", len(stopped_active),
                 )
                 stopped_ids = {id(item) for item, _ in stopped_active}
-                active = [item for item in active if id(item) not in stopped_ids]
+                active = tuple(item for item in active if id(item) not in stopped_ids)
                 output.append(zone)
-                active.append(zone)
+                active += (zone,)
                 owner = None
                 pending_stop = None
-                continue
+                return
 
             gate_event = armed_stop_before(e_item.source_time, e_item)
             completed = pending_stop or (
@@ -8057,31 +10044,87 @@ class StopAllDetector:
                     stopped_owner.kind, stopped_owner.key, stopped_owner.count,
                 )
                 output.append(zone)
-                active.append(zone)
+                active += (zone,)
                 owner = None
                 pending_stop = None
-                continue
+                return
 
             accept("E", str(e_item.family).lower(), int(e_item.number), e_item)
 
-        # The reversal rule is driven by accepted S itself, so it must still
-        # fire when the triggering S occurs after the final accepted E.
-        while s_position < len(s_events):
-            process_s_event(s_events[s_position])
-            s_position += 1
+        for kind, item in events:
+            if kind == "S":
+                process_s_event(item)
+            else:
+                process_e_event(item)
+            if checkpoints is not None:
+                checkpoints.append(_StopAllCheckpoint(owner, pending_stop, active, len(output)))
 
-        completed = []
-        for item in output:
-            stop = self._strict_stop(item.decision_event_time, item.price)
-            completed.append(
-                replace(
-                    item,
-                    stop_index=stop[0] if stop else None,
-                    stop_time=stop[1] if stop else None,
-                    stop_event_time=stop[2] if stop else None,
-                )
-            )
-        return completed
+    def _resolve_stop(self, item: StopAll, *, after: datetime | None = None) -> StopAll:
+        start = item.decision_event_time
+        stop = self._strict_stop(max(start, after) if after is not None else start, item.price)
+        return replace(
+            item, stop_index=stop[0] if stop else None, stop_time=stop[1] if stop else None,
+            stop_event_time=stop[2] if stop else None,
+        )
+
+
+class LiveStopAllContinuation:
+    """Continue accepted S/E ownership and keep StopAlls awaiting a strict stop."""
+
+    def __init__(self, direction, s_zones, e_zones, chronology):
+        self._direction = direction
+        self._checkpoints = [_StopAllCheckpoint()]
+        self._event_keys = []
+        self._output = []
+        self._result = []
+        self._covered_until = None
+        self.update(s_zones, e_zones, chronology, first_dirty_main=0)
+
+    @property
+    def result(self) -> list[StopAll]:
+        return self._result.copy()
+
+    def update(self, s_zones, e_zones, chronology, *, first_dirty_main: int) -> list[StopAll]:
+        if not 0 <= first_dirty_main <= len(chronology.times):
+            raise ValueError("The changed market index is outside the StopAll chronology.")
+        dirty = chronology.times[first_dirty_main] if first_dirty_main < len(chronology.times) else None
+        # Only the prior observed RAW prefix can be known to contain no stop.
+        if self._covered_until is not None and (dirty is None or self._covered_until < dirty):
+            dirty = self._covered_until
+        detector = StopAllDetector(self._direction, s_zones, e_zones, chronology)
+        events = detector._events()
+        # Native immutable S/E records include exact Decimal representations.
+        event_keys = [(kind, repr(item)) for kind, item in events]
+        unchanged = 0
+        for (_, item), old_key, new_key in zip(events, self._event_keys, event_keys):
+            if old_key != new_key or (
+                dirty is not None and max(item.source_time, item.decision_event_time) >= dirty
+            ):
+                break
+            unchanged += 1
+        checkpoint = self._checkpoints[unchanged]
+        checkpoints = self._checkpoints[:unchanged + 1]
+        output = self._output[:checkpoint.output_count]
+        detector._detect_events(events[unchanged:], checkpoint, output, checkpoints)
+        result = []
+        for i, item in enumerate(output):
+            if i < checkpoint.output_count:
+                old = self._result[i]
+                if old.stop_event_time is not None and (dirty is None or old.stop_event_time < dirty):
+                    result.append(old)
+                    continue
+                result.append(detector._resolve_stop(item, after=dirty))
+            else:
+                result.append(detector._resolve_stop(item))
+        self._checkpoints = checkpoints
+        self._event_keys = event_keys
+        self._output = output
+        self._result = result
+        self._covered_until = (
+            chronology.second_times[-1] + timedelta(microseconds=1)
+            if chronology.second_times else None
+        )
+        return self.result
 
 
 def detect_stopalls(
@@ -8853,7 +10896,8 @@ def visible_s_zones_after_module_resets(
     return visible
 
 def reconcile_stopall_lifecycle(
-    detector, s_zones, e_zones, chronology, direction, timed_step=None
+    detector, s_zones, e_zones, chronology, direction, timed_step=None,
+    *, stopall_finder=None,
 ):
     """Freeze StopAll boundaries from the accepted chronological E state.
 
@@ -8871,13 +10915,14 @@ def reconcile_stopall_lifecycle(
     semantics, but never retroactively rebuild the E prefix from that map.
     """
     measure = timed_step or (lambda _label, work: work())
+    find_stopalls = stopall_finder or detect_stopalls
     visible_s = measure(
         f"Reconcile S visibility - {direction.title()}",
         lambda: s_zones_for_stopall(s_zones, e_zones, direction),
     )
     stopalls = measure(
         f"StopAll - {direction.title()}",
-        lambda: detect_stopalls(direction, visible_s, e_zones, chronology),
+        lambda: find_stopalls(direction, visible_s, e_zones, chronology),
     )
     detector.sequence_resets = {
         item.source_time: item.number for item in stopalls
@@ -9087,11 +11132,11 @@ def visible_a_zones(a_zones: Sequence[object], s_zones: Sequence[object]) -> lis
 ````
 <!-- EXACT-SOURCE-END:pipeline/lifecycle_engine.py -->
 
-### 16.11 `pipeline/order_audit_engine.py` — Order / OrderAudit
+### 16.13 `pipeline/order_audit_engine.py` — Physical Order identity and cause ledger
 
-**SHA-256:** `84201f1784fe9a1c924c8c6d3a8f67999d629032c6987c4384a4330954acf2af`  
-**Bytes:** `92027`  
-**LF count:** `2222`
+**SHA-256:** `7196e2778d2f2f41c8f4afdc6911bdd548ccca47d11ef88805dd9e1b7cd579ec`  
+**Bytes:** `95898`  
+**LF count:** `2306`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/order_audit_engine.py -->
 ````python
@@ -9109,8 +11154,8 @@ from typing import Callable, Sequence
 
 from core_utils import as_decimal, order_identity, reaction_identity
 
-ORDER_AUDIT_ENGINE_VERSION = "1.8.1"
-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-01T22:46:39+03:30"
+ORDER_AUDIT_ENGINE_VERSION = "1.8.2"
+ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
 
 
 def relabel_primary_causes(causes, labels):
@@ -9242,6 +11287,34 @@ def order_b_reset_event_time(
     return None if crossing is None else chronology.second_times[crossing]
 
 
+def _order_b_boundary(chronology, first: int, last: int, attribute: str):
+    anchor = as_decimal(getattr(chronology.candles[first], attribute))
+    source_index, boundary = first, anchor
+    for index in range(first + 1, last + 1):
+        value = as_decimal(getattr(chronology.candles[index], attribute))
+        if (value < boundary if attribute == "low" else value > boundary):
+            boundary, source_index = value, index
+    return anchor, boundary, source_index
+
+
+def _order_b_crossing(chronology, attribute: str, left: int, boundary: Decimal):
+    right = len(chronology.second_times)
+    if left >= right:
+        return None
+    index = chronology.lower_index
+    if index is not None:
+        find = index.first_less if attribute == "low" else index.first_greater
+        position = find(left, right, boundary)
+    else:
+        position = None
+        for cursor in range(left, right):
+            value = as_decimal(getattr(chronology.seconds[cursor], attribute))
+            if (value < boundary if attribute == "low" else value > boundary):
+                position = cursor
+                break
+    return chronology.second_times[position] if position is not None else None
+
+
 def discover_order_b_reset_legs(
     direction: str,
     chronology: object,
@@ -9252,6 +11325,8 @@ def discover_order_b_reset_legs(
     a_formation_times: Sequence[datetime],
     *,
     behavior_anchors: Sequence[OrderBBehaviorAnchor] = (),
+    _boundary=None,
+    _crossing=None,
 ) -> list[OrderBResetLeg]:
     """Find Order_B from post-stop HH/LL reset-leg geometry.
 
@@ -9274,12 +11349,13 @@ def discover_order_b_reset_legs(
     if not post_stops or not behavior_anchors:
         return []
 
-    candles = chronology.candles
-    lower = chronology.seconds
     lower_times = chronology.second_times
-    lower_index = chronology.lower_index
     opposite = chronology.opposite_direction(direction)
     attribute = "low" if direction == "bullish" else "high"
+    boundary_at = _boundary or (lambda first, last: _order_b_boundary(chronology, first, last, attribute))
+    crossing_after = _crossing or (
+        lambda time, level: _order_b_crossing(chronology, attribute, bisect_right(lower_times, time), level)
+    )
 
     same_direction = sorted(
         (
@@ -9355,15 +11431,7 @@ def discover_order_b_reset_legs(
         if anchor.behavior_source_index > current[1]:
             continue
 
-        anchor_extreme = as_decimal(
-            getattr(candles[anchor.behavior_source_index], attribute)
-        )
-        source_index = anchor.behavior_source_index
-        boundary = anchor_extreme
-        for index in range(anchor.behavior_source_index + 1, current[1] + 1):
-            value = as_decimal(getattr(candles[index], attribute))
-            if (value < boundary if direction == "bullish" else value > boundary):
-                boundary, source_index = value, index
+        anchor_extreme, boundary, source_index = boundary_at(anchor.behavior_source_index, current[1])
 
         extends_anchor = (
             boundary < anchor_extreme
@@ -9375,28 +11443,9 @@ def discover_order_b_reset_legs(
         if source_index >= current[1]:
             continue
 
-        left = bisect_right(lower_times, reset_time)
-        right = len(lower_times)
-        if left >= right:
+        strict_break_time = crossing_after(reset_time, boundary)
+        if strict_break_time is None:
             continue
-        if lower_index is not None:
-            crossing = (
-                lower_index.first_less(left, right, boundary)
-                if direction == "bullish"
-                else lower_index.first_greater(left, right, boundary)
-            )
-        else:
-            crossing = next((
-                index for index in range(left, right)
-                if (
-                    as_decimal(getattr(lower[index], attribute)) < boundary
-                    if direction == "bullish" else
-                    as_decimal(getattr(lower[index], attribute)) > boundary
-                )
-            ), None)
-        if crossing is None:
-            continue
-        strict_break_time = lower_times[crossing]
         strict_break_index = chronology.main_index(strict_break_time, clamp=True)
 
         # Order_B is a calculation-timeframe rule.  The exact lower-TF crossing
@@ -9446,6 +11495,70 @@ def discover_order_b_reset_legs(
     return found
 
 
+class LiveOrderBResetLegs:
+    """Reuse settled Order_B market geometry and extend pending strict crossings."""
+
+    def __init__(self, direction: str):
+        if direction not in {"bullish", "bearish"}:
+            raise ValueError("Direction must be 'bullish' or 'bearish'.")
+        self._direction = direction
+        self._attribute = "low" if direction == "bullish" else "high"
+        self._boundaries = {}
+        self._crossings = {}
+        self._last_lower_time = None
+
+    def update(
+        self, chronology, trend_reactions, resets, opposite_reactions, post_stops, a_formation_times,
+        *, behavior_anchors, first_dirty_main: int,
+    ) -> list[OrderBResetLeg]:
+        if not 0 <= first_dirty_main <= len(chronology.times):
+            raise ValueError("The changed market index is outside the Order_B chronology.")
+        dirty = chronology.times[first_dirty_main] if first_dirty_main < len(chronology.times) else None
+        lower_times = chronology.second_times
+        last_lower = lower_times[-1] if lower_times else None
+        dirty_lower = bisect_left(lower_times, dirty) if dirty is not None else len(lower_times)
+        old_limit = (
+            bisect_right(lower_times, self._last_lower_time)
+            if self._last_lower_time is not None else 0
+        )
+        boundaries, crossings = {}, {}
+
+        def boundary(first, last):
+            key = (first, last)
+            cached = boundaries.get(key)
+            if cached is None and last < first_dirty_main:
+                cached = self._boundaries.get(key)
+            if cached is None:
+                cached = _order_b_boundary(chronology, first, last, self._attribute)
+            boundaries[key] = cached
+            return cached
+
+        def crossing(reset_time, level):
+            key = (reset_time, level)
+            if key in crossings:
+                return crossings[key]
+            old = self._crossings.get(key)
+            if old is not None and (dirty is None or old < dirty) and last_lower is not None and old <= last_lower:
+                found = old
+            else:
+                left = bisect_right(lower_times, reset_time)
+                if key in self._crossings:
+                    left = max(left, min(old_limit, dirty_lower))
+                found = _order_b_crossing(chronology, self._attribute, left, level)
+            crossings[key] = found
+            return found
+
+        found = discover_order_b_reset_legs(
+            self._direction, chronology, trend_reactions, resets, opposite_reactions,
+            post_stops, a_formation_times, behavior_anchors=behavior_anchors,
+            _boundary=boundary, _crossing=crossing,
+        )
+        self._boundaries = boundaries
+        self._crossings = crossings
+        self._last_lower_time = last_lower
+        return found
+
+
 def discover_accepted_order_b_reset_legs(
     direction: str,
     chronology: object,
@@ -9460,6 +11573,8 @@ def discover_accepted_order_b_reset_legs(
     s_detector: object,
     e_detector: object,
     priority: Callable[[object], int],
+    *,
+    reset_leg_finder=None,
 ) -> list[OrderBResetLeg]:
     """Build reset legs from calculation-accepted lifecycle owners."""
     accepted_a = [
@@ -9516,7 +11631,8 @@ def discover_accepted_order_b_reset_legs(
         ):
             anchors_by_source[key] = anchor
 
-    return discover_order_b_reset_legs(
+    finder = reset_leg_finder or discover_order_b_reset_legs
+    return finder(
         direction, chronology, trend_reactions, trend_resets,
         opposite_reactions, dominant,
         [item.trigger_event_time for item in accepted_a],
@@ -10170,7 +12286,7 @@ class OrderAuditEngineMixin:
             raise ValueError("Primary-Low Order_A is specified for the bullish owner only.")
         return self._register_primary_point(parent)
 
-    def _register_primary_point(self, parent):
+    def _primary_parent_order(self, parent):
         left = bisect_right(self.lower_times, parent.decision_event_time)
         right = bisect_left(self.lower_times, self.range_end)
         position = self._first_cross_position(left, right, as_decimal(parent.price),
@@ -10179,6 +12295,19 @@ class OrderAuditEngineMixin:
         direct = self._direct_parent_stop_order(
             stop_event, None, False, confirmation_after=stop_event,
         ) if stop_event is not None else None
+        return stop_event, direct
+
+    def primary_order_dependency(self, parent):
+        """Describe the current market inputs of one primary Order registration."""
+        stop, direct = self._primary_parent_order(parent)
+        if direct is None:
+            return stop, None
+        number, reaction, confirmation = direct
+        level, source, source_time = self._order_stop(number, reaction)
+        return stop, repr(direct), str(level), source, source_time, self._cross_order(confirmation, level)
+
+    def _register_primary_point(self, parent):
+        stop_event, direct = self._primary_parent_order(parent)
         self._reparent_primary_high_causes(
             parent, stop_event, reaction_identity(direct[1]) if direct is not None else None,
         )
@@ -10517,16 +12646,16 @@ class OrderAuditEngineMixin:
             return list(cached)
         matches: list[OrderMatch] = []
         for entry in self.order_audit.values():
-            a_created_events = [
+            created_events: list[datetime] = [
                 cause[3]
-                for cause in entry.get("causes", set())
+                for cause in entry.get("causes", ())
                 if cause[0] == "parent-stop"
             ]
-            created_events = [min(a_created_events)] if a_created_events else []
-            created_events.extend(
-                cause["physicalOrderConfirmationTime"]
-                for cause in entry.get("order_b_causes", ())
-            )
+            # Only earliest A creation competes; every B cause stays eager.
+            if len(created_events) > 1:
+                created_events = [min(created_events)]
+            for cause in entry.get("order_b_causes", ()):
+                created_events.append(cause["physicalOrderConfirmationTime"])
             if not created_events:
                 continue
             confirmation = entry["confirmation_time"]
@@ -11320,11 +13449,11 @@ class SOrderAuditMixin:
 ````
 <!-- EXACT-SOURCE-END:pipeline/order_audit_engine.py -->
 
-### 16.12 `pipeline/PL_PH_detector.py` — Primary High / Low / Matching Behavior Leg
+### 16.14 `pipeline/PL_PH_detector.py` — Primary High / Low / Matching Behavior Leg
 
-**SHA-256:** `5107fe02c8314552f4c8e45bb84e23682e43d2d49d925cfdaf165eb6a30462d9`  
-**Bytes:** `29764`  
-**LF count:** `666`
+**SHA-256:** `fc2b4ba3d15352831dcf63f34ee04d3da42b0751ca83c0f37e727371c41dabd1`  
+**Bytes:** `36724`  
+**LF count:** `820`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/PL_PH_detector.py -->
 ````python
@@ -11337,7 +13466,7 @@ existing engines.
 """
 from __future__ import annotations
 
-from bisect import bisect_right
+from bisect import bisect_left, bisect_right
 from copy import deepcopy
 from dataclasses import dataclass, field, replace
 from datetime import datetime
@@ -11349,7 +13478,7 @@ from lifecycle_engine import advance_dominant_behavior
 from order_audit_engine import relabel_primary_causes
 
 PL_PH_VERSION = "1.4.0"
-PL_PH_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
+PL_PH_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -11428,13 +13557,13 @@ class PrimaryResult:
     direction: str = "bearish"
 
 
-def first_bullish_transition(chronology, primary):
+def first_bullish_transition(chronology, primary, *, cross=None):
     """Select the earliest exact PH3 stop across all confirmed cycle owners."""
     transitions = []
     for point in resolve_primary_highs(primary, through_index=len(chronology.candles)-1):
         if point.number != 3:
             continue
-        crossed = strict_cross(chronology, point.decision_event_time, point.price, True)
+        crossed = (cross or strict_cross)(chronology, point.decision_event_time, point.price, True)
         if crossed is not None:
             transitions.append(TrendTransition(*crossed, point.price, point))
     return min(transitions, key=lambda item: (
@@ -11552,6 +13681,10 @@ def order_meets_structure_gate(kind, first_index, confirmation, gate_index, even
 def strict_cross(chronology, event: datetime, level: Decimal, above: bool):
     """Find the first strictly later selected-RAW crossing, preserving equality."""
     left = bisect_right(chronology.second_times, event)
+    return _cross_from(chronology, left, level, above)
+
+
+def _cross_from(chronology, left, level, above):
     index = chronology.lower_index
     position = (index.first_greater if above else index.first_less)(
         left, len(chronology.seconds), level
@@ -11614,6 +13747,8 @@ def detect_bearish(
     chronology, s_zones: Sequence[object], e_zones: Sequence[object],
     stopalls: Sequence[object],
     orders: Callable[[str, int, int, datetime], Sequence[StructureOrder]],
+    *,
+    _run: _PrimaryRun | None = None,
 ) -> PrimaryResult:
     """Merge independent cycles on exact chronology and one native Order ledger.
 
@@ -11622,6 +13757,7 @@ def detect_bearish(
     proposal, including cycles waiting without an accepted Order.
     """
     result = PrimaryResult()
+    cross = _run.cross if _run is not None else strict_cross
     activated = []
     qualified = False
     seen = set()
@@ -11634,26 +13770,47 @@ def detect_bearish(
             continue
         seen.add(identity)
         level = as_decimal(chronology.candles[int(reference.source_index)].high)
-        crossed = strict_cross(chronology, qualification, level, True)
+        crossed = cross(chronology, qualification, level, True)
         if crossed is not None:
             activated.append((crossed, reference, second, qualification))
+    activated.sort(key=lambda row: (
+        row[0][1], row[3], row[1].source_index, row[2].source_index,
+    ))
+    if _run is not None:
+        _run.schedule = tuple(_activation_identity(row) for row in activated)
     if not activated:
         if qualified:
             result.status = "waiting-for-stopall-break"
         return result
-    activated.sort(key=lambda row: (
-        row[0][1], row[3], row[1].source_index, row[2].source_index,
-    ))
     checkpoints = []
     pending = {}
     promoted_sources = set()
     activation_index = 0
-    transition = None
+    commit_high = getattr(orders, "confirm_high", None)
+    if _run is not None:
+        for step in _run.retained_steps():
+            activation_index = step.activations
+            index, checkpoint, point = step.cycle_index, step.checkpoint, step.point
+            if index is None:
+                continue
+            if index == len(checkpoints):
+                checkpoints.append(checkpoint)
+            else:
+                checkpoints[index] = checkpoint
+            if point is None:
+                continue
+            (result.highs if point.kind == "PH" else result.lows).append(point)
+            if point.kind == "PH":
+                promoted_sources.add((point.source_index, point.source_time))
+                if commit_high is not None:
+                    commit_high(point)
+        checkpoints = [_refresh_cycle_mbl(chronology, checkpoint, cross) for checkpoint in checkpoints]
+    transition = first_bullish_transition(chronology, result, cross=cross) if result.highs else None
     while True:
         for index, checkpoint in enumerate(checkpoints):
             if index not in pending:
                 pending[index] = _next_point(chronology, checkpoint, orders,
-                    before_event=transition.event_time if transition else None)
+                    before_event=transition.event_time if transition else None, cross=cross)
         decisions = [(point.decision_event_time, index)
                      for index, (_, point) in pending.items() if point is not None]
         decision = min(decisions, default=None)
@@ -11675,8 +13832,15 @@ def detect_bearish(
             if (int(reference.source_index), reference.source_time) in promoted_sources:
                 # The historical StopAll is already a confirmed PH. Its stop
                 # belongs to PH continuation, not an independent matching leg.
+                if _run is not None:
+                    _run.steps.append(_PrimaryStep(activation[0][1], activation_index))
                 continue
-            checkpoints.append(_activate_cycle(chronology, activation))
+            checkpoint = _activate_cycle(chronology, activation, cross=cross)
+            if _run is not None:
+                _run.steps.append(_PrimaryStep(
+                    activation[0][1], activation_index, len(checkpoints), checkpoint,
+                ))
+            checkpoints.append(checkpoint)
             continue
         if decision is None:
             break
@@ -11686,13 +13850,16 @@ def detect_bearish(
         target = checkpoint.result.highs if point.kind == "PH" else checkpoint.result.lows
         target.append(point)
         (result.highs if point.kind == "PH" else result.lows).append(point)
+        if _run is not None:
+            _run.steps.append(_PrimaryStep(
+                point.decision_event_time, activation_index, index, checkpoint, point,
+            ))
         if point.kind == "PH":
             promoted_sources.add((point.source_index, point.source_time))
-            commit_high = getattr(orders, "confirm_high", None)
             if commit_high is not None:
                 commit_high(point)
                 pending.clear()
-            transition = first_bullish_transition(chronology, result)
+            transition = first_bullish_transition(chronology, result, cross=cross)
 
     result.cycles = [pending[index][0].result if index in pending else checkpoint.result
                      for index, checkpoint in enumerate(checkpoints)]
@@ -11720,7 +13887,76 @@ class _CycleCheckpoint:
     reset_high: bool = False
 
 
-def _activate_cycle(chronology, activation):
+def _activation_identity(activation):
+    crossed, reference, second, qualification = activation
+    return (
+        crossed[1], crossed[0], int(reference.source_index), reference.source_time,
+        int(second.source_index), second.source_time, qualification,
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class _PrimaryStep:
+    event_time: datetime
+    activations: int
+    cycle_index: int | None = None
+    checkpoint: _CycleCheckpoint | None = None
+    point: PrimaryPoint | None = None
+
+
+@dataclass(slots=True)
+class _PrimaryRun:
+    previous: _PrimaryRun | None = None
+    dirty_event: datetime | None = None
+    schedule: tuple = ()
+    steps: list[_PrimaryStep] = field(default_factory=list)
+    crossings: dict[tuple, tuple[int, datetime] | None] = field(default_factory=dict)
+    projected_points: dict[int, tuple[PrimaryPoint, PrimaryPoint]] = field(default_factory=dict)
+
+    def retained_steps(self):
+        if self.previous is None:
+            return self.steps
+        frontier = self.dirty_event
+        old = self.previous.schedule
+        position = 0
+        while position < min(len(old), len(self.schedule)) and old[position] == self.schedule[position]:
+            position += 1
+        for schedule in (old, self.schedule):
+            if position < len(schedule):
+                frontier = min(frontier, schedule[position][0])
+        for step in self.previous.steps:
+            if step.event_time >= frontier:
+                break
+            self.steps.append(step)
+        return self.steps
+
+    def cross(self, chronology, event, level, above):
+        key = event, str(level), above
+        if key in self.crossings:
+            return self.crossings[key]
+        left = bisect_right(chronology.second_times, event)
+        if self.previous is not None and key in self.previous.crossings:
+            old = self.previous.crossings[key]
+            if old is not None and old[1] < self.dirty_event:
+                self.crossings[key] = old
+                return old
+            left = max(left, bisect_left(chronology.second_times, self.dirty_event))
+        result = _cross_from(chronology, left, level, above)
+        self.crossings[key] = result
+        return result
+
+
+def _refresh_cycle_mbl(chronology, checkpoint, cross):
+    mbl = checkpoint.result.mbl
+    stop = cross(chronology, mbl.trigger_event_time, mbl.price, False)
+    stop_index, stop_time = stop or (None, None)
+    if (stop_index, stop_time) == (mbl.stop_index, mbl.stop_event_time):
+        return checkpoint
+    mbl = replace(mbl, stop_index=stop_index, stop_event_time=stop_time)
+    return replace(checkpoint, result=replace(checkpoint.result, mbl=mbl))
+
+
+def _activate_cycle(chronology, activation, *, cross=strict_cross):
     crossed, reference, second, qualification = activation
     result = PrimaryResult(
         cycle_id=f"bearish:cycle:{reference.source_index}:{second.source_index}",
@@ -11729,7 +13965,7 @@ def _activate_cycle(chronology, activation):
     reference_price = as_decimal(chronology.candles[int(reference.source_index)].high)
     gate_index, cursor = crossed
     source, floor = _extreme(chronology, int(second.source_index), gate_index, False)
-    broken = strict_cross(chronology, cursor, floor, False)
+    broken = cross(chronology, cursor, floor, False)
     result.mbl = MatchingBehaviorLeg(
         source, chronology.times[source], floor, int(reference.source_index),
         int(second.source_index), gate_index, cursor,
@@ -11738,7 +13974,7 @@ def _activate_cycle(chronology, activation):
     return _CycleCheckpoint(result, reference_price, gate_index, cursor)
 
 
-def _next_point(chronology, checkpoint, orders, *, before_event=None):
+def _next_point(chronology, checkpoint, orders, *, before_event=None, cross=strict_cross):
     """Prospect from committed state without changing shared native ownership.
 
     Cancel/seek transitions are replayable: a later global PH commitment may
@@ -11760,8 +13996,8 @@ def _next_point(chronology, checkpoint, orders, *, before_event=None):
         high_number = 1 if reset_high or not result.highs else result.highs[-1].number + 1
         low_number = result.lows[-1].number + 1 if result.lows else 1
         if phase == "seek":
-            up = strict_cross(chronology, cursor, high_level, True)
-            down = strict_cross(chronology, cursor, low_level, False)
+            up = cross(chronology, cursor, high_level, True)
+            down = cross(chronology, cursor, low_level, False)
             if up is None and down is None:
                 result.status = "waiting-for-structure-break"
                 return prospective, None
@@ -11782,9 +14018,7 @@ def _next_point(chronology, checkpoint, orders, *, before_event=None):
         winner = min(candidates, key=lambda item: (
             item.stop_event_time, -item.first_index, item.break_index
         ), default=None)
-        cancel = strict_cross(chronology, cursor,
-                              floor if phase == "PH" else high_level,
-                              phase == "PL")
+        cancel = cross(chronology, cursor, floor if phase == "PH" else high_level, phase == "PL")
         cancel_is_next = cancel and (
             (phase == "PL" and number > 3)
             or winner is None or cancel[1] < winner.stop_event_time
@@ -11946,7 +14180,7 @@ def _reflect_structure_order(order):
         box_bottom=_negate_price(order.box_top) if order.box_top is not None else None)
 
 
-def detect_bullish(chronology, s_zones, e_zones, stopalls, orders):
+def detect_bullish(chronology, s_zones, e_zones, stopalls, orders, *, _run=None):
     """Apply the approved bullish mirror without reversing time or native state.
 
     Only the primary state machine sees reflected price coordinates. Native
@@ -11960,10 +14194,17 @@ def detect_bullish(chronology, s_zones, e_zones, stopalls, orders):
 
     def point(item):
         if id(item) not in point_cache:
-            point_cache[id(item)] = replace(item,
-                kind="PL" if item.kind == "PH" else "PH", price=_negate_price(item.price),
-                order=_reflect_structure_order(item.order), cycle_id=cycle_id(item.cycle_id),
-                identity_source=point(item.identity_source) if item.identity_source else None)
+            old = _run.previous.projected_points.get(id(item)) if _run and _run.previous else None
+            if old is not None and old[0] is item:
+                projected = old[1]
+            else:
+                projected = replace(item,
+                    kind="PL" if item.kind == "PH" else "PH", price=_negate_price(item.price),
+                    order=_reflect_structure_order(item.order), cycle_id=cycle_id(item.cycle_id),
+                    identity_source=point(item.identity_source) if item.identity_source else None)
+            point_cache[id(item)] = projected
+            if _run is not None:
+                _run.projected_points[id(item)] = item, projected
         return point_cache[id(item)]
 
     def status(value):
@@ -11993,15 +14234,57 @@ def detect_bullish(chronology, s_zones, e_zones, stopalls, orders):
                 callback(point(item))
 
     return result(detect_bearish(_ReflectedChronology(chronology), s_zones, e_zones,
-                                stopalls, ReflectedOrders()))
+                                stopalls, ReflectedOrders(), _run=_run))
+
+
+class LivePrimaryContinuation:
+    """Carry confirmed primary cycles and revalidate the open Order proposal."""
+
+    def __init__(self, direction, chronology, s_zones, e_zones, stopalls, orders):
+        if direction not in {"bearish", "bullish"}:
+            raise ValueError("Primary continuation requires a trading direction.")
+        self._detect = detect_bullish if direction == "bullish" else detect_bearish
+        self._timeframe = chronology.timeframe
+        self._times = chronology.times
+        self._run = _PrimaryRun()
+        self._result = self._detect(chronology, s_zones, e_zones, stopalls, orders, _run=self._run)
+
+    @property
+    def result(self) -> PrimaryResult:
+        return self._result
+
+    def update(self, chronology, s_zones, e_zones, stopalls, orders, *, first_dirty_event: datetime):
+        """Continue with fresh Orders and the earliest revised market/Order event.
+
+        Matching-seed changes can rewind the schedule further. Retained point
+        registrations rebuild the accepted native ledger in their original
+        order before any newly open proposal is evaluated.
+        """
+        if chronology.timeframe != self._timeframe:
+            raise ValueError("Primary continuation requires the original analysis timeframe.")
+        if not isinstance(first_dirty_event, datetime):
+            raise TypeError("Primary continuation requires an exact changed event time.")
+        frontier = first_dirty_event
+        # Point and MBL source selection includes the complete decision or
+        # trigger main. A later lower row in that candle can revise its price.
+        for times in (self._times, chronology.times):
+            index = bisect_right(times, first_dirty_event) - 1
+            if index >= 0 and first_dirty_event < times[index] + self._timeframe:
+                frontier = min(frontier, times[index])
+        run = _PrimaryRun(self._run, frontier)
+        result = self._detect(chronology, s_zones, e_zones, stopalls, orders, _run=run)
+        run.previous = None
+        self._run, self._result = run, result
+        self._times = chronology.times
+        return result
 ````
 <!-- EXACT-SOURCE-END:pipeline/PL_PH_detector.py -->
 
-### 16.13 `pipeline/reaction_engine.py` — Reaction / Reset
+### 16.15 `pipeline/reaction_engine.py` — Canonical First candidate, Break, strict Reset, lower-TF chronology
 
-**SHA-256:** `2554a5609bb126206ad2b7c58eca6694d8b9623f3e5859487540fe9d49dad89b`  
-**Bytes:** `108353`  
-**LF count:** `2501`
+**SHA-256:** `8263ad04295eca35d358e7468b42aaad28b47a8a74f9832c1d73b8d6bdb3e23e`  
+**Bytes:** `123240`  
+**LF count:** `2824`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/reaction_engine.py -->
 ````python
@@ -12026,8 +14309,8 @@ from direction_policy import policy_for
 
 
 REACTION_ENGINE_VERSION = "9.9.1"
-REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.11.0"
-REACTION_ENGINE_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
+REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.12.0"
+REACTION_ENGINE_LAST_MODIFIED = "2026-11-11T14:49:03+03:30"
 
 _ORDER_GATE_CACHE_MAX_ENTRIES = 32_768
 
@@ -12096,6 +14379,45 @@ class DetectionResult:
     resets: list[ResetEvent]
     start_index: int
     end_index: int
+
+
+@dataclass(slots=True)
+class _NormalReactionCursor:
+    next_index: int
+    previous: Candidate
+    candidate: Candidate | None
+    running_value: Decimal
+    running_source: int
+    pending_reset_index: int | None
+
+
+@dataclass(slots=True)
+class _ReactionCheckpoint:
+    cursor: _NormalReactionCursor
+    reaction_count: int
+    reset_count: int
+
+
+@dataclass(slots=True)
+class _InitialLegCursor:
+    next_index: int
+    state: str
+    leg_open_low: Decimal | None
+    leg_just_started: bool
+    anchor: Candle | None
+    anchor_origin: str | None
+    candidate: Candidate | None
+
+
+@dataclass(slots=True)
+class _TrendLegCursor:
+    next_index: int
+    fixed_source: Candle
+    candidate: Candidate | None
+
+
+class LiveReactionUnavailable(RuntimeError):
+    """The supplied prefix cannot seed or extend a live Reaction calculation."""
 
 
 def classify_candle_color(open_price: Decimal, close_price: Decimal) -> str:
@@ -12290,6 +14612,12 @@ class BullishDetector(DetectorBase):
         return None if position is None else self.seconds[position]
 
     def detect(self, *, first_only: bool = False) -> DetectionResult:
+        return self._scan(first_only=first_only)
+
+    def _scan(
+        self, *, first_only: bool, initial: _InitialLegCursor | None = None,
+        retain_initial: bool = False,
+    ) -> DetectionResult:
         reactions: list[Candidate] = []
         resets: list[ResetEvent] = []
         mode = "A"
@@ -12304,8 +14632,18 @@ class BullishDetector(DetectorBase):
         anchor_red_origin: str | None = None
         reset_context: Candle | None = None
         candidate: Candidate | None = None
+        first_index = self.start_index
+        self._initial_cursor: _InitialLegCursor | None = None
+        if initial is not None:
+            first_index = initial.next_index
+            state = initial.state
+            leg_open_low = initial.leg_open_low
+            leg_just_started = initial.leg_just_started
+            anchor_red = initial.anchor
+            anchor_red_origin = initial.anchor_origin
+            candidate = replace(initial.candidate) if initial.candidate is not None else None
 
-        for index in range(self.start_index, self.end_index + 1):
+        for index in range(first_index, self.end_index + 1):
             candle = self.candles[index]
             reset_detected = (
                 last_confirmed_bottom is not None and candle.low < last_confirmed_bottom
@@ -12558,6 +14896,11 @@ class BullishDetector(DetectorBase):
                     running_peak = candle.high
                     running_peak_src = candle.index
 
+        if retain_initial:
+            self._initial_cursor = _InitialLegCursor(
+                self.end_index + 1, state, leg_open_low, leg_just_started,
+                anchor_red, anchor_red_origin, candidate,
+            )
         return DetectionResult(
             direction="bullish",
             reactions=reactions,
@@ -13209,115 +15552,172 @@ class MarketChronology:
         )
 
 
-def build_behavior_reaction_views(
-    full_results: dict[str, object],
-    chronology: MarketChronology,
-):
-    """Mark true cross-direction Reaction interiors for downstream behavior."""
-    candles = chronology.candles
-    seconds = chronology.seconds
-    second_times = chronology.second_times
-    public: dict[str, list[Candidate]] = {}
-    confirmation: dict[str, list[datetime]] = {}
-    for direction in ("bullish", "bearish"):
-        public[direction] = [
-            published_reaction_candidate(direction, item, chronology)
-            for item in full_results[direction].reactions
-        ]
-        confirmation[direction] = [
-            chronology.reaction_confirmation(direction, item)
-            for item in full_results[direction].reactions
-        ]
+@dataclass(frozen=True, slots=True)
+class _BehaviorReactionSpan:
+    identity: tuple[int, int]
+    first_time: datetime
+    confirmed_at: datetime
+    top: Decimal
+    bottom: Decimal
 
-    def path_is_contained(
-        first_time: datetime,
-        confirmed_at: datetime,
-        bottom: Decimal,
-        top: Decimal,
-    ) -> bool:
-        left = bisect.bisect_left(second_times, first_time)
-        right = bisect.bisect_right(second_times, confirmed_at)
+    @classmethod
+    def from_reaction(cls, direction, reaction, chronology):
+        published = published_reaction_candidate(direction, reaction, chronology)
+        first, end = int(reaction.first_idx), int(reaction.break_idx)
+        return cls(
+            (first, end), chronology.candles[first].timestamp,
+            chronology.reaction_confirmation(direction, reaction),
+            _decimal_value(published.box_top), _decimal_value(published.box_bottom),
+        )
+
+    def may_contain(self, inner: _BehaviorReactionSpan) -> bool:
+        return (
+            self.first_time < inner.first_time
+            and self.confirmed_at >= inner.confirmed_at
+            and self.top >= inner.top
+            and self.bottom <= inner.bottom
+        )
+
+    def path_extremes(self, chronology: MarketChronology) -> tuple[Decimal, Decimal] | None:
+        left = bisect.bisect_left(chronology.second_times, self.first_time)
+        right = bisect.bisect_right(chronology.second_times, self.confirmed_at)
         if left >= right:
-            return False
-        # Algorithm requirement: every physical lower-timeframe candle must
-        # remain inside [bottom, top].  The immutable lower-timeframe range
-        # index proves the exact same predicate via min(Low) and max(High),
-        # without allocating/scanning the full slice for every Reaction pair.
+            return None
         minimum_low, _ = chronology.lower_index.range_minimum(left, right)
-        if minimum_low < bottom:
-            return False
         maximum_high, _ = chronology.lower_index.range_maximum(left, right)
-        return maximum_high <= top
+        return minimum_low, maximum_high
 
-    blocked: dict[str, set[tuple[int, int]]] = {
-        "bullish": set(),
-        "bearish": set(),
-    }
-    for direction in ("bullish", "bearish"):
-        opposite = opposite_direction(direction)
-        for number, reaction in enumerate(full_results[direction].reactions, start=1):
-            reaction.behavior_public_number = number
-            published = public[direction][number - 1]
-            reaction.behavior_public_box_top = _decimal_value(published.box_top)
-            reaction.behavior_public_box_bottom = _decimal_value(published.box_bottom)
-            reaction.behavior_confirmation_time = confirmation[direction][number - 1]
-            reaction.behavior_first_time = candles[int(getattr(reaction, "first_idx"))].timestamp
+    def contains_path(self, extremes: tuple[Decimal, Decimal] | None) -> bool:
+        return extremes is not None and self.bottom <= extremes[0] and self.top >= extremes[1]
 
-        for reaction, published, confirmed_at in zip(
-            full_results[direction].reactions,
-            public[direction],
-            confirmation[direction],
-        ):
-            inner_first = candles[int(getattr(reaction, "first_idx"))].timestamp
-            inner_top = _decimal_value(published.box_top)
-            inner_bottom = _decimal_value(published.box_bottom)
-            for outer, outer_published, outer_confirmed_at in zip(
-                full_results[opposite].reactions,
-                public[opposite],
-                confirmation[opposite],
-            ):
-                outer_first = candles[int(getattr(outer, "first_idx"))].timestamp
-                if inner_first <= outer_first or confirmed_at > outer_confirmed_at:
-                    continue
-                outer_top = _decimal_value(outer_published.box_top)
-                outer_bottom = _decimal_value(outer_published.box_bottom)
-                if (
-                    inner_top <= outer_top
-                    and inner_bottom >= outer_bottom
-                    and path_is_contained(
-                        inner_first,
-                        confirmed_at,
-                        outer_bottom,
-                        outer_top,
-                    )
-                ):
-                    blocked[direction].add(
-                        (
-                            int(getattr(reaction, "first_idx")),
-                            int(getattr(reaction, "break_idx")),
-                        )
-                    )
-                    break
+
+def _apply_behavior_reaction_views(full_results, chronology, spans, blocked):
 
     behavior_results = {}
     number_maps = {}
     blocked_first_times = {"bullish": set(), "bearish": set()}
     for direction in ("bullish", "bearish"):
         full = full_results[direction]
-        for item in full.reactions:
-            identity = (
-                int(getattr(item, "first_idx")),
-                int(getattr(item, "break_idx")),
-            )
-            item.behavior_internal = identity in blocked[direction]
+        for number, (item, span) in enumerate(zip(full.reactions, spans[direction]), start=1):
+            item.behavior_public_number = number
+            item.behavior_public_box_top = span.top
+            item.behavior_public_box_bottom = span.bottom
+            item.behavior_confirmation_time = span.confirmed_at
+            item.behavior_first_time = span.first_time
+            item.behavior_internal = span.identity in blocked[direction]
         behavior_results[direction] = full
         number_maps[direction] = {
             number: number for number, _item in enumerate(full.reactions, start=1)
         }
         blocked_first_times[direction] = {
-            candles[first_idx].timestamp for first_idx, _ in blocked[direction]
+            chronology.candles[first_idx].timestamp for first_idx, _ in blocked[direction]
         }
     return behavior_results, number_maps, blocked, blocked_first_times
+
+
+def build_behavior_reaction_views(
+    full_results: dict[str, object],
+    chronology: MarketChronology,
+):
+    """Mark true cross-direction Reaction interiors for downstream behavior."""
+    spans = {
+        direction: [
+            _BehaviorReactionSpan.from_reaction(direction, reaction, chronology)
+            for reaction in full_results[direction].reactions
+        ]
+        for direction in ("bullish", "bearish")
+    }
+    blocked = {}
+    for direction, inner_spans in spans.items():
+        outer_spans = spans[opposite_direction(direction)]
+        identities = set()
+        for inner in inner_spans:
+            extremes = None
+            for outer in outer_spans:
+                if not outer.may_contain(inner):
+                    continue
+                if extremes is None:
+                    extremes = inner.path_extremes(chronology)
+                    if extremes is None:
+                        break
+                if outer.contains_path(extremes):
+                    identities.add(inner.identity)
+                    break
+        blocked[direction] = identities
+    return _apply_behavior_reaction_views(full_results, chronology, spans, blocked)
+
+
+@dataclass(frozen=True, slots=True)
+class _LiveBehaviorReactionEntry:
+    geometry: tuple
+    span: _BehaviorReactionSpan
+    extremes: tuple[Decimal, Decimal] | None
+
+
+class LiveBehaviorReactionViews:
+    """Keep established containment and re-evaluate pairs affected by an append.
+
+    A new opposite-direction Reaction can enclose an already confirmed
+    Reaction. Keep all successful owner pairs so removing a provisional
+    outer Reaction cannot release an inner Reaction with another owner.
+    """
+
+    def __init__(self, full_results: dict[str, object], chronology: MarketChronology):
+        self._entries = {"bullish": [], "bearish": []}
+        self._matches = {"bullish": set(), "bearish": set()}
+        self.update(full_results, chronology, first_dirty_main=0)
+
+    def update(
+        self, full_results: dict[str, object], chronology: MarketChronology,
+        *, first_dirty_main: int,
+    ):
+        if not 0 <= first_dirty_main <= len(chronology.candles):
+            raise ValueError("The changed market index is outside the current chronology.")
+        entries = {}
+        changed = {}
+        for direction, old_entries in self._entries.items():
+            entries[direction] = current = []
+            changed[direction] = changed_positions = set()
+            for position, reaction in enumerate(full_results[direction].reactions):
+                geometry = (
+                    reaction.first_idx, reaction.break_idx, reaction.intrabar_start,
+                    str(reaction.box_top), reaction.box_top_source_idx,
+                    str(reaction.box_bottom), reaction.box_bottom_source_idx,
+                )
+                old = old_entries[position] if position < len(old_entries) else None
+                if old is not None and old.geometry == geometry and reaction.break_idx < first_dirty_main:
+                    current.append(old)
+                    continue
+                span = _BehaviorReactionSpan.from_reaction(direction, reaction, chronology)
+                entry = _LiveBehaviorReactionEntry(geometry, span, span.path_extremes(chronology))
+                if entry != old:
+                    changed_positions.add(position)
+                current.append(entry)
+
+        matches = {}
+        blocked = {}
+        for direction, inner_entries in entries.items():
+            opposite = opposite_direction(direction)
+            outer_entries = entries[opposite]
+            inner_changed, outer_changed = changed[direction], changed[opposite]
+            pairs = {
+                (i, j) for i, j in self._matches[direction]
+                if i < len(inner_entries) and i not in inner_changed
+                and j < len(outer_entries) and j not in outer_changed
+            }
+            for i, inner in enumerate(inner_entries):
+                possible_owners = range(len(outer_entries)) if i in inner_changed else outer_changed
+                for j in possible_owners:
+                    outer = outer_entries[j].span
+                    if outer.may_contain(inner.span) and outer.contains_path(inner.extremes):
+                        pairs.add((i, j))
+            matches[direction] = pairs
+            blocked[direction] = {inner_entries[i].span.identity for i, _ in pairs}
+
+        spans = {direction: [item.span for item in current] for direction, current in entries.items()}
+        result = _apply_behavior_reaction_views(full_results, chronology, spans, blocked)
+        self._entries, self._matches = entries, matches
+        return result
 
 
 def directional_a_stop_order_finder(
@@ -13428,6 +15828,8 @@ class UnifiedReactionDetector(DetectorBase):
         self._order_gate_geometry_cache: dict[
             tuple[str, int, int, datetime | None], Candidate | None
         ] = {}
+        self._live_checkpoint: _ReactionCheckpoint | None = None
+        self._initial_cursor: _InitialLegCursor | _TrendLegCursor | None = None
 
     @property
     def bull(self) -> BullishDetector:
@@ -13651,7 +16053,25 @@ class UnifiedReactionDetector(DetectorBase):
             intrabar_start=remainder_start,
         )
 
-    def _first_initial(self, direction: str) -> Candidate | None:
+    def _first_initial(
+        self, direction: str, *, initial_cursor: _InitialLegCursor | _TrendLegCursor | None = None,
+        retain_initial: bool = False,
+    ) -> Candidate | None:
+        if retain_initial:
+            is_trend_start = (
+                self.initial_bullish_trend if direction == "bullish" else self.initial_bearish_trend
+            )
+            if is_trend_start:
+                assert initial_cursor is None or isinstance(initial_cursor, _TrendLegCursor)
+                return self._first_trend_reaction(direction, initial=initial_cursor, retain_initial=True)
+            assert initial_cursor is None or isinstance(initial_cursor, _InitialLegCursor)
+            helper = self.bull if direction == "bullish" else self.bear.reference
+            result = helper._scan(first_only=True, initial=initial_cursor, retain_initial=True)
+            self._initial_cursor = helper._initial_cursor
+            if not result.reactions:
+                return None
+            candidate = result.reactions[0]
+            return replace(candidate) if direction == "bullish" else mirror_candidate(candidate)
         if direction == "bullish" and self.initial_bullish_trend:
             return self._first_bullish_trend_reaction()
         if direction == "bearish" and self.initial_bearish_trend:
@@ -13671,7 +16091,10 @@ class UnifiedReactionDetector(DetectorBase):
         """Keep the existing bullish bootstrap entry point."""
         return self._first_trend_reaction("bullish")
 
-    def _first_trend_reaction(self, direction: str) -> Candidate | None:
+    def _first_trend_reaction(
+        self, direction: str, *, initial: _TrendLegCursor | None = None,
+        retain_initial: bool = False,
+    ) -> Candidate | None:
         """Bootstrap only the first Reaction of a newly isolated regime.
 
         The boundary candle is eligible as First without an earlier context.
@@ -13681,9 +16104,10 @@ class UnifiedReactionDetector(DetectorBase):
         if self.start_index > self.end_index:
             return None
         bullish = direction == "bullish"
-        fixed_source = self.candles[self.start_index]
-        candidate = None
-        for index in range(self.start_index, self.end_index + 1):
+        fixed_source = initial.fixed_source if initial is not None else self.candles[self.start_index]
+        candidate = replace(initial.candidate) if initial is not None and initial.candidate is not None else None
+        first_index = initial.next_index if initial is not None else self.start_index
+        for index in range(first_index, self.end_index + 1):
             candle = self.candles[index]
             if candidate is None:
                 if ((candle.high > fixed_source.high) if bullish
@@ -13718,6 +16142,8 @@ class UnifiedReactionDetector(DetectorBase):
                 candidate.break_time = candle.display_time
                 self._refine(direction, candidate, candle)
                 return candidate
+        if retain_initial:
+            self._initial_cursor = _TrendLegCursor(self.end_index + 1, fixed_source, candidate)
         return None
 
 
@@ -13732,9 +16158,16 @@ class UnifiedReactionDetector(DetectorBase):
         breaks first, restart strictly after that event. Bearish is the exact
         price/color mirror of Bullish.
         """
+        return self._direct_reset_search(direction, reset_index)[0]
+
+    def _direct_reset_search(
+        self, direction: str, reset_index: int,
+    ) -> tuple[Candidate | None, bool]:
+        """Report whether a bounded result can still be displaced by a later row."""
         context_tag = "GREEN" if direction == "bullish" else "RED"
         first_tag = "RED" if direction == "bullish" else "GREEN"
         blocked_through = reset_index
+        has_earlier_pending = False
 
         for first_index in range(reset_index + 1, self.end_index + 1):
             first = self.candles[first_index]
@@ -13752,12 +16185,13 @@ class UnifiedReactionDetector(DetectorBase):
                 direction, candidate, self.end_index
             )
             if confirmed is not None:
-                return confirmed
+                return confirmed, has_earlier_pending
             if invalidation_index is None:
+                has_earlier_pending = True
                 continue
             blocked_through = invalidation_index
 
-        return None
+        return None, True
 
     def _first_geometry_after_reset(
         self, direction: str, reset_index: int, end_index: int | None = None,
@@ -14198,8 +16632,17 @@ class UnifiedReactionDetector(DetectorBase):
     def detect(
         self, *, stop_after_first_at_or_after: int | None = None
     ) -> DetectionResult:
+        return self._detect(stop_after_first_at_or_after, retain_cursor=False)
+
+    def _detect(
+        self, stop_after_first_at_or_after: int | None, *, retain_cursor: bool,
+        initial_cursor: _InitialLegCursor | _TrendLegCursor | None = None,
+    ) -> DetectionResult:
         direction = self.output_direction
-        initial = self._first_initial(direction)
+        initial = (
+            self._first_initial(direction, initial_cursor=initial_cursor, retain_initial=True)
+            if retain_cursor else self._first_initial(direction)
+        )
         if initial is None:
             return DetectionResult(
                 direction=direction,
@@ -14269,6 +16712,23 @@ class UnifiedReactionDetector(DetectorBase):
                 direction, initial, initial_break_candle, initial_analysis
             )
 
+        return self._scan_normal(
+            _NormalReactionCursor(index, previous, candidate, running_value, running_source, pending_reset_index),
+            stop_after_first_at_or_after, retain_cursor=retain_cursor,
+        )
+
+    def _scan_normal(
+        self, cursor: _NormalReactionCursor, stop_after_first_at_or_after: int | None,
+        *, retain_cursor: bool,
+    ) -> DetectionResult:
+        direction = self.output_direction
+        index = cursor.next_index
+        previous = cursor.previous
+        candidate = cursor.candidate
+        running_value = cursor.running_value
+        running_source = cursor.running_source
+        pending_reset_index = cursor.pending_reset_index
+        earliest_open = None
         while index <= self.end_index:
             candle = self.candles[index]
             reset = pending_reset_index is not None or (
@@ -14297,6 +16757,16 @@ class UnifiedReactionDetector(DetectorBase):
                     else index
                 )
                 reset_candle = self.candles[reset_index]
+                if retain_cursor and earliest_open is None:
+                    before_reset = _ReactionCheckpoint(
+                        _NormalReactionCursor(
+                            index, replace(previous), replace(candidate) if candidate is not None else None,
+                            running_value, running_source, pending_reset_index,
+                        ),
+                        len(self.all_reactions[direction]), len(self.all_resets[direction]),
+                    )
+                else:
+                    before_reset = None
                 pending_reset_index = None
                 level = previous.box_bottom if direction == "bullish" else previous.box_top
                 already_recorded = (
@@ -14311,9 +16781,12 @@ class UnifiedReactionDetector(DetectorBase):
                 # A Reset reopens the ordinary same-direction ownership gate.
                 # The geometric relaxation belongs only to the cross-direction
                 # structural/E path and must not relabel every normal Reset.
-                direct_candidate = self._first_direct_same_direction_after_reset(
-                    direction, reset_index
-                )
+                if before_reset is not None:
+                    direct_candidate, still_open = self._direct_reset_search(direction, reset_index)
+                    if still_open:
+                        earliest_open = before_reset
+                else:
+                    direct_candidate = self._first_direct_same_direction_after_reset(direction, reset_index)
                 # Both paths are valid interpretations of the same requested-
                 # direction restart. The chronologically first confirmation
                 # wins; a later Anchor-based candidate must never hide an
@@ -14503,17 +16976,150 @@ class UnifiedReactionDetector(DetectorBase):
                 running_value, running_source = candle.low, candle.index
             index += 1
 
+        if retain_cursor:
+            self._live_checkpoint = earliest_open or _ReactionCheckpoint(
+                _NormalReactionCursor(index, previous, candidate, running_value, running_source, pending_reset_index),
+                len(self.all_reactions[direction]), len(self.all_resets[direction]),
+            )
         return self._result()
+
+
+class LiveReactionContinuation:
+    """Extend a confirmed Reaction calculation using committed market candles.
+
+    Normal searches preserve their candidate and next index. An unresolved
+    Reset search keeps the checkpoint preceding it, because a later candle
+    can displace a bounded restart and its dependent suffix.
+    """
+
+    def __init__(
+        self, candles: Sequence[Candle], lower: Sequence[Candle], direction: str,
+        *, timeframe_seconds: int,
+        initial_bullish_trend: bool = False, initial_bearish_trend: bool = False,
+    ) -> None:
+        policy_for(direction)
+        if len(candles) < 2:
+            raise LiveReactionUnavailable("A live Reaction seed requires at least two committed main candles.")
+        self._direction = direction
+        self._options = {
+            "initial_bullish_trend": initial_bullish_trend,
+            "initial_bearish_trend": initial_bearish_trend,
+        }
+        self._candles = list(candles)
+        self._lower = list(lower)
+        self._timeframe = timedelta(seconds=timeframe_seconds)
+        self._validate_extension(self._candles, self._lower, None, None)
+        detector = self._detector(self._candles, self._lower)
+        try:
+            result = detector._detect(None, retain_cursor=True)
+        finally:
+            self._release_indexes(self._candles, self._lower)
+        self._result = result
+        self._checkpoint = detector._live_checkpoint
+        self._initial_cursor = detector._initial_cursor
+        # Sum the main-candle spans supplied to the searches after seeding.
+        # The span can include an earlier unresolved Reset.
+        self.processed_main_candles = 0
+
+    @property
+    def result(self) -> DetectionResult:
+        return self._snapshot(self._result)
+
+    @staticmethod
+    def _snapshot(result: DetectionResult) -> DetectionResult:
+        return replace(
+            result,
+            reactions=[replace(candidate) for candidate in result.reactions],
+            resets=list(result.resets),
+        )
+
+    def _detector(self, candles: list[Candle], lower: list[Candle]) -> UnifiedReactionDetector:
+        return UnifiedReactionDetector(candles, lower, 0, len(candles) - 1, self._direction, **self._options)
+
+    @staticmethod
+    def _release_indexes(*sequences: list[Candle]) -> None:
+        # These snapshots belong only to this session. The batch caches keep
+        # a strong reference by list identity and must not retain every poll.
+        for sequence in sequences:
+            for cache in (_SEQUENCE_TIME_INDEXES, _LOWER_TIMEFRAME_INDEXES, _REFLECTED_VIEWS):
+                cache.pop(id(sequence), None)
+
+    def _validate_extension(
+        self, candles: Sequence[Candle], lower: Sequence[Candle],
+        previous_main: Candle | None, previous_lower: Candle | None,
+    ) -> None:
+        if self._timeframe <= timedelta(0) or not candles or not lower:
+            raise LiveReactionUnavailable("A live batch must contain committed main and lower candles.")
+        for candle in candles:
+            if previous_main is None:
+                valid = candle.index == 0
+            else:
+                gap = candle.timestamp - previous_main.timestamp
+                valid = candle.index == previous_main.index + 1 and gap > timedelta(0) and gap % self._timeframe == timedelta(0)
+            if not valid:
+                raise LiveReactionUnavailable("Main candles must extend the committed timeframe grid.")
+            previous_main = candle
+        for candle in lower:
+            if previous_lower is None:
+                valid = candle.index == 0
+            else:
+                valid = candle.index == previous_lower.index + 1 and candle.timestamp > previous_lower.timestamp
+            if not valid:
+                raise LiveReactionUnavailable("Lower candles must extend the committed chronology.")
+            previous_lower = candle
+        if lower[0].timestamp < candles[0].timestamp or lower[-1].timestamp >= candles[-1].timestamp + self._timeframe:
+            raise LiveReactionUnavailable("Lower candles must fall inside the newly committed main range.")
+
+    def advance(self, candles: Sequence[Candle], lower: Sequence[Candle]) -> DetectionResult:
+        return self._extend(candles, lower, commit=True)
+
+    def preview(self, candles: Sequence[Candle], lower: Sequence[Candle]) -> DetectionResult:
+        """Evaluate the current tail without advancing the committed checkpoint."""
+        return self._extend(candles, lower, commit=False)
+
+    def _extend(
+        self, candles: Sequence[Candle], lower: Sequence[Candle], *, commit: bool,
+    ) -> DetectionResult:
+        if not candles and not lower:
+            return self.result
+        self._validate_extension(candles, lower, self._candles[-1], self._lower[-1])
+        next_main = [*self._candles, *candles]
+        next_lower = [*self._lower, *lower]
+        detector = self._detector(next_main, next_lower)
+        checkpoint = self._checkpoint
+        try:
+            if checkpoint is None:
+                processed = len(candles)
+                result = detector._detect(None, retain_cursor=True, initial_cursor=self._initial_cursor)
+            else:
+                detector.all_reactions[self._direction] = self._result.reactions[:checkpoint.reaction_count]
+                detector.all_resets[self._direction] = self._result.resets[:checkpoint.reset_count]
+                cursor = replace(
+                    checkpoint.cursor, previous=replace(checkpoint.cursor.previous),
+                    candidate=replace(checkpoint.cursor.candidate) if checkpoint.cursor.candidate is not None else None,
+                )
+                processed = len(next_main) - cursor.next_index
+                result = detector._scan_normal(cursor, None, retain_cursor=True)
+        finally:
+            self._release_indexes(next_main, next_lower)
+        if commit:
+            self._candles = next_main
+            self._lower = next_lower
+            self._result = result
+            self._checkpoint = detector._live_checkpoint
+            self._initial_cursor = detector._initial_cursor
+            self.processed_main_candles += processed
+        return self._snapshot(result)
 
 
 ````
 <!-- EXACT-SOURCE-END:pipeline/reaction_engine.py -->
 
-### 16.14 `pipeline/s_zone_detector.py` — S
+### 16.16 `pipeline/s_zone_detector.py` — Accepted A stop, aligned Reaction, physical opposite Order
 
-**SHA-256:** `0c5864bc3bc6c17f72c5c38b04a1cd0b5b38c726d8834207a55d5351fdfa38fe`  
-**Bytes:** `60942`  
-**LF count:** `1445`
+**SHA-256:** `029a52fff2f6fd618b8e67a9fd99229bd1b2ffccf91dbd9656baf06aef0989a8`  
+**Bytes:** `66030`  
+**LF count:** `1554`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/s_zone_detector.py -->
 ````python
@@ -14539,8 +17145,8 @@ from direction_policy import policy_for
 
 
 S_ZONE_VERSION = "4.20.1"
-S_ZONE_IMPLEMENTATION_VERSION = "4.21.1"
-S_ZONE_LAST_MODIFIED = "2026-10-23 12:23:13 +02:00"
+S_ZONE_IMPLEMENTATION_VERSION = "4.22.0"
+S_ZONE_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -15744,7 +18350,33 @@ class SZoneDetector(SOrderAuditMixin):
             decision_event_time=decision_event_time,
         )
 
+    def _resolve_candidate(
+        self,
+        zone: object,
+        a_ordinal: int,
+        a_price: Decimal,
+        a_stop: tuple[int, datetime, datetime],
+        order_match: tuple[int, object, datetime] | None,
+    ) -> SZone | None:
+        a_stop_event_time = a_stop[2]
+        no_order_deadline = order_match[2] if order_match is not None else self.range_end
+        type3 = self._first_type3(a_stop_event_time, no_order_deadline)
+        type4 = self._first_type4(a_stop, no_order_deadline)
+        # Type-3 and Type-4 are independent order-free S-Blue routes.
+        # Exact decision chronology owns the handoff; preserve established
+        # Type-3 precedence only on a true exact-event tie.
+        if type3 is not None and (type4 is None or type3[-1] <= type4[-1]):
+            return self._build_type3_zone(zone, a_ordinal, a_price, a_stop, type3)
+        if type4 is not None:
+            return self._build_type4_zone(zone, a_ordinal, a_price, a_stop, type4)
+        if order_match is not None:
+            return self._resolved_order_backed_zone(zone, a_ordinal, a_price, a_stop, order_match)
+        return None
+
     def detect(self) -> list[SZone]:
+        return self._detect(self._resolve_candidate)
+
+    def _detect(self, resolve_candidate: Callable[..., SZone | None]) -> list[SZone]:
         output: list[SZone] = []
         self.a_ownership_windows.clear()
         self.order_audit.clear()
@@ -15780,29 +18412,8 @@ class SZoneDetector(SOrderAuditMixin):
                 continue
 
             self.a_ownership_windows.append((a_stop_event_time, None))
-            no_order_deadline = (
-                order_match[2] if order_match is not None else self.range_end
-            )
-            type3 = self._first_type3(a_stop_event_time, no_order_deadline)
-            type4 = self._first_type4(a_stop, no_order_deadline)
-            # Type-3 and Type-4 are independent order-free S-Blue routes.
-            # Exact decision chronology owns the handoff; preserve established
-            # Type-3 precedence only on a true exact-event tie.
-            if type3 is not None and (type4 is None or type3[-1] <= type4[-1]):
-                s_zone = self._build_type3_zone(
-                    zone, a_ordinal, a_price, a_stop, type3
-                )
-            elif type4 is not None:
-                s_zone = self._build_type4_zone(
-                    zone, a_ordinal, a_price, a_stop, type4
-                )
-            elif order_match is not None:
-                s_zone = self._resolved_order_backed_zone(
-                    zone, a_ordinal, a_price, a_stop, order_match
-                )
-                if s_zone is None:
-                    continue
-            else:
+            s_zone = resolve_candidate(zone, a_ordinal, a_price, a_stop, order_match)
+            if s_zone is None:
                 continue
 
             output.append(s_zone)
@@ -15935,6 +18546,110 @@ class SZoneDetector(SOrderAuditMixin):
                 decision_time=crossed[1],
                 decision_event_time=crossed[2],
             ))
+        return output
+
+
+def _s_reaction_inputs(item: object) -> tuple:
+    return (
+        item.first_idx, item.break_idx, item.mode, getattr(item, "intrabar_start", None),
+        item.box_top_source_idx, str(item.box_top),
+        item.box_bottom_source_idx, str(item.box_bottom),
+        getattr(item, "anchor_idx", None), str(getattr(item, "anchor_value", None)),
+    )
+
+
+class LiveSZoneContinuation:
+    """Retain decided initial S candidates over a verified market append.
+
+    The owning pipeline supplies a fresh detector with current authoritative
+    inputs. A first opposite Order can change as bounded geometry completes,
+    so each handoff still verifies its physical Order and current ownership.
+    A revision to earlier Reaction, Reset or Blue evidence also reopens the
+    affected candidate even when its A and market candles are unchanged.
+    """
+
+    def __init__(self) -> None:
+        self._scope: tuple | None = None
+        self._dependencies: set[tuple] = set()
+        self._decisions: dict[tuple, tuple[datetime, SZone]] = {}
+
+    @staticmethod
+    def _current_dependencies(detector: SZoneDetector) -> set[tuple]:
+        dependencies = {
+            (detector.candle_times[item.break_idx], side, number, _s_reaction_inputs(item))
+            for side, reactions in (
+                ("trend", detector.trend_reactions), ("opposite", detector.opposite_reactions),
+            )
+            for number, item in enumerate(reactions)
+        }
+        dependencies.update(
+            (event, "reset", int(item.from_first_idx))
+            for event, item in detector._opposite_reset_events
+        )
+        dependencies.update(
+            (event, "reset-blue", number)
+            for number, event in detector._reset_blue_formation_by_reaction.items()
+        )
+        dependencies.update((event, "public-blue") for event in detector._public_blue_formation_times)
+        return dependencies
+
+    @staticmethod
+    def _settled_through(
+        detector: SZoneDetector,
+        zone: SZone,
+        order_match: tuple[int, object, datetime] | None,
+    ) -> datetime | None:
+        through = zone.decision_event_time
+        if zone.formation_type in {"type3", "type4"}:
+            return through
+
+        assert order_match is not None
+        order_confirmation = order_match[2]
+        position = bisect_left(detector.lower_times, max(order_confirmation, detector.range_start))
+        if position == len(detector.lower_times) or detector.lower_times[position] > through:
+            # A main-only fallback can be displaced by a later lower row.
+            return None
+        through = max(through, detector.candle_times[order_match[1].break_idx])
+        aligned = detector._first_trend_reaction_after_order(order_confirmation)
+        if aligned is not None:
+            # In an Order-backed Red race, its decision can predate the
+            # aligned Reaction that supplies the competing candidate.
+            through = max(through, detector.candle_times[aligned[1].break_idx], aligned[2])
+        return through
+
+    def update(self, detector: SZoneDetector, *, first_dirty_main: int) -> list[SZone]:
+        if not 0 <= first_dirty_main <= len(detector.candles):
+            raise ValueError("The changed market index is outside the current chronology.")
+        scope = (detector.direction, detector.timeframe, detector.start_index, detector.range_start)
+        dirty = (
+            detector.candle_times[first_dirty_main]
+            if first_dirty_main < len(detector.candles) else detector.range_end
+        )
+        dependencies = self._current_dependencies(detector)
+        if scope == self._scope:
+            changed_input = min((item[0] for item in self._dependencies ^ dependencies), default=dirty)
+            dirty = min(dirty, changed_input)
+            previous = self._decisions
+        else:
+            previous = {}
+        current: dict[tuple, tuple[datetime, SZone]] = {}
+
+        def resolve(zone, ordinal, price, stop, order):
+            order_key = None if order is None else (order[0], _s_reaction_inputs(order[1]), order[2])
+            key = (ordinal, zone.source_index, zone.source_time, str(price), stop, order_key)
+            decision = previous.get(key)
+            if decision is not None and decision[0] < dirty:
+                current[key] = decision
+                return decision[1]
+            result = detector._resolve_candidate(zone, ordinal, price, stop, order)
+            if result is not None:
+                through = self._settled_through(detector, result, order)
+                if through is not None:
+                    current[key] = (through, result)
+            return result
+
+        output = detector._detect(resolve)
+        self._scope, self._dependencies, self._decisions = scope, dependencies, current
         return output
 
 

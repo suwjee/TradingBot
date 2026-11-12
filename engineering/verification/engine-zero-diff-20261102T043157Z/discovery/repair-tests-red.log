@@ -1,0 +1,116 @@
+FFFF...                                                                  [100%]
+================================== FAILURES ===================================
+__ test_merged_projection_keys_follow_first_appearance_across_hash_seeds[0] ___
+
+seed = '0'
+
+    @pytest.mark.parametrize("seed", ["0", "1", "2", "3"])
+    def test_merged_projection_keys_follow_first_appearance_across_hash_seeds(seed):
+        script = """
+    import json, sys
+    sys.path.insert(0, sys.argv[1])
+    from trading_pipeline import merge_regime_outputs
+    first = {'reactions': [{'id': 'first'}], 'bridgeOutput': {'reactions': [{'firstIndex': 1}], 'resets': [], 'aZones': []}}
+    last = {'reactions': [{'id': 'last'}], 'bridgeOutput': {'aZones': [], 'orderAudit': [{'firstIndex': 2}]}}
+    print(json.dumps(merge_regime_outputs([('bullish', first), ('bullish', last)]), separators=(',', ':')))
+    """
+        completed = subprocess.run(
+            [sys.executable, "-B", "-c", script, str(BRIDGE)],
+            env={**os.environ, "PYTHONHASHSEED": seed},
+            capture_output=True, check=True,
+        )
+        result = json.loads(completed.stdout)["bullish"]
+>       assert list(result["bridgeOutput"]) == ["reactions", "resets", "aZones", "orderAudit"]
+E       AssertionError: assert ['resets', 'r... 'orderAudit'] == ['reactions',... 'orderAudit']
+E         
+E         At index 0 diff: 'resets' != 'reactions'
+E         Use -v to get more diff
+
+engine\tests\unit\test_regime_output_determinism.py:33: AssertionError
+__ test_merged_projection_keys_follow_first_appearance_across_hash_seeds[1] ___
+
+seed = '1'
+
+    @pytest.mark.parametrize("seed", ["0", "1", "2", "3"])
+    def test_merged_projection_keys_follow_first_appearance_across_hash_seeds(seed):
+        script = """
+    import json, sys
+    sys.path.insert(0, sys.argv[1])
+    from trading_pipeline import merge_regime_outputs
+    first = {'reactions': [{'id': 'first'}], 'bridgeOutput': {'reactions': [{'firstIndex': 1}], 'resets': [], 'aZones': []}}
+    last = {'reactions': [{'id': 'last'}], 'bridgeOutput': {'aZones': [], 'orderAudit': [{'firstIndex': 2}]}}
+    print(json.dumps(merge_regime_outputs([('bullish', first), ('bullish', last)]), separators=(',', ':')))
+    """
+        completed = subprocess.run(
+            [sys.executable, "-B", "-c", script, str(BRIDGE)],
+            env={**os.environ, "PYTHONHASHSEED": seed},
+            capture_output=True, check=True,
+        )
+        result = json.loads(completed.stdout)["bullish"]
+>       assert list(result["bridgeOutput"]) == ["reactions", "resets", "aZones", "orderAudit"]
+E       AssertionError: assert ['aZones', 'r... 'orderAudit'] == ['reactions',... 'orderAudit']
+E         
+E         At index 0 diff: 'aZones' != 'reactions'
+E         Use -v to get more diff
+
+engine\tests\unit\test_regime_output_determinism.py:33: AssertionError
+__ test_merged_projection_keys_follow_first_appearance_across_hash_seeds[2] ___
+
+seed = '2'
+
+    @pytest.mark.parametrize("seed", ["0", "1", "2", "3"])
+    def test_merged_projection_keys_follow_first_appearance_across_hash_seeds(seed):
+        script = """
+    import json, sys
+    sys.path.insert(0, sys.argv[1])
+    from trading_pipeline import merge_regime_outputs
+    first = {'reactions': [{'id': 'first'}], 'bridgeOutput': {'reactions': [{'firstIndex': 1}], 'resets': [], 'aZones': []}}
+    last = {'reactions': [{'id': 'last'}], 'bridgeOutput': {'aZones': [], 'orderAudit': [{'firstIndex': 2}]}}
+    print(json.dumps(merge_regime_outputs([('bullish', first), ('bullish', last)]), separators=(',', ':')))
+    """
+        completed = subprocess.run(
+            [sys.executable, "-B", "-c", script, str(BRIDGE)],
+            env={**os.environ, "PYTHONHASHSEED": seed},
+            capture_output=True, check=True,
+        )
+        result = json.loads(completed.stdout)["bullish"]
+>       assert list(result["bridgeOutput"]) == ["reactions", "resets", "aZones", "orderAudit"]
+E       AssertionError: assert ['orderAudit'..., 'reactions'] == ['reactions',... 'orderAudit']
+E         
+E         At index 0 diff: 'orderAudit' != 'reactions'
+E         Use -v to get more diff
+
+engine\tests\unit\test_regime_output_determinism.py:33: AssertionError
+__ test_merged_projection_keys_follow_first_appearance_across_hash_seeds[3] ___
+
+seed = '3'
+
+    @pytest.mark.parametrize("seed", ["0", "1", "2", "3"])
+    def test_merged_projection_keys_follow_first_appearance_across_hash_seeds(seed):
+        script = """
+    import json, sys
+    sys.path.insert(0, sys.argv[1])
+    from trading_pipeline import merge_regime_outputs
+    first = {'reactions': [{'id': 'first'}], 'bridgeOutput': {'reactions': [{'firstIndex': 1}], 'resets': [], 'aZones': []}}
+    last = {'reactions': [{'id': 'last'}], 'bridgeOutput': {'aZones': [], 'orderAudit': [{'firstIndex': 2}]}}
+    print(json.dumps(merge_regime_outputs([('bullish', first), ('bullish', last)]), separators=(',', ':')))
+    """
+        completed = subprocess.run(
+            [sys.executable, "-B", "-c", script, str(BRIDGE)],
+            env={**os.environ, "PYTHONHASHSEED": seed},
+            capture_output=True, check=True,
+        )
+        result = json.loads(completed.stdout)["bullish"]
+>       assert list(result["bridgeOutput"]) == ["reactions", "resets", "aZones", "orderAudit"]
+E       AssertionError: assert ['orderAudit'...ts', 'aZones'] == ['reactions',... 'orderAudit']
+E         
+E         At index 0 diff: 'orderAudit' != 'reactions'
+E         Use -v to get more diff
+
+engine\tests\unit\test_regime_output_determinism.py:33: AssertionError
+=========================== short test summary info ===========================
+FAILED engine/tests/unit/test_regime_output_determinism.py::test_merged_projection_keys_follow_first_appearance_across_hash_seeds[0]
+FAILED engine/tests/unit/test_regime_output_determinism.py::test_merged_projection_keys_follow_first_appearance_across_hash_seeds[1]
+FAILED engine/tests/unit/test_regime_output_determinism.py::test_merged_projection_keys_follow_first_appearance_across_hash_seeds[2]
+FAILED engine/tests/unit/test_regime_output_determinism.py::test_merged_projection_keys_follow_first_appearance_across_hash_seeds[3]
+4 failed, 3 passed in 1.17s

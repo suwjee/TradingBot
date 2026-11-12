@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import http from "node:http";
 import os from "node:os";
@@ -8,6 +9,7 @@ import path from "node:path";
 
 import { buildCandleFilename, buildCoverageRecoveryChunks, createFarazCandleApi as createProductionFarazCandleApi, findCandleCoverageGaps, normalizeClearTextSession } from "../../server/faraz-candle-api.js";
 import { buildChartVerificationRanges } from "../../src/features/candle-update.js";
+import { createRawResourceStore } from "../../server/raw-resource-store.js";
 
 function createFarazCandleApi(options) {
   return createProductionFarazCandleApi({ ...options, localStateRoot: path.join(options.workspaceRoot, "apps", "chart", "state") });
@@ -94,6 +96,196 @@ function writeFakeSession(workspaceRoot) {
   }));
   return sessionPath;
 }
+
+function realtimeCandle(time) {
+  return { time, open: 1, high: 2, low: 1, close: 2 };
+}
+
+function historyResponse(times) {
+  return Response.json({ s: "ok", t: times, o: times.map(() => 1), h: times.map(() => 2), l: times.map(() => 1), c: times.map(() => 2) });
+}
+
+async function realtimeFixture(t, fetchImpl, { nowSeconds = 120, last = 100 } = {}) {
+  const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-realtime-"));
+  t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
+  writeFakeSession(workspaceRoot);
+  const rootDir = path.join(workspaceRoot, "apps", "chart", "state", "data", "raw");
+  const rawStore = createRawResourceStore({ rootDir });
+  const old = rawStore.write({ broker: "TEST", symbol: "PAIR", timeframe: "5S", candles: [realtimeCandle(last)], source: "test" });
+  const origin = await listenForApi(t, createFarazCandleApi({ workspaceRoot, rawStore, fetchImpl, now: () => nowSeconds * 1000 }));
+  const post = ({ baseSha256 = old.dataSha256, ...options } = {}) => fetch(`${origin}/api/candle-files/realtime`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: old.id, chartId: old.chartId, lastCandleTime: last, baseSha256 }), ...options,
+  });
+  return { rawStore, old, post };
+}
+
+test("real-time catch-up publishes one renamed RAW pair with only closed native-timeframe candles", async (t) => {
+  const requests = [];
+  const { rawStore, old, post } = await realtimeFixture(t, async (url) => {
+    requests.push(Object.fromEntries(url.searchParams));
+    return historyResponse([103, 108, 113]);
+  }, { nowSeconds: 113, last: 103 });
+  const coverage = rawStore.recordFarazCoverage(old.id, {
+    timeframeSeconds: 5, ranges: [{ from: 103, to: 103, status: "complete" }], checkedThrough: 103, mode: "gap-full",
+  }).farazCoverage;
+
+  const response = await post();
+  assert.equal(response.status, 200);
+  const { file, candles } = await response.json();
+  assert.equal(requests.length, 1);
+  assert.equal(requests[0].symbolName, "TEST_PAIR");
+  assert.equal(requests[0].resolution, "5S");
+  assert.equal(requests[0].from, "108");
+  assert.equal(requests[0].to, "108");
+  assert.equal(requests[0].firstDataRequest, "false");
+  assert.deepEqual(candles, [realtimeCandle(108)]);
+  assert.equal(file.chartId, old.chartId);
+  assert.equal(file.from, 103);
+  assert.equal(file.to, 108);
+  assert.equal(file.count, 2);
+  assert.deepEqual(file.metadata.farazCoverage, coverage);
+  assert.match(file.id, /TO 1970-01-01 03-31-48\.json$/);
+  assert.deepEqual(rawStore.read(file.id), [realtimeCandle(103), realtimeCandle(108)]);
+  assert.equal(fs.existsSync(old.dataPath), false);
+  assert.equal(fs.existsSync(old.metaPath), false);
+  assert.deepEqual(rawStore.list().map(({ id }) => id), [file.id]);
+
+  const stale = await post();
+  assert.equal(stale.status, 409);
+  assert.equal((await stale.json()).file.id, file.id);
+  assert.equal(requests.length, 1);
+});
+
+test("real-time catch-up leaves RAW unchanged while FARAZ has no closed rows", async (t) => {
+  let requests = 0;
+  const { old, post } = await realtimeFixture(t, async () => {
+    requests++;
+    return Response.json({ s: "no_data" });
+  });
+  const initial = fs.statSync(old.dataPath);
+  const originalSidecar = fs.readFileSync(old.metaPath, "utf8");
+  const response = await post();
+  assert.equal(response.status, 200);
+  const { file, candles } = await response.json();
+  assert.equal(file.id, old.id);
+  assert.deepEqual(candles, []);
+  assert.equal(fs.statSync(old.dataPath).mtimeMs, initial.mtimeMs);
+  assert.equal(fs.readFileSync(old.metaPath, "utf8"), originalSidecar);
+  assert.equal(requests, 1);
+});
+
+test("real-time catch-up rejects a competing request and discards data after the RAW changes", async (t) => {
+  const started = deferred();
+  const finish = deferred();
+  const { rawStore, old, post } = await realtimeFixture(t, async () => {
+    started.resolve();
+    await finish.promise;
+    return historyResponse([105, 110, 115]);
+  });
+  const first = post();
+  assert.equal(await Promise.race([first.then((response) => response.status), started.promise.then(() => "started")]), "started");
+  try {
+    const competing = await post();
+    assert.equal(competing.status, 409);
+    assert.equal((await competing.json()).code, "RAW_BUSY");
+    assert.equal(rawStore.remove(old.id), true);
+  } finally {
+    finish.resolve();
+  }
+  const response = await first;
+  assert.equal(response.status, 409);
+  assert.deepEqual(rawStore.list(), []);
+});
+
+test("a disconnected real-time catch-up leaves the selected RAW pair intact", async (t) => {
+  const started = deferred();
+  const cancelled = deferred();
+  const { rawStore, old, post } = await realtimeFixture(t, async (_url, { signal }) => {
+    started.resolve();
+    if (!signal.aborted) await new Promise((resolve) => signal.addEventListener("abort", resolve, { once: true }));
+    cancelled.resolve();
+    return historyResponse([105, 110, 115]);
+  });
+  const controller = new AbortController();
+  const request = post({ signal: controller.signal });
+  assert.equal(await Promise.race([request.then((response) => response.status), started.promise.then(() => "started")]), "started");
+  controller.abort();
+  await assert.rejects(request, { name: "AbortError" });
+  await cancelled.promise;
+  assert.deepEqual(rawStore.list().map(({ id }) => id), [old.id]);
+  assert.deepEqual(rawStore.read(old.id), [realtimeCandle(100)]);
+});
+
+test("a failed real-time RAW publication preserves the prior data and sidecar", async (t) => {
+  const { rawStore, old, post } = await realtimeFixture(t, async () => historyResponse([105, 110, 115]));
+  const originalSidecar = fs.readFileSync(old.metaPath, "utf8");
+  const originalRename = fs.renameSync;
+  t.mock.method(fs, "renameSync", (source, target) => {
+    if (source.endsWith(".data.tmp")) throw new Error("Simulated RAW publication failure.");
+    return originalRename(source, target);
+  });
+  const response = await post();
+  assert.equal(response.status, 500);
+  assert.deepEqual(rawStore.read(old.id), [realtimeCandle(100)]);
+  assert.equal(fs.readFileSync(old.metaPath, "utf8"), originalSidecar);
+  assert.deepEqual(fs.readdirSync(path.dirname(old.dataPath)).sort(), [path.basename(old.dataPath), path.basename(old.metaPath)].sort());
+});
+
+test("disconnecting during real-time RAW staging prevents publication", async (t) => {
+  const started = deferred();
+  const cancelled = deferred();
+  const { rawStore, old, post } = await realtimeFixture(t, async () => historyResponse([105, 110, 115]));
+  const originalWrite = fs.promises.writeFile;
+  t.mock.method(fs.promises, "writeFile", async (target, data, options) => {
+    if (target.endsWith(".data.tmp")) {
+      started.resolve();
+      await new Promise((resolve) => options.signal.addEventListener("abort", resolve, { once: true }));
+      cancelled.resolve();
+    }
+    return originalWrite(target, data, options);
+  });
+  const controller = new AbortController();
+  const request = post({ signal: controller.signal });
+  assert.equal(await Promise.race([request.then((response) => response.status), started.promise.then(() => "staging")]), "staging");
+  controller.abort();
+  await assert.rejects(request, { name: "AbortError" });
+  await cancelled.promise;
+  assert.deepEqual(rawStore.list().map(({ id }) => id), [old.id]);
+  assert.deepEqual(rawStore.read(old.id), [realtimeCandle(100)]);
+});
+
+test("real-time catch-up preserves the existing JSON bytes before the closing array bracket", async (t) => {
+  const { rawStore, old, post } = await realtimeFixture(t, async () => historyResponse([105]));
+  const prefix = '[\n  { "time": 100, "open": 1e0, "high": 2, "low": 1, "close": 2 }\n';
+  fs.writeFileSync(old.dataPath, `${prefix}]\n`);
+  const response = await post({ baseSha256: rawStore.get(old.id).metadata.dataSha256 });
+  assert.equal(response.status, 200);
+  const { file } = await response.json();
+  const contents = fs.readFileSync(rawStore.resolve(file.id).dataPath);
+  assert.ok(contents.toString().startsWith(prefix));
+  assert.ok(contents.toString().endsWith("]\n"));
+  assert.deepEqual(JSON.parse(contents), [realtimeCandle(100), realtimeCandle(105)]);
+  assert.equal(file.metadata.dataSha256, createHash("sha256").update(contents).digest("hex"));
+});
+
+test("real-time catch-up rejects a stale RAW checksum even when the file ID and tail match", async (t) => {
+  let requests = 0;
+  const { rawStore, old, post } = await realtimeFixture(t, async () => {
+    requests++;
+    return historyResponse([105]);
+  });
+  const updatedCandle = { ...realtimeCandle(100), open: 2 };
+  fs.writeFileSync(old.dataPath, JSON.stringify([updatedCandle]));
+  const response = await post();
+  assert.equal(response.status, 409);
+  const { code, file } = await response.json();
+  assert.equal(code, "RAW_CHANGED");
+  assert.equal(file.id, old.id);
+  assert.notEqual(file.metadata.dataSha256, old.dataSha256);
+  assert.deepEqual(rawStore.read(old.id), [updatedCandle]);
+  assert.equal(requests, 0);
+});
 
 test("removing the only FARAZ session file disconnects an open browser context", async (t) => {
   const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-file-authority-"));

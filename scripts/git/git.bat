@@ -13,6 +13,8 @@ pause
 exit /b 2
 
 :root_found
+if /I "%~1"=="-ReleaseTag" goto :release
+
 pushd "%TB_ROOT%" >nul 2>&1
 if errorlevel 1 (
   echo [FAIL] Could not enter TradingBot project root: "%TB_ROOT%"
@@ -31,3 +33,11 @@ if not "%TB_GIT_RC%"=="0" (
 )
 
 exit /b %TB_GIT_RC%
+
+:release
+if not exist "%TB_ROOT%\scripts\git\Invoke-TradingBotRelease.ps1" (
+  echo [FAIL] The TradingBot release command was not found.
+  exit /b 2
+)
+"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%TB_ROOT%\scripts\git\Invoke-TradingBotRelease.ps1" -NonInteractive %*
+exit /b %ERRORLEVEL%

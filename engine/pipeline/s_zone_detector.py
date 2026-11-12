@@ -20,8 +20,8 @@ from direction_policy import policy_for
 
 
 S_ZONE_VERSION = "4.20.1"
-S_ZONE_IMPLEMENTATION_VERSION = "4.21.1"
-S_ZONE_LAST_MODIFIED = "2026-10-23 12:23:13 +02:00"
+S_ZONE_IMPLEMENTATION_VERSION = "4.22.0"
+S_ZONE_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -1225,7 +1225,33 @@ class SZoneDetector(SOrderAuditMixin):
             decision_event_time=decision_event_time,
         )
 
+    def _resolve_candidate(
+        self,
+        zone: object,
+        a_ordinal: int,
+        a_price: Decimal,
+        a_stop: tuple[int, datetime, datetime],
+        order_match: tuple[int, object, datetime] | None,
+    ) -> SZone | None:
+        a_stop_event_time = a_stop[2]
+        no_order_deadline = order_match[2] if order_match is not None else self.range_end
+        type3 = self._first_type3(a_stop_event_time, no_order_deadline)
+        type4 = self._first_type4(a_stop, no_order_deadline)
+        # Type-3 and Type-4 are independent order-free S-Blue routes.
+        # Exact decision chronology owns the handoff; preserve established
+        # Type-3 precedence only on a true exact-event tie.
+        if type3 is not None and (type4 is None or type3[-1] <= type4[-1]):
+            return self._build_type3_zone(zone, a_ordinal, a_price, a_stop, type3)
+        if type4 is not None:
+            return self._build_type4_zone(zone, a_ordinal, a_price, a_stop, type4)
+        if order_match is not None:
+            return self._resolved_order_backed_zone(zone, a_ordinal, a_price, a_stop, order_match)
+        return None
+
     def detect(self) -> list[SZone]:
+        return self._detect(self._resolve_candidate)
+
+    def _detect(self, resolve_candidate: Callable[..., SZone | None]) -> list[SZone]:
         output: list[SZone] = []
         self.a_ownership_windows.clear()
         self.order_audit.clear()
@@ -1261,29 +1287,8 @@ class SZoneDetector(SOrderAuditMixin):
                 continue
 
             self.a_ownership_windows.append((a_stop_event_time, None))
-            no_order_deadline = (
-                order_match[2] if order_match is not None else self.range_end
-            )
-            type3 = self._first_type3(a_stop_event_time, no_order_deadline)
-            type4 = self._first_type4(a_stop, no_order_deadline)
-            # Type-3 and Type-4 are independent order-free S-Blue routes.
-            # Exact decision chronology owns the handoff; preserve established
-            # Type-3 precedence only on a true exact-event tie.
-            if type3 is not None and (type4 is None or type3[-1] <= type4[-1]):
-                s_zone = self._build_type3_zone(
-                    zone, a_ordinal, a_price, a_stop, type3
-                )
-            elif type4 is not None:
-                s_zone = self._build_type4_zone(
-                    zone, a_ordinal, a_price, a_stop, type4
-                )
-            elif order_match is not None:
-                s_zone = self._resolved_order_backed_zone(
-                    zone, a_ordinal, a_price, a_stop, order_match
-                )
-                if s_zone is None:
-                    continue
-            else:
+            s_zone = resolve_candidate(zone, a_ordinal, a_price, a_stop, order_match)
+            if s_zone is None:
                 continue
 
             output.append(s_zone)
@@ -1416,6 +1421,110 @@ class SZoneDetector(SOrderAuditMixin):
                 decision_time=crossed[1],
                 decision_event_time=crossed[2],
             ))
+        return output
+
+
+def _s_reaction_inputs(item: object) -> tuple:
+    return (
+        item.first_idx, item.break_idx, item.mode, getattr(item, "intrabar_start", None),
+        item.box_top_source_idx, str(item.box_top),
+        item.box_bottom_source_idx, str(item.box_bottom),
+        getattr(item, "anchor_idx", None), str(getattr(item, "anchor_value", None)),
+    )
+
+
+class LiveSZoneContinuation:
+    """Retain decided initial S candidates over a verified market append.
+
+    The owning pipeline supplies a fresh detector with current authoritative
+    inputs. A first opposite Order can change as bounded geometry completes,
+    so each handoff still verifies its physical Order and current ownership.
+    A revision to earlier Reaction, Reset or Blue evidence also reopens the
+    affected candidate even when its A and market candles are unchanged.
+    """
+
+    def __init__(self) -> None:
+        self._scope: tuple | None = None
+        self._dependencies: set[tuple] = set()
+        self._decisions: dict[tuple, tuple[datetime, SZone]] = {}
+
+    @staticmethod
+    def _current_dependencies(detector: SZoneDetector) -> set[tuple]:
+        dependencies = {
+            (detector.candle_times[item.break_idx], side, number, _s_reaction_inputs(item))
+            for side, reactions in (
+                ("trend", detector.trend_reactions), ("opposite", detector.opposite_reactions),
+            )
+            for number, item in enumerate(reactions)
+        }
+        dependencies.update(
+            (event, "reset", int(item.from_first_idx))
+            for event, item in detector._opposite_reset_events
+        )
+        dependencies.update(
+            (event, "reset-blue", number)
+            for number, event in detector._reset_blue_formation_by_reaction.items()
+        )
+        dependencies.update((event, "public-blue") for event in detector._public_blue_formation_times)
+        return dependencies
+
+    @staticmethod
+    def _settled_through(
+        detector: SZoneDetector,
+        zone: SZone,
+        order_match: tuple[int, object, datetime] | None,
+    ) -> datetime | None:
+        through = zone.decision_event_time
+        if zone.formation_type in {"type3", "type4"}:
+            return through
+
+        assert order_match is not None
+        order_confirmation = order_match[2]
+        position = bisect_left(detector.lower_times, max(order_confirmation, detector.range_start))
+        if position == len(detector.lower_times) or detector.lower_times[position] > through:
+            # A main-only fallback can be displaced by a later lower row.
+            return None
+        through = max(through, detector.candle_times[order_match[1].break_idx])
+        aligned = detector._first_trend_reaction_after_order(order_confirmation)
+        if aligned is not None:
+            # In an Order-backed Red race, its decision can predate the
+            # aligned Reaction that supplies the competing candidate.
+            through = max(through, detector.candle_times[aligned[1].break_idx], aligned[2])
+        return through
+
+    def update(self, detector: SZoneDetector, *, first_dirty_main: int) -> list[SZone]:
+        if not 0 <= first_dirty_main <= len(detector.candles):
+            raise ValueError("The changed market index is outside the current chronology.")
+        scope = (detector.direction, detector.timeframe, detector.start_index, detector.range_start)
+        dirty = (
+            detector.candle_times[first_dirty_main]
+            if first_dirty_main < len(detector.candles) else detector.range_end
+        )
+        dependencies = self._current_dependencies(detector)
+        if scope == self._scope:
+            changed_input = min((item[0] for item in self._dependencies ^ dependencies), default=dirty)
+            dirty = min(dirty, changed_input)
+            previous = self._decisions
+        else:
+            previous = {}
+        current: dict[tuple, tuple[datetime, SZone]] = {}
+
+        def resolve(zone, ordinal, price, stop, order):
+            order_key = None if order is None else (order[0], _s_reaction_inputs(order[1]), order[2])
+            key = (ordinal, zone.source_index, zone.source_time, str(price), stop, order_key)
+            decision = previous.get(key)
+            if decision is not None and decision[0] < dirty:
+                current[key] = decision
+                return decision[1]
+            result = detector._resolve_candidate(zone, ordinal, price, stop, order)
+            if result is not None:
+                through = self._settled_through(detector, result, order)
+                if through is not None:
+                    current[key] = (through, result)
+            return result
+
+        output = detector._detect(resolve)
+        self._scope, self._dependencies, self._decisions = scope, dependencies, current
         return output
 
 

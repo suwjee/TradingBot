@@ -13,7 +13,8 @@ function harness() {
     indicatorEnabled: { checked: true }, applyIndicator: { disabled: false } };
   const inputs = { direction: "bearish", timeframe: "30" };
   const context = { fileId: "A.json", chartId: "A", symbol: "A", chartTimeframe: 30,
-    analysisTimeframe: 30, from: 100, to: 200, direction: "bearish", sourceFingerprint: "old-source" };
+    analysisTimeframe: 30, from: 100, to: 200, direction: "bearish", sourceFingerprint: "old-source",
+    liveSessionId: "checkpoint" };
   const state = { file: { id: "A.json", chartId: "A", symbol: "A" }, tf: 30,
     raw: [{ time: 0 }, { time: 300 }], data: [],
     indicator: { loading: false, results: {}, resultContext: context }, indicatorRange: {} };
@@ -40,7 +41,10 @@ function harness() {
   const runtime = vm.createContext(sandbox);
   const invalidateStart = main.indexOf("function invalidateIndicatorCalculation() {");
   const invalidate = invalidateStart < 0 ? "" : main.slice(invalidateStart, main.indexOf("\nfunction clearActiveIndicatorCalculation()", invalidateStart));
-  vm.runInContext(`let indicatorCalculationOwner = null;\n${invalidate}\n${actualCalculate}`, runtime);
+  vm.runInContext(`let indicatorCalculationOwner = null;
+let realtimeUpdateOwner = null;
+let symbolLoadRevision = 0;
+${invalidate}\n${actualCalculate}`, runtime);
   return { state, controls, inputs, posts, probes, applied, runtime,
     calculate: () => vm.runInContext("calculateIndicator()", runtime),
     resolve: (fingerprint = "new-source", index = 0) => probes[index]({ ok: true, json: async () => ({ sourceFingerprint: fingerprint }) }),
@@ -80,6 +84,16 @@ test("unchanged selection still reuses a verified calculation after the probe", 
   assert.equal(h.controls.applyIndicator.disabled, false);
 });
 
+test("Apply requests a checkpoint when a matching cached calculation has no live session", async () => {
+  const h = harness();
+  h.state.indicator.resultContext.liveSessionId = null;
+  void h.calculate();
+  h.resolve("old-source");
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(h.posts.length, 1);
+  assert.equal(h.applied.length, 0);
+});
+
 test("an older probe cannot clear a newer operation's loading state", async () => {
   const h = harness();
   const first = h.calculate();
@@ -105,4 +119,45 @@ test("selection invalidation cancels a probe even when all values return to thei
   assert.equal(h.posts.length, 0);
   assert.equal(h.applied.length, 0);
   assert.equal(h.state.indicator.loading, false);
+});
+
+test("manual Apply waits for an in-flight real-time RAW publication", async () => {
+  const h = harness();
+  let finish;
+  h.runtime.realtimeFinished = new Promise(resolve => { finish = resolve; });
+  vm.runInContext("realtimeUpdateOwner = { finished: realtimeFinished }", h.runtime);
+  const running = h.calculate();
+  assert.equal(h.probes.length, 0);
+  vm.runInContext("realtimeUpdateOwner = null", h.runtime);
+  finish();
+  await new Promise(resolve => setImmediate(resolve));
+  h.resolve("old-source");
+  await running;
+  assert.deepEqual(h.applied.map(item => item[0]), ["visible", "settings"]);
+});
+
+test("manual Apply waiting for a live update abandons a changed chart selection", async () => {
+  const h = harness();
+  let finish;
+  h.runtime.realtimeFinished = new Promise(resolve => { finish = resolve; });
+  vm.runInContext("realtimeUpdateOwner = { finished: realtimeFinished }", h.runtime);
+  const running = h.calculate();
+  vm.runInContext("symbolLoadRevision += 1; realtimeUpdateOwner = null", h.runtime);
+  finish();
+  await running;
+  assert.equal(h.probes.length, 0);
+  assert.equal(h.posts.length, 0);
+});
+
+test("manual Apply does not use a RAW file that needs to be reloaded after a live update", async () => {
+  const h = harness();
+  let finish;
+  h.runtime.realtimeFinished = new Promise(resolve => { finish = resolve; });
+  vm.runInContext("realtimeUpdateOwner = { finished: realtimeFinished }", h.runtime);
+  const running = h.calculate();
+  vm.runInContext("realtimeUpdateOwner = null", h.runtime);
+  finish(true);
+  await running;
+  assert.equal(h.probes.length, 0);
+  assert.equal(h.posts.length, 0);
 });

@@ -27,3 +27,12 @@ export function restoredTimeframe(storage, supported, fallback = 30) {
 export function indicatorControlId(key) {
   return key === "timeframe" ? "indicatorTf" : key;
 }
+
+export function drawingToolOrder(definitions, saved) {
+  const defaults = definitions.map(([id]) => id);
+  const available = new Set(defaults);
+  const order = [...new Set([...(Array.isArray(saved) ? saved : []), ...defaults])]
+    .filter((id) => available.has(id));
+  const tail = ["measure", "long", "short"].filter((id) => available.has(id));
+  return [...order.filter((id) => !tail.includes(id)), ...tail];
+}

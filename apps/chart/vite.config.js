@@ -17,6 +17,7 @@ import { readBoundedBody } from './server/request-body.js';
 import { createProgressChannels } from './server/progress-channels.js';
 import { assertRawInputUnchanged, captureRawInputIdentity } from './server/raw-input-identity.js';
 import { cachePathForRaw, readCalculationCache, writeCalculationCache } from './server/calculation-cache.js';
+import { createLiveEngineSessions, LiveEngineError, startLiveEngineWorker } from './server/live-engine-sessions.js';
 
 // Anchor source paths to this config and local state to the chart-owned subtree.
 // Vite may be launched from either the repository root or apps/chart.
@@ -26,6 +27,7 @@ const localState = resolveLocalStatePaths(workspaceRoot);
 const inputDir = localState.raw;
 const rawStore = createRawResourceStore({ rootDir: inputDir });
 const bridgePath = path.join(workspaceRoot, 'engine', 'bridge', 'trading_pipeline.py');
+const liveBridgePath = path.join(workspaceRoot, 'engine', 'bridge', 'live_pipeline.py');
 const pipelineRoot = path.join(workspaceRoot, 'engine', 'pipeline');
 const enginePath = path.join(pipelineRoot, 'reaction_engine.py');
 const blueEnginePath = path.join(pipelineRoot, 'blue_line_detector.py');
@@ -37,9 +39,12 @@ const orderEnginePath = path.join(pipelineRoot, 'order_audit_engine.py');
 const directionPolicyPath = path.join(pipelineRoot, 'direction_policy.py');
 const coreUtilsPath = path.join(pipelineRoot, 'core_utils.py');
 const primaryEnginePath = path.join(pipelineRoot, 'PL_PH_detector.py');
+const setupEnginePath = path.join(pipelineRoot, 'bullish_setup_engine.py');
 const indicatorRangeInputPath = path.join(chartRoot, 'server', 'indicator-range-input.js');
-const calculationSources = [bridgePath, enginePath, blueEnginePath, aEnginePath, sEnginePath, eEnginePath, stopAllEnginePath, orderEnginePath, directionPolicyPath, coreUtilsPath, primaryEnginePath, indicatorRangeInputPath];
+const calculationSources = [bridgePath, enginePath, blueEnginePath, aEnginePath, sEnginePath, eEnginePath, stopAllEnginePath, orderEnginePath, directionPolicyPath, coreUtilsPath, primaryEnginePath, setupEnginePath, indicatorRangeInputPath];
 const pythonCommand = process.env.TRADINGBOT_PYTHON || 'python';
+const engineArgs = ['--engine', enginePath, '--blue-engine', blueEnginePath, '--a-engine', aEnginePath,
+  '--s-engine', sEnginePath, '--e-engine', eEnginePath, '--stopall-engine', stopAllEnginePath];
 // VMware shared folders reject native watches, while polling can monopolize
 // Vite's event loop. The launcher therefore serves without filesystem watches;
 // developers can explicitly opt into polling when they need HMR.
@@ -61,6 +66,15 @@ function calculationSourceFingerprint() {
   }
   return hash.digest('hex');
 }
+
+function liveSourceFingerprint(sourceFingerprint) {
+  try {
+    return createHash('sha256').update(sourceFingerprint).update(fs.readFileSync(liveBridgePath)).digest('hex');
+  } catch (error) {
+    if (error?.code === 'ENOENT') return null;
+    throw error;
+  }
+}
 const inventoryMeta = new Map();
 // Durable, human-navigable cache root.  Calculation results must never rely on
 // Vite's process memory: restarting the dev server must preserve the exact
@@ -75,9 +89,11 @@ const calculationCoordinator = createCalculationCoordinator({
   maxActive: parseEngineConcurrency(process.env.TRADINGBOT_MAX_ENGINE_CONCURRENCY),
 });
 const activeDetectorChildren = new Set();
+const liveEngineSessions = createLiveEngineSessions();
 
 function shutdownCalculations() {
   calculationCoordinator.close();
+  liveEngineSessions.close();
   for (const child of activeDetectorChildren) child.kill();
   progressChannels.close();
 }
@@ -240,7 +256,7 @@ async function readJson(req, maxBytes = 100_000) {
 function runDetector(args, onProgress = () => {}, signal) {
   return new Promise((resolve, reject) => {
     if (signal?.aborted) { reject(new Error('Server is shutting down.')); return; }
-    const child = spawn(pythonCommand, [bridgePath, '--engine', enginePath, '--blue-engine', blueEnginePath, '--a-engine', aEnginePath, '--s-engine', sEnginePath, '--e-engine', eEnginePath, '--stopall-engine', stopAllEnginePath, ...args], {
+    const child = spawn(pythonCommand, [bridgePath, ...engineArgs, ...args], {
       windowsHide: true,
       env: { ...process.env, PYTHONDONTWRITEBYTECODE: '1' },
     });
@@ -584,6 +600,69 @@ function localDataApi() {
           res.end(JSON.stringify({ error: 'Calculation source identity is unavailable' }));
         }
       });
+      server.middlewares.use('/api/reactions/continue', async (req, res) => {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-store');
+        try {
+          if (req.method !== 'POST') throw new LiveEngineError(405, 'POST is required.');
+          const { id, chartId, sessionId, keepAlive } = await readJson(req).catch(error => { throw new LiveEngineError(400, error.message); });
+          if (typeof id !== 'string' || typeof chartId !== 'string' || !chartId ||
+              typeof sessionId !== 'string' || !/^[a-f0-9]{32}$/.test(sessionId)) {
+            throw new LiveEngineError(400, 'A valid live indicator session and RAW identity are required.');
+          }
+          const sourceFingerprint = calculationSourceFingerprint();
+          const workerFingerprint = liveSourceFingerprint(sourceFingerprint);
+          if (!workerFingerprint) throw new LiveEngineError(410, 'The live Engine is unavailable. Use Apply again.');
+          const selected = rawStore.get(id);
+          if (!selected || selected.chartId !== chartId) {
+            throw new LiveEngineError(503, 'The selected RAW changed before the indicator update. The next poll will retry.');
+          }
+          if (keepAlive === true) {
+            liveEngineSessions.keepAlive({ sessionId, chartId, sourceFingerprint: workerFingerprint });
+            res.statusCode = 204;
+            res.end();
+            return;
+          }
+          const { dataPath, metadata } = selected;
+          let rawIdentity;
+          async function validate() {
+            if (liveSourceFingerprint(calculationSourceFingerprint()) !== workerFingerprint) {
+              liveEngineSessions.discard(sessionId);
+              throw new LiveEngineError(409, 'Calculation sources changed. Use Apply again.', 'ENGINE_CHANGED');
+            }
+            try {
+              if (rawIdentity) await assertRawInputUnchanged(dataPath, rawIdentity);
+              else rawIdentity = await captureRawInputIdentity(dataPath);
+              if (rawIdentity.sha256 !== metadata.dataSha256) throw new Error('The selected RAW changed.');
+            } catch {
+              throw new LiveEngineError(503, 'The selected RAW changed during the indicator update. The next poll will retry.');
+            }
+          }
+          const result = await liveEngineSessions.advance({
+            sessionId, chartId, sourceFingerprint: workerFingerprint, rawSha256: metadata.dataSha256, data: dataPath,
+          }, {
+            validate,
+            publish(payload, request) {
+              // One current live report per seed configuration. Its namespace
+              // is distinct from all immutable manual Apply reports.
+              const key = JSON.stringify(['live-indicator-report-v1', chartId, sourceFingerprint, request]);
+              const target = calculationPath(selected, request, key);
+              const to = Math.floor(selected.to / request.chartTimeframe) * request.chartTimeframe;
+              const output = JSON.stringify(payload);
+              writeCalculationCache(target, metadata.dataSha256, output);
+              fs.writeFileSync(calculationMetadataPath(target),
+                JSON.stringify(calculationMetadata(selected, { ...request, to }, target)), 'utf8');
+              return { output, calculationId: calculationId(target) };
+            },
+          });
+          res.setHeader('X-QG-Source-Fingerprint', sourceFingerprint);
+          res.setHeader('X-QG-Calculation-Id', result.calculationId);
+          res.end(result.output);
+        } catch (error) {
+          res.statusCode = error.status || 500;
+          res.end(JSON.stringify({ error: error.message, code: error.code }));
+        }
+      });
       server.middlewares.use('/api/reactions', async (req, res) => {
         const requestStarted = performance.now();
         let requestId = null;
@@ -617,7 +696,9 @@ function localDataApi() {
           const bridgeOutput = true;
           const calculationRequest = { timeframe, chartTimeframe, from, to, direction: body.direction, blueLines: body.blueLines, bridgeOutput };
           const cacheKey = JSON.stringify(['engine-content-v3-range-input', sourceFingerprint, valid.chartId || valid.id, valid.id, dataStat.mtimeMs, timeframe, chartTimeframe, from, to, body.direction, body.blueLines, bridgeOutput, inputScope]);
-          const executionKey = JSON.stringify([cacheKey, rawIdentity.sha256]);
+          const workerFingerprint = body.liveSession === true && valid.chartId
+            ? liveSourceFingerprint(sourceFingerprint) : null;
+          const executionKey = JSON.stringify([cacheKey, rawIdentity.sha256, workerFingerprint]);
           const baseCalculationPath = calculationPath(valid, calculationRequest, cacheKey);
           const changedRawPath = calculationPath(valid, calculationRequest, JSON.stringify([cacheKey, rawIdentity.sha256]));
           const persistedCalculationPath = cachePathForRaw(baseCalculationPath, rawIdentity.sha256, changedRawPath);
@@ -631,15 +712,40 @@ function localDataApi() {
           const cacheHit = Boolean(output);
           const cacheReadMs = performance.now() - cacheReadStarted;
           let detectorMs = 0;
-          if (!output) {
+          let liveSessionId = null;
+          if (!output || workerFingerprint) {
             const calculated = await calculationCoordinator.run(executionKey, async (publish, signal) => {
               await assertRawInputUnchanged(sourcePath, rawIdentity);
               let jobDetectorMs = 0;
+              let jobLiveSessionId = null;
+              const cachedOutput = readCalculationCache(persistedCalculationPath, rawIdentity.sha256);
               const runCalculation = async (calculationInputPath, bounds) => {
                 const detectorStarted = performance.now();
                 publish({ status: 'started', label: 'Start Python calculation' });
                 try {
-                  const result = await runDetector(['--data', calculationInputPath, '--timeframe', String(timeframe), '--from-time', String(bounds.fromTime), '--to-time', String(bounds.toTime), '--direction', body.direction, '--blue-lines', body.blueLines ? 'enabled' : 'disabled', '--a-zones', 'enabled', '--s-zones', 'enabled', '--bridge-output'], publish, signal);
+                  const args = ['--data', calculationInputPath, '--timeframe', String(timeframe),
+                    '--from-time', String(bounds.fromTime), '--to-time', String(bounds.toTime),
+                    '--direction', body.direction, '--blue-lines', body.blueLines ? 'enabled' : 'disabled',
+                    '--a-zones', 'enabled', '--s-zones', 'enabled', '--bridge-output'];
+                  let result = cachedOutput;
+                  if (workerFingerprint) {
+                    try {
+                      const seed = await liveEngineSessions.seed({
+                        chartId: valid.chartId, sourceFingerprint: workerFingerprint, request: calculationRequest,
+                      }, () => startLiveEngineWorker({
+                        command: pythonCommand, args: [liveBridgePath, ...engineArgs, ...args],
+                        env: { ...process.env, PYTHONDONTWRITEBYTECODE: '1', PYTHONUTF8: '1',
+                          TRADINGBOT_LIVE_RAW_SOURCE: sourcePath, TRADINGBOT_LIVE_CHART_TIMEFRAME: String(chartTimeframe) },
+                        onProgress: publish,
+                      }));
+                      jobLiveSessionId = seed.sessionId;
+                      if (!result) result = JSON.stringify(seed.payload);
+                    } catch {
+                      // An unavailable live checkpoint must not suppress a
+                      // valid manual calculation or a cached manual result.
+                    }
+                  }
+                  if (!result) result = await runDetector(args, publish, signal);
                   jobDetectorMs = performance.now() - detectorStarted;
                   publish({ status: 'completed', label: 'Start Python calculation', durationMs: jobDetectorMs });
                   return result;
@@ -648,37 +754,43 @@ function localDataApi() {
                   throw error;
                 }
               };
-              let result;
-              if (inputScope === 'complete-source') {
-                result = await runCalculation(sourcePath, { fromTime: from, toTime: Number(valid.to) });
-              } else {
-                const inputPreparationStarted = performance.now();
-                publish({ status: 'started', label: 'Filter raw range' });
-                const rows = rawStore.read(valid.id);
-                if (!rows) throw new Error('Candle file not found');
-                result = await runIndicatorRangeCalculation({
-                  rows,
-                  sourcePath,
-                  from,
-                  to,
-                  chartTimeframeSeconds: chartTimeframe,
-                  onPrepared: () => publish({
-                    status: 'completed',
-                    label: 'Filter raw range',
-                    durationMs: performance.now() - inputPreparationStarted,
-                  }),
-                  run: runCalculation,
-                });
+              try {
+                let result;
+                if (inputScope === 'complete-source') {
+                  result = await runCalculation(sourcePath, { fromTime: from, toTime: Number(valid.to) });
+                } else {
+                  const inputPreparationStarted = performance.now();
+                  publish({ status: 'started', label: 'Filter raw range' });
+                  const rows = rawStore.read(valid.id);
+                  if (!rows) throw new Error('Candle file not found');
+                  result = await runIndicatorRangeCalculation({
+                    rows, sourcePath, from, to, chartTimeframeSeconds: chartTimeframe,
+                    onPrepared: () => publish({
+                      status: 'completed', label: 'Filter raw range',
+                      durationMs: performance.now() - inputPreparationStarted,
+                    }),
+                    run: runCalculation,
+                  });
+                }
+                if (calculationSourceFingerprint() !== sourceFingerprint) {
+                  throw new Error('Calculation sources changed while running. Apply again with the current engines.');
+                }
+                if (jobLiveSessionId && liveSourceFingerprint(sourceFingerprint) !== workerFingerprint) {
+                  liveEngineSessions.discard(jobLiveSessionId);
+                  jobLiveSessionId = null;
+                }
+                await assertRawInputUnchanged(sourcePath, rawIdentity);
+                const published = readCalculationCache(persistedCalculationPath, rawIdentity.sha256);
+                if (!published) writeCalculationCache(persistedCalculationPath, rawIdentity.sha256, result);
+                return { output: published || result, detectorMs: jobDetectorMs, liveSessionId: jobLiveSessionId };
+              } catch (error) {
+                if (jobLiveSessionId) liveEngineSessions.discard(jobLiveSessionId);
+                throw error;
               }
-              if (calculationSourceFingerprint() !== sourceFingerprint) {
-                throw new Error('Calculation sources changed while running. Apply again with the current engines.');
-              }
-              await assertRawInputUnchanged(sourcePath, rawIdentity);
-              writeCalculationCache(persistedCalculationPath, rawIdentity.sha256, result);
-              return { output: result, detectorMs: jobDetectorMs };
             }, (event) => publishProgress(requestId, event));
             output = calculated.output;
             detectorMs = calculated.detectorMs;
+            liveSessionId = calculated.liveSessionId;
           }
            else {
              await assertRawInputUnchanged(sourcePath, rawIdentity);
@@ -695,6 +807,7 @@ function localDataApi() {
            res.setHeader('X-QG-Calculation-Id', calculationId(persistedCalculationPath));
            res.setHeader('X-QG-Input-Scope', inputScope);
           res.setHeader('X-QG-Source-Fingerprint', sourceFingerprint);
+          if (liveSessionId) res.setHeader('X-QG-Live-Session', liveSessionId);
           res.setHeader('X-QG-Detector-Ms', detectorMs.toFixed(2));
           res.setHeader('X-QG-Cache-Read-Ms', cacheReadMs.toFixed(2));
           res.setHeader('X-QG-Server-Ms', (performance.now() - requestStarted).toFixed(2));
@@ -730,7 +843,7 @@ function infoPage() {
 }
 
 export default defineConfig({
-  plugins: [localDataApi(), createFarazCandleApi({ workspaceRoot, localStateRoot: localState.root }), infoPage()],
+  plugins: [localDataApi(), createFarazCandleApi({ workspaceRoot, localStateRoot: localState.root, rawStore }), infoPage()],
   server: {
     port: 5173,
     strictPort: false,

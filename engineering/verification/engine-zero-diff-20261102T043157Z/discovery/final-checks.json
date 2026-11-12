@@ -1,0 +1,282 @@
+[
+  {
+    "name": "lexical-output",
+    "command": [
+      "C:\\Users\\msadr\\AppData\\Local\\Python\\pythoncore-3.15-64\\python.exe",
+      "-B",
+      "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\scripts\\lexical_output_check.py"
+    ],
+    "status": "PASS",
+    "exit_code": 0,
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-lexical-output-rerun.log",
+    "verified_after_execution_utc": "2026-11-02T08:57:13.871645+00:00",
+    "reason": "Comparator empty-input guard changed; original successful check retained in initial archive"
+  },
+  {
+    "name": "cli-contract",
+    "command": [
+      "C:\\Users\\msadr\\AppData\\Local\\Python\\pythoncore-3.15-64\\python.exe",
+      "-B",
+      "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\scripts\\cli_contract_check.py",
+      "--evidence-name",
+      "cli-contract-v2"
+    ],
+    "status": "PASS",
+    "exit_code": 0,
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-cli-contract-rerun.log",
+    "verified_after_execution_utc": "2026-11-02T08:57:09.122257+00:00",
+    "supersedes": "final-checks-initial.json / cli-contract FAIL; unsupported test-only --e-zones option and empty-stdout assumption; original failure/partial artifacts retained"
+  },
+  {
+    "name": "engine-unit",
+    "command": [
+      "X:\\My-Projects\\TradingBot\\apps\\chart\\state\\tmp\\engine-audit-20261102T043157Z-venv\\Scripts\\python.exe",
+      "-B",
+      "-m",
+      "pytest",
+      "engine/tests/unit",
+      "-q",
+      "-p",
+      "no:cacheprovider"
+    ],
+    "started_utc": "2026-11-02T08:41:50.456378+00:00",
+    "exit_code": 0,
+    "status": "PASS",
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-engine-unit.log"
+  },
+  {
+    "name": "allocation-pretraced",
+    "command": [
+      "X:\\My-Projects\\TradingBot\\apps\\chart\\state\\tmp\\engine-audit-20261102T043157Z-venv\\Scripts\\python.exe",
+      "-B",
+      "-X",
+      "tracemalloc=1",
+      "-m",
+      "pytest",
+      "engine/tests/unit/test_carried_order_query.py::test_creation_lists_do_not_retain_both_dense_parent_and_b_history",
+      "-q",
+      "-p",
+      "no:cacheprovider"
+    ],
+    "started_utc": "2026-11-02T08:41:53.038440+00:00",
+    "exit_code": 0,
+    "status": "PASS",
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-allocation-pretraced.log"
+  },
+  {
+    "name": "harness-unit",
+    "command": [
+      "C:\\Users\\msadr\\AppData\\Local\\Python\\pythoncore-3.15-64\\python.exe",
+      "-B",
+      "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\scripts\\test_harness.py"
+    ],
+    "started_utc": "2026-11-02T08:41:54.501727+00:00",
+    "exit_code": 0,
+    "status": "PASS",
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-harness-unit.log"
+  },
+  {
+    "name": "lexical-harness-unit",
+    "command": [
+      "C:\\Users\\msadr\\AppData\\Local\\Python\\pythoncore-3.15-64\\python.exe",
+      "-B",
+      "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\scripts\\test_lexical_output.py"
+    ],
+    "status": "PASS",
+    "exit_code": 0,
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-lexical-harness-unit-rerun.log",
+    "verified_after_execution_utc": "2026-11-02T08:57:09.355258+00:00",
+    "reason": "Comparator empty-input guard changed; original successful check retained in initial archive"
+  },
+  {
+    "name": "references",
+    "command": [
+      "C:\\Users\\msadr\\AppData\\Local\\Python\\pythoncore-3.15-64\\python.exe",
+      "-B",
+      "engine/tests/verification/verify_order_references.py"
+    ],
+    "started_utc": "2026-11-02T08:41:55.076164+00:00",
+    "exit_code": 0,
+    "status": "PASS",
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-references.log"
+  },
+  {
+    "name": "anti-drift-unit",
+    "command": [
+      "C:\\Users\\msadr\\AppData\\Local\\Python\\pythoncore-3.15-64\\python.exe",
+      "-B",
+      "scripts/verification/test_anti_drift.py"
+    ],
+    "started_utc": "2026-11-02T08:41:55.339646+00:00",
+    "exit_code": 0,
+    "status": "PASS",
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-anti-drift-unit.log"
+  },
+  {
+    "name": "anti-drift-full",
+    "command": [
+      "C:\\Users\\msadr\\AppData\\Local\\Python\\pythoncore-3.15-64\\python.exe",
+      "-B",
+      "scripts/verification/anti_drift.py",
+      "--mode",
+      "full",
+      "--format",
+      "human",
+      "--verbose"
+    ],
+    "started_utc": "2026-11-02T08:41:59.469539+00:00",
+    "exit_code": 0,
+    "status": "PASS",
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-anti-drift-full.log"
+  },
+  {
+    "name": "chart-contracts",
+    "command": [
+      "node",
+      "--test",
+      "apps/chart/tests/unit/manual-review.test.mjs",
+      "apps/chart/tests/unit/calculation-cache.test.mjs",
+      "apps/chart/tests/unit/indicator-cache.test.mjs"
+    ],
+    "started_utc": "2026-11-02T08:41:59.709776+00:00",
+    "exit_code": 0,
+    "status": "PASS",
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-chart-contracts.log"
+  },
+  {
+    "name": "before-xau-sep28-30s-bearish-anchors",
+    "command": [
+      "C:\\Users\\msadr\\AppData\\Local\\Python\\pythoncore-3.15-64\\python.exe",
+      "-B",
+      "engine/tests/regression/verify_pl_ph_raw.py",
+      "--after",
+      "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\before\\xau-sep28-30s-bearish\\run-01.stdout.json",
+      "--xauusd-user-example",
+      "--formed-mbls"
+    ],
+    "started_utc": "2026-11-02T08:41:59.894968+00:00",
+    "exit_code": 0,
+    "status": "PASS",
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-before-xau-sep28-30s-bearish-anchors.log"
+  },
+  {
+    "name": "before-usoil-month-30s-bearish-anchors",
+    "command": [
+      "C:\\Users\\msadr\\AppData\\Local\\Python\\pythoncore-3.15-64\\python.exe",
+      "-B",
+      "engine/tests/regression/verify_pl_ph_raw.py",
+      "--after",
+      "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\before\\usoil-month-30s-bearish\\run-01.stdout.json",
+      "--usoil-user-example",
+      "--formed-mbls"
+    ],
+    "started_utc": "2026-11-02T08:42:00.037150+00:00",
+    "exit_code": 0,
+    "status": "PASS",
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-before-usoil-month-30s-bearish-anchors.log"
+  },
+  {
+    "name": "after-xau-sep28-30s-bearish-anchors",
+    "command": [
+      "C:\\Users\\msadr\\AppData\\Local\\Python\\pythoncore-3.15-64\\python.exe",
+      "-B",
+      "engine/tests/regression/verify_pl_ph_raw.py",
+      "--after",
+      "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\after\\xau-sep28-30s-bearish\\run-01.stdout.json",
+      "--xauusd-user-example",
+      "--formed-mbls"
+    ],
+    "started_utc": "2026-11-02T08:42:00.312722+00:00",
+    "exit_code": 0,
+    "status": "PASS",
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-after-xau-sep28-30s-bearish-anchors.log"
+  },
+  {
+    "name": "after-usoil-month-30s-bearish-anchors",
+    "command": [
+      "C:\\Users\\msadr\\AppData\\Local\\Python\\pythoncore-3.15-64\\python.exe",
+      "-B",
+      "engine/tests/regression/verify_pl_ph_raw.py",
+      "--after",
+      "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\after\\usoil-month-30s-bearish\\run-01.stdout.json",
+      "--usoil-user-example",
+      "--formed-mbls"
+    ],
+    "started_utc": "2026-11-02T08:42:00.447333+00:00",
+    "exit_code": 0,
+    "status": "PASS",
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-after-usoil-month-30s-bearish-anchors.log"
+  },
+  {
+    "name": "before-order-b-bullish",
+    "command": [
+      "C:\\Users\\msadr\\AppData\\Local\\Python\\pythoncore-3.15-64\\python.exe",
+      "-B",
+      "engine/tests/verification/verify_order_b_raw.py",
+      "--raw",
+      "X:\\My-Projects\\TradingBot\\apps\\chart\\state\\data\\RAW\\FXCM\\USOIL\\RAW FXCM_USOIL 5S FROM 2026-10-22 19-25-25 TO 2026-10-23 19-25-25.json",
+      "--payload",
+      "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\before\\usoil-oct22-5s-bullish-legacy-no-primary\\run-01.stdout.json",
+      "--timeframe",
+      "5"
+    ],
+    "started_utc": "2026-11-02T08:42:00.724185+00:00",
+    "exit_code": 0,
+    "status": "PASS",
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-before-order-b-bullish.log"
+  },
+  {
+    "name": "after-order-b-bullish",
+    "command": [
+      "C:\\Users\\msadr\\AppData\\Local\\Python\\pythoncore-3.15-64\\python.exe",
+      "-B",
+      "engine/tests/verification/verify_order_b_raw.py",
+      "--raw",
+      "X:\\My-Projects\\TradingBot\\apps\\chart\\state\\data\\RAW\\FXCM\\USOIL\\RAW FXCM_USOIL 5S FROM 2026-10-22 19-25-25 TO 2026-10-23 19-25-25.json",
+      "--payload",
+      "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\after\\usoil-oct22-5s-bullish-legacy-no-primary\\run-01.stdout.json",
+      "--timeframe",
+      "5"
+    ],
+    "started_utc": "2026-11-02T08:42:00.838659+00:00",
+    "exit_code": 0,
+    "status": "PASS",
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-after-order-b-bullish.log"
+  },
+  {
+    "name": "before-order-b-bearish",
+    "command": [
+      "C:\\Users\\msadr\\AppData\\Local\\Python\\pythoncore-3.15-64\\python.exe",
+      "-B",
+      "engine/tests/verification/verify_order_b_raw.py",
+      "--raw",
+      "X:\\My-Projects\\TradingBot\\apps\\chart\\state\\data\\RAW\\FXCM\\USOIL\\RAW FXCM_USOIL 5S FROM 2026-10-22 19-25-25 TO 2026-10-23 19-25-25.json",
+      "--payload",
+      "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\before\\usoil-oct22-5s-bearish-legacy-no-primary\\run-01.stdout.json",
+      "--timeframe",
+      "5"
+    ],
+    "started_utc": "2026-11-02T08:42:00.961795+00:00",
+    "exit_code": 0,
+    "status": "PASS",
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-before-order-b-bearish.log"
+  },
+  {
+    "name": "after-order-b-bearish",
+    "command": [
+      "C:\\Users\\msadr\\AppData\\Local\\Python\\pythoncore-3.15-64\\python.exe",
+      "-B",
+      "engine/tests/verification/verify_order_b_raw.py",
+      "--raw",
+      "X:\\My-Projects\\TradingBot\\apps\\chart\\state\\data\\RAW\\FXCM\\USOIL\\RAW FXCM_USOIL 5S FROM 2026-10-22 19-25-25 TO 2026-10-23 19-25-25.json",
+      "--payload",
+      "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\after\\usoil-oct22-5s-bearish-legacy-no-primary\\run-01.stdout.json",
+      "--timeframe",
+      "5"
+    ],
+    "started_utc": "2026-11-02T08:42:01.078003+00:00",
+    "exit_code": 0,
+    "status": "PASS",
+    "log": "X:\\My-Projects\\TradingBot\\engineering\\verification\\engine-zero-diff-20261102T043157Z\\discovery\\final-after-order-b-bearish.log"
+  }
+]

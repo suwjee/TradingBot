@@ -1,0 +1,22 @@
+--- original/engine/bridge/trading_pipeline.py
++++ final/engine/bridge/trading_pipeline.py
+@@ -40,8 +40,8 @@
+ 
+ 
+ TRADING_PIPELINE_VERSION = "1.13.0"
+-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.16.0"
+-TRADING_PIPELINE_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
++TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.16.1"
++TRADING_PIPELINE_LAST_MODIFIED = "2026-11-02T10:35:59+03:30"
+ MBL_EXTENSION_CANDLES = 400
+ 
+ TEHRAN = ZoneInfo("Asia/Tehran")
+@@ -3249,7 +3249,7 @@
+             aggregate[key] = [row for segment in segments for row in segment.get(key, [])]
+         bridge_outputs = [segment.get("bridgeOutput", {}) for segment in segments]
+         if any(bridge_outputs):
+-            bridge_keys = {key for item in bridge_outputs for key in item}
++            bridge_keys = dict.fromkeys(key for item in bridge_outputs for key in item)
+             aggregate["bridgeOutput"] = {
+                 key: [row for item in bridge_outputs for row in item.get(key, [])]
+                 for key in bridge_keys

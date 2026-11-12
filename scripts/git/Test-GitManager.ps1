@@ -460,6 +460,7 @@ function Test-ManagerPublishWorkingTree {
       'engine/configuration/new[1].json' = '{"enabled":true}'
       'apps/chart/src/new-feature.js' = 'export const enabled = true;'
       'engine/tests/test_new_detector.py' = '# new test'
+      'apps/chart/src/new-feature.spec.js' = '// colocated test'
       'engine/algorithms/new-reference.md' = '# New reference'
       'engineering/docs/new-guide.md' = '# New guide'
       'apps/chart/state/cache/local.json' = '{}'
@@ -489,7 +490,7 @@ function Test-ManagerPublishWorkingTree {
       foreach ($relative in @('engine/runtime.py', 'engine/retired.py', 'apps/chart/state/cache/local.json', 'apps/chart/state/data/RAW/local.json', 'apps/chart/state/secret/local.json', 'engine/__pycache__/local.pyc')) {
         Assert-Manager ($paths -notcontains $relative) "$branch omits removed or excluded path $relative"
       }
-      foreach ($relative in @('engine/tests/test_new_detector.py', 'engine/algorithms/new-reference.md', 'engineering/docs/new-guide.md')) {
+      foreach ($relative in @('engine/tests/test_new_detector.py', 'apps/chart/src/new-feature.spec.js', 'engine/algorithms/new-reference.md', 'engineering/docs/new-guide.md')) {
         Assert-Manager (($paths -contains $relative) -eq ($branch -eq 'main')) "$relative follows the existing $branch content policy"
       }
     }

@@ -1,0 +1,76 @@
+{
+  "scope": "Public stdout/exit-code exactness; complete stderr retained, progress duration telemetry is not a stable error contract; no arbitrary user-defined private-ledger objects or traceback-frame equality claim",
+  "cases": [
+    {
+      "case": "s-disabled",
+      "status": "PASS",
+      "before_exit": 1,
+      "after_exit": 1,
+      "before_error": "'bullish'",
+      "after_error": "'bullish'",
+      "bare_error_stderr_equal": true,
+      "first_byte_difference": null
+    },
+    {
+      "case": "all-secondary-disabled",
+      "status": "PASS",
+      "before_exit": 1,
+      "after_exit": 1,
+      "before_error": "'bullish'",
+      "after_error": "'bullish'",
+      "bare_error_stderr_equal": true,
+      "first_byte_difference": null
+    },
+    {
+      "case": "zero-timeframe",
+      "status": "PASS",
+      "before_exit": 1,
+      "after_exit": 1,
+      "before_error": "Timeframe must be at least one second.",
+      "after_error": "Timeframe must be at least one second.",
+      "bare_error_stderr_equal": true,
+      "first_byte_difference": null
+    },
+    {
+      "case": "empty-input",
+      "status": "PASS",
+      "before_exit": 1,
+      "after_exit": 1,
+      "before_error": "The selected range contains no raw candles.",
+      "after_error": "The selected range contains no raw candles.",
+      "bare_error_stderr_equal": true,
+      "first_byte_difference": null
+    },
+    {
+      "case": "missing-input",
+      "status": "PASS",
+      "before_exit": 1,
+      "after_exit": 1,
+      "before_error": "[Errno 2] No such file or directory: 'X:\\\\My-Projects\\\\TradingBot\\\\engineering\\\\verification\\\\engine-zero-diff-20261102T043157Z\\\\discovery\\\\derived-fixtures\\\\missing-contract-never-created.json'",
+      "after_error": "[Errno 2] No such file or directory: 'X:\\\\My-Projects\\\\TradingBot\\\\engineering\\\\verification\\\\engine-zero-diff-20261102T043157Z\\\\discovery\\\\derived-fixtures\\\\missing-contract-never-created.json'",
+      "bare_error_stderr_equal": true,
+      "first_byte_difference": null
+    },
+    {
+      "case": "reversed-window",
+      "status": "PASS",
+      "before_exit": 1,
+      "after_exit": 1,
+      "before_error": "The selected range contains no timeframe candles.",
+      "after_error": "The selected range contains no timeframe candles.",
+      "bare_error_stderr_equal": true,
+      "first_byte_difference": null
+    },
+    {
+      "case": "unknown-switch",
+      "status": "PASS",
+      "before_exit": 2,
+      "after_exit": 2,
+      "before_error": null,
+      "after_error": null,
+      "bare_error_stderr_equal": true,
+      "first_byte_difference": null
+    }
+  ],
+  "status": "PASS"
+}

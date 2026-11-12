@@ -10,7 +10,7 @@ scope:
   - engine
   - runtime-boundaries
   - state-and-transport
-last_modified_at: 2026-11-01T19:22:42+03:30
+last_modified_at: 2026-11-12T01:34:50+03:30
 ---
 
 # TradingBot Technical Architecture
@@ -94,6 +94,10 @@ This path does not perform trading calculation.
 8. Vite may persist the serialized result under its calculation cache and returns the same finalized result to Chart.
 9. Chart renders the result and may open the Manual Review surface using the persisted calculation identity.
 
+A manual Apply can start a dedicated Engine session for its selected start, direction and analysis timeframe. The worker verifies the original RAW byte prefix and parses newly appended candle rows. It retains Reaction and Reset search, cross-direction ownership, Blue/A/S/E, Order and StopAll evidence, primary cycles, and setup event state. A provisional analysis candle is evaluated separately from the committed Reaction cursor. If a new event changes earlier ownership, the affected calculation resumes from the earliest dependent state. A completed independent trend regime can reuse its finalized result. The Bridge publishes the same indicator response contract as a manual calculation.
+
+Bullish schematic assessments are calculated by `engine/pipeline/bullish_setup_engine.py` after native accepted behavior and primary-structure calculation. The Bridge projects finalized setup levels, T/F assessments, reference-break provenance and regime identities. The Chart presents these records as indicator-owned annotations and stores geometry edits separately as presentation overrides. Native detector arrays are not reinterpreted by this stage or by the browser. The server's calculation-source fingerprint includes the setup Engine module.
+
 ### 5.3 Market-data acquisition
 
 1. Chart/FARAZ UI initiates an acquisition or update request through the local server.
@@ -103,6 +107,10 @@ This path does not perform trading calculation.
 5. The resulting RAW resource becomes available through the normal Chart inventory/load flow.
 
 Acquisition creates or updates input data. It does not execute Engine trading semantics.
+
+Real-time Chart polls the latest closed candles for one stable chart identity. The server derives the request from the resolved RAW tail and native timeframe. It rejects a stale source, serializes concurrent live requests for the same chart, and stages the validated RAW and sidecar before publishing the renamed pair. The browser receives the committed delta and updates its existing chart view.
+
+The continuation API authorizes an update with the chart identity, Engine source fingerprint and a session token returned by Apply. It follows the RAW rename, verifies the current file digest and replays the same response on retries. The server keeps bounded worker sessions in memory. Active clients keep their session open through market closures. A restart, expired session or historical RAW rewrite requires a new Apply.
 
 ## 6. Chart architecture
 

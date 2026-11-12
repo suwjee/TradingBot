@@ -7,6 +7,7 @@ does not decide A/S/E lifecycle ownership.
 
 from __future__ import annotations
 
+from copy import copy
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
@@ -319,15 +320,25 @@ def _build_reset_blue_line(
         behavior_internal=behavior_internal,
     )
 
-def detect_blue_lines(
+@dataclass(frozen=True, slots=True)
+class _BlueCheckpoint:
+    previous_reaction: object | None = None
+    previous_count: int | None = None
+    healthy_since_blue: int = 0
+    line_count: int = 0
+
+
+def _calculate_blue_tail(
     direction: str,
     reactions: Sequence[object],
     chronology: object,
-    resets: Sequence[object] = (),
+    resets: Sequence[object],
+    *,
+    start: int,
+    checkpoint: _BlueCheckpoint,
+    output: list[BlueLine],
+    checkpoints: list[_BlueCheckpoint] | None = None,
 ) -> list[BlueLine]:
-    """Detect scale and Reset Blue Lines over authoritative engine events."""
-    if direction not in {"bullish", "bearish"}:
-        raise ValueError("Direction must be 'bullish' or 'bearish'.")
     candles = chronology.candles
     candles_by_index = {
         int(getattr(candle, "index")): candle for candle in candles
@@ -338,13 +349,13 @@ def detect_blue_lines(
             int(getattr(reset, "from_first_idx")), []
         ).append(reset)
 
-    output: list[BlueLine] = []
-    previous_reaction: object | None = None
-    previous_count: int | None = None
-    has_blue_line = False
-    healthy_reactions_since_blue = 0
+    previous_reaction = checkpoint.previous_reaction
+    previous_count = checkpoint.previous_count
+    has_blue_line = bool(output)
+    healthy_reactions_since_blue = checkpoint.healthy_since_blue
 
-    for reaction_number, reaction in enumerate(reactions, start=1):
+    suffix = reactions[start:] if start else reactions
+    for reaction_number, reaction in enumerate(suffix, start=start + 1):
         behavior_internal = bool(getattr(reaction, "behavior_internal", False))
         if str(getattr(reaction, "mode")) == "A":
             boundary = getattr(reaction, "anchor_value", None)
@@ -423,8 +434,82 @@ def detect_blue_lines(
 
         previous_reaction = reaction
         previous_count = len(strikes)
+        if checkpoints is not None:
+            checkpoints.append(_BlueCheckpoint(
+                copy(reaction), previous_count, healthy_reactions_since_blue, len(output),
+            ))
 
     return output
+
+
+def detect_blue_lines(
+    direction: str,
+    reactions: Sequence[object],
+    chronology: object,
+    resets: Sequence[object] = (),
+) -> list[BlueLine]:
+    """Detect scale and Reset Blue Lines over authoritative engine events."""
+    if direction not in {"bullish", "bearish"}:
+        raise ValueError("Direction must be 'bullish' or 'bearish'.")
+    return _calculate_blue_tail(
+        direction, reactions, chronology, resets,
+        start=0, checkpoint=_BlueCheckpoint(), output=[],
+    )
+
+
+class LiveBlueLineContinuation:
+    """Reuse Blue decisions before the earliest changed Reaction.
+
+    The event owner supplies the first revised Reaction or Reset owner. The
+    market owner can also supply the first changed candle, since Blue reads
+    its source candle even when the Reaction and Reset records stay equal.
+    """
+
+    def __init__(
+        self, direction: str, reactions: Sequence[object], chronology: object,
+        resets: Sequence[object] = (),
+    ) -> None:
+        if direction not in {"bullish", "bearish"}:
+            raise ValueError("Direction must be 'bullish' or 'bearish'.")
+        self.direction = direction
+        self._checkpoints = [_BlueCheckpoint()]
+        self._lines = _calculate_blue_tail(
+            direction, reactions, chronology, resets,
+            start=0, checkpoint=self._checkpoints[0], output=[], checkpoints=self._checkpoints,
+        )
+
+    @property
+    def result(self) -> list[BlueLine]:
+        return self._lines.copy()
+
+    def update(
+        self, reactions: Sequence[object], chronology: object, resets: Sequence[object],
+        *, first_changed: int, first_dirty_main: int | None = None,
+    ) -> list[BlueLine]:
+        if not 0 <= first_changed < len(self._checkpoints) or first_changed > len(reactions):
+            raise ValueError("The Blue continuation must start at an existing checkpoint.")
+        if first_dirty_main is not None:
+            reset_owners = {
+                int(getattr(reset, "from_first_idx")) for reset in resets
+                if int(getattr(reset, "index")) >= first_dirty_main
+            }
+            for index in range(first_changed):
+                reaction = reactions[index]
+                if (int(getattr(reaction, "break_idx")) >= first_dirty_main
+                        or int(getattr(reaction, "first_idx")) in reset_owners):
+                    first_changed = index
+                    break
+        checkpoint = self._checkpoints[first_changed]
+        checkpoints = self._checkpoints[:first_changed + 1]
+        lines = self._lines[:checkpoint.line_count]
+        if first_changed < len(reactions):
+            _calculate_blue_tail(
+                self.direction, reactions, chronology, resets, start=first_changed,
+                checkpoint=checkpoint, output=lines, checkpoints=checkpoints,
+            )
+        self._checkpoints = checkpoints
+        self._lines = lines
+        return self.result
 
 
 def public_blue_lines(lines: Sequence[BlueLine]) -> list[BlueLine]:

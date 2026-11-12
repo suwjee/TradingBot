@@ -17,6 +17,20 @@ test("indicator range permits a single selected candle", () => {
   });
 });
 
+test("range snapping breaks ties toward the earlier candle without scanning chart history", () => {
+  let reads = 0;
+  const history = new Proxy(Array.from({ length: 4096 }, (_, i) => ({ time: 30 * (i + 1) })), {
+    get(target, key, receiver) {
+      if (/^\d+$/.test(String(key))) reads += 1;
+      return Reflect.get(target, key, receiver);
+    },
+  });
+  assert.deepEqual(normalizeIndicatorRange(60015, 90001, history), {
+    from: 60000, to: 90000, fromIndex: 1999, toIndex: 2999,
+  });
+  assert.ok(reads < 100, `range handles read ${reads} candles per update`);
+});
+
 test("moving one handle cannot cross the other handle", () => {
   assert.deepEqual(moveIndicatorRange({ fromIndex: 1, toIndex: 3 }, "from", 3, candles), {
     fromIndex: 3, toIndex: 3,

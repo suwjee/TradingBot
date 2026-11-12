@@ -1,0 +1,37 @@
+--- original/engine/pipeline/order_audit_engine.py
++++ final/engine/pipeline/order_audit_engine.py
+@@ -12,8 +12,8 @@
+ 
+ from core_utils import as_decimal, order_identity, reaction_identity
+ 
+-ORDER_AUDIT_ENGINE_VERSION = "1.8.1"
+-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-01T22:46:39+03:30"
++ORDER_AUDIT_ENGINE_VERSION = "1.8.2"
++ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-02T11:23:50+03:30"
+ 
+ 
+ def relabel_primary_causes(causes, labels):
+@@ -1420,16 +1420,16 @@
+             return list(cached)
+         matches: list[OrderMatch] = []
+         for entry in self.order_audit.values():
+-            a_created_events = [
++            created_events: list[datetime] = [
+                 cause[3]
+-                for cause in entry.get("causes", set())
++                for cause in entry.get("causes", ())
+                 if cause[0] == "parent-stop"
+             ]
+-            created_events = [min(a_created_events)] if a_created_events else []
+-            created_events.extend(
+-                cause["physicalOrderConfirmationTime"]
+-                for cause in entry.get("order_b_causes", ())
+-            )
++            # Only earliest A creation competes; every B cause stays eager.
++            if len(created_events) > 1:
++                created_events = [min(created_events)]
++            for cause in entry.get("order_b_causes", ()):
++                created_events.append(cause["physicalOrderConfirmationTime"])
+             if not created_events:
+                 continue
+             confirmation = entry["confirmation_time"]

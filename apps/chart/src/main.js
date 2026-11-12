@@ -5,10 +5,12 @@ import {
 } from "lightweight-charts";
 import "./platform/browser-compat.js";
 import { icon } from "./ui/icons.js";
-import { drawingArray, normalizeHistorySnapshot, CHART_TIMEFRAME_KEY, restoredTimeframe, indicatorControlId } from "./chart/state.js";
+import { drawingArray, normalizeHistorySnapshot, CHART_TIMEFRAME_KEY, restoredTimeframe, indicatorControlId, drawingToolOrder } from "./chart/state.js";
 import { PRIMARY_VISUAL_DEFAULTS, primaryVisualObjects, drawPrimaryStructures, drawTrendTransitions, clipHistoricalHitBoxes, indicatorCalculationSegments } from "./chart/primary-structure.js";
 import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart/lod.js";
-import { coordinateToRawTime, createViewAnchorCache, rawTimeToCoordinate, selectDensityMode } from "./chart/view-transform.js";
+import { aggregateCandles as aggregate, appendCandleBuckets } from "./chart/candle-buckets.js";
+import { mountRealtimeChart } from "./features/realtime-chart.js";
+import { coordinateToRawTime, createViewAnchorCache, rawIndexAtTime, rawIndexToCoordinate, remapCandleLogicalRange, selectDensityMode } from "./chart/view-transform.js";
 import { updateStageAggregate } from "./chart/progress.js";
 import { cacheClearLayers, clearIndicatorBrowserState } from "./features/indicator-cache.js";
 import { buildIndicatorCalculationRequest } from "./features/indicator-calculation-request.js";
@@ -33,15 +35,17 @@ import { createCaptureFeedback, indicatorApplyProblem, indicatorNotificationType
 import { setAnchoredPopoverOpen } from "./ui/popover.js";
 import { formatInventoryDateTime, formatSymbolWithBroker } from "./ui/symbol-format.js";
 import { MIN_SAFE_BAR_SPACING } from "./chart/zoom-config.js";
-import { resolveCanonicalChartPoint } from "./chart/drawing-coordinates.js";
+import { resolveCanonicalChartPoint, positionTimeToCoordinate } from "./chart/drawing-coordinates.js";
+import { SETUP_VISUAL_DEFAULTS, setupObjectVisible, setupVisualObjects, setupPositionDrawing, drawSetupStatusLabels } from "./chart/setup-annotations.js";
 import { drawScreenshotOverlay } from "./features/screenshot-overlay.js";
 import { chartTabUrl, resolveChartTabState, resolveWorkspaceRefreshState } from "./features/workspace-session.js";
 import { parseTehranMetadataTime } from "./features/raw-file-contract.js";
 import { moveIndicatorRange, normalizeIndicatorRange } from "./chart/indicator-range.js";
-import { calculateMeasureStats, calculatePositionLevels } from "./drawings/drawing-math.js";
+import { calculateMeasureStats, calculatePositionLevels, initialPositionLevels, editPositionLevel, editPositionTime, positionEndTime, positionRightTime, positionWidthBars, translatePosition } from "./drawings/drawing-math.js";
 import { fullChartId, shortChartId } from "./ui/chart-identity.js";
 import "./styles/tokens.css";
 import "./styles/app.css";
+import "./styles/realtime-chart.css";
 import "./drawings/drawing.css";
 import "./drawings/object-tree.css";
 import "../../../engine/styles/reaction-detector.css";
@@ -190,23 +194,19 @@ const drawingToolDefinitions = [
   ["brush", "Brush"],
   ["rect", "Rectangle"],
   ["circle", "Circle"],
-  ["long", "Long position"],
-  ["short", "Short position"],
   ["text", "Text"],
   ["path", "Path"],
   ["measure", "Measure"],
+  ["long", "Long position"],
+  ["short", "Short position"],
 ];
 const drawingToolById = new Map(drawingToolDefinitions);
 const drawingTools = (() => {
-  const pinMeasureLast = (ids) => [...ids.filter((id) => id !== "measure"), "measure"];
   try {
     const saved = JSON.parse(localStorage.getItem(DRAWING_TOOL_ORDER_KEY) || "null");
-    if (Array.isArray(saved) && saved.length === drawingToolDefinitions.length) {
-      const ids = saved.filter((id) => drawingToolById.has(id));
-      if (new Set(ids).size === drawingToolDefinitions.length) return pinMeasureLast(ids);
-    }
+    return drawingToolOrder(drawingToolDefinitions, saved);
   } catch {}
-  return pinMeasureLast(drawingToolDefinitions.map(([id]) => id));
+  return drawingToolOrder(drawingToolDefinitions, null);
 })();
 const materialIcon = (name) => {
   const paths = {
@@ -388,24 +388,23 @@ const tehranTick = new Intl.DateTimeFormat("en-GB", {
   second: "2-digit",
   hourCycle: "h23",
 });
+const tehranMonth = new Intl.DateTimeFormat("en-US", { timeZone: TEHRAN, month: "short" });
+const fibPriceFormat = new Intl.NumberFormat("en-US", { minimumFractionDigits: 4, maximumFractionDigits: 4 });
 function formatTehran(time, axis = false) {
   const date = new Date(Number(time) * 1000);
   return (axis ? tehranTick : tehranDateTime).format(date).replace(",", "");
 }
 function formatChartAxisTime(time) {
+  const date = new Date(Number(time) * 1000);
   const parts = tehranDateTime
-    .formatToParts(new Date(Number(time) * 1000))
+    .formatToParts(date)
     .reduce((output, part) => ((output[part.type] = part.value), output), {});
-  const monthName = new Intl.DateTimeFormat("en-US", {
-    timeZone: TEHRAN,
-    month: "short",
-  }).format(new Date(Number(time) * 1000));
   const hhmm = `${parts.hour}:${parts.minute}`;
   if (state.chartTimeFormat === "time") return `${hhmm}:${parts.second}`;
   if (state.chartTimeFormat === "numeric") return `${parts.day}/${parts.month} ${hhmm}`;
   if (state.chartTimeFormat === "full")
     return `${parts.year}-${parts.month}-${parts.day} ${hhmm}:${parts.second}`;
-  return `${parts.day} ${monthName} ${hhmm}`;
+  return `${parts.day} ${tehranMonth.format(date)} ${hhmm}`;
 }
 function parseTehranInput(value) {
   const m = value.match(
@@ -533,6 +532,7 @@ $(".topbar").addEventListener("focusin", (event) => {
 });
 $(".top-actions")?.insertAdjacentHTML("afterbegin", `<button class="icon-btn" id="applyIndicatorRangeBtn" title="Calculate indicator for selected range" aria-label="Calculate indicator for selected range">${materialIcon("play_arrow")}</button>`);
 $(".top-actions")?.insertAdjacentHTML("afterbegin", `<button class="icon-btn" id="cutCandlesBtn" title="Cut candles" aria-label="Cut candles">${materialIcon("content_cut")}</button>`);
+$("#cutCandlesBtn")?.insertAdjacentHTML("beforebegin", '<button class="icon-btn" type="button" id="realtimeChartBtn"></button>');
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
 })[character]);
@@ -670,6 +670,7 @@ document.body.insertAdjacentHTML(
   "beforeend",
   `<div id="drawingToolbar" class="drawing-toolbar hidden"><span class="toolbar-grip">⋮⋮</span><input id="objectText" class="object-text hidden" type="text" maxlength="24" aria-label="Object text"><select id="objectSize" class="object-size hidden" aria-label="Text size"><option>9</option><option>11</option><option>13</option><option>14</option><option>16</option></select><input id="strokeColor" type="color" value="#2962ff" title="Line color" aria-label="Line color and opacity"><input id="fillColor" type="color" value="#2962ff" title="Fill color" aria-label="Fill color and opacity"><select id="lineWidth" title="Line width"><option value="0.5">0.5</option><option value="0.75">0.75</option><option value="1">1</option><option value="2">2</option></select><select id="lineStyle" title="Line style"><option value="solid">Solid</option><option value="dash">Dashed</option><option value="dot">Dotted</option></select><label class="opacity-control hidden"><span>Opacity</span><input id="fillOpacity" type="range" min="0" max="1" step="0.01" value="0.1"></label><button id="lockDrawing" title="Lock" aria-label="Lock drawing">${icon("lock", 18)}</button><button id="copyDrawing" title="Duplicate" aria-label="Duplicate drawing">${icon("copy", 18)}</button><button id="deleteDrawing" class="danger" title="Delete" aria-label="Delete drawing">${icon("trash", 18)}</button></div>`,
 );
+$("#lockDrawing").insertAdjacentHTML("beforebegin", `<span id="positionLevels" class="position-levels hidden"><label>Target<input id="positionTarget" type="number" step="any" aria-label="Position target price"></label><label>Stop<input id="positionStop" type="number" step="any" aria-label="Position stop price"></label><label>Bars<input id="positionBars" type="number" min="0.001" step="any" aria-label="Position width in candles"></label></span>`);
 const chart = createChart($("#chart"), {
   layout: {
     background: { color: "#ffffff" },
@@ -706,6 +707,8 @@ const chart = createChart($("#chart"), {
     rightOffset: 8,
     barSpacing: 8,
     minBarSpacing: MIN_SAFE_BAR_SPACING,
+    enableConflation: true,
+    precomputeConflationOnInit: true,
   },
   handleScroll: {
     mouseWheel: true,
@@ -847,6 +850,9 @@ let algorithmController = null;
 let symbolLoadController = null;
 let symbolLoadRevision = 0;
 let indicatorCalculationOwner = null;
+let realtimeChart = null;
+let realtimeUpdateOwner = null;
+let realtimePublicationRevision = 0;
 function selectWorkspaceNavigation(activeId) {
   $$(".leftbar .nav-item").forEach((button) => {
     const active = button.id === activeId;
@@ -1017,6 +1023,9 @@ async function importChartFolder() {
   });
   if (!response.ok) throw new Error((await response.json().catch(() => ({}))).error || "Unable to import the selected chart folder.");
   const result = await response.json();
+  const pendingUpdate = realtimeUpdateOwner;
+  realtimeChart?.stop();
+  if (pendingUpdate) await pendingUpdate.finished;
   await refreshSymbolInventory();
   const imported = state.inventory.find((item) => item.id === result.id);
   if (!imported) throw new Error("The chart was imported but is missing from the symbol list.");
@@ -1094,6 +1103,12 @@ $(".indicator-body").innerHTML = `
         ["mblVisible", "MBL line"], ["mblLabelVisible", "MBL label"],
       ].map(([id, title]) => `<label class="module-row"><span><b>${title}</b></span><input id="${id}" class="module-toggle-input" type="checkbox" aria-label="Toggle ${title}" checked><span class="module-toggle" aria-hidden="true"></span></label>`).join("")}
     </section>
+    <section class="tv-section"><h3>Setup annotations</h3>
+      ${[
+        ["setupTVisible", "T labels"], ["setupFVisible", "F labels"],
+        ["setupPositionsVisible", "Positions"],
+      ].map(([id, title]) => `<label class="module-row"><span><b>${title}</b></span><input id="${id}" class="module-toggle-input" type="checkbox" aria-label="Toggle ${title}" checked><span class="module-toggle" aria-hidden="true"></span></label>`).join("")}
+    </section>
   </div>
   <div class="indicator-tab" data-indicator-page="style">
     <section class="style-group" data-style-group="foundation"><button type="button" class="style-group-header" aria-expanded="true"><span><strong>Foundation</strong><small>Reaction • Blue Line • A</small></span><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div class="style-group-body">
@@ -1124,6 +1139,16 @@ $(".indicator-body").innerHTML = `
       ${styleModule("order-stop", "Order stop lines", [appearancePopup("order-stop", "Order stop line appearance", "Color, width and dotted style", [swatchRow([["orderStopColor", "Line color", "color", "#ef4444"]]), widthRow("orderStopWidth", "Line width", 1), lineStyleRow("orderStopLineStyle", "dot")], ["orderStopColor", "orderStopWidth", "orderStopLineStyle"]), `<div class="setting-row"><label>Unbroken stop cap</label><input id="orderStopCap" type="number" min="1" max="200" value="200"></div>`])}
     </div>
     </section>
+    <section class="style-group" data-style-group="setups"><button type="button" class="style-group-header" aria-expanded="true"><span><strong>Setup annotations</strong><small>T • F</small></span><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div class="style-group-body">
+      ${["T", "F"].map((status) => {
+        const prefix = `setup${status}`;
+        return styleModule(`setup-${status.toLowerCase()}`, `${status} labels`, [
+          appearancePopup(`setup-${status.toLowerCase()}`, `${status} label color`, "Label color", [swatchRow([[`${prefix}Color`, "Label color", "color", SETUP_VISUAL_DEFAULTS[`${prefix}Color`]]])], [`${prefix}Color`]),
+          fontSizeRow(`${prefix}Size`, "Font size", SETUP_VISUAL_DEFAULTS[`${prefix}Size`]),
+          rangeRow(`${prefix}Gap`, "Distance from object label", 0, 64, SETUP_VISUAL_DEFAULTS[`${prefix}Gap`], "px"),
+        ], [`${prefix}Color`, `${prefix}Size`, `${prefix}Gap`]);
+      }).join("")}
+    </div></section>
   </div>
   <div class="indicator-tab" data-indicator-page="info">
     <section class="tv-section">
@@ -1400,6 +1425,7 @@ function activateIndicatorTab(target, moveFocus = false) {
     page.classList.toggle('active', active);
     page.hidden = !active;
   });
+  if (target === "info" && state.indicator.infoDetailsDirty) renderIndicatorInfo();
 }
 $('.indicator-tabs').setAttribute('role', 'tablist');
 $('.indicator-tabs').setAttribute('aria-label', 'Indicator settings');
@@ -1458,30 +1484,6 @@ chart.applyOptions({
   timeScale: { tickMarkFormatter: (time) => formatChartAxisTime(time) },
 });
 
-function aggregate(rows, seconds) {
-  if (seconds === 1) return rows;
-  const out = [];
-  let bar = null;
-  for (const r of rows) {
-    const time = Math.floor(Number(r.time) / seconds) * seconds;
-    if (!bar || bar.time !== time) {
-      if (bar) out.push(bar);
-      bar = {
-        time,
-        open: +r.open,
-        high: +r.high,
-        low: +r.low,
-        close: +r.close,
-      };
-    } else {
-      bar.high = Math.max(bar.high, +r.high);
-      bar.low = Math.min(bar.low, +r.low);
-      bar.close = +r.close;
-    }
-  }
-  if (bar) out.push(bar);
-  return out;
-}
 const CHART_LOD_TARGET_CANDLES = 4_000;
 const CHART_LOD_BARS_PER_PIXEL = 2;
 const CHART_LOD_STABLE_DATA_LIMIT = 100_000;
@@ -1494,17 +1496,29 @@ function viewportIndexRange(range) {
   const end = Math.min(state.data.length, lowerBoundTime(state.data, Math.max(from, to)) + 1);
   return { start, end: Math.max(start + 1, end) };
 }
-function renderChartViewport(range, { preserveRange = false, force = false } = {}) {
+function renderChartViewport(range, { preserveRange = false, force = false, followAppended = 0 } = {}) {
   const visible = viewportIndexRange(range);
   if (!visible) return;
+  const previous = state.chartRender;
+  const scale = chart.timeScale();
+  const logical = preserveRange && previous ? scale.getVisibleLogicalRange() : null;
+  const shift = previous ? followAppended / previous.stride : 0;
+  if (followAppended) {
+    visible.start = Math.min(state.data.length - 1, visible.start + followAppended);
+    visible.end = Math.min(state.data.length, visible.end + followAppended);
+  }
+  const restoreViewport = () => {
+    if (!logical) return;
+    const shifted = { from: logical.from + shift, to: logical.to + shift };
+    scale.setVisibleLogicalRange(remapCandleLogicalRange(shifted, previous, state.chartRender));
+  };
   if (state.data.length <= CHART_LOD_STABLE_DATA_LIMIT) {
     if (!force && state.chartRender?.fullData) return;
     series.setData(state.data);
     state.chartViewRevision += 1;
     state.chartDensityMode = "exact";
     state.chartRender = { start: 0, end: state.data.length, stride: 1, displayCount: state.data.length, display: state.data, fullData: true, revision: state.chartViewRevision };
-    if (preserveRange && range?.from != null && range?.to != null)
-      chart.timeScale().setVisibleRange({ from: range.from, to: range.to });
+    restoreViewport();
     return;
   }
   const visibleCount = Math.max(1, visible.end - visible.start);
@@ -1523,9 +1537,8 @@ function renderChartViewport(range, { preserveRange = false, force = false } = {
     visibleCount,
     Math.ceil((CHART_LOD_TARGET_CANDLES * stride) / 2),
   );
-  const start = Math.max(0, visible.start - buffer);
+  const start = Math.max(0, Math.floor((visible.start - buffer) / stride) * stride);
   const end = Math.min(state.data.length, visible.end + buffer);
-  const previous = state.chartRender;
   const margin = previous ? Math.floor((previous.end - previous.start) * 0.15) : 0;
   const coverage = previous &&
     visible.start >= previous.start && visible.end <= previous.end &&
@@ -1537,8 +1550,7 @@ function renderChartViewport(range, { preserveRange = false, force = false } = {
   state.chartViewRevision += 1;
   state.chartDensityMode = densityMode;
   state.chartRender = { start, end, stride, displayCount: display.length, display, densityMode, revision: state.chartViewRevision };
-  if (preserveRange && range?.from != null && range?.to != null)
-    chart.timeScale().setVisibleRange({ from: range.from, to: range.to });
+  restoreViewport();
 }
 let chartViewportFrame = 0,
   chartViewportTimer = 0;
@@ -1684,10 +1696,12 @@ async function loadInventory() {
 }
 let inventoryRefreshPromise = null;
 function inventorySignature(items) {
-  return items.map((item) => `${item.id}|${item.chartId || ""}|${item.bytes}|${item.savedAt}`).join("\n");
+  return items.map((item) => `${item.id}|${item.chartId || ""}|${item.bytes}|${item.savedAt}|${item.metadata?.dataSha256 || ""}`).join("\n");
 }
 function refreshSymbolInventory({ initial = false } = {}) {
   if (inventoryRefreshPromise) return inventoryRefreshPromise;
+  if (realtimeUpdateOwner) return Promise.resolve(false);
+  const publication = realtimePublicationRevision;
   const refresh = (async () => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
@@ -1703,6 +1717,7 @@ function refreshSymbolInventory({ initial = false } = {}) {
       throw error;
     }
     const nextInventory = await r.json();
+    if (realtimeUpdateOwner || publication !== realtimePublicationRevision) return false;
     const previousFile = state.file;
     const changed = inventorySignature(state.inventory) !== inventorySignature(nextInventory);
     state.inventory = nextInventory;
@@ -1713,6 +1728,7 @@ function refreshSymbolInventory({ initial = false } = {}) {
       if (!active) {
         state.file = null;
         state.raw = [];
+        if (previousFile) realtimeChart?.contextChanged();
         renderChartIdentity(null);
       } else if (state.file?.id !== active.id) {
         void loadFile(active);
@@ -1725,6 +1741,7 @@ function refreshSymbolInventory({ initial = false } = {}) {
           || Number(previousFile.from) !== Number(active.from)
           || Number(previousFile.to) !== Number(active.to)
           || Number(previousFile.savedAt) !== Number(active.savedAt)
+          || previousFile.metadata?.dataSha256 !== active.metadata?.dataSha256
         );
         if (dataChanged && !symbolLoadController) void loadFile(active);
       }
@@ -1745,6 +1762,7 @@ async function loadFile(item) {
   symbolLoadController?.abort();
   const controller = new AbortController();
   symbolLoadController = controller;
+  realtimeChart?.contextChanged();
   const loadRevision = ++symbolLoadRevision;
   const started = performance.now();
   log.chart.info("SYMBOL_LOAD_STARTED", { id: item.id, symbol: item.symbol });
@@ -1813,6 +1831,7 @@ async function loadFile(item) {
     if (loadRevision === symbolLoadRevision) {
       symbolLoadController = null;
       $("#loading").classList.add("hidden");
+      realtimeChart?.contextChanged();
     }
   }
 }
@@ -2340,6 +2359,7 @@ function saveIndicatorObjectOverrides() {
       text: item.text,
       size: item.size,
       weight: item.weight,
+      position: item.type === "indicator-position" ? item.position : undefined,
       customized: Boolean(item.customized),
       hidden: Boolean(item.hidden),
       locked: item.locked !== false,
@@ -2507,18 +2527,39 @@ if (typeof ResizeObserver === "function") {
   window.addEventListener("resize", resize);
 }
 const viewAnchorCache = createViewAnchorCache();
+const DRAWING_TIME_LOOKUP_LIMIT = 32_768;
+const drawingTimeLookup = new Map();
+let drawingTimeLookupSource = null;
+let overlayFrame = null;
+
+function drawingRawIndex(time) {
+  if (drawingTimeLookupSource !== state.data) {
+    drawingTimeLookupSource = state.data;
+    drawingTimeLookup.clear();
+  }
+  const cached = drawingTimeLookup.get(time);
+  if (cached !== undefined) return cached;
+  const index = rawIndexAtTime(state.data, time);
+  if (drawingTimeLookup.size < DRAWING_TIME_LOOKUP_LIMIT) drawingTimeLookup.set(time, index);
+  return index;
+}
+
 function chartViewAnchors() {
-  const display = state.chartRender?.display;
-  if (!display?.length || state.chartRender?.fullData) return [];
-  return viewAnchorCache.get(state.chartViewRevision, display, () =>
-    display.flatMap((row) => {
-      const coordinate = chart.timeScale().timeToCoordinate(Number(row.time));
-      if (!Number.isFinite(coordinate)) return [];
-      return [{ rawIndex: lowerBoundTime(state.data, Number(row.time)), coordinate }];
-    }),
-  );
+  const render = state.chartRender;
+  if (!render?.displayCount) return [];
+  return viewAnchorCache.get(state.chartViewRevision, render.display, () => {
+    // Display rows start at evenly spaced raw indices, even across market
+    // gaps. Two endpoints describe the entire linear logical time scale.
+    const scale = chart.timeScale();
+    const last = render.displayCount - 1;
+    return (last ? [0, last] : [0]).flatMap((index) => {
+      const coordinate = scale.logicalToCoordinate(index);
+      return Number.isFinite(coordinate) ? [{ rawIndex: render.start + index * render.stride, coordinate }] : [];
+    });
+  });
 }
 function canonicalTimeAtCoordinate(x) {
+  if (state.chartRender?.fullData) return chart.timeScale().coordinateToTime(x);
   const anchors = chartViewAnchors();
   const first = anchors[0]?.coordinate;
   const last = anchors.at(-1)?.coordinate;
@@ -2528,12 +2569,46 @@ function canonicalTimeAtCoordinate(x) {
   }
   return chart.timeScale().coordinateToTime(x);
 }
-function canonicalCoordinateAtTime(time) {
-  const direct = chart.timeScale().timeToCoordinate(Number(time));
-  if (direct != null) return direct;
-  return rawTimeToCoordinate(state.data, Number(time), chartViewAnchors());
+function coordinateAtCandleTime(time) {
+  const index = drawingRawIndex(time);
+  // Keep the exact-series contract for manual points between chart candles.
+  if (state.chartRender?.fullData && !Number.isInteger(index)) return null;
+  return rawIndexToCoordinate(index, overlayFrame?.anchors ?? chartViewAnchors());
 }
-function point(e) {
+function measureRawCandleSpacing() {
+  const scale = chart.timeScale();
+  const left = scale.logicalToCoordinate(0);
+  const right = scale.logicalToCoordinate(1);
+  return left == null || right == null ? 0 : (right - left) / (state.chartRender?.stride || 1);
+}
+function rawCandleSpacing() {
+  return overlayFrame?.spacing ?? measureRawCandleSpacing();
+}
+function overlayPriceCoordinate(price) {
+  const cache = overlayFrame?.prices;
+  if (!cache) return series.priceToCoordinate(price);
+  const cached = cache.get(price);
+  if (cached !== undefined) return cached;
+  const value = series.priceToCoordinate(price);
+  cache.set(price, value);
+  return value;
+}
+function canonicalCoordinateAtTime(time) {
+  const target = Number(time);
+  const first = state.data[0], last = state.data.at(-1);
+  const edge = target < Number(first?.time) ? first : target > Number(last?.time) ? last : null;
+  if (!edge) return coordinateAtCandleTime(target);
+  const x = coordinateAtCandleTime(Number(edge.time));
+  return x == null ? null : x + ((target - Number(edge.time)) / state.tf) * rawCandleSpacing();
+}
+function positionCoordinateAtTime(time) {
+  return positionTimeToCoordinate({
+    candles: state.data, time, timeframe: state.tf,
+    timeToCoordinate: canonicalCoordinateAtTime,
+    barSpacing: rawCandleSpacing(),
+  });
+}
+function point(e, positionCoordinates = false) {
   // Coordinate conversion must use the actual Lightweight Charts surface.
   // The shell may have additional chrome or change its geometry when panels
   // are pinned, while drawings are anchored exclusively to the chart canvas.
@@ -2558,12 +2633,12 @@ function point(e) {
     if (result.time == null) {
       const first = state.data[0];
       const last = state.data.at(-1);
-      const firstX = chart.timeScale().timeToCoordinate(Number(first.time));
-      const lastX = chart.timeScale().timeToCoordinate(Number(last.time));
-      const spacing = Math.max(1, Number(chart.timeScale().options().barSpacing) || 6);
-      if (Number.isFinite(lastX) && x > lastX)
+      const firstX = coordinateAtCandleTime(Number(first.time));
+      const lastX = coordinateAtCandleTime(Number(last.time));
+      const spacing = rawCandleSpacing();
+      if (spacing > 0 && Number.isFinite(lastX) && x > lastX)
         result.time = Number(last.time) + Math.round((x - lastX) / spacing) * state.tf;
-      else if (Number.isFinite(firstX) && x < firstX)
+      else if (spacing > 0 && Number.isFinite(firstX) && x < firstX)
         result.time = Math.max(1, Number(first.time) + Math.round((x - firstX) / spacing) * state.tf);
       else result.time = candle?.time ?? null;
     }
@@ -2576,6 +2651,19 @@ function point(e) {
       if (Number.isFinite(high) && Number.isFinite(low)) {
         result.price = high - (Math.max(0, Math.min(y, canvas.clientHeight)) / Math.max(1, canvas.clientHeight)) * (high - low || 1);
       }
+    }
+  }
+  if (state.data.length && (positionCoordinates || isPosition(state.draft) || isPosition({ type: state.tool }) ||
+      (state.interaction?.id && isPosition(selected())) ||
+      (state.interaction?.indicatorId && selectedIndicatorObject()?.type === "indicator-position"))) {
+    const firstTime = Number(state.data[0].time), lastTime = Number(state.data.at(-1).time);
+    const firstX = positionCoordinateAtTime(firstTime), lastX = positionCoordinateAtTime(lastTime);
+    if (Number.isFinite(lastX) && x > lastX) {
+      const spacing = positionCoordinateAtTime(lastTime + state.tf) - lastX;
+      if (spacing > 0) result.time = lastTime + Math.round((x - lastX) / spacing) * state.tf;
+    } else if (Number.isFinite(firstX) && x < firstX) {
+      const spacing = firstX - positionCoordinateAtTime(firstTime - state.tf);
+      if (spacing > 0) result.time = Math.max(1, firstTime + Math.round((x - firstX) / spacing) * state.tf);
     }
   }
   if (state.magnet && result.time != null && state.data.length) {
@@ -2612,32 +2700,21 @@ function xy(p) {
   // Drawings are anchored exclusively to market time and price.  Logical
   // indexes are viewport-relative and caused a completed drawing to shift
   // after the chart recalculated its scale or aggregation.
-  let x = canonicalCoordinateAtTime(time);
-  if (x == null && state.data.length) {
-    const first = state.data[0];
-    const last = state.data.at(-1);
-    const firstX = chart.timeScale().timeToCoordinate(Number(first.time));
-    const lastX = chart.timeScale().timeToCoordinate(Number(last.time));
-    const spacing = Math.max(1, Number(chart.timeScale().options().barSpacing) || 6);
-    if (Number.isFinite(lastX) && time > Number(last.time))
-      x = lastX + ((time - Number(last.time)) / state.tf) * spacing;
-    else if (Number.isFinite(firstX) && time < Number(first.time))
-      x = firstX + ((time - Number(first.time)) / state.tf) * spacing;
-  }
   return {
-    x,
-    y: series.priceToCoordinate(Number(p.price)),
+    x: canonicalCoordinateAtTime(time),
+    y: overlayPriceCoordinate(Number(p.price)),
   };
 }
 function rgba(hex, a) {
   const n = parseInt(hex.slice(1), 16);
   return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`;
 }
+const dashPatterns = { dash: [9, 6], dot: [1, 4], solid: [] };
 function styleOf(d) {
   return d.style || state.defaults;
 }
 function dash(s) {
-  return s === "dash" ? [9, 6] : s === "dot" ? [1, 4] : [];
+  return s === "dash" || s === "dot" ? dashPatterns[s] : dashPatterns.solid;
 }
 function valid(q) {
   return q && q.x != null && q.y != null;
@@ -2652,12 +2729,130 @@ function handle(q) {
   ctx.setLineDash([]);
   ctx.stroke();
 }
-function drawOne(d, selected = false) {
+function isPosition(d) {
+  return d?.type === "long" || d?.type === "short";
+}
+function indicatorPositionDrawing(item) {
+  return setupPositionDrawing(item, state.data, state.tf);
+}
+const setupPresentationCache = new WeakMap();
+function setupObjectsForGroup(group,direction) {
+  if (!setupPresentationCache.has(group))
+    setupPresentationCache.set(group,setupVisualObjects(group,direction));
+  return setupPresentationCache.get(group);
+}
+function positionHandleAt(drawing, p) {
+  return positionGeometry(drawing)?.handles
+    .map(q => ({...q,distance:Math.hypot(p.x-q.x,p.y-q.y)}))
+    .filter(q => q.distance <= 10).sort((a,b) => a.distance-b.distance)[0];
+}
+function selectedPositionContext() {
+  const object = selectedIndicatorObject();
+  return object?.type === "indicator-position"
+    ? {drawing:indicatorPositionDrawing(object),object} : {drawing:selected(),object:null};
+}
+function applyPositionEdit(context, edited, persist = true) {
+  if (context.object) {
+    context.object.position = {a:{...edited.a},b:{...edited.b},stopPrice:edited.stopPrice};
+    context.object.customized = true;
+    if (persist) saveIndicatorObjectOverrides();
+  } else {
+    Object.assign(context.drawing,edited);
+    if (persist) saveDrawings();
+  }
+  updateToolbar();
+  drawAll();
+}
+function positionGeometry(d) {
+  const levels = calculatePositionLevels(d.type, d.a?.price, d.b?.price, d.stopPrice);
+  if (!levels) return null;
+  const a = { x: positionCoordinateAtTime(d.a.time), y: overlayPriceCoordinate(levels.entry) };
+  const rightTime = positionRightTime(d, state.data, state.tf);
+  const end = { x: positionCoordinateAtTime(rightTime), y: overlayPriceCoordinate(levels.target) };
+  const stop = overlayPriceCoordinate(levels.stop);
+  if (!valid(a) || !valid(end) || !Number.isFinite(stop)) return null;
+  const handles = [
+    { x: a.x, y: end.y, level: "target" },
+    { x: end.x, y: end.y, level: "target" },
+    { x: a.x, y: stop, level: "stop" },
+    { x: end.x, y: stop, level: "stop" },
+    { x: a.x, y: a.y, level: "start" },
+    { x: end.x, y: a.y, level: "end" },
+  ];
+  return { left: a.x, right: end.x, entry: a.y, target: end.y, stop, levels, handles };
+}
+function drawPosition(d, selected, geometry = positionGeometry(d)) {
+  if (!geometry) return;
+  const { left, right, entry, target, stop, levels, handles } = geometry;
+  const width = right - left;
   const s = styleOf(d);
+  const label = `R:R ${Number(levels.riskReward.toFixed(2))}`;
+  const padding = Math.max(8, s.width, label.length * 10);
+  if (overlayFrame && (Math.max(left, right) < -padding || Math.min(left, right) > overlayFrame.width + padding)) return;
+  ctx.save();
+  ctx.fillStyle = "rgba(8, 153, 129, 0.10)";
+  ctx.fillRect(left, Math.min(entry, target), width, Math.abs(target - entry));
+  ctx.fillStyle = "rgba(242, 54, 69, 0.10)";
+  ctx.fillRect(left, Math.min(entry, stop), width, Math.abs(stop - entry));
+  ctx.lineWidth = s.width;
+  ctx.strokeStyle = "#089981";
+  ctx.strokeRect(left, Math.min(entry, target), width, Math.abs(target - entry));
+  ctx.strokeStyle = "#f23645";
+  ctx.strokeRect(left, Math.min(entry, stop), width, Math.abs(stop - entry));
+  ctx.strokeStyle = s.stroke;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath();
+  ctx.moveTo(left, entry);
+  ctx.lineTo(right, entry);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font = '500 10px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+  const labelWidth = ctx.measureText(label).width + 4;
+  const labelX = (left + right - labelWidth) / 2;
+  const labelY = (target + stop) / 2 - 5;
+  ctx.fillStyle = "rgba(255, 255, 255, 0.96)";
+  ctx.fillRect(labelX, labelY, labelWidth, 10);
+  ctx.strokeStyle = s.stroke;
+  ctx.lineWidth = 1;
+  ctx.strokeRect(labelX, labelY, labelWidth, 10);
+  ctx.fillStyle = "#171a21";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(label, (left + right) / 2, labelY + 5);
+  ctx.restore();
+  if (selected && !d.locked) handles.forEach(handle);
+}
+const fibLevels = [0, 0.618, 1];
+function fibLabel(d, level) {
+  const price = Number(d.b.price) + (Number(d.a.price) - Number(d.b.price)) * level;
+  return `${level} (${fibPriceFormat.format(price)})`;
+}
+function measureLabel(d) {
+  const stats = calculateMeasureStats(d.a, d.b, state.tf);
+  const sign = stats.priceDelta >= 0 ? "+" : "";
+  return `${stats.durationLabel} • ${stats.bars} bars • ${sign}${stats.priceDelta.toFixed(3)} (${stats.percentage.toFixed(2)}%)`;
+}
+function drawOne(d, selected, width, height) {
+  const s = styleOf(d);
+  if (isPosition(d)) {
+    drawPosition(d, selected);
+    return;
+  }
   // Freehand drawings can straddle the visible range.  Their legacy a/b
   // endpoints are metadata only; rejecting either endpoint used to hide the
   // entire stroke while it was being moved.
   if (["brush", "path"].includes(d.type)) {
+    const pad = Math.max(7, s.width * 5); // Include handles and canvas miter joins.
+    let earliest = d.preview ? Number(d.preview.time) : Infinity;
+    let latest = d.preview ? Number(d.preview.time) : -Infinity;
+    for (const point of d.points || []) {
+      earliest = Math.min(earliest, Number(point?.time));
+      latest = Math.max(latest, Number(point?.time));
+    }
+    if (earliest <= latest) {
+      const left = canonicalCoordinateAtTime(earliest), right = canonicalCoordinateAtTime(latest);
+      if ((right != null && right < -pad) || (left != null && left > width + pad)) return;
+    }
     const pts = (d.points || []).map(xy).filter(valid);
     if (d.type === "path" && d.preview) {
       const preview = xy(d.preview);
@@ -2670,7 +2865,7 @@ function drawOne(d, selected = false) {
     ctx.setLineDash(dash(s.style));
     ctx.beginPath();
     ctx.moveTo(pts[0].x, pts[0].y);
-    pts.slice(1).forEach((q) => ctx.lineTo(q.x, q.y));
+    for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
     ctx.stroke();
     ctx.restore();
     if (selected && !d.locked && d.type === "path") pts.forEach(handle);
@@ -2679,6 +2874,21 @@ function drawOne(d, selected = false) {
   const a = xy(d.a),
     b = xy(d.b || d.a);
   if (!valid(a) || !valid(b)) return;
+  const pad = Math.max(10, s.width * 5 + 10);
+  const leftAnchor = Math.min(a.x, b.x), rightAnchor = Math.max(a.x, b.x);
+  const entirelyLeft = rightAnchor < -pad, entirelyRight = leftAnchor > width + pad;
+  let measurement;
+  if (entirelyLeft || entirelyRight) {
+    if (["line", "arrow", "rect", "circle", "channel"].includes(d.type)) return;
+    // Leave room for labels that extend past the object's time anchors.
+    if (d.type === "fib" && (entirelyRight ||
+        rightAnchor + 7 + Math.max(...fibLevels.map((level) => fibLabel(d, level).length)) * 11 < -pad)) return;
+    if (d.type === "measure") {
+      measurement = measureLabel(d);
+      const labelPadding = measurement.length * 6 + 9;
+      if (rightAnchor < -labelPadding - pad || leftAnchor > width + labelPadding + pad) return;
+    }
+  }
   ctx.save();
   ctx.strokeStyle = s.stroke;
   ctx.fillStyle = rgba(s.fill, s.opacity);
@@ -2687,51 +2897,13 @@ function drawOne(d, selected = false) {
   ctx.beginPath();
   if (d.type === "hline") {
     ctx.moveTo(0, a.y);
-    ctx.lineTo(canvas.clientWidth, a.y);
+    ctx.lineTo(width, a.y);
   } else if (d.type === "hray") {
     ctx.moveTo(a.x, a.y);
-    ctx.lineTo(canvas.clientWidth, a.y);
+    ctx.lineTo(width, a.y);
   } else if (d.type === "vline") {
     ctx.moveTo(a.x, 0);
-    ctx.lineTo(a.x, canvas.clientHeight);
-  } else if (["long", "short"].includes(d.type)) {
-    const left = Math.min(a.x, b.x);
-    const right = Math.max(a.x + 48, b.x);
-    const entry = a.y;
-    const levels = calculatePositionLevels(d.type, d.a.price, d.b?.price);
-    const target = Number.isFinite(levels?.target) ? series.priceToCoordinate(levels.target) : b.y;
-    const stop = Number.isFinite(levels?.stop) ? series.priceToCoordinate(levels.stop) : entry + (d.type === "long" ? Math.abs(b.y - entry) : -Math.abs(b.y - entry));
-    const targetTop = Math.min(entry, target);
-    const stopTop = Math.min(entry, stop);
-    const targetColor = d.type === "long" ? "rgba(8, 153, 129, .18)" : "rgba(242, 54, 69, .18)";
-    const stopColor = d.type === "long" ? "rgba(242, 54, 69, .16)" : "rgba(8, 153, 129, .16)";
-    ctx.fillStyle = targetColor;
-    ctx.fillRect(left, targetTop, right - left, Math.abs(target - entry));
-    ctx.fillStyle = stopColor;
-    ctx.fillRect(left, stopTop, right - left, Math.abs(stop - entry));
-    ctx.strokeStyle = s.stroke;
-    ctx.setLineDash([4, 3]);
-    ctx.moveTo(left, entry);
-    ctx.lineTo(right, entry);
-    ctx.setLineDash([]);
-    ctx.rect(left, targetTop, right - left, Math.abs(target - entry));
-    ctx.rect(left, stopTop, right - left, Math.abs(stop - entry));
-    ctx.moveTo(left, target);
-    ctx.lineTo(right, target);
-    ctx.moveTo(left, stop);
-    ctx.lineTo(right, stop);
-    ctx.font = '600 10px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-    ctx.textAlign = "left";
-    ctx.textBaseline = "middle";
-    const rewardLabel = levels ? `TP ${levels.target.toFixed(4)}` : "TP";
-    const stopLabel = levels ? `SL ${levels.stop.toFixed(4)}` : "SL";
-    const rrLabel = levels ? `R:R ${levels.riskReward.toFixed(2)}` : "R:R";
-    ctx.fillStyle = d.type === "long" ? "#087f6b" : "#b42332";
-    ctx.fillText(rewardLabel, right + 6, target);
-    ctx.fillStyle = d.type === "long" ? "#b42332" : "#087f6b";
-    ctx.fillText(stopLabel, right + 6, stop);
-    ctx.fillStyle = s.stroke;
-    ctx.fillText(rrLabel, right + 6, entry);
+    ctx.lineTo(a.x, height);
   } else if (d.type === "rect") {
     ctx.rect(a.x, a.y, b.x - a.x, b.y - a.y);
     ctx.fill();
@@ -2747,16 +2919,11 @@ function drawOne(d, selected = false) {
     );
     ctx.fill();
   } else if (d.type === "fib") {
-    const left = Math.min(a.x, b.x),
-      right = Math.max(a.x, b.x),
-      levels = [0, 0.618, 1];
+    const left = leftAnchor, right = rightAnchor;
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
-    for (const level of levels) {
+    for (const level of fibLevels) {
       const y = b.y + (a.y - b.y) * level,
-        price =
-          Number(d.b.price) +
-          (Number(d.a.price) - Number(d.b.price)) * level,
         highlight = level === 0.618;
       ctx.beginPath();
       ctx.moveTo(left, y);
@@ -2767,11 +2934,7 @@ function drawOne(d, selected = false) {
       ctx.stroke();
       ctx.fillStyle = highlight ? "#ff7a3d" : "#b6bcc6";
       ctx.font = `${highlight ? 700 : 500} 11px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
-      ctx.fillText(
-        `${level} (${price.toLocaleString("en-US", { minimumFractionDigits: 4, maximumFractionDigits: 4 })})`,
-        right + 7,
-        y,
-      );
+      ctx.fillText(fibLabel(d, level), right + 7, y);
     }
     ctx.beginPath();
   } else if (d.type === "channel") {
@@ -2792,8 +2955,7 @@ function drawOne(d, selected = false) {
     ctx.rect(left,top,width,height); ctx.fill();
     ctx.moveTo(left,(a.y+b.y)/2); ctx.lineTo(left+width,(a.y+b.y)/2);
     ctx.moveTo((a.x+b.x)/2,top); ctx.lineTo((a.x+b.x)/2,top+height);
-    const stats = calculateMeasureStats(d.a, d.b, state.tf);
-    const label=`${stats.durationLabel} • ${stats.bars} bars • ${stats.priceDelta>=0?'+':''}${stats.priceDelta.toFixed(3)} (${stats.percentage.toFixed(2)}%)`;
+    const label = measurement ?? measureLabel(d);
     ctx.font='650 12px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
     const labelWidth=ctx.measureText(label).width+18, labelX=left+(width-labelWidth)/2, labelY=top+height+9;
     ctx.fillStyle="#eaf1ff"; ctx.fillRect(labelX,labelY,labelWidth,30);
@@ -2805,10 +2967,10 @@ function drawOne(d, selected = false) {
     ctx.fillText(d.text, a.x, a.y);
   } else {
     ctx.moveTo(a.x, a.y);
-    const ex = d.type === "ray" ? canvas.clientWidth : b.x,
+    const ex = d.type === "ray" ? width : b.x,
       ey =
         d.type === "ray"
-          ? a.y + ((canvas.clientWidth - a.x) * (b.y - a.y)) / (b.x - a.x || 1)
+          ? a.y + ((width - a.x) * (b.y - a.y)) / (b.x - a.x || 1)
           : b.y;
     ctx.lineTo(ex, ey);
     if (d.type === "arrow") {
@@ -2821,14 +2983,14 @@ function drawOne(d, selected = false) {
   ctx.restore();
   if (d.type === "vline") {
     const label = formatTehran(d.a.time, false),
-      labelY = canvas.clientHeight - 21;
+      labelY = height - 21;
     ctx.save();
     ctx.font =
       '500 10px "SF Mono", Consolas, ui-monospace, monospace';
     const labelWidth = ctx.measureText(label).width + 12,
       labelX = Math.max(
         2,
-        Math.min(canvas.clientWidth - labelWidth - 2, a.x - labelWidth / 2),
+        Math.min(width - labelWidth - 2, a.x - labelWidth / 2),
       );
     ctx.fillStyle = s.stroke;
     ctx.fillRect(labelX, labelY, labelWidth, 19);
@@ -2847,10 +3009,6 @@ function drawOne(d, selected = false) {
 }
 function indicatorObject(id) {
   return state.indicator.objectMap.get(id);
-}
-function indicatorObjectVisible(id) {
-  const item = indicatorObject(id);
-  return !item || !item.hidden;
 }
 function removeInvalidIndicatorCalculations(payload) {
   for (const group of Object.values(payload?.directions || {})) {
@@ -2878,7 +3036,11 @@ function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
   const add = (item) => {
     const old = previous.get(item.id);
     const stored = storedOverrides[item.id];
-    const source = old?.customized || old?.hidden || old?.locked === false ? old : stored;
+    // A provisional result may shift array positions. Carry an override only
+    // when the same object still occupies that position.
+    const sameObject = old?.type === item.type && old?.time === item.time;
+    const source = sameObject && (old.customized || old.hidden || old.locked === false)
+      ? old : (!old || sameObject ? stored : null);
     const preserved = source ? {
       offsetTime: source.offsetTime,
       offsetPrice: source.offsetPrice,
@@ -2890,6 +3052,7 @@ function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
       text: source.text,
       size: source.size,
       weight: source.weight,
+      position: item.type === "indicator-position" ? source.position : undefined,
       customized: Boolean(source.customized || source.offsetTime || source.offsetPrice),
       hidden: Boolean(source.hidden),
       locked: source.locked == null ? true : Boolean(source.locked),
@@ -2900,6 +3063,7 @@ function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
   };
   for (const [direction, group] of Object.entries(state.indicator.results.directions)) {
     primaryVisualObjects(group, direction, state.indicator.settings).forEach(add);
+    setupObjectsForGroup(group, direction).forEach(add);
     const behaviorOrders = [
       ...(group.sZones || []),
       ...(group.eZones || []),
@@ -2952,7 +3116,10 @@ function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
   }
   state.indicator.objects = output;
   state.indicator.objectMap = new Map(output.map((item) => [item.id, item]));
-  state.indicator.selectedObjectId = null;
+  const oldSelected = previous.get(state.indicator.selectedObjectId);
+  const newSelected = state.indicator.objectMap.get(state.indicator.selectedObjectId);
+  if (!oldSelected || !newSelected || oldSelected.time !== newSelected.time || oldSelected.type !== newSelected.type)
+    state.indicator.selectedObjectId = null;
   saveIndicatorObjectOverrides();
   renderObjectTree();
 }
@@ -2962,15 +3129,17 @@ function indicatorOffset(item) {
     price: Number.isFinite(Number(item?.offsetPrice)) ? Number(item.offsetPrice) : 0,
   };
 }
+const noIndicatorOffset = { x: 0, y: 0 };
 function indicatorOffsetPixels(item) {
+  if (!item) return noIndicatorOffset;
   const offset = indicatorOffset(item);
   if ((!offset.time && !offset.price) || !Number.isFinite(Number(item?.time)) || !Number.isFinite(Number(item?.price))) {
-    return { x: 0, y: 0 };
+    return noIndicatorOffset;
   }
   const baseX = indicatorTimeToCoordinate(Number(item.time));
   const nextX = indicatorTimeToCoordinate(Number(item.time) + offset.time);
-  const baseY = series.priceToCoordinate(Number(item.price));
-  const nextY = series.priceToCoordinate(Number(item.price) + offset.price);
+  const baseY = overlayPriceCoordinate(Number(item.price));
+  const nextY = overlayPriceCoordinate(Number(item.price) + offset.price);
   return {
     x: Number.isFinite(baseX) && Number.isFinite(nextX) ? nextX - baseX : 0,
     y: Number.isFinite(baseY) && Number.isFinite(nextY) ? nextY - baseY : 0,
@@ -2999,19 +3168,18 @@ function nearestRangeCandle(clientX) {
   const next = state.data[low], previous = state.data[low - 1];
   return previous && Math.abs(Number(previous.time) - target) <= Math.abs(Number(next.time) - target) ? previous : next;
 }
+const rangeHandleLabels = new WeakMap();
 function syncIndicatorRangeHandles() {
   const root = $("#indicatorRangeHandles");
   if (!root) return;
   const active = chartWorkspaceActive() && state.data.length > 0;
   root.classList.toggle("hidden", !active);
-  root.setAttribute("aria-hidden", String(!active));
+  if (root.getAttribute("aria-hidden") !== String(!active)) root.setAttribute("aria-hidden", String(!active));
   if (!active) return;
   const first = Number(state.data[0].time), last = Number(state.data.at(-1).time);
-  const fallbackFrom = parseTehranInput($("#indicatorFrom")?.value || "") || first;
-  const fallbackTo = parseTehranInput($("#indicatorTo")?.value || "") || last;
   const normalized = normalizeIndicatorRange(
-    Number.isFinite(state.indicatorRange.from) ? state.indicatorRange.from : fallbackFrom,
-    Number.isFinite(state.indicatorRange.to) ? state.indicatorRange.to : fallbackTo,
+    Number.isFinite(state.indicatorRange.from) ? state.indicatorRange.from : parseTehranInput($("#indicatorFrom")?.value || "") || first,
+    Number.isFinite(state.indicatorRange.to) ? state.indicatorRange.to : parseTehranInput($("#indicatorTo")?.value || "") || last,
     state.data,
   );
   if (!normalized) return;
@@ -3019,20 +3187,23 @@ function syncIndicatorRangeHandles() {
   state.indicatorRange.to = normalized.to;
   state.indicatorRange.fromIndex = normalized.fromIndex;
   state.indicatorRange.toIndex = normalized.toIndex;
+  const handleInset = 14;
+  const maxX = Math.max(handleInset, (overlayFrame?.width ?? chartElement.clientWidth) - handleInset);
   for (const side of ["from", "to"]) {
     const time = Number(state.indicatorRange[side]);
     const rawX = canonicalCoordinateAtTime(time);
-    const handleInset = 14;
-    const clampHandleX = (value) => Math.max(handleInset, Math.min(Math.max(handleInset, chartElement.clientWidth - handleInset), value));
-    const calculatedX = Number.isFinite(rawX) ? clampHandleX(rawX) : null;
+    const calculatedX = Number.isFinite(rawX) ? Math.max(handleInset, Math.min(maxX, rawX)) : null;
     // Range grips stay attached to their selected candle time. A cached screen
     // coordinate becomes stale after pan or zoom and detaches the grip.
     const x = calculatedX;
     const handle = $(`#range${side === "from" ? "From" : "To"}Handle`);
     const guide = $(`#range${side === "from" ? "From" : "To"}Guide`);
     if (!Number.isFinite(x) || !handle || !guide) continue;
-    handle.style.left = `${x}px`;
-    guide.style.left = `${x}px`;
+    const left = `${x}px`;
+    if (handle.style.left !== left) handle.style.left = left;
+    if (guide.style.left !== left) guide.style.left = left;
+    if (rangeHandleLabels.get(handle) === time) continue;
+    rangeHandleLabels.set(handle, time);
     const label = `${side.toUpperCase()}  ${formatTehran(time, false)}`;
     handle.querySelector(".range-handle-tip").textContent = label;
     handle.setAttribute("aria-label", label);
@@ -3139,6 +3310,11 @@ function openCutCandlesModal() {
 async function cutCurrentFile(mode) {
   const range = selectedIndicatorRange();
   if (!state.file || !range) return;
+  if (realtimeUpdateOwner) {
+    toast("A real-time update is in progress. Try again when it finishes.", "info");
+    return;
+  }
+  realtimeChart?.stop();
   const button = $("#confirmCutCandles");
   button.disabled = true;
   try {
@@ -3151,7 +3327,7 @@ async function cutCurrentFile(mode) {
     if (!response.ok) throw new Error(result.error || `Cut failed with HTTP ${response.status}.`);
     closeCutCandlesModal();
     await refreshSymbolInventory();
-    let next = state.inventory.find((item) => item.id === result.newId) || state.inventory.find((item) => item.chartId === result.chartId);
+    let next = state.inventory.find((item) => item.id === result.newId);
     if (!next) {
       // A background inventory poll may have completed against the old snapshot
       // while the cut request was writing. Force one authoritative read before
@@ -3210,11 +3386,11 @@ function indicatorTimeToCoordinate(time) {
   const anchor = after || before;
   const anchorX = anchor ? chart.timeScale().timeToCoordinate(Number(anchor.time)) : null;
   if (!Number.isFinite(anchorX)) return null;
-  const spacing = Math.max(1, Number(chart.timeScale().options().barSpacing) || 6);
+  const spacing = rawCandleSpacing();
   const timeframe = Math.max(1, Number(state.tf) || 1);
   return anchorX + ((target - Number(anchor.time)) / timeframe) * spacing;
 }
-function drawIndicator() {
+function drawIndicator(canvasWidth, canvasHeight) {
   state.indicator.hitBoxes = [];
   if (!state.indicator.enabled || !state.indicator.results) return;
   const settings = state.indicator.settings,
@@ -3242,7 +3418,7 @@ function drawIndicator() {
       ? indicatorTimeToCoordinate(group.calculationEndTime) : null;
     if (Number.isFinite(historicalEndX)) {
       ctx.beginPath();
-      ctx.rect(0, 0, Math.max(0, historicalEndX), canvas.clientHeight);
+      ctx.rect(0, 0, Math.max(0, historicalEndX), canvasHeight);
       ctx.clip();
     }
     let count = 0,
@@ -3281,21 +3457,24 @@ function drawIndicator() {
       } else count++;
       lastFirst = reaction.firstIndex;
       const reactionObjectId = `indicator:${direction}:reaction:${reactionIndex + objectOffsets.reactions}`;
-      if (!settings.reactionVisible || !indicatorObjectVisible(reactionObjectId)) continue;
+      if (!settings.reactionVisible) continue;
       const reactionObject = indicatorObject(reactionObjectId);
+      if (reactionObject?.hidden) continue;
       const startTime = bullish
           ? reaction.boxTopSourceTime
           : reaction.boxBottomSourceTime,
         x1 = indicatorTimeToCoordinate(startTime),
-        x2 = indicatorTimeToCoordinate(reaction.breakTime),
-        yTop = series.priceToCoordinate(+reaction.boxTop),
-        yBottom = series.priceToCoordinate(+reaction.boxBottom);
-      if ([x1, x2, yTop, yBottom].some((v) => v == null)) continue;
-      const shifted = offsetIndicatorRect(reactionObject, x1, yTop, x2, yBottom),
-        left = Math.min(shifted.x1, shifted.x2),
-        right = Math.max(shifted.x1, shifted.x2),
-        top = Math.min(shifted.y1, shifted.y2),
-        bottom = Math.max(shifted.y1, shifted.y2);
+        x2 = indicatorTimeToCoordinate(reaction.breakTime);
+      if (x1 == null || x2 == null) continue;
+      const offset = indicatorOffsetPixels(reactionObject);
+      const left = Math.min(x1, x2) + offset.x, right = Math.max(x1, x2) + offset.x;
+      const strokeWidth = reactionObject?.customized ? reactionObject.width : width;
+      const label = settings.numberEnabled ? String(count) : "";
+      const padding = Math.max(9, strokeWidth, label.length * settings.numberSize || 0);
+      if (right < -padding || left > canvasWidth + padding) continue;
+      const yTop = overlayPriceCoordinate(+reaction.boxTop), yBottom = overlayPriceCoordinate(+reaction.boxBottom);
+      if (yTop == null || yBottom == null) continue;
+      const top = Math.min(yTop, yBottom) + offset.y, bottom = Math.max(yTop, yBottom) + offset.y;
       state.indicator.hitBoxes.push({
         objectId: reactionObjectId,
         shape: "rect",
@@ -3312,7 +3491,7 @@ function drawIndicator() {
         reactionObject?.customized ? reactionObject.opacity : opacity,
       );
       ctx.strokeStyle = reactionObject?.customized ? reactionObject.color : border;
-      ctx.lineWidth = reactionObject?.customized ? reactionObject.width : width;
+      ctx.lineWidth = strokeWidth;
       ctx.setLineDash(
         reactionObject?.customized
           ? dash(reactionObject.lineStyle)
@@ -3330,7 +3509,7 @@ function drawIndicator() {
         ctx.textBaseline = bullish ? "top" : "bottom";
         ctx.fillStyle = settings.numberColor;
         ctx.fillText(
-          String(count),
+          label,
           (left + right) / 2,
           bullish ? bottom + settings.numberGap : top - settings.numberGap,
         );
@@ -3691,6 +3870,23 @@ function drawIndicator() {
       offsetRect: offsetIndicatorRect,
       onHit: (hit) => state.indicator.hitBoxes.push(hit),
     });
+    const setupObjects = setupObjectsForGroup(group,direction);
+    drawSetupStatusLabels(ctx,setupObjects,{
+      timeToX:indicatorTimeToCoordinate,priceToY:price=>series.priceToCoordinate(price),
+      objectFor:indicatorObject,offsetPoint:offsetIndicatorPoint,settings,
+      onHit:hit=>state.indicator.hitBoxes.push(hit),
+    });
+    for (const original of setupObjects) {
+      if (original.type !== "indicator-position") continue;
+      const object = indicatorObject(original.id);
+      if (!object || !setupObjectVisible(object, settings)) continue;
+      const drawing = indicatorPositionDrawing(object), geometry = positionGeometry(drawing);
+      if (!geometry) continue;
+      drawPosition(drawing, state.indicator.selectedObjectId === object.id, geometry);
+      state.indicator.hitBoxes.push({objectId:object.id,shape:"rect",area:true,
+        left:geometry.left,right:geometry.right,
+        top:Math.min(geometry.target,geometry.stop),bottom:Math.max(geometry.target,geometry.stop)});
+    }
     if (Number.isFinite(historicalEndX)) {
       state.indicator.hitBoxes.push(...clipHistoricalHitBoxes(
         state.indicator.hitBoxes.splice(firstHitIndex), historicalEndX));
@@ -3699,12 +3895,13 @@ function drawIndicator() {
     drawTrendTransitions(ctx, group, {
       timeToX: indicatorTimeToCoordinate,
       priceToY: (price) => series.priceToCoordinate(price),
-      height: canvas.clientHeight,
+      height: canvasHeight,
     });
   }
 }
 function drawIndicatorSelection() {
   if (!state.indicator.selectedObjectId) return;
+  if (selectedIndicatorObject()?.type === "indicator-position") return;
   const hit = state.indicator.hitBoxes.find(
     (item) => item.objectId === state.indicator.selectedObjectId,
   );
@@ -3733,17 +3930,24 @@ function drawIndicatorSelection() {
   ctx.restore();
 }
 function drawAll() {
+  const width = canvas.clientWidth, height = canvas.clientHeight;
+  overlayFrame = { anchors: chartViewAnchors(), spacing: measureRawCandleSpacing(), prices: new Map(), width };
+  try {
+    drawOverlay(width, height);
+  } finally {
+    overlayFrame = null;
+  }
+}
+function drawOverlay(width, height) {
   syncIndicatorRangeHandles();
-  ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-  drawIndicator();
+  ctx.clearRect(0, 0, width, height);
+  drawIndicator(width, height);
   for (const hitBox of state.indicator.hitBoxes) hitBox.viewRevision = state.chartViewRevision;
   drawIndicatorSelection();
-  state.drawings
-    .filter((d) => !d.hidden)
-    .forEach((d) =>
-      drawOne(d, d.id === state.selected || state.selectedIds.includes(d.id)),
-    );
-  if (state.draft) drawOne(state.draft);
+  const selectedIds = state.selectedIds.length ? new Set(state.selectedIds) : null;
+  for (const d of state.drawings)
+    if (!d.hidden) drawOne(d, d.id === state.selected || selectedIds?.has(d.id), width, height);
+  if (state.draft) drawOne(state.draft, false, width, height);
   if (state.selectionBox) {
     const { a, b } = state.selectionBox;
     ctx.save();
@@ -3773,11 +3977,6 @@ chart
     scheduleDraw();
     scheduleChartViewport();
   });
-chart.timeScale().subscribeVisibleTimeRangeChange(() => {
-  viewAnchorCache.invalidate();
-  scheduleDraw();
-  scheduleChartViewport();
-});
 chart.timeScale().subscribeSizeChange(() => {
   viewAnchorCache.invalidate();
   scheduleDraw();
@@ -3814,6 +4013,12 @@ function hitTest(p) {
   for (let i = state.drawings.length - 1; i >= 0; i--) {
     const d = state.drawings[i];
     if (d.hidden) continue;
+    if (isPosition(d)) {
+      const g = positionGeometry(d);
+      if (g && p.x >= g.left - 9 && p.x <= g.right + 9 &&
+          p.y >= Math.min(g.target, g.stop) - 9 && p.y <= Math.max(g.target, g.stop) + 9) return d;
+      continue;
+    }
     const a = xy(d.a),
       b = xy(d.b || d.a);
     if (!valid(a) || !valid(b)) continue;
@@ -3871,6 +4076,11 @@ function hitTest(p) {
   return null;
 }
 function indicatorHitTest(p) {
+  const active = selectedIndicatorObject();
+  if (active?.type === "indicator-position" && !active.hidden && !active.locked &&
+      state.indicator.hitBoxes.some(hit => hit.objectId === active.id &&
+        hit.viewRevision === state.chartViewRevision && (hit.clipRight == null || p.x <= hit.clipRight)) &&
+      positionHandleAt(indicatorPositionDrawing(active),p)) return active;
   for (let index = state.indicator.hitBoxes.length - 1; index >= 0; index--) {
     const hit = state.indicator.hitBoxes[index],
       item = indicatorObject(hit.objectId);
@@ -3890,7 +4100,7 @@ function indicatorHitTest(p) {
         onBorder =
           Math.abs(p.x - hit.left) <= 7 || Math.abs(p.x - hit.right) <= 7 ||
           Math.abs(p.y - hit.top) <= 7 || Math.abs(p.y - hit.bottom) <= 7;
-      if (withinX && withinY && onBorder) return item;
+      if (withinX && withinY && (onBorder || hit.area)) return item;
     }
   }
   return null;
@@ -3975,6 +4185,15 @@ function updateToolbar() {
   bar.classList.toggle("hidden", !visible);
   if (!visible) return;
   const s = d ? styleOf(d) : null;
+  const positionDrawing = selectedPositionContext().drawing;
+  const position = isPosition(positionDrawing) ? calculatePositionLevels(positionDrawing.type, positionDrawing.a.price, positionDrawing.b?.price, positionDrawing.stopPrice) : null;
+  $("#positionLevels").classList.toggle("hidden", !position);
+  if (position) {
+    $("#positionTarget").value = String(position.target);
+    $("#positionStop").value = String(position.stop);
+    $("#positionBars").value = String(Number(positionWidthBars(state.data, positionDrawing.a.time, positionRightTime(positionDrawing, state.data, state.tf), state.tf).toFixed(4)));
+    $("#positionTarget").disabled = $("#positionStop").disabled = $("#positionBars").disabled = Boolean(positionDrawing.locked);
+  }
   $("#strokeColor").value = s?.stroke || indicatorItem.color || "#2962ff";
   $("#fillColor").value = s?.fill || indicatorItem.fill || indicatorItem.color || "#2962ff";
   syncColorControl($("#strokeColor"));
@@ -3986,7 +4205,7 @@ function updateToolbar() {
     isLine = ["indicator-blue", "indicator-stop"].includes(indicatorItem?.type),
     isBox = ["indicator-reaction", "indicator-order"].includes(indicatorItem?.type);
   const drawingText = d?.type === "text";
-  const drawingHasFill = ["rect", "circle", "long", "short", "channel", "measure"].includes(d?.type);
+  const drawingHasFill = ["rect", "circle", "channel", "measure"].includes(d?.type);
   $("#objectText").classList.toggle("hidden", !isLabel && !drawingText);
   $("#objectText").value = indicatorItem?.text || d?.text || "";
   $("#objectSize").classList.toggle("hidden", !isLabel && !drawingText);
@@ -4087,7 +4306,7 @@ function selectIndicatorObject(id) {
   drawAll();
 }
 function newDrawing(type, p) {
-  return {
+  const drawing = {
     id: createUniqueId(),
     type,
     a: p,
@@ -4096,6 +4315,15 @@ function newDrawing(type, p) {
     style: clone(state.defaults),
     locked: false,
   };
+  if (isPosition(drawing)) updatePositionDraft(drawing, p);
+  return drawing;
+}
+function updatePositionDraft(drawing, p) {
+  if (p.price == null || !Number.isFinite(Number(p.price))) return;
+  const levels = initialPositionLevels(drawing.type, drawing.a.price, p.price);
+  if (!levels) return;
+  drawing.b = { time: positionEndTime(state.data, drawing.a.time, state.tf, 50), price: levels.target };
+  drawing.stopPrice = levels.stop;
 }
 const twoClickTools = new Set([
   "line",
@@ -4156,8 +4384,14 @@ function shiftPoint(p, dt, dp) {
   p.price = price;
   return true;
 }
-function moveDrawing(d, dt, dp) {
+function moveDrawing(d, dt, dp, deltaBars) {
   if (!Number.isFinite(Number(dt)) || !Number.isFinite(Number(dp))) return false;
+  if (isPosition(d)) {
+    const moved = translatePosition(d, state.data, state.tf, deltaBars ?? Number(dt) / state.tf, dp);
+    if (!moved) return false;
+    Object.assign(d, moved);
+    return true;
+  }
   const candidate = clone(d);
   if (["brush", "path"].includes(candidate.type)) {
     if (!(candidate.points || []).every((p) => shiftPoint(p, dt, dp))) return false;
@@ -4174,6 +4408,7 @@ function moveDrawing(d, dt, dp) {
 }
 function selectDrawingTool(tool) {
   if (tool !== "cursor" && !chartWorkspaceActive()) return;
+  if (state.tool !== tool) state.draft = null;
   state.tool = tool;
   $$("[data-tool]").forEach((item) =>
     item.classList.toggle("active", item.dataset.tool === tool),
@@ -4371,7 +4606,8 @@ canvas.onpointerdown = (e) => {
   }
   if (state.draft && twoClickTools.has(state.tool)) {
     p = constrainLinePoint(state.draft.a, p, e.shiftKey);
-    state.draft.b = p;
+    if (isPosition(state.draft)) updatePositionDraft(state.draft, p);
+    else state.draft.b = p;
     finishDraft();
     return;
   }
@@ -4386,7 +4622,8 @@ canvas.onpointermove = (e) => {
     drawAll();
     return;
   }
-  state.draft.b = p;
+  if (isPosition(state.draft)) updatePositionDraft(state.draft, p);
+  else state.draft.b = p;
   if (state.tool === "brush") state.draft.points.push(p);
   drawAll();
 };
@@ -4462,14 +4699,19 @@ shell.addEventListener(
       selectIndicatorObject(indicatorItem.id);
       if (!indicatorItem.locked) {
         checkpoint();
-        state.interaction = { indicatorId: indicatorItem.id, mode: "indicator-move", last: p };
+        if (indicatorItem.type === "indicator-position") {
+          const handle = positionHandleAt(indicatorPositionDrawing(indicatorItem),p);
+          state.interaction = {indicatorId:indicatorItem.id,
+            mode:`setup-${handle?.level || "move"}`,last:point(e,true)};
+        } else state.interaction = { indicatorId: indicatorItem.id, mode: "indicator-move", last: p };
         canvas.classList.add("selection-active");
         shell.setPointerCapture(e.pointerId);
       }
       return;
     }
     if (!d) {
-      selectDrawing(null);
+      if (state.selected || state.indicator.selectedObjectId || state.selectedIds.length || state.treeSelectedIds.length)
+        selectDrawing(null);
       return;
     }
     e.preventDefault();
@@ -4489,14 +4731,19 @@ shell.addEventListener(
       );
       if (vertexIndex >= 0) mode = "path-vertex";
     }
-    if (!isFreeform && Math.hypot(p.x - a.x, p.y - a.y) < 7) mode = "a";
+    if (isPosition(d)) {
+      const corner = positionGeometry(d)?.handles
+        .map((q) => ({ ...q, distance: Math.hypot(p.x - q.x, p.y - q.y) }))
+        .filter((q) => q.distance <= 10).sort((a, b) => a.distance - b.distance)[0];
+      if (corner) mode = `position-${corner.level}`;
+    } else if (!isFreeform && Math.hypot(p.x - a.x, p.y - a.y) < 7) mode = "a";
     else if (
       !isFreeform &&
       Math.hypot(p.x - b.x, p.y - b.y) < 9 &&
       !["hline", "vline", "text"].includes(d.type)
     )
       mode = "b";
-    state.interaction = { id: d.id, mode, last: p, vertexIndex };
+    state.interaction = { id: d.id, mode, last: isPosition(d) ? point(e, true) : p, vertexIndex };
     canvas.classList.add("selection-active");
     shell.setPointerCapture(e.pointerId);
   },
@@ -4513,6 +4760,20 @@ shell.addEventListener(
     if (state.interaction.mode === "select") {
       state.selectionBox.b = p;
       drawAll();
+      return;
+    }
+    if (state.interaction.indicatorId && state.interaction.mode.startsWith("setup-")) {
+      const object = selectedIndicatorObject();
+      if (!object || object.locked || p.time == null || p.price == null) return;
+      const drawing = indicatorPositionDrawing(object), part = state.interaction.mode.slice(6);
+      const edited = ["start","end"].includes(part)
+        ? editPositionTime(drawing,part,p.time,positionRightTime(drawing,state.data,state.tf))
+        : ["target","stop"].includes(part) ? editPositionLevel(drawing,part,p.price)
+          : translatePosition(drawing,state.data,state.tf,
+            positionWidthBars(state.data,state.interaction.last.time,p.time,state.tf),
+            Number(p.price)-Number(state.interaction.last.price));
+      if (edited) applyPositionEdit({drawing,object},edited,false);
+      state.interaction.last = p;
       return;
     }
     if (state.interaction.mode === "indicator-move") {
@@ -4536,7 +4797,12 @@ shell.addEventListener(
     const
       d = selected();
     if (!d || p.time == null || p.price == null) return;
-    if (state.interaction.mode === "path-vertex") {
+    if (isPosition(d) && state.interaction.mode.startsWith("position-")) {
+      const part = state.interaction.mode.slice(9);
+      const edited = ["start", "end"].includes(part)
+        ? editPositionTime(d, part, p.time, positionRightTime(d, state.data, state.tf)) : editPositionLevel(d, part, p.price);
+      if (edited) Object.assign(d, edited);
+    } else if (state.interaction.mode === "path-vertex") {
       const index = state.interaction.vertexIndex;
       if (!Array.isArray(d.points) || index < 0 || index >= d.points.length) return;
       d.points[index] = clone(p);
@@ -4547,9 +4813,11 @@ shell.addEventListener(
         d,
         Number(p.time) - Number(state.interaction.last.time),
         Number(p.price) - Number(state.interaction.last.price),
+        isPosition(d) ? positionWidthBars(state.data, state.interaction.last.time, p.time, state.tf) : undefined,
       );
     } else d[state.interaction.mode] = p;
     state.interaction.last = p;
+    if (isPosition(d)) updateToolbar();
     drawAll();
   },
   true,
@@ -4593,10 +4861,48 @@ shell.addEventListener(
     canvas.classList.remove("selection-active");
     saveDrawings();
     saveIndicatorObjectOverrides();
+    if (isPosition(selectedPositionContext().drawing)) updateToolbar();
     drawAll();
   },
   true,
 );
+for (const [id, level] of [["positionTarget", "target"], ["positionStop", "stop"]]) {
+  $("#" + id).addEventListener("change", (event) => {
+    const context = selectedPositionContext(), d = context.drawing;
+    if (!isPosition(d) || d.locked) return;
+    const edited = event.target.value.trim() ? editPositionLevel(d, level, event.target.value) : null;
+    if (!edited) {
+      toast(`Keep the ${level} on its side of the entry price`, "error");
+      updateToolbar();
+      return;
+    }
+    checkpoint();
+    applyPositionEdit(context,edited);
+  });
+}
+$("#positionBars").addEventListener("change", (event) => {
+  const context = selectedPositionContext(), d = context.drawing, bars = Number(event.target.value);
+  if (!isPosition(d) || d.locked) return;
+  if (!Number.isFinite(bars) || bars <= 0) {
+    toast("Position width must be greater than zero", "error");
+    updateToolbar();
+    return;
+  }
+  const endTime = positionEndTime(state.data, d.a.time, state.tf, bars);
+  const edited = editPositionTime(d, "end", endTime);
+  if (!edited) return;
+  checkpoint();
+  applyPositionEdit(context,edited);
+});
+shell.addEventListener("pointercancel", () => {
+  if (!(state.interaction?.id || state.interaction?.indicatorId) || !isPosition(selectedPositionContext().drawing)) return;
+  state.interaction = null;
+  canvas.classList.remove("selection-active");
+  saveDrawings();
+  saveIndicatorObjectOverrides();
+  updateToolbar();
+  drawAll();
+});
 function changeStyle(persist = true) {
   const indicatorItem = selectedIndicatorObject();
   if (indicatorItem) {
@@ -5176,6 +5482,11 @@ function indicatorSettings() {
       return [id, typeof fallback === "boolean" ? control.checked
         : typeof fallback === "number" ? Number(control.value) : control.value];
     })),
+    ...Object.fromEntries(Object.entries(SETUP_VISUAL_DEFAULTS).map(([id, fallback]) => {
+      const control = $("#" + id);
+      return [id, typeof fallback === "boolean" ? control.checked
+        : typeof fallback === "number" ? Number(control.value) : control.value];
+    })),
     numberEnabled: false,
     numberMode: "off",
   };
@@ -5198,6 +5509,12 @@ function calculationKey(settings, from, to, timeframe, chartTimeframe) {
 }
 function applyVisualSettings(settings = indicatorSettings()) {
   state.indicator.settings = settings;
+  const selectedSetup = selectedIndicatorObject();
+  if ((selectedSetup?.setupStatusKind || selectedSetup?.type === "indicator-position") &&
+      !setupObjectVisible(selectedSetup, settings)) {
+    state.indicator.selectedObjectId = null;
+    updateToolbar();
+  }
   if (state.indicator.results) {
     if (typeof saveChartIndicatorContext === "function") saveChartIndicatorContext();
     drawAll();
@@ -5262,7 +5579,7 @@ function plannedCalculationStages(direction) {
     "Load Reaction engine", "Load Blue Line engine", "Load A engine", "Load S engine",
     "Load E engine", "Load StopAll engine", "Normalize raw candles", "Build lower candle views",
     "Build timeframe candle views", "Select candle range", "Reaction geometry • Bullish",
-    "Reaction geometry • Bearish", "Start Python calculation", "Cached result",
+    "Reaction geometry • Bearish", "Bullish setup annotations", "Start Python calculation", "Cached result",
   ];
   const directional = selectedDirections.flatMap((name) => [
     `Blue Line • ${name}`, `A • ${name}`, `S • ${name}`,
@@ -5522,6 +5839,7 @@ function pushIndicatorActivity(level, message, details = {}) {
   renderIndicatorActivity();
 }
 function renderIndicatorInfo() {
+  state.indicator.infoDetailsDirty = false;
   const payload = state.indicator.results;
   if (!payload) {
     state.indicator.infoDetails = "";
@@ -5724,6 +6042,13 @@ function openIndicator() {
     hasResults: Boolean(state.indicator.results),
   });
   if (openIndicator.restoredFor !== state.file?.id) {
+    for (const [id, value] of Object.entries(SETUP_VISUAL_DEFAULTS)) {
+      const control = $("#" + id);
+      if (control.type === "checkbox") control.checked = value;
+      else control.value = value;
+      const valueLabel = $("#" + id + "Value");
+      if (valueLabel) valueLabel.textContent = `${value}px`;
+    }
     try {
       const saved = JSON.parse(
         localStorage.getItem(indicatorStateKey()) || "null",
@@ -5777,6 +6102,7 @@ function openIndicator() {
     }
     openIndicator.restoredFor = state.file?.id;
     updateStyleAvailability();
+    refreshAppearancePreviews();
   }
   if (state.raw.length) {
     if (!$("#indicatorFrom").value)
@@ -5784,7 +6110,8 @@ function openIndicator() {
     if (!$("#indicatorTo").value)
       setDateTimeValue("#indicatorTo", inputFromTehran(state.raw.at(-1).time));
   }
-  renderIndicatorActivity();
+  if (state.indicator.infoDetailsDirty && $('[data-indicator-tab="info"].active')) renderIndicatorInfo();
+  else renderIndicatorActivity();
   $("#indicatorModal").classList.remove("hidden");
   requestAnimationFrame(() => {
     resize();
@@ -5792,6 +6119,15 @@ function openIndicator() {
   });
 }
 async function calculateIndicator() {
+  if (realtimeUpdateOwner) {
+    const revision = symbolLoadRevision;
+    const reloadRequired = await realtimeUpdateOwner.finished;
+    if (revision !== symbolLoadRevision) return;
+    if (reloadRequired) {
+      indicatorToast("A live RAW update was interrupted or the source changed. Try Apply again once the chart is current.", "error");
+      return;
+    }
+  }
   if (state.indicator.loading || !state.file) return;
   const calculationStarted = performance.now();
   const direction = $("[data-direction].active")?.dataset.direction;
@@ -5881,7 +6217,8 @@ async function calculateIndicator() {
     }
   }
   if (!operationIsCurrent()) return;
-  if (state.indicator.results && canReuseAppliedCalculation(state.indicator.resultContext, nextContext, reusableSourceFingerprint)) {
+  if (state.indicator.results && (!calculationSource.chartId || state.indicator.resultContext?.liveSessionId)
+      && canReuseAppliedCalculation(state.indicator.resultContext, nextContext, reusableSourceFingerprint)) {
     setIndicatorVisibility(true);
     applyVisualSettings(settings);
     indicatorStatus("Appearance updated without recalculation", "success");
@@ -5924,7 +6261,7 @@ async function calculateIndicator() {
         method: "POST",
         signal: owner.requestAbort.signal,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(buildIndicatorCalculationRequest({
+        body: JSON.stringify({ ...buildIndicatorCalculationRequest({
           file: calculationSource,
           analysisTimeframe: timeframe,
           chartTimeframe: nextContext.chartTimeframe,
@@ -5932,7 +6269,7 @@ async function calculateIndicator() {
           to,
           direction: settings.direction,
           requestId: progressRequestId,
-        })),
+        }), liveSession: true }),
       }),
       responseReceived = performance.now();
     if (!operationIsCurrent()) return;
@@ -5959,7 +6296,12 @@ async function calculateIndicator() {
     state.indicator.enabled = $("#indicatorEnabled").checked;
     state.indicator.settings = settings;
     state.indicator.results = removeInvalidIndicatorCalculations(payload);
-    state.indicator.resultContext = { ...nextContext, source: calculationSource, calculationKey: nextKey, calculationId: r.headers.get("X-QG-Calculation-Id"), sourceFingerprint: r.headers.get("X-QG-Source-Fingerprint") };
+    state.indicator.resultContext = {
+      ...nextContext, source: calculationSource, calculationKey: nextKey,
+      calculationId: r.headers.get("X-QG-Calculation-Id"),
+      sourceFingerprint: r.headers.get("X-QG-Source-Fingerprint"),
+      liveSessionId: r.headers.get("X-QG-Live-Session"),
+    };
     capturedInputs = captureCurrentInputs();
     state.indicator.calculationKey = nextKey;
     const objectPreparationStarted = performance.now();
@@ -6088,6 +6430,192 @@ $("#indicatorStatusFooter").onclick = openIndicator;
 const CHART_UPDATE_PACKET_SIZE = 1_000;
 const CHART_UPDATE_RATE_LIMIT_MS = 30;
 let chartUpdateRunning = false;
+function realtimeIndicatorProblem(chartId = state.file?.chartId) {
+  const context = state.indicator.resultContext;
+  if (!state.indicator.results || !context || context.chartId !== chartId || context.chartTimeframe !== state.tf)
+    return "Run an indicator calculation with Apply before enabling automatic continuation.";
+  return context.liveSessionId ? "" : "Use Apply again to start a live indicator session.";
+}
+
+async function continueRealtimeIndicator(context, file, signal, operationIsCurrent) {
+  const rawTo = state.raw.at(-1).time;
+  const isCurrent = () => !signal.aborted && operationIsCurrent() && state.indicator.resultContext === context;
+  const keepAlive = context.liveRawTo === rawTo;
+  if (!isCurrent() || (keepAlive && performance.now() - context.liveContactAt < 10 * 60_000))
+    return false;
+  const response = await fetch("/api/reactions/continue", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: file.id, chartId: file.chartId, sessionId: context.liveSessionId,
+      ...(keepAlive ? { keepAlive: true } : {}) }),
+    signal,
+  });
+  if (!isCurrent()) return false;
+  if (response.status === 409 || response.status === 410) {
+    state.indicator.resultContext = { ...context, liveSessionId: null };
+    throw new Error(realtimeIndicatorProblem(file.chartId));
+  }
+  if (response.status === 204) {
+    state.indicator.resultContext = { ...context, liveRawTo: rawTo, liveContactAt: performance.now() };
+    return false;
+  }
+  const payload = await response.json();
+  if (!isCurrent()) return false;
+  if (!response.ok) throw new Error(payload.error || "Could not continue the indicator.");
+  const sourceFingerprint = response.headers.get("X-QG-Source-Fingerprint");
+  if (sourceFingerprint !== context.sourceFingerprint) {
+    state.indicator.resultContext = { ...context, liveSessionId: null };
+    throw new Error(realtimeIndicatorProblem(file.chartId));
+  }
+  if (!payload.directions || payload.timeframe !== context.analysisTimeframe)
+    throw new Error("The indicator returned an invalid continuation.");
+
+  const to = state.data.at(-1).time;
+  const nextKey = calculationKey(context, context.from, to, context.analysisTimeframe, context.chartTimeframe);
+  state.indicator.results = removeInvalidIndicatorCalculations(payload);
+  state.indicator.resultContext = {
+    ...context, fileId: file.id, source: Object.freeze(clone(file)), to,
+    calculationKey: nextKey, calculationId: response.headers.get("X-QG-Calculation-Id"),
+    sourceFingerprint, liveRawTo: rawTo, liveContactAt: performance.now(),
+  };
+  state.indicator.calculationKey = nextKey;
+  if (!state.indicatorRange.dragging && parseTehranInput($("#indicatorFrom").value) === context.from
+      && parseTehranInput($("#indicatorTo").value) === context.to) {
+    setDateTimeValue("#indicatorTo", inputFromTehran(to));
+    saveChartIndicatorContext();
+  }
+  rebuildIndicatorObjects({ preserveOverrides: true });
+  state.indicator.infoDetailsDirty = true;
+  if ($("#indicatorModal:not(.hidden)") && $('[data-indicator-tab="info"].active'))
+    renderIndicatorInfo();
+  scheduleDraw();
+  return true;
+}
+
+function moveRealtimeIndicatorPreferences(oldId, newId) {
+  if (oldId === newId) return;
+  if (openIndicator.restoredFor === oldId) openIndicator.restoredFor = newId;
+  try {
+    for (const suffix of ["indicator-runtime:v1", "indicator-overrides:v1"]) {
+      const previous = `market-canvas:${oldId}:${suffix}`;
+      const next = `market-canvas:${newId}:${suffix}`;
+      const value = localStorage.getItem(previous);
+      if (value == null) continue;
+      if (localStorage.getItem(next) == null) localStorage.setItem(next, value);
+      if (localStorage.getItem(next) === value) localStorage.removeItem(previous);
+    }
+    localStorage.setItem("qg:last-symbol", newId);
+    persistWorkspaceRefresh();
+  } catch (error) {
+    log.chart.warn("REALTIME_CHART_PREFERENCES_FAILED", { message: error.message });
+  }
+}
+
+function applyRealtimeCandles(file, candles) {
+  const scale = chart.timeScale();
+  const range = scale.getVisibleRange();
+  const previousLength = state.data.length;
+  const followsLatest = state.chartRender?.end === previousLength && scale.scrollPosition() >= -1;
+  const previousFile = state.file;
+  state.raw = state.raw.concat(candles);
+  const native = state.tf === sourceTimeframeSeconds(previousFile);
+  const display = native ? { data: state.raw, changed: candles } : appendCandleBuckets(state.data, candles, state.tf);
+  state.data = display.data;
+  state.file = { ...previousFile, ...file };
+  realtimePublicationRevision += 1;
+  state.inventory = state.inventory.map(item => item.chartId === file.chartId ? state.file : item);
+  if (state.chartRender?.fullData && state.data.length <= CHART_LOD_STABLE_DATA_LIMIT && display.changed.length <= 64) {
+    for (const candle of display.changed) series.update(candle);
+    state.chartViewRevision += 1;
+    state.chartRender = { ...state.chartRender, end: state.data.length, displayCount: state.data.length,
+      display: state.data, revision: state.chartViewRevision };
+  } else {
+    renderChartViewport(range, {
+      force: true, preserveRange: true,
+      followAppended: followsLatest ? state.data.length - previousLength : 0,
+    });
+  }
+  $("#candleCount").textContent = `${state.data.length.toLocaleString("en-US")} candles`;
+  $("#chartTo").textContent = formatSystemDateTime(state.data.at(-1).time * 1000);
+  setOHLC(state.data.at(-1));
+  moveRealtimeIndicatorPreferences(previousFile.id, file.id);
+  renderChartIdentity();
+  renderSymbolList();
+  candleExportController?.syncRawInventory(state.inventory);
+  scheduleDraw();
+}
+
+async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, indicatorSignal }) {
+  const problem = indicatorCalculation && realtimeIndicatorProblem(chartId);
+  if (problem) throw new Error(problem);
+  if (chartUpdateRunning || indicatorCalculationOwner) return "Chart is busy. Retrying at the next interval.";
+  const file = state.file;
+  const lastCandleTime = state.raw.at(-1)?.time;
+  if (!file || file.chartId !== chartId || !lastCandleTime || symbolLoadController)
+    throw new Error("Load a RAW candle file first.");
+  const loadRevision = symbolLoadRevision;
+  const indicatorContext = indicatorCalculation ? state.indicator.resultContext : null;
+  let finished;
+  const owner = { finished: new Promise(resolve => { finished = resolve; }) };
+  realtimeUpdateOwner = owner;
+  chartUpdateRunning = true;
+  let refreshRequired = false;
+  let rawVerified = false;
+  try {
+    const response = await fetch("/api/candle-files/realtime", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: file.id, chartId, lastCandleTime, baseSha256: file.metadata?.dataSha256 }),
+      signal,
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      refreshRequired = response.status === 404 || result.code === "RAW_CHANGED";
+      throw new Error(result.error || "Could not update the RAW file.");
+    }
+    if (signal.aborted || loadRevision !== symbolLoadRevision || state.file?.chartId !== chartId || state.file?.id !== file.id)
+      return "The selected RAW file changed.";
+    const { file: updatedFile, candles } = result;
+    if (updatedFile?.chartId !== chartId || !Array.isArray(candles) ||
+        updatedFile.count !== state.raw.length + candles.length ||
+        updatedFile.to !== (candles.at(-1)?.time ?? lastCandleTime) ||
+        candles.some((row, i) => !Number.isSafeInteger(row.time) ||
+          row.time <= (i ? candles[i - 1].time : lastCandleTime))) {
+      refreshRequired = true;
+      throw new Error("The RAW file changed during the live update. Reloading its current data.");
+    }
+    if (candles.length) {
+      applyRealtimeCandles(updatedFile, candles);
+      log.chart.info("REALTIME_CANDLES_APPENDED", { chartId, count: candles.length, to: updatedFile.to });
+    }
+    rawVerified = true;
+    const publishedFile = state.file;
+    const candleStatus = candles.length
+      ? `Added ${candles.length.toLocaleString("en-US")} closed ${updatedFile.timeframe} candles.`
+      : "No new closed candles.";
+    const operationIsCurrent = () => !signal.aborted && loadRevision === symbolLoadRevision
+      && state.file === publishedFile && state.tf === indicatorContext.chartTimeframe;
+    const continuationSignal = indicatorSignal || signal;
+    try {
+      const updated = indicatorContext && await continueRealtimeIndicator(indicatorContext, publishedFile,
+        continuationSignal, operationIsCurrent);
+      return updated ? `${candleStatus} Indicator updated.` : candleStatus;
+    } catch (error) {
+      if (continuationSignal.aborted) return candleStatus;
+      throw new Error(`${candleStatus} ${error.message}`);
+    }
+  } catch (error) {
+    if (!signal.aborted) log.chart.error("REALTIME_CHART_UPDATE_FAILED", error, { chartId });
+    throw error;
+  } finally {
+    realtimeUpdateOwner = null;
+    chartUpdateRunning = false;
+    finished(refreshRequired || (signal.aborted && !rawVerified));
+    if (refreshRequired && !signal.aborted)
+      void refreshSymbolInventory().catch(error => log.chart.warn("SYMBOL_INVENTORY_REFRESH_FAILED", { message: error.message }));
+  }
+}
+
 function setUpdateButtonState(state) {
   const button = $("#updateDataBtn");
   const detail = {
@@ -6159,7 +6687,10 @@ function setUpdateChoiceOpen(open) {
 }
 async function runChartUpdate(mode) {
   const btn = $("#updateDataBtn");
-  if (chartUpdateRunning) return;
+  if (chartUpdateRunning) {
+    if (realtimeUpdateOwner) toast("A real-time update is in progress. Try again when it finishes.", "info");
+    return;
+  }
   if (!state.file) { toast("No data file loaded", "error"); return; }
   invalidateIndicatorCalculation();
   chartUpdateRunning = true;
@@ -6663,6 +7194,7 @@ $("#pickerSave").onclick = () => {
   if (applyAfterSave) $("#gotoApply").click();
 };
 const visualSettingIds = [
+  ...Object.keys(SETUP_VISUAL_DEFAULTS),
   ...Object.keys(PRIMARY_VISUAL_DEFAULTS),
   "bullFill",
   "bullBorder",
@@ -6768,7 +7300,7 @@ function captureIndicatorForm() {
 const indicatorDefaults = captureIndicatorForm();
 function applyIndicatorForm(snapshot) {
   if (!snapshot?.controls) return;
-  for (const [id, value] of Object.entries(snapshot.controls)) {
+  for (const [id, value] of Object.entries({ ...SETUP_VISUAL_DEFAULTS, ...snapshot.controls })) {
     const element = $("#" + id);
     if (!element) continue;
     if (element.type === "checkbox") element.checked = Boolean(value);
@@ -6822,6 +7354,8 @@ function updateStyleAvailability() {
     ["sVisible", ["sBullColor", "sBearColor", "sSize", "sGap"]],
     ["eVisible", ["eBlueColor", "eRedColor", "eSize", "eGap"]],
     ["stopAllVisible", ["stopAllFill", "stopAllBorder", "stopAllOpacity", "stopAllWidth", "stopAllSize", "stopAllRadius", "stopAllGap"]],
+    ["setupTVisible", ["setupTColor", "setupTSize", "setupTGap"]],
+    ["setupFVisible", ["setupFColor", "setupFSize", "setupFGap"]],
     ["orderVisible", ["orderFill", "orderColor", "orderOpacity", "orderWidth", "orderLineStyle"]],
     ["orderStopVisible", ["orderStopColor", "orderStopWidth", "orderStopLineStyle", "orderStopCap"]],
     ["eStopVisible", ["eStopColor", "eStopWidth", "eStopLineStyle"]],
@@ -6891,7 +7425,7 @@ $("#templateMenu").onclick = async (event) => {
     $("#templateBtn").setAttribute("aria-expanded", "false");
   }
 };
-for (const id of ["reactionVisible", "blueLineEnabled", "aVisible", "sVisible", "eVisible", "stopAllVisible", "orderVisible", "orderStopVisible", "eStopVisible"])
+for (const id of ["reactionVisible", "blueLineEnabled", "aVisible", "sVisible", "eVisible", "stopAllVisible", "orderVisible", "orderStopVisible", "eStopVisible", "setupTVisible", "setupFVisible"])
   $("#" + id).addEventListener("change", updateStyleAvailability);
 updateStyleAvailability();
 $$('[data-range="all"]').forEach(
@@ -6980,6 +7514,12 @@ setInterval(
 $("#clock").textContent = formatSystemDateTime(new Date());
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !$("#errorLogModal").classList.contains("hidden")) closeErrorLog();
+});
+realtimeChart = mountRealtimeChart({
+  trigger: $("#realtimeChartBtn"),
+  getChartId: () => symbolLoadController ? null : state.file?.chartId,
+  indicatorProblem: realtimeIndicatorProblem,
+  runUpdate: runRealtimeChartUpdate,
 });
 loadInventory().then(restoreWorkspaceAfterRefresh).catch((err) => {
   const message = err?.name === "AbortError"

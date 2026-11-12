@@ -13,7 +13,7 @@ scope:
   - release-tooling
 supersedes: engineering/archive/documentation/local-tests-legacy-2026-09-30.md
 created_at: 2026-09-30T11:40:11+03:30
-last_modified_at: 2026-10-28T18:08:26+03:30
+last_modified_at: 2026-11-03T00:19:46+03:30
 ---
 
 # TradingBot Testing
@@ -127,6 +127,8 @@ Use `NOT APPLICABLE` only when the check is demonstrably irrelevant to the chang
 Never promote compile/import success, static inspection, an old report, or a visually plausible output into a trading-correctness `PASS`.
 
 ## 7. Verification layers
+
+The approved bullish setup-annotation regression and browser reproduction helpers are maintained with the task evidence at [Bullish setup verification](../../verification/bullish-setups-20261102/verification-report.md). They exercise the Engine assessment/entry stage, Bridge projection and indicator-owned drawing interactions; they do not simulate or execute trades.
 
 Keep evidence categories distinct.
 

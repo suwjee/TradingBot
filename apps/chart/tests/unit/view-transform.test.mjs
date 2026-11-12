@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   coordinateToRawTime,
   createViewAnchorCache,
+  remapCandleLogicalRange,
   rawIndexAtTime,
   rawTimeToCoordinate,
   selectDensityMode,
@@ -32,6 +33,15 @@ test("raw-time lookup follows chronological source rows across irregular gaps", 
   const irregular = [{ time: 100 }, { time: 110 }, { time: 170 }, { time: 180 }];
   assert.equal(rawIndexAtTime(irregular, 140), 1.5);
   assert.equal(rawIndexAtTime(irregular, 175), 2.5);
+});
+
+test("changing display windows keeps the raw candle at the viewport center and the same raw span", () => {
+  const before = { from: 20, to: 219 };
+  const exactWindow = { start: 80, stride: 1 };
+  const denseWindow = { start: 0, stride: 4 };
+  const after = remapCandleLogicalRange(before, exactWindow, denseWindow);
+  assert.deepEqual(after, { from: 25.375, to: 74.375 });
+  assert.deepEqual(remapCandleLogicalRange(after, denseWindow, exactWindow), before);
 });
 
 test("density selection has hysteresis and freezes during gestures", () => {

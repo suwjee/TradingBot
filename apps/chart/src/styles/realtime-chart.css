@@ -1,0 +1,117 @@
+.realtime-chart-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+}
+
+.realtime-chart-button.is-live .realtime-chart-icon {
+  color: var(--ui-positive);
+}
+
+.realtime-chart-button.is-live .realtime-chart-icon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(currentColor var(--realtime-chart-fill, 0deg), var(--ui-border) 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 0);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 0);
+}
+
+.realtime-chart-popover {
+  box-sizing: border-box;
+  width: min(280px, calc(100vw - 16px));
+  max-height: calc(100vh - 16px);
+  max-height: calc(100dvh - 16px);
+  overflow: auto;
+  padding: var(--ui-space-3);
+  color: var(--ui-text-primary);
+}
+
+.realtime-chart-header,
+.realtime-chart-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ui-space-3);
+}
+
+.realtime-chart-header strong {
+  font-size: var(--ui-text-md);
+  font-weight: var(--ui-weight-semibold);
+}
+
+.realtime-chart-options {
+  display: grid;
+  gap: var(--ui-space-2);
+  min-inline-size: 0;
+  margin: var(--ui-space-3) 0 0;
+  padding: var(--ui-space-2) 0 0;
+  border: 0;
+  border-top: 1px solid var(--ui-border-subtle);
+}
+
+.realtime-chart-options:disabled {
+  color: var(--ui-text-muted);
+}
+
+.realtime-chart-option select {
+  min-height: var(--ui-control-sm);
+  padding-inline: var(--ui-space-2);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-sm);
+  background: var(--ui-bg-surface);
+  color: inherit;
+  font: inherit;
+}
+
+.realtime-chart-option .master-switch {
+  cursor: pointer;
+}
+
+.realtime-chart-option .master-switch > input {
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.realtime-chart-options:disabled .master-switch {
+  cursor: default;
+  opacity: .65;
+}
+
+.realtime-chart-feedback,
+.realtime-chart-popover > .realtime-chart-error {
+  color: var(--ui-text-secondary);
+  font-size: var(--ui-text-sm);
+  line-height: var(--ui-leading-normal);
+  overflow-wrap: anywhere;
+}
+
+.realtime-chart-popover p {
+  margin: 0;
+}
+
+.realtime-chart-popover p:not(:empty) {
+  margin-top: var(--ui-space-2);
+}
+
+.realtime-chart-popover .realtime-chart-error {
+  color: var(--ui-danger);
+}
+
+.realtime-chart-feedback [data-countdown] {
+  color: var(--ui-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .realtime-chart-popover .master-switch > span,
+  .realtime-chart-popover .master-switch > span::after {
+    transition: none;
+  }
+}

@@ -1,0 +1,482 @@
+[
+  {
+    "file": "engine/bridge/trading_pipeline.py",
+    "line": 9,
+    "import": "from __future__ import annotations"
+  },
+  {
+    "file": "engine/bridge/trading_pipeline.py",
+    "line": 11,
+    "import": "import argparse"
+  },
+  {
+    "file": "engine/bridge/trading_pipeline.py",
+    "line": 12,
+    "import": "import importlib.util"
+  },
+  {
+    "file": "engine/bridge/trading_pipeline.py",
+    "line": 13,
+    "import": "import json"
+  },
+  {
+    "file": "engine/bridge/trading_pipeline.py",
+    "line": 14,
+    "import": "import sys"
+  },
+  {
+    "file": "engine/bridge/trading_pipeline.py",
+    "line": 15,
+    "import": "from bisect import bisect_left"
+  },
+  {
+    "file": "engine/bridge/trading_pipeline.py",
+    "line": 16,
+    "import": "from dataclasses import dataclass, field, replace"
+  },
+  {
+    "file": "engine/bridge/trading_pipeline.py",
+    "line": 17,
+    "import": "from datetime import datetime"
+  },
+  {
+    "file": "engine/bridge/trading_pipeline.py",
+    "line": 18,
+    "import": "from decimal import Decimal"
+  },
+  {
+    "file": "engine/bridge/trading_pipeline.py",
+    "line": 19,
+    "import": "from pathlib import Path"
+  },
+  {
+    "file": "engine/bridge/trading_pipeline.py",
+    "line": 20,
+    "import": "from time import perf_counter"
+  },
+  {
+    "file": "engine/bridge/trading_pipeline.py",
+    "line": 21,
+    "import": "from typing import Sequence"
+  },
+  {
+    "file": "engine/bridge/trading_pipeline.py",
+    "line": 22,
+    "import": "from zoneinfo import ZoneInfo"
+  },
+  {
+    "file": "engine/bridge/trading_pipeline.py",
+    "line": 36,
+    "import": "from core_utils import as_decimal, order_identity"
+  },
+  {
+    "file": "engine/bridge/trading_pipeline.py",
+    "line": 37,
+    "import": "from order_audit_engine import accepted_audit_entries, order_b_leg_identity"
+  },
+  {
+    "file": "engine/bridge/trading_pipeline.py",
+    "line": 3019,
+    "import": "from PL_PH_detector import resolve_primary_highs, resolve_primary_lows, relabel_primary_order, formed_matching_legs"
+  },
+  {
+    "file": "engine/bridge/trading_pipeline.py",
+    "line": 3265,
+    "import": "from copy import copy"
+  },
+  {
+    "file": "engine/pipeline/__init__.py",
+    "line": 7,
+    "import": "import sys"
+  },
+  {
+    "file": "engine/pipeline/__init__.py",
+    "line": 8,
+    "import": "from pathlib import Path"
+  },
+  {
+    "file": "engine/pipeline/__init__.py",
+    "line": 14,
+    "import": "from .blue_line_detector import BlueLine, ScaleStrike, count_scale_strikes, detect_blue_lines, fibonacci_level"
+  },
+  {
+    "file": "engine/pipeline/a_zone_detector.py",
+    "line": 8,
+    "import": "from __future__ import annotations"
+  },
+  {
+    "file": "engine/pipeline/a_zone_detector.py",
+    "line": 10,
+    "import": "from bisect import bisect_left, bisect_right"
+  },
+  {
+    "file": "engine/pipeline/a_zone_detector.py",
+    "line": 11,
+    "import": "from dataclasses import dataclass, field"
+  },
+  {
+    "file": "engine/pipeline/a_zone_detector.py",
+    "line": 12,
+    "import": "from datetime import datetime, timedelta"
+  },
+  {
+    "file": "engine/pipeline/a_zone_detector.py",
+    "line": 13,
+    "import": "from decimal import Decimal"
+  },
+  {
+    "file": "engine/pipeline/a_zone_detector.py",
+    "line": 14,
+    "import": "from typing import Sequence"
+  },
+  {
+    "file": "engine/pipeline/a_zone_detector.py",
+    "line": 16,
+    "import": "from core_utils import as_decimal"
+  },
+  {
+    "file": "engine/pipeline/a_zone_detector.py",
+    "line": 17,
+    "import": "from direction_policy import policy_for"
+  },
+  {
+    "file": "engine/pipeline/blue_line_detector.py",
+    "line": 8,
+    "import": "from __future__ import annotations"
+  },
+  {
+    "file": "engine/pipeline/blue_line_detector.py",
+    "line": 10,
+    "import": "from dataclasses import dataclass"
+  },
+  {
+    "file": "engine/pipeline/blue_line_detector.py",
+    "line": 11,
+    "import": "from datetime import datetime"
+  },
+  {
+    "file": "engine/pipeline/blue_line_detector.py",
+    "line": 12,
+    "import": "from decimal import Decimal"
+  },
+  {
+    "file": "engine/pipeline/blue_line_detector.py",
+    "line": 13,
+    "import": "from typing import Sequence"
+  },
+  {
+    "file": "engine/pipeline/blue_line_detector.py",
+    "line": 15,
+    "import": "from direction_policy import policy_for"
+  },
+  {
+    "file": "engine/pipeline/core_utils.py",
+    "line": 3,
+    "import": "from __future__ import annotations"
+  },
+  {
+    "file": "engine/pipeline/core_utils.py",
+    "line": 7,
+    "import": "from decimal import Decimal"
+  },
+  {
+    "file": "engine/pipeline/core_utils.py",
+    "line": 8,
+    "import": "from typing import TypeAlias"
+  },
+  {
+    "file": "engine/pipeline/direction_policy.py",
+    "line": 9,
+    "import": "from __future__ import annotations"
+  },
+  {
+    "file": "engine/pipeline/direction_policy.py",
+    "line": 13,
+    "import": "from dataclasses import dataclass"
+  },
+  {
+    "file": "engine/pipeline/direction_policy.py",
+    "line": 14,
+    "import": "from decimal import Decimal"
+  },
+  {
+    "file": "engine/pipeline/direction_policy.py",
+    "line": 15,
+    "import": "from typing import Literal"
+  },
+  {
+    "file": "engine/pipeline/e_zone_detector.py",
+    "line": 8,
+    "import": "from __future__ import annotations"
+  },
+  {
+    "file": "engine/pipeline/e_zone_detector.py",
+    "line": 10,
+    "import": "from bisect import bisect_left"
+  },
+  {
+    "file": "engine/pipeline/e_zone_detector.py",
+    "line": 11,
+    "import": "from dataclasses import dataclass, replace"
+  },
+  {
+    "file": "engine/pipeline/e_zone_detector.py",
+    "line": 12,
+    "import": "from datetime import datetime"
+  },
+  {
+    "file": "engine/pipeline/e_zone_detector.py",
+    "line": 13,
+    "import": "from decimal import Decimal"
+  },
+  {
+    "file": "engine/pipeline/e_zone_detector.py",
+    "line": 14,
+    "import": "from heapq import heapify, heappop, heappush"
+  },
+  {
+    "file": "engine/pipeline/e_zone_detector.py",
+    "line": 15,
+    "import": "from typing import Callable, Sequence"
+  },
+  {
+    "file": "engine/pipeline/e_zone_detector.py",
+    "line": 17,
+    "import": "from core_utils import as_decimal, reaction_identity"
+  },
+  {
+    "file": "engine/pipeline/e_zone_detector.py",
+    "line": 18,
+    "import": "from direction_policy import policy_for"
+  },
+  {
+    "file": "engine/pipeline/e_zone_detector.py",
+    "line": 19,
+    "import": "from order_audit_engine import OrderAuditEngineMixin, OrderBResetLeg, OrderMatch, PostBehaviorStop, discover_accepted_order_b_reset_legs, discover_order_b_reset_legs, dominant_post_behavior_stops, order_b_reset_event_time"
+  },
+  {
+    "file": "engine/pipeline/lifecycle_engine.py",
+    "line": 9,
+    "import": "from __future__ import annotations"
+  },
+  {
+    "file": "engine/pipeline/lifecycle_engine.py",
+    "line": 11,
+    "import": "from bisect import bisect_left, bisect_right"
+  },
+  {
+    "file": "engine/pipeline/lifecycle_engine.py",
+    "line": 12,
+    "import": "from dataclasses import dataclass, field, replace"
+  },
+  {
+    "file": "engine/pipeline/lifecycle_engine.py",
+    "line": 13,
+    "import": "from datetime import datetime"
+  },
+  {
+    "file": "engine/pipeline/lifecycle_engine.py",
+    "line": 14,
+    "import": "from decimal import Decimal"
+  },
+  {
+    "file": "engine/pipeline/lifecycle_engine.py",
+    "line": 15,
+    "import": "from typing import Sequence"
+  },
+  {
+    "file": "engine/pipeline/lifecycle_engine.py",
+    "line": 17,
+    "import": "from core_utils import as_decimal, order_identity"
+  },
+  {
+    "file": "engine/pipeline/lifecycle_engine.py",
+    "line": 18,
+    "import": "from order_audit_engine import accepted_audit_entry, prepare_order_audit"
+  },
+  {
+    "file": "engine/pipeline/lifecycle_engine.py",
+    "line": 21,
+    "import": "from direction_policy import policy_for"
+  },
+  {
+    "file": "engine/pipeline/order_audit_engine.py",
+    "line": 3,
+    "import": "from __future__ import annotations"
+  },
+  {
+    "file": "engine/pipeline/order_audit_engine.py",
+    "line": 5,
+    "import": "from bisect import bisect_left, bisect_right"
+  },
+  {
+    "file": "engine/pipeline/order_audit_engine.py",
+    "line": 6,
+    "import": "from copy import deepcopy"
+  },
+  {
+    "file": "engine/pipeline/order_audit_engine.py",
+    "line": 7,
+    "import": "from dataclasses import dataclass"
+  },
+  {
+    "file": "engine/pipeline/order_audit_engine.py",
+    "line": 8,
+    "import": "from datetime import datetime"
+  },
+  {
+    "file": "engine/pipeline/order_audit_engine.py",
+    "line": 9,
+    "import": "from decimal import Decimal"
+  },
+  {
+    "file": "engine/pipeline/order_audit_engine.py",
+    "line": 10,
+    "import": "from types import SimpleNamespace"
+  },
+  {
+    "file": "engine/pipeline/order_audit_engine.py",
+    "line": 11,
+    "import": "from typing import Callable, Sequence"
+  },
+  {
+    "file": "engine/pipeline/order_audit_engine.py",
+    "line": 13,
+    "import": "from core_utils import as_decimal, order_identity, reaction_identity"
+  },
+  {
+    "file": "engine/pipeline/PL_PH_detector.py",
+    "line": 8,
+    "import": "from __future__ import annotations"
+  },
+  {
+    "file": "engine/pipeline/PL_PH_detector.py",
+    "line": 10,
+    "import": "from bisect import bisect_right"
+  },
+  {
+    "file": "engine/pipeline/PL_PH_detector.py",
+    "line": 11,
+    "import": "from copy import deepcopy"
+  },
+  {
+    "file": "engine/pipeline/PL_PH_detector.py",
+    "line": 12,
+    "import": "from dataclasses import dataclass, field, replace"
+  },
+  {
+    "file": "engine/pipeline/PL_PH_detector.py",
+    "line": 13,
+    "import": "from datetime import datetime"
+  },
+  {
+    "file": "engine/pipeline/PL_PH_detector.py",
+    "line": 14,
+    "import": "from decimal import Decimal"
+  },
+  {
+    "file": "engine/pipeline/PL_PH_detector.py",
+    "line": 15,
+    "import": "from typing import Callable, Sequence"
+  },
+  {
+    "file": "engine/pipeline/PL_PH_detector.py",
+    "line": 17,
+    "import": "from core_utils import as_decimal"
+  },
+  {
+    "file": "engine/pipeline/PL_PH_detector.py",
+    "line": 18,
+    "import": "from lifecycle_engine import advance_dominant_behavior"
+  },
+  {
+    "file": "engine/pipeline/PL_PH_detector.py",
+    "line": 19,
+    "import": "from order_audit_engine import relabel_primary_causes"
+  },
+  {
+    "file": "engine/pipeline/reaction_engine.py",
+    "line": 9,
+    "import": "from __future__ import annotations"
+  },
+  {
+    "file": "engine/pipeline/reaction_engine.py",
+    "line": 11,
+    "import": "import bisect"
+  },
+  {
+    "file": "engine/pipeline/reaction_engine.py",
+    "line": 12,
+    "import": "from array import array"
+  },
+  {
+    "file": "engine/pipeline/reaction_engine.py",
+    "line": 13,
+    "import": "from dataclasses import dataclass, replace"
+  },
+  {
+    "file": "engine/pipeline/reaction_engine.py",
+    "line": 14,
+    "import": "from datetime import datetime, timedelta"
+  },
+  {
+    "file": "engine/pipeline/reaction_engine.py",
+    "line": 15,
+    "import": "from decimal import Decimal"
+  },
+  {
+    "file": "engine/pipeline/reaction_engine.py",
+    "line": 16,
+    "import": "from typing import Iterable, Sequence"
+  },
+  {
+    "file": "engine/pipeline/reaction_engine.py",
+    "line": 18,
+    "import": "from direction_policy import policy_for"
+  },
+  {
+    "file": "engine/pipeline/s_zone_detector.py",
+    "line": 9,
+    "import": "from __future__ import annotations"
+  },
+  {
+    "file": "engine/pipeline/s_zone_detector.py",
+    "line": 11,
+    "import": "from bisect import bisect_left, bisect_right"
+  },
+  {
+    "file": "engine/pipeline/s_zone_detector.py",
+    "line": 12,
+    "import": "from dataclasses import dataclass, replace"
+  },
+  {
+    "file": "engine/pipeline/s_zone_detector.py",
+    "line": 13,
+    "import": "from datetime import datetime, timedelta"
+  },
+  {
+    "file": "engine/pipeline/s_zone_detector.py",
+    "line": 14,
+    "import": "from decimal import Decimal"
+  },
+  {
+    "file": "engine/pipeline/s_zone_detector.py",
+    "line": 15,
+    "import": "from typing import Callable, Sequence"
+  },
+  {
+    "file": "engine/pipeline/s_zone_detector.py",
+    "line": 17,
+    "import": "from core_utils import as_decimal"
+  },
+  {
+    "file": "engine/pipeline/s_zone_detector.py",
+    "line": 18,
+    "import": "from order_audit_engine import SOrderAuditMixin"
+  },
+  {
+    "file": "engine/pipeline/s_zone_detector.py",
+    "line": 19,
+    "import": "from direction_policy import policy_for"
+  }
+]

@@ -4,6 +4,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { execFile, execFileSync } from "node:child_process";
 import { chromium } from "playwright-core";
 import { fileURLToPath } from "node:url";
+import { setTimeout as delay } from "node:timers/promises";
 import { resolveLocalStatePaths } from "./local-state-paths.js";
 import { createRawResourceStore } from "./raw-resource-store.js";
 import { buildRawFilename, formatTehranMetadataTime, parseRawFilename } from "../src/features/raw-file-contract.js";
@@ -235,6 +236,11 @@ function json(res, status, body) {
   res.end(JSON.stringify(body));
 }
 
+function publicRawFile(file) {
+  const { id, chartId, broker, symbol, timeframe, from, to, count, bytes, savedAt, metadata, createdAt, updatedAt } = file;
+  return { id, chartId, broker, symbol, timeframe, from, to, count, bytes, savedAt, metadata, createdAt, updatedAt };
+}
+
 async function readJson(req, limit = 100_000) {
   const body = await readBoundedBody(req, limit, "Request is too large.");
   try { return JSON.parse(body || "{}"); }
@@ -403,15 +409,17 @@ export function normalizeClearTextSession(value) {
   return { storageState, credentials, historyAuth };
 }
 
-export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..", ".."), localStateRoot, launchBrowser, fetchImpl = globalThis.fetch } = {}) {
+export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..", ".."), localStateRoot, launchBrowser, fetchImpl = globalThis.fetch, rawStore: sharedRawStore, now = Date.now } = {}) {
   const localState = resolveLocalStatePaths(workspaceRoot, localStateRoot);
   const secretDir = localState.secret;
   const secretPath = path.join(secretDir, "faraz-session.dpapi.json");
   const inputDir = localState.raw;
   const outputDir = localState.raw;
-  const rawStore = createRawResourceStore({ rootDir: inputDir });
+  const rawStore = sharedRawStore || createRawResourceStore({ rootDir: inputDir });
   const temporaryOutputDir = path.join(localState.tmp, "faraz-candle-exports");
   const jobs = new Map();
+  const realtimeUpdates = new Map();
+  const realtimeFileIds = new Map();
   let browser = null;
   let context = null;
   let authPage = null;
@@ -430,11 +438,12 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
   const pendingLaunches = new Set();
   const observedHistoryPages = new WeakSet();
 
-  async function waitForChartHistoryRequestSlot() {
+  async function waitForChartHistoryRequestSlot(signal) {
+    signal?.throwIfAborted();
     const now = Date.now();
     const scheduledAt = Math.max(now, nextChartHistoryRequestAt);
     nextChartHistoryRequestAt = scheduledAt + CHART_UPDATE_RATE_LIMIT_MS;
-    if (scheduledAt > now) await new Promise((resolve) => setTimeout(resolve, scheduledAt - now));
+    if (scheduledAt > now) await delay(scheduledAt - now, undefined, { signal });
   }
 
   function loadStoredSession() {
@@ -563,13 +572,65 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     };
   }
 
-  async function directRequest(url, { timeoutMs = REQUEST_TIMEOUT_MS, controller = new AbortController() } = {}) {
+  async function directRequest(url, { timeoutMs = REQUEST_TIMEOUT_MS, controller = new AbortController(), signal } = {}) {
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
     try {
-      return await fetchImpl(url, { method: "GET", signal: controller.signal, headers: sessionHeaders() });
+      const requestSignal = signal ? AbortSignal.any([signal, controller.signal]) : controller.signal;
+      return await fetchImpl(url, { method: "GET", signal: requestSignal, headers: sessionHeaders() });
     } finally {
       clearTimeout(timeout);
     }
+  }
+
+  async function chartHistory({ symbolName, resolution, timeframeSeconds, from, to, signal }) {
+    if (!fs.existsSync(secretPath) || !loadStoredSession()) {
+      throw Object.assign(new Error("Sign in to FARAZ first."), { status: 401 });
+    }
+    // Chart updates stay on the source host independently of the export mirror.
+    const host = "faraz.io";
+    const endpoint = historyAuth?.endpoint && new URL(historyAuth.endpoint).host === host
+      ? historyAuth.endpoint
+      : `https://${host}${HISTORY_PATH}`;
+
+    async function requestPacket(packet) {
+      const url = new URL(endpoint);
+      for (const [key, value] of Object.entries({
+        symbolName: endpointSymbolName(symbolName), resolution, from: packet.from, to: packet.to,
+        countback: packet.countback, firstDataRequest: false, latest: packet.latest,
+        adjustType: historyAuth?.adjustType || "2", json: true,
+      })) url.searchParams.set(key, String(value));
+      let lastError;
+      for (let attempt = 1; attempt <= MAX_PACKET_ATTEMPTS; attempt++) {
+        await waitForChartHistoryRequestSlot(signal);
+        try {
+          const response = await directRequest(url, { timeoutMs: 30_000, signal });
+          const text = await response.text();
+          signal?.throwIfAborted();
+          if (response.status !== 200) {
+            throw Object.assign(new Error(`FARAZ returned HTTP ${response.status}: ${text}`), { status: response.status });
+          }
+          let payload;
+          try { payload = JSON.parse(text); }
+          catch { throw Object.assign(new Error("FARAZ returned invalid JSON with HTTP 200."), { status: 200 }); }
+          const normalized = normalizeHistoryPayloadDetails(payload);
+          if (normalized.rejectedRows) {
+            throw Object.assign(new Error(`FARAZ returned ${normalized.rejectedRows} malformed candle row(s).`), { status: 200 });
+          }
+          return normalized.candles;
+        } catch (error) {
+          signal?.throwIfAborted();
+          lastError = error;
+          if (attempt < MAX_PACKET_ATTEMPTS) await delay(RETRY_BASE_DELAY_MS * attempt, undefined, { signal });
+        }
+      }
+      throw Object.assign(new Error(`FARAZ packet ${tehranDisplayTime(packet.from)}→${tehranDisplayTime(packet.to)} failed after ${MAX_PACKET_ATTEMPTS} attempts: ${lastError?.message || "Unknown error"}`), { status: lastError?.status });
+    }
+
+    const collected = [];
+    for (const packet of chunkRange(from, to, timeframeSeconds, CHART_UPDATE_PACKET_SIZE)) {
+      collected.push(await requestPacket(packet));
+    }
+    return mergeCandles(collected, from, to);
   }
 
   async function probeStoredSession(symbolName = "FXCM:USOIL") {
@@ -981,6 +1042,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
   function shutdown() {
     if (shutdownPromise) return shutdownPromise;
     shuttingDown = true;
+    for (const controller of realtimeUpdates.values()) controller.abort();
     shutdownPromise = (async () => {
       for (const job of jobs.values()) {
         if (!job.running && !job.awaitingCoverageDecision) continue;
@@ -1481,9 +1543,76 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           json(res, 400, { error: error.message });
         }
       });
+      server.middlewares.use("/api/candle-files/realtime", async (req, res) => {
+        if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
+        const controller = new AbortController();
+        const { signal } = controller;
+        const onClose = () => controller.abort();
+        res.once("close", onClose);
+        let chartId;
+        try {
+          let params;
+          try { params = await readJson(req); }
+          catch (error) { return json(res, 400, { error: error.message }); }
+          signal.throwIfAborted();
+          if (!params || typeof params !== "object") return json(res, 400, { error: "A RAW catch-up request is required." });
+          const id = typeof params.id === "string" ? params.id.trim() : "";
+          chartId = typeof params.chartId === "string" ? params.chartId.trim() : "";
+          const { lastCandleTime, baseSha256 } = params;
+          if (!id || !chartId || !Number.isSafeInteger(lastCandleTime) || lastCandleTime <= 0
+            || typeof baseSha256 !== "string" || !/^[a-f0-9]{64}$/.test(baseSha256)) {
+            return json(res, 400, { error: "A RAW file ID, chart ID, last candle time and base SHA-256 are required." });
+          }
+          if (shuttingDown) return json(res, 503, { error: "FARAZ service is shutting down." });
+          if (realtimeUpdates.has(chartId)) {
+            return json(res, 409, { code: "RAW_BUSY", error: "This RAW file is already catching up." });
+          }
+          const changed = (file) => json(res, 409, {
+            code: "RAW_CHANGED", error: "The selected RAW file changed. Reload its current version before retrying.",
+            ...(file?.chartId === chartId ? { file: publicRawFile(file) } : {}),
+          });
+          const version = rawStore.version(id);
+          const file = rawStore.get(id);
+          if (!file || file.chartId !== chartId) return changed(rawStore.get(realtimeFileIds.get(chartId)));
+          if (file.to !== lastCandleTime || file.metadata.dataSha256 !== baseSha256) return changed(file);
+          const timeframeSeconds = parseResolutionToSeconds(file.timeframe);
+          const from = file.to + timeframeSeconds;
+          const closedSteps = Math.floor((now() / 1000 - file.to) / timeframeSeconds) - 1;
+          const to = file.to + closedSteps * timeframeSeconds;
+          if (from > to) return json(res, 200, { file: publicRawFile(file), candles: [] });
+
+          if (!version) return changed();
+          realtimeUpdates.set(chartId, controller);
+          let history;
+          try {
+            history = await chartHistory({ symbolName: `${file.broker}:${file.symbol}`, resolution: file.timeframe, timeframeSeconds, from, to, signal });
+          } catch (error) {
+            if (signal.aborted) return;
+            const needAuth = error.status === 401 || error.status === 403;
+            return json(res, needAuth ? 401 : 502, { error: error.message, needAuth });
+          }
+          signal.throwIfAborted();
+          if (history.conflicts || history.candles.some((row) => (row.time - from) % timeframeSeconds !== 0)) {
+            return json(res, 502, { error: "FARAZ returned conflicting candles or candles outside the RAW timeframe grid." });
+          }
+          if (rawStore.version(id) !== version) return changed();
+          const current = rawStore.get(id);
+          if (current?.chartId !== chartId) return changed(current);
+          const { candles } = history;
+          const updated = candles.length ? await rawStore.appendLatest(current, candles, timeframeSeconds, version, signal) : current;
+          if (!updated) return changed();
+          if (updated.id !== id) realtimeFileIds.set(chartId, updated.id);
+          json(res, 200, { file: publicRawFile(updated), candles });
+        } catch (error) {
+          if (signal.aborted || res.destroyed) return;
+          json(res, 500, { error: error.message });
+        } finally {
+          res.off("close", onClose);
+          if (realtimeUpdates.get(chartId) === controller) realtimeUpdates.delete(chartId);
+        }
+      });
+
       // ---- Faraz History Proxy ----
-      // Server-side proxy to faraz.io history endpoint (avoids CORS).
-      // Accepts POST { symbolName, resolution, from, to } and returns raw candle data.
       server.middlewares.use("/api/faraz/history", async (req, res) => {
         if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
         try {
@@ -1497,78 +1626,8 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           if (!Number.isFinite(from) || from <= 0) return json(res, 400, { error: "Invalid from." });
           if (!Number.isFinite(to) || to < from) return json(res, 400, { error: "Invalid to." });
 
-          // The local session file is authoritative on every chart packet.
-          // Sending a separate history/profile probe for each packet multiplied
-          // the network round trips on large RAW audits.
-          if (!fs.existsSync(secretPath) || !loadStoredSession()) {
-            return json(res, 401, { error: "Sign in to FARAZ first.", needAuth: true });
-          }
-
-          // Chart gap verification is always against the requested source host,
-          // independent of an exporter capture on an ir3/ir4 history mirror.
-          const host = "faraz.io";
-          const endpoint = historyAuth?.endpoint && new URL(historyAuth.endpoint).host === host
-            ? historyAuth.endpoint
-            : `https://${host}${HISTORY_PATH}`;
-
-          // Update ranges are split into bounded requests so the FARAZ server
-          // receives the same packet shape as the exporter instead of one
-          // unbounded history request.
-          const requestPacket = async (packet) => {
-            const url = new URL(endpoint);
-            for (const [key, value] of Object.entries({
-              symbolName: endpointSymbolName(symbolName),
-              resolution, from: packet.from, to: packet.to,
-              countback: packet.countback,
-              firstDataRequest: false,
-              latest: packet.latest,
-              adjustType: historyAuth?.adjustType || "2",
-              json: true,
-            })) url.searchParams.set(key, String(value));
-            let lastError = null;
-            for (let attempt = 1; attempt <= MAX_PACKET_ATTEMPTS; attempt++) {
-              await waitForChartHistoryRequestSlot();
-              try {
-                const response = await directRequest(url, { timeoutMs: 30_000 });
-                const text = await response.text();
-                if (response.status !== 200) {
-                  const error = new Error(`FARAZ returned HTTP ${response.status}: ${text}`);
-                  error.status = response.status;
-                  throw error;
-                }
-                let payload;
-                try { payload = JSON.parse(text); }
-                catch {
-                  const error = new Error("FARAZ returned invalid JSON with HTTP 200.");
-                  error.status = 200;
-                  throw error;
-                }
-                const normalized = normalizeHistoryPayloadDetails(payload);
-                if (normalized.rejectedRows) {
-                  const error = new Error(`FARAZ returned ${normalized.rejectedRows} malformed candle row(s).`);
-                  error.status = 200;
-                  throw error;
-                }
-                return normalized.candles;
-              } catch (error) {
-                lastError = error;
-                if (attempt < MAX_PACKET_ATTEMPTS) {
-                  await new Promise((resolve) => setTimeout(resolve, RETRY_BASE_DELAY_MS * attempt));
-                }
-              }
-            }
-            const error = new Error(`FARAZ packet ${tehranDisplayTime(packet.from)}→${tehranDisplayTime(packet.to)} failed after ${MAX_PACKET_ATTEMPTS} attempts: ${lastError?.message || "Unknown error"}`);
-            error.status = lastError?.status;
-            throw error;
-          };
-
-          const collected = [];
-          for (const packet of chunkRange(from, to, timeframeSeconds, CHART_UPDATE_PACKET_SIZE)) {
-            const rows = await requestPacket(packet);
-            if (!Array.isArray(rows)) return;
-            collected.push(rows);
-          }
-          json(res, 200, mergeCandles(collected, from, to).candles);
+          const { candles } = await chartHistory({ symbolName, resolution, timeframeSeconds, from, to });
+          json(res, 200, candles);
         } catch (error) {
           json(res, error.status === 401 || error.status === 403 ? 401 : 502, { error: error.message, needAuth: error.status === 401 || error.status === 403 });
         }

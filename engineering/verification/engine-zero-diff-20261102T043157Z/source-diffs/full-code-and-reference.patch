@@ -1,0 +1,616 @@
+diff --git a/engine/algorithms/TradingBot_Bearish_Algorithm_Reference_V5.4.33_Source_Synchronized.md b/engine/algorithms/TradingBot_Bearish_Algorithm_Reference_V5.4.33_Source_Synchronized.md
+index a565e05..c98fc23 100644
+--- a/engine/algorithms/TradingBot_Bearish_Algorithm_Reference_V5.4.33_Source_Synchronized.md
++++ b/engine/algorithms/TradingBot_Bearish_Algorithm_Reference_V5.4.33_Source_Synchronized.md
+@@ -1,8 +1,8 @@
+ # TradingBot Bearish Algorithm Reference — Current Standalone Specification
+ 
+ **Document Version:** `5.4.33`  
+-**Last Modified:** `2026-11-02T07:13:10+03:30`  
+-**last_modified_at:** `2026-11-02T07:13:10+03:30`  
++**Last Modified:** `2026-11-02T12:11:44+03:30`  
++**last_modified_at:** `2026-11-02T12:11:44+03:30`  
+ **document_role:** `reference`  
+ **lifecycle:** `maintained`  
+ **owner:** `engine/algorithms`  
+@@ -25,6 +25,16 @@
+ - OrderAudit removes only the rejected S creation cause and retains independently valid A/E parent-stop and reset-leg causes, physical identity, exact confirmation and strict stop. Public field names and directional price predicates remain unchanged.
+ - Focused regressions cover both directions; independent real-market and browser checks must be reported separately from unit and reflection evidence.
+ 
++<!-- ENGINE-AUDIT-IMPLEMENTATION-BEGIN -->
++### Current Engine implementation audit (UNRELEASED)
++
++- **Preparatory serialization repair:** the merged multi-regime Bridge projection preserves first-appearance field order using an ordered key collector. This removes process-hash-dependent mapping order; calculation values, types, Decimal strings, physical identities, provenance and arrays are unchanged by this repair. Public API version fields remain unchanged.
++- **Implementation-only optimization:** the carried-Order query reuses its eagerly extracted parent creation list, reduces multiple parents to their original earliest event and appends every B confirmation eagerly. This reduces redundant temporary allocation and generator work without changing native selection, time boundaries, error precedence, Order identity, cache validity, result order or public output. No new retained cache or trading rule is introduced.
++- **Authority:** the user delegated this separately disclosed repair after the original exact baseline exposed two mapping-order failures. The original failed baseline is preserved; it is not relabeled zero-difference. Optimization, if retained, must compare against a separately named stable post-repair baseline.
++- **Evidence:** `engineering/verification/engine-zero-diff-20261102T043157Z/` contains original outputs, first differences, independent review and actual test/measurement records. No release/publication is claimed. Final optimization/RAW status must be read from that run's final report, not inferred from Source synchronization.
++- **Source synchronization timestamp:** `2026-11-02T12:11:44+03:30`. Only implementation evidence and exact embedded Source/index/manifest representation are synchronized here; existing trading-rule text and pre-existing documented ambiguities remain unchanged.
++<!-- ENGINE-AUDIT-IMPLEMENTATION-END -->
++
+ ### Current local extension — bidirectional PH/PL/MBL (UNRELEASED)
+ <!-- PRIMARY-REVISION-BEGIN -->
+ 
+@@ -113,7 +123,7 @@ The Source manifest and exact embedded Source are regenerated from the authorita
+ |---|---|---|---:|---:|---|
+ | `__init__.py` | Engine package marker | `unversioned` | 0 | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+ | `bridge/__init__.py` | Bridge package marker | `unversioned` | 1 | 64 | `2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8` |
+-| `bridge/trading_pipeline.py` | Pipeline / Serialization | `1.13.0 (impl 1.16.0)` | 3433 | 134613 | `6d93dbaf67e4dce02060575b92dda5de6eaf6de0148f6db54056015c072181dc` |
++| `bridge/trading_pipeline.py` | Pipeline / Serialization | `1.13.0 (impl 1.16.1)` | 3433 | 134626 | `1de8bc3d98686c54a5942956734aca7fbdfe2a85f29d04bd6f072d9efa0c8a10` |
+ | `pipeline/__init__.py` | Compatibility package wrapper | `unversioned` | 28 | 653 | `d22a1b81495a6c97b5eccc4d921b1ba4b709bfbcd39be6ef34b9014690b9f460` |
+ | `pipeline/a_zone_detector.py` | A | `1.7.0` | 804 | 31373 | `83f08b06556eb59c6d1b3afd22b51c280315bd80f3a31bc3044ada349251a115` |
+ | `pipeline/blue_line_detector.py` | Blue | `2.4.1` | 481 | 16945 | `c6466c280504f82d8f2b189263ed0e9b9581c2f48edd8aaa12f016e55effc98c` |
+@@ -121,7 +131,7 @@ The Source manifest and exact embedded Source are regenerated from the authorita
+ | `pipeline/direction_policy.py` | Direction Policy | `1.0.0` | 70 | 2282 | `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea` |
+ | `pipeline/e_zone_detector.py` | E | `6.16.2 (impl 6.18.6)` | 1261 | 56097 | `6736628d9b3c36473f30a548ea8f652a6127ff1c461cceafe352227d223b5690` |
+ | `pipeline/lifecycle_engine.py` | Lifecycle / StopAll | `1.18.6 (impl 1.20.7)` | 1529 | 63174 | `760928f5480efad446b42bc6aa2fbea3e431de13ab92714bac05c09188519c26` |
+-| `pipeline/order_audit_engine.py` | Order / OrderAudit | `1.8.1` | 2222 | 92027 | `84201f1784fe9a1c924c8c6d3a8f67999d629032c6987c4384a4330954acf2af` |
++| `pipeline/order_audit_engine.py` | Order / OrderAudit | `1.8.2` | 2222 | 92099 | `a74cb24f100477fc3fc5cb1197cb0e57d40c400b8cbd7029813e8ac9e064393f` |
+ | `pipeline/PL_PH_detector.py` | Primary High / Low / Matching Behavior Leg | `1.4.0` | 666 | 29764 | `5107fe02c8314552f4c8e45bb84e23682e43d2d49d925cfdaf165eb6a30462d9` |
+ | `pipeline/reaction_engine.py` | Reaction / Reset | `9.9.1 (impl 9.11.0)` | 2501 | 108353 | `2554a5609bb126206ad2b7c58eca6694d8b9623f3e5859487540fe9d49dad89b` |
+ | `pipeline/s_zone_detector.py` | S | `4.20.1 (impl 4.21.1)` | 1445 | 60942 | `0c5864bc3bc6c17f72c5c38b04a1cd0b5b38c726d8834207a55d5351fdfa38fe` |
+@@ -788,31 +798,31 @@ The index is descriptive integrity/navigation evidence, not trading-semantic aut
+ - **Nested implementation functions/closures:** _none_
+ 
+ #### `bridge/trading_pipeline.py`
+-- **Module-level symbols/assignments:** `_ENGINE_ROOT` (L30–L30), `_PIPELINE_DIR` (L31–L31), `_pipeline_dir_text` (L32–L32), `_DTFMT` (L39–L39), `TRADING_PIPELINE_VERSION` (L42–L42), `TRADING_PIPELINE_IMPLEMENTATION_VERSION` (L43–L43), `TRADING_PIPELINE_LAST_MODIFIED` (L44–L44), `MBL_EXTENSION_CANDLES` (L45–L45), `TEHRAN` (L47–L47), `_local_dt_cache` (L84–L84), `_epoch_cache` (L96–L96), `_display_epoch_cache` (L108–L108)
+-- **Top-level functions:** `emit_progress(status: str, label: str, duration_ms: float | None=None)` (L50–L55), `timed(timings: dict[str, float], label: str, work)` (L58–L67), `load_module(name: str, path: Path)` (L70–L77), `load_engine(path: Path)` (L80–L81), `local_datetime(epoch: int) -> datetime` (L87–L93), `epoch(local: datetime) -> int` (L99–L105), `display_epoch(value: str | datetime) -> int` (L111–L120), `build_candle_buckets(rows: list[dict], timeframe: int)` (L123–L178), `build_candle_objects(engine, buckets: list[dict])` (L181–L208), `_index_selected(index: object, start_index: int | None, end_index: int | None) -> bool` (L211–L216), `select_reaction_serialization_items(result, start_index=None, end_index=None, reaction_transform=None)` (L219–L239), `serialize(result, start_index=None, end_index=None, reaction_transform=None, selected_items=None)` (L242–L283), `serialize_blue_lines(items, start_index=None, end_index=None)` (L286–L303), `serialize_a_zones(items)` (L306–L330), `serialize_s_zones(items)` (L333–L395), `serialize_e_zones(items)` (L398–L438), `serialize_stopalls(items)` (L441–L505), `bridge_datetime(value: object | None) -> str | None` (L508–L519), `bridge_direction(direction: str) -> str` (L522–L523), `bridge_mode(mode: object) -> str | None` (L526–L527), `bridge_color(value: object | None) -> str | None` (L530–L533), `_bridge_horizon(market: MarketContext) -> datetime` (L536–L540), `_bridge_in_horizon(market: MarketContext, value: datetime | None) -> bool` (L543–L544), `_bridge_proven_strict_event(market: MarketContext, direction: str, level: object | None, event_time: datetime | None) -> datetime | None` (L547–L584), `_bridge_stop_view(market: MarketContext, direction: str, price: object | None, stop_time: datetime | None, stop_event_time: datetime | None) -> dict[str, object]` (L587–L604), `_bridge_reaction_confirmation(market: MarketContext, direction: str, reaction: object, *, use_intrabar_start: bool=True) -> datetime | None` (L607–L628), `_bridge_order_identity(item: object) -> tuple[int, int] | None` (L631–L636), `_bridge_parent_stop(projection: BridgeProjection, detector: object | None, parent_type: str, item: object) -> tuple[datetime | None, datetime | None]` (L833–L851), `_bridge_a_stop(projection: BridgeProjection, s_detector: object | None, item: object) -> tuple[datetime | None, datetime | None]` (L854–L872), `_bridge_behavior_stop(projection: BridgeProjection, direction: str, price: object, stop_time: datetime | None, stop_event_time: datetime | None) -> dict[str, object]` (L875–L887), `_bridge_blue_formation(projection: BridgeProjection, direction: str, line: object, reactions: list[object]) -> tuple[datetime | None, datetime | None]` (L890–L910), `_bridge_project_reaction(projection: BridgeProjection, direction: str, raw: object, public: object) -> dict[str, object]` (L913–L953), `_bridge_project_reset(projection: BridgeProjection, direction: str, reset: object) -> dict[str, object]` (L956–L976), `_bridge_project_blue(projection: BridgeProjection, direction: str, line: object, reactions: list[object]) -> dict[str, object]` (L979–L1012), `_bridge_full_lines_by_ordinal(lines: list[object]) -> dict[int, object]` (L1015–L1024), `_bridge_project_a(projection: BridgeProjection, direction: str, item: object, lines_by_ordinal: dict[int, object], reactions: list[object], s_detector: object | None) -> dict[str, object]` (L1027–L1114), `_bridge_project_s(projection: BridgeProjection, direction: str, item: object, e_detector: object | None) -> dict[str, object]` (L1117–L1170), `_bridge_source_index(item: object) -> tuple[int, datetime] | None` (L1173–L1178), `_bridge_parent_behavior_for_e(projection: BridgeProjection, direction: str, item: object, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object]) -> dict[str, object]` (L1181–L1222), `_bridge_project_e(projection: BridgeProjection, direction: str, item: object, e_detector: object | None, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object]) -> dict[str, object]` (L1225–L1269), `_bridge_project_stopall(projection: BridgeProjection, direction: str, item: object) -> dict[str, object]` (L1272–L1338), `_bridge_audit_order_key(prepared: object, detector: object) -> tuple[int, int]` (L1341–L1348), `build_bridge_output(direction: str, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, selected_reactions: list[tuple[object, object]], selected_resets: list[object], selected_blue_lines: list[object], selected_a_zones: list[object], selected_s_zones: list[object], selected_e_zones: list[object], selected_stopalls: list[object], selected_order_audit: list[object]) -> dict[str, list[dict[str, object]]]` (L1351–L1453), `validate_order_audit_bridge(prepared_items, s_zones, e_zones, stopalls) -> None` (L1456–L1521), `serialize_order_audit(prepared_items, detector)` (L1524–L1574), `market_segment(market, start, stop, *, initial_bullish_trend=None, initial_bearish_trend=None)` (L1601–L1621), `absolute_payload_indexes(value, offset)` (L1624–L1635), `serialize_trend_transition(transition, market)` (L1638–L1658), `parse_arguments(argv=None)` (L1661–L1731), `load_engines(args, timings: dict[str, float]) -> EngineBundle` (L1734–L1769), `prepare_market_context(args, engines: EngineBundle, timings: dict[str, float]) -> MarketContext` (L1772–L1852), `create_e_detector(direction: str, e_engine, full_results: dict[str, object], s_zones: list[object], chronology, geometry_detectors: dict[str, object], initial_order_audit, lifecycle_engine, *, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[object]=())` (L1891–L1936), `calculate_full_direction_state(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], order_b_legs: Sequence[object]=(), shared_stages: FullDirectionState | None=None) -> FullDirectionState` (L1939–L2271), `calculate_direction_with_order_b_feedback(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], *, stopall_enabled: bool) -> FullDirectionState` (L2274–L2333), `prepare_pipeline_state(args, engines: EngineBundle, market: MarketContext, timings: dict[str, float]) -> PipelineState` (L2336–L2473), `calculate_direction_range_state(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float]) -> DirectionRangeState` (L2508–L2607), `finalize_direction_visibility(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, direction_state: DirectionRangeState, timings: dict[str, float]) -> DirectionVisibilityState` (L2610–L2844), `serialize_direction_payload(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, timings: dict[str, float])` (L2847–L2985), `serialize_primary_order(order, market, owner_direction)` (L2988–L3014), `serialize_primary_structures(primary, market)` (L3017–L3136), `calculate_primary_structures(args, engines, market, state, visibility, timings, direction='bearish')` (L3139–L3189), `build_direction_output(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L3192–L3232), `merge_regime_outputs(regimes)` (L3234–L3260), `build_reversed_trend_outputs(args, engines, market, transition, timings)` (L3263–L3329), `build_response_payload(args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float], pipeline_started: float) -> dict[str, object]` (L3332–L3392), `main() -> int` (L3395–L3425)
++- **Module-level symbols/assignments:** `_ENGINE_ROOT` (L30), `_PIPELINE_DIR` (L31), `_pipeline_dir_text` (L32), `_DTFMT` (L39), `TRADING_PIPELINE_VERSION` (L42), `TRADING_PIPELINE_IMPLEMENTATION_VERSION` (L43), `TRADING_PIPELINE_LAST_MODIFIED` (L44), `MBL_EXTENSION_CANDLES` (L45), `TEHRAN` (L47), `_local_dt_cache` (L84), `_epoch_cache` (L96), `_display_epoch_cache` (L108)
++- **Top-level functions:** `emit_progress(status: str, label: str, duration_ms: float | None=None)` (L50), `timed(timings: dict[str, float], label: str, work)` (L58), `load_module(name: str, path: Path)` (L70), `load_engine(path: Path)` (L80), `local_datetime(epoch: int)` (L87), `epoch(local: datetime)` (L99), `display_epoch(value: str | datetime)` (L111), `build_candle_buckets(rows: list[dict], timeframe: int)` (L123), `build_candle_objects(engine, buckets: list[dict])` (L181), `_index_selected(index: object, start_index: int | None, end_index: int | None)` (L211), `select_reaction_serialization_items(result, start_index=None, end_index=None, reaction_transform=None)` (L219), `serialize(result, start_index=None, end_index=None, reaction_transform=None, selected_items=None)` (L242), `serialize_blue_lines(items, start_index=None, end_index=None)` (L286), `serialize_a_zones(items)` (L306), `serialize_s_zones(items)` (L333), `serialize_e_zones(items)` (L398), `serialize_stopalls(items)` (L441), `bridge_datetime(value: object | None)` (L508), `bridge_direction(direction: str)` (L522), `bridge_mode(mode: object)` (L526), `bridge_color(value: object | None)` (L530), `_bridge_horizon(market: MarketContext)` (L536), `_bridge_in_horizon(market: MarketContext, value: datetime | None)` (L543), `_bridge_proven_strict_event(market: MarketContext, direction: str, level: object | None, event_time: datetime | None)` (L547), `_bridge_stop_view(market: MarketContext, direction: str, price: object | None, stop_time: datetime | None, stop_event_time: datetime | None)` (L587), `_bridge_reaction_confirmation(market: MarketContext, direction: str, reaction: object, *, use_intrabar_start: bool=True)` (L607), `_bridge_order_identity(item: object)` (L631), `_bridge_parent_stop(projection: BridgeProjection, detector: object | None, parent_type: str, item: object)` (L833), `_bridge_a_stop(projection: BridgeProjection, s_detector: object | None, item: object)` (L854), `_bridge_behavior_stop(projection: BridgeProjection, direction: str, price: object, stop_time: datetime | None, stop_event_time: datetime | None)` (L875), `_bridge_blue_formation(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L890), `_bridge_project_reaction(projection: BridgeProjection, direction: str, raw: object, public: object)` (L913), `_bridge_project_reset(projection: BridgeProjection, direction: str, reset: object)` (L956), `_bridge_project_blue(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L979), `_bridge_full_lines_by_ordinal(lines: list[object])` (L1015), `_bridge_project_a(projection: BridgeProjection, direction: str, item: object, lines_by_ordinal: dict[int, object], reactions: list[object], s_detector: object | None)` (L1027), `_bridge_project_s(projection: BridgeProjection, direction: str, item: object, e_detector: object | None)` (L1117), `_bridge_source_index(item: object)` (L1173), `_bridge_parent_behavior_for_e(projection: BridgeProjection, direction: str, item: object, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1181), `_bridge_project_e(projection: BridgeProjection, direction: str, item: object, e_detector: object | None, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1225), `_bridge_project_stopall(projection: BridgeProjection, direction: str, item: object)` (L1272), `_bridge_audit_order_key(prepared: object, detector: object)` (L1341), `build_bridge_output(direction: str, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, selected_reactions: list[tuple[object, object]], selected_resets: list[object], selected_blue_lines: list[object], selected_a_zones: list[object], selected_s_zones: list[object], selected_e_zones: list[object], selected_stopalls: list[object], selected_order_audit: list[object])` (L1351), `validate_order_audit_bridge(prepared_items, s_zones, e_zones, stopalls)` (L1456), `serialize_order_audit(prepared_items, detector)` (L1524), `market_segment(market, start, stop, *, initial_bullish_trend=None, initial_bearish_trend=None)` (L1601), `absolute_payload_indexes(value, offset)` (L1624), `serialize_trend_transition(transition, market)` (L1638), `parse_arguments(argv=None)` (L1661), `load_engines(args, timings: dict[str, float])` (L1734), `prepare_market_context(args, engines: EngineBundle, timings: dict[str, float])` (L1772), `create_e_detector(direction: str, e_engine, full_results: dict[str, object], s_zones: list[object], chronology, geometry_detectors: dict[str, object], initial_order_audit, lifecycle_engine, *, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[object]=())` (L1891), `calculate_full_direction_state(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], order_b_legs: Sequence[object]=(), shared_stages: FullDirectionState | None=None)` (L1939), `calculate_direction_with_order_b_feedback(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], *, stopall_enabled: bool)` (L2274), `prepare_pipeline_state(args, engines: EngineBundle, market: MarketContext, timings: dict[str, float])` (L2336), `calculate_direction_range_state(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L2508), `finalize_direction_visibility(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, direction_state: DirectionRangeState, timings: dict[str, float])` (L2610), `serialize_direction_payload(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, timings: dict[str, float])` (L2847), `serialize_primary_order(order, market, owner_direction)` (L2988), `serialize_primary_structures(primary, market)` (L3017), `calculate_primary_structures(args, engines, market, state, visibility, timings, direction='bearish')` (L3139), `build_direction_output(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L3192), `merge_regime_outputs(regimes)` (L3234), `build_reversed_trend_outputs(args, engines, market, transition, timings)` (L3263), `build_response_payload(args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float], pipeline_started: float)` (L3332), `main()` (L3395)
+ - **Classes / schemas:**
+-  - `BridgeProjection` (L639–L830)
++  - `BridgeProjection` (L639)
+     - Fields: _none_
+-    - Methods/properties: `__init__(self, *, direction: str, market: MarketContext, prepared_order_audit: list[object], order_direction: str) -> None` (L647–L664), `physical_order(self, prepared: object | None) -> dict[str, object] | None` (L666–L709), `parent_order(self, behavior: object) -> dict[str, object] | None` (L711–L716), `current_order(self, behavior: object, parent_type: str, parent_family: str | None, strict_stop_event: datetime | None) -> dict[str, object] | None` (L718–L771), `order_audit(self, prepared: object) -> dict[str, object]` (L773–L830)
+-  - `EngineBundle` (L1578–L1585)
+-    - Fields: `reaction: object` (L1579), `blue_line: object` (L1580), `a_zone: object` (L1581), `s_zone: object` (L1582), `e_zone: object | None` (L1583), `lifecycle: object | None` (L1584), `primary: object | None` (L1585)
++    - Methods/properties: `__init__(self, *, direction: str, market: MarketContext, prepared_order_audit: list[object], order_direction: str)` (L647), `physical_order(self, prepared: object | None)` (L666), `parent_order(self, behavior: object)` (L711), `current_order(self, behavior: object, parent_type: str, parent_family: str | None, strict_stop_event: datetime | None)` (L718), `order_audit(self, prepared: object)` (L773)
++  - `EngineBundle` (L1578)
++    - Fields: `reaction: object`, `blue_line: object`, `a_zone: object`, `s_zone: object`, `e_zone: object | None`, `lifecycle: object | None`, `primary: object | None`
+     - Methods/properties: _none_
+-  - `MarketContext` (L1589–L1598)
+-    - Fields: `seconds: list[object]` (L1590), `candles: list[object]` (L1591), `lower_index: object` (L1592), `chronology: object` (L1593), `start_index: int` (L1594), `end_index: int` (L1595), `index_offset: int` (L1596), `initial_bullish_trend: bool` (L1597), `initial_bearish_trend: bool` (L1598)
++  - `MarketContext` (L1589)
++    - Fields: `seconds: list[object]`, `candles: list[object]`, `lower_index: object`, `chronology: object`, `start_index: int`, `end_index: int`, `index_offset: int`, `initial_bullish_trend: bool`, `initial_bearish_trend: bool`
+     - Methods/properties: _none_
+-  - `PipelineState` (L1855–L1872)
+-    - Fields: `directions: tuple[str, ...]` (L1858), `results: dict[str, object]` (L1859), `reusable_full_context: bool` (L1860), `initial_order_geometry: dict[str, object]` (L1861), `internal_reaction_identities: dict[str, set[tuple[int, int]]]` (L1862), `full_e_zones: dict[str, list[object]]` (L1863), `full_e_detectors: dict[str, object]` (L1864), `full_s_detectors: dict[str, object]` (L1865), `full_lines_by_direction: dict[str, list[object]]` (L1866), `full_a_by_direction: dict[str, list[object]]` (L1867), `invalid_a_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L1868), `invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L1869), `full_s_by_direction: dict[str, list[object]]` (L1870), `full_s_candidates_by_direction: dict[str, list[object]]` (L1871), `primary_result: object | None` (L1872)
++  - `PipelineState` (L1855)
++    - Fields: `directions: tuple[str, ...]`, `results: dict[str, object]`, `reusable_full_context: bool`, `initial_order_geometry: dict[str, object]`, `internal_reaction_identities: dict[str, set[tuple[int, int]]]`, `full_e_zones: dict[str, list[object]]`, `full_e_detectors: dict[str, object]`, `full_s_detectors: dict[str, object]`, `full_lines_by_direction: dict[str, list[object]]`, `full_a_by_direction: dict[str, list[object]]`, `invalid_a_identities_by_direction: dict[str, set[tuple[datetime, int]]]`, `invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]`, `full_s_by_direction: dict[str, list[object]]`, `full_s_candidates_by_direction: dict[str, list[object]]`, `primary_result: object | None`
+     - Methods/properties: _none_
+-  - `FullDirectionState` (L1876–L1888)
+-    - Fields: `e_zones: list[object]` (L1879), `e_detector: object` (L1880), `s_detector: object` (L1881), `blue_lines: list[object]` (L1882), `a_zones: list[object]` (L1883), `invalid_a_identities: set[tuple[datetime, int]]` (L1884), `invalid_s_identities: set[tuple[datetime, int]]` (L1885), `s_zones: list[object]` (L1886), `s_candidates: list[object]` (L1887), `initial_s_zones: list[object]` (L1888)
++  - `FullDirectionState` (L1876)
++    - Fields: `e_zones: list[object]`, `e_detector: object`, `s_detector: object`, `blue_lines: list[object]`, `a_zones: list[object]`, `invalid_a_identities: set[tuple[datetime, int]]`, `invalid_s_identities: set[tuple[datetime, int]]`, `s_zones: list[object]`, `s_candidates: list[object]`, `initial_s_zones: list[object]`
+     - Methods/properties: _none_
+-  - `DirectionRangeState` (L2477–L2486)
+-    - Fields: `blue_lines: list[object]` (L2480), `a_zones: list[object]` (L2481), `s_candidates: list[object]` (L2482), `accepted_s_zones: list[object]` (L2483), `e_zones: list[object]` (L2484), `invalid_a_identities: set[tuple[datetime, int]]` (L2485), `invalid_s_identities: set[tuple[datetime, int]]` (L2486)
++  - `DirectionRangeState` (L2477)
++    - Fields: `blue_lines: list[object]`, `a_zones: list[object]`, `s_candidates: list[object]`, `accepted_s_zones: list[object]`, `e_zones: list[object]`, `invalid_a_identities: set[tuple[datetime, int]]`, `invalid_s_identities: set[tuple[datetime, int]]`
+     - Methods/properties: _none_
+-  - `DirectionVisibilityState` (L2490–L2505)
+-    - Fields: `blue_lines: list[object]` (L2493), `a_zones: list[object]` (L2494), `s_zones: list[object]` (L2495), `e_zones: list[object]` (L2496), `stopalls: list[object]` (L2497), `prepared_order_audit: list[object]` (L2498), `projection_s_zones: list[object]` (L2502), `projection_e_zones: list[object]` (L2503), `projection_stopalls: list[object]` (L2504), `primary_groups: dict[str, list[object]]` (L2505)
++  - `DirectionVisibilityState` (L2490)
++    - Fields: `blue_lines: list[object]`, `a_zones: list[object]`, `s_zones: list[object]`, `e_zones: list[object]`, `stopalls: list[object]`, `prepared_order_audit: list[object]`, `projection_s_zones: list[object]`, `projection_e_zones: list[object]`, `projection_stopalls: list[object]`, `primary_groups: dict[str, list[object]]`
+     - Methods/properties: _none_
+-- **Nested implementation functions/closures:** `build_candle_buckets.cached_decimal(value: object) -> Decimal` (L132–L143), `create_e_detector.direct_geometry(geometry_direction, geometry_start, geometry_end, gate_event)` (L1910–L1918), `serialize_direction_payload.build_legacy_payload()` (L2874–L2897), `serialize_direction_payload.serialize_reactions_from_one_selection()` (L2906–L2914), `serialize_direction_payload.build_payload()` (L2947–L2981), `serialize_primary_order.value(item)` (L2991–L2996), `serialize_primary_structures.cycle_identity(value)` (L3028–L3033), `serialize_primary_structures.point(item)` (L3034–L3057), `calculate_primary_structures.commit_high(point)` (L3162–L3170), `build_reversed_trend_outputs.calculate(context, direction)` (L3271–L3276), `build_reversed_trend_outputs.publish(group, context, *, stopped=False)` (L3278–L3293), `build_reversed_trend_outputs.empty_lists(item)` (L3311–L3316)
++- **Nested implementation functions/closures:** `build_candle_buckets.cached_decimal` (L132), `create_e_detector.direct_geometry` (L1910), `serialize_direction_payload.build_legacy_payload` (L2874), `serialize_direction_payload.serialize_reactions_from_one_selection` (L2906), `serialize_direction_payload.build_payload` (L2947), `serialize_primary_order.value` (L2991), `serialize_primary_structures.cycle_identity` (L3028), `serialize_primary_structures.point` (L3034), `calculate_primary_structures.commit_high` (L3162), `build_reversed_trend_outputs.calculate` (L3271), `build_reversed_trend_outputs.publish` (L3278), `build_reversed_trend_outputs.empty_lists` (L3311)
+ 
+ #### `pipeline/__init__.py`
+ - **Module-level symbols/assignments:** `_pipeline_dir` (L10–L10), `__all__` (L22–L28)
+@@ -1369,8 +1379,8 @@ Every currently discovered production Python file in the live Engine package, Br
+ 
+ ### 16.3 `bridge/trading_pipeline.py` — Pipeline / Serialization
+ 
+-**SHA-256:** `6d93dbaf67e4dce02060575b92dda5de6eaf6de0148f6db54056015c072181dc`  
+-**Bytes:** `134613`  
++**SHA-256:** `1de8bc3d98686c54a5942956734aca7fbdfe2a85f29d04bd6f072d9efa0c8a10`  
++**Bytes:** `134626`  
+ **LF count:** `3433`
+ 
+ <!-- EXACT-SOURCE-BEGIN:bridge/trading_pipeline.py -->
+@@ -1417,8 +1427,8 @@ _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
+ 
+ 
+ TRADING_PIPELINE_VERSION = "1.13.0"
+-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.16.0"
+-TRADING_PIPELINE_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
++TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.16.1"
++TRADING_PIPELINE_LAST_MODIFIED = "2026-11-02T10:35:59+03:30"
+ MBL_EXTENSION_CANDLES = 400
+ 
+ TEHRAN = ZoneInfo("Asia/Tehran")
+@@ -4626,7 +4636,7 @@ def merge_regime_outputs(regimes):
+             aggregate[key] = [row for segment in segments for row in segment.get(key, [])]
+         bridge_outputs = [segment.get("bridgeOutput", {}) for segment in segments]
+         if any(bridge_outputs):
+-            bridge_keys = {key for item in bridge_outputs for key in item}
++            bridge_keys = dict.fromkeys(key for item in bridge_outputs for key in item)
+             aggregate["bridgeOutput"] = {
+                 key: [row for item in bridge_outputs for row in item.get(key, [])]
+                 for key in bridge_keys
+@@ -9089,8 +9099,8 @@ def visible_a_zones(a_zones: Sequence[object], s_zones: Sequence[object]) -> lis
+ 
+ ### 16.11 `pipeline/order_audit_engine.py` — Order / OrderAudit
+ 
+-**SHA-256:** `84201f1784fe9a1c924c8c6d3a8f67999d629032c6987c4384a4330954acf2af`  
+-**Bytes:** `92027`  
++**SHA-256:** `a74cb24f100477fc3fc5cb1197cb0e57d40c400b8cbd7029813e8ac9e064393f`  
++**Bytes:** `92099`  
+ **LF count:** `2222`
+ 
+ <!-- EXACT-SOURCE-BEGIN:pipeline/order_audit_engine.py -->
+@@ -9109,8 +9119,8 @@ from typing import Callable, Sequence
+ 
+ from core_utils import as_decimal, order_identity, reaction_identity
+ 
+-ORDER_AUDIT_ENGINE_VERSION = "1.8.1"
+-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-01T22:46:39+03:30"
++ORDER_AUDIT_ENGINE_VERSION = "1.8.2"
++ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-02T11:23:50+03:30"
+ 
+ 
+ def relabel_primary_causes(causes, labels):
+@@ -10517,16 +10527,16 @@ class OrderAuditEngineMixin:
+             return list(cached)
+         matches: list[OrderMatch] = []
+         for entry in self.order_audit.values():
+-            a_created_events = [
++            created_events: list[datetime] = [
+                 cause[3]
+-                for cause in entry.get("causes", set())
++                for cause in entry.get("causes", ())
+                 if cause[0] == "parent-stop"
+             ]
+-            created_events = [min(a_created_events)] if a_created_events else []
+-            created_events.extend(
+-                cause["physicalOrderConfirmationTime"]
+-                for cause in entry.get("order_b_causes", ())
+-            )
++            # Only earliest A creation competes; every B cause stays eager.
++            if len(created_events) > 1:
++                created_events = [min(created_events)]
++            for cause in entry.get("order_b_causes", ()):
++                created_events.append(cause["physicalOrderConfirmationTime"])
+             if not created_events:
+                 continue
+             confirmation = entry["confirmation_time"]
+diff --git a/engine/algorithms/TradingBot_Bullish_Algorithm_Reference_V5.4.33_Source_Synchronized.md b/engine/algorithms/TradingBot_Bullish_Algorithm_Reference_V5.4.33_Source_Synchronized.md
+index 313870d..4311d1f 100644
+--- a/engine/algorithms/TradingBot_Bullish_Algorithm_Reference_V5.4.33_Source_Synchronized.md
++++ b/engine/algorithms/TradingBot_Bullish_Algorithm_Reference_V5.4.33_Source_Synchronized.md
+@@ -1,8 +1,8 @@
+ # TradingBot Bullish Algorithm Reference — Current Standalone Specification
+ 
+ **Document Version:** `5.4.33`  
+-**Last Modified:** `2026-11-02T07:13:10+03:30`  
+-**last_modified_at:** `2026-11-02T07:13:10+03:30`  
++**Last Modified:** `2026-11-02T12:11:44+03:30`  
++**last_modified_at:** `2026-11-02T12:11:44+03:30`  
+ **document_role:** `reference`  
+ **lifecycle:** `maintained`  
+ **owner:** `engine/algorithms`  
+@@ -25,6 +25,16 @@
+ - OrderAudit removes only the rejected S creation cause and retains independently valid A/E parent-stop and reset-leg causes, physical identity, exact confirmation and strict stop. Public field names and directional price predicates remain unchanged.
+ - Focused regressions cover both directions; independent real-market and browser checks must be reported separately from unit and reflection evidence.
+ 
++<!-- ENGINE-AUDIT-IMPLEMENTATION-BEGIN -->
++### Current Engine implementation audit (UNRELEASED)
++
++- **Preparatory serialization repair:** the merged multi-regime Bridge projection preserves first-appearance field order using an ordered key collector. This removes process-hash-dependent mapping order; calculation values, types, Decimal strings, physical identities, provenance and arrays are unchanged by this repair. Public API version fields remain unchanged.
++- **Implementation-only optimization:** the carried-Order query reuses its eagerly extracted parent creation list, reduces multiple parents to their original earliest event and appends every B confirmation eagerly. This reduces redundant temporary allocation and generator work without changing native selection, time boundaries, error precedence, Order identity, cache validity, result order or public output. No new retained cache or trading rule is introduced.
++- **Authority:** the user delegated this separately disclosed repair after the original exact baseline exposed two mapping-order failures. The original failed baseline is preserved; it is not relabeled zero-difference. Optimization, if retained, must compare against a separately named stable post-repair baseline.
++- **Evidence:** `engineering/verification/engine-zero-diff-20261102T043157Z/` contains original outputs, first differences, independent review and actual test/measurement records. No release/publication is claimed. Final optimization/RAW status must be read from that run's final report, not inferred from Source synchronization.
++- **Source synchronization timestamp:** `2026-11-02T12:11:44+03:30`. Only implementation evidence and exact embedded Source/index/manifest representation are synchronized here; existing trading-rule text and pre-existing documented ambiguities remain unchanged.
++<!-- ENGINE-AUDIT-IMPLEMENTATION-END -->
++
+ ### Current local extension — bidirectional PH/PL/MBL (UNRELEASED)
+ <!-- PRIMARY-REVISION-BEGIN -->
+ 
+@@ -113,7 +123,7 @@ The Source manifest and exact embedded Source are regenerated from the authorita
+ |---|---|---|---:|---:|---|
+ | `__init__.py` | Engine package marker | `unversioned` | 0 | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+ | `bridge/__init__.py` | Bridge package marker | `unversioned` | 1 | 64 | `2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8` |
+-| `bridge/trading_pipeline.py` | Pipeline / Serialization | `1.13.0 (impl 1.16.0)` | 3433 | 134613 | `6d93dbaf67e4dce02060575b92dda5de6eaf6de0148f6db54056015c072181dc` |
++| `bridge/trading_pipeline.py` | Pipeline / Serialization | `1.13.0 (impl 1.16.1)` | 3433 | 134626 | `1de8bc3d98686c54a5942956734aca7fbdfe2a85f29d04bd6f072d9efa0c8a10` |
+ | `pipeline/__init__.py` | Compatibility package wrapper | `unversioned` | 28 | 653 | `d22a1b81495a6c97b5eccc4d921b1ba4b709bfbcd39be6ef34b9014690b9f460` |
+ | `pipeline/a_zone_detector.py` | A | `1.7.0` | 804 | 31373 | `83f08b06556eb59c6d1b3afd22b51c280315bd80f3a31bc3044ada349251a115` |
+ | `pipeline/blue_line_detector.py` | Blue | `2.4.1` | 481 | 16945 | `c6466c280504f82d8f2b189263ed0e9b9581c2f48edd8aaa12f016e55effc98c` |
+@@ -121,7 +131,7 @@ The Source manifest and exact embedded Source are regenerated from the authorita
+ | `pipeline/direction_policy.py` | Direction Policy | `1.0.0` | 70 | 2282 | `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea` |
+ | `pipeline/e_zone_detector.py` | E | `6.16.2 (impl 6.18.6)` | 1261 | 56097 | `6736628d9b3c36473f30a548ea8f652a6127ff1c461cceafe352227d223b5690` |
+ | `pipeline/lifecycle_engine.py` | Lifecycle / StopAll | `1.18.6 (impl 1.20.7)` | 1529 | 63174 | `760928f5480efad446b42bc6aa2fbea3e431de13ab92714bac05c09188519c26` |
+-| `pipeline/order_audit_engine.py` | Order / OrderAudit | `1.8.1` | 2222 | 92027 | `84201f1784fe9a1c924c8c6d3a8f67999d629032c6987c4384a4330954acf2af` |
++| `pipeline/order_audit_engine.py` | Order / OrderAudit | `1.8.2` | 2222 | 92099 | `a74cb24f100477fc3fc5cb1197cb0e57d40c400b8cbd7029813e8ac9e064393f` |
+ | `pipeline/PL_PH_detector.py` | Primary High / Low / Matching Behavior Leg | `1.4.0` | 666 | 29764 | `5107fe02c8314552f4c8e45bb84e23682e43d2d49d925cfdaf165eb6a30462d9` |
+ | `pipeline/reaction_engine.py` | Reaction / Reset | `9.9.1 (impl 9.11.0)` | 2501 | 108353 | `2554a5609bb126206ad2b7c58eca6694d8b9623f3e5859487540fe9d49dad89b` |
+ | `pipeline/s_zone_detector.py` | S | `4.20.1 (impl 4.21.1)` | 1445 | 60942 | `0c5864bc3bc6c17f72c5c38b04a1cd0b5b38c726d8834207a55d5351fdfa38fe` |
+@@ -788,31 +798,31 @@ The index is descriptive integrity/navigation evidence, not trading-semantic aut
+ - **Nested implementation functions/closures:** _none_
+ 
+ #### `bridge/trading_pipeline.py`
+-- **Module-level symbols/assignments:** `_ENGINE_ROOT` (L30–L30), `_PIPELINE_DIR` (L31–L31), `_pipeline_dir_text` (L32–L32), `_DTFMT` (L39–L39), `TRADING_PIPELINE_VERSION` (L42–L42), `TRADING_PIPELINE_IMPLEMENTATION_VERSION` (L43–L43), `TRADING_PIPELINE_LAST_MODIFIED` (L44–L44), `MBL_EXTENSION_CANDLES` (L45–L45), `TEHRAN` (L47–L47), `_local_dt_cache` (L84–L84), `_epoch_cache` (L96–L96), `_display_epoch_cache` (L108–L108)
+-- **Top-level functions:** `emit_progress(status: str, label: str, duration_ms: float | None=None)` (L50–L55), `timed(timings: dict[str, float], label: str, work)` (L58–L67), `load_module(name: str, path: Path)` (L70–L77), `load_engine(path: Path)` (L80–L81), `local_datetime(epoch: int) -> datetime` (L87–L93), `epoch(local: datetime) -> int` (L99–L105), `display_epoch(value: str | datetime) -> int` (L111–L120), `build_candle_buckets(rows: list[dict], timeframe: int)` (L123–L178), `build_candle_objects(engine, buckets: list[dict])` (L181–L208), `_index_selected(index: object, start_index: int | None, end_index: int | None) -> bool` (L211–L216), `select_reaction_serialization_items(result, start_index=None, end_index=None, reaction_transform=None)` (L219–L239), `serialize(result, start_index=None, end_index=None, reaction_transform=None, selected_items=None)` (L242–L283), `serialize_blue_lines(items, start_index=None, end_index=None)` (L286–L303), `serialize_a_zones(items)` (L306–L330), `serialize_s_zones(items)` (L333–L395), `serialize_e_zones(items)` (L398–L438), `serialize_stopalls(items)` (L441–L505), `bridge_datetime(value: object | None) -> str | None` (L508–L519), `bridge_direction(direction: str) -> str` (L522–L523), `bridge_mode(mode: object) -> str | None` (L526–L527), `bridge_color(value: object | None) -> str | None` (L530–L533), `_bridge_horizon(market: MarketContext) -> datetime` (L536–L540), `_bridge_in_horizon(market: MarketContext, value: datetime | None) -> bool` (L543–L544), `_bridge_proven_strict_event(market: MarketContext, direction: str, level: object | None, event_time: datetime | None) -> datetime | None` (L547–L584), `_bridge_stop_view(market: MarketContext, direction: str, price: object | None, stop_time: datetime | None, stop_event_time: datetime | None) -> dict[str, object]` (L587–L604), `_bridge_reaction_confirmation(market: MarketContext, direction: str, reaction: object, *, use_intrabar_start: bool=True) -> datetime | None` (L607–L628), `_bridge_order_identity(item: object) -> tuple[int, int] | None` (L631–L636), `_bridge_parent_stop(projection: BridgeProjection, detector: object | None, parent_type: str, item: object) -> tuple[datetime | None, datetime | None]` (L833–L851), `_bridge_a_stop(projection: BridgeProjection, s_detector: object | None, item: object) -> tuple[datetime | None, datetime | None]` (L854–L872), `_bridge_behavior_stop(projection: BridgeProjection, direction: str, price: object, stop_time: datetime | None, stop_event_time: datetime | None) -> dict[str, object]` (L875–L887), `_bridge_blue_formation(projection: BridgeProjection, direction: str, line: object, reactions: list[object]) -> tuple[datetime | None, datetime | None]` (L890–L910), `_bridge_project_reaction(projection: BridgeProjection, direction: str, raw: object, public: object) -> dict[str, object]` (L913–L953), `_bridge_project_reset(projection: BridgeProjection, direction: str, reset: object) -> dict[str, object]` (L956–L976), `_bridge_project_blue(projection: BridgeProjection, direction: str, line: object, reactions: list[object]) -> dict[str, object]` (L979–L1012), `_bridge_full_lines_by_ordinal(lines: list[object]) -> dict[int, object]` (L1015–L1024), `_bridge_project_a(projection: BridgeProjection, direction: str, item: object, lines_by_ordinal: dict[int, object], reactions: list[object], s_detector: object | None) -> dict[str, object]` (L1027–L1114), `_bridge_project_s(projection: BridgeProjection, direction: str, item: object, e_detector: object | None) -> dict[str, object]` (L1117–L1170), `_bridge_source_index(item: object) -> tuple[int, datetime] | None` (L1173–L1178), `_bridge_parent_behavior_for_e(projection: BridgeProjection, direction: str, item: object, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object]) -> dict[str, object]` (L1181–L1222), `_bridge_project_e(projection: BridgeProjection, direction: str, item: object, e_detector: object | None, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object]) -> dict[str, object]` (L1225–L1269), `_bridge_project_stopall(projection: BridgeProjection, direction: str, item: object) -> dict[str, object]` (L1272–L1338), `_bridge_audit_order_key(prepared: object, detector: object) -> tuple[int, int]` (L1341–L1348), `build_bridge_output(direction: str, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, selected_reactions: list[tuple[object, object]], selected_resets: list[object], selected_blue_lines: list[object], selected_a_zones: list[object], selected_s_zones: list[object], selected_e_zones: list[object], selected_stopalls: list[object], selected_order_audit: list[object]) -> dict[str, list[dict[str, object]]]` (L1351–L1453), `validate_order_audit_bridge(prepared_items, s_zones, e_zones, stopalls) -> None` (L1456–L1521), `serialize_order_audit(prepared_items, detector)` (L1524–L1574), `market_segment(market, start, stop, *, initial_bullish_trend=None, initial_bearish_trend=None)` (L1601–L1621), `absolute_payload_indexes(value, offset)` (L1624–L1635), `serialize_trend_transition(transition, market)` (L1638–L1658), `parse_arguments(argv=None)` (L1661–L1731), `load_engines(args, timings: dict[str, float]) -> EngineBundle` (L1734–L1769), `prepare_market_context(args, engines: EngineBundle, timings: dict[str, float]) -> MarketContext` (L1772–L1852), `create_e_detector(direction: str, e_engine, full_results: dict[str, object], s_zones: list[object], chronology, geometry_detectors: dict[str, object], initial_order_audit, lifecycle_engine, *, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[object]=())` (L1891–L1936), `calculate_full_direction_state(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], order_b_legs: Sequence[object]=(), shared_stages: FullDirectionState | None=None) -> FullDirectionState` (L1939–L2271), `calculate_direction_with_order_b_feedback(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], *, stopall_enabled: bool) -> FullDirectionState` (L2274–L2333), `prepare_pipeline_state(args, engines: EngineBundle, market: MarketContext, timings: dict[str, float]) -> PipelineState` (L2336–L2473), `calculate_direction_range_state(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float]) -> DirectionRangeState` (L2508–L2607), `finalize_direction_visibility(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, direction_state: DirectionRangeState, timings: dict[str, float]) -> DirectionVisibilityState` (L2610–L2844), `serialize_direction_payload(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, timings: dict[str, float])` (L2847–L2985), `serialize_primary_order(order, market, owner_direction)` (L2988–L3014), `serialize_primary_structures(primary, market)` (L3017–L3136), `calculate_primary_structures(args, engines, market, state, visibility, timings, direction='bearish')` (L3139–L3189), `build_direction_output(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L3192–L3232), `merge_regime_outputs(regimes)` (L3234–L3260), `build_reversed_trend_outputs(args, engines, market, transition, timings)` (L3263–L3329), `build_response_payload(args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float], pipeline_started: float) -> dict[str, object]` (L3332–L3392), `main() -> int` (L3395–L3425)
++- **Module-level symbols/assignments:** `_ENGINE_ROOT` (L30), `_PIPELINE_DIR` (L31), `_pipeline_dir_text` (L32), `_DTFMT` (L39), `TRADING_PIPELINE_VERSION` (L42), `TRADING_PIPELINE_IMPLEMENTATION_VERSION` (L43), `TRADING_PIPELINE_LAST_MODIFIED` (L44), `MBL_EXTENSION_CANDLES` (L45), `TEHRAN` (L47), `_local_dt_cache` (L84), `_epoch_cache` (L96), `_display_epoch_cache` (L108)
++- **Top-level functions:** `emit_progress(status: str, label: str, duration_ms: float | None=None)` (L50), `timed(timings: dict[str, float], label: str, work)` (L58), `load_module(name: str, path: Path)` (L70), `load_engine(path: Path)` (L80), `local_datetime(epoch: int)` (L87), `epoch(local: datetime)` (L99), `display_epoch(value: str | datetime)` (L111), `build_candle_buckets(rows: list[dict], timeframe: int)` (L123), `build_candle_objects(engine, buckets: list[dict])` (L181), `_index_selected(index: object, start_index: int | None, end_index: int | None)` (L211), `select_reaction_serialization_items(result, start_index=None, end_index=None, reaction_transform=None)` (L219), `serialize(result, start_index=None, end_index=None, reaction_transform=None, selected_items=None)` (L242), `serialize_blue_lines(items, start_index=None, end_index=None)` (L286), `serialize_a_zones(items)` (L306), `serialize_s_zones(items)` (L333), `serialize_e_zones(items)` (L398), `serialize_stopalls(items)` (L441), `bridge_datetime(value: object | None)` (L508), `bridge_direction(direction: str)` (L522), `bridge_mode(mode: object)` (L526), `bridge_color(value: object | None)` (L530), `_bridge_horizon(market: MarketContext)` (L536), `_bridge_in_horizon(market: MarketContext, value: datetime | None)` (L543), `_bridge_proven_strict_event(market: MarketContext, direction: str, level: object | None, event_time: datetime | None)` (L547), `_bridge_stop_view(market: MarketContext, direction: str, price: object | None, stop_time: datetime | None, stop_event_time: datetime | None)` (L587), `_bridge_reaction_confirmation(market: MarketContext, direction: str, reaction: object, *, use_intrabar_start: bool=True)` (L607), `_bridge_order_identity(item: object)` (L631), `_bridge_parent_stop(projection: BridgeProjection, detector: object | None, parent_type: str, item: object)` (L833), `_bridge_a_stop(projection: BridgeProjection, s_detector: object | None, item: object)` (L854), `_bridge_behavior_stop(projection: BridgeProjection, direction: str, price: object, stop_time: datetime | None, stop_event_time: datetime | None)` (L875), `_bridge_blue_formation(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L890), `_bridge_project_reaction(projection: BridgeProjection, direction: str, raw: object, public: object)` (L913), `_bridge_project_reset(projection: BridgeProjection, direction: str, reset: object)` (L956), `_bridge_project_blue(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L979), `_bridge_full_lines_by_ordinal(lines: list[object])` (L1015), `_bridge_project_a(projection: BridgeProjection, direction: str, item: object, lines_by_ordinal: dict[int, object], reactions: list[object], s_detector: object | None)` (L1027), `_bridge_project_s(projection: BridgeProjection, direction: str, item: object, e_detector: object | None)` (L1117), `_bridge_source_index(item: object)` (L1173), `_bridge_parent_behavior_for_e(projection: BridgeProjection, direction: str, item: object, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1181), `_bridge_project_e(projection: BridgeProjection, direction: str, item: object, e_detector: object | None, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1225), `_bridge_project_stopall(projection: BridgeProjection, direction: str, item: object)` (L1272), `_bridge_audit_order_key(prepared: object, detector: object)` (L1341), `build_bridge_output(direction: str, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, selected_reactions: list[tuple[object, object]], selected_resets: list[object], selected_blue_lines: list[object], selected_a_zones: list[object], selected_s_zones: list[object], selected_e_zones: list[object], selected_stopalls: list[object], selected_order_audit: list[object])` (L1351), `validate_order_audit_bridge(prepared_items, s_zones, e_zones, stopalls)` (L1456), `serialize_order_audit(prepared_items, detector)` (L1524), `market_segment(market, start, stop, *, initial_bullish_trend=None, initial_bearish_trend=None)` (L1601), `absolute_payload_indexes(value, offset)` (L1624), `serialize_trend_transition(transition, market)` (L1638), `parse_arguments(argv=None)` (L1661), `load_engines(args, timings: dict[str, float])` (L1734), `prepare_market_context(args, engines: EngineBundle, timings: dict[str, float])` (L1772), `create_e_detector(direction: str, e_engine, full_results: dict[str, object], s_zones: list[object], chronology, geometry_detectors: dict[str, object], initial_order_audit, lifecycle_engine, *, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[object]=())` (L1891), `calculate_full_direction_state(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], order_b_legs: Sequence[object]=(), shared_stages: FullDirectionState | None=None)` (L1939), `calculate_direction_with_order_b_feedback(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], *, stopall_enabled: bool)` (L2274), `prepare_pipeline_state(args, engines: EngineBundle, market: MarketContext, timings: dict[str, float])` (L2336), `calculate_direction_range_state(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L2508), `finalize_direction_visibility(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, direction_state: DirectionRangeState, timings: dict[str, float])` (L2610), `serialize_direction_payload(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, timings: dict[str, float])` (L2847), `serialize_primary_order(order, market, owner_direction)` (L2988), `serialize_primary_structures(primary, market)` (L3017), `calculate_primary_structures(args, engines, market, state, visibility, timings, direction='bearish')` (L3139), `build_direction_output(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L3192), `merge_regime_outputs(regimes)` (L3234), `build_reversed_trend_outputs(args, engines, market, transition, timings)` (L3263), `build_response_payload(args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float], pipeline_started: float)` (L3332), `main()` (L3395)
+ - **Classes / schemas:**
+-  - `BridgeProjection` (L639–L830)
++  - `BridgeProjection` (L639)
+     - Fields: _none_
+-    - Methods/properties: `__init__(self, *, direction: str, market: MarketContext, prepared_order_audit: list[object], order_direction: str) -> None` (L647–L664), `physical_order(self, prepared: object | None) -> dict[str, object] | None` (L666–L709), `parent_order(self, behavior: object) -> dict[str, object] | None` (L711–L716), `current_order(self, behavior: object, parent_type: str, parent_family: str | None, strict_stop_event: datetime | None) -> dict[str, object] | None` (L718–L771), `order_audit(self, prepared: object) -> dict[str, object]` (L773–L830)
+-  - `EngineBundle` (L1578–L1585)
+-    - Fields: `reaction: object` (L1579), `blue_line: object` (L1580), `a_zone: object` (L1581), `s_zone: object` (L1582), `e_zone: object | None` (L1583), `lifecycle: object | None` (L1584), `primary: object | None` (L1585)
++    - Methods/properties: `__init__(self, *, direction: str, market: MarketContext, prepared_order_audit: list[object], order_direction: str)` (L647), `physical_order(self, prepared: object | None)` (L666), `parent_order(self, behavior: object)` (L711), `current_order(self, behavior: object, parent_type: str, parent_family: str | None, strict_stop_event: datetime | None)` (L718), `order_audit(self, prepared: object)` (L773)
++  - `EngineBundle` (L1578)
++    - Fields: `reaction: object`, `blue_line: object`, `a_zone: object`, `s_zone: object`, `e_zone: object | None`, `lifecycle: object | None`, `primary: object | None`
+     - Methods/properties: _none_
+-  - `MarketContext` (L1589–L1598)
+-    - Fields: `seconds: list[object]` (L1590), `candles: list[object]` (L1591), `lower_index: object` (L1592), `chronology: object` (L1593), `start_index: int` (L1594), `end_index: int` (L1595), `index_offset: int` (L1596), `initial_bullish_trend: bool` (L1597), `initial_bearish_trend: bool` (L1598)
++  - `MarketContext` (L1589)
++    - Fields: `seconds: list[object]`, `candles: list[object]`, `lower_index: object`, `chronology: object`, `start_index: int`, `end_index: int`, `index_offset: int`, `initial_bullish_trend: bool`, `initial_bearish_trend: bool`
+     - Methods/properties: _none_
+-  - `PipelineState` (L1855–L1872)
+-    - Fields: `directions: tuple[str, ...]` (L1858), `results: dict[str, object]` (L1859), `reusable_full_context: bool` (L1860), `initial_order_geometry: dict[str, object]` (L1861), `internal_reaction_identities: dict[str, set[tuple[int, int]]]` (L1862), `full_e_zones: dict[str, list[object]]` (L1863), `full_e_detectors: dict[str, object]` (L1864), `full_s_detectors: dict[str, object]` (L1865), `full_lines_by_direction: dict[str, list[object]]` (L1866), `full_a_by_direction: dict[str, list[object]]` (L1867), `invalid_a_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L1868), `invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L1869), `full_s_by_direction: dict[str, list[object]]` (L1870), `full_s_candidates_by_direction: dict[str, list[object]]` (L1871), `primary_result: object | None` (L1872)
++  - `PipelineState` (L1855)
++    - Fields: `directions: tuple[str, ...]`, `results: dict[str, object]`, `reusable_full_context: bool`, `initial_order_geometry: dict[str, object]`, `internal_reaction_identities: dict[str, set[tuple[int, int]]]`, `full_e_zones: dict[str, list[object]]`, `full_e_detectors: dict[str, object]`, `full_s_detectors: dict[str, object]`, `full_lines_by_direction: dict[str, list[object]]`, `full_a_by_direction: dict[str, list[object]]`, `invalid_a_identities_by_direction: dict[str, set[tuple[datetime, int]]]`, `invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]`, `full_s_by_direction: dict[str, list[object]]`, `full_s_candidates_by_direction: dict[str, list[object]]`, `primary_result: object | None`
+     - Methods/properties: _none_
+-  - `FullDirectionState` (L1876–L1888)
+-    - Fields: `e_zones: list[object]` (L1879), `e_detector: object` (L1880), `s_detector: object` (L1881), `blue_lines: list[object]` (L1882), `a_zones: list[object]` (L1883), `invalid_a_identities: set[tuple[datetime, int]]` (L1884), `invalid_s_identities: set[tuple[datetime, int]]` (L1885), `s_zones: list[object]` (L1886), `s_candidates: list[object]` (L1887), `initial_s_zones: list[object]` (L1888)
++  - `FullDirectionState` (L1876)
++    - Fields: `e_zones: list[object]`, `e_detector: object`, `s_detector: object`, `blue_lines: list[object]`, `a_zones: list[object]`, `invalid_a_identities: set[tuple[datetime, int]]`, `invalid_s_identities: set[tuple[datetime, int]]`, `s_zones: list[object]`, `s_candidates: list[object]`, `initial_s_zones: list[object]`
+     - Methods/properties: _none_
+-  - `DirectionRangeState` (L2477–L2486)
+-    - Fields: `blue_lines: list[object]` (L2480), `a_zones: list[object]` (L2481), `s_candidates: list[object]` (L2482), `accepted_s_zones: list[object]` (L2483), `e_zones: list[object]` (L2484), `invalid_a_identities: set[tuple[datetime, int]]` (L2485), `invalid_s_identities: set[tuple[datetime, int]]` (L2486)
++  - `DirectionRangeState` (L2477)
++    - Fields: `blue_lines: list[object]`, `a_zones: list[object]`, `s_candidates: list[object]`, `accepted_s_zones: list[object]`, `e_zones: list[object]`, `invalid_a_identities: set[tuple[datetime, int]]`, `invalid_s_identities: set[tuple[datetime, int]]`
+     - Methods/properties: _none_
+-  - `DirectionVisibilityState` (L2490–L2505)
+-    - Fields: `blue_lines: list[object]` (L2493), `a_zones: list[object]` (L2494), `s_zones: list[object]` (L2495), `e_zones: list[object]` (L2496), `stopalls: list[object]` (L2497), `prepared_order_audit: list[object]` (L2498), `projection_s_zones: list[object]` (L2502), `projection_e_zones: list[object]` (L2503), `projection_stopalls: list[object]` (L2504), `primary_groups: dict[str, list[object]]` (L2505)
++  - `DirectionVisibilityState` (L2490)
++    - Fields: `blue_lines: list[object]`, `a_zones: list[object]`, `s_zones: list[object]`, `e_zones: list[object]`, `stopalls: list[object]`, `prepared_order_audit: list[object]`, `projection_s_zones: list[object]`, `projection_e_zones: list[object]`, `projection_stopalls: list[object]`, `primary_groups: dict[str, list[object]]`
+     - Methods/properties: _none_
+-- **Nested implementation functions/closures:** `build_candle_buckets.cached_decimal(value: object) -> Decimal` (L132–L143), `create_e_detector.direct_geometry(geometry_direction, geometry_start, geometry_end, gate_event)` (L1910–L1918), `serialize_direction_payload.build_legacy_payload()` (L2874–L2897), `serialize_direction_payload.serialize_reactions_from_one_selection()` (L2906–L2914), `serialize_direction_payload.build_payload()` (L2947–L2981), `serialize_primary_order.value(item)` (L2991–L2996), `serialize_primary_structures.cycle_identity(value)` (L3028–L3033), `serialize_primary_structures.point(item)` (L3034–L3057), `calculate_primary_structures.commit_high(point)` (L3162–L3170), `build_reversed_trend_outputs.calculate(context, direction)` (L3271–L3276), `build_reversed_trend_outputs.publish(group, context, *, stopped=False)` (L3278–L3293), `build_reversed_trend_outputs.empty_lists(item)` (L3311–L3316)
++- **Nested implementation functions/closures:** `build_candle_buckets.cached_decimal` (L132), `create_e_detector.direct_geometry` (L1910), `serialize_direction_payload.build_legacy_payload` (L2874), `serialize_direction_payload.serialize_reactions_from_one_selection` (L2906), `serialize_direction_payload.build_payload` (L2947), `serialize_primary_order.value` (L2991), `serialize_primary_structures.cycle_identity` (L3028), `serialize_primary_structures.point` (L3034), `calculate_primary_structures.commit_high` (L3162), `build_reversed_trend_outputs.calculate` (L3271), `build_reversed_trend_outputs.publish` (L3278), `build_reversed_trend_outputs.empty_lists` (L3311)
+ 
+ #### `pipeline/__init__.py`
+ - **Module-level symbols/assignments:** `_pipeline_dir` (L10–L10), `__all__` (L22–L28)
+@@ -1369,8 +1379,8 @@ Every currently discovered production Python file in the live Engine package, Br
+ 
+ ### 16.3 `bridge/trading_pipeline.py` — Pipeline / Serialization
+ 
+-**SHA-256:** `6d93dbaf67e4dce02060575b92dda5de6eaf6de0148f6db54056015c072181dc`  
+-**Bytes:** `134613`  
++**SHA-256:** `1de8bc3d98686c54a5942956734aca7fbdfe2a85f29d04bd6f072d9efa0c8a10`  
++**Bytes:** `134626`  
+ **LF count:** `3433`
+ 
+ <!-- EXACT-SOURCE-BEGIN:bridge/trading_pipeline.py -->
+@@ -1417,8 +1427,8 @@ _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
+ 
+ 
+ TRADING_PIPELINE_VERSION = "1.13.0"
+-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.16.0"
+-TRADING_PIPELINE_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
++TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.16.1"
++TRADING_PIPELINE_LAST_MODIFIED = "2026-11-02T10:35:59+03:30"
+ MBL_EXTENSION_CANDLES = 400
+ 
+ TEHRAN = ZoneInfo("Asia/Tehran")
+@@ -4626,7 +4636,7 @@ def merge_regime_outputs(regimes):
+             aggregate[key] = [row for segment in segments for row in segment.get(key, [])]
+         bridge_outputs = [segment.get("bridgeOutput", {}) for segment in segments]
+         if any(bridge_outputs):
+-            bridge_keys = {key for item in bridge_outputs for key in item}
++            bridge_keys = dict.fromkeys(key for item in bridge_outputs for key in item)
+             aggregate["bridgeOutput"] = {
+                 key: [row for item in bridge_outputs for row in item.get(key, [])]
+                 for key in bridge_keys
+@@ -9089,8 +9099,8 @@ def visible_a_zones(a_zones: Sequence[object], s_zones: Sequence[object]) -> lis
+ 
+ ### 16.11 `pipeline/order_audit_engine.py` — Order / OrderAudit
+ 
+-**SHA-256:** `84201f1784fe9a1c924c8c6d3a8f67999d629032c6987c4384a4330954acf2af`  
+-**Bytes:** `92027`  
++**SHA-256:** `a74cb24f100477fc3fc5cb1197cb0e57d40c400b8cbd7029813e8ac9e064393f`  
++**Bytes:** `92099`  
+ **LF count:** `2222`
+ 
+ <!-- EXACT-SOURCE-BEGIN:pipeline/order_audit_engine.py -->
+@@ -9109,8 +9119,8 @@ from typing import Callable, Sequence
+ 
+ from core_utils import as_decimal, order_identity, reaction_identity
+ 
+-ORDER_AUDIT_ENGINE_VERSION = "1.8.1"
+-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-01T22:46:39+03:30"
++ORDER_AUDIT_ENGINE_VERSION = "1.8.2"
++ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-02T11:23:50+03:30"
+ 
+ 
+ def relabel_primary_causes(causes, labels):
+@@ -10517,16 +10527,16 @@ class OrderAuditEngineMixin:
+             return list(cached)
+         matches: list[OrderMatch] = []
+         for entry in self.order_audit.values():
+-            a_created_events = [
++            created_events: list[datetime] = [
+                 cause[3]
+-                for cause in entry.get("causes", set())
++                for cause in entry.get("causes", ())
+                 if cause[0] == "parent-stop"
+             ]
+-            created_events = [min(a_created_events)] if a_created_events else []
+-            created_events.extend(
+-                cause["physicalOrderConfirmationTime"]
+-                for cause in entry.get("order_b_causes", ())
+-            )
++            # Only earliest A creation competes; every B cause stays eager.
++            if len(created_events) > 1:
++                created_events = [min(created_events)]
++            for cause in entry.get("order_b_causes", ()):
++                created_events.append(cause["physicalOrderConfirmationTime"])
+             if not created_events:
+                 continue
+             confirmation = entry["confirmation_time"]
+diff --git a/engine/bridge/trading_pipeline.py b/engine/bridge/trading_pipeline.py
+index 93022a3..5ba63b0 100644
+--- a/engine/bridge/trading_pipeline.py
++++ b/engine/bridge/trading_pipeline.py
+@@ -40,8 +40,8 @@ _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
+ 
+ 
+ TRADING_PIPELINE_VERSION = "1.13.0"
+-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.16.0"
+-TRADING_PIPELINE_LAST_MODIFIED = "2026-11-01T19:03:18+03:30"
++TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.16.1"
++TRADING_PIPELINE_LAST_MODIFIED = "2026-11-02T10:35:59+03:30"
+ MBL_EXTENSION_CANDLES = 400
+ 
+ TEHRAN = ZoneInfo("Asia/Tehran")
+@@ -3249,7 +3249,7 @@ def merge_regime_outputs(regimes):
+             aggregate[key] = [row for segment in segments for row in segment.get(key, [])]
+         bridge_outputs = [segment.get("bridgeOutput", {}) for segment in segments]
+         if any(bridge_outputs):
+-            bridge_keys = {key for item in bridge_outputs for key in item}
++            bridge_keys = dict.fromkeys(key for item in bridge_outputs for key in item)
+             aggregate["bridgeOutput"] = {
+                 key: [row for item in bridge_outputs for row in item.get(key, [])]
+                 for key in bridge_keys
+diff --git a/engine/pipeline/order_audit_engine.py b/engine/pipeline/order_audit_engine.py
+index ce44ec8..f8964e5 100644
+--- a/engine/pipeline/order_audit_engine.py
++++ b/engine/pipeline/order_audit_engine.py
+@@ -12,8 +12,8 @@ from typing import Callable, Sequence
+ 
+ from core_utils import as_decimal, order_identity, reaction_identity
+ 
+-ORDER_AUDIT_ENGINE_VERSION = "1.8.1"
+-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-01T22:46:39+03:30"
++ORDER_AUDIT_ENGINE_VERSION = "1.8.2"
++ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-02T11:23:50+03:30"
+ 
+ 
+ def relabel_primary_causes(causes, labels):
+@@ -1420,16 +1420,16 @@ class OrderAuditEngineMixin:
+             return list(cached)
+         matches: list[OrderMatch] = []
+         for entry in self.order_audit.values():
+-            a_created_events = [
++            created_events: list[datetime] = [
+                 cause[3]
+-                for cause in entry.get("causes", set())
++                for cause in entry.get("causes", ())
+                 if cause[0] == "parent-stop"
+             ]
+-            created_events = [min(a_created_events)] if a_created_events else []
+-            created_events.extend(
+-                cause["physicalOrderConfirmationTime"]
+-                for cause in entry.get("order_b_causes", ())
+-            )
++            # Only earliest A creation competes; every B cause stays eager.
++            if len(created_events) > 1:
++                created_events = [min(created_events)]
++            for cause in entry.get("order_b_causes", ()):
++                created_events.append(cause["physicalOrderConfirmationTime"])
+             if not created_events:
+                 continue
+             confirmation = entry["confirmation_time"]
+--- /dev/null
++++ b/engine/tests/unit/test_carried_order_query.py
+@@ -0,0 +1,126 @@
++"""Exact carried-Order boundaries, eager failures, identity and temporary memory."""
++from __future__ import annotations
++from types import SimpleNamespace
++import json
++import os
++from pathlib import Path
++import subprocess
++import sys
++import tracemalloc
++
++import pytest
++
++from test_order_audit_lifecycle_contracts import candidate, detector_state, moment
++
++
++def ledger_entry(physical, *, parents=(), b_events=(), confirmation=190, crossing=215, number=1):
++    return {
++        "reaction": physical, "reaction_number": number,
++        "confirmation_time": moment(confirmation), "stop_level": "120.00",
++        "stop_source_index": physical.first_idx, "stop_source_time": moment(physical.first_idx * 30),
++        "stop_cross": None if crossing is None else (crossing // 30, moment(crossing // 30 * 30), moment(crossing)),
++        "causes": {("parent-stop", "S", "blue", moment(event), moment(60)) for event in parents},
++        "order_b_causes": [{"physicalOrderConfirmationTime": moment(event)} for event in b_events],
++    }
++
++
++@pytest.mark.parametrize("direction", ["bullish", "bearish"])
++@pytest.mark.parametrize("parents,b_events,accepted", [
++    ((), (), False), ((110,), (), False), ((200,), (), False),
++    ((125,), (), True), ((90, 125), (), False), ((125, 150), (), True),
++    ((90,), (150,), True), ((), (110, 200), False), ((), (150,), True),
++])
++def test_carried_creation_uses_earliest_parent_and_all_b_events(direction, parents, b_events, accepted):
++    detector, _, physical = detector_state(direction)
++    detector.order_audit = {(physical.first_idx, physical.break_idx): ledger_entry(physical, parents=parents, b_events=b_events)}
++    matches = detector._carried_orders_for_parent(SimpleNamespace(decision_event_time=moment(110)), moment(200))
++    assert bool(matches) is accepted
++    if accepted:
++        assert len(matches) == 1 and matches[0][1] is physical
++        assert str(matches[0][3]) == "120.00"
++        assert matches[0][7:] == (("carried-live",), None)
++
++
++@pytest.mark.parametrize("confirmation,crossing,accepted", [
++    (200, 200, True), (201, 215, False), (190, 199, False), (190, None, False),
++])
++def test_carried_confirmation_and_stop_boundaries(confirmation, crossing, accepted):
++    detector, _, physical = detector_state("bullish")
++    detector.order_audit = {(5,6): ledger_entry(physical, parents=(125,), confirmation=confirmation, crossing=crossing)}
++    assert bool(detector._carried_orders_for_parent(SimpleNamespace(decision_event_time=moment(110)), moment(200))) is accepted
++
++
++def test_carried_exact_sort_ties_keep_ledger_insertion_and_cache_returns_fresh_lists():
++    detector, _, _ = detector_state("bearish")
++    first, second = candidate(5, 7), candidate(5, 6)
++    detector.order_audit = {(5,7): ledger_entry(first, parents=(125,), number=2),
++                            (5,6): ledger_entry(second, parents=(125,), number=1)}
++    parent = SimpleNamespace(decision_event_time=moment(110))
++    matches = detector._carried_orders_for_parent(parent, moment(200))
++    assert [item[1] for item in matches] == [first, second]
++    assert matches[0][1] is first and matches[1][1] is second
++    matches.clear()
++    assert [item[1] for item in detector._carried_orders_for_parent(parent, moment(200))] == [first, second]
++
++
++def test_causeless_partial_row_is_skipped_before_physical_field_access():
++    detector, _, _ = detector_state("bullish")
++    detector.order_audit = {(5,6): {}}
++    assert detector._carried_orders_for_parent(SimpleNamespace(decision_event_time=moment(110)), moment(200)) == []
++
++
++def test_every_b_creation_is_extracted_before_metadata_rejection():
++    detector, _, physical = detector_state("bullish")
++    entry = ledger_entry(physical, parents=(125,), confirmation=300, crossing=None)
++    entry["order_b_causes"] = [{"physicalOrderConfirmationTime": moment(150)}, {}]
++    del entry["confirmation_time"]
++    detector.order_audit = {(5,6): entry}
++    with pytest.raises(KeyError, match="physicalOrderConfirmationTime"):
++        detector._carried_orders_for_parent(SimpleNamespace(decision_event_time=moment(110)), moment(200))
++
++
++def test_nonempty_creation_keeps_missing_confirmation_error():
++    detector, _, physical = detector_state("bullish")
++    entry = ledger_entry(physical, parents=(125,))
++    del entry["confirmation_time"]
++    detector.order_audit = {(5,6): entry}
++    with pytest.raises(KeyError, match="confirmation_time"):
++        detector._carried_orders_for_parent(SimpleNamespace(decision_event_time=moment(110)), moment(200))
++
++
++def measure_dense_query_allocation():
++    """Measure only native query scratch memory in an isolated interpreter."""
++    detector, _, physical = detector_state("bullish")
++    count = 10_000
++    entry = ledger_entry(physical, parents=range(125, 125+count), b_events=[150]*count)
++    detector.order_audit = {(5,6): entry}
++    detector._initial_order_records()
++    parent = SimpleNamespace(decision_event_time=moment(110))
++    tracemalloc.start(1)
++    try:
++        matches = detector._carried_orders_for_parent(parent, moment(200))
++        _, peak = tracemalloc.get_traced_memory()
++    finally:
++        tracemalloc.stop()
++    return {"identity_preserved": len(matches) == 1 and matches[0][1] is physical, "peak_bytes": peak}
++
++
++def test_creation_lists_do_not_retain_both_dense_parent_and_b_history():
++    """A high-provenance row should need one history-sized scratch collection."""
++    # Do not consume a pre-existing global tracing peak or stop the caller's
++    # tracer when pytest is launched with -X tracemalloc/PYTHONTRACEMALLOC.
++    environment = dict(os.environ)
++    environment.pop("PYTHONTRACEMALLOC", None)
++    code = (
++        "import json,sys; "
++        f"sys.path.insert(0, {str(Path(__file__).parent)!r}); "
++        "from test_carried_order_query import measure_dense_query_allocation; "
++        "print(json.dumps(measure_dense_query_allocation()))"
++    )
++    completed = subprocess.run([sys.executable, "-B", "-c", code], env=environment,
++                               capture_output=True, text=True, check=True)
++    result = json.loads(completed.stdout)
++    assert result["identity_preserved"]
++    # Two simultaneous 10k-pointer histories exceed160kB on supported64-bit
++    # Python. Leave ample overhead above a single history for query/results.
++    assert result["peak_bytes"] < 140_000, f"Carried query retained redundant scratch histories: {result['peak_bytes']} bytes"
+--- /dev/null
++++ b/engine/tests/unit/test_regime_output_determinism.py
+@@ -0,0 +1,69 @@
++"""Repeated directional regimes retain deterministic projection field order."""
++from __future__ import annotations
++
++import json
++import os
++from pathlib import Path
++import subprocess
++import sys
++
++import pytest
++
++BRIDGE = Path(__file__).resolve().parents[2] / "bridge"
++sys.path.insert(0, str(BRIDGE))
++from trading_pipeline import merge_regime_outputs
++
++
++@pytest.mark.parametrize("seed", ["0", "1", "2", "3"])
++def test_merged_projection_keys_follow_first_appearance_across_hash_seeds(seed):
++    script = """
++import json, sys
++sys.path.insert(0, sys.argv[1])
++from trading_pipeline import merge_regime_outputs
++first = {'reactions': [{'id': 'first'}], 'bridgeOutput': {'reactions': [{'firstIndex': 1}], 'resets': [], 'aZones': []}}
++last = {'reactions': [{'id': 'last'}], 'bridgeOutput': {'aZones': [], 'orderAudit': [{'firstIndex': 2}]}}
++print(json.dumps(merge_regime_outputs([('bullish', first), ('bullish', last)]), separators=(',', ':')))
++"""
++    completed = subprocess.run(
++        [sys.executable, "-B", "-c", script, str(BRIDGE)],
++        env={**os.environ, "PYTHONHASHSEED": seed},
++        capture_output=True, check=True,
++    )
++    result = json.loads(completed.stdout)["bullish"]
++    assert list(result["bridgeOutput"]) == ["reactions", "resets", "aZones", "orderAudit"]
++    assert result["reactions"] == [{"id": "first"}, {"id": "last"}]
++    assert result["bridgeOutput"]["reactions"] == [{"firstIndex": 1}]
++    assert result["bridgeOutput"]["orderAudit"] == [{"firstIndex": 2}]
++
++
++def test_single_regime_preserves_original_group_identity():
++    group = {"reactions": [], "bridgeOutput": {"resets": [], "reactions": []}}
++    result = merge_regime_outputs([("bearish", group)])
++    assert result["bearish"] is group
++    assert list(result["bearish"]["bridgeOutput"]) == ["resets", "reactions"]
++
++
++def test_merge_preserves_row_identity_segment_order_and_final_metadata():
++    first_row, last_row = {"firstIndex": 1}, {"firstIndex": 2}
++    first = {"reactions": [first_row], "primaryStatus": "old", "calculationEndTime": 10,
++             "bridgeOutput": {"reactions": [first_row]}}
++    last = {"reactions": [last_row], "primaryStatus": "final", "bridgeOutput": {"reactions": [last_row]}}
++    result = merge_regime_outputs([("bearish", first), ("bullish", {"reactions": []}), ("bearish", last)])
++    group = result["bearish"]
++    assert list(result) == ["bearish", "bullish"]
++    assert group["primaryStatus"] == "final"
++    assert group["reactions"][0] is first_row and group["reactions"][1] is last_row
++    assert group["bridgeOutput"]["reactions"][0] is first_row
++    assert group["bridgeOutput"]["reactions"][1] is last_row
++    assert group["calculationSegments"][0] is first and group["calculationSegments"][1] is last
++    assert "calculationEndTime" not in group
++    assert first["calculationEndTime"] == 10
++
++
++def test_empty_projection_segments_remain_empty():
++    result = merge_regime_outputs([
++        ("bullish", {"reactions": [], "bridgeOutput": {}}),
++        ("bullish", {"reactions": [], "bridgeOutput": {}}),
++    ])
++    assert result["bullish"]["bridgeOutput"] == {}
++    assert result["bullish"]["reactions"] == []

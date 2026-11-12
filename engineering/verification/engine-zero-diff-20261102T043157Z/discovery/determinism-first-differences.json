@@ -1,0 +1,130 @@
+{
+  "gate_status": "FAIL",
+  "production_edits": "NONE",
+  "failed_real_cases": [
+    {
+      "case": "usoil-month-30s-bearish",
+      "ordered_stable_bytes_equal": false,
+      "stable_differences": [
+        {
+          "path": "$.directions.bearish.bridgeOutput",
+          "kind": "mapping-key-order",
+          "before": [
+            "aZones",
+            "orderAudit",
+            "blueLines",
+            "stopAlls",
+            "reactions",
+            "resets",
+            "eZones",
+            "sZones"
+          ],
+          "after": [
+            "reactions",
+            "orderAudit",
+            "eZones",
+            "resets",
+            "sZones",
+            "blueLines",
+            "aZones",
+            "stopAlls"
+          ]
+        }
+      ],
+      "difference_count": 1,
+      "non_order_difference_count": 0
+    },
+    {
+      "case": "xau-sep28-30s-bullish",
+      "ordered_stable_bytes_equal": false,
+      "stable_differences": [
+        {
+          "path": "$.directions.bullish.bridgeOutput",
+          "kind": "mapping-key-order",
+          "before": [
+            "resets",
+            "eZones",
+            "blueLines",
+            "stopAlls",
+            "orderAudit",
+            "sZones",
+            "aZones",
+            "reactions"
+          ],
+          "after": [
+            "blueLines",
+            "orderAudit",
+            "eZones",
+            "sZones",
+            "stopAlls",
+            "aZones",
+            "resets",
+            "reactions"
+          ]
+        }
+      ],
+      "difference_count": 1,
+      "non_order_difference_count": 0
+    }
+  ],
+  "hashseed_probe": [
+    {
+      "seed": "0",
+      "bridge_output_keys": [
+        "orderAudit",
+        "blueLines",
+        "stopAlls",
+        "reactions",
+        "aZones",
+        "eZones",
+        "resets",
+        "sZones"
+      ],
+      "exit_code": 0
+    },
+    {
+      "seed": "1",
+      "bridge_output_keys": [
+        "resets",
+        "aZones",
+        "sZones",
+        "eZones",
+        "blueLines",
+        "reactions",
+        "orderAudit",
+        "stopAlls"
+      ],
+      "exit_code": 0
+    },
+    {
+      "seed": "2",
+      "bridge_output_keys": [
+        "aZones",
+        "reactions",
+        "eZones",
+        "orderAudit",
+        "blueLines",
+        "stopAlls",
+        "resets",
+        "sZones"
+      ],
+      "exit_code": 0
+    },
+    {
+      "seed": "3",
+      "bridge_output_keys": [
+        "reactions",
+        "resets",
+        "blueLines",
+        "orderAudit",
+        "sZones",
+        "stopAlls",
+        "eZones",
+        "aZones"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "root_cause": "merge_regime_outputs rebuilds bridgeOutput by iterating bridge_keys, a set of string keys; hash randomization changes insertion order before JSON encoding.",
+  "diagnostic_only": "Explicit hash seeds are used only to reproduce cause. Original default-environment baselines remain FAIL and are not replaced, sorted or normalized to pass."
+}
