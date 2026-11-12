@@ -6301,6 +6301,7 @@ async function calculateIndicator() {
       calculationId: r.headers.get("X-QG-Calculation-Id"),
       sourceFingerprint: r.headers.get("X-QG-Source-Fingerprint"),
       liveSessionId: r.headers.get("X-QG-Live-Session"),
+      liveRecovery: r.headers.get("X-QG-Live-Recovery") === "available",
     };
     capturedInputs = captureCurrentInputs();
     state.indicator.calculationKey = nextKey;
@@ -6434,38 +6435,44 @@ function realtimeIndicatorProblem(chartId = state.file?.chartId) {
   const context = state.indicator.resultContext;
   if (!state.indicator.results || !context || context.chartId !== chartId || context.chartTimeframe !== state.tf)
     return "Run an indicator calculation with Apply before enabling automatic continuation.";
-  return context.liveSessionId ? "" : "Use Apply again to start a live indicator session.";
+  if (context.liveProblem) return context.liveProblem;
+  if (context.liveSessionId || (context.liveRecovery && context.calculationId)) return "";
+  return "The saved calculation does not have a live checkpoint. Use Apply to initialize it.";
 }
 
 async function continueRealtimeIndicator(context, file, signal, operationIsCurrent) {
   const rawTo = state.raw.at(-1).time;
   const isCurrent = () => !signal.aborted && operationIsCurrent() && state.indicator.resultContext === context;
-  const keepAlive = context.liveRawTo === rawTo;
+  const keepAlive = Boolean(context.liveSessionId) && context.liveRawTo === rawTo
+    && context.source?.metadata?.dataSha256 === file.metadata?.dataSha256;
   if (!isCurrent() || (keepAlive && performance.now() - context.liveContactAt < 10 * 60_000))
     return false;
   const response = await fetch("/api/reactions/continue", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ id: file.id, chartId: file.chartId, sessionId: context.liveSessionId,
+      ...(context.calculationId ? { calculationId: context.calculationId } : {}),
       ...(keepAlive ? { keepAlive: true } : {}) }),
     signal,
   });
   if (!isCurrent()) return false;
-  if (response.status === 409 || response.status === 410) {
-    state.indicator.resultContext = { ...context, liveSessionId: null };
-    throw new Error(realtimeIndicatorProblem(file.chartId));
-  }
   if (response.status === 204) {
     state.indicator.resultContext = { ...context, liveRawTo: rawTo, liveContactAt: performance.now() };
     return false;
   }
   const payload = await response.json();
   if (!isCurrent()) return false;
-  if (!response.ok) throw new Error(payload.error || "Could not continue the indicator.");
+  if (!response.ok) {
+    const problem = payload.error || "Could not continue the indicator.";
+    if (response.status === 409 || response.status === 410)
+      state.indicator.resultContext = { ...context, liveSessionId: null, liveProblem: problem };
+    throw Object.assign(new Error(problem), { code: payload.code });
+  }
   const sourceFingerprint = response.headers.get("X-QG-Source-Fingerprint");
   if (sourceFingerprint !== context.sourceFingerprint) {
-    state.indicator.resultContext = { ...context, liveSessionId: null };
-    throw new Error(realtimeIndicatorProblem(file.chartId));
+    const problem = "The Engine changed since this calculation. Use Apply with the current Engine.";
+    state.indicator.resultContext = { ...context, liveSessionId: null, liveProblem: problem };
+    throw Object.assign(new Error(problem), { code: "ENGINE_CHANGED" });
   }
   if (!payload.directions || payload.timeframe !== context.analysisTimeframe)
     throw new Error("The indicator returned an invalid continuation.");
@@ -6476,6 +6483,8 @@ async function continueRealtimeIndicator(context, file, signal, operationIsCurre
   state.indicator.resultContext = {
     ...context, fileId: file.id, source: Object.freeze(clone(file)), to,
     calculationKey: nextKey, calculationId: response.headers.get("X-QG-Calculation-Id"),
+    liveSessionId: response.headers.get("X-QG-Live-Session") || context.liveSessionId,
+    liveRecovery: true,
     sourceFingerprint, liveRawTo: rawTo, liveContactAt: performance.now(),
   };
   state.indicator.calculationKey = nextKey;
@@ -6547,14 +6556,13 @@ function applyRealtimeCandles(file, candles) {
 
 async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, indicatorSignal }) {
   const problem = indicatorCalculation && realtimeIndicatorProblem(chartId);
-  if (problem) throw new Error(problem);
   if (chartUpdateRunning || indicatorCalculationOwner) return "Chart is busy. Retrying at the next interval.";
   const file = state.file;
   const lastCandleTime = state.raw.at(-1)?.time;
   if (!file || file.chartId !== chartId || !lastCandleTime || symbolLoadController)
     throw new Error("Load a RAW candle file first.");
   const loadRevision = symbolLoadRevision;
-  const indicatorContext = indicatorCalculation ? state.indicator.resultContext : null;
+  const indicatorContext = indicatorCalculation && !problem ? state.indicator.resultContext : null;
   let finished;
   const owner = { finished: new Promise(resolve => { finished = resolve; }) };
   realtimeUpdateOwner = owner;
@@ -6593,16 +6601,20 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
     const candleStatus = candles.length
       ? `Added ${candles.length.toLocaleString("en-US")} closed ${updatedFile.timeframe} candles.`
       : "No new closed candles.";
+    if (problem) return { status: candleStatus, indicatorError: problem };
     const operationIsCurrent = () => !signal.aborted && loadRevision === symbolLoadRevision
-      && state.file === publishedFile && state.tf === indicatorContext.chartTimeframe;
+      && state.file?.id === publishedFile.id && state.file.chartId === chartId
+      && state.file.metadata?.dataSha256 === publishedFile.metadata?.dataSha256
+      && state.tf === indicatorContext.chartTimeframe;
     const continuationSignal = indicatorSignal || signal;
     try {
       const updated = indicatorContext && await continueRealtimeIndicator(indicatorContext, publishedFile,
         continuationSignal, operationIsCurrent);
       return updated ? `${candleStatus} Indicator updated.` : candleStatus;
     } catch (error) {
-      if (continuationSignal.aborted) return candleStatus;
-      throw new Error(`${candleStatus} ${error.message}`);
+      if (continuationSignal.aborted || !operationIsCurrent()) return candleStatus;
+      log.indicator.warn("REALTIME_INDICATOR_CONTINUATION_FAILED", { chartId, code: error.code, message: error.message });
+      return { status: candleStatus, indicatorError: error.message };
     }
   } catch (error) {
     if (!signal.aborted) log.chart.error("REALTIME_CHART_UPDATE_FAILED", error, { chartId });

@@ -130,6 +130,16 @@ test("an active market can keep its checkpoint while no candles arrive", async t
   assert.throws(() => f.sessions.keepAlive(snapshot(sessionId)), { status: 410 });
 });
 
+test("keep-alive detects a worker that stopped while the market was idle", async t => {
+  const f = fixture(t);
+  let closed = false;
+  const { sessionId } = await f.sessions.seed(seedArgs, () => ({ ...f.worker(), get closed() { return closed; } }));
+  f.sessions.keepAlive(snapshot(sessionId));
+  closed = true;
+  assert.throws(() => f.sessions.keepAlive(snapshot(sessionId)), { status: 410, code: "LIVE_SESSION_CLOSED" });
+  assert.equal(f.closes, 1);
+});
+
 test("a worker update sends the exact RAW bytes and digest without a file path", async t => {
   const source = `
     const emit = payload => console.log(JSON.stringify(payload));

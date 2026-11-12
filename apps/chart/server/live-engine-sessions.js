@@ -93,6 +93,7 @@ export function startLiveEngineWorker({ command, args, env, onProgress, timeoutM
 
   return {
     seed: receive("seed"),
+    get closed() { return closed; },
     async update(bytes, sha256) {
       if (!Buffer.isBuffer(bytes)) throw new TypeError("The live Engine requires RAW bytes.");
       return (await receive("update", { bytes, sha256 })).payload;
@@ -155,6 +156,10 @@ export function createLiveEngineSessions({ maxSessions = 4, idleTtlMs = 30 * 60_
     const session = sessions.get(sessionId);
     if (!session || session.seeding || session.chartId !== chartId)
       throw new LiveEngineError(410, EXPIRED, "LIVE_SESSION_EXPIRED");
+    if (session.worker.closed) {
+      discard(sessionId);
+      throw new LiveEngineError(410, EXPIRED, "LIVE_SESSION_CLOSED");
+    }
     if (session.sourceFingerprint !== sourceFingerprint) {
       discard(sessionId);
       throw new LiveEngineError(409, "Calculation sources changed. Use Apply again.", "ENGINE_CHANGED");

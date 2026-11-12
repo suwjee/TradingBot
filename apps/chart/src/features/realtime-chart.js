@@ -80,8 +80,14 @@ export function createRealtimeChartScheduler({ runUpdate, indicatorProblem, rend
     notify();
     try {
       const result = await runUpdate(request);
-      if (!abort.signal.aborted && !indicatorAbort?.signal.aborted)
-        status = result || "Checked for new candles.";
+      if (!abort.signal.aborted && !indicatorAbort?.signal.aborted) {
+        status = (typeof result === "string" ? result : result?.status) || "Checked for new candles.";
+        if (indicatorAbort) {
+          const problem = indicatorProblem(chartId) || "";
+          indicatorError = problem || result?.indicatorError || "";
+          indicatorCalculation = !problem;
+        }
+      }
     } catch (error) {
       if (!abort.signal.aborted && !indicatorAbort?.signal.aborted) {
         status = error?.message || "Could not check for new candles.";

@@ -169,14 +169,14 @@ test("a newly requested indicator check waits for the active RAW check", async (
   assert.equal(fixture.view.status, "Indicator updated.");
 });
 
-test("a lost checkpoint turns off indicator continuation immediately", async (t) => {
+test("an unrecoverable indicator pauses while the successful RAW result stays visible", async (t) => {
   let problem = "";
   const fixture = createScheduler(t, {
     indicatorProblem: () => problem,
     runUpdate({ indicatorCalculation }) {
       if (!indicatorCalculation) return "Candles updated.";
-      problem = "Apply again to start a new live calculation.";
-      throw new Error(problem);
+      problem = "The Engine changed. Use Apply with the current Engine.";
+      return { status: "Added 13 closed 5S candles.", indicatorError: problem };
     },
   });
   fixture.scheduler.enable();
@@ -186,6 +186,29 @@ test("a lost checkpoint turns off indicator continuation immediately", async (t)
   assert.equal(fixture.view.indicatorCalculation, false);
   assert.equal(fixture.view.indicatorError, problem);
   assert.equal(fixture.view.enabled, true);
+  assert.equal(fixture.view.status, "Added 13 closed 5S candles.");
+  assert.equal(fixture.view.failed, false);
+});
+
+test("a temporary indicator error stays separate and the next poll retries", async (t) => {
+  let indicatorChecks = 0;
+  const fixture = createScheduler(t, { runUpdate({ indicatorCalculation }) {
+    if (!indicatorCalculation) return "Candles updated.";
+    if (++indicatorChecks === 1) return { status: "Added 13 closed 5S candles.", indicatorError: "RAW changed during recovery. Retrying." };
+    return "Indicator updated.";
+  } });
+  fixture.scheduler.enable();
+  await settle();
+  fixture.scheduler.setIndicatorCalculation(true);
+  await settle();
+  assert.equal(fixture.view.status, "Added 13 closed 5S candles.");
+  assert.match(fixture.view.indicatorError, /Retrying/);
+  assert.equal(fixture.view.indicatorCalculation, true);
+  t.mock.timers.tick(60_000);
+  await settle();
+  assert.equal(indicatorChecks, 2);
+  assert.equal(fixture.view.indicatorError, "");
+  assert.equal(fixture.view.status, "Indicator updated.");
 });
 
 test("a polling failure is displayed and subsequent checks continue until disabled", async (t) => {

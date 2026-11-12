@@ -28,7 +28,7 @@ function fixture({ candles = [{ time: 330 }], onContinue } = {}) {
   };
   const controls = { "#indicatorFrom": { value: "100" }, "#indicatorTo": { value: "200" } };
   const payload = { directions: { bearish: { reactions: [], resets: [] } }, timeframe: 30 };
-  const requests = [], rebuilt = [];
+  const requests = [], rebuilt = [], failures = [];
   const rawResponse = {
     file: { ...state.file, id: candles.length ? "new.json" : state.file.id,
       to: candles.at(-1)?.time ?? state.file.to, count: state.raw.length + candles.length },
@@ -44,7 +44,7 @@ function fixture({ candles = [{ time: 330 }], onContinue } = {}) {
     $: selector => controls[selector], parseTehranInput: Number, inputFromTehran: String,
     setDateTimeValue: (selector, value) => { controls[selector].value = value; },
     scheduleDraw: noop, saveChartIndicatorContext: noop, renderIndicatorInfo: noop,
-    log: { chart: { info: noop, warn: noop, error: noop }, indicator: { info: noop, warn: noop, error: noop } },
+    log: { chart: { info: noop, warn: noop, error: name => failures.push(name) }, indicator: { info: noop, warn: noop, error: noop } },
     applyRealtimeCandles(file, rows) {
       state.file = file;
       state.raw.push(...rows);
@@ -64,7 +64,7 @@ function fixture({ candles = [{ time: 330 }], onContinue } = {}) {
   vm.runInContext(indicatorFlow + updateFlow, sandbox);
   const rawAbort = new AbortController();
   const indicatorAbort = new AbortController();
-  return { state, originalResult, payload, requests, rebuilt, controls, indicatorAbort,
+  return { state, originalResult, payload, requests, rebuilt, controls, indicatorAbort, failures,
     problem: () => vm.runInContext('realtimeIndicatorProblem("chart")', sandbox),
     update() {
       sandbox.request = { chartId: "chart", signal: rawAbort.signal,
@@ -100,15 +100,29 @@ test("a new continuation can catch up to the existing RAW tail with no new candl
   assert.equal(chart.requests.filter(([url]) => url === "/api/reactions/continue").length, 1);
 });
 
-test("an expired checkpoint keeps published candles and prior indicator output", async () => {
-  const chart = fixture({ onContinue: () => ({ ok: false, status: 410,
-    json: async () => ({ error: "Checkpoint expired." }) }) });
-  await assert.rejects(chart.update(), /Apply/);
-  assert.match(chart.problem(), /Apply/);
+test("a historical rewrite pauses the indicator and keeps the successful candle status", async () => {
+  const chart = fixture({ onContinue: () => ({ ok: false, status: 409,
+    json: async () => ({ code: "RAW_CHANGED", error: "Existing RAW candles changed. Use Apply." }) }) });
+  const result = await chart.update();
+  assert.match(result.status, /Added 1/);
+  assert.match(result.indicatorError, /Existing RAW candles changed/);
+  assert.match(chart.problem(), /Existing RAW candles changed/);
+  assert.deepEqual(chart.failures, []);
   assert.equal(chart.state.file.id, "new.json");
   assert.equal(chart.state.raw.at(-1).time, 330);
   assert.equal(chart.state.indicator.results, chart.originalResult);
   assert.equal(chart.state.indicator.resultContext.liveSessionId, null);
+});
+
+test("a verified report can recover a missing worker and adopts the replacement token", async () => {
+  const chart = fixture({ onContinue: async () => ({ ok: true, status: 200, json: async () => chart.payload,
+    headers: new Map([["X-QG-Live-Session", "recovered"], ["X-QG-Calculation-Id", "new-calculation"],
+      ["X-QG-Source-Fingerprint", "source"]]) }) });
+  Object.assign(chart.state.indicator.resultContext, { liveSessionId: null, liveRecovery: true, calculationId: "saved" });
+  assert.equal(chart.problem(), "");
+  assert.match(await chart.update(), /Indicator updated/);
+  assert.deepEqual(chart.requests[1][1], { id: "new.json", chartId: "chart", sessionId: null, calculationId: "saved" });
+  assert.equal(chart.state.indicator.resultContext.liveSessionId, "recovered");
 });
 
 test("a canceled or stale continuation cannot publish an indicator result", async () => {

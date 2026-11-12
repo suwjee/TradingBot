@@ -13,7 +13,7 @@ scope:
   - release-tooling
 supersedes: engineering/archive/documentation/local-tests-legacy-2026-09-30.md
 created_at: 2026-09-30T11:40:11+03:30
-last_modified_at: 2026-11-03T00:19:46+03:30
+last_modified_at: 2026-11-12T07:58:23+03:30
 ---
 
 # TradingBot Testing
@@ -71,6 +71,8 @@ Before executing tests, inspect the live project for:
 - environment/runtime prerequisites.
 
 Use the current supported command from those sources. Do not copy an old command merely because it worked in a previous report.
+
+Run the live-indicator restart regression from `apps/chart` with `node --test tests/integration/live-indicator-recovery.test.mjs` on Windows. It starts isolated Vite processes, uses the configured Python Engine, and verifies both directions after a restart, RAW renames, idle-session recovery and rejection of rewritten history. Set `TRADINGBOT_LIVE_TEST_RAW` to a representative 5-second RAW file to repeat the same checks on real data.
 
 If no supported runner exists for a required check, report that limitation explicitly instead of inventing a false PASS.
 
