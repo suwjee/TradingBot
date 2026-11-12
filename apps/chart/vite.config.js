@@ -7,7 +7,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { createFarazCandleApi } from './server/faraz-candle-api.js';
 import { createChartTransferBundle, importChartTransferBundle } from './server/chart-transfer.js';
-import { runIndicatorRangeCalculation } from './server/indicator-range-input.js';
+import { runIndicatorRangeCalculation, withIndicatorInputPipe } from './server/indicator-range-input.js';
 import { migrateFlatRawFiles } from './server/migrate-raw-resources.js';
 import { createRawResourceStore } from './server/raw-resource-store.js';
 import { sendCandleFile } from './server/candle-file-response.js';
@@ -18,7 +18,7 @@ import { createProgressChannels } from './server/progress-channels.js';
 import { assertRawInputUnchanged, captureRawInputIdentity } from './server/raw-input-identity.js';
 import { cachePathForRaw, readCalculationCache, writeCalculationCache } from './server/calculation-cache.js';
 import { createLiveEngineSessions, LiveEngineError, startLiveEngineWorker } from './server/live-engine-sessions.js';
-import { matchesRecoveredIndicator, restoreRawSnapshot } from './server/live-engine-recovery.js';
+import { indicatorDigest, restoreRawSnapshot } from './server/live-engine-recovery.js';
 
 // Anchor source paths to this config and local state to the chart-owned subtree.
 // Vite may be launched from either the repository root or apps/chart.
@@ -91,10 +91,12 @@ const calculationCoordinator = createCalculationCoordinator({
 });
 const activeDetectorChildren = new Set();
 const liveEngineSessions = createLiveEngineSessions();
+const liveReports = new Map();
 
 function shutdownCalculations() {
   calculationCoordinator.close();
   liveEngineSessions.close();
+  liveReports.clear();
   for (const child of activeDetectorChildren) child.kill();
   progressChannels.close();
 }
@@ -157,9 +159,9 @@ function calculationId(calculationFile) {
   return path.relative(calculationsDir, calculationFile).split(path.sep).join('/');
 }
 
-function calculationMetadata(item, request, calculationFile, recovery) {
+function calculationMetadata(item, request, reportId) {
   return {
-    calculationId: calculationId(calculationFile),
+    calculationId: reportId,
     chartId: item.chartId || null,
     symbol: item.symbol,
     sourceFile: item.id,
@@ -168,7 +170,6 @@ function calculationMetadata(item, request, calculationFile, recovery) {
     direction: request.direction,
     from: request.from,
     to: request.to,
-    ...(recovery ? { recovery } : {}),
   };
 }
 
@@ -182,8 +183,15 @@ function resolveCalculationReport(id) {
   return file.startsWith(`${path.resolve(calculationsDir)}${path.sep}`) && fs.existsSync(file) ? file : null;
 }
 
-function liveRecoveryMetadata(item, request, workerFingerprint) {
-  return { request, workerFingerprint, rawBytes: item.metadata.dataBytes, rawSha256: item.metadata.dataSha256 };
+function livePublication(item, request, to, payload, workerFingerprint, tabId, token) {
+  const reportId = `live/${token || randomUUID().replaceAll('-', '')}`;
+  liveReports.delete(reportId);
+  liveReports.set(reportId, { payload, calculation: calculationMetadata(item, { ...request, to }, reportId) });
+  if (liveReports.size > 16) liveReports.delete(liveReports.keys().next().value);
+  return { calculationId: reportId, output: JSON.stringify(payload), proof: {
+    chartId: item.chartId, tabId, request, to, workerFingerprint,
+    rawBytes: item.metadata.dataBytes, rawSha256: item.metadata.dataSha256, resultDigest: indicatorDigest(payload),
+  } };
 }
 
 function engineCalculationArgs(dataPath, request, bounds) {
@@ -193,8 +201,8 @@ function engineCalculationArgs(dataPath, request, bounds) {
     '--a-zones', 'enabled', '--s-zones', 'enabled', '--bridge-output'];
 }
 
-function seedLiveEngine({ chartId, workerFingerprint, request, sourcePath, args, onProgress }) {
-  return liveEngineSessions.seed({ chartId, sourceFingerprint: workerFingerprint, request },
+function seedLiveEngine({ chartId, tabId, workerFingerprint, request, sourcePath, args, onProgress }) {
+  return liveEngineSessions.seed({ chartId, tabId, sourceFingerprint: workerFingerprint, request },
     () => startLiveEngineWorker({
       command: pythonCommand, args: [liveBridgePath, ...engineArgs, ...args],
       env: { ...process.env, PYTHONDONTWRITEBYTECODE: '1', PYTHONUTF8: '1',
@@ -203,53 +211,59 @@ function seedLiveEngine({ chartId, workerFingerprint, request, sourcePath, args,
     }));
 }
 
-async function recoverLiveEngine({ selected, reportId, workerFingerprint }) {
-  const reportFile = resolveCalculationReport(reportId);
-  const unavailable = () => new LiveEngineError(410,
-    'The saved indicator calculation is unavailable. Use Apply to initialize it.', 'LIVE_RECOVERY_UNAVAILABLE');
-  if (!reportFile || !fs.existsSync(calculationMetadataPath(reportFile))) throw unavailable();
-  const report = JSON.parse(fs.readFileSync(calculationMetadataPath(reportFile), 'utf8'));
-  const recovery = report.recovery;
-  if (report.chartId !== selected.chartId || !recovery?.request) throw unavailable();
-  if (recovery.workerFingerprint !== workerFingerprint) {
-    throw new LiveEngineError(409, 'The Engine changed since this calculation. Use Apply with the current Engine.', 'ENGINE_CHANGED');
+function validLiveProof(proof, selected, tabId) {
+  const request = proof?.request;
+  return proof?.chartId === selected.chartId && proof.tabId === tabId
+    && Number.isSafeInteger(proof.to) && request
+    && Number.isSafeInteger(request.from) && Number.isSafeInteger(request.to)
+    && request.from <= request.to && request.from <= proof.to
+    && Number.isSafeInteger(request.timeframe) && request.timeframe > 0
+    && Number.isSafeInteger(request.chartTimeframe) && request.chartTimeframe > 0
+    && ['bullish', 'bearish'].includes(request.direction) && typeof request.blueLines === 'boolean';
+}
+
+async function recoverLiveEngine({ selected, proof, tabId, workerFingerprint }) {
+  if (!validLiveProof(proof, selected, tabId)) {
+    throw new LiveEngineError(404, 'Run an indicator calculation with Apply in this tab before enabling automatic continuation.', 'NO_INDICATOR_CALCULATION');
   }
-  const saved = readCalculationCache(reportFile, recovery.rawSha256);
-  if (!saved) throw unavailable();
   const current = await captureRawInputIdentity(selected.dataPath, { includeBytes: true }).catch(() => null);
   if (!current || current.sha256 !== selected.metadata.dataSha256) {
     throw new LiveEngineError(503, 'RAW changed during recovery. Retrying at the next check.', 'RAW_RETRY');
   }
-  const snapshot = restoreRawSnapshot(current.bytes, recovery);
-  if (!snapshot) {
-    throw new LiveEngineError(409, 'Existing RAW candles changed. Use Apply with the current history.', 'RAW_CHANGED');
-  }
-  await fs.promises.mkdir(localState.tmp, { recursive: true });
-  const sourcePath = path.join(localState.tmp, `live-recovery-${randomUUID()}.json`);
-  const file = await fs.promises.open(sourcePath, 'wx');
-  const request = recovery.request;
-  let seed;
-  try {
-    try { await file.writeFile(snapshot); }
-    finally { await file.close(); }
-    seed = await runIndicatorRangeCalculation({
-      rows: JSON.parse(snapshot.toString('utf8').replace(/^\uFEFF/, '')), sourcePath,
-      from: request.from, to: report.to, chartTimeframeSeconds: request.chartTimeframe,
-      run: (input, bounds) => seedLiveEngine({
-        chartId: selected.chartId, workerFingerprint, request, sourcePath,
-        args: engineCalculationArgs(input, request, bounds),
-      }),
-    });
-    if (!seed.sessionId || !matchesRecoveredIndicator(JSON.parse(saved), seed.payload)) {
-      throw new LiveEngineError(409, 'The saved indicator result could not be reproduced. Use Apply to verify it.', 'LIVE_RECOVERY_MISMATCH');
+  const request = proof.request;
+  const runSeed = (rows, sourcePath, applied, to) => runIndicatorRangeCalculation({
+    rows, sourcePath, from: applied.from, to, chartTimeframeSeconds: applied.chartTimeframe,
+    run: (input, bounds) => seedLiveEngine({
+      chartId: selected.chartId, tabId, workerFingerprint, request: applied, sourcePath,
+      args: engineCalculationArgs(input, applied, bounds),
+    }),
+  });
+  const decode = bytes => JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/, ''));
+  const snapshot = proof.workerFingerprint === workerFingerprint && restoreRawSnapshot(current.bytes, proof);
+  if (snapshot) {
+    const seed = await withIndicatorInputPipe(snapshot, sourcePath => runSeed(decode(snapshot), sourcePath, request, proof.to))
+      .catch(error => {
+        if (error.status === 429 || error.status === 503) throw error;
+        return null;
+      });
+    if (seed?.sessionId) {
+      if (indicatorDigest(seed.payload) === proof.resultDigest) return seed.sessionId;
+      liveEngineSessions.discard(seed.sessionId);
     }
-    return seed.sessionId;
-  } catch (error) {
-    if (seed?.sessionId) liveEngineSessions.discard(seed.sessionId);
-    throw error;
-  } finally {
-    await fs.promises.rm(sourcePath, { force: true });
   }
+
+  // Only this tab's applied range can initialize a replacement worker.
+  // If its exact RAW prefix no longer exists, run it once on current RAW.
+  const rows = decode(current.bytes);
+  const first = rows.find(row => row.time >= request.from);
+  if (!first) {
+    throw new LiveEngineError(503, 'Waiting for RAW candles at the previously applied starting time.', 'RAW_RETRY');
+  }
+  const from = Math.floor(first.time / request.chartTimeframe) * request.chartTimeframe;
+  const to = Math.floor(rows.at(-1).time / request.chartTimeframe) * request.chartTimeframe;
+  const seed = await runSeed(rows, selected.dataPath, { ...request, from }, to);
+  if (!seed.sessionId) throw new LiveEngineError(503, 'The indicator worker is unavailable. Retrying at the next check.');
+  return seed.sessionId;
 }
 
 function ensureStateDirectories() {
@@ -431,6 +445,12 @@ function localDataApi() {
         try {
           if (req.method !== 'GET') throw new Error('GET is required');
           const route = decodeURIComponent(new URL(req.url ?? '/', 'http://localhost').pathname).replace(/^\/+/, '');
+          if (/^live\/[a-f0-9]{32}$/.test(route)) {
+            const report = liveReports.get(route);
+            if (!report) throw new Error('The live report is unavailable. Update the indicator in its chart tab.');
+            res.end(JSON.stringify({ payload: report.payload, snapshot: { timezone: 'Asia/Tehran', calculation: report.calculation } }));
+            return;
+          }
           const calculationFile = resolveCalculationReport(route);
           if (!calculationFile) throw new Error('Calculation report was not found');
           const [symbol, timeframe, direction, filename] = route.split('/');
@@ -681,10 +701,10 @@ function localDataApi() {
         res.setHeader('Cache-Control', 'no-store');
         try {
           if (req.method !== 'POST') throw new LiveEngineError(405, 'POST is required.');
-          const { id, chartId, sessionId, keepAlive, calculationId: reportId } = await readJson(req).catch(error => { throw new LiveEngineError(400, error.message); });
-          const hasReport = typeof reportId === 'string' && reportId.length > 0;
+          const { id, chartId, tabId = null, sessionId, keepAlive, proof } = await readJson(req).catch(error => { throw new LiveEngineError(400, error.message); });
           if (typeof id !== 'string' || typeof chartId !== 'string' || !chartId ||
-              (sessionId == null ? !hasReport : typeof sessionId !== 'string' || !/^[a-f0-9]{32}$/.test(sessionId))) {
+              (tabId !== null && (typeof tabId !== 'string' || !/^[a-zA-Z0-9-]{8,80}$/.test(tabId))) ||
+              (sessionId != null && (typeof sessionId !== 'string' || !/^[a-f0-9]{32}$/.test(sessionId)))) {
             throw new LiveEngineError(400, 'A valid live indicator session and RAW identity are required.');
           }
           const sourceFingerprint = calculationSourceFingerprint();
@@ -715,22 +735,13 @@ function localDataApi() {
               throw new LiveEngineError(503, 'The selected RAW changed during the indicator update. The next poll will retry.');
             }
           }
-          const session = { chartId, sourceFingerprint: workerFingerprint };
+          const session = { chartId, tabId, sourceFingerprint: workerFingerprint };
           function advance(token) {
             return liveEngineSessions.advance({
               ...session, sessionId: token, rawSha256: metadata.dataSha256, data: dataPath,
             }, { validate, publish(payload, request) {
-              // One current live report per seed configuration. Its namespace
-              // is distinct from all immutable manual Apply reports.
-              const key = JSON.stringify(['live-indicator-report-v1', chartId, sourceFingerprint, request]);
-              const target = calculationPath(selected, request, key);
               const to = Math.floor(selected.to / request.chartTimeframe) * request.chartTimeframe;
-              const output = JSON.stringify(payload);
-              writeCalculationCache(target, metadata.dataSha256, output);
-              fs.writeFileSync(calculationMetadataPath(target),
-                JSON.stringify(calculationMetadata(selected, { ...request, to }, target,
-                  liveRecoveryMetadata(selected, request, workerFingerprint))), 'utf8');
-              return { output, calculationId: calculationId(target) };
+              return livePublication(selected, request, to, payload, workerFingerprint, tabId, token);
             } });
           }
           let result;
@@ -743,11 +754,13 @@ function localDataApi() {
             }
             result = await advance(sessionId);
           } catch (error) {
-            if (!hasReport || !['LIVE_SESSION_EXPIRED', 'LIVE_SESSION_CLOSED', 'LIVE_ENGINE_TIMEOUT',
-              'LIVE_ENGINE_FAILED', 'LIVE_ENGINE_PROTOCOL'].includes(error.code)) throw error;
-            const key = JSON.stringify(['live-recovery', chartId, reportId, metadata.dataSha256, workerFingerprint]);
+            const lostSession = ['LIVE_SESSION_EXPIRED', 'LIVE_SESSION_CLOSED', 'LIVE_ENGINE_TIMEOUT',
+              'LIVE_ENGINE_FAILED', 'LIVE_ENGINE_PROTOCOL'].includes(error.code);
+            const staleHistory = ['ENGINE_CHANGED', 'RAW_CHANGED'].includes(error.code);
+            if (!lostSession && !(proof && staleHistory)) throw error;
+            const key = JSON.stringify(['live-recovery', chartId, tabId, sessionId, proof, metadata.dataSha256, workerFingerprint]);
             const recovered = await calculationCoordinator.run(key, async () => {
-              const token = await recoverLiveEngine({ selected, reportId, workerFingerprint });
+              const token = await recoverLiveEngine({ selected, proof, tabId, workerFingerprint });
               currentSessionId = token;
               rawIdentity = undefined;
               try { return { result: await advance(token), token }; }
@@ -758,6 +771,7 @@ function localDataApi() {
           }
           res.setHeader('X-QG-Source-Fingerprint', sourceFingerprint);
           res.setHeader('X-QG-Calculation-Id', result.calculationId);
+          res.setHeader('X-QG-Live-Proof', JSON.stringify(result.proof));
           res.end(result.output);
         } catch (error) {
           res.statusCode = error.status || 500;
@@ -797,16 +811,23 @@ function localDataApi() {
           const bridgeOutput = true;
           const calculationRequest = { timeframe, chartTimeframe, from, to, direction: body.direction, blueLines: body.blueLines, bridgeOutput };
           const cacheKey = JSON.stringify(['engine-content-v3-range-input', sourceFingerprint, valid.chartId || valid.id, valid.id, dataStat.mtimeMs, timeframe, chartTimeframe, from, to, body.direction, body.blueLines, bridgeOutput, inputScope]);
-          const workerFingerprint = body.liveSession === true && valid.chartId
-            ? liveSourceFingerprint(sourceFingerprint) : null;
-          const executionKey = JSON.stringify([cacheKey, rawIdentity.sha256, workerFingerprint]);
-          const baseCalculationPath = calculationPath(valid, calculationRequest, cacheKey);
-          const changedRawPath = calculationPath(valid, calculationRequest, JSON.stringify([cacheKey, rawIdentity.sha256]));
-          const persistedCalculationPath = cachePathForRaw(baseCalculationPath, rawIdentity.sha256, changedRawPath);
+          const liveRequested = body.liveSession === true;
+          const tabId = body.tabId ?? null;
+          if (tabId !== null && (typeof tabId !== 'string' || !/^[a-zA-Z0-9-]{8,80}$/.test(tabId))) {
+            throw new Error('Invalid indicator tab identity');
+          }
+          const workerFingerprint = liveRequested && valid.chartId ? liveSourceFingerprint(sourceFingerprint) : null;
+          const executionKey = JSON.stringify([cacheKey, rawIdentity.sha256, liveRequested, workerFingerprint, tabId]);
+          let persistedCalculationPath = null;
+          if (!liveRequested) {
+            const base = calculationPath(valid, calculationRequest, cacheKey);
+            const changed = calculationPath(valid, calculationRequest, JSON.stringify([cacheKey, rawIdentity.sha256]));
+            persistedCalculationPath = cachePathForRaw(base, rawIdentity.sha256, changed);
+          }
           let output = null;
           let cacheSource = null;
           const cacheReadStarted = performance.now();
-          output = readCalculationCache(persistedCalculationPath, rawIdentity.sha256);
+          if (persistedCalculationPath) output = readCalculationCache(persistedCalculationPath, rawIdentity.sha256);
           if (output) {
             cacheSource = 'file';
           }
@@ -819,7 +840,7 @@ function localDataApi() {
               await assertRawInputUnchanged(sourcePath, rawIdentity);
               let jobDetectorMs = 0;
               let jobLiveSessionId = null;
-              const cachedOutput = readCalculationCache(persistedCalculationPath, rawIdentity.sha256);
+              const cachedOutput = persistedCalculationPath ? readCalculationCache(persistedCalculationPath, rawIdentity.sha256) : null;
               const runCalculation = async (calculationInputPath, bounds) => {
                 const detectorStarted = performance.now();
                 publish({ status: 'started', label: 'Start Python calculation' });
@@ -828,13 +849,12 @@ function localDataApi() {
                   let result = cachedOutput;
                   if (workerFingerprint) {
                     try {
-                      const seed = await seedLiveEngine({ chartId: valid.chartId, workerFingerprint,
+                      const seed = await seedLiveEngine({ chartId: valid.chartId, tabId, workerFingerprint,
                         request: calculationRequest, sourcePath, args, onProgress: publish });
                       jobLiveSessionId = seed.sessionId;
                       if (!result) result = JSON.stringify(seed.payload);
                     } catch {
-                      // An unavailable live checkpoint must not suppress a
-                      // valid manual calculation or a cached manual result.
+                      // The tab can still perform its manual calculation using the Engine.
                     }
                   }
                   if (!result) result = await runDetector(args, publish, signal);
@@ -872,6 +892,7 @@ function localDataApi() {
                   jobLiveSessionId = null;
                 }
                 await assertRawInputUnchanged(sourcePath, rawIdentity);
+                if (liveRequested) return { output: result, detectorMs: jobDetectorMs, liveSessionId: jobLiveSessionId };
                 const published = readCalculationCache(persistedCalculationPath, rawIdentity.sha256);
                 if (!published) writeCalculationCache(persistedCalculationPath, rawIdentity.sha256, result);
                 return { output: published || result, detectorMs: jobDetectorMs, liveSessionId: jobLiveSessionId };
@@ -891,16 +912,21 @@ function localDataApi() {
              }
              publishProgress(requestId, { status: 'completed', label: `Cached result (${cacheSource})` });
            }
-           const metadataFile = calculationMetadataPath(persistedCalculationPath);
-           if (workerFingerprint || !fs.existsSync(metadataFile)) fs.writeFileSync(metadataFile, JSON.stringify(
-              calculationMetadata(valid, calculationRequest, persistedCalculationPath,
-                workerFingerprint && liveRecoveryMetadata(valid, calculationRequest, workerFingerprint)),
-            ), 'utf8');
-           res.setHeader('X-QG-Cache', cacheHit ? cacheSource : 'miss');
-           res.setHeader('X-QG-Calculation-Id', calculationId(persistedCalculationPath));
+           if (liveRequested) {
+             const live = livePublication(valid, calculationRequest, to, JSON.parse(output), workerFingerprint, tabId, liveSessionId);
+             res.setHeader('X-QG-Live-Proof', JSON.stringify(live.proof));
+             res.setHeader('X-QG-Calculation-Id', live.calculationId);
+           } else {
+             const reportId = calculationId(persistedCalculationPath);
+             const metadataFile = calculationMetadataPath(persistedCalculationPath);
+             if (!fs.existsSync(metadataFile)) fs.writeFileSync(metadataFile, JSON.stringify(
+               calculationMetadata(valid, calculationRequest, reportId),
+             ), 'utf8');
+             res.setHeader('X-QG-Calculation-Id', reportId);
+           }
+           res.setHeader('X-QG-Cache', liveRequested ? 'bypass' : cacheHit ? cacheSource : 'miss');
            res.setHeader('X-QG-Input-Scope', inputScope);
           res.setHeader('X-QG-Source-Fingerprint', sourceFingerprint);
-          if (workerFingerprint) res.setHeader('X-QG-Live-Recovery', 'available');
           if (liveSessionId) res.setHeader('X-QG-Live-Session', liveSessionId);
           res.setHeader('X-QG-Detector-Ms', detectorMs.toFixed(2));
           res.setHeader('X-QG-Cache-Read-Ms', cacheReadMs.toFixed(2));

@@ -122,7 +122,7 @@ export function createLiveEngineSessions({ maxSessions = 4, idleTtlMs = 30 * 60_
   const timer = setInterval(expire, Math.min(idleTtlMs, 60_000));
   timer.unref();
 
-  async function seed({ chartId, sourceFingerprint, request }, launch) {
+  async function seed({ chartId, tabId, sourceFingerprint, request }, launch) {
     if (closed) throw new LiveEngineError(503, "The server is shutting down.");
     expire();
     if (sessions.size >= maxSessions) {
@@ -133,7 +133,7 @@ export function createLiveEngineSessions({ maxSessions = 4, idleTtlMs = 30 * 60_
     }
     const id = randomBytes(16).toString("hex");
     const worker = launch();
-    const session = { worker, chartId, sourceFingerprint, request, seeding: true, touched: now(), latest: null };
+    const session = { worker, chartId, tabId, sourceFingerprint, request, seeding: true, touched: now(), latest: null };
     sessions.set(id, session);
     try {
       const { payload, ready } = await worker.seed;
@@ -151,10 +151,10 @@ export function createLiveEngineSessions({ maxSessions = 4, idleTtlMs = 30 * 60_
     }
   }
 
-  function activeSession(sessionId, chartId, sourceFingerprint) {
+  function activeSession(sessionId, chartId, tabId, sourceFingerprint) {
     expire();
     const session = sessions.get(sessionId);
-    if (!session || session.seeding || session.chartId !== chartId)
+    if (!session || session.seeding || session.chartId !== chartId || session.tabId !== tabId)
       throw new LiveEngineError(410, EXPIRED, "LIVE_SESSION_EXPIRED");
     if (session.worker.closed) {
       discard(sessionId);
@@ -167,12 +167,12 @@ export function createLiveEngineSessions({ maxSessions = 4, idleTtlMs = 30 * 60_
     return session;
   }
 
-  function keepAlive({ sessionId, chartId, sourceFingerprint }) {
-    activeSession(sessionId, chartId, sourceFingerprint).touched = now();
+  function keepAlive({ sessionId, chartId, tabId, sourceFingerprint }) {
+    activeSession(sessionId, chartId, tabId, sourceFingerprint).touched = now();
   }
 
-  async function advance({ sessionId, chartId, sourceFingerprint, rawSha256, data }, { validate, publish }) {
-    const session = activeSession(sessionId, chartId, sourceFingerprint);
+  async function advance({ sessionId, chartId, tabId, sourceFingerprint, rawSha256, data }, { validate, publish }) {
+    const session = activeSession(sessionId, chartId, tabId, sourceFingerprint);
     if (session.pending) {
       if (session.pending.rawSha256 === rawSha256 && session.pending.data === data) return session.pending.result;
       throw new LiveEngineError(429, "The live indicator is already updating.");

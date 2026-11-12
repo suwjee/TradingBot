@@ -34,7 +34,8 @@ async function launch(stateRoot) {
   for await (const line of output) {
     if (!line.startsWith("TEST_PORT:")) continue;
     const port = Number(line.slice("TEST_PORT:".length));
-    return { stop, post: (route, body) => fetch(`http://127.0.0.1:${port}/api/reactions${route}`, {
+    return { stop, getReport: id => fetch("http://127.0.0.1:" + port + "/api/info/" + id),
+      post: (route, body) => fetch(`http://127.0.0.1:${port}/api/reactions${route}`, {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body), signal: AbortSignal.timeout(90_000),
     }) };
@@ -50,7 +51,7 @@ async function indicator(response) {
   return output;
 }
 
-test("restart recovers manual and advanced live checkpoints across RAW renames", {
+test("a tab catches up after five minutes and recovers across a restart without calculation files", {
   skip: process.platform !== "win32" && "Selected-range Engine input uses Windows named pipes",
   timeout: 180_000,
 }, async () => {
@@ -65,7 +66,7 @@ test("restart recovers manual and advanced live checkpoints across RAW renames",
     return { time: 1_795_000_020 + i * 5, open, high: Math.max(open, close) + i % 7,
       low: Math.min(open, close) - i % 5, close };
   });
-  const initialCount = rows.length - 50;
+  const initialCount = rows.length - 100;
   let raw = store.get(store.write({ broker: "TEST", symbol: "RECOVERY", timeframe: "5S", candles: rows.slice(0, initialCount) }).id);
   const chartId = raw.chartId;
   const requests = ["bullish", "bearish"].map(direction => ({ chartId, direction, timeframe: direction === "bullish" ? 30 : 60,
@@ -79,34 +80,68 @@ test("restart recovers manual and advanced live checkpoints across RAW renames",
   }
   try {
     server = await launch(stateRoot);
-    const missing = await server.post("/continue", { id: raw.id, chartId, sessionId: null });
-    assert.equal(missing.status, 400);
-    const invalid = await server.post("/continue", { id: raw.id, chartId, sessionId: null, calculationId: "../30s/bullish/1-2--0123456789abcdef.json" });
-    assert.equal(invalid.status, 410);
+    const cache = path.join(stateRoot, "cache", "indicator-calculations");
+    const cacheFiles = () => fs.readdir(cache, { recursive: true });
+    const legacyResponse = await server.post("", { ...requests[0], id: raw.id });
+    const baseline = await indicator(legacyResponse);
+    const legacyId = legacyResponse.headers.get("X-QG-Calculation-Id");
+    const legacyFile = path.join(cache, legacyId);
+    const legacyContents = await fs.readFile(legacyFile, "utf8");
+    await fs.writeFile(legacyFile, JSON.stringify({ timeframe: 30, directions: {}, marker: "disk-cache" }));
+    const originalCacheFiles = await cacheFiles();
+
+    const emptyTab = { chartId, tabId: "unapplied-tab" };
+    const missing = await server.post("/continue", { id: raw.id, ...emptyTab, calculationId: legacyId });
+    assert.equal(missing.status, 404);
+    assert.equal((await missing.json()).code, "NO_INDICATOR_CALCULATION");
+
     const checkpoints = [];
-    for (const request of requests) {
-      const response = await server.post("", { ...request, id: raw.id, liveSession: true });
-      await indicator(response);
+    for (const [index, request] of requests.entries()) {
+      const tabId = "applied-tab-" + index;
+      const response = await server.post("", { ...request, tabId, id: raw.id, liveSession: true });
+      const actual = await indicator(response);
+      if (index === 0) assert.deepEqual(actual, baseline);
+      assert.equal(response.headers.get("X-QG-Cache"), "bypass");
       const sessionId = response.headers.get("X-QG-Live-Session");
-      const calculationId = response.headers.get("X-QG-Calculation-Id");
-      assert(sessionId && calculationId);
-      checkpoints.push({ sessionId, calculationId });
+      const proof = JSON.parse(response.headers.get("X-QG-Live-Proof"));
+      const reportId = response.headers.get("X-QG-Calculation-Id");
+      assert(sessionId && proof);
+      assert.match(reportId, /^live\/[a-f0-9]{32}$/);
+      const report = await server.getReport(reportId);
+      assert.equal(report.status, 200);
+      assert.equal((await report.json()).snapshot.calculation.direction, request.direction);
+      checkpoints.push({ sessionId, proof, tabId });
     }
-    for (const count of [initialCount + 13, initialCount + 26]) {
+    assert.deepEqual(await cacheFiles(), originalCacheFiles);
+    assert.match(await fs.readFile(legacyFile, "utf8"), /disk-cache/);
+    await fs.writeFile(legacyFile, legacyContents);
+
+    const otherTab = await server.post("/continue", { id: raw.id, ...checkpoints[0], ...emptyTab });
+    assert.equal(otherTab.status, 404);
+    assert.equal((await otherTab.json()).code, "NO_INDICATOR_CALCULATION");
+
+    for (const count of [initialCount + 60, initialCount + 73]) {
       const oldId = raw.id;
       raw = await store.appendLatest(raw, rows.slice(raw.count, count), 5, store.version(raw.id), new AbortController().signal);
       assert.notEqual(raw.id, oldId);
       assert.equal(raw.chartId, chartId);
-      await restart();
+      const restarted = count !== initialCount + 60;
+      if (restarted) await restart();
       for (const [index, checkpoint] of checkpoints.entries()) {
+        const before = await cacheFiles();
         const response = await server.post("/continue", { id: raw.id, chartId, ...checkpoint });
         const actual = await indicator(response);
-        const sessionId = response.headers.get("X-QG-Live-Session");
-        assert(sessionId && sessionId !== checkpoint.sessionId);
-        checkpoint.sessionId = sessionId;
-        checkpoint.calculationId = response.headers.get("X-QG-Calculation-Id");
-        const to = Math.floor(raw.to / 30) * 30;
-        const expected = await indicator(await server.post("", { ...requests[index], id: raw.id, to }));
+        if (restarted) {
+          const sessionId = response.headers.get("X-QG-Live-Session");
+          assert(sessionId && sessionId !== checkpoint.sessionId);
+          checkpoint.sessionId = sessionId;
+        }
+        checkpoint.proof = JSON.parse(response.headers.get("X-QG-Live-Proof"));
+        assert.equal(checkpoint.proof.request.from, requests[index].from);
+        assert.equal(checkpoint.proof.request.direction, requests[index].direction);
+        assert.equal(checkpoint.proof.to, Math.floor(raw.to / 30) * 30);
+        assert.deepEqual(await cacheFiles(), before);
+        const expected = await indicator(await server.post("", { ...requests[index], id: raw.id, to: checkpoint.proof.to }));
         assert.deepEqual(actual, expected);
         assert.deepEqual(await indicator(await server.post("/continue", { id: raw.id, chartId, ...checkpoint })), actual);
       }
@@ -114,19 +149,23 @@ test("restart recovers manual and advanced live checkpoints across RAW renames",
     await restart();
     const idle = await server.post("/continue", { id: raw.id, chartId, ...checkpoints[0], keepAlive: true });
     await indicator(idle);
-    const idleSession = idle.headers.get("X-QG-Live-Session");
-    assert(idleSession && idleSession !== checkpoints[0].sessionId);
-    const ping = await server.post("/continue", { id: raw.id, chartId, sessionId: idleSession, keepAlive: true });
+    checkpoints[0].sessionId = idle.headers.get("X-QG-Live-Session");
+    const ping = await server.post("/continue", { id: raw.id, chartId, ...checkpoints[0], keepAlive: true });
     assert.equal(ping.status, 204);
+
     const modified = { ...rows[1], close: rows[1].low };
     if (modified.close === rows[1].close) modified.close = rows[1].high;
     assert.notEqual(modified.close, rows[1].close);
     await fs.writeFile(raw.dataPath, JSON.stringify([rows[0], modified, ...rows.slice(2, raw.count)]));
-    await restart();
-    const rewrite = await server.post("/continue", { id: raw.id, chartId, ...checkpoints[0] });
-    const problem = await rewrite.json();
-    assert.equal(rewrite.status, 409, JSON.stringify(problem));
-    assert.equal(problem.code, "RAW_CHANGED");
+    const rebuild = await server.post("/continue", { id: raw.id, chartId, ...checkpoints[0] });
+    const actual = await indicator(rebuild);
+    const expected = await indicator(await server.post("", { ...requests[0], id: raw.id,
+      to: Math.floor(raw.to / 30) * 30 }));
+    assert.deepEqual(actual, expected);
+
+    const fresh = await server.post("/continue", { id: raw.id, ...emptyTab });
+    assert.equal(fresh.status, 404);
+    assert.equal((await fresh.json()).code, "NO_INDICATOR_CALCULATION");
   } finally {
     if (server) await server.stop();
     assert.equal(path.dirname(stateRoot), directory);

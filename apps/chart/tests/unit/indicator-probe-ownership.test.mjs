@@ -21,6 +21,7 @@ function harness() {
   const posts = [], probes = [], applied = [];
   const noop = () => {};
   const sandbox = { ...lifecycle, state, inputs, controls, posts, performance, AbortController, setTimeout, clearTimeout, clearInterval,
+    liveIndicatorTabId: "manual-apply-tab",
     $: selector => selector === "[data-direction].active" ? { dataset: { direction: inputs.direction } }
       : controls[selector.replace(/^#/, "")] ||= { dataset: {}, focus: noop, classList: { toggle: noop } },
     indicatorApplyProblem: () => null, indicatorSettings: () => ({ ...inputs }),
@@ -84,13 +85,15 @@ test("unchanged selection still reuses a verified calculation after the probe", 
   assert.equal(h.controls.applyIndicator.disabled, false);
 });
 
-test("Apply requests a checkpoint when a matching cached calculation has no live session", async () => {
+test("Apply requests a fresh checkpoint for this tab when its calculation has no worker", async () => {
   const h = harness();
   h.state.indicator.resultContext.liveSessionId = null;
   void h.calculate();
   h.resolve("old-source");
   await new Promise(resolve => setImmediate(resolve));
   assert.equal(h.posts.length, 1);
+  assert.equal(h.posts[0].tabId, "manual-apply-tab");
+  assert.equal(h.posts[0].liveSession, true);
   assert.equal(h.applied.length, 0);
 });
 

@@ -12,7 +12,7 @@ scope:
   - faraz-ui
   - algorithm-reference-ui
   - responsive-accessibility
-last_modified_at: 2026-11-12T07:58:23+03:30
+last_modified_at: 2026-11-12T08:32:07+03:30
 ---
 
 # TradingBot UI/UX Reference
@@ -422,7 +422,7 @@ FARAZ acquisition and Chart update affect input data availability. They do not d
 
 The Real-time Chart control sits before Cut Candles. Enable starts a catch-up on the selected RAW file, then checks for closed candles at the configured interval. The green ring fills until the next check. Disable stops the timer and disables the other options. Changing the selected RAW file ends the current live session. New candles retain the RAW source timeframe and are displayed using the current chart timeframe. The chart follows incoming candles when already at the latest edge and preserves a historical viewport when browsing older candles.
 
-Indicator Calculation requires a manual Apply with the intended start and direction. Enabling it first catches up from that calculation, then processes new closed RAW candles on each check. It retains the analysis timeframe, updates behaviors whose remaining conditions resolve and keeps the current chart and drawings in place. If an Engine worker expires or the server restarts, the chart can recover the verified calculation automatically from the previous Apply and continue from its saved result. A change to the earlier RAW, an Engine change, or a calculation that cannot be verified pauses automatic indicator calculation and retains the last indicator result. Candle polling continues and reports its own outcome.
+Indicator Calculation starts with the result displayed in the current browser tab. Enabling it immediately processes the backlog through the latest available RAW candle, then continues at the configured interval. Apply is required when the current tab has no displayed calculation, including after a browser reload. The open tab retains its calculation selection through a worker loss and can recover without reading saved calculation files. Temporary failures keep the last result and retry, and stored candles can be processed while the market-data source is unavailable.
 
 ## 13. Algorithm reference workspace
 

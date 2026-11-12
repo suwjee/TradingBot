@@ -12,7 +12,7 @@ const INTERVALS = new Map([
 ]);
 const DEFAULT_INTERVAL_MS = 60_000;
 
-export function createRealtimeChartScheduler({ runUpdate, indicatorProblem, render, now = () => performance.now() }) {
+export function createRealtimeChartScheduler({ runUpdate, render, now = () => performance.now() }) {
   let chartId = null;
   let enabled = false;
   let intervalMs = DEFAULT_INTERVAL_MS;
@@ -65,11 +65,6 @@ export function createRealtimeChartScheduler({ runUpdate, indicatorProblem, rend
       return;
     }
     queued = false;
-    if (indicatorCalculation) {
-      indicatorError = indicatorProblem(chartId) || "";
-      indicatorCalculation = !indicatorError;
-    }
-
     const abort = new AbortController();
     const indicatorAbort = indicatorCalculation ? new AbortController() : null;
     const request = { chartId, signal: abort.signal, indicatorCalculation, indicatorSignal: indicatorAbort?.signal };
@@ -83,19 +78,14 @@ export function createRealtimeChartScheduler({ runUpdate, indicatorProblem, rend
       if (!abort.signal.aborted && !indicatorAbort?.signal.aborted) {
         status = (typeof result === "string" ? result : result?.status) || "Checked for new candles.";
         if (indicatorAbort) {
-          const problem = indicatorProblem(chartId) || "";
-          indicatorError = problem || result?.indicatorError || "";
-          indicatorCalculation = !problem;
+          indicatorError = result?.indicatorError || "";
+          indicatorCalculation = !indicatorError;
         }
       }
     } catch (error) {
       if (!abort.signal.aborted && !indicatorAbort?.signal.aborted) {
         status = error?.message || "Could not check for new candles.";
         failed = true;
-        if (indicatorCalculation) {
-          indicatorError = indicatorProblem(chartId) || "";
-          indicatorCalculation = !indicatorError;
-        }
       }
     } finally {
       active = null;
@@ -141,8 +131,8 @@ export function createRealtimeChartScheduler({ runUpdate, indicatorProblem, rend
   function setIndicatorCalculation(nextValue) {
     if (!enabled) return;
     const wasEnabled = indicatorCalculation;
-    indicatorError = nextValue ? indicatorProblem(chartId) || "" : "";
-    indicatorCalculation = nextValue && !indicatorError;
+    indicatorError = "";
+    indicatorCalculation = nextValue;
     if (!indicatorCalculation && active?.indicatorAbort && !active.indicatorAbort.signal.aborted) {
       active.indicatorAbort.abort();
       status = "Indicator check canceled.";
@@ -161,7 +151,7 @@ function updateText(element, text) {
   if (element.textContent !== text) element.textContent = text;
 }
 
-export function mountRealtimeChart({ trigger, runUpdate, indicatorProblem, getChartId }) {
+export function mountRealtimeChart({ trigger, runUpdate, getChartId }) {
   const document = trigger.ownerDocument;
   const window = document.defaultView;
   const menu = document.createElement("section");
@@ -219,7 +209,6 @@ export function mountRealtimeChart({ trigger, runUpdate, indicatorProblem, getCh
 
   const scheduler = createRealtimeChartScheduler({
     runUpdate,
-    indicatorProblem,
     render(view) {
       enabled = view.enabled;
       toggle.disabled = !view.hasChart;

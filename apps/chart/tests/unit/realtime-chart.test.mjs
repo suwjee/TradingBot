@@ -8,7 +8,6 @@ function createScheduler(t, options = {}) {
   let view;
   const scheduler = createRealtimeChartScheduler({
     now: options.now ?? Date.now,
-    indicatorProblem: options.indicatorProblem ?? (() => ""),
     async runUpdate(request) {
       requests.push(request);
       return options.runUpdate ? options.runUpdate(request) : "Checked for new candles.";
@@ -100,22 +99,23 @@ test("waking after browser timer throttling performs only one overdue check", as
 
 test("an ineligible indicator option reports manual Apply and continues candle polling", async (t) => {
   const problem = "Apply the indicator manually before enabling live calculation.";
-  const fixture = createScheduler(t, { indicatorProblem: () => problem });
+  const fixture = createScheduler(t, { runUpdate: ({ indicatorCalculation }) => indicatorCalculation
+    ? { status: "Candles updated.", indicatorError: problem } : "Candles updated." });
   fixture.scheduler.enable();
   await settle();
 
   fixture.scheduler.setIndicatorCalculation(true);
+  await settle();
   assert.equal(fixture.view.indicatorCalculation, false);
   assert.equal(fixture.view.indicatorError, problem);
   assert.equal(fixture.view.enabled, true);
   t.mock.timers.tick(60_000);
-  assert.equal(fixture.requests.length, 2);
-  assert.equal(fixture.requests[1].indicatorCalculation, false);
+  assert.equal(fixture.requests.length, 3);
+  assert.equal(fixture.requests[2].indicatorCalculation, false);
 });
 
-test("enabling indicator continuation checks immediately and revalidates before later polls", async (t) => {
-  let problem = "";
-  const fixture = createScheduler(t, { indicatorProblem: () => problem });
+test("reenabling indicator calculation after five minutes checks immediately", async (t) => {
+  const fixture = createScheduler(t);
   fixture.scheduler.enable();
   await settle();
   fixture.scheduler.setIndicatorCalculation(true);
@@ -123,10 +123,18 @@ test("enabling indicator continuation checks immediately and revalidates before 
   assert.equal(fixture.requests[1].indicatorCalculation, true);
   await settle();
 
-  problem = "Apply the indicator manually for the current range.";
-  t.mock.timers.tick(60_000);
-  assert.equal(fixture.requests[2].indicatorCalculation, false);
-  assert.equal(fixture.view.indicatorError, problem);
+  fixture.scheduler.setIndicatorCalculation(false);
+  for (let minute = 0; minute < 5; minute++) {
+    t.mock.timers.tick(60_000);
+    await settle();
+    assert.equal(fixture.requests.at(-1).indicatorCalculation, false);
+  }
+  const count = fixture.requests.length;
+  fixture.scheduler.setIndicatorCalculation(true);
+  assert.equal(fixture.requests.length, count + 1);
+  assert.equal(fixture.requests.at(-1).indicatorCalculation, true);
+  await settle();
+  assert.equal(fixture.view.indicatorError, "");
 });
 
 test("turning indicator calculation off cancels only the indicator request", async (t) => {
@@ -169,13 +177,11 @@ test("a newly requested indicator check waits for the active RAW check", async (
   assert.equal(fixture.view.status, "Indicator updated.");
 });
 
-test("an unrecoverable indicator pauses while the successful RAW result stays visible", async (t) => {
-  let problem = "";
+test("a missing prior calculation turns off the indicator while the successful RAW result stays visible", async (t) => {
+  const problem = "Run an indicator calculation with Apply before enabling automatic continuation.";
   const fixture = createScheduler(t, {
-    indicatorProblem: () => problem,
     runUpdate({ indicatorCalculation }) {
       if (!indicatorCalculation) return "Candles updated.";
-      problem = "The Engine changed. Use Apply with the current Engine.";
       return { status: "Added 13 closed 5S candles.", indicatorError: problem };
     },
   });
@@ -194,15 +200,15 @@ test("a temporary indicator error stays separate and the next poll retries", asy
   let indicatorChecks = 0;
   const fixture = createScheduler(t, { runUpdate({ indicatorCalculation }) {
     if (!indicatorCalculation) return "Candles updated.";
-    if (++indicatorChecks === 1) return { status: "Added 13 closed 5S candles.", indicatorError: "RAW changed during recovery. Retrying." };
+    if (++indicatorChecks === 1) return "Added 13 closed 5S candles. Indicator update deferred. Retrying.";
     return "Indicator updated.";
   } });
   fixture.scheduler.enable();
   await settle();
   fixture.scheduler.setIndicatorCalculation(true);
   await settle();
-  assert.equal(fixture.view.status, "Added 13 closed 5S candles.");
-  assert.match(fixture.view.indicatorError, /Retrying/);
+  assert.match(fixture.view.status, /Added 13 closed 5S candles.*Retrying/);
+  assert.equal(fixture.view.indicatorError, "");
   assert.equal(fixture.view.indicatorCalculation, true);
   t.mock.timers.tick(60_000);
   await settle();

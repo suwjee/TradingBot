@@ -10,7 +10,7 @@ scope:
   - engine
   - runtime-boundaries
   - state-and-transport
-last_modified_at: 2026-11-12T07:58:23+03:30
+last_modified_at: 2026-11-12T08:32:07+03:30
 ---
 
 # TradingBot Technical Architecture
@@ -110,7 +110,7 @@ Acquisition creates or updates input data. It does not execute Engine trading se
 
 Real-time Chart polls the latest closed candles for one stable chart identity. The server derives the request from the resolved RAW tail and native timeframe. It rejects a stale source, serializes concurrent live requests for the same chart, and stages the validated RAW and sidecar before publishing the renamed pair. The browser receives the committed delta and updates its existing chart view.
 
-The continuation API authorizes an update with the chart identity, Engine source fingerprint and a session token returned by Apply. It follows the RAW rename, verifies the current file digest and replays the same response on retries. The server sends the validated RAW bytes and their digest over the private worker pipe. The worker checks the digest and the previously observed RAW prefix. The server keeps bounded worker sessions in memory and keeps active sessions open through market closures. If a worker is lost, recovery reads the last published calculation and its RAW provenance. The server verifies the Engine fingerprint and the saved RAW digest against the append-only file, rebuilds the missing checkpoint, and compares the complete saved indicator output apart from timings before it processes new candles. An Engine change, historical RAW rewrite, or mismatched result requires a new Apply.
+The continuation API binds the worker to the chart and the browser tab that ran Apply. It follows RAW renames, validates the current RAW digest, and replays the same in-memory response on retries. Apply and continuation for the chart bypass calculation cache files. If the worker stops, the open tab provides its applied selection, the RAW digest and the indicator digest from its last visible result. The server verifies the old RAW prefix and result before continuing from a replacement worker. If they no longer match, it rebuilds once from that tab's applied selection on current RAW. Live review reports are served from bounded process memory.
 
 ## 6. Chart architecture
 

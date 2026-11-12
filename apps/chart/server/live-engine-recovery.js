@@ -1,5 +1,4 @@
 import { createHash } from "node:crypto";
-import { isDeepStrictEqual } from "node:util";
 
 export function restoreRawSnapshot(current, { rawBytes, rawSha256 }) {
   if (!Number.isSafeInteger(rawBytes) || rawBytes <= 0 || rawBytes > current.length) return null;
@@ -17,8 +16,7 @@ export function restoreRawSnapshot(current, { rawBytes, rawSha256 }) {
   return boundary === closing ? current : Buffer.concat([prefix, ending], rawBytes);
 }
 
-export function matchesRecoveredIndicator(saved, recovered) {
-  const { timings: _savedTimings, ...savedOutput } = saved;
-  const { timings: _recoveredTimings, ...recoveredOutput } = recovered;
-  return isDeepStrictEqual(savedOutput, recoveredOutput);
+export function indicatorDigest(payload) {
+  const { timings: _timings, ...output } = payload;
+  return createHash("sha256").update(JSON.stringify(output)).digest("hex");
 }

@@ -150,6 +150,8 @@ function createUniqueId() {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
+const liveIndicatorTabId = createUniqueId();
+
 window.addEventListener("error", (event) => {
   const signature = `${event.filename || ""} ${event.message || ""} ${event.error?.stack || ""}`;
   const scope = /indicator|reaction/i.test(signature) ? log.indicator : log.chart;
@@ -5781,7 +5783,7 @@ function setFooterCacheStatus(cache) {
   const footer = $("#cacheStatusFooter");
   if (!footer) return;
   const fromCache = source === "file" || source === "memory" || source === "hit";
-  const cold = source === "miss" || source === "cold";
+  const cold = source === "miss" || source === "cold" || source === "bypass";
   const failed = source === "error";
   footer.dataset.state = failed ? "error" : fromCache ? "cache" : cold ? "cold" : "idle";
   footer.title = failed ? "Indicator cache error" : fromCache ? "Indicator result loaded from cache" : cold ? "Indicator result calculated without a cache hit" : "Calculation source is not available";
@@ -6269,7 +6271,7 @@ async function calculateIndicator() {
           to,
           direction: settings.direction,
           requestId: progressRequestId,
-        }), liveSession: true }),
+        }), liveSession: true, tabId: liveIndicatorTabId }),
       }),
       responseReceived = performance.now();
     if (!operationIsCurrent()) return;
@@ -6301,7 +6303,7 @@ async function calculateIndicator() {
       calculationId: r.headers.get("X-QG-Calculation-Id"),
       sourceFingerprint: r.headers.get("X-QG-Source-Fingerprint"),
       liveSessionId: r.headers.get("X-QG-Live-Session"),
-      liveRecovery: r.headers.get("X-QG-Live-Recovery") === "available",
+      liveProof: JSON.parse(r.headers.get("X-QG-Live-Proof") || "null"),
     };
     capturedInputs = captureCurrentInputs();
     state.indicator.calculationKey = nextKey;
@@ -6431,15 +6433,6 @@ $("#indicatorStatusFooter").onclick = openIndicator;
 const CHART_UPDATE_PACKET_SIZE = 1_000;
 const CHART_UPDATE_RATE_LIMIT_MS = 30;
 let chartUpdateRunning = false;
-function realtimeIndicatorProblem(chartId = state.file?.chartId) {
-  const context = state.indicator.resultContext;
-  if (!state.indicator.results || !context || context.chartId !== chartId || context.chartTimeframe !== state.tf)
-    return "Run an indicator calculation with Apply before enabling automatic continuation.";
-  if (context.liveProblem) return context.liveProblem;
-  if (context.liveSessionId || (context.liveRecovery && context.calculationId)) return "";
-  return "The saved calculation does not have a live checkpoint. Use Apply to initialize it.";
-}
-
 async function continueRealtimeIndicator(context, file, signal, operationIsCurrent) {
   const rawTo = state.raw.at(-1).time;
   const isCurrent = () => !signal.aborted && operationIsCurrent() && state.indicator.resultContext === context;
@@ -6447,11 +6440,13 @@ async function continueRealtimeIndicator(context, file, signal, operationIsCurre
     && context.source?.metadata?.dataSha256 === file.metadata?.dataSha256;
   if (!isCurrent() || (keepAlive && performance.now() - context.liveContactAt < 10 * 60_000))
     return false;
+  const proof = context.liveProof || { chartId: file.chartId, tabId: liveIndicatorTabId, to: context.to,
+    request: { from: context.from, to: context.to, direction: context.direction,
+      timeframe: context.analysisTimeframe, chartTimeframe: context.chartTimeframe, blueLines: true, bridgeOutput: true } };
   const response = await fetch("/api/reactions/continue", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: file.id, chartId: file.chartId, sessionId: context.liveSessionId,
-      ...(context.calculationId ? { calculationId: context.calculationId } : {}),
+    body: JSON.stringify({ id: file.id, chartId: file.chartId, tabId: liveIndicatorTabId, sessionId: context.liveSessionId, proof,
       ...(keepAlive ? { keepAlive: true } : {}) }),
     signal,
   });
@@ -6464,27 +6459,27 @@ async function continueRealtimeIndicator(context, file, signal, operationIsCurre
   if (!isCurrent()) return false;
   if (!response.ok) {
     const problem = payload.error || "Could not continue the indicator.";
-    if (response.status === 409 || response.status === 410)
-      state.indicator.resultContext = { ...context, liveSessionId: null, liveProblem: problem };
     throw Object.assign(new Error(problem), { code: payload.code });
   }
   const sourceFingerprint = response.headers.get("X-QG-Source-Fingerprint");
-  if (sourceFingerprint !== context.sourceFingerprint) {
-    const problem = "The Engine changed since this calculation. Use Apply with the current Engine.";
-    state.indicator.resultContext = { ...context, liveSessionId: null, liveProblem: problem };
-    throw Object.assign(new Error(problem), { code: "ENGINE_CHANGED" });
-  }
-  if (!payload.directions || payload.timeframe !== context.analysisTimeframe)
+  const liveProof = JSON.parse(response.headers.get("X-QG-Live-Proof") || "null");
+  const range = liveProof && { ...liveProof.request, to: liveProof.to };
+  if (!sourceFingerprint || liveProof?.chartId !== file.chartId || liveProof.tabId !== liveIndicatorTabId
+    || !payload.directions || !range || payload.timeframe !== range.timeframe
+    || !["bullish", "bearish"].includes(range.direction) || !Number.isSafeInteger(range.from)
+    || !Number.isSafeInteger(range.to) || range.from > range.to
+    || !Number.isSafeInteger(range.chartTimeframe) || range.chartTimeframe < 1)
     throw new Error("The indicator returned an invalid continuation.");
 
-  const to = state.data.at(-1).time;
-  const nextKey = calculationKey(context, context.from, to, context.analysisTimeframe, context.chartTimeframe);
+  const { from, to, direction, timeframe: analysisTimeframe, chartTimeframe } = range;
+  const nextKey = calculationKey(range, from, to, analysisTimeframe, chartTimeframe);
   state.indicator.results = removeInvalidIndicatorCalculations(payload);
   state.indicator.resultContext = {
-    ...context, fileId: file.id, source: Object.freeze(clone(file)), to,
+    fileId: file.id, chartId: file.chartId, symbol: file.symbol, source: Object.freeze(clone(file)),
+    from, to, direction, analysisTimeframe, chartTimeframe,
     calculationKey: nextKey, calculationId: response.headers.get("X-QG-Calculation-Id"),
     liveSessionId: response.headers.get("X-QG-Live-Session") || context.liveSessionId,
-    liveRecovery: true,
+    liveProof,
     sourceFingerprint, liveRawTo: rawTo, liveContactAt: performance.now(),
   };
   state.indicator.calculationKey = nextKey;
@@ -6555,14 +6550,33 @@ function applyRealtimeCandles(file, candles) {
 }
 
 async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, indicatorSignal }) {
-  const problem = indicatorCalculation && realtimeIndicatorProblem(chartId);
   if (chartUpdateRunning || indicatorCalculationOwner) return "Chart is busy. Retrying at the next interval.";
   const file = state.file;
   const lastCandleTime = state.raw.at(-1)?.time;
   if (!file || file.chartId !== chartId || !lastCandleTime || symbolLoadController)
     throw new Error("Load a RAW candle file first.");
   const loadRevision = symbolLoadRevision;
-  const indicatorContext = indicatorCalculation && !problem ? state.indicator.resultContext : null;
+  const viewTimeframe = state.tf;
+  const indicatorContext = state.indicator.enabled && state.indicator.results && state.indicator.resultContext?.chartId === chartId
+    ? state.indicator.resultContext : null;
+  async function updateIndicator(publishedFile, candleStatus) {
+    if (!indicatorCalculation) return candleStatus;
+    if (!indicatorContext) return { status: candleStatus,
+      indicatorError: "Run an indicator calculation with Apply in this tab before enabling automatic continuation." };
+    const operationIsCurrent = () => !signal.aborted && loadRevision === symbolLoadRevision
+      && state.file?.id === publishedFile.id && state.file.chartId === chartId
+      && state.file.metadata?.dataSha256 === publishedFile.metadata?.dataSha256
+      && state.tf === viewTimeframe;
+    const continuationSignal = indicatorSignal || signal;
+    try {
+      const updated = await continueRealtimeIndicator(indicatorContext, publishedFile, continuationSignal, operationIsCurrent);
+      return updated ? `${candleStatus} Indicator updated.` : candleStatus;
+    } catch (error) {
+      if (continuationSignal.aborted || !operationIsCurrent()) return candleStatus;
+      log.indicator.warn("REALTIME_INDICATOR_CONTINUATION_DEFERRED", { chartId, code: error.code, message: error.message });
+      return `${candleStatus} Indicator update deferred. Retrying at the next check.`;
+    }
+  }
   let finished;
   const owner = { finished: new Promise(resolve => { finished = resolve; }) };
   realtimeUpdateOwner = owner;
@@ -6597,26 +6611,15 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
       log.chart.info("REALTIME_CANDLES_APPENDED", { chartId, count: candles.length, to: updatedFile.to });
     }
     rawVerified = true;
-    const publishedFile = state.file;
     const candleStatus = candles.length
       ? `Added ${candles.length.toLocaleString("en-US")} closed ${updatedFile.timeframe} candles.`
       : "No new closed candles.";
-    if (problem) return { status: candleStatus, indicatorError: problem };
-    const operationIsCurrent = () => !signal.aborted && loadRevision === symbolLoadRevision
-      && state.file?.id === publishedFile.id && state.file.chartId === chartId
-      && state.file.metadata?.dataSha256 === publishedFile.metadata?.dataSha256
-      && state.tf === indicatorContext.chartTimeframe;
-    const continuationSignal = indicatorSignal || signal;
-    try {
-      const updated = indicatorContext && await continueRealtimeIndicator(indicatorContext, publishedFile,
-        continuationSignal, operationIsCurrent);
-      return updated ? `${candleStatus} Indicator updated.` : candleStatus;
-    } catch (error) {
-      if (continuationSignal.aborted || !operationIsCurrent()) return candleStatus;
-      log.indicator.warn("REALTIME_INDICATOR_CONTINUATION_FAILED", { chartId, code: error.code, message: error.message });
-      return { status: candleStatus, indicatorError: error.message };
-    }
+    return await updateIndicator(state.file, candleStatus);
   } catch (error) {
+    if (!signal.aborted && indicatorCalculation && !refreshRequired && !rawVerified) {
+      log.chart.warn("REALTIME_CANDLE_CHECK_DEFERRED", { chartId, message: error.message });
+      return await updateIndicator(file, "Candle fetch deferred.");
+    }
     if (!signal.aborted) log.chart.error("REALTIME_CHART_UPDATE_FAILED", error, { chartId });
     throw error;
   } finally {
@@ -7530,7 +7533,6 @@ document.addEventListener("keydown", (event) => {
 realtimeChart = mountRealtimeChart({
   trigger: $("#realtimeChartBtn"),
   getChartId: () => symbolLoadController ? null : state.file?.chartId,
-  indicatorProblem: realtimeIndicatorProblem,
   runUpdate: runRealtimeChartUpdate,
 });
 loadInventory().then(restoreWorkspaceAfterRefresh).catch((err) => {
