@@ -11,8 +11,9 @@ const INTERVALS = new Map([
   [900_000, "15m"],
 ]);
 const DEFAULT_INTERVAL_MS = 60_000;
+const POLL_OFFSET_MS = 2_000;
 
-export function createRealtimeChartScheduler({ runUpdate, indicatorProblem, render, now = () => performance.now() }) {
+export function createRealtimeChartScheduler({ runUpdate, render, onVerificationComplete, now = Date.now }) {
   let chartId = null;
   let enabled = false;
   let intervalMs = DEFAULT_INTERVAL_MS;
@@ -20,16 +21,23 @@ export function createRealtimeChartScheduler({ runUpdate, indicatorProblem, rend
   let indicatorError = "";
   let status = "";
   let failed = false;
+  let verification = null;
+  let progress = null;
   let active = null;
   let queued = false;
-  let intervalAnchor = 0;
+  let verifyAllQueued = false;
   let nextDue = null;
   let timer;
 
+  function nextBoundary(time) {
+    const offset = new Date(time).getTimezoneOffset() * 60_000;
+    return (Math.floor((time - offset - POLL_OFFSET_MS) / intervalMs) + 1) * intervalMs + offset + POLL_OFFSET_MS;
+  }
+
   function notify() {
     render({
-      hasChart: Boolean(chartId), enabled, intervalMs, indicatorCalculation, indicatorError, status, failed,
-      busy: enabled && Boolean(active),
+      hasChart: Boolean(chartId), enabled, intervalMs, indicatorCalculation, indicatorError, status, failed, verification, progress,
+      busy: enabled && Boolean(active), verifyingAll: verifyAllQueued || Boolean(active?.verifyAll),
       remainingMs: nextDue === null ? null : Math.max(0, nextDue - now()),
     });
   }
@@ -37,10 +45,14 @@ export function createRealtimeChartScheduler({ runUpdate, indicatorProblem, rend
   function wake() {
     if (nextDue === null) return;
     clearTimeout(timer);
-    const remainingMs = nextDue - now();
+    const time = now();
+    // Re-align after a backward clock jump. An overdue timer makes one check,
+    // then the next boundary is scheduled after that check finishes.
+    if (nextDue - time > intervalMs) nextDue = nextBoundary(time);
+    const remainingMs = nextDue - time;
     if (remainingMs <= 0) {
       nextDue = null;
-      void check();
+      void check("poll");
       return;
     }
     notify();
@@ -48,65 +60,80 @@ export function createRealtimeChartScheduler({ runUpdate, indicatorProblem, rend
   }
 
   function scheduleNext() {
-    const elapsedMs = now() - intervalAnchor;
-    const intervals = Math.max(1, Math.ceil(elapsedMs / intervalMs));
-    nextDue = intervalAnchor + intervals * intervalMs;
+    nextDue = nextBoundary(now());
     wake();
   }
 
-  async function check() {
-    if (!enabled) return;
+  async function check(kind) {
+    if (!chartId || (!enabled && !verifyAllQueued)) return;
     clearTimeout(timer);
     nextDue = null;
     if (active) {
-      queued = true;
+      if (kind === "indicator") queued = true;
       status = "Waiting for the previous check to finish…";
       notify();
       return;
     }
     queued = false;
-    if (indicatorCalculation) {
-      indicatorError = indicatorProblem(chartId) || "";
-      indicatorCalculation = !indicatorError;
-    }
-
+    const verifyAll = verifyAllQueued;
+    verifyAllQueued = false;
     const abort = new AbortController();
     const indicatorAbort = indicatorCalculation ? new AbortController() : null;
-    const request = { chartId, signal: abort.signal, indicatorCalculation, indicatorSignal: indicatorAbort?.signal };
-    active = { abort, indicatorAbort };
-    intervalAnchor = now();
-    status = "Checking for new candles…";
+    const indicatorOnly = kind === "indicator" && !verifyAll;
+    const reportProgress = value => {
+      if (active?.abort !== abort || abort.signal.aborted || !Number.isInteger(value) || value <= progress || value > 99) return;
+      progress = value;
+      notify();
+    };
+    const request = { chartId, signal: abort.signal, indicatorCalculation, indicatorSignal: indicatorAbort?.signal,
+      ...(verifyAll ? { verifyAll: true } : {}), ...(indicatorOnly ? { indicatorOnly: true } : { reportProgress }) };
+    active = { abort, indicatorAbort, verifyAll };
+    if (!indicatorOnly) progress = 0;
+    status = verifyAll ? "Verifying all candles…" : kind === "indicator" ? "Updating indicator…" : "Checking for new candles…";
     failed = false;
     notify();
     try {
       const result = await runUpdate(request);
-      if (!abort.signal.aborted && !indicatorAbort?.signal.aborted)
-        status = result || "Checked for new candles.";
-    } catch (error) {
+      if (!abort.signal.aborted && result?.verification) {
+        verification = result.verification;
+        if (!indicatorOnly) {
+          progress = verification.status === "unavailable" ? null : 100;
+          if (verifyAll && verification.status !== "unavailable") onVerificationComplete?.(verification);
+        }
+      } else if (!abort.signal.aborted && !indicatorOnly) progress = null;
       if (!abort.signal.aborted && !indicatorAbort?.signal.aborted) {
-        status = error?.message || "Could not check for new candles.";
-        failed = true;
-        if (indicatorCalculation) {
-          indicatorError = indicatorProblem(chartId) || "";
+        status = (typeof result === "string" ? result : result?.status)
+          || (result?.verification ? "" : "Checked for new candles.");
+        if (indicatorAbort) {
+          indicatorError = result?.indicatorError || "";
           indicatorCalculation = !indicatorError;
         }
       }
+    } catch (error) {
+      if (!abort.signal.aborted && !indicatorOnly) progress = null;
+      if (!abort.signal.aborted && !indicatorAbort?.signal.aborted) {
+        status = error?.message || "Could not check for new candles.";
+        failed = true;
+      }
     } finally {
       active = null;
-      if (queued) void check();
+      if (verifyAllQueued) void check("verify");
+      else if (queued && enabled) void check("indicator");
       else if (enabled) scheduleNext();
+      else notify();
     }
   }
 
   function enable() {
     if (enabled || !chartId) return;
     enabled = true;
-    void check();
+    scheduleNext();
   }
 
   function stop() {
     enabled = false;
     queued = false;
+    verifyAllQueued = false;
     nextDue = null;
     clearTimeout(timer);
     active?.abort.abort();
@@ -114,6 +141,7 @@ export function createRealtimeChartScheduler({ runUpdate, indicatorProblem, rend
     status = "";
     failed = false;
     indicatorError = "";
+    progress = null;
     notify();
   }
 
@@ -121,13 +149,20 @@ export function createRealtimeChartScheduler({ runUpdate, indicatorProblem, rend
     chartId = nextChartId;
     intervalMs = DEFAULT_INTERVAL_MS;
     indicatorCalculation = false;
+    verification = null;
     stop();
+    enable();
+  }
+
+  function verifyAll() {
+    if (!chartId || active?.verifyAll || verifyAllQueued) return;
+    verifyAllQueued = true;
+    void check("verify");
   }
 
   function setInterval(nextInterval) {
     if (!INTERVALS.has(nextInterval) || intervalMs === nextInterval) return;
     intervalMs = nextInterval;
-    intervalAnchor = now();
     if (enabled && !active) scheduleNext();
     else notify();
   }
@@ -135,27 +170,53 @@ export function createRealtimeChartScheduler({ runUpdate, indicatorProblem, rend
   function setIndicatorCalculation(nextValue) {
     if (!enabled) return;
     const wasEnabled = indicatorCalculation;
-    indicatorError = nextValue ? indicatorProblem(chartId) || "" : "";
-    indicatorCalculation = nextValue && !indicatorError;
+    indicatorError = "";
+    indicatorCalculation = nextValue;
     if (!indicatorCalculation && active?.indicatorAbort && !active.indicatorAbort.signal.aborted) {
       active.indicatorAbort.abort();
       status = "Indicator check canceled.";
     }
     if (indicatorCalculation && !wasEnabled) {
-      void check();
+      void check("indicator");
       return;
     }
     notify();
   }
 
-  return { enable, stop, contextChanged, setInterval, setIndicatorCalculation, wake };
+  return { enable, stop, contextChanged, setInterval, setIndicatorCalculation, verifyAll, wake };
 }
 
 function updateText(element, text) {
   if (element.textContent !== text) element.textContent = text;
 }
 
-export function mountRealtimeChart({ trigger, runUpdate, indicatorProblem, getChartId }) {
+export async function readRealtimeUpdate(response, reportProgress) {
+  if (!response.headers?.get("Content-Type")?.startsWith("application/x-ndjson")) {
+    return { status: response.status, result: await response.json() };
+  }
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let pending = "";
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      pending += decoder.decode(value, { stream: !done });
+      let end;
+      while ((end = pending.indexOf("\n")) >= 0) {
+        const event = JSON.parse(pending.slice(0, end));
+        pending = pending.slice(end + 1);
+        if (Number.isInteger(event.status)) return event;
+        reportProgress?.(event.progress);
+      }
+      if (done) throw new TypeError("The candle check ended without a result.");
+    }
+  } finally {
+    await reader.cancel().catch(() => {});
+    reader.releaseLock();
+  }
+}
+
+export function mountRealtimeChart({ trigger, runUpdate, getChartId, onVerificationComplete, onStateChange }) {
   const document = trigger.ownerDocument;
   const window = document.defaultView;
   const menu = document.createElement("section");
@@ -172,7 +233,10 @@ export function mountRealtimeChart({ trigger, runUpdate, indicatorProblem, getCh
     <fieldset class="realtime-chart-options" aria-label="Live update options" disabled>
       <div class="realtime-chart-option">
         <label for="realtimeChartInterval">Polling interval</label>
-        <select id="realtimeChartInterval">${[...INTERVALS].map(([ms, label]) => `<option value="${ms}">${label}</option>`).join("")}</select>
+        <div class="realtime-chart-interval">
+          <select id="realtimeChartInterval">${[...INTERVALS].map(([ms, label]) => `<option value="${ms}">${label}</option>`).join("")}</select>
+          <span data-poll-progress role="progressbar" aria-label="Candle check progress" aria-valuemin="0" aria-valuemax="100" hidden></span>
+        </div>
       </div>
       <div class="realtime-chart-option">
         <label for="realtimeChartIndicator">Indicator Calculation</label>
@@ -182,6 +246,10 @@ export function mountRealtimeChart({ trigger, runUpdate, indicatorProblem, getCh
         </label>
       </div>
     </fieldset>
+    <div class="realtime-chart-option realtime-chart-verification">
+      <span data-verification role="status"><i aria-hidden="true"></i><span data-verification-label></span></span>
+      <button class="btn" type="button" data-verify-all>Verify All</button>
+    </div>
     <p class="realtime-chart-error" id="realtimeChartIndicatorError" role="status"></p>
     <div class="realtime-chart-feedback">
       <p data-status role="status"></p>
@@ -199,10 +267,14 @@ export function mountRealtimeChart({ trigger, runUpdate, indicatorProblem, getCh
   const toggle = menu.querySelector("[data-enable]");
   const options = menu.querySelector("fieldset");
   const interval = menu.querySelector("#realtimeChartInterval");
+  const progress = menu.querySelector("[data-poll-progress]");
   const indicator = menu.querySelector("#realtimeChartIndicator");
   const indicatorError = menu.querySelector("#realtimeChartIndicatorError");
   const status = menu.querySelector("[data-status]");
   const countdown = menu.querySelector("[data-countdown]");
+  const verifyAll = menu.querySelector("[data-verify-all]");
+  const verification = menu.querySelector("[data-verification]");
+  const verificationLabel = menu.querySelector("[data-verification-label]");
   let open = false;
   let enabled = false;
 
@@ -213,20 +285,35 @@ export function mountRealtimeChart({ trigger, runUpdate, indicatorProblem, getCh
 
   const scheduler = createRealtimeChartScheduler({
     runUpdate,
-    indicatorProblem,
+    onVerificationComplete,
     render(view) {
       enabled = view.enabled;
       toggle.disabled = !view.hasChart;
       updateText(toggle, enabled ? "Disable" : "Enable");
       options.disabled = !enabled;
       if (Number(interval.value) !== view.intervalMs) interval.value = String(view.intervalMs);
+      progress.hidden = view.progress === null;
+      if (!progress.hidden) {
+        progress.setAttribute("aria-valuenow", String(view.progress));
+        updateText(progress, `${view.progress}%`);
+      }
       indicator.checked = view.indicatorCalculation;
       indicator.setAttribute("aria-invalid", String(Boolean(view.indicatorError)));
       updateText(indicatorError, view.indicatorError);
       updateText(status, view.hasChart ? view.status : "Open a RAW chart to enable live updates.");
       status.classList.toggle("realtime-chart-error", view.failed);
       trigger.classList.toggle("is-live", enabled);
-      trigger.title = enabled ? "Real-time Chart (enabled)" : "Real-time Chart";
+      const verificationStatus = view.verification?.status;
+      const offline = verificationStatus === "unavailable";
+      trigger.classList.toggle("verification-unavailable", offline);
+      trigger.title = offline ? "Real-time Chart · Candle verification unavailable"
+        : enabled ? "Real-time Chart (enabled)" : "Real-time Chart";
+      verification.dataset.state = verificationStatus || "idle";
+      verifyAll.disabled = !view.hasChart || view.verifyingAll;
+      updateText(verificationLabel, offline ? "Verification unavailable"
+        : verificationStatus === "verified" ? "Candles verified"
+        : verificationStatus === "pending" ? `${view.verification.verifiedCount.toLocaleString("en-US")} / ${view.verification.totalCount.toLocaleString("en-US")} verified`
+        : "Candle verification");
 
       const remainingSeconds = Math.ceil((view.remainingMs ?? 0) / 1000);
       const minutes = Math.floor(remainingSeconds / 60);
@@ -234,6 +321,7 @@ export function mountRealtimeChart({ trigger, runUpdate, indicatorProblem, getCh
       updateText(countdown, view.remainingMs === null ? "" : `Next check in ${minutes}:${seconds}`);
       const fill = view.busy ? 1 : 1 - (view.remainingMs ?? view.intervalMs) / view.intervalMs;
       trigger.style.setProperty("--realtime-chart-fill", `${360 * fill}deg`);
+      onStateChange?.(view);
     },
   });
 
@@ -247,6 +335,7 @@ export function mountRealtimeChart({ trigger, runUpdate, indicatorProblem, getCh
   });
   interval.addEventListener("change", () => scheduler.setInterval(Number(interval.value)));
   indicator.addEventListener("change", () => scheduler.setIndicatorCalculation(indicator.checked));
+  verifyAll.addEventListener("click", scheduler.verifyAll);
 
   function closeOutside(event) {
     if (open && !menu.contains(event.target) && !trigger.contains(event.target)) setOpen(false);

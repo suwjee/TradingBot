@@ -310,6 +310,21 @@ export function buildChartUpdatePackets(ranges, timeframeSeconds, maximumCandles
   return packets;
 }
 
+export function reconcilePublishedCandles(previous, incoming) {
+  if (!previous.length || incoming[0]?.time !== previous[0].time) return null;
+  const corrections = [], gapCandles = [];
+  let index = 0;
+  for (const row of previous) {
+    while (incoming[index]?.time < row.time) gapCandles.push(incoming[index++]);
+    const next = incoming[index++];
+    if (next?.time !== row.time) return null;
+    if (next.open !== row.open || next.high !== row.high || next.low !== row.low || next.close !== row.close) {
+      corrections.push(next);
+    }
+  }
+  return { candles: incoming.slice(index), corrections, gapCandles };
+}
+
 export function mergeChartCandles(existingCandles, incomingCandles) {
   const byTime = new Map();
   for (const candle of existingCandles || []) byTime.set(candle.time, candle);

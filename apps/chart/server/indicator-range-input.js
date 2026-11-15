@@ -55,15 +55,19 @@ export function prepareIndicatorRangeInput(rows, { from, to, chartTimeframeSecon
 }
 
 export async function withIndicatorRangePipe(rows, consume) {
+  if (!Array.isArray(rows) || !rows.length) throw new Error("A non-empty indicator range is required.");
+  return withIndicatorInputPipe(Buffer.from(JSON.stringify(rows), "utf8"), consume);
+}
+
+export async function withIndicatorInputPipe(payload, consume) {
   if (process.platform !== "win32") {
     throw new Error("In-memory ranged indicator input requires Windows named-pipe support.");
   }
-  if (!Array.isArray(rows) || !rows.length || typeof consume !== "function") {
+  if (!Buffer.isBuffer(payload) || !payload.length || typeof consume !== "function") {
     throw new Error("A non-empty indicator range and consumer are required.");
   }
 
   const pipePath = `\\\\.\\pipe\\tradingbot-indicator-range-${process.pid}-${randomUUID()}`;
-  const payload = Buffer.from(JSON.stringify(rows), "utf8");
   const sockets = new Set();
   let rejectTransport;
   let transportSettled = false;

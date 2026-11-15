@@ -1,5 +1,5 @@
 @echo off
-setlocal EnableExtensions
+setlocal EnableExtensions DisableDelayedExpansion
 chcp 65001 >nul
 
 for %%I in ("%~dp0..") do set "PROJECT_ROOT=%%~fI\"
@@ -11,26 +11,13 @@ if not exist "%START_SCRIPT%" (
   exit /b 2
 )
 
-if not exist "%PROJECT_ROOT%apps\chart\package.json" (
-  echo [ERROR] Missing apps\chart\package.json
+pushd "%PROJECT_ROOT%" >nul 2>&1
+if errorlevel 1 (
+  echo [ERROR] Could not enter the TradingBot project directory.
   pause
-  exit /b 2
+  exit /b 3
 )
-
-if not exist "%PROJECT_ROOT%apps\chart\scripts\dev-server.mjs" (
-  echo [ERROR] Missing apps\chart\scripts\dev-server.mjs
-  pause
-  exit /b 2
-)
-
-if not exist "%PROJECT_ROOT%engine\bridge\trading_pipeline.py" (
-  echo [ERROR] Missing engine\bridge\trading_pipeline.py
-  pause
-  exit /b 2
-)
-
-pushd "%PROJECT_ROOT%"
-%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%START_SCRIPT%"
+"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%START_SCRIPT%"
 set "EXIT_CODE=%ERRORLEVEL%"
 popd
 

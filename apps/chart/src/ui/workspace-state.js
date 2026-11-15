@@ -11,6 +11,10 @@ const contracts = {
     headerGroups: ["workspace"],
     footerGroups: ["runtime", "clock"],
   },
+  alert: {
+    headerGroups: ["workspace"],
+    footerGroups: ["runtime", "clock"],
+  },
   "fullscreen-chart": {
     headerGroups: [],
     footerGroups: [],

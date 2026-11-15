@@ -1,4 +1,4 @@
-const WORKSPACES = new Set(["chart", "faraz", "algorithm"]);
+const WORKSPACES = new Set(["chart", "faraz", "algorithm", "alert"]);
 
 export function resolveChartTabState(search, { inventory = [], timeframes = [] } = {}) {
   const params = new URLSearchParams(String(search || "").replace(/^[^?]*\?/, ""));

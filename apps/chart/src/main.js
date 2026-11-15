@@ -9,7 +9,8 @@ import { drawingArray, normalizeHistorySnapshot, CHART_TIMEFRAME_KEY, restoredTi
 import { PRIMARY_VISUAL_DEFAULTS, primaryVisualObjects, drawPrimaryStructures, drawTrendTransitions, clipHistoricalHitBoxes, indicatorCalculationSegments } from "./chart/primary-structure.js";
 import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart/lod.js";
 import { aggregateCandles as aggregate, appendCandleBuckets } from "./chart/candle-buckets.js";
-import { mountRealtimeChart } from "./features/realtime-chart.js";
+import { mountRealtimeChart, readRealtimeUpdate } from "./features/realtime-chart.js";
+import { mountAlerts } from "./features/alerts/page.js";
 import { coordinateToRawTime, createViewAnchorCache, rawIndexAtTime, rawIndexToCoordinate, remapCandleLogicalRange, selectDensityMode } from "./chart/view-transform.js";
 import { updateStageAggregate } from "./chart/progress.js";
 import { cacheClearLayers, clearIndicatorBrowserState } from "./features/indicator-cache.js";
@@ -29,6 +30,7 @@ import {
   chunkCandleUpdatesByBytes,
   mapWithConcurrency,
   mergeChartCandles,
+  reconcilePublishedCandles,
 } from "./features/candle-update.js";
 import { summarizeUiError } from "./ui/log-window.js";
 import { createCaptureFeedback, indicatorApplyProblem, indicatorNotificationType, notificationPresentation } from "./ui/feedback.js";
@@ -46,13 +48,14 @@ import { fullChartId, shortChartId } from "./ui/chart-identity.js";
 import "./styles/tokens.css";
 import "./styles/app.css";
 import "./styles/realtime-chart.css";
+import "./features/alerts/styles.css";
 import "./drawings/drawing.css";
 import "./drawings/object-tree.css";
 import "../../../engine/styles/reaction-detector.css";
 import "./styles/qg-modern.css";
 
 function allowsCheckboxLabelToggle(label) {
-  return Boolean(label?.matches(".master-switch, .module-row"));
+  return Boolean(label?.matches(".master-switch, .module-row, .alert-toggle"));
 }
 
 // Export controls keep their checkbox-only hit target, while the indicator's
@@ -149,6 +152,8 @@ function createUniqueId() {
   const hex = [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
+
+const liveIndicatorTabId = createUniqueId();
 
 window.addEventListener("error", (event) => {
   const signature = `${event.filename || ""} ${event.message || ""} ${event.error?.stack || ""}`;
@@ -491,7 +496,7 @@ new MutationObserver((records) => {
     }
   }
 }).observe(appRoot, { childList: true, subtree: true });
-for (const id of ["indicatorBtn", "objectTreeBtn", "settingsNavBtn", "alertBtn", "historyBtn"]) {
+for (const id of ["indicatorBtn", "objectTreeBtn", "settingsNavBtn", "historyBtn"]) {
   const control = $(`#${id}`);
   if (control) control.dataset.workspaceGroup = "chart-actions";
 }
@@ -853,6 +858,25 @@ let indicatorCalculationOwner = null;
 let realtimeChart = null;
 let realtimeUpdateOwner = null;
 let realtimePublicationRevision = 0;
+let alertLiveView;
+let alertLiveReady = false;
+const alertController = mountAlerts({
+  root: $(".chart-shell"), headerRoot: $(".workspace-header-slot"), toast, createId: createUniqueId,
+  formatTime: time => formatSystemDateTime(time * 1000),
+});
+function syncAlertMonitoring() {
+  const { hasChart, enabled, indicatorCalculation } = alertLiveView || {};
+  const hasResult = state.indicator.enabled && Boolean(state.indicator.resultContext);
+  const ready = Boolean(hasChart && hasResult && enabled && indicatorCalculation);
+  if (alertLiveReady !== ready) {
+    alertLiveReady = ready;
+    alertController.baseline(ready ? state.raw.at(-1)?.time : null);
+  }
+  alertController.setLiveStatus(!hasChart ? "Open a RAW chart to monitor alerts."
+    : !hasResult ? "Apply the indicator on the current chart."
+      : !ready ? "Enable Indicator Calculation in Real-time Chart."
+        : `Monitoring ${formatSymbolWithBroker(state.file)} · ${state.indicator.resultContext.direction}`);
+}
 function selectWorkspaceNavigation(activeId) {
   $$(".leftbar .nav-item").forEach((button) => {
     const active = button.id === activeId;
@@ -863,6 +887,7 @@ function selectWorkspaceNavigation(activeId) {
 function showChartWorkspace() {
   candleExportController?.close();
   algorithmController?.close();
+  alertController.close();
   setWorkspaceState("chart");
   selectWorkspaceNavigation("chartNavBtn");
   setDrawingToolsActive(true);
@@ -870,7 +895,8 @@ function showChartWorkspace() {
 }
 function chartWorkspaceActive() {
   return !$(".chart-shell").classList.contains("candle-export-active")
-    && !$(".chart-shell").classList.contains("algorithm-active");
+    && !$(".chart-shell").classList.contains("algorithm-active")
+    && !$(".chart-shell").classList.contains("alert-workspace-active");
 }
 candleExportController = initCandleExport({
   root: $(".chart-shell"),
@@ -903,6 +929,7 @@ algorithmController = initAlgorithmPage({
 });
 function showAlgorithmWorkspace() {
   candleExportController?.close();
+  alertController.close();
   closeSidePanel($("#objectTree"));
   closeSidePanel($("#indicatorModal"));
   selectDrawing(null);
@@ -920,6 +947,7 @@ if (/^#algorithm-(?:overview|[a-z0-9_-]+)$/i.test(window.location.hash)) {
 }
 function showFarazWorkspace() {
   algorithmController?.close();
+  alertController.close();
   closeSidePanel($("#objectTree"));
   closeSidePanel($("#indicatorModal"));
   setWorkspaceState("faraz");
@@ -929,6 +957,18 @@ function showFarazWorkspace() {
 }
 $("#candleExportBtn").onclick = showFarazWorkspace;
 $("#farazStatusFooter").onclick = showFarazWorkspace;
+function showAlertWorkspace() {
+  candleExportController?.close();
+  algorithmController?.close();
+  closeSidePanel($("#objectTree"));
+  closeSidePanel($("#indicatorModal"));
+  selectDrawing(null);
+  setWorkspaceState("alert");
+  selectWorkspaceNavigation("alertBtn");
+  setDrawingToolsActive(false);
+  alertController.open();
+}
+$("#alertBtn").onclick = showAlertWorkspace;
 function restoreWorkspaceAfterRefresh() {
   if (/^#algorithm-(?:overview|[a-z0-9_-]+)$/i.test(window.location.hash)) return;
   const workspace = resolveWorkspaceRefreshState(storedWorkspaceRefresh, {
@@ -936,6 +976,7 @@ function restoreWorkspaceAfterRefresh() {
   }).workspace;
   if (workspace === "faraz") showFarazWorkspace();
   else if (workspace === "algorithm") showAlgorithmWorkspace();
+  else if (workspace === "alert") showAlertWorkspace();
   else showChartWorkspace();
 }
 $("#chartNavBtn").onclick = () => {
@@ -1496,13 +1537,13 @@ function viewportIndexRange(range) {
   const end = Math.min(state.data.length, lowerBoundTime(state.data, Math.max(from, to)) + 1);
   return { start, end: Math.max(start + 1, end) };
 }
-function renderChartViewport(range, { preserveRange = false, force = false, followAppended = 0 } = {}) {
+function renderChartViewport(range, { preserveRange = false, force = false, followAppended = 0, viewportShift = followAppended } = {}) {
   const visible = viewportIndexRange(range);
   if (!visible) return;
   const previous = state.chartRender;
   const scale = chart.timeScale();
   const logical = preserveRange && previous ? scale.getVisibleLogicalRange() : null;
-  const shift = previous ? followAppended / previous.stride : 0;
+  const shift = previous ? viewportShift / previous.stride : 0;
   if (followAppended) {
     visible.start = Math.min(state.data.length - 1, visible.start + followAppended);
     visible.end = Math.min(state.data.length, visible.end + followAppended);
@@ -1700,7 +1741,7 @@ function inventorySignature(items) {
 }
 function refreshSymbolInventory({ initial = false } = {}) {
   if (inventoryRefreshPromise) return inventoryRefreshPromise;
-  if (realtimeUpdateOwner) return Promise.resolve(false);
+  if (realtimeUpdateOwner || indicatorCalculationOwner) return Promise.resolve(false);
   const publication = realtimePublicationRevision;
   const refresh = (async () => {
     const controller = new AbortController();
@@ -1717,25 +1758,26 @@ function refreshSymbolInventory({ initial = false } = {}) {
       throw error;
     }
     const nextInventory = await r.json();
-    if (realtimeUpdateOwner || publication !== realtimePublicationRevision) return false;
+    if (realtimeUpdateOwner || indicatorCalculationOwner || publication !== realtimePublicationRevision) return false;
     const previousFile = state.file;
     const changed = inventorySignature(state.inventory) !== inventorySignature(nextInventory);
     state.inventory = nextInventory;
     if (changed) {
       renderSymbolList();
       candleExportController?.syncRawInventory(nextInventory);
-      const active = state.file && (nextInventory.find((item) => item.chartId === state.file.chartId) || nextInventory.find((item) => item.id === state.file.id));
+      log.chart.info("SYMBOL_INVENTORY_UPDATED", { symbols: state.inventory.length, initial });
+    }
+    if (previousFile && !symbolLoadController) {
+      const active = nextInventory.find(item => item.chartId === previousFile.chartId)
+        || nextInventory.find(item => item.id === previousFile.id);
       if (!active) {
         state.file = null;
         state.raw = [];
-        if (previousFile) realtimeChart?.contextChanged();
+        realtimeChart?.contextChanged();
         renderChartIdentity(null);
-      } else if (state.file?.id !== active.id) {
-        void loadFile(active);
       } else {
-        state.file = active;
-        renderChartIdentity(active);
-        const dataChanged = previousFile && (
+        const dataChanged = (
+          previousFile.id !== active.id ||
           Number(previousFile.bytes) !== Number(active.bytes)
           || Number(previousFile.count) !== Number(active.count)
           || Number(previousFile.from) !== Number(active.from)
@@ -1743,9 +1785,12 @@ function refreshSymbolInventory({ initial = false } = {}) {
           || Number(previousFile.savedAt) !== Number(active.savedAt)
           || previousFile.metadata?.dataSha256 !== active.metadata?.dataSha256
         );
-        if (dataChanged && !symbolLoadController) void loadFile(active);
+        if (dataChanged) await loadFile(active, { reconcileLive: true });
+        else if (changed) {
+          state.file = active;
+          renderChartIdentity(active);
+        }
       }
-      log.chart.info("SYMBOL_INVENTORY_UPDATED", { symbols: state.inventory.length, initial });
     }
     return changed;
   })();
@@ -1756,13 +1801,16 @@ function refreshSymbolInventory({ initial = false } = {}) {
   inventoryRefreshPromise = trackedRefresh;
   return trackedRefresh;
 }
-async function loadFile(item) {
+async function loadFile(item, { reconcileLive = false } = {}) {
   if (!item) return;
+  const previous = state.file;
+  let preserve = Boolean(reconcileLive && previous?.chartId && item.chartId === previous.chartId
+    && item.timeframe === previous.timeframe && item.symbol === previous.symbol && item.broker === previous.broker);
   invalidateIndicatorCalculation();
   symbolLoadController?.abort();
   const controller = new AbortController();
   symbolLoadController = controller;
-  realtimeChart?.contextChanged();
+  if (!preserve) realtimeChart?.contextChanged();
   const loadRevision = ++symbolLoadRevision;
   const started = performance.now();
   log.chart.info("SYMBOL_LOAD_STARTED", { id: item.id, symbol: item.symbol });
@@ -1790,6 +1838,19 @@ async function loadFile(item) {
       && (!index || candle.time > normalizedRows[index - 1].time));
     if (!validRows) throw new Error("The candle file failed strict chronology or OHLC validation.");
     if (loadRevision !== symbolLoadRevision) return;
+    if (preserve) {
+      const delta = reconcilePublishedCandles(state.raw, normalizedRows);
+      if (delta) {
+        const { candles, corrections, gapCandles } = delta;
+        const context = state.indicator.resultContext;
+        if (context && (corrections.length || gapCandles.length)) {
+          state.indicator.resultContext = { ...context, needsCandleRepair: true };
+        }
+        applyRealtimeCandles(item, candles, corrections, gapCandles);
+        return;
+      }
+      preserve = false;
+    }
     if (typeof saveChartIndicatorContext === "function") saveChartIndicatorContext();
     state.file = item;
     state.raw = normalizedRows;
@@ -1831,7 +1892,7 @@ async function loadFile(item) {
     if (loadRevision === symbolLoadRevision) {
       symbolLoadController = null;
       $("#loading").classList.add("hidden");
-      realtimeChart?.contextChanged();
+      if (!preserve) realtimeChart?.contextChanged();
     }
   }
 }
@@ -1874,7 +1935,7 @@ function toast(msg, type = "auto") {
   $("#toastMessage").textContent = msg;
   $("#toastIcon").innerHTML = icon(presentation.icon, 18);
   el.className = `toast toast-${resolvedType}`;
-  el.setAttribute("role", resolvedType === "error" ? "alert" : "status");
+  el.setAttribute("role", ["alert", "error"].includes(resolvedType) ? "alert" : "status");
   el.style.setProperty("--toast-duration", `${presentation.duration}ms`);
   el.classList.remove("hidden");
   void el.offsetWidth;
@@ -5752,6 +5813,7 @@ function eventDetails(direction, group, type) {
 }
 function setIndicatorVisibility(enabled) {
   state.indicator.enabled = Boolean(enabled && state.indicator.results);
+  syncAlertMonitoring();
   if (typeof saveChartIndicatorContext === "function") saveChartIndicatorContext();
   $("#indicatorBtn").classList.toggle("active", state.indicator.enabled);
   const footer = $("#indicatorStatusFooter");
@@ -5781,7 +5843,7 @@ function setFooterCacheStatus(cache) {
   const footer = $("#cacheStatusFooter");
   if (!footer) return;
   const fromCache = source === "file" || source === "memory" || source === "hit";
-  const cold = source === "miss" || source === "cold";
+  const cold = source === "miss" || source === "cold" || source === "bypass";
   const failed = source === "error";
   footer.dataset.state = failed ? "error" : fromCache ? "cache" : cold ? "cold" : "idle";
   footer.title = failed ? "Indicator cache error" : fromCache ? "Indicator result loaded from cache" : cold ? "Indicator result calculated without a cache hit" : "Calculation source is not available";
@@ -6269,7 +6331,7 @@ async function calculateIndicator() {
           to,
           direction: settings.direction,
           requestId: progressRequestId,
-        }), liveSession: true }),
+        }), liveSession: true, tabId: liveIndicatorTabId }),
       }),
       responseReceived = performance.now();
     if (!operationIsCurrent()) return;
@@ -6301,6 +6363,7 @@ async function calculateIndicator() {
       calculationId: r.headers.get("X-QG-Calculation-Id"),
       sourceFingerprint: r.headers.get("X-QG-Source-Fingerprint"),
       liveSessionId: r.headers.get("X-QG-Live-Session"),
+      liveProof: JSON.parse(r.headers.get("X-QG-Live-Proof") || "null"),
     };
     capturedInputs = captureCurrentInputs();
     state.indicator.calculationKey = nextKey;
@@ -6333,6 +6396,8 @@ async function calculateIndicator() {
     const renderStarted = performance.now();
     drawAll();
     const renderCompleted = performance.now();
+    syncAlertMonitoring();
+    if (alertLiveReady) alertController.baseline(state.raw.at(-1)?.time);
     progressTimer.recordEvent({
       status: "completed",
       label: "Canvas render",
@@ -6430,53 +6495,57 @@ $("#indicatorStatusFooter").onclick = openIndicator;
 const CHART_UPDATE_PACKET_SIZE = 1_000;
 const CHART_UPDATE_RATE_LIMIT_MS = 30;
 let chartUpdateRunning = false;
-function realtimeIndicatorProblem(chartId = state.file?.chartId) {
-  const context = state.indicator.resultContext;
-  if (!state.indicator.results || !context || context.chartId !== chartId || context.chartTimeframe !== state.tf)
-    return "Run an indicator calculation with Apply before enabling automatic continuation.";
-  return context.liveSessionId ? "" : "Use Apply again to start a live indicator session.";
-}
-
-async function continueRealtimeIndicator(context, file, signal, operationIsCurrent) {
+async function continueRealtimeIndicator(context, file, signal, operationIsCurrent, repairOnly = false) {
   const rawTo = state.raw.at(-1).time;
   const isCurrent = () => !signal.aborted && operationIsCurrent() && state.indicator.resultContext === context;
-  const keepAlive = context.liveRawTo === rawTo;
+  const keepAlive = !repairOnly && Boolean(context.liveSessionId) && context.liveRawTo === rawTo
+    && context.source?.metadata?.dataSha256 === file.metadata?.dataSha256;
   if (!isCurrent() || (keepAlive && performance.now() - context.liveContactAt < 10 * 60_000))
     return false;
-  const response = await fetch("/api/reactions/continue", {
+  const proof = context.liveProof || { chartId: file.chartId, tabId: liveIndicatorTabId, to: context.to,
+    request: { from: context.from, to: context.to, direction: context.direction,
+      timeframe: context.analysisTimeframe, chartTimeframe: context.chartTimeframe, blueLines: true, bridgeOutput: true } };
+  const request = repairOnly ? {
+    ...proof.request, id: file.id, chartId: file.chartId, tabId: liveIndicatorTabId, to: context.to, liveSession: true,
+  } : { id: file.id, chartId: file.chartId, tabId: liveIndicatorTabId, sessionId: context.liveSessionId, proof,
+    ...(keepAlive ? { keepAlive: true } : {}) };
+  const response = await fetch(repairOnly ? "/api/reactions" : "/api/reactions/continue", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: file.id, chartId: file.chartId, sessionId: context.liveSessionId,
-      ...(keepAlive ? { keepAlive: true } : {}) }),
+    body: JSON.stringify(request),
     signal,
   });
   if (!isCurrent()) return false;
-  if (response.status === 409 || response.status === 410) {
-    state.indicator.resultContext = { ...context, liveSessionId: null };
-    throw new Error(realtimeIndicatorProblem(file.chartId));
-  }
   if (response.status === 204) {
     state.indicator.resultContext = { ...context, liveRawTo: rawTo, liveContactAt: performance.now() };
     return false;
   }
   const payload = await response.json();
   if (!isCurrent()) return false;
-  if (!response.ok) throw new Error(payload.error || "Could not continue the indicator.");
-  const sourceFingerprint = response.headers.get("X-QG-Source-Fingerprint");
-  if (sourceFingerprint !== context.sourceFingerprint) {
-    state.indicator.resultContext = { ...context, liveSessionId: null };
-    throw new Error(realtimeIndicatorProblem(file.chartId));
+  if (!response.ok) {
+    const problem = payload.error || "Could not continue the indicator.";
+    throw Object.assign(new Error(problem), { code: payload.code });
   }
-  if (!payload.directions || payload.timeframe !== context.analysisTimeframe)
+  const sourceFingerprint = response.headers.get("X-QG-Source-Fingerprint");
+  const liveProof = JSON.parse(response.headers.get("X-QG-Live-Proof") || "null");
+  const range = liveProof && { ...liveProof.request, to: liveProof.to };
+  if (!sourceFingerprint || liveProof?.chartId !== file.chartId || liveProof.tabId !== liveIndicatorTabId
+    || !payload.directions || !range || payload.timeframe !== range.timeframe
+    || !["bullish", "bearish"].includes(range.direction) || !Number.isSafeInteger(range.from)
+    || !Number.isSafeInteger(range.to) || range.from > range.to
+    || !Number.isSafeInteger(range.chartTimeframe) || range.chartTimeframe < 1)
     throw new Error("The indicator returned an invalid continuation.");
 
-  const to = state.data.at(-1).time;
-  const nextKey = calculationKey(context, context.from, to, context.analysisTimeframe, context.chartTimeframe);
+  const { from, to, direction, timeframe: analysisTimeframe, chartTimeframe } = range;
+  const nextKey = calculationKey(range, from, to, analysisTimeframe, chartTimeframe);
   state.indicator.results = removeInvalidIndicatorCalculations(payload);
   state.indicator.resultContext = {
-    ...context, fileId: file.id, source: Object.freeze(clone(file)), to,
+    fileId: file.id, chartId: file.chartId, symbol: file.symbol, source: Object.freeze(clone(file)),
+    from, to, direction, analysisTimeframe, chartTimeframe,
     calculationKey: nextKey, calculationId: response.headers.get("X-QG-Calculation-Id"),
-    sourceFingerprint, liveRawTo: rawTo, liveContactAt: performance.now(),
+    liveSessionId: response.headers.get("X-QG-Live-Session") || (repairOnly ? null : context.liveSessionId),
+    liveProof,
+    sourceFingerprint, liveRawTo: repairOnly ? null : rawTo, liveContactAt: performance.now(),
   };
   state.indicator.calculationKey = nextKey;
   if (!state.indicatorRange.dragging && parseTehranInput($("#indicatorFrom").value) === context.from
@@ -6489,6 +6558,11 @@ async function continueRealtimeIndicator(context, file, signal, operationIsCurre
   if ($("#indicatorModal:not(.hidden)") && $('[data-indicator-tab="info"].active'))
     renderIndicatorInfo();
   scheduleDraw();
+  if (alertLiveReady) {
+    if (repairOnly) alertController.baseline(rawTo);
+    else alertController.advance(state.indicator.results, rawTo, formatSymbolWithBroker(file),
+      { revalidateHistory: Boolean(context.needsCandleRepair) });
+  }
   return true;
 }
 
@@ -6511,28 +6585,40 @@ function moveRealtimeIndicatorPreferences(oldId, newId) {
   }
 }
 
-function applyRealtimeCandles(file, candles) {
+function applyRealtimeCandles(file, candles, corrections = [], gapCandles = []) {
   const scale = chart.timeScale();
   const range = scale.getVisibleRange();
   const previousLength = state.data.length;
   const followsLatest = state.chartRender?.end === previousLength && scale.scrollPosition() >= -1;
   const previousFile = state.file;
-  state.raw = state.raw.concat(candles);
+  const projection = state.chartRender;
+  const logical = gapCandles.length && projection ? scale.getVisibleLogicalRange() : null;
+  const anchorIndex = logical ? Math.max(0, Math.min(previousLength - 1,
+    Math.round(projection.start + (logical.from + logical.to) / 2 * projection.stride))) : null;
+  const anchorTime = anchorIndex === null ? null : state.data[anchorIndex]?.time;
+  const byTime = new Map(corrections.map(row => [row.time, row]));
+  if (byTime.size) state.raw = state.raw.map(row => byTime.get(row.time) || row);
+  if (gapCandles.length) state.raw = mergeChartCandles(state.raw, gapCandles);
+  if (candles.length) state.raw = state.raw.concat(candles);
   const native = state.tf === sourceTimeframeSeconds(previousFile);
-  const display = native ? { data: state.raw, changed: candles } : appendCandleBuckets(state.data, candles, state.tf);
+  const repairs = corrections.length || gapCandles.length;
+  const display = native ? { data: state.raw, changed: candles }
+    : repairs ? { data: aggregate(state.raw, state.tf) } : appendCandleBuckets(state.data, candles, state.tf);
   state.data = display.data;
   state.file = { ...previousFile, ...file };
   realtimePublicationRevision += 1;
   state.inventory = state.inventory.map(item => item.chartId === file.chartId ? state.file : item);
-  if (state.chartRender?.fullData && state.data.length <= CHART_LOD_STABLE_DATA_LIMIT && display.changed.length <= 64) {
+  if (!repairs && state.chartRender?.fullData && state.data.length <= CHART_LOD_STABLE_DATA_LIMIT && display.changed.length <= 64) {
     for (const candle of display.changed) series.update(candle);
     state.chartViewRevision += 1;
     state.chartRender = { ...state.chartRender, end: state.data.length, displayCount: state.data.length,
       display: state.data, revision: state.chartViewRevision };
   } else {
+    const addedBuckets = state.data.length - previousLength;
     renderChartViewport(range, {
       force: true, preserveRange: true,
-      followAppended: followsLatest ? state.data.length - previousLength : 0,
+      followAppended: followsLatest && !gapCandles.length ? addedBuckets : 0,
+      viewportShift: followsLatest ? addedBuckets : anchorTime == null ? 0 : lowerBoundTime(state.data, anchorTime) - anchorIndex,
     });
   }
   $("#candleCount").textContent = `${state.data.length.toLocaleString("en-US")} candles`;
@@ -6545,16 +6631,36 @@ function applyRealtimeCandles(file, candles) {
   scheduleDraw();
 }
 
-async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, indicatorSignal }) {
-  const problem = indicatorCalculation && realtimeIndicatorProblem(chartId);
-  if (problem) throw new Error(problem);
+async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, indicatorSignal, indicatorOnly, verifyAll, reportProgress }) {
   if (chartUpdateRunning || indicatorCalculationOwner) return "Chart is busy. Retrying at the next interval.";
   const file = state.file;
   const lastCandleTime = state.raw.at(-1)?.time;
   if (!file || file.chartId !== chartId || !lastCandleTime || symbolLoadController)
     throw new Error("Load a RAW candle file first.");
   const loadRevision = symbolLoadRevision;
-  const indicatorContext = indicatorCalculation ? state.indicator.resultContext : null;
+  const viewTimeframe = state.tf;
+  let indicatorContext = state.indicator.enabled && state.indicator.results && state.indicator.resultContext?.chartId === chartId
+    ? state.indicator.resultContext : null;
+  async function updateIndicator(publishedFile, candleStatus, verification) {
+    const result = (status, indicatorError) => verification || indicatorError ? { status, verification, indicatorError } : status;
+    const repairOnly = !indicatorCalculation && indicatorContext?.needsCandleRepair;
+    if (!indicatorCalculation && !repairOnly) return result(candleStatus);
+    if (!indicatorContext) return { status: candleStatus,
+      verification, indicatorError: "Run an indicator calculation with Apply in this tab before enabling automatic continuation." };
+    const operationIsCurrent = () => !signal.aborted && loadRevision === symbolLoadRevision
+      && state.file?.id === publishedFile.id && state.file.chartId === chartId
+      && state.file.metadata?.dataSha256 === publishedFile.metadata?.dataSha256
+      && state.tf === viewTimeframe;
+    const continuationSignal = repairOnly ? signal : indicatorSignal || signal;
+    try {
+      const updated = await continueRealtimeIndicator(indicatorContext, publishedFile, continuationSignal, operationIsCurrent, repairOnly);
+      return result(updated ? [candleStatus, "Indicator updated."].filter(Boolean).join(" ") : candleStatus);
+    } catch (error) {
+      if (continuationSignal.aborted || !operationIsCurrent()) return result(candleStatus);
+      log.indicator.warn("REALTIME_INDICATOR_CONTINUATION_DEFERRED", { chartId, code: error.code, message: error.message });
+      return result([candleStatus, "Indicator update deferred. Retrying at the next check."].filter(Boolean).join(" "));
+    }
+  }
   let finished;
   const owner = { finished: new Promise(resolve => { finished = resolve; }) };
   realtimeUpdateOwner = owner;
@@ -6562,49 +6668,79 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
   let refreshRequired = false;
   let rawVerified = false;
   try {
-    const response = await fetch("/api/candle-files/realtime", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: file.id, chartId, lastCandleTime, baseSha256: file.metadata?.dataSha256 }),
-      signal,
-    });
-    const result = await response.json();
-    if (!response.ok) {
-      refreshRequired = response.status === 404 || result.code === "RAW_CHANGED";
-      throw new Error(result.error || "Could not update the RAW file.");
+    if (indicatorOnly) {
+      rawVerified = true;
+      return await updateIndicator(file, "");
     }
-    if (signal.aborted || loadRevision !== symbolLoadRevision || state.file?.chartId !== chartId || state.file?.id !== file.id)
-      return "The selected RAW file changed.";
-    const { file: updatedFile, candles } = result;
-    if (updatedFile?.chartId !== chartId || !Array.isArray(candles) ||
-        updatedFile.count !== state.raw.length + candles.length ||
-        updatedFile.to !== (candles.at(-1)?.time ?? lastCandleTime) ||
-        candles.some((row, i) => !Number.isSafeInteger(row.time) ||
-          row.time <= (i ? candles[i - 1].time : lastCandleTime))) {
-      refreshRequired = true;
-      throw new Error("The RAW file changed during the live update. Reloading its current data.");
+    let verification;
+    let added = 0, corrected = 0, recovered = 0;
+    const phases = verifyAll ? [null] : ["latest", "history"];
+    for (const phase of phases) {
+      if (phase === "history" && verification?.status !== "pending") break;
+      const base = state.file;
+      const baseTail = state.raw.at(-1).time;
+      rawVerified = false;
+      const response = await fetch("/api/candle-files/realtime", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/x-ndjson" },
+        body: JSON.stringify({ id: base.id, chartId, lastCandleTime: baseTail, baseSha256: base.metadata?.dataSha256,
+          ...(verifyAll ? { verifyAll: true } : { phase }) }),
+        signal,
+      });
+      const { status, result } = await readRealtimeUpdate(response, value => reportProgress?.(
+        verifyAll ? value : phase === "latest" ? Math.floor(value * .7) : 70 + Math.floor(value * .29)));
+      if (status !== 200) {
+        refreshRequired = status === 404 || result.code === "RAW_CHANGED";
+        throw Object.assign(new Error(result.error || "Could not update the RAW file."), { code: result.code, status });
+      }
+      if (signal.aborted || loadRevision !== symbolLoadRevision || state.file?.chartId !== chartId || state.file?.id !== base.id)
+        return "The selected RAW file changed.";
+      const { file: updatedFile, candles, corrections = [], gapCandles = [] } = result;
+      if (updatedFile?.chartId !== chartId || !Array.isArray(candles) || !Array.isArray(corrections) || !Array.isArray(gapCandles) ||
+          updatedFile.count !== state.raw.length + candles.length + gapCandles.length ||
+          updatedFile.to !== (candles.at(-1)?.time ?? baseTail) ||
+          candles.some((row, i) => !Number.isSafeInteger(row.time) || row.time <= (i ? candles[i - 1].time : baseTail)) ||
+          corrections.some((row, i) => state.raw[lowerBoundTime(state.raw, row.time)]?.time !== row.time
+            || (i > 0 && row.time <= corrections[i - 1].time)) ||
+          gapCandles.some((row, i) => !Number.isSafeInteger(row.time) || row.time <= state.raw[0].time || row.time >= baseTail
+            || state.raw[lowerBoundTime(state.raw, row.time)]?.time === row.time || (i > 0 && row.time <= gapCandles[i - 1].time))) {
+        refreshRequired = true;
+        throw new Error("The RAW file changed during the live update. Reloading its current data.");
+      }
+      rawVerified = true;
+      verification = result.verification;
+      if (candles.length || corrections.length || gapCandles.length) {
+        applyRealtimeCandles(updatedFile, candles, corrections, gapCandles);
+      } else if (updatedFile.metadata?.candleVerification) {
+        state.file = { ...base, ...updatedFile };
+        state.inventory = state.inventory.map(item => item.chartId === chartId ? state.file : item);
+      }
+      const affectsIndicator = row => row.time >= indicatorContext.from
+        && row.time < indicatorContext.to + indicatorContext.chartTimeframe;
+      if (indicatorContext && state.indicator.resultContext === indicatorContext
+        && (corrections.some(affectsIndicator) || gapCandles.some(affectsIndicator))) {
+        indicatorContext = { ...indicatorContext, needsCandleRepair: true };
+        state.indicator.resultContext = indicatorContext;
+      }
+      if (candles.length) {
+        log.chart.info("REALTIME_CANDLES_APPENDED", { chartId, count: candles.length, to: updatedFile.to });
+      }
+      added += candles.length;
+      corrected += corrections.length;
+      recovered += gapCandles.length;
     }
-    if (candles.length) {
-      applyRealtimeCandles(updatedFile, candles);
-      log.chart.info("REALTIME_CANDLES_APPENDED", { chartId, count: candles.length, to: updatedFile.to });
-    }
-    rawVerified = true;
-    const publishedFile = state.file;
-    const candleStatus = candles.length
-      ? `Added ${candles.length.toLocaleString("en-US")} closed ${updatedFile.timeframe} candles.`
-      : "No new closed candles.";
-    const operationIsCurrent = () => !signal.aborted && loadRevision === symbolLoadRevision
-      && state.file === publishedFile && state.tf === indicatorContext.chartTimeframe;
-    const continuationSignal = indicatorSignal || signal;
-    try {
-      const updated = indicatorContext && await continueRealtimeIndicator(indicatorContext, publishedFile,
-        continuationSignal, operationIsCurrent);
-      return updated ? `${candleStatus} Indicator updated.` : candleStatus;
-    } catch (error) {
-      if (continuationSignal.aborted) return candleStatus;
-      throw new Error(`${candleStatus} ${error.message}`);
-    }
+    const candleStatus = [
+      added ? `Added ${added.toLocaleString("en-US")} closed ${state.file.timeframe} candles.` : "",
+      corrected ? `Corrected ${corrected.toLocaleString("en-US")} candle${corrected === 1 ? "" : "s"}.` : "",
+      recovered ? `Filled ${recovered.toLocaleString("en-US")} missing candle${recovered === 1 ? "" : "s"}.` : "",
+    ].filter(Boolean).join(" ");
+    return await updateIndicator(state.file, candleStatus || (verifyAll || verification?.status === "unavailable" ? "" : "No new closed candles."), verification);
   } catch (error) {
+    if (!signal.aborted && !refreshRequired && !rawVerified && (error instanceof TypeError || error.code === "RAW_BUSY"
+      || [401, 429, 502, 503, 504].includes(error.status))) {
+      log.chart.warn("REALTIME_CANDLE_CHECK_DEFERRED", { chartId, message: error.message });
+      return await updateIndicator(state.file, "", { status: "unavailable" });
+    }
     if (!signal.aborted) log.chart.error("REALTIME_CHART_UPDATE_FAILED", error, { chartId });
     throw error;
   } finally {
@@ -7518,8 +7654,14 @@ document.addEventListener("keydown", (event) => {
 realtimeChart = mountRealtimeChart({
   trigger: $("#realtimeChartBtn"),
   getChartId: () => symbolLoadController ? null : state.file?.chartId,
-  indicatorProblem: realtimeIndicatorProblem,
   runUpdate: runRealtimeChartUpdate,
+  onStateChange(view) {
+    alertLiveView = view;
+    syncAlertMonitoring();
+  },
+  onVerificationComplete({ checkedCount, correctedCount, recoveredCount }) {
+    toast(`${checkedCount.toLocaleString("en-US")} candles checked · ${correctedCount.toLocaleString("en-US")} corrected · ${recoveredCount.toLocaleString("en-US")} missing candles restored`, "info");
+  },
 });
 loadInventory().then(restoreWorkspaceAfterRefresh).catch((err) => {
   const message = err?.name === "AbortError"
