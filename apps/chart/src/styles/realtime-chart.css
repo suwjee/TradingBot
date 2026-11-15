@@ -20,6 +20,23 @@
   mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 0);
 }
 
+.realtime-chart-button.verification-unavailable .realtime-chart-icon::after,
+.realtime-chart-verification i {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--ui-text-muted);
+}
+
+.realtime-chart-button.verification-unavailable .realtime-chart-icon::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto auto;
+  background: var(--ui-danger);
+  box-shadow: 0 0 0 1px var(--ui-bg-surface);
+}
+
 .realtime-chart-popover {
   box-sizing: border-box;
   width: min(280px, calc(100vw - 16px));
@@ -66,6 +83,36 @@
   color: inherit;
   font: inherit;
 }
+
+.realtime-chart-interval {
+  display: flex;
+  align-items: center;
+  gap: var(--ui-space-2);
+}
+
+.realtime-chart-interval [data-poll-progress] {
+  min-width: 4ch;
+  color: var(--ui-text-secondary);
+  font-size: var(--ui-text-sm);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.realtime-chart-verification {
+  margin-top: var(--ui-space-2);
+  font-size: var(--ui-text-sm);
+}
+
+.realtime-chart-verification [data-verification] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ui-space-2);
+}
+
+.realtime-chart-verification [data-state="verified"] i { background: var(--ui-positive); }
+.realtime-chart-verification [data-state="pending"] i { background: var(--ui-warning); }
+.realtime-chart-verification [data-state="unavailable"] i { background: var(--ui-danger); }
+.realtime-chart-verification button { flex: none; }
 
 .realtime-chart-option .master-switch {
   cursor: pointer;

@@ -105,17 +105,17 @@ function historyResponse(times) {
   return Response.json({ s: "ok", t: times, o: times.map(() => 1), h: times.map(() => 2), l: times.map(() => 1), c: times.map(() => 2) });
 }
 
-async function realtimeFixture(t, fetchImpl, { nowSeconds = 120, last = 100 } = {}) {
+async function realtimeFixture(t, fetchImpl, { nowSeconds = 120, last = 100, rows = [realtimeCandle(last)] } = {}) {
   const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-realtime-"));
   t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
   writeFakeSession(workspaceRoot);
   const rootDir = path.join(workspaceRoot, "apps", "chart", "state", "data", "raw");
   const rawStore = createRawResourceStore({ rootDir });
-  const old = rawStore.write({ broker: "TEST", symbol: "PAIR", timeframe: "5S", candles: [realtimeCandle(last)], source: "test" });
+  const old = rawStore.write({ broker: "TEST", symbol: "PAIR", timeframe: "5S", candles: rows, source: "test" });
   const origin = await listenForApi(t, createFarazCandleApi({ workspaceRoot, rawStore, fetchImpl, now: () => nowSeconds * 1000 }));
-  const post = ({ baseSha256 = old.dataSha256, ...options } = {}) => fetch(`${origin}/api/candle-files/realtime`, {
+  const post = ({ baseSha256 = old.dataSha256, file = old, verifyAll = false, ...options } = {}) => fetch(`${origin}/api/candle-files/realtime`, {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: old.id, chartId: old.chartId, lastCandleTime: last, baseSha256 }), ...options,
+    body: JSON.stringify({ id: file.id, chartId: file.chartId, lastCandleTime: file.to ?? last, baseSha256, verifyAll }), ...options,
   });
   return { rawStore, old, post };
 }
@@ -133,11 +133,11 @@ test("real-time catch-up publishes one renamed RAW pair with only closed native-
   const response = await post();
   assert.equal(response.status, 200);
   const { file, candles } = await response.json();
-  assert.equal(requests.length, 1);
+  assert.deepEqual(requests.map(request => [request.from, request.to]), [["108", "113"], ["108", "113"], ["103", "108"]]);
   assert.equal(requests[0].symbolName, "TEST_PAIR");
   assert.equal(requests[0].resolution, "5S");
   assert.equal(requests[0].from, "108");
-  assert.equal(requests[0].to, "108");
+  assert.equal(requests[0].to, "113");
   assert.equal(requests[0].firstDataRequest, "false");
   assert.deepEqual(candles, [realtimeCandle(108)]);
   assert.equal(file.chartId, old.chartId);
@@ -154,7 +154,153 @@ test("real-time catch-up publishes one renamed RAW pair with only closed native-
   const stale = await post();
   assert.equal(stale.status, 409);
   assert.equal((await stale.json()).file.id, file.id);
-  assert.equal(requests.length, 1);
+  assert.equal(requests.length, 3);
+});
+
+test("live verification repairs history, confirms newly appended OHLC with a second fetch, and supports Verify All", async (t) => {
+  const requests = [];
+  let latestClose = 1.5;
+  const { old, rawStore, post } = await realtimeFixture(t, async (url) => {
+    const from = Number(url.searchParams.get("from"));
+    requests.push(from);
+    if (from === 105 && requests.filter(value => value === 105).length === 1) return historyResponse([105]);
+    if (from === 105) return Response.json({ s: "ok", t: [105], o: [1], h: [2], l: [1], c: [1.5] });
+    return Response.json({ s: "ok", t: [95, 100, 105], o: [1, 1, 1], h: [2, 2, 2], l: [1, 1, 1], c: [2, latestClose, 1.5] });
+  }, { nowSeconds: 110, rows: [realtimeCandle(95), realtimeCandle(100)] });
+  const first = await post();
+  assert.equal(first.status, 200);
+  const result = await first.json();
+  assert.equal(result.verification.status, "verified");
+  assert.equal(result.verification.verifiedCount, 3);
+  assert.deepEqual(result.corrections, [{ ...realtimeCandle(100), close: 1.5 }]);
+  assert.equal(result.candles[0].close, 1.5);
+  assert.deepEqual(requests, [105, 105, 95]);
+  assert.equal(rawStore.read(result.file.id)[1].close, 1.5);
+  assert.equal(result.file.chartId, old.chartId);
+  assert.equal(JSON.parse(fs.readFileSync(rawStore.resolve(result.file.id).metaPath)).candleVerification.verifiedCount, 3);
+  const current = { file: result.file, baseSha256: result.file.metadata.dataSha256 };
+  const subsequent = await post(current);
+  assert.equal((await subsequent.json()).verification.status, "verified");
+  assert.deepEqual(requests, [105, 105, 95]);
+  latestClose = 1.75;
+  const manual = await post({ ...current, verifyAll: true });
+  assert.equal(manual.status, 200);
+  const checked = await manual.json();
+  assert.equal(checked.file.id, result.file.id);
+  assert.equal(checked.corrections[0].close, 1.75);
+  assert.equal(rawStore.read(checked.file.id)[1].close, 1.75);
+  assert.deepEqual(requests, [105, 105, 95, 95]);
+});
+
+test("an unavailable source leaves RAW intact and returns verification status instead of an HTTP error", async (t) => {
+  const { old, post } = await realtimeFixture(t, async () => { throw new TypeError("Network offline"); });
+  const before = fs.readFileSync(old.dataPath, "utf8");
+  const response = await post();
+  assert.equal(response.status, 200);
+  const result = await response.json();
+  assert.equal(result.verification.status, "unavailable");
+  assert.deepEqual(result.candles, []);
+  assert.equal(fs.readFileSync(old.dataPath, "utf8"), before);
+});
+
+test("Verify All fills native-timeframe gaps across packet boundaries and leaves missing source slots alone", async (t) => {
+  const requests = [];
+  const confirmedTimes = [100, 105, 5095, 5100, 5110];
+  const { old, post, rawStore } = await realtimeFixture(t, async (url) => {
+    const from = Number(url.searchParams.get("from"));
+    const to = Number(url.searchParams.get("to"));
+    requests.push([from, to]);
+    assert.equal(url.searchParams.get("resolution"), "5S");
+    return historyResponse(confirmedTimes.filter(time => time >= from && time < to));
+  }, { nowSeconds: 5115, last: 5110, rows: [{ ...realtimeCandle(100), close: 1 }, realtimeCandle(5110)] });
+  const response = await post({ verifyAll: true });
+  assert.equal(response.status, 200);
+  const result = await response.json();
+  assert.deepEqual(requests, [[100, 5100], [5100, 5115]]);
+  assert.equal(result.file.id, old.id);
+  assert.equal(result.file.chartId, old.chartId);
+  assert.deepEqual(result.gapCandles.map(row => row.time), [105, 5095, 5100]);
+  assert.deepEqual(result.corrections, [realtimeCandle(100)]);
+  assert.deepEqual(rawStore.read(old.id), confirmedTimes.map(realtimeCandle));
+  assert.deepEqual(result.file.metadata.candleVerification.ranges, [[0, 4]]);
+  assert.equal(result.verification.recoveredCount, 3);
+  assert.equal(result.verification.correctedCount, 1);
+});
+
+test("a polling stream reports actual work and counts repairs to both historical and new 5S candles", async (t) => {
+  let latestRequests = 0;
+  const { post } = await realtimeFixture(t, async (url) => {
+    assert.equal(url.searchParams.get("resolution"), "5S");
+    if (url.searchParams.get("from") === "105" && ++latestRequests === 1) return historyResponse([105]);
+    return Response.json({ s: "ok", t: [95, 100, 105], o: [1, 1, 1], h: [2, 2, 2], l: [1, 1, 1], c: [2, 1.5, 1.5] });
+  }, { nowSeconds: 110, rows: [realtimeCandle(95), realtimeCandle(100)] });
+  const response = await post({ headers: { "Content-Type": "application/json", Accept: "application/x-ndjson" } });
+  assert.match(response.headers.get("Content-Type"), /^application\/x-ndjson/);
+  const messages = (await response.text()).trim().split("\n").map(JSON.parse);
+  const progress = messages.slice(0, -1).map(message => message.progress);
+  assert(progress.some(value => value > 0 && value < 100));
+  assert.deepEqual(progress, progress.toSorted((left, right) => left - right));
+  assert.equal(messages.at(-1).status, 200);
+  assert.deepEqual(messages.at(-1).result.verification, {
+    status: "verified", verifiedCount: 3, totalCount: 3, checkedCount: 3, correctedCount: 2, recoveredCount: 0,
+  });
+});
+
+test("an unconfirmed new candle stays pending and is corrected on the next poll", async (t) => {
+  let calls = 0;
+  const { post, rawStore } = await realtimeFixture(t, async (url, options) => {
+    calls++;
+    if (calls === 2) {
+      assert.equal(options.cache, "no-store");
+      throw new TypeError("Connection lost before confirmation");
+    }
+    if (calls === 3) return Response.json({ s: "ok", t: [100, 105], o: [1, 1], h: [2, 2], l: [1, 1], c: [2, 1.5] });
+    return historyResponse([105]);
+  }, { nowSeconds: 110 });
+  const first = await (await post()).json();
+  assert.equal(first.verification.status, "unavailable");
+  assert.equal(first.verification.verifiedCount, 0);
+  assert.equal(first.candles.length, 1);
+  const next = await (await post({ file: first.file, baseSha256: first.file.metadata.dataSha256 })).json();
+  assert.equal(next.verification.status, "verified");
+  assert.equal(next.candles.length, 0);
+  assert.equal(next.corrections[0].close, 1.5);
+  assert.equal(rawStore.read(next.file.id)[1].close, 1.5);
+});
+
+test("a missing FARAZ row stays pending and never deletes a stored candle", async (t) => {
+  let complete = false;
+  const { old, post, rawStore } = await realtimeFixture(t, async () => historyResponse(complete ? [95, 100] : [100]),
+    { nowSeconds: 105, rows: [realtimeCandle(95), realtimeCandle(100)] });
+  const first = await (await post()).json();
+  assert.equal(first.verification.status, "pending");
+  assert.equal(first.verification.verifiedCount, 1);
+  assert.deepEqual(rawStore.read(old.id), [realtimeCandle(95), realtimeCandle(100)]);
+  complete = true;
+  const next = await (await post()).json();
+  assert.equal(next.verification.status, "verified");
+  assert.equal(next.verification.verifiedCount, 2);
+});
+
+test("a correction preserves the original JSON bytes of unaffected rows", async (t) => {
+  const { old, post, rawStore } = await realtimeFixture(t, async () => historyResponse([95, 100]),
+    { nowSeconds: 105, rows: [realtimeCandle(95), realtimeCandle(100)] });
+  const prefix = '[\n {"time":95,"open":1.000000000000000000,"high":2,"low":1,"close":2},\n ';
+  const bad = { ...realtimeCandle(100), close: 1 };
+  fs.writeFileSync(old.dataPath, `${prefix}${JSON.stringify(bad)}\n]\n`);
+  const baseSha256 = rawStore.get(old.id).metadata.dataSha256;
+  const response = await post({ baseSha256, verifyAll: true });
+  assert.equal(response.status, 200);
+  assert.equal(fs.readFileSync(old.dataPath, "utf8"), `${prefix}${JSON.stringify(realtimeCandle(100))}\n]\n`);
+});
+
+test("malformed FARAZ values cannot overwrite a valid stored candle", async (t) => {
+  const { old, post, rawStore } = await realtimeFixture(t,
+    async () => Response.json({ s: "ok", t: [100], o: [1], h: [2], l: [0], c: [null] }), { nowSeconds: 105 });
+  const result = await (await post({ verifyAll: true })).json();
+  assert.equal(result.verification.status, "unavailable");
+  assert.equal(result.verification.verifiedCount, 0);
+  assert.deepEqual(rawStore.read(old.id), [realtimeCandle(100)]);
 });
 
 test("real-time catch-up leaves RAW unchanged while FARAZ has no closed rows", async (t) => {
@@ -172,7 +318,7 @@ test("real-time catch-up leaves RAW unchanged while FARAZ has no closed rows", a
   assert.deepEqual(candles, []);
   assert.equal(fs.statSync(old.dataPath).mtimeMs, initial.mtimeMs);
   assert.equal(fs.readFileSync(old.metaPath, "utf8"), originalSidecar);
-  assert.equal(requests, 1);
+  assert.equal(requests, 2);
 });
 
 test("real-time catch-up rejects a competing request and discards data after the RAW changes", async (t) => {

@@ -1,4 +1,5 @@
 import test from "node:test";
+import { reconcilePublishedCandles } from "../../src/features/candle-update.js";
 import assert from "node:assert/strict";
 
 import {
@@ -165,4 +166,14 @@ test("chart updates use byte-bounded batches so large appends need far fewer saf
     const arrayBytes = new TextEncoder().encode(JSON.stringify(batch)).byteLength;
     assert.ok(arrayBytes + requestOverheadBytes <= maximumPayloadBytes);
   }
+});
+test("a published RAW refresh can add, fill, and correct candles without dropping prior rows", () => {
+  const candle = (time, close = 11) => ({ time, open: 10, high: 14, low: 9, close });
+  const prior = [candle(5), candle(15), candle(20)];
+  const next = [candle(5), candle(10), candle(15, 12), candle(20), candle(25)];
+  assert.deepEqual(reconcilePublishedCandles(prior, next), {
+    candles: [candle(25)], corrections: [candle(15, 12)], gapCandles: [candle(10)],
+  });
+  assert.equal(reconcilePublishedCandles(prior, [candle(5), candle(20), candle(25)]), null);
+  assert.equal(reconcilePublishedCandles(prior, [candle(1), ...prior]), null);
 });

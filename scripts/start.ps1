@@ -13,15 +13,11 @@ $env:PYTHONDONTWRITEBYTECODE = '1'
 # Runtime dependencies used by the maintained Python engine.
 $PythonPackages = @('orjson', 'tzdata')
 
-# Authoritative production layout after the engine refactor.
-$EngineFiles = @(
+# Required runtime entry points. Python module validation also discovers the
+# current bridge and pipeline contents beneath their owning directories.
+$EngineEntryPoints = @(
   'engine\bridge\trading_pipeline.py',
-  'engine\pipeline\reaction_engine.py',
-  'engine\pipeline\blue_line_detector.py',
-  'engine\pipeline\a_zone_detector.py',
-  'engine\pipeline\s_zone_detector.py',
-  'engine\pipeline\e_zone_detector.py',
-  'engine\pipeline\lifecycle_engine.py'
+  'engine\bridge\live_pipeline.py'
 )
 
 $PythonPackageFiles = @(
@@ -31,7 +27,9 @@ $PythonPackageFiles = @(
 
 $ChartFiles = @(
   'apps\chart\package.json',
+  'apps\chart\package-lock.json',
   'apps\chart\vite.config.js',
+  'apps\chart\server\local-state-paths.js',
   'apps\chart\scripts\dev-server.mjs'
 )
 
@@ -73,7 +71,7 @@ function Ensure-Path([string]$Path, [string]$Label) {
 }
 
 function Ensure-ProjectFiles {
-  $required = @($ChartFiles + $PythonPackageFiles + $EngineFiles)
+  $required = @($ChartFiles + $PythonPackageFiles + $EngineEntryPoints)
   foreach ($relative in $required) {
     Ensure-Path (Join-Path $Root $relative) $relative
   }
@@ -117,6 +115,11 @@ function Resolve-LocalState([string]$Node) {
   $env:TRADINGBOT_LOCAL_STATE_ROOT = $script:LocalStateRoot
 }
 
+function Test-NodeVersion([version]$Version) {
+  # The app's locked Vite package requires ^20.19.0 || >=22.12.0.
+  return ($Version.Major -eq 20 -and $Version -ge [version]'20.19.0') -or $Version -ge [version]'22.12.0'
+}
+
 function Ensure-Runtimes {
   $node = Find-Command @('node.exe', 'node')
   if (-not $node) {
@@ -126,13 +129,13 @@ function Ensure-Runtimes {
   if (-not $node) { throw 'Node.js is unavailable after installation.' }
 
   $nodeVersion = [version]((& $node --version).Trim().TrimStart('v'))
-  if ($nodeVersion -lt [version]'20.19.0') {
+  if (-not (Test-NodeVersion $nodeVersion)) {
     Install-Winget 'OpenJS.NodeJS.LTS' 'Node.js LTS'
     $node = Find-Command @('node.exe', 'node')
     if (-not $node) { throw 'Node.js is unavailable after update.' }
     $nodeVersion = [version]((& $node --version).Trim().TrimStart('v'))
-    if ($nodeVersion -lt [version]'20.19.0') {
-      throw "Node.js 20.19.0 or newer is required; found $nodeVersion."
+    if (-not (Test-NodeVersion $nodeVersion)) {
+      throw "Node.js 20.19+ in the 20.x line or 22.12+ is required; found $nodeVersion."
     }
   }
 
@@ -164,11 +167,9 @@ function Ensure-Runtimes {
     }
   }
 
-  foreach ($relative in @($PythonPackageFiles + $EngineFiles)) {
-    $path = Join-Path $Root $relative
-    & $python -B -c "import ast,pathlib,sys; ast.parse(pathlib.Path(sys.argv[1]).read_text(encoding='utf-8-sig'))" $path
-    if ($LASTEXITCODE -ne 0) { throw "Python syntax validation failed: $relative" }
-  }
+  $checkSyntax = "import ast,pathlib,sys; engine=pathlib.Path(sys.argv[1])/'engine'; paths=[engine/'__init__.py', *(engine/'bridge').rglob('*.py'), *(engine/'pipeline').rglob('*.py')]; [ast.parse(path.read_bytes(), filename=str(path)) for path in paths if '__pycache__' not in path.parts]"
+  & $python -B -c $checkSyntax $Root
+  if ($LASTEXITCODE -ne 0) { throw 'Python Engine syntax validation failed.' }
 
   Write-Step (
     "Node {0}; npm {1}; {2}" -f
@@ -198,7 +199,12 @@ function Ensure-NpmDependencies([string]$Npm) {
     $lockHash = $null
     $installedLockHash = $null
     if (Test-Path -LiteralPath $lockPath) {
-      $lockHash = (Get-FileHash -LiteralPath $lockPath -Algorithm SHA256).Hash
+      $sha256 = [Security.Cryptography.SHA256]::Create()
+      try {
+        $stream = [IO.File]::OpenRead($lockPath)
+        try { $lockHash = [BitConverter]::ToString($sha256.ComputeHash($stream)).Replace('-', '') }
+        finally { $stream.Dispose() }
+      } finally { $sha256.Dispose() }
       if (Test-Path -LiteralPath $lockStampPath) {
         $installedLockHash = [IO.File]::ReadAllText($lockStampPath).Trim()
       }
@@ -260,7 +266,5 @@ try {
   Start-DevServer $tools.Npm $tools.Python
 } catch {
   Write-Step $_.Exception.Message Red
-  Write-Host "`nStartup failed. Press any key to close." -ForegroundColor Red
-  $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
   exit 1
 }

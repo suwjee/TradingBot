@@ -53,15 +53,18 @@ def verify(raw_path: Path, payload_path: Path, timeframe: int) -> dict[str, int]
                     order["firstIndex"], order["breakIndex"]
                 )
                 assert cause["physicalOrderConfirmationTime"] >= order["breakTime"]
-                # Reference 10.6: FirstTime equality with strictBreakTime is
-                # valid; only the price break and confirmation remain strict.
+                # Reference 10.6 compares First with the candle containing the
+                # break. The order confirmation is compared to the exact event.
+                strict_break = cause["strictBreakTime"]
                 assert (
                     cause["postBehaviorStopTime"]
                     < cause["resetTime"]
-                    < cause["strictBreakTime"]
-                    <= order["firstTime"]
-                    <= cause["physicalOrderConfirmationTime"]
+                    < strict_break
+                    < cause["physicalOrderConfirmationTime"]
                 )
+                assert strict_break < main[first_index][0] + timeframe
+                assert main[first_index][0] == order["firstTime"]
+                assert order["firstTime"] <= cause["physicalOrderConfirmationTime"]
                 if "previousReactionConfirmationTime" in cause:
                     assert (
                         cause["postBehaviorStopTime"]

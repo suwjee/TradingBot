@@ -2,6 +2,7 @@ const presentations = {
   success: { title: "Completed", icon: "check", duration: 3600 },
   error: { title: "Action needed", icon: "warning", duration: 5200 },
   info: { title: "Notice", icon: "info", duration: 4000 },
+  alert: { title: "Trading alert", icon: "bell", duration: 5200 },
 };
 
 export function farazActivityNotice(activity, detail = "") {

@@ -1,13 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createRealtimeChartScheduler } from "../../src/features/realtime-chart.js";
+import { createRealtimeChartScheduler, readRealtimeUpdate } from "../../src/features/realtime-chart.js";
 
 function createScheduler(t, options = {}) {
-  t.mock.timers.enable({ apis: ["Date", "setTimeout"], now: 0 });
+  t.mock.timers.enable({ apis: ["Date", "setTimeout"], now: options.start ?? 0 });
   const requests = [];
   let view;
   const scheduler = createRealtimeChartScheduler({
     now: options.now ?? Date.now,
+    onVerificationComplete: options.onVerificationComplete,
     async runUpdate(request) {
       requests.push(request);
       return options.runUpdate ? options.runUpdate(request) : "Checked for new candles.";
@@ -21,20 +22,90 @@ function createScheduler(t, options = {}) {
 
 const settle = () => new Promise((resolve) => setImmediate(resolve));
 
-test("enabling runs an immediate check and then observes the selected interval", async (t) => {
-  const fixture = createScheduler(t);
-  fixture.scheduler.enable();
-  assert.equal(fixture.requests.length, 1);
-  assert.equal(fixture.requests[0].chartId, "raw-chart-a");
-  assert.equal(fixture.requests[0].indicatorCalculation, false);
+test("progress is streamed before completion, and a final error retains its application status", async () => {
+  let input;
+  const response = new Response(new ReadableStream({ start(controller) { input = controller; } }), {
+    headers: { "Content-Type": "application/x-ndjson; charset=utf-8" },
+  });
+  const encoder = new TextEncoder();
+  const observed = [];
+  const update = readRealtimeUpdate(response, progress => observed.push(progress));
+  input.enqueue(encoder.encode('{"progress":0}\n{"pro'));
+  input.enqueue(encoder.encode('gress":65}\n'));
   await settle();
-  assert.equal(fixture.view.status, "Checked for new candles.");
+  assert.deepEqual(observed, [0, 65]);
+  input.enqueue(encoder.encode('{"status":409,"result":{"code":"RAW_CHANGED"}}\n'));
+  assert.deepEqual(await update, { status: 409, result: { code: "RAW_CHANGED" } });
+});
 
-  fixture.scheduler.setInterval(30_000);
-  assert.equal(fixture.view.remainingMs, 30_000);
-  t.mock.timers.tick(29_999);
-  assert.equal(fixture.requests.length, 1);
+test("polling starts enabled, shows progress, and only Verify All sends a notification", async (t) => {
+  const notices = [];
+  let finish;
+  const fixture = createScheduler(t, {
+    onVerificationComplete: result => notices.push(result),
+    runUpdate({ reportProgress }) {
+      reportProgress(40);
+      reportProgress(20);
+      return new Promise(resolve => { finish = resolve; });
+    },
+  });
+  assert.equal(fixture.view.enabled, true);
+  t.mock.timers.tick(2_000);
+  assert.equal(fixture.view.progress, 40);
+  assert.equal(notices.length, 0);
+  const verification = { status: "verified", checkedCount: 13, correctedCount: 2 };
+  finish({ verification });
+  await settle();
+  assert.equal(fixture.view.progress, 100);
+  assert.deepEqual(notices, []);
+  fixture.scheduler.verifyAll();
+  assert.equal(fixture.requests[1].verifyAll, true);
+  finish({ verification });
+  await settle();
+  assert.deepEqual(notices, [verification]);
+  fixture.scheduler.stop();
+  assert.equal(fixture.view.progress, null);
+});
+
+test("Verify All works while polling is off and reports an unavailable connection without a poll failure", async (t) => {
+  const fixture = createScheduler(t, { runUpdate: () => ({ status: "", verification: { status: "unavailable" } }) });
+  fixture.scheduler.stop();
+  fixture.scheduler.verifyAll();
+  assert.equal(fixture.requests[0].verifyAll, true);
+  assert.equal(fixture.view.verifyingAll, true);
+  await settle();
+  assert.equal(fixture.view.verifyingAll, false);
+  assert.equal(fixture.view.verification.status, "unavailable");
+  assert.equal(fixture.view.failed, false);
+  assert.equal(fixture.view.status, "");
+  assert.equal(fixture.view.remainingMs, null);
+});
+
+test("every interval polls at the local wall-clock boundary plus two seconds", async (t) => {
+  const start = new Date(2026, 10, 13, 6, 12, 37).getTime();
+  const minute = (hour, minute, second) => new Date(2026, 10, 13, hour, minute, second).getTime();
+  const fixture = createScheduler(t, { start });
+  for (const [interval, expected] of [
+    [30_000, minute(6, 13, 2)], [60_000, minute(6, 13, 2)],
+    [120_000, minute(6, 14, 2)], [180_000, minute(6, 15, 2)],
+    [300_000, minute(6, 15, 2)], [600_000, minute(6, 20, 2)], [900_000, minute(6, 15, 2)],
+  ]) {
+    fixture.scheduler.setInterval(interval);
+    fixture.scheduler.enable();
+    assert.equal(fixture.requests.length, 0);
+    assert.equal(fixture.view.remainingMs, expected - start);
+    fixture.scheduler.stop();
+  }
+  fixture.scheduler.setInterval(60_000);
+  fixture.scheduler.enable();
+  t.mock.timers.tick(24_999);
+  assert.equal(fixture.requests.length, 0);
   t.mock.timers.tick(1);
+  assert.equal(Date.now(), minute(6, 13, 2));
+  assert.equal(fixture.requests.length, 1);
+  await settle();
+  t.mock.timers.tick(60_000);
+  assert.equal(Date.now(), minute(6, 14, 2));
   assert.equal(fixture.requests.length, 2);
 });
 
@@ -44,17 +115,19 @@ test("switching RAW aborts the old check and serializes a new live session", asy
     runUpdate: () => new Promise((resolve) => releases.push(resolve)),
   });
   fixture.scheduler.enable();
-  t.mock.timers.tick(90_000);
+  t.mock.timers.tick(2_000);
+  t.mock.timers.tick(88_000);
   assert.equal(fixture.requests.length, 1);
 
   fixture.scheduler.contextChanged("raw-chart-b");
   assert.equal(fixture.requests[0].signal.aborted, true);
-  assert.equal(fixture.view.enabled, false);
-  fixture.scheduler.enable();
+  assert.equal(fixture.view.enabled, true);
   assert.equal(fixture.requests.length, 1);
 
   releases[0]("Old chart updated.");
   await settle();
+  assert.equal(fixture.requests.length, 1);
+  t.mock.timers.tick(32_000);
   assert.equal(fixture.requests.length, 2);
   assert.equal(fixture.requests[1].chartId, "raw-chart-b");
   assert.notEqual(fixture.view.status, "Old chart updated.");
@@ -70,21 +143,23 @@ test("a long check skips missed intervals and resumes at the next scheduled star
   });
   fixture.scheduler.setInterval(30_000);
   fixture.scheduler.enable();
-  t.mock.timers.tick(75_000);
+  t.mock.timers.tick(2_000);
+  t.mock.timers.tick(73_000);
   assert.equal(fixture.requests.length, 1);
   finishFirst("Checked for new candles.");
   await settle();
-  assert.equal(fixture.view.remainingMs, 15_000);
-  t.mock.timers.tick(14_999);
+  assert.equal(fixture.view.remainingMs, 17_000);
+  t.mock.timers.tick(16_999);
   assert.equal(fixture.requests.length, 1);
   t.mock.timers.tick(1);
   assert.equal(fixture.requests.length, 2);
 });
 
-test("waking after browser timer throttling performs only one overdue check", async (t) => {
+test("waking after browser timer throttling runs one catch-up poll and preserves wall-clock alignment", async (t) => {
   let elapsedWhileThrottled = 0;
   const fixture = createScheduler(t, { now: () => Date.now() + elapsedWhileThrottled });
   fixture.scheduler.enable();
+  t.mock.timers.tick(2_000);
   await settle();
   elapsedWhileThrottled = 180_000;
   fixture.scheduler.wake();
@@ -102,6 +177,7 @@ test("an ineligible indicator option reports manual Apply and continues candle p
   const fixture = createScheduler(t, { runUpdate: ({ indicatorCalculation }) => indicatorCalculation
     ? { status: "Candles updated.", indicatorError: problem } : "Candles updated." });
   fixture.scheduler.enable();
+  t.mock.timers.tick(2_000);
   await settle();
 
   fixture.scheduler.setIndicatorCalculation(true);
@@ -117,6 +193,7 @@ test("an ineligible indicator option reports manual Apply and continues candle p
 test("reenabling indicator calculation after five minutes checks immediately", async (t) => {
   const fixture = createScheduler(t);
   fixture.scheduler.enable();
+  t.mock.timers.tick(2_000);
   await settle();
   fixture.scheduler.setIndicatorCalculation(true);
   assert.equal(fixture.requests.length, 2);
@@ -132,6 +209,7 @@ test("reenabling indicator calculation after five minutes checks immediately", a
   const count = fixture.requests.length;
   fixture.scheduler.setIndicatorCalculation(true);
   assert.equal(fixture.requests.length, count + 1);
+  assert.equal(fixture.requests.at(-1).indicatorOnly, true);
   assert.equal(fixture.requests.at(-1).indicatorCalculation, true);
   await settle();
   assert.equal(fixture.view.indicatorError, "");
@@ -145,6 +223,7 @@ test("turning indicator calculation off cancels only the indicator request", asy
       : "Candles updated.",
   });
   fixture.scheduler.enable();
+  t.mock.timers.tick(2_000);
   await settle();
   fixture.scheduler.setIndicatorCalculation(true);
   assert.equal(fixture.requests[1].indicatorCalculation, true);
@@ -167,6 +246,7 @@ test("a newly requested indicator check waits for the active RAW check", async (
       : new Promise(resolve => { finishRaw = resolve; }),
   });
   fixture.scheduler.enable();
+  t.mock.timers.tick(2_000);
   fixture.scheduler.setIndicatorCalculation(true);
   assert.equal(fixture.requests.length, 1);
   assert.equal(fixture.requests[0].signal.aborted, false);
@@ -186,6 +266,7 @@ test("a missing prior calculation turns off the indicator while the successful R
     },
   });
   fixture.scheduler.enable();
+  t.mock.timers.tick(2_000);
   await settle();
   fixture.scheduler.setIndicatorCalculation(true);
   await settle();
@@ -204,6 +285,7 @@ test("a temporary indicator error stays separate and the next poll retries", asy
     return "Indicator updated.";
   } });
   fixture.scheduler.enable();
+  t.mock.timers.tick(2_000);
   await settle();
   fixture.scheduler.setIndicatorCalculation(true);
   await settle();
@@ -226,6 +308,7 @@ test("a polling failure is displayed and subsequent checks continue until disabl
     },
   });
   fixture.scheduler.enable();
+  t.mock.timers.tick(2_000);
   await settle();
   assert.equal(fixture.view.status, "FARAZ session expired.");
   assert.equal(fixture.view.failed, true);

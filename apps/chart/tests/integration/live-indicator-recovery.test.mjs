@@ -7,6 +7,7 @@ import { createInterface } from "node:readline";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { createRawResourceStore } from "../../server/raw-resource-store.js";
+import { createAlertMonitor, normalizeAlertRule } from "../../src/features/alerts/rules.js";
 
 const chart = fileURLToPath(new URL("../../", import.meta.url));
 const startVite = `
@@ -34,7 +35,8 @@ async function launch(stateRoot) {
   for await (const line of output) {
     if (!line.startsWith("TEST_PORT:")) continue;
     const port = Number(line.slice("TEST_PORT:".length));
-    return { stop, getReport: id => fetch("http://127.0.0.1:" + port + "/api/info/" + id),
+    const report = (id, method) => fetch(`http://127.0.0.1:${port}/api/info/${id}`, { method });
+    return { stop, getReport: id => report(id, "GET"), saveReport: id => report(id, "POST"),
       post: (route, body) => fetch(`http://127.0.0.1:${port}/api/reactions${route}`, {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body), signal: AbortSignal.timeout(90_000),
@@ -81,7 +83,10 @@ test("a tab catches up after five minutes and recovers across a restart without 
   try {
     server = await launch(stateRoot);
     const cache = path.join(stateRoot, "cache", "indicator-calculations");
-    const cacheFiles = () => fs.readdir(cache, { recursive: true });
+    // Opening a report explicitly saves its immutable snapshot. Polling and
+    // recovery must leave ordinary calculation caches alone.
+    const cacheFiles = async () => (await fs.readdir(cache, { recursive: true }))
+      .filter(entry => entry !== "live" && !/^live[\\/]/.test(entry));
     const legacyResponse = await server.post("", { ...requests[0], id: raw.id });
     const baseline = await indicator(legacyResponse);
     const legacyId = legacyResponse.headers.get("X-QG-Calculation-Id");
@@ -96,6 +101,14 @@ test("a tab catches up after five minutes and recovers across a restart without 
     assert.equal((await missing.json()).code, "NO_INDICATOR_CALCULATION");
 
     const checkpoints = [];
+    const openedReports = [];
+    const alertMonitors = requests.map(({ direction }) => {
+      const rule = normalizeAlertRule({ id: direction, name: direction, enabled: true, sound: false,
+        seconds: 3, steps: [[`${direction}:reaction`]] });
+      const monitor = createAlertMonitor();
+      monitor.baseline(raw.to);
+      return { rule, monitor, matches: 0 };
+    });
     for (const [index, request] of requests.entries()) {
       const tabId = "applied-tab-" + index;
       const response = await server.post("", { ...request, tabId, id: raw.id, liveSession: true });
@@ -110,6 +123,9 @@ test("a tab catches up after five minutes and recovers across a restart without 
       const report = await server.getReport(reportId);
       assert.equal(report.status, 200);
       assert.equal((await report.json()).snapshot.calculation.direction, request.direction);
+      const saved = await server.saveReport(reportId);
+      assert.equal(saved.status, 200);
+      openedReports.push(reportId);
       checkpoints.push({ sessionId, proof, tabId });
     }
     assert.deepEqual(await cacheFiles(), originalCacheFiles);
@@ -131,6 +147,12 @@ test("a tab catches up after five minutes and recovers across a restart without 
         const before = await cacheFiles();
         const response = await server.post("/continue", { id: raw.id, chartId, ...checkpoint });
         const actual = await indicator(response);
+        assert.notEqual(response.headers.get("X-QG-Calculation-Id"), openedReports[index]);
+        const alert = alertMonitors[index];
+        const matches = alert.monitor.advance([alert.rule], actual, raw.to);
+        alert.matches += matches.length;
+        assert.ok(matches.every(({ events: [event] }) => event.direction === requests[index].direction && event.time > rows[initialCount - 1].time));
+        assert.deepEqual(alert.monitor.advance([alert.rule], actual, raw.to), []);
         if (restarted) {
           const sessionId = response.headers.get("X-QG-Live-Session");
           assert(sessionId && sessionId !== checkpoint.sessionId);
@@ -146,7 +168,14 @@ test("a tab catches up after five minutes and recovers across a restart without 
         assert.deepEqual(await indicator(await server.post("/continue", { id: raw.id, chartId, ...checkpoint })), actual);
       }
     }
+    if (!rawFixture) assert.ok(alertMonitors.some(alert => alert.matches > 0),
+      `The synthetic live extension should trigger Reaction rules, got ${alertMonitors.map(alert => alert.matches).join(", ")}.`);
     await restart();
+    for (const [index, reportId] of openedReports.entries()) {
+      const report = await server.getReport(reportId);
+      assert.equal(report.status, 200);
+      assert.equal((await report.json()).snapshot.calculation.to, requests[index].to);
+    }
     const idle = await server.post("/continue", { id: raw.id, chartId, ...checkpoints[0], keepAlive: true });
     await indicator(idle);
     checkpoints[0].sessionId = idle.headers.get("X-QG-Live-Session");

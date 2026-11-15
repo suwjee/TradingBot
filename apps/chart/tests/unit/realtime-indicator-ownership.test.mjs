@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import vm from "node:vm";
+import { readRealtimeUpdate } from "../../src/features/realtime-chart.js";
 
 const main = await readFile(new URL("../../src/main.js", import.meta.url), "utf8");
 const indicatorFlow = main.slice(main.indexOf("let chartUpdateRunning = false;") + "let chartUpdateRunning = false;".length,
@@ -12,7 +13,7 @@ const tabId = "same-tab-fixture";
 const proof = to => ({ chartId: "chart", tabId, to,
   request: { from: 100, to: 200, direction: "bearish", timeframe: 30, chartTimeframe: 30, blueLines: true, bridgeOutput: true } });
 
-function fixture({ candles = [{ time: 330 }], onContinue, marketAvailable = true } = {}) {
+function fixture({ candles = [{ time: 330 }], corrections = [], onContinue, marketAvailable = true, historyPending = false, alertsReady = false } = {}) {
   const originalResult = { directions: { bearish: {} } };
   const state = {
     file: { id: "old.json", chartId: "chart", to: 300, timeframe: "5S", metadata: { dataSha256: "old" } },
@@ -32,16 +33,23 @@ function fixture({ candles = [{ time: 330 }], onContinue, marketAvailable = true
   };
   const controls = { "#indicatorFrom": { value: "100" }, "#indicatorTo": { value: "200" }, "#indicatorEnabled": { checked: false } };
   const payload = { directions: { bearish: { reactions: [], resets: [] } }, timeframe: 30 };
-  const requests = [], rebuilt = [], failures = [];
+  const requests = [], rebuilt = [], failures = [], alertPublications = [];
   const rawResponse = {
     file: { ...state.file, id: candles.length ? "new.json" : state.file.id,
       to: candles.at(-1)?.time ?? state.file.to, count: state.raw.length + candles.length },
     candles,
+    corrections,
   };
   const noop = () => {};
   const sandbox = vm.createContext({
-    state, AbortController, performance, symbolLoadController: null, symbolLoadRevision: 1, liveIndicatorTabId: tabId,
+    state, AbortController, performance, readRealtimeUpdate, symbolLoadController: null, symbolLoadRevision: 1, liveIndicatorTabId: tabId,
+    alertLiveReady: alertsReady, formatSymbolWithBroker: file => file.id,
+    alertController: {
+      baseline: time => alertPublications.push({ kind: "baseline", time }),
+      advance: (result, time, symbol) => alertPublications.push({ kind: "advance", result, time, symbol }),
+    },
     indicatorCalculationOwner: null, realtimeUpdateOwner: null, chartUpdateRunning: false,
+    lowerBoundTime: (rows, time) => rows.findIndex(row => row.time >= time),
     clone: structuredClone, removeInvalidIndicatorCalculations: value => value,
     calculationKey: ({ direction }, from, to) => [direction, from, to].join(":"),
     rebuildIndicatorObjects: options => rebuilt.push(options),
@@ -50,16 +58,24 @@ function fixture({ candles = [{ time: 330 }], onContinue, marketAvailable = true
     scheduleDraw: noop, saveChartIndicatorContext: noop, renderIndicatorInfo: noop,
     indicatorSettings: () => ({}), setIndicatorVisibility: enabled => { state.indicator.enabled = enabled; },
     log: { chart: { info: noop, warn: noop, error: name => failures.push(name) }, indicator: { info: noop, warn: noop, error: noop } },
-    applyRealtimeCandles(file, rows) {
+    applyRealtimeCandles(file, rows, corrected) {
       state.file = file;
+      for (const row of corrected) state.raw[state.raw.findIndex(old => old.time === row.time)] = row;
       state.raw.push(...rows);
       state.data.push(...rows);
     },
     async fetch(url, options) {
       requests.push([url, JSON.parse(options.body)]);
-      if (url === "/api/candle-files/realtime")
-        return marketAvailable ? { ok: true, status: 200, json: async () => rawResponse }
+      if (url === "/api/candle-files/realtime") {
+        const phase = JSON.parse(options.body).phase;
+        if (historyPending && phase === "history") {
+          assert.equal(state.raw.at(-1).time, 330);
+          return { status: 200, json: async () => ({ file: state.file, candles: [], verification: { status: "verified" } }) };
+        }
+        return marketAvailable ? { ok: true, status: 200, json: async () => historyPending
+          ? { ...rawResponse, verification: { status: "pending" } } : rawResponse }
           : { ok: false, status: 503, json: async () => ({ error: "FARAZ unavailable." }) };
+      }
       if (onContinue) return onContinue(url, options);
       return {
         ok: true, status: 200, json: async () => payload,
@@ -71,14 +87,27 @@ function fixture({ candles = [{ time: 330 }], onContinue, marketAvailable = true
   vm.runInContext(indicatorFlow + updateFlow, sandbox);
   const rawAbort = new AbortController();
   const indicatorAbort = new AbortController();
-  return { state, originalResult, payload, requests, rebuilt, controls, indicatorAbort, failures,
-    update() {
+  return { state, originalResult, payload, requests, rebuilt, controls, indicatorAbort, failures, alertPublications,
+    update(overrides) {
       sandbox.request = { chartId: "chart", signal: rawAbort.signal,
-        indicatorSignal: indicatorAbort.signal, indicatorCalculation: true };
+        indicatorSignal: indicatorAbort.signal, indicatorCalculation: true, ...overrides };
       return vm.runInContext("runRealtimeChartUpdate(request)", sandbox);
     },
   };
 }
+
+test("an accepted continuation publishes the result to the alert monitor with the closed RAW tail", async () => {
+  const chart = fixture({ alertsReady: true });
+  await chart.update();
+  assert.deepEqual(chart.alertPublications, [{ kind: "advance", result: chart.payload, time: 330, symbol: "new.json" }]);
+});
+
+test("a historical repair refreshes the alert baseline without evaluating a trigger", async () => {
+  const chart = fixture({ alertsReady: true, candles: [], corrections: [{ time: 300 }] });
+  chart.state.indicator.resultContext.to = 300;
+  await chart.update({ indicatorCalculation: false, verifyAll: true });
+  assert.deepEqual(chart.alertPublications, [{ kind: "baseline", time: 300 }]);
+});
 
 test("the accepted checkpoint follows the published RAW rename and retains the chosen start and direction", async () => {
   const chart = fixture();
@@ -93,6 +122,35 @@ test("the accepted checkpoint follows the published RAW rename and retains the c
   assert.equal(chart.state.indicator.resultContext.fileId, "new.json");
   assert.equal(chart.rebuilt[0].preserveOverrides, true);
   assert.deepEqual(chart.state.drawings, [{ id: "position" }]);
+});
+
+test("indicator-only activation leaves the candle acquisition clock untouched", async () => {
+  const chart = fixture();
+  assert.match(await chart.update({ indicatorOnly: true }), /Indicator updated/);
+  assert.deepEqual(chart.requests.map(([url]) => url), ["/api/reactions/continue"]);
+});
+
+test("a poll displays appended rows before requesting historical verification", async () => {
+  const chart = fixture({ historyPending: true });
+  await chart.update({ indicatorCalculation: false });
+  assert.deepEqual(chart.requests.map(([, body]) => body.phase), ["latest", "history"]);
+  assert.equal(chart.requests[1][1].id, "new.json");
+  assert.equal(chart.requests[1][1].lastCandleTime, 330);
+  assert.equal(chart.state.raw.at(-1).time, 330);
+});
+
+test("Verify All corrects a visible result within its original manual range when automatic continuation is off", async () => {
+  const chart = fixture({ candles: [], corrections: [{ time: 300, close: 2 }] });
+  chart.state.indicator.resultContext.to = 300;
+  chart.state.indicator.resultContext.liveProof = proof(300);
+  assert.match(await chart.update({ indicatorCalculation: false, verifyAll: true }), /Corrected 1 candle\..*Indicator updated/);
+  const [endpoint, request] = chart.requests[1];
+  assert.equal(endpoint, "/api/reactions");
+  assert.equal(request.from, 100);
+  assert.equal(request.to, 300);
+  assert.equal(request.direction, "bearish");
+  assert.equal(request.liveSession, true);
+  assert.equal(chart.state.raw[0].close, 2);
 });
 
 test("a new continuation can catch up to the existing RAW tail with no new candles", async () => {
@@ -143,7 +201,9 @@ test("activation catches up this tab's calculation even if market acquisition is
       ["X-QG-Live-Proof", JSON.stringify(proof(300))],
       ["X-QG-Live-Session", "recovered"], ["X-QG-Calculation-Id", "saved"], ["X-QG-Source-Fingerprint", "source"],
     ]) }) });
-  assert.match(await chart.update(), /Indicator updated/);
+  const result = await chart.update();
+  assert.match(result.status, /Indicator updated/);
+  assert.equal(result.verification.status, "unavailable");
   assert.deepEqual(chart.requests[1][1], { id: "old.json", chartId: "chart", tabId, sessionId: "checkpoint", proof: proof(200) });
   assert.equal(chart.state.indicator.resultContext.chartTimeframe, 30);
   assert.equal(chart.state.indicator.resultContext.direction, "bearish");

@@ -3,7 +3,7 @@ title: TradingBot Release Operations
 document_role: procedure
 lifecycle: maintained
 owner: release-tooling
-last_modified_at: 2026-11-12T07:27:00+03:30
+last_modified_at: 2026-11-15T18:25:39+03:30
 ---
 
 # TradingBot release operations
@@ -51,6 +51,7 @@ The main release stops if an excluded artifact is already tracked, including one
 `production` uses a dependency-derived runtime inventory from the exact committed main SHA. Every eligible file under the runtime-owned `apps/chart`, `engine`, and `scripts` roots is included, even if it is not imported yet. Import traversal validates dependencies and adds referenced paths; it does not decide whether a new runtime file is eligible. Dedicated and colocated tests, engineering evidence, development documentation, Algorithm References, ZIP snapshots, local chart state, credentials, dependencies, and disposable artifacts stay outside production. The workflow validates policy, sensitive markers, PowerShell and JavaScript syntax, Python AST, both Engine entry points, `npm ci`, and the chart build in an isolated worktree.
 
 On startup, the launcher runs `npm ci` when the chart lockfile differs from the last successful launcher installation. It stores the lockfile digest in the local `node_modules` directory and reuses the installation on subsequent launches with the same lockfile.
+The launcher requires the chart lockfile and both Engine entry points. Its Python syntax check discovers the current bridge and pipeline modules.
 
 A new `engine/pipeline/xyz.py`, a new configuration file, or a renamed runtime folder is picked up automatically. Runtime package markers and helpers remain eligible even before a caller imports them; exclusions describe non-runtime categories rather than individual source filenames. Additions, modifications, renames, and deletions appear in the branch previews. Main includes all eligible project files; eligible files accidentally matching `.gitignore` are explicitly staged after policy and sensitive-content checks. Individual detector filenames are not a permanent production allowlist.
 

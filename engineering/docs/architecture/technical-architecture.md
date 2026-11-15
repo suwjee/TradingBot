@@ -10,7 +10,7 @@ scope:
   - engine
   - runtime-boundaries
   - state-and-transport
-last_modified_at: 2026-11-12T08:32:07+03:30
+last_modified_at: 2026-11-15T18:25:39+03:30
 ---
 
 # TradingBot Technical Architecture
@@ -110,7 +110,9 @@ Acquisition creates or updates input data. It does not execute Engine trading se
 
 Real-time Chart polls the latest closed candles for one stable chart identity. The server derives the request from the resolved RAW tail and native timeframe. It rejects a stale source, serializes concurrent live requests for the same chart, and stages the validated RAW and sidecar before publishing the renamed pair. The browser receives the committed delta and updates its existing chart view.
 
-The continuation API binds the worker to the chart and the browser tab that ran Apply. It follows RAW renames, validates the current RAW digest, and replays the same in-memory response on retries. Apply and continuation for the chart bypass calculation cache files. If the worker stops, the open tab provides its applied selection, the RAW digest and the indicator digest from its last visible result. The server verifies the old RAW prefix and result before continuing from a replacement worker. If they no longer match, it rebuilds once from that tab's applied selection on current RAW. Live review reports are served from bounded process memory.
+Real-time verification independently reads closed native-timeframe OHLC from FARAZ. It confirms newly acquired rows with a second read and sends them to the chart before starting the bounded historical checks. Verify All covers the entire closed RAW grid in native-timeframe packets and inserts only candles supplied by FARAZ. The RAW sidecar records matched row ranges against the file digest. Missing source rows remain pending. Corrections retain candle timestamps and are published with the corresponding RAW and metadata changes. A source outage returns verification status and retains available local data.
+
+The continuation API binds the worker to the chart and the browser tab that ran Apply. It follows RAW renames, validates the current RAW digest, and replays the same in-memory response on retries. Apply and continuation for the chart bypass calculation cache files. If the worker stops, the open tab provides its applied selection, the RAW digest and the indicator digest from its last visible result. The server verifies the old RAW prefix and result before continuing from a replacement worker. If they no longer match, it rebuilds once from that tab's applied selection on current RAW. Live publications have separate report identities. Opening one in Manual Review saves its immutable snapshot to local report storage so its link can survive a server restart.
 
 ## 6. Chart architecture
 
@@ -126,6 +128,7 @@ Chart is the browser-side workstation and presentation owner. It owns:
 - calculation request initiation;
 - progress consumption;
 - rendering of finalized Engine results;
+- live alert rule matching and delivery using published Engine event times;
 - Manual Review presentation.
 
 Current composition is rooted in the chart application entry point and supporting `src/` feature, chart, drawing, UI, and review modules. These paths are discovery anchors, not an exhaustive future inventory.

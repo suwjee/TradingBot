@@ -10,6 +10,7 @@ import { createRawResourceStore } from "./raw-resource-store.js";
 import { buildRawFilename, formatTehranMetadataTime, parseRawFilename } from "../src/features/raw-file-contract.js";
 import { readBoundedBody } from "./request-body.js";
 import { mergeChartUpdateCandles } from "./chart-update-merge.js";
+import { firstUnverifiedRow, recordVerifiedGapBatch, recordVerifiedRows, summarizeVerifiedRows } from "./candle-verification.js";
 
 const HISTORY_PATH = "/api/customer/trading-view/history";
 const CHART_LIST_PATH = "/api/customer/chart-layout-v2/";
@@ -27,6 +28,7 @@ const PRIMARY_CONCURRENCY = 6;
 const MAX_COVERAGE_RECOVERY_ROUNDS = 3;
 const CHART_UPDATE_PACKET_SIZE = 1_000;
 const CHART_UPDATE_RATE_LIMIT_MS = 30;
+const AUTOMATIC_VERIFICATION_PACKETS = 8;
 const SESSION_FILE_VERSION = 3;
 const LEGACY_DPAPI_SESSION_VERSION = 2;
 
@@ -44,7 +46,7 @@ export function normalizeHistoryPayload(payload) {
   return normalizeHistoryPayloadDetails(payload).candles;
 }
 
-export function normalizeHistoryPayloadDetails(payload) {
+export function normalizeHistoryPayloadDetails(payload, { strict = false } = {}) {
   const result = payload?.result && typeof payload.result === "object" ? payload.result : payload;
   if (result?.s === "no_data") return { candles: [], receivedRows: 0, rejectedRows: 0 };
   const t = Array.isArray(result?.t) ? result.t : [];
@@ -60,7 +62,13 @@ export function normalizeHistoryPayloadDetails(payload) {
   const receivedRows = Math.max(...lengths);
   let rejectedRows = receivedRows - Math.min(...lengths);
   for (let index = 0; index < Math.min(...lengths); index++) {
-    const candle = { time: Math.trunc(Number(t[index])), open: Number(o[index]), high: Number(h[index]), low: Number(l[index]), close: Number(c[index]) };
+    if (strict && [t[index], o[index], h[index], l[index], c[index]].some(value =>
+      typeof value !== "number" && (typeof value !== "string" || !value.trim()))) {
+      rejectedRows++;
+      continue;
+    }
+    const time = Number(t[index]);
+    const candle = { time: strict ? time : Math.trunc(time), open: Number(o[index]), high: Number(h[index]), low: Number(l[index]), close: Number(c[index]) };
     if (!Number.isSafeInteger(candle.time) || candle.time <= 0
       || ![candle.open, candle.high, candle.low, candle.close].every(Number.isFinite)
       || candle.high < Math.max(candle.open, candle.close, candle.low)
@@ -572,17 +580,17 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     };
   }
 
-  async function directRequest(url, { timeoutMs = REQUEST_TIMEOUT_MS, controller = new AbortController(), signal } = {}) {
+  async function directRequest(url, { timeoutMs = REQUEST_TIMEOUT_MS, controller = new AbortController(), signal, fresh = false } = {}) {
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
     try {
       const requestSignal = signal ? AbortSignal.any([signal, controller.signal]) : controller.signal;
-      return await fetchImpl(url, { method: "GET", signal: requestSignal, headers: sessionHeaders() });
+      return await fetchImpl(url, { method: "GET", signal: requestSignal, headers: sessionHeaders(), ...(fresh ? { cache: "no-store" } : {}) });
     } finally {
       clearTimeout(timeout);
     }
   }
 
-  async function chartHistory({ symbolName, resolution, timeframeSeconds, from, to, signal }) {
+  async function chartHistory({ symbolName, resolution, timeframeSeconds, from, to, signal, realtime = false, fresh = false, onPacket }) {
     if (!fs.existsSync(secretPath) || !loadStoredSession()) {
       throw Object.assign(new Error("Sign in to FARAZ first."), { status: 401 });
     }
@@ -595,15 +603,19 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     async function requestPacket(packet) {
       const url = new URL(endpoint);
       for (const [key, value] of Object.entries({
-        symbolName: endpointSymbolName(symbolName), resolution, from: packet.from, to: packet.to,
+        // FARAZ's upper bound is exclusive. Keep the inclusive RAW bound in
+        // mergeCandles so the next, potentially open candle is never accepted.
+        symbolName: endpointSymbolName(symbolName), resolution, from: packet.from, to: packet.to + (realtime ? timeframeSeconds : 0),
         countback: packet.countback, firstDataRequest: false, latest: packet.latest,
         adjustType: historyAuth?.adjustType || "2", json: true,
       })) url.searchParams.set(key, String(value));
       let lastError;
-      for (let attempt = 1; attempt <= MAX_PACKET_ATTEMPTS; attempt++) {
+      const attempts = realtime ? 1 : MAX_PACKET_ATTEMPTS;
+      for (let attempt = 1; attempt <= attempts; attempt++) {
         await waitForChartHistoryRequestSlot(signal);
         try {
-          const response = await directRequest(url, { timeoutMs: 30_000, signal });
+          const requestSignal = realtime ? AbortSignal.any([signal, AbortSignal.timeout(5_000)]) : signal;
+          const response = await directRequest(url, { timeoutMs: 30_000, signal: requestSignal, fresh });
           const text = await response.text();
           signal?.throwIfAborted();
           if (response.status !== 200) {
@@ -612,7 +624,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           let payload;
           try { payload = JSON.parse(text); }
           catch { throw Object.assign(new Error("FARAZ returned invalid JSON with HTTP 200."), { status: 200 }); }
-          const normalized = normalizeHistoryPayloadDetails(payload);
+          const normalized = normalizeHistoryPayloadDetails(payload, { strict: realtime });
           if (normalized.rejectedRows) {
             throw Object.assign(new Error(`FARAZ returned ${normalized.rejectedRows} malformed candle row(s).`), { status: 200 });
           }
@@ -620,17 +632,116 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
         } catch (error) {
           signal?.throwIfAborted();
           lastError = error;
-          if (attempt < MAX_PACKET_ATTEMPTS) await delay(RETRY_BASE_DELAY_MS * attempt, undefined, { signal });
+          if (attempt < attempts) await delay(RETRY_BASE_DELAY_MS * attempt, undefined, { signal });
         }
       }
-      throw Object.assign(new Error(`FARAZ packet ${tehranDisplayTime(packet.from)}→${tehranDisplayTime(packet.to)} failed after ${MAX_PACKET_ATTEMPTS} attempts: ${lastError?.message || "Unknown error"}`), { status: lastError?.status });
+      throw Object.assign(new Error(`FARAZ packet ${tehranDisplayTime(packet.from)}→${tehranDisplayTime(packet.to)} failed after ${attempts} attempt${attempts === 1 ? "" : "s"}: ${lastError?.message || "Unknown error"}`), { status: lastError?.status });
     }
 
     const collected = [];
-    for (const packet of chunkRange(from, to, timeframeSeconds, CHART_UPDATE_PACKET_SIZE)) {
+    const packets = chunkRange(from, to, timeframeSeconds, CHART_UPDATE_PACKET_SIZE);
+    for (const packet of packets) {
       collected.push(await requestPacket(packet));
+      onPacket?.(collected.length, packets.length);
     }
     return mergeCandles(collected, from, to);
+  }
+
+  async function checkRealtimeCandles(file, timeframeSeconds, closedTo, { verifyAll, phase, signal, reportProgress }) {
+    const previous = file.metadata.candleVerification;
+    const ranges = verifyAll ? [] : (previous?.ranges || []).map(range => [...range]);
+    const readHistory = async (from, to, { fresh = true, onPacket } = {}) => {
+      const history = await chartHistory({ symbolName: `${file.broker}:${file.symbol}`, resolution: file.timeframe,
+        timeframeSeconds, from, to, signal, realtime: true, fresh, onPacket });
+      if (history.conflicts || history.candles.some(row => (row.time - file.from) % timeframeSeconds !== 0)) {
+        throw new Error("FARAZ returned conflicting candles or candles outside the RAW timeframe grid.");
+      }
+      return history.candles;
+    };
+    let candles = [];
+    const corrections = [];
+    const gapCandles = [];
+    let checkedCount = 0;
+    let correctedNewCount = 0;
+    let unavailable = false;
+    let checkedHistory = false;
+    let cursor = verifyAll ? 0 : (previous?.nextIndex || 0);
+    try {
+      const from = file.to + timeframeSeconds;
+      if (!verifyAll && phase !== "history" && from <= closedTo) {
+        candles = await readHistory(from, closedTo, { fresh: false,
+          onPacket: (done, total) => reportProgress(40 * done / total) });
+        if (candles.length) {
+          const confirmed = await readHistory(candles[0].time, candles.at(-1).time, {
+            onPacket: (done, total) => reportProgress(40 + 25 * done / total),
+          });
+          const comparison = recordVerifiedRows(ranges, file.count, candles, confirmed);
+          checkedCount += comparison.checkedCount;
+          correctedNewCount = comparison.corrections.length;
+          const fixed = new Map(comparison.corrections.map(row => [row.time, row]));
+          candles = candles.map(row => fixed.get(row.time) || row);
+        }
+      }
+      const alreadyVerified = summarizeVerifiedRows(ranges, file.count + candles.length).ranges;
+      const verified = firstUnverifiedRow(alreadyVerified, 0) >= file.count;
+      if (!verified && phase !== "latest") {
+        const rows = rawStore.read(file.id);
+        if (!rows) return null;
+        const batches = [];
+        if (cursor >= rows.length || rows[cursor].time > closedTo) cursor = 0;
+        let index = cursor;
+        const rangeEnd = Math.min(file.to, closedTo);
+        if (verifyAll && file.from <= rangeEnd) {
+          // Cover the entire native grid, including gaps wider than a packet.
+          for (const packet of chunkRange(file.from, rangeEnd, timeframeSeconds, CHART_UPDATE_PACKET_SIZE)) {
+            let end = index;
+            while (end < rows.length && rows[end].time <= packet.to) end++;
+            batches.push({ start: index, end, from: packet.from, to: packet.to });
+            index = end;
+          }
+        } else if (!verifyAll) {
+          while (batches.length < AUTOMATIC_VERIFICATION_PACKETS) {
+            index = firstUnverifiedRow(alreadyVerified, index);
+            const first = rows[index];
+            if (!first || first.time > closedTo) break;
+            const limit = Math.min(closedTo, first.time + (CHART_UPDATE_PACKET_SIZE - 1) * timeframeSeconds);
+            let end = index + 1;
+            while (end < rows.length && rows[end].time <= limit) end++;
+            batches.push({ start: index, end, from: first.time, to: rows[end - 1].time });
+            index = end;
+          }
+        }
+        const historyStart = verifyAll || phase === "history" || from > closedTo ? 0 : 65;
+        for (const [batchIndex, { start, end, from, to }] of batches.entries()) {
+          const batch = rows.slice(start, end);
+          const reference = await readHistory(from, to);
+          checkedHistory = true;
+          const comparison = verifyAll ? recordVerifiedGapBatch(ranges, start + gapCandles.length, batch, reference)
+            : recordVerifiedRows(ranges, start, batch, reference);
+          if (comparison.recovered) for (const row of comparison.recovered) gapCandles.push(row);
+          checkedCount += comparison.checkedCount;
+          for (const row of comparison.corrections) corrections.push(row);
+          cursor = end;
+          reportProgress(historyStart + (95 - historyStart) * (batchIndex + 1) / batches.length);
+        }
+        if (verifyAll || batches.length < AUTOMATIC_VERIFICATION_PACKETS) cursor = 0;
+      }
+    } catch (error) {
+      signal.throwIfAborted();
+      unavailable = true;
+    }
+    if (verifyAll && unavailable && !checkedHistory && previous) {
+      return { candles, corrections, gapCandles, verification: previous, status: "unavailable", checkedCount, correctedCount: 0 };
+    }
+    corrections.sort((left, right) => left.time - right.time);
+    const summary = summarizeVerifiedRows(ranges, file.count + candles.length + gapCandles.length);
+    const verification = { schemaVersion: 1, ...summary, nextIndex: verifyAll && unavailable ? 0 : cursor };
+    if (verification.verifiedCount || verifyAll || previous) {
+      verification.verifiedAt = verifyAll || corrections.length || summary.verifiedCount !== previous?.verifiedCount
+        ? formatTehranMetadataTime(Math.floor(now() / 1000)) : previous?.verifiedAt;
+    }
+    return { candles, corrections, gapCandles, verification, status: unavailable ? "unavailable" : verification.status,
+      checkedCount, correctedCount: corrections.length + correctedNewCount };
   }
 
   async function probeStoredSession(symbolName = "FXCM:USOIL") {
@@ -1545,6 +1656,19 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       });
       server.middlewares.use("/api/candle-files/realtime", async (req, res) => {
         if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
+        const streamProgress = req.headers.accept === "application/x-ndjson";
+        const sendResult = (status, result) => {
+          if (!res.headersSent) return json(res, status, result);
+          res.end(`${JSON.stringify({ status, result })}\n`);
+        };
+        let lastProgress = -1;
+        const reportProgress = value => {
+          const progress = Math.floor(value);
+          if (!streamProgress || res.destroyed || progress <= lastProgress) return;
+          if (!res.headersSent) res.writeHead(200, { "Content-Type": "application/x-ndjson; charset=utf-8", "Cache-Control": "no-store" });
+          lastProgress = progress;
+          res.write(`${JSON.stringify({ progress })}\n`);
+        };
         const controller = new AbortController();
         const { signal } = controller;
         const onClose = () => controller.abort();
@@ -1559,6 +1683,10 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           const id = typeof params.id === "string" ? params.id.trim() : "";
           chartId = typeof params.chartId === "string" ? params.chartId.trim() : "";
           const { lastCandleTime, baseSha256 } = params;
+          const phase = params.phase;
+          if (phase !== undefined && phase !== "latest" && phase !== "history") {
+            return json(res, 400, { error: "The live update phase is invalid." });
+          }
           if (!id || !chartId || !Number.isSafeInteger(lastCandleTime) || lastCandleTime <= 0
             || typeof baseSha256 !== "string" || !/^[a-f0-9]{64}$/.test(baseSha256)) {
             return json(res, 400, { error: "A RAW file ID, chart ID, last candle time and base SHA-256 are required." });
@@ -1567,7 +1695,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           if (realtimeUpdates.has(chartId)) {
             return json(res, 409, { code: "RAW_BUSY", error: "This RAW file is already catching up." });
           }
-          const changed = (file) => json(res, 409, {
+          const changed = (file) => sendResult(409, {
             code: "RAW_CHANGED", error: "The selected RAW file changed. Reload its current version before retrying.",
             ...(file?.chartId === chartId ? { file: publicRawFile(file) } : {}),
           });
@@ -1576,36 +1704,34 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           if (!file || file.chartId !== chartId) return changed(rawStore.get(realtimeFileIds.get(chartId)));
           if (file.to !== lastCandleTime || file.metadata.dataSha256 !== baseSha256) return changed(file);
           const timeframeSeconds = parseResolutionToSeconds(file.timeframe);
-          const from = file.to + timeframeSeconds;
           const closedSteps = Math.floor((now() / 1000 - file.to) / timeframeSeconds) - 1;
           const to = file.to + closedSteps * timeframeSeconds;
-          if (from > to) return json(res, 200, { file: publicRawFile(file), candles: [] });
 
           if (!version) return changed();
           realtimeUpdates.set(chartId, controller);
-          let history;
-          try {
-            history = await chartHistory({ symbolName: `${file.broker}:${file.symbol}`, resolution: file.timeframe, timeframeSeconds, from, to, signal });
-          } catch (error) {
-            if (signal.aborted) return;
-            const needAuth = error.status === 401 || error.status === 403;
-            return json(res, needAuth ? 401 : 502, { error: error.message, needAuth });
-          }
+          reportProgress(0);
+          const checked = await checkRealtimeCandles(file, timeframeSeconds, to,
+            { verifyAll: params.verifyAll === true, phase, signal, reportProgress });
           signal.throwIfAborted();
-          if (history.conflicts || history.candles.some((row) => (row.time - from) % timeframeSeconds !== 0)) {
-            return json(res, 502, { error: "FARAZ returned conflicting candles or candles outside the RAW timeframe grid." });
-          }
-          if (rawStore.version(id) !== version) return changed();
+          if (!checked || rawStore.version(id) !== version) return changed();
           const current = rawStore.get(id);
           if (current?.chartId !== chartId) return changed(current);
-          const { candles } = history;
-          const updated = candles.length ? await rawStore.appendLatest(current, candles, timeframeSeconds, version, signal) : current;
+          const { candles, corrections, gapCandles, verification, status, checkedCount, correctedCount } = checked;
+          if (status !== "unavailable") reportProgress(95);
+          const oldVerification = current.metadata.candleVerification;
+          const verificationChanged = (verification.verifiedCount || verification.nextIndex || oldVerification)
+            && JSON.stringify(verification) !== JSON.stringify(oldVerification);
+          const updated = candles.length || corrections.length || gapCandles.length || verificationChanged
+            ? await rawStore.appendLatest(current, candles, timeframeSeconds, version, signal,
+              { corrections, gapCandles, verification: verificationChanged ? verification : undefined }) : current;
           if (!updated) return changed();
           if (updated.id !== id) realtimeFileIds.set(chartId, updated.id);
-          json(res, 200, { file: publicRawFile(updated), candles });
+          sendResult(200, { file: publicRawFile(updated), candles, corrections, gapCandles,
+            verification: { status, verifiedCount: verification.verifiedCount, totalCount: verification.totalCount,
+              checkedCount, correctedCount, recoveredCount: gapCandles.length } });
         } catch (error) {
           if (signal.aborted || res.destroyed) return;
-          json(res, 500, { error: error.message });
+          sendResult(500, { error: error.message });
         } finally {
           res.off("close", onClose);
           if (realtimeUpdates.get(chartId) === controller) realtimeUpdates.delete(chartId);

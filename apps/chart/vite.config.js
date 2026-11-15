@@ -183,9 +183,8 @@ function resolveCalculationReport(id) {
   return file.startsWith(`${path.resolve(calculationsDir)}${path.sep}`) && fs.existsSync(file) ? file : null;
 }
 
-function livePublication(item, request, to, payload, workerFingerprint, tabId, token) {
-  const reportId = `live/${token || randomUUID().replaceAll('-', '')}`;
-  liveReports.delete(reportId);
+function livePublication(item, request, to, payload, workerFingerprint, tabId) {
+  const reportId = `live/${randomUUID().replaceAll('-', '')}`;
   liveReports.set(reportId, { payload, calculation: calculationMetadata(item, { ...request, to }, reportId) });
   if (liveReports.size > 16) liveReports.delete(liveReports.keys().next().value);
   return { calculationId: reportId, output: JSON.stringify(payload), proof: {
@@ -443,14 +442,27 @@ function localDataApi() {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         try {
-          if (req.method !== 'GET') throw new Error('GET is required');
           const route = decodeURIComponent(new URL(req.url ?? '/', 'http://localhost').pathname).replace(/^\/+/, '');
-          if (/^live\/[a-f0-9]{32}$/.test(route)) {
+          if (/^live\/[a-f0-9]{32}$/.test(route) && ['GET', 'POST'].includes(req.method)) {
+            const file = path.join(calculationsDir, `${route}.json`);
+            if (fs.existsSync(file)) { res.end(fs.readFileSync(file)); return; }
             const report = liveReports.get(route);
             if (!report) throw new Error('The live report is unavailable. Update the indicator in its chart tab.');
-            res.end(JSON.stringify({ payload: report.payload, snapshot: { timezone: 'Asia/Tehran', calculation: report.calculation } }));
+            const output = JSON.stringify({ payload: report.payload, snapshot: { timezone: 'Asia/Tehran', calculation: report.calculation } });
+            if (req.method === 'POST') {
+              const temporary = `${file}.${randomUUID()}.tmp`;
+              fs.mkdirSync(path.dirname(file), { recursive: true });
+              try {
+                fs.writeFileSync(temporary, output, { encoding: 'utf8', flag: 'wx' });
+                fs.renameSync(temporary, file);
+              } finally {
+                fs.rmSync(temporary, { force: true });
+              }
+            }
+            res.end(output);
             return;
           }
+          if (req.method !== 'GET') throw new Error('GET is required');
           const calculationFile = resolveCalculationReport(route);
           if (!calculationFile) throw new Error('Calculation report was not found');
           const [symbol, timeframe, direction, filename] = route.split('/');
@@ -741,7 +753,7 @@ function localDataApi() {
               ...session, sessionId: token, rawSha256: metadata.dataSha256, data: dataPath,
             }, { validate, publish(payload, request) {
               const to = Math.floor(selected.to / request.chartTimeframe) * request.chartTimeframe;
-              return livePublication(selected, request, to, payload, workerFingerprint, tabId, token);
+              return livePublication(selected, request, to, payload, workerFingerprint, tabId);
             } });
           }
           let result;
@@ -913,7 +925,7 @@ function localDataApi() {
              publishProgress(requestId, { status: 'completed', label: `Cached result (${cacheSource})` });
            }
            if (liveRequested) {
-             const live = livePublication(valid, calculationRequest, to, JSON.parse(output), workerFingerprint, tabId, liveSessionId);
+             const live = livePublication(valid, calculationRequest, to, JSON.parse(output), workerFingerprint, tabId);
              res.setHeader('X-QG-Live-Proof', JSON.stringify(live.proof));
              res.setHeader('X-QG-Calculation-Id', live.calculationId);
            } else {

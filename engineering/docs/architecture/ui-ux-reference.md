@@ -12,7 +12,7 @@ scope:
   - faraz-ui
   - algorithm-reference-ui
   - responsive-accessibility
-last_modified_at: 2026-11-12T08:32:07+03:30
+last_modified_at: 2026-11-15T18:25:39+03:30
 ---
 
 # TradingBot UI/UX Reference
@@ -45,7 +45,7 @@ The maintained UI follows these durable principles:
 
 1. **Chart-first workstation.** Market data, chart interaction, drawings, calculation controls, and finalized result overlays share one workstation shell.
 2. **Presentation is not trading authority.** Chart displays finalized Engine results; it does not independently repair or recreate trading decisions.
-3. **Workspace ownership is explicit.** Chart, FARAZ, and Algorithm modes reveal only the controls relevant to the active workspace.
+3. **Workspace ownership is explicit.** Chart, FARAZ, Algorithm, and Alert modes reveal the controls relevant to the active workspace.
 4. **User intent is visible.** Long operations expose progress or status; destructive operations require explicit user action; failures remain observable.
 5. **Presentation state is separate from calculation truth.** Colors, visibility, offsets, filters, panels, and review decisions may change without rewriting Engine state.
 6. **Responsive behavior preserves access.** Narrow layouts reflow, scroll, or overlay controls instead of defining a separate mobile product.
@@ -82,11 +82,21 @@ It is a **reference/presentation surface**, not a replacement for canonical proj
 
 ### 4.5 Manual Review
 
-Manual Review is a separate report document opened from a persisted calculation identity. It is not a fourth shared-shell workspace. It presents finalized calculation information for human review without changing Engine truth.
+Manual Review is a separate report document opened from a persisted calculation identity. It presents finalized calculation information for human review without changing Engine truth.
 
 ### 4.6 Full-screen Chart
 
 Full-screen Chart suppresses normal workstation chrome so the chart surface can occupy the available viewport. Leaving full screen restores the normal workspace contract.
+
+### 4.7 Alert workspace
+
+Alert lists saved rules alongside an editor. Each rule can be enabled independently and contains one or more ordered steps. Within each step, any of the selected event alternatives can match. The following step must match at a strictly later event time. A completed rule starts again at its first step.
+
+The picker groups Reaction, Blue Line and A under Base behaviors. S Blue, S Red, the two E families and numbered StopAll events are Secondary behaviors. Both groups offer Bullish and Bearish options for each event. Primary structure offers numbered PH and PL. A rule can use more than one direction by choosing the direction of each applicable event.
+
+Monitoring runs in the open TradingBot tab across workspaces. Apply the indicator to the chart and enable Indicator Calculation in Real-time Chart. The monitor observes the events published by that live indicator, including its directional transitions. An event uses the published confirmation time at the finest available resolution. Monitoring starts at the current RAW tail. Applying a new calculation establishes a new baseline. A historical repair alone does not trigger an alert.
+
+Rule completion shows an in-app notification. Desktop notifications are available with browser permission. Sound can be enabled per rule and configured for 1–300 seconds, with Test sound and Stop sound controls. Browser playback can require interaction with the tab.
 
 ## 5. Primary user workflow
 
@@ -316,7 +326,7 @@ Persistence location details belong to [Local State](../operations/local-state.m
 
 ### 11.1 Entry
 
-Manual Review is opened from a calculation that has a valid persisted report identity. It opens as a separate browser document/tab under the report route.
+Manual Review opens as a separate browser document under the report route. Opening a live calculation saves its report snapshot. The link opens that same snapshot as new calculations complete and after a server restart.
 
 If no valid report identity exists, or the persisted report cannot be found/loaded, the review page shows an inline failure state rather than fabricating a report.
 
@@ -420,7 +430,9 @@ Chart also exposes an update-data workflow for the currently loaded RAW resource
 
 FARAZ acquisition and Chart update affect input data availability. They do not define trading semantics.
 
-The Real-time Chart control sits before Cut Candles. Enable starts a catch-up on the selected RAW file, then checks for closed candles at the configured interval. The green ring fills until the next check. Disable stops the timer and disables the other options. Changing the selected RAW file ends the current live session. New candles retain the RAW source timeframe and are displayed using the current chart timeframe. The chart follows incoming candles when already at the latest edge and preserves a historical viewport when browsing older candles.
+The Real-time Chart control sits before Cut Candles. Opening a RAW chart starts Real-time Chart by default. The timer schedules checks at local system-clock boundaries for the selected interval plus two seconds. After a delayed wake, one immediate check catches up and later checks resume that alignment. The green ring fills until the next check. Disable stops the timer and disables the other options. Loading another chart or a RAW revision that removes previously loaded candles ends the current live session. Appends, gap fills and corrections published by another tab on the same chart can be reconciled with the current session. New candles retain the RAW source timeframe and are displayed using the current chart timeframe. The chart follows incoming candles when already at the latest edge and preserves a historical viewport when browsing older candles.
+
+Candle verification runs automatically with real-time checks. The percentage next to Polling interval reflects completed request packets and reaches 100% after the check finishes. Verify All reports the number of candles compared, corrected, and restored from gaps. Automatic checks update the percentage and verification status without a toast. Verification uses the selected RAW file's timeframe independently of the display timeframe. Verify All compares the entire selected RAW file and fills historical gaps with confirmed FARAZ candles. A red verification indicator appears while FARAZ is unavailable, and the chart remains usable with its local data. Corrections refresh the displayed candles and recalculate affected visible indicator results using that tab's applied selection.
 
 Indicator Calculation starts with the result displayed in the current browser tab. Enabling it immediately processes the backlog through the latest available RAW candle, then continues at the configured interval. Apply is required when the current tab has no displayed calculation, including after a browser reload. The open tab retains its calculation selection through a worker loss and can recover without reading saved calculation files. Temporary failures keep the last result and retry, and stored candles can be processed while the market-data source is unavailable.
 
@@ -447,6 +459,7 @@ The Algorithm workspace is a convenience reference surface. Its content does not
 | UI-relevant state | Primary owner | User contract |
 | --- | --- | --- |
 | Active workspace | Browser UI | Restored when the saved workspace remains valid. |
+| Alert rules | Browser UI | Rule definitions persist locally. In-progress sequences belong to the open tab and current live calculation. |
 | Selected chart/timeframe | Browser UI + tab URL | Valid chart identity/timeframe can survive refresh; explicit tab URL state takes precedence where present. |
 | Visible pan/zoom range | Chart runtime | Presentation state; not the calculation-range authority. |
 | Indicator form/range preferences | Browser UI | May restore for the same chart context; active calculated truth is not reconstructed from form state. |
@@ -480,7 +493,7 @@ Operational directory details are intentionally delegated to [Local State](../op
 
 ## 16. Navigation and routing
 
-The primary in-application navigation model switches among Chart, FARAZ, and Algorithm workspaces inside one workstation shell.
+The primary in-application navigation model switches among Chart, FARAZ, Algorithm, and Alert workspaces inside one workstation shell.
 
 Routing/state behavior includes:
 
@@ -516,7 +529,7 @@ Manual Review begins with a loading state and transitions to the rendered report
 
 ### Notifications
 
-Transient success/info/error notifications use semantic presentation. Error notifications use alert semantics; non-error notifications use status semantics. Hovering an active toast pauses its dismissal timer so the message remains readable.
+Transient notifications use semantic presentation. Errors and trading alerts use alert semantics. Success and informational notifications use status semantics. Hovering an active toast pauses its dismissal timer so the message remains readable.
 
 ## 18. Error handling and recovery UX
 

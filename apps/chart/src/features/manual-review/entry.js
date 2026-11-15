@@ -4,7 +4,9 @@ const loading = document.getElementById("review-loading");
 const app = document.getElementById("app");
 
 function fail(message) {
-  loading.innerHTML = `<p>${message}</p>`;
+  const paragraph = document.createElement("p");
+  paragraph.textContent = message;
+  loading.replaceChildren(paragraph);
 }
 
 function renderReview(payload, snapshot) {
@@ -28,7 +30,8 @@ async function loadCalculationReport() {
   const identity = location.pathname.replace(/^\/info\/?/, "");
   if (!identity) { fail("This report has no calculation identity."); return; }
   try {
-    const response = await fetch(`/api/info/${identity}`, { cache: "no-store" });
+    const method = /^live\/[a-f0-9]{32}$/.test(identity) ? "POST" : "GET";
+    const response = await fetch(`/api/info/${identity}`, { cache: "no-store", method });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Calculation report was not found");
     renderReview(result.payload, result.snapshot);
