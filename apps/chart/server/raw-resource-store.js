@@ -7,6 +7,8 @@ import { buildRawFilename, formatTehranMetadataTime, parseRawFilename, parseTehr
 
 const CANDLE_KEYS = ["time", "open", "high", "low", "close"];
 const UNIT_SECONDS = { S: 1, M: 60, H: 3600, D: 86400, W: 604800 };
+const MAX_RECENT_APPENDS = 128;
+const MAX_APPEND_BYTES = 256 * 1024;
 
 function segment(value, fallback) {
   const result = String(value || "").trim().replace(/[^a-zA-Z0-9._-]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 80);
@@ -161,6 +163,7 @@ function persistedMetadata({ broker, symbol, timeframe, source, filename, snapsh
 export function createRawResourceStore({ rootDir }) {
   const root = path.resolve(rootDir);
   const inventoryCache = new Map();
+  const recentAppends = new Map();
 
   function fileVersion(stat) {
     return `${stat.dev}:${stat.ino}:${stat.size}:${stat.birthtimeMs}:${stat.mtimeMs}:${stat.ctimeMs}`;
@@ -285,6 +288,41 @@ export function createRawResourceStore({ rootDir }) {
     return candles;
   }
 
+  function appendKey(chartId, digest) {
+    return `${chartId}:${digest}`;
+  }
+
+  function appendChain(chartId, base, target) {
+    const chunks = [];
+    for (let digest = target; digest !== base;) {
+      const edge = recentAppends.get(appendKey(chartId, digest));
+      if (!edge) return null;
+      chunks.push(edge.bytes);
+      digest = edge.base;
+    }
+    return chunks;
+  }
+
+  function isCurrent(file) {
+    const current = get(file.id);
+    return current?.chartId === file.chartId && current.metadata.dataSha256 === file.metadata.dataSha256;
+  }
+
+  function readAppendDelta(file, baseSha256) {
+    if (!baseSha256 || baseSha256 === file.metadata.dataSha256 || !canServeAppendSnapshot(file)) return null;
+    const chunks = appendChain(file.chartId, baseSha256, file.metadata.dataSha256);
+    return chunks && Buffer.concat(chunks.reverse());
+  }
+
+  function canServeAppendSnapshot(file) {
+    if (isCurrent(file)) return true;
+    // A calculation already reading a superseded file may finish when every
+    // intervening commit only extended its exact bytes. Repairs break the chain.
+    const newest = [...recentAppends.values()].reverse().find(edge => edge.file.chartId === file.chartId);
+    return Boolean(newest && appendChain(file.chartId, file.metadata.dataSha256, newest.file.metadata.dataSha256)
+      && isCurrent(newest.file));
+  }
+
   async function appendLatest(file, incoming, timeframeSeconds, expectedVersion, signal, { corrections = [], gapCandles = [], verification } = {}) {
     const cached = inventoryCache.get(file.id);
     if (cached?.item !== file || (incoming.length && (cached.timeframeSeconds !== timeframeSeconds
@@ -382,7 +420,15 @@ export function createRawResourceStore({ rootDir }) {
     // A sidecar whose old RAW path no longer exists is invisible to inventory.
     try { fs.rmSync(file.metaPath, { force: true }); } catch { /* The new pair is already committed. */ }
     inventoryCache.delete(file.id);
-    return cacheItem({ id, dataPath, metaPath }, metadata, snapshot, timeframeSeconds);
+    const committed = cacheItem({ id, dataPath, metaPath }, metadata, snapshot, timeframeSeconds);
+    if (!corrections.length && !gapCandles.length && suffix.length <= MAX_APPEND_BYTES) {
+      const key = appendKey(committed.chartId, snapshot.dataSha256);
+      recentAppends.delete(key);
+      recentAppends.set(key, { file: { id, chartId: committed.chartId, metadata: { dataSha256: snapshot.dataSha256 } },
+        base: previous.dataSha256, bytes: suffix.subarray(0, -1) });
+      if (recentAppends.size > MAX_RECENT_APPENDS) recentAppends.delete(recentAppends.keys().next().value);
+    }
+    return committed;
   }
 
   function cut(id, { from, to, mode = "replace" } = {}) {
@@ -476,5 +522,6 @@ export function createRawResourceStore({ rootDir }) {
     inventoryCache.delete(item.id);
     return true;
   }
-  return { root, resolve, version, get, write, list, read, appendLatest, cut, recordFarazCoverage, remove };
+  return { root, resolve, version, get, write, list, read, appendLatest, readAppendDelta, canServeAppendSnapshot,
+    cut, recordFarazCoverage, remove };
 }

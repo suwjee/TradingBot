@@ -48,8 +48,8 @@ export function startLiveEngineWorker({ command, args, env, onProgress, timeoutM
       timer.unref();
       pending = { type, resolve, reject, timer };
       if (request) {
-        const { bytes, sha256 } = request;
-        child.stdin.write(`${JSON.stringify({ bytes: bytes.length, sha256 })}\n`);
+        const { bytes, sha256, baseSha256 } = request;
+        child.stdin.write(`${JSON.stringify({ bytes: bytes.length, sha256, baseSha256 })}\n`);
         child.stdin.write(bytes, error => {
           if (error) close();
         });
@@ -71,7 +71,7 @@ export function startLiveEngineWorker({ command, args, env, onProgress, timeoutM
       return;
     }
     if (message?.type === "error") {
-      if (message.code === "RAW_RETRY") {
+      if (["RAW_RETRY", "RAW_DELTA_MISMATCH"].includes(message.code)) {
         settle(new LiveEngineError(503, message.message, message.code));
         return;
       }
@@ -94,9 +94,9 @@ export function startLiveEngineWorker({ command, args, env, onProgress, timeoutM
   return {
     seed: receive("seed"),
     get closed() { return closed; },
-    async update(bytes, sha256) {
+    async update(bytes, sha256, baseSha256) {
       if (!Buffer.isBuffer(bytes)) throw new TypeError("The live Engine requires RAW bytes.");
-      return (await receive("update", { bytes, sha256 })).payload;
+      return (await receive("update", { bytes, sha256, baseSha256 })).payload;
     },
     close,
   };
@@ -122,7 +122,7 @@ export function createLiveEngineSessions({ maxSessions = 4, idleTtlMs = 30 * 60_
   const timer = setInterval(expire, Math.min(idleTtlMs, 60_000));
   timer.unref();
 
-  async function seed({ chartId, tabId, sourceFingerprint, request }, launch) {
+  async function seed({ chartId, tabId, sourceFingerprint, request, rawSha256 }, launch) {
     if (closed) throw new LiveEngineError(503, "The server is shutting down.");
     expire();
     if (sessions.size >= maxSessions) {
@@ -133,7 +133,8 @@ export function createLiveEngineSessions({ maxSessions = 4, idleTtlMs = 30 * 60_
     }
     const id = randomBytes(16).toString("hex");
     const worker = launch();
-    const session = { worker, chartId, tabId, sourceFingerprint, request, seeding: true, touched: now(), latest: null };
+    const session = { worker, chartId, tabId, sourceFingerprint, request, seedRawSha256: rawSha256,
+      seeding: true, touched: now(), latest: null };
     sessions.set(id, session);
     try {
       const { payload, ready } = await worker.seed;
@@ -171,7 +172,7 @@ export function createLiveEngineSessions({ maxSessions = 4, idleTtlMs = 30 * 60_
     activeSession(sessionId, chartId, tabId, sourceFingerprint).touched = now();
   }
 
-  async function advance({ sessionId, chartId, tabId, sourceFingerprint, rawSha256, data }, { validate, publish }) {
+  async function advance({ sessionId, chartId, tabId, sourceFingerprint, rawSha256, data }, { validate, publish, readAppend }) {
     const session = activeSession(sessionId, chartId, tabId, sourceFingerprint);
     if (session.pending) {
       if (session.pending.rawSha256 === rawSha256 && session.pending.data === data) return session.pending.result;
@@ -183,11 +184,25 @@ export function createLiveEngineSessions({ maxSessions = 4, idleTtlMs = 30 * 60_
     };
     async function update() {
       const needsUpdate = session.latest?.rawSha256 !== rawSha256;
-      const bytes = await validate(needsUpdate);
+      const baseSha256 = session.latest?.rawSha256 ?? session.seedRawSha256;
+      let delta = needsUpdate && baseSha256 && readAppend?.(baseSha256);
+      const replayDelta = !needsUpdate && session.latest.usedDelta;
+      let bytes = await validate(needsUpdate && !delta, Boolean(delta || replayDelta));
       isActive();
       if (needsUpdate) {
         let payload;
-        try { payload = await session.worker.update(bytes, rawSha256); }
+        try {
+          if (delta) {
+            try { payload = await session.worker.update(delta, rawSha256, baseSha256); }
+            catch (error) {
+              if (error.code !== "RAW_DELTA_MISMATCH") throw error;
+              delta = null;
+              bytes = await validate(true);
+              isActive();
+            }
+          }
+          if (!delta) payload = await session.worker.update(bytes, rawSha256);
+        }
         catch (error) {
           if (error.code !== "RAW_RETRY") discard(sessionId);
           throw error;
@@ -195,11 +210,11 @@ export function createLiveEngineSessions({ maxSessions = 4, idleTtlMs = 30 * 60_
         isActive();
         // Retain the full Engine result even if RAW validation, report
         // publication, or the HTTP response fails after the Engine advances.
-        session.latest = { rawSha256, data, payload };
-        await validate();
+        session.latest = { rawSha256, data, payload, usedDelta: Boolean(delta) };
+        await validate(false, Boolean(delta));
         isActive();
       } else if (session.latest.data !== data) {
-        session.latest = { rawSha256, data, payload: session.latest.payload };
+        session.latest = { rawSha256, data, payload: session.latest.payload, usedDelta: session.latest.usedDelta };
       }
       if (!session.latest.published) session.latest.published = await publish(session.latest.payload, session.request);
       return session.latest.published;

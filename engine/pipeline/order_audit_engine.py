@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from bisect import bisect_left, bisect_right
+from bisect import bisect_left, bisect_right, insort_right
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime
@@ -14,8 +14,8 @@ from typing import Callable, Sequence
 from core_utils import as_decimal, order_identity, reaction_identity
 
 ORDER_AUDIT_ENGINE_VERSION = "1.8.2"
-ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION = "1.9.0"
-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-18T07:10:09+03:30"
+ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION = "1.9.1"
+ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-18T17:44:08+03:30"
 
 
 def relabel_primary_causes(causes, labels):
@@ -1018,8 +1018,7 @@ class OrderAuditEngineMixin:
     def _clear_order_audit(self) -> None:
         self.order_audit.clear()
         self._order_audit_confirmation_index.clear()
-        self._carried_orders_cache.clear()
-        self._carried_creation_index = None
+        self._invalidate_carried_order_caches()
         self._invalidate_post_stop_order_cache()
 
     def _invalidate_carried_order_caches(self) -> None:
@@ -1029,6 +1028,7 @@ class OrderAuditEngineMixin:
         # must not wipe that cache.
         self._carried_orders_cache.clear()
         self._carried_creation_index = None
+        self._carried_creation_append = None
 
     def _invalidate_post_stop_order_cache(self) -> None:
         self._post_stop_orders_cache.clear()
@@ -1271,15 +1271,21 @@ class OrderAuditEngineMixin:
                     parent_stop,
                 ))
 
-        creation_changed = False
+        ledger = self.order_audit
+        previous_index = None
+        if type(ledger) is dict and self._carried_orders_cache:
+            previous_index = getattr(self, "_carried_creation_index", None)
+        new_entries = []
+        earlier_existing_creation = False
         for match in matches:
             number, reaction, confirmation, level, source, source_time = match[:6]
             crossed, causes = match[6], match[7]
             if "parent-stop" not in causes:
                 continue
             key = reaction_identity(reaction)
-            entry = self.order_audit.get(key)
-            if entry is None:
+            entry = ledger.get(key)
+            is_new = entry is None
+            if is_new:
                 entry = {
                     "reaction_number": number,
                     "reaction": reaction,
@@ -1290,9 +1296,9 @@ class OrderAuditEngineMixin:
                     "stop_cross": crossed,
                     "causes": set(),
                 }
-                self.order_audit[key] = entry
+                ledger[key] = entry
                 self._index_order_audit_identity(key, confirmation)
-                creation_changed = True
+                new_entries.append(entry)
             audit_causes = entry["causes"]
             assert isinstance(audit_causes, set)
             family = str(getattr(parent, "color", getattr(parent, "family", "")))
@@ -1319,10 +1325,15 @@ class OrderAuditEngineMixin:
                 # Carried eligibility uses only the earliest parent creation,
                 # plus every B confirmation. Later/equal parent provenance
                 # remains in the ledger but cannot change this query's result.
-                if earlier_creation:
-                    creation_changed = True
-        if creation_changed:
+                if earlier_creation and not is_new:
+                    earlier_existing_creation = True
+        if new_entries or earlier_existing_creation:
             self._invalidate_carried_order_caches()
+            if (not earlier_existing_creation and previous_index is not None
+                    and previous_index[0] is ledger and previous_index[2] is not None
+                    and len(previous_index[1]) + len(new_entries) == len(ledger)):
+                # Validate the append at the next query, in its Decimal context.
+                self._carried_creation_append = previous_index, new_entries
 
 
     @staticmethod
@@ -1588,6 +1599,29 @@ class OrderAuditEngineMixin:
             return None
         return events, event_timezone
 
+    def _extend_carried_creation_index(self):
+        """Extend the validated prefix while keeping original ledger ordinals."""
+        pending = getattr(self, "_carried_creation_append", None)
+        self._carried_creation_append = None
+        if pending is None:
+            return None
+        (ledger, entries, (events, timezone)), new_entries = pending
+        if ledger is not self.order_audit or len(entries) + len(new_entries) != len(ledger):
+            return None
+        appended = OrderAuditEngineMixin._validated_carried_creation_index(self, new_entries)
+        if appended is None:
+            return None
+        new_events, new_timezone = appended
+        if events and new_events and timezone is not new_timezone:
+            return None
+        if not events:
+            timezone = new_timezone
+        offset = len(entries)
+        for event, ordinal in new_events:
+            insort_right(events, (event, offset + ordinal))
+        entries.extend(new_entries)
+        return ledger, entries, (events, timezone)
+
     def _carried_orders_for_parent(
         self, parent: object, parent_stop: datetime,
     ) -> list[OrderMatch]:
@@ -1601,9 +1635,13 @@ class OrderAuditEngineMixin:
             return list(cached)
         indexed = getattr(self, "_carried_creation_index", None)
         if indexed is None or not self._carried_orders_cache:
-            entries = list(self.order_audit.values())
-            indexed = self._carried_creation_index = entries, OrderAuditEngineMixin._validated_carried_creation_index(self, entries)
-        entries, creation_index = indexed
+            indexed = OrderAuditEngineMixin._extend_carried_creation_index(self)
+            if indexed is None:
+                ledger = self.order_audit
+                entries = list(ledger.values())
+                indexed = ledger, entries, OrderAuditEngineMixin._validated_carried_creation_index(self, entries)
+            self._carried_creation_index = indexed
+        _, entries, creation_index = indexed
         use_index = creation_index is not None and all(
             type(event) is datetime and event.tzinfo is creation_index[1]
             for event in (lifecycle_start, parent_stop)

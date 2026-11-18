@@ -20,6 +20,10 @@ export function createRealtimeChartScheduler({ runUpdate, render, onVerification
   let indicatorCalculation = false;
   let indicatorError = "";
   let status = "";
+  let indicatorStatus = "";
+  let indicatorUpdate = null;
+  let scope = new AbortController();
+  let indicatorAbort = null;
   let failed = false;
   let verification = null;
   let progress = null;
@@ -36,7 +40,8 @@ export function createRealtimeChartScheduler({ runUpdate, render, onVerification
 
   function notify() {
     render({
-      hasChart: Boolean(chartId), enabled, intervalMs, indicatorCalculation, indicatorError, status, failed, verification, progress,
+      hasChart: Boolean(chartId), enabled, intervalMs, indicatorCalculation, indicatorError,
+      status: failed ? status : [status, indicatorStatus].filter(Boolean).join(" "), failed, verification, progress,
       busy: enabled && Boolean(active), verifyingAll: verifyAllQueued || Boolean(active?.verifyAll),
       remainingMs: nextDue === null ? null : Math.max(0, nextDue - now()),
     });
@@ -64,6 +69,22 @@ export function createRealtimeChartScheduler({ runUpdate, render, onVerification
     wake();
   }
 
+  function watchIndicatorUpdate(update, signal) {
+    if (!update) {
+      if (!indicatorUpdate) indicatorStatus = "";
+      return;
+    }
+    indicatorUpdate = update;
+    indicatorStatus = "Updating indicator…";
+    function finish(nextStatus) {
+      if (signal.aborted || indicatorUpdate !== update) return;
+      indicatorUpdate = null;
+      indicatorStatus = nextStatus;
+      notify();
+    }
+    void update.then(result => finish(result?.status || ""), () => finish("Indicator update deferred. Retrying at the next check."));
+  }
+
   async function check(kind) {
     if (!chartId || (!enabled && !verifyAllQueued)) return;
     clearTimeout(timer);
@@ -77,41 +98,49 @@ export function createRealtimeChartScheduler({ runUpdate, render, onVerification
     queued = false;
     const verifyAll = verifyAllQueued;
     verifyAllQueued = false;
-    const abort = new AbortController();
-    const indicatorAbort = indicatorCalculation ? new AbortController() : null;
+    const { signal } = scope;
+    if (indicatorCalculation) indicatorAbort ||= new AbortController();
+    const indicatorSignal = indicatorAbort?.signal;
     const indicatorOnly = kind === "indicator" && !verifyAll;
+    const checkRun = { verifyAll, indicatorOnly };
     const reportProgress = value => {
-      if (active?.abort !== abort || abort.signal.aborted || !Number.isInteger(value) || value <= progress || value > 99) return;
+      if (active !== checkRun || signal.aborted || !Number.isInteger(value) || value <= progress || value > 99) return;
       progress = value;
       notify();
     };
-    const request = { chartId, signal: abort.signal, indicatorCalculation, indicatorSignal: indicatorAbort?.signal,
+    const request = { chartId, signal, indicatorCalculation, indicatorSignal,
       ...(verifyAll ? { verifyAll: true } : {}), ...(indicatorOnly ? { indicatorOnly: true } : { reportProgress }) };
-    active = { abort, indicatorAbort, verifyAll };
+    active = checkRun;
     if (!indicatorOnly) progress = 0;
+    if (!indicatorUpdate) indicatorStatus = "";
     status = verifyAll ? "Verifying all candles…" : kind === "indicator" ? "Updating indicator…" : "Checking for new candles…";
     failed = false;
     notify();
     try {
       const result = await runUpdate(request);
-      if (!abort.signal.aborted && result?.verification) {
+      if (!signal.aborted && result?.verification) {
         verification = result.verification;
         if (!indicatorOnly) {
           progress = verification.status === "unavailable" ? null : 100;
           if (verifyAll && verification.status !== "unavailable") onVerificationComplete?.(verification);
         }
-      } else if (!abort.signal.aborted && !indicatorOnly) progress = null;
-      if (!abort.signal.aborted && !indicatorAbort?.signal.aborted) {
+      } else if (!signal.aborted && !indicatorOnly) progress = null;
+      if (!signal.aborted && (!indicatorOnly || !indicatorSignal?.aborted)) {
         status = (typeof result === "string" ? result : result?.status)
-          || (result?.verification ? "" : "Checked for new candles.");
-        if (indicatorAbort) {
+          || (result?.verification || indicatorOnly ? "" : "Checked for new candles.");
+        watchIndicatorUpdate(result?.indicatorUpdate, signal);
+        if (indicatorSignal && !indicatorSignal.aborted) {
           indicatorError = result?.indicatorError || "";
           indicatorCalculation = !indicatorError;
+          if (indicatorError) {
+            indicatorAbort.abort();
+            indicatorAbort = null;
+          }
         }
       }
     } catch (error) {
-      if (!abort.signal.aborted && !indicatorOnly) progress = null;
-      if (!abort.signal.aborted && !indicatorAbort?.signal.aborted) {
+      if (!signal.aborted && !indicatorOnly) progress = null;
+      if (!signal.aborted && (!indicatorOnly || !indicatorSignal?.aborted)) {
         status = error?.message || "Could not check for new candles.";
         failed = true;
       }
@@ -136,8 +165,12 @@ export function createRealtimeChartScheduler({ runUpdate, render, onVerification
     verifyAllQueued = false;
     nextDue = null;
     clearTimeout(timer);
-    active?.abort.abort();
-    active?.indicatorAbort?.abort();
+    scope.abort();
+    scope = new AbortController();
+    indicatorAbort?.abort();
+    indicatorAbort = null;
+    indicatorUpdate = null;
+    indicatorStatus = "";
     status = "";
     failed = false;
     indicatorError = "";
@@ -172,9 +205,12 @@ export function createRealtimeChartScheduler({ runUpdate, render, onVerification
     const wasEnabled = indicatorCalculation;
     indicatorError = "";
     indicatorCalculation = nextValue;
-    if (!indicatorCalculation && active?.indicatorAbort && !active.indicatorAbort.signal.aborted) {
-      active.indicatorAbort.abort();
-      status = "Indicator check canceled.";
+    if (!indicatorCalculation && indicatorAbort) {
+      indicatorAbort.abort();
+      indicatorAbort = null;
+      if (indicatorUpdate || (active && wasEnabled)) indicatorStatus = "Indicator check canceled.";
+      if (active?.indicatorOnly) status = "";
+      indicatorUpdate = null;
     }
     if (indicatorCalculation && !wasEnabled) {
       void check("indicator");
@@ -183,7 +219,11 @@ export function createRealtimeChartScheduler({ runUpdate, render, onVerification
     notify();
   }
 
-  return { enable, stop, contextChanged, setInterval, setIndicatorCalculation, verifyAll, wake };
+  function getIndicatorSignal() {
+    return enabled && indicatorCalculation ? (indicatorAbort ||= new AbortController()).signal : undefined;
+  }
+
+  return { enable, stop, contextChanged, setInterval, setIndicatorCalculation, verifyAll, wake, getIndicatorSignal };
 }
 
 function updateText(element, text) {
@@ -368,5 +408,5 @@ export function mountRealtimeChart({ trigger, runUpdate, getChartId, onVerificat
     if (open) setOpen(false, menu.contains(document.activeElement));
   }
   contextChanged();
-  return { contextChanged, stop: scheduler.stop };
+  return { contextChanged, stop: scheduler.stop, getIndicatorSignal: scheduler.getIndicatorSignal };
 }

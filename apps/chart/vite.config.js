@@ -203,8 +203,8 @@ function engineCalculationArgs(dataPath, request, bounds) {
     '--a-zones', 'enabled', '--s-zones', 'enabled', '--bridge-output'];
 }
 
-function seedLiveEngine({ chartId, tabId, workerFingerprint, request, sourcePath, args, onProgress }) {
-  return liveEngineSessions.seed({ chartId, tabId, sourceFingerprint: workerFingerprint, request },
+function seedLiveEngine({ chartId, tabId, workerFingerprint, request, sourcePath, args, onProgress, rawSha256 }) {
+  return liveEngineSessions.seed({ chartId, tabId, sourceFingerprint: workerFingerprint, request, rawSha256 },
     () => startLiveEngineWorker({
       command: pythonCommand, args: [liveBridgePath, ...engineArgs, ...args],
       env: { ...process.env, PYTHONDONTWRITEBYTECODE: '1', PYTHONUTF8: '1',
@@ -233,17 +233,17 @@ async function recoverLiveEngine({ selected, proof, tabId, workerFingerprint }) 
     throw new LiveEngineError(503, 'RAW changed during recovery. Retrying at the next check.', 'RAW_RETRY');
   }
   const request = proof.request;
-  const runSeed = (rows, sourcePath, applied, to) => runIndicatorRangeCalculation({
+  const runSeed = (rows, sourcePath, applied, to, rawSha256) => runIndicatorRangeCalculation({
     rows, sourcePath, from: applied.from, to, chartTimeframeSeconds: applied.chartTimeframe,
     run: (input, bounds) => seedLiveEngine({
       chartId: selected.chartId, tabId, workerFingerprint, request: applied, sourcePath,
-      args: engineCalculationArgs(input, applied, bounds),
+      args: engineCalculationArgs(input, applied, bounds), rawSha256,
     }),
   });
   const decode = bytes => JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/, ''));
   const snapshot = proof.workerFingerprint === workerFingerprint && restoreRawSnapshot(current.bytes, proof);
   if (snapshot) {
-    const seed = await withIndicatorInputPipe(snapshot, sourcePath => runSeed(decode(snapshot), sourcePath, request, proof.to))
+    const seed = await withIndicatorInputPipe(snapshot, sourcePath => runSeed(decode(snapshot), sourcePath, request, proof.to, proof.rawSha256))
       .catch(error => {
         if (error.status === 429 || error.status === 503) throw error;
         return null;
@@ -263,7 +263,7 @@ async function recoverLiveEngine({ selected, proof, tabId, workerFingerprint }) 
   }
   const from = Math.floor(first.time / request.chartTimeframe) * request.chartTimeframe;
   const to = Math.floor(rows.at(-1).time / request.chartTimeframe) * request.chartTimeframe;
-  const seed = await runSeed(rows, selected.dataPath, { ...request, from }, to);
+  const seed = await runSeed(rows, selected.dataPath, { ...request, from }, to, current.sha256);
   if (!seed.sessionId) throw new LiveEngineError(503, 'The indicator worker is unavailable. Retrying at the next check.');
   return seed.sessionId;
 }
@@ -732,14 +732,19 @@ function localDataApi() {
           const { dataPath, metadata } = selected;
           let rawIdentity;
           let currentSessionId = sessionId;
-          async function validate(includeBytes = false) {
+          async function validate(includeBytes = false, delta = false) {
             if (liveSourceFingerprint(calculationSourceFingerprint()) !== workerFingerprint) {
               liveEngineSessions.discard(currentSessionId);
               throw new LiveEngineError(409, 'Calculation sources changed. Use Apply again.', 'ENGINE_CHANGED');
             }
             try {
+              if (delta) {
+                if (!rawStore.canServeAppendSnapshot(selected)) throw new Error('The selected RAW changed.');
+                return;
+              }
               if (rawIdentity) {
-                await assertRawInputUnchanged(dataPath, rawIdentity);
+                try { await assertRawInputUnchanged(dataPath, rawIdentity); }
+                catch (error) { if (!rawStore.canServeAppendSnapshot(selected)) throw error; }
                 return;
               }
               const { bytes, ...identity } = await captureRawInputIdentity(dataPath, { includeBytes });
@@ -754,7 +759,7 @@ function localDataApi() {
           function advance(token) {
             return liveEngineSessions.advance({
               ...session, sessionId: token, rawSha256: metadata.dataSha256, data: dataPath,
-            }, { validate, publish(payload, request) {
+            }, { validate, readAppend: base => rawStore.readAppendDelta(selected, base), publish(payload, request) {
               const to = Math.floor(selected.to / request.chartTimeframe) * request.chartTimeframe;
               return livePublication(selected, request, to, payload, workerFingerprint, tabId);
             } });
@@ -865,7 +870,7 @@ function localDataApi() {
                   if (workerFingerprint) {
                     try {
                       const seed = await seedLiveEngine({ chartId: valid.chartId, tabId, workerFingerprint,
-                        request: calculationRequest, sourcePath, args, onProgress: publish });
+                        request: calculationRequest, sourcePath, args, onProgress: publish, rawSha256: rawIdentity.sha256 });
                       jobLiveSessionId = seed.sessionId;
                       if (!result) result = JSON.stringify(seed.payload);
                     } catch {

@@ -21,7 +21,7 @@ from trading_pipeline import (
 from order_audit_engine import LiveOrderBResetLegs
 
 
-LIVE_PIPELINE_VERSION = "1.0.1"
+LIVE_PIPELINE_VERSION = "1.0.2"
 
 
 def _blue_dependencies(result):
@@ -337,6 +337,10 @@ class LiveRawChanged(ValueError):
     """A previously observed source candle was removed or revised."""
 
 
+class LiveRawDeltaMismatch(ValueError):
+    """The private append message could not prove byte-exact continuity."""
+
+
 def _decode_raw(data):
     rows = json.loads(data, parse_float=Decimal)
     if not isinstance(rows, list) or not rows:
@@ -360,29 +364,59 @@ class LiveRawSource:
         # The RAW writer preserves everything before the closing bracket.
         # Hash the bytes without parsing or normalizing the previous candles.
         self._end = data.rfind(b"]")
-        self._signature = hashlib.sha256(memoryview(data)[:self._end]).digest()
+        self._prefix_hash = hashlib.sha256(memoryview(data)[:self._end])
+        self._ending = data[self._end:]
+        self._raw_sha256 = self._file_digest(self._prefix_hash, self._ending)
+
+    @staticmethod
+    def _file_digest(prefix_hash, ending):
+        digest = prefix_hash.copy()
+        digest.update(ending)
+        return digest.hexdigest()
+
+    def append_delta(self, data, base_sha256, raw_sha256, pipeline):
+        if base_sha256 != self._raw_sha256 or not data.startswith(b","):
+            raise LiveRawDeltaMismatch
+        prefix = self._prefix_hash.copy()
+        prefix.update(data)
+        if self._file_digest(prefix, self._ending) != raw_sha256:
+            raise LiveRawDeltaMismatch
+
+        new_rows = _decode_raw(b"[" + data[1:] + b"]")
+        result = self._append_rows(new_rows, pipeline)
+        self._end += len(data)
+        self._prefix_hash = prefix
+        self._raw_sha256 = raw_sha256
+        return result
 
     def append(self, data, pipeline):
-        if len(data) <= self._end or hashlib.sha256(memoryview(data)[:self._end]).digest() != self._signature:
+        if len(data) <= self._end or hashlib.sha256(memoryview(data)[:self._end]).digest() != self._prefix_hash.digest():
             raise LiveRawChanged("Existing RAW candles changed. Use Apply again.")
         tail = data[self._end:].lstrip()
         if tail.startswith(b","):
             new_rows = _decode_raw(b"[" + tail[1:])
-            previous = self._last_time
-            for row in new_rows:
-                if row["time"] <= previous:
-                    raise LiveRawChanged("RAW candles no longer extend the previous history. Use Apply again.")
-                previous = row["time"]
         elif tail.rstrip() == b"]":
             new_rows = []
         else:
             raise LiveRawChanged("The RAW file is no longer an append of the original source. Use Apply again.")
+        result = self._append_rows(new_rows, pipeline)
+        if new_rows:
+            self._remember_prefix(data)
+        elif data[self._end:] != self._ending:
+            self._ending = data[self._end:]
+            self._raw_sha256 = self._file_digest(self._prefix_hash, self._ending)
+        return result
+
+    def _append_rows(self, new_rows, pipeline):
+        previous = self._last_time
+        for row in new_rows:
+            if row["time"] <= previous:
+                raise LiveRawChanged("RAW candles no longer extend the previous history. Use Apply again.")
+            previous = row["time"]
         batch = self._catchup + new_rows
         result = pipeline.append(batch) if batch else None
         self._catchup = []
-        if new_rows:
-            self._last_time = new_rows[-1]["time"]
-            self._remember_prefix(data)
+        self._last_time = previous
         return result
 
 
@@ -404,7 +438,7 @@ def main():
         payload = pipeline.append(selected)
         del selected, original, selected_data, original_data
         _send_worker_message("seed", ready=True, payload=payload)
-        # Updates carry a short JSON header followed by the unchanged RAW bytes.
+        # The server supplies exact append bytes when it owns the commit lineage.
         pipe = sys.stdin.buffer
         while header := pipe.readline(256):
             if not header.endswith(b"\n"):
@@ -412,16 +446,25 @@ def main():
             request = json.loads(header)
             size = request.get("bytes")
             digest = request.get("sha256")
+            base_digest = request.get("baseSha256")
             if type(size) is not int or size <= 0 or not isinstance(digest, str) or len(digest) != 64:
                 raise ValueError("Invalid live RAW update header.")
             raw = pipe.read(size)
             if len(raw) != size:
                 raise ValueError("Incomplete live RAW update.")
-            if hashlib.sha256(raw).hexdigest() != digest:
+            if base_digest is not None:
+                try:
+                    updated = lineage.append_delta(raw, base_digest, digest, pipeline)
+                except LiveRawDeltaMismatch:
+                    _send_worker_message("error", code="RAW_DELTA_MISMATCH",
+                                         message="The RAW append could not be verified against the live checkpoint.")
+                    continue
+            elif hashlib.sha256(raw).hexdigest() != digest:
                 _send_worker_message("error", code="RAW_RETRY",
                                      message="RAW changed during the indicator update. Retrying at the next check.")
                 continue
-            updated = lineage.append(raw, pipeline)
+            else:
+                updated = lineage.append(raw, pipeline)
             if updated is not None:
                 payload = updated
             _send_worker_message("update", payload=payload)
