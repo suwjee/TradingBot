@@ -18,7 +18,8 @@ from direction_policy import policy_for
 
 
 A_ZONE_VERSION = "1.7.0"
-A_ZONE_LAST_MODIFIED_DATE = "2026-11-12"
+A_ZONE_IMPLEMENTATION_VERSION = "1.8.0"
+A_ZONE_LAST_MODIFIED_DATE = "2026-11-17"
 
 
 @dataclass(frozen=True, slots=True)
@@ -169,7 +170,18 @@ class AZoneDetector:
     ) -> tuple[Decimal, int, datetime]:
         if end < start:
             raise ValueError("Extreme range end precedes its start.")
-        lower_items = self._lower_window(start, end + timedelta(microseconds=1))
+        window_end = end + timedelta(microseconds=1)
+        left, right = self.chronology.lower_bounds(start, window_end)
+        if left < right and self.lower_index is not None:
+            query = (
+                self.lower_index.range_minimum
+                if self.direction == "bullish"
+                else self.lower_index.range_maximum
+            )
+            value, position = query(left, right)
+            source_index = self._main_index(self.lower_times[position])
+            return value, source_index, getattr(self.candles[source_index], "timestamp")
+        lower_items = self._lower_window(start, window_end)
         if lower_items:
             source = lower_items[0]
             value = as_decimal(getattr(source, self.extreme_name))

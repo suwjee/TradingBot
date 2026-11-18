@@ -51,7 +51,6 @@ class LivePipelineStages:
         self._primary = {}
         self._primary_ledger = {}
         self._primary_dependencies = {}
-        self._setup = None
         self._active_regimes = {}
         self._closed_regimes = {}
         self._used_regimes = set()
@@ -287,21 +286,6 @@ class LivePipelineStages:
             (point, detector.primary_order_dependency(point)) for point in points
         ]
         return result
-
-    def bullish_setups(self, groups, primary_lows):
-        from bullish_setup_engine import LiveBullishSetupContinuation
-
-        market = self._market
-        chronology = market.chronology
-        inputs = (chronology, groups["S"], groups["E"], groups["StopAll"], primary_lows)
-        if self._setup is None:
-            self._setup = LiveBullishSetupContinuation(*inputs, through_index=market.end_index)
-            return self._setup.result
-        dirty = (chronology.times[self.first_dirty_main]
-                 if self.first_dirty_main < len(chronology.times)
-                 else chronology.times[-1] + chronology.timeframe)
-        return self._setup.update(*inputs, first_dirty_event=dirty, through_index=market.end_index)
-
 
 class LivePipelineContinuation:
     """Build the standard indicator payload over append-only market input."""

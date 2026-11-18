@@ -13,7 +13,8 @@ export function normalizeHistorySnapshot(snapshot, current) {
   const indicatorObjects = Array.isArray(snapshot?.indicatorObjects)
     ? snapshot.indicatorObjects
     : Array.isArray(current.indicatorObjects) ? current.indicatorObjects : [];
-  return structuredClone({ drawings, indicatorObjects });
+  return structuredClone({ drawings, indicatorObjects: indicatorObjects.filter((item) =>
+    item?.type !== "indicator-position" && !item?.setupStatusKind) });
 }
 
 export const CHART_TIMEFRAME_KEY = "qg:last-chart-timeframe:v1";

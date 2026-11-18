@@ -19,8 +19,8 @@ from direction_policy import policy_for
 
 
 REACTION_ENGINE_VERSION = "9.9.1"
-REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.12.0"
-REACTION_ENGINE_LAST_MODIFIED = "2026-11-11T14:49:03+03:30"
+REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.13.0"
+REACTION_ENGINE_LAST_MODIFIED = "2026-11-17T20:14:54+03:30"
 
 _ORDER_GATE_CACHE_MAX_ENTRIES = 32_768
 
@@ -195,6 +195,13 @@ class DetectorBase:
         return None
 
     def minimum_low(self, start_index: int, end_index: int) -> tuple[Decimal, Candle]:
+        if end_index - start_index >= 16:
+            if isinstance(self.candles, _ReflectedCandles):
+                value, position = shared_lower_timeframe_index(self.candles.source).range_maximum(start_index, end_index + 1)
+                value = value.copy_negate()
+            else:
+                value, position = shared_lower_timeframe_index(self.candles).range_minimum(start_index, end_index + 1)
+            return value, self.candles[position]
         source = self.candles[start_index]
         candles = self.candles
         for index in range(start_index + 1, end_index + 1):
@@ -204,6 +211,13 @@ class DetectorBase:
         return source.low, source
 
     def maximum_high(self, start_index: int, end_index: int) -> tuple[Decimal, Candle]:
+        if end_index - start_index >= 16:
+            if isinstance(self.candles, _ReflectedCandles):
+                value, position = shared_lower_timeframe_index(self.candles.source).range_minimum(start_index, end_index + 1)
+                value = value.copy_negate()
+            else:
+                value, position = shared_lower_timeframe_index(self.candles).range_maximum(start_index, end_index + 1)
+            return value, self.candles[position]
         source = self.candles[start_index]
         candles = self.candles
         for index in range(start_index + 1, end_index + 1):
@@ -1048,6 +1062,7 @@ class MarketChronology:
         "lower_index",
         "_confirmation_cache",
         "_reset_time_cache",
+        "_e_main_extremes",
     )
 
     def __init__(
@@ -1071,6 +1086,9 @@ class MarketChronology:
         self.lower_index = lower_index or shared_lower_timeframe_index(seconds)
         self._confirmation_cache: dict[tuple[object, ...], datetime] = {}
         self._reset_time_cache: dict[tuple[object, ...], datetime] = {}
+        # E feedback detectors share only immutable main-candle geometry.
+        # Each batch/regime/append creates its own chronology and cache.
+        self._e_main_extremes: dict[str, tuple] = {}
 
     @staticmethod
     def opposite_direction(direction: str) -> str:

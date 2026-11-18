@@ -179,16 +179,8 @@ export function reviewRecords(payload) {
   return records.sort((a, b) => (a.epoch ?? Infinity) - (b.epoch ?? Infinity));
 }
 
-// Bulk review actions are intentionally scoped to one Tehran calendar day.
-// A filtered-out record is never changed by a day action.
 export function reviewTimeGroup(time) {
   return time === "Undated" ? "Undated" : String(time || "Undated").slice(0, 10);
-}
-
-export function visibleReviewTimeGroupIds(records, timeGroup) {
-  return records
-    .filter((record) => record?.timeGroup === timeGroup && !record.hidden)
-    .map((record) => record.id);
 }
 
 const readableDirection = (value) => value === "bullish" ? "Bullish" : value === "bearish" ? "Bearish" : value;
@@ -466,198 +458,6 @@ function yamlLines(value, depth = 0) {
 }
 export const formatInfoYaml = (value) => yamlLines(value).join("\n");
 const copyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>';
-const detail = (value) => {
-  const lines = formatInfoYaml(value).split("\n").map((line) => {
-    if (!line) return '<span class="yaml-line yaml-gap" aria-hidden="true"></span>';
-    const depth = Math.min(5, Math.floor((line.match(/^ */)?.[0].length || 0) / 4));
-    return `<span class="yaml-line yaml-depth-${depth}">${escapeHtml(line)}</span>`;
-  }).join("\n");
-  return `<div class="yaml-tools"><button class="yaml-copy" type="button" data-copy-yaml title="Copy Bridge output" aria-label="Copy Bridge output">${copyIcon}</button></div><pre class="bridge-yaml" aria-label="Bridge output in YAML">${lines}</pre>`;
-};
-const lazyDetail = (record) => `<details class="bridge-output" data-bridge-id="${escapeHtml(record.id)}"><summary>Bridge output</summary><div class="bridge-placeholder"></div></details>`;
-function eventCard(record) {
-  const { id, direction, row, time, label } = record;
-  const visibleTime = time === "Undated" ? time : time.slice(11);
-  const timeGroup = record.timeGroup || reviewTimeGroup(time);
-  return `<article class="event" data-id="${escapeHtml(id)}" data-filter="${escapeHtml(record.category.key)}" data-time="${time}" data-time-group="${escapeHtml(timeGroup)}" data-label="${escapeHtml(`${direction} | ${label}`)}">
-    <div class="state-control" role="group" aria-label="Review status">${["true", "false"].map((status) => `<label class="${status}-choice" title="Mark as ${status}"><input class="state" type="radio" name="${escapeHtml(id)}" value="${status}" aria-label="Mark ${escapeHtml(`${direction} ${label} ${time}`)} as ${status}"><span class="sr-only">Mark as ${status}</span></label>`).join("")}</div>
-    <button class="event-time copy-line" type="button" title="Copy full timestamp and review status"><time datetime="${time === "Undated" ? "" : time.replace(" ", "T")}">${visibleTime}</time></button>
-    <div><span class="chip" style="color:${reviewLabelColor(record, record.color)};background:${reviewColorSurface()}">${escapeHtml(label)}</span><small>${escapeHtml(direction)}</small></div>
-    ${lazyDetail(record)}</article>`;
-}
-
-function timeGroupActions(day) {
-  const encodedDay = escapeHtml(day);
-  return `<div class="day-bulk-actions" role="group" aria-label="Review visible events on ${encodedDay}">
-    <span>Visible events</span>
-    <button type="button" data-time-group="${encodedDay}" data-time-group-status="true">Mark True</button>
-    <button type="button" data-time-group="${encodedDay}" data-time-group-status="false">Mark False</button>
-    <button type="button" class="quiet-action" data-time-group="${encodedDay}" data-time-group-status="">Clear</button>
-  </div>`;
-}
-
-// Review behavior for the served page; it runs same-origin and stores verdicts
-// in localStorage. It still makes no requests and stays entirely in the page.
-function legacyReviewRuntime(initialBridgeData = null) {
-  const q = (selector) => document.querySelector(selector);
-  let bridgeData = initialBridgeData && typeof initialBridgeData === "object" ? initialBridgeData : {};
-  if (!initialBridgeData) {
-    try { bridgeData = JSON.parse(q("#bridge-data")?.value || "{}") || {}; } catch {}
-  }
-  q("#bridge-data")?.remove();
-  const escapeBridgeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
-  const bridgeScalar = (value) => value === null ? "null" : typeof value === "boolean" || typeof value === "number" ? String(value) : JSON.stringify(String(value));
-  const bridgeObject = (value) => value && typeof value === "object" && !Array.isArray(value);
-  const bridgeYaml = (value) => {
-    const lines = [], stack = [{ type: "value", value, depth: 0 }];
-    while (stack.length) {
-      const task = stack.pop();
-      if (task.type === "line") { lines.push(task.value); continue; }
-      if (task.type === "blank") { lines.push(""); continue; }
-      if (Array.isArray(task.value)) {
-        for (let index = task.value.length - 1; index >= 0; index--) {
-          const item = task.value[index], prefix = " ".repeat(task.depth * 4);
-          if (bridgeObject(item) || Array.isArray(item)) { stack.push({ type: "value", value: item, depth: task.depth + 1 }); stack.push({ type: "line", value: `${prefix}-` }); }
-          else stack.push({ type: "line", value: `${prefix}- ${bridgeScalar(item)}` });
-          if (index) stack.push({ type: "blank" });
-        }
-        continue;
-      }
-      const entries = Object.entries(task.value || {}), blankBefore = new Set();
-      let previousComplex = false;
-      entries.forEach(([, item], index) => { const complex = bridgeObject(item) || Array.isArray(item); if (index && (complex || previousComplex)) blankBefore.add(index); previousComplex = complex; });
-      for (let index = entries.length - 1; index >= 0; index--) {
-        const [key, item] = entries[index], complex = bridgeObject(item) || Array.isArray(item), prefix = " ".repeat(task.depth * 4);
-        if (complex) { stack.push({ type: "value", value: item, depth: task.depth + 1 }); stack.push({ type: "line", value: `${prefix}${key}:` }); }
-        else stack.push({ type: "line", value: `${prefix}${key}: ${bridgeScalar(item)}` });
-        if (blankBefore.has(index)) stack.push({ type: "blank" });
-      }
-    }
-    return lines;
-  };
-  const renderBridgeOutput = (details) => {
-    const target = details.querySelector(".bridge-placeholder"), value = bridgeData[details.dataset.bridgeId];
-    if (!target || !value) return;
-    const lines = bridgeYaml(value).map((line) => {
-      if (!line) return '<span class="yaml-line yaml-gap" aria-hidden="true"></span>';
-      const depth = Math.min(5, Math.floor((line.match(/^ */)?.[0].length || 0) / 4));
-      return `<span class="yaml-line yaml-depth-${depth}">${escapeBridgeHtml(line)}</span>`;
-    }).join("\n");
-    target.innerHTML = `<div class="yaml-tools"><button class="yaml-copy" type="button" data-copy-yaml title="Copy Bridge output" aria-label="Copy Bridge output"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button></div><pre class="bridge-yaml" aria-label="Bridge output in YAML">${lines}</pre>`;
-    delete bridgeData[details.dataset.bridgeId];
-  };
-  const events = [...document.querySelectorAll(".event")];
-  const references = [...document.querySelectorAll(".reference-row")];
-  const filters = [...document.querySelectorAll(".category-filter")];
-  const days = [...document.querySelectorAll(".day")];
-  const key = `timeline-review-v4-${document.body.dataset.payloadHash}-${document.body.dataset.reviewId}`;
-  let saved = {};
-  try { saved = JSON.parse(localStorage.getItem(key) || "{}") || {}; } catch {}
-  for (const event of events) {
-    const status = saved[event.dataset.id];
-    if (["true", "false"].includes(status)) event.querySelector(`input[value="${status}"]`).checked = true;
-  }
-  const statusOf = (event) => event.querySelector("input:checked")?.value;
-  const line = (event) => `${event.dataset.time} | ${event.dataset.label} | ${statusOf(event) === "true" ? "True" : statusOf(event) === "false" ? "False" : "Unselected"}`;
-  function update() {
-    const from = q("#from").value.trim().replace("T", " "), to = q("#to").value.trim().replace("T", " ");
-    const mode = q("#mode").value;
-    const selected = new Set(filters.filter((input) => input.checked).map((input) => input.value));
-    const invalid = !!(from && to && from > to);
-    q("#range-error").hidden = !invalid;
-    q("#to").setAttribute("aria-invalid", String(invalid));
-    const hidden = (event) => invalid || !selected.has(event.dataset.filter) ||
-      !!((from && event.dataset.time < from) || (to && event.dataset.time > to));
-    const output = ["Indicator information review", "Timezone: Asia/Tehran", ""];
-    const statuses = {};
-    for (const event of events) {
-      const status = statusOf(event);
-      event.hidden = hidden(event);
-      event.dataset.status = status || "";
-      if (status) statuses[event.dataset.id] = status;
-      if (!event.hidden && status && (mode === "all" || status === mode)) output.push(line(event));
-    }
-    for (const row of references) row.hidden = hidden(row);
-    document.querySelectorAll(".collection").forEach((group) => { group.hidden = !group.querySelector(".reference-row:not([hidden])"); });
-    days.forEach((day) => {
-      const visible = [...day.querySelectorAll(".event:not([hidden])")];
-      day.hidden = !visible.length;
-      day.querySelector(".day-count").textContent = `${visible.length.toLocaleString()} events · ${visible.filter(statusOf).length.toLocaleString()} reviewed`;
-    });
-    const visibleCount = events.filter((event) => !event.hidden).length;
-    q("#empty").hidden = visibleCount !== 0;
-    const values = Object.values(statuses);
-    q("#filter-note").textContent = `${visibleCount.toLocaleString()} of ${events.length.toLocaleString()} events visible · ${values.filter((v) => v === "true").length.toLocaleString()} True · ${values.filter((v) => v === "false").length.toLocaleString()} False · ${(events.length - values.length).toLocaleString()} unreviewed (all records).`;
-    q("#report-text").value = output.join("\n");
-    try {
-      if (values.length) localStorage.setItem(key, JSON.stringify(statuses));
-      else localStorage.removeItem(key);
-    } catch { q("#storage-note").textContent = "Browser storage unavailable. Download the TXT report before closing this page."; }
-  }
-  async function copy(text) {
-    try { await navigator.clipboard.writeText(text); }
-    catch {
-      const input = document.createElement("textarea"); input.value = text;
-      document.body.append(input); input.select(); document.execCommand("copy"); input.remove();
-    }
-  }
-  if (typeof document.addEventListener === "function") {
-    document.addEventListener("toggle", (event) => {
-      const details = event.target;
-      if (details instanceof HTMLDetailsElement && details.open && details.matches("[data-bridge-id]")) renderBridgeOutput(details);
-    }, true);
-    document.addEventListener("click", async (event) => {
-      const copyButton = event.target.closest?.("[data-copy-yaml]");
-      if (copyButton) {
-        const text = copyButton.closest("details")?.querySelector(".bridge-yaml")?.textContent?.trimEnd();
-        if (!text) return;
-        await copy(text);
-        copyButton.dataset.copied = "true";
-        copyButton.title = "Copied Bridge output";
-        copyButton.setAttribute("aria-label", "Bridge output copied");
-        setTimeout(() => {
-          copyButton.dataset.copied = "";
-          copyButton.title = "Copy Bridge output";
-          copyButton.setAttribute("aria-label", "Copy Bridge output");
-        }, 1200);
-        return;
-      }
-      const groupButton = event.target.closest?.("[data-time-group-status]");
-      if (!groupButton) return;
-      const status = groupButton.dataset.timeGroupStatus;
-      if (!["true", "false", ""].includes(status)) return;
-      const ids = new Set(visibleReviewTimeGroupIds(events.map((item) => ({
-        id: item.dataset.id, timeGroup: item.dataset.timeGroup, hidden: item.hidden,
-      })), groupButton.dataset.timeGroup));
-      if (!ids.size) return;
-      for (const item of events) {
-        if (!ids.has(item.dataset.id)) continue;
-        const input = item.querySelector(`input[value="${status}"]`);
-        if (input) input.checked = true;
-        else item.querySelectorAll("input").forEach((control) => { control.checked = false; });
-      }
-      update();
-    });
-  }
-  events.forEach((event) => {
-    event.querySelectorAll("input").forEach((input) => { input.onchange = update; });
-    event.querySelector(".copy-line").onclick = () => copy(line(event));
-  });
-  q("#from").oninput = update; q("#to").oninput = update; q("#mode").onchange = update;
-  filters.forEach((input) => { input.onchange = update; });
-  q("#reset").onclick = () => { q("#from").value = ""; q("#to").value = ""; update(); };
-  q("#copy").onclick = () => copy(q("#report-text").value);
-  q("#download").onclick = () => {
-    const url = URL.createObjectURL(new Blob([q("#report-text").value], { type: "text/plain;charset=utf-8" }));
-    const a = document.createElement("a"); a.href = url;
-    const date = new Date(), two = (value) => String(value).padStart(2, "0");
-    a.download = `info-${date.getFullYear()}_${two(date.getMonth() + 1)}_${two(date.getDate())} ${two(date.getHours())}_${two(date.getMinutes())}_${two(date.getSeconds())}.txt`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  };
-  update();
-}
-
 const reportFamilyOrder = ["Reaction", "Reset", "Blue Line", "A", "S Blue", "S Red", "E Blue", "E Red", "StopAll", "Order Audit", "MBL", "PH", "PL"];
 export const reportFamilyColor = {
   Reaction: "var(--report-reaction)", Reset: "var(--report-reset)",
@@ -711,8 +511,7 @@ function reportEventCard(record) {
   const label = reportDisplayLabel(record);
   const color = primaryFamilies.has(category.family) ? record.color : reportCategoryColor(reportRecordColorKey(record), category.family);
   return `<article class="event"${defaultHiddenFamilies.has(category.family) ? " hidden" : ""} style="--event-color:${escapeHtml(color)}" data-id="${escapeHtml(id)}" data-filter="${escapeHtml(category.key)}" data-filter-family="${escapeHtml(category.family)}" data-report-family="${escapeHtml(category.family)}" data-time="${escapeHtml(safeTime)}" data-time-group="${escapeHtml(reviewTimeGroup(safeTime))}" data-label="${escapeHtml(`${direction} | ${label}`)}">
-    <div class="state-control" role="group" aria-label="Review status"><label class="true-choice" title="Mark as true"><input class="state" type="radio" name="${escapeHtml(id)}" value="true" aria-label="Mark ${escapeHtml(`${direction} ${label} ${safeTime}`)} as true"><span class="sr-only">True</span></label><label class="false-choice" title="Mark as false"><input class="state" type="radio" name="${escapeHtml(id)}" value="false" aria-label="Mark ${escapeHtml(`${direction} ${label} ${safeTime}`)} as false"><span class="sr-only">False</span></label></div>
-    <button class="event-time copy-line" type="button" title="Copy timestamp and review status"><time datetime="${safeTime === "Undated" ? "" : safeTime.replace(" ", "T")}">${escapeHtml(safeTime)}</time></button>
+    <button class="event-time copy-line" type="button" title="Copy timestamp and event label"><time datetime="${safeTime === "Undated" ? "" : safeTime.replace(" ", "T")}">${escapeHtml(safeTime)}</time></button>
     <div class="event-label"><span class="chip" style="--chip-color:${escapeHtml(color)};--event-color:${escapeHtml(color)}">${escapeHtml(label)}</span><small>${escapeHtml(direction)}</small></div>
     <details class="bridge-output" data-bridge-id="${escapeHtml(id)}"><summary>Bridge output</summary><div class="bridge-placeholder"></div></details>
   </article>`;
@@ -784,26 +583,16 @@ export function reviewRuntime(initialBridgeData = null) {
   const allFilters = q("#all-filters");
   const filterTreeToggle = q(".filter-all-toggle");
   const filterGroups = q("#filter-groups");
-  const key = `tradingbot-minimal-review:${document.body.dataset.payloadHash || "standalone"}:${document.body.dataset.reviewId || "report"}`;
-  let saved = {};
-  try { saved = JSON.parse(localStorage.getItem(key) || "{}") || {}; } catch {}
-  for (const event of events) {
-    const status = saved[event.dataset.id];
-    if (["true", "false"].includes(status)) event.querySelector(`input[value="${status}"]`).checked = true;
-  }
-  const statusOf = (event) => event.querySelector("input:checked")?.value;
-  const line = (event) => `${event.dataset.time} | ${event.dataset.label} | ${statusOf(event) === "true" ? "True" : statusOf(event) === "false" ? "False" : "Unselected"}`;
+  const line = (event) => `${event.dataset.time} | ${event.dataset.label}`;
   const metadata = [...document.querySelectorAll(".calculation-meta > div")].map((item) => [item.querySelector("dt")?.textContent || "", item.querySelector("dd")?.textContent || ""]);
   const refreshReport = () => {
-    const accepted = q("#mode")?.value || "all";
-    const reviewed = events.filter((event) => !event.hidden && (accepted === "visible"
-      || statusOf(event) && (accepted === "all" || statusOf(event) === accepted)));
+    const visible = events.filter((event) => !event.hidden);
     const lines = [
       "CALCULATION REPORT - MANUAL REVIEW",
       ...metadata.map(([label, value]) => `${label}: ${value}`),
-      `${accepted === "visible" ? "Visible" : "Reviewed"} events in current view: ${reviewed.length}`,
+      `Visible events in current view: ${visible.length}`,
       "",
-      ...reviewed.map((event) => `${event.dataset.time}\t${event.dataset.label.replace(/^\w+\s*\|\s*/, "")}\t${(statusOf(event) || "Unselected").toUpperCase()}`),
+      ...visible.map((event) => `${event.dataset.time}\t${event.dataset.label.replace(/^\w+\s*\|\s*/, "")}`),
     ];
     const output = q("#report-text");
     if (output) output.value = lines.join("\n");
@@ -844,25 +633,18 @@ export function reviewRuntime(initialBridgeData = null) {
     if (q("#range-error")) q("#range-error").hidden = !invalid;
     if (q("#to")) q("#to").setAttribute("aria-invalid", String(invalid));
     const hidden = (event) => invalid || !selected.has(event.dataset.filter) || !!((from && event.dataset.time < from) || (to && event.dataset.time > to));
-    const statuses = {};
-    for (const event of events) {
-      const status = statusOf(event);
-      event.hidden = hidden(event);
-      event.dataset.status = status || "";
-      if (status) statuses[event.dataset.id] = status;
-    }
+    for (const event of events) event.hidden = hidden(event);
     days.forEach((day) => {
       const visible = [...day.querySelectorAll(".event:not([hidden])")];
       day.hidden = !visible.length;
       const count = day.querySelector(".day-count");
-      if (count) count.textContent = `${visible.length.toLocaleString()} · ${visible.filter(statusOf).length.toLocaleString()}`;
+      if (count) count.textContent = visible.length.toLocaleString();
     });
-    const visibleCount = events.filter((event) => !event.hidden).length, values = Object.values(statuses);
+    const visibleCount = events.filter((event) => !event.hidden).length;
     if (q("#empty")) q("#empty").hidden = visibleCount !== 0;
     if (q("#filter-note")) q("#filter-note").textContent = `${visibleCount.toLocaleString()} / ${events.length.toLocaleString()} events`;
     refreshReport();
     updateParents();
-    try { if (values.length) localStorage.setItem(key, JSON.stringify(statuses)); else localStorage.removeItem(key); } catch {}
   }
   async function copy(text) {
     try { await navigator.clipboard.writeText(text); }
@@ -885,13 +667,6 @@ export function reviewRuntime(initialBridgeData = null) {
     }
     const copyButton = event.target.closest?.("[data-copy-yaml]");
     if (copyButton) { const text = copyButton.closest("details")?.querySelector(".bridge-yaml")?.textContent?.trimEnd(); if (text) await copy(text); return; }
-    const groupButton = event.target.closest?.("[data-time-group-status]");
-    if (!groupButton) return;
-    const status = groupButton.dataset.timeGroupStatus;
-    for (const item of events.filter((entry) => entry.dataset.timeGroup === groupButton.dataset.timeGroup && !entry.hidden)) {
-      item.querySelectorAll("input").forEach((control) => { control.checked = control.value === status; });
-    }
-    update();
   });
   filters.forEach((input) => { input.onchange = update; });
   parents.forEach((parent) => { parent.onchange = () => { filters.filter((input) => input.dataset.filterFamily === parent.dataset.filterParent).forEach((input) => { input.checked = parent.checked; }); update(); }; });
@@ -902,64 +677,14 @@ export function reviewRuntime(initialBridgeData = null) {
     filterTreeToggle.setAttribute("aria-label", expanded ? "Collapse all filters" : "Expand all filters");
     if (filterGroups) filterGroups.hidden = !expanded;
   });
-  events.forEach((event) => { event.querySelectorAll(".state").forEach((input) => { input.onchange = update; }); event.querySelector(".copy-line").onclick = () => copy(line(event)); });
-  q("#from") && (q("#from").oninput = update); q("#to") && (q("#to").oninput = update); q("#mode") && (q("#mode").onchange = update);
+  events.forEach((event) => { event.querySelector(".copy-line").onclick = () => copy(line(event)); });
+  q("#from") && (q("#from").oninput = update); q("#to") && (q("#to").oninput = update);
   q("#filter-search") && (q("#filter-search").oninput = applySearch);
   q("#clear-filters") && (q("#clear-filters").onclick = () => { filters.forEach((input) => { input.checked = false; }); update(); });
   q("#reset") && (q("#reset").onclick = () => { q("#from").value = ""; q("#to").value = ""; update(); });
   q("#copy") && (q("#copy").onclick = () => copy(q("#report-text").value));
   q("#download") && (q("#download").onclick = () => { const url = URL.createObjectURL(new Blob([q("#report-text").value], { type: "text/plain;charset=utf-8" })); const a = document.createElement("a"); a.href = url; a.download = manualReviewFilename(new Date(), "txt"); a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); });
   update();
-}
-
-// Build the review page body from the Bridge report payload. The raw direction
-// collections remain a compatibility fallback for older cached calculations.
-// export, minus the heavyweight duplication. The payload is embedded once as
-// the <pre> reference copy; candle caches are never serialized here.
-async function buildLegacyReviewBody(payload, snapshot = {}, cryptoApi = globalThis.crypto) {
-  if (!payload || !payload.directions || typeof payload.directions !== "object") throw new Error("Invalid indicator payload");
-  const raw = JSON.stringify(payload);
-  const digest = await cryptoApi.subtle.digest("SHA-256", new TextEncoder().encode(raw));
-  const hash = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
-  const records = reviewRecords(payload), days = new Map(), groups = new Map(), categories = new Map();
-  const bridgeData = Object.create(null);
-  const objects = new Map((snapshot.indicatorObjects || []).map((item) => [item.id, item]));
-  for (const record of records) {
-    bridgeData[record.id] = manualInfoObject(record);
-    record.color = reviewColor(record, snapshot, objects);
-    if (!categories.has(record.category.key)) categories.set(record.category.key, { ...record.category, color: record.color, count: 0 });
-    categories.get(record.category.key).count++;
-    const day = reviewTimeGroup(record.time);
-    record.timeGroup = day;
-    if (!days.has(day)) days.set(day, []);
-    days.get(day).push(record);
-    const group = `${record.direction} · ${collections[record.group]?.[0] || record.group}`;
-    if (!groups.has(group)) groups.set(group, []);
-    groups.get(group).push(record);
-  }
-  const calculation = snapshot.calculation || {};
-  const rangeTime = (value) => typeof value === "number" && Number.isFinite(value) ? reviewTime(value) : "—";
-  const reportMeta = [
-    ["Symbol", calculation.symbol || calculation.source?.symbol || "—"],
-    ["Source file", calculation.sourceFile || calculation.source?.id || "—"],
-    ["Calculation timeframe", `${calculation.timeframe ?? payload.timeframe ?? "—"} seconds`],
-    ["Direction", readableDirection(calculation.direction || Object.keys(payload.directions || {}).join(", "))],
-    ["Range", `${rangeTime(calculation.from ?? payload.actualFrom)} → ${rangeTime(calculation.to ?? payload.actualTo)}`],
-  ];
-  const timeline = [...days].map(([day, rows]) => `<details class="day" data-time-group="${escapeHtml(day)}"><summary class="day-head"><h2>${escapeHtml(day)}</h2><span class="day-count">${rows.length.toLocaleString()} events</span></summary>${timeGroupActions(day)}<div class="events">${rows.map(eventCard).join("")}</div></details>`).join("");
-  const features = [...groups].map(([group, rows]) => `<section class="feature"><strong>${escapeHtml(group)}</strong><small>${rows.length.toLocaleString()} records</small></section>`).join("");
-  const categoryOrder = Object.keys(colorSpec);
-  const filterControls = [...categories.values()].sort((a, b) => (categoryOrder.indexOf(a.key) < 0 ? 99 : categoryOrder.indexOf(a.key)) - (categoryOrder.indexOf(b.key) < 0 ? 99 : categoryOrder.indexOf(b.key)))
-    .map((category) => `<label class="category-choice"><input class="category-filter" type="checkbox" value="${escapeHtml(category.key)}" checked><i class="swatch" style="background:${category.color}" aria-hidden="true"></i><span>${escapeHtml(category.label)}</span><small>${category.count.toLocaleString()}</small></label>`).join("");
-  // Keep the legacy template tail inexpensive; the returned body below replaces
-  // it with the lazy bridge-data store before it reaches the browser.
-  const infoPayload = {};
-  const body = `<a class="skip-link" href="#timeline">Skip to timeline</a><header><span class="eyebrow">INDICATOR INFO · ASIA/TEHRAN</span><h1>Indicator information</h1><dl class="calculation-meta" aria-label="Calculation details">${reportMeta.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}</dl></header>
-<main><section class="filters" aria-labelledby="filter-title"><div><span class="eyebrow">TIMELINE FILTER</span><h2 id="filter-title">Show a precise review window</h2></div><div class="filter-fields"><label>From<input id="from" type="datetime-local" step="1" aria-describedby="range-error"></label><label>To<input id="to" type="datetime-local" step="1" aria-describedby="range-error"></label><button id="reset" type="button">Reset</button></div><fieldset><legend>Behavior filters</legend><div class="category-options">${filterControls}</div></fieldset><p id="range-hint" hidden></p><p class="error" id="range-error" role="alert" hidden>From must not be later than To.</p><p id="filter-note" role="status" aria-live="polite"></p></section><section id="timeline" aria-labelledby="timeline-title"><span class="eyebrow">PRIMARY REVIEW SURFACE</span><h2 id="timeline-title">Chronological timeline</h2><p class="subtitle" hidden></p><p class="empty" id="empty" hidden>No matching events.</p>${timeline || "<p>No events.</p>"}</section>
-<section class="report" id="review-report" aria-labelledby="report-title"><div><span class="eyebrow">AI HANDOFF</span><h2 id="report-title">Live review report</h2><p id="storage-note" hidden></p></div><div class="report-controls"><label>Include <select id="mode"><option value="all">All selected</option><option value="true">True only</option><option value="false">False only</option></select></label><button id="copy">Copy report</button><button id="download">Download TXT</button></div><textarea id="report-text" readonly aria-label="Review report"></textarea></section>
-<h2>Record collections</h2>${features}</main>`;
-  const optimizedBody = body;
-  return { hash, reviewId: snapshot.exportedAt || "standalone", runtime: reviewRuntime.toString(), body: optimizedBody, bridgeData };
 }
 
 export async function buildReviewBody(payload, snapshot = {}, cryptoApi = globalThis.crypto) {
@@ -996,11 +721,11 @@ export async function buildReviewBody(payload, snapshot = {}, cryptoApi = global
     ["Direction", readableDirection(calculation.direction || Object.keys(payload.directions || {}).join(", "))],
     ["Range", `${rangeTime(calculation.from ?? payload.actualFrom)} → ${rangeTime(calculation.to ?? payload.actualTo)}`],
   ];
-  const timeline = [...days].map(([day, rows]) => `<details class="day" data-time-group="${escapeHtml(day)}"><summary class="day-head"><h2>${escapeHtml(day)}</h2><span class="day-count">${rows.length.toLocaleString()}</span></summary>${timeGroupActions(day)}<div class="events">${rows.map(reportEventCard).join("")}</div></details>`).join("");
+  const timeline = [...days].map(([day, rows]) => `<details class="day" data-time-group="${escapeHtml(day)}"><summary class="day-head"><h2>${escapeHtml(day)}</h2><span class="day-count">${rows.length.toLocaleString()}</span></summary><div class="events">${rows.map(reportEventCard).join("")}</div></details>`).join("");
   const featureDetails = [...groups].map(([group, count]) => `<details class="feature"><summary><strong>${escapeHtml(group)}</strong><span>${count.toLocaleString()}</span></summary></details>`).join("");
   const body = `<a class="skip-link" href="#timeline">Skip to timeline</a><header><span class="eyebrow">CALCULATION REPORT</span><h1>Indicator information</h1><dl class="calculation-meta" aria-label="Calculation details">${reportMeta.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}</dl></header>
 <main class="report-shell"><aside class="filter-sidebar" aria-label="Behavior filters"><div class="filter-sidebar-head"><h2 class="filter-sidebar-title"><svg class="filter-heading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16l-6.5 7.5v5.5l-3 2v-7.5L4 5Z"></path></svg>Behavior filters</h2><span class="filter-total-count">${records.length.toLocaleString()}</span><div class="filter-actions"><button id="clear-filters" class="quiet-action" type="button">Clear all</button></div></div><label class="filter-search"><span class="sr-only">Search filters</span><input id="filter-search" type="search" placeholder="Search filters…" autocomplete="off"></label><div class="filter-dates"><label>From<input id="from" type="datetime-local" step="1" aria-describedby="range-error"></label><label>To<input id="to" type="datetime-local" step="1" aria-describedby="range-error"></label><button id="reset" class="quiet-action" type="button">Reset dates</button></div><p class="error" id="range-error" role="alert" hidden>From must not be later than To.</p><div class="filter-tree"><div class="filter-all-row"><button class="filter-all-toggle" type="button" aria-controls="filter-groups" aria-expanded="true" aria-label="Collapse all filters"></button><label class="filter-all-label"><input id="all-filters" type="checkbox" checked><strong>All</strong><span class="filter-all-count">${records.length.toLocaleString()}</span></label></div><div class="filter-groups" id="filter-groups">${reportFilterMarkup(families)}</div></div><footer class="filter-footer"><span id="filter-note" role="status" aria-live="polite"></span></footer></aside><section class="report-content" id="timeline" aria-labelledby="timeline-title"><div class="section-head"><h2 id="timeline-title">Chronological timeline</h2><span id="empty" class="empty" hidden>No matching events.</span></div>${timeline || "<p class=\"empty\">No events.</p>"}</section></main>
-<section class="report-export" id="review-report" aria-labelledby="report-title"><div class="report-export-head"><h2 id="report-title">Live review report</h2><div class="report-controls"><label>Include <select id="mode"><option value="all">All selected</option><option value="visible">All visible</option><option value="true">True only</option><option value="false">False only</option></select></label><button id="copy" type="button">Copy</button><button id="download" type="button">Download</button></div></div><textarea id="report-text" readonly aria-label="Review report"></textarea></section>
+<section class="report-export" id="review-report" aria-labelledby="report-title"><div class="report-export-head"><h2 id="report-title">Live review report</h2><div class="report-controls"><button id="copy" type="button">Copy</button><button id="download" type="button">Download</button></div></div><textarea id="report-text" readonly aria-label="Review report"></textarea></section>
 <section class="collections" aria-labelledby="collections-title"><h2 id="collections-title">Record collections</h2>${featureDetails}</section>`;
   return { hash, reviewId: snapshot.exportedAt || "standalone", runtime: reviewRuntime.toString(), body, bridgeData };
 }

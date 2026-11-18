@@ -6,7 +6,9 @@ import {
 import "./platform/browser-compat.js";
 import { icon } from "./ui/icons.js";
 import { drawingArray, normalizeHistorySnapshot, CHART_TIMEFRAME_KEY, restoredTimeframe, indicatorControlId, drawingToolOrder } from "./chart/state.js";
-import { PRIMARY_VISUAL_DEFAULTS, primaryVisualObjects, drawPrimaryStructures, drawTrendTransitions, clipHistoricalHitBoxes, indicatorCalculationSegments } from "./chart/primary-structure.js";
+import { PRIMARY_VISUAL_DEFAULTS, primaryVisualObjects as initialPrimaryVisualObjects } from "./chart/primary-structure.js";
+import { drawIndicator as initialPaintIndicator, INDICATOR_MARKER_DEFAULTS } from "./chart/indicator-renderer.js";
+import * as initialVerdictLabels from "./chart/true-false-label.js";
 import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart/lod.js";
 import { aggregateCandles as aggregate, appendCandleBuckets } from "./chart/candle-buckets.js";
 import { mountRealtimeChart, readRealtimeUpdate } from "./features/realtime-chart.js";
@@ -38,7 +40,6 @@ import { setAnchoredPopoverOpen } from "./ui/popover.js";
 import { formatInventoryDateTime, formatSymbolWithBroker } from "./ui/symbol-format.js";
 import { MIN_SAFE_BAR_SPACING } from "./chart/zoom-config.js";
 import { resolveCanonicalChartPoint, positionTimeToCoordinate } from "./chart/drawing-coordinates.js";
-import { SETUP_VISUAL_DEFAULTS, setupObjectVisible, setupVisualObjects, setupPositionDrawing, drawSetupStatusLabels } from "./chart/setup-annotations.js";
 import { drawScreenshotOverlay } from "./features/screenshot-overlay.js";
 import { chartTabUrl, resolveChartTabState, resolveWorkspaceRefreshState } from "./features/workspace-session.js";
 import { parseTehranMetadataTime } from "./features/raw-file-contract.js";
@@ -1132,6 +1133,7 @@ $(".indicator-body").innerHTML = `
         ["sVisible", "S module", ""],
         ["eVisible", "E module", ""],
         ["stopAllVisible", "StopAll module", ""],
+        ["trueFalseVisible", "T/F labels", ""],
         ["eStopVisible", "E stop lines", ""],
         ["orderVisible", "Order reactions", ""],
         ["orderStopVisible", "Order stops", ""],
@@ -1144,29 +1146,23 @@ $(".indicator-body").innerHTML = `
         ["mblVisible", "MBL line"], ["mblLabelVisible", "MBL label"],
       ].map(([id, title]) => `<label class="module-row"><span><b>${title}</b></span><input id="${id}" class="module-toggle-input" type="checkbox" aria-label="Toggle ${title}" checked><span class="module-toggle" aria-hidden="true"></span></label>`).join("")}
     </section>
-    <section class="tv-section"><h3>Setup annotations</h3>
-      ${[
-        ["setupTVisible", "T labels"], ["setupFVisible", "F labels"],
-        ["setupPositionsVisible", "Positions"],
-      ].map(([id, title]) => `<label class="module-row"><span><b>${title}</b></span><input id="${id}" class="module-toggle-input" type="checkbox" aria-label="Toggle ${title}" checked><span class="module-toggle" aria-hidden="true"></span></label>`).join("")}
-    </section>
   </div>
   <div class="indicator-tab" data-indicator-page="style">
     <section class="style-group" data-style-group="foundation"><button type="button" class="style-group-header" aria-expanded="true"><span><strong>Foundation</strong><small>Reaction • Blue Line • A</small></span><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div class="style-group-body">
       ${styleModule("reaction", "Bullish reaction", [appearancePopup("reaction-bull", "Bullish reaction appearance", "Fill, opacity and border", [swatchRow([["bullFill", "Fill", "color", "#86efac"], ["bullBorder", "Border", "color", "#22c55e"]]), rangeRow("bullOpacity", "Fill opacity", 0, 100, 20, "%"), widthRow("bullWidth", "Border width", 0.25), lineStyleRow("bullLineStyle", "solid")], ["bullFill", "bullBorder", "bullOpacity", "bullWidth", "bullLineStyle"])])}
       ${styleModule("reaction-bear", "Bearish reaction", [appearancePopup("reaction-bear", "Bearish reaction appearance", "Fill, opacity and border", [swatchRow([["bearFill", "Fill", "color", "#fca5a5"], ["bearBorder", "Border", "color", "#ef4444"]]), rangeRow("bearOpacity", "Fill opacity", 0, 100, 20, "%"), widthRow("bearWidth", "Border width", 0.25), lineStyleRow("bearLineStyle", "solid")], ["bearFill", "bearBorder", "bearOpacity", "bearWidth", "bearLineStyle"])])}
       ${styleModule("blue", "Blue Line", [appearancePopup("blue", "Blue Line appearance", "Color, width and line style", [swatchRow([["blueColor", "Line color", "color", "#06b6d4"]]), rangeRow("blueOpacity", "Opacity", 0, 100, 100, "%"), widthRow("blueWidth", "Line width", 3), lineStyleRow("blueLineStyle", "solid")], ["blueColor", "blueOpacity", "blueWidth", "blueLineStyle"])])}
-      ${styleModule("a", "A label", [appearancePopup("a", "A label color", "Label color", [swatchRow([["aColor", "Label color", "color", "#7c3aed"]])], ["aColor"]), fontSizeRow("aSize", "Font size", 12), rangeRow("aGap", "Distance from candle", 4, 32, 12, "px")])}
+      ${styleModule("a", "A label", [appearancePopup("a", "A label color", "Label color", [swatchRow([["aColor", "Label color", "color", "#7c3aed"]])], ["aColor"]), fontSizeRow("aSize", "Font size", INDICATOR_MARKER_DEFAULTS.aSize), rangeRow("aGap", "Distance from candle", 4, 32, 12, "px")])}
     </div>
     </section>
     <section class="style-group" data-style-group="se"><button type="button" class="style-group-header" aria-expanded="true"><span><strong>S & E behaviors</strong><small>S • E</small></span><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div class="style-group-body">
-      ${styleModule("s", "S labels", [appearancePopup("s", "S label colors", "Bullish and bearish colors", [swatchRow([["sBullColor", "Bullish", "color", "#2563eb"], ["sBearColor", "Bearish", "color", "#f23645"]])], ["sBullColor", "sBearColor"]), fontSizeRow("sSize", "Font size", 12), rangeRow("sGap", "Distance from candle", 4, 32, 12, "px")])}
-      ${styleModule("e", "E labels", [appearancePopup("e", "E label colors", "Blue and red family colors", [swatchRow([["eBlueColor", "Blue family", "color", "#1e3a8a"], ["eRedColor", "Red family", "color", "#7f1d1d"]])], ["eBlueColor", "eRedColor"]), fontSizeRow("eSize", "Font size", 12), rangeRow("eGap", "Distance from candle", 4, 32, 12, "px")])}
+      ${styleModule("s", "S labels", [appearancePopup("s", "S label colors", "Bullish and bearish colors", [swatchRow([["sBullColor", "Bullish", "color", "#2563eb"], ["sBearColor", "Bearish", "color", "#f23645"]])], ["sBullColor", "sBearColor"]), fontSizeRow("sSize", "Font size", INDICATOR_MARKER_DEFAULTS.sSize), rangeRow("sGap", "Distance from candle", 4, 32, 12, "px")])}
+      ${styleModule("e", "E labels", [appearancePopup("e", "E label colors", "Blue and red family colors", [swatchRow([["eBlueColor", "Blue family", "color", "#1e3a8a"], ["eRedColor", "Red family", "color", "#7f1d1d"]])], ["eBlueColor", "eRedColor"]), fontSizeRow("eSize", "Font size", INDICATOR_MARKER_DEFAULTS.eSize), rangeRow("eGap", "Distance from candle", 4, 32, 12, "px")])}
       ${styleModule("e-stop", "E stop lines", [appearancePopup("e-stop", "E stop line appearance", "Color, width and dotted style", [swatchRow([["eStopColor", "Line color", "color", "#111111"]]), widthRow("eStopWidth", "Line width", 1), lineStyleRow("eStopLineStyle", "dot")], ["eStopColor", "eStopWidth", "eStopLineStyle"])])}
     </div>
     </section>
     <section class="style-group" data-style-group="stopall"><button type="button" class="style-group-header" aria-expanded="true"><span><strong>StopAll</strong><small>StopAll</small></span><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div class="style-group-body">
-      ${styleModule("stopall", "StopAll marker", [appearancePopup("stopall", "StopAll appearance", "Fill, opacity and border", [swatchRow([["stopAllFill", "Fill", "color", "#ff9800"], ["stopAllBorder", "Border", "color", "#ff9800"]]), rangeRow("stopAllOpacity", "Fill opacity", 0, 100, 20, "%"), widthRow("stopAllWidth", "Border width", 0.25)], ["stopAllFill", "stopAllBorder", "stopAllOpacity", "stopAllWidth"]), fontSizeRow("stopAllSize", "Label font size", 15), rangeRow("stopAllRadius", "Circle radius", 4, 16, 8, "px"), rangeRow("stopAllGap", "Label distance", 4, 32, 16, "px")])}
+      ${styleModule("stopall", "StopAll marker", [appearancePopup("stopall", "StopAll appearance", "Fill, opacity and border", [swatchRow([["stopAllFill", "Fill", "color", "#ff9800"], ["stopAllBorder", "Border", "color", "#ff9800"]]), rangeRow("stopAllOpacity", "Fill opacity", 0, 100, 20, "%"), widthRow("stopAllWidth", "Border width", 0.25)], ["stopAllFill", "stopAllBorder", "stopAllOpacity", "stopAllWidth"]), fontSizeRow("stopAllSize", "Label font size", INDICATOR_MARKER_DEFAULTS.stopAllSize), rangeRow("stopAllRadius", "Circle radius", 4, 16, INDICATOR_MARKER_DEFAULTS.stopAllRadius, "px"), rangeRow("stopAllGap", "Label distance", 4, 32, 16, "px")])}
     </div>
     </section>
     <section class="style-group" data-style-group="primary"><button type="button" class="style-group-header" aria-expanded="true"><span><strong>PH/PL</strong><small>Primary High • Primary Low • MBL</small></span><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div class="style-group-body">
@@ -1180,16 +1176,6 @@ $(".indicator-body").innerHTML = `
       ${styleModule("order-stop", "Order stop lines", [appearancePopup("order-stop", "Order stop line appearance", "Color, width and dotted style", [swatchRow([["orderStopColor", "Line color", "color", "#ef4444"]]), widthRow("orderStopWidth", "Line width", 1), lineStyleRow("orderStopLineStyle", "dot")], ["orderStopColor", "orderStopWidth", "orderStopLineStyle"]), `<div class="setting-row"><label>Unbroken stop cap</label><input id="orderStopCap" type="number" min="1" max="200" value="200"></div>`])}
     </div>
     </section>
-    <section class="style-group" data-style-group="setups"><button type="button" class="style-group-header" aria-expanded="true"><span><strong>Setup annotations</strong><small>T • F</small></span><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div class="style-group-body">
-      ${["T", "F"].map((status) => {
-        const prefix = `setup${status}`;
-        return styleModule(`setup-${status.toLowerCase()}`, `${status} labels`, [
-          appearancePopup(`setup-${status.toLowerCase()}`, `${status} label color`, "Label color", [swatchRow([[`${prefix}Color`, "Label color", "color", SETUP_VISUAL_DEFAULTS[`${prefix}Color`]]])], [`${prefix}Color`]),
-          fontSizeRow(`${prefix}Size`, "Font size", SETUP_VISUAL_DEFAULTS[`${prefix}Size`]),
-          rangeRow(`${prefix}Gap`, "Distance from object label", 0, 64, SETUP_VISUAL_DEFAULTS[`${prefix}Gap`], "px"),
-        ], [`${prefix}Color`, `${prefix}Size`, `${prefix}Gap`]);
-      }).join("")}
-    </div></section>
   </div>
   <div class="indicator-tab" data-indicator-page="info">
     <section class="tv-section">
@@ -2420,7 +2406,6 @@ function saveIndicatorObjectOverrides() {
       text: item.text,
       size: item.size,
       weight: item.weight,
-      position: item.type === "indicator-position" ? item.position : undefined,
       customized: Boolean(item.customized),
       hidden: Boolean(item.hidden),
       locked: item.locked !== false,
@@ -2715,8 +2700,7 @@ function point(e, positionCoordinates = false) {
     }
   }
   if (state.data.length && (positionCoordinates || isPosition(state.draft) || isPosition({ type: state.tool }) ||
-      (state.interaction?.id && isPosition(selected())) ||
-      (state.interaction?.indicatorId && selectedIndicatorObject()?.type === "indicator-position"))) {
+      (state.interaction?.id && isPosition(selected())))) {
     const firstTime = Number(state.data[0].time), lastTime = Number(state.data.at(-1).time);
     const firstX = positionCoordinateAtTime(firstTime), lastX = positionCoordinateAtTime(lastTime);
     if (Number.isFinite(lastX) && x > lastX) {
@@ -2793,34 +2777,9 @@ function handle(q) {
 function isPosition(d) {
   return d?.type === "long" || d?.type === "short";
 }
-function indicatorPositionDrawing(item) {
-  return setupPositionDrawing(item, state.data, state.tf);
-}
-const setupPresentationCache = new WeakMap();
-function setupObjectsForGroup(group,direction) {
-  if (!setupPresentationCache.has(group))
-    setupPresentationCache.set(group,setupVisualObjects(group,direction));
-  return setupPresentationCache.get(group);
-}
-function positionHandleAt(drawing, p) {
-  return positionGeometry(drawing)?.handles
-    .map(q => ({...q,distance:Math.hypot(p.x-q.x,p.y-q.y)}))
-    .filter(q => q.distance <= 10).sort((a,b) => a.distance-b.distance)[0];
-}
-function selectedPositionContext() {
-  const object = selectedIndicatorObject();
-  return object?.type === "indicator-position"
-    ? {drawing:indicatorPositionDrawing(object),object} : {drawing:selected(),object:null};
-}
-function applyPositionEdit(context, edited, persist = true) {
-  if (context.object) {
-    context.object.position = {a:{...edited.a},b:{...edited.b},stopPrice:edited.stopPrice};
-    context.object.customized = true;
-    if (persist) saveIndicatorObjectOverrides();
-  } else {
-    Object.assign(context.drawing,edited);
-    if (persist) saveDrawings();
-  }
+function applyPositionEdit(drawing, edited) {
+  Object.assign(drawing, edited);
+  saveDrawings();
   updateToolbar();
   drawAll();
 }
@@ -2894,11 +2853,11 @@ function measureLabel(d) {
   return `${stats.durationLabel} • ${stats.bars} bars • ${sign}${stats.priceDelta.toFixed(3)} (${stats.percentage.toFixed(2)}%)`;
 }
 function drawOne(d, selected, width, height) {
-  const s = styleOf(d);
   if (isPosition(d)) {
     drawPosition(d, selected);
     return;
   }
+  const s = styleOf(d);
   // Freehand drawings can straddle the visible range.  Their legacy a/b
   // endpoints are metadata only; rejecting either endpoint used to hide the
   // entire stroke while it was being moved.
@@ -3080,10 +3039,6 @@ function removeInvalidIndicatorCalculations(payload) {
   }
   return payload;
 }
-const INDICATOR_LABEL_MEDIUM_SIZE = 12,
-  INDICATOR_LABEL_SMALL_SIZE = 12,
-  INDICATOR_LABEL_LARGE_SIZE = 15,
-  STOPALL_LABEL_GAP = 16;
 function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
   const output = [];
   if (!state.indicator.results) {
@@ -3113,7 +3068,6 @@ function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
       text: source.text,
       size: source.size,
       weight: source.weight,
-      position: item.type === "indicator-position" ? source.position : undefined,
       customized: Boolean(source.customized || source.offsetTime || source.offsetPrice),
       hidden: Boolean(source.hidden),
       locked: source.locked == null ? true : Boolean(source.locked),
@@ -3124,7 +3078,6 @@ function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
   };
   for (const [direction, group] of Object.entries(state.indicator.results.directions)) {
     primaryVisualObjects(group, direction, state.indicator.settings).forEach(add);
-    setupObjectsForGroup(group, direction).forEach(add);
     const behaviorOrders = [
       ...(group.sZones || []),
       ...(group.eZones || []),
@@ -3137,9 +3090,9 @@ function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
     );
     (group.reactions || []).forEach((item, index) => add({ id: `indicator:${direction}:reaction:${index}`, type: "indicator-reaction", name: `${direction} Reaction ${index + 1}`, time: item.firstTime, price: item.boxTop, color: direction === "bullish" ? state.indicator.settings.bullBorder : state.indicator.settings.bearBorder }));
     (group.blueLines || []).forEach((item, index) => add({ id: `indicator:${direction}:blue:${index}`, type: "indicator-blue", name: `Blue Line ${index + 1}`, time: item.sourceTime, price: item.linePrice, color: state.indicator.settings.blueColor }));
-    (group.aZones || []).filter((item) => item.calculationValid !== false).forEach((item, index) => add({ id: `indicator:${direction}:a:${index}`, type: "indicator-label", name: `A ${index + 1}`, text: "A", size: INDICATOR_LABEL_SMALL_SIZE, weight: 500, time: item.sourceTime, price: item.price, color: "#7c3aed" }));
+    (group.aZones || []).filter((item) => item.calculationValid !== false).forEach((item, index) => add({ id: `indicator:${direction}:a:${index}`, type: "indicator-label", name: `A ${index + 1}`, text: "A", size: INDICATOR_MARKER_DEFAULTS.aSize, weight: 500, time: item.sourceTime, price: item.price, color: "#7c3aed" }));
     (group.sZones || []).filter((item) => item.calculationValid !== false).forEach((item, index) => {
-      add({ id: `indicator:${direction}:s:${index}`, type: "indicator-label", name: `S ${index + 1}`, text: "S", size: INDICATOR_LABEL_MEDIUM_SIZE, weight: 500, time: item.sourceTime, price: item.price, color: item.color === "red" ? "#f23645" : "#2563eb" });
+      add({ id: `indicator:${direction}:s:${index}`, type: "indicator-label", name: `S ${index + 1}`, text: "S", size: INDICATOR_MARKER_DEFAULTS.sSize, weight: 500, time: item.sourceTime, price: item.price, color: item.color === "red" ? "#f23645" : "#2563eb" });
       if (item.calculationValid !== false && item.orderFirstTime != null)
         add({ id: `indicator:${direction}:s-order:${index}`, type: "indicator-order", name: `S order ${index + 1}`, time: item.orderFirstTime, price: item.orderStopLevel, color: state.indicator.settings.orderColor });
     });
@@ -3147,7 +3100,7 @@ function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
       const family = item.family === "red" ? "red" : "blue";
       const eName = `E${item.number}`;
       const eColor = family === "red" ? "#7f1d1d" : "#1e3a8a";
-      add({ id: `indicator:${direction}:e:${index}`, type: "indicator-label", name: eName, text: eName, size: INDICATOR_LABEL_MEDIUM_SIZE, weight: 600, time: item.sourceTime, price: item.price, color: eColor });
+      add({ id: `indicator:${direction}:e:${index}`, type: "indicator-label", name: eName, text: eName, size: INDICATOR_MARKER_DEFAULTS.eSize, weight: 600, time: item.sourceTime, price: item.price, color: eColor });
       add({ id: `indicator:${direction}:e-order:${index}`, type: "indicator-order", name: `${eName} order`, time: item.orderFirstTime, price: item.orderStopLevel, color: state.indicator.settings.orderColor });
       if (
         String(item.parentType).toUpperCase() === "E" &&
@@ -3157,7 +3110,7 @@ function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
     });
     (group.stopAlls || []).forEach((item, index) => {
       const name = `StopAll${item.number}`;
-      add({ id: `indicator:${direction}:stopall:${index}`, type: "indicator-label", name, text: String(item.number), size: INDICATOR_LABEL_LARGE_SIZE, weight: 600, time: item.sourceTime, price: item.price, color: "#ff9800" });
+      add({ id: `indicator:${direction}:stopall:${index}`, type: "indicator-label", name, text: String(item.number), size: INDICATOR_MARKER_DEFAULTS.stopAllSize, weight: 600, time: item.sourceTime, price: item.price, color: "#ff9800" });
       add({ id: `indicator:${direction}:stopall-order:${index}`, type: "indicator-order", name: `${name} order`, time: item.orderFirstTime, price: item.orderStopLevel, color: state.indicator.settings.orderColor });
     });
     (group.orderAudit || []).forEach((item, index) => {
@@ -3452,517 +3405,15 @@ function indicatorTimeToCoordinate(time) {
   return anchorX + ((target - Number(anchor.time)) / timeframe) * spacing;
 }
 function drawIndicator(canvasWidth, canvasHeight) {
-  state.indicator.hitBoxes = [];
-  if (!state.indicator.enabled || !state.indicator.results) return;
-  const settings = state.indicator.settings,
-    timeframe = Number(state.indicator.results.timeframe || state.tf);
-  for (const { direction, group, objectOffsets } of indicatorCalculationSegments(state.indicator.results)) {
-    ctx.save();
-    const firstHitIndex = state.indicator.hitBoxes.length;
-    const bullish = direction === "bullish",
-      eSourceIndices = group.__eSourceIndices ||= new Set(
-        (group.eZones || []).map((zone) => Number(zone.sourceIndex)),
-      ),
-      stopAllSourceIndices = group.__stopAllSourceIndices ||= new Set(
-        (group.stopAlls || []).map((zone) => Number(zone.sourceIndex)),
-      ),
-      sSourceIndices = group.__sSourceIndices ||= new Set(
-        (group.sZones || [])
-          .filter((zone) => zone.calculationValid !== false)
-          .map((zone) => Number(zone.sourceIndex)),
-      ),
-      fill = bullish ? settings.bullFill : settings.bearFill,
-      border = bullish ? settings.bullBorder : settings.bearBorder,
-      opacity = (bullish ? settings.bullOpacity : settings.bearOpacity) / 100,
-      width = bullish ? settings.bullWidth : settings.bearWidth;
-    const historicalEndX = group.calculationEndTime != null
-      ? indicatorTimeToCoordinate(group.calculationEndTime) : null;
-    if (Number.isFinite(historicalEndX)) {
-      ctx.beginPath();
-      ctx.rect(0, 0, Math.max(0, historicalEndX), canvasHeight);
-      ctx.clip();
-    }
-    let count = 0,
-      lastFirst = -1,
-      resetCursor = 0,
-      aCursor = 0;
-    const resets = settings.numberEnabled && settings.numberMode === "reset"
-        ? (group.__sortedResets ||= [...group.resets].sort((a, b) => a.index - b.index))
-        : [],
-      aZones = settings.numberEnabled && settings.numberMode === "a"
-        ? (group.__sortedAZones ||= [...(group.aZones || [])]
-          .filter((zone) => zone.calculationValid !== false)
-          .sort((a, b) => Number(a.sourceIndex) - Number(b.sourceIndex)))
-        : [];
-    for (const [reactionIndex, reaction] of group.reactions.entries()) {
-      if (settings.numberMode === "reset") {
-        let reset = false;
-        while (
-          resetCursor < resets.length &&
-          resets[resetCursor].index <= reaction.firstIndex
-        ) {
-          if (resets[resetCursor].index > lastFirst) reset = true;
-          resetCursor++;
-        }
-        count = reset ? 1 : count + 1;
-      } else if (settings.numberMode === "a") {
-        let restart = false;
-        while (
-          aCursor < aZones.length &&
-          Number(aZones[aCursor].sourceIndex) <= reaction.firstIndex
-        ) {
-          if (Number(aZones[aCursor].sourceIndex) > lastFirst) restart = true;
-          aCursor++;
-        }
-        count = restart ? 1 : count + 1;
-      } else count++;
-      lastFirst = reaction.firstIndex;
-      const reactionObjectId = `indicator:${direction}:reaction:${reactionIndex + objectOffsets.reactions}`;
-      if (!settings.reactionVisible) continue;
-      const reactionObject = indicatorObject(reactionObjectId);
-      if (reactionObject?.hidden) continue;
-      const startTime = bullish
-          ? reaction.boxTopSourceTime
-          : reaction.boxBottomSourceTime,
-        x1 = indicatorTimeToCoordinate(startTime),
-        x2 = indicatorTimeToCoordinate(reaction.breakTime);
-      if (x1 == null || x2 == null) continue;
-      const offset = indicatorOffsetPixels(reactionObject);
-      const left = Math.min(x1, x2) + offset.x, right = Math.max(x1, x2) + offset.x;
-      const strokeWidth = reactionObject?.customized ? reactionObject.width : width;
-      const label = settings.numberEnabled ? String(count) : "";
-      const padding = Math.max(9, strokeWidth, label.length * settings.numberSize || 0);
-      if (right < -padding || left > canvasWidth + padding) continue;
-      const yTop = overlayPriceCoordinate(+reaction.boxTop), yBottom = overlayPriceCoordinate(+reaction.boxBottom);
-      if (yTop == null || yBottom == null) continue;
-      const top = Math.min(yTop, yBottom) + offset.y, bottom = Math.max(yTop, yBottom) + offset.y;
-      state.indicator.hitBoxes.push({
-        objectId: reactionObjectId,
-        shape: "rect",
-        left,
-        right,
-        top,
-        bottom,
-        direction,
-        reaction,
-      });
-      ctx.save();
-      ctx.fillStyle = rgba(
-        reactionObject?.customized ? reactionObject.fill : fill,
-        reactionObject?.customized ? reactionObject.opacity : opacity,
-      );
-      ctx.strokeStyle = reactionObject?.customized ? reactionObject.color : border;
-      ctx.lineWidth = strokeWidth;
-      ctx.setLineDash(
-        reactionObject?.customized
-          ? dash(reactionObject.lineStyle)
-          : dash(bullish ? settings.bullLineStyle : settings.bearLineStyle),
-      );
-      ctx.beginPath();
-      ctx.rect(left, top, Math.max(1, right - left), Math.max(1, bottom - top));
-      ctx.fill();
-      if (width > 0) ctx.stroke();
-      ctx.restore();
-      if (settings.numberEnabled) {
-        ctx.save();
-        ctx.font = `${settings.numberWeight} ${settings.numberSize}px Inter`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = bullish ? "top" : "bottom";
-        ctx.fillStyle = settings.numberColor;
-        ctx.fillText(
-          label,
-          (left + right) / 2,
-          bullish ? bottom + settings.numberGap : top - settings.numberGap,
-        );
-        ctx.restore();
-      }
-    }
-    if (settings.blueLineEnabled) {
-      for (const [blueIndex, blueLine] of (group.blueLines || []).entries()) {
-        const blueObjectId = `indicator:${direction}:blue:${blueIndex + objectOffsets.blueLines}`,
-          blueObject = indicatorObject(blueObjectId);
-        if (blueObject?.hidden) continue;
-        const x1 = indicatorTimeToCoordinate(blueLine.startTime),
-          x2 = indicatorTimeToCoordinate(blueLine.endTime),
-          y = series.priceToCoordinate(+blueLine.linePrice);
-        if ([x1, x2, y].some((value) => value == null)) continue;
-        const shifted = offsetIndicatorRect(blueObject, x1, y, x2, y);
-        state.indicator.hitBoxes.push({ objectId: blueObjectId, shape: "line", x1: shifted.x1, y1: shifted.y1, x2: shifted.x2, y2: shifted.y2 });
-        ctx.save();
-        ctx.strokeStyle = blueObject?.customized ? rgba(blueObject.color, blueObject.opacity ?? 1) : rgba(settings.blueColor, settings.blueOpacity / 100);
-        ctx.lineWidth = blueObject?.customized ? blueObject.width : settings.blueWidth;
-        ctx.lineCap = "round";
-        ctx.setLineDash(
-          blueObject?.customized
-            ? dash(blueObject.lineStyle)
-            : dash(settings.blueLineStyle),
-        );
-        ctx.beginPath();
-        ctx.moveTo(shifted.x1, shifted.y1);
-        ctx.lineTo(shifted.x2, shifted.y2);
-        ctx.stroke();
-        ctx.restore();
-      }
-    }
-    for (const [zoneIndex, zone] of (group.aZones || []).entries()) {
-      const labelObject = indicatorObject(`indicator:${direction}:a:${zoneIndex + objectOffsets.aZones}`);
-      if (!settings.aVisible) continue;
-      if (labelObject?.hidden) continue;
-      if (
-        eSourceIndices.has(Number(zone.sourceIndex)) ||
-        stopAllSourceIndices.has(Number(zone.sourceIndex)) ||
-        sSourceIndices.has(Number(zone.sourceIndex))
-      )
-        continue;
-      const x = indicatorTimeToCoordinate(zone.sourceTime),
-        y = series.priceToCoordinate(+zone.price);
-      if (x == null || y == null) continue;
-      const shifted = offsetIndicatorPoint(labelObject, x, bullish ? y + settings.aGap : y - settings.aGap);
-      state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:a:${zoneIndex + objectOffsets.aZones}`, shape: "point", x: shifted.x, y: shifted.y, radius: 14 });
-      ctx.save();
-      ctx.fillStyle = labelObject?.customized
-        ? labelObject.color
-        : settings.aColor || "#7c3aed";
-      ctx.font = `${labelObject?.weight || 500} ${
-        labelObject?.customized ? labelObject.size : settings.aSize || INDICATOR_LABEL_SMALL_SIZE
-      }px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = bullish ? "top" : "bottom";
-      ctx.fillText(labelObject?.text ?? "A", shifted.x, shifted.y);
-      ctx.restore();
-    }
-    for (const [zoneIndex, zone] of (group.sZones || []).entries()) {
-      const hasOrder = zone.calculationValid !== false && zone.orderFirstTime != null;
-      const orderObject = indicatorObject(`indicator:${direction}:s-order:${zoneIndex + objectOffsets.sZones}`),
-        labelObject = indicatorObject(`indicator:${direction}:s:${zoneIndex + objectOffsets.sZones}`);
-      const orderBullish = zone.orderDirection === "bullish",
-        orderStartTime = orderBullish
-          ? zone.orderBoxTopSourceTime
-          : zone.orderBoxBottomSourceTime,
-        boxX1 = hasOrder ? indicatorTimeToCoordinate(orderStartTime) : null,
-        boxX2 = hasOrder ? indicatorTimeToCoordinate(zone.orderBreakTime) : null,
-        boxYTop = hasOrder ? series.priceToCoordinate(+zone.orderBoxTop) : null,
-        boxYBottom = hasOrder ? series.priceToCoordinate(+zone.orderBoxBottom) : null;
-      if (hasOrder && settings.orderVisible && !orderObject?.hidden && ![boxX1, boxX2, boxYTop, boxYBottom].some((v) => v == null)) {
-        const shifted = offsetIndicatorRect(orderObject, boxX1, boxYTop, boxX2, boxYBottom),
-          left = Math.min(shifted.x1, shifted.x2),
-          right = Math.max(shifted.x1, shifted.x2),
-          top = Math.min(shifted.y1, shifted.y2),
-          bottom = Math.max(shifted.y1, shifted.y2);
-        state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:s-order:${zoneIndex + objectOffsets.sZones}`, shape: "rect", left, right, top, bottom });
-        ctx.save();
-        ctx.fillStyle = rgba(orderObject?.customized ? orderObject.fill : settings.orderFill, orderObject?.customized ? orderObject.opacity : settings.orderOpacity / 100);
-        ctx.strokeStyle = orderObject?.customized ? orderObject.color : settings.orderColor;
-        ctx.lineWidth = orderObject?.customized ? orderObject.width : settings.orderWidth;
-        ctx.setLineDash(
-          orderObject?.customized
-            ? dash(orderObject.lineStyle)
-            : dash(settings.orderLineStyle),
-        );
-        ctx.beginPath();
-        ctx.rect(left, top, Math.max(1, right - left), Math.max(1, bottom - top));
-        ctx.fill();
-        ctx.stroke();
-        ctx.restore();
-      }
-      const x = indicatorTimeToCoordinate(zone.sourceTime),
-        y = series.priceToCoordinate(+zone.price);
-      if (x == null || y == null) continue;
-      const shiftedLabel = offsetIndicatorPoint(labelObject, x, bullish ? y + settings.sGap : y - settings.sGap);
-      state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:s:${zoneIndex + objectOffsets.sZones}`, shape: "point", x: shiftedLabel.x, y: shiftedLabel.y, radius: 14 });
-      if (eSourceIndices.has(Number(zone.sourceIndex)) || stopAllSourceIndices.has(Number(zone.sourceIndex))) continue;
-      if (!settings.sVisible) continue;
-      if (labelObject?.hidden) continue;
-      ctx.save();
-      ctx.fillStyle = labelObject?.customized
-        ? labelObject.color
-        : zone.color === "red"
-          ? settings.sBearColor || "#f23645"
-          : settings.sBullColor || "#2563eb";
-      ctx.font = `${labelObject?.weight || 500} ${
-        labelObject?.customized ? labelObject.size : settings.sSize || INDICATOR_LABEL_MEDIUM_SIZE
-      }px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = bullish ? "top" : "bottom";
-      ctx.fillText(labelObject?.text ?? "S", shiftedLabel.x, shiftedLabel.y);
-      ctx.restore();
-    }
-    for (const [zoneIndex, zone] of (group.eZones || []).entries()) {
-      const orderObject = indicatorObject(`indicator:${direction}:e-order:${zoneIndex + objectOffsets.eZones}`),
-        labelObject = indicatorObject(`indicator:${direction}:e:${zoneIndex + objectOffsets.eZones}`);
-      const orderBullish = zone.orderDirection === "bullish",
-        orderStartTime = orderBullish
-          ? zone.orderBoxTopSourceTime
-          : zone.orderBoxBottomSourceTime,
-        boxX1 = indicatorTimeToCoordinate(orderStartTime),
-        boxX2 = indicatorTimeToCoordinate(zone.orderBreakTime),
-        boxYTop = series.priceToCoordinate(+zone.orderBoxTop),
-        boxYBottom = series.priceToCoordinate(+zone.orderBoxBottom);
-      if (settings.orderVisible && !orderObject?.hidden && ![boxX1, boxX2, boxYTop, boxYBottom].some((v) => v == null)) {
-        const shifted = offsetIndicatorRect(orderObject, boxX1, boxYTop, boxX2, boxYBottom),
-          left = Math.min(shifted.x1, shifted.x2),
-          right = Math.max(shifted.x1, shifted.x2),
-          top = Math.min(shifted.y1, shifted.y2),
-          bottom = Math.max(shifted.y1, shifted.y2);
-        state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:e-order:${zoneIndex + objectOffsets.eZones}`, shape: "rect", left, right, top, bottom });
-        ctx.save();
-        ctx.fillStyle = rgba(orderObject?.customized ? orderObject.fill : settings.orderFill, orderObject?.customized ? orderObject.opacity : settings.orderOpacity / 100);
-        ctx.strokeStyle = orderObject?.customized ? orderObject.color : settings.orderColor;
-        ctx.lineWidth = orderObject?.customized ? orderObject.width : settings.orderWidth;
-        ctx.setLineDash(
-          orderObject?.customized
-            ? dash(orderObject.lineStyle)
-            : dash(settings.orderLineStyle),
-        );
-        ctx.beginPath();
-        ctx.rect(left, top, Math.max(1, right - left), Math.max(1, bottom - top));
-        ctx.fill();
-        ctx.stroke();
-        ctx.restore();
-      }
-      const x = indicatorTimeToCoordinate(zone.sourceTime),
-        y = series.priceToCoordinate(+zone.price);
-      if (x == null || y == null) continue;
-      const shiftedLabel = offsetIndicatorPoint(labelObject, x, bullish ? y + settings.eGap : y - settings.eGap);
-      state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:e:${zoneIndex + objectOffsets.eZones}`, shape: "point", x: shiftedLabel.x, y: shiftedLabel.y, radius: 14 });
-      if (!settings.eVisible) continue;
-      if (labelObject?.hidden) continue;
-      ctx.save();
-      ctx.fillStyle = labelObject?.customized
-        ? labelObject.color
-        : zone.family === "red"
-          ? settings.eRedColor || "#7f1d1d"
-          : settings.eBlueColor || "#1e3a8a";
-      ctx.font = `${labelObject?.weight || 500} ${labelObject?.customized ? labelObject.size : settings.eSize || INDICATOR_LABEL_MEDIUM_SIZE}px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = bullish ? "top" : "bottom";
-      ctx.fillText(labelObject?.text ?? `E${zone.number}`, shiftedLabel.x, shiftedLabel.y);
-      ctx.restore();
-    }
-    for (const [zoneIndex, zone] of (group.stopAlls || []).entries()) {
-      const objectId = `indicator:${direction}:stopall:${zoneIndex + objectOffsets.stopAlls}`,
-        object = indicatorObject(objectId),
-        orderObject = indicatorObject(`indicator:${direction}:stopall-order:${zoneIndex + objectOffsets.stopAlls}`),
-        orderBullish = zone.orderDirection === "bullish",
-        orderStartTime = orderBullish
-          ? zone.orderBoxTopSourceTime
-          : zone.orderBoxBottomSourceTime,
-        boxX1 = indicatorTimeToCoordinate(orderStartTime),
-        boxX2 = indicatorTimeToCoordinate(zone.orderBreakTime),
-        boxYTop = series.priceToCoordinate(+zone.orderBoxTop),
-        boxYBottom = series.priceToCoordinate(+zone.orderBoxBottom),
-        x = indicatorTimeToCoordinate(zone.sourceTime),
-        y = series.priceToCoordinate(+zone.price);
-      if (settings.orderVisible && !orderObject?.hidden && ![boxX1, boxX2, boxYTop, boxYBottom].some((value) => value == null)) {
-        const shifted = offsetIndicatorRect(orderObject, boxX1, boxYTop, boxX2, boxYBottom),
-          left = Math.min(shifted.x1, shifted.x2),
-          right = Math.max(shifted.x1, shifted.x2),
-          top = Math.min(shifted.y1, shifted.y2),
-          bottom = Math.max(shifted.y1, shifted.y2);
-        state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:stopall-order:${zoneIndex + objectOffsets.stopAlls}`, shape: "rect", left, right, top, bottom });
-        ctx.save();
-        ctx.fillStyle = rgba(orderObject?.customized ? orderObject.fill : settings.orderFill, orderObject?.customized ? orderObject.opacity : settings.orderOpacity / 100);
-        ctx.strokeStyle = orderObject?.customized ? orderObject.color : settings.orderColor;
-        ctx.lineWidth = orderObject?.customized ? orderObject.width : settings.orderWidth;
-        ctx.setLineDash(orderObject?.customized ? dash(orderObject.lineStyle) : dash(settings.orderLineStyle));
-        ctx.beginPath();
-        ctx.rect(left, top, Math.max(1, right - left), Math.max(1, bottom - top));
-        ctx.fill();
-        ctx.stroke();
-        ctx.restore();
-      }
-      if (!settings.stopAllVisible || object?.hidden || x == null || y == null) continue;
-      const radius = settings.stopAllRadius,
-        shifted = offsetIndicatorPoint(object, x, y);
-      state.indicator.hitBoxes.push({ objectId, shape: "point", x: shifted.x, y: shifted.y, radius: radius + 2 });
-      ctx.save();
-      ctx.fillStyle = rgba(settings.stopAllFill, settings.stopAllOpacity / 100);
-      ctx.strokeStyle = object?.customized ? object.color : settings.stopAllBorder;
-      ctx.lineWidth = object?.customized ? object.width : settings.stopAllWidth;
-      ctx.beginPath();
-      ctx.arc(shifted.x, shifted.y, radius, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-      ctx.fillStyle = object?.customized ? object.color : settings.stopAllBorder;
-      ctx.font = `${object?.weight || 600} ${object?.customized ? object.size : settings.stopAllSize || INDICATOR_LABEL_LARGE_SIZE}px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = bullish ? "top" : "bottom";
-      ctx.fillText(object?.text ?? String(zone.number), shifted.x,
-        shifted.y + (bullish ? 1 : -1) * (radius + settings.stopAllGap));
-      ctx.restore();
-    }
-    if (settings.orderStopVisible) {
-      const seen = new Set();
-      for (const zone of [...(group.sZones || []), ...(group.eZones || []), ...(group.stopAlls || [])]) {
-        if (zone.calculationValid === false) continue;
-        if (zone.orderStopSourceIndex == null || zone.orderStopLevel == null) continue;
-        const key = [zone.orderDirection, zone.orderFirstIndex, zone.orderStopSourceIndex].join(":");
-        if (seen.has(key)) continue;
-        seen.add(key);
-        const stopObject = indicatorObject(`indicator:${direction}:stop:${key}`);
-        if (stopObject?.hidden) continue;
-        const stopIndex = Number(zone.orderStopSourceIndex),
-          endIndex = Math.min(
-            Number.isFinite(+zone.decisionIndex) ? +zone.decisionIndex : stopIndex + settings.orderStopCap,
-            stopIndex + settings.orderStopCap,
-          );
-        const
-          startTime = zone.orderStopSourceTime,
-          endTime = Number(startTime) +
-            Math.max(1, endIndex - stopIndex) *
-              timeframe,
-          visibleEndTime = Number.isFinite(+zone.decisionTime)
-            ? Math.min(+zone.decisionTime, endTime)
-            : endTime;
-        const
-          x1 = indicatorTimeToCoordinate(startTime),
-          x2 = indicatorTimeToCoordinate(visibleEndTime),
-          y = series.priceToCoordinate(+zone.orderStopLevel);
-        if ([x1, x2, y].some((value) => value == null)) continue;
-        const shifted = offsetIndicatorRect(stopObject, x1, y, x2, y);
-        state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:stop:${key}`, shape: "line", x1: shifted.x1, y1: shifted.y1, x2: shifted.x2, y2: shifted.y2 });
-        ctx.save();
-        ctx.strokeStyle = stopObject?.customized ? stopObject.color : settings.orderStopColor;
-        ctx.lineWidth = stopObject?.customized ? stopObject.width : settings.orderStopWidth;
-        ctx.lineCap = (stopObject?.customized ? stopObject.lineStyle : settings.orderStopLineStyle) === "dot"
-          ? "round"
-          : "butt";
-        ctx.setLineDash(
-          stopObject?.customized
-            ? dash(stopObject.lineStyle)
-            : dash(settings.orderStopLineStyle || "dot"),
-        );
-        ctx.beginPath();
-        ctx.moveTo(shifted.x1, shifted.y1);
-        ctx.lineTo(shifted.x2, shifted.y2);
-        ctx.stroke();
-        ctx.restore();
-      }
-    }
-    const representedOrderKeys = new Set(
-      [...(group.sZones || []), ...(group.eZones || []), ...(group.stopAlls || [])]
-        .filter((item) => item.calculationValid !== false && item.orderFirstIndex != null && item.orderBreakIndex != null)
-        .map((item) => `${item.orderFirstIndex}:${item.orderBreakIndex}`),
-    );
-    for (const [auditIndex, order] of (group.orderAudit || []).entries()) {
-      const key = `${order.firstIndex}:${order.breakIndex}`;
-      if (representedOrderKeys.has(key)) continue;
-      const objectId = `indicator:${direction}:audit-order:${order.firstIndex}:${order.breakIndex}`,
-        object = indicatorObject(objectId),
-        orderBullish = order.direction === "bullish",
-        startTime = orderBullish ? order.boxTopSourceTime : order.boxBottomSourceTime,
-        x1 = indicatorTimeToCoordinate(startTime),
-        x2 = indicatorTimeToCoordinate(order.breakTime),
-        yTop = series.priceToCoordinate(+order.boxTop),
-        yBottom = series.priceToCoordinate(+order.boxBottom);
-      if (!settings.orderVisible || object?.hidden || [x1, x2, yTop, yBottom].some((value) => !Number.isFinite(value))) continue;
-      const shifted = offsetIndicatorRect(object, x1, yTop, x2, yBottom),
-        left = Math.min(shifted.x1, shifted.x2),
-        right = Math.max(shifted.x1, shifted.x2),
-        top = Math.min(shifted.y1, shifted.y2),
-        bottom = Math.max(shifted.y1, shifted.y2);
-      state.indicator.hitBoxes.push({ objectId, shape: "rect", left, right, top, bottom });
-      ctx.save();
-      ctx.fillStyle = rgba(object?.customized ? object.fill : settings.orderFill, object?.customized ? object.opacity : settings.orderOpacity / 100);
-      ctx.strokeStyle = object?.customized ? object.color : settings.orderColor;
-      ctx.lineWidth = object?.customized ? object.width : settings.orderWidth;
-      ctx.setLineDash(object?.customized ? dash(object.lineStyle) : dash(settings.orderLineStyle));
-      ctx.beginPath();
-      ctx.rect(left, top, Math.max(1, right - left), Math.max(1, bottom - top));
-      ctx.fill();
-      ctx.stroke();
-      ctx.restore();
-    }
-    if (settings.eStopVisible) {
-      for (const [zoneIndex, zone] of (group.eZones || []).entries()) {
-        const parentStopIndex = Number(zone.parentStopIndex),
-          parentSourceIndex = Number(zone.parentSourceIndex);
-        if (
-          String(zone.parentType).toUpperCase() !== "E" ||
-          !Number.isFinite(parentStopIndex) ||
-          !Number.isFinite(parentSourceIndex) ||
-          parentStopIndex - parentSourceIndex <= 350
-        )
-          continue;
-        const objectId = `indicator:${direction}:e-stop:${zoneIndex + objectOffsets.eZones}`,
-          stopObject = indicatorObject(objectId);
-        if (stopObject?.hidden) continue;
-        const x1 = indicatorTimeToCoordinate(zone.parentSourceTime),
-          x2 = indicatorTimeToCoordinate(zone.parentStopTime),
-          y = series.priceToCoordinate(+zone.parentPrice);
-        if ([x1, x2, y].some((value) => value == null)) continue;
-        const shifted = offsetIndicatorRect(stopObject, x1, y, x2, y);
-        state.indicator.hitBoxes.push({
-          objectId,
-          shape: "line",
-          x1: shifted.x1,
-          y1: shifted.y1,
-          x2: shifted.x2,
-          y2: shifted.y2,
-        });
-        ctx.save();
-        ctx.strokeStyle = stopObject?.customized
-          ? stopObject.color
-          : settings.eStopColor;
-        ctx.lineWidth = stopObject?.customized
-          ? stopObject.width
-          : settings.eStopWidth;
-        ctx.lineCap = (stopObject?.customized ? stopObject.lineStyle : settings.eStopLineStyle) === "dot"
-          ? "round"
-          : "butt";
-        ctx.setLineDash(
-          stopObject?.customized
-            ? dash(stopObject.lineStyle)
-            : dash(settings.eStopLineStyle || "dot"),
-        );
-        ctx.beginPath();
-        ctx.moveTo(shifted.x1, shifted.y1);
-        ctx.lineTo(shifted.x2, shifted.y2);
-        ctx.stroke();
-        ctx.restore();
-      }
-    }
-    drawPrimaryStructures(ctx, group, {
-      direction, settings, timeframe,
-      timeToX: indicatorTimeToCoordinate,
-      priceToY: (price) => series.priceToCoordinate(price),
-      objectFor: indicatorObject,
-      offsetPoint: offsetIndicatorPoint,
-      offsetRect: offsetIndicatorRect,
-      onHit: (hit) => state.indicator.hitBoxes.push(hit),
-    });
-    const setupObjects = setupObjectsForGroup(group,direction);
-    drawSetupStatusLabels(ctx,setupObjects,{
-      timeToX:indicatorTimeToCoordinate,priceToY:price=>series.priceToCoordinate(price),
-      objectFor:indicatorObject,offsetPoint:offsetIndicatorPoint,settings,
-      onHit:hit=>state.indicator.hitBoxes.push(hit),
-    });
-    for (const original of setupObjects) {
-      if (original.type !== "indicator-position") continue;
-      const object = indicatorObject(original.id);
-      if (!object || !setupObjectVisible(object, settings)) continue;
-      const drawing = indicatorPositionDrawing(object), geometry = positionGeometry(drawing);
-      if (!geometry) continue;
-      drawPosition(drawing, state.indicator.selectedObjectId === object.id, geometry);
-      state.indicator.hitBoxes.push({objectId:object.id,shape:"rect",area:true,
-        left:geometry.left,right:geometry.right,
-        top:Math.min(geometry.target,geometry.stop),bottom:Math.max(geometry.target,geometry.stop)});
-    }
-    if (Number.isFinite(historicalEndX)) {
-      state.indicator.hitBoxes.push(...clipHistoricalHitBoxes(
-        state.indicator.hitBoxes.splice(firstHitIndex), historicalEndX));
-    }
-    ctx.restore();
-    drawTrendTransitions(ctx, group, {
-      timeToX: indicatorTimeToCoordinate,
-      priceToY: (price) => series.priceToCoordinate(price),
-      height: canvasHeight,
-    });
-  }
+  paintIndicator(canvasWidth, canvasHeight, {
+    ctx, state, indicatorTimeToCoordinate, overlayPriceCoordinate,
+    priceToY: price => series.priceToCoordinate(price),
+    indicatorObject, indicatorOffsetPixels, offsetIndicatorPoint, offsetIndicatorRect,
+    rgba, dash,
+  });
 }
 function drawIndicatorSelection() {
   if (!state.indicator.selectedObjectId) return;
-  if (selectedIndicatorObject()?.type === "indicator-position") return;
   const hit = state.indicator.hitBoxes.find(
     (item) => item.objectId === state.indicator.selectedObjectId,
   );
@@ -4023,6 +3474,8 @@ function drawOverlay(width, height) {
   if (state.selected || state.indicator.selectedObjectId)
     scheduleDrawingToolbarPosition();
 }
+let paintIndicator = initialPaintIndicator;
+let primaryVisualObjects = initialPrimaryVisualObjects;
 let drawFrame = 0;
 function scheduleDraw() {
   if (drawFrame) return;
@@ -4137,11 +3590,6 @@ function hitTest(p) {
   return null;
 }
 function indicatorHitTest(p) {
-  const active = selectedIndicatorObject();
-  if (active?.type === "indicator-position" && !active.hidden && !active.locked &&
-      state.indicator.hitBoxes.some(hit => hit.objectId === active.id &&
-        hit.viewRevision === state.chartViewRevision && (hit.clipRight == null || p.x <= hit.clipRight)) &&
-      positionHandleAt(indicatorPositionDrawing(active),p)) return active;
   for (let index = state.indicator.hitBoxes.length - 1; index >= 0; index--) {
     const hit = state.indicator.hitBoxes[index],
       item = indicatorObject(hit.objectId);
@@ -4246,7 +3694,7 @@ function updateToolbar() {
   bar.classList.toggle("hidden", !visible);
   if (!visible) return;
   const s = d ? styleOf(d) : null;
-  const positionDrawing = selectedPositionContext().drawing;
+  const positionDrawing = selected();
   const position = isPosition(positionDrawing) ? calculatePositionLevels(positionDrawing.type, positionDrawing.a.price, positionDrawing.b?.price, positionDrawing.stopPrice) : null;
   $("#positionLevels").classList.toggle("hidden", !position);
   if (position) {
@@ -4392,9 +3840,9 @@ const twoClickTools = new Set([
   "rect",
   "circle",
   "fib",
-  "measure",
   "long",
   "short",
+  "measure",
 ]);
 function constrainLinePoint(anchor, next, shiftKey) {
   if (!shiftKey || state.tool !== "line") return next;
@@ -4760,11 +4208,7 @@ shell.addEventListener(
       selectIndicatorObject(indicatorItem.id);
       if (!indicatorItem.locked) {
         checkpoint();
-        if (indicatorItem.type === "indicator-position") {
-          const handle = positionHandleAt(indicatorPositionDrawing(indicatorItem),p);
-          state.interaction = {indicatorId:indicatorItem.id,
-            mode:`setup-${handle?.level || "move"}`,last:point(e,true)};
-        } else state.interaction = { indicatorId: indicatorItem.id, mode: "indicator-move", last: p };
+        state.interaction = { indicatorId: indicatorItem.id, mode: "indicator-move", last: p };
         canvas.classList.add("selection-active");
         shell.setPointerCapture(e.pointerId);
       }
@@ -4821,20 +4265,6 @@ shell.addEventListener(
     if (state.interaction.mode === "select") {
       state.selectionBox.b = p;
       drawAll();
-      return;
-    }
-    if (state.interaction.indicatorId && state.interaction.mode.startsWith("setup-")) {
-      const object = selectedIndicatorObject();
-      if (!object || object.locked || p.time == null || p.price == null) return;
-      const drawing = indicatorPositionDrawing(object), part = state.interaction.mode.slice(6);
-      const edited = ["start","end"].includes(part)
-        ? editPositionTime(drawing,part,p.time,positionRightTime(drawing,state.data,state.tf))
-        : ["target","stop"].includes(part) ? editPositionLevel(drawing,part,p.price)
-          : translatePosition(drawing,state.data,state.tf,
-            positionWidthBars(state.data,state.interaction.last.time,p.time,state.tf),
-            Number(p.price)-Number(state.interaction.last.price));
-      if (edited) applyPositionEdit({drawing,object},edited,false);
-      state.interaction.last = p;
       return;
     }
     if (state.interaction.mode === "indicator-move") {
@@ -4922,14 +4352,14 @@ shell.addEventListener(
     canvas.classList.remove("selection-active");
     saveDrawings();
     saveIndicatorObjectOverrides();
-    if (isPosition(selectedPositionContext().drawing)) updateToolbar();
+    if (isPosition(selected())) updateToolbar();
     drawAll();
   },
   true,
 );
 for (const [id, level] of [["positionTarget", "target"], ["positionStop", "stop"]]) {
   $("#" + id).addEventListener("change", (event) => {
-    const context = selectedPositionContext(), d = context.drawing;
+    const d = selected();
     if (!isPosition(d) || d.locked) return;
     const edited = event.target.value.trim() ? editPositionLevel(d, level, event.target.value) : null;
     if (!edited) {
@@ -4938,11 +4368,11 @@ for (const [id, level] of [["positionTarget", "target"], ["positionStop", "stop"
       return;
     }
     checkpoint();
-    applyPositionEdit(context,edited);
+    applyPositionEdit(d, edited);
   });
 }
 $("#positionBars").addEventListener("change", (event) => {
-  const context = selectedPositionContext(), d = context.drawing, bars = Number(event.target.value);
+  const d = selected(), bars = Number(event.target.value);
   if (!isPosition(d) || d.locked) return;
   if (!Number.isFinite(bars) || bars <= 0) {
     toast("Position width must be greater than zero", "error");
@@ -4953,14 +4383,13 @@ $("#positionBars").addEventListener("change", (event) => {
   const edited = editPositionTime(d, "end", endTime);
   if (!edited) return;
   checkpoint();
-  applyPositionEdit(context,edited);
+  applyPositionEdit(d, edited);
 });
 shell.addEventListener("pointercancel", () => {
-  if (!(state.interaction?.id || state.interaction?.indicatorId) || !isPosition(selectedPositionContext().drawing)) return;
+  if (!state.interaction?.id || !isPosition(selected())) return;
   state.interaction = null;
   canvas.classList.remove("selection-active");
   saveDrawings();
-  saveIndicatorObjectOverrides();
   updateToolbar();
   drawAll();
 });
@@ -5501,6 +4930,7 @@ function indicatorSettings() {
     sVisible: $("#sVisible").checked,
     eVisible: $("#eVisible").checked,
     stopAllVisible: $("#stopAllVisible").checked,
+    trueFalseVisible: $("#trueFalseVisible").checked,
     eStopVisible: $("#eStopVisible").checked,
     orderVisible: $("#orderVisible").checked,
     orderStopVisible: $("#orderStopVisible").checked,
@@ -5543,11 +4973,6 @@ function indicatorSettings() {
       return [id, typeof fallback === "boolean" ? control.checked
         : typeof fallback === "number" ? Number(control.value) : control.value];
     })),
-    ...Object.fromEntries(Object.entries(SETUP_VISUAL_DEFAULTS).map(([id, fallback]) => {
-      const control = $("#" + id);
-      return [id, typeof fallback === "boolean" ? control.checked
-        : typeof fallback === "number" ? Number(control.value) : control.value];
-    })),
     numberEnabled: false,
     numberMode: "off",
   };
@@ -5570,12 +4995,6 @@ function calculationKey(settings, from, to, timeframe, chartTimeframe) {
 }
 function applyVisualSettings(settings = indicatorSettings()) {
   state.indicator.settings = settings;
-  const selectedSetup = selectedIndicatorObject();
-  if ((selectedSetup?.setupStatusKind || selectedSetup?.type === "indicator-position") &&
-      !setupObjectVisible(selectedSetup, settings)) {
-    state.indicator.selectedObjectId = null;
-    updateToolbar();
-  }
   if (state.indicator.results) {
     if (typeof saveChartIndicatorContext === "function") saveChartIndicatorContext();
     drawAll();
@@ -5640,7 +5059,7 @@ function plannedCalculationStages(direction) {
     "Load Reaction engine", "Load Blue Line engine", "Load A engine", "Load S engine",
     "Load E engine", "Load StopAll engine", "Normalize raw candles", "Build lower candle views",
     "Build timeframe candle views", "Select candle range", "Reaction geometry • Bullish",
-    "Reaction geometry • Bearish", "Bullish setup annotations", "Start Python calculation", "Cached result",
+    "Reaction geometry • Bearish", "Start Python calculation", "Cached result",
   ];
   const directional = selectedDirections.flatMap((name) => [
     `Blue Line • ${name}`, `A • ${name}`, `S • ${name}`,
@@ -6104,13 +5523,6 @@ function openIndicator() {
     hasResults: Boolean(state.indicator.results),
   });
   if (openIndicator.restoredFor !== state.file?.id) {
-    for (const [id, value] of Object.entries(SETUP_VISUAL_DEFAULTS)) {
-      const control = $("#" + id);
-      if (control.type === "checkbox") control.checked = value;
-      else control.value = value;
-      const valueLabel = $("#" + id + "Value");
-      if (valueLabel) valueLabel.textContent = `${value}px`;
-    }
     try {
       const saved = JSON.parse(
         localStorage.getItem(indicatorStateKey()) || "null",
@@ -6631,7 +6043,7 @@ function applyRealtimeCandles(file, candles, corrections = [], gapCandles = []) 
   scheduleDraw();
 }
 
-async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, indicatorSignal, indicatorOnly, verifyAll, reportProgress }) {
+async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, indicatorSignal, indicatorOnly, verifyAll, reportProgress, refreshIndicatorSource = false }) {
   if (chartUpdateRunning || indicatorCalculationOwner) return "Chart is busy. Retrying at the next interval.";
   const file = state.file;
   const lastCandleTime = state.raw.at(-1)?.time;
@@ -6643,14 +6055,14 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
     ? state.indicator.resultContext : null;
   async function updateIndicator(publishedFile, candleStatus, verification) {
     const result = (status, indicatorError) => verification || indicatorError ? { status, verification, indicatorError } : status;
-    const repairOnly = !indicatorCalculation && indicatorContext?.needsCandleRepair;
+    const repairOnly = refreshIndicatorSource || (!indicatorCalculation && indicatorContext?.needsCandleRepair);
     if (!indicatorCalculation && !repairOnly) return result(candleStatus);
     if (!indicatorContext) return { status: candleStatus,
       verification, indicatorError: "Run an indicator calculation with Apply in this tab before enabling automatic continuation." };
     const operationIsCurrent = () => !signal.aborted && loadRevision === symbolLoadRevision
       && state.file?.id === publishedFile.id && state.file.chartId === chartId
       && state.file.metadata?.dataSha256 === publishedFile.metadata?.dataSha256
-      && state.tf === viewTimeframe;
+      && state.tf === viewTimeframe && (!refreshIndicatorSource || state.indicator.enabled);
     const continuationSignal = repairOnly ? signal : indicatorSignal || signal;
     try {
       const updated = await continueRealtimeIndicator(indicatorContext, publishedFile, continuationSignal, operationIsCurrent, repairOnly);
@@ -6658,7 +6070,8 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
     } catch (error) {
       if (continuationSignal.aborted || !operationIsCurrent()) return result(candleStatus);
       log.indicator.warn("REALTIME_INDICATOR_CONTINUATION_DEFERRED", { chartId, code: error.code, message: error.message });
-      return result([candleStatus, "Indicator update deferred. Retrying at the next check."].filter(Boolean).join(" "));
+      return result([candleStatus, "Indicator update deferred. Retrying at the next check."].filter(Boolean).join(" "),
+        refreshIndicatorSource ? error.message : undefined);
     }
   }
   let finished;
@@ -7330,7 +6743,6 @@ $("#pickerSave").onclick = () => {
   if (applyAfterSave) $("#gotoApply").click();
 };
 const visualSettingIds = [
-  ...Object.keys(SETUP_VISUAL_DEFAULTS),
   ...Object.keys(PRIMARY_VISUAL_DEFAULTS),
   "bullFill",
   "bullBorder",
@@ -7348,6 +6760,7 @@ const visualSettingIds = [
   "sVisible",
   "eVisible",
   "stopAllVisible",
+  "trueFalseVisible",
   "eStopVisible",
   "orderVisible",
   "orderStopVisible",
@@ -7388,7 +6801,7 @@ const visualSettingIds = [
 ];
 for (const id of visualSettingIds) {
   $("#" + id).oninput = () => {
-    invalidateIndicatorCalculation();
+    if (id !== "trueFalseVisible") invalidateIndicatorCalculation();
     const valueLabel = $("#" + id + "Value");
     if (valueLabel)
       valueLabel.textContent =
@@ -7436,7 +6849,7 @@ function captureIndicatorForm() {
 const indicatorDefaults = captureIndicatorForm();
 function applyIndicatorForm(snapshot) {
   if (!snapshot?.controls) return;
-  for (const [id, value] of Object.entries({ ...SETUP_VISUAL_DEFAULTS, ...snapshot.controls })) {
+  for (const [id, value] of Object.entries(snapshot.controls)) {
     const element = $("#" + id);
     if (!element) continue;
     if (element.type === "checkbox") element.checked = Boolean(value);
@@ -7490,8 +6903,6 @@ function updateStyleAvailability() {
     ["sVisible", ["sBullColor", "sBearColor", "sSize", "sGap"]],
     ["eVisible", ["eBlueColor", "eRedColor", "eSize", "eGap"]],
     ["stopAllVisible", ["stopAllFill", "stopAllBorder", "stopAllOpacity", "stopAllWidth", "stopAllSize", "stopAllRadius", "stopAllGap"]],
-    ["setupTVisible", ["setupTColor", "setupTSize", "setupTGap"]],
-    ["setupFVisible", ["setupFColor", "setupFSize", "setupFGap"]],
     ["orderVisible", ["orderFill", "orderColor", "orderOpacity", "orderWidth", "orderLineStyle"]],
     ["orderStopVisible", ["orderStopColor", "orderStopWidth", "orderStopLineStyle", "orderStopCap"]],
     ["eStopVisible", ["eStopColor", "eStopWidth", "eStopLineStyle"]],
@@ -7561,7 +6972,7 @@ $("#templateMenu").onclick = async (event) => {
     $("#templateBtn").setAttribute("aria-expanded", "false");
   }
 };
-for (const id of ["reactionVisible", "blueLineEnabled", "aVisible", "sVisible", "eVisible", "stopAllVisible", "orderVisible", "orderStopVisible", "eStopVisible", "setupTVisible", "setupFVisible"])
+for (const id of ["reactionVisible", "blueLineEnabled", "aVisible", "sVisible", "eVisible", "stopAllVisible", "orderVisible", "orderStopVisible", "eStopVisible"])
   $("#" + id).addEventListener("change", updateStyleAvailability);
 updateStyleAvailability();
 $$('[data-range="all"]').forEach(
@@ -7663,6 +7074,82 @@ realtimeChart = mountRealtimeChart({
     toast(`${checkedCount.toLocaleString("en-US")} candles checked · ${correctedCount.toLocaleString("en-US")} corrected · ${recoveredCount.toLocaleString("en-US")} missing candles restored`, "info");
   },
 });
+function loadVerdictFonts({ TRUE_FALSE_LABEL_WEIGHT, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT }) {
+  for (const weight of [TRUE_FALSE_LABEL_WEIGHT, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT]) {
+    document.fonts.load(`${weight} 9px Inter`, "TF").then((faces) => {
+      if (faces.length && state.indicator.results) scheduleDraw();
+    }, () => {});
+  }
+}
+loadVerdictFonts(initialVerdictLabels);
+if (import.meta.hot) {
+  function notifyUiUpdateFailure() {
+    toast("A UI update could not be applied. The chart is still open.", "error");
+  }
+  let engineRefreshTimer, engineRefreshAbort;
+  function queueEngineSourceRefresh(chartId) {
+    clearTimeout(engineRefreshTimer);
+    if (!chartId || !state.indicator.enabled || state.indicator.resultContext?.chartId !== chartId) return;
+    engineRefreshTimer = setTimeout(async () => {
+      if (state.file?.chartId !== chartId || state.indicator.resultContext?.chartId !== chartId || !state.indicator.enabled) return;
+      if (chartUpdateRunning || indicatorCalculationOwner || realtimeUpdateOwner
+          || symbolLoadController || state.indicatorRange.dragging) {
+        queueEngineSourceRefresh(chartId);
+        return;
+      }
+      const controller = new AbortController();
+      engineRefreshAbort = controller;
+      try {
+        const result = await runRealtimeChartUpdate({
+          chartId, signal: controller.signal, indicatorOnly: true, refreshIndicatorSource: true,
+        });
+        if (result?.indicatorError && !controller.signal.aborted && state.file?.chartId === chartId) {
+          toast("Engine update deferred. The last indicator result is still visible.", "info");
+        }
+      } catch (error) {
+        if (!controller.signal.aborted && state.file?.chartId === chartId) {
+          log.indicator.warn("ENGINE_SOURCE_REFRESH_DEFERRED", { message: error.message });
+          toast("Engine update deferred. The last indicator result is still visible.", "info");
+        }
+      } finally {
+        if (engineRefreshAbort === controller) engineRefreshAbort = null;
+      }
+    }, 600);
+  }
+  import.meta.hot.accept("./chart/indicator-renderer.js", updated => {
+    if (typeof updated?.drawIndicator !== "function") {
+      notifyUiUpdateFailure();
+      return;
+    }
+    paintIndicator = updated.drawIndicator;
+    scheduleDraw();
+  });
+  import.meta.hot.accept("./chart/primary-structure.js", updated => {
+    if (typeof updated?.primaryVisualObjects !== "function") {
+      notifyUiUpdateFailure();
+      return;
+    }
+    primaryVisualObjects = updated.primaryVisualObjects;
+    if (state.indicator.results) rebuildIndicatorObjects({ preserveOverrides: true });
+    scheduleDraw();
+  });
+  import.meta.hot.accept("./chart/true-false-label.js", updated => {
+    if (typeof updated?.drawTrueFalseLabel !== "function") {
+      notifyUiUpdateFailure();
+      return;
+    }
+    loadVerdictFonts(updated);
+  });
+  import.meta.hot.on("tradingbot:ui-update-deferred", ({ file } = {}) => {
+    toast(file ? `Update deferred for ${file}. The chart is still open.`
+      : "A UI update needs a reload. The chart is still open.", "info");
+  });
+  import.meta.hot.on("vite:error", notifyUiUpdateFailure);
+  import.meta.hot.on("tradingbot:engine-source-updated", () => {
+    engineRefreshAbort?.abort();
+    queueEngineSourceRefresh(state.file?.chartId);
+  });
+}
 loadInventory().then(restoreWorkspaceAfterRefresh).catch((err) => {
   const message = err?.name === "AbortError"
     ? "Market data service timed out. Restart the dev server from the repository root."

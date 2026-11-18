@@ -14,7 +14,7 @@ import json
 import sys
 from bisect import bisect_left
 from dataclasses import dataclass, field, replace
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 from time import perf_counter
@@ -35,13 +35,14 @@ if _pipeline_dir_text not in sys.path:
 
 from core_utils import as_decimal, order_identity
 from order_audit_engine import accepted_audit_entries, order_b_leg_identity
+from true_false import apply_true_false, repair_crossing_lookup
 
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
 TRADING_PIPELINE_VERSION = "1.14.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.18.0"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.19.0"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-11-17T20:14:54+03:30"
 MBL_EXTENSION_CANDLES = 400
 
 TEHRAN = ZoneInfo("Asia/Tehran")
@@ -3320,47 +3321,6 @@ def calculate_primary_structures(args, engines, market, state, visibility, timin
     return primary
 
 
-def serialize_setup_annotations(result, market):
-    """Project finalized chart annotations; price/state decisions stay in Engine."""
-    from dataclasses import fields
-    from bullish_setup_engine import SETUP_VERSION
-
-    def value(item):
-        if isinstance(item, datetime):
-            return epoch(item)
-        if isinstance(item, Decimal):
-            return str(item)
-        return item
-
-    def row(item):
-        projected = {}
-        for field in fields(item):
-            parts = field.name.split("_")
-            key = parts[0] + "".join(part.title() for part in parts[1:])
-            content = getattr(item, field.name)
-            if field.name == "cycle_id" and content and getattr(market,"index_offset",0):
-                parts = content.split(":")
-                if len(parts) == 4 and parts[1] == "cycle":
-                    offset = market.index_offset
-                    content = f"{parts[0]}:cycle:{int(parts[2])+offset}:{int(parts[3])+offset}"
-            projected[key] = ([{"sourceIndex": index} for index in content]
-                              if field.name == "predecessor_source_indexes" else value(content))
-        return projected
-
-    def visible(items, index):
-        return [row(item) for item in items
-                if market.start_index <= getattr(item, index) <= market.end_index]
-
-    return {
-        "setupVersion": SETUP_VERSION,
-        "setupPhase": result.phase,
-        "positionSetups": visible(result.setups, "entry_index"),
-        "stopAllAssessments": visible(result.assessments, "source_index"),
-        "behaviorAssessments": visible(result.behaviors, "source_index"),
-        "setupReferenceBreaks": visible(result.breakouts, "source_index"),
-    }
-
-
 def build_direction_output(
     direction: str,
     args,
@@ -3396,27 +3356,11 @@ def build_direction_output(
             visibility.prepared_order_audit, visibility.s_zones,
             visibility.e_zones, visibility.stopalls,
         )
-    setup_result = None
-    if (direction == "bullish" and direction == primary_direction
-            and args.lifecycle_engine is not None
-            and args.s_zones == "enabled"):
-        from bullish_setup_engine import calculate_bullish_setups
-        groups = visibility.primary_groups
-        primary_lows = primary.lows if primary is not None else []
-        live = getattr(state, "live_stages", None)
-        setup_result = timed(timings, "Bullish setup annotations", lambda:
-            live.bullish_setups(groups, primary_lows)
-            if live is not None else calculate_bullish_setups(
-                market.chronology, groups["S"], groups["E"], groups["StopAll"],
-                primary_lows, through_index=market.end_index,
-            ))
     payload = serialize_direction_payload(
         direction, args, engines, market, state, visibility, timings
     )
     if primary is not None:
         payload.update(serialize_primary_structures(primary, market))
-    if setup_result is not None:
-        payload.update(serialize_setup_annotations(setup_result, market))
     return payload
 
 def merge_regime_outputs(regimes):
@@ -3590,6 +3534,12 @@ def build_response_payload(
             for segment in group.get("calculationSegments", [group])]
         payload["activeDirection"] = max(candidates, default=(-1,
             getattr(transition, "target_direction", "bullish")))[1]
+    through = (market.candles[market.end_index].timestamp
+               + market.chronology.timeframe - timedelta(seconds=1))
+    find_repair = repair_crossing_lookup(market.lower_index, local_datetime, epoch, through=through)
+    for direction, group in payload["directions"].items():
+        for segment in group.get("calculationSegments", (group,)):
+            apply_true_false(direction, segment, find_repair)
     payload["timings"] = {
         "phasesMs": {
             label: round(duration, 2) for label, duration in timings.items()
