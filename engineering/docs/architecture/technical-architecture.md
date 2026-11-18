@@ -10,7 +10,7 @@ scope:
   - engine
   - runtime-boundaries
   - state-and-transport
-last_modified_at: 2026-11-18T17:01:34+03:30
+last_modified_at: 2026-11-18T17:49:49+03:30
 ---
 
 # TradingBot Technical Architecture
@@ -114,7 +114,9 @@ Real-time Chart polls the latest closed candles for one stable chart identity. T
 
 Real-time verification independently reads closed native-timeframe OHLC from FARAZ. It confirms newly acquired rows with a second read and sends them to the chart before starting the bounded historical checks. Verify All covers the entire closed RAW grid in native-timeframe packets and inserts only candles supplied by FARAZ. The RAW sidecar records matched row ranges against the file digest. Missing source rows remain pending. Corrections retain candle timestamps and are published with the corresponding RAW and metadata changes. A source outage returns verification status and retains available local data.
 
-The continuation API binds the worker to the chart and the browser tab that ran Apply. It follows RAW renames, validates the current RAW digest, and replays the same in-memory response on retries. Apply and continuation for the chart bypass calculation cache files. If the worker stops, the open tab provides its applied selection, the RAW digest and the indicator digest from its last visible result. The server verifies the old RAW prefix and result before continuing from a replacement worker. If they no longer match, it rebuilds once from that tab's applied selection on current RAW. Live publications have separate report identities. Opening one in Manual Review saves its immutable snapshot to local report storage so its link can survive a server restart.
+The continuation API binds the worker to the chart and the browser tab that ran Apply. Candle polling can continue while the indicator calculates. One continuation runs per tab, and newer candle batches request a catch-up to the latest committed RAW. The RAW store retains a bounded, in-memory chain of committed, byte-exact appends across file renames. When that chain reaches the worker's checkpoint, the server sends only the appended bytes. The Engine verifies the complete new digest from its retained prefix hash, then feeds the new rows in order into the existing calculation state. A newer append can supersede an in-flight snapshot without invalidating it. Historical corrections break the append chain and invalidate affected publications.
+
+The server replays the same in-memory response on retries. If the append chain is unavailable, the worker checks the full RAW against its retained prefix before continuing. If the worker stops, the open tab provides its applied selection, the RAW digest and the indicator digest from its last visible result. The server verifies the old RAW prefix and result before continuing from a replacement worker. If they no longer match, it rebuilds once from that tab's applied selection on current RAW. Apply and continuation for the chart bypass calculation cache files. Live publications have separate report identities. Opening one in Manual Review saves its immutable snapshot to local report storage so its link can survive a server restart.
 
 ## 6. Chart architecture
 

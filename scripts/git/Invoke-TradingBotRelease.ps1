@@ -3,6 +3,7 @@ param(
   [string] $CommitMessage = '',
   [string] $ReleaseTag = '',
   [string] $ReleaseTitle = '',
+  [string] $ReleaseNotesFile = '',
   [switch] $DryRun,
   [switch] $NonInteractive,
   [switch] $VerboseReport
@@ -16,6 +17,7 @@ try {
     CommitMessage = $CommitMessage
     ReleaseTag = $ReleaseTag
     ReleaseTitle = $ReleaseTitle
+    ReleaseNotesFile = $ReleaseNotesFile
     DryRun = [bool]$DryRun
     NonInteractive = [bool]$NonInteractive
   }

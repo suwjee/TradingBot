@@ -299,6 +299,29 @@ test("a temporary indicator error stays separate and the next poll retries", asy
   assert.equal(fixture.view.status, "Indicator updated.");
 });
 
+test("candle countdown and verification proceed during deferred indicator completion", async (t) => {
+  let completeIndicator;
+  const indicatorUpdate = new Promise(resolve => { completeIndicator = resolve; });
+  const verification = { status: "verified" };
+  const fixture = createScheduler(t, {
+    runUpdate: ({ indicatorOnly }) => indicatorOnly ? { indicatorUpdate } : { status: "Candles updated.", verification },
+  });
+  fixture.scheduler.setIndicatorCalculation(true);
+  await settle();
+  assert.match(fixture.view.status, /Updating indicator/);
+  t.mock.timers.tick(2_000);
+  await settle();
+  assert.equal(fixture.view.verification, verification);
+  assert.equal(fixture.view.remainingMs, 60_000);
+  assert.equal(fixture.view.busy, false);
+  fixture.scheduler.setIndicatorCalculation(false);
+  assert.equal(fixture.requests[0].indicatorSignal.aborted, true);
+  assert.equal(fixture.requests[0].signal.aborted, false);
+  completeIndicator({ status: "The canceled indicator updated." });
+  await settle();
+  assert.doesNotMatch(fixture.view.status, /The canceled indicator updated/);
+});
+
 test("a polling failure is displayed and subsequent checks continue until disabled", async (t) => {
   let attempts = 0;
   const fixture = createScheduler(t, {

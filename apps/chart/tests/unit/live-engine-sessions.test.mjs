@@ -27,6 +27,38 @@ const publishPayload = (payload, request) => ({ payload, request });
 const validate = async includeBytes => includeBytes ? Buffer.from("current.json") : undefined;
 const defaultHooks = { validate, publish: publishPayload };
 
+test("verified RAW deltas use the retained worker and retry a rejected delta with the full snapshot", async t => {
+  const f = fixture(t);
+  const updates = [];
+  const { sessionId } = await f.sessions.seed({ ...seedArgs, rawSha256: "seed-digest" }, () => ({
+    ...f.worker(),
+    async update(bytes, digest, base) {
+      updates.push([bytes.toString(), digest, base]);
+      if (base === "first-digest") throw Object.assign(new Error("Wrong prefix"), { code: "RAW_DELTA_MISMATCH" });
+      return indicator(digest);
+    },
+  }));
+  const checks = [];
+  const hooks = {
+    readAppend: base => Buffer.from(`append from ${base}`),
+    validate: async (includeBytes, delta) => {
+      checks.push([includeBytes, Boolean(delta)]);
+      return validate(includeBytes);
+    },
+    publish: publishPayload,
+  };
+  await f.sessions.advance(snapshot(sessionId, { rawSha256: "first-digest" }), hooks);
+  const result = await f.sessions.advance(snapshot(sessionId, { rawSha256: "second-digest" }), hooks);
+  assert.deepEqual(updates, [
+    ["append from seed-digest", "first-digest", "seed-digest"],
+    ["append from first-digest", "second-digest", "first-digest"],
+    ["current.json", "second-digest", undefined],
+  ]);
+  assert.deepEqual(checks, [[false, true], [false, true], [false, true], [true, false], [false, false]]);
+  assert.equal(result.payload.directions.bullish.marker, "second-digest");
+  assert.equal(f.closes, 0);
+});
+
 test("an unsupported seed returns its ordinary result without issuing a live token", async t => {
   const f = fixture(t);
   const seed = await f.sessions.seed(seedArgs, () => f.worker(false));
@@ -163,10 +195,10 @@ test("a worker update sends the exact RAW bytes and digest without a file path",
   assert.equal((await worker.seed).ready, true);
   await assert.rejects(worker.update("X:/current RAW.json", "a".repeat(64)), TypeError);
   const raw = Buffer.from('\ufeff[\r\n {"close":1.00,"note":"نفت"}\r\n]\n');
-  for (const bytes of [raw, Buffer.from("[1]")]) {
+  for (const [bytes, baseSha256] of [[raw, undefined], [Buffer.from(",{\"time\":10}"), "b".repeat(64)]]) {
     const sha256 = "a".repeat(64);
-    const result = await worker.update(bytes, sha256);
-    assert.deepEqual(result.header, { bytes: bytes.length, sha256 });
+    const result = await worker.update(bytes, sha256, baseSha256);
+    assert.deepEqual(result.header, { bytes: bytes.length, sha256, ...(baseSha256 && { baseSha256 }) });
     assert.equal(result.raw, bytes.toString("hex"));
   }
 });

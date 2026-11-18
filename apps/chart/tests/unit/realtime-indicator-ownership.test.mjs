@@ -13,7 +13,7 @@ const tabId = "same-tab-fixture";
 const proof = to => ({ chartId: "chart", tabId, to,
   request: { from: 100, to: 200, direction: "bearish", timeframe: 30, chartTimeframe: 30, blueLines: true, bridgeOutput: true } });
 
-function fixture({ candles = [{ time: 330 }], corrections = [], onContinue, marketAvailable = true, historyPending = false, alertsReady = false } = {}) {
+function fixture({ candles = [{ time: 330 }], corrections = [], onContinue, nextRaw, marketAvailable = true, historyPending = false, alertsReady = false } = {}) {
   const originalResult = { directions: { bearish: {} } };
   const state = {
     file: { id: "old.json", chartId: "chart", to: 300, timeframe: "5S", metadata: { dataSha256: "old" } },
@@ -42,7 +42,7 @@ function fixture({ candles = [{ time: 330 }], corrections = [], onContinue, mark
   };
   const noop = () => {};
   const sandbox = vm.createContext({
-    state, AbortController, performance, readRealtimeUpdate, symbolLoadController: null, symbolLoadRevision: 1, liveIndicatorTabId: tabId,
+    state, AbortController, AbortSignal, performance, readRealtimeUpdate, symbolLoadController: null, symbolLoadRevision: 1, liveIndicatorTabId: tabId,
     alertLiveReady: alertsReady, formatSymbolWithBroker: file => file.id,
     alertController: {
       baseline: time => alertPublications.push({ kind: "baseline", time }),
@@ -67,6 +67,7 @@ function fixture({ candles = [{ time: 330 }], corrections = [], onContinue, mark
     async fetch(url, options) {
       requests.push([url, JSON.parse(options.body)]);
       if (url === "/api/candle-files/realtime") {
+        if (nextRaw) return { status: 200, json: async () => nextRaw(state, JSON.parse(options.body)) };
         const phase = JSON.parse(options.body).phase;
         if (historyPending && phase === "history") {
           assert.equal(state.raw.at(-1).time, 330);
@@ -88,10 +89,14 @@ function fixture({ candles = [{ time: 330 }], corrections = [], onContinue, mark
   const rawAbort = new AbortController();
   const indicatorAbort = new AbortController();
   return { state, originalResult, payload, requests, rebuilt, controls, indicatorAbort, failures, alertPublications,
-    update(overrides) {
+    async update(overrides) {
       sandbox.request = { chartId: "chart", signal: rawAbort.signal,
         indicatorSignal: indicatorAbort.signal, indicatorCalculation: true, ...overrides };
-      return vm.runInContext("runRealtimeChartUpdate(request)", sandbox);
+      const raw = await vm.runInContext("runRealtimeChartUpdate(request)", sandbox);
+      if (!raw?.indicatorUpdate) return raw;
+      const indicator = await raw.indicatorUpdate;
+      const status = [raw.status, indicator?.status].filter(Boolean).join(" ");
+      return raw.verification ? { status, verification: raw.verification } : status;
     },
   };
 }
@@ -137,6 +142,25 @@ test("a poll displays appended rows before requesting historical verification", 
   assert.equal(chart.requests[1][1].id, "new.json");
   assert.equal(chart.requests[1][1].lastCandleTime, 330);
   assert.equal(chart.state.raw.at(-1).time, 330);
+});
+
+test("latest candles can start a continuation while historical verification is pending", async () => {
+  let finishHistory;
+  const chart = fixture({
+    nextRaw(state, { phase }) {
+      if (phase === "history") return new Promise(resolve => { finishHistory = resolve; });
+      return { file: { ...state.file, id: "330.json", to: 330, count: 2 }, candles: [{ time: 330 }], verification: { status: "pending" } };
+    },
+  });
+  const poll = chart.update();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(chart.state.raw.at(-1).time, 330);
+  assert.equal(chart.requests.filter(([url]) => url === "/api/reactions/continue").length, 1);
+  assert.equal(chart.state.indicator.results, chart.originalResult);
+  finishHistory({ file: { ...chart.state.file }, candles: [], verification: { status: "verified" } });
+  await poll;
+  assert.equal(chart.requests.filter(([url]) => url === "/api/reactions/continue").length, 1);
+  assert.equal(chart.state.indicator.resultContext.to, 330);
 });
 
 test("Verify All corrects a visible result within its original manual range when automatic continuation is off", async () => {
@@ -220,4 +244,104 @@ test("a canceled or stale continuation cannot publish an indicator result", asyn
   assert.equal(chart.state.file.id, "new.json");
   assert.equal(chart.state.indicator.results, chart.originalResult);
   assert.equal(chart.rebuilt.length, 0);
+});
+
+test("successive RAW polls commit their candles while one continuation is blocked", async () => {
+  const advances = [];
+  const chart = fixture({ alertsReady: true,
+    nextRaw(state) {
+      const to = state.file.to + 30;
+      return { file: { ...state.file, id: `${to}.json`, to, count: state.raw.length + 1 }, candles: [{ time: to }] };
+    },
+    onContinue(url, options) {
+      return new Promise(resolve => advances.push({ ...JSON.parse(options.body), resolve }));
+    },
+  });
+  const first = chart.update();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.deepEqual(chart.state.raw.map(row => row.time), [300, 330]);
+  assert.equal(advances.length, 1);
+  const second = chart.update();
+  await new Promise(resolve => setImmediate(resolve));
+  const third = chart.update();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.deepEqual(chart.state.raw.map(row => row.time), [300, 330, 360, 390]);
+  assert.equal(advances.length, 1);
+
+  const complete = (advance, to) => advance.resolve({ ok: true, status: 200, json: async () => chart.payload,
+    headers: new Map([["X-QG-Source-Fingerprint", "source"], ["X-QG-Live-Proof", JSON.stringify(proof(to))]]) });
+  complete(advances[0], 330);
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(chart.state.indicator.resultContext.to, 330);
+  assert.equal(advances.length, 2);
+  assert.equal(advances[1].id, "390.json");
+  assert.equal(advances[1].proof.to, 330);
+  complete(advances[1], 390);
+  await Promise.all([first, second, third]);
+  assert.deepEqual(chart.alertPublications.map(event => event.time), [330, 390]);
+});
+
+test("a continuation waits for an overlapping verification and cannot publish superseded prices", async () => {
+  let finishVerification;
+  const advances = [];
+  const chart = fixture({ alertsReady: true,
+    nextRaw(state, { verifyAll }) {
+      if (verifyAll) return new Promise(resolve => { finishVerification = resolve; });
+      return { file: { ...state.file, id: "330.json", to: 330, count: 2 }, candles: [{ time: 330 }] };
+    },
+    onContinue(url) {
+      return new Promise(resolve => advances.push({ url, resolve }));
+    },
+  });
+  chart.state.indicator.resultContext.to = 300;
+  const first = chart.update();
+  await new Promise(resolve => setImmediate(resolve));
+  const verification = chart.update({ verifyAll: true, indicatorCalculation: false });
+  await new Promise(resolve => setImmediate(resolve));
+  const complete = (advance, to) => advance.resolve({ ok: true, status: 200, json: async () => chart.payload,
+    headers: new Map([["X-QG-Source-Fingerprint", "source"], ["X-QG-Live-Proof", JSON.stringify(proof(to))]]) });
+  complete(advances[0], 330);
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(chart.state.indicator.results, chart.originalResult);
+  assert.deepEqual(chart.alertPublications, []);
+  finishVerification({ file: { ...chart.state.file, metadata: { dataSha256: "corrected" } }, candles: [], corrections: [{ time: 300, close: 42 }] });
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(chart.state.raw[0].close, 42);
+  assert.equal(chart.state.indicator.results, chart.originalResult);
+  assert.equal(advances.length, 2);
+  assert.equal(advances[1].url, "/api/reactions");
+  complete(advances[1], 300);
+  await Promise.all([first, verification]);
+  assert.equal(chart.state.indicator.resultContext.to, 300);
+  assert.deepEqual(chart.alertPublications, [{ kind: "baseline", time: 330 }]);
+});
+
+test("recovery under a changed Engine source establishes a new alert baseline", async () => {
+  const chart = fixture({ alertsReady: true, onContinue: async () => ({ ok: true, status: 200,
+    json: async () => chart.payload, headers: new Map([
+      ["X-QG-Source-Fingerprint", "revised-source"], ["X-QG-Live-Proof", JSON.stringify(proof(330))],
+      ["X-QG-Live-Session", "recovered"],
+    ]) }) });
+  await chart.update();
+  assert.equal(chart.state.indicator.resultContext.sourceFingerprint, "revised-source");
+  assert.deepEqual(chart.alertPublications, [{ kind: "baseline", time: 330 }]);
+});
+
+test("a pending Engine source refresh covers newly appended candles when automatic calculation is enabled", async () => {
+  const chart = fixture({ alertsReady: true,
+    onContinue: async (url, options) => {
+      const request = JSON.parse(options.body);
+      const to = url === "/api/reactions/continue" ? 330 : request.to;
+      return { ok: true, status: 200, json: async () => chart.payload, headers: new Map([
+        ["X-QG-Source-Fingerprint", "revised-source"], ["X-QG-Live-Proof", JSON.stringify(proof(to))],
+        ["X-QG-Live-Session", "recovered"],
+      ]) };
+    },
+  });
+  chart.state.indicator.resultContext.needsSourceRefresh = true;
+  await chart.update();
+  assert.equal(chart.state.indicator.resultContext.to, 330);
+  assert.equal(chart.state.indicator.resultContext.liveRawTo, 330);
+  assert.equal(chart.state.indicator.resultContext.sourceFingerprint, "revised-source");
+  assert.deepEqual(chart.alertPublications, [{ kind: "baseline", time: 330 }]);
 });

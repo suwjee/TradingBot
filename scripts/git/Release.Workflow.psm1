@@ -805,6 +805,7 @@ function Read-ReleaseInputs {
     [string] $CommitMessage = '',
     [string] $ReleaseTag = '',
     [string] $ReleaseTitle = '',
+    [string] $ReleaseNotesFile = '',
     [switch] $NonInteractive
   )
   if ([string]::IsNullOrWhiteSpace($CommitMessage)) {
@@ -818,7 +819,14 @@ function Read-ReleaseInputs {
   Assert-ReleaseCondition (-not [string]::IsNullOrWhiteSpace($CommitMessage)) 'Release commit message must not be empty.'
   Assert-ReleaseCondition (-not [string]::IsNullOrWhiteSpace($ReleaseTag)) 'Release tag must not be empty.'
   $title = if ([string]::IsNullOrWhiteSpace($ReleaseTitle)) { $ReleaseTag.Trim() } else { $ReleaseTitle.Trim() }
-  return [pscustomobject]@{ CommitMessage = $CommitMessage.Trim(); ReleaseTag = $ReleaseTag.Trim(); ReleaseTitle = $title }
+  $notes = ''
+  if ($ReleaseNotesFile) {
+    Assert-ReleaseCondition (Test-Path -LiteralPath $ReleaseNotesFile -PathType Leaf) "Release notes file was not found: $ReleaseNotesFile"
+    $notesPath = (Resolve-Path -LiteralPath $ReleaseNotesFile).ProviderPath
+    $notes = [IO.File]::ReadAllText($notesPath, [Text.UTF8Encoding]::new($false, $true)).TrimEnd([char[]]"`r`n")
+    Assert-ReleaseCondition (-not [string]::IsNullOrWhiteSpace($notes)) 'Release notes file must contain text.'
+  }
+  return [pscustomobject]@{ CommitMessage = $CommitMessage.Trim(); ReleaseTag = $ReleaseTag.Trim(); ReleaseTitle = $title; ReleaseNotes = $notes }
 }
 
 function Invoke-PublicationGit {
@@ -1012,14 +1020,33 @@ function Publish-ReleaseRefs {
 
 function New-GitHubRelease {
   [CmdletBinding()]
-  param([Parameter(Mandatory)] [string] $Root, [Parameter(Mandatory)] $PreparedRelease, [string] $Title = $PreparedRelease.Tag)
-  $existing = Invoke-ReleaseGh -Root $Root -Arguments @('release', 'view', $PreparedRelease.Tag, '--json', 'tagName')
+  param(
+    [Parameter(Mandatory)] [string] $Root,
+    [Parameter(Mandatory)] $PreparedRelease,
+    [string] $Title = $PreparedRelease.Tag,
+    [string] $ReleaseNotes = '',
+    [scriptblock] $CommandAdapter = { param($root, $options) Invoke-ReleaseGh -Root $root -Arguments $options }
+  )
+  $existing = & $CommandAdapter $Root @('release', 'view', $PreparedRelease.Tag, '--json', 'tagName')
   Assert-ReleaseCondition ($existing.ExitCode -ne 0 -and ($existing.StdErr + $existing.StdOut) -match '(?i)(release not found|HTTP 404: Not Found)') "GitHub Release uniqueness could not be confirmed for tag: $($PreparedRelease.Tag)"
   $provenance = "TradingBot-Main-Source: $($PreparedRelease.MainSha)"
   $sourceNote = if ($PreparedRelease.ProductionChanged) { 'Production commit carries the provenance trailer.' } else { 'Production tree was unchanged; provenance is tag-sourced.' }
-  $created = Invoke-ReleaseGh -Root $Root -Arguments @('release', 'create', $PreparedRelease.Tag, '--verify-tag', '--latest', '--target', $PreparedRelease.ProductionSha, '--title', $Title, '--notes', "$provenance`n$sourceNote")
+  $body = if ($ReleaseNotes) { "$ReleaseNotes`n`n---`n`n$provenance`n$sourceNote" } else { "$provenance`n$sourceNote" }
+  $notesPath = [IO.Path]::GetTempFileName()
+  try {
+    [IO.File]::WriteAllText($notesPath, $body, [Text.UTF8Encoding]::new($false))
+    $created = & $CommandAdapter $Root @('release', 'create', $PreparedRelease.Tag, '--verify-tag', '--latest',
+      '--target', $PreparedRelease.ProductionSha, '--title', $Title, '--notes-file', $notesPath)
+  } finally {
+    Remove-Item -LiteralPath $notesPath -Force
+  }
   Assert-ReleaseCondition ($created.ExitCode -eq 0) 'Could not create GitHub Release after ref publication.'
-  return [pscustomobject]@{ Status='PASS'; Url=($created.StdOut -split "`r?`n" | Select-Object -Last 1).Trim() }
+  $verified = & $CommandAdapter $Root @('release', 'view', $PreparedRelease.Tag, '--json', 'tagName,name,isDraft,isPrerelease,url')
+  Assert-ReleaseCondition ($verified.ExitCode -eq 0) 'Could not verify the published GitHub Release.'
+  $release = $verified.StdOut | ConvertFrom-Json
+  Assert-ReleaseCondition ($release.tagName -ceq $PreparedRelease.Tag -and $release.name -ceq $Title -and
+    $release.isDraft -eq $false -and $release.isPrerelease -eq $false -and $release.url -match '^https://') 'Published GitHub Release metadata differs from the requested release.'
+  return [pscustomobject]@{ Status='PASS'; Url=$release.url }
 }
 
 function Invoke-TradingBotRelease {
@@ -1027,7 +1054,8 @@ function Invoke-TradingBotRelease {
   param([Parameter(Mandatory)] [hashtable] $Parameters)
   $root = if ($Parameters.ContainsKey('Root')) { $Parameters.Root } else { Resolve-TradingBotProjectRoot -ScriptPath $Parameters.ScriptPath }
   $nonInteractive = $Parameters.ContainsKey('NonInteractive') -and [bool] $Parameters.NonInteractive
-  $inputs = Read-ReleaseInputs -CommitMessage $Parameters.CommitMessage -ReleaseTag $Parameters.ReleaseTag -ReleaseTitle $Parameters.ReleaseTitle -NonInteractive:$nonInteractive
+  $inputs = Read-ReleaseInputs -CommitMessage $Parameters.CommitMessage -ReleaseTag $Parameters.ReleaseTag `
+    -ReleaseTitle $Parameters.ReleaseTitle -ReleaseNotesFile $Parameters.ReleaseNotesFile -NonInteractive:$nonInteractive
   $preflight = Test-ReleasePreflight -Root $root -Tag $inputs.ReleaseTag -RequireGitHubCli
   Assert-ReleaseCondition ($preflight.Errors.Count -eq 0) ($preflight.Errors -join '; ')
   $containsRemoteMain = Invoke-ReleaseGit -Root $root -Arguments @('merge-base', '--is-ancestor', $preflight.RemoteMainSha, 'HEAD')
@@ -1069,7 +1097,7 @@ function Invoke-TradingBotRelease {
       $outcome = [pscustomobject]@{ Mode='PUBLICATION_STOPPED'; LocalMain=$main.MainSha; LocalProduction=$branch.ProductionSha; RemoteMain=$publication.RemoteMain; RemoteProduction=$publication.RemoteProduction; RemoteTag=$publication.RemoteTag; Tag=$tag.Tag; TagStatus='LOCAL_CREATED'; TagObjectSha=$tag.TagObjectSha; GitHubRelease='NOT_CREATED'; TemporaryWorktree='CLEANUP_PENDING'; ProductionDrift=@($fileSet.Drift); Publication=$publication; Error="Ref publication stopped: $($publication.Status)"; Checks=@($validation.Checks) }
       return $outcome
     }
-    try { $github = New-GitHubRelease -Root $root -PreparedRelease $prepared -Title $inputs.ReleaseTitle }
+    try { $github = New-GitHubRelease -Root $root -PreparedRelease $prepared -Title $inputs.ReleaseTitle -ReleaseNotes $inputs.ReleaseNotes }
     catch {
       $outcome = [pscustomobject]@{ Mode='GITHUB_RELEASE_UNVERIFIED'; LocalMain=$main.MainSha; LocalProduction=$branch.ProductionSha; RemoteMain=$publication.RemoteMain; RemoteProduction=$publication.RemoteProduction; RemoteTag=$publication.RemoteTag; Tag=$tag.Tag; TagStatus='PUBLISHED'; TagObjectSha=$tag.TagObjectSha; GitHubRelease='UNVERIFIED'; TemporaryWorktree='CLEANUP_PENDING'; ProductionDrift=@($fileSet.Drift); Publication=$publication; Error=$_.Exception.Message; Checks=@($validation.Checks) }
       return $outcome

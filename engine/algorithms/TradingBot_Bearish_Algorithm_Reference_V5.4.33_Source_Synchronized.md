@@ -1,8 +1,8 @@
 # TradingBot Bearish Algorithm Reference — Current Standalone Specification
 
 **Document Version:** `5.4.33`  
-**Last Modified:** `2026-11-18T16:22:07+03:30`  
-**last_modified_at:** `2026-11-18T16:22:07+03:30`  
+**Last Modified:** `2026-11-18T17:49:49+03:30`  
+**last_modified_at:** `2026-11-18T17:49:49+03:30`  
 **document_role:** `reference`  
 **lifecycle:** `maintained`  
 **owner:** `engine/algorithms`  
@@ -131,7 +131,7 @@ The Source manifest and exact embedded Source are regenerated from the authorita
 |---|---|---|---:|---:|---|
 | `__init__.py` | Engine package marker | `unversioned` | 0 | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 | `bridge/__init__.py` | Bridge package marker | `unversioned` | 1 | 64 | `2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8` |
-| `bridge/live_pipeline.py` | Production module | `1.0.1` | 440 | 20268 | `c3a450ccf45cc06bcc611ac7a1a8365ca2ad958d57e992a3483b701bc6938ab4` |
+| `bridge/live_pipeline.py` | Production module | `1.0.2` | 483 | 22021 | `2b4563ddd7fdac72a0010e429d68d92ec64992f755e0529450d4613bf9dfa532` |
 | `bridge/trading_pipeline.py` | Final reconciled calculation objects | `1.14.0 (impl 1.19.0)` | 3590 | 142067 | `fe383ba2f2a27c965dcf1d697460c3ec0e50f612dfa4a0008a55553761c600ce` |
 | `pipeline/__init__.py` | Compatibility package wrapper | `unversioned` | 28 | 653 | `d22a1b81495a6c97b5eccc4d921b1ba4b709bfbcd39be6ef34b9014690b9f460` |
 | `pipeline/a_zone_detector.py` | BlueState and first-stop/inherited/double-stop routes | `1.7.0 (impl 1.8.0)` | 1044 | 42088 | `7e6ab318cc89529d7bde874b0de18059277152bb6cbd96fc960ea4a0a277323d` |
@@ -140,13 +140,13 @@ The Source manifest and exact embedded Source are regenerated from the authorita
 | `pipeline/direction_policy.py` | Direction Policy | `1.0.0` | 70 | 2282 | `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea` |
 | `pipeline/e_zone_detector.py` | S/E/Order lineage and parent stops | `6.16.2 (impl 6.20.0)` | 1589 | 72201 | `c589f227a0f206d09a32eb3e155bb66a6ae89a5b327396285b5336209bd20d9a` |
 | `pipeline/lifecycle_engine.py` | Final S/E dominance, accepted strict behavior stops | `1.18.6 (impl 1.22.0)` | 1606 | 66830 | `2ab96f5dbca41b5254bc9e63ea3f64b175a8700a59691ffed24be966176d6901` |
-| `pipeline/order_audit_engine.py` | Physical Order identity and cause ledger | `1.8.2 (impl 1.9.0)` | 2533 | 108698 | `6ca8097225352c1b519472bc918353d0c9429087d7405df0bdbd16edf4d78599` |
+| `pipeline/order_audit_engine.py` | Physical Order identity and cause ledger | `1.8.2 (impl 1.9.1)` | 2571 | 110639 | `a4eda95d858c1217d26292db2fa7db1966e82122696eaa670ebf87d5d39e74a5` |
 | `pipeline/PL_PH_detector.py` | Primary High / Low / Matching Behavior Leg | `1.4.0` | 820 | 36724 | `fc2b4ba3d15352831dcf63f34ee04d3da42b0751ca83c0f37e727371c41dabd1` |
 | `pipeline/reaction_engine.py` | Canonical First candidate, Break, strict Reset, lower-TF chronology | `9.9.1 (impl 9.13.0)` | 2842 | 124384 | `deae48c6d86bbcba98df1433ba26bfcd16f650e93ffe7690f575d063caea0b1c` |
 | `pipeline/s_zone_detector.py` | Accepted A stop, aligned Reaction, physical opposite Order | `4.20.1 (impl 4.22.0)` | 1554 | 66030 | `029a52fff2f6fd618b8e67a9fd99229bd1b2ffccf91dbd9656baf06aef0989a8` |
 | `pipeline/true_false.py` | Independent final behavior T/F and strict repair evidence | `unversioned` | 133 | 4719 | `13408ddcedff2b5960b2fe790c444a4c430a77788b9e38501a9db584caa6a1ec` |
 
-Generated Source-inventory evidence at `2026-11-18T16:22:07+03:30`. Recursive live production discovery includes package markers and all production Python under Bridge and Pipeline. Tests, historical archives and caches are excluded.
+Generated Source-inventory evidence at `2026-11-18T17:49:49+03:30`. Recursive live production discovery includes package markers and all production Python under Bridge and Pipeline. Tests, historical archives and caches are excluded.
 
 Section 16 embeds the exact bytes represented by this manifest.
 
@@ -792,7 +792,7 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 #### `bridge/__init__.py`
 
 #### `bridge/live_pipeline.py`
-- Assignment `LIVE_PIPELINE_VERSION = '1.0.1'` (L24).
+- Assignment `LIVE_PIPELINE_VERSION = '1.0.2'` (L24).
 - Function `_blue_dependencies(result)` (L27-L31).
 - Class `LivePipelineStages` (L34-L288).
 - Function `LivePipelineStages.__init__(self, engines)` (L37-L58).
@@ -817,13 +817,17 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 - Function `LivePipelineContinuation.__init__(self, args, engines)` (L293-L301).
 - Function `LivePipelineContinuation.append(self, rows)` (L303-L333).
 - Class `LiveRawChanged` (L336-L337).
-- Function `_decode_raw(data)` (L340-L344).
-- Class `LiveRawSource` (L347-L386).
-- Function `LiveRawSource.__init__(self, selected, data, original)` (L350-L357).
-- Function `LiveRawSource._remember_prefix(self, data)` (L359-L363).
-- Function `LiveRawSource.append(self, data, pipeline)` (L365-L386).
-- Function `_send_worker_message(kind, **fields)` (L389-L390).
-- Function `main()` (L393-L436).
+- Class `LiveRawDeltaMismatch` (L340-L341).
+- Function `_decode_raw(data)` (L344-L348).
+- Class `LiveRawSource` (L351-L420).
+- Function `LiveRawSource.__init__(self, selected, data, original)` (L354-L361).
+- Function `LiveRawSource._remember_prefix(self, data)` (L363-L369).
+- Function `LiveRawSource._file_digest(prefix_hash, ending)` (L372-L375).
+- Function `LiveRawSource.append_delta(self, data, base_sha256, raw_sha256, pipeline)` (L377-L390).
+- Function `LiveRawSource.append(self, data, pipeline)` (L392-L408).
+- Function `LiveRawSource._append_rows(self, new_rows, pipeline)` (L410-L420).
+- Function `_send_worker_message(kind, **fields)` (L423-L424).
+- Function `main()` (L427-L479).
 
 #### `bridge/trading_pipeline.py`
 - Assignment `_ENGINE_ROOT = Path(__file__).resolve().parents[1]` (L30).
@@ -1396,8 +1400,8 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 
 #### `pipeline/order_audit_engine.py`
 - Assignment `ORDER_AUDIT_ENGINE_VERSION = '1.8.2'` (L16).
-- Assignment `ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION = '1.9.0'` (L17).
-- Assignment `ORDER_AUDIT_ENGINE_LAST_MODIFIED = '2026-11-18T07:10:09+03:30'` (L18).
+- Assignment `ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION = '1.9.1'` (L17).
+- Assignment `ORDER_AUDIT_ENGINE_LAST_MODIFIED = '2026-11-18T17:44:08+03:30'` (L18).
 - Function `relabel_primary_causes(causes, labels)` (L21-L33).
 - Class `PostBehaviorStop` (L36-L40).
 - Assignment `behavior_type: str` (L37).
@@ -1441,7 +1445,7 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 - Function `discover_accepted_order_b_reset_legs(direction: str, chronology: object, trend_reactions: Sequence[object], trend_resets: Sequence[object], opposite_reactions: Sequence[object], a_zones: Sequence[object], invalid_a_identities: set[tuple[datetime, int]], s_zones: Sequence[object], e_zones: Sequence[object], stopalls: Sequence[object], s_detector: object, e_detector: object, priority: Callable[[object], int], *, reset_leg_finder=None)` (L438-L516).
 - Assignment `OrderMatch = tuple[int, object, datetime, Decimal, int, datetime, tuple[int, datetime, datetime] | None, tuple[str, ...], datetime | None]` (L519).
 - Function `order_b_leg_identity(items: Sequence[object])` (L526-L546).
-- Class `OrderAuditEngineMixin` (L550-L2132).
+- Class `OrderAuditEngineMixin` (L550-L2170).
 - Function `OrderAuditEngineMixin._order_stop(self, number: int, reaction: object, context_start: datetime | None=None)` (L553-L579).
 - Function `OrderAuditEngineMixin.order_stop(self, reaction_number: int, reaction: object)` (L582-L586).
 - Function `OrderAuditEngineMixin._first_healthy_direct_geometry(self, start: datetime, allow_bounded_continue: bool=False)` (L589-L661).
@@ -1454,8 +1458,8 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 - Function `OrderAuditEngineMixin._first_order(self, start: datetime, continuous_deadline: datetime | None=None, allow_bounded_continue: bool=False, allow_trend_leg_continue: bool=False)` (L980-L993).
 - Function `OrderAuditEngineMixin._has_sequence_reset_between(self, start: datetime, end: datetime)` (L996-L1004).
 - Function `OrderAuditEngineMixin._index_order_audit_identity(self, identity: tuple[int, int], confirmation: datetime)` (L1007-L1015).
-- Function `OrderAuditEngineMixin._clear_order_audit(self)` (L1018-L1023).
-- Function `OrderAuditEngineMixin._invalidate_carried_order_caches(self)` (L1025-L1031).
+- Function `OrderAuditEngineMixin._clear_order_audit(self)` (L1018-L1022).
+- Function `OrderAuditEngineMixin._invalidate_carried_order_caches(self)` (L1024-L1031).
 - Function `OrderAuditEngineMixin._invalidate_post_stop_order_cache(self)` (L1033-L1035).
 - Function `OrderAuditEngineMixin.register_order_b_reset_legs(self, legs: Sequence[OrderBResetLeg])` (L1038-L1102).
 - Function `OrderAuditEngineMixin._reparent_primary_high_causes(self, parent, stop_event, direct_identity)` (L1105-L1151).
@@ -1467,48 +1471,49 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 - Function `OrderAuditEngineMixin.reconcile_primary_high_labels(self, highs)` (L1215-L1217).
 - Function `OrderAuditEngineMixin.reconcile_primary_low_labels(self, lows)` (L1219-L1221).
 - Function `OrderAuditEngineMixin._reconcile_primary_labels(self, points, prefix)` (L1223-L1240).
-- Function `OrderAuditEngineMixin._register_order_audit(self, parent_type: str, parent: object, parent_stop: datetime)` (L1242-L1325).
-- Function `OrderAuditEngineMixin.visual_order_lifecycle(self, start: datetime)` (L1329-L1348).
-- Function `OrderAuditEngineMixin._cross_order(self, start: datetime, level: Decimal)` (L1351-L1369).
-- Function `OrderAuditEngineMixin.cross_order(self, confirmation_time: datetime, stop_level: Decimal)` (L1372-L1376).
-- Function `OrderAuditEngineMixin._unconsumed_s_orders(self, parent: object, parent_stop: datetime)` (L1379-L1413).
-- Function `OrderAuditEngineMixin._initial_order_records(self)` (L1416-L1471).
-- Function `OrderAuditEngineMixin._initial_record_match(record: tuple[datetime, datetime, int, object, Decimal, int, datetime, tuple[int, datetime, datetime] | None], causes: tuple[str, ...])` (L1475-L1486).
-- Function `OrderAuditEngineMixin._initial_order_match(self, entry: dict[str, object], causes: tuple[str, ...])` (L1489-L1501).
-- Function `OrderAuditEngineMixin._gate_owned_initial_order(self, parent_stop: datetime)` (L1504-L1524).
-- Function `OrderAuditEngineMixin._carried_creation_events(entry: dict[str, object])` (L1528-L1534).
-- Function `OrderAuditEngineMixin._validated_carried_creation_index(self, entries)` (L1536-L1589).
-- Function `OrderAuditEngineMixin._carried_orders_for_parent(self, parent: object, parent_stop: datetime)` (L1591-L1660).
-- Function `OrderAuditEngineMixin._post_stop_accepted_orders_for_parent(self, parent: object, parent_stop: datetime)` (L1663-L1742).
-- Function `OrderAuditEngineMixin._post_stop_accepted_orders_for_parent.add_match(match: OrderMatch)` (L1677-L1694).
-- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders(self, parent, parent_stop)` (L1744-L1861).
-- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.native_time(value)` (L1754-L1755).
-- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.native_match(match)` (L1757-L1769).
-- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.eligible(items, times)` (L1845-L1851).
-- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.accepted()` (L1853-L1859).
-- Function `OrderAuditEngineMixin._order_created_only_by_disowned_s(self, identity: tuple[int, int], source_times: set[datetime], prospective_source_time: datetime | None=None)` (L1864-L1877).
-- Function `OrderAuditEngineMixin._blocked_by_gate_owned_order(self, zone: EZone)` (L1879-L1887).
-- Function `OrderAuditEngineMixin._rebuild_accepted_order_audit(self, numbered: list[EZone], supplemental_s_zones: Sequence[object]=())` (L1890-L2075).
-- Function `OrderAuditEngineMixin._rebuild_accepted_order_audit.valid_parent_stop_cause(cause: tuple[object, ...])` (L1904-L1916).
-- Function `OrderAuditEngineMixin.rebuild_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=())` (L2078-L2090).
-- Function `OrderAuditEngineMixin.ensure_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=())` (L2093-L2132).
-- Function `_parent_stop_cause_key(cause: dict[str, object])` (L2135-L2141).
-- Function `_collect_s_ledger_entries(s_detector, accepted_a_sources: set[datetime] | None)` (L2144-L2173).
-- Function `_collect_e_ledger_entries(detector, accepted_a_sources: set[datetime] | None=None)` (L2176-L2202).
-- Function `_merge_prepared_identities(combined: list[tuple[dict[str, object], list[dict[str, object]]]], detector, start_index: int, end_index: int, required_identities: set[tuple[int, int]])` (L2205-L2245).
-- Function `_single_owner_parent_stop_causes(output: list[dict[str, object]])` (L2248-L2283).
-- Function `prepare_order_audit(detector, start_index: int, end_index: int, s_detector=None, accepted_a_sources: set[datetime] | None=None, required_identities: set[tuple[int, int]] | None=None)` (L2286-L2303).
-- Function `accepted_audit_entry(entry: dict[str, object], accepted_sources: set)` (L2306-L2336).
-- Function `accepted_audit_entries(order_audit: dict[tuple[int, int], dict[str, object]], accepted_sources: set[datetime])` (L2339-L2349).
-- Function `order_identity_is_internal(item, internal_identities)` (L2352-L2358).
-- Class `SOrderAuditMixin` (L2361-L2532).
-- Function `SOrderAuditMixin._first_order_after(self, a_stop_event_time: datetime)` (L2364-L2417).
-- Function `SOrderAuditMixin._order_matches_after(self, a_stop_event_time: datetime)` (L2420-L2439).
-- Function `SOrderAuditMixin._record_a_order_audit(self, zone: object, a_stop_event_time: datetime, order_match: tuple[int, object, datetime])` (L2442-L2474).
-- Function `SOrderAuditMixin._audit_stopped_a(self, zone: object)` (L2477-L2487).
-- Function `SOrderAuditMixin._order_stop(self, order_number: int, reaction: object)` (L2490-L2499).
-- Function `SOrderAuditMixin._order_stop_crossed(self, candle: object, level: Decimal)` (L2502-L2505).
-- Function `SOrderAuditMixin._shared_order_stop_cross(self, confirmation: datetime, level: Decimal)` (L2508-L2532).
+- Function `OrderAuditEngineMixin._register_order_audit(self, parent_type: str, parent: object, parent_stop: datetime)` (L1242-L1336).
+- Function `OrderAuditEngineMixin.visual_order_lifecycle(self, start: datetime)` (L1340-L1359).
+- Function `OrderAuditEngineMixin._cross_order(self, start: datetime, level: Decimal)` (L1362-L1380).
+- Function `OrderAuditEngineMixin.cross_order(self, confirmation_time: datetime, stop_level: Decimal)` (L1383-L1387).
+- Function `OrderAuditEngineMixin._unconsumed_s_orders(self, parent: object, parent_stop: datetime)` (L1390-L1424).
+- Function `OrderAuditEngineMixin._initial_order_records(self)` (L1427-L1482).
+- Function `OrderAuditEngineMixin._initial_record_match(record: tuple[datetime, datetime, int, object, Decimal, int, datetime, tuple[int, datetime, datetime] | None], causes: tuple[str, ...])` (L1486-L1497).
+- Function `OrderAuditEngineMixin._initial_order_match(self, entry: dict[str, object], causes: tuple[str, ...])` (L1500-L1512).
+- Function `OrderAuditEngineMixin._gate_owned_initial_order(self, parent_stop: datetime)` (L1515-L1535).
+- Function `OrderAuditEngineMixin._carried_creation_events(entry: dict[str, object])` (L1539-L1545).
+- Function `OrderAuditEngineMixin._validated_carried_creation_index(self, entries)` (L1547-L1600).
+- Function `OrderAuditEngineMixin._extend_carried_creation_index(self)` (L1602-L1623).
+- Function `OrderAuditEngineMixin._carried_orders_for_parent(self, parent: object, parent_stop: datetime)` (L1625-L1698).
+- Function `OrderAuditEngineMixin._post_stop_accepted_orders_for_parent(self, parent: object, parent_stop: datetime)` (L1701-L1780).
+- Function `OrderAuditEngineMixin._post_stop_accepted_orders_for_parent.add_match(match: OrderMatch)` (L1715-L1732).
+- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders(self, parent, parent_stop)` (L1782-L1899).
+- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.native_time(value)` (L1792-L1793).
+- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.native_match(match)` (L1795-L1807).
+- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.eligible(items, times)` (L1883-L1889).
+- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.accepted()` (L1891-L1897).
+- Function `OrderAuditEngineMixin._order_created_only_by_disowned_s(self, identity: tuple[int, int], source_times: set[datetime], prospective_source_time: datetime | None=None)` (L1902-L1915).
+- Function `OrderAuditEngineMixin._blocked_by_gate_owned_order(self, zone: EZone)` (L1917-L1925).
+- Function `OrderAuditEngineMixin._rebuild_accepted_order_audit(self, numbered: list[EZone], supplemental_s_zones: Sequence[object]=())` (L1928-L2113).
+- Function `OrderAuditEngineMixin._rebuild_accepted_order_audit.valid_parent_stop_cause(cause: tuple[object, ...])` (L1942-L1954).
+- Function `OrderAuditEngineMixin.rebuild_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=())` (L2116-L2128).
+- Function `OrderAuditEngineMixin.ensure_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=())` (L2131-L2170).
+- Function `_parent_stop_cause_key(cause: dict[str, object])` (L2173-L2179).
+- Function `_collect_s_ledger_entries(s_detector, accepted_a_sources: set[datetime] | None)` (L2182-L2211).
+- Function `_collect_e_ledger_entries(detector, accepted_a_sources: set[datetime] | None=None)` (L2214-L2240).
+- Function `_merge_prepared_identities(combined: list[tuple[dict[str, object], list[dict[str, object]]]], detector, start_index: int, end_index: int, required_identities: set[tuple[int, int]])` (L2243-L2283).
+- Function `_single_owner_parent_stop_causes(output: list[dict[str, object]])` (L2286-L2321).
+- Function `prepare_order_audit(detector, start_index: int, end_index: int, s_detector=None, accepted_a_sources: set[datetime] | None=None, required_identities: set[tuple[int, int]] | None=None)` (L2324-L2341).
+- Function `accepted_audit_entry(entry: dict[str, object], accepted_sources: set)` (L2344-L2374).
+- Function `accepted_audit_entries(order_audit: dict[tuple[int, int], dict[str, object]], accepted_sources: set[datetime])` (L2377-L2387).
+- Function `order_identity_is_internal(item, internal_identities)` (L2390-L2396).
+- Class `SOrderAuditMixin` (L2399-L2570).
+- Function `SOrderAuditMixin._first_order_after(self, a_stop_event_time: datetime)` (L2402-L2455).
+- Function `SOrderAuditMixin._order_matches_after(self, a_stop_event_time: datetime)` (L2458-L2477).
+- Function `SOrderAuditMixin._record_a_order_audit(self, zone: object, a_stop_event_time: datetime, order_match: tuple[int, object, datetime])` (L2480-L2512).
+- Function `SOrderAuditMixin._audit_stopped_a(self, zone: object)` (L2515-L2525).
+- Function `SOrderAuditMixin._order_stop(self, order_number: int, reaction: object)` (L2528-L2537).
+- Function `SOrderAuditMixin._order_stop_crossed(self, candle: object, level: Decimal)` (L2540-L2543).
+- Function `SOrderAuditMixin._shared_order_stop_cross(self, confirmation: datetime, level: Decimal)` (L2546-L2570).
 
 #### `pipeline/PL_PH_detector.py`
 - Assignment `PL_PH_VERSION = '1.4.0'` (L21).
@@ -2320,9 +2325,9 @@ Every discovered production Python file in the live Engine package, Bridge and P
 
 ### 16.3 `bridge/live_pipeline.py` — Production module
 
-**SHA-256:** `c3a450ccf45cc06bcc611ac7a1a8365ca2ad958d57e992a3483b701bc6938ab4`  
-**Bytes:** `20268`  
-**LF count:** `440`
+**SHA-256:** `2b4563ddd7fdac72a0010e429d68d92ec64992f755e0529450d4613bf9dfa532`  
+**Bytes:** `22021`  
+**LF count:** `483`
 
 <!-- EXACT-SOURCE-BEGIN:bridge/live_pipeline.py -->
 ````python
@@ -2349,7 +2354,7 @@ from trading_pipeline import (
 from order_audit_engine import LiveOrderBResetLegs
 
 
-LIVE_PIPELINE_VERSION = "1.0.1"
+LIVE_PIPELINE_VERSION = "1.0.2"
 
 
 def _blue_dependencies(result):
@@ -2665,6 +2670,10 @@ class LiveRawChanged(ValueError):
     """A previously observed source candle was removed or revised."""
 
 
+class LiveRawDeltaMismatch(ValueError):
+    """The private append message could not prove byte-exact continuity."""
+
+
 def _decode_raw(data):
     rows = json.loads(data, parse_float=Decimal)
     if not isinstance(rows, list) or not rows:
@@ -2688,29 +2697,59 @@ class LiveRawSource:
         # The RAW writer preserves everything before the closing bracket.
         # Hash the bytes without parsing or normalizing the previous candles.
         self._end = data.rfind(b"]")
-        self._signature = hashlib.sha256(memoryview(data)[:self._end]).digest()
+        self._prefix_hash = hashlib.sha256(memoryview(data)[:self._end])
+        self._ending = data[self._end:]
+        self._raw_sha256 = self._file_digest(self._prefix_hash, self._ending)
+
+    @staticmethod
+    def _file_digest(prefix_hash, ending):
+        digest = prefix_hash.copy()
+        digest.update(ending)
+        return digest.hexdigest()
+
+    def append_delta(self, data, base_sha256, raw_sha256, pipeline):
+        if base_sha256 != self._raw_sha256 or not data.startswith(b","):
+            raise LiveRawDeltaMismatch
+        prefix = self._prefix_hash.copy()
+        prefix.update(data)
+        if self._file_digest(prefix, self._ending) != raw_sha256:
+            raise LiveRawDeltaMismatch
+
+        new_rows = _decode_raw(b"[" + data[1:] + b"]")
+        result = self._append_rows(new_rows, pipeline)
+        self._end += len(data)
+        self._prefix_hash = prefix
+        self._raw_sha256 = raw_sha256
+        return result
 
     def append(self, data, pipeline):
-        if len(data) <= self._end or hashlib.sha256(memoryview(data)[:self._end]).digest() != self._signature:
+        if len(data) <= self._end or hashlib.sha256(memoryview(data)[:self._end]).digest() != self._prefix_hash.digest():
             raise LiveRawChanged("Existing RAW candles changed. Use Apply again.")
         tail = data[self._end:].lstrip()
         if tail.startswith(b","):
             new_rows = _decode_raw(b"[" + tail[1:])
-            previous = self._last_time
-            for row in new_rows:
-                if row["time"] <= previous:
-                    raise LiveRawChanged("RAW candles no longer extend the previous history. Use Apply again.")
-                previous = row["time"]
         elif tail.rstrip() == b"]":
             new_rows = []
         else:
             raise LiveRawChanged("The RAW file is no longer an append of the original source. Use Apply again.")
+        result = self._append_rows(new_rows, pipeline)
+        if new_rows:
+            self._remember_prefix(data)
+        elif data[self._end:] != self._ending:
+            self._ending = data[self._end:]
+            self._raw_sha256 = self._file_digest(self._prefix_hash, self._ending)
+        return result
+
+    def _append_rows(self, new_rows, pipeline):
+        previous = self._last_time
+        for row in new_rows:
+            if row["time"] <= previous:
+                raise LiveRawChanged("RAW candles no longer extend the previous history. Use Apply again.")
+            previous = row["time"]
         batch = self._catchup + new_rows
         result = pipeline.append(batch) if batch else None
         self._catchup = []
-        if new_rows:
-            self._last_time = new_rows[-1]["time"]
-            self._remember_prefix(data)
+        self._last_time = previous
         return result
 
 
@@ -2732,7 +2771,7 @@ def main():
         payload = pipeline.append(selected)
         del selected, original, selected_data, original_data
         _send_worker_message("seed", ready=True, payload=payload)
-        # Updates carry a short JSON header followed by the unchanged RAW bytes.
+        # The server supplies exact append bytes when it owns the commit lineage.
         pipe = sys.stdin.buffer
         while header := pipe.readline(256):
             if not header.endswith(b"\n"):
@@ -2740,16 +2779,25 @@ def main():
             request = json.loads(header)
             size = request.get("bytes")
             digest = request.get("sha256")
+            base_digest = request.get("baseSha256")
             if type(size) is not int or size <= 0 or not isinstance(digest, str) or len(digest) != 64:
                 raise ValueError("Invalid live RAW update header.")
             raw = pipe.read(size)
             if len(raw) != size:
                 raise ValueError("Incomplete live RAW update.")
-            if hashlib.sha256(raw).hexdigest() != digest:
+            if base_digest is not None:
+                try:
+                    updated = lineage.append_delta(raw, base_digest, digest, pipeline)
+                except LiveRawDeltaMismatch:
+                    _send_worker_message("error", code="RAW_DELTA_MISMATCH",
+                                         message="The RAW append could not be verified against the live checkpoint.")
+                    continue
+            elif hashlib.sha256(raw).hexdigest() != digest:
                 _send_worker_message("error", code="RAW_RETRY",
                                      message="RAW changed during the indicator update. Retrying at the next check.")
                 continue
-            updated = lineage.append(raw, pipeline)
+            else:
+                updated = lineage.append(raw, pipeline)
             if updated is not None:
                 payload = updated
             _send_worker_message("update", payload=payload)
@@ -11378,9 +11426,9 @@ def visible_a_zones(a_zones: Sequence[object], s_zones: Sequence[object]) -> lis
 
 ### 16.12 `pipeline/order_audit_engine.py` — Physical Order identity and cause ledger
 
-**SHA-256:** `6ca8097225352c1b519472bc918353d0c9429087d7405df0bdbd16edf4d78599`  
-**Bytes:** `108698`  
-**LF count:** `2533`
+**SHA-256:** `a4eda95d858c1217d26292db2fa7db1966e82122696eaa670ebf87d5d39e74a5`  
+**Bytes:** `110639`  
+**LF count:** `2571`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/order_audit_engine.py -->
 ````python
@@ -11388,7 +11436,7 @@ def visible_a_zones(a_zones: Sequence[object], s_zones: Sequence[object]) -> lis
 
 from __future__ import annotations
 
-from bisect import bisect_left, bisect_right
+from bisect import bisect_left, bisect_right, insort_right
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime
@@ -11400,8 +11448,8 @@ from typing import Callable, Sequence
 from core_utils import as_decimal, order_identity, reaction_identity
 
 ORDER_AUDIT_ENGINE_VERSION = "1.8.2"
-ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION = "1.9.0"
-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-18T07:10:09+03:30"
+ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION = "1.9.1"
+ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-18T17:44:08+03:30"
 
 
 def relabel_primary_causes(causes, labels):
@@ -12404,8 +12452,7 @@ class OrderAuditEngineMixin:
     def _clear_order_audit(self) -> None:
         self.order_audit.clear()
         self._order_audit_confirmation_index.clear()
-        self._carried_orders_cache.clear()
-        self._carried_creation_index = None
+        self._invalidate_carried_order_caches()
         self._invalidate_post_stop_order_cache()
 
     def _invalidate_carried_order_caches(self) -> None:
@@ -12415,6 +12462,7 @@ class OrderAuditEngineMixin:
         # must not wipe that cache.
         self._carried_orders_cache.clear()
         self._carried_creation_index = None
+        self._carried_creation_append = None
 
     def _invalidate_post_stop_order_cache(self) -> None:
         self._post_stop_orders_cache.clear()
@@ -12657,15 +12705,21 @@ class OrderAuditEngineMixin:
                     parent_stop,
                 ))
 
-        creation_changed = False
+        ledger = self.order_audit
+        previous_index = None
+        if type(ledger) is dict and self._carried_orders_cache:
+            previous_index = getattr(self, "_carried_creation_index", None)
+        new_entries = []
+        earlier_existing_creation = False
         for match in matches:
             number, reaction, confirmation, level, source, source_time = match[:6]
             crossed, causes = match[6], match[7]
             if "parent-stop" not in causes:
                 continue
             key = reaction_identity(reaction)
-            entry = self.order_audit.get(key)
-            if entry is None:
+            entry = ledger.get(key)
+            is_new = entry is None
+            if is_new:
                 entry = {
                     "reaction_number": number,
                     "reaction": reaction,
@@ -12676,9 +12730,9 @@ class OrderAuditEngineMixin:
                     "stop_cross": crossed,
                     "causes": set(),
                 }
-                self.order_audit[key] = entry
+                ledger[key] = entry
                 self._index_order_audit_identity(key, confirmation)
-                creation_changed = True
+                new_entries.append(entry)
             audit_causes = entry["causes"]
             assert isinstance(audit_causes, set)
             family = str(getattr(parent, "color", getattr(parent, "family", "")))
@@ -12705,10 +12759,15 @@ class OrderAuditEngineMixin:
                 # Carried eligibility uses only the earliest parent creation,
                 # plus every B confirmation. Later/equal parent provenance
                 # remains in the ledger but cannot change this query's result.
-                if earlier_creation:
-                    creation_changed = True
-        if creation_changed:
+                if earlier_creation and not is_new:
+                    earlier_existing_creation = True
+        if new_entries or earlier_existing_creation:
             self._invalidate_carried_order_caches()
+            if (not earlier_existing_creation and previous_index is not None
+                    and previous_index[0] is ledger and previous_index[2] is not None
+                    and len(previous_index[1]) + len(new_entries) == len(ledger)):
+                # Validate the append at the next query, in its Decimal context.
+                self._carried_creation_append = previous_index, new_entries
 
 
     @staticmethod
@@ -12974,6 +13033,29 @@ class OrderAuditEngineMixin:
             return None
         return events, event_timezone
 
+    def _extend_carried_creation_index(self):
+        """Extend the validated prefix while keeping original ledger ordinals."""
+        pending = getattr(self, "_carried_creation_append", None)
+        self._carried_creation_append = None
+        if pending is None:
+            return None
+        (ledger, entries, (events, timezone)), new_entries = pending
+        if ledger is not self.order_audit or len(entries) + len(new_entries) != len(ledger):
+            return None
+        appended = OrderAuditEngineMixin._validated_carried_creation_index(self, new_entries)
+        if appended is None:
+            return None
+        new_events, new_timezone = appended
+        if events and new_events and timezone is not new_timezone:
+            return None
+        if not events:
+            timezone = new_timezone
+        offset = len(entries)
+        for event, ordinal in new_events:
+            insort_right(events, (event, offset + ordinal))
+        entries.extend(new_entries)
+        return ledger, entries, (events, timezone)
+
     def _carried_orders_for_parent(
         self, parent: object, parent_stop: datetime,
     ) -> list[OrderMatch]:
@@ -12987,9 +13069,13 @@ class OrderAuditEngineMixin:
             return list(cached)
         indexed = getattr(self, "_carried_creation_index", None)
         if indexed is None or not self._carried_orders_cache:
-            entries = list(self.order_audit.values())
-            indexed = self._carried_creation_index = entries, OrderAuditEngineMixin._validated_carried_creation_index(self, entries)
-        entries, creation_index = indexed
+            indexed = OrderAuditEngineMixin._extend_carried_creation_index(self)
+            if indexed is None:
+                ledger = self.order_audit
+                entries = list(ledger.values())
+                indexed = ledger, entries, OrderAuditEngineMixin._validated_carried_creation_index(self, entries)
+            self._carried_creation_index = indexed
+        _, entries, creation_index = indexed
         use_index = creation_index is not None and all(
             type(event) is datetime and event.tzinfo is creation_index[1]
             for event in (lifecycle_start, parent_stop)

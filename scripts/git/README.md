@@ -3,7 +3,7 @@ title: TradingBot Release Operations
 document_role: procedure
 lifecycle: maintained
 owner: release-tooling
-last_modified_at: 2026-11-18T17:24:43+03:30
+last_modified_at: 2026-11-18T18:06:12+03:30
 ---
 
 # TradingBot release operations
@@ -16,10 +16,10 @@ Open the interactive manager with:
 .\scripts\git\git.bat
 ```
 
-Run `git.bat -Help` to see the supported options. To publish both branches and a GitHub Release, pass `-ReleaseTag` first and supply a commit message. `-ReleaseTitle` sets the GitHub Release title and defaults to the tag. Add `-DryRun` to validate both candidate trees without publication.
+Run `git.bat -Help` to see the supported options. To publish both branches and a GitHub Release, pass `-ReleaseTag` first and supply a commit message. `-ReleaseTitle` sets the GitHub Release title and defaults to the tag. `-ReleaseNotesFile` reads a non-empty UTF-8 Markdown file relative to the caller's working directory. Quote paths containing spaces. Add `-DryRun` to validate the inputs and both candidate trees without publication.
 
 ```powershell
-.\scripts\git\git.bat -ReleaseTag "vX.Y.Z" -CommitMessage "Release vX.Y.Z" -ReleaseTitle "TradingBot vX.Y.Z"
+.\scripts\git\git.bat -ReleaseTag "vX.Y.Z" -CommitMessage "Release vX.Y.Z" -ReleaseTitle "TradingBot vX.Y.Z" -ReleaseNotesFile ".\release notes.md"
 ```
 
 `AGENTS.md` is optional. The launcher checks the menu file; PowerShell verifies the Git root and the `apps/chart` and `engine` directories. Paths containing spaces, parentheses, ampersands, and exclamation marks are supported. Git for Windows must be installed and `git.exe` must be on PATH.
@@ -70,6 +70,8 @@ The scripted release validates temporary main and production candidates before c
 ## Traceability and Recovery
 
 Changed production content receives `TradingBot-Main-Source: <main SHA>` in its commit trailer. When the production tree is unchanged, no empty commit is made; the annotated tag and GitHub Release metadata carry that source SHA. The annotated tag always points to the exact production release commit.
+
+The scripted workflow appends provenance to any supplied Markdown and verifies the published tag and title through GitHub before printing the Release URL.
 
 If validation fails, inspect the reported policy, closure, or tool check and correct it before retrying. If publication reports partial failure, do not retry blindly: compare the reported remote `main`, `production`, and tag OIDs, reconcile the remote state deliberately, then rerun with a new unused tag only when appropriate. Temporary worktree cleanup is reported separately.
 

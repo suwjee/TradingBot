@@ -414,6 +414,16 @@ function Invoke-PublicationTests {
     Assert-True ($inputs.ReleaseTitle -eq 'fixture-release') 'omitting the release title preserves the tag as the title'
     $namedInputs = Read-ReleaseInputs -CommitMessage 'fixture commit' -ReleaseTag 'fixture-release' -ReleaseTitle '  Fixture release title  '
     Assert-True ($namedInputs.ReleaseTitle -eq 'Fixture release title') 'a custom release title is independent of the commit message and tag'
+    $notes = "## Live update`n`n- Use the verified candle delta.`n- UTF-8 $([char]0x2192) verified."
+    Write-FixtureFile $fixture.Root 'release notes.md' ($notes + "`n")
+    Push-Location -LiteralPath $fixture.Root
+    try {
+      $withNotes = Read-ReleaseInputs -CommitMessage 'fixture commit' -ReleaseTag 'fixture-release' -ReleaseNotesFile 'release notes.md'
+      Assert-True ($withNotes.ReleaseNotes -ceq $notes) 'relative UTF-8 notes retain their multiline Markdown'
+      Assert-Throws { Read-ReleaseInputs -CommitMessage 'fixture commit' -ReleaseTag 'fixture-release' -ReleaseNotesFile 'missing.md' } 'missing notes stop validation'
+      Write-FixtureFile $fixture.Root 'empty notes.md' ' '
+      Assert-Throws { Read-ReleaseInputs -CommitMessage 'fixture commit' -ReleaseTag 'fixture-release' -ReleaseNotesFile 'empty notes.md' } 'empty notes stop validation'
+    } finally { Pop-Location }
     Assert-Throws { Read-ReleaseInputs -CommitMessage '' -ReleaseTag 'fixture-release' -NonInteractive } 'empty noninteractive commit message'
     Assert-Throws { New-ReleaseTag -Root $fixture.Root -Tag 'bad tag' -ProductionSha $fixture.ProductionSha -MainSha $fixture.MainSha } 'invalid tag syntax'
     $tag = New-ReleaseTag -Root $fixture.Root -Tag 'fixture-release' -ProductionSha $fixture.ProductionSha -MainSha $fixture.MainSha
@@ -425,6 +435,27 @@ function Invoke-PublicationTests {
     $published = Publish-ReleaseRefs -Root $fixture.Root -PreparedRelease $prepared
     Assert-True ($published.Status -eq 'ATOMIC_PASS') 'atomic publication succeeds to fixture remote'
     Assert-True ($published.RemoteMain -eq $fixture.MainSha -and $published.RemoteProduction -eq $fixture.ProductionSha -and $published.RemoteTag -eq $tag.TagObjectSha) 'atomic publication verifies all refs'
+
+    $github = [pscustomobject]@{ Views=0; TempPath=$null; Body=$null; CreateArgs=$null }
+    $releaseUrl = 'https://github.com/example/TradingBot/releases/tag/fixture-release'
+    $release = [pscustomobject]@{ Tag=$prepared.Tag; MainSha=$prepared.MainSha; ProductionSha=$prepared.ProductionSha; ProductionChanged=$true }
+    $adapter = {
+      param($root, $ghArguments)
+      if ($ghArguments[1] -eq 'view') {
+        $github.Views++
+        if ($github.Views -eq 1) { return [pscustomobject]@{ ExitCode=1; StdOut=''; StdErr='release not found' } }
+        $json = @{ tagName=$release.Tag; name='Fixture title'; isDraft=$false; isPrerelease=$false; url=$releaseUrl } | ConvertTo-Json -Compress
+        return [pscustomobject]@{ ExitCode=0; StdOut=$json; StdErr='' }
+      }
+      $github.CreateArgs = $ghArguments
+      $github.TempPath = $ghArguments[-1]
+      $github.Body = [IO.File]::ReadAllText($github.TempPath)
+      return [pscustomobject]@{ ExitCode=0; StdOut="`r`n"; StdErr='' }
+    }.GetNewClosure()
+    $created = New-GitHubRelease -Root $fixture.Root -PreparedRelease $release -Title 'Fixture title' -ReleaseNotes $withNotes.ReleaseNotes -CommandAdapter $adapter
+    Assert-True ($created.Url -eq $releaseUrl -and $github.Views -eq 2) 'actual GitHub metadata provides the release URL when the create output is blank'
+    Assert-True (($github.CreateArgs -contains '--notes-file') -and $github.Body.StartsWith($notes + "`n`n") -and $github.Body.Contains("TradingBot-Main-Source: $($fixture.MainSha)")) 'GitHub receives the Markdown and source provenance from the same notes file'
+    Assert-True (-not (Test-Path -LiteralPath $github.TempPath)) 'temporary publication notes are removed after GitHub returns'
 
     $fallbackFixture = New-PublicationFixture
     $fixtures += $fallbackFixture
@@ -476,7 +507,7 @@ function Invoke-DocumentationTests {
   Assert-True ($text -match '(?m)^powershell\.exe .*Invoke-TradingBotRelease\.ps1\s*$') 'README shows the one-command normal release invocation'
   foreach ($phrase in @(
     'derive the project root from their own locations', 'inclusion-first', 'dependency-derived', 'BaseLine', 'Graphify', 'apps/chart/state',
-    'origin/production', 'GitHub CLI', '-DryRun', 'temporary worktree', '--atomic', 'fallback',
+    'origin/production', 'GitHub CLI', '-DryRun', '-ReleaseNotesFile', 'temporary worktree', '--atomic', 'fallback',
     'TradingBot-Main-Source', 'GitHub Release', 'Recovery', 'No publication occurs during implementation validation'
   )) {
     Assert-True ($text.Contains($phrase)) "README covers $phrase"

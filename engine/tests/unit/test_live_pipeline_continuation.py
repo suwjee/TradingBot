@@ -106,3 +106,33 @@ def test_worker_rejects_a_path_supplied_over_stdin(tmp_path, monkeypatch, capsys
     messages = [json.loads(line) for line in capsys.readouterr().out.splitlines()]
     assert [message["type"] for message in messages] == ["seed", "error"]
     assert messages[-1]["code"] == "LIVE_ENGINE_FAILED"
+
+
+def test_raw_delta_requires_the_exact_base_and_final_bytes_and_can_return_to_a_full_snapshot():
+    from hashlib import sha256
+    from live_pipeline import LiveRawDeltaMismatch, LiveRawSource, _decode_raw
+
+    original = b'\xef\xbb\xbf[{"time":10,"open":1.00},{"time":15,"open":2.0}]\r\n'
+    rows = _decode_raw(original)
+    source = LiveRawSource(rows[:1], original, rows)
+    delta = b',{"time":20,"open":3.000},{"time":25,"open":4.00}'
+    boundary = original.rfind(b"]")
+    target = original[:boundary] + delta + original[boundary:]
+
+    class Engine:
+        calls = []
+
+        def append(self, new_rows):
+            self.calls.append(new_rows)
+            return new_rows
+
+    engine = Engine()
+    fingerprint = lambda data: sha256(data).hexdigest()
+    with pytest.raises(LiveRawDeltaMismatch):
+        source.append_delta(delta, "0" * 64, fingerprint(target), engine)
+    with pytest.raises(LiveRawDeltaMismatch):
+        source.append_delta(delta.replace(b"3.000", b"3.100"), fingerprint(original), fingerprint(target), engine)
+    assert not engine.calls
+    assert source.append_delta(delta, fingerprint(original), fingerprint(target), engine) == _decode_raw(target)[1:]
+    subsequent = target[:target.rfind(b"]")] + b',{"time":30,"open":5.0}]\r\n'
+    assert source.append(subsequent, engine) == _decode_raw(subsequent)[-1:]

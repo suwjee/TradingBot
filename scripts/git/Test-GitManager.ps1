@@ -110,13 +110,13 @@ function Test-ManagerLauncher {
     $result = Invoke-TestProcess -Executable $env:ComSpec -Arguments ('/d /c ""' + $bat + '" -LoadFunctionsOnly"') -Directory ([IO.Path]::GetTempPath())
     Assert-Manager ($result.ExitCode -eq 0) 'batch forwards arguments to PowerShell'
     $result = Invoke-TestProcess -Executable $env:ComSpec -Arguments ('/d /c ""' + $bat + '" -Help"') -Directory ([IO.Path]::GetTempPath())
-    Assert-Manager ($result.ExitCode -eq 0 -and $result.StdOut -match '-ReleaseTitle' -and $result.StdOut -match '-DryRun') 'batch documents named releases without opening the menu'
+    Assert-Manager ($result.ExitCode -eq 0 -and $result.StdOut -match '-ReleaseTitle' -and $result.StdOut -match '-ReleaseNotesFile' -and $result.StdOut -match '-DryRun') 'batch documents named releases and notes without opening the menu'
     [IO.File]::WriteAllText((Join-Path $fixture 'scripts/git/Invoke-TradingBotRelease.ps1'), @'
-param([string]$ReleaseTag, [string]$CommitMessage, [string]$ReleaseTitle, [switch]$NonInteractive, [switch]$DryRun)
-Write-Output "$ReleaseTag|$CommitMessage|$ReleaseTitle|$([bool]$NonInteractive)|$([bool]$DryRun)"
+param([string]$ReleaseTag, [string]$CommitMessage, [string]$ReleaseTitle, [string]$ReleaseNotesFile, [switch]$NonInteractive, [switch]$DryRun)
+Write-Output "$ReleaseTag|$CommitMessage|$ReleaseTitle|$ReleaseNotesFile|$([bool]$NonInteractive)|$([bool]$DryRun)"
 '@)
-    $result = Invoke-TestProcess -Executable $env:ComSpec -Arguments ('/d /c ""' + $bat + '" -ReleaseTag v2.8.0 -CommitMessage "Release v2.8.0" -ReleaseTitle "Live Chart & T/F Labels" -DryRun"') -Directory ([IO.Path]::GetTempPath())
-    Assert-Manager ($result.ExitCode -eq 0 -and $result.StdOut.Trim() -eq 'v2.8.0|Release v2.8.0|Live Chart & T/F Labels|True|True') 'batch forwards release title, tag and switches from another working directory'
+    $result = Invoke-TestProcess -Executable $env:ComSpec -Arguments ('/d /c ""' + $bat + '" -ReleaseTag v2.8.1 -CommitMessage "Release v2.8.1" -ReleaseTitle "Live Chart & Indicator" -ReleaseNotesFile "release notes.md" -DryRun"') -Directory ([IO.Path]::GetTempPath())
+    Assert-Manager ($result.ExitCode -eq 0 -and $result.StdOut.Trim() -eq 'v2.8.1|Release v2.8.1|Live Chart & Indicator|release notes.md|True|True') 'batch forwards release notes, title, tag and switches from another working directory'
   } finally { Remove-ManagerFixture $fixture }
 }
 

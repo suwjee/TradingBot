@@ -13,7 +13,7 @@ scope:
   - release-tooling
 supersedes: engineering/archive/documentation/local-tests-legacy-2026-09-30.md
 created_at: 2026-09-30T11:40:11+03:30
-last_modified_at: 2026-11-18T15:24:37+03:30
+last_modified_at: 2026-11-18T17:54:03+03:30
 ---
 
 # TradingBot Testing
@@ -72,7 +72,7 @@ Before executing tests, inspect the live project for:
 
 Use the current supported command from those sources. Do not copy an old command merely because it worked in a previous report.
 
-Run the live-indicator restart regression from `apps/chart` with `node --test tests/integration/live-indicator-recovery.test.mjs` on Windows. It starts isolated Vite processes, uses the configured Python Engine, and verifies both directions after a restart, RAW renames, idle-session recovery, detection of rewritten history, and catch-up of a five-minute backlog from an open tab and isolation from disk cache and other tabs. Set `TRADINGBOT_LIVE_TEST_RAW` to a representative 5-second RAW file to repeat the same checks on real data.
+Run the live-indicator regressions from `apps/chart` with `node --test tests/integration/live-indicator-recovery.test.mjs` on Windows. They start isolated Vite processes and use the configured Python Engine. The restart case checks both directions, RAW renames, idle-session recovery, rewritten history, and catch-up of a five-minute backlog with isolation from disk cache and other tabs. Set `TRADINGBOT_LIVE_TEST_RAW` to a representative 5-second RAW file to run this case on recorded market data. The confirmed-append case uses simulated FARAZ responses, verifies that the realtime RAW route retains the same worker, and compares its output with a fresh Apply.
 
 If no supported runner exists for a required check, report that limitation explicitly instead of inventing a false PASS.
 

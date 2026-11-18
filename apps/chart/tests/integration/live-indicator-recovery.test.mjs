@@ -12,6 +12,18 @@ import { createAlertMonitor, normalizeAlertRule } from "../../src/features/alert
 const chart = fileURLToPath(new URL("../../", import.meta.url));
 const startVite = `
   import { createServer } from "vite";
+  import fs from "node:fs/promises";
+  if (process.env.TRADINGBOT_TEST_MARKET) {
+    const rows = JSON.parse(await fs.readFile(process.env.TRADINGBOT_TEST_MARKET, "utf8"));
+    globalThis.fetch = async (input) => {
+      const url = new URL(input);
+      if (url.pathname !== "/api/customer/trading-view/history") throw new Error("Unexpected upstream test route");
+      const selected = rows.filter(row => row.time >= Number(url.searchParams.get("from"))
+        && row.time <= Number(url.searchParams.get("to")));
+      return Response.json({ s: "ok", t: selected.map(row => row.time), o: selected.map(row => row.open),
+        h: selected.map(row => row.high), l: selected.map(row => row.low), c: selected.map(row => row.close) });
+    };
+  }
   const server = await createServer({ configLoader: "native", server: { port: 0, host: "127.0.0.1", ws: false } });
   await server.listen();
   console.log("TEST_PORT:" + server.httpServer.address().port);
@@ -19,9 +31,9 @@ const startVite = `
   process.stdin.once("end", () => server.close());
 `;
 
-async function launch(stateRoot) {
+async function launch(stateRoot, marketFixture = "") {
   const child = spawn(process.execPath, ["--input-type=module", "-e", startVite], {
-    cwd: chart, env: { ...process.env, TRADINGBOT_LOCAL_STATE_ROOT: stateRoot }, windowsHide: true,
+    cwd: chart, env: { ...process.env, TRADINGBOT_LOCAL_STATE_ROOT: stateRoot, TRADINGBOT_TEST_MARKET: marketFixture }, windowsHide: true,
   });
   const closed = once(child, "close");
   const output = createInterface({ input: child.stdout });
@@ -36,11 +48,13 @@ async function launch(stateRoot) {
     if (!line.startsWith("TEST_PORT:")) continue;
     const port = Number(line.slice("TEST_PORT:".length));
     const report = (id, method) => fetch(`http://127.0.0.1:${port}/api/info/${id}`, { method });
-    return { stop, getReport: id => report(id, "GET"), saveReport: id => report(id, "POST"),
-      post: (route, body) => fetch(`http://127.0.0.1:${port}/api/reactions${route}`, {
+    const post = (route, body) => fetch(`http://127.0.0.1:${port}/api${route}`, {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body), signal: AbortSignal.timeout(90_000),
-    }) };
+    });
+    return { stop, getReport: id => report(id, "GET"), saveReport: id => report(id, "POST"),
+      post: (route, body) => post(`/reactions${route}`, body),
+      update: body => post("/candle-files/realtime", body) };
   }
   await stop();
   assert.fail(`Vite did not start. ${stderr}`);
@@ -195,6 +209,53 @@ test("a tab catches up after five minutes and recovers across a restart without 
     const fresh = await server.post("/continue", { id: raw.id, ...emptyTab });
     assert.equal(fresh.status, 404);
     assert.equal((await fresh.json()).code, "NO_INDICATOR_CALCULATION");
+  } finally {
+    if (server) await server.stop();
+    assert.equal(path.dirname(stateRoot), directory);
+    await fs.rm(stateRoot, { recursive: true, force: true });
+  }
+});
+
+test("a confirmed realtime append continues in the same worker and matches a fresh Apply", {
+  skip: process.platform !== "win32" && "Selected-range Engine input uses Windows named pipes",
+  timeout: 45_000,
+}, async () => {
+  const directory = path.resolve(chart, "state", "tmp");
+  await fs.mkdir(directory, { recursive: true });
+  const stateRoot = await fs.mkdtemp(path.join(directory, "live-append-test-"));
+  const store = createRawResourceStore({ rootDir: path.join(stateRoot, "data", "raw") });
+  const first = Math.floor(Date.now() / 30_000) * 30 - 1_200;
+  const rows = Array.from({ length: 220 }, (_, index) => {
+    const price = 100 + (index * 13 % 41);
+    return { time: first + index * 5, open: price, high: price + 2, low: price - 2, close: price + 1 };
+  });
+  const marketFixture = path.join(stateRoot, "market.json");
+  const secrets = path.join(stateRoot, "secret");
+  await fs.mkdir(secrets);
+  await fs.writeFile(path.join(secrets, "faraz-session.dpapi.json"), JSON.stringify({ format: "clear-text",
+    "x-access-token": "test-token", farazSession: "test-session", storageState: { cookies: [], origins: [] } }));
+  await fs.writeFile(marketFixture, JSON.stringify(rows));
+  const raw = store.get(store.write({ broker: "TEST", symbol: "APPEND", timeframe: "5S", candles: rows.slice(0, 215) }).id);
+  const request = { id: raw.id, chartId: raw.chartId, tabId: "realtime-append-tab", direction: "bullish",
+    timeframe: 30, chartTimeframe: 30, from: first, to: Math.floor(raw.to / 30) * 30, blueLines: true };
+  let server;
+  try {
+    server = await launch(stateRoot, marketFixture);
+    const seed = await server.post("", { ...request, liveSession: true });
+    await indicator(seed);
+    const sessionId = seed.headers.get("X-QG-Live-Session");
+    const proof = JSON.parse(seed.headers.get("X-QG-Live-Proof"));
+    assert.ok(sessionId && proof);
+    const response = await server.update({ id: raw.id, chartId: raw.chartId, lastCandleTime: raw.to,
+      baseSha256: raw.metadata.dataSha256, phase: "latest" });
+    const updated = await response.json();
+    assert.equal(response.status, 200, JSON.stringify(updated));
+    assert.deepEqual(updated.candles, rows.slice(215));
+    const continued = await server.post("/continue", { id: updated.file.id, chartId: raw.chartId, tabId: request.tabId, sessionId, proof });
+    const actual = await indicator(continued);
+    assert.equal(continued.headers.get("X-QG-Live-Session"), null, "A successful append must reuse its worker");
+    const expected = await indicator(await server.post("", { ...request, id: updated.file.id, to: Math.floor(updated.file.to / 30) * 30 }));
+    assert.deepEqual(actual, expected);
   } finally {
     if (server) await server.stop();
     assert.equal(path.dirname(stateRoot), directory);

@@ -163,6 +163,37 @@ def test_later_parent_provenance_keeps_creation_cache_but_earlier_parent_invalid
 
 
 @pytest.mark.parametrize("direction", ("bullish", "bearish"))
+def test_new_physical_order_extends_carried_creation_index(direction, monkeypatch):
+    from order_audit_engine import OrderAuditEngineMixin
+
+    detector, parent, first = detector_state(direction)
+    second = candidate(first.first_idx, first.break_idx + 1)
+    validated_sizes = []
+    validate = OrderAuditEngineMixin._validated_carried_creation_index
+
+    def count_validated(instance, entries):
+        validated_sizes.append(len(entries))
+        return validate(instance, entries)
+
+    monkeypatch.setattr(OrderAuditEngineMixin, "_validated_carried_creation_index", count_validated)
+    detector._register_order_audit("S", parent, moment(125))
+    assert [match[1] for match in detector._carried_orders_for_parent(parent, moment(205))] == [first]
+
+    # The new physical row has an earlier creation and ties the first row's
+    # stop sort key. The result must keep ledger insertion order.
+    earlier_match = (
+        2, second, moment(190), "120.00", 4, moment(120),
+        (7, moment(210), moment(215)), ("parent-stop",), moment(120),
+    )
+    monkeypatch.setattr(detector, "order_candidates", lambda *_args, **_kwargs: [earlier_match])
+    monkeypatch.setattr(detector, "_direct_parent_stop_order", lambda *_args, **_kwargs: None)
+    detector._register_order_audit("S", parent, moment(120))
+    actual = detector._carried_orders_for_parent(parent, moment(205))
+    assert len(actual) == 2 and actual[0][1] is first and actual[1][1] is second
+    assert validated_sizes == [1, 1]
+
+
+@pytest.mark.parametrize("direction", ("bullish", "bearish"))
 def test_lazy_post_stop_stream_matches_complete_query_across_mutation_and_reset(direction):
     detector, parent, physical = detector_state(direction)
     for first, stop in ((5, 215), (6, 230), (7, 215), (8, 270)):

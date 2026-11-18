@@ -4,6 +4,27 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
+test("only committed chronological appends supply a contiguous exact RAW delta", async t => {
+  const { createRawResourceStore } = await import("../../server/raw-resource-store.js");
+  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "raw-lineage-"));
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+  const store = createRawResourceStore({ rootDir });
+  const rows = [100, 105, 110, 115].map(time => ({ time, open: 1, high: 3, low: 1, close: 2 }));
+  const initial = store.get(store.write({ broker: "TEST", symbol: "LINEAGE", timeframe: "5S", candles: rows.slice(0, 1) }).id);
+  const append = (file, candle, options) => store.appendLatest(file, [candle], 5, store.version(file.id), new AbortController().signal, options);
+  const first = await append(initial, rows[1]);
+  const second = await append(first, rows[2]);
+  const delta = store.readAppendDelta(second, initial.metadata.dataSha256);
+  assert.equal(delta.toString(), `,${JSON.stringify(rows[1])},${JSON.stringify(rows[2])}`);
+  assert.equal(store.canServeAppendSnapshot(first), true);
+  assert.equal(store.readAppendDelta(second, "unknown"), null);
+
+  const corrected = await append(second, rows[3], { corrections: [{ ...rows[0], close: 3 }] });
+  assert.equal(store.readAppendDelta(corrected, second.metadata.dataSha256), null);
+  assert.equal(store.canServeAppendSnapshot(first), false);
+  assert.equal(store.canServeAppendSnapshot(second), false);
+});
+
 test("RAW store writes compact candles with a broker and symbol metadata sidecar", async (t) => {
   const { createRawResourceStore } = await import("../../server/raw-resource-store.js");
   const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "raw-store-"));
