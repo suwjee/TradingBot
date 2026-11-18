@@ -1,0 +1,40 @@
+...............................FF.......                                 [100%]
+================================== FAILURES ===================================
+_ test_later_parent_provenance_keeps_creation_cache_but_earlier_parent_invalidates[bullish] _
+
+direction = 'bullish'
+
+    @pytest.mark.parametrize("direction", ("bullish", "bearish"))
+    def test_later_parent_provenance_keeps_creation_cache_but_earlier_parent_invalidates(direction):
+        detector, parent, physical = detector_state(direction)
+        detector._register_order_audit("S", parent, moment(125))
+        assert detector._carried_orders_for_parent(parent, moment(205))
+        indexed = detector._carried_creation_index
+        detector._register_order_audit("S", parent, moment(145))
+>       assert detector._carried_orders_cache, "A later cause cannot change the earliest parent creation."
+E       AssertionError: A later cause cannot change the earliest parent creation.
+E       assert {}
+E        +  where {} = <e_zone_detector.EZoneDetector object at 0x0000023F29523A10>._carried_orders_cache
+
+engine\tests\unit\test_carried_order_query.py:157: AssertionError
+_ test_later_parent_provenance_keeps_creation_cache_but_earlier_parent_invalidates[bearish] _
+
+direction = 'bearish'
+
+    @pytest.mark.parametrize("direction", ("bullish", "bearish"))
+    def test_later_parent_provenance_keeps_creation_cache_but_earlier_parent_invalidates(direction):
+        detector, parent, physical = detector_state(direction)
+        detector._register_order_audit("S", parent, moment(125))
+        assert detector._carried_orders_for_parent(parent, moment(205))
+        indexed = detector._carried_creation_index
+        detector._register_order_audit("S", parent, moment(145))
+>       assert detector._carried_orders_cache, "A later cause cannot change the earliest parent creation."
+E       AssertionError: A later cause cannot change the earliest parent creation.
+E       assert {}
+E        +  where {} = <e_zone_detector.EZoneDetector object at 0x0000023F2928ECF0>._carried_orders_cache
+
+engine\tests\unit\test_carried_order_query.py:157: AssertionError
+=========================== short test summary info ===========================
+FAILED engine/tests/unit/test_carried_order_query.py::test_later_parent_provenance_keeps_creation_cache_but_earlier_parent_invalidates[bullish]
+FAILED engine/tests/unit/test_carried_order_query.py::test_later_parent_provenance_keeps_creation_cache_but_earlier_parent_invalidates[bearish]
+2 failed, 38 passed in 0.40s

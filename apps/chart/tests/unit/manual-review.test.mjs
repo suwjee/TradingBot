@@ -10,7 +10,6 @@ import {
   reviewRecords,
   reviewRuntime,
   reviewColor,
-  visibleReviewTimeGroupIds,
 } from "../../src/features/manual-review/render.js";
 
 test("counted report labels retain finalized behavior numbers", () => {
@@ -118,10 +117,12 @@ test("Reaction filter family color follows the calculation direction", async () 
   }
 });
 
-test("live report offers all visible events in addition to reviewed statuses", async () => {
+test("report keeps event data and export actions without verdict controls", async () => {
   const { body } = await buildReviewBody({ directions: { bearish: { eZones: [{ sourceTime: 100, number: 3, family: "red" }] } } });
-  assert.match(body, /<option value="visible">All visible<\/option>/);
-  for (const value of ["all", "true", "false"]) assert.match(body, new RegExp(`<option value="${value}">`));
+  assert.match(body, /class="chip"[^>]*>E-3<\/span>/);
+  assert.match(body, /id="copy"/);
+  assert.match(body, /id="download"/);
+  assert.doesNotMatch(body, /Review status|state-control|type="radio"|Mark True|Mark False|data-time-group-status|id="mode"|True only|False only|All selected/);
 });
 
 test("serialized live report exports numbered labels as tab-separated fields", () => {
@@ -141,9 +142,16 @@ test("serialized live report exports numbered labels as tab-separated fields", (
       querySelector: selector => ({ "#report-text": output, "#mode": { value: "visible" } })[selector] || null,
       querySelectorAll: selector => ({ ".event": [event], ".category-filter": [{ checked: true, value: "primary" }] })[selector] || [],
     };
-    const localStorage = { getItem: () => null, setItem() {}, removeItem() {} };
+    let storageAccesses = 0;
+    const localStorage = new Proxy({}, { get() {
+      storageAccesses++;
+      throw new Error("Report must not access removed verdict storage");
+    } });
     vm.runInNewContext(`(${reviewRuntime.toString()})()`, { document, localStorage });
-    assert.equal(output.value.split("\n").at(-1), `2026-01-01 10:00:00\t${expected}\tUNSELECTED`);
+    assert.equal(storageAccesses, 0);
+    assert.equal(output.value.split("\n").at(-1), `2026-01-01 10:00:00\t${expected}`);
+    assert.match(output.value, /Visible events in current view: 1/);
+    assert.doesNotMatch(output.value, /UNSELECTED|TRUE|FALSE|Reviewed events/);
   }
 });
 
@@ -171,17 +179,7 @@ test("report labels use family names while retaining semantic color variants", (
   assert.equal(reportCategoryColor("reactions:bearish", "Reaction"), "var(--report-reaction-bearish)");
 });
 
-test("time-group bulk selection is limited to visible records in that Tehran day", () => {
-  const ids = visibleReviewTimeGroupIds([
-    { id: "bullish:reactions:0", timeGroup: "2026-09-15", hidden: false },
-    { id: "bullish:sZones:0", timeGroup: "2026-09-15", hidden: true },
-    { id: "bearish:reactions:0", timeGroup: "2026-09-16", hidden: false },
-  ], "2026-09-15");
-
-  assert.deepEqual(ids, ["bullish:reactions:0"]);
-});
-
-test("review body exposes only day-scoped bulk review controls", async () => {
+test("report keeps day grouping without bulk verdict actions", async () => {
   const payload = {
     timeframe: 5,
     directions: {
@@ -191,10 +189,8 @@ test("review body exposes only day-scoped bulk review controls", async () => {
   const cryptoApi = { subtle: { async digest() { return new Uint8Array(32).buffer; } } };
   const { body } = await buildReviewBody(payload, {}, cryptoApi);
 
-  assert.match(body, /data-time-group-status="true"/);
-  assert.match(body, /data-time-group-status="false"/);
   assert.match(body, /data-time-group="2026-09-15"/);
-  assert.doesNotMatch(body, /data-collection-status/);
+  assert.doesNotMatch(body, /data-time-group-status|data-collection-status|Review status/);
 });
 
 test("report records render from the bridge report payload inside a collapsed bridge disclosure", async () => {

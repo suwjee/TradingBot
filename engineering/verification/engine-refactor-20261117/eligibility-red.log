@@ -1,0 +1,27 @@
+.............................................................F           [100%]
+================================== FAILURES ===================================
+______________ test_s_eligibility_does_not_rescan_prior_history _______________
+
+    def test_s_eligibility_does_not_rescan_prior_history():
+        class Zone:
+            reads = 0
+            color = "red"
+            price = a_price = Decimal("10.00")
+            def __init__(self, number):
+                self.time = self.a_source_time = BASE + timedelta(seconds=number)
+            @property
+            def source_time(self):
+                Zone.reads += 1
+                return self.time
+        zones = [Zone(i) for i in range(600)]
+        actual = s_zones_for_module_engines(zones, [], "bullish")
+        assert all(left is right for left, right in zip(actual, zones)) and len(actual) == len(zones)
+>       assert Zone.reads < 600 * 100, "S eligibility must not rescan the accepted history for every S."
+E       AssertionError: S eligibility must not rescan the accepted history for every S.
+E       assert 540299 < (600 * 100)
+E        +  where 540299 = <class 'test_lifecycle_index_equivalence.test_s_eligibility_does_not_rescan_prior_history.<locals>.Zone'>.reads
+
+engine\tests\unit\test_lifecycle_index_equivalence.py:134: AssertionError
+=========================== short test summary info ===========================
+FAILED engine/tests/unit/test_lifecycle_index_equivalence.py::test_s_eligibility_does_not_rescan_prior_history
+1 failed, 61 passed in 0.32s

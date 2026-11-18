@@ -1,0 +1,50 @@
+...........................FF.                                           [100%]
+================================== FAILURES ===================================
+_ test_lazy_post_stop_stream_matches_complete_query_across_mutation_and_reset[bullish] _
+
+direction = 'bullish'
+
+    @pytest.mark.parametrize("direction", ("bullish", "bearish"))
+    def test_lazy_post_stop_stream_matches_complete_query_across_mutation_and_reset(direction):
+        detector, parent, physical = detector_state(direction)
+        for first, stop in ((5, 215), (6, 230), (7, 215), (8, 270)):
+            reaction = candidate(first, first + 2)
+            entry = ledger_entry(reaction, parents=(125,), confirmation=190 + first, crossing=stop)
+            identity = reaction.first_idx, reaction.break_idx
+            detector.order_audit[identity] = entry
+            detector._index_order_audit_identity(identity, entry["confirmation_time"])
+        for resets in ({}, {moment(250): 1}, {moment(215): 1}):
+            detector.sequence_resets = resets
+            for stop in (125, 190, 195, 200, 215, 240, 280):
+                expected = detector._post_stop_accepted_orders_for_parent(parent, moment(stop))
+>               actual = list(detector._iter_post_stop_accepted_orders(parent, moment(stop)))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               AttributeError: 'EZoneDetector' object has no attribute '_iter_post_stop_accepted_orders'
+
+engine\tests\unit\test_carried_order_query.py:121: AttributeError
+_ test_lazy_post_stop_stream_matches_complete_query_across_mutation_and_reset[bearish] _
+
+direction = 'bearish'
+
+    @pytest.mark.parametrize("direction", ("bullish", "bearish"))
+    def test_lazy_post_stop_stream_matches_complete_query_across_mutation_and_reset(direction):
+        detector, parent, physical = detector_state(direction)
+        for first, stop in ((5, 215), (6, 230), (7, 215), (8, 270)):
+            reaction = candidate(first, first + 2)
+            entry = ledger_entry(reaction, parents=(125,), confirmation=190 + first, crossing=stop)
+            identity = reaction.first_idx, reaction.break_idx
+            detector.order_audit[identity] = entry
+            detector._index_order_audit_identity(identity, entry["confirmation_time"])
+        for resets in ({}, {moment(250): 1}, {moment(215): 1}):
+            detector.sequence_resets = resets
+            for stop in (125, 190, 195, 200, 215, 240, 280):
+                expected = detector._post_stop_accepted_orders_for_parent(parent, moment(stop))
+>               actual = list(detector._iter_post_stop_accepted_orders(parent, moment(stop)))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               AttributeError: 'EZoneDetector' object has no attribute '_iter_post_stop_accepted_orders'
+
+engine\tests\unit\test_carried_order_query.py:121: AttributeError
+=========================== short test summary info ===========================
+FAILED engine/tests/unit/test_carried_order_query.py::test_lazy_post_stop_stream_matches_complete_query_across_mutation_and_reset[bullish]
+FAILED engine/tests/unit/test_carried_order_query.py::test_lazy_post_stop_stream_matches_complete_query_across_mutation_and_reset[bearish]
+2 failed, 28 passed in 0.47s

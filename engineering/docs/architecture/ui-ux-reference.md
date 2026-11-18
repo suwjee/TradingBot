@@ -12,7 +12,7 @@ scope:
   - faraz-ui
   - algorithm-reference-ui
   - responsive-accessibility
-last_modified_at: 2026-11-15T18:25:39+03:30
+last_modified_at: 2026-11-18T17:24:43+03:30
 ---
 
 # TradingBot UI/UX Reference
@@ -47,7 +47,7 @@ The maintained UI follows these durable principles:
 2. **Presentation is not trading authority.** Chart displays finalized Engine results; it does not independently repair or recreate trading decisions.
 3. **Workspace ownership is explicit.** Chart, FARAZ, Algorithm, and Alert modes reveal the controls relevant to the active workspace.
 4. **User intent is visible.** Long operations expose progress or status; destructive operations require explicit user action; failures remain observable.
-5. **Presentation state is separate from calculation truth.** Colors, visibility, offsets, filters, panels, and review decisions may change without rewriting Engine state.
+5. **Presentation state is separate from calculation truth.** Colors, visibility, offsets, filters and panels may change without rewriting Engine state.
 6. **Responsive behavior preserves access.** Narrow layouts reflow, scroll, or overlay controls instead of defining a separate mobile product.
 7. **Performance optimizations remain presentation-only.** Display density/LOD must not alter RAW authority or Engine calculation semantics.
 8. **Historical UI evidence cannot override the live application.**
@@ -110,7 +110,7 @@ A normal Chart-centered workflow is:
 6. Apply the calculation.
 7. Observe calculation progress while the request is validated, executed, returned, and prepared for rendering.
 8. Inspect finalized result overlays, status information, Object Tree entries, and calculation details.
-9. Open Manual Review when a persisted calculation report needs event-by-event human classification.
+9. Open Manual Review to inspect, filter and export events from a persisted calculation report.
 10. Use FARAZ acquisition/update workflows when additional or repaired source data is required.
 
 The application may restore valid workspace/chart preferences across refresh, but restored presentation state never substitutes for a new authoritative calculation when the calculation context is absent or changed.
@@ -258,7 +258,7 @@ For repeated directional regimes, Chart renders each Engine-finalized calculatio
 
 Users can control presentation properties such as visibility, line/fill appearance, label styling, and selected object appearance.
 
-Indicator Configure provides independent T-label, F-label and setup-position visibility switches under Setup annotations. Appearance provides separate T and F colors, font sizes and distances from their owning object labels. These controls update the existing finalized result immediately, participate in saved preferences and templates, and reset through the standard style controls. Older saved forms use the original appearance defaults. Individual object overrides remain effective, and hiding indicator positions leaves standalone manual Long/Short drawings visible.
+Configure and Appearance expose the supported native indicator objects, including primary structures and physical Orders. Visibility and style controls update the existing finalized result, participate in saved preferences/templates and reset through the standard style controls. In Configure, T/F labels toggles the smaller Engine-supplied marks alongside visible native labels. Explicitly unassigned candidates show N/A in `#b8b8b8` at font weight 300. Basic verdicts use font weight 300. StopAll and primary T/F verdicts use font weight 700. It redraws the current chart without an Engine request. The setting is on by default and participates in saved preferences and templates.
 
 Presentation objects may support UI-only customization such as:
 
@@ -280,13 +280,7 @@ Selecting an object can focus it in the Chart context. Object visibility, lockin
 
 ### 10.1 Creation
 
-Chart provides user drawing/annotation tools for line/shape/freehand/measurement/position-style workflows and related annotations implemented by the current toolset.
-
-Manual Long Position and Short Position tools appear immediately after Measure in the default/restored drawing toolbar. They work independently of the indicator: click an entry location, then click the target level to complete the schematic. New schematics start at 4R with an initial width of 50 chart-candle intervals, including across market gaps and into future chart space. They do not execute or manage trades.
-
-Both directions use a green target region and a red stop region with 10% fill opacity. The compact boxed R:R label uses 10px text and reflects the current price distances. Target and stop corner handles resize their own region independently; changing one does not resize the other. Left/right handles on the entry line shorten or extend the whole schematic horizontally without changing its price levels or R:R. The selected drawing's contextual toolbar also provides Target and Stop price fields and a Bars width field for precise keyboard editing. Moving the whole schematic translates all price levels together and preserves its edited time span.
-
-The indicator also presents Engine-calculated bullish setup schematics and T/F labels. These are indicator objects, separate from manual drawings, using the same initial 50-candle width, 10px R:R text, colors and independent geometry handles. Selected position handles take precedence over overlapping indicator bodies. Hide, lock, undo/redo and explicit context restoration use the existing indicator-object workflow; a fresh calculation creates a fresh presentation as elsewhere in the indicator. Geometry edits do not change the Engine's original setup levels or classification. Disabling the indicator hides its schematics while independent manual drawings remain visible. T/F setup assessments are distinct from native calculation-validity flags.
+Chart provides line, shape, text, freehand, measurement and manual position tools for user annotations. The Measure tool reports duration, bar intervals, price change and percentage change. Long and Short position drawings show the target, stop and risk-to-reward ratio. Their toolbar supports editing the target, stop and width in candles. Calculated T/F labels are display marks attached to finalized indicator behaviors. Native A, S and E labels default to 10 px. StopAll circles default to a 5 px radius with 14 px numbers.
 
 Drawing points are stored in canonical chart time/price coordinates so presentation-density changes do not redefine their market position.
 
@@ -314,11 +308,15 @@ The drawing toolbar itself has persistent ordering. Desktop users can reorder to
 
 Undo/redo snapshots cover user drawings and compatible presentation-object state. Indicator presentation snapshots are restored only when they belong to the same active calculation identity; stale calculation objects are not revived across a different calculation.
 
+Legacy snapshots omit retired Long/Short drawings, automatic positions and setup-assessment labels while retaining unrelated drawings and native indicator objects.
+
 ### 10.5 Persistence
 
 Drawings are saved through the server-backed drawing store. Browser storage is also used as a recovery/fallback path for compatible local drawing state.
 
 Stored drawings are validated before use. Invalid recovered entries are separated from valid drawings instead of causing valid drawings to be discarded.
+
+Loading legacy drawing data omits the retired position types. Saved toolbar layouts drop removed tools while preserving the relative order of supported tools. The [removal audit](../../verification/engine-refactor-20261117/contracts-audit.md) records the dated migration and interaction verification.
 
 Persistence location details belong to [Local State](../operations/local-state.md).
 
@@ -339,11 +337,9 @@ The review surface provides:
 - calculation metadata;
 - behavior-family/subtype filters;
 - date-range filtering;
-- event-by-event True/False/Unselected review state;
-- day-scoped bulk True/False actions for currently visible events;
 - expandable finalized Bridge detail;
 - copyable Bridge detail;
-- a generated human-review report;
+- a text report of the currently visible events;
 - copy/download of the review report.
 
 Bridge detail is a display-only view of finalized supplied data. It does not infer a new behavior or Order identity from row position.
@@ -358,12 +354,11 @@ Reaction filter text follows its direction: green for bullish calculation,
 red for bearish calculation; a combined-direction family uses a neutral header
 and keeps directional child colors.
 
-The Live review report Include selector can export all currently visible rows,
-including unreviewed rows, through All visible. Category/date filters remain in
-force; unreviewed rows are reported as UNSELECTED without changing annotation
-state. Existing reviewed, True-only and False-only modes remain available.
-Copy and download use the selected output mode. Report typography is enlarged
-by 15% with local styles, wider reading columns and responsive stacking.
+The Live review report includes every event visible under the current category
+and date filters. Each exported row contains its timestamp and native event
+label; there is no verdict column or verdict-based output mode. Copy and
+download use that same filtered text. Report typography uses local styles,
+wider reading columns and responsive stacking.
 
 
 Primary structures use the names MBL, PH and PL. Their labels and filter colors
@@ -374,11 +369,9 @@ reviewable behavior, filter family or record collection. Omitting that metadata
 from this page does not remove it from the authoritative calculation payload.
 
 
-### 11.3 Review persistence
+### 11.3 Report identity and local state
 
-Human review selections persist locally per report identity/content identity. Filtering an event out of the current view does not reinterpret its underlying event data.
-
-Review state is human annotation. It is not Engine state and is not fed back as a trading calculation decision.
+The report identity opens its immutable calculation snapshot. Category/date filters affect the current view and export without changing the underlying report. Manual Review creates no True/False verdict state and does not read or restore historical local verdict selections. Existing report payloads remain readable as saved evidence.
 
 ### 11.4 Review navigation
 
@@ -470,7 +463,7 @@ The Algorithm workspace is a convenience reference surface. Its content does not
 | Workspace/object-tree preferences | Browser UI | Presentation organization only. |
 | FARAZ exporter form/job identity | FARAZ UI | Persists locally enough to restore workflow state when still valid. |
 | FARAZ authentication/session | FARAZ/server boundary | Connection state is visible; secret material is not UI trading state. |
-| Manual Review decisions | Review browser state | Persist per report identity/content and remain human review annotations. |
+| Manual Review filters | Review document | Transient view/export selection over an immutable calculation snapshot. |
 | Serialized calculation cache | Local server | May accelerate repeated calculation requests; not UI or semantic authority. |
 | Trading calculation/lifecycle state | Engine | Authoritative result source; never reconstructed by Chart preferences. |
 
@@ -485,7 +478,7 @@ Users should expect the following current restoration behavior:
 - indicator input form/range can restore, but a prior active calculation is not treated as live merely because its form values return;
 - FARAZ exporter preferences and a still-valid acquisition job identity can restore;
 - Algorithm language/direction/navigation preferences can restore;
-- Manual Review True/False selections can restore for the same report identity.
+- Manual Review report links reopen the saved calculation snapshot; retired verdict selections are not restored.
 
 Cache clearing is explicit and scoped. The UI distinguishes calculation cache, browser storage/cache, IndexedDB, drawings, and—only for the broadest clear operation—local FARAZ session state.
 
@@ -676,7 +669,7 @@ The maintained UI/UX contract requires:
 - UI appearance changes do not mutate trading semantics;
 - user drawings remain user-owned annotations;
 - display LOD does not change authoritative source/calculation data;
-- Manual Review remains human classification/presentation, not trading feedback;
+- Manual Review remains read-only event inspection and export, without trading feedback;
 - FARAZ remains acquisition UX rather than algorithm UX;
 - cache reuse never becomes semantic authority;
 - secrets/session material is not exposed as UI diagnostic content;

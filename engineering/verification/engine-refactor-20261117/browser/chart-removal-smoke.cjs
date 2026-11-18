@@ -1,0 +1,61 @@
+const assert = require('node:assert/strict');
+const {chromium}=require('X:/My-Projects/TradingBot/apps/chart/node_modules/playwright-core');
+(async()=>{
+ const browser=await chromium.launch({channel:'msedge',headless:true});
+ const context=await browser.newContext({viewport:{width:1440,height:1000}});
+ const page=await context.newPage(); const errors=[],writes=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ page.on('console',e=>{if(e.type()==='error')errors.push(e.text())});
+ const rows=Array.from({length:240},(_,i)=>({time:1795000020+i*30,open:100+i%7,high:110+i%7,low:90+i%7,close:102+i%7}));
+ const item={id:'REMOVAL-QA.json',chartId:'removal-qa-fixture',broker:'TEST',symbol:'REMOVALQA',timeframe:'30S',from:rows[0].time,to:rows.at(-1).time,count:rows.length,bytes:24000,savedAt:1795000020};
+ const oldDrawings=[{id:'retained-line',type:'line',a:{time:rows[30].time,price:100},b:{time:rows[50].time,price:110},style:{stroke:'#2962ff',fill:'#2962ff',width:1,opacity:0.1},locked:false},{id:'retired-long',type:'long',a:{time:rows[60].time,price:100},b:{time:rows[80].time,price:110}}];
+ await page.route('**/api/**',async route=>{const request=route.request(), url=new URL(request.url());
+   if(url.pathname==='/api/symbols')return route.fulfill({json:[item]});
+   if(url.pathname==='/api/candles')return route.fulfill({json:rows});
+   if(url.pathname==='/api/drawings'){
+     if(request.method()==='GET')return route.fulfill({json:oldDrawings});
+     writes.push(request.postDataJSON()); return route.fulfill({json:{ok:true}});
+   }
+   if(request.method()!=='GET')return route.fulfill({json:{ok:true}});
+   return route.continue();
+ });
+ try{
+ await page.goto('http://localhost:5191/?chartId=removal-qa-fixture&tf=30');
+ await page.locator('#chartSymbol').filter({hasText:'REMOVALQA'}).waitFor();
+ await page.locator('#loading').waitFor({state:'hidden'});
+ assert.match(await page.title(),/QG|Chart|Trading/i);
+ assert.equal(await page.locator('vite-error-overlay').count(),0);
+ assert.equal(await page.locator('[data-drawing-tool="long"],[data-drawing-tool="short"]').count(),0);
+ assert.equal(await page.locator('[data-drawing-tool="measure"]').count(),1);
+ await page.locator('#objectTreeBtn').click();
+ await page.locator('[data-object="retained-line"]').waitFor();
+ assert.equal(await page.locator('[data-object="retired-long"]').count(),0);
+ await page.locator('#closeObjectTree').click();
+ await page.locator('#indicatorBtn').click();
+ await page.locator('#indicatorModal:not(.hidden)').waitFor();
+ assert.equal(await page.getByText('Setup annotations',{exact:true}).count(),0);
+ assert.equal(await page.locator('#setupTVisible,#setupFVisible,#setupPositionsVisible').count(),0);
+ await page.locator('#sVisible').uncheck(); assert.equal(await page.locator('#sVisible').isChecked(),false);
+ await page.locator('#sVisible').check();
+ await page.locator('[data-indicator-tab="style"]').click();
+ assert.equal(await page.locator('[data-style-group="setups"]').count(),0);
+ assert.equal(await page.locator('#sBullColor').isEnabled(),true);
+ await page.screenshot({path:'C:/Users/msadr/.codex/visualizations/2026/11/17/01a1ea50-fb29-7963-b9ce-63492f15717a/chart-removal-desktop.png'});
+ await page.locator('#closeIndicator').click();
+ await page.locator('[data-drawing-tool="measure"]').click();
+ const canvas=page.locator('canvas.drawing-layer'), bounds=await canvas.boundingBox(); assert.ok(bounds);
+ await page.mouse.click(bounds.x+bounds.width*0.35,bounds.y+bounds.height*0.35);
+ await page.mouse.move(bounds.x+bounds.width*0.55,bounds.y+bounds.height*0.55);
+ await page.mouse.click(bounds.x+bounds.width*0.55,bounds.y+bounds.height*0.55);
+ await page.waitForFunction(()=>document.querySelector('#objectCount')?.textContent==='2 objects');
+ await page.locator('#undoBtn').click();
+ await page.waitForFunction(()=>document.querySelector('#objectCount')?.textContent==='1 object');
+ await page.locator('#redoBtn').click();
+ await page.waitForFunction(()=>document.querySelector('#objectCount')?.textContent==='2 objects');
+ await page.setViewportSize({width:390,height:844});
+ await page.screenshot({path:'C:/Users/msadr/.codex/visualizations/2026/11/17/01a1ea50-fb29-7963-b9ce-63492f15717a/chart-removal-mobile.png'});
+ assert.equal(await page.locator('vite-error-overlay').count(),0); assert.deepEqual(errors,[]);
+ assert.ok(writes.length); assert.ok(writes.every(body=>body.drawings.every(d=>!['long','short'].includes(d.type))));
+ console.log(JSON.stringify({status:'PASS',url:page.url(),title:await page.title(),errors,drawingsPersisted:writes.at(-1).drawings.map(d=>d.type),viewports:['1440x1000','390x844'],browser:'installed Edge via playwright-core; Browser plugin absent'}));
+ }finally{await browser.close()}
+})().catch(e=>{console.error(e);process.exitCode=1});

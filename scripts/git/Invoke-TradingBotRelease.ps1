@@ -2,6 +2,7 @@
 param(
   [string] $CommitMessage = '',
   [string] $ReleaseTag = '',
+  [string] $ReleaseTitle = '',
   [switch] $DryRun,
   [switch] $NonInteractive,
   [switch] $VerboseReport
@@ -14,6 +15,7 @@ try {
     ScriptPath = $PSCommandPath
     CommitMessage = $CommitMessage
     ReleaseTag = $ReleaseTag
+    ReleaseTitle = $ReleaseTitle
     DryRun = [bool]$DryRun
     NonInteractive = [bool]$NonInteractive
   }

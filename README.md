@@ -3,7 +3,7 @@ title: TradingBot
 document_role: reference
 lifecycle: maintained
 owner: project-navigation
-last_modified_at: 2026-09-30T11:40:11+03:30
+last_modified_at: 2026-11-18T17:01:34+03:30
 ---
 
 # TradingBot
@@ -43,6 +43,8 @@ npm.cmd run dev -- --host 127.0.0.1 --configLoader native
 ```
 
 Build with `npm.cmd run build` from `apps/chart`. These commands keep generated output inside the project.
+
+In dev mode, saving a stylesheet or an indicator-renderer module updates the open chart. Saving a watched Python calculation file refreshes an already-applied indicator for its selected chart and range. The tab stays open when a change requires loading a new interface shell. The chart displays a notification for such changes. Dev mode polls the UI and active Python sources every 1,500 ms by default. Set `TRADINGBOT_VITE_POLLING=false` before starting Vite to disable this check, or set `TRADINGBOT_VITE_POLL_INTERVAL_MS` to adjust it with a 500 ms minimum.
 
 ## Local verification and navigation
 

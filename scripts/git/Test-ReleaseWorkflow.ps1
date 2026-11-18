@@ -411,6 +411,9 @@ function Invoke-PublicationTests {
     $fixtures += $fixture
     $inputs = Read-ReleaseInputs -CommitMessage 'fixture release' -ReleaseTag 'fixture-release'
     Assert-True ($inputs.CommitMessage -eq 'fixture release' -and $inputs.ReleaseTag -eq 'fixture-release') 'provided release inputs are accepted unchanged'
+    Assert-True ($inputs.ReleaseTitle -eq 'fixture-release') 'omitting the release title preserves the tag as the title'
+    $namedInputs = Read-ReleaseInputs -CommitMessage 'fixture commit' -ReleaseTag 'fixture-release' -ReleaseTitle '  Fixture release title  '
+    Assert-True ($namedInputs.ReleaseTitle -eq 'Fixture release title') 'a custom release title is independent of the commit message and tag'
     Assert-Throws { Read-ReleaseInputs -CommitMessage '' -ReleaseTag 'fixture-release' -NonInteractive } 'empty noninteractive commit message'
     Assert-Throws { New-ReleaseTag -Root $fixture.Root -Tag 'bad tag' -ProductionSha $fixture.ProductionSha -MainSha $fixture.MainSha } 'invalid tag syntax'
     $tag = New-ReleaseTag -Root $fixture.Root -Tag 'fixture-release' -ProductionSha $fixture.ProductionSha -MainSha $fixture.MainSha

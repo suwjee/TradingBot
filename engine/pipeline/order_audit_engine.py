@@ -6,14 +6,16 @@ from bisect import bisect_left, bisect_right
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime
-from decimal import Decimal
+from decimal import Decimal, localcontext
+from heapq import heappop, heappush, merge
 from types import SimpleNamespace
 from typing import Callable, Sequence
 
 from core_utils import as_decimal, order_identity, reaction_identity
 
 ORDER_AUDIT_ENGINE_VERSION = "1.8.2"
-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
+ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION = "1.9.0"
+ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-18T07:10:09+03:30"
 
 
 def relabel_primary_causes(causes, labels):
@@ -74,26 +76,42 @@ def dominant_post_behavior_stops(
     priority: Callable[[object], int],
 ) -> list[PostBehaviorStop]:
     """Select the accepted lifecycle owner of each stopped main candle."""
+    # Rank once, using the original position to retain max()'s first-equal
+    # winner. The sweep includes both activation and stop endpoints; expired
+    # owners are removed only when their end is strictly before the event.
+    ranks = [(
+        priority(item), int(getattr(item, "number", 0)),
+        getattr(item, "source_time"), int(getattr(item, "source_index")),
+    ) for _, item, _ in lifetimes]
+    ordered_ranks = sorted(range(len(lifetimes)), key=lambda i: (*ranks[i], -i))
+    rank_positions = [0] * len(lifetimes)
+    for rank, position in enumerate(ordered_ranks):
+        rank_positions[position] = rank
+    starts = sorted((
+        (getattr(item, "trigger_event_time", None)
+         or getattr(item, "decision_event_time", None)
+         or getattr(item, "source_time")), i,
+    ) for i, (_, item, _) in enumerate(lifetimes))
+    owners = {}
+    active = []
+    cursor = 0
+    for event in sorted({end for _, _, end in lifetimes if end is not None}):
+        while cursor < len(starts) and starts[cursor][0] <= event:
+            position = starts[cursor][1]
+            heappush(active, (-rank_positions[position], position))
+            cursor += 1
+        while active:
+            position = active[0][1]
+            end = lifetimes[position][2]
+            if end is None or event <= end:
+                owners[event] = lifetimes[position][1]
+                break
+            heappop(active)
     by_candle: dict[int, tuple[tuple[object, ...], PostBehaviorStop]] = {}
     for behavior_type, behavior, event_time in lifetimes:
         if event_time is None:
             continue
-        active = [
-            item for _type, item, end in lifetimes
-            if (
-                getattr(item, "trigger_event_time", None)
-                or getattr(item, "decision_event_time", None)
-                or getattr(item, "source_time")
-            ) <= event_time
-            and (end is None or event_time <= end)
-        ]
-        if not active:
-            continue
-        owner = max(active, key=lambda item: (
-            priority(item), int(getattr(item, "number", 0)),
-            getattr(item, "source_time"), int(getattr(item, "source_index")),
-        ))
-        if owner is not behavior:
+        if owners.get(event_time) is not behavior:
             continue
         source_time = getattr(behavior, "source_time")
         source_index = int(getattr(behavior, "source_index"))
@@ -994,12 +1012,14 @@ class OrderAuditEngineMixin:
         item = (confirmation, first_index, break_index)
         position = bisect_right(self._order_audit_confirmation_index, item)
         self._order_audit_confirmation_index.insert(position, item)
+        self._post_stop_sorted_audit = None
 
 
     def _clear_order_audit(self) -> None:
         self.order_audit.clear()
         self._order_audit_confirmation_index.clear()
         self._carried_orders_cache.clear()
+        self._carried_creation_index = None
         self._invalidate_post_stop_order_cache()
 
     def _invalidate_carried_order_caches(self) -> None:
@@ -1008,9 +1028,11 @@ class OrderAuditEngineMixin:
         # index length (included in its cache key), so cause-only mutations
         # must not wipe that cache.
         self._carried_orders_cache.clear()
+        self._carried_creation_index = None
 
     def _invalidate_post_stop_order_cache(self) -> None:
         self._post_stop_orders_cache.clear()
+        self._post_stop_sorted_audit = None
 
 
     def register_order_b_reset_legs(
@@ -1249,7 +1271,7 @@ class OrderAuditEngineMixin:
                     parent_stop,
                 ))
 
-        changed = False
+        creation_changed = False
         for match in matches:
             number, reaction, confirmation, level, source, source_time = match[:6]
             crossed, causes = match[6], match[7]
@@ -1270,7 +1292,7 @@ class OrderAuditEngineMixin:
                 }
                 self.order_audit[key] = entry
                 self._index_order_audit_identity(key, confirmation)
-                changed = True
+                creation_changed = True
             audit_causes = entry["causes"]
             assert isinstance(audit_causes, set)
             family = str(getattr(parent, "color", getattr(parent, "family", "")))
@@ -1286,9 +1308,20 @@ class OrderAuditEngineMixin:
                 getattr(parent, "source_time"),
             )
             if cause not in audit_causes:
+                try:
+                    previous_creation = min((item[3] for item in audit_causes if item[0] == "parent-stop"), default=None)
+                    earlier_creation = previous_creation is None or parent_stop < previous_creation
+                except Exception:
+                    # Non-native provenance retains the former conservative
+                    # invalidation without introducing a registration error.
+                    earlier_creation = True
                 audit_causes.add(cause)
-                changed = True
-        if changed:
+                # Carried eligibility uses only the earliest parent creation,
+                # plus every B confirmation. Later/equal parent provenance
+                # remains in the ledger but cannot change this query's result.
+                if earlier_creation:
+                    creation_changed = True
+        if creation_changed:
             self._invalidate_carried_order_caches()
 
 
@@ -1491,6 +1524,70 @@ class OrderAuditEngineMixin:
         )
 
 
+    @staticmethod
+    def _carried_creation_events(entry: dict[str, object]) -> list[datetime]:
+        created = [cause[3] for cause in entry.get("causes", ()) if cause[0] == "parent-stop"]
+        if len(created) > 1:
+            created = [min(created)]
+        for cause in entry.get("order_b_causes", ()):
+            created.append(cause["physicalOrderConfirmationTime"])
+        return created
+
+    def _validated_carried_creation_index(self, entries):
+        """Index complete native rows; retain legacy evaluation for other rows."""
+        events = []
+        event_timezone = None
+        have_timezone = False
+        try:
+            # Validation must not set the caller's Decimal flags or change its
+            # traps when an unselected malformed price needs the legacy path.
+            with localcontext():
+                for ordinal, entry in enumerate(entries):
+                    if type(entry) is not dict:
+                        return None
+                    causes = entry.get("causes", ())
+                    b_causes = entry.get("order_b_causes", ())
+                    if type(causes) not in (set, frozenset, tuple, list) or type(b_causes) not in (tuple, list):
+                        return None
+                    if any(type(cause) is not tuple or not cause for cause in causes):
+                        return None
+                    if any(type(cause) is not dict for cause in b_causes):
+                        return None
+                    created = OrderAuditEngineMixin._carried_creation_events(entry)
+                    if not created:
+                        continue
+                    confirmation = entry["confirmation_time"]
+                    crossed = entry.get("stop_cross")
+                    dates = (created, (confirmation, entry["stop_source_time"]))
+                    if crossed is not None:
+                        if type(crossed) is not tuple or len(crossed) < 3 or type(crossed[0]) is not int:
+                            return None
+                        dates += (crossed[1:3],)
+                    for group in dates:
+                        for event in group:
+                            if type(event) is not datetime:
+                                return None
+                            if have_timezone and event.tzinfo is not event_timezone:
+                                return None
+                            event_timezone = event.tzinfo
+                            have_timezone = True
+                    reaction = entry["reaction"]
+                    if any(type(value) is not int for value in (
+                        entry["reaction_number"], entry["stop_source_index"],
+                        getattr(reaction, "first_idx"), getattr(reaction, "break_idx"),
+                    )):
+                        return None
+                    if type(entry["stop_level"]) not in (Decimal, str, int, float):
+                        return None
+                    if not as_decimal(entry["stop_level"]).is_finite():
+                        return None
+                    events.extend((event, ordinal) for event in set(created))
+                events.sort()
+        except Exception:
+            # The original scan owns exception order and short-circuiting.
+            return None
+        return events, event_timezone
+
     def _carried_orders_for_parent(
         self, parent: object, parent_stop: datetime,
     ) -> list[OrderMatch]:
@@ -1502,24 +1599,35 @@ class OrderAuditEngineMixin:
         cached = self._carried_orders_cache.get(key)
         if cached is not None:
             return list(cached)
+        indexed = getattr(self, "_carried_creation_index", None)
+        if indexed is None or not self._carried_orders_cache:
+            entries = list(self.order_audit.values())
+            indexed = self._carried_creation_index = entries, OrderAuditEngineMixin._validated_carried_creation_index(self, entries)
+        entries, creation_index = indexed
+        use_index = creation_index is not None and all(
+            type(event) is datetime and event.tzinfo is creation_index[1]
+            for event in (lifecycle_start, parent_stop)
+        )
+        if use_index:
+            events = creation_index[0]
+            left = bisect_right(events, (lifecycle_start, len(entries)))
+            right = bisect_left(events, (parent_stop, -1))
+            # Ledger insertion order remains the stable tie order before
+            # sorting. Multiple creation causes select one entry once.
+            ordinals = sorted({ordinal for _, ordinal in events[left:right]})
+            selected = ((entries[ordinal], None) for ordinal in ordinals)
+        else:
+            selected = ((entry, OrderAuditEngineMixin._carried_creation_events(entry)) for entry in entries)
         matches: list[OrderMatch] = []
-        for entry in self.order_audit.values():
-            created_events: list[datetime] = [
-                cause[3]
-                for cause in entry.get("causes", ())
-                if cause[0] == "parent-stop"
-            ]
-            # Only earliest A creation competes; every B cause stays eager.
-            if len(created_events) > 1:
-                created_events = [min(created_events)]
-            for cause in entry.get("order_b_causes", ()):
-                created_events.append(cause["physicalOrderConfirmationTime"])
-            if not created_events:
+        for entry, created_events in selected:
+            if created_events is not None and not created_events:
                 continue
             confirmation = entry["confirmation_time"]
             crossed = entry.get("stop_cross")
             if (
-                not any(lifecycle_start < created < parent_stop for created in created_events)
+                (created_events is not None and not any(
+                    lifecycle_start < created < parent_stop for created in created_events
+                ))
                 or confirmation > parent_stop
                 or crossed is None
                 or crossed[2] < parent_stop
@@ -1632,6 +1740,125 @@ class OrderAuditEngineMixin:
         )
         self._post_stop_orders_cache[cache_key] = result
         return list(result)
+
+    def _iter_post_stop_accepted_orders(self, parent, parent_stop):
+        """Yield accepted Orders in the existing exact order, only as consumed.
+
+        Geometry indexes are subordinate to the accepted ledger. New physical
+        identities invalidate the audit view; cause-only edits cannot change
+        this use route. Hard-reset eligibility is evaluated at query time.
+        """
+        key = lambda item: (item[6][2], item[2], -int(getattr(item[1], "first_idx")))
+        native_timezone = self.range_start.tzinfo
+
+        def native_time(value):
+            return type(value) is datetime and value.tzinfo is native_timezone
+
+        def native_match(match):
+            return (
+                all(type(value) is int for value in (
+                    match[0], match[4], getattr(match[1], "first_idx"), getattr(match[1], "break_idx"),
+                ))
+                and native_time(match[2]) and native_time(match[5])
+                and type(match[3]) is Decimal and match[3].is_finite()
+                and (match[6] is None or (
+                    type(match[6]) is tuple and len(match[6]) >= 3
+                    and type(match[6][0]) is int
+                    and native_time(match[6][1]) and native_time(match[6][2])
+                ))
+            )
+
+        if not native_time(parent_stop):
+            return iter(self._post_stop_accepted_orders_for_parent(parent, parent_stop))
+        initial = getattr(self, "_post_stop_sorted_initial", None)
+        if initial is None:
+            # The original query materializes initial geometry before reading
+            # the accepted ledger. Retain that eager exception precedence.
+            records = self._initial_order_records()
+            try:
+                with localcontext():
+                    matches = [self._initial_record_match(record, ("accepted-live",)) for record in records]
+                    if not all(native_match(match) for match in matches):
+                        raise ValueError("Non-native initial Order geometry.")
+                    initial = sorted((match for match in matches
+                                      if match[6] is not None and match[6][2] > match[2]), key=key)
+                    initial = initial, [item[6][2] for item in initial]
+            except Exception:
+                initial = False
+            self._post_stop_sorted_initial = initial
+        if initial is False:
+            return iter(self._post_stop_accepted_orders_for_parent(parent, parent_stop))
+        audit = getattr(self, "_post_stop_sorted_audit", None)
+        if audit is None:
+            try:
+                # Validate once per ledger generation without leaking Decimal
+                # flags. Partial/malformed rows use the complete query, whose
+                # confirmation filter and short-circuit order are contractual.
+                with localcontext():
+                    matches = []
+                    initial_geometry = {}
+                    for match in initial[0]:
+                        identity = reaction_identity(match[1])
+                        geometry = match[6][2], match[2]
+                        if initial_geometry.setdefault(identity, geometry) != geometry:
+                            raise ValueError("Conflicting initial Order geometry.")
+                    for indexed_confirmation, first, last in self._order_audit_confirmation_index:
+                        if not native_time(indexed_confirmation) or type(first) is not int or type(last) is not int:
+                            raise ValueError("Non-native confirmation index.")
+                        entry = self.order_audit.get((first, last))
+                        if type(entry) is not dict:
+                            raise ValueError("Non-native accepted Order row.")
+                        level = entry["stop_level"]
+                        if type(level) not in (Decimal, str, int, float):
+                            raise ValueError("Non-native accepted Order price.")
+                        level = as_decimal(level)
+                        match = (entry["reaction_number"], entry["reaction"], entry["confirmation_time"],
+                                 level, entry["stop_source_index"], entry["stop_source_time"],
+                                 entry.get("stop_cross"), ("accepted-live",), None)
+                        if not native_match(match) or indexed_confirmation != match[2]:
+                            raise ValueError("Non-native accepted Order geometry.")
+                        if match[6] is None:
+                            cross_key = match[2], level
+                            if cross_key not in self._cross_order_cache or self._cross_order_cache[cross_key] is not None:
+                                raise ValueError("Unresolved accepted Order crossing.")
+                        elif match[6][2] > match[2]:
+                            previous = initial_geometry.get(reaction_identity(match[1]))
+                            if previous is not None and previous != (match[6][2], match[2]):
+                                # The eager identity dictionary keeps initial
+                                # insertion rank after a better audit replacement.
+                                # A stream merge cannot infer that query-specific
+                                # rank from the winning audit row alone.
+                                raise ValueError("Conflicting accepted Order geometry.")
+                            matches.append(match)
+                    audit = sorted(matches, key=key)
+                    audit = audit, [item[6][2] for item in audit]
+            except Exception:
+                audit = False
+            self._post_stop_sorted_audit = audit
+        if audit is False:
+            return iter(self._post_stop_accepted_orders_for_parent(parent, parent_stop))
+        initial, initial_times = initial
+        audit, audit_times = audit
+        reset_position = bisect_right(self._sequence_reset_times, parent_stop)
+        reset = self._sequence_reset_times[reset_position] if reset_position < len(self._sequence_reset_times) else None
+
+        def eligible(items, times):
+            for position in range(bisect_right(times, parent_stop), len(items)):
+                item = items[position]
+                if reset is not None and item[6][2] >= reset:
+                    break
+                if item[2] > parent_stop:
+                    yield item
+
+        def accepted():
+            seen = set()
+            for match in merge(eligible(initial, initial_times), eligible(audit, audit_times), key=key):
+                identity = reaction_identity(match[1])
+                if identity not in seen:
+                    seen.add(identity)
+                    yield match
+
+        return accepted()
 
 
     def _order_created_only_by_disowned_s(

@@ -13,6 +13,7 @@ pause
 exit /b 2
 
 :root_found
+if /I "%~1"=="-Help" goto :help
 if /I "%~1"=="-ReleaseTag" goto :release
 
 pushd "%TB_ROOT%" >nul 2>&1
@@ -33,6 +34,16 @@ if not "%TB_GIT_RC%"=="0" (
 )
 
 exit /b %TB_GIT_RC%
+
+:help
+echo git.bat
+echo   Open the interactive Git Manager.
+echo git.bat -ReleaseTag TAG -CommitMessage MESSAGE [-ReleaseTitle TITLE] [-DryRun] [-VerboseReport]
+echo   Validate and publish main, production, the annotated tag and a GitHub Release.
+echo   Pass -ReleaseTag first. Quote values containing spaces.
+echo   -ReleaseTitle sets the GitHub Release title. The tag is used by default.
+echo   Use -DryRun to validate both candidate trees without publication.
+exit /b 0
 
 :release
 if not exist "%TB_ROOT%\scripts\git\Invoke-TradingBotRelease.ps1" (

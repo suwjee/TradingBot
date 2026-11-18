@@ -1,5 +1,7 @@
 // Presentation of finalized Engine PH, PL and matching-behavior-leg results.
 // Price crossings, structure validity and numbering remain Engine-owned.
+import { drawTrueFalseLabel, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT } from "./true-false-label.js";
+
 export const PRIMARY_VISUAL_DEFAULTS = Object.freeze({
   phVisible: true,
   phLabelVisible: true,
@@ -274,6 +276,9 @@ export function drawPrimaryStructures(ctx, group, {
         ctx.textBaseline = "alphabetic";
         const label = primaryLabelLayout({ ...marker, fontSize: size }, ctx.measureText(text));
         ctx.fillText(text, marker.x, label.baselineY);
+        const below = marker.textBaseline === "top";
+        drawTrueFalseLabel(ctx, item.trueFalse, settings.trueFalseVisible, size,
+          marker.x, below ? label.bottom : label.top, below, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT);
         onHit({ objectId, shape: "rect", left: label.left, right: label.right,
           top: label.top, bottom: label.bottom });
       }

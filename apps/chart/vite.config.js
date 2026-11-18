@@ -19,6 +19,7 @@ import { assertRawInputUnchanged, captureRawInputIdentity } from './server/raw-i
 import { cachePathForRaw, readCalculationCache, writeCalculationCache } from './server/calculation-cache.js';
 import { createLiveEngineSessions, LiveEngineError, startLiveEngineWorker } from './server/live-engine-sessions.js';
 import { indicatorDigest, restoreRawSnapshot } from './server/live-engine-recovery.js';
+import { chartWatchOptions, preserveOpenChart } from './server/ui-live-update.js';
 
 // Anchor source paths to this config and local state to the chart-owned subtree.
 // Vite may be launched from either the repository root or apps/chart.
@@ -40,20 +41,22 @@ const orderEnginePath = path.join(pipelineRoot, 'order_audit_engine.py');
 const directionPolicyPath = path.join(pipelineRoot, 'direction_policy.py');
 const coreUtilsPath = path.join(pipelineRoot, 'core_utils.py');
 const primaryEnginePath = path.join(pipelineRoot, 'PL_PH_detector.py');
-const setupEnginePath = path.join(pipelineRoot, 'bullish_setup_engine.py');
+const trueFalseEnginePath = path.join(pipelineRoot, 'true_false.py');
 const indicatorRangeInputPath = path.join(chartRoot, 'server', 'indicator-range-input.js');
-const calculationSources = [bridgePath, enginePath, blueEnginePath, aEnginePath, sEnginePath, eEnginePath, stopAllEnginePath, orderEnginePath, directionPolicyPath, coreUtilsPath, primaryEnginePath, setupEnginePath, indicatorRangeInputPath];
+const calculationSources = [bridgePath, enginePath, blueEnginePath, aEnginePath, sEnginePath, eEnginePath, stopAllEnginePath, orderEnginePath, directionPolicyPath, coreUtilsPath, primaryEnginePath, trueFalseEnginePath, indicatorRangeInputPath];
 const pythonCommand = process.env.TRADINGBOT_PYTHON || 'python';
 const engineArgs = ['--engine', enginePath, '--blue-engine', blueEnginePath, '--a-engine', aEnginePath,
   '--s-engine', sEnginePath, '--e-engine', eEnginePath, '--stopall-engine', stopAllEnginePath];
-// VMware shared folders reject native watches, while polling can monopolize
-// Vite's event loop. The launcher therefore serves without filesystem watches;
-// developers can explicitly opt into polling when they need HMR.
-const useVitePolling = process.env.TRADINGBOT_VITE_POLLING === 'true';
-const vitePollingInterval = Math.max(500, Number(process.env.TRADINGBOT_VITE_POLL_INTERVAL_MS) || 5_000);
-const viteWatchOptions = useVitePolling
-  ? { usePolling: true, interval: vitePollingInterval }
-  : { ignored: ['**/*'] };
+// Limit polling to UI and Engine sources on VMware shared folders. RAW, cache and server
+// sources stay outside the watcher so an edit cannot restart the workstation.
+const useVitePolling = process.env.TRADINGBOT_VITE_POLLING !== 'false';
+const vitePollingInterval = Math.max(500, Number(process.env.TRADINGBOT_VITE_POLL_INTERVAL_MS) || 1_500);
+const engineStyles = path.join(workspaceRoot, 'engine', 'styles');
+const liveUpdateEngineSources = [liveBridgePath, ...calculationSources.filter(file => file.endsWith('.py'))];
+const viteWatchOptions = chartWatchOptions({
+  chartRoot, engineStyles, engineSources: liveUpdateEngineSources,
+  enabled: useVitePolling, interval: vitePollingInterval,
+});
 
 function calculationSourceFingerprint() {
   const hash = createHash('sha256');
@@ -975,14 +978,16 @@ function infoPage() {
 }
 
 export default defineConfig({
-  plugins: [localDataApi(), createFarazCandleApi({ workspaceRoot, localStateRoot: localState.root, rawStore }), infoPage()],
+  plugins: [localDataApi(), createFarazCandleApi({ workspaceRoot, localStateRoot: localState.root, rawStore }),
+    infoPage(), preserveOpenChart({ workspaceRoot, engineStyles, engineSources: liveUpdateEngineSources })],
   server: {
     port: 5173,
     strictPort: false,
     fs: {
       deny: ['**/.env', '**/.env.*', '**/*.{crt,pem}', '**/.git/**', '**/state/**', '**/tests/**', '**/engineering/archive/**', '**/engineering/verification/**'],
     },
-    watch: { ...viteWatchOptions, ignored: [...(viteWatchOptions.ignored ?? []), '**/state/**', '**/tests/**', '**/engineering/archive/**', '**/engineering/verification/**'] },
+    watch: viteWatchOptions,
+    hmr: { overlay: false },
   },
   build: { target: 'chrome89' },
 });

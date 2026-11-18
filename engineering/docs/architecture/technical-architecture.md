@@ -10,7 +10,7 @@ scope:
   - engine
   - runtime-boundaries
   - state-and-transport
-last_modified_at: 2026-11-15T18:25:39+03:30
+last_modified_at: 2026-11-18T17:01:34+03:30
 ---
 
 # TradingBot Technical Architecture
@@ -94,9 +94,11 @@ This path does not perform trading calculation.
 8. Vite may persist the serialized result under its calculation cache and returns the same finalized result to Chart.
 9. Chart renders the result and may open the Manual Review surface using the persisted calculation identity.
 
-A manual Apply can start a dedicated Engine session for its selected start, direction and analysis timeframe. The worker verifies the original RAW byte prefix and parses newly appended candle rows. It retains Reaction and Reset search, cross-direction ownership, Blue/A/S/E, Order and StopAll evidence, primary cycles, and setup event state. A provisional analysis candle is evaluated separately from the committed Reaction cursor. If a new event changes earlier ownership, the affected calculation resumes from the earliest dependent state. A completed independent trend regime can reuse its finalized result. The Bridge publishes the same indicator response contract as a manual calculation.
+A manual Apply can start a dedicated Engine session for its selected start, direction and analysis timeframe. The worker verifies the original RAW byte prefix and parses newly appended candle rows. It retains Reaction and Reset search, cross-direction ownership, Blue/A/S/E, Order and StopAll evidence, and primary cycles. A provisional analysis candle is evaluated separately from the committed Reaction cursor. If a new event changes earlier ownership, the affected calculation resumes from the earliest dependent state. A completed independent trend regime can reuse its finalized result. The Bridge publishes the same indicator response contract as a manual calculation.
 
-Bullish schematic assessments are calculated by `engine/pipeline/bullish_setup_engine.py` after native accepted behavior and primary-structure calculation. The Bridge projects finalized setup levels, T/F assessments, reference-break provenance and regime identities. The Chart presents these records as indicator-owned annotations and stores geometry edits separately as presentation overrides. Native detector arrays are not reinterpreted by this stage or by the browser. The server's calculation-source fingerprint includes the setup Engine module.
+The Engine publishes Basic, StopAll and directional primary T/F labels on final behavior rows. Each finalized directional primary resets the StopAll verdict history at its source candle. The shared response builder applies this stage for manual and live calculation. RAW repair lookup uses the reference direction, including after reversal. Chart renders those labels as presentation, and Manual Review continues to present finalized events. The previous automatic position/setup stage remains retired.
+
+During development, Vite polls the Chart sources, UI assets, Engine styles and the registered active Python files. Chart's indicator renderer can be replaced in memory while the chart instance and its state stay in place. Vite sends a status event for changes that require loading a new interface shell. Python source changes reuse the existing indicator calculation context with the normal request, validation and cache-fingerprint rules. The recalculation refreshes the alert baseline. RAW, cache, tests, historical artifacts and server configuration remain outside this source watcher.
 
 ### 5.3 Market-data acquisition
 

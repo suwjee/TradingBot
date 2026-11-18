@@ -1,0 +1,24 @@
+..........................F.                                             [100%]
+================================== FAILURES ===================================
+_ test_distinct_parent_queries_reuse_creation_index_and_invalidate_on_new_cause _
+
+    def test_distinct_parent_queries_reuse_creation_index_and_invalidate_on_new_cause():
+        detector, _, physical = detector_state("bullish")
+        class Ledger(dict):
+            scans = 0
+            def values(self):
+                self.scans += 1
+                return super().values()
+        detector.order_audit = Ledger({(5, 6): ledger_entry(physical, parents=(125,))})
+        for start in range(100, 110):
+            assert detector._carried_orders_for_parent(SimpleNamespace(decision_event_time=moment(start)), moment(200))
+>       assert detector.order_audit.scans == 1, "Different parents must share the current ledger creation index."
+E       AssertionError: Different parents must share the current ledger creation index.
+E       assert 10 == 1
+E        +  where 10 = {(5, 6): {'reaction': Candidate(first_idx=5, first_time='2000-01-01 00:02:30', box_top_source_idx=5, box_top_source_ti...op', 'S', 'blue', datetime.datetime(2000, 1, 1, 0, 2, 5), datetime.datetime(2000, 1, 1, 0, 1))}, 'order_b_causes': []}}.scans
+E        +    where {(5, 6): {'reaction': Candidate(first_idx=5, first_time='2000-01-01 00:02:30', box_top_source_idx=5, box_top_source_ti...op', 'S', 'blue', datetime.datetime(2000, 1, 1, 0, 2, 5), datetime.datetime(2000, 1, 1, 0, 1))}, 'order_b_causes': []}} = <e_zone_detector.EZoneDetector object at 0x000002297FE9B380>.order_audit
+
+engine\tests\unit\test_carried_order_query.py:101: AssertionError
+=========================== short test summary info ===========================
+FAILED engine/tests/unit/test_carried_order_query.py::test_distinct_parent_queries_reuse_creation_index_and_invalidate_on_new_cause
+1 failed, 27 passed in 0.52s

@@ -22,8 +22,8 @@ from direction_policy import policy_for
 
 
 STOP_ALL_VERSION = "1.18.6"
-STOP_ALL_IMPLEMENTATION_VERSION = "1.21.0"
-STOP_ALL_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
+STOP_ALL_IMPLEMENTATION_VERSION = "1.22.0"
+STOP_ALL_LAST_MODIFIED = "2026-11-17T20:14:54+03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -1134,14 +1134,25 @@ def consumed_s_evidence_after_larger_stop(
 def s_zones_for_module_engines(s_zones, e_zones, direction):
     """Preserve the established S eligibility contract consumed by E/StopAll."""
     ordered_e = sorted(e_zones, key=lambda item: getattr(item, "source_time"))
+    e_times = [getattr(item, "source_time") for item in ordered_e]
     visible = []
+    visible_times = []
+
+    def latest_prior(items, times, source):
+        position = bisect_left(times, source) - 1
+        if position < 0:
+            return None
+        # max() on the old concatenated list retained the first equal-time
+        # owner. Locate that first entry, rather than the final duplicate.
+        return items[bisect_left(times, times[position])]
+
     for s_zone in sorted(s_zones, key=lambda item: getattr(item, "source_time")):
-        prior_modules = [
-            item for item in [*ordered_e, *visible]
-            if getattr(item, "source_time") < getattr(s_zone, "source_time")
-        ]
-        if prior_modules:
-            prior = max(prior_modules, key=lambda item: getattr(item, "source_time"))
+        source = getattr(s_zone, "source_time")
+        prior = latest_prior(ordered_e, e_times, source)
+        prior_s = latest_prior(visible, visible_times, source)
+        if prior_s is not None and (prior is None or getattr(prior_s, "source_time") > getattr(prior, "source_time")):
+            prior = prior_s
+        if prior is not None:
             # A strictly higher-priority behavior may supersede a lower one;
             # equal or lower priority remains owned by the prior lifecycle.
             # This preserves the original hierarchy contract while allowing
@@ -1159,6 +1170,7 @@ def s_zones_for_module_engines(s_zones, e_zones, direction):
                 ):
                     continue
         visible.append(s_zone)
+        visible_times.append(source)
     return visible
 
 def s_zones_for_stopall(s_zones, e_zones, direction):

@@ -7,6 +7,9 @@ Cross-stage visibility and StopAll grouping remain lifecycle-owned.
 
 from __future__ import annotations
 
+from heapq import merge
+from itertools import groupby
+
 from bisect import bisect_left
 from dataclasses import dataclass, replace
 from datetime import datetime
@@ -24,8 +27,8 @@ from order_audit_engine import (
 
 
 E_ZONE_VERSION = "6.16.2"
-E_ZONE_IMPLEMENTATION_VERSION = "6.19.0"
-E_ZONE_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
+E_ZONE_IMPLEMENTATION_VERSION = "6.20.0"
+E_ZONE_LAST_MODIFIED = "2026-11-17T20:14:54+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -362,12 +365,21 @@ class EZoneDetector(OrderAuditEngineMixin):
         self.range_start = self.times[self.start_index]
         self.range_end = self.times[self.end_index] + self.timeframe
         if live_continuation is None:
-            self._stop_values = [
-                as_decimal(getattr(candle, self.policy.extreme_attr))
-                for candle in self.candles
-            ]
-            self._candle_codes = [int(getattr(candle, "index")) for candle in self.candles]
-            self._extreme_sparse = self._build_extreme_sparse()
+            main_extremes = getattr(chronology, "_e_main_extremes", None)
+            cached = main_extremes.get(direction) if main_extremes is not None else None
+            if cached is None:
+                self._stop_values = [
+                    as_decimal(getattr(candle, self.policy.extreme_attr))
+                    for candle in self.candles
+                ]
+                self._candle_codes = [int(getattr(candle, "index")) for candle in self.candles]
+                self._extreme_sparse = self._build_extreme_sparse()
+                if main_extremes is not None:
+                    main_extremes[direction] = (
+                        self._stop_values, self._candle_codes, self._extreme_sparse,
+                    )
+            else:
+                self._stop_values, self._candle_codes, self._extreme_sparse = cached
         self.direct_geometry_finder = direct_geometry_finder
         self.blocked_order_first_times = blocked_order_first_times or set()
         self.e_parent_order_first_exceptions = e_parent_order_first_exceptions
@@ -669,7 +681,7 @@ class EZoneDetector(OrderAuditEngineMixin):
         gate_owned = self._gate_owned_initial_order(stop_event)
         carried = self._carried_orders_for_parent(parent, stop_event)
         self._register_order_audit(parent_type, parent, stop_event)
-        post_stop_accepted = self._post_stop_accepted_orders_for_parent(
+        post_stop_accepted = self._iter_post_stop_accepted_orders(
             parent, stop_event
         )
         inherited_stop_events = [
@@ -692,17 +704,25 @@ class EZoneDetector(OrderAuditEngineMixin):
         # E consumption owns one global adjudication across every eligible
         # physical Order route. Route-local reductions must not discard a
         # later First before the canonical exact-stop tie-break can run.
-        choices = [
-            item
-            for route in (direct, inherited, carried, post_stop_accepted)
-            for item in route
-            if item[6] is not None
-        ]
+        choice_key = lambda item: (item[6][2], -int(item[1].first_idx))
+
+        def post_stop_choices():
+            # The public accepted-Order query orders exact stop ties by
+            # confirmation first. E adjudication instead orders by First;
+            # materialize only that one stop-time group to preserve both.
+            for _, group in groupby(post_stop_accepted, key=lambda item: item[6][2]):
+                yield from sorted(group, key=choice_key)
+
+        choices = merge(
+            *(sorted((item for item in route if item[6] is not None), key=choice_key)
+              for route in (direct, inherited, carried)),
+            post_stop_choices(), key=choice_key,
+        )
         owned_sources = e_owned_source_times if e_owned_source_times is not None else {
             source_time for source_time, _index in self._accepted_e_source_identities
         }
         order_match = None
-        for match in sorted(choices, key=lambda item: (item[6][2], -int(item[1].first_idx))):
+        for match in choices:
             prospective_source = self._extreme_between(stop_event, max(stop_event, match[6][2]))
             if self._order_created_only_by_disowned_s(
                 (int(match[1].first_idx), int(match[1].break_idx)),
@@ -1210,6 +1230,21 @@ class EZoneDetector(OrderAuditEngineMixin):
             (item.source_index, item.source_time): item
             for item in candidates
         }
+        s_by_source: dict[tuple[int, datetime], object] = {}
+        for item in self.s_zones:
+            s_by_source.setdefault((int(item.source_index), item.source_time), item)
+        child_decision_by_parent: dict[tuple[int, datetime], datetime] = {}
+
+        def index_child(zone: EZone) -> None:
+            if zone.parent_type == "E":
+                identity = (zone.parent_source_index, zone.parent_source_time)
+                child_decision_by_parent[identity] = max(
+                    child_decision_by_parent.get(identity, zone.decision_event_time),
+                    zone.decision_event_time,
+                )
+
+        for zone in candidates:
+            index_child(zone)
 
         def enqueue(zone: EZone | None, current_source: int) -> None:
             if zone is None or zone in known:
@@ -1218,6 +1253,7 @@ class EZoneDetector(OrderAuditEngineMixin):
             regenerated.add(zone)
             candidates.append(zone)
             candidates_by_source_time[(zone.source_index, zone.source_time)] = zone
+            index_child(zone)
             by_source.setdefault(zone.source_index, []).append(zone)
             if zone.source_index != current_source and zone.source_index not in scheduled:
                 heappush(pending, (zone.source_time, zone.decision_event_time, zone.source_index))
@@ -1234,16 +1270,7 @@ class EZoneDetector(OrderAuditEngineMixin):
 
         def parent_active(zone: EZone, seen: set[tuple[int, datetime]] | None = None) -> bool:
             if zone.parent_type == "S":
-                parent_s = next(
-                    (
-                        item for item in self.s_zones
-                        if int(getattr(item, "source_index"))
-                        == zone.parent_source_index
-                        and getattr(item, "source_time")
-                        == zone.parent_source_time
-                    ),
-                    None,
-                )
+                parent_s = s_by_source.get((zone.parent_source_index, zone.parent_source_time))
                 if parent_s is None or (
                     parent_s.source_time, int(parent_s.source_index)
                 ) in accepted_sources:
@@ -1358,14 +1385,10 @@ class EZoneDetector(OrderAuditEngineMixin):
                     and any(
                         stopped_by(item, owner)
                         and (owner.family == "red" or item.family == "blue")
-                        and any(
-                            child.parent_type == "E"
-                            and child.parent_source_index == owner.source_index
-                            and child.parent_source_time == owner.source_time
-                            and child.decision_event_time
-                            >= item.decision_event_time
-                            for child in candidates
-                        )
+                        and (child_decision := child_decision_by_parent.get(
+                            (owner.source_index, owner.source_time)
+                        )) is not None
+                        and child_decision >= item.decision_event_time
                         for owner in active
                     )
                 )

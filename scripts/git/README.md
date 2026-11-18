@@ -3,7 +3,7 @@ title: TradingBot Release Operations
 document_role: procedure
 lifecycle: maintained
 owner: release-tooling
-last_modified_at: 2026-11-15T18:25:39+03:30
+last_modified_at: 2026-11-18T17:24:43+03:30
 ---
 
 # TradingBot release operations
@@ -16,10 +16,10 @@ Open the interactive manager with:
 .\scripts\git\git.bat
 ```
 
-Run a two-branch release from the same launcher by passing the release tag first. Supply an explicit commit message. Add `-DryRun` to validate both candidate trees without publication.
+Run `git.bat -Help` to see the supported options. To publish both branches and a GitHub Release, pass `-ReleaseTag` first and supply a commit message. `-ReleaseTitle` sets the GitHub Release title and defaults to the tag. Add `-DryRun` to validate both candidate trees without publication.
 
 ```powershell
-.\scripts\git\git.bat -ReleaseTag "vX.Y.Z" -CommitMessage "Release vX.Y.Z"
+.\scripts\git\git.bat -ReleaseTag "vX.Y.Z" -CommitMessage "Release vX.Y.Z" -ReleaseTitle "TradingBot vX.Y.Z"
 ```
 
 `AGENTS.md` is optional. The launcher checks the menu file; PowerShell verifies the Git root and the `apps/chart` and `engine` directories. Paths containing spaces, parentheses, ampersands, and exclamation marks are supported. Git for Windows must be installed and `git.exe` must be on PATH.
