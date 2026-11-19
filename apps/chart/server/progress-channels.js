@@ -1,13 +1,13 @@
 const HISTORY_LIMIT = 120;
 
-export function createProgressChannels() {
+export function createProgressChannels({ maxIdleChannels = 128 } = {}) {
   const channels = new Map();
   let closed = false;
 
   function get(id) {
     let channel = channels.get(id);
     if (!channel) {
-      channel = { events: [], clients: new Set() };
+      channel = { events: [], clients: new Set(), observed: false };
       channels.set(id, channel);
     }
     return channel;
@@ -15,7 +15,11 @@ export function createProgressChannels() {
 
   function releaseIfObserved(id, channel) {
     if (channel.clients.size || channels.get(id) !== channel) return;
-    if (!channel.events.length || channel.events.at(-1)?.status === "finished") channels.delete(id);
+    if (!channel.events.length || (channel.observed && isTerminal(channel))) channels.delete(id);
+  }
+
+  function isTerminal(channel) {
+    return ["failed", "finished"].includes(channel.events.at(-1)?.status);
   }
 
   function publish(id, event) {
@@ -28,12 +32,20 @@ export function createProgressChannels() {
       try { client.write(message); }
       catch { channel.clients.delete(client); }
     }
+    if (isTerminal(channel)) {
+      releaseIfObserved(id, channel);
+      if (channels.size > maxIdleChannels) {
+        const idle = [...channels].filter(([, value]) => !value.clients.size && isTerminal(value));
+        for (const [expired] of idle.slice(0, Math.max(0, idle.length - maxIdleChannels))) channels.delete(expired);
+      }
+    }
   }
 
   function attach(id, client) {
     if (closed) { client.end(); return () => {}; }
     const channel = get(id);
     channel.clients.add(client);
+    channel.observed = true;
     for (const event of channel.events) {
       try { client.write(`data: ${JSON.stringify(event)}\n\n`); }
       catch { channel.clients.delete(client); break; }

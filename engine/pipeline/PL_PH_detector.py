@@ -19,7 +19,7 @@ from lifecycle_engine import advance_dominant_behavior
 from order_audit_engine import relabel_primary_causes
 
 PL_PH_VERSION = "1.4.0"
-PL_PH_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
+PL_PH_LAST_MODIFIED = "2026-11-18T22:28:23+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -692,6 +692,19 @@ class _ReflectedRow:
         return _negate_price(self.original.high)
 
 
+class _ReflectedRows:
+    """Snapshot candle references and reflect each row only when accessed."""
+
+    def __init__(self, rows: Sequence[object]) -> None:
+        self._rows = tuple(rows)
+
+    def __len__(self) -> int:
+        return len(self._rows)
+
+    def __getitem__(self, index: int) -> _ReflectedRow:
+        return _ReflectedRow(self._rows[index])
+
+
 class _ReflectedPriceIndex:
     """Reuse immutable original RAW indexes rather than allocate a second tree."""
     def __init__(self, original):
@@ -706,8 +719,8 @@ class _ReflectedPriceIndex:
 
 class _ReflectedChronology:
     def __init__(self, original):
-        self.candles = tuple(_ReflectedRow(row) for row in original.candles)
-        self.seconds = tuple(_ReflectedRow(row) for row in original.seconds)
+        self.candles = _ReflectedRows(original.candles)
+        self.seconds = _ReflectedRows(original.seconds)
         self.times, self.second_times = original.times, original.second_times
         self.lower_index = _ReflectedPriceIndex(original.lower_index)
         self.main_index = original.main_index

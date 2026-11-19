@@ -647,7 +647,9 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     return mergeCandles(collected, from, to);
   }
 
-  async function checkRealtimeCandles(file, timeframeSeconds, closedTo, { verifyAll, phase, signal, reportProgress }) {
+  async function checkRealtimeCandles(file, timeframeSeconds, closedTo, {
+    verifyAll, phase, historyPacketLimit = AUTOMATIC_VERIFICATION_PACKETS, version, signal, reportProgress,
+  }) {
     const previous = file.metadata.candleVerification;
     const ranges = verifyAll ? [] : (previous?.ranges || []).map(range => [...range]);
     const readHistory = async (from, to, { fresh = true, onPacket } = {}) => {
@@ -663,30 +665,37 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     const gapCandles = [];
     let checkedCount = 0;
     let correctedNewCount = 0;
+    let awaitingConfirmation = false;
+    let verificationSnapshot;
     let unavailable = false;
     let checkedHistory = false;
     let cursor = verifyAll ? 0 : (previous?.nextIndex || 0);
     try {
       const from = file.to + timeframeSeconds;
       if (!verifyAll && phase !== "history" && from <= closedTo) {
-        candles = await readHistory(from, closedTo, { fresh: false,
+        const candidates = await readHistory(from, closedTo, { fresh: false,
           onPacket: (done, total) => reportProgress(40 * done / total) });
-        if (candles.length) {
-          const confirmed = await readHistory(candles[0].time, candles.at(-1).time, {
+        if (candidates.length) {
+          const confirmed = await readHistory(from, candidates.at(-1).time, {
             onPacket: (done, total) => reportProgress(40 + 25 * done / total),
           });
-          const comparison = recordVerifiedRows(ranges, file.count, candles, confirmed);
+          // Keep the RAW tail before any disagreement so the next poll can retry the range.
+          let matched = 0;
+          while (matched < candidates.length && candidates[matched].time === confirmed[matched]?.time) matched++;
+          awaitingConfirmation = matched < candidates.length;
+          candles = confirmed.slice(0, matched);
+          const comparison = recordVerifiedRows(ranges, file.count, candidates.slice(0, matched), candles);
           checkedCount += comparison.checkedCount;
           correctedNewCount = comparison.corrections.length;
-          const fixed = new Map(comparison.corrections.map(row => [row.time, row]));
-          candles = candles.map(row => fixed.get(row.time) || row);
         }
       }
       const alreadyVerified = summarizeVerifiedRows(ranges, file.count + candles.length).ranges;
       const verified = firstUnverifiedRow(alreadyVerified, 0) >= file.count;
       if (!verified && phase !== "latest") {
-        const rows = rawStore.read(file.id);
-        if (!rows) return null;
+        const history = await rawStore.readForVerification(file, version, signal);
+        if (!history) return null;
+        const { rows } = history;
+        verificationSnapshot = history.snapshot;
         const batches = [];
         if (cursor >= rows.length || rows[cursor].time > closedTo) cursor = 0;
         let index = cursor;
@@ -700,7 +709,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
             index = end;
           }
         } else if (!verifyAll) {
-          while (batches.length < AUTOMATIC_VERIFICATION_PACKETS) {
+          while (batches.length < historyPacketLimit) {
             index = firstUnverifiedRow(alreadyVerified, index);
             const first = rows[index];
             if (!first || first.time > closedTo) break;
@@ -724,7 +733,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           cursor = end;
           reportProgress(historyStart + (95 - historyStart) * (batchIndex + 1) / batches.length);
         }
-        if (verifyAll || batches.length < AUTOMATIC_VERIFICATION_PACKETS) cursor = 0;
+        if (verifyAll || batches.length < historyPacketLimit) cursor = 0;
       }
     } catch (error) {
       signal.throwIfAborted();
@@ -740,7 +749,8 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       verification.verifiedAt = verifyAll || corrections.length || summary.verifiedCount !== previous?.verifiedCount
         ? formatTehranMetadataTime(Math.floor(now() / 1000)) : previous?.verifiedAt;
     }
-    return { candles, corrections, gapCandles, verification, status: unavailable ? "unavailable" : verification.status,
+    const status = awaitingConfirmation ? "pending" : verification.status;
+    return { candles, corrections, gapCandles, verification, verificationSnapshot, status: unavailable ? "unavailable" : status,
       checkedCount, correctedCount: corrections.length + correctedNewCount };
   }
 
@@ -1682,17 +1692,21 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           if (!params || typeof params !== "object") return json(res, 400, { error: "A RAW catch-up request is required." });
           const id = typeof params.id === "string" ? params.id.trim() : "";
           chartId = typeof params.chartId === "string" ? params.chartId.trim() : "";
-          const { lastCandleTime, baseSha256 } = params;
+          const { lastCandleTime, baseSha256, historyPacketLimit } = params;
           const phase = params.phase;
-          if (phase !== undefined && phase !== "latest" && phase !== "history") {
+          if (phase !== undefined && phase !== "latest" && phase !== "history" && phase !== "replay") {
             return json(res, 400, { error: "The live update phase is invalid." });
+          }
+          if (historyPacketLimit !== undefined && (phase !== "history" || !Number.isSafeInteger(historyPacketLimit)
+            || historyPacketLimit < 1 || historyPacketLimit > AUTOMATIC_VERIFICATION_PACKETS)) {
+            return json(res, 400, { error: "The history packet limit is invalid." });
           }
           if (!id || !chartId || !Number.isSafeInteger(lastCandleTime) || lastCandleTime <= 0
             || typeof baseSha256 !== "string" || !/^[a-f0-9]{64}$/.test(baseSha256)) {
             return json(res, 400, { error: "A RAW file ID, chart ID, last candle time and base SHA-256 are required." });
           }
           if (shuttingDown) return json(res, 503, { error: "FARAZ service is shutting down." });
-          if (realtimeUpdates.has(chartId)) {
+          if (phase !== "replay" && realtimeUpdates.has(chartId)) {
             return json(res, 409, { code: "RAW_BUSY", error: "This RAW file is already catching up." });
           }
           const changed = (file) => sendResult(409, {
@@ -1701,7 +1715,20 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           });
           const version = rawStore.version(id);
           const file = rawStore.get(id);
-          if (!file || file.chartId !== chartId) return changed(rawStore.get(realtimeFileIds.get(chartId)));
+          if (!file || file.chartId !== chartId) {
+            const latest = rawStore.get(realtimeFileIds.get(chartId));
+            if ((phase === "latest" || phase === "replay") && params.verifyAll !== true && latest?.chartId === chartId) {
+              const candles = rawStore.readCommittedCandleAppend(latest, { id, lastCandleTime, baseSha256 });
+              const verification = latest.metadata.candleVerification;
+              if (candles && verification) {
+                return sendResult(200, { file: publicRawFile(latest), candles, corrections: [], gapCandles: [],
+                  verification: { status: verification.status, verifiedCount: verification.verifiedCount,
+                    totalCount: verification.totalCount, checkedCount: 0, correctedCount: 0, recoveredCount: 0 } });
+              }
+            }
+            return changed(latest);
+          }
+          if (phase === "replay") return changed(file);
           if (file.to !== lastCandleTime || file.metadata.dataSha256 !== baseSha256) return changed(file);
           const timeframeSeconds = parseResolutionToSeconds(file.timeframe);
           const closedSteps = Math.floor((now() / 1000 - file.to) / timeframeSeconds) - 1;
@@ -1711,19 +1738,19 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           realtimeUpdates.set(chartId, controller);
           reportProgress(0);
           const checked = await checkRealtimeCandles(file, timeframeSeconds, to,
-            { verifyAll: params.verifyAll === true, phase, signal, reportProgress });
+            { verifyAll: params.verifyAll === true, phase, historyPacketLimit, version, signal, reportProgress });
           signal.throwIfAborted();
           if (!checked || rawStore.version(id) !== version) return changed();
           const current = rawStore.get(id);
-          if (current?.chartId !== chartId) return changed(current);
-          const { candles, corrections, gapCandles, verification, status, checkedCount, correctedCount } = checked;
+          if (current?.chartId !== chartId || current.metadata.dataSha256 !== baseSha256) return changed(current);
+          const { candles, corrections, gapCandles, verification, verificationSnapshot, status, checkedCount, correctedCount } = checked;
           if (status !== "unavailable") reportProgress(95);
           const oldVerification = current.metadata.candleVerification;
           const verificationChanged = (verification.verifiedCount || verification.nextIndex || oldVerification)
             && JSON.stringify(verification) !== JSON.stringify(oldVerification);
           const updated = candles.length || corrections.length || gapCandles.length || verificationChanged
             ? await rawStore.appendLatest(current, candles, timeframeSeconds, version, signal,
-              { corrections, gapCandles, verification: verificationChanged ? verification : undefined }) : current;
+              { corrections, gapCandles, verification: verificationChanged ? verification : undefined, verificationSnapshot }) : current;
           if (!updated) return changed();
           if (updated.id !== id) realtimeFileIds.set(chartId, updated.id);
           sendResult(200, { file: publicRawFile(updated), candles, corrections, gapCandles,

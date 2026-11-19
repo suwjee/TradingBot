@@ -39,17 +39,18 @@ export function startLiveEngineWorker({ command, args, env, onProgress, timeoutM
     child.kill();
   }
 
-  function receive(type, request) {
+  function receive(type, request, reportProgress) {
     if (closed) return Promise.reject(new LiveEngineError(410, EXPIRED, "LIVE_SESSION_CLOSED"));
     if (pending) return Promise.reject(new LiveEngineError(429, "The live indicator is busy."));
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => close(new LiveEngineError(410,
         "The live Engine did not respond. Use Apply again.", "LIVE_ENGINE_TIMEOUT")), timeoutMs);
       timer.unref();
-      pending = { type, resolve, reject, timer };
+      pending = { type, resolve, reject, timer, reportProgress };
       if (request) {
         const { bytes, sha256, baseSha256 } = request;
-        child.stdin.write(`${JSON.stringify({ bytes: bytes.length, sha256, baseSha256 })}\n`);
+        child.stdin.write(`${JSON.stringify({ bytes: bytes.length, sha256, baseSha256,
+          ...(reportProgress && { progress: true }) })}\n`);
         child.stdin.write(bytes, error => {
           if (error) close();
         });
@@ -68,6 +69,10 @@ export function startLiveEngineWorker({ command, args, env, onProgress, timeoutM
     try { message = JSON.parse(line); }
     catch {
       close(new LiveEngineError(410, "The live Engine returned an invalid response.", "LIVE_ENGINE_PROTOCOL"));
+      return;
+    }
+    if (message?.type === "progress" && pending?.type === "update" && typeof message.event?.label === "string") {
+      try { pending.reportProgress?.(message.event); } catch { /* Progress does not change the calculation. */ }
       return;
     }
     if (message?.type === "error") {
@@ -94,9 +99,9 @@ export function startLiveEngineWorker({ command, args, env, onProgress, timeoutM
   return {
     seed: receive("seed"),
     get closed() { return closed; },
-    async update(bytes, sha256, baseSha256) {
+    async update(bytes, sha256, baseSha256, reportProgress) {
       if (!Buffer.isBuffer(bytes)) throw new TypeError("The live Engine requires RAW bytes.");
-      return (await receive("update", { bytes, sha256, baseSha256 })).payload;
+      return (await receive("update", { bytes, sha256, baseSha256 }, reportProgress)).payload;
     },
     close,
   };
@@ -133,8 +138,8 @@ export function createLiveEngineSessions({ maxSessions = 4, idleTtlMs = 30 * 60_
     }
     const id = randomBytes(16).toString("hex");
     const worker = launch();
-    const session = { worker, chartId, tabId, sourceFingerprint, request, seedRawSha256: rawSha256,
-      seeding: true, touched: now(), latest: null };
+    const session = { worker, chartId, tabId, sourceFingerprint, request, rawSha256,
+      seeding: true, touched: now() };
     sessions.set(id, session);
     try {
       const { payload, ready } = await worker.seed;
@@ -172,7 +177,7 @@ export function createLiveEngineSessions({ maxSessions = 4, idleTtlMs = 30 * 60_
     activeSession(sessionId, chartId, tabId, sourceFingerprint).touched = now();
   }
 
-  async function advance({ sessionId, chartId, tabId, sourceFingerprint, rawSha256, data }, { validate, publish, readAppend }) {
+  async function advance({ sessionId, chartId, tabId, sourceFingerprint, rawSha256, data }, { validate, publish, readAppend, reportProgress }) {
     const session = activeSession(sessionId, chartId, tabId, sourceFingerprint);
     if (session.pending) {
       if (session.pending.rawSha256 === rawSha256 && session.pending.data === data) return session.pending.result;
@@ -183,41 +188,32 @@ export function createLiveEngineSessions({ maxSessions = 4, idleTtlMs = 30 * 60_
       if (sessions.get(sessionId) !== session) throw new LiveEngineError(410, EXPIRED, "LIVE_SESSION_EXPIRED");
     };
     async function update() {
-      const needsUpdate = session.latest?.rawSha256 !== rawSha256;
-      const baseSha256 = session.latest?.rawSha256 ?? session.seedRawSha256;
-      let delta = needsUpdate && baseSha256 && readAppend?.(baseSha256);
-      const replayDelta = !needsUpdate && session.latest.usedDelta;
-      let bytes = await validate(needsUpdate && !delta, Boolean(delta || replayDelta));
+      const baseSha256 = session.rawSha256;
+      let delta = baseSha256 && baseSha256 !== rawSha256 && readAppend?.(baseSha256);
+      let bytes = await validate(!delta, Boolean(delta));
       isActive();
-      if (needsUpdate) {
-        let payload;
-        try {
-          if (delta) {
-            try { payload = await session.worker.update(delta, rawSha256, baseSha256); }
-            catch (error) {
-              if (error.code !== "RAW_DELTA_MISMATCH") throw error;
-              delta = null;
-              bytes = await validate(true);
-              isActive();
-            }
+      let payload;
+      try {
+        if (delta) {
+          try { payload = await session.worker.update(delta, rawSha256, baseSha256, reportProgress); }
+          catch (error) {
+            if (error.code !== "RAW_DELTA_MISMATCH") throw error;
+            delta = null;
+            bytes = await validate(true);
+            isActive();
           }
-          if (!delta) payload = await session.worker.update(bytes, rawSha256);
         }
-        catch (error) {
-          if (error.code !== "RAW_RETRY") discard(sessionId);
-          throw error;
-        }
-        isActive();
-        // Retain the full Engine result even if RAW validation, report
-        // publication, or the HTTP response fails after the Engine advances.
-        session.latest = { rawSha256, data, payload, usedDelta: Boolean(delta) };
-        await validate(false, Boolean(delta));
-        isActive();
-      } else if (session.latest.data !== data) {
-        session.latest = { rawSha256, data, payload: session.latest.payload, usedDelta: session.latest.usedDelta };
+        if (!delta) payload = await session.worker.update(bytes, rawSha256, undefined, reportProgress);
+      } catch (error) {
+        if (error.code !== "RAW_RETRY") discard(sessionId);
+        throw error;
       }
-      if (!session.latest.published) session.latest.published = await publish(session.latest.payload, session.request);
-      return session.latest.published;
+      // Only the input lineage survives publication failures, so retrying
+      // the same RAW starts a fresh Engine calculation.
+      session.rawSha256 = rawSha256;
+      await validate(false, Boolean(delta));
+      isActive();
+      return publish(payload, session.request);
     }
 
     session.pending = { rawSha256, data, result: update() };

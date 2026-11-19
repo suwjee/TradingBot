@@ -15,12 +15,13 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import Iterable, Sequence
 
+from core_utils import ChronologicalContainmentIndex, as_decimal as _decimal_value
 from direction_policy import policy_for
 
 
 REACTION_ENGINE_VERSION = "9.9.1"
-REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.13.0"
-REACTION_ENGINE_LAST_MODIFIED = "2026-11-17T20:14:54+03:30"
+REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.13.3"
+REACTION_ENGINE_LAST_MODIFIED = "2026-11-19T00:13:11+03:30"
 
 _ORDER_GATE_CACHE_MAX_ENTRIES = 32_768
 
@@ -878,11 +879,6 @@ def published_reaction_candidate(
     return published
 
 
-def _decimal_value(value: object) -> Decimal:
-    """Normalize external numeric values without binary-float arithmetic."""
-    return value if isinstance(value, Decimal) else Decimal(str(value))
-
-
 class LowerTimeframeIndex:
     """Immutable segment index for exact first strict High/Low crossings.
 
@@ -1043,6 +1039,19 @@ class ReflectedLowerTimeframeIndex:
     def range_maximum(self, left: int, right: int) -> tuple[Decimal, int]:
         value, position = self.base.range_minimum(left, right)
         return value.copy_negate(), position
+
+
+def clear_market_indexes() -> None:
+    """Release every process-local market index after an independent replay."""
+    for cache in (_SEQUENCE_TIME_INDEXES, _LOWER_TIMEFRAME_INDEXES, _REFLECTED_VIEWS):
+        cache.clear()
+
+
+def release_market_indexes(*sequences: Sequence[Candle]) -> None:
+    """Release indexes that hold finished calculation segments by identity."""
+    for sequence in sequences:
+        for cache in (_SEQUENCE_TIME_INDEXES, _LOWER_TIMEFRAME_INDEXES, _REFLECTED_VIEWS):
+            cache.pop(id(sequence), None)
 
 
 class MarketChronology:
@@ -1355,13 +1364,29 @@ def build_behavior_reaction_views(
         ]
         for direction in ("bullish", "bearish")
     }
+    can_index = all(
+        type(instant) is datetime and instant.tzinfo is None
+        for direction_spans in spans.values()
+        for span in direction_spans
+        for instant in (span.first_time, span.confirmed_at)
+    )
     blocked = {}
     for direction, inner_spans in spans.items():
         outer_spans = spans[opposite_direction(direction)]
+        containment = (
+            ChronologicalContainmentIndex(
+                (outer.first_time, outer.confirmed_at, outer) for outer in outer_spans
+            )
+            if can_index else None
+        )
         identities = set()
         for inner in inner_spans:
             extremes = None
-            for outer in outer_spans:
+            possible_owners = (
+                outer_spans if containment is None
+                else containment.enclosing(inner.first_time, inner.confirmed_at)
+            )
+            for outer in possible_owners:
                 if not outer.may_contain(inner):
                     continue
                 if extremes is None:
@@ -1723,51 +1748,17 @@ class UnifiedReactionDetector(DetectorBase):
         else:
             if self.lower_index.first_greater(left, right, analysis.extreme) is not None:
                 return None
-        # A cross-direction Leg-Start confirmation candle may simultaneously
-        # become the first candle of the next same-direction reaction. Its
-        # decisive second belongs to the new box boundary, so no second,
-        # still-more-extreme tick is required. Other confirmations retain the
-        # ordinary fresh post-event boundary requirement.
-        # Every confirmation opens Normal Search. If its main candle has the
-        # required start color, that complete candle is the next First candle,
-        # regardless of whether the confirmed reaction was Mode A or Mode B.
-        whole_confirmation_candle = True
-        remainder_start = (
-            candle.timestamp
-            if whole_confirmation_candle
-            else analysis.event_second.timestamp + timedelta(microseconds=1)
-        )
-        remainder_end = candle.timestamp + self.timeframe
-        seconds = list(self.seconds_between(remainder_start, remainder_end))
+        # Normal Search uses the entire confirmation candle as its next First.
+        candle_start = candle.timestamp
+        seconds = list(self.seconds_between(candle_start, candle_start + self.timeframe))
         if not seconds:
             return None
         if direction == "bullish":
             top_second = max(seconds, key=lambda item: (item.high, -item.timestamp.timestamp()))
             bottom_second = min(seconds, key=lambda item: (item.low, item.timestamp))
-            if (
-                not whole_confirmation_candle
-                and top_second.high <= analysis.event_second.high
-            ):
-                return None
-            return Candidate(
-                first_idx=candle.index,
-                first_time=candle.display_time,
-                box_top_source_idx=candle.index,
-                box_top_source_time=candle.display_time,
-                box_top=top_second.high,
-                box_bottom_source_idx=candle.index,
-                box_bottom_source_time=candle.display_time,
-                box_bottom=bottom_second.low,
-                mode="B",
-                intrabar_start=remainder_start,
-            )
-        bottom_second = min(seconds, key=lambda item: (item.low, item.timestamp))
-        top_second = max(seconds, key=lambda item: (item.high, -item.timestamp.timestamp()))
-        if (
-            not whole_confirmation_candle
-            and bottom_second.low >= analysis.event_second.low
-        ):
-            return None
+        else:
+            bottom_second = min(seconds, key=lambda item: (item.low, item.timestamp))
+            top_second = max(seconds, key=lambda item: (item.high, -item.timestamp.timestamp()))
         return Candidate(
             first_idx=candle.index,
             first_time=candle.display_time,
@@ -1778,7 +1769,7 @@ class UnifiedReactionDetector(DetectorBase):
             box_bottom_source_time=candle.display_time,
             box_bottom=bottom_second.low,
             mode="B",
-            intrabar_start=remainder_start,
+            intrabar_start=candle_start,
         )
 
     def _first_initial(
@@ -2766,11 +2757,7 @@ class LiveReactionContinuation:
 
     @staticmethod
     def _release_indexes(*sequences: list[Candle]) -> None:
-        # These snapshots belong only to this session. The batch caches keep
-        # a strong reference by list identity and must not retain every poll.
-        for sequence in sequences:
-            for cache in (_SEQUENCE_TIME_INDEXES, _LOWER_TIMEFRAME_INDEXES, _REFLECTED_VIEWS):
-                cache.pop(id(sequence), None)
+        release_market_indexes(*sequences)
 
     def _validate_extension(
         self, candles: Sequence[Candle], lower: Sequence[Candle],

@@ -1,6 +1,5 @@
-// Keep a positive floor while allowing 2.5 times the visible span of 0.25px.
-// Display density may change, but the time axis still uses candle coordinates.
-export const MIN_SAFE_BAR_SPACING = 0.10;
+// A positive floor bounds the visible candle slots at maximum zoom-out.
+export const MIN_SAFE_BAR_SPACING = 0.05;
 
 export function zoomOutCapacityGain(previousSpacing, nextSpacing) {
   const previous = Number(previousSpacing);

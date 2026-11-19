@@ -16,7 +16,7 @@ import { createCalculationCoordinator, parseEngineConcurrency } from './server/c
 import { readBoundedBody } from './server/request-body.js';
 import { createProgressChannels } from './server/progress-channels.js';
 import { assertRawInputUnchanged, captureRawInputIdentity } from './server/raw-input-identity.js';
-import { cachePathForRaw, readCalculationCache, writeCalculationCache } from './server/calculation-cache.js';
+import { writeCalculationCache } from './server/calculation-cache.js';
 import { createLiveEngineSessions, LiveEngineError, startLiveEngineWorker } from './server/live-engine-sessions.js';
 import { indicatorDigest, restoreRawSnapshot } from './server/live-engine-recovery.js';
 import { chartWatchOptions, preserveOpenChart } from './server/ui-live-update.js';
@@ -62,7 +62,7 @@ function calculationSourceFingerprint() {
   const hash = createHash('sha256');
   for (const file of calculationSources) {
     // Content, not mtimes or version labels: same-size edits and preserved file
-    // timestamps must invalidate both memory and disk entries. Basenames keep
+    // timestamps must invalidate an in-flight calculation. Basenames keep
     // the identity portable between real checkouts of these maintained files.
     hash.update(path.basename(file));
     hash.update('\0');
@@ -143,14 +143,11 @@ function resolveDrawingPath(item) {
   return target;
 }
 
-function calculationPath(item, request, cacheKey) {
+function calculationPath(item, request, runId) {
   const symbol = cacheSegment(item.symbol, 'unnamed-symbol');
   const timeframe = `${request.timeframe}s`;
   const direction = cacheSegment(request.direction, 'direction');
-  // Request options remain in the immutable cache key/digest; the file name
-  // stays readable because symbol, timeframe, direction, and range are already
-  // represented by the directory tree and prefix.
-  const filename = `${request.from}-${request.to}--${identityDigest(cacheKey)}.json`;
+  const filename = `${request.from}-${request.to}--${identityDigest(runId)}.json`;
   return path.join(calculationsDir, symbol, timeframe, direction, filename);
 }
 
@@ -224,7 +221,7 @@ function validLiveProof(proof, selected, tabId) {
     && ['bullish', 'bearish'].includes(request.direction) && typeof request.blueLines === 'boolean';
 }
 
-async function recoverLiveEngine({ selected, proof, tabId, workerFingerprint }) {
+async function recoverLiveEngine({ selected, proof, tabId, workerFingerprint, onProgress }) {
   if (!validLiveProof(proof, selected, tabId)) {
     throw new LiveEngineError(404, 'Run an indicator calculation with Apply in this tab before enabling automatic continuation.', 'NO_INDICATOR_CALCULATION');
   }
@@ -233,15 +230,19 @@ async function recoverLiveEngine({ selected, proof, tabId, workerFingerprint }) 
     throw new LiveEngineError(503, 'RAW changed during recovery. Retrying at the next check.', 'RAW_RETRY');
   }
   const request = proof.request;
+  const { bytes, ...identity } = current;
+  const completedSeed = (seed, request, to) => ({
+    token: seed.sessionId, fresh: { payload: seed.payload, request, to, identity },
+  });
   const runSeed = (rows, sourcePath, applied, to, rawSha256) => runIndicatorRangeCalculation({
     rows, sourcePath, from: applied.from, to, chartTimeframeSeconds: applied.chartTimeframe,
     run: (input, bounds) => seedLiveEngine({
       chartId: selected.chartId, tabId, workerFingerprint, request: applied, sourcePath,
-      args: engineCalculationArgs(input, applied, bounds), rawSha256,
+      args: engineCalculationArgs(input, applied, bounds), rawSha256, onProgress,
     }),
   });
   const decode = bytes => JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/, ''));
-  const snapshot = proof.workerFingerprint === workerFingerprint && restoreRawSnapshot(current.bytes, proof);
+  const snapshot = proof.workerFingerprint === workerFingerprint && restoreRawSnapshot(bytes, proof);
   if (snapshot) {
     const seed = await withIndicatorInputPipe(snapshot, sourcePath => runSeed(decode(snapshot), sourcePath, request, proof.to, proof.rawSha256))
       .catch(error => {
@@ -249,23 +250,28 @@ async function recoverLiveEngine({ selected, proof, tabId, workerFingerprint }) 
         return null;
       });
     if (seed?.sessionId) {
-      if (indicatorDigest(seed.payload) === proof.resultDigest) return seed.sessionId;
+      if (indicatorDigest(seed.payload) === proof.resultDigest) {
+        const currentTo = Math.floor(selected.to / request.chartTimeframe) * request.chartTimeframe;
+        if (snapshot === bytes && proof.to === currentTo) return completedSeed(seed, request, currentTo);
+        return { token: seed.sessionId };
+      }
       liveEngineSessions.discard(seed.sessionId);
     }
   }
 
   // Only this tab's applied range can initialize a replacement worker.
   // If its exact RAW prefix no longer exists, run it once on current RAW.
-  const rows = decode(current.bytes);
+  const rows = decode(bytes);
   const first = rows.find(row => row.time >= request.from);
   if (!first) {
     throw new LiveEngineError(503, 'Waiting for RAW candles at the previously applied starting time.', 'RAW_RETRY');
   }
   const from = Math.floor(first.time / request.chartTimeframe) * request.chartTimeframe;
   const to = Math.floor(rows.at(-1).time / request.chartTimeframe) * request.chartTimeframe;
-  const seed = await runSeed(rows, selected.dataPath, { ...request, from }, to, current.sha256);
+  const recoveredRequest = { ...request, from };
+  const seed = await runSeed(rows, selected.dataPath, recoveredRequest, to, current.sha256);
   if (!seed.sessionId) throw new LiveEngineError(503, 'The indicator worker is unavailable. Retrying at the next check.');
-  return seed.sessionId;
+  return completedSeed(seed, recoveredRequest, to);
 }
 
 function ensureStateDirectories() {
@@ -714,9 +720,12 @@ function localDataApi() {
       server.middlewares.use('/api/reactions/continue', async (req, res) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
+        let requestId = null;
+        const report = event => publishProgress(requestId, event);
         try {
           if (req.method !== 'POST') throw new LiveEngineError(405, 'POST is required.');
-          const { id, chartId, tabId = null, sessionId, keepAlive, proof } = await readJson(req).catch(error => { throw new LiveEngineError(400, error.message); });
+          const { id, chartId, tabId = null, sessionId, keepAlive, proof, requestId: progressId } = await readJson(req).catch(error => { throw new LiveEngineError(400, error.message); });
+          if (typeof progressId === 'string' && /^[a-zA-Z0-9-]{8,80}$/.test(progressId)) requestId = progressId;
           if (typeof id !== 'string' || typeof chartId !== 'string' || !chartId ||
               (tabId !== null && (typeof tabId !== 'string' || !/^[a-zA-Z0-9-]{8,80}$/.test(tabId))) ||
               (sessionId != null && (typeof sessionId !== 'string' || !/^[a-f0-9]{32}$/.test(sessionId)))) {
@@ -756,10 +765,10 @@ function localDataApi() {
             }
           }
           const session = { chartId, tabId, sourceFingerprint: workerFingerprint };
-          function advance(token) {
+          function advance(token, reportProgress = requestId ? report : undefined) {
             return liveEngineSessions.advance({
               ...session, sessionId: token, rawSha256: metadata.dataSha256, data: dataPath,
-            }, { validate, readAppend: base => rawStore.readAppendDelta(selected, base), publish(payload, request) {
+            }, { validate, reportProgress, readAppend: base => rawStore.readAppendDelta(selected, base), publish(payload, request) {
               const to = Math.floor(selected.to / request.chartTimeframe) * request.chartTimeframe;
               return livePublication(selected, request, to, payload, workerFingerprint, tabId);
             } });
@@ -772,6 +781,7 @@ function localDataApi() {
               res.end();
               return;
             }
+            report({ status: 'started', label: 'Validate RAW checkpoint' });
             result = await advance(sessionId);
           } catch (error) {
             const lostSession = ['LIVE_SESSION_EXPIRED', 'LIVE_SESSION_CLOSED', 'LIVE_ENGINE_TIMEOUT',
@@ -779,21 +789,32 @@ function localDataApi() {
             const staleHistory = ['ENGINE_CHANGED', 'RAW_CHANGED'].includes(error.code);
             if (!lostSession && !(proof && staleHistory)) throw error;
             const key = JSON.stringify(['live-recovery', chartId, tabId, sessionId, proof, metadata.dataSha256, workerFingerprint]);
-            const recovered = await calculationCoordinator.run(key, async () => {
-              const token = await recoverLiveEngine({ selected, proof, tabId, workerFingerprint });
+            const recovered = await calculationCoordinator.run(key, async publish => {
+              publish({ status: 'started', label: 'Recover live Engine checkpoint' });
+              const { token, fresh } = await recoverLiveEngine({ selected, proof, tabId, workerFingerprint, onProgress: publish });
               currentSessionId = token;
-              rawIdentity = undefined;
-              try { return { result: await advance(token), token }; }
+              rawIdentity = fresh?.identity;
+              try {
+                if (!fresh) return { result: await advance(token, publish), token };
+                // The successful seed already calculated through the current
+                // RAW tail in this request. Validate it before publication.
+                await validate();
+                liveEngineSessions.keepAlive({ ...session, sessionId: token });
+                const result = livePublication(selected, fresh.request, fresh.to, fresh.payload, workerFingerprint, tabId);
+                return { result, token };
+              }
               catch (recoveryError) { liveEngineSessions.discard(token); throw recoveryError; }
-            });
+            }, report);
             result = recovered.result;
             res.setHeader('X-QG-Live-Session', recovered.token);
           }
           res.setHeader('X-QG-Source-Fingerprint', sourceFingerprint);
           res.setHeader('X-QG-Calculation-Id', result.calculationId);
           res.setHeader('X-QG-Live-Proof', JSON.stringify(result.proof));
+          report({ status: 'finished', label: 'Response ready' });
           res.end(result.output);
         } catch (error) {
+          report({ status: 'failed', label: error.message });
           res.statusCode = error.status || 500;
           res.end(JSON.stringify({ error: error.message, code: error.code }));
         }
@@ -825,131 +846,91 @@ function localDataApi() {
           if (rawIdentity.sha256 !== valid.metadata?.dataSha256) {
             throw new Error('The selected RAW file changed while calculating. Apply again with the current file.');
           }
-          const dataStat = rawIdentity.stat;
           const sourceFingerprint = calculationSourceFingerprint();
           const inputScope = from === sourceFromBucket && to === sourceToBucket ? 'complete-source' : 'selected-range';
           const bridgeOutput = true;
           const calculationRequest = { timeframe, chartTimeframe, from, to, direction: body.direction, blueLines: body.blueLines, bridgeOutput };
-          const cacheKey = JSON.stringify(['engine-content-v3-range-input', sourceFingerprint, valid.chartId || valid.id, valid.id, dataStat.mtimeMs, timeframe, chartTimeframe, from, to, body.direction, body.blueLines, bridgeOutput, inputScope]);
           const liveRequested = body.liveSession === true;
           const tabId = body.tabId ?? null;
           if (tabId !== null && (typeof tabId !== 'string' || !/^[a-zA-Z0-9-]{8,80}$/.test(tabId))) {
             throw new Error('Invalid indicator tab identity');
           }
           const workerFingerprint = liveRequested && valid.chartId ? liveSourceFingerprint(sourceFingerprint) : null;
-          const executionKey = JSON.stringify([cacheKey, rawIdentity.sha256, liveRequested, workerFingerprint, tabId]);
-          let persistedCalculationPath = null;
-          if (!liveRequested) {
-            const base = calculationPath(valid, calculationRequest, cacheKey);
-            const changed = calculationPath(valid, calculationRequest, JSON.stringify([cacheKey, rawIdentity.sha256]));
-            persistedCalculationPath = cachePathForRaw(base, rawIdentity.sha256, changed);
-          }
-          let output = null;
-          let cacheSource = null;
-          const cacheReadStarted = performance.now();
-          if (persistedCalculationPath) output = readCalculationCache(persistedCalculationPath, rawIdentity.sha256);
-          if (output) {
-            cacheSource = 'file';
-          }
-          const cacheHit = Boolean(output);
-          const cacheReadMs = performance.now() - cacheReadStarted;
-          let detectorMs = 0;
-          let liveSessionId = null;
-          if (!output || workerFingerprint) {
-            const calculated = await calculationCoordinator.run(executionKey, async (publish, signal) => {
-              await assertRawInputUnchanged(sourcePath, rawIdentity);
-              let jobDetectorMs = 0;
-              let jobLiveSessionId = null;
-              const cachedOutput = persistedCalculationPath ? readCalculationCache(persistedCalculationPath, rawIdentity.sha256) : null;
-              const runCalculation = async (calculationInputPath, bounds) => {
-                const detectorStarted = performance.now();
-                publish({ status: 'started', label: 'Start Python calculation' });
+          const calculated = await calculationCoordinator.run(Symbol(), async (publish, signal) => {
+            await assertRawInputUnchanged(sourcePath, rawIdentity);
+            let jobDetectorMs = 0;
+            let jobLiveSessionId = null;
+            const runCalculation = async (calculationInputPath, bounds) => {
+              const detectorStarted = performance.now();
+              publish({ status: 'started', label: 'Start Python calculation' });
+              const args = engineCalculationArgs(calculationInputPath, calculationRequest, bounds);
+              let result;
+              if (workerFingerprint) {
                 try {
-                  const args = engineCalculationArgs(calculationInputPath, calculationRequest, bounds);
-                  let result = cachedOutput;
-                  if (workerFingerprint) {
-                    try {
-                      const seed = await seedLiveEngine({ chartId: valid.chartId, tabId, workerFingerprint,
-                        request: calculationRequest, sourcePath, args, onProgress: publish, rawSha256: rawIdentity.sha256 });
-                      jobLiveSessionId = seed.sessionId;
-                      if (!result) result = JSON.stringify(seed.payload);
-                    } catch {
-                      // The tab can still perform its manual calculation using the Engine.
-                    }
-                  }
-                  if (!result) result = await runDetector(args, publish, signal);
-                  jobDetectorMs = performance.now() - detectorStarted;
-                  publish({ status: 'completed', label: 'Start Python calculation', durationMs: jobDetectorMs });
-                  return result;
-                } catch (error) {
-                  jobDetectorMs = performance.now() - detectorStarted;
-                  throw error;
+                  const seed = await seedLiveEngine({ chartId: valid.chartId, tabId, workerFingerprint,
+                    request: calculationRequest, sourcePath, args, onProgress: publish, rawSha256: rawIdentity.sha256 });
+                  jobLiveSessionId = seed.sessionId;
+                  result = JSON.stringify(seed.payload);
+                } catch {
+                  // The tab can still perform its manual calculation using the Engine.
                 }
-              };
-              try {
-                let result;
-                if (inputScope === 'complete-source') {
-                  result = await runCalculation(sourcePath, { fromTime: from, toTime: Number(valid.to) });
-                } else {
-                  const inputPreparationStarted = performance.now();
-                  publish({ status: 'started', label: 'Filter raw range' });
-                  const rows = rawStore.read(valid.id);
-                  if (!rows) throw new Error('Candle file not found');
-                  result = await runIndicatorRangeCalculation({
-                    rows, sourcePath, from, to, chartTimeframeSeconds: chartTimeframe,
-                    onPrepared: () => publish({
-                      status: 'completed', label: 'Filter raw range',
-                      durationMs: performance.now() - inputPreparationStarted,
-                    }),
-                    run: runCalculation,
-                  });
-                }
-                if (calculationSourceFingerprint() !== sourceFingerprint) {
-                  throw new Error('Calculation sources changed while running. Apply again with the current engines.');
-                }
-                if (jobLiveSessionId && liveSourceFingerprint(sourceFingerprint) !== workerFingerprint) {
-                  liveEngineSessions.discard(jobLiveSessionId);
-                  jobLiveSessionId = null;
-                }
-                await assertRawInputUnchanged(sourcePath, rawIdentity);
-                if (liveRequested) return { output: result, detectorMs: jobDetectorMs, liveSessionId: jobLiveSessionId };
-                const published = readCalculationCache(persistedCalculationPath, rawIdentity.sha256);
-                if (!published) writeCalculationCache(persistedCalculationPath, rawIdentity.sha256, result);
-                return { output: published || result, detectorMs: jobDetectorMs, liveSessionId: jobLiveSessionId };
-              } catch (error) {
-                if (jobLiveSessionId) liveEngineSessions.discard(jobLiveSessionId);
-                throw error;
               }
-            }, (event) => publishProgress(requestId, event));
-            output = calculated.output;
-            detectorMs = calculated.detectorMs;
-            liveSessionId = calculated.liveSessionId;
+              if (!result) result = await runDetector(args, publish, signal);
+              jobDetectorMs = performance.now() - detectorStarted;
+              publish({ status: 'completed', label: 'Start Python calculation', durationMs: jobDetectorMs });
+              return result;
+            };
+            try {
+              let result;
+              if (inputScope === 'complete-source') {
+                result = await runCalculation(sourcePath, { fromTime: from, toTime: Number(valid.to) });
+              } else {
+                const inputPreparationStarted = performance.now();
+                publish({ status: 'started', label: 'Filter raw range' });
+                const rows = rawStore.read(valid.id);
+                if (!rows) throw new Error('Candle file not found');
+                result = await runIndicatorRangeCalculation({
+                  rows, sourcePath, from, to, chartTimeframeSeconds: chartTimeframe,
+                  onPrepared: () => publish({
+                    status: 'completed', label: 'Filter raw range',
+                    durationMs: performance.now() - inputPreparationStarted,
+                  }),
+                  run: runCalculation,
+                });
+              }
+              if (calculationSourceFingerprint() !== sourceFingerprint) {
+                throw new Error('Calculation sources changed while running. Apply again with the current engines.');
+              }
+              if (workerFingerprint && liveSourceFingerprint(sourceFingerprint) !== workerFingerprint) {
+                throw new Error('Live calculation sources changed while running. Apply again with the current engines.');
+              }
+              await assertRawInputUnchanged(sourcePath, rawIdentity);
+              return { output: result, detectorMs: jobDetectorMs, liveSessionId: jobLiveSessionId };
+            } catch (error) {
+              if (jobLiveSessionId) liveEngineSessions.discard(jobLiveSessionId);
+              throw error;
+            }
+          }, event => publishProgress(requestId, event));
+          const { output, detectorMs, liveSessionId } = calculated;
+          if (liveRequested) {
+            const live = livePublication(valid, calculationRequest, to, JSON.parse(output), workerFingerprint, tabId);
+            res.setHeader('X-QG-Live-Proof', JSON.stringify(live.proof));
+            res.setHeader('X-QG-Calculation-Id', live.calculationId);
+          } else {
+            const reportFile = calculationPath(valid, calculationRequest, randomUUID());
+            const reportId = calculationId(reportFile);
+            writeCalculationCache(reportFile, rawIdentity.sha256, output);
+            fs.writeFileSync(calculationMetadataPath(reportFile), JSON.stringify(
+              calculationMetadata(valid, calculationRequest, reportId),
+            ), 'utf8');
+            res.setHeader('X-QG-Calculation-Id', reportId);
           }
-           else {
-             await assertRawInputUnchanged(sourcePath, rawIdentity);
-             if (calculationSourceFingerprint() !== sourceFingerprint) {
-               throw new Error('Calculation sources changed while running. Apply again with the current engines.');
-             }
-             publishProgress(requestId, { status: 'completed', label: `Cached result (${cacheSource})` });
-           }
-           if (liveRequested) {
-             const live = livePublication(valid, calculationRequest, to, JSON.parse(output), workerFingerprint, tabId);
-             res.setHeader('X-QG-Live-Proof', JSON.stringify(live.proof));
-             res.setHeader('X-QG-Calculation-Id', live.calculationId);
-           } else {
-             const reportId = calculationId(persistedCalculationPath);
-             const metadataFile = calculationMetadataPath(persistedCalculationPath);
-             if (!fs.existsSync(metadataFile)) fs.writeFileSync(metadataFile, JSON.stringify(
-               calculationMetadata(valid, calculationRequest, reportId),
-             ), 'utf8');
-             res.setHeader('X-QG-Calculation-Id', reportId);
-           }
-           res.setHeader('X-QG-Cache', liveRequested ? 'bypass' : cacheHit ? cacheSource : 'miss');
-           res.setHeader('X-QG-Input-Scope', inputScope);
+          res.setHeader('X-QG-Cache', 'bypass');
+          res.setHeader('X-QG-Input-Scope', inputScope);
           res.setHeader('X-QG-Source-Fingerprint', sourceFingerprint);
           if (liveSessionId) res.setHeader('X-QG-Live-Session', liveSessionId);
           res.setHeader('X-QG-Detector-Ms', detectorMs.toFixed(2));
-          res.setHeader('X-QG-Cache-Read-Ms', cacheReadMs.toFixed(2));
+          res.setHeader('X-QG-Cache-Read-Ms', '0.00');
           res.setHeader('X-QG-Server-Ms', (performance.now() - requestStarted).toFixed(2));
           res.setHeader('Server-Timing', `detector;dur=${detectorMs.toFixed(2)}, total;dur=${(performance.now() - requestStarted).toFixed(2)}`);
           publishProgress(requestId, { status: 'finished', label: 'Response ready', durationMs: performance.now() - requestStarted });

@@ -164,14 +164,16 @@ export function createRawResourceStore({ rootDir }) {
   const root = path.resolve(rootDir);
   const inventoryCache = new Map();
   const recentAppends = new Map();
+  const verificationSnapshots = new WeakMap();
 
   function fileVersion(stat) {
-    return `${stat.dev}:${stat.ino}:${stat.size}:${stat.birthtimeMs}:${stat.mtimeMs}:${stat.ctimeMs}`;
+    return `${stat.dev}:${stat.ino}:${stat.size}:${stat.birthtimeNs}:${stat.mtimeNs}:${stat.ctimeNs}`;
   }
 
   function inventorySignature(dataPath, metaPath) {
-    const data = fs.statSync(dataPath);
-    const metadata = fs.existsSync(metaPath) ? fs.statSync(metaPath) : null;
+    const data = fs.statSync(dataPath, { bigint: true, throwIfNoEntry: false });
+    if (!data) return null;
+    const metadata = fs.statSync(metaPath, { bigint: true, throwIfNoEntry: false });
     return `${fileVersion(data)}:${metadata ? fileVersion(metadata) : ""}`;
   }
 
@@ -185,7 +187,7 @@ export function createRawResourceStore({ rootDir }) {
 
   function version(id) {
     const item = resolve(id);
-    const stat = item && fs.statSync(item.dataPath, { throwIfNoEntry: false });
+    const stat = item && fs.statSync(item.dataPath, { bigint: true, throwIfNoEntry: false });
     return stat ? fileVersion(stat) : null;
   }
 
@@ -288,19 +290,34 @@ export function createRawResourceStore({ rootDir }) {
     return candles;
   }
 
+  async function readForVerification(file, expectedVersion, signal) {
+    if (inventoryCache.get(file.id)?.item !== file) return null;
+    let contents;
+    try { contents = await fs.promises.readFile(file.dataPath, { signal }); }
+    catch (error) { if (error.code === "ENOENT") return null; throw error; }
+    signal.throwIfAborted();
+    const digest = createHash("sha256").update(contents).digest("hex");
+    if (digest !== file.metadata.dataSha256 || version(file.id) !== expectedVersion) return null;
+    // get() already validated the schema and chronology of this exact digest.
+    const rows = JSON.parse(contents);
+    const snapshot = {};
+    verificationSnapshots.set(snapshot, { id: file.id, version: expectedVersion, digest });
+    return { rows, snapshot };
+  }
+
   function appendKey(chartId, digest) {
     return `${chartId}:${digest}`;
   }
 
   function appendChain(chartId, base, target) {
-    const chunks = [];
+    const edges = [];
     for (let digest = target; digest !== base;) {
       const edge = recentAppends.get(appendKey(chartId, digest));
       if (!edge) return null;
-      chunks.push(edge.bytes);
+      edges.push(edge);
       digest = edge.base;
     }
-    return chunks;
+    return edges;
   }
 
   function isCurrent(file) {
@@ -310,8 +327,17 @@ export function createRawResourceStore({ rootDir }) {
 
   function readAppendDelta(file, baseSha256) {
     if (!baseSha256 || baseSha256 === file.metadata.dataSha256 || !canServeAppendSnapshot(file)) return null;
-    const chunks = appendChain(file.chartId, baseSha256, file.metadata.dataSha256);
-    return chunks && Buffer.concat(chunks.reverse());
+    const edges = appendChain(file.chartId, baseSha256, file.metadata.dataSha256);
+    return edges && Buffer.concat(edges.reverse().map(edge => edge.bytes));
+  }
+
+  function readCommittedCandleAppend(file, { id, lastCandleTime, baseSha256 }) {
+    if (!isCurrent(file)) return null;
+    const edges = appendChain(file.chartId, baseSha256, file.metadata.dataSha256);
+    const oldest = edges?.at(-1);
+    if (!oldest || oldest.previousId !== id || oldest.previousTo !== lastCandleTime) return null;
+    const bytes = Buffer.concat(edges.reverse().map(edge => edge.bytes));
+    return JSON.parse(`[${bytes.subarray(1).toString("utf8")}]`);
   }
 
   function canServeAppendSnapshot(file) {
@@ -323,7 +349,9 @@ export function createRawResourceStore({ rootDir }) {
       && isCurrent(newest.file));
   }
 
-  async function appendLatest(file, incoming, timeframeSeconds, expectedVersion, signal, { corrections = [], gapCandles = [], verification } = {}) {
+  async function appendLatest(file, incoming, timeframeSeconds, expectedVersion, signal, {
+    corrections = [], gapCandles = [], verification, verificationSnapshot,
+  } = {}) {
     const cached = inventoryCache.get(file.id);
     if (cached?.item !== file || (incoming.length && (cached.timeframeSeconds !== timeframeSeconds
       || !assertCandles(incoming, timeframeSeconds) || incoming[0].time <= file.to
@@ -336,34 +364,41 @@ export function createRawResourceStore({ rootDir }) {
       throw new Error("The gap candles do not match the RAW chronology and timeframe.");
     }
     const signature = inventorySignature(file.dataPath, file.metaPath);
-    let contents;
-    try {
-      contents = await fs.promises.readFile(file.dataPath, { signal });
-    } catch (error) {
-      if (error.code === "ENOENT") return null;
-      throw error;
-    }
     signal.throwIfAborted();
-    if (version(file.id) !== expectedVersion) return null;
+    if (cached.signature !== signature || version(file.id) !== expectedVersion) return null;
     const previous = file.metadata;
-    if (createHash("sha256").update(contents).digest("hex") !== previous.dataSha256) {
-      inventoryCache.delete(file.id);
-      return null;
-    }
-    const originalContents = contents;
     const dataChanged = Boolean(corrections.length || gapCandles.length || incoming.length);
-    contents = amendRawRows(contents, corrections, gapCandles);
-    // The exact bytes passed JSON and native grid validation in get(). Replace
-    // only the closing array bracket and keep surrounding whitespace intact.
-    const closingBracket = contents.lastIndexOf(0x5d);
-    const prefix = contents.subarray(0, closingBracket);
-    const suffix = incoming.length ? Buffer.from(`,${JSON.stringify(incoming).slice(1)}`) : Buffer.from("]");
-    const trailing = contents.subarray(closingBracket + 1);
+    const checked = verificationSnapshots.get(verificationSnapshot);
+    // A metadata-only change can use the digest already verified while reading
+    // the historical comparison input. The filesystem revision must still match.
+    const canReuseDigest = !dataChanged && checked?.id === file.id && checked.version === expectedVersion
+      && checked.digest === previous.dataSha256;
+    let originalContents;
+    if (!canReuseDigest) {
+      try { originalContents = await fs.promises.readFile(file.dataPath, { signal }); }
+      catch (error) { if (error.code === "ENOENT") return null; throw error; }
+      signal.throwIfAborted();
+      if (version(file.id) !== expectedVersion) return null;
+      if (createHash("sha256").update(originalContents).digest("hex") !== previous.dataSha256) {
+        inventoryCache.delete(file.id);
+        return null;
+      }
+    }
     const snapshot = {
       from: file.from, to: incoming.at(-1)?.time ?? file.to, count: file.count + incoming.length + gapCandles.length,
-      dataBytes: prefix.length + suffix.length + trailing.length,
-      dataSha256: createHash("sha256").update(prefix).update(suffix).update(trailing).digest("hex"),
+      dataBytes: previous.dataBytes, dataSha256: previous.dataSha256,
     };
+    let prefix, suffix, trailing;
+    if (dataChanged) {
+      const contents = amendRawRows(originalContents, corrections, gapCandles);
+      // Replace only the closing array bracket and keep surrounding whitespace intact.
+      const closingBracket = contents.lastIndexOf(0x5d);
+      prefix = contents.subarray(0, closingBracket);
+      suffix = incoming.length ? Buffer.from(`,${JSON.stringify(incoming).slice(1)}`) : Buffer.from("]");
+      trailing = contents.subarray(closingBracket + 1);
+      snapshot.dataBytes = prefix.length + suffix.length + trailing.length;
+      snapshot.dataSha256 = createHash("sha256").update(prefix).update(suffix).update(trailing).digest("hex");
+    }
     const filename = incoming.length ? buildRawFilename({ ...file, firstTime: snapshot.from, lastTime: snapshot.to }) : path.basename(file.dataPath);
     const directory = path.dirname(file.dataPath);
     const dataPath = path.join(directory, filename);
@@ -425,7 +460,7 @@ export function createRawResourceStore({ rootDir }) {
       const key = appendKey(committed.chartId, snapshot.dataSha256);
       recentAppends.delete(key);
       recentAppends.set(key, { file: { id, chartId: committed.chartId, metadata: { dataSha256: snapshot.dataSha256 } },
-        base: previous.dataSha256, bytes: suffix.subarray(0, -1) });
+        base: previous.dataSha256, previousId: file.id, previousTo: file.to, bytes: suffix.subarray(0, -1) });
       if (recentAppends.size > MAX_RECENT_APPENDS) recentAppends.delete(recentAppends.keys().next().value);
     }
     return committed;
@@ -522,6 +557,6 @@ export function createRawResourceStore({ rootDir }) {
     inventoryCache.delete(item.id);
     return true;
   }
-  return { root, resolve, version, get, write, list, read, appendLatest, readAppendDelta, canServeAppendSnapshot,
-    cut, recordFarazCoverage, remove };
+  return { root, resolve, version, get, write, list, read, readForVerification, appendLatest, readAppendDelta,
+    readCommittedCandleAppend, canServeAppendSnapshot, cut, recordFarazCoverage, remove };
 }

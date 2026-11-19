@@ -22,8 +22,8 @@ from direction_policy import policy_for
 
 
 STOP_ALL_VERSION = "1.18.6"
-STOP_ALL_IMPLEMENTATION_VERSION = "1.22.0"
-STOP_ALL_LAST_MODIFIED = "2026-11-17T20:14:54+03:30"
+STOP_ALL_IMPLEMENTATION_VERSION = "1.22.2"
+STOP_ALL_LAST_MODIFIED = "2026-11-19T01:21:11+03:30"
 
 
 SEQUENCE_PRIORITY = {
@@ -819,18 +819,25 @@ def split_a_zones_by_dominant_stops(
             stopped.append((a_owner, stop_index, stop_event))
             a_owner_identities.add(module_identity(a_owner))
 
-    stop_indices = {
-        module_identity(module): stop_index
-        for module, stop_index, _stop_event in stopped
-    }
-    stop_events = {
-        module_identity(module): stop_event
-        for module, _stop_index, stop_event in stopped
-    }
+    stopped_modules = []
+    stop_indices = {}
+    stop_events = {}
+    first_stop_events = {}
+    for module, stop_index, stop_event in stopped:
+        identity = module_identity(module)
+        stopped_modules.append((module, identity, stop_index, getattr(module, "source_time")))
+        # Dominance uses the last stop per identity. Interior-leg evidence
+        # still uses the first record for a duplicate identity.
+        stop_indices[identity] = stop_index
+        stop_events[identity] = stop_event
+        first_stop_events.setdefault(identity, stop_event)
 
     valid = []
     invalid = []
     consumed = set()
+    by_stop = sorted(enumerate(stopped_modules), key=lambda row: row[1][2])
+    next_stop = 0
+    ready_by_identity = {}
     for a_zone in sorted(
         a_zones,
         key=lambda item: (
@@ -839,42 +846,40 @@ def split_a_zones_by_dominant_stops(
         ),
     ):
         source_index = int(getattr(a_zone, "source_index"))
+        source_time = getattr(a_zone, "source_time")
         eligible = []
-        for module, stop_index, _stop_event in stopped:
-            identity = module_identity(module)
-            if (
-                getattr(module, "source_time") >= getattr(a_zone, "source_time")
-                or stop_index > source_index
-                or identity in consumed
-            ):
-                continue
-            if identity in a_owner_identities:
-                # A->A immediate re-entry is defined by chronology, not by a
-                # permanent A owner.  If the new A trigger starts only after
-                # the previous A strict stop, it belongs to a genuinely new
-                # leg and the old A must not block it.  A trigger that starts
-                # at/before that stop overlaps the closed A transition and is
-                # calculation-invalid.
-                trigger_event = getattr(
-                    a_zone, "trigger_event_time", getattr(a_zone, "source_time")
-                )
-                if trigger_event > stop_events[identity]:
+        while next_stop < len(by_stop) and by_stop[next_stop][1][2] <= source_index:
+            ordinal, row = by_stop[next_stop]
+            next_stop += 1
+            if row[1] not in consumed:
+                ready_by_identity.setdefault(row[1], []).append((ordinal, row))
+
+        # Regressing source indexes must still exclude stops after that A.
+        # Retain the original ordinal for otherwise identical dominance keys.
+        for rows in ready_by_identity.values():
+            for ordinal, (module, identity, stop_index, module_time) in rows:
+                if module_time >= source_time or stop_index > source_index:
                     continue
-            eligible.append(module)
+                # A trigger after the prior A stop belongs to a new leg.
+                if (identity in a_owner_identities
+                        and getattr(a_zone, "trigger_event_time", source_time) > stop_events[identity]):
+                    continue
+                eligible.append((module, identity, ordinal))
         if not eligible:
             valid.append(a_zone)
             continue
         # A historical high-priority E cannot own every later leg forever.
         # The newest main candle containing a strict stop owns the transition;
         # priority and numbering resolve only owners stopped in that candle.
-        dominant = max(
+        dominant, dominant_identity, _ = max(
             eligible,
-            key=lambda item: (
-                stop_indices[module_identity(item)],
-                module_priority(item),
-                int(getattr(item, "number", 0)),
-                getattr(item, "source_time"),
-                int(getattr(item, "source_index", -1)),
+            key=lambda row: (
+                stop_indices[row[1]],
+                module_priority(row[0]),
+                int(getattr(row[0], "number", 0)),
+                getattr(row[0], "source_time"),
+                int(getattr(row[0], "source_index", -1)),
+                -row[2],
             ),
         )
         crosses_dominant = strictly_beyond_boundary(
@@ -892,16 +897,13 @@ def split_a_zones_by_dominant_stops(
         # consumption below. This is provenance-based and uses no fixture data.
         interior = False
         if (
-            module_identity(dominant) not in a_owner_identities
+            dominant_identity not in a_owner_identities
             and trend_reactions is not None
             and confirmation_finder is not None
             and source_index > 0
             and getattr(a_zone, "reaction_first_time", None) is not None
         ):
-            owner_stop = next(
-                stop_event for module, stop_index, stop_event in stopped
-                if module_identity(module) == module_identity(dominant)
-            )
+            owner_stop = first_stop_events[dominant_identity]
             owner_stop_index = bisect_right(candle_times, owner_stop) - 1
             first_trend_index = bisect_right(
                 candle_times, getattr(a_zone, "reaction_first_time")
@@ -936,16 +938,17 @@ def split_a_zones_by_dominant_stops(
                         <= first_trend_index
                         and int(getattr(reaction, "break_idx")) < source_index
                         and confirmation_finder(reaction, direction)
-                        < getattr(a_zone, "source_time")
+                        < source_time
                         for reaction in trend_reactions
                     )
         if interior:
             valid.append(a_zone)
             # Continue into the common consumption logic below.
             dominant_priority = module_priority(dominant)
-            for module in eligible:
+            for module, identity, _ in eligible:
                 if module_priority(module) <= dominant_priority:
-                    consumed.add(module_identity(module))
+                    consumed.add(identity)
+                    ready_by_identity.pop(identity, None)
             continue
 
         invalid.append(a_zone)
@@ -958,12 +961,13 @@ def split_a_zones_by_dominant_stops(
             # owner until a genuinely later-stage behavior takes ownership.
             if stage_invalid_a_identities is not None:
                 stage_invalid_a_identities.add(
-                    (getattr(a_zone, "source_time"), int(getattr(a_zone, "source_index")))
+                    (source_time, source_index)
                 )
             continue
-        for module in eligible:
+        for module, identity, _ in eligible:
             if module_priority(module) <= dominant_priority:
-                consumed.add(module_identity(module))
+                consumed.add(identity)
+                ready_by_identity.pop(identity, None)
     return valid, invalid
 
 def blocked_orders_while_invalid_leg_heads_are_live(

@@ -8,14 +8,18 @@ from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal, localcontext
 from heapq import heappop, heappush, merge
+from operator import itemgetter
 from types import SimpleNamespace
-from typing import Callable, Sequence
+from typing import TYPE_CHECKING, Callable, Sequence
 
 from core_utils import as_decimal, order_identity, reaction_identity
 
+if TYPE_CHECKING:
+    from e_zone_detector import EZone
+
 ORDER_AUDIT_ENGINE_VERSION = "1.8.2"
-ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION = "1.9.1"
-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-18T17:44:08+03:30"
+ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION = "1.9.4"
+ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-19T01:18:13+03:30"
 
 
 def relabel_primary_causes(causes, labels):
@@ -550,6 +554,101 @@ def order_b_leg_identity(items: Sequence[object]) -> tuple[object, ...]:
 class OrderAuditEngineMixin:
     """Order methods shared by the accepted E lifecycle detector."""
 
+    def _initialize_order_audit(self) -> None:
+        """Initialize the per-detector ledger and its immutable chronology indexes."""
+        self._cross_order_cache: dict[
+            tuple[datetime, Decimal], tuple[int, datetime, datetime] | None
+        ] = {}
+        # Performance implementation detail: canonical opposite Reactions are
+        # immutable for one run, and their canonical Order stop depends only
+        # on that canonical reaction number/geometry plus immutable chronology.
+        # Cache only exact canonical objects; bounded/noncanonical Order_A
+        # geometry intentionally stays on the authoritative uncached path.
+        self._canonical_order_stop_cache: dict[
+            int, tuple[Decimal, int, datetime]
+        ] = {}
+        # Performance implementation detail: the initial A-owned OrderAudit
+        # ledger is immutable for one detector run. Materialize its expensive
+        # strict-stop lookup once, then keep both chronological indexes and
+        # the original physical identity semantics.
+        self._initial_order_records_cache: tuple[tuple[
+            datetime, datetime, int, object, Decimal, int, datetime,
+            tuple[int, datetime, datetime] | None,
+        ], ...] | None = None
+        self._initial_order_first_times: list[datetime] | None = None
+        self._initial_order_confirmation_times: list[datetime] | None = None
+        self._initial_order_confirmation_records: tuple[tuple[
+            datetime, datetime, int, object, Decimal, int, datetime,
+            tuple[int, datetime, datetime] | None,
+        ], ...] = ()
+        self._initial_orders_by_first_time: dict[datetime, tuple[tuple[
+            datetime, datetime, int, object, Decimal, int, datetime,
+            tuple[int, datetime, datetime] | None,
+        ], ...]] | None = None
+        self._order_candidates_cache: dict[
+            tuple[datetime, datetime | None, bool, bool, bool], tuple[OrderMatch, ...]
+        ] = {}
+        self._carried_orders_cache: dict[
+            tuple[datetime, datetime], tuple[OrderMatch, ...]
+        ] = {}
+        self._post_stop_orders_cache: dict[
+            tuple[datetime, int], list[OrderMatch]
+        ] = {}
+        self._direct_parent_stop_cache: dict[
+            tuple[datetime, datetime | None, bool, bool, datetime | None],
+            tuple[int, object, datetime] | None,
+        ] = {}
+        self.order_audit: dict[tuple[int, int], dict[str, object]] = {}
+        # Performance implementation detail: ``order_audit`` remains the
+        # authoritative accepted ledger and preserves insertion/provenance
+        # semantics. This secondary chronology index exists only to avoid a
+        # full ledger scan when a parent can use only Orders confirmed after
+        # its strict stop.
+        self._order_audit_confirmation_index: list[
+            tuple[datetime, int, int]
+        ] = []
+        self._post_stop_sorted_audit = None
+        self._post_stop_pending: list[tuple[datetime, int, int]] = []
+        self._trend_first_times = [
+            self._reaction_first_time(item) for item in self.trend_reactions
+        ]
+        self._trend_confirmations = [
+            self._confirmation_for(item, self.direction)
+            for item in self.trend_reactions
+        ]
+        self._opposite_first_times = [
+            self._reaction_first_time(item) for item in self.opposite_reactions
+        ]
+        self._opposite_confirmations = [
+            self._confirmation(item) for item in self.opposite_reactions
+        ]
+        self._trend_by_confirmation = sorted(
+            zip(
+                self._trend_confirmations,
+                self._trend_first_times,
+                self.trend_reactions,
+            ),
+            key=lambda item: item[0],
+        )
+        self._trend_confirmation_times = [item[0] for item in self._trend_by_confirmation]
+        self._opposite_reset_times_by_first: dict[int, list[datetime]] = {}
+        for reset in self.opposite_resets:
+            self._opposite_reset_times_by_first.setdefault(
+                int(getattr(reset, "from_first_idx")), []
+            ).append(self._reset_time(reset))
+        self._opposite_by_first_index = {
+            int(getattr(item, "first_idx")): item
+            for item in self.opposite_reactions
+        }
+        # Performance implementation detail: retain the first canonical
+        # position for each physical identity. Legacy linear searches used
+        # ``next(...)``, so first-win semantics are preserved intentionally.
+        self._opposite_identity_position: dict[tuple[int, int], int] = {}
+        for position, item in enumerate(self.opposite_reactions):
+            self._opposite_identity_position.setdefault(
+                reaction_identity(item), position
+            )
+
     def _order_stop(
         self, number: int, reaction: object, context_start: datetime | None = None,
     ) -> tuple[Decimal, int, datetime]:
@@ -1012,7 +1111,10 @@ class OrderAuditEngineMixin:
         item = (confirmation, first_index, break_index)
         position = bisect_right(self._order_audit_confirmation_index, item)
         self._order_audit_confirmation_index.insert(position, item)
-        self._post_stop_sorted_audit = None
+        if isinstance(self._post_stop_sorted_audit, dict):
+            self._post_stop_pending.append(item)
+        else:
+            self._post_stop_sorted_audit = None
 
 
     def _clear_order_audit(self) -> None:
@@ -1033,6 +1135,7 @@ class OrderAuditEngineMixin:
     def _invalidate_post_stop_order_cache(self) -> None:
         self._post_stop_orders_cache.clear()
         self._post_stop_sorted_audit = None
+        self._post_stop_pending.clear()
 
 
     def register_order_b_reset_legs(
@@ -1782,9 +1885,10 @@ class OrderAuditEngineMixin:
     def _iter_post_stop_accepted_orders(self, parent, parent_stop):
         """Yield accepted Orders in the existing exact order, only as consumed.
 
-        Geometry indexes are subordinate to the accepted ledger. New physical
-        identities invalidate the audit view; cause-only edits cannot change
-        this use route. Hard-reset eligibility is evaluated at query time.
+        Geometry indexes are scoped to this detector. Appended physical Orders
+        extend the audit view; ledger rebuilds and removals invalidate it.
+        Cause-only changes do not affect geometry. Reset eligibility is
+        evaluated at query time.
         """
         key = lambda item: (item[6][2], item[2], -int(getattr(item[1], "first_idx")))
         native_timezone = self.range_start.tzinfo
@@ -1818,29 +1922,33 @@ class OrderAuditEngineMixin:
                     matches = [self._initial_record_match(record, ("accepted-live",)) for record in records]
                     if not all(native_match(match) for match in matches):
                         raise ValueError("Non-native initial Order geometry.")
-                    initial = sorted((match for match in matches
+                    ordered = sorted((match for match in matches
                                       if match[6] is not None and match[6][2] > match[2]), key=key)
-                    initial = initial, [item[6][2] for item in initial]
+                    # This side of the merge is fixed for the detector's
+                    # lifetime, even when new Orders invalidate the audit view.
+                    geometry = {}
+                    for match in ordered:
+                        identity = reaction_identity(match[1])
+                        events = match[6][2], match[2]
+                        if geometry.setdefault(identity, events) != events:
+                            raise ValueError("Conflicting initial Order geometry.")
+                    initial = ordered, [item[6][2] for item in ordered], geometry
             except Exception:
                 initial = False
             self._post_stop_sorted_initial = initial
         if initial is False:
             return iter(self._post_stop_accepted_orders_for_parent(parent, parent_stop))
-        audit = getattr(self, "_post_stop_sorted_audit", None)
-        if audit is None:
+        audit = self._post_stop_sorted_audit
+        pending = self._post_stop_pending
+        if audit is None or pending:
             try:
-                # Validate once per ledger generation without leaking Decimal
-                # flags. Partial/malformed rows use the complete query, whose
-                # confirmation filter and short-circuit order are contractual.
+                # Validate new geometry under a local Decimal context. A
+                # non-native row falls back to the complete authoritative scan.
+                indexes = self._order_audit_confirmation_index if audit is None else pending
                 with localcontext():
                     matches = []
-                    initial_geometry = {}
-                    for match in initial[0]:
-                        identity = reaction_identity(match[1])
-                        geometry = match[6][2], match[2]
-                        if initial_geometry.setdefault(identity, geometry) != geometry:
-                            raise ValueError("Conflicting initial Order geometry.")
-                    for indexed_confirmation, first, last in self._order_audit_confirmation_index:
+                    initial_geometry = initial[2]
+                    for indexed_confirmation, first, last in indexes:
                         if not native_time(indexed_confirmation) or type(first) is not int or type(last) is not int:
                             raise ValueError("Non-native confirmation index.")
                         entry = self.order_audit.get((first, last))
@@ -1867,30 +1975,46 @@ class OrderAuditEngineMixin:
                                 # A stream merge cannot infer that query-specific
                                 # rank from the winning audit row alone.
                                 raise ValueError("Conflicting accepted Order geometry.")
-                            matches.append(match)
-                    audit = sorted(matches, key=key)
-                    audit = audit, [item[6][2] for item in audit]
+                            # The confirmation index owns the stable order
+                            # of otherwise equal accepted-stream keys.
+                            matches.append(((*key(match), first, last), match))
+                    audit = {} if audit is None else audit.copy()
+                    if matches:
+                        by_key = itemgetter(0)
+                        matches.sort(key=by_key)
+                        tier = len(matches).bit_length()
+                        # Merge equally sized tiers instead of copying the
+                        # entire ledger on each append. Published runs remain
+                        # immutable for any already-issued iterator.
+                        while tier in audit:
+                            older, _ = audit.pop(tier)
+                            matches = list(merge(older, matches, key=by_key))
+                            tier = len(matches).bit_length()
+                        audit[tier] = matches, [row[0][0] for row in matches]
             except Exception:
                 audit = False
+            pending.clear()
             self._post_stop_sorted_audit = audit
         if audit is False:
             return iter(self._post_stop_accepted_orders_for_parent(parent, parent_stop))
-        initial, initial_times = initial
-        audit, audit_times = audit
+        initial, initial_times, _ = initial
         reset_position = bisect_right(self._sequence_reset_times, parent_stop)
         reset = self._sequence_reset_times[reset_position] if reset_position < len(self._sequence_reset_times) else None
 
-        def eligible(items, times):
+        def eligible(items, times, *, audit_rows=False):
             for position in range(bisect_right(times, parent_stop), len(items)):
-                item = items[position]
+                entry = items[position]
+                item = entry[1] if audit_rows else entry
                 if reset is not None and item[6][2] >= reset:
                     break
                 if item[2] > parent_stop:
-                    yield item
+                    yield entry
 
         def accepted():
+            audit_runs = [eligible(rows, times, audit_rows=True) for rows, times in audit.values()]
+            audit_matches = (row[1] for row in merge(*audit_runs, key=itemgetter(0)))
             seen = set()
-            for match in merge(eligible(initial, initial_times), eligible(audit, audit_times), key=key):
+            for match in merge(eligible(initial, initial_times), audit_matches, key=key):
                 identity = reaction_identity(match[1])
                 if identity not in seen:
                     seen.add(identity)
@@ -2399,6 +2523,32 @@ def order_identity_is_internal(item, internal_identities):
 class SOrderAuditMixin:
     """Physical Order_A and shared Order stop operations for S."""
 
+    def _initialize_stopped_a_order_lookup(self) -> None:
+        """Index the native opposite Reaction stream for stopped-A gates."""
+        self._opposite_by_first_index = {
+            int(getattr(item, "first_idx")): (number, item)
+            for number, item in enumerate(self.opposite_reactions, start=1)
+        }
+        # Performance implementation detail: the authoritative Order chronology
+        # is immutable for this detector run. Build its exact sort order once and cache
+        # the first qualifying canonical Order for each stopped-A gate.
+        self._opposite_order_matches = sorted(
+            (
+                self._reaction_confirmation_time(item, self.order_direction),
+                int(getattr(item, "first_idx")),
+                int(getattr(item, "break_idx")),
+                number,
+                item,
+            )
+            for number, item in enumerate(self.opposite_reactions, start=1)
+        )
+        self._opposite_order_confirmation_times = [
+            item[0] for item in self._opposite_order_matches
+        ]
+        self._first_canonical_order_cache: dict[
+            datetime, tuple[int, object, datetime] | None
+        ] = {}
+
     def _first_order_after(
         self, a_stop_event_time: datetime
     ) -> tuple[int, object, datetime] | None:
@@ -2411,8 +2561,7 @@ class SOrderAuditMixin:
         otherwise use reaction number zero (no invented public Reaction).
         The same immutable chosen physical identity is shared by S and E audit.
         """
-        canonical = self._order_matches_after(a_stop_event_time)
-        native = canonical[0] if canonical else None
+        native = self._first_canonical_order_after(a_stop_event_time)
         if self.initial_order_geometry is None:
             return native
 
@@ -2455,27 +2604,26 @@ class SOrderAuditMixin:
         return native
 
 
-    def _order_matches_after(
+    def _first_canonical_order_after(
         self, a_stop_event_time: datetime
-    ) -> list[tuple[int, object, datetime]]:
-        """Expose canonical opposite-Order chronology without changing ownership."""
-        cached = self._order_matches_after_cache.get(a_stop_event_time)
-        if cached is not None:
-            return list(cached)
+    ) -> tuple[int, object, datetime] | None:
+        """Find the first confirmed native Order whose First can follow this gate."""
+        cache = self._first_canonical_order_cache
+        if a_stop_event_time in cache:
+            return cache[a_stop_event_time]
 
         gate_index = self._main_index(a_stop_event_time)
         position = bisect_right(
             self._opposite_order_confirmation_times, a_stop_event_time
         )
-        matches = tuple(
-            (number, reaction, confirmation)
-            for confirmation, first_index, _break, number, reaction
-            in self._opposite_order_matches[position:]
-            if first_index >= gate_index
-        )
-        self._order_matches_after_cache[a_stop_event_time] = matches
-        return list(matches)
-
+        match = None
+        for index in range(position, len(self._opposite_order_matches)):
+            confirmation, first_index, _, number, reaction = self._opposite_order_matches[index]
+            if first_index >= gate_index:
+                match = number, reaction, confirmation
+                break
+        cache[a_stop_event_time] = match
+        return match
 
     def _record_a_order_audit(
         self,

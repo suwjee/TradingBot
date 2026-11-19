@@ -1,13 +1,3 @@
-const CONTEXT_KEYS = [
-  "fileId",
-  "symbol",
-  "chartTimeframe",
-  "analysisTimeframe",
-  "from",
-  "to",
-  "direction",
-];
-
 export function restoreIndicatorLifecycle(saved) {
   return {
     form: saved?.form && typeof saved.form === "object" ? saved.form : null,
@@ -16,19 +6,6 @@ export function restoreIndicatorLifecycle(saved) {
     active: false,
     resultContext: null,
   };
-}
-
-export function appliedContextMatches(applied, next) {
-  return Boolean(applied && next)
-    && CONTEXT_KEYS.every((key) => applied[key] === next[key]);
-}
-
-export function canReuseAppliedCalculation(applied, next, currentSourceFingerprint) {
-  const hasIdentity = value => typeof value === "string" && value.trim().length > 0;
-  return appliedContextMatches(applied, next)
-    && hasIdentity(applied.sourceFingerprint)
-    && hasIdentity(currentSourceFingerprint)
-    && applied.sourceFingerprint === currentSourceFingerprint;
 }
 
 export function captureCalculationInputs({ file, chartTimeframe, raw, data, settings,
