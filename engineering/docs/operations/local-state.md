@@ -9,7 +9,7 @@ scope:
   - sessions
   - cache
   - raw
-last_modified_at: 2026-09-30T16:03:01+03:30
+last_modified_at: 2026-11-19T00:09:15+03:30
 ---
 
 # TradingBot Local State
@@ -73,7 +73,7 @@ Filesystem persistence under the Chart cache owner currently includes durable co
 - indicator calculation results;
 - indicator templates.
 
-These categories have different recovery properties. Saved drawings and templates can contain user-created state and are not presumed reproducible. Calculation results are caches, but they remain valid only under the owning input/Source identity contract.
+These categories have different recovery properties. Saved drawings and templates can contain user-created state and are not presumed reproducible. Saved calculation results are report snapshots tied to their original input and Source. Apply and Live updates compute a fresh result from RAW.
 
 Do not duplicate detailed interaction semantics here. Use [UI/UX Reference](../architecture/ui-ux-reference.md).
 
@@ -154,7 +154,7 @@ For every cache class determine:
 7. whether it has verification/evidence value;
 8. Git/release classification from the owning policy.
 
-The Current Chart cache subtree is intentionally mixed: calculation results are rebuildable under the correct context, while drawings/templates can contain durable user-created state. A blanket cache-directory deletion is therefore unsafe.
+The Current Chart cache subtree is intentionally mixed: the calculation directory contains review snapshots and drawings or templates can contain durable user-created state. A blanket cache-directory deletion is therefore unsafe.
 
 Browser storage, browser Cache Storage, and IndexedDB also require scoped ownership-aware clearing. Use the application's supported clear behavior where applicable instead of deleting unrelated browser data.
 

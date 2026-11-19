@@ -16,7 +16,7 @@ function createScheduler(t, options = {}) {
     render: (state) => { view = state; },
   });
   t.after(scheduler.stop);
-  scheduler.contextChanged("raw-chart-a");
+  scheduler.contextChanged("raw-chart-a", options.sourceTimeframeSeconds);
   return { scheduler, requests, get view() { return view; } };
 }
 
@@ -81,11 +81,25 @@ test("Verify All works while polling is off and reports an unavailable connectio
   assert.equal(fixture.view.remainingMs, null);
 });
 
+test("Verify All with realtime disabled leaves automatic indicator calculation paused", async (t) => {
+  const fixture = createScheduler(t);
+  fixture.scheduler.setIndicatorCalculation(true);
+  await settle();
+  fixture.scheduler.stop();
+  fixture.scheduler.verifyAll();
+  const request = fixture.requests.at(-1);
+  assert.equal(request.verifyAll, true);
+  assert.equal(request.indicatorCalculation, false);
+  assert.equal(request.indicatorSignal, undefined);
+  await settle();
+});
+
 test("every interval polls at the local wall-clock boundary plus two seconds", async (t) => {
   const start = new Date(2026, 10, 13, 6, 12, 37).getTime();
   const minute = (hour, minute, second) => new Date(2026, 10, 13, hour, minute, second).getTime();
   const fixture = createScheduler(t, { start });
   for (const [interval, expected] of [
+    [1_000, minute(6, 12, 38)], [5_000, minute(6, 12, 42)],
     [30_000, minute(6, 13, 2)], [60_000, minute(6, 13, 2)],
     [120_000, minute(6, 14, 2)], [180_000, minute(6, 15, 2)],
     [300_000, minute(6, 15, 2)], [600_000, minute(6, 20, 2)], [900_000, minute(6, 15, 2)],
@@ -106,6 +120,96 @@ test("every interval polls at the local wall-clock boundary plus two seconds", a
   await settle();
   t.mock.timers.tick(60_000);
   assert.equal(Date.now(), minute(6, 14, 2));
+  assert.equal(fixture.requests.length, 2);
+});
+
+test("a RAW chart starts at one minute when legal and rejects shorter-than-native polling", async (t) => {
+  const fixture = createScheduler(t, { sourceTimeframeSeconds: 5 });
+  assert.equal(fixture.view.intervalMs, 60_000);
+  fixture.scheduler.setInterval(1_000);
+  assert.equal(fixture.view.intervalMs, 60_000);
+  fixture.scheduler.setInterval(5_000);
+  assert.equal(fixture.view.intervalMs, 5_000);
+  t.mock.timers.tick(2_000);
+  assert.equal(fixture.requests[0].pollIntervalMs, 5_000);
+  await settle();
+});
+
+test("polling offers the exact native interval when the source changes or exceeds all presets", async (t) => {
+  const fixture = createScheduler(t, { sourceTimeframeSeconds: 17, start: new Date(2026, 10, 13).getTime() });
+  assert.deepEqual(fixture.view.intervals.find(({ ms }) => ms === 17_000), {
+    ms: 17_000, label: "17s", disabled: false,
+  });
+  assert.equal(fixture.view.intervals.find(({ ms }) => ms === 5_000).disabled, true);
+  fixture.scheduler.setInterval(17_000);
+  assert.equal(fixture.view.intervalMs, 17_000);
+
+  fixture.scheduler.contextChanged("raw-chart-b", 3_600);
+  assert.equal(fixture.view.intervalMs, 3_600_000);
+  assert.equal(fixture.view.intervals.some(({ ms }) => ms === 17_000), false);
+  assert.deepEqual(fixture.view.intervals.filter(({ disabled }) => !disabled), [
+    { ms: 3_600_000, label: "1h", disabled: false },
+  ]);
+  fixture.scheduler.setInterval(900_000);
+  assert.equal(fixture.view.intervalMs, 3_600_000);
+  t.mock.timers.tick(2_000);
+  assert.equal(fixture.requests[0].pollIntervalMs, 3_600_000);
+  await settle();
+});
+
+test("coverage follows verified candles independently of completed request packets", async (t) => {
+  let finish;
+  const fixture = createScheduler(t, {
+    runUpdate({ reportProgress, reportVerification }) {
+      reportProgress(85);
+      reportVerification?.({ status: "pending", verifiedCount: 0, totalCount: 2_000 });
+      return new Promise(resolve => { finish = resolve; });
+    },
+  });
+  assert.equal(fixture.view.verificationPercent, null);
+  t.mock.timers.tick(2_000);
+  assert.equal(fixture.view.verificationPercent, 0);
+  assert.equal(fixture.view.progress, 85);
+  finish({ verification: { status: "pending", verifiedCount: 1_999, totalCount: 2_000 } });
+  await settle();
+  assert.equal(fixture.view.verificationPercent, 99);
+  assert.equal(fixture.view.progress, 100);
+  assert.equal(fixture.view.remainingMs, 60_000);
+  fixture.scheduler.verifyAll();
+  finish({ verification: { status: "unavailable", verifiedCount: 2_000, totalCount: 2_000 } });
+  await settle();
+  assert.equal(fixture.view.verificationPercent, 100);
+  assert.equal(fixture.view.progress, null);
+  fixture.scheduler.verifyAll();
+  finish({ verification: { status: "verified", verifiedCount: 0, totalCount: 0 } });
+  await settle();
+  assert.equal(fixture.view.verificationPercent, null);
+});
+
+test("stored coverage appears on load and follows replay for the current chart", (t) => {
+  const fixture = createScheduler(t);
+  const { scheduler } = fixture;
+  scheduler.contextChanged("saved", 5, { status: "pending", verifiedCount: 6, totalCount: 10 });
+  assert.equal(fixture.view.verificationPercent, 60);
+  scheduler.useStoredVerification("previous", { verifiedCount: 2, totalCount: 2 });
+  assert.equal(fixture.view.verificationPercent, 60);
+  scheduler.useStoredVerification("saved", { status: "pending", verifiedCount: 9, totalCount: 12 });
+  assert.equal(fixture.view.verificationPercent, 75);
+});
+
+test("a slow one-second check keeps RAW acquisition single-flight", async (t) => {
+  let finish;
+  const fixture = createScheduler(t, { sourceTimeframeSeconds: 1,
+    runUpdate: () => new Promise(resolve => { finish = resolve; }),
+  });
+  fixture.scheduler.setInterval(1_000);
+  t.mock.timers.tick(1_000);
+  t.mock.timers.tick(7_500);
+  assert.equal(fixture.requests.length, 1);
+  finish("Checked for new candles.");
+  await settle();
+  assert.equal(fixture.view.remainingMs, 500);
+  t.mock.timers.tick(500);
   assert.equal(fixture.requests.length, 2);
 });
 
@@ -320,6 +424,49 @@ test("candle countdown and verification proceed during deferred indicator comple
   completeIndicator({ status: "The canceled indicator updated." });
   await settle();
   assert.doesNotMatch(fixture.view.status, /The canceled indicator updated/);
+});
+
+test("indicator progress follows the running operation through newer candle checks", async (t) => {
+  const finishChecks = [];
+  const fixture = createScheduler(t, {
+    sourceTimeframeSeconds: 1,
+    runUpdate: () => ({ indicatorUpdate: new Promise(resolve => { finishChecks.push(resolve); }) }),
+  });
+  fixture.scheduler.setInterval(1_000);
+  fixture.scheduler.setIndicatorCalculation(true);
+  const first = fixture.requests[0].reportIndicatorProgress;
+  first?.({ operationId: "one", outcome: "started", percent: 0, stage: "Preparing" });
+  first?.({ operationId: "one", percent: 47, stage: "Calculating" });
+  assert.equal(fixture.view.indicatorProgress?.percent, 47);
+  assert.equal(fixture.view.indicatorProgress.stage, "Calculating");
+  await settle();
+
+  t.mock.timers.tick(1_000);
+  await settle();
+  assert.equal(fixture.view.indicatorProgress.percent, 47);
+  const second = fixture.requests[1].reportIndicatorProgress;
+  second({ operationId: "two", percent: 91, stage: "Unowned progress" });
+  assert.equal(fixture.view.indicatorProgress.percent, 47);
+  first({ operationId: "one", percent: 100, stage: "Finalizing" });
+  assert.equal(fixture.view.indicatorProgress.percent, 99);
+  first({ operationId: "one", outcome: "applied", stage: "Complete" });
+  assert.equal(fixture.view.indicatorProgress.percent, 100);
+
+  second({ operationId: "two", outcome: "started", percent: 0, stage: "Preparing" });
+  assert.equal(fixture.view.indicatorProgress.percent, 0);
+  first({ operationId: "one", outcome: "deferred", stage: "Old calculation" });
+  assert.equal(fixture.view.indicatorProgress.stage, "Preparing");
+  second({ operationId: "two", outcome: "deferred", stage: "Retrying" });
+  assert.equal(fixture.view.indicatorProgress.percent, null);
+  assert.equal(fixture.view.indicatorProgress.stage, "Retrying");
+  second({ operationId: "two", percent: 90, stage: "Outdated progress" });
+  assert.equal(fixture.view.indicatorProgress.stage, "Retrying");
+  fixture.scheduler.setIndicatorCalculation(false);
+  assert.equal(fixture.view.indicatorProgress, null);
+  second({ operationId: "two", outcome: "started", percent: 0, stage: "Old calculation" });
+  assert.equal(fixture.view.indicatorProgress, null);
+  finishChecks.forEach(resolve => resolve());
+  await settle();
 });
 
 test("a polling failure is displayed and subsequent checks continue until disabled", async (t) => {

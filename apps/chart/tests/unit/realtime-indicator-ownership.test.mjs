@@ -3,17 +3,20 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import vm from "node:vm";
 import { readRealtimeUpdate } from "../../src/features/realtime-chart.js";
+import { startLiveIndicatorProgress } from "../../src/features/indicator-live-progress.js";
 
 const main = await readFile(new URL("../../src/main.js", import.meta.url), "utf8");
 const indicatorFlow = main.slice(main.indexOf("let chartUpdateRunning = false;") + "let chartUpdateRunning = false;".length,
   main.indexOf("function moveRealtimeIndicatorPreferences("));
 const updateFlow = main.slice(main.indexOf("async function runRealtimeChartUpdate("),
   main.indexOf("function setUpdateButtonState("));
+const inventoryFlow = main.slice(main.indexOf("function refreshSymbolInventory("), main.indexOf("async function loadFile("));
 const tabId = "same-tab-fixture";
 const proof = to => ({ chartId: "chart", tabId, to,
   request: { from: 100, to: 200, direction: "bearish", timeframe: 30, chartTimeframe: 30, blueLines: true, bridgeOutput: true } });
 
-function fixture({ candles = [{ time: 330 }], corrections = [], onContinue, nextRaw, marketAvailable = true, historyPending = false, alertsReady = false } = {}) {
+function fixture({ candles = [{ time: 330 }], corrections = [], onContinue, nextRaw, marketAvailable = true, historyPending = false,
+  alertsReady = false, connectProgress = () => null, now = () => performance.now() } = {}) {
   const originalResult = { directions: { bearish: {} } };
   const state = {
     file: { id: "old.json", chartId: "chart", to: 300, timeframe: "5S", metadata: { dataSha256: "old" } },
@@ -42,7 +45,9 @@ function fixture({ candles = [{ time: 330 }], corrections = [], onContinue, next
   };
   const noop = () => {};
   const sandbox = vm.createContext({
-    state, AbortController, AbortSignal, performance, readRealtimeUpdate, symbolLoadController: null, symbolLoadRevision: 1, liveIndicatorTabId: tabId,
+    state, AbortController, AbortSignal, performance: { now }, readRealtimeUpdate, symbolLoadController: null, symbolLoadRevision: 1,
+    liveIndicatorTabId: tabId, createUniqueId: () => "live-progress-fixture",
+    startLiveIndicatorProgress: options => startLiveIndicatorProgress({ ...options, connect: connectProgress }),
     alertLiveReady: alertsReady, formatSymbolWithBroker: file => file.id,
     alertController: {
       baseline: time => alertPublications.push({ kind: "baseline", time }),
@@ -107,6 +112,38 @@ test("an accepted continuation publishes the result to the alert monitor with th
   assert.deepEqual(chart.alertPublications, [{ kind: "advance", result: chart.payload, time: 330, symbol: "new.json" }]);
 });
 
+test("inventory applies a proven RAW rename as an append and immediately requests indicator continuation", async () => {
+  const previous = { id: "old.json", chartId: "chart", count: 1, from: 300, to: 300, metadata: { dataSha256: "old" } };
+  const coverage = { verifiedCount: 1, totalCount: 2, status: "pending" };
+  const updated = { ...previous, id: "new.json", count: 2, to: 330,
+    metadata: { dataSha256: "new", candleVerification: coverage } };
+  const state = { file: previous, raw: [{ time: 300 }], inventory: [previous] };
+  const requests = [], actions = [];
+  const sandbox = vm.createContext({
+    state, AbortController, AbortSignal, setTimeout, clearTimeout, inventoryRefreshPromise: null,
+    realtimeUpdateOwner: null, indicatorCalculationOwner: null, realtimePublicationRevision: 0,
+    symbolLoadRevision: 0, symbolLoadController: null, inventorySignature: JSON.stringify, candleExportController: null,
+    renderSymbolList() {}, log: { chart: { info() {}, warn() {} } },
+    realtimeChart: { requestIndicatorUpdate: () => actions.push("continue"),
+      useStoredVerification: (chartId, value) => actions.push([chartId, value]) },
+    applyRealtimeCandles(file, candles) { actions.push("append"); state.file = file; state.raw.push(...candles); },
+    loadFile: () => actions.push("reload"),
+    fetch: async (url, options) => {
+      if (url === "/api/symbols") return { ok: true, json: async () => [updated] };
+      requests.push([url, JSON.parse(options.body)]);
+      return { ok: true, json: async () => ({ file: updated, candles: [{ time: 330 }] }) };
+    },
+  });
+  vm.runInContext(inventoryFlow, sandbox);
+  await vm.runInContext("refreshSymbolInventory()", sandbox);
+  assert.deepEqual(requests, [["/api/candle-files/realtime", {
+    id: "old.json", chartId: "chart", lastCandleTime: 300, baseSha256: "old", phase: "replay",
+  }]]);
+  assert.deepEqual(actions, ["append", ["chart", coverage], "continue"]);
+  assert.equal(state.file, updated);
+  assert.equal(state.raw.at(-1).time, 330);
+});
+
 test("a historical repair refreshes the alert baseline without evaluating a trigger", async () => {
   const chart = fixture({ alertsReady: true, candles: [], corrections: [{ time: 300 }] });
   chart.state.indicator.resultContext.to = 300;
@@ -142,6 +179,42 @@ test("a poll displays appended rows before requesting historical verification", 
   assert.equal(chart.requests[1][1].id, "new.json");
   assert.equal(chart.requests[1][1].lastCandleTime, 330);
   assert.equal(chart.state.raw.at(-1).time, 330);
+});
+
+test("rapid polls request latest candles every time and limit automatic history work", async () => {
+  let time = 0;
+  const chart = fixture({ now: () => time, nextRaw: state => ({ file: { ...state.file, count: state.raw.length },
+    candles: [], verification: { status: "pending", verifiedCount: 1, totalCount: 2 } }) });
+  const coverage = [];
+  for (time of [0, 1_000, 5_000, 30_000]) {
+    await chart.update({ indicatorCalculation: false, pollIntervalMs: 1_000, reportVerification: value => coverage.push(value) });
+  }
+  assert.deepEqual(chart.requests.map(([, body]) => [body.phase, body.historyPacketLimit]), [
+    ["latest", undefined], ["history", 1], ["latest", undefined], ["latest", undefined], ["latest", undefined], ["history", 1],
+  ]);
+  assert.equal(coverage.length, 6);
+  await chart.update({ indicatorCalculation: false, pollIntervalMs: 1_000, verifyAll: true });
+  assert.equal(chart.requests.at(-1)[1].verifyAll, true);
+  assert.equal(chart.requests.at(-1)[1].historyPacketLimit, undefined);
+});
+
+test("indicator progress remains below 100 until the current result passes chart validation", async () => {
+  const events = [];
+  let respond;
+  const source = { close() {} };
+  const chart = fixture({ connectProgress: () => source, onContinue: () => new Promise(resolve => { respond = resolve; }) });
+  const poll = chart.update({ reportIndicatorProgress: event => events.push(event) });
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(chart.requests.at(-1)[1].requestId, "live-progress-fixture");
+  source.onmessage({ data: JSON.stringify({ status: "completed", label: "Bullish lifecycle ready", completedStages: 3, totalStages: 6 }) });
+  assert.equal(events.at(-1).percent, 50);
+  assert.equal(chart.state.indicator.results, chart.originalResult);
+  respond({ ok: true, status: 200, json: async () => chart.payload,
+    headers: new Map([["X-QG-Source-Fingerprint", "source"], ["X-QG-Live-Proof", JSON.stringify(proof(330))]]) });
+  await poll;
+  assert.equal(events.at(-1).percent, 100);
+  assert.equal(events.at(-1).outcome, "applied");
+  assert.equal(chart.state.indicator.results, chart.payload);
 });
 
 test("latest candles can start a continuation while historical verification is pending", async () => {

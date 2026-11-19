@@ -84,13 +84,13 @@
   font: inherit;
 }
 
-.realtime-chart-interval {
+.realtime-chart-control {
   display: flex;
   align-items: center;
   gap: var(--ui-space-2);
 }
 
-.realtime-chart-interval [data-poll-progress] {
+.realtime-chart-control [role="progressbar"] {
   min-width: 4ch;
   color: var(--ui-text-secondary);
   font-size: var(--ui-text-sm);
@@ -114,6 +114,11 @@
 .realtime-chart-verification [data-state="unavailable"] i { background: var(--ui-danger); }
 .realtime-chart-verification button { flex: none; }
 
+.realtime-chart-verification [data-verification-value] {
+  color: var(--ui-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
 .realtime-chart-option .master-switch {
   cursor: pointer;
 }
@@ -132,6 +137,7 @@
 }
 
 .realtime-chart-feedback,
+.realtime-chart-detail,
 .realtime-chart-popover > .realtime-chart-error {
   color: var(--ui-text-secondary);
   font-size: var(--ui-text-sm);

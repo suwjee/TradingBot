@@ -10,7 +10,7 @@ scope:
   - engine
   - runtime-boundaries
   - state-and-transport
-last_modified_at: 2026-11-18T17:49:49+03:30
+last_modified_at: 2026-11-19T03:41:13+03:30
 ---
 
 # TradingBot Technical Architecture
@@ -91,14 +91,14 @@ This path does not perform trading calculation.
 5. Vite launches the Python bridge as a child process with the current Engine component paths and calculation arguments.
 6. The bridge loads the configured Engine components, reads the entire supplied input, normalizes chronology/candles, runs the required calculation/lifecycle pipeline, finalizes visibility/state, and serializes the requested direction output.
 7. Python writes machine-readable progress events to stderr and the final JSON result to stdout.
-8. Vite may persist the serialized result under its calculation cache and returns the same finalized result to Chart.
+8. Vite returns the freshly serialized result to Chart and can retain a snapshot for Manual Review.
 9. Chart renders the result and may open the Manual Review surface using the persisted calculation identity.
 
-A manual Apply can start a dedicated Engine session for its selected start, direction and analysis timeframe. The worker verifies the original RAW byte prefix and parses newly appended candle rows. It retains Reaction and Reset search, cross-direction ownership, Blue/A/S/E, Order and StopAll evidence, and primary cycles. A provisional analysis candle is evaluated separately from the committed Reaction cursor. If a new event changes earlier ownership, the affected calculation resumes from the earliest dependent state. A completed independent trend regime can reuse its finalized result. The Bridge publishes the same indicator response contract as a manual calculation.
+A manual Apply can start a dedicated Engine session scoped to its selected start, direction and analysis timeframe. The worker retains epoch-aligned RAW input buckets and append lineage. A verified append updates only affected input buckets, including the provisional tail. It builds fresh market chronology and reruns the trading stages at the requested horizon, including the last analysis candle. The bridge publishes the same indicator schema as the CLI.
 
 The Engine publishes Basic, StopAll and directional primary T/F labels on final behavior rows. Each finalized directional primary resets the StopAll verdict history at its source candle. The shared response builder applies this stage for manual and live calculation. RAW repair lookup uses the reference direction, including after reversal. Chart renders those labels as presentation, and Manual Review continues to present finalized events. The previous automatic position/setup stage remains retired.
 
-During development, Vite polls the Chart sources, UI assets, Engine styles and the registered active Python files. Chart's indicator renderer can be replaced in memory while the chart instance and its state stay in place. Vite sends a status event for changes that require loading a new interface shell. Python source changes reuse the existing indicator calculation context with the normal request, validation and cache-fingerprint rules. The recalculation refreshes the alert baseline. RAW, cache, tests, historical artifacts and server configuration remain outside this source watcher.
+During development, Vite polls the Chart sources, UI assets, Engine styles and the registered active Python files. Chart's indicator renderer can be replaced in memory while the chart instance and its state stay in place. Vite sends a status event for changes that require loading a new interface shell. Python source changes reuse the existing indicator calculation context for a new request that validates RAW and the active Source fingerprint. The recalculation refreshes the alert baseline. RAW, cache, tests, historical artifacts and server configuration remain outside this source watcher.
 
 ### 5.3 Market-data acquisition
 
@@ -112,11 +112,11 @@ Acquisition creates or updates input data. It does not execute Engine trading se
 
 Real-time Chart polls the latest closed candles for one stable chart identity. The server derives the request from the resolved RAW tail and native timeframe. It rejects a stale source, serializes concurrent live requests for the same chart, and stages the validated RAW and sidecar before publishing the renamed pair. The browser receives the committed delta and updates its existing chart view.
 
-Real-time verification independently reads closed native-timeframe OHLC from FARAZ. It confirms newly acquired rows with a second read and sends them to the chart before starting the bounded historical checks. Verify All covers the entire closed RAW grid in native-timeframe packets and inserts only candles supplied by FARAZ. The RAW sidecar records matched row ranges against the file digest. Missing source rows remain pending. Corrections retain candle timestamps and are published with the corresponding RAW and metadata changes. A source outage returns verification status and retains available local data.
+Real-time verification independently reads closed native-timeframe OHLC from FARAZ. A second read confirms an ordered prefix of newly acquired rows before it is written to RAW, and the chart receives that prefix before historical verification begins. A disagreement leaves the unconfirmed suffix for a later poll. The polling interval is at least the RAW timeframe. Automatic checks at `1s` or `5s` allow one historical packet every 30 seconds to prioritize the latest candles. Verify All covers the entire closed RAW grid in native-timeframe packets and inserts only candles supplied by FARAZ. The RAW sidecar records matched row ranges against the file digest. Missing source rows remain pending. Corrections retain candle timestamps and are published with the corresponding RAW and metadata changes. A source outage returns verification status and retains available local data.
 
-The continuation API binds the worker to the chart and the browser tab that ran Apply. Candle polling can continue while the indicator calculates. One continuation runs per tab, and newer candle batches request a catch-up to the latest committed RAW. The RAW store retains a bounded, in-memory chain of committed, byte-exact appends across file renames. When that chain reaches the worker's checkpoint, the server sends only the appended bytes. The Engine verifies the complete new digest from its retained prefix hash, then feeds the new rows in order into the existing calculation state. A newer append can supersede an in-flight snapshot without invalidating it. Historical corrections break the append chain and invalidate affected publications.
+The continuation API binds the worker to the chart and the browser tab that ran Apply. Candle polling can continue while the indicator calculates. One continuation runs per tab, and newer candle batches request a catch-up to the latest committed RAW. The RAW store retains a bounded, in-memory chain of committed, byte-exact appends across file renames. Other tabs can replay an append using the prior file ID, last candle time and digest. This lets an inventory refresh apply only the committed candles and request a continuation immediately. When the chain reaches the worker's checkpoint, the server sends only the appended bytes. The worker verifies the complete new digest from its retained prefix hash, adds the new rows in order and calculates from the full session RAW. A newer append can supersede an in-flight snapshot without invalidating it. Historical corrections break the append chain and invalidate affected publications. The continuation streams Engine progress and the chart reports completion once the accepted result is applied.
 
-The server replays the same in-memory response on retries. If the append chain is unavailable, the worker checks the full RAW against its retained prefix before continuing. If the worker stops, the open tab provides its applied selection, the RAW digest and the indicator digest from its last visible result. The server verifies the old RAW prefix and result before continuing from a replacement worker. If they no longer match, it rebuilds once from that tab's applied selection on current RAW. Apply and continuation for the chart bypass calculation cache files. Live publications have separate report identities. Opening one in Manual Review saves its immutable snapshot to local report storage so its link can survive a server restart.
+Each Live update reruns the Engine on the session’s validated RAW history. A worker retains normalized RAW input and verifies the exact append prefix before incorporating new rows. A failed replay rolls back the newly staged input and its Decimal normalization state. When the append proof is unavailable, the worker verifies the full RAW snapshot. After a restart or a historical revision, the server recovers the tab’s applied range and verifies or rebuilds it against current RAW. Each successful calculation has a report identity. Opening a Live report in Manual Review saves its snapshot so the link can survive a restart.
 
 ## 6. Chart architecture
 
@@ -174,7 +174,7 @@ The Vite/local-server layer owns:
 - browser/server mediation;
 - RAW inventory and candle delivery;
 - drawing/template and calculation-result persistence;
-- calculation-cache coordination;
+- calculation scheduling and Live session coordination;
 - chart-transfer and RAW lifecycle orchestration;
 - Engine child-process launch;
 - full-source versus selected-range input preparation;
@@ -187,9 +187,9 @@ The Vite/local-server layer owns:
 
 Vite launches the Python bridge as a separate process. It provides Engine component locations and request arguments, collects stdout as the final JSON response, and interprets prefixed stderr records as progress events.
 
-After a calculation-cache miss, a FIFO coordinator runs at most one Engine child by default. `TRADINGBOT_MAX_ENGINE_CONCURRENCY` accepts an integer from 1 through 8; invalid values stop server initialization. Concurrent requests with the same public calculation cache identity and RAW content digest share one execution and receive independent progress events. A cache hit requires an internal stamp matching that digest. An unchanged RAW keeps its calculation ID; changed RAW bytes with a preserved timestamp receive a separate ID so an existing stamped report stays intact. The server rechecks RAW and calculation Source before serving a cache hit; a calculation rejects a RAW source changed while it waited or ran, before its result is cached. Shutdown aborts owned calculations and closes their progress channels. Progress history retains at most 120 events per request; a finished channel is released after its last observer disconnects, while unobserved terminal history remains replayable for the life of the server process. These server controls leave Engine Source and both Algorithm References unchanged.
+Each Apply enters a FIFO coordinator and executes Python. The coordinator defaults to one active Apply and accepts a limit of 1 through 8 through TRADINGBOT_MAX_ENGINE_CONCURRENCY. The server validates RAW and the active calculation Source before publishing the result. Shutdown aborts owned calculations and closes their progress channels. Progress history retains at most 120 events per request. A finished channel is released after its last observer disconnects.
 
-Vite does not reproduce Engine trading stages. Its calculation responsibility ends at validation, input preparation, process orchestration, transport, cache coordination, and persistence of already-serialized results.
+Vite does not reproduce Engine trading stages. Its calculation responsibility ends at validation, input preparation, process orchestration, transport, and persistence of already-serialized reports.
 
 ### Local file boundary
 
@@ -314,7 +314,7 @@ Changing the transport mechanism does not necessarily change system architecture
 | FARAZ authentication/session | FARAZ integration under secret state | Acquisition trust state; never trading semantics |
 | Acquisition jobs/coverage | FARAZ/local server | External-data workflow state |
 | Calculation progress channels | Vite/local server process | Transport/observability state only |
-| Serialized calculation cache | Vite/local server local state | Reusable finalized output; invalidatable and non-authoritative |
+| Serialized calculation reports | Vite/local server local state | Snapshots for Manual Review |
 | Trading calculation/lifecycle state | Engine | Authoritative for the current run |
 | Historical/archive/verification evidence | Engineering governance owners | Evidence only; never runtime state |
 
@@ -322,15 +322,11 @@ Operational storage placement and migration rules are owned by [Local State](../
 
 ## 13. Cache and persistence boundaries
 
-### Server calculation cache
+### Calculation freshness and reports
 
-The local server persists serialized calculation results using an identity that includes the relevant current calculation-source fingerprint, RAW identity/freshness, requested input scope/range, timeframes, direction, and calculation settings.
+Apply executes the Engine even when the RAW and calculation settings match a previous request. Live updates replay validated RAW through the trading stages, with indexes and detector state scoped to the current calculation. The live worker retains input buckets and digest lineage between requests for append and recovery. Trading-stage state and finalized results are rebuilt on each calculation. A keep-alive request can maintain the session without publishing a calculation.
 
-A compatible cache hit can avoid rerunning Python. A cache miss executes Engine and persists the resulting serialized payload. A source-fingerprint change during execution invalidates the in-flight result rather than silently storing it under stale code identity.
-
-The cache is a reuse layer for finalized output. It is not a substitute for Engine semantics.
-
-The local server also exposes a non-cacheable calculation-Source identity to Chart. Before appearance-only reuse of an already applied result, Chart compares that opaque identity with the result's Source identity. A missing, changed or unavailable identity falls back to the normal calculation request; this check does not replace the server's RAW validation.
+The server exposes a content fingerprint to validate the running Source. A calculation discards its result when the relevant Source or RAW changes during execution. Stored report payloads remain available by report ID for Manual Review.
 
 ### RAW inventory cache
 
@@ -365,7 +361,7 @@ Calculation progress follows this path:
 
 The final calculation follows:
 
-`Engine/bridge finalized state → JSON stdout → Vite/cache/HTTP → Chart or Manual Review`.
+`Engine/bridge finalized state → JSON stdout → Vite transport → Chart or Manual Review`.
 
 Errors can originate at browser request validation, server validation/file I/O, child-process execution, Engine calculation, FARAZ acquisition, or external service boundaries. Each layer reports failure through its transport contract. Presentation may explain an error but must not substitute fabricated successful state.
 
@@ -403,7 +399,7 @@ Python bridge / Engine calculation
         ↓
 Finalized serialized result
         ↓
-Vite transport/cache
+Vite transport and report storage
         ↓
 Chart / Manual Review presentation
 ```
@@ -490,7 +486,7 @@ This roadmap is a Current navigation map of major project ownership boundaries. 
 | [`apps/chart/`](../../../apps/chart/) | Chart workstation | Browser application plus its local Node/Vite service boundary | Presentation and orchestration domain; must not become a second trading algorithm. |
 | [`apps/chart/src/`](../../../apps/chart/src/) | Chart frontend | UI, chart/drawing features, workspace state, review and presentation logic | Consumes finalized Engine results; presentation cannot redefine trading truth. |
 | [`apps/chart/server/`](../../../apps/chart/server/) | Vite/local-server services | Local API/service modules, RAW/state services, FARAZ integration and server-side helpers | Composed by Vite; owns transport/persistence orchestration, not trading semantics. |
-| [`apps/chart/vite.config.js`](../../../apps/chart/vite.config.js) | Vite/local-server boundary | Main local backend composition, HTTP/SSE routes, Engine child-process orchestration and calculation-cache coordination | Launches the Engine bridge and composes current server modules. |
+| [`apps/chart/vite.config.js`](../../../apps/chart/vite.config.js) | Vite/local-server boundary | Main local backend composition, HTTP/SSE routes, Engine child-process orchestration and calculation scheduling | Launches the Engine bridge and composes current server modules. |
 | [`apps/chart/server/faraz-candle-api.js`](../../../apps/chart/server/faraz-candle-api.js) | FARAZ integration | External market-data acquisition, session/auth integration, validation and RAW publication | FARAZ supplies validated market data and never owns trading semantics. |
 | [`apps/chart/scripts/`](../../../apps/chart/scripts/) | Chart development startup | Chart-owned development-server entry/support tooling | Invoked by package/startup tooling; not a production trading owner. |
 | [`apps/chart/package.json`](../../../apps/chart/package.json) and [`package-lock.json`](../../../apps/chart/package-lock.json) | Chart manifests | Current Node scripts and dependency contract | Discover current versions/scripts here instead of freezing them in conceptual docs. |

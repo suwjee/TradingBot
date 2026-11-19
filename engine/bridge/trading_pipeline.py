@@ -13,6 +13,8 @@ import importlib.util
 import json
 import sys
 from bisect import bisect_left
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import dataclass, field, replace
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -41,19 +43,33 @@ _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
 TRADING_PIPELINE_VERSION = "1.14.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.19.0"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-11-17T20:14:54+03:30"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.20.2"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-11-19T01:21:11+03:30"
 MBL_EXTENSION_CANDLES = 400
 
 TEHRAN = ZoneInfo("Asia/Tehran")
+_progress_sink = ContextVar("progress_sink", default=None)
 
 
-def emit_progress(status: str, label: str, duration_ms: float | None = None):
+@contextmanager
+def progress_events_to(sink):
+    token = _progress_sink.set(sink)
+    try:
+        yield
+    finally:
+        _progress_sink.reset(token)
+
+
+def emit_progress(status: str, label: str, duration_ms: float | None = None, **details):
     """Send machine-readable lifecycle events without contaminating JSON stdout."""
-    event = {"status": status, "label": label}
+    event = {"status": status, "label": label, **details}
     if duration_ms is not None:
         event["durationMs"] = round(duration_ms, 2)
-    print(f"QG_PROGRESS:{json.dumps(event, separators=(',', ':'))}", file=sys.stderr, flush=True)
+    sink = _progress_sink.get()
+    if sink is None:
+        print(f"QG_PROGRESS:{json.dumps(event, separators=(',', ':'))}", file=sys.stderr, flush=True)
+    else:
+        sink(event)
 
 
 def timed(timings: dict[str, float], label: str, work):
@@ -110,7 +126,7 @@ _display_epoch_cache: dict[str, int] = {}
 
 
 def display_epoch(value: str | datetime) -> int:
-    """Convert an engine display/native timestamp once per pipeline process."""
+    """Convert each engine display or native timestamp once per calculation."""
     if isinstance(value, datetime):
         return epoch(value)
     cached = _display_epoch_cache.get(value)
@@ -124,6 +140,7 @@ def display_epoch(value: str | datetime) -> int:
 def _aggregate_candle_buckets(
     rows: Iterable[dict], timeframe: int, cached_decimal: Callable[[object], Decimal],
     *, second_tail: dict | None = None, main_tail: dict | None = None,
+    lower_only: bool = False,
 ) -> tuple[list[dict], list[dict]]:
     current_second = second_tail
     second_buckets = [] if second_tail is None else [second_tail]
@@ -148,6 +165,8 @@ def _aggregate_candle_buckets(
             current_second["high"] = max(current_second["high"], high)
             current_second["low"] = min(current_second["low"], low)
             current_second["close"] = close
+        if lower_only:
+            continue
         bucket_time = timestamp if timeframe == 1 else timestamp // timeframe * timeframe
         if current is None or current["time"] != bucket_time:
             current = {
@@ -165,7 +184,7 @@ def _aggregate_candle_buckets(
     return second_buckets, buckets
 
 
-def build_candle_buckets(rows: list[dict], timeframe: int):
+def build_candle_buckets(rows: list[dict], timeframe: int, *, lower_only: bool = False):
     """Normalize raw rows once, preserving lower and selected-timeframe buckets."""
     to_decimal = as_decimal
     decimal_cache: dict[tuple[type, object], Decimal] = {}
@@ -180,7 +199,7 @@ def build_candle_buckets(rows: list[dict], timeframe: int):
             decimal_cache[key] = normalized
             return normalized
 
-    return _aggregate_candle_buckets(rows, timeframe, cached_decimal)
+    return _aggregate_candle_buckets(rows, timeframe, cached_decimal, lower_only=lower_only)
 
 
 @dataclass(frozen=True, slots=True)
@@ -199,15 +218,22 @@ class LiveMarketBuckets:
             raise ValueError("Live timeframe must be a positive integer number of seconds.")
         self.timeframe = timeframe
         self.second_buckets: list[dict] = []
-        self.main_buckets: list[dict] = []
+        self.main_buckets: list[dict] = self.second_buckets if timeframe == 1 else []
         self.last_raw_time: int | None = None
         self._prices: dict[tuple[type, object], Decimal] = {}
 
     def append(self, rows: Sequence[dict]) -> BucketAppend:
+        with self.stage_append(rows) as delta:
+            return delta
+
+    @contextmanager
+    def stage_append(self, rows: Sequence[dict]):
+        """Refresh input buckets and restore the prior prefix if replay fails."""
         dirty_second = len(self.second_buckets)
         dirty_main = len(self.main_buckets)
         if not rows:
-            return self._delta(dirty_second, dirty_main)
+            yield self._delta(dirty_second, dirty_main)
+            return
 
         first_time = int(rows[0]["time"])
         first_bucket = first_time // self.timeframe * self.timeframe
@@ -216,10 +242,13 @@ class LiveMarketBuckets:
         if self.second_buckets and self.last_raw_time == first_time:
             dirty_second -= 1
             second_tail = self.second_buckets[-1].copy()
-        if self.main_buckets and self.main_buckets[-1]["time"] == first_bucket:
+        shared_main = self.timeframe == 1
+        if not shared_main and self.main_buckets and self.main_buckets[-1]["time"] == first_bucket:
             dirty_main -= 1
             main_tail = self.main_buckets[-1].copy()
 
+        if shared_main:
+            dirty_main = dirty_second
         previous_time = self.last_raw_time
         new_prices: dict[tuple[type, object], Decimal] = {}
 
@@ -244,13 +273,26 @@ class LiveMarketBuckets:
 
         seconds, main = _aggregate_candle_buckets(
             checked_rows(), self.timeframe, cached_decimal,
-            second_tail=second_tail, main_tail=main_tail,
+            second_tail=second_tail, main_tail=main_tail, lower_only=shared_main,
         )
+        old_second_suffix = self.second_buckets[dirty_second:]
+        old_main_suffix = self.main_buckets[dirty_main:] if not shared_main else []
+        old_last_time = self.last_raw_time
         self._prices.update(new_prices)
         self.second_buckets[dirty_second:] = seconds
-        self.main_buckets[dirty_main:] = main
+        if not shared_main:
+            self.main_buckets[dirty_main:] = main
         self.last_raw_time = previous_time
-        return self._delta(dirty_second, dirty_main)
+        try:
+            yield self._delta(dirty_second, dirty_main)
+        except BaseException:
+            self.second_buckets[dirty_second:] = old_second_suffix
+            if not shared_main:
+                self.main_buckets[dirty_main:] = old_main_suffix
+            self.last_raw_time = old_last_time
+            for value in new_prices:
+                del self._prices[value]
+            raise
 
     def _delta(self, dirty_second: int, dirty_main: int) -> BucketAppend:
         # The final bucket remains mutable until a later bucket starts. The
@@ -1867,6 +1909,13 @@ def prepare_market_context(
         timings, "Parse source JSON",
         lambda: json.loads(source_bytes, parse_float=Decimal),
     )
+    return _prepare_market_context_from_rows(args, engines, timings, source_rows)
+
+
+def _prepare_market_context_from_rows(
+    args, engines: EngineBundle, timings: dict[str, float], source_rows: list[dict],
+) -> MarketContext:
+    """Build a new market context directly from RAW rows."""
     # A requested time range is a presentation window only.  Reaction state
     # can remain open past ``to_time`` and be resolved by later RAW chronology;
     # truncating calculation at the visible end manufactures provisional
@@ -1883,8 +1932,15 @@ def prepare_market_context(
     second_buckets, timeframe_buckets = timed(
         timings,
         "Normalize raw candles",
-        lambda: build_candle_buckets(rows, args.timeframe),
+        lambda: build_candle_buckets(rows, args.timeframe, lower_only=args.timeframe == 1),
     )
+    return _prepare_market_context_from_buckets(args, engines, timings, second_buckets, timeframe_buckets)
+
+
+def _prepare_market_context_from_buckets(
+    args, engines: EngineBundle, timings: dict[str, float],
+    second_buckets: list[dict], timeframe_buckets: list[dict],
+) -> MarketContext:
     seconds = timed(
         timings,
         "Build lower candle views",
@@ -1908,7 +1964,11 @@ def prepare_market_context(
     # Bucket boundaries are epoch-aligned exactly as ``build_candle_buckets``
     # constructs them, which also keeps full-run source indexes/ordinals
     # stable in a short-window request.
-    main_bucket_times = [int(item["time"]) for item in timeframe_buckets]
+    # At 1s the lower and main candles share the same timestamps and
+    # aggregation, including equal-timestamp rows.
+    main_bucket_times = [
+        item["time"] for item in (second_buckets if args.timeframe == 1 else timeframe_buckets)
+    ]
     requested_start_bucket = (
         args.from_time
         if args.timeframe == 1
@@ -2106,9 +2166,8 @@ def calculate_full_direction_state(
     # A detection is provisional. Only A that survives S ownership may create
     # a parent-stop Order_A used by downstream E/Order state. Later lifecycle
     # invalidation applies the same accepted-cause filter again.
-    s_accepted_a_sources = {
-        getattr(item, "source_time") for item in s_detector.eligible_a_zones
-    }
+    eligible_a_zones = s_detector.eligible_a_zones
+    s_accepted_a_sources = {getattr(item, "source_time") for item in eligible_a_zones}
     s_accepted_order_audit = accepted_audit_entries(
         s_detector.order_audit, s_accepted_a_sources
     )
@@ -2134,6 +2193,15 @@ def calculate_full_direction_state(
         s_zones, e_zones, direction
     )
     if len(valid_s_zones) != len(s_zones):
+        try:
+            valid_s_membership = set(valid_s_zones)
+            blocked_s_sources = {
+                getattr(item, "source_time") for item in s_zones if item not in valid_s_membership
+            }
+        except TypeError:
+            blocked_s_sources = {
+                getattr(item, "source_time") for item in s_zones if item not in valid_s_zones
+            }
         e_detector = create_e_detector(
             direction,
             e_engine,
@@ -2143,11 +2211,7 @@ def calculate_full_direction_state(
             geometry_detectors,
             s_accepted_order_audit,
             lifecycle_engine,
-            blocked_order_first_times={
-                getattr(item, "source_time")
-                for item in s_zones
-                if item not in valid_s_zones
-            },
+            blocked_order_first_times=blocked_s_sources,
             order_b_legs=order_b_legs,
             live_continuation=live_e,
             order_geometry=order_geometry,
@@ -2161,7 +2225,7 @@ def calculate_full_direction_state(
         s_zones = valid_s_zones
 
     candidate_a = lifecycle_engine.visible_a_zones(
-        s_detector.eligible_a_zones, s_zones
+        eligible_a_zones, s_zones
     )
     candidate_a = lifecycle_engine.visible_a_zones_after_s_stops(
         candidate_a, s_zones, candles
@@ -2171,7 +2235,7 @@ def calculate_full_direction_state(
     # S candidate temporarily hides that A from presentation.  Otherwise a
     # later S reconciliation can remove the provisional S and accidentally
     # resurrect an A that should have been rejected by the stopped S/E owner.
-    lifecycle_a_candidates = list(s_detector.eligible_a_zones)
+    lifecycle_a_candidates = list(eligible_a_zones)
     _calculation_a, invalid_a = lifecycle_engine.split_a_zones_by_dominant_stops(
         lifecycle_a_candidates,
         s_candidates,
@@ -2225,7 +2289,7 @@ def calculate_full_direction_state(
 
     accepted_a_sources = {
         getattr(item, "source_time")
-        for item in s_detector.eligible_a_zones
+        for item in eligible_a_zones
         if (getattr(item, "source_time"), int(getattr(item, "source_index")))
         not in invalid_a_identities
     }
@@ -2458,6 +2522,7 @@ def prepare_pipeline_state(
     timings: dict[str, float],
     *,
     live=None,
+    report_stage=None,
 ) -> PipelineState:
     """Run shared calculation stages once and retain reusable detector state."""
     engine = engines.reaction
@@ -2511,6 +2576,8 @@ def prepare_pipeline_state(
             "Internal Reaction ownership",
             lambda: live.ownership(results) if live is not None else engine.build_behavior_reaction_views(results, chronology)[2],
         )
+        if report_stage is not None:
+            report_stage("Reaction geometry and ownership ready")
         # A-stop Order_A geometry has its own independent post-stop First gate.
         # Reuse the already-detected opposite-direction engine and its cached
         # lower-TF chronology; continuous public Reaction ownership must not
@@ -2544,6 +2611,8 @@ def prepare_pipeline_state(
                 stopall_enabled=(args.lifecycle_engine is not None),
                 live=live,
             )
+            if report_stage is not None:
+                report_stage(f"{direction.title()} lifecycle ready")
             full_e_zones[direction] = state.e_zones
             full_e_detectors[direction] = state.e_detector
             full_s_detectors[direction] = state.s_detector
@@ -3410,11 +3479,11 @@ def build_reversed_trend_outputs(args, engines, market, transition, timings, *, 
         group = build_direction_output(direction, local_args, engines, context, local_state, timings)
         return group, local_state
 
-    def publish(group, context, *, stopped=False):
-        group = absolute_payload_indexes(group, context.index_offset)
-        if context.index_offset != market.index_offset:
-            group["calculationStartTime"] = epoch(context.candles[0].timestamp)
-            group["calculationStartIndex"] = context.index_offset
+    def publish(group, index_offset, first_time, *, stopped=False):
+        group = absolute_payload_indexes(group, index_offset)
+        if index_offset != market.index_offset:
+            group["calculationStartTime"] = epoch(first_time)
+            group["calculationStartIndex"] = index_offset
         if incoming is not None:
             group["trendTransitions"] = [incoming]
         if stopped:
@@ -3427,11 +3496,12 @@ def build_reversed_trend_outputs(args, engines, market, transition, timings, *, 
                 leg["capTime"] = min(leg["capTime"], end)
         return group
 
+    release_indexes = getattr(getattr(engines, "reaction", None), "release_market_indexes", None)
     while True:
         boundary = transition.index
         if not 0 < boundary < len(current.candles):
             raise RuntimeError("A trend reversal must advance beyond its independent regime start.")
-        def calculate_closed():
+        def calculate_closed(current=current, boundary=boundary, current_direction=current_direction):
             prefix = market_segment(current, 0, boundary)
             has_history = prefix.start_index <= prefix.end_index
             if not has_history:
@@ -3441,12 +3511,15 @@ def build_reversed_trend_outputs(args, engines, market, transition, timings, *, 
                 resolve = (engines.primary.resolve_primary_highs if current_direction == "bearish"
                            else engines.primary.resolve_primary_lows)
                 confirmed = resolve(historical_state.primary_result, through_index=len(prefix.candles)-1)
-                return prefix, has_history, history, confirmed
+                # A closed regime retains only the data needed for publication.
+                return prefix.index_offset, prefix.candles[0].timestamp, has_history, history, confirmed
             finally:
-                if live is not None:
+                if release_indexes is not None:
+                    release_indexes(prefix.candles, prefix.seconds)
+                elif live is not None:
                     engines.reaction.LiveReactionContinuation._release_indexes(prefix.candles, prefix.seconds)
 
-        prefix, has_history, history, confirmed = (
+        index_offset, first_time, has_history, history, confirmed = (
             calculate_closed() if live is None
             else live.closed_regime(current_direction, current, boundary, calculate_closed)
         )
@@ -3461,7 +3534,7 @@ def build_reversed_trend_outputs(args, engines, market, transition, timings, *, 
                     return {key: empty_lists(value) for key, value in item.items()}
                 return item
             history = empty_lists(history)
-        regimes.append((current_direction, publish(history, prefix, stopped=True)))
+        regimes.append((current_direction, publish(history, index_offset, first_time, stopped=True)))
         target = transition.target_direction
         incoming = serialize_trend_transition(transition, current)
         current = market_segment(current, boundary, len(current.candles),
@@ -3471,11 +3544,15 @@ def build_reversed_trend_outputs(args, engines, market, transition, timings, *, 
             continuation = live.active_regime(current, current_direction) if live is not None else None
             group, state = calculate(current, current_direction, continuation)
         finally:
-            if live is not None:
+            if release_indexes is not None:
+                release_indexes(current.candles, current.seconds)
+            elif live is not None:
                 engines.reaction.LiveReactionContinuation._release_indexes(current.candles, current.seconds)
         transition = getattr(state.primary_result, "transition", None)
         if transition is None or transition.index > current.end_index:
-            regimes.append((current_direction, publish(group, current)))
+            regimes.append((
+                current_direction, publish(group, current.index_offset, current.candles[0].timestamp),
+            ))
             break
     return merge_regime_outputs(regimes)
 
@@ -3549,6 +3626,52 @@ def build_response_payload(
     return payload
 
 
+@contextmanager
+def _market_calculation_scope(reaction):
+    """Give each calculation its own timestamp conversions and market indexes."""
+    time_caches = (_local_dt_cache, _epoch_cache, _display_epoch_cache)
+    for cache in time_caches:
+        cache.clear()
+    clear_indexes = getattr(reaction, "clear_market_indexes", None)
+    if clear_indexes is not None:
+        clear_indexes()
+    try:
+        yield
+    finally:
+        if clear_indexes is not None:
+            clear_indexes()
+        for cache in time_caches:
+            cache.clear()
+
+
+def calculate_live_from_raw(
+    args, engines: EngineBundle, rows: list[dict], *, report_stage=None,
+) -> dict[str, object]:
+    """Run a complete calculation in the live worker with a fresh market context."""
+    return _run_live_calculation(args, engines, _prepare_market_context_from_rows, (rows,), report_stage)
+
+
+def calculate_live_from_buckets(
+    args, engines: EngineBundle, buckets: LiveMarketBuckets, *, report_stage=None,
+) -> dict[str, object]:
+    """Replay every trading stage from freshly validated, normalized RAW input."""
+    return _run_live_calculation(
+        args, engines, _prepare_market_context_from_buckets,
+        (buckets.second_buckets, buckets.main_buckets), report_stage,
+    )
+
+
+def _run_live_calculation(args, engines, prepare_market, market_inputs, report_stage):
+    started = perf_counter()
+    timings: dict[str, float] = {}
+    with _market_calculation_scope(engines.reaction):
+        market = prepare_market(args, engines, timings, *market_inputs)
+        if report_stage is not None:
+            report_stage("Market chronology ready")
+        state = prepare_pipeline_state(args, engines, market, timings, report_stage=report_stage)
+        return build_response_payload(args, engines, market, state, timings, started)
+
+
 def main() -> int:
     pipeline_started = perf_counter()
     timings: dict[str, float] = {}
@@ -3560,11 +3683,12 @@ def main() -> int:
     emit_progress("completed", "Validate request", validation_ms)
 
     engines = load_engines(args, timings)
-    market = prepare_market_context(args, engines, timings)
-    state = prepare_pipeline_state(args, engines, market, timings)
-    payload = build_response_payload(
-        args, engines, market, state, timings, pipeline_started
-    )
+    with _market_calculation_scope(engines.reaction):
+        market = prepare_market_context(args, engines, timings)
+        state = prepare_pipeline_state(args, engines, market, timings)
+        payload = build_response_payload(
+            args, engines, market, state, timings, pipeline_started
+        )
 
     emit_progress(
         "completed",

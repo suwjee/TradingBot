@@ -84,3 +84,18 @@ test("finished progress is removed when its last observer disconnects", () => {
   detach();
   assert.deepEqual(channels.stats(), { channels: 0, clients: 0 });
 });
+
+test("abandoned progress is released at terminal events without losing bounded late replay", () => {
+  const channels = createProgressChannels({ maxIdleChannels: 3 });
+  const detach = channels.attach("abandoned", { write() {}, end() {} });
+  channels.publish("abandoned", { status: "started", label: "Engine" });
+  detach();
+  channels.publish("abandoned", { status: "failed", label: "Engine failed" });
+  assert.deepEqual(channels.stats(), { channels: 0, clients: 0 });
+  for (let index = 0; index < 5; index++) channels.publish(String(index), { status: "finished", label: String(index) });
+  assert.deepEqual(channels.stats(), { channels: 3, clients: 0 });
+  const replay = [];
+  channels.attach("4", { write: message => replay.push(message), end() {} });
+  assert.match(replay[0], /"label":"4"/);
+  channels.close();
+});

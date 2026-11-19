@@ -78,7 +78,7 @@ test("a token is scoped to the same chart and Engine fingerprint", async t => {
   assert.deepEqual(f.paths, []);
 });
 
-test("a same-RAW retry replays the complete response without advancing the worker or republishing", async t => {
+test("a same-RAW request runs the worker and publishes a new result", async t => {
   const f = fixture(t);
   const { sessionId } = await f.sessions.seed(seedArgs, f.worker);
   let validated = 0, published = 0;
@@ -88,15 +88,15 @@ test("a same-RAW retry replays the complete response without advancing the worke
   } };
   const first = await f.sessions.advance(snapshot(sessionId), hooks);
   const replay = await f.sessions.advance(snapshot(sessionId), hooks);
-  assert.equal(replay, first);
+  assert.notEqual(replay, first);
   assert.equal(replay.payload.directions.bullish.marker, "current.json");
   assert.equal(replay.request.from, 100);
-  assert.deepEqual(f.paths, ["current.json"]);
-  assert.equal(published, 1);
-  assert(validated >= 3);
+  assert.deepEqual(f.paths, ["current.json", "current.json"]);
+  assert.equal(published, 2);
+  assert.equal(validated, 4);
 });
 
-test("a failed report write can retry with the same result without rerunning Engine", async t => {
+test("a failed report write can retry with a fresh calculation", async t => {
   const f = fixture(t);
   const { sessionId } = await f.sessions.seed(seedArgs, f.worker);
   await assert.rejects(f.sessions.advance(snapshot(sessionId), {
@@ -104,7 +104,7 @@ test("a failed report write can retry with the same result without rerunning Eng
   }), /Could not write report/);
   const result = await f.sessions.advance(snapshot(sessionId), defaultHooks);
   assert.equal(result.payload.directions.bullish.marker, "current.json");
-  assert.deepEqual(f.paths, ["current.json"]);
+  assert.deepEqual(f.paths, ["current.json", "current.json"]);
 });
 
 test("a transient RAW race retains the same Engine checkpoint for retry", async t => {
@@ -187,6 +187,7 @@ test("a worker update sends the exact RAW bytes and digest without a file path",
       const end = newline + 1 + header.bytes;
       const raw = input.subarray(newline + 1, end).toString("hex");
       input = input.subarray(end);
+      if (header.progress) emit({ type: "progress", event: { status: "started", label: "Continue Reaction geometry" } });
       emit({ type: "update", payload: { directions: {}, header, raw } });
     });
   `;
@@ -197,8 +198,12 @@ test("a worker update sends the exact RAW bytes and digest without a file path",
   const raw = Buffer.from('\ufeff[\r\n {"close":1.00,"note":"نفت"}\r\n]\n');
   for (const [bytes, baseSha256] of [[raw, undefined], [Buffer.from(",{\"time\":10}"), "b".repeat(64)]]) {
     const sha256 = "a".repeat(64);
-    const result = await worker.update(bytes, sha256, baseSha256);
-    assert.deepEqual(result.header, { bytes: bytes.length, sha256, ...(baseSha256 && { baseSha256 }) });
+    const progress = [];
+    const result = await worker.update(bytes, sha256, baseSha256, event => progress.push(event));
+    assert.deepEqual(progress, [{ status: "started", label: "Continue Reaction geometry" }]);
+    assert.deepEqual(result.header, { bytes: bytes.length, sha256, progress: true, ...(baseSha256 && { baseSha256 }) });
     assert.equal(result.raw, bytes.toString("hex"));
   }
+  const noObserver = await worker.update(raw, "a".repeat(64));
+  assert.equal(Object.hasOwn(noObserver.header, "progress"), false);
 });

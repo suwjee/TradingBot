@@ -14,14 +14,14 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import Callable, Sequence
 
-from core_utils import as_decimal
+from core_utils import as_decimal, ordered_naive_datetimes
 from order_audit_engine import SOrderAuditMixin
 from direction_policy import policy_for
 
 
 S_ZONE_VERSION = "4.20.1"
-S_ZONE_IMPLEMENTATION_VERSION = "4.22.0"
-S_ZONE_LAST_MODIFIED = "2026-11-12T01:34:50+03:30"
+S_ZONE_IMPLEMENTATION_VERSION = "4.22.2"
+S_ZONE_LAST_MODIFIED = "2026-11-19T01:08:03+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -116,30 +116,7 @@ class SZoneDetector(SOrderAuditMixin):
         # decided, ordinary A re-entry is blocked until the S strict stop.
         self.a_ownership_windows: list[tuple[datetime, datetime | None]] = []
         self._reset_blue_formation_by_reaction: dict[int, datetime] = {}
-        self._opposite_by_first_index = {
-            int(getattr(item, "first_idx")): (number, item)
-            for number, item in enumerate(self.opposite_reactions, start=1)
-        }
-        # Performance implementation detail: the authoritative Order chronology
-        # is immutable for this detector run. Build its exact legacy sort order
-        # once, then bisect/cache A-stop lookups instead of re-scanning and
-        # re-sorting the complete opposite-Reaction history for every A.
-        self._opposite_order_matches = sorted(
-            (
-                self._reaction_confirmation_time(item, self.order_direction),
-                int(getattr(item, "first_idx")),
-                int(getattr(item, "break_idx")),
-                number,
-                item,
-            )
-            for number, item in enumerate(self.opposite_reactions, start=1)
-        )
-        self._opposite_order_confirmation_times = [
-            item[0] for item in self._opposite_order_matches
-        ]
-        self._order_matches_after_cache: dict[
-            datetime, tuple[tuple[int, object, datetime], ...]
-        ] = {}
+        self._initialize_stopped_a_order_lookup()
 
         for line in self.trend_blue_lines:
             if not bool(getattr(line, "calculation_valid", True)):
@@ -154,7 +131,7 @@ class SZoneDetector(SOrderAuditMixin):
 
         # Performance implementation detail: immutable chronology indexes.
         # They preserve the exact legacy sort keys and are scoped to this run.
-        self._trend_ordered = sorted(
+        trend_rows = [
             (
                 self._reaction_confirmation_time(item, self.direction),
                 int(getattr(item, "first_idx")),
@@ -163,11 +140,18 @@ class SZoneDetector(SOrderAuditMixin):
                 item,
             )
             for number, item in enumerate(self.trend_reactions, start=1)
-        )
+        ]
+        confirmations = [row[0] for row in trend_rows]
+        self._confirmations_in_reaction_order = confirmations if ordered_naive_datetimes(confirmations) else None
+        first_indexes = [row[1] for row in trend_rows]
+        # Native Reactions allow us to ignore Firsts outside the Order without
+        # sorting the candidates or changing which contained Reaction wins.
+        self._ordered_first_indexes = first_indexes if (
+            all(0 <= first <= end < len(self.candles) for _, first, end, _, _ in trend_rows)
+            and all(first_indexes[i - 1] <= first_indexes[i] for i in range(1, len(first_indexes)))
+        ) else None
+        self._trend_ordered = sorted(trend_rows)
         self._trend_ordered_confirmation_times = [item[0] for item in self._trend_ordered]
-        self._trend_confirmation_times_sorted = sorted(
-            item[0] for item in self._trend_ordered
-        )
         self._opposite_confirmation_by_first = {
             int(getattr(item, "first_idx")): self._reaction_confirmation_time(
                 item, self.order_direction
@@ -330,6 +314,14 @@ class SZoneDetector(SOrderAuditMixin):
     def _first_trend_reaction_after_order(
         self, order_confirmation_time: datetime
     ) -> tuple[int, object, datetime] | None:
+        confirmations = self._confirmations_in_reaction_order
+        if (confirmations is not None and type(order_confirmation_time) is datetime
+                and order_confirmation_time.tzinfo is None):
+            position = bisect_right(confirmations, order_confirmation_time)
+            if position < len(confirmations):
+                return position + 1, self.trend_reactions[position], confirmations[position]
+            return None
+
         for number, reaction in enumerate(self.trend_reactions, start=1):
             confirmation = self._reaction_confirmation_time(
                 reaction, self.direction
@@ -347,7 +339,12 @@ class SZoneDetector(SOrderAuditMixin):
         order_first = getattr(self.candles[order_first_index], "timestamp")
         order_top = as_decimal(getattr(order, "box_top"))
         order_bottom = as_decimal(getattr(order, "box_bottom"))
-        for number, reaction in enumerate(self.trend_reactions, start=1):
+        left, right = 0, len(self.trend_reactions)
+        if self._ordered_first_indexes is not None:
+            left = bisect_right(self._ordered_first_indexes, order_first_index)
+            right = bisect_right(self._ordered_first_indexes, order_break_index, lo=left)
+        for position in range(left, right):
+            reaction = self.trend_reactions[position]
             first_index = int(getattr(reaction, "first_idx"))
             break_index = int(getattr(reaction, "break_idx"))
             first = getattr(self.candles[first_index], "timestamp")
@@ -366,7 +363,7 @@ class SZoneDetector(SOrderAuditMixin):
                 and as_decimal(getattr(reaction, "box_bottom")) >= order_bottom
             )
             if confirmation <= order_confirmation_time and wholly_inside:
-                return number, reaction, confirmation
+                return position + 1, reaction, confirmation
         return None
 
     def _simple_candidate(
@@ -397,10 +394,10 @@ class SZoneDetector(SOrderAuditMixin):
     def _type3_has_trend_reaction(
         self, a_stop_event: datetime, crossing: datetime
     ) -> bool:
-        position = bisect_right(self._trend_confirmation_times_sorted, a_stop_event)
+        position = bisect_right(self._trend_ordered_confirmation_times, a_stop_event)
         return (
-            position < len(self._trend_confirmation_times_sorted)
-            and self._trend_confirmation_times_sorted[position] <= crossing
+            position < len(self._trend_ordered_confirmation_times)
+            and self._trend_ordered_confirmation_times[position] <= crossing
         )
 
     def _first_type3(
@@ -858,10 +855,10 @@ class SZoneDetector(SOrderAuditMixin):
         self, behavior_start: datetime, event_time: datetime
     ) -> bool:
         """Return whether ordinary aligned geometry completed in the leg."""
-        position = bisect_right(self._trend_confirmation_times_sorted, behavior_start)
+        position = bisect_right(self._trend_ordered_confirmation_times, behavior_start)
         return (
-            position < len(self._trend_confirmation_times_sorted)
-            and self._trend_confirmation_times_sorted[position] <= event_time
+            position < len(self._trend_ordered_confirmation_times)
+            and self._trend_ordered_confirmation_times[position] <= event_time
         )
 
 
@@ -902,11 +899,11 @@ class SZoneDetector(SOrderAuditMixin):
                     else None
                 )
                 trend_position = bisect_right(
-                    self._trend_confirmation_times_sorted, behavior_start
+                    self._trend_ordered_confirmation_times, behavior_start
                 )
                 trend_time = (
-                    self._trend_confirmation_times_sorted[trend_position]
-                    if trend_position < len(self._trend_confirmation_times_sorted)
+                    self._trend_ordered_confirmation_times[trend_position]
+                    if trend_position < len(self._trend_ordered_confirmation_times)
                     else None
                 )
                 qualifiers = [

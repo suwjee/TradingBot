@@ -3,7 +3,7 @@ title: TradingBot Release Operations
 document_role: procedure
 lifecycle: maintained
 owner: release-tooling
-last_modified_at: 2026-11-18T18:06:12+03:30
+last_modified_at: 2026-11-19T23:27:10+03:30
 ---
 
 # TradingBot release operations
@@ -16,7 +16,7 @@ Open the interactive manager with:
 .\scripts\git\git.bat
 ```
 
-Run `git.bat -Help` to see the supported options. To publish both branches and a GitHub Release, pass `-ReleaseTag` first and supply a commit message. `-ReleaseTitle` sets the GitHub Release title and defaults to the tag. `-ReleaseNotesFile` reads a non-empty UTF-8 Markdown file relative to the caller's working directory. Quote paths containing spaces. Add `-DryRun` to validate the inputs and both candidate trees without publication.
+Run `git.bat -Help` to see the supported options. Running the launcher without options opens the menu. Passing release options invokes the noninteractive release command from any working directory. Supply `-ReleaseTag` and `-CommitMessage` in any order. `-ReleaseTitle` sets the GitHub Release title and defaults to the tag. `-ReleaseNotesFile` reads a non-empty UTF-8 Markdown file relative to the caller's working directory. Quote paths containing spaces. Add `-DryRun` to validate the inputs and both candidate trees without publication.
 
 ```powershell
 .\scripts\git\git.bat -ReleaseTag "vX.Y.Z" -CommitMessage "Release vX.Y.Z" -ReleaseTitle "TradingBot vX.Y.Z" -ReleaseNotesFile ".\release notes.md"
@@ -44,7 +44,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\git\Invoke-Tradi
 
 Only narrowly proven disposable material is excluded: dependencies restored from manifests, build products, interpreter caches, temporary files, local secrets, and machine-local chart state. `apps/chart/state` is never copied to production; the launcher creates required directories at runtime without deploying current local contents.
 
-The Engine audit reports, manifests, review notes and reproduction scripts remain eligible for main. The audit's full market captures, repeated benchmark outputs, derived market fixtures, local prompt and connector captures stay on the workstation. Their policy paths match the exclusions in `.gitignore`.
+Engine audit reports, reviewed manifests, review notes and reproduction scripts remain eligible for `main`. Keep full market captures, repeated benchmark outputs, derived market fixtures, local prompt and connector captures under `apps/chart/state/tmp/` or a `local-runs/` directory inside `engineering/verification/`. The release policy and `.gitignore` exclude those locations, including when a benchmark writes its results alongside an eligible report.
 
 The main release stops if an excluded artifact is already tracked, including one staged for modification. Staged removal of such an artifact is allowed. Eligible ZIP archives are checked for embedded cache, build, temporary, dependency, or unsafe parent-directory paths. The two historical project snapshots containing those entries remain on the workstation but are excluded from Git; archived test logs remain eligible as verification evidence.
 
@@ -54,6 +54,8 @@ On startup, the launcher runs `npm ci` when the chart lockfile differs from the 
 The launcher requires the chart lockfile and both Engine entry points. Its Python syntax check discovers the current bridge and pipeline modules.
 
 A new `engine/pipeline/xyz.py`, a new configuration file, or a renamed runtime folder is picked up automatically. Runtime package markers and helpers remain eligible even before a caller imports them; exclusions describe non-runtime categories rather than individual source filenames. Additions, modifications, renames, and deletions appear in the branch previews. Main includes all eligible project files; eligible files accidentally matching `.gitignore` are explicitly staged after policy and sensitive-content checks. Individual detector filenames are not a permanent production allowlist.
+
+Check release coverage whenever project files change. The release-inventory check on `main` verifies the committed tree and tests discovery of newly added runtime modules and main-only tests. The local `git.bat` dry run also exercises uncommitted changes before publication.
 
 Both branch inventories are passed to Git as UTF-8, NUL-delimited files of literal paths. Their size is independent of Windows' native command-line length limit, and filenames containing spaces, Unicode, or brackets retain their exact identities.
 

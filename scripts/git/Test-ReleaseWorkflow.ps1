@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-  [ValidateSet('All', 'RootResolution', 'MainPolicy', 'ProductionClosure', 'Snapshot', 'Publication', 'MenuSafety', 'Documentation')]
+  [ValidateSet('All', 'RootResolution', 'MainPolicy', 'ProductionClosure', 'RepositoryCoverage', 'Snapshot', 'Publication', 'MenuSafety', 'Documentation')]
   [string] $Case = 'All'
 )
 
@@ -79,6 +79,10 @@ function New-MainPolicyFixture {
   Write-FixtureFile $fixture 'apps/chart/state/secret/session.dpapi.json' '{}'
   Write-FixtureFile $fixture 'apps/chart/dist/index.html' '<html></html>'
   Write-FixtureFile $fixture 'engineering/verification/regenerated-artifacts/dist/index.html' '<html></html>'
+  Write-FixtureFile $fixture 'engineering/verification/performance/REPORT.md' 'published report'
+  Write-FixtureFile $fixture 'engineering/verification/performance/compare.py' '# reproducible comparison'
+  Write-FixtureFile $fixture 'engineering/verification/performance/local-runs/inputs.json' '{"workspace":"local"}'
+  Write-FixtureFile $fixture 'engineering/verification/performance/local-runs/capture/candidate.stable.json.gz' 'generated comparison output'
   Write-FixtureFile $fixture 'apps/chart/state/data/raw/BaseLine/temp/partial.json' '{}'
   Write-FixtureFile $fixture 'engineering/verification/regenerated-artifacts/node_modules/package/index.js' 'rebuildable dependency'
   Write-FixtureFile $fixture 'node_modules/package/index.js' 'root dependency installation'
@@ -180,6 +184,8 @@ function Invoke-MainPolicyTests {
       'engineering/archive/repository-graphify/graph.json',
       'engineering/archive/repository-graphify/graph.html',
       'engineering/archive/repository-graphify/rebuild/raw-run/GRAPH_REPORT.md',
+      'engineering/verification/performance/REPORT.md',
+      'engineering/verification/performance/compare.py',
       'apps/chart/state/data/raw/BaseLine/reference.json',
       '.editorconfig'
     )) {
@@ -195,6 +201,8 @@ function Invoke-MainPolicyTests {
       'apps/chart/state/secret/session.dpapi.json',
       'apps/chart/dist/index.html'
       'engineering/verification/regenerated-artifacts/dist/index.html'
+      'engineering/verification/performance/local-runs/inputs.json'
+      'engineering/verification/performance/local-runs/capture/candidate.stable.json.gz'
       'apps/chart/state/data/raw/BaseLine/temp/partial.json'
       'engineering/verification/regenerated-artifacts/node_modules/package/index.js'
       'node_modules/package/index.js'
@@ -285,6 +293,20 @@ function Invoke-ProductionClosureTests {
     foreach ($path in @('apps/chart/src/nested/runtime.test.js', 'engine/pipeline/nested/tests/support.py', 'engine/pipeline/docs/design.md')) {
       Assert-True ($currentSet.Paths -notcontains $path) "nested non-runtime file stays in main: $path"
     }
+
+    $runtime = 'apps/chart/src/features/new-runtime.js'
+    $test = 'apps/chart/tests/unit/new-runtime.test.mjs'
+    Write-FixtureFile $fixture.Root $runtime 'export const current = true;'
+    Write-FixtureFile $fixture.Root $test '// current runtime regression'
+    $fixturePolicy = Join-Path $fixture.Root 'scripts/git/production-policy.psd1'
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'production-policy.psd1') -Destination $fixturePolicy
+    $draft = New-MainReleaseSource -Root $fixture.Root -CommitMessage 'new runtime files' -DryRun
+    $draftPaths = Get-GitTreePaths -Root $fixture.Root -Commitish $draft.MainSha
+    Assert-True ($draftPaths -contains $runtime -and $draftPaths -contains $test) 'main candidate includes both untracked project files'
+    $draftRuntime = Get-ProductionFileSet -Root $fixture.Root -MainSha $draft.MainSha -Policy $currentPolicy
+    Assert-True ($draftRuntime.Paths -contains $runtime -and $draftRuntime.Paths -notcontains $test) 'production discovers the new runtime while the test stays in main'
+    Assert-True ($draftRuntime.Errors.Count -eq 0) 'new runtime paths keep the production closure valid'
+
     & git -C $fixture.Root rm --quiet -- engine/bridge/live_pipeline.py
     $withoutWorker = Commit-Fixture $fixture.Root
     $invalid = Get-ProductionFileSet -Root $fixture.Root -MainSha $withoutWorker -Policy $currentPolicy
@@ -292,6 +314,20 @@ function Invoke-ProductionClosureTests {
   } finally {
     Remove-TestFixturePath $fixture.Root
   }
+}
+
+function Invoke-RepositoryCoverageTests {
+  Import-Module $script:ModulePath -Force
+  $root = Resolve-TradingBotProjectRoot -ScriptPath (Join-Path $PSScriptRoot 'Invoke-TradingBotRelease.ps1')
+  $commit = Invoke-ReleaseGit -Root $root -Arguments @('rev-parse', 'HEAD')
+  Assert-True ($commit.ExitCode -eq 0) 'the project has a committed candidate'
+  $policy = Import-ReleasePolicy -Root $root
+  $main = Get-MainPolicyReport -Root $root
+  Assert-True ($main.Errors.Count -eq 0) ($main.Errors -join "`n")
+  $runtime = Get-ProductionFileSet -Root $root -MainSha $commit.StdOut.Trim() -Policy $policy
+  Assert-True (($runtime.Errors.Count + $runtime.Drift.Count) -eq 0) (($runtime.Errors + $runtime.Drift) -join "`n")
+  $validation = Test-ProductionFileSet -FileSet $runtime -Policy $policy
+  Assert-True ($validation.Errors.Count -eq 0) ($validation.Errors -join "`n")
 }
 
 function Invoke-SnapshotTests {
@@ -546,15 +582,17 @@ try {
       Invoke-RootResolutionTests
       Invoke-MainPolicyTests
       Invoke-ProductionClosureTests
+      Invoke-RepositoryCoverageTests
       Invoke-SnapshotTests
       Invoke-PublicationTests
       Invoke-MenuSafetyTests
       Invoke-DocumentationTests
-      $script:Passed += 7
+      $script:Passed += 8
     }
     'RootResolution' { Invoke-RootResolutionTests; $script:Passed++ }
     'MainPolicy' { Invoke-MainPolicyTests; $script:Passed++ }
     'ProductionClosure' { Invoke-ProductionClosureTests; $script:Passed++ }
+    'RepositoryCoverage' { Invoke-RepositoryCoverageTests; $script:Passed++ }
     'Snapshot' { Invoke-SnapshotTests; $script:Passed++ }
     'Publication' { Invoke-PublicationTests; $script:Passed++ }
     'MenuSafety' { Invoke-MenuSafetyTests; $script:Passed++ }

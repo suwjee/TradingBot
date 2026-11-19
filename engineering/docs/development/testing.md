@@ -13,7 +13,7 @@ scope:
   - release-tooling
 supersedes: engineering/archive/documentation/local-tests-legacy-2026-09-30.md
 created_at: 2026-09-30T11:40:11+03:30
-last_modified_at: 2026-11-18T17:54:03+03:30
+last_modified_at: 2026-11-19T00:28:34+03:30
 ---
 
 # TradingBot Testing
@@ -306,7 +306,7 @@ For changes to local calculation dispatch, cache, RAW identity, or progress tran
 
 - distinct requests respect the configured Engine concurrency limit and queue order; identical in-flight requests share one execution while each caller receives the appropriate progress;
 - a failed execution releases its slot so a later request can retry; server shutdown aborts owned active work and rejects queued work;
-- a cache hit requires the current RAW content and calculation Source identity; changed RAW bytes, including a same-size change with preserved modification time, cannot reuse a stale result;
+- every Apply and each sequential Live calculation runs the Engine, including repeats with unchanged settings. Changed RAW bytes with the same size and modification time are rejected or calculated from the new source. Test saved report access separately.
 - RAW changes while a request waits or runs cause rejection before its result is persisted;
 - late or reconnected progress subscribers receive ordered, bounded history and terminal state; disconnection and shutdown release the appropriate progress resources.
 

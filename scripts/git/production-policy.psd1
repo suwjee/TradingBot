@@ -58,6 +58,8 @@
       'engineering/archive/repository-graphify/**/raw-run/.graphify_root',
       'engineering/archive/docs/validation-temp/**',
       'engineering/verification/**/runtime-server.*',
+      'engineering/verification/local-runs/**',
+      'engineering/verification/**/local-runs/**',
       'engineering/verification/engine-zero-diff-20261102T043157Z/before/**',
       'engineering/verification/engine-zero-diff-20261102T043157Z/repaired-before/**',
       'engineering/verification/engine-zero-diff-20261102T043157Z/after/**',

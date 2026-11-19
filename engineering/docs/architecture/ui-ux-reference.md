@@ -12,7 +12,7 @@ scope:
   - faraz-ui
   - algorithm-reference-ui
   - responsive-accessibility
-last_modified_at: 2026-11-18T17:24:43+03:30
+last_modified_at: 2026-11-19T00:09:15+03:30
 ---
 
 # TradingBot UI/UX Reference
@@ -203,13 +203,9 @@ Before calculation can start, the current UI requires:
 
 When a required choice is missing, the user receives an error and the relevant control is focused where practical.
 
-### 8.2 Calculation reuse vs recalculation
+### 8.2 Indicator calculation
 
-If the current finalized result matches the same calculation context and the local server confirms its calculation-Source fingerprint is current, changing presentation-only settings can update appearance without rerunning Engine. An unavailable, missing or changed Source identity requires the normal calculation request. The Source check does not independently validate RAW freshness.
-
-Changes to calculation identity/context—such as source, direction, analysis timeframe, chart timeframe, or selected calculation range—require an appropriate calculation result for that new context.
-
-Server-side result cache reuse may make a repeated request faster, but cache status is presented as reuse information rather than semantic authority.
+Apply starts a fresh Engine calculation for the selected Source, direction, analysis timeframe and date range. This applies to repeated submissions and changes to appearance settings submitted through Apply. Manual Review can open previously saved calculation reports.
 
 ### 8.3 Progress
 
@@ -423,11 +419,11 @@ Chart also exposes an update-data workflow for the currently loaded RAW resource
 
 FARAZ acquisition and Chart update affect input data availability. They do not define trading semantics.
 
-The Real-time Chart control sits before Cut Candles. Opening a RAW chart starts Real-time Chart by default. The timer schedules checks at local system-clock boundaries for the selected interval plus two seconds. After a delayed wake, one immediate check catches up and later checks resume that alignment. The green ring fills until the next check. Disable stops the timer and disables the other options. Loading another chart or a RAW revision that removes previously loaded candles ends the current live session. Appends, gap fills and corrections published by another tab on the same chart can be reconciled with the current session. New candles retain the RAW source timeframe and are displayed using the current chart timeframe. The chart follows incoming candles when already at the latest edge and preserves a historical viewport when browsing older candles.
+The Real-time Chart control sits before Cut Candles. Opening a RAW chart starts Real-time Chart by default. The polling menu includes 1s and 5s and disables intervals shorter than the RAW candle timeframe. The menu also offers the exact RAW timeframe when it falls between or exceeds the presets. The default is 1m when allowed and the RAW timeframe otherwise. The timer schedules checks at local system-clock boundaries for the selected interval plus two seconds. After a delayed wake, one immediate check catches up and later checks resume that alignment. A running candle check finishes before another starts. The green ring fills until the next check. Disable stops the timer and disables the other options. Loading another chart or a RAW revision that removes previously loaded candles ends the current live session. Appends, gap fills and corrections published by another tab on the same chart can be reconciled with the current session. New candles retain the RAW source timeframe and are displayed using the current chart timeframe. The chart follows incoming candles when already at the latest edge and preserves a historical viewport when browsing older candles.
 
-Candle verification runs automatically with real-time checks. The percentage next to Polling interval reflects completed request packets and reaches 100% after the check finishes. Verify All reports the number of candles compared, corrected, and restored from gaps. Automatic checks update the percentage and verification status without a toast. Verification uses the selected RAW file's timeframe independently of the display timeframe. Verify All compares the entire selected RAW file and fills historical gaps with confirmed FARAZ candles. A red verification indicator appears while FARAZ is unavailable, and the chart remains usable with its local data. Corrections refresh the displayed candles and recalculate affected visible indicator results using that tab's applied selection.
+Candle verification runs automatically with real-time checks. Candles verified shows the percentage of RAW candles already verified and reaches 100% when the verified count covers the whole file. The percentage beside Polling interval tracks completed request packets for the current check. For polling intervals of five seconds or less, automatic historical verification checks at most one packet every 30 seconds. Verify All reports the number of candles compared, corrected, and restored from gaps. Automatic checks update coverage and verification status without a toast. Verification uses the selected RAW file's timeframe independently of the display timeframe. Verify All compares the entire selected RAW file and fills historical gaps with confirmed FARAZ candles. When FARAZ is unavailable, the panel marks verification Offline and shows coverage if the counts are known. The chart remains usable with its local data. Corrections refresh the displayed candles and recalculate affected visible indicator results using that tab's applied selection.
 
-Indicator Calculation starts with the result displayed in the current browser tab. Enabling it immediately processes the backlog through the latest available RAW candle, then continues at the configured interval. Apply is required when the current tab has no displayed calculation, including after a browser reload. The open tab retains its calculation selection through a worker loss and can recover without reading saved calculation files. Temporary failures keep the last result and retry, and stored candles can be processed while the market-data source is unavailable.
+Indicator Calculation starts with the result displayed in the current browser tab. Enabling it immediately processes the backlog through the latest available RAW candle, then continues at the configured interval. The panel shows the active calculation's reported percentage and stage while candle polling continues. The calculation reaches 100% when the chart accepts the updated result. Apply is required when the current tab has no displayed calculation, including after a browser reload. The open tab retains its calculation selection through a worker loss and can recover without reading saved calculation files. Temporary failures keep the last result and retry, and stored candles can be processed while the market-data source is unavailable.
 
 ## 13. Algorithm reference workspace
 
@@ -464,7 +460,7 @@ The Algorithm workspace is a convenience reference surface. Its content does not
 | FARAZ exporter form/job identity | FARAZ UI | Persists locally enough to restore workflow state when still valid. |
 | FARAZ authentication/session | FARAZ/server boundary | Connection state is visible; secret material is not UI trading state. |
 | Manual Review filters | Review document | Transient view/export selection over an immutable calculation snapshot. |
-| Serialized calculation cache | Local server | May accelerate repeated calculation requests; not UI or semantic authority. |
+| Serialized calculation reports | Local server | Saved snapshots for Manual Review. |
 | Trading calculation/lifecycle state | Engine | Authoritative result source; never reconstructed by Chart preferences. |
 
 ## 15. Persistence UX
@@ -671,7 +667,7 @@ The maintained UI/UX contract requires:
 - display LOD does not change authoritative source/calculation data;
 - Manual Review remains read-only event inspection and export, without trading feedback;
 - FARAZ remains acquisition UX rather than algorithm UX;
-- cache reuse never becomes semantic authority;
+- Apply and Live updates calculate from current RAW;
 - secrets/session material is not exposed as UI diagnostic content;
 - destructive local-data actions remain explicit;
 - historical screenshots/audits do not override live UI behavior.

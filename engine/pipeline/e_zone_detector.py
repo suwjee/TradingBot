@@ -10,14 +10,15 @@ from __future__ import annotations
 from heapq import merge
 from itertools import groupby
 
-from bisect import bisect_left
+from bisect import bisect_left, insort
 from dataclasses import dataclass, replace
 from datetime import datetime
 from decimal import Decimal
 from heapq import heapify, heappop, heappush
 from typing import Callable, Sequence
 
-from core_utils import as_decimal, reaction_identity
+from core_utils import as_decimal
+from core_utils import reaction_identity as reaction_identity
 from direction_policy import policy_for
 from order_audit_engine import (
     OrderAuditEngineMixin, OrderBResetLeg, OrderMatch, PostBehaviorStop,
@@ -27,8 +28,8 @@ from order_audit_engine import (
 
 
 E_ZONE_VERSION = "6.16.2"
-E_ZONE_IMPLEMENTATION_VERSION = "6.20.0"
-E_ZONE_LAST_MODIFIED = "2026-11-17T20:14:54+03:30"
+E_ZONE_IMPLEMENTATION_VERSION = "6.20.3"
+E_ZONE_LAST_MODIFIED = "2026-11-19T01:11:09+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -364,22 +365,18 @@ class EZoneDetector(OrderAuditEngineMixin):
         self.end_index = len(self.candles) - 1 if end_index is None else int(end_index)
         self.range_start = self.times[self.start_index]
         self.range_end = self.times[self.end_index] + self.timeframe
-        if live_continuation is None:
-            main_extremes = getattr(chronology, "_e_main_extremes", None)
-            cached = main_extremes.get(direction) if main_extremes is not None else None
-            if cached is None:
-                self._stop_values = [
-                    as_decimal(getattr(candle, self.policy.extreme_attr))
-                    for candle in self.candles
-                ]
-                self._candle_codes = [int(getattr(candle, "index")) for candle in self.candles]
-                self._extreme_sparse = self._build_extreme_sparse()
-                if main_extremes is not None:
-                    main_extremes[direction] = (
-                        self._stop_values, self._candle_codes, self._extreme_sparse,
-                    )
-            else:
-                self._stop_values, self._candle_codes, self._extreme_sparse = cached
+        self._shared_main_extreme = None
+        if (live_continuation is None and self.timeframe.total_seconds() == 1
+                and getattr(self.lower_index, "candles", None) is self.candles):
+            # The one-second bridge already built a range tree over this
+            # same sequence. Both queries assign equality to the first row.
+            self._shared_main_extreme = getattr(
+                self.lower_index,
+                "range_minimum" if direction == "bullish" else "range_maximum",
+                None,
+            )
+        if live_continuation is None and self._shared_main_extreme is None:
+            self._initialize_main_extremes()
         self.direct_geometry_finder = direct_geometry_finder
         self.blocked_order_first_times = blocked_order_first_times or set()
         self.e_parent_order_first_exceptions = e_parent_order_first_exceptions
@@ -387,96 +384,7 @@ class EZoneDetector(OrderAuditEngineMixin):
         self.order_b_legs = tuple(order_b_legs)
         self._live_continuation = live_continuation
         self._live_scope = live_scope
-        self._cross_order_cache: dict[
-            tuple[datetime, Decimal], tuple[int, datetime, datetime] | None
-        ] = {}
-        # Performance implementation detail: canonical opposite Reactions are
-        # immutable for one run, and their canonical Order stop depends only
-        # on that canonical reaction number/geometry plus immutable chronology.
-        # Cache only exact canonical objects; bounded/noncanonical Order_A
-        # geometry intentionally stays on the authoritative uncached path.
-        self._canonical_order_stop_cache: dict[
-            int, tuple[Decimal, int, datetime]
-        ] = {}
-        # Performance implementation detail: the initial A-owned OrderAudit
-        # ledger is immutable for one detector run. Materialize its expensive
-        # strict-stop lookup once, then keep both chronological indexes and
-        # the original physical identity semantics.
-        self._initial_order_records_cache: tuple[tuple[
-            datetime, datetime, int, object, Decimal, int, datetime,
-            tuple[int, datetime, datetime] | None,
-        ], ...] | None = None
-        self._initial_order_first_times: list[datetime] | None = None
-        self._initial_order_confirmation_times: list[datetime] | None = None
-        self._initial_order_confirmation_records: tuple[tuple[
-            datetime, datetime, int, object, Decimal, int, datetime,
-            tuple[int, datetime, datetime] | None,
-        ], ...] = ()
-        self._initial_orders_by_first_time: dict[datetime, tuple[tuple[
-            datetime, datetime, int, object, Decimal, int, datetime,
-            tuple[int, datetime, datetime] | None,
-        ], ...]] | None = None
-        self._order_candidates_cache: dict[
-            tuple[datetime, datetime | None, bool, bool], tuple[OrderMatch, ...]
-        ] = {}
-        self._carried_orders_cache: dict[
-            tuple[datetime, datetime], tuple[OrderMatch, ...]
-        ] = {}
-        self._post_stop_orders_cache: dict[
-            tuple[datetime, int], list[OrderMatch]
-        ] = {}
-        self._direct_parent_stop_cache: dict[
-            tuple[datetime, datetime | None, bool, bool, datetime | None],
-            tuple[int, object, datetime] | None,
-        ] = {}
-        self.order_audit: dict[tuple[int, int], dict[str, object]] = {}
-        # Performance implementation detail: ``order_audit`` remains the
-        # authoritative accepted ledger and preserves insertion/provenance
-        # semantics. This secondary chronology index exists only to avoid a
-        # full ledger scan when a parent can use only Orders confirmed after
-        # its strict stop.
-        self._order_audit_confirmation_index: list[
-            tuple[datetime, int, int]
-        ] = []
-        self._trend_first_times = [
-            self._reaction_first_time(item) for item in self.trend_reactions
-        ]
-        self._trend_confirmations = [
-            self._confirmation_for(item, self.direction)
-            for item in self.trend_reactions
-        ]
-        self._opposite_first_times = [
-            self._reaction_first_time(item) for item in self.opposite_reactions
-        ]
-        self._opposite_confirmations = [
-            self._confirmation(item) for item in self.opposite_reactions
-        ]
-        self._trend_by_confirmation = sorted(
-            zip(
-                self._trend_confirmations,
-                self._trend_first_times,
-                self.trend_reactions,
-            ),
-            key=lambda item: item[0],
-        )
-        self._trend_confirmation_times = [item[0] for item in self._trend_by_confirmation]
-        self._opposite_reset_times_by_first: dict[int, list[datetime]] = {}
-        for reset in self.opposite_resets:
-            self._opposite_reset_times_by_first.setdefault(
-                int(getattr(reset, "from_first_idx")), []
-            ).append(self._reset_time(reset))
-        self._opposite_by_first_index = {
-            int(getattr(item, "first_idx")): item
-            for item in self.opposite_reactions
-        }
-        # Performance implementation detail: retain the first canonical
-        # position for each physical identity. Legacy linear searches used
-        # ``next(...)``, so first-win semantics are preserved intentionally.
-        self._opposite_identity_position: dict[tuple[int, int], int] = {}
-        for position, item in enumerate(self.opposite_reactions):
-            self._opposite_identity_position.setdefault(
-                reaction_identity(item), position
-            )
+        self._initialize_order_audit()
         self.visual_lifecycle_starts: set[datetime] = set()
         self._consumed_s_evidence: list[tuple[object, tuple[int, datetime]]] = []
         self._last_candidate_zones: list[EZone] = []
@@ -526,6 +434,24 @@ class EZoneDetector(OrderAuditEngineMixin):
 
     def _stop_value(self, item: object) -> Decimal:
         return as_decimal(getattr(item, self.policy.extreme_attr))
+
+    def _initialize_main_extremes(self) -> None:
+        chronology = self.chronology
+        main_extremes = getattr(chronology, "_e_main_extremes", None)
+        cached = main_extremes.get(self.direction) if main_extremes is not None else None
+        if cached is None:
+            self._stop_values = [
+                as_decimal(getattr(candle, self.policy.extreme_attr))
+                for candle in self.candles
+            ]
+            self._candle_codes = [int(getattr(candle, "index")) for candle in self.candles]
+            self._extreme_sparse = self._build_extreme_sparse()
+            if main_extremes is not None:
+                main_extremes[self.direction] = (
+                    self._stop_values, self._candle_codes, self._extreme_sparse,
+                )
+        else:
+            self._stop_values, self._candle_codes, self._extreme_sparse = cached
 
     def _build_extreme_sparse(self) -> list[list[int]]:
         """Sparse table of first extreme candle positions over the main series."""
@@ -611,14 +537,22 @@ class EZoneDetector(OrderAuditEngineMixin):
     ) -> tuple[int, datetime, datetime] | None:
         if self._live_continuation is None:
             return super()._cross_order(start, level)
+        # The accepted-Order stream uses this per-detector cache to distinguish
+        # a proven open stop from a ledger row whose crossing still needs a lookup.
+        key = start, level
+        if key in self._cross_order_cache:
+            self._live_continuation._dirty_time(self)
+            return self._cross_order_cache[key]
         event = self._live_continuation.first_stop(
             self, max(start, self.range_start), level,
             less=self.order_direction != "bearish", search=self._search_order_stop,
         )
-        if event is None:
-            return None
-        index = self._main_index(event)
-        return index, self.times[index], event
+        result = None
+        if event is not None:
+            index = self._main_index(event)
+            result = index, self.times[index], event
+        self._cross_order_cache[key] = result
+        return result
 
     def _confirmation_for(self, reaction: object, direction: str) -> datetime:
         return self.chronology.reaction_confirmation(direction, reaction)
@@ -631,11 +565,8 @@ class EZoneDetector(OrderAuditEngineMixin):
 
 
     def _parent_stop(self, parent_type: str, parent: object) -> tuple[int, datetime] | None:
-        if parent_type == "S":
-            start = getattr(parent, "decision_event_time")
-        else:
-            # An E can only stop after the order-stop event that confirms it.
-            start = getattr(parent, "decision_event_time")
+        # Both S and E can stop only from the event that confirmed them.
+        start = getattr(parent, "decision_event_time")
         return self._first_parent_stop(start, as_decimal(getattr(parent, "price")))
 
     def parent_stop(
@@ -659,6 +590,12 @@ class EZoneDetector(OrderAuditEngineMixin):
         return self._find_extreme(start_index, end_index)
 
     def _find_extreme(self, start_index: int, end_index: int) -> tuple[int, datetime, Decimal]:
+        if self._shared_main_extreme is not None:
+            if 0 <= start_index <= end_index < len(self.candles):
+                value, position = self._shared_main_extreme(start_index, end_index + 1)
+                return int(getattr(self.candles[position], "index")), self.times[position], value
+            if not hasattr(self, "_extreme_sparse"):
+                self._initialize_main_extremes()
         position = self._extreme_position(start_index, end_index)
         return (
             self._candle_codes[position],
@@ -684,16 +621,12 @@ class EZoneDetector(OrderAuditEngineMixin):
         post_stop_accepted = self._iter_post_stop_accepted_orders(
             parent, stop_event
         )
-        inherited_stop_events = [
-            item[6][2] for item in inherited if item[6] is not None
-        ]
-        continuous_deadline = (
-            min(inherited_stop_events)
-            if parent_type == "S" and not carried and inherited_stop_events
-            else self.range_end
-            if parent_type == "S" and not carried
-            else None
-        )
+        continuous_deadline = None
+        if parent_type == "S" and not carried:
+            continuous_deadline = min(
+                (item[6][2] for item in inherited if item[6] is not None),
+                default=self.range_end,
+            )
         direct = self.order_candidates(
             stop_event,
             continuous_deadline,
@@ -1105,19 +1038,17 @@ class EZoneDetector(OrderAuditEngineMixin):
         # Discover S-owned orders before walking recursive E chains.  A valid
         # order formed inside an E parent's lifetime must remain available even
         # when that S branch is reconciled later than the E branch.
+        stopped_parents: list[tuple[object, datetime]] = []
         for s_zone in self.s_zones:
             stop = self._parent_stop("S", s_zone)
             if stop is not None:
-                self._register_order_audit("S", s_zone, stop[1])
+                _, stop_event = stop
+                self._register_order_audit("S", s_zone, stop_event)
+                stopped_parents.append((s_zone, stop_event))
 
         chains: list[tuple[object, list[EZone]]] = []
         candidates: list[EZone] = []
-        for s_zone in self.s_zones:
-            stop = self._parent_stop("S", s_zone)
-            if stop is None:
-                continue
-            _, stop_event = stop
-
+        for s_zone, stop_event in stopped_parents:
             # Every fully formed S starts an independent provisional E chain.
             # Final lifecycle eligibility is resolved after all candidate
             # continuations are visible, so exact same-source cross-family
@@ -1202,7 +1133,8 @@ class EZoneDetector(OrderAuditEngineMixin):
         # Resolve competing chains chronologically.  A stopped E is removed
         # from the active set immediately; it remains only as historical
         # output and cannot affect a later family or number.
-        candidates = list(candidates)
+        # Candidate discovery also publishes its input list for inspection.
+        # Copy on the first generated continuation to preserve that input.
         by_source: dict[int, list[EZone]] = {}
         for zone in candidates:
             by_source.setdefault(zone.source_index, []).append(zone)
@@ -1233,6 +1165,27 @@ class EZoneDetector(OrderAuditEngineMixin):
         s_by_source: dict[tuple[int, datetime], object] = {}
         for item in self.s_zones:
             s_by_source.setdefault((int(item.source_index), item.source_time), item)
+        numbered_by_source: dict[tuple[int, datetime], EZone] = {}
+        first_numbered_at_time: dict[datetime, EZone] = {}
+        numbered_times: list[datetime] = []
+        numbered_s_parent_times: set[datetime] = set()
+
+        def index_numbered(item: EZone) -> None:
+            # First accepted wins an equal source time, including when a
+            # regenerated race adds an earlier source out of order.
+            numbered_by_source.setdefault((item.source_index, item.source_time), item)
+            if item.source_time not in first_numbered_at_time:
+                first_numbered_at_time[item.source_time] = item
+                if not numbered_times or numbered_times[-1] < item.source_time:
+                    numbered_times.append(item.source_time)
+                else:
+                    insort(numbered_times, item.source_time)
+            if item.parent_type == "S":
+                numbered_s_parent_times.add(item.parent_source_time)
+
+        for item in numbered:
+            index_numbered(item)
+
         child_decision_by_parent: dict[tuple[int, datetime], datetime] = {}
 
         def index_child(zone: EZone) -> None:
@@ -1247,8 +1200,11 @@ class EZoneDetector(OrderAuditEngineMixin):
             index_child(zone)
 
         def enqueue(zone: EZone | None, current_source: int) -> None:
+            nonlocal candidates
             if zone is None or zone in known:
                 return
+            if not regenerated:
+                candidates = candidates.copy()
             known.add(zone)
             regenerated.add(zone)
             candidates.append(zone)
@@ -1280,17 +1236,13 @@ class EZoneDetector(OrderAuditEngineMixin):
                     or parent_s.a_source_time < sequence_start
                 ):
                     return False
-                prior_e = [
-                    item for item in numbered
-                    if getattr(item, "source_time")
-                    < zone.source_time
-                    and (sequence_start is None or item.source_time > sequence_start)
-                ]
-                if not prior_e:
+                position = bisect_left(numbered_times, zone.source_time)
+                if position == 0:
                     return True
-                prior = max(
-                    prior_e, key=lambda item: getattr(item, "source_time")
-                )
+                prior_time = numbered_times[position - 1]
+                if sequence_start is not None and prior_time <= sequence_start:
+                    return True
+                prior = first_numbered_at_time[prior_time]
                 rebuilt_after_e = (
                     getattr(parent_s, "source_time")
                     > getattr(prior, "source_time")
@@ -1303,11 +1255,7 @@ class EZoneDetector(OrderAuditEngineMixin):
                     str(getattr(parent_s, "color")) == "red"
                     and prior.family == "blue"
                     and parent_s.source_time < prior.source_time
-                    and not any(
-                        item.parent_type == "S"
-                        and item.parent_source_time == zone.parent_source_time
-                        for item in numbered
-                    )
+                    and zone.parent_source_time not in numbered_s_parent_times
                 )
                 return rebuilt_after_e or dominant_s
             if zone.parent_source_time == sequence_start:
@@ -1354,10 +1302,8 @@ class EZoneDetector(OrderAuditEngineMixin):
                             (item.order_first_index, item.order_break_index),
                             accepted_source_times, item.source_time)
                         and parent_active(item)):
-                    parents = self.s_zones if item.parent_type == "S" else numbered
-                    parent = next((parent for parent in parents
-                                   if (parent.source_time, int(parent.source_index)) ==
-                                   (item.parent_source_time, item.parent_source_index)), None)
+                    parents = s_by_source if item.parent_type == "S" else numbered_by_source
+                    parent = parents.get((item.parent_source_index, item.parent_source_time))
                     if parent is None:
                         continue
                     if checkpoint is not None:
@@ -1495,6 +1441,7 @@ class EZoneDetector(OrderAuditEngineMixin):
             ]
             numbered_zone = replace(zone, family=family, number=number)
             numbered.append(numbered_zone)
+            index_numbered(numbered_zone)
             accepted_sources.add((numbered_zone.source_time, numbered_zone.source_index))
             accepted_source_times.add(numbered_zone.source_time)
             if zone.source_time in self.sequence_resets:

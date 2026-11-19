@@ -4,7 +4,7 @@ from decimal import Decimal
 
 import pytest
 
-from test_order_audit_lifecycle_contracts import candle, detector_state, moment
+from test_order_audit_lifecycle_contracts import candle, candidate, detector_state, moment
 from e_zone_detector import EZoneDetector, LiveEContinuation
 from lifecycle_engine import sequence_priority
 from reaction_engine import MarketChronology, mirror_candle
@@ -27,6 +27,60 @@ def detector(direction, chronology, live=None, end_index=None):
         direction, [], [], [], [], chronology, end_index=end_index,
         sequence_priority=sequence_priority, live_continuation=live,
     )
+
+
+@pytest.mark.parametrize("direction", ("bullish", "bearish"))
+def test_live_accepted_order_stream_reuses_the_proven_crossing_state(direction, monkeypatch):
+    live = LiveEContinuation()
+    initial = market(direction, 3)
+    _, parent, _ = detector_state(direction)
+    physical = candidate(1, 2)
+    level = Decimal("120.00" if direction == "bullish" else "-120.00")
+    confirmation = moment(65)
+
+    def register(engine):
+        crossed = engine.cross_order(confirmation, level)
+        engine.order_audit[(1, 2)] = {
+            "reaction_number": 1,
+            "reaction": physical,
+            "confirmation_time": confirmation,
+            "stop_level": level,
+            "stop_source_index": 1,
+            "stop_source_time": moment(30),
+            "stop_cross": crossed,
+        }
+        engine._index_order_audit_identity((1, 2), confirmation)
+
+    def full_ledger_scan(*_args):
+        pytest.fail("A proven crossing state must be eligible for the native accepted-Order stream.")
+
+    live.advance(initial, first_dirty_main=0)
+    seed = detector(direction, initial, live)
+    register(seed)
+    monkeypatch.setattr(seed, "_post_stop_accepted_orders_for_parent", full_ledger_scan)
+    assert list(seed._iter_post_stop_accepted_orders(parent, moment(60))) == []
+
+    extension = market(direction, 4)
+    crossing = candle(95, 95, high="121")
+    if direction == "bearish":
+        crossing = mirror_candle(crossing)
+    lower = [*extension.seconds]
+    lower[95] = crossing
+    revised = MarketChronology(extension.candles, lower, 30)
+    live.advance(revised, first_dirty_main=3)
+    warm = detector(direction, revised, live)
+    register(warm)
+    warm.sequence_resets = {moment(95): 1}
+    monkeypatch.setattr(warm, "_post_stop_accepted_orders_for_parent", full_ledger_scan)
+    assert list(warm._iter_post_stop_accepted_orders(parent, moment(60))) == []
+
+    warm.sequence_resets = {}
+    match, = warm._iter_post_stop_accepted_orders(parent, moment(60))
+    assert match[1] is physical
+    assert match[3].as_tuple() == level.as_tuple()
+    assert match[6] == (3, moment(90), moment(95))
+    with pytest.raises(ValueError, match="Advance the live E state"):
+        seed.cross_order(confirmation, level)
 
 
 @pytest.mark.parametrize("direction", ("bullish", "bearish"))

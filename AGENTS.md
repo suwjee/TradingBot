@@ -1,6 +1,6 @@
 # TradingBot Project Operating Contract
 
-**last_modified_at:** `2026-09-30T20:12:59+03:30`
+**last_modified_at:** `2026-11-18T23:29:11+03:30`
 
 This root `AGENTS.md` is the durable navigation and operating contract for AI-assisted work in TradingBot. It defines authority, discovery, ownership boundaries, safety rules, engineering workflow, and verification obligations. It is intentionally discovery-first: mutable repository facts must be re-discovered from the live project instead of being frozen here.
 
@@ -344,6 +344,8 @@ For current local-state ownership, use [Project-local workstation state](enginee
 ## 13. Release and Publication Rules
 
 Release mechanics are owned by the current release subsystem, not by this file.
+
+For every project change, check release coverage for new, modified, renamed, and deleted files. Update the maintained `git.bat` policy and its verification when the change creates a new ownership boundary or classification. Confirm eligible engineering files enter `main` and runtime-owned files enter `production` through the current discovery rules. Preserve the project-local state and sensitive-content exclusions.
 
 When release work is requested:
 

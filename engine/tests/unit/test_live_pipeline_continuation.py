@@ -55,6 +55,32 @@ def test_live_pipeline_matches_manual_apply_at_each_horizon(direction, tmp_path)
         assert actual == expected
 
 
+def test_failed_full_replay_leaves_the_raw_append_retryable(monkeypatch, tmp_path):
+    from types import SimpleNamespace
+    import live_pipeline
+
+    args = setup("bullish", tmp_path / "raw.json", 100, 100)
+    worker = live_pipeline.LivePipelineContinuation(args, SimpleNamespace(e_zone=True, primary=None))
+    attempts = []
+
+    def calculate(_args, _engines, buckets, **_options):
+        times = [row["time"] for row in buckets.second_buckets]
+        attempts.append(times)
+        if len(attempts) == 2:
+            raise ValueError("Calculation failed")
+        return {"times": times}
+
+    monkeypatch.setattr(live_pipeline, "calculate_live_from_buckets", calculate)
+    first = dict(time=100, open=1, high=2, low=0, close=1)
+    second = dict(first, time=105, high=3)
+    assert worker.append([first]) == {"times": [100]}
+    with pytest.raises(ValueError, match="Calculation failed"):
+        worker.append([second])
+    assert worker.append([second]) == {"times": [100, 105]}
+    assert worker.append([]) == {"times": [100, 105]}
+    assert attempts == [[100], [100, 105], [100, 105], [100, 105]]
+
+
 def test_raw_lineage_catches_up_once_and_accepts_only_an_exact_append():
     from decimal import Decimal
     from live_pipeline import LiveRawChanged, LiveRawSource, _decode_raw
@@ -69,7 +95,7 @@ def test_raw_lineage_catches_up_once_and_accepts_only_an_exact_append():
 
     engine = Engine()
     assert live.append(original, engine) == [source[1]]
-    assert live.append(original, engine) is None
+    assert live.append(original, engine) == []
     extended = original[:original.rfind(b"]")] + b',{"time":20,"open":3.000}]\n'
     assert live.append(extended, engine) == [{"time": 20, "open": Decimal("3.000")}]
     with pytest.raises(LiveRawChanged, match="Existing RAW candles changed"):

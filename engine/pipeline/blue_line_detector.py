@@ -7,12 +7,14 @@ does not decide A/S/E lifecycle ownership.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from copy import copy
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 from typing import Sequence
 
+from core_utils import ChronologicalContainmentIndex
 from direction_policy import policy_for
 
 
@@ -533,6 +535,21 @@ def mark_internal_blue_lines(
     fall strictly inside the same healthy Reaction interior.  The drawing
     offset alone never changes ownership.
     """
+    interiors: ChronologicalContainmentIndex[object] | None = None
+    indexed = False
+
+    def index_interiors() -> ChronologicalContainmentIndex[object] | None:
+        windows = []
+        for reaction in all_behavior_reactions:
+            first = getattr(reaction, "behavior_first_time", None)
+            confirmed = getattr(reaction, "behavior_confirmation_time", None)
+            if first is None or confirmed is None:
+                continue
+            if (type(first) is not datetime or first.tzinfo is not None
+                    or type(confirmed) is not datetime or confirmed.tzinfo is not None):
+                return None
+            windows.append((first, confirmed, reaction))
+        return ChronologicalContainmentIndex(windows)
 
     def owner_is_internal(line: BlueLine) -> bool:
         number = int(getattr(line, "reaction_number", 0) or 0)
@@ -541,6 +558,7 @@ def mark_internal_blue_lines(
         return bool(getattr(owner_reactions[number - 1], "behavior_internal", False))
 
     def geometry_is_internal(line: BlueLine) -> bool:
+        nonlocal indexed, interiors
         source_time = getattr(line, "source_time", None)
         line_price = getattr(line, "line_price", None)
         source_extreme = getattr(line, "source_extreme", None)
@@ -548,7 +566,13 @@ def mark_internal_blue_lines(
             return False
         rendered = Decimal(str(line_price))
         semantic = Decimal(str(source_extreme))
-        for reaction in all_behavior_reactions:
+        if not indexed:
+            interiors = index_interiors()
+            indexed = True
+        reactions: Iterable[object] = all_behavior_reactions
+        if interiors is not None and type(source_time) is datetime and source_time.tzinfo is None:
+            reactions = interiors.enclosing(source_time, source_time)
+        for reaction in reactions:
             first = getattr(reaction, "behavior_first_time", None)
             confirmed = getattr(reaction, "behavior_confirmation_time", None)
             if first is None or confirmed is None:

@@ -105,17 +105,17 @@ function historyResponse(times) {
   return Response.json({ s: "ok", t: times, o: times.map(() => 1), h: times.map(() => 2), l: times.map(() => 1), c: times.map(() => 2) });
 }
 
-async function realtimeFixture(t, fetchImpl, { nowSeconds = 120, last = 100, rows = [realtimeCandle(last)] } = {}) {
+async function realtimeFixture(t, fetchImpl, { nowSeconds = 120, last = 100, rows = [realtimeCandle(last)], timeframe = "5S" } = {}) {
   const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-realtime-"));
   t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
   writeFakeSession(workspaceRoot);
   const rootDir = path.join(workspaceRoot, "apps", "chart", "state", "data", "raw");
   const rawStore = createRawResourceStore({ rootDir });
-  const old = rawStore.write({ broker: "TEST", symbol: "PAIR", timeframe: "5S", candles: rows, source: "test" });
+  const old = rawStore.write({ broker: "TEST", symbol: "PAIR", timeframe, candles: rows, source: "test" });
   const origin = await listenForApi(t, createFarazCandleApi({ workspaceRoot, rawStore, fetchImpl, now: () => nowSeconds * 1000 }));
-  const post = ({ baseSha256 = old.dataSha256, file = old, verifyAll = false, ...options } = {}) => fetch(`${origin}/api/candle-files/realtime`, {
+  const post = ({ baseSha256 = old.dataSha256, file = old, lastCandleTime = file.to ?? old.actualRange.to, verifyAll = false, phase, historyPacketLimit, ...options } = {}) => fetch(`${origin}/api/candle-files/realtime`, {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: file.id, chartId: file.chartId, lastCandleTime: file.to ?? last, baseSha256, verifyAll }), ...options,
+    body: JSON.stringify({ id: file.id, chartId: file.chartId, lastCandleTime, baseSha256, verifyAll, phase, historyPacketLimit }), ...options,
   });
   return { rawStore, old, post };
 }
@@ -155,6 +155,52 @@ test("real-time catch-up publishes one renamed RAW pair with only closed native-
   assert.equal(stale.status, 409);
   assert.equal((await stale.json()).file.id, file.id);
   assert.equal(requests.length, 3);
+});
+
+test("another tab receives the committed append from its exact RAW cursor without a new FARAZ request", async (t) => {
+  let requests = 0;
+  const { post, rawStore } = await realtimeFixture(t, async () => {
+    requests++;
+    return historyResponse([103, 108, 113, 118]);
+  }, { nowSeconds: 118, last: 103 });
+
+  const first = await post({ phase: "latest" });
+  assert.equal(first.status, 200);
+  const committed = await first.json();
+  assert.deepEqual(committed.candles, [realtimeCandle(108), realtimeCandle(113)]);
+  assert.equal(requests, 2);
+
+  const replay = await post({ phase: "latest" });
+  assert.equal(replay.status, 200);
+  const caughtUp = await replay.json();
+  assert.equal(caughtUp.file.id, committed.file.id);
+  assert.equal(caughtUp.file.metadata.dataSha256, committed.file.metadata.dataSha256);
+  assert.deepEqual(caughtUp.candles, committed.candles);
+  assert.deepEqual(caughtUp.corrections, []);
+  assert.deepEqual(caughtUp.gapCandles, []);
+  assert.equal(caughtUp.verification.verifiedCount, committed.verification.verifiedCount);
+  assert.equal(caughtUp.verification.totalCount, committed.verification.totalCount);
+
+  const fromInventory = await post({ phase: "replay" });
+  assert.equal(fromInventory.status, 200);
+  assert.deepEqual(await fromInventory.json(), caughtUp);
+  const alreadyCurrent = await post({ phase: "replay", file: committed.file, baseSha256: committed.file.metadata.dataSha256 });
+  assert.equal(alreadyCurrent.status, 409);
+
+  for (const cursor of [{ lastCandleTime: 108 }, { baseSha256: "0".repeat(64) }, { verifyAll: true }]) {
+    const rejected = await post({ phase: "latest", ...cursor });
+    assert.equal(rejected.status, 409);
+    assert.equal((await rejected.json()).code, "RAW_CHANGED");
+  }
+  assert.equal(requests, 2);
+
+  const current = rawStore.get(committed.file.id);
+  await rawStore.appendLatest(current, [], 5, rawStore.version(current.id), new AbortController().signal,
+    { corrections: [{ ...realtimeCandle(103), close: 1.5 }] });
+  const afterHistoricalCorrection = await post({ phase: "replay" });
+  assert.equal(afterHistoricalCorrection.status, 409);
+  assert.equal((await afterHistoricalCorrection.json()).code, "RAW_CHANGED");
+  assert.equal(requests, 2);
 });
 
 test("live verification repairs history, confirms newly appended OHLC with a second fetch, and supports Verify All", async (t) => {
@@ -246,26 +292,138 @@ test("a polling stream reports actual work and counts repairs to both historical
   });
 });
 
-test("an unconfirmed new candle stays pending and is corrected on the next poll", async (t) => {
+test("a failed confirmation leaves RAW intact so the next poll can append confirmed OHLC", async (t) => {
   let calls = 0;
-  const { post, rawStore } = await realtimeFixture(t, async (url, options) => {
+  const { old, post, rawStore } = await realtimeFixture(t, async (url, options) => {
     calls++;
+    assert.equal(url.searchParams.get("from"), "105");
     if (calls === 2) {
       assert.equal(options.cache, "no-store");
       throw new TypeError("Connection lost before confirmation");
     }
-    if (calls === 3) return Response.json({ s: "ok", t: [100, 105], o: [1, 1], h: [2, 2], l: [1, 1], c: [2, 1.5] });
+    if (calls === 4) return Response.json({ s: "ok", t: [105], o: [1], h: [2], l: [1], c: [1.5] });
     return historyResponse([105]);
   }, { nowSeconds: 110 });
-  const first = await (await post()).json();
+  const first = await (await post({ phase: "latest" })).json();
   assert.equal(first.verification.status, "unavailable");
   assert.equal(first.verification.verifiedCount, 0);
-  assert.equal(first.candles.length, 1);
-  const next = await (await post({ file: first.file, baseSha256: first.file.metadata.dataSha256 })).json();
-  assert.equal(next.verification.status, "verified");
-  assert.equal(next.candles.length, 0);
-  assert.equal(next.corrections[0].close, 1.5);
-  assert.equal(rawStore.read(next.file.id)[1].close, 1.5);
+  assert.equal(first.file.id, old.id);
+  assert.deepEqual(first.candles, []);
+  assert.deepEqual(rawStore.read(old.id), [realtimeCandle(100)]);
+  const next = await (await post({ phase: "latest" })).json();
+  assert.deepEqual(next.candles, [{ ...realtimeCandle(105), close: 1.5 }]);
+  assert.equal(next.verification.verifiedCount, 1);
+  assert.equal(next.verification.correctedCount, 1);
+  assert.deepEqual(rawStore.read(next.file.id), [realtimeCandle(100), { ...realtimeCandle(105), close: 1.5 }]);
+});
+
+test("a partial confirmation appends the matching 1S prefix and retries from the first unmatched candle", async (t) => {
+  const requests = [];
+  const { post, rawStore } = await realtimeFixture(t, async (url) => {
+    assert.equal(url.searchParams.get("resolution"), "1S");
+    const from = Number(url.searchParams.get("from"));
+    requests.push(from);
+    const rows = requests.length === 2 ? [101, 103, 104] : [101, 102, 103, 104];
+    return historyResponse(rows.filter(time => time >= from));
+  }, { nowSeconds: 105, timeframe: "1S" });
+  const first = await (await post({ phase: "latest" })).json();
+  assert.deepEqual(first.candles, [realtimeCandle(101)]);
+  assert.equal(first.verification.verifiedCount, 1);
+  assert.deepEqual(rawStore.read(first.file.id).map(row => row.time), [100, 101]);
+
+  const next = await (await post({ phase: "latest", file: first.file, baseSha256: first.file.metadata.dataSha256 })).json();
+  assert.deepEqual(next.candles.map(row => row.time), [102, 103, 104]);
+  assert.equal(next.verification.verifiedCount, 4);
+  assert.deepEqual(requests, [101, 101, 102, 102]);
+  assert.deepEqual(rawStore.read(next.file.id).map(row => row.time), [100, 101, 102, 103, 104]);
+});
+
+test("a candle found only in the fresh response keeps later candles pending", async (t) => {
+  let requests = 0;
+  const { old, post, rawStore } = await realtimeFixture(t, async (url) => {
+    requests++;
+    const from = Number(url.searchParams.get("from"));
+    const times = requests === 1 ? [100] : requests === 2 ? [110] : [105, 110];
+    return historyResponse(times.filter(time => time >= from));
+  }, { nowSeconds: 115 });
+  const prior = await (await post({ verifyAll: true })).json();
+  assert.equal(prior.verification.status, "verified");
+  const result = await (await post({ phase: "latest" })).json();
+  assert.equal(result.verification.status, "pending");
+  assert.equal(result.verification.verifiedCount, 1);
+  assert.deepEqual(result.candles, []);
+  assert.deepEqual(rawStore.read(old.id), [realtimeCandle(100)]);
+});
+
+test("a limited history phase verifies one packet and resumes at the next unchecked packet", async (t) => {
+  const rows = Array.from({ length: 1001 }, (_, index) => realtimeCandle(100 + index));
+  const requests = [];
+  const { post } = await realtimeFixture(t, async (url) => {
+    const from = Number(url.searchParams.get("from"));
+    const to = Number(url.searchParams.get("to"));
+    requests.push([from, to]);
+    return historyResponse(rows.filter(row => row.time >= from && row.time < to).map(row => row.time));
+  }, { nowSeconds: 1101, rows, timeframe: "1S" });
+  const first = await (await post({ phase: "history", historyPacketLimit: 1 })).json();
+  assert.equal(first.verification.status, "pending");
+  assert.equal(first.verification.verifiedCount, 1000);
+  assert.deepEqual(requests, [[100, 1100]]);
+
+  const second = await (await post({ phase: "history", historyPacketLimit: 1 })).json();
+  assert.equal(second.verification.status, "verified");
+  assert.equal(second.verification.verifiedCount, 1001);
+  assert.deepEqual(requests, [[100, 1100], [1100, 1101]]);
+
+  const all = await (await post({ phase: "history", historyPacketLimit: 1, verifyAll: true })).json();
+  assert.equal(all.verification.checkedCount, 1001);
+  assert.deepEqual(requests, [[100, 1100], [1100, 1101], [100, 1100], [1100, 1101]]);
+});
+
+test("history packet limits are bounded integers scoped to the history phase", async (t) => {
+  const { post } = await realtimeFixture(t, async () => { assert.fail("An invalid limit must not fetch FARAZ"); });
+  for (const request of [{ phase: "latest", historyPacketLimit: 1 }, { historyPacketLimit: 1 },
+    { phase: "history", historyPacketLimit: 0 }, { phase: "history", historyPacketLimit: 9 }, { phase: "history", historyPacketLimit: "1" }]) {
+    assert.equal((await post(request)).status, 400);
+  }
+});
+
+test("history verification can publish a metadata-only update after a single RAW read", async (t) => {
+  const { old, post, rawStore } = await realtimeFixture(t, async () => historyResponse([100]), { nowSeconds: 105 });
+  assert.equal(rawStore.get(old.id).metadata.dataSha256, old.dataSha256);
+  const readFileSync = fs.readFileSync;
+  const readFile = fs.promises.readFile;
+  let rawReads = 0;
+  t.mock.method(fs, "readFileSync", (target, ...args) => {
+    if (target === old.dataPath) rawReads++;
+    return readFileSync(target, ...args);
+  });
+  t.mock.method(fs.promises, "readFile", (target, ...args) => {
+    if (target === old.dataPath) rawReads++;
+    return readFile(target, ...args);
+  });
+
+  const result = await (await post({ phase: "history" })).json();
+  assert.equal(result.verification.status, "verified");
+  assert.equal(rawStore.get(old.id).metadata.candleVerification.verifiedCount, 1);
+  assert.equal(rawStore.get(old.id).metadata.dataSha256, old.dataSha256);
+  assert.equal(rawReads, 1);
+});
+
+test("metadata-only verification rejects a RAW change while staging its sidecar", async (t) => {
+  const { old, post, rawStore } = await realtimeFixture(t, async () => historyResponse([100]), { nowSeconds: 105 });
+  const originalSidecar = fs.readFileSync(old.metaPath, "utf8");
+  const writeFile = fs.promises.writeFile;
+  const revised = { ...realtimeCandle(100), close: 1 };
+  t.mock.method(fs.promises, "writeFile", async (target, ...args) => {
+    await writeFile(target, ...args);
+    if (target.endsWith(".meta.tmp")) fs.writeFileSync(old.dataPath, JSON.stringify([revised]));
+  });
+
+  const response = await post({ phase: "history" });
+  assert.equal(response.status, 409);
+  assert.equal((await response.json()).code, "RAW_CHANGED");
+  assert.equal(fs.readFileSync(old.metaPath, "utf8"), originalSidecar);
+  assert.deepEqual(rawStore.read(old.id), [revised]);
 });
 
 test("a missing FARAZ row stays pending and never deletes a stored candle", async (t) => {

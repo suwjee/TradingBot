@@ -305,6 +305,22 @@ test("MBL line visibility leaves its independently enabled label visible", async
   assert.deepEqual(context.strokes, []);
 });
 
+test("primary PH and PL render their T and F verdicts at weight 700", async () => {
+  const { drawPrimaryStructures } = await import(source);
+  const context = primaryPaintContext();
+  const verdicts = [];
+  context.fillText = function (text) {
+    if (text === "T" || text === "F") verdicts.push([text, this.font.split(" ")[0]]);
+  };
+  drawPrimaryStructures(context, { primaryHighs: [{ number: 1, sourceTime: 10, price: "20", trueFalse: "T" }] }, {
+    direction: "bearish", timeframe: 30, timeToX: value => value, priceToY: value => value,
+  });
+  drawPrimaryStructures(context, { primaryLows: [{ number: 2, sourceTime: 15, price: "10", trueFalse: "F" }] }, {
+    direction: "bullish", timeframe: 30, timeToX: value => value, priceToY: value => value,
+  });
+  assert.deepEqual(verdicts, [["T", "700"], ["F", "700"]]);
+});
+
 test("per-object hidden suppresses both primary marker and label", async () => {
   const { drawPrimaryStructures } = await import(source);
   const context = primaryPaintContext();

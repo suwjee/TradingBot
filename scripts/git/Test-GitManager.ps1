@@ -117,6 +117,8 @@ Write-Output "$ReleaseTag|$CommitMessage|$ReleaseTitle|$ReleaseNotesFile|$([bool
 '@)
     $result = Invoke-TestProcess -Executable $env:ComSpec -Arguments ('/d /c ""' + $bat + '" -ReleaseTag v2.8.1 -CommitMessage "Release v2.8.1" -ReleaseTitle "Live Chart & Indicator" -ReleaseNotesFile "release notes.md" -DryRun"') -Directory ([IO.Path]::GetTempPath())
     Assert-Manager ($result.ExitCode -eq 0 -and $result.StdOut.Trim() -eq 'v2.8.1|Release v2.8.1|Live Chart & Indicator|release notes.md|True|True') 'batch forwards release notes, title, tag and switches from another working directory'
+    $result = Invoke-TestProcess -Executable $env:ComSpec -Arguments ('/d /c ""' + $bat + '" -DryRun -CommitMessage "Validate release" -ReleaseTag v2.8.2"') -Directory ([IO.Path]::GetTempPath()) -InputText "0`r`n"
+    Assert-Manager ($result.ExitCode -eq 0 -and $result.StdOut.Trim() -eq 'v2.8.2|Validate release|||True|True') 'batch routes a dry-run regardless of release option order'
   } finally { Remove-ManagerFixture $fixture }
 }
 

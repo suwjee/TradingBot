@@ -54,10 +54,38 @@ async function launch(stateRoot, marketFixture = "") {
     });
     return { stop, getReport: id => report(id, "GET"), saveReport: id => report(id, "POST"),
       post: (route, body) => post(`/reactions${route}`, body),
-      update: body => post("/candle-files/realtime", body) };
+      update: body => post("/candle-files/realtime", body),
+      progress: requestId => fetch(`http://127.0.0.1:${port}/api/reactions/progress?requestId=${encodeURIComponent(requestId)}`,
+        { signal: AbortSignal.timeout(30_000) }) };
   }
   await stop();
   assert.fail(`Vite did not start. ${stderr}`);
+}
+
+async function indicatorProgress(response) {
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("Content-Type"), /^text\/event-stream/);
+  const events = [];
+  const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+  let pending = "";
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) assert.fail("Engine progress ended without a terminal event");
+      pending += value;
+      let end;
+      while ((end = pending.indexOf("\n\n")) >= 0) {
+        const message = pending.slice(0, end);
+        pending = pending.slice(end + 2);
+        if (!message.startsWith("data: ")) continue;
+        const event = JSON.parse(message.slice(6));
+        events.push(event);
+        if (event.status === "finished" || event.status === "failed") return events;
+      }
+    }
+  } finally {
+    await reader.cancel();
+  }
 }
 
 async function indicator(response) {
@@ -107,6 +135,10 @@ test("a tab catches up after five minutes and recovers across a restart without 
     const legacyFile = path.join(cache, legacyId);
     const legacyContents = await fs.readFile(legacyFile, "utf8");
     await fs.writeFile(legacyFile, JSON.stringify({ timeframe: 30, directions: {}, marker: "disk-cache" }));
+    const freshResponse = await server.post("", { ...requests[0], id: raw.id });
+    assert.deepEqual(await indicator(freshResponse), baseline);
+    assert.equal(freshResponse.headers.get("X-QG-Cache"), "bypass");
+    assert.notEqual(freshResponse.headers.get("X-QG-Calculation-Id"), legacyId);
     const originalCacheFiles = await cacheFiles();
 
     const emptyTab = { chartId, tabId: "unapplied-tab" };
@@ -179,7 +211,9 @@ test("a tab catches up after five minutes and recovers across a restart without 
         assert.deepEqual(await cacheFiles(), before);
         const expected = await indicator(await server.post("", { ...requests[index], id: raw.id, to: checkpoint.proof.to }));
         assert.deepEqual(actual, expected);
-        assert.deepEqual(await indicator(await server.post("/continue", { id: raw.id, chartId, ...checkpoint })), actual);
+        const repeated = await server.post("/continue", { id: raw.id, chartId, ...checkpoint });
+        assert.deepEqual(await indicator(repeated), actual);
+        assert.notEqual(repeated.headers.get("X-QG-Calculation-Id"), response.headers.get("X-QG-Calculation-Id"));
       }
     }
     if (!rawFixture) assert.ok(alertMonitors.some(alert => alert.matches > 0),
@@ -190,7 +224,14 @@ test("a tab catches up after five minutes and recovers across a restart without 
       assert.equal(report.status, 200);
       assert.equal((await report.json()).snapshot.calculation.to, requests[index].to);
     }
-    const idle = await server.post("/continue", { id: raw.id, chartId, ...checkpoints[0], keepAlive: true });
+    const idleRequestId = "restart-current-range";
+    const idleProgress = await server.progress(idleRequestId);
+    const [idle, idleEvents] = await Promise.all([
+      server.post("/continue", { id: raw.id, chartId, ...checkpoints[0], keepAlive: true, requestId: idleRequestId }),
+      indicatorProgress(idleProgress),
+    ]);
+    assert.equal(idleEvents.filter(event =>
+      event.status === "started" && event.label === "Build live market chronology").length, 1);
     await indicator(idle);
     checkpoints[0].sessionId = idle.headers.get("X-QG-Live-Session");
     const ping = await server.post("/continue", { id: raw.id, chartId, ...checkpoints[0], keepAlive: true });
@@ -200,7 +241,14 @@ test("a tab catches up after five minutes and recovers across a restart without 
     if (modified.close === rows[1].close) modified.close = rows[1].high;
     assert.notEqual(modified.close, rows[1].close);
     await fs.writeFile(raw.dataPath, JSON.stringify([rows[0], modified, ...rows.slice(2, raw.count)]));
-    const rebuild = await server.post("/continue", { id: raw.id, chartId, ...checkpoints[0] });
+    const requestId = "historical-revision-recovery";
+    const recoveryProgress = await server.progress(requestId);
+    const [rebuild, recoveryEvents] = await Promise.all([
+      server.post("/continue", { id: raw.id, chartId, ...checkpoints[0], requestId }),
+      indicatorProgress(recoveryProgress),
+    ]);
+    assert.equal(recoveryEvents.filter(event =>
+      event.status === "started" && event.label === "Build live market chronology").length, 1);
     const actual = await indicator(rebuild);
     const expected = await indicator(await server.post("", { ...requests[0], id: raw.id,
       to: Math.floor(raw.to / 30) * 30 }));
@@ -251,9 +299,25 @@ test("a confirmed realtime append continues in the same worker and matches a fre
     const updated = await response.json();
     assert.equal(response.status, 200, JSON.stringify(updated));
     assert.deepEqual(updated.candles, rows.slice(215));
-    const continued = await server.post("/continue", { id: updated.file.id, chartId: raw.chartId, tabId: request.tabId, sessionId, proof });
+    const replayResponse = await server.update({ id: raw.id, chartId: raw.chartId, lastCandleTime: raw.to,
+      baseSha256: raw.metadata.dataSha256, phase: "replay" });
+    const replayed = await replayResponse.json();
+    assert.equal(replayResponse.status, 200, JSON.stringify(replayed));
+    assert.deepEqual(replayed.candles, updated.candles);
+    assert.equal(replayed.file.metadata.dataSha256, updated.file.metadata.dataSha256);
+    const requestId = "verified-realtime-progress";
+    const progressResponse = await server.progress(requestId);
+    const [continued, events] = await Promise.all([
+      server.post("/continue", { id: replayed.file.id, chartId: raw.chartId, tabId: request.tabId, sessionId, proof, requestId }),
+      indicatorProgress(progressResponse),
+    ]);
     const actual = await indicator(continued);
     assert.equal(continued.headers.get("X-QG-Live-Session"), null, "A successful append must reuse its worker");
+    assert.equal(events.at(-1).status, "finished");
+    assert.ok(events.some(event => event.status === "started" && event.label === "Reaction geometry • Bullish"));
+    const completed = events.filter(event => event.completedStages !== undefined);
+    assert.deepEqual(completed.map(event => event.completedStages), [1, 2, 3, 4, 5]);
+    assert.ok(completed.every(event => event.totalStages === 6));
     const expected = await indicator(await server.post("", { ...request, id: updated.file.id, to: Math.floor(updated.file.to / 30) * 30 }));
     assert.deepEqual(actual, expected);
   } finally {

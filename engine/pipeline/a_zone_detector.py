@@ -13,13 +13,13 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import Sequence
 
-from core_utils import as_decimal
+from core_utils import as_decimal, ordered_naive_datetimes
 from direction_policy import policy_for
 
 
 A_ZONE_VERSION = "1.7.0"
-A_ZONE_IMPLEMENTATION_VERSION = "1.8.0"
-A_ZONE_LAST_MODIFIED_DATE = "2026-11-17"
+A_ZONE_IMPLEMENTATION_VERSION = "1.8.1"
+A_ZONE_LAST_MODIFIED_DATE = "2026-11-19"
 
 
 @dataclass(frozen=True, slots=True)
@@ -104,6 +104,9 @@ class AZoneDetector:
         self._reaction_confirmations = [
             self._reaction_confirmation_time(reaction) for reaction in self.reactions
         ]
+        self._ordered_firsts = ordered_naive_datetimes(self._reaction_first_times)
+        self._ordered_breaks = ordered_naive_datetimes(self._reaction_break_times)
+        self._ordered_confirmations = ordered_naive_datetimes(self._reaction_confirmations)
 
     @property
     def extreme_name(self) -> str:
@@ -506,6 +509,19 @@ class AZoneDetector:
         reactions = self.reactions
         first_times = self._reaction_first_times
         confirmations = self._reaction_confirmations
+        if (
+            start_position >= 0
+            and self._ordered_confirmations
+            and type(trigger_event_time) is datetime and trigger_event_time.tzinfo is None
+            and (not_before is None or (
+                self._ordered_firsts and type(not_before) is datetime and not_before.tzinfo is None
+            ))
+        ):
+            position = max(start_position, bisect_left(confirmations, trigger_event_time))
+            if not_before is not None:
+                position = max(position, bisect_left(first_times, not_before))
+            return (position + 1, reactions[position]) if position < len(reactions) else None
+
         for number in range(start_position, len(reactions)):
             if (
                 confirmations[number] >= trigger_event_time
@@ -539,12 +555,21 @@ class AZoneDetector:
         reactions = self.reactions
         first_times = self._reaction_first_times
         break_times = self._reaction_break_times
-        for number in range(len(reactions)):
+        start = 0
+        if self._ordered_firsts and type(window_start) is datetime and window_start.tzinfo is None:
+            start = bisect_right(first_times, window_start)
+        ordered_limit = (
+            self._ordered_breaks and type(current.formation_time) is datetime
+            and current.formation_time.tzinfo is None
+        )
+        for number in range(start, len(reactions)):
             first_time = first_times[number]
             break_time = break_times[number]
             if first_time <= window_start:
                 continue
             if break_time >= current.formation_time:
+                if ordered_limit:
+                    break
                 continue
             # Exact directional mirror: once a prior Blue has strictly
             # stopped, its carried stop uses the directional extreme across

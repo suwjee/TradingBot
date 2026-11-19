@@ -273,10 +273,14 @@ def test_native_post_stop_stream_reuses_generation_without_rescanning_ledger():
     assert list(detector._iter_post_stop_accepted_orders(parent, moment(125)))
     assert list(detector._iter_post_stop_accepted_orders(parent, moment(150)))
     assert detector.order_audit.reads == 1
+    original = detector._iter_post_stop_accepted_orders(parent, moment(125))
     detector.order_audit[(7, 8)] = ledger_entry(candidate(7, 8), confirmation=195, crossing=230)
     detector._index_order_audit_identity((7, 8), moment(195))
-    assert len(list(detector._iter_post_stop_accepted_orders(parent, moment(125)))) == 2
-    assert detector.order_audit.reads == 3
+    current = list(detector._iter_post_stop_accepted_orders(parent, moment(125)))
+    assert len(current) == 2
+    assert detector.order_audit.reads == 2
+    assert list(original) == current[:1]
+    assert current == detector._post_stop_accepted_orders_for_parent(parent, moment(125))
 
 
 @pytest.mark.parametrize("consumer", ("query", "zone"))

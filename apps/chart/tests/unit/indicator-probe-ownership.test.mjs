@@ -18,25 +18,30 @@ function harness() {
   const state = { file: { id: "A.json", chartId: "A", symbol: "A" }, tf: 30,
     raw: [{ time: 0 }, { time: 300 }], data: [],
     indicator: { loading: false, results: {}, resultContext: context }, indicatorRange: {} };
-  const posts = [], probes = [], applied = [];
+  const posts = [], replies = [], applied = [];
   const noop = () => {};
   const sandbox = { ...lifecycle, state, inputs, controls, posts, performance, AbortController, setTimeout, clearTimeout, clearInterval,
     liveIndicatorTabId: "manual-apply-tab",
     $: selector => selector === "[data-direction].active" ? { dataset: { direction: inputs.direction } }
-      : controls[selector.replace(/^#/, "")] ||= { dataset: {}, focus: noop, classList: { toggle: noop } },
+      : controls[selector.replace(/^#/, "")] ||= { dataset: {}, focus: noop, setAttribute: noop, classList: { toggle: noop } },
     indicatorApplyProblem: () => null, indicatorSettings: () => ({ ...inputs }),
     parseTehranInput: Number, normalizeIndicatorRange: () => null, calculationKey: () => "key",
     clone: value => structuredClone(value), indicatorStatus: noop, indicatorToast: noop,
-    log: { indicator: { info: noop, warn: noop, error: noop } },
-    setIndicatorVisibility: value => applied.push(["visible", value]), applyVisualSettings: value => applied.push(["settings", value]),
+    log: { indicator: { info: noop, warn: noop, error: (_event, error) => { throw error; } } },
+    setIndicatorVisibility: value => applied.push(["visible", value]),
+    removeInvalidIndicatorCalculations: value => { applied.push(value); return value; },
+    localStorage: { setItem: noop },
+    rebuildIndicatorObjects: noop, drawAll: noop, syncAlertMonitoring: noop,
+    alertLiveReady: false, renderIndicatorInfo: noop, setFooterCacheStatus: noop, window: {},
     pushIndicatorActivity: noop, createUniqueId: () => "request", formatTehran: String,
     startCalculationProgress: () => ({ events: [], recordEvent: noop, source: { close: noop } }), stopCalculationProgress: noop,
     setCalculationProgress: noop,
     buildIndicatorCalculationRequest: value => value,
     fetch: (url, options) => {
-      if (url === "/api/reactions/source") return new Promise(resolve => probes.push(resolve));
+      assert.equal(url, "/api/reactions");
+      assert.equal(options.cache, "no-store");
       posts.push(JSON.parse(options.body));
-      return new Promise(() => {});
+      return new Promise(resolve => replies.push(resolve));
     },
   };
   const runtime = vm.createContext(sandbox);
@@ -46,9 +51,10 @@ function harness() {
 let realtimeUpdateOwner = null;
 let symbolLoadRevision = 0;
 ${invalidate}\n${actualCalculate}`, runtime);
-  return { state, controls, inputs, posts, probes, applied, runtime,
+  return { state, controls, inputs, posts, applied, runtime,
     calculate: () => vm.runInContext("calculateIndicator()", runtime),
-    resolve: (fingerprint = "new-source", index = 0) => probes[index]({ ok: true, json: async () => ({ sourceFingerprint: fingerprint }) }),
+    resolve: (index = 0) => replies[index]({ ok: true,
+      headers: { get: () => null }, json: async () => ({ directions: {} }) }),
   };
 }
 
@@ -62,64 +68,52 @@ for (const [name, change] of [
   ["direction input", h => { h.inputs.direction = "bullish"; }],
   ["cleared result context", h => { h.state.indicator.resultContext = null; }],
 ]) {
-  test(`pending Source probe abandons stale ${name}`, async () => {
+  test(`pending calculation abandons stale ${name}`, async () => {
     const h = harness();
     const running = h.calculate();
     change(h);
     h.resolve();
     await new Promise(resolve => setImmediate(resolve));
-    assert.equal(h.posts.length, 0, "A stale selection must not submit an Engine request");
-    assert.equal(h.applied.length, 0, "A stale selection must not restore old visibility/settings");
+    assert.equal(h.posts.length, 1);
+    assert.equal(h.applied.length, 0, "A stale response must not update the applied indicator");
     await running;
   });
 }
 
-test("unchanged selection still reuses a verified calculation after the probe", async () => {
+test("Apply requests a fresh calculation even when its existing result matches", async () => {
   const h = harness();
   const running = h.calculate();
-  h.resolve("old-source");
-  await running;
-  assert.equal(h.posts.length, 0);
-  assert.deepEqual(h.applied.map(item => item[0]), ["visible", "settings"]);
-  assert.equal(h.state.indicator.loading, false);
-  assert.equal(h.controls.applyIndicator.disabled, false);
-});
-
-test("Apply requests a fresh checkpoint for this tab when its calculation has no worker", async () => {
-  const h = harness();
-  h.state.indicator.resultContext.liveSessionId = null;
-  void h.calculate();
-  h.resolve("old-source");
-  await new Promise(resolve => setImmediate(resolve));
   assert.equal(h.posts.length, 1);
   assert.equal(h.posts[0].tabId, "manual-apply-tab");
   assert.equal(h.posts[0].liveSession, true);
-  assert.equal(h.applied.length, 0);
+  h.resolve();
+  await running;
+  assert.equal(h.applied.length, 1);
+  assert.equal(h.state.indicator.loading, false);
 });
 
-test("an older probe cannot clear a newer operation's loading state", async () => {
+test("an older response cannot clear a newer operation's loading state", async () => {
   const h = harness();
   const first = h.calculate();
   h.state.indicator.loading = false;
   const second = h.calculate();
-  assert.equal(h.probes.length, 2);
-  h.resolve("new-source", 0);
-  await new Promise(resolve => setImmediate(resolve));
-  assert.equal(h.posts.length, 0);
+  assert.equal(h.posts.length, 2);
+  h.resolve();
+  await first;
+  assert.equal(h.applied.length, 0);
   assert.equal(h.state.indicator.loading, true);
   assert.equal(h.controls.applyIndicator.disabled, true);
-  h.resolve("old-source", 1);
+  h.resolve(1);
   await second;
-  await first;
 });
 
-test("selection invalidation cancels a probe even when all values return to their originals", async () => {
+test("selection invalidation ignores a pending response even when all values return to their originals", async () => {
   const h = harness();
   const running = h.calculate();
   vm.runInContext("invalidateIndicatorCalculation()", h.runtime);
-  h.resolve("old-source");
+  h.resolve();
   await running;
-  assert.equal(h.posts.length, 0);
+  assert.equal(h.posts.length, 1);
   assert.equal(h.applied.length, 0);
   assert.equal(h.state.indicator.loading, false);
 });
@@ -130,13 +124,14 @@ test("manual Apply waits for an in-flight real-time RAW publication", async () =
   h.runtime.realtimeFinished = new Promise(resolve => { finish = resolve; });
   vm.runInContext("realtimeUpdateOwner = { finished: realtimeFinished }", h.runtime);
   const running = h.calculate();
-  assert.equal(h.probes.length, 0);
+  assert.equal(h.posts.length, 0);
   vm.runInContext("realtimeUpdateOwner = null", h.runtime);
   finish();
   await new Promise(resolve => setImmediate(resolve));
-  h.resolve("old-source");
+  assert.equal(h.posts.length, 1);
+  h.resolve();
   await running;
-  assert.deepEqual(h.applied.map(item => item[0]), ["visible", "settings"]);
+  assert.equal(h.applied.length, 1);
 });
 
 test("manual Apply waiting for a live update abandons a changed chart selection", async () => {
@@ -148,7 +143,6 @@ test("manual Apply waiting for a live update abandons a changed chart selection"
   vm.runInContext("symbolLoadRevision += 1; realtimeUpdateOwner = null", h.runtime);
   finish();
   await running;
-  assert.equal(h.probes.length, 0);
   assert.equal(h.posts.length, 0);
 });
 
@@ -161,6 +155,5 @@ test("manual Apply does not use a RAW file that needs to be reloaded after a liv
   vm.runInContext("realtimeUpdateOwner = null", h.runtime);
   finish(true);
   await running;
-  assert.equal(h.probes.length, 0);
   assert.equal(h.posts.length, 0);
 });
