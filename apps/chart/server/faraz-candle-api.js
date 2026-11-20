@@ -31,6 +31,7 @@ const MAX_COVERAGE_RECOVERY_ROUNDS = 3;
 const CHART_UPDATE_PACKET_SIZE = 1_000;
 const CHART_UPDATE_RATE_LIMIT_MS = 30;
 const AUTOMATIC_VERIFICATION_PACKETS = 8;
+const RECENT_VERIFICATION_LOOKBACK = 1_000;
 const SESSION_FILE_VERSION = 3;
 const LEGACY_DPAPI_SESSION_VERSION = 2;
 
@@ -664,7 +665,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
   }
 
   async function checkRealtimeCandles(file, timeframeSeconds, closedTo, {
-    verifyAll, phase, historyPacketLimit = AUTOMATIC_VERIFICATION_PACKETS, version, signal, reportProgress,
+    verifyAll, phase, historyPacketLimit = AUTOMATIC_VERIFICATION_PACKETS, previousTail, version, signal, reportProgress,
   }) {
     const previous = file.metadata.candleVerification;
     const ranges = verifyAll ? [] : (previous?.ranges || []).map(range => [...range]);
@@ -688,7 +689,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     let cursor = verifyAll ? 0 : (previous?.nextIndex || 0);
     try {
       const from = file.to + timeframeSeconds;
-      if (!verifyAll && phase !== "history" && from <= closedTo) {
+      if (!verifyAll && phase !== "history" && phase !== "recent" && from <= closedTo) {
         const candidates = await readHistory(from, closedTo, { fresh: false,
           onPacket: (done, total) => reportProgress(40 * done / total) });
         if (candidates.length) {
@@ -707,13 +708,13 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       }
       const alreadyVerified = summarizeVerifiedRows(ranges, file.count + candles.length).ranges;
       const verified = firstUnverifiedRow(alreadyVerified, 0) >= file.count;
-      if (!verified && phase !== "latest") {
+      if (phase === "recent" || (!verified && phase !== "latest")) {
         const history = await rawStore.readForVerification(file, version, signal);
         if (!history) return null;
         const { rows } = history;
         verificationSnapshot = history.snapshot;
         const batches = [];
-        if (cursor >= rows.length || rows[cursor].time > closedTo) cursor = 0;
+        if (phase !== "recent" && (cursor >= rows.length || rows[cursor].time > closedTo)) cursor = 0;
         let index = cursor;
         const rangeEnd = Math.min(file.to, closedTo);
         if (verifyAll && file.from <= rangeEnd) {
@@ -722,6 +723,20 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
             let end = index;
             while (end < rows.length && rows[end].time <= packet.to) end++;
             batches.push({ start: index, end, from: packet.from, to: packet.to });
+            index = end;
+          }
+        } else if (phase === "recent") {
+          const previousIndex = rows.findLastIndex(row => row.time === previousTail);
+          if (previousIndex < 0) return null;
+          // The previous tail is the first append's penultimate candle. For
+          // a batch, cover the union of its windows without rechecking overlaps.
+          index = Math.max(0, previousIndex - RECENT_VERIFICATION_LOOKBACK);
+          while (index < rows.length - 1 && rows[index].time <= closedTo) {
+            const first = rows[index].time;
+            const limit = Math.min(closedTo, first + (CHART_UPDATE_PACKET_SIZE - 1) * timeframeSeconds);
+            let end = index + 1;
+            while (end < rows.length - 1 && rows[end].time <= limit) end++;
+            batches.push({ start: index, end, from: first, to: rows[end - 1].time });
             index = end;
           }
         } else if (!verifyAll) {
@@ -736,7 +751,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
             index = end;
           }
         }
-        const historyStart = verifyAll || phase === "history" || from > closedTo ? 0 : 65;
+        const historyStart = verifyAll || phase === "history" || phase === "recent" || from > closedTo ? 0 : 65;
         for (const [batchIndex, { start, end, from, to }] of batches.entries()) {
           const batch = rows.slice(start, end);
           const reference = await readHistory(from, to);
@@ -746,10 +761,10 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           if (comparison.recovered) for (const row of comparison.recovered) gapCandles.push(row);
           checkedCount += comparison.checkedCount;
           for (const row of comparison.corrections) corrections.push(row);
-          cursor = end;
+          if (phase !== "recent") cursor = end;
           reportProgress(historyStart + (95 - historyStart) * (batchIndex + 1) / batches.length);
         }
-        if (verifyAll || batches.length < historyPacketLimit) cursor = 0;
+        if (phase !== "recent" && (verifyAll || batches.length < historyPacketLimit)) cursor = 0;
       }
     } catch (error) {
       signal.throwIfAborted();
@@ -1778,6 +1793,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
         if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
         const streamProgress = req.headers.accept === "application/x-ndjson";
         const sendResult = (status, result) => {
+          if (status === 200) result = { ...result, supportsRecentVerification: true };
           if (!res.headersSent) return json(res, status, result);
           res.end(`${JSON.stringify({ status, result })}\n`);
         };
@@ -1802,9 +1818,9 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           if (!params || typeof params !== "object") return json(res, 400, { error: "A RAW catch-up request is required." });
           const id = typeof params.id === "string" ? params.id.trim() : "";
           chartId = typeof params.chartId === "string" ? params.chartId.trim() : "";
-          const { lastCandleTime, baseSha256, historyPacketLimit } = params;
+          const { lastCandleTime, baseSha256, historyPacketLimit, previousTail } = params;
           const phase = params.phase;
-          if (phase !== undefined && phase !== "latest" && phase !== "history" && phase !== "replay") {
+          if (phase !== undefined && phase !== "latest" && phase !== "history" && phase !== "recent" && phase !== "replay") {
             return json(res, 400, { error: "The live update phase is invalid." });
           }
           if (historyPacketLimit !== undefined && (phase !== "history" || !Number.isSafeInteger(historyPacketLimit)
@@ -1814,6 +1830,10 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           if (!id || !chartId || !Number.isSafeInteger(lastCandleTime) || lastCandleTime <= 0
             || typeof baseSha256 !== "string" || !/^[a-f0-9]{64}$/.test(baseSha256)) {
             return json(res, 400, { error: "A RAW file ID, chart ID, last candle time and base SHA-256 are required." });
+          }
+          if (phase === "recent" && (params.verifyAll === true || !Number.isSafeInteger(previousTail)
+            || previousTail <= 0 || previousTail >= lastCandleTime)) {
+            return json(res, 400, { error: "Recent verification requires the RAW tail before the append." });
           }
           if (shuttingDown) return json(res, 503, { error: "FARAZ service is shutting down." });
           if (phase !== "replay" && realtimeUpdates.has(chartId)) {
@@ -1848,7 +1868,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           realtimeUpdates.set(chartId, controller);
           reportProgress(0);
           const checked = await checkRealtimeCandles(file, timeframeSeconds, to,
-            { verifyAll: params.verifyAll === true, phase, historyPacketLimit, version, signal, reportProgress });
+            { verifyAll: params.verifyAll === true, phase, historyPacketLimit, previousTail, version, signal, reportProgress });
           signal.throwIfAborted();
           if (!checked || rawStore.version(id) !== version) return changed();
           const current = rawStore.get(id);

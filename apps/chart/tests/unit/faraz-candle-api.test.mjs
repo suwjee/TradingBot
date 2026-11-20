@@ -114,9 +114,9 @@ async function realtimeFixture(t, fetchImpl, { nowSeconds = 120, last = 100, row
   const rawStore = createRawResourceStore({ rootDir });
   const old = rawStore.write({ broker: "TEST", symbol: "PAIR", timeframe, candles: rows, source: "test" });
   const origin = await listenForApi(t, createFarazCandleApi({ workspaceRoot, rawStore, fetchImpl, now: () => nowSeconds * 1000 }));
-  const post = ({ baseSha256 = old.dataSha256, file = old, lastCandleTime = file.to ?? old.actualRange.to, verifyAll = false, phase, historyPacketLimit, ...options } = {}) => fetch(`${origin}/api/candle-files/realtime`, {
+  const post = ({ baseSha256 = old.dataSha256, file = old, lastCandleTime = file.to ?? old.actualRange.to, verifyAll = false, phase, historyPacketLimit, previousTail, ...options } = {}) => fetch(`${origin}/api/candle-files/realtime`, {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: file.id, chartId: file.chartId, lastCandleTime, baseSha256, verifyAll, phase, historyPacketLimit }), ...options,
+    body: JSON.stringify({ id: file.id, chartId: file.chartId, lastCandleTime, baseSha256, verifyAll, phase, historyPacketLimit, previousTail }), ...options,
   });
   return { rawStore, old, post };
 }
@@ -156,6 +156,63 @@ test("real-time catch-up publishes one renamed RAW pair with only closed native-
   assert.equal(stale.status, 409);
   assert.equal((await stale.json()).file.id, file.id);
   assert.equal(requests.length, 3);
+});
+
+test("recent verification rechecks the union of append windows and excludes the newest candle", async (t) => {
+  const rows = Array.from({ length: 1_005 }, (_, index) => realtimeCandle(100 + index * 5));
+  // The interval is selected by actual row count, even when a timeframe slot is missing.
+  rows.splice(20, 1);
+  const previousTail = rows.at(-1).time;
+  const newest = previousTail + 10;
+  const requests = [];
+  let repair = false;
+  const { post, rawStore } = await realtimeFixture(t, async (url) => {
+    const from = Number(url.searchParams.get("from"));
+    const to = Number(url.searchParams.get("to"));
+    requests.push([from, to]);
+    const times = rows.map(row => row.time).concat(previousTail + 5, newest)
+      .filter(time => time >= from && time < to);
+    const payload = await historyResponse(times).json();
+    const index = times.indexOf(previousTail);
+    if (repair && index >= 0) payload.h[index] = 3;
+    return Response.json(payload);
+  }, { rows, nowSeconds: newest + 5 });
+  const initial = await post({ verifyAll: true });
+  assert.equal(initial.status, 200);
+  const latest = await (await post({ phase: "latest" })).json();
+  assert.deepEqual(latest.candles.map(row => row.time), [previousTail + 5, newest]);
+  assert.equal(latest.verification.status, "verified");
+  repair = true;
+  requests.length = 0;
+  const response = await post({ phase: "recent", previousTail, file: latest.file, baseSha256: latest.file.metadata.dataSha256 });
+  assert.equal(response.status, 200);
+  const result = await response.json();
+  assert.equal(requests[0][0], rows.at(-1001).time);
+  assert.equal(requests.at(-1)[1], newest); // FARAZ has an exclusive upper bound.
+  assert.ok(requests.every(([from, to]) => to - from <= 1_000 * 5));
+  assert.equal(result.verification.checkedCount, 1_002);
+  assert.deepEqual(result.corrections, [{ ...realtimeCandle(previousTail), high: 3 }]);
+  assert.deepEqual(result.candles, []);
+  assert.deepEqual(rawStore.read(result.file.id).at(-1), realtimeCandle(newest));
+});
+
+test("recent verification on a short file starts at its first candle and stops at the penultimate candle", async (t) => {
+  const requests = [];
+  const { old, post } = await realtimeFixture(t, async (url) => {
+    const from = Number(url.searchParams.get("from"));
+    const to = Number(url.searchParams.get("to"));
+    requests.push([from, to]);
+    return historyResponse([100, 105, 110].filter(time => time >= from && time < to));
+  }, { rows: [realtimeCandle(100), realtimeCandle(105), realtimeCandle(110)], nowSeconds: 115 });
+  const response = await post({ phase: "recent", previousTail: 105 });
+  assert.equal(response.status, 200);
+  assert.deepEqual(requests, [[100, 110]]);
+  const result = await response.json();
+  assert.equal(result.verification.checkedCount, 2);
+  assert.equal(result.file.metadata.dataSha256, old.dataSha256);
+  assert.equal((await post({ phase: "recent", previousTail: 110 })).status, 400);
+  assert.equal((await post({ phase: "recent", previousTail: 103 })).status, 409);
+  assert.deepEqual(requests, [[100, 110]]);
 });
 
 test("another tab receives the committed append from its exact RAW cursor without a new FARAZ request", async (t) => {

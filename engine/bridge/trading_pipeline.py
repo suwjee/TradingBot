@@ -43,8 +43,8 @@ _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
 TRADING_PIPELINE_VERSION = "1.14.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.20.2"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-11-19T01:21:11+03:30"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.20.3"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-11-20T22:00:58+03:30"
 MBL_EXTENSION_CANDLES = 400
 
 TEHRAN = ZoneInfo("Asia/Tehran")
@@ -332,6 +332,35 @@ def build_candle_objects(engine, buckets: list[dict], *, start_index: int = 0):
         ))
     return candles
 
+
+class LiveMarketViews:
+    """Keep immutable candle history and refresh its range indexes at the RAW tail."""
+
+    def __init__(self):
+        self.seconds = []
+        self.candles = []
+        self.lower_index = None
+        self.main_index = None
+
+    @staticmethod
+    def _update_series(engine, buckets, candles, index, first_dirty):
+        first = first_dirty if index is not None else 0
+        candles[first:] = build_candle_objects(engine, buckets[first:], start_index=first)
+        if index is None or len(candles) > index.size:
+            return engine.LowerTimeframeIndex(candles, retain_crossings=True)
+        index.refresh_suffix(first)
+        return index
+
+    def update(self, engine, timeframe, second_buckets, main_buckets, delta, timings):
+        self.lower_index = timed(timings, "Update live lower candle views", lambda: self._update_series(
+            engine, second_buckets, self.seconds, self.lower_index, delta.first_dirty_second,
+        ))
+        if timeframe == 1:
+            self.candles, self.main_index = self.seconds, self.lower_index
+        else:
+            self.main_index = timed(timings, "Update live timeframe candle views", lambda: self._update_series(
+                engine, main_buckets, self.candles, self.main_index, delta.first_dirty_main,
+            ))
 
 def _index_selected(index: object, start_index: int | None, end_index: int | None) -> bool:
     return (
@@ -1940,25 +1969,28 @@ def _prepare_market_context_from_rows(
 def _prepare_market_context_from_buckets(
     args, engines: EngineBundle, timings: dict[str, float],
     second_buckets: list[dict], timeframe_buckets: list[dict],
+    live_views: LiveMarketViews | None = None, bucket_delta: BucketAppend | None = None,
 ) -> MarketContext:
-    seconds = timed(
-        timings,
-        "Build lower candle views",
-        lambda: build_candle_objects(engines.reaction, second_buckets),
-    )
-    lower_index = engines.reaction.shared_lower_timeframe_index(seconds)
-    candles = (
-        seconds
-        if args.timeframe == 1
-        else timed(
+    reaction = engines.reaction
+    if live_views is None:
+        seconds = timed(
             timings,
-            "Build timeframe candle views",
-            lambda: build_candle_objects(engines.reaction, timeframe_buckets),
+            "Build lower candle views",
+            lambda: build_candle_objects(reaction, second_buckets),
         )
-    )
-    chronology = engines.reaction.MarketChronology(
-        candles, seconds, args.timeframe, lower_index
-    )
+        lower_index = reaction.shared_lower_timeframe_index(seconds)
+        candles = seconds if args.timeframe == 1 else timed(
+            timings, "Build timeframe candle views",
+            lambda: build_candle_objects(reaction, timeframe_buckets),
+        )
+        chronology = reaction.MarketChronology(candles, seconds, args.timeframe, lower_index)
+    else:
+        assert bucket_delta is not None
+        live_views.update(reaction, args.timeframe, second_buckets, timeframe_buckets, bucket_delta, timings)
+        seconds, candles = live_views.seconds, live_views.candles
+        lower_index = reaction.shared_lower_timeframe_index(seconds, prepared=live_views.lower_index)
+        main_index = reaction.shared_lower_timeframe_index(candles, prepared=live_views.main_index)
+        chronology = reaction.MarketChronology(candles, seconds, args.timeframe, lower_index, main_index)
 
     # Resolve the visible main-candle range inside the prefix calculation.
     # Bucket boundaries are epoch-aligned exactly as ``build_candle_buckets``
@@ -1966,9 +1998,7 @@ def _prepare_market_context_from_buckets(
     # stable in a short-window request.
     # At 1s the lower and main candles share the same timestamps and
     # aggregation, including equal-timestamp rows.
-    main_bucket_times = [
-        item["time"] for item in (second_buckets if args.timeframe == 1 else timeframe_buckets)
-    ]
+    main_buckets = second_buckets if args.timeframe == 1 else timeframe_buckets
     requested_start_bucket = (
         args.from_time
         if args.timeframe == 1
@@ -1979,8 +2009,8 @@ def _prepare_market_context_from_buckets(
         if args.timeframe == 1
         else args.to_time // args.timeframe * args.timeframe
     )
-    start_index = bisect_left(main_bucket_times, requested_start_bucket)
-    end_index = bisect_left(main_bucket_times, requested_end_bucket + args.timeframe) - 1
+    start_index = bisect_left(main_buckets, requested_start_bucket, key=lambda bucket: bucket["time"])
+    end_index = bisect_left(main_buckets, requested_end_bucket + args.timeframe, key=lambda bucket: bucket["time"]) - 1
     if start_index >= len(candles) or end_index < start_index:
         raise ValueError("The selected range contains no timeframe candles.")
     end_index = min(end_index, len(candles) - 1)
@@ -3652,12 +3682,13 @@ def calculate_live_from_raw(
 
 
 def calculate_live_from_buckets(
-    args, engines: EngineBundle, buckets: LiveMarketBuckets, *, report_stage=None,
+    args, engines: EngineBundle, buckets: LiveMarketBuckets, *,
+    live_views: LiveMarketViews | None = None, bucket_delta: BucketAppend | None = None, report_stage=None,
 ) -> dict[str, object]:
     """Replay every trading stage from freshly validated, normalized RAW input."""
     return _run_live_calculation(
         args, engines, _prepare_market_context_from_buckets,
-        (buckets.second_buckets, buckets.main_buckets), report_stage,
+        (buckets.second_buckets, buckets.main_buckets, live_views, bucket_delta), report_stage,
     )
 
 

@@ -81,6 +81,70 @@ test("Verify All works while polling is off and reports an unavailable connectio
   assert.equal(fixture.view.remainingMs, null);
 });
 
+test("background Verify All runs every ten minutes independently of the candle interval", async (t) => {
+  const notices = [];
+  const fixture = createScheduler(t, { sourceTimeframeSeconds: 3_600, start: new Date(2026, 10, 20).getTime(),
+    onVerificationComplete: result => notices.push(result),
+    runUpdate: () => ({ verification: { status: "verified" } }) });
+  t.mock.timers.tick(2_000);
+  await settle();
+  assert.equal(fixture.requests.length, 1);
+  assert.equal(fixture.requests[0].verifyAll, undefined);
+  t.mock.timers.tick(597_999);
+  assert.equal(fixture.requests.length, 1);
+  t.mock.timers.tick(1);
+  assert.equal(fixture.requests[1]?.verifyAll, true);
+  await settle();
+  assert.deepEqual(notices, []);
+  t.mock.timers.tick(600_000);
+  assert.equal(fixture.requests[2]?.verifyAll, true);
+  await settle();
+  fixture.scheduler.stop();
+  t.mock.timers.tick(600_000);
+  assert.equal(fixture.requests.length, 3);
+});
+
+test("an overdue background Verify All waits for an active poll in the same chart", async (t) => {
+  let finishPoll;
+  const fixture = createScheduler(t, { runUpdate: ({ verifyAll }) => verifyAll ? "" :
+    new Promise(resolve => { finishPoll = resolve; }) });
+  t.mock.timers.tick(2_000);
+  t.mock.timers.tick(600_000);
+  assert.equal(fixture.requests.length, 1);
+  finishPoll("");
+  await settle();
+  assert.equal(fixture.requests[1]?.verifyAll, true);
+});
+
+test("Verify All countdown, progress and coverage stay separate from a running candle poll", async (t) => {
+  const finishes = [];
+  const fixture = createScheduler(t, { runUpdate(request) {
+    request.reportProgress(request.verifyAll ? 38 : 17);
+    return new Promise(resolve => finishes.push(resolve));
+  } });
+  assert.equal(fixture.view.verifyAllRemainingMs, 600_000);
+  assert.equal(fixture.view.verifyAllProgress, null);
+  t.mock.timers.tick(2_000);
+  assert.equal(fixture.view.progress, 17);
+  t.mock.timers.tick(3_000);
+  assert.equal(fixture.view.verifyAllRemainingMs, 595_000);
+  t.mock.timers.tick(595_000);
+  assert.equal(fixture.view.verifyAllState, "queued");
+  assert.equal(fixture.view.verifyAllProgress, null);
+  finishes.shift()({ verification: { status: "pending", verifiedCount: 8, totalCount: 10 } });
+  await settle();
+  assert.equal(fixture.view.verifyAllState, "running");
+  assert.equal(fixture.view.verifyAllProgress, 38);
+  assert.equal(fixture.view.progress, 100);
+  assert.equal(fixture.view.verificationPercent, 80);
+  finishes.shift()({ verification: { status: "pending", verifiedCount: 9, totalCount: 10 } });
+  await settle();
+  assert.equal(fixture.view.verifyAllState, "idle");
+  assert.equal(fixture.view.verifyAllProgress, 100);
+  assert.equal(fixture.view.verifyAllRemainingMs, 600_000);
+  assert.equal(fixture.view.verificationPercent, 90);
+});
+
 test("Verify All with realtime disabled leaves automatic indicator calculation paused", async (t) => {
   const fixture = createScheduler(t);
   fixture.scheduler.setIndicatorCalculation(true);
@@ -179,7 +243,9 @@ test("coverage follows verified candles independently of completed request packe
   finish({ verification: { status: "unavailable", verifiedCount: 2_000, totalCount: 2_000 } });
   await settle();
   assert.equal(fixture.view.verificationPercent, 100);
-  assert.equal(fixture.view.progress, null);
+  assert.equal(fixture.view.progress, 100);
+  assert.equal(fixture.view.verifyAllProgress, null);
+  assert.equal(fixture.view.verifyAllState, "offline");
   fixture.scheduler.verifyAll();
   finish({ verification: { status: "verified", verifiedCount: 0, totalCount: 0 } });
   await settle();

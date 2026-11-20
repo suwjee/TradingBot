@@ -446,6 +446,7 @@ test("a confirmed realtime append continues in the same worker and matches a fre
       baseSha256: raw.metadata.dataSha256, phase: "latest" });
     const updated = await response.json();
     assert.equal(response.status, 200, JSON.stringify(updated));
+    assert.equal(updated.supportsRecentVerification, true);
     assert.deepEqual(updated.candles, rows.slice(215));
     const replayResponse = await server.update({ id: raw.id, chartId: raw.chartId, lastCandleTime: raw.to,
       baseSha256: raw.metadata.dataSha256, phase: "replay" });
@@ -453,6 +454,13 @@ test("a confirmed realtime append continues in the same worker and matches a fre
     assert.equal(replayResponse.status, 200, JSON.stringify(replayed));
     assert.deepEqual(replayed.candles, updated.candles);
     assert.equal(replayed.file.metadata.dataSha256, updated.file.metadata.dataSha256);
+    const recentResponse = await server.update({ id: replayed.file.id, chartId: raw.chartId,
+      lastCandleTime: replayed.file.to, baseSha256: replayed.file.metadata.dataSha256, phase: "recent", previousTail: raw.to });
+    const recent = await recentResponse.json();
+    assert.equal(recentResponse.status, 200, JSON.stringify(recent));
+    assert.equal(recent.verification.checkedCount, rows.length - 1);
+    assert.deepEqual(recent.corrections, []);
+    assert.equal(recent.file.metadata.dataSha256, replayed.file.metadata.dataSha256);
     const requestId = "verified-realtime-progress";
     const progressResponse = await server.progress(requestId);
     const [continued, events] = await Promise.all([

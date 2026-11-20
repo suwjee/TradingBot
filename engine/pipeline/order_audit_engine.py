@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from e_zone_detector import EZone
 
 ORDER_AUDIT_ENGINE_VERSION = "1.8.2"
-ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION = "1.9.4"
-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-19T01:18:13+03:30"
+ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION = "1.9.5"
+ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-20T22:00:58+03:30"
 
 
 def relabel_primary_causes(causes, labels):
@@ -631,6 +631,7 @@ class OrderAuditEngineMixin:
             key=lambda item: item[0],
         )
         self._trend_confirmation_times = [item[0] for item in self._trend_by_confirmation]
+        self._trend_leg_order_positions: dict[int, int | None] = {}
         self._opposite_reset_times_by_first: dict[int, list[datetime]] = {}
         for reset in self.opposite_resets:
             self._opposite_reset_times_by_first.setdefault(
@@ -774,42 +775,35 @@ class OrderAuditEngineMixin:
         """
         if self.direct_geometry_finder is None:
             return None
-        position = bisect_right(self._trend_confirmation_times, start)
-        while position < len(self._trend_by_confirmation):
+        first_position = bisect_right(self._trend_confirmation_times, start)
+        for position in range(first_position, len(self._trend_by_confirmation)):
             confirmation, first_time, trend = self._trend_by_confirmation[position]
-            position += 1
             if first_time <= start:
                 continue
-            if bool(getattr(trend, "behavior_internal", False)):
-                continue
-            break_index = int(getattr(trend, "break_idx"))
-            candidate = self.direct_geometry_finder(
-                self.order_direction, break_index, self.end_index, confirmation
-            )
-            if candidate is None:
-                continue
-            if getattr(candidate, "order_gate_decision", None) != "continue":
-                continue
-            candidate_confirmation = self._confirmation_for(
-                candidate, self.order_direction
-            )
-            if self._reaction_first_time(candidate) <= confirmation:
-                continue
-            identity = (
-                int(getattr(candidate, "first_idx")),
-                int(getattr(candidate, "break_idx")),
-            )
-            canonical_position = self._opposite_identity_position.get(identity)
+            if position not in self._trend_leg_order_positions:
+                self._trend_leg_order_positions[position] = self._trend_leg_order_position(confirmation, trend)
+            canonical_position = self._trend_leg_order_positions[position]
             if canonical_position is not None:
                 return (
                     canonical_position + 1,
                     self.opposite_reactions[canonical_position],
                     self._opposite_confirmations[canonical_position],
                 )
-            # A bounded geometry that is absent from the canonical opposite
-            # Reaction stream is internal evidence only, not an Order_A.
-            continue
         return None
+
+    def _trend_leg_order_position(self, confirmation: datetime, trend: object) -> int | None:
+        if bool(getattr(trend, "behavior_internal", False)):
+            return None
+        candidate = self.direct_geometry_finder(
+            self.order_direction, int(getattr(trend, "break_idx")), self.end_index, confirmation,
+        )
+        if candidate is None or getattr(candidate, "order_gate_decision", None) != "continue":
+            return None
+        self._confirmation_for(candidate, self.order_direction)
+        if self._reaction_first_time(candidate) <= confirmation:
+            return None
+        # Only geometry in the canonical opposite stream is eligible here.
+        return self._opposite_identity_position.get(reaction_identity(candidate))
 
 
     def _direct_parent_stop_order(

@@ -2,7 +2,7 @@
 
 **Document Version:** `5.4.33`  
 **Last Modified:** `2026-11-20T19:38:40+03:30`  
-**last_modified_at:** `2026-11-20T19:38:40+03:30`  
+**last_modified_at:** `2026-11-20T22:06:11+03:30`  
 **document_role:** `reference`  
 **lifecycle:** `maintained`  
 **owner:** `engine/algorithms`  
@@ -131,22 +131,22 @@ This earlier synchronization described a supplied `engine.zip` without a root pa
 |---|---|---|---:|---:|---|
 | `__init__.py` | Engine package marker | `unversioned` | 0 | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 | `bridge/__init__.py` | Bridge package marker | `unversioned` | 1 | 64 | `2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8` |
-| `bridge/live_pipeline.py` | Production module | `1.2.0` | 218 | 9342 | `b8faa4a676e608f37802c9b0d110f98eb5b2dfc4a66572cb9a7d27194e774b03` |
-| `bridge/trading_pipeline.py` | Final reconciled calculation objects | `1.14.0 (impl 1.20.2)` | 3714 | 147373 | `afc63a3d292baf21bba3e60f47d50b909b1e7754aa8b41dcae6c97c4c3850d6e` |
+| `bridge/live_pipeline.py` | Production module | `1.3.0` | 225 | 9694 | `5c0effe89dd5ce47c996187ca4da2689915aa83bcc16271432f2c0ee62c2240d` |
+| `bridge/trading_pipeline.py` | Final reconciled calculation objects | `1.14.0 (impl 1.20.3)` | 3745 | 149435 | `e7a1af5937efb23649149f92da660da89a9e3bda026da7c66e2d6e8409bfcc5a` |
 | `pipeline/__init__.py` | Compatibility package wrapper | `unversioned` | 28 | 653 | `d22a1b81495a6c97b5eccc4d921b1ba4b709bfbcd39be6ef34b9014690b9f460` |
 | `pipeline/a_zone_detector.py` | BlueState and first-stop/inherited/double-stop routes | `1.7.0 (impl 1.8.1)` | 1069 | 43435 | `a77c57d1c2e148461e5c9a5f1f9ea569a1a66c64e5b97b08380ec0d6a16d8593` |
 | `pipeline/blue_line_detector.py` | Confirmed Reaction/Reset, Fibonacci, exact confirmation prefix | `2.4.1` | 590 | 21498 | `0171a1bfc48bc40b3b82781ac935614b75905a740e69b703ef3654d897d76df5` |
 | `pipeline/core_utils.py` | Core Utilities | `1.1.0` | 66 | 2532 | `f0764f52943ed3a9b02e90183196f4cabcbcc99217480e063a271cb56c1d4fd0` |
 | `pipeline/direction_policy.py` | Direction Policy | `1.0.0` | 70 | 2282 | `a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea` |
-| `pipeline/e_zone_detector.py` | S/E/Order lineage and parent stops | `6.16.2 (impl 6.20.3)` | 1536 | 69966 | `73df3b8f1d002008342db1ed48308b041b1bfb0a191c9932026ef34fa358705f` |
+| `pipeline/e_zone_detector.py` | S/E/Order lineage and parent stops | `6.16.2 (impl 6.20.4)` | 1538 | 70071 | `e05301a5812657f599c58e24525486e14e92910203004a1193c411d8a90d9f96` |
 | `pipeline/lifecycle_engine.py` | Final S/E dominance, accepted strict behavior stops | `1.18.6 (impl 1.22.2)` | 1610 | 67191 | `304848d425630ac4bce8f8e6e976d36312e1b16dac148a226efec4cf84f4f3f2` |
-| `pipeline/order_audit_engine.py` | Physical Order identity and cause ledger | `1.8.2 (impl 1.9.4)` | 2719 | 118202 | `0b5b761f02482fd15a3770900de5bbcf5ea03d059515c5a87c6e2e6cd135d691` |
+| `pipeline/order_audit_engine.py` | Physical Order identity and cause ledger | `1.8.2 (impl 1.9.5)` | 2713 | 118217 | `a7912855fb8ee9bf9447cc5304cf805752bbb1d939015457fea868faaf5d3b8d` |
 | `pipeline/PL_PH_detector.py` | Primary High / Low / Matching Behavior Leg | `1.4.0` | 833 | 37041 | `0da974cd7dc50b70c943a091345d18dc2956a051989e9d733bfea1958152b7fc` |
-| `pipeline/reaction_engine.py` | Canonical First candidate, Break, strict Reset, lower-TF chronology | `9.9.1 (impl 9.13.3)` | 2829 | 123582 | `0884af77417267713bfe78a47a413793909267df400c456cbca380ee87539bf4` |
+| `pipeline/reaction_engine.py` | Canonical First candidate, Break, strict Reset, lower-TF chronology | `9.9.1 (impl 9.13.4)` | 2907 | 127156 | `0b37fbf91a0f2cdd65fec85eee6c39095e835bc928a98c657f1fe808e204b066` |
 | `pipeline/s_zone_detector.py` | Accepted A stop, aligned Reaction, physical opposite Order | `4.20.1 (impl 4.22.2)` | 1551 | 66301 | `3da3424c2a292ee8fb0f08854462bce57f075721bb370c9619d3e795fd134b78` |
 | `pipeline/true_false.py` | Independent final behavior T/F and strict repair evidence | `unversioned` | 133 | 4719 | `13408ddcedff2b5960b2fe790c444a4c430a77788b9e38501a9db584caa6a1ec` |
 
-Generated Source-inventory evidence at `2026-11-19T03:41:13+03:30`. Recursive live production discovery includes package markers and all production Python under Bridge and Pipeline. Tests, historical archives and caches are excluded.
+Generated Source-inventory evidence at `2026-11-20T22:06:11+03:30`. Recursive live production discovery includes package markers and all production Python under Bridge and Pipeline. Tests, historical archives and caches are excluded.
 
 Section 16 embeds the exact bytes represented by this manifest.
 
@@ -792,24 +792,24 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 #### `bridge/__init__.py`
 
 #### `bridge/live_pipeline.py`
-- Assignment `LIVE_PIPELINE_VERSION = '1.2.0'` (L19).
-- Class `LivePipelineContinuation` (L22-L63).
-- Function `LivePipelineContinuation.__init__(self, args, engines)` (L25-L32).
-- Function `LivePipelineContinuation.append(self, rows: list[dict])` (L34-L63).
-- Function `LivePipelineContinuation.append.report_stage(label)` (L51-L55).
-- Class `LiveRawChanged` (L66-L67).
-- Class `LiveRawDeltaMismatch` (L70-L71).
-- Function `_decode_raw(data)` (L74-L78).
-- Class `LiveRawSource` (L81-L149).
-- Function `LiveRawSource.__init__(self, selected, data, original)` (L84-L91).
-- Function `LiveRawSource._remember_prefix(self, data)` (L93-L99).
-- Function `LiveRawSource._file_digest(prefix_hash, ending)` (L102-L105).
-- Function `LiveRawSource.append_delta(self, data, base_sha256, raw_sha256, pipeline)` (L107-L120).
-- Function `LiveRawSource.append(self, data, pipeline)` (L122-L138).
-- Function `LiveRawSource._append_rows(self, new_rows, pipeline)` (L140-L149).
-- Function `_send_worker_message(kind, **fields)` (L152-L153).
-- Function `_report_worker_progress(event)` (L156-L158).
-- Function `main()` (L161-L214).
+- Assignment `LIVE_PIPELINE_VERSION = '1.3.0'` (L19).
+- Class `LivePipelineContinuation` (L22-L70).
+- Function `LivePipelineContinuation.__init__(self, args, engines)` (L25-L33).
+- Function `LivePipelineContinuation.append(self, rows: list[dict])` (L35-L70).
+- Function `LivePipelineContinuation.append.report_stage(label)` (L52-L56).
+- Class `LiveRawChanged` (L73-L74).
+- Class `LiveRawDeltaMismatch` (L77-L78).
+- Function `_decode_raw(data)` (L81-L85).
+- Class `LiveRawSource` (L88-L156).
+- Function `LiveRawSource.__init__(self, selected, data, original)` (L91-L98).
+- Function `LiveRawSource._remember_prefix(self, data)` (L100-L106).
+- Function `LiveRawSource._file_digest(prefix_hash, ending)` (L109-L112).
+- Function `LiveRawSource.append_delta(self, data, base_sha256, raw_sha256, pipeline)` (L114-L127).
+- Function `LiveRawSource.append(self, data, pipeline)` (L129-L145).
+- Function `LiveRawSource._append_rows(self, new_rows, pipeline)` (L147-L156).
+- Function `_send_worker_message(kind, **fields)` (L159-L160).
+- Function `_report_worker_progress(event)` (L163-L165).
+- Function `main()` (L168-L221).
 
 #### `bridge/trading_pipeline.py`
 - Assignment `_ENGINE_ROOT = Path(__file__).resolve().parents[1]` (L32).
@@ -817,8 +817,8 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 - Assignment `_pipeline_dir_text = str(_PIPELINE_DIR)` (L34).
 - Assignment `_DTFMT = '{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}'` (L42).
 - Assignment `TRADING_PIPELINE_VERSION = '1.14.0'` (L45).
-- Assignment `TRADING_PIPELINE_IMPLEMENTATION_VERSION = '1.20.2'` (L46).
-- Assignment `TRADING_PIPELINE_LAST_MODIFIED = '2026-11-19T01:21:11+03:30'` (L47).
+- Assignment `TRADING_PIPELINE_IMPLEMENTATION_VERSION = '1.20.3'` (L46).
+- Assignment `TRADING_PIPELINE_LAST_MODIFIED = '2026-11-20T22:00:58+03:30'` (L47).
 - Assignment `MBL_EXTENSION_CANDLES = 400` (L48).
 - Assignment `TEHRAN = ZoneInfo('Asia/Tehran')` (L50).
 - Assignment `_progress_sink = ContextVar('progress_sink', default=None)` (L51).
@@ -849,152 +849,156 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 - Function `LiveMarketBuckets.stage_append.cached_decimal(value: object)` (L266-L272).
 - Function `LiveMarketBuckets._delta(self, dirty_second: int, dirty_main: int)` (L297-L303).
 - Function `build_candle_objects(engine, buckets: list[dict], *, start_index: int=0)` (L306-L333).
-- Function `_index_selected(index: object, start_index: int | None, end_index: int | None)` (L336-L341).
-- Function `select_reaction_serialization_items(result, start_index=None, end_index=None, reaction_transform=None)` (L344-L364).
-- Function `serialize(result, start_index=None, end_index=None, reaction_transform=None, selected_items=None)` (L367-L408).
-- Function `serialize_blue_lines(items, start_index=None, end_index=None)` (L411-L428).
-- Function `serialize_a_zones(items)` (L431-L455).
-- Function `serialize_s_zones(items)` (L458-L520).
-- Function `serialize_e_zones(items)` (L523-L563).
-- Function `serialize_stopalls(items)` (L566-L630).
-- Function `bridge_datetime(value: object | None)` (L633-L644).
-- Function `bridge_direction(direction: str)` (L647-L648).
-- Function `bridge_mode(mode: object)` (L651-L652).
-- Function `bridge_color(value: object | None)` (L655-L658).
-- Function `_bridge_horizon(market: MarketContext)` (L661-L665).
-- Function `_bridge_in_horizon(market: MarketContext, value: datetime | None)` (L668-L669).
-- Function `_bridge_proven_strict_event(market: MarketContext, direction: str, level: object | None, event_time: datetime | None)` (L672-L709).
-- Function `_bridge_stop_view(market: MarketContext, direction: str, price: object | None, stop_time: datetime | None, stop_event_time: datetime | None)` (L712-L729).
-- Function `_bridge_reaction_confirmation(market: MarketContext, direction: str, reaction: object, *, use_intrabar_start: bool=True)` (L732-L753).
-- Function `_bridge_order_identity(item: object)` (L756-L761).
-- Class `BridgeProjection` (L764-L955).
-- Function `BridgeProjection.__init__(self, *, direction: str, market: MarketContext, prepared_order_audit: list[object], order_direction: str)` (L772-L789).
-- Function `BridgeProjection.physical_order(self, prepared: object | None)` (L791-L834).
-- Function `BridgeProjection.parent_order(self, behavior: object)` (L836-L841).
-- Function `BridgeProjection.current_order(self, behavior: object, parent_type: str, parent_family: str | None, strict_stop_event: datetime | None)` (L843-L896).
-- Function `BridgeProjection.order_audit(self, prepared: object)` (L898-L955).
-- Function `_bridge_parent_stop(projection: BridgeProjection, detector: object | None, parent_type: str, item: object)` (L958-L976).
-- Function `_bridge_a_stop(projection: BridgeProjection, s_detector: object | None, item: object)` (L979-L997).
-- Function `_bridge_behavior_stop(projection: BridgeProjection, direction: str, price: object, stop_time: datetime | None, stop_event_time: datetime | None)` (L1000-L1012).
-- Function `_bridge_blue_formation(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L1015-L1035).
-- Function `_bridge_project_reaction(projection: BridgeProjection, direction: str, raw: object, public: object)` (L1038-L1078).
-- Function `_bridge_project_reset(projection: BridgeProjection, direction: str, reset: object)` (L1081-L1101).
-- Function `_bridge_project_blue(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L1104-L1137).
-- Function `_bridge_full_lines_by_ordinal(lines: list[object])` (L1140-L1149).
-- Function `_bridge_project_a(projection: BridgeProjection, direction: str, item: object, lines_by_ordinal: dict[int, object], reactions: list[object], s_detector: object | None)` (L1152-L1239).
-- Function `_bridge_project_s(projection: BridgeProjection, direction: str, item: object, e_detector: object | None)` (L1242-L1295).
-- Function `_bridge_source_index(item: object)` (L1298-L1303).
-- Function `_bridge_parent_behavior_for_e(projection: BridgeProjection, direction: str, item: object, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1306-L1347).
-- Function `_bridge_project_e(projection: BridgeProjection, direction: str, item: object, e_detector: object | None, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1350-L1394).
-- Function `_bridge_project_stopall(projection: BridgeProjection, direction: str, item: object)` (L1397-L1463).
-- Function `_bridge_audit_order_key(prepared: object, detector: object)` (L1466-L1473).
-- Function `build_bridge_output(direction: str, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, selected_reactions: list[tuple[object, object]], selected_resets: list[object], selected_blue_lines: list[object], selected_a_zones: list[object], selected_s_zones: list[object], selected_e_zones: list[object], selected_stopalls: list[object], selected_order_audit: list[object])` (L1476-L1578).
-- Function `validate_order_audit_bridge(prepared_items, s_zones, e_zones, stopalls)` (L1581-L1646).
-- Function `serialize_order_audit(prepared_items, detector)` (L1649-L1699).
-- Class `EngineBundle` (L1703-L1710).
-- Assignment `reaction: object` (L1704).
-- Assignment `blue_line: object` (L1705).
-- Assignment `a_zone: object` (L1706).
-- Assignment `s_zone: object` (L1707).
-- Assignment `e_zone: object | None` (L1708).
-- Assignment `lifecycle: object | None` (L1709).
-- Assignment `primary: object | None = None` (L1710).
-- Class `MarketContext` (L1714-L1723).
-- Assignment `seconds: list[object]` (L1715).
-- Assignment `candles: list[object]` (L1716).
-- Assignment `lower_index: object` (L1717).
-- Assignment `chronology: object` (L1718).
-- Assignment `start_index: int` (L1719).
-- Assignment `end_index: int` (L1720).
-- Assignment `index_offset: int = 0` (L1721).
-- Assignment `initial_bullish_trend: bool = False` (L1722).
-- Assignment `initial_bearish_trend: bool = False` (L1723).
-- Function `market_segment(market, start, stop, *, initial_bullish_trend=None, initial_bearish_trend=None)` (L1726-L1746).
-- Function `absolute_payload_indexes(value, offset)` (L1749-L1760).
-- Function `serialize_trend_transition(transition, market)` (L1763-L1783).
-- Function `parse_arguments(argv=None)` (L1786-L1856).
-- Function `load_engines(args, timings: dict[str, float])` (L1859-L1894).
-- Function `prepare_market_context(args, engines: EngineBundle, timings: dict[str, float])` (L1897-L1912).
-- Function `_prepare_market_context_from_rows(args, engines: EngineBundle, timings: dict[str, float], source_rows: list[dict])` (L1915-L1937).
-- Function `_prepare_market_context_from_buckets(args, engines: EngineBundle, timings: dict[str, float], second_buckets: list[dict], timeframe_buckets: list[dict])` (L1940-L1995).
-- Class `PipelineState` (L1998-L2016).
-- Assignment `directions: tuple[str, ...]` (L2001).
-- Assignment `results: dict[str, object]` (L2002).
-- Assignment `reusable_full_context: bool` (L2003).
-- Assignment `initial_order_geometry: dict[str, object]` (L2004).
-- Assignment `internal_reaction_identities: dict[str, set[tuple[int, int]]]` (L2005).
-- Assignment `full_e_zones: dict[str, list[object]]` (L2006).
-- Assignment `full_e_detectors: dict[str, object]` (L2007).
-- Assignment `full_s_detectors: dict[str, object]` (L2008).
-- Assignment `full_lines_by_direction: dict[str, list[object]]` (L2009).
-- Assignment `full_a_by_direction: dict[str, list[object]]` (L2010).
-- Assignment `invalid_a_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2011).
-- Assignment `invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2012).
-- Assignment `full_s_by_direction: dict[str, list[object]]` (L2013).
-- Assignment `full_s_candidates_by_direction: dict[str, list[object]]` (L2014).
-- Assignment `primary_result: object | None = None` (L2015).
-- Assignment `live_stages: object | None = None` (L2016).
-- Class `FullDirectionState` (L2020-L2032).
-- Assignment `e_zones: list[object]` (L2023).
-- Assignment `e_detector: object` (L2024).
-- Assignment `s_detector: object` (L2025).
-- Assignment `blue_lines: list[object]` (L2026).
-- Assignment `a_zones: list[object]` (L2027).
-- Assignment `invalid_a_identities: set[tuple[datetime, int]]` (L2028).
-- Assignment `invalid_s_identities: set[tuple[datetime, int]]` (L2029).
-- Assignment `s_zones: list[object]` (L2030).
-- Assignment `s_candidates: list[object]` (L2031).
-- Assignment `initial_s_zones: list[object]` (L2032).
-- Function `create_e_detector(direction: str, e_engine, full_results: dict[str, object], s_zones: list[object], chronology, geometry_detectors: dict[str, object], initial_order_audit, lifecycle_engine, *, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[object]=(), live_continuation=None, order_geometry=None, live_scope=())` (L2035-L2090).
-- Function `create_e_detector.direct_geometry(geometry_direction, geometry_start, geometry_end, gate_event)` (L2057-L2070).
-- Function `calculate_full_direction_state(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], order_b_legs: Sequence[object]=(), shared_stages: FullDirectionState | None=None, live=None, feedback_index: int=0)` (L2093-L2448).
-- Function `calculate_direction_with_order_b_feedback(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], *, stopall_enabled: bool, live=None)` (L2451-L2515).
-- Function `prepare_pipeline_state(args, engines: EngineBundle, market: MarketContext, timings: dict[str, float], *, live=None, report_stage=None)` (L2518-L2669).
-- Class `DirectionRangeState` (L2673-L2682).
-- Assignment `blue_lines: list[object]` (L2676).
-- Assignment `a_zones: list[object]` (L2677).
-- Assignment `s_candidates: list[object]` (L2678).
-- Assignment `accepted_s_zones: list[object]` (L2679).
-- Assignment `e_zones: list[object]` (L2680).
-- Assignment `invalid_a_identities: set[tuple[datetime, int]]` (L2681).
-- Assignment `invalid_s_identities: set[tuple[datetime, int]]` (L2682).
-- Class `DirectionVisibilityState` (L2686-L2701).
-- Assignment `blue_lines: list[object]` (L2689).
-- Assignment `a_zones: list[object]` (L2690).
-- Assignment `s_zones: list[object]` (L2691).
-- Assignment `e_zones: list[object]` (L2692).
-- Assignment `stopalls: list[object]` (L2693).
-- Assignment `prepared_order_audit: list[object]` (L2694).
-- Assignment `projection_s_zones: list[object]` (L2698).
-- Assignment `projection_e_zones: list[object]` (L2699).
-- Assignment `projection_stopalls: list[object]` (L2700).
-- Assignment `primary_groups: dict[str, list[object]] = field(default_factory=dict, kw_only=True)` (L2701).
-- Function `calculate_direction_range_state(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L2704-L2803).
-- Function `finalize_direction_visibility(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, direction_state: DirectionRangeState, timings: dict[str, float])` (L2806-L3042).
-- Function `serialize_direction_payload(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, timings: dict[str, float])` (L3045-L3183).
-- Function `serialize_direction_payload.build_legacy_payload()` (L3072-L3095).
-- Function `serialize_direction_payload.serialize_reactions_from_one_selection()` (L3104-L3112).
-- Function `serialize_direction_payload.build_payload()` (L3145-L3179).
-- Function `serialize_primary_order(order, market, owner_direction)` (L3186-L3212).
-- Function `serialize_primary_order.value(item)` (L3189-L3194).
-- Function `serialize_primary_structures(primary, market)` (L3215-L3334).
-- Function `serialize_primary_structures.cycle_identity(value)` (L3226-L3231).
-- Function `serialize_primary_structures.point(item)` (L3232-L3255).
-- Function `calculate_primary_structures(args, engines, market, state, visibility, timings, direction='bearish')` (L3337-L3390).
-- Function `calculate_primary_structures.commit_high(point)` (L3360-L3368).
-- Function `build_direction_output(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L3393-L3433).
-- Function `merge_regime_outputs(regimes)` (L3435-L3461).
-- Function `build_reversed_trend_outputs(args, engines, market, transition, timings, *, live=None)` (L3464-L3557).
-- Function `build_reversed_trend_outputs.calculate(context, direction, continuation=None)` (L3472-L3480).
-- Function `build_reversed_trend_outputs.publish(group, index_offset, first_time, *, stopped=False)` (L3482-L3497).
-- Function `build_reversed_trend_outputs.calculate_closed(current=current, boundary=boundary, current_direction=current_direction)` (L3504-L3520).
-- Function `build_reversed_trend_outputs.empty_lists(item)` (L3530-L3535).
-- Function `build_response_payload(args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float], pipeline_started: float)` (L3560-L3626).
-- Function `_market_calculation_scope(reaction)` (L3630-L3644).
-- Function `calculate_live_from_raw(args, engines: EngineBundle, rows: list[dict], *, report_stage=None)` (L3647-L3651).
-- Function `calculate_live_from_buckets(args, engines: EngineBundle, buckets: LiveMarketBuckets, *, report_stage=None)` (L3654-L3661).
-- Function `_run_live_calculation(args, engines, prepare_market, market_inputs, report_stage)` (L3664-L3672).
-- Function `main()` (L3675-L3706).
+- Class `LiveMarketViews` (L336-L363).
+- Function `LiveMarketViews.__init__(self)` (L339-L343).
+- Function `LiveMarketViews._update_series(engine, buckets, candles, index, first_dirty)` (L346-L352).
+- Function `LiveMarketViews.update(self, engine, timeframe, second_buckets, main_buckets, delta, timings)` (L354-L363).
+- Function `_index_selected(index: object, start_index: int | None, end_index: int | None)` (L365-L370).
+- Function `select_reaction_serialization_items(result, start_index=None, end_index=None, reaction_transform=None)` (L373-L393).
+- Function `serialize(result, start_index=None, end_index=None, reaction_transform=None, selected_items=None)` (L396-L437).
+- Function `serialize_blue_lines(items, start_index=None, end_index=None)` (L440-L457).
+- Function `serialize_a_zones(items)` (L460-L484).
+- Function `serialize_s_zones(items)` (L487-L549).
+- Function `serialize_e_zones(items)` (L552-L592).
+- Function `serialize_stopalls(items)` (L595-L659).
+- Function `bridge_datetime(value: object | None)` (L662-L673).
+- Function `bridge_direction(direction: str)` (L676-L677).
+- Function `bridge_mode(mode: object)` (L680-L681).
+- Function `bridge_color(value: object | None)` (L684-L687).
+- Function `_bridge_horizon(market: MarketContext)` (L690-L694).
+- Function `_bridge_in_horizon(market: MarketContext, value: datetime | None)` (L697-L698).
+- Function `_bridge_proven_strict_event(market: MarketContext, direction: str, level: object | None, event_time: datetime | None)` (L701-L738).
+- Function `_bridge_stop_view(market: MarketContext, direction: str, price: object | None, stop_time: datetime | None, stop_event_time: datetime | None)` (L741-L758).
+- Function `_bridge_reaction_confirmation(market: MarketContext, direction: str, reaction: object, *, use_intrabar_start: bool=True)` (L761-L782).
+- Function `_bridge_order_identity(item: object)` (L785-L790).
+- Class `BridgeProjection` (L793-L984).
+- Function `BridgeProjection.__init__(self, *, direction: str, market: MarketContext, prepared_order_audit: list[object], order_direction: str)` (L801-L818).
+- Function `BridgeProjection.physical_order(self, prepared: object | None)` (L820-L863).
+- Function `BridgeProjection.parent_order(self, behavior: object)` (L865-L870).
+- Function `BridgeProjection.current_order(self, behavior: object, parent_type: str, parent_family: str | None, strict_stop_event: datetime | None)` (L872-L925).
+- Function `BridgeProjection.order_audit(self, prepared: object)` (L927-L984).
+- Function `_bridge_parent_stop(projection: BridgeProjection, detector: object | None, parent_type: str, item: object)` (L987-L1005).
+- Function `_bridge_a_stop(projection: BridgeProjection, s_detector: object | None, item: object)` (L1008-L1026).
+- Function `_bridge_behavior_stop(projection: BridgeProjection, direction: str, price: object, stop_time: datetime | None, stop_event_time: datetime | None)` (L1029-L1041).
+- Function `_bridge_blue_formation(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L1044-L1064).
+- Function `_bridge_project_reaction(projection: BridgeProjection, direction: str, raw: object, public: object)` (L1067-L1107).
+- Function `_bridge_project_reset(projection: BridgeProjection, direction: str, reset: object)` (L1110-L1130).
+- Function `_bridge_project_blue(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L1133-L1166).
+- Function `_bridge_full_lines_by_ordinal(lines: list[object])` (L1169-L1178).
+- Function `_bridge_project_a(projection: BridgeProjection, direction: str, item: object, lines_by_ordinal: dict[int, object], reactions: list[object], s_detector: object | None)` (L1181-L1268).
+- Function `_bridge_project_s(projection: BridgeProjection, direction: str, item: object, e_detector: object | None)` (L1271-L1324).
+- Function `_bridge_source_index(item: object)` (L1327-L1332).
+- Function `_bridge_parent_behavior_for_e(projection: BridgeProjection, direction: str, item: object, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1335-L1376).
+- Function `_bridge_project_e(projection: BridgeProjection, direction: str, item: object, e_detector: object | None, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1379-L1423).
+- Function `_bridge_project_stopall(projection: BridgeProjection, direction: str, item: object)` (L1426-L1492).
+- Function `_bridge_audit_order_key(prepared: object, detector: object)` (L1495-L1502).
+- Function `build_bridge_output(direction: str, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, selected_reactions: list[tuple[object, object]], selected_resets: list[object], selected_blue_lines: list[object], selected_a_zones: list[object], selected_s_zones: list[object], selected_e_zones: list[object], selected_stopalls: list[object], selected_order_audit: list[object])` (L1505-L1607).
+- Function `validate_order_audit_bridge(prepared_items, s_zones, e_zones, stopalls)` (L1610-L1675).
+- Function `serialize_order_audit(prepared_items, detector)` (L1678-L1728).
+- Class `EngineBundle` (L1732-L1739).
+- Assignment `reaction: object` (L1733).
+- Assignment `blue_line: object` (L1734).
+- Assignment `a_zone: object` (L1735).
+- Assignment `s_zone: object` (L1736).
+- Assignment `e_zone: object | None` (L1737).
+- Assignment `lifecycle: object | None` (L1738).
+- Assignment `primary: object | None = None` (L1739).
+- Class `MarketContext` (L1743-L1752).
+- Assignment `seconds: list[object]` (L1744).
+- Assignment `candles: list[object]` (L1745).
+- Assignment `lower_index: object` (L1746).
+- Assignment `chronology: object` (L1747).
+- Assignment `start_index: int` (L1748).
+- Assignment `end_index: int` (L1749).
+- Assignment `index_offset: int = 0` (L1750).
+- Assignment `initial_bullish_trend: bool = False` (L1751).
+- Assignment `initial_bearish_trend: bool = False` (L1752).
+- Function `market_segment(market, start, stop, *, initial_bullish_trend=None, initial_bearish_trend=None)` (L1755-L1775).
+- Function `absolute_payload_indexes(value, offset)` (L1778-L1789).
+- Function `serialize_trend_transition(transition, market)` (L1792-L1812).
+- Function `parse_arguments(argv=None)` (L1815-L1885).
+- Function `load_engines(args, timings: dict[str, float])` (L1888-L1923).
+- Function `prepare_market_context(args, engines: EngineBundle, timings: dict[str, float])` (L1926-L1941).
+- Function `_prepare_market_context_from_rows(args, engines: EngineBundle, timings: dict[str, float], source_rows: list[dict])` (L1944-L1966).
+- Function `_prepare_market_context_from_buckets(args, engines: EngineBundle, timings: dict[str, float], second_buckets: list[dict], timeframe_buckets: list[dict], live_views: LiveMarketViews | None=None, bucket_delta: BucketAppend | None=None)` (L1969-L2025).
+- Class `PipelineState` (L2028-L2046).
+- Assignment `directions: tuple[str, ...]` (L2031).
+- Assignment `results: dict[str, object]` (L2032).
+- Assignment `reusable_full_context: bool` (L2033).
+- Assignment `initial_order_geometry: dict[str, object]` (L2034).
+- Assignment `internal_reaction_identities: dict[str, set[tuple[int, int]]]` (L2035).
+- Assignment `full_e_zones: dict[str, list[object]]` (L2036).
+- Assignment `full_e_detectors: dict[str, object]` (L2037).
+- Assignment `full_s_detectors: dict[str, object]` (L2038).
+- Assignment `full_lines_by_direction: dict[str, list[object]]` (L2039).
+- Assignment `full_a_by_direction: dict[str, list[object]]` (L2040).
+- Assignment `invalid_a_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2041).
+- Assignment `invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2042).
+- Assignment `full_s_by_direction: dict[str, list[object]]` (L2043).
+- Assignment `full_s_candidates_by_direction: dict[str, list[object]]` (L2044).
+- Assignment `primary_result: object | None = None` (L2045).
+- Assignment `live_stages: object | None = None` (L2046).
+- Class `FullDirectionState` (L2050-L2062).
+- Assignment `e_zones: list[object]` (L2053).
+- Assignment `e_detector: object` (L2054).
+- Assignment `s_detector: object` (L2055).
+- Assignment `blue_lines: list[object]` (L2056).
+- Assignment `a_zones: list[object]` (L2057).
+- Assignment `invalid_a_identities: set[tuple[datetime, int]]` (L2058).
+- Assignment `invalid_s_identities: set[tuple[datetime, int]]` (L2059).
+- Assignment `s_zones: list[object]` (L2060).
+- Assignment `s_candidates: list[object]` (L2061).
+- Assignment `initial_s_zones: list[object]` (L2062).
+- Function `create_e_detector(direction: str, e_engine, full_results: dict[str, object], s_zones: list[object], chronology, geometry_detectors: dict[str, object], initial_order_audit, lifecycle_engine, *, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[object]=(), live_continuation=None, order_geometry=None, live_scope=())` (L2065-L2120).
+- Function `create_e_detector.direct_geometry(geometry_direction, geometry_start, geometry_end, gate_event)` (L2087-L2100).
+- Function `calculate_full_direction_state(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], order_b_legs: Sequence[object]=(), shared_stages: FullDirectionState | None=None, live=None, feedback_index: int=0)` (L2123-L2478).
+- Function `calculate_direction_with_order_b_feedback(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], *, stopall_enabled: bool, live=None)` (L2481-L2545).
+- Function `prepare_pipeline_state(args, engines: EngineBundle, market: MarketContext, timings: dict[str, float], *, live=None, report_stage=None)` (L2548-L2699).
+- Class `DirectionRangeState` (L2703-L2712).
+- Assignment `blue_lines: list[object]` (L2706).
+- Assignment `a_zones: list[object]` (L2707).
+- Assignment `s_candidates: list[object]` (L2708).
+- Assignment `accepted_s_zones: list[object]` (L2709).
+- Assignment `e_zones: list[object]` (L2710).
+- Assignment `invalid_a_identities: set[tuple[datetime, int]]` (L2711).
+- Assignment `invalid_s_identities: set[tuple[datetime, int]]` (L2712).
+- Class `DirectionVisibilityState` (L2716-L2731).
+- Assignment `blue_lines: list[object]` (L2719).
+- Assignment `a_zones: list[object]` (L2720).
+- Assignment `s_zones: list[object]` (L2721).
+- Assignment `e_zones: list[object]` (L2722).
+- Assignment `stopalls: list[object]` (L2723).
+- Assignment `prepared_order_audit: list[object]` (L2724).
+- Assignment `projection_s_zones: list[object]` (L2728).
+- Assignment `projection_e_zones: list[object]` (L2729).
+- Assignment `projection_stopalls: list[object]` (L2730).
+- Assignment `primary_groups: dict[str, list[object]] = field(default_factory=dict, kw_only=True)` (L2731).
+- Function `calculate_direction_range_state(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L2734-L2833).
+- Function `finalize_direction_visibility(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, direction_state: DirectionRangeState, timings: dict[str, float])` (L2836-L3072).
+- Function `serialize_direction_payload(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, timings: dict[str, float])` (L3075-L3213).
+- Function `serialize_direction_payload.build_legacy_payload()` (L3102-L3125).
+- Function `serialize_direction_payload.serialize_reactions_from_one_selection()` (L3134-L3142).
+- Function `serialize_direction_payload.build_payload()` (L3175-L3209).
+- Function `serialize_primary_order(order, market, owner_direction)` (L3216-L3242).
+- Function `serialize_primary_order.value(item)` (L3219-L3224).
+- Function `serialize_primary_structures(primary, market)` (L3245-L3364).
+- Function `serialize_primary_structures.cycle_identity(value)` (L3256-L3261).
+- Function `serialize_primary_structures.point(item)` (L3262-L3285).
+- Function `calculate_primary_structures(args, engines, market, state, visibility, timings, direction='bearish')` (L3367-L3420).
+- Function `calculate_primary_structures.commit_high(point)` (L3390-L3398).
+- Function `build_direction_output(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L3423-L3463).
+- Function `merge_regime_outputs(regimes)` (L3465-L3491).
+- Function `build_reversed_trend_outputs(args, engines, market, transition, timings, *, live=None)` (L3494-L3587).
+- Function `build_reversed_trend_outputs.calculate(context, direction, continuation=None)` (L3502-L3510).
+- Function `build_reversed_trend_outputs.publish(group, index_offset, first_time, *, stopped=False)` (L3512-L3527).
+- Function `build_reversed_trend_outputs.calculate_closed(current=current, boundary=boundary, current_direction=current_direction)` (L3534-L3550).
+- Function `build_reversed_trend_outputs.empty_lists(item)` (L3560-L3565).
+- Function `build_response_payload(args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float], pipeline_started: float)` (L3590-L3656).
+- Function `_market_calculation_scope(reaction)` (L3660-L3674).
+- Function `calculate_live_from_raw(args, engines: EngineBundle, rows: list[dict], *, report_stage=None)` (L3677-L3681).
+- Function `calculate_live_from_buckets(args, engines: EngineBundle, buckets: LiveMarketBuckets, *, live_views: LiveMarketViews | None=None, bucket_delta: BucketAppend | None=None, report_stage=None)` (L3684-L3692).
+- Function `_run_live_calculation(args, engines, prepare_market, market_inputs, report_stage)` (L3695-L3703).
+- Function `main()` (L3706-L3737).
 
 #### `pipeline/__init__.py`
 - Assignment `_pipeline_dir = str(Path(__file__).resolve().parent)` (L10).
@@ -1174,8 +1178,8 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 
 #### `pipeline/e_zone_detector.py`
 - Assignment `E_ZONE_VERSION = '6.16.2'` (L30).
-- Assignment `E_ZONE_IMPLEMENTATION_VERSION = '6.20.3'` (L31).
-- Assignment `E_ZONE_LAST_MODIFIED = '2026-11-19T01:11:09+03:30'` (L32).
+- Assignment `E_ZONE_IMPLEMENTATION_VERSION = '6.20.4'` (L31).
+- Assignment `E_ZONE_LAST_MODIFIED = '2026-11-20T22:00:58+03:30'` (L32).
 - Class `EZone` (L36-L71).
 - Assignment `direction: str` (L37).
 - Assignment `family: str` (L38).
@@ -1237,54 +1241,54 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 - Function `LiveEContinuation.extreme(self, detector: EZoneDetector, start_index: int, end_index: int)` (L176-L194).
 - Function `LiveEContinuation.zone(self, detector: EZoneDetector, family: str, number: int, parent_type: str, parent: object, stop_event: datetime, match: OrderMatch, source: tuple[int, datetime, Decimal])` (L196-L218).
 - Function `LiveEContinuation.reconcile(self, detector: EZoneDetector, candidates: list[EZone])` (L220-L309).
-- Class `EZoneDetector` (L312-L1504).
-- Function `EZoneDetector.__init__(self, direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], s_zones: Sequence[object], opposite_resets: Sequence[object], chronology: object, start_index: int=0, end_index: int | None=None, direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None=None, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), initial_order_audit: dict[tuple[int, int], dict[str, object]] | None=None, sequence_resets: dict[datetime, int] | None=None, sequence_priority: Callable[[str, str], int] | None=None, invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[OrderBResetLeg]=(), live_continuation: LiveEContinuation | None=None, live_scope: tuple=())` (L313-L390).
-- Function `EZoneDetector.sequence_resets(self)` (L393-L394).
-- Function `EZoneDetector.sequence_resets(self, resets: dict[datetime, int])` (L397-L409).
-- Function `EZoneDetector._reset_time(self, reset: object)` (L411-L412).
-- Function `EZoneDetector._main_index(self, value: datetime)` (L414-L415).
-- Function `EZoneDetector._first_cross_position(self, left: int, right: int, level: Decimal, *, less: bool)` (L418-L433).
-- Function `EZoneDetector._stop_value(self, item: object)` (L435-L436).
-- Function `EZoneDetector._initialize_main_extremes(self)` (L438-L454).
-- Function `EZoneDetector._build_extreme_sparse(self)` (L456-L483).
-- Function `EZoneDetector._extreme_position(self, left: int, right: int)` (L485-L502).
-- Function `EZoneDetector._first_parent_stop(self, source_time: datetime, level: Decimal)` (L505-L515).
-- Function `EZoneDetector._search_parent_stop(self, start: datetime, end: datetime, level: Decimal)` (L517-L520).
-- Function `EZoneDetector._search_order_stop(self, start: datetime, end: datetime, level: Decimal)` (L522-L525).
-- Function `EZoneDetector._search_strict_cross(self, start: datetime, end: datetime, level: Decimal, *, less: bool)` (L527-L533).
-- Function `EZoneDetector._cross_order(self, start: datetime, level: Decimal)` (L535-L555).
-- Function `EZoneDetector._confirmation_for(self, reaction: object, direction: str)` (L557-L558).
-- Function `EZoneDetector._confirmation(self, reaction: object)` (L560-L561).
-- Function `EZoneDetector._reaction_first_time(self, reaction: object)` (L563-L564).
-- Function `EZoneDetector._parent_stop(self, parent_type: str, parent: object)` (L567-L570).
-- Function `EZoneDetector.parent_stop(self, parent_type: str, parent: object)` (L572-L576).
-- Function `EZoneDetector._extreme_between(self, start: datetime, end: datetime)` (L579-L590).
-- Function `EZoneDetector._find_extreme(self, start_index: int, end_index: int)` (L592-L604).
-- Function `EZoneDetector._zone(self, family: str, number: int, parent_type: str, parent: object, stop_event: datetime, *, e_owned_source_times: set[datetime] | None=None)` (L606-L673).
-- Function `EZoneDetector._zone.post_stop_choices()` (L642-L647).
-- Function `EZoneDetector._build_zone(self, family: str, number: int, parent_type: str, parent: object, stop_event: datetime, order_match: OrderMatch, prospective_source: tuple[int, datetime, Decimal])` (L675-L731).
-- Function `EZoneDetector.set_consumed_s_evidence(self, evidence: Sequence[tuple[object, object]])` (L733-L743).
-- Function `EZoneDetector._apply_consumed_s_evidence(self, zones: Sequence[EZone])` (L745-L761).
-- Function `EZoneDetector.continuation_chain_from_s(self, owner: EZone, s_zone: object, independent_a_order_identities: frozenset[tuple[int, int]]=frozenset())` (L763-L820).
-- Function `EZoneDetector.replace_with_earlier_continuation(self, base_zones: Sequence[EZone], owner: EZone, continuation: Sequence[EZone])` (L822-L867).
-- Function `EZoneDetector.replace_with_earlier_continuation.descends_from_owner(item: EZone)` (L831-L845).
-- Function `EZoneDetector.resolve_same_source_conflicts(self, zones: Sequence[EZone])` (L869-L911).
-- Function `EZoneDetector.resolve_same_source_conflicts.outranks(candidate: EZone, current: EZone)` (L887-L894).
-- Function `EZoneDetector.restore_independent_s_roots(self, dominant_zones: Sequence[EZone])` (L913-L1003).
-- Function `EZoneDetector._invalid_s_without_order_cause(self, zone: EZone)` (L1005-L1027).
-- Function `EZoneDetector._discover_candidate_chains(self)` (L1029-L1120).
-- Function `EZoneDetector._reconcile_candidate_chains(self, candidates: list[EZone])` (L1122-L1128).
-- Function `EZoneDetector._compute_reconciliation(self, candidates: list[EZone], *, steps=None, checkpoint=None, previous=None, frontier=0)` (L1130-L1490).
-- Function `EZoneDetector._compute_reconciliation.index_numbered(item: EZone)` (L1173-L1184).
-- Function `EZoneDetector._compute_reconciliation.index_child(zone: EZone)` (L1191-L1197).
-- Function `EZoneDetector._compute_reconciliation.enqueue(zone: EZone | None, current_source: int)` (L1202-L1216).
-- Function `EZoneDetector._compute_reconciliation.valid_order(zone: EZone)` (L1218-L1225).
-- Function `EZoneDetector._compute_reconciliation.parent_active(zone: EZone, seen: set[tuple[int, datetime]] | None=None)` (L1227-L1283).
-- Function `EZoneDetector._compute_reconciliation.stopped_by(zone: EZone, prior: EZone)` (L1285-L1290).
-- Function `EZoneDetector._compute_reconciliation.ownership_priority(item: EZone)` (L1363-L1368).
-- Function `EZoneDetector._compute_reconciliation.collect_lineage(zone: EZone, seen: set[tuple[int, datetime]])` (L1463-L1475).
-- Function `EZoneDetector.detect(self)` (L1493-L1504).
-- Function `detect_e_zones(direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], s_zones: Sequence[object], opposite_resets: Sequence[object], chronology: object, start_index: int=0, end_index: int | None=None, direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None=None, blocked_order_first_times: set[datetime] | None=None, initial_order_audit: dict[tuple[int, int], dict[str, object]] | None=None, sequence_priority: Callable[[str, str], int] | None=None, invalid_s_root_identities: set[tuple[datetime, int]] | None=None)` (L1507-L1536).
+- Class `EZoneDetector` (L312-L1506).
+- Function `EZoneDetector.__init__(self, direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], s_zones: Sequence[object], opposite_resets: Sequence[object], chronology: object, start_index: int=0, end_index: int | None=None, direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None=None, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), initial_order_audit: dict[tuple[int, int], dict[str, object]] | None=None, sequence_resets: dict[datetime, int] | None=None, sequence_priority: Callable[[str, str], int] | None=None, invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[OrderBResetLeg]=(), live_continuation: LiveEContinuation | None=None, live_scope: tuple=())` (L313-L392).
+- Function `EZoneDetector.sequence_resets(self)` (L395-L396).
+- Function `EZoneDetector.sequence_resets(self, resets: dict[datetime, int])` (L399-L411).
+- Function `EZoneDetector._reset_time(self, reset: object)` (L413-L414).
+- Function `EZoneDetector._main_index(self, value: datetime)` (L416-L417).
+- Function `EZoneDetector._first_cross_position(self, left: int, right: int, level: Decimal, *, less: bool)` (L420-L435).
+- Function `EZoneDetector._stop_value(self, item: object)` (L437-L438).
+- Function `EZoneDetector._initialize_main_extremes(self)` (L440-L456).
+- Function `EZoneDetector._build_extreme_sparse(self)` (L458-L485).
+- Function `EZoneDetector._extreme_position(self, left: int, right: int)` (L487-L504).
+- Function `EZoneDetector._first_parent_stop(self, source_time: datetime, level: Decimal)` (L507-L517).
+- Function `EZoneDetector._search_parent_stop(self, start: datetime, end: datetime, level: Decimal)` (L519-L522).
+- Function `EZoneDetector._search_order_stop(self, start: datetime, end: datetime, level: Decimal)` (L524-L527).
+- Function `EZoneDetector._search_strict_cross(self, start: datetime, end: datetime, level: Decimal, *, less: bool)` (L529-L535).
+- Function `EZoneDetector._cross_order(self, start: datetime, level: Decimal)` (L537-L557).
+- Function `EZoneDetector._confirmation_for(self, reaction: object, direction: str)` (L559-L560).
+- Function `EZoneDetector._confirmation(self, reaction: object)` (L562-L563).
+- Function `EZoneDetector._reaction_first_time(self, reaction: object)` (L565-L566).
+- Function `EZoneDetector._parent_stop(self, parent_type: str, parent: object)` (L569-L572).
+- Function `EZoneDetector.parent_stop(self, parent_type: str, parent: object)` (L574-L578).
+- Function `EZoneDetector._extreme_between(self, start: datetime, end: datetime)` (L581-L592).
+- Function `EZoneDetector._find_extreme(self, start_index: int, end_index: int)` (L594-L606).
+- Function `EZoneDetector._zone(self, family: str, number: int, parent_type: str, parent: object, stop_event: datetime, *, e_owned_source_times: set[datetime] | None=None)` (L608-L675).
+- Function `EZoneDetector._zone.post_stop_choices()` (L644-L649).
+- Function `EZoneDetector._build_zone(self, family: str, number: int, parent_type: str, parent: object, stop_event: datetime, order_match: OrderMatch, prospective_source: tuple[int, datetime, Decimal])` (L677-L733).
+- Function `EZoneDetector.set_consumed_s_evidence(self, evidence: Sequence[tuple[object, object]])` (L735-L745).
+- Function `EZoneDetector._apply_consumed_s_evidence(self, zones: Sequence[EZone])` (L747-L763).
+- Function `EZoneDetector.continuation_chain_from_s(self, owner: EZone, s_zone: object, independent_a_order_identities: frozenset[tuple[int, int]]=frozenset())` (L765-L822).
+- Function `EZoneDetector.replace_with_earlier_continuation(self, base_zones: Sequence[EZone], owner: EZone, continuation: Sequence[EZone])` (L824-L869).
+- Function `EZoneDetector.replace_with_earlier_continuation.descends_from_owner(item: EZone)` (L833-L847).
+- Function `EZoneDetector.resolve_same_source_conflicts(self, zones: Sequence[EZone])` (L871-L913).
+- Function `EZoneDetector.resolve_same_source_conflicts.outranks(candidate: EZone, current: EZone)` (L889-L896).
+- Function `EZoneDetector.restore_independent_s_roots(self, dominant_zones: Sequence[EZone])` (L915-L1005).
+- Function `EZoneDetector._invalid_s_without_order_cause(self, zone: EZone)` (L1007-L1029).
+- Function `EZoneDetector._discover_candidate_chains(self)` (L1031-L1122).
+- Function `EZoneDetector._reconcile_candidate_chains(self, candidates: list[EZone])` (L1124-L1130).
+- Function `EZoneDetector._compute_reconciliation(self, candidates: list[EZone], *, steps=None, checkpoint=None, previous=None, frontier=0)` (L1132-L1492).
+- Function `EZoneDetector._compute_reconciliation.index_numbered(item: EZone)` (L1175-L1186).
+- Function `EZoneDetector._compute_reconciliation.index_child(zone: EZone)` (L1193-L1199).
+- Function `EZoneDetector._compute_reconciliation.enqueue(zone: EZone | None, current_source: int)` (L1204-L1218).
+- Function `EZoneDetector._compute_reconciliation.valid_order(zone: EZone)` (L1220-L1227).
+- Function `EZoneDetector._compute_reconciliation.parent_active(zone: EZone, seen: set[tuple[int, datetime]] | None=None)` (L1229-L1285).
+- Function `EZoneDetector._compute_reconciliation.stopped_by(zone: EZone, prior: EZone)` (L1287-L1292).
+- Function `EZoneDetector._compute_reconciliation.ownership_priority(item: EZone)` (L1365-L1370).
+- Function `EZoneDetector._compute_reconciliation.collect_lineage(zone: EZone, seen: set[tuple[int, datetime]])` (L1465-L1477).
+- Function `EZoneDetector.detect(self)` (L1495-L1506).
+- Function `detect_e_zones(direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], s_zones: Sequence[object], opposite_resets: Sequence[object], chronology: object, start_index: int=0, end_index: int | None=None, direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None=None, blocked_order_first_times: set[datetime] | None=None, initial_order_audit: dict[tuple[int, int], dict[str, object]] | None=None, sequence_priority: Callable[[str, str], int] | None=None, invalid_s_root_identities: set[tuple[datetime, int]] | None=None)` (L1509-L1538).
 
 #### `pipeline/lifecycle_engine.py`
 - Assignment `STOP_ALL_VERSION = '1.18.6'` (L24).
@@ -1399,8 +1403,8 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 
 #### `pipeline/order_audit_engine.py`
 - Assignment `ORDER_AUDIT_ENGINE_VERSION = '1.8.2'` (L20).
-- Assignment `ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION = '1.9.4'` (L21).
-- Assignment `ORDER_AUDIT_ENGINE_LAST_MODIFIED = '2026-11-19T01:18:13+03:30'` (L22).
+- Assignment `ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION = '1.9.5'` (L21).
+- Assignment `ORDER_AUDIT_ENGINE_LAST_MODIFIED = '2026-11-20T22:00:58+03:30'` (L22).
 - Function `relabel_primary_causes(causes, labels)` (L25-L37).
 - Class `PostBehaviorStop` (L40-L44).
 - Assignment `behavior_type: str` (L41).
@@ -1444,77 +1448,78 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 - Function `discover_accepted_order_b_reset_legs(direction: str, chronology: object, trend_reactions: Sequence[object], trend_resets: Sequence[object], opposite_reactions: Sequence[object], a_zones: Sequence[object], invalid_a_identities: set[tuple[datetime, int]], s_zones: Sequence[object], e_zones: Sequence[object], stopalls: Sequence[object], s_detector: object, e_detector: object, priority: Callable[[object], int], *, reset_leg_finder=None)` (L442-L520).
 - Assignment `OrderMatch = tuple[int, object, datetime, Decimal, int, datetime, tuple[int, datetime, datetime] | None, tuple[str, ...], datetime | None]` (L523).
 - Function `order_b_leg_identity(items: Sequence[object])` (L530-L550).
-- Class `OrderAuditEngineMixin` (L554-L2294).
-- Function `OrderAuditEngineMixin._initialize_order_audit(self)` (L557-L650).
-- Function `OrderAuditEngineMixin._order_stop(self, number: int, reaction: object, context_start: datetime | None=None)` (L652-L678).
-- Function `OrderAuditEngineMixin.order_stop(self, reaction_number: int, reaction: object)` (L681-L685).
-- Function `OrderAuditEngineMixin._first_healthy_direct_geometry(self, start: datetime, allow_bounded_continue: bool=False)` (L688-L760).
-- Function `OrderAuditEngineMixin._trend_leg_direct_order(self, start: datetime)` (L763-L812).
-- Function `OrderAuditEngineMixin._direct_parent_stop_order(self, start: datetime, continuous_deadline: datetime | None, allow_bounded_continue: bool, e_parent: bool=False, *, confirmation_after: datetime | None=None)` (L815-L833).
-- Function `OrderAuditEngineMixin._compute_direct_parent_stop_order(self, start: datetime, continuous_deadline: datetime | None, allow_bounded_continue: bool, e_parent: bool=False, *, confirmation_after: datetime | None=None)` (L835-L924).
-- Function `OrderAuditEngineMixin._merge_order_candidate(self, by_geometry: dict[tuple[int, int], OrderMatch], number: int, reaction: object, confirmation: datetime, *, parent_stop_cause_time: datetime)` (L927-L958).
-- Function `OrderAuditEngineMixin._enforce_single_parent_stop_owner(self, by_geometry: dict[tuple[int, int], OrderMatch])` (L961-L985).
-- Function `OrderAuditEngineMixin.order_candidates(self, start: datetime, continuous_deadline: datetime | None=None, allow_bounded_continue: bool=False, allow_trend_leg_continue: bool=False, e_parent: bool=False)` (L988-L1076).
-- Function `OrderAuditEngineMixin._first_order(self, start: datetime, continuous_deadline: datetime | None=None, allow_bounded_continue: bool=False, allow_trend_leg_continue: bool=False)` (L1079-L1092).
-- Function `OrderAuditEngineMixin._has_sequence_reset_between(self, start: datetime, end: datetime)` (L1095-L1103).
-- Function `OrderAuditEngineMixin._index_order_audit_identity(self, identity: tuple[int, int], confirmation: datetime)` (L1106-L1117).
-- Function `OrderAuditEngineMixin._clear_order_audit(self)` (L1120-L1124).
-- Function `OrderAuditEngineMixin._invalidate_carried_order_caches(self)` (L1126-L1133).
-- Function `OrderAuditEngineMixin._invalidate_post_stop_order_cache(self)` (L1135-L1138).
-- Function `OrderAuditEngineMixin.register_order_b_reset_legs(self, legs: Sequence[OrderBResetLeg])` (L1141-L1205).
-- Function `OrderAuditEngineMixin._reparent_primary_high_causes(self, parent, stop_event, direct_identity)` (L1208-L1254).
-- Function `OrderAuditEngineMixin.register_primary_high(self, parent)` (L1256-L1264).
-- Function `OrderAuditEngineMixin.register_primary_low(self, parent)` (L1266-L1270).
-- Function `OrderAuditEngineMixin._primary_parent_order(self, parent)` (L1272-L1281).
-- Function `OrderAuditEngineMixin.primary_order_dependency(self, parent)` (L1283-L1290).
-- Function `OrderAuditEngineMixin._register_primary_point(self, parent)` (L1292-L1316).
-- Function `OrderAuditEngineMixin.reconcile_primary_high_labels(self, highs)` (L1318-L1320).
-- Function `OrderAuditEngineMixin.reconcile_primary_low_labels(self, lows)` (L1322-L1324).
-- Function `OrderAuditEngineMixin._reconcile_primary_labels(self, points, prefix)` (L1326-L1343).
-- Function `OrderAuditEngineMixin._register_order_audit(self, parent_type: str, parent: object, parent_stop: datetime)` (L1345-L1439).
-- Function `OrderAuditEngineMixin.visual_order_lifecycle(self, start: datetime)` (L1443-L1462).
-- Function `OrderAuditEngineMixin._cross_order(self, start: datetime, level: Decimal)` (L1465-L1483).
-- Function `OrderAuditEngineMixin.cross_order(self, confirmation_time: datetime, stop_level: Decimal)` (L1486-L1490).
-- Function `OrderAuditEngineMixin._unconsumed_s_orders(self, parent: object, parent_stop: datetime)` (L1493-L1527).
-- Function `OrderAuditEngineMixin._initial_order_records(self)` (L1530-L1585).
-- Function `OrderAuditEngineMixin._initial_record_match(record: tuple[datetime, datetime, int, object, Decimal, int, datetime, tuple[int, datetime, datetime] | None], causes: tuple[str, ...])` (L1589-L1600).
-- Function `OrderAuditEngineMixin._initial_order_match(self, entry: dict[str, object], causes: tuple[str, ...])` (L1603-L1615).
-- Function `OrderAuditEngineMixin._gate_owned_initial_order(self, parent_stop: datetime)` (L1618-L1638).
-- Function `OrderAuditEngineMixin._carried_creation_events(entry: dict[str, object])` (L1642-L1648).
-- Function `OrderAuditEngineMixin._validated_carried_creation_index(self, entries)` (L1650-L1703).
-- Function `OrderAuditEngineMixin._extend_carried_creation_index(self)` (L1705-L1726).
-- Function `OrderAuditEngineMixin._carried_orders_for_parent(self, parent: object, parent_stop: datetime)` (L1728-L1801).
-- Function `OrderAuditEngineMixin._post_stop_accepted_orders_for_parent(self, parent: object, parent_stop: datetime)` (L1804-L1883).
-- Function `OrderAuditEngineMixin._post_stop_accepted_orders_for_parent.add_match(match: OrderMatch)` (L1818-L1835).
-- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders(self, parent, parent_stop)` (L1885-L2023).
-- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.native_time(value)` (L1896-L1897).
-- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.native_match(match)` (L1899-L1911).
-- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.eligible(items, times, *, audit_rows=False)` (L2004-L2011).
-- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.accepted()` (L2013-L2021).
-- Function `OrderAuditEngineMixin._order_created_only_by_disowned_s(self, identity: tuple[int, int], source_times: set[datetime], prospective_source_time: datetime | None=None)` (L2026-L2039).
-- Function `OrderAuditEngineMixin._blocked_by_gate_owned_order(self, zone: EZone)` (L2041-L2049).
-- Function `OrderAuditEngineMixin._rebuild_accepted_order_audit(self, numbered: list[EZone], supplemental_s_zones: Sequence[object]=())` (L2052-L2237).
-- Function `OrderAuditEngineMixin._rebuild_accepted_order_audit.valid_parent_stop_cause(cause: tuple[object, ...])` (L2066-L2078).
-- Function `OrderAuditEngineMixin.rebuild_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=())` (L2240-L2252).
-- Function `OrderAuditEngineMixin.ensure_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=())` (L2255-L2294).
-- Function `_parent_stop_cause_key(cause: dict[str, object])` (L2297-L2303).
-- Function `_collect_s_ledger_entries(s_detector, accepted_a_sources: set[datetime] | None)` (L2306-L2335).
-- Function `_collect_e_ledger_entries(detector, accepted_a_sources: set[datetime] | None=None)` (L2338-L2364).
-- Function `_merge_prepared_identities(combined: list[tuple[dict[str, object], list[dict[str, object]]]], detector, start_index: int, end_index: int, required_identities: set[tuple[int, int]])` (L2367-L2407).
-- Function `_single_owner_parent_stop_causes(output: list[dict[str, object]])` (L2410-L2445).
-- Function `prepare_order_audit(detector, start_index: int, end_index: int, s_detector=None, accepted_a_sources: set[datetime] | None=None, required_identities: set[tuple[int, int]] | None=None)` (L2448-L2465).
-- Function `accepted_audit_entry(entry: dict[str, object], accepted_sources: set)` (L2468-L2498).
-- Function `accepted_audit_entries(order_audit: dict[tuple[int, int], dict[str, object]], accepted_sources: set[datetime])` (L2501-L2511).
-- Function `order_identity_is_internal(item, internal_identities)` (L2514-L2520).
-- Class `SOrderAuditMixin` (L2523-L2718).
-- Function `SOrderAuditMixin._initialize_stopped_a_order_lookup(self)` (L2526-L2550).
-- Function `SOrderAuditMixin._first_order_after(self, a_stop_event_time: datetime)` (L2552-L2604).
-- Function `SOrderAuditMixin._first_canonical_order_after(self, a_stop_event_time: datetime)` (L2607-L2626).
-- Function `SOrderAuditMixin._record_a_order_audit(self, zone: object, a_stop_event_time: datetime, order_match: tuple[int, object, datetime])` (L2628-L2660).
-- Function `SOrderAuditMixin._audit_stopped_a(self, zone: object)` (L2663-L2673).
-- Function `SOrderAuditMixin._order_stop(self, order_number: int, reaction: object)` (L2676-L2685).
-- Function `SOrderAuditMixin._order_stop_crossed(self, candle: object, level: Decimal)` (L2688-L2691).
-- Function `SOrderAuditMixin._shared_order_stop_cross(self, confirmation: datetime, level: Decimal)` (L2694-L2718).
+- Class `OrderAuditEngineMixin` (L554-L2288).
+- Function `OrderAuditEngineMixin._initialize_order_audit(self)` (L557-L651).
+- Function `OrderAuditEngineMixin._order_stop(self, number: int, reaction: object, context_start: datetime | None=None)` (L653-L679).
+- Function `OrderAuditEngineMixin.order_stop(self, reaction_number: int, reaction: object)` (L682-L686).
+- Function `OrderAuditEngineMixin._first_healthy_direct_geometry(self, start: datetime, allow_bounded_continue: bool=False)` (L689-L761).
+- Function `OrderAuditEngineMixin._trend_leg_direct_order(self, start: datetime)` (L764-L792).
+- Function `OrderAuditEngineMixin._trend_leg_order_position(self, confirmation: datetime, trend: object)` (L794-L806).
+- Function `OrderAuditEngineMixin._direct_parent_stop_order(self, start: datetime, continuous_deadline: datetime | None, allow_bounded_continue: bool, e_parent: bool=False, *, confirmation_after: datetime | None=None)` (L809-L827).
+- Function `OrderAuditEngineMixin._compute_direct_parent_stop_order(self, start: datetime, continuous_deadline: datetime | None, allow_bounded_continue: bool, e_parent: bool=False, *, confirmation_after: datetime | None=None)` (L829-L918).
+- Function `OrderAuditEngineMixin._merge_order_candidate(self, by_geometry: dict[tuple[int, int], OrderMatch], number: int, reaction: object, confirmation: datetime, *, parent_stop_cause_time: datetime)` (L921-L952).
+- Function `OrderAuditEngineMixin._enforce_single_parent_stop_owner(self, by_geometry: dict[tuple[int, int], OrderMatch])` (L955-L979).
+- Function `OrderAuditEngineMixin.order_candidates(self, start: datetime, continuous_deadline: datetime | None=None, allow_bounded_continue: bool=False, allow_trend_leg_continue: bool=False, e_parent: bool=False)` (L982-L1070).
+- Function `OrderAuditEngineMixin._first_order(self, start: datetime, continuous_deadline: datetime | None=None, allow_bounded_continue: bool=False, allow_trend_leg_continue: bool=False)` (L1073-L1086).
+- Function `OrderAuditEngineMixin._has_sequence_reset_between(self, start: datetime, end: datetime)` (L1089-L1097).
+- Function `OrderAuditEngineMixin._index_order_audit_identity(self, identity: tuple[int, int], confirmation: datetime)` (L1100-L1111).
+- Function `OrderAuditEngineMixin._clear_order_audit(self)` (L1114-L1118).
+- Function `OrderAuditEngineMixin._invalidate_carried_order_caches(self)` (L1120-L1127).
+- Function `OrderAuditEngineMixin._invalidate_post_stop_order_cache(self)` (L1129-L1132).
+- Function `OrderAuditEngineMixin.register_order_b_reset_legs(self, legs: Sequence[OrderBResetLeg])` (L1135-L1199).
+- Function `OrderAuditEngineMixin._reparent_primary_high_causes(self, parent, stop_event, direct_identity)` (L1202-L1248).
+- Function `OrderAuditEngineMixin.register_primary_high(self, parent)` (L1250-L1258).
+- Function `OrderAuditEngineMixin.register_primary_low(self, parent)` (L1260-L1264).
+- Function `OrderAuditEngineMixin._primary_parent_order(self, parent)` (L1266-L1275).
+- Function `OrderAuditEngineMixin.primary_order_dependency(self, parent)` (L1277-L1284).
+- Function `OrderAuditEngineMixin._register_primary_point(self, parent)` (L1286-L1310).
+- Function `OrderAuditEngineMixin.reconcile_primary_high_labels(self, highs)` (L1312-L1314).
+- Function `OrderAuditEngineMixin.reconcile_primary_low_labels(self, lows)` (L1316-L1318).
+- Function `OrderAuditEngineMixin._reconcile_primary_labels(self, points, prefix)` (L1320-L1337).
+- Function `OrderAuditEngineMixin._register_order_audit(self, parent_type: str, parent: object, parent_stop: datetime)` (L1339-L1433).
+- Function `OrderAuditEngineMixin.visual_order_lifecycle(self, start: datetime)` (L1437-L1456).
+- Function `OrderAuditEngineMixin._cross_order(self, start: datetime, level: Decimal)` (L1459-L1477).
+- Function `OrderAuditEngineMixin.cross_order(self, confirmation_time: datetime, stop_level: Decimal)` (L1480-L1484).
+- Function `OrderAuditEngineMixin._unconsumed_s_orders(self, parent: object, parent_stop: datetime)` (L1487-L1521).
+- Function `OrderAuditEngineMixin._initial_order_records(self)` (L1524-L1579).
+- Function `OrderAuditEngineMixin._initial_record_match(record: tuple[datetime, datetime, int, object, Decimal, int, datetime, tuple[int, datetime, datetime] | None], causes: tuple[str, ...])` (L1583-L1594).
+- Function `OrderAuditEngineMixin._initial_order_match(self, entry: dict[str, object], causes: tuple[str, ...])` (L1597-L1609).
+- Function `OrderAuditEngineMixin._gate_owned_initial_order(self, parent_stop: datetime)` (L1612-L1632).
+- Function `OrderAuditEngineMixin._carried_creation_events(entry: dict[str, object])` (L1636-L1642).
+- Function `OrderAuditEngineMixin._validated_carried_creation_index(self, entries)` (L1644-L1697).
+- Function `OrderAuditEngineMixin._extend_carried_creation_index(self)` (L1699-L1720).
+- Function `OrderAuditEngineMixin._carried_orders_for_parent(self, parent: object, parent_stop: datetime)` (L1722-L1795).
+- Function `OrderAuditEngineMixin._post_stop_accepted_orders_for_parent(self, parent: object, parent_stop: datetime)` (L1798-L1877).
+- Function `OrderAuditEngineMixin._post_stop_accepted_orders_for_parent.add_match(match: OrderMatch)` (L1812-L1829).
+- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders(self, parent, parent_stop)` (L1879-L2017).
+- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.native_time(value)` (L1890-L1891).
+- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.native_match(match)` (L1893-L1905).
+- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.eligible(items, times, *, audit_rows=False)` (L1998-L2005).
+- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.accepted()` (L2007-L2015).
+- Function `OrderAuditEngineMixin._order_created_only_by_disowned_s(self, identity: tuple[int, int], source_times: set[datetime], prospective_source_time: datetime | None=None)` (L2020-L2033).
+- Function `OrderAuditEngineMixin._blocked_by_gate_owned_order(self, zone: EZone)` (L2035-L2043).
+- Function `OrderAuditEngineMixin._rebuild_accepted_order_audit(self, numbered: list[EZone], supplemental_s_zones: Sequence[object]=())` (L2046-L2231).
+- Function `OrderAuditEngineMixin._rebuild_accepted_order_audit.valid_parent_stop_cause(cause: tuple[object, ...])` (L2060-L2072).
+- Function `OrderAuditEngineMixin.rebuild_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=())` (L2234-L2246).
+- Function `OrderAuditEngineMixin.ensure_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=())` (L2249-L2288).
+- Function `_parent_stop_cause_key(cause: dict[str, object])` (L2291-L2297).
+- Function `_collect_s_ledger_entries(s_detector, accepted_a_sources: set[datetime] | None)` (L2300-L2329).
+- Function `_collect_e_ledger_entries(detector, accepted_a_sources: set[datetime] | None=None)` (L2332-L2358).
+- Function `_merge_prepared_identities(combined: list[tuple[dict[str, object], list[dict[str, object]]]], detector, start_index: int, end_index: int, required_identities: set[tuple[int, int]])` (L2361-L2401).
+- Function `_single_owner_parent_stop_causes(output: list[dict[str, object]])` (L2404-L2439).
+- Function `prepare_order_audit(detector, start_index: int, end_index: int, s_detector=None, accepted_a_sources: set[datetime] | None=None, required_identities: set[tuple[int, int]] | None=None)` (L2442-L2459).
+- Function `accepted_audit_entry(entry: dict[str, object], accepted_sources: set)` (L2462-L2492).
+- Function `accepted_audit_entries(order_audit: dict[tuple[int, int], dict[str, object]], accepted_sources: set[datetime])` (L2495-L2505).
+- Function `order_identity_is_internal(item, internal_identities)` (L2508-L2514).
+- Class `SOrderAuditMixin` (L2517-L2712).
+- Function `SOrderAuditMixin._initialize_stopped_a_order_lookup(self)` (L2520-L2544).
+- Function `SOrderAuditMixin._first_order_after(self, a_stop_event_time: datetime)` (L2546-L2598).
+- Function `SOrderAuditMixin._first_canonical_order_after(self, a_stop_event_time: datetime)` (L2601-L2620).
+- Function `SOrderAuditMixin._record_a_order_audit(self, zone: object, a_stop_event_time: datetime, order_match: tuple[int, object, datetime])` (L2622-L2654).
+- Function `SOrderAuditMixin._audit_stopped_a(self, zone: object)` (L2657-L2667).
+- Function `SOrderAuditMixin._order_stop(self, order_number: int, reaction: object)` (L2670-L2679).
+- Function `SOrderAuditMixin._order_stop_crossed(self, candle: object, level: Decimal)` (L2682-L2685).
+- Function `SOrderAuditMixin._shared_order_stop_cross(self, confirmation: datetime, level: Decimal)` (L2688-L2712).
 
 #### `pipeline/PL_PH_detector.py`
 - Assignment `PL_PH_VERSION = '1.4.0'` (L21).
@@ -1650,209 +1655,217 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 - Function `LivePrimaryContinuation.update(self, chronology, s_zones, e_zones, stopalls, orders, *, first_dirty_event: datetime)` (L810-L833).
 
 #### `pipeline/reaction_engine.py`
-- Assignment `REACTION_ENGINE_VERSION = '9.9.1'` (L22).
-- Assignment `REACTION_ENGINE_IMPLEMENTATION_VERSION = '9.13.3'` (L23).
-- Assignment `REACTION_ENGINE_LAST_MODIFIED = '2026-11-19T00:13:11+03:30'` (L24).
-- Assignment `_ORDER_GATE_CACHE_MAX_ENTRIES = 32768` (L26).
-- Assignment `_SEQUENCE_TIME_INDEXES: dict[int, tuple[Sequence[Candle], list[datetime]]] = {}` (L28).
-- Class `Candle` (L31-L39).
-- Assignment `index: int` (L32).
-- Assignment `timestamp: datetime` (L33).
-- Assignment `display_time: str` (L34).
-- Assignment `tag: str` (L35).
-- Assignment `open: Decimal` (L36).
-- Assignment `high: Decimal` (L37).
-- Assignment `low: Decimal` (L38).
-- Assignment `close: Decimal` (L39).
-- Class `Candidate` (L43-L67).
-- Assignment `first_idx: int` (L44).
-- Assignment `first_time: str` (L45).
-- Assignment `box_top_source_idx: int` (L46).
-- Assignment `box_top_source_time: str` (L47).
-- Assignment `box_top: Decimal` (L48).
-- Assignment `box_bottom_source_idx: int` (L49).
-- Assignment `box_bottom_source_time: str` (L50).
-- Assignment `box_bottom: Decimal` (L51).
-- Assignment `mode: str` (L52).
-- Assignment `anchor_idx: int | None = None` (L53).
-- Assignment `anchor_value: Decimal | None = None` (L54).
-- Assignment `leg_boundary_value: Decimal | None = None` (L55).
-- Assignment `break_idx: int | None = None` (L56).
-- Assignment `break_time: str | None = None` (L57).
-- Assignment `intrabar_start: datetime | None = None` (L58).
-- Assignment `cross_direction_origin: bool = False` (L59).
-- Assignment `cross_direction_chain_owner: bool = False` (L60).
-- Assignment `order_gate_decision: str | None = None` (L61).
-- Assignment `behavior_public_number: int | None = None` (L62).
-- Assignment `behavior_public_box_top: Decimal | None = None` (L63).
-- Assignment `behavior_public_box_bottom: Decimal | None = None` (L64).
-- Assignment `behavior_confirmation_time: datetime | None = None` (L65).
-- Assignment `behavior_first_time: datetime | None = None` (L66).
-- Assignment `behavior_internal: bool = False` (L67).
-- Class `ResetEvent` (L71-L76).
-- Assignment `index: int` (L72).
-- Assignment `display_time: str` (L73).
-- Assignment `second_time: str | None` (L74).
-- Assignment `broken_level: Decimal` (L75).
-- Assignment `from_first_idx: int` (L76).
-- Class `IntrabarAnalysis` (L80-L83).
-- Assignment `event_second: Candle` (L81).
-- Assignment `extreme: Decimal` (L82).
-- Assignment `extreme_source: Candle` (L83).
-- Class `DetectionResult` (L87-L92).
-- Assignment `direction: str` (L88).
-- Assignment `reactions: list[Candidate]` (L89).
-- Assignment `resets: list[ResetEvent]` (L90).
-- Assignment `start_index: int` (L91).
-- Assignment `end_index: int` (L92).
-- Class `_NormalReactionCursor` (L96-L102).
-- Assignment `next_index: int` (L97).
-- Assignment `previous: Candidate` (L98).
-- Assignment `candidate: Candidate | None` (L99).
-- Assignment `running_value: Decimal` (L100).
-- Assignment `running_source: int` (L101).
-- Assignment `pending_reset_index: int | None` (L102).
-- Class `_ReactionCheckpoint` (L106-L109).
-- Assignment `cursor: _NormalReactionCursor` (L107).
-- Assignment `reaction_count: int` (L108).
-- Assignment `reset_count: int` (L109).
-- Class `_InitialLegCursor` (L113-L120).
-- Assignment `next_index: int` (L114).
-- Assignment `state: str` (L115).
-- Assignment `leg_open_low: Decimal | None` (L116).
-- Assignment `leg_just_started: bool` (L117).
-- Assignment `anchor: Candle | None` (L118).
-- Assignment `anchor_origin: str | None` (L119).
-- Assignment `candidate: Candidate | None` (L120).
-- Class `_TrendLegCursor` (L124-L127).
-- Assignment `next_index: int` (L125).
-- Assignment `fixed_source: Candle` (L126).
-- Assignment `candidate: Candidate | None` (L127).
-- Class `LiveReactionUnavailable` (L130-L131).
-- Function `classify_candle_color(open_price: Decimal, close_price: Decimal)` (L134-L136).
-- Function `opposite_direction(direction: str)` (L139-L141).
-- Class `DetectorBase` (L144-L228).
-- Function `DetectorBase.__init__(self, candles: Sequence[Candle], one_second_candles: Sequence[Candle], start_index: int, end_index: int)` (L145-L167).
-- Function `DetectorBase._shared_time_index(candles: Sequence[Candle])` (L170-L178).
-- Function `DetectorBase.seconds_between(self, start: datetime, end: datetime)` (L180-L183).
-- Function `DetectorBase.main_source_for_time(self, timestamp: datetime)` (L185-L196).
-- Function `DetectorBase.minimum_low(self, start_index: int, end_index: int)` (L198-L212).
-- Function `DetectorBase.maximum_high(self, start_index: int, end_index: int)` (L214-L228).
-- Class `BullishDetector` (L231-L635).
-- Function `BullishDetector.green_run_peak_before(self, first_red_index: int)` (L232-L240).
-- Function `BullishDetector.breakout_analysis(self, candidate: Candidate, breakout_candle: Candle)` (L242-L266).
-- Function `BullishDetector.mode_a_invalidation_before_breakout(self, candidate: Candidate, candle: Candle)` (L268-L302).
-- Function `BullishDetector.confirmed_reset_before_breakout(self, candidate: Candidate | None, candle: Candle, confirmed_bottom: Decimal)` (L304-L322).
-- Function `BullishDetector.post_breakout_reset(self, analysis: IntrabarAnalysis | None, box_bottom: Decimal, breakout_candle: Candle)` (L324-L337).
-- Function `BullishDetector.detect(self, *, first_only: bool=False)` (L339-L340).
-- Function `BullishDetector._scan(self, *, first_only: bool, initial: _InitialLegCursor | None=None, retain_initial: bool=False)` (L342-L635).
-- Function `mirror_candle(candle: Candle)` (L638-L655).
-- Function `mirror_candidate(candidate: Candidate | None)` (L658-L675).
-- Function `mirror_analysis(analysis: IntrabarAnalysis | None)` (L677-L683).
-- Class `_ReflectedCandles` (L686-L708).
-- Function `_ReflectedCandles.__init__(self, source: Sequence[Candle])` (L694-L696).
-- Function `_ReflectedCandles.__len__(self)` (L698-L699).
-- Function `_ReflectedCandles.__getitem__(self, index)` (L701-L708).
-- Assignment `_REFLECTED_VIEWS: dict[int, tuple[Sequence[Candle], _ReflectedCandles]] = {}` (L711).
-- Function `_reflected_view(source: Sequence[Candle])` (L714-L721).
-- Class `BearishDetector` (L724-L781).
-- Function `BearishDetector.__init__(self, candles, one_second_candles, start_index, end_index)` (L732-L744).
-- Function `BearishDetector.red_run_bottom_before(self, first_green_index)` (L746-L748).
-- Function `BearishDetector.breakdown_analysis(self, candidate, breakdown_candle)` (L750-L753).
-- Function `BearishDetector.invalidation_high_break_before_breakdown(self, candidate, candle)` (L755-L758).
-- Function `BearishDetector.confirmed_reset_before_breakdown(self, candidate, candle, confirmed_top)` (L760-L764).
-- Function `BearishDetector.post_breakdown_reset(self, analysis, box_top, breakdown_candle)` (L766-L771).
-- Function `BearishDetector.detect(self, *, first_only: bool=False)` (L773-L781).
-- Function `published_reaction_candidate(direction: str, candidate: Candidate, chronology: object)` (L784-L879).
-- Class `LowerTimeframeIndex` (L882-L999).
-- Function `LowerTimeframeIndex.__init__(self, candles: Sequence[Candle])` (L889-L928).
-- Function `LowerTimeframeIndex.first_less(self, left: int, right: int, level: Decimal)` (L930-L931).
-- Function `LowerTimeframeIndex.first_greater(self, left: int, right: int, level: Decimal)` (L933-L934).
-- Function `LowerTimeframeIndex.range_minimum(self, left: int, right: int)` (L936-L938).
-- Function `LowerTimeframeIndex.range_maximum(self, left: int, right: int)` (L940-L942).
-- Function `LowerTimeframeIndex._range_query(self, left: int, right: int, *, minimum: bool)` (L944-L980).
-- Function `LowerTimeframeIndex._first(self, node: int, start: int, end: int, left: int, right: int, level: Decimal, less: bool)` (L982-L999).
-- Assignment `_LOWER_TIMEFRAME_INDEXES: dict[int, tuple[Sequence[Candle], LowerTimeframeIndex]] = {}` (L1002).
-- Function `shared_lower_timeframe_index(candles: Sequence[Candle])` (L1007-L1017).
-- Class `ReflectedLowerTimeframeIndex` (L1020-L1041).
-- Assignment `__slots__ = ('base', 'times')` (L1023).
-- Function `ReflectedLowerTimeframeIndex.__init__(self, base: LowerTimeframeIndex)` (L1025-L1027).
-- Function `ReflectedLowerTimeframeIndex.first_less(self, left: int, right: int, level: Decimal)` (L1029-L1030).
-- Function `ReflectedLowerTimeframeIndex.first_greater(self, left: int, right: int, level: Decimal)` (L1032-L1033).
-- Function `ReflectedLowerTimeframeIndex.range_minimum(self, left: int, right: int)` (L1035-L1037).
-- Function `ReflectedLowerTimeframeIndex.range_maximum(self, left: int, right: int)` (L1039-L1041).
-- Function `clear_market_indexes()` (L1044-L1047).
-- Function `release_market_indexes(*sequences: Sequence[Candle])` (L1050-L1054).
-- Class `MarketChronology` (L1057-L1289).
-- Assignment `__slots__ = ('candles', 'seconds', 'times', 'second_times', 'timeframe', 'lower_index', '_confirmation_cache', '_reset_time_cache', '_e_main_extremes')` (L1065).
-- Function `MarketChronology.__init__(self, candles: Sequence[Candle], seconds: Sequence[Candle], timeframe_seconds: int, lower_index: LowerTimeframeIndex | None=None)` (L1077-L1100).
-- Function `MarketChronology.opposite_direction(direction: str)` (L1103-L1105).
-- Function `MarketChronology.main_index(self, timestamp: datetime, *, clamp: bool=False)` (L1107-L1114).
-- Function `MarketChronology.lower_bounds(self, start: datetime, end: datetime | None=None)` (L1116-L1125).
-- Function `MarketChronology.lower_window(self, start: datetime, end: datetime | None=None)` (L1127-L1131).
-- Function `MarketChronology._reset_cache_key(reset: object)` (L1134-L1143).
-- Function `MarketChronology._reaction_cache_key(reaction: object, direction: str, use_intrabar_start: bool)` (L1146-L1158).
-- Function `MarketChronology.reset_time(self, reset: object)` (L1160-L1177).
-- Function `MarketChronology.reaction_confirmation(self, direction: str, reaction: object, *, use_intrabar_start: bool=True)` (L1179-L1224).
-- Function `MarketChronology.canonical_order_stop(self, order_direction: str, reaction_number: int, reaction: object, opposite_reactions: Sequence[object], *, start_index: int=0)` (L1227-L1289).
-- Class `_BehaviorReactionSpan` (L1293-L1328).
-- Assignment `identity: tuple[int, int]` (L1294).
-- Assignment `first_time: datetime` (L1295).
-- Assignment `confirmed_at: datetime` (L1296).
-- Assignment `top: Decimal` (L1297).
-- Assignment `bottom: Decimal` (L1298).
-- Function `_BehaviorReactionSpan.from_reaction(cls, direction, reaction, chronology)` (L1301-L1308).
-- Function `_BehaviorReactionSpan.may_contain(self, inner: _BehaviorReactionSpan)` (L1310-L1316).
-- Function `_BehaviorReactionSpan.path_extremes(self, chronology: MarketChronology)` (L1318-L1325).
-- Function `_BehaviorReactionSpan.contains_path(self, extremes: tuple[Decimal, Decimal] | None)` (L1327-L1328).
-- Function `_apply_behavior_reaction_views(full_results, chronology, spans, blocked)` (L1331-L1352).
-- Function `build_behavior_reaction_views(full_results: dict[str, object], chronology: MarketChronology)` (L1355-L1400).
-- Class `_LiveBehaviorReactionEntry` (L1404-L1407).
-- Assignment `geometry: tuple` (L1405).
-- Assignment `span: _BehaviorReactionSpan` (L1406).
-- Assignment `extremes: tuple[Decimal, Decimal] | None` (L1407).
-- Class `LiveBehaviorReactionViews` (L1410-L1473).
-- Function `LiveBehaviorReactionViews.__init__(self, full_results: dict[str, object], chronology: MarketChronology)` (L1418-L1421).
-- Function `LiveBehaviorReactionViews.update(self, full_results: dict[str, object], chronology: MarketChronology, *, first_dirty_main: int)` (L1423-L1473).
-- Function `directional_a_stop_order_finder(candles: Sequence[Candle], seconds: Sequence[Candle], direction: str)` (L1476-L1536).
-- Function `directional_a_stop_order_finder.find(gate_index: int, gate_event: datetime, end_index: int)` (L1490-L1534).
-- Class `UnifiedReactionDetector` (L1539-L2703).
-- Function `UnifiedReactionDetector.__init__(self, candles: Sequence[Candle], one_second_candles: Sequence[Candle], start_index: int, end_index: int, output_direction: str, *, initial_bullish_trend: bool=False, initial_bearish_trend: bool=False)` (L1549-L1585).
-- Function `UnifiedReactionDetector.bull(self)` (L1588-L1593).
-- Function `UnifiedReactionDetector.bear(self)` (L1596-L1601).
-- Function `UnifiedReactionDetector._append_reaction(self, direction: str, candidate: Candidate)` (L1603-L1683).
-- Function `UnifiedReactionDetector._append_reset(self, direction: str, candle: Candle, level: Decimal, first_idx: int, second_time: str | None=None)` (L1685-L1701).
-- Function `UnifiedReactionDetector._refine(self, direction: str, candidate: Candidate, candle: Candle)` (L1703-L1722).
-- Function `UnifiedReactionDetector._candidate_from_confirmation_remainder(self, direction: str, confirmed: Candidate, candle: Candle, analysis: IntrabarAnalysis | None)` (L1724-L1773).
-- Function `UnifiedReactionDetector._first_initial(self, direction: str, *, initial_cursor: _InitialLegCursor | _TrendLegCursor | None=None, retain_initial: bool=False)` (L1775-L1807).
-- Function `UnifiedReactionDetector._first_bullish_trend_reaction(self)` (L1809-L1811).
-- Function `UnifiedReactionDetector._first_trend_reaction(self, direction: str, *, initial: _TrendLegCursor | None=None, retain_initial: bool=False)` (L1813-L1866).
-- Function `UnifiedReactionDetector._first_direct_same_direction_after_reset(self, direction: str, reset_index: int)` (L1869-L1880).
-- Function `UnifiedReactionDetector._direct_reset_search(self, direction: str, reset_index: int)` (L1882-L1913).
-- Function `UnifiedReactionDetector._first_geometry_after_reset(self, direction: str, reset_index: int, end_index: int | None=None)` (L1915-L1966).
-- Function `UnifiedReactionDetector.first_geometry_after_reset(self, direction: str, reset_index: int, end_index: int)` (L1968-L1972).
-- Function `UnifiedReactionDetector._reaction_break_indices(self, direction: str)` (L1975-L1988).
-- Function `UnifiedReactionDetector.first_order_reaction_after_gate(self, direction: str, gate_index: int, end_index: int | None=None, gate_event_time: datetime | None=None)` (L1990-L2137).
-- Function `UnifiedReactionDetector.first_order_reaction_after_gate.cache_result(result: Candidate | None)` (L2006-L2015).
-- Function `UnifiedReactionDetector.first_order_reaction_after_gate.confirmed_no_later_than_gate(reaction: Candidate)` (L2017-L2035).
-- Function `UnifiedReactionDetector._earliest_confirmed_geometry(self, direction: str, start_index: int, end_index: int | None=None)` (L2139-L2211).
-- Function `UnifiedReactionDetector._build_direct_candidate(self, direction: str, reset_index: int, first_index: int)` (L2213-L2268).
-- Function `UnifiedReactionDetector._scan_direct_candidate(self, direction: str, candidate: Candidate, stop_index: int)` (L2271-L2299).
-- Function `UnifiedReactionDetector._owner_boundary_before_confirmation(self, direction: str, candidate: Candidate, candle: Candle)` (L2301-L2339).
-- Function `UnifiedReactionDetector._result(self)` (L2342-L2349).
-- Function `UnifiedReactionDetector.detect(self, *, stop_after_first_at_or_after: int | None=None)` (L2351-L2354).
-- Function `UnifiedReactionDetector._detect(self, stop_after_first_at_or_after: int | None, *, retain_cursor: bool, initial_cursor: _InitialLegCursor | _TrendLegCursor | None=None)` (L2356-L2437).
-- Function `UnifiedReactionDetector._scan_normal(self, cursor: _NormalReactionCursor, stop_after_first_at_or_after: int | None, *, retain_cursor: bool)` (L2439-L2703).
-- Class `LiveReactionContinuation` (L2706-L2827).
-- Function `LiveReactionContinuation.__init__(self, candles: Sequence[Candle], lower: Sequence[Candle], direction: str, *, timeframe_seconds: int, initial_bullish_trend: bool=False, initial_bearish_trend: bool=False)` (L2714-L2741).
-- Function `LiveReactionContinuation.result(self)` (L2744-L2745).
-- Function `LiveReactionContinuation._snapshot(result: DetectionResult)` (L2748-L2753).
-- Function `LiveReactionContinuation._detector(self, candles: list[Candle], lower: list[Candle])` (L2755-L2756).
-- Function `LiveReactionContinuation._release_indexes(*sequences: list[Candle])` (L2759-L2760).
-- Function `LiveReactionContinuation._validate_extension(self, candles: Sequence[Candle], lower: Sequence[Candle], previous_main: Candle | None, previous_lower: Candle | None)` (L2762-L2786).
-- Function `LiveReactionContinuation.advance(self, candles: Sequence[Candle], lower: Sequence[Candle])` (L2788-L2789).
-- Function `LiveReactionContinuation.preview(self, candles: Sequence[Candle], lower: Sequence[Candle])` (L2791-L2793).
-- Function `LiveReactionContinuation._extend(self, candles: Sequence[Candle], lower: Sequence[Candle], *, commit: bool)` (L2795-L2827).
+- Assignment `REACTION_ENGINE_VERSION = '9.9.1'` (L25).
+- Assignment `REACTION_ENGINE_IMPLEMENTATION_VERSION = '9.13.4'` (L26).
+- Assignment `REACTION_ENGINE_LAST_MODIFIED = '2026-11-20T22:06:11+03:30'` (L27).
+- Assignment `_ORDER_GATE_CACHE_MAX_ENTRIES = 32768` (L29).
+- Assignment `_LIVE_CROSSING_CACHE_MAX_ENTRIES = 16384` (L30).
+- Assignment `_SEQUENCE_TIME_INDEXES: dict[int, tuple[Sequence[Candle], list[datetime]]] = {}` (L32).
+- Class `Candle` (L35-L43).
+- Assignment `index: int` (L36).
+- Assignment `timestamp: datetime` (L37).
+- Assignment `display_time: str` (L38).
+- Assignment `tag: str` (L39).
+- Assignment `open: Decimal` (L40).
+- Assignment `high: Decimal` (L41).
+- Assignment `low: Decimal` (L42).
+- Assignment `close: Decimal` (L43).
+- Class `Candidate` (L47-L71).
+- Assignment `first_idx: int` (L48).
+- Assignment `first_time: str` (L49).
+- Assignment `box_top_source_idx: int` (L50).
+- Assignment `box_top_source_time: str` (L51).
+- Assignment `box_top: Decimal` (L52).
+- Assignment `box_bottom_source_idx: int` (L53).
+- Assignment `box_bottom_source_time: str` (L54).
+- Assignment `box_bottom: Decimal` (L55).
+- Assignment `mode: str` (L56).
+- Assignment `anchor_idx: int | None = None` (L57).
+- Assignment `anchor_value: Decimal | None = None` (L58).
+- Assignment `leg_boundary_value: Decimal | None = None` (L59).
+- Assignment `break_idx: int | None = None` (L60).
+- Assignment `break_time: str | None = None` (L61).
+- Assignment `intrabar_start: datetime | None = None` (L62).
+- Assignment `cross_direction_origin: bool = False` (L63).
+- Assignment `cross_direction_chain_owner: bool = False` (L64).
+- Assignment `order_gate_decision: str | None = None` (L65).
+- Assignment `behavior_public_number: int | None = None` (L66).
+- Assignment `behavior_public_box_top: Decimal | None = None` (L67).
+- Assignment `behavior_public_box_bottom: Decimal | None = None` (L68).
+- Assignment `behavior_confirmation_time: datetime | None = None` (L69).
+- Assignment `behavior_first_time: datetime | None = None` (L70).
+- Assignment `behavior_internal: bool = False` (L71).
+- Class `ResetEvent` (L75-L80).
+- Assignment `index: int` (L76).
+- Assignment `display_time: str` (L77).
+- Assignment `second_time: str | None` (L78).
+- Assignment `broken_level: Decimal` (L79).
+- Assignment `from_first_idx: int` (L80).
+- Class `IntrabarAnalysis` (L84-L87).
+- Assignment `event_second: Candle` (L85).
+- Assignment `extreme: Decimal` (L86).
+- Assignment `extreme_source: Candle` (L87).
+- Class `DetectionResult` (L91-L96).
+- Assignment `direction: str` (L92).
+- Assignment `reactions: list[Candidate]` (L93).
+- Assignment `resets: list[ResetEvent]` (L94).
+- Assignment `start_index: int` (L95).
+- Assignment `end_index: int` (L96).
+- Class `_NormalReactionCursor` (L100-L106).
+- Assignment `next_index: int` (L101).
+- Assignment `previous: Candidate` (L102).
+- Assignment `candidate: Candidate | None` (L103).
+- Assignment `running_value: Decimal` (L104).
+- Assignment `running_source: int` (L105).
+- Assignment `pending_reset_index: int | None` (L106).
+- Class `_ReactionCheckpoint` (L110-L113).
+- Assignment `cursor: _NormalReactionCursor` (L111).
+- Assignment `reaction_count: int` (L112).
+- Assignment `reset_count: int` (L113).
+- Class `_InitialLegCursor` (L117-L124).
+- Assignment `next_index: int` (L118).
+- Assignment `state: str` (L119).
+- Assignment `leg_open_low: Decimal | None` (L120).
+- Assignment `leg_just_started: bool` (L121).
+- Assignment `anchor: Candle | None` (L122).
+- Assignment `anchor_origin: str | None` (L123).
+- Assignment `candidate: Candidate | None` (L124).
+- Class `_TrendLegCursor` (L128-L131).
+- Assignment `next_index: int` (L129).
+- Assignment `fixed_source: Candle` (L130).
+- Assignment `candidate: Candidate | None` (L131).
+- Class `LiveReactionUnavailable` (L134-L135).
+- Function `classify_candle_color(open_price: Decimal, close_price: Decimal)` (L138-L140).
+- Function `opposite_direction(direction: str)` (L143-L145).
+- Class `DetectorBase` (L148-L232).
+- Function `DetectorBase.__init__(self, candles: Sequence[Candle], one_second_candles: Sequence[Candle], start_index: int, end_index: int)` (L149-L171).
+- Function `DetectorBase._shared_time_index(candles: Sequence[Candle])` (L174-L182).
+- Function `DetectorBase.seconds_between(self, start: datetime, end: datetime)` (L184-L187).
+- Function `DetectorBase.main_source_for_time(self, timestamp: datetime)` (L189-L200).
+- Function `DetectorBase.minimum_low(self, start_index: int, end_index: int)` (L202-L216).
+- Function `DetectorBase.maximum_high(self, start_index: int, end_index: int)` (L218-L232).
+- Class `BullishDetector` (L235-L639).
+- Function `BullishDetector.green_run_peak_before(self, first_red_index: int)` (L236-L244).
+- Function `BullishDetector.breakout_analysis(self, candidate: Candidate, breakout_candle: Candle)` (L246-L270).
+- Function `BullishDetector.mode_a_invalidation_before_breakout(self, candidate: Candidate, candle: Candle)` (L272-L306).
+- Function `BullishDetector.confirmed_reset_before_breakout(self, candidate: Candidate | None, candle: Candle, confirmed_bottom: Decimal)` (L308-L326).
+- Function `BullishDetector.post_breakout_reset(self, analysis: IntrabarAnalysis | None, box_bottom: Decimal, breakout_candle: Candle)` (L328-L341).
+- Function `BullishDetector.detect(self, *, first_only: bool=False)` (L343-L344).
+- Function `BullishDetector._scan(self, *, first_only: bool, initial: _InitialLegCursor | None=None, retain_initial: bool=False)` (L346-L639).
+- Function `mirror_candle(candle: Candle)` (L642-L659).
+- Function `mirror_candidate(candidate: Candidate | None)` (L662-L679).
+- Function `mirror_analysis(analysis: IntrabarAnalysis | None)` (L681-L687).
+- Class `_ReflectedCandles` (L690-L712).
+- Function `_ReflectedCandles.__init__(self, source: Sequence[Candle])` (L698-L700).
+- Function `_ReflectedCandles.__len__(self)` (L702-L703).
+- Function `_ReflectedCandles.__getitem__(self, index)` (L705-L712).
+- Assignment `_REFLECTED_VIEWS: dict[int, tuple[Sequence[Candle], _ReflectedCandles]] = {}` (L715).
+- Function `_reflected_view(source: Sequence[Candle])` (L718-L725).
+- Class `BearishDetector` (L728-L785).
+- Function `BearishDetector.__init__(self, candles, one_second_candles, start_index, end_index)` (L736-L748).
+- Function `BearishDetector.red_run_bottom_before(self, first_green_index)` (L750-L752).
+- Function `BearishDetector.breakdown_analysis(self, candidate, breakdown_candle)` (L754-L757).
+- Function `BearishDetector.invalidation_high_break_before_breakdown(self, candidate, candle)` (L759-L762).
+- Function `BearishDetector.confirmed_reset_before_breakdown(self, candidate, candle, confirmed_top)` (L764-L768).
+- Function `BearishDetector.post_breakdown_reset(self, analysis, box_top, breakdown_candle)` (L770-L775).
+- Function `BearishDetector.detect(self, *, first_only: bool=False)` (L777-L785).
+- Function `published_reaction_candidate(direction: str, candidate: Candidate, chronology: object)` (L788-L883).
+- Class `LowerTimeframeIndex` (L886-L1069).
+- Function `LowerTimeframeIndex.__init__(self, candles: Sequence[Candle], *, retain_crossings: bool=False)` (L893-L907).
+- Function `LowerTimeframeIndex._fill_leaves(self, first: int)` (L909-L916).
+- Function `LowerTimeframeIndex._update_parents(self, last: int, before_first: int)` (L917-L939).
+- Function `LowerTimeframeIndex.refresh_suffix(self, first: int)` (L941-L957).
+- Function `LowerTimeframeIndex.first_less(self, left: int, right: int, level: Decimal)` (L959-L960).
+- Function `LowerTimeframeIndex.first_greater(self, left: int, right: int, level: Decimal)` (L962-L963).
+- Function `LowerTimeframeIndex.range_minimum(self, left: int, right: int)` (L965-L967).
+- Function `LowerTimeframeIndex.range_maximum(self, left: int, right: int)` (L969-L971).
+- Function `LowerTimeframeIndex._range_query(self, left: int, right: int, *, minimum: bool)` (L973-L1009).
+- Function `LowerTimeframeIndex._first(self, left, right, level, values, excludes)` (L1011-L1017).
+- Function `LowerTimeframeIndex._first_with_history(self, left, right, level, values, excludes)` (L1019-L1035).
+- Function `LowerTimeframeIndex._remember_crossing(self, key, evidence)` (L1037-L1040).
+- Function `LowerTimeframeIndex._search_first(self, left, right, level, values, excludes)` (L1042-L1062).
+- Function `LowerTimeframeIndex._descend_first(self, node, values, level, excludes)` (L1064-L1069).
+- Assignment `_LOWER_TIMEFRAME_INDEXES: dict[int, tuple[Sequence[Candle], LowerTimeframeIndex]] = {}` (L1072).
+- Function `shared_lower_timeframe_index(candles: Sequence[Candle], *, prepared: LowerTimeframeIndex | None=None)` (L1077-L1092).
+- Class `ReflectedLowerTimeframeIndex` (L1095-L1116).
+- Assignment `__slots__ = ('base', 'times')` (L1098).
+- Function `ReflectedLowerTimeframeIndex.__init__(self, base: LowerTimeframeIndex)` (L1100-L1102).
+- Function `ReflectedLowerTimeframeIndex.first_less(self, left: int, right: int, level: Decimal)` (L1104-L1105).
+- Function `ReflectedLowerTimeframeIndex.first_greater(self, left: int, right: int, level: Decimal)` (L1107-L1108).
+- Function `ReflectedLowerTimeframeIndex.range_minimum(self, left: int, right: int)` (L1110-L1112).
+- Function `ReflectedLowerTimeframeIndex.range_maximum(self, left: int, right: int)` (L1114-L1116).
+- Function `clear_market_indexes()` (L1119-L1122).
+- Function `release_market_indexes(*sequences: Sequence[Candle])` (L1125-L1129).
+- Class `MarketChronology` (L1132-L1367).
+- Assignment `__slots__ = ('candles', 'seconds', 'times', 'second_times', 'timeframe', 'lower_index', 'main_range_index', '_confirmation_cache', '_reset_time_cache', '_e_main_extremes')` (L1140).
+- Function `MarketChronology.__init__(self, candles: Sequence[Candle], seconds: Sequence[Candle], timeframe_seconds: int, lower_index: LowerTimeframeIndex | None=None, main_range_index: LowerTimeframeIndex | None=None)` (L1153-L1178).
+- Function `MarketChronology.opposite_direction(direction: str)` (L1181-L1183).
+- Function `MarketChronology.main_index(self, timestamp: datetime, *, clamp: bool=False)` (L1185-L1192).
+- Function `MarketChronology.lower_bounds(self, start: datetime, end: datetime | None=None)` (L1194-L1203).
+- Function `MarketChronology.lower_window(self, start: datetime, end: datetime | None=None)` (L1205-L1209).
+- Function `MarketChronology._reset_cache_key(reset: object)` (L1212-L1221).
+- Function `MarketChronology._reaction_cache_key(reaction: object, direction: str, use_intrabar_start: bool)` (L1224-L1236).
+- Function `MarketChronology.reset_time(self, reset: object)` (L1238-L1255).
+- Function `MarketChronology.reaction_confirmation(self, direction: str, reaction: object, *, use_intrabar_start: bool=True)` (L1257-L1302).
+- Function `MarketChronology.canonical_order_stop(self, order_direction: str, reaction_number: int, reaction: object, opposite_reactions: Sequence[object], *, start_index: int=0)` (L1305-L1367).
+- Class `_BehaviorReactionSpan` (L1371-L1406).
+- Assignment `identity: tuple[int, int]` (L1372).
+- Assignment `first_time: datetime` (L1373).
+- Assignment `confirmed_at: datetime` (L1374).
+- Assignment `top: Decimal` (L1375).
+- Assignment `bottom: Decimal` (L1376).
+- Function `_BehaviorReactionSpan.from_reaction(cls, direction, reaction, chronology)` (L1379-L1386).
+- Function `_BehaviorReactionSpan.may_contain(self, inner: _BehaviorReactionSpan)` (L1388-L1394).
+- Function `_BehaviorReactionSpan.path_extremes(self, chronology: MarketChronology)` (L1396-L1403).
+- Function `_BehaviorReactionSpan.contains_path(self, extremes: tuple[Decimal, Decimal] | None)` (L1405-L1406).
+- Function `_apply_behavior_reaction_views(full_results, chronology, spans, blocked)` (L1409-L1430).
+- Function `build_behavior_reaction_views(full_results: dict[str, object], chronology: MarketChronology)` (L1433-L1478).
+- Class `_LiveBehaviorReactionEntry` (L1482-L1485).
+- Assignment `geometry: tuple` (L1483).
+- Assignment `span: _BehaviorReactionSpan` (L1484).
+- Assignment `extremes: tuple[Decimal, Decimal] | None` (L1485).
+- Class `LiveBehaviorReactionViews` (L1488-L1551).
+- Function `LiveBehaviorReactionViews.__init__(self, full_results: dict[str, object], chronology: MarketChronology)` (L1496-L1499).
+- Function `LiveBehaviorReactionViews.update(self, full_results: dict[str, object], chronology: MarketChronology, *, first_dirty_main: int)` (L1501-L1551).
+- Function `directional_a_stop_order_finder(candles: Sequence[Candle], seconds: Sequence[Candle], direction: str)` (L1554-L1614).
+- Function `directional_a_stop_order_finder.find(gate_index: int, gate_event: datetime, end_index: int)` (L1568-L1612).
+- Class `UnifiedReactionDetector` (L1617-L2781).
+- Function `UnifiedReactionDetector.__init__(self, candles: Sequence[Candle], one_second_candles: Sequence[Candle], start_index: int, end_index: int, output_direction: str, *, initial_bullish_trend: bool=False, initial_bearish_trend: bool=False)` (L1627-L1663).
+- Function `UnifiedReactionDetector.bull(self)` (L1666-L1671).
+- Function `UnifiedReactionDetector.bear(self)` (L1674-L1679).
+- Function `UnifiedReactionDetector._append_reaction(self, direction: str, candidate: Candidate)` (L1681-L1761).
+- Function `UnifiedReactionDetector._append_reset(self, direction: str, candle: Candle, level: Decimal, first_idx: int, second_time: str | None=None)` (L1763-L1779).
+- Function `UnifiedReactionDetector._refine(self, direction: str, candidate: Candidate, candle: Candle)` (L1781-L1800).
+- Function `UnifiedReactionDetector._candidate_from_confirmation_remainder(self, direction: str, confirmed: Candidate, candle: Candle, analysis: IntrabarAnalysis | None)` (L1802-L1851).
+- Function `UnifiedReactionDetector._first_initial(self, direction: str, *, initial_cursor: _InitialLegCursor | _TrendLegCursor | None=None, retain_initial: bool=False)` (L1853-L1885).
+- Function `UnifiedReactionDetector._first_bullish_trend_reaction(self)` (L1887-L1889).
+- Function `UnifiedReactionDetector._first_trend_reaction(self, direction: str, *, initial: _TrendLegCursor | None=None, retain_initial: bool=False)` (L1891-L1944).
+- Function `UnifiedReactionDetector._first_direct_same_direction_after_reset(self, direction: str, reset_index: int)` (L1947-L1958).
+- Function `UnifiedReactionDetector._direct_reset_search(self, direction: str, reset_index: int)` (L1960-L1991).
+- Function `UnifiedReactionDetector._first_geometry_after_reset(self, direction: str, reset_index: int, end_index: int | None=None)` (L1993-L2044).
+- Function `UnifiedReactionDetector.first_geometry_after_reset(self, direction: str, reset_index: int, end_index: int)` (L2046-L2050).
+- Function `UnifiedReactionDetector._reaction_break_indices(self, direction: str)` (L2053-L2066).
+- Function `UnifiedReactionDetector.first_order_reaction_after_gate(self, direction: str, gate_index: int, end_index: int | None=None, gate_event_time: datetime | None=None)` (L2068-L2215).
+- Function `UnifiedReactionDetector.first_order_reaction_after_gate.cache_result(result: Candidate | None)` (L2084-L2093).
+- Function `UnifiedReactionDetector.first_order_reaction_after_gate.confirmed_no_later_than_gate(reaction: Candidate)` (L2095-L2113).
+- Function `UnifiedReactionDetector._earliest_confirmed_geometry(self, direction: str, start_index: int, end_index: int | None=None)` (L2217-L2289).
+- Function `UnifiedReactionDetector._build_direct_candidate(self, direction: str, reset_index: int, first_index: int)` (L2291-L2346).
+- Function `UnifiedReactionDetector._scan_direct_candidate(self, direction: str, candidate: Candidate, stop_index: int)` (L2349-L2377).
+- Function `UnifiedReactionDetector._owner_boundary_before_confirmation(self, direction: str, candidate: Candidate, candle: Candle)` (L2379-L2417).
+- Function `UnifiedReactionDetector._result(self)` (L2420-L2427).
+- Function `UnifiedReactionDetector.detect(self, *, stop_after_first_at_or_after: int | None=None)` (L2429-L2432).
+- Function `UnifiedReactionDetector._detect(self, stop_after_first_at_or_after: int | None, *, retain_cursor: bool, initial_cursor: _InitialLegCursor | _TrendLegCursor | None=None)` (L2434-L2515).
+- Function `UnifiedReactionDetector._scan_normal(self, cursor: _NormalReactionCursor, stop_after_first_at_or_after: int | None, *, retain_cursor: bool)` (L2517-L2781).
+- Class `LiveReactionContinuation` (L2784-L2905).
+- Function `LiveReactionContinuation.__init__(self, candles: Sequence[Candle], lower: Sequence[Candle], direction: str, *, timeframe_seconds: int, initial_bullish_trend: bool=False, initial_bearish_trend: bool=False)` (L2792-L2819).
+- Function `LiveReactionContinuation.result(self)` (L2822-L2823).
+- Function `LiveReactionContinuation._snapshot(result: DetectionResult)` (L2826-L2831).
+- Function `LiveReactionContinuation._detector(self, candles: list[Candle], lower: list[Candle])` (L2833-L2834).
+- Function `LiveReactionContinuation._release_indexes(*sequences: list[Candle])` (L2837-L2838).
+- Function `LiveReactionContinuation._validate_extension(self, candles: Sequence[Candle], lower: Sequence[Candle], previous_main: Candle | None, previous_lower: Candle | None)` (L2840-L2864).
+- Function `LiveReactionContinuation.advance(self, candles: Sequence[Candle], lower: Sequence[Candle])` (L2866-L2867).
+- Function `LiveReactionContinuation.preview(self, candles: Sequence[Candle], lower: Sequence[Candle])` (L2869-L2871).
+- Function `LiveReactionContinuation._extend(self, candles: Sequence[Candle], lower: Sequence[Candle], *, commit: bool)` (L2873-L2905).
 
 #### `pipeline/s_zone_detector.py`
 - Assignment `S_ZONE_VERSION = '4.20.1'` (L22).
@@ -2331,9 +2344,9 @@ Every discovered production Python file in the live Engine package, Bridge and P
 
 ### 16.3 `bridge/live_pipeline.py` — Production module
 
-**SHA-256:** `b8faa4a676e608f37802c9b0d110f98eb5b2dfc4a66572cb9a7d27194e774b03`  
-**Bytes:** `9342`  
-**LF count:** `218`
+**SHA-256:** `5c0effe89dd5ce47c996187ca4da2689915aa83bcc16271432f2c0ee62c2240d`  
+**Bytes:** `9694`  
+**LF count:** `225`
 
 <!-- EXACT-SOURCE-BEGIN:bridge/live_pipeline.py -->
 ````python
@@ -2351,11 +2364,11 @@ from pathlib import Path
 import sys
 
 from trading_pipeline import (
-    LiveMarketBuckets, calculate_live_from_buckets, emit_progress, load_engines, parse_arguments, progress_events_to,
+    LiveMarketBuckets, LiveMarketViews, calculate_live_from_buckets, emit_progress, load_engines, parse_arguments, progress_events_to,
 )
 
 
-LIVE_PIPELINE_VERSION = "1.2.0"
+LIVE_PIPELINE_VERSION = "1.3.0"
 
 
 class LivePipelineContinuation:
@@ -2369,6 +2382,7 @@ class LivePipelineContinuation:
         self.args = copy(args)
         self.engines = engines
         self._buckets = LiveMarketBuckets(args.timeframe)
+        self._market_views = LiveMarketViews()
 
     def append(self, rows: list[dict]) -> dict[str, object]:
         previous_time = self._buckets.last_raw_time
@@ -2394,11 +2408,17 @@ class LivePipelineContinuation:
                           totalStages=direction_count + 4)
 
         emit_progress("started", "Build live market chronology", liveProgress=True)
-        with self._buckets.stage_append(rows):
-            payload = calculate_live_from_buckets(
-                args, self.engines, self._buckets, report_stage=report_stage,
-            )
-            report_stage("Calculated result ready for validation")
+        try:
+            with self._buckets.stage_append(rows) as delta:
+                payload = calculate_live_from_buckets(
+                    args, self.engines, self._buckets, live_views=self._market_views, bucket_delta=delta,
+                    report_stage=report_stage,
+                )
+                report_stage("Calculated result ready for validation")
+        except BaseException:
+            # The input transaction rolled back. Rebuild geometry on retry.
+            self._market_views = LiveMarketViews()
+            raise
         return payload
 
 
@@ -2560,9 +2580,9 @@ if __name__ == "__main__":
 
 ### 16.4 `bridge/trading_pipeline.py` — Final reconciled calculation objects
 
-**SHA-256:** `afc63a3d292baf21bba3e60f47d50b909b1e7754aa8b41dcae6c97c4c3850d6e`  
-**Bytes:** `147373`  
-**LF count:** `3714`
+**SHA-256:** `e7a1af5937efb23649149f92da660da89a9e3bda026da7c66e2d6e8409bfcc5a`  
+**Bytes:** `149435`  
+**LF count:** `3745`
 
 <!-- EXACT-SOURCE-BEGIN:bridge/trading_pipeline.py -->
 ````python
@@ -2611,8 +2631,8 @@ _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
 TRADING_PIPELINE_VERSION = "1.14.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.20.2"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-11-19T01:21:11+03:30"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.20.3"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-11-20T22:00:58+03:30"
 MBL_EXTENSION_CANDLES = 400
 
 TEHRAN = ZoneInfo("Asia/Tehran")
@@ -2900,6 +2920,35 @@ def build_candle_objects(engine, buckets: list[dict], *, start_index: int = 0):
         ))
     return candles
 
+
+class LiveMarketViews:
+    """Keep immutable candle history and refresh its range indexes at the RAW tail."""
+
+    def __init__(self):
+        self.seconds = []
+        self.candles = []
+        self.lower_index = None
+        self.main_index = None
+
+    @staticmethod
+    def _update_series(engine, buckets, candles, index, first_dirty):
+        first = first_dirty if index is not None else 0
+        candles[first:] = build_candle_objects(engine, buckets[first:], start_index=first)
+        if index is None or len(candles) > index.size:
+            return engine.LowerTimeframeIndex(candles, retain_crossings=True)
+        index.refresh_suffix(first)
+        return index
+
+    def update(self, engine, timeframe, second_buckets, main_buckets, delta, timings):
+        self.lower_index = timed(timings, "Update live lower candle views", lambda: self._update_series(
+            engine, second_buckets, self.seconds, self.lower_index, delta.first_dirty_second,
+        ))
+        if timeframe == 1:
+            self.candles, self.main_index = self.seconds, self.lower_index
+        else:
+            self.main_index = timed(timings, "Update live timeframe candle views", lambda: self._update_series(
+                engine, main_buckets, self.candles, self.main_index, delta.first_dirty_main,
+            ))
 
 def _index_selected(index: object, start_index: int | None, end_index: int | None) -> bool:
     return (
@@ -4508,25 +4557,28 @@ def _prepare_market_context_from_rows(
 def _prepare_market_context_from_buckets(
     args, engines: EngineBundle, timings: dict[str, float],
     second_buckets: list[dict], timeframe_buckets: list[dict],
+    live_views: LiveMarketViews | None = None, bucket_delta: BucketAppend | None = None,
 ) -> MarketContext:
-    seconds = timed(
-        timings,
-        "Build lower candle views",
-        lambda: build_candle_objects(engines.reaction, second_buckets),
-    )
-    lower_index = engines.reaction.shared_lower_timeframe_index(seconds)
-    candles = (
-        seconds
-        if args.timeframe == 1
-        else timed(
+    reaction = engines.reaction
+    if live_views is None:
+        seconds = timed(
             timings,
-            "Build timeframe candle views",
-            lambda: build_candle_objects(engines.reaction, timeframe_buckets),
+            "Build lower candle views",
+            lambda: build_candle_objects(reaction, second_buckets),
         )
-    )
-    chronology = engines.reaction.MarketChronology(
-        candles, seconds, args.timeframe, lower_index
-    )
+        lower_index = reaction.shared_lower_timeframe_index(seconds)
+        candles = seconds if args.timeframe == 1 else timed(
+            timings, "Build timeframe candle views",
+            lambda: build_candle_objects(reaction, timeframe_buckets),
+        )
+        chronology = reaction.MarketChronology(candles, seconds, args.timeframe, lower_index)
+    else:
+        assert bucket_delta is not None
+        live_views.update(reaction, args.timeframe, second_buckets, timeframe_buckets, bucket_delta, timings)
+        seconds, candles = live_views.seconds, live_views.candles
+        lower_index = reaction.shared_lower_timeframe_index(seconds, prepared=live_views.lower_index)
+        main_index = reaction.shared_lower_timeframe_index(candles, prepared=live_views.main_index)
+        chronology = reaction.MarketChronology(candles, seconds, args.timeframe, lower_index, main_index)
 
     # Resolve the visible main-candle range inside the prefix calculation.
     # Bucket boundaries are epoch-aligned exactly as ``build_candle_buckets``
@@ -4534,9 +4586,7 @@ def _prepare_market_context_from_buckets(
     # stable in a short-window request.
     # At 1s the lower and main candles share the same timestamps and
     # aggregation, including equal-timestamp rows.
-    main_bucket_times = [
-        item["time"] for item in (second_buckets if args.timeframe == 1 else timeframe_buckets)
-    ]
+    main_buckets = second_buckets if args.timeframe == 1 else timeframe_buckets
     requested_start_bucket = (
         args.from_time
         if args.timeframe == 1
@@ -4547,8 +4597,8 @@ def _prepare_market_context_from_buckets(
         if args.timeframe == 1
         else args.to_time // args.timeframe * args.timeframe
     )
-    start_index = bisect_left(main_bucket_times, requested_start_bucket)
-    end_index = bisect_left(main_bucket_times, requested_end_bucket + args.timeframe) - 1
+    start_index = bisect_left(main_buckets, requested_start_bucket, key=lambda bucket: bucket["time"])
+    end_index = bisect_left(main_buckets, requested_end_bucket + args.timeframe, key=lambda bucket: bucket["time"]) - 1
     if start_index >= len(candles) or end_index < start_index:
         raise ValueError("The selected range contains no timeframe candles.")
     end_index = min(end_index, len(candles) - 1)
@@ -6220,12 +6270,13 @@ def calculate_live_from_raw(
 
 
 def calculate_live_from_buckets(
-    args, engines: EngineBundle, buckets: LiveMarketBuckets, *, report_stage=None,
+    args, engines: EngineBundle, buckets: LiveMarketBuckets, *,
+    live_views: LiveMarketViews | None = None, bucket_delta: BucketAppend | None = None, report_stage=None,
 ) -> dict[str, object]:
     """Replay every trading stage from freshly validated, normalized RAW input."""
     return _run_live_calculation(
         args, engines, _prepare_market_context_from_buckets,
-        (buckets.second_buckets, buckets.main_buckets), report_stage,
+        (buckets.second_buckets, buckets.main_buckets, live_views, bucket_delta), report_stage,
     )
 
 
@@ -8163,9 +8214,9 @@ BEARISH = DirectionPolicy(
 
 ### 16.10 `pipeline/e_zone_detector.py` — S/E/Order lineage and parent stops
 
-**SHA-256:** `73df3b8f1d002008342db1ed48308b041b1bfb0a191c9932026ef34fa358705f`  
-**Bytes:** `69966`  
-**LF count:** `1536`
+**SHA-256:** `e05301a5812657f599c58e24525486e14e92910203004a1193c411d8a90d9f96`  
+**Bytes:** `70071`  
+**LF count:** `1538`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/e_zone_detector.py -->
 ````python
@@ -8199,8 +8250,8 @@ from order_audit_engine import (
 
 
 E_ZONE_VERSION = "6.16.2"
-E_ZONE_IMPLEMENTATION_VERSION = "6.20.3"
-E_ZONE_LAST_MODIFIED = "2026-11-19T01:11:09+03:30"
+E_ZONE_IMPLEMENTATION_VERSION = "6.20.4"
+E_ZONE_LAST_MODIFIED = "2026-11-20T22:00:58+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -8537,12 +8588,14 @@ class EZoneDetector(OrderAuditEngineMixin):
         self.range_start = self.times[self.start_index]
         self.range_end = self.times[self.end_index] + self.timeframe
         self._shared_main_extreme = None
-        if (live_continuation is None and self.timeframe.total_seconds() == 1
-                and getattr(self.lower_index, "candles", None) is self.candles):
-            # The one-second bridge already built a range tree over this
-            # same sequence. Both queries assign equality to the first row.
+        market_index = getattr(chronology, "main_range_index", None)
+        if market_index is None and self.timeframe.total_seconds() == 1:
+            market_index = self.lower_index
+        if live_continuation is None and getattr(market_index, "candles", None) is self.candles:
+            # Use the prepared range tree over this exact main sequence.
+            # Both queries assign equality to the first row.
             self._shared_main_extreme = getattr(
-                self.lower_index,
+                market_index,
                 "range_minimum" if direction == "bullish" else "range_maximum",
                 None,
             )
@@ -11331,9 +11384,9 @@ def visible_a_zones(a_zones: Sequence[object], s_zones: Sequence[object]) -> lis
 
 ### 16.12 `pipeline/order_audit_engine.py` — Physical Order identity and cause ledger
 
-**SHA-256:** `0b5b761f02482fd15a3770900de5bbcf5ea03d059515c5a87c6e2e6cd135d691`  
-**Bytes:** `118202`  
-**LF count:** `2719`
+**SHA-256:** `a7912855fb8ee9bf9447cc5304cf805752bbb1d939015457fea868faaf5d3b8d`  
+**Bytes:** `118217`  
+**LF count:** `2713`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/order_audit_engine.py -->
 ````python
@@ -11357,8 +11410,8 @@ if TYPE_CHECKING:
     from e_zone_detector import EZone
 
 ORDER_AUDIT_ENGINE_VERSION = "1.8.2"
-ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION = "1.9.4"
-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-19T01:18:13+03:30"
+ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION = "1.9.5"
+ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-20T22:00:58+03:30"
 
 
 def relabel_primary_causes(causes, labels):
@@ -11970,6 +12023,7 @@ class OrderAuditEngineMixin:
             key=lambda item: item[0],
         )
         self._trend_confirmation_times = [item[0] for item in self._trend_by_confirmation]
+        self._trend_leg_order_positions: dict[int, int | None] = {}
         self._opposite_reset_times_by_first: dict[int, list[datetime]] = {}
         for reset in self.opposite_resets:
             self._opposite_reset_times_by_first.setdefault(
@@ -12113,42 +12167,35 @@ class OrderAuditEngineMixin:
         """
         if self.direct_geometry_finder is None:
             return None
-        position = bisect_right(self._trend_confirmation_times, start)
-        while position < len(self._trend_by_confirmation):
+        first_position = bisect_right(self._trend_confirmation_times, start)
+        for position in range(first_position, len(self._trend_by_confirmation)):
             confirmation, first_time, trend = self._trend_by_confirmation[position]
-            position += 1
             if first_time <= start:
                 continue
-            if bool(getattr(trend, "behavior_internal", False)):
-                continue
-            break_index = int(getattr(trend, "break_idx"))
-            candidate = self.direct_geometry_finder(
-                self.order_direction, break_index, self.end_index, confirmation
-            )
-            if candidate is None:
-                continue
-            if getattr(candidate, "order_gate_decision", None) != "continue":
-                continue
-            candidate_confirmation = self._confirmation_for(
-                candidate, self.order_direction
-            )
-            if self._reaction_first_time(candidate) <= confirmation:
-                continue
-            identity = (
-                int(getattr(candidate, "first_idx")),
-                int(getattr(candidate, "break_idx")),
-            )
-            canonical_position = self._opposite_identity_position.get(identity)
+            if position not in self._trend_leg_order_positions:
+                self._trend_leg_order_positions[position] = self._trend_leg_order_position(confirmation, trend)
+            canonical_position = self._trend_leg_order_positions[position]
             if canonical_position is not None:
                 return (
                     canonical_position + 1,
                     self.opposite_reactions[canonical_position],
                     self._opposite_confirmations[canonical_position],
                 )
-            # A bounded geometry that is absent from the canonical opposite
-            # Reaction stream is internal evidence only, not an Order_A.
-            continue
         return None
+
+    def _trend_leg_order_position(self, confirmation: datetime, trend: object) -> int | None:
+        if bool(getattr(trend, "behavior_internal", False)):
+            return None
+        candidate = self.direct_geometry_finder(
+            self.order_direction, int(getattr(trend, "break_idx")), self.end_index, confirmation,
+        )
+        if candidate is None or getattr(candidate, "order_gate_decision", None) != "continue":
+            return None
+        self._confirmation_for(candidate, self.order_direction)
+        if self._reaction_first_time(candidate) <= confirmation:
+            return None
+        # Only geometry in the canonical opposite stream is eligible here.
+        return self._opposite_identity_position.get(reaction_identity(candidate))
 
 
     def _direct_parent_stop_order(
@@ -14905,9 +14952,9 @@ class LivePrimaryContinuation:
 
 ### 16.14 `pipeline/reaction_engine.py` — Canonical First candidate, Break, strict Reset, lower-TF chronology
 
-**SHA-256:** `0884af77417267713bfe78a47a413793909267df400c456cbca380ee87539bf4`  
-**Bytes:** `123582`  
-**LF count:** `2829`
+**SHA-256:** `0b37fbf91a0f2cdd65fec85eee6c39095e835bc928a98c657f1fe808e204b066`  
+**Bytes:** `127156`  
+**LF count:** `2907`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/reaction_engine.py -->
 ````python
@@ -14923,9 +14970,12 @@ from __future__ import annotations
 
 import bisect
 from array import array
+from collections import OrderedDict
+from copy import copy
 from dataclasses import dataclass, replace
 from datetime import datetime, timedelta
 from decimal import Decimal
+from operator import ge, le
 from typing import Iterable, Sequence
 
 from core_utils import ChronologicalContainmentIndex, as_decimal as _decimal_value
@@ -14933,10 +14983,11 @@ from direction_policy import policy_for
 
 
 REACTION_ENGINE_VERSION = "9.9.1"
-REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.13.3"
-REACTION_ENGINE_LAST_MODIFIED = "2026-11-19T00:13:11+03:30"
+REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.13.4"
+REACTION_ENGINE_LAST_MODIFIED = "2026-11-20T22:06:11+03:30"
 
 _ORDER_GATE_CACHE_MAX_ENTRIES = 32_768
+_LIVE_CROSSING_CACHE_MAX_ENTRIES = 16_384
 
 _SEQUENCE_TIME_INDEXES: dict[int, tuple[Sequence[Candle], list[datetime]]] = {}
 
@@ -15793,14 +15844,15 @@ def published_reaction_candidate(
 
 
 class LowerTimeframeIndex:
-    """Immutable segment index for exact first strict High/Low crossings.
+    """Segment index for exact first strict High/Low crossings.
 
     The index is direction-agnostic and shared by A/S/E so heavy 1-second
     inputs are not rescanned for every stop/trigger lookup.
     """
 
-    def __init__(self, candles: Sequence[Candle]) -> None:
+    def __init__(self, candles: Sequence[Candle], *, retain_crossings: bool = False) -> None:
         self.candles = candles
+        self._crossings = OrderedDict() if retain_crossings else None
         self.times = [getattr(item, "timestamp") for item in candles]
         size = 1
         while size < len(candles):
@@ -15811,13 +15863,19 @@ class LowerTimeframeIndex:
         self.maximum: list[Decimal | None] = [None] * (2 * size)
         self.minimum_position = array("i", [-1]) * (2 * size)
         self.maximum_position = array("i", [-1]) * (2 * size)
-        for position, candle in enumerate(candles):
-            node = size + position
+        self._fill_leaves(0)
+        self._update_parents(size - 1, 0)
+
+    def _fill_leaves(self, first: int) -> None:
+        for position in range(first, self.length):
+            candle = self.candles[position]
+            node = self.size + position
             self.minimum[node] = _decimal_value(getattr(candle, "low"))
             self.maximum[node] = _decimal_value(getattr(candle, "high"))
             self.minimum_position[node] = position
             self.maximum_position[node] = position
-        for node in range(size - 1, 0, -1):
+    def _update_parents(self, last: int, before_first: int) -> None:
+        for node in range(last, before_first, -1):
             left, right = node * 2, node * 2 + 1
             low_left, low_right = self.minimum[left], self.minimum[right]
             high_left, high_right = self.maximum[left], self.maximum[right]
@@ -15840,11 +15898,29 @@ class LowerTimeframeIndex:
                 self.maximum[node] = high_right
                 self.maximum_position[node] = self.maximum_position[right]
 
+    def refresh_suffix(self, first: int) -> None:
+        """Refresh an owned tail and its ancestors before exposing the next market view."""
+        length = len(self.candles)
+        if not 0 <= first <= self.length <= length <= self.size:
+            raise ValueError("Invalid range-index suffix.")
+        if first == length:
+            return
+        if self._crossings is not None and first < self.length - 1:
+            self._crossings.clear()
+        self.times[first:] = [self.candles[position].timestamp for position in range(first, length)]
+        self.length = length
+        self._fill_leaves(first)
+        left, right = (self.size + first) >> 1, (self.size + length - 1) >> 1
+        while left:
+            self._update_parents(right, left - 1)
+            left >>= 1
+            right >>= 1
+
     def first_less(self, left: int, right: int, level: Decimal) -> int | None:
-        return self._first(1, 0, self.size, left, right, level, True)
+        return self._first(left, right, level, self.minimum, ge)
 
     def first_greater(self, left: int, right: int, level: Decimal) -> int | None:
-        return self._first(1, 0, self.size, left, right, level, False)
+        return self._first(left, right, level, self.maximum, le)
 
     def range_minimum(self, left: int, right: int) -> tuple[Decimal, int]:
         """Return the minimum Low and earliest owning position in [left, right)."""
@@ -15892,24 +15968,65 @@ class LowerTimeframeIndex:
             raise ValueError("Range contains no lower-timeframe candles.")
         return best_value, best_position
 
-    def _first(
-        self, node: int, start: int, end: int, left: int, right: int,
-        level: Decimal, less: bool,
-    ) -> int | None:
-        if end <= left or right <= start or start >= self.length:
+    def _first(self, left, right, level, values, excludes) -> int | None:
+        left, right = max(0, left), min(self.length, right)
+        if left >= right:
             return None
-        extreme = self.minimum[node] if less else self.maximum[node]
-        if extreme is None or (extreme >= level if less else extreme <= level):
+        if self._crossings is None:
+            return self._search_first(left, right, level, values, excludes)
+        return self._first_with_history(left, right, level, values, excludes)
+
+    def _first_with_history(self, left, right, level, values, excludes) -> int | None:
+        # Only remember searches through settled rows. The latest candle can
+        # still receive quotes and must be evaluated again on the next append.
+        key = left, level, excludes
+        examined, crossed = self._crossings.get(key, (left, None))
+        if crossed is not None:
+            return crossed if crossed < right else None
+        if examined >= right:
             return None
-        if end - start == 1:
-            return start
-        middle = (start + end) // 2
-        found = self._first(node * 2, start, middle, left, right, level, less)
-        if found is not None:
-            return found
-        return self._first(
-            node * 2 + 1, middle, end, left, right, level, less
-        )
+        crossed = self._search_first(examined, right, level, values, excludes)
+        settled = self.length - 1
+        through = min(right, settled)
+        if crossed is not None and crossed < settled:
+            self._remember_crossing(key, (crossed, crossed))
+        elif through > examined:
+            self._remember_crossing(key, (through, None))
+        return crossed
+
+    def _remember_crossing(self, key, evidence) -> None:
+        self._crossings[key] = evidence
+        if len(self._crossings) > _LIVE_CROSSING_CACHE_MAX_ENTRIES:
+            self._crossings.popitem(last=False)
+
+    def _search_first(self, left, right, level, values, excludes) -> int | None:
+        if values[1] is None or excludes(values[1], level):
+            return None
+        left += self.size
+        right += self.size
+        deferred = []
+        # Right edge intervals are discovered in reverse chronological order.
+        while left < right:
+            if left & 1:
+                if not excludes(values[left], level):
+                    return self._descend_first(left, values, level, excludes)
+                left += 1
+            if right & 1:
+                right -= 1
+                deferred.append(right)
+            left >>= 1
+            right >>= 1
+        for node in reversed(deferred):
+            if not excludes(values[node], level):
+                return self._descend_first(node, values, level, excludes)
+        return None
+
+    def _descend_first(self, node, values, level, excludes) -> int:
+        while node < self.size:
+            node <<= 1
+            if excludes(values[node], level):
+                node += 1
+        return node - self.size
 
 
 _LOWER_TIMEFRAME_INDEXES: dict[
@@ -15918,10 +16035,15 @@ _LOWER_TIMEFRAME_INDEXES: dict[
 
 
 def shared_lower_timeframe_index(
-    candles: Sequence[Candle],
+    candles: Sequence[Candle], *, prepared: LowerTimeframeIndex | None = None,
 ) -> LowerTimeframeIndex:
-    """Reuse one immutable lower-timeframe index per source sequence."""
+    """Reuse one prepared range index per source sequence within the calculation."""
     key = id(candles)
+    if prepared is not None:
+        if prepared.candles is not candles:
+            raise ValueError("The prepared index belongs to a different candle sequence.")
+        _LOWER_TIMEFRAME_INDEXES[key] = (candles, prepared)
+        return prepared
     cached = _LOWER_TIMEFRAME_INDEXES.get(key)
     if cached is not None and cached[0] is candles:
         return cached[1]
@@ -15982,6 +16104,7 @@ class MarketChronology:
         "second_times",
         "timeframe",
         "lower_index",
+        "main_range_index",
         "_confirmation_cache",
         "_reset_time_cache",
         "_e_main_extremes",
@@ -15993,12 +16116,13 @@ class MarketChronology:
         seconds: Sequence[Candle],
         timeframe_seconds: int,
         lower_index: LowerTimeframeIndex | None = None,
+        main_range_index: LowerTimeframeIndex | None = None,
     ) -> None:
         if timeframe_seconds < 1:
             raise ValueError("Timeframe must be at least one second.")
         self.candles = candles
         self.seconds = seconds
-        self.times = [getattr(item, "timestamp") for item in candles]
+        self.times = main_range_index.times if main_range_index is not None else [getattr(item, "timestamp") for item in candles]
         self.second_times = (
             lower_index.times
             if lower_index is not None
@@ -16006,6 +16130,7 @@ class MarketChronology:
         )
         self.timeframe = timedelta(seconds=timeframe_seconds)
         self.lower_index = lower_index or shared_lower_timeframe_index(seconds)
+        self.main_range_index = main_range_index
         self._confirmation_cache: dict[tuple[object, ...], datetime] = {}
         self._reset_time_cache: dict[tuple[object, ...], datetime] = {}
         # E feedback detectors share only immutable main-candle geometry.
@@ -16914,7 +17039,7 @@ class UnifiedReactionDetector(DetectorBase):
         cache_key = (direction, gate_index, limit, gate_event_time)
         if cache_key in self._order_gate_geometry_cache:
             cached = self._order_gate_geometry_cache[cache_key]
-            return replace(cached) if cached is not None else None
+            return copy(cached) if cached is not None else None
 
         def cache_result(result: Candidate | None) -> Candidate | None:
             # The cache is run-scoped and bounded. FIFO eviction is sufficient
@@ -16923,7 +17048,7 @@ class UnifiedReactionDetector(DetectorBase):
                 oldest = next(iter(self._order_gate_geometry_cache))
                 del self._order_gate_geometry_cache[oldest]
             self._order_gate_geometry_cache[cache_key] = (
-                replace(result) if result is not None else None
+                copy(result) if result is not None else None
             )
             return result
 
