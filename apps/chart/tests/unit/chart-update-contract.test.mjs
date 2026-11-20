@@ -1,12 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import path from "node:path";
 
-const mainSource = fs.readFileSync(path.resolve("src/main.js"), "utf8");
-const exporterSource = fs.readFileSync(path.resolve("src/features/candle-export.js"), "utf8");
-const appCss = fs.readFileSync(path.resolve("src/styles/app.css"), "utf8");
-const viteSource = fs.readFileSync(path.resolve("vite.config.js"), "utf8");
+const mainSource = fs.readFileSync(new URL("../../src/main.js", import.meta.url), "utf8");
+const exporterSource = fs.readFileSync(new URL("../../src/features/candle-export.js", import.meta.url), "utf8");
+const appCss = fs.readFileSync(new URL("../../src/styles/app.css", import.meta.url), "utf8");
+const viteSource = fs.readFileSync(new URL("../../vite.config.js", import.meta.url), "utf8");
 
 test("chart updates send the FARAZ request with the selected broker and symbol", () => {
   assert.match(mainSource, /const symbol = formatSymbolWithBroker\(state\.file\);/);

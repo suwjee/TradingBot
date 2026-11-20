@@ -3,7 +3,7 @@ title: TradingBot Engineering Documentation
 document_role: reference
 lifecycle: maintained
 owner: documentation
-last_modified_at: 2026-10-04T05:09:22+03:30
+last_modified_at: 2026-11-20T11:55:09+03:30
 ---
 
 # Engineering documentation
@@ -17,12 +17,12 @@ This directory is the maintained documentation entry point. Root [`AGENTS.md`](.
 | Architecture | [Technical Architecture](architecture/technical-architecture.md), [UI/UX Reference](architecture/ui-ux-reference.md) |
 | Source/reference engineering | [Algorithm Reference Maintenance](development/algorithm-reference-maintenance.md), [Zero-Difference Refactor](development/zero-difference-refactor.md) |
 | Testing / verification | [Testing](development/testing.md), [Repository Integrity](verification/repository-integrity.md) |
-| Operations | [Local State](operations/local-state.md) |
+| Operations and publication | [Local State](operations/local-state.md), [Release Operations](../../scripts/git/README.md) |
 
 Historical documentation is preserved outside the maintained documentation surface under `engineering/archive/`. Historical verification/migration evidence is preserved under `engineering/verification/history/` or its associated dated evidence area. Historical and generated material is supporting evidence, not Current authority.
 
 The [Graphify archive](../archive/repository-graphify/README.md) provides generated navigation evidence for the repository. [Repository Integrity](verification/repository-integrity.md) explains how to classify and validate that evidence against Current Source.
 
-Maintained owner documents describe Current durable contracts. Historical phase records and superseded snapshots remain evidence under the project archive/verification owners and must not be interpreted as pending Current instructions.
+Use the [project README](../../README.md) to install, launch, and navigate the workstation. For a behavioral question, choose the owning document above and verify implementation details in the current Source. Open a dated verification report to see the inputs, environment, and checks from that run.
 
 Current accepted Algorithm References are discovered under `engine/algorithms/` according to root AGENTS. Do not freeze their count, filenames, hashes, or versions in this index.

@@ -4,6 +4,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { execFile, execFileSync } from "node:child_process";
 import { chromium } from "playwright-core";
 import { fileURLToPath } from "node:url";
+import { pipeline } from "node:stream/promises";
 import { setTimeout as delay } from "node:timers/promises";
 import { resolveLocalStatePaths } from "./local-state-paths.js";
 import { createRawResourceStore } from "./raw-resource-store.js";
@@ -24,6 +25,7 @@ const MAX_RATE_LIMIT_MS = 60_000;
 const MAX_PACKET_ATTEMPTS = 4;
 const RETRY_BASE_DELAY_MS = 600;
 const REQUEST_TIMEOUT_MS = 15_000;
+const PASSIVE_AUTH_STATUS_MS = 30_000;
 const PRIMARY_CONCURRENCY = 6;
 const MAX_COVERAGE_RECOVERY_ROUNDS = 3;
 const CHART_UPDATE_PACKET_SIZE = 1_000;
@@ -439,6 +441,8 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
   let storedStorageState = { cookies: [], origins: [] };
   let sessionCapturePending = null;
   let authCaptureArmed = false;
+  let passiveAuthProbe = null;
+  const explicitAuthChecks = new Map();
   let loginBrowser = null;
   let nextChartHistoryRequestAt = 0;
   let shutdownPromise = null;
@@ -498,23 +502,29 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
   }
 
   async function persistSession() {
-    if (!authCaptureArmed || !context) return;
-    const storageState = await context.storageState({ indexedDB: true });
-    const sessionCookie = storageState.cookies.find((cookie) => cookie?.name === "farazSession" && /(^|\.)faraz\.io$/i.test(cookie.domain || ""));
-    if (sessionCookie?.value) credentials.farazSession = sessionCookie.value;
-    if (!credentials.xAccessToken && authPage && !authPage.isClosed()) {
-      const pageToken = await authPage.evaluate(() => {
+    const captureContext = context;
+    const capturePage = authPage;
+    if (!authCaptureArmed || !captureContext) return false;
+    const storageState = await captureContext.storageState({ indexedDB: true });
+    let pageToken;
+    if (authCaptureArmed && context === captureContext && !credentials.xAccessToken && capturePage && !capturePage.isClosed()) {
+      pageToken = await capturePage.evaluate(() => {
         const values = Object.values(localStorage);
         return values.map((value) => String(value).match(/eyJ[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+/)?.[0]).find(Boolean) || "";
       }).catch(() => "");
-      if (pageToken) credentials.xAccessToken = pageToken;
     }
+    if (!authCaptureArmed || context !== captureContext || fs.existsSync(secretPath)) return false;
+    const sessionCookie = storageState.cookies.find((cookie) => cookie?.name === "farazSession" && /(^|\.)faraz\.io$/i.test(cookie.domain || ""));
+    if (sessionCookie?.value) credentials.farazSession = sessionCookie.value;
+    if (!credentials.xAccessToken && pageToken) credentials.xAccessToken = pageToken;
     persistStorageState(storageState);
     authCaptureArmed = false;
+    return true;
   }
 
   async function finalizeCapturedSession() {
-    await persistSession();
+    const captureContext = context;
+    if (!await persistSession() || context !== captureContext) return;
     if (!fs.existsSync(secretPath)) throw new Error("FARAZ session was not saved locally.");
     await closeBrowserContext();
   }
@@ -546,11 +556,12 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
   }
 
   async function clearStoredSession() {
-    await closeBrowserContext();
+    cancelAuthStatusChecks();
     historyAuth = null;
     credentials = { xAccessToken: "", farazSession: "" };
     storedStorageState = { cookies: [], origins: [] };
     if (fs.existsSync(secretPath)) fs.unlinkSync(secretPath);
+    await closeBrowserContext();
   }
 
   function openSavedFile(outputPath) {
@@ -580,14 +591,20 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     };
   }
 
-  async function directRequest(url, { timeoutMs = REQUEST_TIMEOUT_MS, controller = new AbortController(), signal, fresh = false } = {}) {
+  async function directRequest(url, { timeoutMs = REQUEST_TIMEOUT_MS, controller = new AbortController(), signal, fresh = false,
+    readResponse = response => response } = {}) {
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
     try {
       const requestSignal = signal ? AbortSignal.any([signal, controller.signal]) : controller.signal;
-      return await fetchImpl(url, { method: "GET", signal: requestSignal, headers: sessionHeaders(), ...(fresh ? { cache: "no-store" } : {}) });
+      const response = await fetchImpl(url, { method: "GET", signal: requestSignal, headers: sessionHeaders(), ...(fresh ? { cache: "no-store" } : {}) });
+      return await readResponse(response);
     } finally {
       clearTimeout(timeout);
     }
+  }
+
+  async function readResponseText(response) {
+    return { response, text: await response.text() };
   }
 
   async function chartHistory({ symbolName, resolution, timeframeSeconds, from, to, signal, realtime = false, fresh = false, onPacket }) {
@@ -615,8 +632,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
         await waitForChartHistoryRequestSlot(signal);
         try {
           const requestSignal = realtime ? AbortSignal.any([signal, AbortSignal.timeout(5_000)]) : signal;
-          const response = await directRequest(url, { timeoutMs: 30_000, signal: requestSignal, fresh });
-          const text = await response.text();
+          const { response, text } = await directRequest(url, { timeoutMs: 30_000, signal: requestSignal, fresh, readResponse: readResponseText });
           signal?.throwIfAborted();
           if (response.status !== 200) {
             throw Object.assign(new Error(`FARAZ returned HTTP ${response.status}: ${text}`), { status: response.status });
@@ -754,7 +770,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       checkedCount, correctedCount: corrections.length + correctedNewCount };
   }
 
-  async function probeStoredSession(symbolName = "FXCM:USOIL") {
+  async function probeStoredSession(symbolName = "FXCM:USOIL", signal) {
     const host = safeHost(historyAuth?.host);
     const url = new URL(historyAuth?.endpoint && new URL(historyAuth.endpoint).host === host
       ? historyAuth.endpoint
@@ -766,8 +782,9 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       adjustType: historyAuth?.adjustType || "2", json: true,
     })) url.searchParams.set(key, String(value));
     const startedAt = Date.now();
-    const response = await directRequest(url);
+    const response = await directRequest(url, { signal });
     const contentType = response.headers?.get?.("content-type") || "";
+    void response.body?.cancel().catch(() => {});
     return {
       connected: response.status !== 401 && response.status !== 403 && response.ok && /(?:application|text)\/json/i.test(contentType),
       status: response.status,
@@ -775,16 +792,17 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     };
   }
 
-  async function readAuthenticatedProfile() {
-    const response = await directRequest(new URL(`${FARAZ_ORIGIN}${AUTH_PROFILE_PATH}`));
-    if (!response.ok) {
-      const error = new Error(`FARAZ profile request failed with HTTP ${response.status}.`);
-      error.status = response.status;
-      throw error;
-    }
-    let payload;
-    try { payload = JSON.parse(await response.text()); }
-    catch { throw new Error("FARAZ profile response was not valid JSON."); }
+  async function readAuthenticatedProfile(signal) {
+    const payload = await directRequest(new URL(`${FARAZ_ORIGIN}${AUTH_PROFILE_PATH}`), { signal, async readResponse(response) {
+      if (!response.ok) {
+        void response.body?.cancel().catch(() => {});
+        const error = new Error(`FARAZ profile request failed with HTTP ${response.status}.`);
+        error.status = response.status;
+        throw error;
+      }
+      try { return JSON.parse(await response.text()); }
+      catch { throw new Error("FARAZ profile response was not valid JSON."); }
+    } });
     return {
       userId: typeof payload?._id === "string" ? payload._id : null,
       userName: typeof payload?.name === "string" ? payload.name : null,
@@ -939,7 +957,12 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     return fs.existsSync(secretPath);
   }
 
-  async function authStatus(symbolName = "FXCM:USOIL") {
+  function sessionFileIdentity() {
+    const stat = fs.statSync(secretPath, { bigint: true, throwIfNoEntry: false });
+    return stat ? [stat.dev, stat.ino, stat.size, stat.mtimeNs, stat.ctimeNs].join(":") : null;
+  }
+
+  async function authStatus(symbolName = "FXCM:USOIL", signal) {
     try {
       if (!fs.existsSync(secretPath)) {
         if (authCaptureArmed && await capturePendingBrowserLogin(symbolName)) {
@@ -956,11 +979,17 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
         }
       }
       const storageState = loadStoredSession();
-      const probe = await probeStoredSession(symbolName);
+      const verifiedIdentity = sessionFileIdentity();
+      const probe = await probeStoredSession(symbolName || historyAuth?.symbolName || undefined, signal);
+      signal?.throwIfAborted();
       if (probe.status === 401) {
         return { connected: false, state: "expired_session", httpStatus: probe.status };
       }
-      const profile = probe.connected ? await readAuthenticatedProfile().catch(() => ({})) : {};
+      const profile = probe.connected ? await readAuthenticatedProfile(signal).catch(() => ({})) : {};
+      const currentIdentity = sessionFileIdentity();
+      if (currentIdentity !== verifiedIdentity) {
+        return { connected: false, state: currentIdentity ? "expired_session" : "not_connected" };
+      }
       return {
         connected: probe.connected,
         state: probe.connected ? "saved_session" : "expired_session",
@@ -975,12 +1004,68 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
         savedCookies: storageState.cookies.filter((cookie) => /(^|\.)faraz\.io$/i.test(cookie?.domain || "")).length,
       };
     } catch (error) {
-      if (!fs.existsSync(secretPath) && !authCaptureArmed) {
-        await clearStoredSession();
-        return { connected: false, state: "not_connected" };
-      }
+      if (!fs.existsSync(secretPath) && !authCaptureArmed) return { connected: false, state: "not_connected" };
       return { connected: false, state: authCaptureArmed ? "waiting_for_login" : "expired_session", error: error.message };
     }
+  }
+
+  function cancelPassiveAuthProbe() {
+    const previous = passiveAuthProbe;
+    passiveAuthProbe = null;
+    if (previous?.pending) previous.controller.abort();
+  }
+
+  function cancelAuthStatusChecks() {
+    cancelPassiveAuthProbe();
+    for (const { controller } of explicitAuthChecks.values()) controller.abort();
+  }
+
+  async function checkAuthStatus(symbol) {
+    if (shuttingDown) return { connected: false, state: "not_connected" };
+    const identity = sessionFileIdentity();
+    cancelPassiveAuthProbe();
+    const controller = new AbortController();
+    const pending = authStatus(symbol, controller.signal);
+    explicitAuthChecks.set(pending, { identity, controller });
+    try {
+      const status = await pending;
+      return controller.signal.aborted ? { connected: false, state: "not_connected" } : status;
+    } finally {
+      explicitAuthChecks.delete(pending);
+    }
+  }
+
+  async function pollAuthStatus() {
+    if (shuttingDown) return { connected: false, state: "not_connected" };
+    const identity = sessionFileIdentity();
+    const pendingExplicit = [];
+    for (const [pending, check] of explicitAuthChecks) {
+      if (check.identity === identity && !check.controller.signal.aborted) pendingExplicit.push(pending);
+    }
+    if (pendingExplicit.length) {
+      // Let a newer manual check finish before refreshing the canonical badge.
+      // Its chosen symbol can differ from the shared passive probe symbol.
+      await Promise.all(pendingExplicit);
+      return pollAuthStatus();
+    }
+    if (passiveAuthProbe?.identity === identity) {
+      if (passiveAuthProbe.pending) return passiveAuthProbe.pending;
+      if (identity && now() - passiveAuthProbe.completedAt < PASSIVE_AUTH_STATUS_MS) return passiveAuthProbe.status;
+    }
+    cancelPassiveAuthProbe();
+    const attempt = { identity, controller: new AbortController() };
+    passiveAuthProbe = attempt;
+    // The footer shows account status. Its shared history probe is independent
+    // of each tab's selected chart symbol. Explicit checks use their own symbol.
+    attempt.pending = authStatus(null, attempt.controller.signal).then((status) => {
+      if (shuttingDown) return { connected: false, state: "not_connected" };
+      if (attempt !== passiveAuthProbe || identity !== sessionFileIdentity()) return pollAuthStatus();
+      attempt.pending = null;
+      attempt.status = status;
+      attempt.completedAt = now();
+      return status;
+    });
+    return attempt.pending;
   }
 
   async function logoutFromLoginBrowser() {
@@ -1063,18 +1148,33 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     if (scheduledAt > now) await cancellableDelay(job, scheduledAt - now);
   }
 
+  function stopExportRequests(job) {
+    job.abort.cancelled = true;
+    job.requestController?.abort();
+    for (const controller of job.requestControllers || []) controller.abort();
+  }
+
   async function runConcurrent(job, entries, concurrency, worker) {
     const results = new Array(entries.length);
     let cursor = 0;
+    let failure;
     const workers = Array.from({ length: Math.min(Math.max(1, concurrency), entries.length) }, async () => {
-      while (!job.abort.cancelled) {
-        const index = cursor++;
-        if (index >= entries.length) return;
-        results[index] = await worker(entries[index], index);
+      try {
+        while (!job.abort.cancelled) {
+          const index = cursor++;
+          if (index >= entries.length) return;
+          results[index] = await worker(entries[index], index);
+        }
+        throw new Error("Extraction cancelled.");
+      } catch (error) {
+        if (!failure) {
+          failure = { error };
+          stopExportRequests(job);
+        }
       }
-      throw new Error("Extraction cancelled.");
     });
     await Promise.all(workers);
+    if (failure) throw failure.error;
     return results;
   }
 
@@ -1085,13 +1185,13 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       countback: chunk.countback, firstDataRequest: chunk.firstDataRequest, latest: chunk.latest,
       adjustType: job.adjustType, json: true,
     })) url.searchParams.set(key, String(value));
-    let response;
+    let response, text;
     const requestController = new AbortController();
     job.requestController = requestController;
     job.requestControllers?.add(requestController);
     try {
       await paceRequest(job);
-      response = await directRequest(url, { controller: requestController });
+      ({ response, text } = await directRequest(url, { controller: requestController, readResponse: readResponseText }));
     } catch (cause) {
       if (job.abort.cancelled) throw new Error("Extraction cancelled.");
       const error = new Error(cause?.name === "AbortError" ? "FARAZ history request timed out." : `FARAZ network error: ${cause?.message || "Network error"}`);
@@ -1101,7 +1201,6 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       if (job.requestController === requestController) job.requestController = null;
       job.requestControllers?.delete(requestController);
     }
-    const text = await response.text();
     captureHistoryResponse(job, chunk, response, text);
     if (!response.ok) {
       const error = new Error(`FARAZ history request failed with HTTP ${response.status}: ${text}`);
@@ -1152,24 +1251,15 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     throw new Error("FARAZ history request failed.");
   }
 
-  function remainingCoverageForGap(gap, remainingGaps, timeframeSeconds) {
-    return remainingGaps.reduce((total, remaining) => {
-      const from = Math.max(gap.from, remaining.from);
-      const to = Math.min(gap.to, remaining.to);
-      return from > to ? total : total + Math.floor((to - from) / timeframeSeconds) + 1;
-    }, 0);
-  }
-
   function shutdown() {
     if (shutdownPromise) return shutdownPromise;
     shuttingDown = true;
+    cancelAuthStatusChecks();
     for (const controller of realtimeUpdates.values()) controller.abort();
     shutdownPromise = (async () => {
       for (const job of jobs.values()) {
         if (!job.running && !job.awaitingCoverageDecision) continue;
-        job.abort.cancelled = true;
-        job.requestController?.abort();
-        for (const controller of job.requestControllers || []) controller.abort();
+        stopExportRequests(job);
       }
       await Promise.allSettled([...pendingLaunches]);
       await closeBrowserContext({ forceKill: true });
@@ -1182,6 +1272,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       from: job.requestedFrom, to: job.requestedTo, timeframeSeconds: job.timeframeSeconds,
     });
     if (!originalGaps.length) return { candles: initialCandles, records: [], coverageComplete: true };
+    const originalMissingSlots = originalGaps.reduce((total, gap) => total + gap.missingCandles, 0);
 
     log(job, "warn", `${originalGaps.length} source-timeframe coverage gap interval(s) were detected, including request boundaries. Replaying the missing intervals before saving.`);
     const supplemental = [];
@@ -1212,17 +1303,26 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       remainingGaps = findCandleCoverageGaps(candles, {
         from: job.requestedFrom, to: job.requestedTo, timeframeSeconds: job.timeframeSeconds,
       });
-      const recovered = originalGaps.reduce((total, gap) => total + gap.missingCandles, 0)
-        - remainingGaps.reduce((total, gap) => total + gap.missingCandles, 0);
-      log(job, remainingGaps.length ? "warn" : "success", `Coverage replay ${attempts} recovered ${recovered.toLocaleString("en-US")} candle(s); ${remainingGaps.length} gap interval(s) remain.`);
       const missingAfterReplay = remainingGaps.reduce((total, gap) => total + gap.missingCandles, 0);
+      const recovered = originalMissingSlots - missingAfterReplay;
+      log(job, remainingGaps.length ? "warn" : "success", `Coverage replay ${attempts} recovered ${recovered.toLocaleString("en-US")} candle(s); ${remainingGaps.length} gap interval(s) remain.`);
       if (missingAfterReplay >= missingBeforeReplay) {
         log(job, "warn", `Coverage replay ${attempts} made no progress; the remaining intervals are treated as unavailable source data instead of being requested again.`);
         break;
       }
     }
+    // Both coverage scans return gaps in chronological order. Once a
+    // remaining gap ends before this original gap it cannot overlap a later one.
+    let remainingIndex = 0;
     const records = originalGaps.map((gap) => {
-      const remainingCandles = remainingCoverageForGap(gap, remainingGaps, job.timeframeSeconds);
+      while (remainingIndex < remainingGaps.length && remainingGaps[remainingIndex].to < gap.from) remainingIndex++;
+      let remainingCandles = 0;
+      for (let index = remainingIndex; index < remainingGaps.length && remainingGaps[index].from <= gap.to; index++) {
+        const remaining = remainingGaps[index];
+        const from = Math.max(gap.from, remaining.from);
+        const to = Math.min(gap.to, remaining.to);
+        if (from <= to) remainingCandles += Math.floor((to - from) / job.timeframeSeconds) + 1;
+      }
       return {
         ...gap,
         attempts,
@@ -1276,7 +1376,8 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       let published = false;
       try {
         fs.writeFileSync(temporaryPath, serialized, { encoding: "utf8", flag: "wx" });
-        const validation = verifySavedCandles(JSON.parse(fs.readFileSync(temporaryPath, "utf8")), {
+        const written = fs.readFileSync(temporaryPath);
+        const validation = verifySavedCandles(JSON.parse(written), {
           from: saveFrom, to: job.requestedTo, timeframeSeconds: job.timeframeSeconds,
         });
         job.validation = validation.checks;
@@ -1284,7 +1385,6 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           for (const check of validation.checks.filter((item) => !item.passed)) log(job, "error", `Saved-file check failed: ${check.label}. ${check.detail}`);
           throw new Error("Saved RAW file validation failed; it was not moved into data/raw.");
         }
-        const written = fs.readFileSync(temporaryPath);
         const expectedHash = createHash("sha256").update(serialized).digest("hex");
         const writtenHash = createHash("sha256").update(written).digest("hex");
         if (expectedHash !== writtenHash) throw new Error("Saved RAW file hash verification failed; the temporary file was not published.");
@@ -1324,6 +1424,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     const status = await authStatus(job.symbolName);
     if (!status.connected) throw new Error("FARAZ authentication is required.");
     const collected = [];
+    let primaryCandles = [];
     let cursor = 0;
     while (cursor < job.chunks.length) {
       if (job.abort.cancelled) throw new Error("Extraction cancelled.");
@@ -1344,6 +1445,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       cursor += batch.length;
       const primarySoFar = mergeCandles(collected, job.requestedFrom, job.requestedTo);
       if (primarySoFar.conflicts) throw new Error(`Extraction found ${primarySoFar.conflicts} conflicting duplicate candle(s); nothing was saved.`);
+      primaryCandles = primarySoFar.candles;
       if (cursor === job.chunks.length && job.mode === "count") {
         const merged = primarySoFar;
         if (merged.candles.length < job.candleCount) {
@@ -1360,18 +1462,15 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
         }
       }
     }
-    const primaryMerged = mergeCandles(collected, job.requestedFrom, job.requestedTo);
-    const coverageRecovery = await recoverCoverageGaps(job, primaryMerged.candles);
-    const merged = mergeCandles([coverageRecovery.candles], job.requestedFrom, job.requestedTo);
-    let candles = merged.candles;
-    if (job.mode === "count") candles = candles.slice(-job.candleCount);
+    collected.length = 0;
+    const coverageRecovery = await recoverCoverageGaps(job, primaryCandles);
+    const candles = job.mode === "count" ? coverageRecovery.candles.slice(-job.candleCount) : coverageRecovery.candles;
     if (!candles.length) throw new Error("No valid candles were returned for the requested range.");
     if (job.mode === "count" && candles.length !== job.candleCount) throw new Error(`Only ${candles.length}/${job.candleCount} candles were available.`);
-    if (merged.conflicts) throw new Error(`Extraction found ${merged.conflicts} conflicting duplicate candle(s); nothing was saved.`);
     job.stage = "Verifying completeness";
-    candles = verifyCollectedCandles(job, candles, coverageRecovery.coverageComplete);
-    if (job.mode === "count") candles = candles.slice(-job.candleCount);
-    Object.assign(job, { duplicates: merged.duplicates, conflicts: merged.conflicts, suspiciousGaps: coverageRecovery.records });
+    verifyCollectedCandles(job, candles, coverageRecovery.coverageComplete);
+    // Both collection and recovery already rejected conflicts and removed duplicates.
+    Object.assign(job, { duplicates: 0, conflicts: 0, suspiciousGaps: coverageRecovery.records });
     if (!coverageRecovery.coverageComplete) {
       Object.assign(job, {
         running: false,
@@ -1448,6 +1547,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     }).finally(() => {
       job.requestController = null;
       job.requestControllers?.clear();
+      job.chunks.length = 0;
     });
     return publicJob(job);
   }
@@ -1471,8 +1571,15 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
         catch (error) { json(res, 500, { error: error.message }); }
       });
       server.middlewares.use("/api/faraz/auth/status", async (req, res) => {
-        const symbol = new URL(req.url || "", "http://localhost").searchParams.get("symbolName") || undefined;
-        json(res, 200, await authStatus(symbol));
+        const params = new URL(req.url || "", "http://localhost").searchParams;
+        try {
+          const status = await (params.get("passive") === "1"
+            ? pollAuthStatus()
+            : checkAuthStatus(params.get("symbolName") || undefined));
+          json(res, 200, status);
+        } catch (error) {
+          json(res, 200, { connected: false, state: "expired_session", error: error.message });
+        }
       });
       server.middlewares.use("/api/faraz/auth/logout", async (req, res) => {
         if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
@@ -1498,10 +1605,9 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           const { id } = await readJson(req);
           const job = jobs.get(id);
           if (!job) return json(res, 404, { error: "Extraction was not found." });
-          job.abort.cancelled = true;
           job.cancelRequested = true;
-          job.requestController?.abort();
-          for (const controller of job.requestControllers || []) controller.abort();
+          stopExportRequests(job);
+          if (job.awaitingCoverageDecision) resolveCoverageDecision(job, "cancel");
           json(res, 200, { ok: true });
         } catch (error) { json(res, 400, { error: error.message }); }
       });
@@ -1524,14 +1630,18 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           json(res, 200, { ok: true });
         } catch (error) { json(res, 404, { error: error.message }); }
       });
-      server.middlewares.use("/api/faraz/candles/download", (req, res) => {
+      server.middlewares.use("/api/faraz/candles/download", async (req, res) => {
         const id = new URL(req.url || "", "http://localhost").searchParams.get("id");
         const job = jobs.get(id);
         if (!job?.done || !job.outputPath || !fs.existsSync(job.outputPath)) return json(res, 404, { error: "Export file is not ready." });
         res.setHeader("Content-Type", "application/json; charset=utf-8");
         res.setHeader("Content-Disposition", `attachment; filename*=UTF-8''${encodeURIComponent(job.fileName)}`);
         res.setHeader("Cache-Control", "no-store");
-        fs.createReadStream(job.outputPath).pipe(res);
+        try {
+          await pipeline(fs.createReadStream(job.outputPath), res);
+        } catch (error) {
+          if (!res.destroyed) res.destroy(error);
+        }
       });
 
       // ---- Update Chart Data Endpoint ----

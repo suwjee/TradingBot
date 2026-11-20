@@ -1,23 +1,23 @@
 # TradingBot Bearish Algorithm Reference — Current Standalone Specification
 
 **Document Version:** `5.4.33`  
-**Last Modified:** `2026-11-19T03:41:13+03:30`  
-**last_modified_at:** `2026-11-19T03:41:13+03:30`  
+**Last Modified:** `2026-11-20T19:38:40+03:30`  
+**last_modified_at:** `2026-11-20T19:38:40+03:30`  
 **document_role:** `reference`  
 **lifecycle:** `maintained`  
 **owner:** `engine/algorithms`  
 **scope:** `accepted directional specification and exact Source; bidirectional primary structures and isolated alternating regimes; independent T/F labels`  
-**Status:** `ACTIVE SOURCE-SYNCHRONIZED LOCAL CHANGE — independent T/F labels; UNRELEASED`  
+**Status:** `ACTIVE SOURCE-SYNCHRONIZED — Engine Source matches the v2.8.2 production release`  
 **Target Direction:** `bearish`  
 **Opposite Direction:** `bullish`  
-**Production Source Behavioral Change:** `YES — downstream T/F labels and Basic repair evidence`  
+**Production Source Behavioral Change:** `NONE in this documentation revision`  
 **Mirror Contract:** Standard upstream geometry retains its directional mirror contract. The user-approved primary mirror and first-Reaction bootstrap apply symmetrically to newly isolated regimes; time, physical identity, provenance and S/E families remain invariant.
 
 > **Historical baseline source lineage:** V5.4.33 starts from the exact newly uploaded V5.4.32 `engine(1).zip`. V5.4.32 remains the historical baseline; older unmerged branches are not silently introduced.
 
 ## 0. Revision scope
 
-### Current local addition - independent T/F labels (UNRELEASED)
+### Independent T/F labels
 
 The Engine evaluates the final published behavior of each source candle. It assigns T/F independently for Basic (S/E), StopAll, and the directional primary structures. Section 13.10 defines the rules and output. Chart exposes smaller marks alongside native labels through its T/F labels control.
 
@@ -25,7 +25,7 @@ The Engine evaluates the final published behavior of each source candle. It assi
 
 The earlier change removed all automatic T/F and trading-position setup behavior; the earlier removal audit records the former public fields. Manual Long/Short and Manual Review verdict controls are removed in Chart. Native calculation remains governed by the existing accepted rules. The separate optimization compares against a frozen post-removal baseline; no historical whole-project rollback is performed. Fresh verification, direct equality, runtime and peak-memory measurements are recorded under `engineering/verification/engine-refactor-20261117/`.
 
-### Current local correction - accepted E source ownership (UNRELEASED)
+### Accepted E source ownership
 
 - An accepted E owns its physical source before a provisional same-source S can override it or open a competing root. Distinct-source Red S precedence and independent qualified roots remain unchanged.
 - Native E Order selection excludes identities whose sole creator is such a disowned S, including prospective self-invalidating sources. The complete strict-stop/First-index race selects the next valid Order; recalculated later sources and descendants remain chronological.
@@ -43,13 +43,13 @@ The earlier change removed all automatic T/F and trading-position setup behavior
 - **Source synchronization timestamp:** `2026-11-02T12:11:44+03:30`. Only implementation evidence and exact embedded Source/index/manifest representation are synchronized here; existing trading-rule text and pre-existing documented ambiguities remain unchanged.
 <!-- ENGINE-AUDIT-IMPLEMENTATION-END -->
 
-### Current local extension — bidirectional PH/PL/MBL (UNRELEASED)
+### Bidirectional PH/PL/MBL
 <!-- PRIMARY-REVISION-BEGIN -->
 
 - **Approved behavioral addition:** the user-taught bearish primary-structure state, immutable MBL, native accepted-audit Order race, cancellation/reset behavior and Chart presentation. See Section 13.4a for the complete rules and later teaching corrections.
 - **Calculation scope:** approved bearish and bullish primary structures. Section 13.4a retains the bearish rules; Section 13.4b specifies the approved bullish mirror, native PL parents and repeated isolated directional regimes. Existing upstream calculations retain their owners.
 - **Compatibility:** primary output and Source-aware cache invalidation; the later approved PH-over-StopAll classification and PH-stop Order_A extension intentionally update bearish StopAll/OrderAudit output. Other upstream arrays retain their original trading authority. Native OrderAudit owns all physical creation.
-- **Revision identity:** this edits the maintained `5.4.33` Reference files in place. No new release, tag, package publication or cumulative historical branch merge is claimed.
+- **Revision identity:** these semantics and the exact-source snapshot remain part of the maintained `5.4.33` Reference. TradingBot release tags identify the separately published workstation runtime.
 - **Historical boundary:** prior version-specific verification claims below remain historical evidence. Earlier bounded checks remain historical in Section 14.0p; current synchronization and integrated-verification boundaries are separated in Section 14.0m.
 
 - **Latest approved correction:** PH Order consumption uses confirmation at or after the exact crossing, including older First; PL and native fresh Order_A creation gates stay separate. MBL display cap is 400 candles and its default label is 9px; the first strict PH3 stop starts an isolated bullish regime.
@@ -123,7 +123,7 @@ Reference `5.4.26` adds one user-approved general chronology correction on top o
 
 The fix is general and contains no timestamp, symbol, price, fixture or RAW-name branch. `pipeline/order_audit_engine.py` is the only changed production module. RX-01, SE-01, accepted-final-A Order_A eligibility, A detection, S ownership, E tie policy, Reaction/Reset geometry and serialization schema remain unchanged.
 
-The Source manifest and exact embedded Source are regenerated from the authoritative `engine.zip` Source tree. The stale virtual root `__init__.py` entry present in Reference `5.4.25` is removed because the authoritative package contains no such file; this is documentation/source-integrity synchronization only and has no runtime effect.
+This earlier synchronization described a supplied `engine.zip` without a root package marker. The current live Engine includes `engine/__init__.py`, which is recorded in the Source manifest and embedded in Section 16.
 
 ## 1. Source manifest
 
@@ -2064,7 +2064,7 @@ This table makes the stage chain reconstructable without relying on examples. Th
 
 **Patch branch note:** All 12 real Python Source paths from the uploaded engine.zip are embedded byte-exact; the legacy historical Source audit below refers only to the 5.4.26 baseline and is not new regression evidence.
 
-1. The authoritative supplied Engine tree contains the **12** Python Source paths in Section 1. It does not contain a root `__init__.py`; the stale virtual zero-byte entry from Reference `5.4.25` is removed in this synchronization.
+1. The earlier supplied package contained 12 Python Source paths and lacked a root package marker. Section 1 records the current live inventory, including `engine/__init__.py`.
 2. Section 16 embeds each current production Python file byte-for-byte.
 3. The historical missing `run_blue_line` package wrapper import is repaired in 5.4.32. The production Bridge path is the supported calculation entry.
 4. Unit, targeted and full RAW regression evidence for this revision is recorded in Section 14. Prior verification claims remain historical evidence for their own Source revisions.
@@ -2184,7 +2184,7 @@ Reference `5.4.25` and its recorded verification remain historical evidence for 
 
 ## 15. Current and historical revision record
 
-### Current PH/PL local extension — UNRELEASED
+### Historical PH/PL implementation record
 
 - **Modified:** `2026-10-26T19:42:22+03:30`.
 - **Rule owner:** current approved bearish teaching and explicit bullish mirror; complete active rules are in Sections 13.4a and 13.4b.

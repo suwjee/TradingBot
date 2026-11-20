@@ -113,6 +113,79 @@ test("closing aborts owned active work and rejects queued work", async () => {
   await assert.rejects(coordinator.run("later", async () => "unreachable"), /shutting down/i);
 });
 
+test("an owner can cancel queued work without waiting for the active calculation", async () => {
+  const coordinator = createCalculationCoordinator();
+  const gate = deferred();
+  const occupied = coordinator.run(Symbol(), () => gate.promise);
+  const client = new AbortController();
+  const cancelled = coordinator.run(Symbol(), () => assert.fail("cancelled work ran"), undefined, { signal: client.signal });
+  const next = coordinator.run(Symbol(), () => "next");
+  client.abort();
+  await assert.rejects(cancelled, { name: "AbortError" });
+  assert.deepEqual(coordinator.stats(), { active: 1, pending: 1, inFlight: 2 });
+  gate.resolve();
+  await occupied;
+  assert.equal(await next, "next");
+});
+
+test("disconnecting the first recovery caller retains an identical waiting caller", async () => {
+  const coordinator = createCalculationCoordinator();
+  const gate = deferred();
+  const occupied = coordinator.run(Symbol(), () => gate.promise);
+  const controller = new AbortController();
+  let executions = 0;
+  const abandoned = coordinator.run("shared-recovery", () => ++executions, undefined, { signal: controller.signal });
+  const survivor = coordinator.run("shared-recovery", () => assert.fail("Duplicate execution"));
+  const results = Promise.allSettled([abandoned, survivor]);
+  controller.abort();
+  const waiting = coordinator.stats();
+  gate.resolve();
+  await occupied;
+  const [left, right] = await results;
+  assert.deepEqual(waiting, { active: 1, pending: 1, inFlight: 2 });
+  assert.equal(left.reason?.name, "AbortError");
+  assert.deepEqual(right, { status: "fulfilled", value: 1 });
+  assert.equal(executions, 1);
+});
+
+test("aborting the last recovery caller permits a fresh retry without freeing the running slot early", async () => {
+  const coordinator = createCalculationCoordinator();
+  const client = new AbortController();
+  const workerExit = deferred();
+  let workSignal;
+  const original = coordinator.run("recovery", (_publish, signal) => {
+    workSignal = signal;
+    return workerExit.promise;
+  }, undefined, { signal: client.signal });
+  const rejected = assert.rejects(original, { name: "AbortError" });
+  client.abort();
+  const retry = coordinator.run("recovery", () => "fresh");
+  const whileStopping = coordinator.stats();
+  workerExit.resolve("discarded");
+  const results = await Promise.allSettled([rejected, retry]);
+  assert.equal(workSignal.aborted, true);
+  assert.deepEqual(whileStopping, { active: 1, pending: 1, inFlight: 1 });
+  assert.deepEqual(results, [{ status: "fulfilled", value: undefined }, { status: "fulfilled", value: "fresh" }]);
+});
+
+test("cancelling an active calculation keeps its slot until the owned work exits", async () => {
+  const coordinator = createCalculationCoordinator();
+  const client = new AbortController();
+  const gate = deferred();
+  let receivedSignal;
+  const active = coordinator.run(Symbol(), (_publish, signal) => {
+    receivedSignal = signal;
+    return gate.promise;
+  }, undefined, { signal: client.signal });
+  const next = coordinator.run(Symbol(), () => "next");
+  client.abort();
+  assert.equal(receivedSignal.reason, client.signal.reason);
+  assert.equal(coordinator.stats().pending, 1);
+  gate.reject(receivedSignal.reason);
+  await assert.rejects(active, { name: "AbortError" });
+  assert.equal(await next, "next");
+});
+
 test("a rejection without an Error still releases the slot and rejects callers", async () => {
   const coordinator = createCalculationCoordinator({ maxActive: 1 });
   const first = coordinator.run("first", () => Promise.reject(undefined));

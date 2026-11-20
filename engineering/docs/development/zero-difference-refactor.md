@@ -8,7 +8,7 @@ scope:
   - performance
   - equivalence
   - deterministic-verification
-last_modified_at: 2026-09-30T11:40:11+03:30
+last_modified_at: 2026-11-20T11:55:09+03:30
 ---
 
 # TradingBot Zero-Difference Refactor
@@ -234,6 +234,8 @@ Parallelism is acceptable only when:
 
 Never parallelize algorithm stages whose sequential chronology is part of the trading contract.
 
+For request coordination, distinguish a subscriber's cancellation from cancellation of shared work. Verify that a remaining subscriber sees the same result and that a new request cannot acquire an active slot before abandoned work has exited.
+
 ## 15. Determinism gate
 
 Repeat equivalent inputs when determinism matters.
@@ -311,6 +313,8 @@ Use comparable conditions:
 - repeated measurements when noise matters.
 
 Report representative measurements, not only the best run.
+
+Measure deferred work where it is first required. For a lazy workspace, compare the first visible route, first search and first complete export separately. For local data paths, report cold and warm inventory costs separately and use the same input data and workspace state for both implementations.
 
 Benchmark results are evidence. Do not place one measured number into this maintained procedure as permanent Current truth.
 

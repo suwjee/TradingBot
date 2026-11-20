@@ -4,6 +4,22 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
+test("direct inventory lookup only accepts exactly listed regular RAW paths", async t => {
+  const { createRawResourceStore } = await import("../../server/raw-resource-store.js");
+  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "raw-exact-id-"));
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+  const store = createRawResourceStore({ rootDir });
+  const written = store.write({ broker: "TEST", symbol: "LOOKUP", timeframe: "5S",
+    candles: [{ time: 100, open: 1, high: 2, low: 1, close: 2 }] });
+  const [listed] = store.list();
+  assert.equal(store.getListed(written.id), listed);
+  assert.equal(store.getListed(written.id.replaceAll("/", "\\")), null);
+  assert.equal(store.getListed(written.id.replace(/\.json$/, ".JSON")), null);
+  assert.equal(store.getListed(written.id.replace(/^TEST/, "Test")), null);
+  fs.symlinkSync(path.join(rootDir, "TEST"), path.join(rootDir, "LINK"), process.platform === "win32" ? "junction" : "dir");
+  assert.equal(store.getListed(written.id.replace(/^TEST/, "LINK")), null);
+});
+
 test("only committed chronological appends supply a contiguous exact RAW delta", async t => {
   const { createRawResourceStore } = await import("../../server/raw-resource-store.js");
   const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "raw-lineage-"));

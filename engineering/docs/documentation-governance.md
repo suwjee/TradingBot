@@ -11,7 +11,7 @@ scope:
   - documentation-placement
   - documentation-maintenance
 created_at: 2026-09-30T09:24:20+03:00
-last_modified_at: 2026-09-30T20:12:59+03:30
+last_modified_at: 2026-11-20T11:55:09+03:30
 ---
 
 # TradingBot Documentation Governance
@@ -371,6 +371,8 @@ README should:
 - help distinguish Current maintained guidance from Historical/Generated/Evidence material.
 
 README must remain navigation, not duplicate governance policy.
+
+Keep portable assistant guides and workstation navigation links tied to repository-owned documents. Discover external knowledge roots and optional tool installations at task time. Dated manifests, generated inventories, and benchmark observations belong under their evidence owner.
 
 ## 18. AI document-consumption rules
 

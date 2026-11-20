@@ -9,17 +9,18 @@ function sameStat(left, right) {
     && identityFields.every((field) => left[field] === right[field]);
 }
 
-export async function captureRawInputIdentity(sourcePath, { includeBytes = false } = {}) {
+export async function captureRawInputIdentity(sourcePath, { includeBytes = false, signal } = {}) {
   try {
+    signal?.throwIfAborted();
     const before = fs.statSync(sourcePath);
     if (!before.isFile()) throw new Error(changedMessage);
     const hash = createHash("sha256");
     let bytes;
     if (includeBytes) {
-      bytes = await fs.promises.readFile(sourcePath);
+      bytes = await fs.promises.readFile(sourcePath, { signal });
       hash.update(bytes);
     } else {
-      for await (const chunk of fs.createReadStream(sourcePath)) hash.update(chunk);
+      for await (const chunk of fs.createReadStream(sourcePath, { signal })) hash.update(chunk);
     }
     const after = fs.statSync(sourcePath);
     if (!sameStat(before, after)) throw new Error(changedMessage);
@@ -27,13 +28,15 @@ export async function captureRawInputIdentity(sourcePath, { includeBytes = false
     if (includeBytes) identity.bytes = bytes;
     return identity;
   } catch {
+    signal?.throwIfAborted();
     throw new Error(changedMessage);
   }
 }
 
-export async function assertRawInputUnchanged(sourcePath, selected) {
-  const current = await captureRawInputIdentity(sourcePath);
+export async function assertRawInputUnchanged(sourcePath, selected, options) {
+  const current = await captureRawInputIdentity(sourcePath, options);
   if (!sameStat(current.stat, selected.stat) || current.sha256 !== selected.sha256) {
     throw new Error(changedMessage);
   }
+  return current.bytes;
 }

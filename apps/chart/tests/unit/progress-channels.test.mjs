@@ -99,3 +99,40 @@ test("abandoned progress is released at terminal events without losing bounded l
   assert.match(replay[0], /"label":"4"/);
   channels.close();
 });
+
+test("a late subscriber replays cancelled progress then reaches the end of the stream", () => {
+  const channels = createProgressChannels();
+  channels.publish("late-request", { status: "started", label: "Engine" });
+  channels.cancel("late-request", { status: "failed", label: "Calculation cancelled" });
+  const messages = [];
+  let ended = false;
+  const detach = channels.attach("late-request", {
+    write: message => messages.push(message),
+    end() { ended = true; },
+  });
+  assert.match(messages[0], /"status":"started"/);
+  assert.match(messages[1], /"label":"Calculation cancelled"/);
+  assert.equal(ended, true);
+  assert.deepEqual(channels.stats(), { channels: 0, clients: 0 });
+  assert.equal(channels.shouldStopReconnect("late-request"), true);
+  detach();
+});
+
+test("the reconnect stop marker is bounded and clears when a request ID starts new work", () => {
+  const channels = createProgressChannels({ maxIdleChannels: 2 });
+  const event = { status: "failed", label: "Calculation cancelled" };
+  for (const id of ["old", "second", "last"]) {
+    channels.attach(id, { write() {}, end() {} });
+    channels.cancel(id, event);
+  }
+  assert.equal(channels.shouldStopReconnect("old"), false);
+  assert.equal(channels.shouldStopReconnect("second"), true);
+  assert.equal(channels.shouldStopReconnect("last"), true);
+  channels.publish("last", { status: "started", label: "Retry" });
+  assert.equal(channels.shouldStopReconnect("last"), false);
+  const messages = [];
+  const detach = channels.attach("last", { write: value => messages.push(value), end() {} });
+  assert.match(messages[0], /"label":"Retry"/);
+  assert.equal(channels.stats().clients, 1);
+  detach();
+});

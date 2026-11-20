@@ -7,6 +7,7 @@ $ProgressPreference = 'SilentlyContinue'
 
 $Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $ChartRoot = Join-Path $Root 'apps\chart'
+$ViteCommand = Join-Path $ChartRoot 'node_modules\vite\bin\vite.js'
 $LocalStateRoot = $null
 $env:PYTHONDONTWRITEBYTECODE = '1'
 
@@ -158,25 +159,21 @@ function Ensure-Runtimes {
     throw "Python 3.12 or newer is required; found $pythonVersionText."
   }
 
-  foreach ($package in $PythonPackages) {
-    & $python -c "import importlib.util,sys; sys.exit(0 if importlib.util.find_spec('$package') else 1)" 2>$null
-    if ($LASTEXITCODE -ne 0) {
-      Write-Step "Installing Python package $package..." Yellow
-      & $python -m pip install --disable-pip-version-check --quiet $package
-      if ($LASTEXITCODE -ne 0) { throw "Failed to install Python package $package." }
-    }
+  $findMissing = 'import importlib.util, sys; print(chr(10).join(p for p in sys.argv[1:] if importlib.util.find_spec(p) is None))'
+  $missingPackages = @(& $python -B -c $findMissing @PythonPackages)
+  if ($LASTEXITCODE -ne 0) { throw 'Unable to check the Python packages.' }
+  foreach ($package in $missingPackages) {
+    if (-not $package) { continue }
+    Write-Step "Installing Python package $package..." Yellow
+    & $python -m pip install --disable-pip-version-check --quiet $package
+    if ($LASTEXITCODE -ne 0) { throw "Failed to install Python package $package." }
   }
 
   $checkSyntax = "import ast,pathlib,sys; engine=pathlib.Path(sys.argv[1])/'engine'; paths=[engine/'__init__.py', *(engine/'bridge').rglob('*.py'), *(engine/'pipeline').rglob('*.py')]; [ast.parse(path.read_bytes(), filename=str(path)) for path in paths if '__pycache__' not in path.parts]"
   & $python -B -c $checkSyntax $Root
   if ($LASTEXITCODE -ne 0) { throw 'Python Engine syntax validation failed.' }
 
-  Write-Step (
-    "Node {0}; npm {1}; {2}" -f
-    (& $node --version).Trim(),
-    (& $npm --version).Trim(),
-    $pythonVersionText
-  ) Green
+  Write-Step "Node v$nodeVersion and $pythonVersionText" Green
 
   return [pscustomobject]@{
     Node = $node
@@ -188,47 +185,40 @@ function Ensure-Runtimes {
 function Ensure-NpmDependencies([string]$Npm) {
   Push-Location $ChartRoot
   try {
-    $requiredNodeModules = @('vite', 'lightweight-charts', 'playwright-core')
-    $missing = @(
-      $requiredNodeModules | Where-Object {
-        -not (Test-Path -LiteralPath (Join-Path $ChartRoot ("node_modules\{0}" -f $_)))
-      }
+    $requiredFiles = @(
+      $ViteCommand
+      (Join-Path $ChartRoot 'node_modules\vite\package.json')
+      (Join-Path $ChartRoot 'node_modules\lightweight-charts\package.json')
+      (Join-Path $ChartRoot 'node_modules\playwright-core\package.json')
     )
     $lockPath = Join-Path $ChartRoot 'package-lock.json'
     $lockStampPath = Join-Path $ChartRoot 'node_modules\.tradingbot-lock-sha256'
-    $lockHash = $null
-    $installedLockHash = $null
-    if (Test-Path -LiteralPath $lockPath) {
-      $sha256 = [Security.Cryptography.SHA256]::Create()
+    if (-not (Test-Path -LiteralPath $lockPath -PathType Leaf)) {
+      throw 'apps/chart/package-lock.json is required for a reproducible npm installation.'
+    }
+    $sha256 = [Security.Cryptography.SHA256]::Create()
+    try {
+      $stream = [IO.File]::OpenRead($lockPath)
       try {
-        $stream = [IO.File]::OpenRead($lockPath)
-        try { $lockHash = [BitConverter]::ToString($sha256.ComputeHash($stream)).Replace('-', '') }
-        finally { $stream.Dispose() }
-      } finally { $sha256.Dispose() }
-      if (Test-Path -LiteralPath $lockStampPath) {
-        $installedLockHash = [IO.File]::ReadAllText($lockStampPath).Trim()
-      }
+        $lockHash = [BitConverter]::ToString($sha256.ComputeHash($stream)).Replace('-', '')
+      } finally { $stream.Dispose() }
+    } finally { $sha256.Dispose() }
+    $installedLockHash = if (Test-Path -LiteralPath $lockStampPath -PathType Leaf) {
+      [IO.File]::ReadAllText($lockStampPath).Trim()
     }
 
-    $needsInstall = $missing.Count -gt 0 -or $lockHash -ne $installedLockHash
-    if ($needsInstall) {
+    $missing = @($requiredFiles | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) })
+    if ($missing.Count -gt 0 -or $lockHash -ne $installedLockHash) {
       Write-Step 'Installing npm dependencies for this checkout...' Yellow
-      if ($lockHash) {
-        & $Npm ci
-      } else {
-        & $Npm install
-      }
+      & $Npm ci
       if ($LASTEXITCODE -ne 0) {
         throw "npm dependency installation failed (exit code $LASTEXITCODE)."
       }
-    }
-
-    foreach ($module in $requiredNodeModules) {
-      if (-not (Test-Path -LiteralPath (Join-Path $ChartRoot ("node_modules\{0}" -f $module)))) {
-        throw "npm dependency is still missing after installation: $module"
+      foreach ($file in $requiredFiles) {
+        if (-not (Test-Path -LiteralPath $file -PathType Leaf)) {
+          throw "npm dependency file is still missing after installation: $file"
+        }
       }
-    }
-    if ($needsInstall -and $lockHash) {
       Set-Content -LiteralPath $lockStampPath -Value $lockHash -Encoding ASCII
     }
   } finally {
@@ -238,18 +228,19 @@ function Ensure-NpmDependencies([string]$Npm) {
   Write-Step 'npm dependencies are ready.' Green
 }
 
-function Start-DevServer([string]$Npm, [string]$Python) {
+function Start-DevServer([string]$Node, [string]$Python) {
   $env:TRADINGBOT_PYTHON = $Python
   $env:TRADINGBOT_PROJECT_ROOT = $Root
 
+  if (-not (Test-Path -LiteralPath $ViteCommand -PathType Leaf)) { throw 'The Vite command is missing. Check the npm installation.' }
   Push-Location $ChartRoot
   try {
     Write-Step 'Starting TradingBot development server...' Cyan
     # Vite's bundled config loader corrupts paths on the VMware shared drive.
     # Native loading keeps the launcher's reported LAN addresses routable.
-    & $Npm run dev -- --host 0.0.0.0 --configLoader native
+    & $Node $ViteCommand --host 0.0.0.0 --configLoader native
     if ($LASTEXITCODE -ne 0) {
-      throw "npm run dev exited with code $LASTEXITCODE."
+      throw "Vite exited with code $LASTEXITCODE."
     }
   } finally {
     Pop-Location
@@ -263,7 +254,7 @@ try {
   Resolve-LocalState $tools.Node
   Ensure-Directories
   Ensure-NpmDependencies $tools.Npm
-  Start-DevServer $tools.Npm $tools.Python
+  Start-DevServer $tools.Node $tools.Python
 } catch {
   Write-Step $_.Exception.Message Red
   exit 1

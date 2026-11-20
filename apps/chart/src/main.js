@@ -23,7 +23,6 @@ import { primaryDetectionSummary } from "./features/primary-detection-summary.js
 import { applyWorkspaceState } from "./ui/workspace-state.js";
 import { openManualReviewTab } from "./features/manual-review/tab.js";
 import { initCandleExport } from "./features/candle-export.js";
-import { initAlgorithmPage } from "./algorithm/page.js";
 import {
   buildChartUpdatePackets,
   buildChartUpdateRanges,
@@ -33,6 +32,7 @@ import {
   chunkCandleUpdatesByBytes,
   mapWithConcurrency,
   mergeChartCandles,
+  mergeChronologicalCandles,
   reconcilePublishedCandles,
 } from "./features/candle-update.js";
 import { summarizeUiError } from "./ui/log-window.js";
@@ -390,6 +390,13 @@ const tehranTick = new Intl.DateTimeFormat("en-GB", {
   timeZone: TEHRAN,
   month: "short",
   day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hourCycle: "h23",
+});
+const tehranIndicatorLogTime = new Intl.DateTimeFormat("en-GB", {
+  timeZone: TEHRAN,
   hour: "2-digit",
   minute: "2-digit",
   second: "2-digit",
@@ -854,6 +861,9 @@ $("#objectTree").setAttribute("aria-modal", "true");
 $(".workspace").append($("#objectTree"), $("#indicatorModal"));
 let candleExportController = null;
 let algorithmController = null;
+let workspaceNavigationRevision = 0;
+const algorithmButton = $("#algorithmBtn");
+const isAlgorithmHash = () => /^#algorithm-(?:overview|[a-z0-9_-]+)$/i.test(window.location.hash);
 let symbolLoadController = null;
 let symbolLoadRevision = 0;
 let indicatorCalculationOwner = null;
@@ -888,7 +898,7 @@ function selectWorkspaceNavigation(activeId) {
 }
 function showChartWorkspace() {
   candleExportController?.close();
-  algorithmController?.close();
+  closeAlgorithmWorkspace();
   alertController.close();
   setWorkspaceState("chart");
   selectWorkspaceNavigation("chartNavBtn");
@@ -923,13 +933,35 @@ candleExportController = initCandleExport({
   },
   onInventoryChanged: () => { void refreshSymbolInventory(); },
 });
-algorithmController = initAlgorithmPage({
-  root: $(".chart-shell"),
-  headerRoot: $(".workspace-header-slot"),
-  icon,
-  showChart: showChartWorkspace,
-});
-function showAlgorithmWorkspace() {
+function closeAlgorithmWorkspace() {
+  workspaceNavigationRevision++;
+  if (!algorithmController && algorithmButton.hasAttribute("aria-busy") && isAlgorithmHash()) {
+    window.history.replaceState(window.history.state, "", `${window.location.pathname}${window.location.search}`);
+  }
+  algorithmButton.removeAttribute("aria-busy");
+  algorithmController?.close();
+}
+async function showAlgorithmWorkspace() {
+  const revision = ++workspaceNavigationRevision;
+  if (!algorithmController) {
+    const previousWorkspace = appRoot.dataset.workspace;
+    algorithmButton.setAttribute("aria-busy", "true");
+    try {
+      const { initAlgorithmPage } = await import("./algorithm/page.js");
+      if (revision !== workspaceNavigationRevision || appRoot.dataset.workspace !== previousWorkspace) return;
+      algorithmController = initAlgorithmPage({
+        root: $(".chart-shell"), headerRoot: $(".workspace-header-slot"), icon, showChart: showChartWorkspace,
+      });
+    } catch (error) {
+      if (revision === workspaceNavigationRevision) {
+        log.chart.error("ALGORITHM_WORKSPACE_LOAD_FAILED", error);
+        toast("Could not load the Algorithm workspace. Try opening it again.", "error");
+      }
+      return;
+    } finally {
+      if (revision === workspaceNavigationRevision) algorithmButton.removeAttribute("aria-busy");
+    }
+  }
   candleExportController?.close();
   alertController.close();
   closeSidePanel($("#objectTree"));
@@ -940,15 +972,13 @@ function showAlgorithmWorkspace() {
   setDrawingToolsActive(false);
   algorithmController.open();
 }
-$("#algorithmBtn").onclick = showAlgorithmWorkspace;
-if (/^#algorithm-(?:overview|[a-z0-9_-]+)$/i.test(window.location.hash)) {
-  // Restore after this module finishes initializing every workspace binding.
-  // A microtask still runs before the next paint, so refresh keeps Algorithm
-  // visible without touching later declarations while they are in the TDZ.
+algorithmButton.onclick = showAlgorithmWorkspace;
+if (isAlgorithmHash()) {
+  // Start restoring the deep link after all workspace bindings initialize.
   queueMicrotask(showAlgorithmWorkspace);
 }
 function showFarazWorkspace() {
-  algorithmController?.close();
+  closeAlgorithmWorkspace();
   alertController.close();
   closeSidePanel($("#objectTree"));
   closeSidePanel($("#indicatorModal"));
@@ -961,7 +991,7 @@ $("#candleExportBtn").onclick = showFarazWorkspace;
 $("#farazStatusFooter").onclick = showFarazWorkspace;
 function showAlertWorkspace() {
   candleExportController?.close();
-  algorithmController?.close();
+  closeAlgorithmWorkspace();
   closeSidePanel($("#objectTree"));
   closeSidePanel($("#indicatorModal"));
   selectDrawing(null);
@@ -972,7 +1002,7 @@ function showAlertWorkspace() {
 }
 $("#alertBtn").onclick = showAlertWorkspace;
 function restoreWorkspaceAfterRefresh() {
-  if (/^#algorithm-(?:overview|[a-z0-9_-]+)$/i.test(window.location.hash)) return;
+  if (workspaceNavigationRevision || isAlgorithmHash()) return;
   const workspace = resolveWorkspaceRefreshState(storedWorkspaceRefresh, {
     fileIds: state.inventory.map((item) => item.id), timeframes: TF.map((item) => item.s),
   }).workspace;
@@ -1846,19 +1876,18 @@ async function loadFile(item, { reconcileLive = false } = {}) {
     if (loadRevision !== symbolLoadRevision) return;
     if (!Array.isArray(rows) || !rows.length)
       throw new Error("The candle file is empty or invalid.");
-    const normalizedRows = rows.map((x) => ({
-      time: +x.time,
-      open: +x.open,
-      high: +x.high,
-      low: +x.low,
-      close: +x.close,
-    }));
-    const validRows = normalizedRows.every((candle, index) =>
-      Number.isSafeInteger(candle.time) && candle.time > 0
-      && [candle.open, candle.high, candle.low, candle.close].every(Number.isFinite)
-      && candle.high >= Math.max(candle.open, candle.close, candle.low)
-      && candle.low <= Math.min(candle.open, candle.close, candle.high)
-      && (!index || candle.time > normalizedRows[index - 1].time));
+    const normalizedRows = new Array(rows.length);
+    let validRows = true;
+    let previousTime = 0;
+    for (let index = 0; index < rows.length; index++) {
+      const row = rows[index];
+      const time = +row.time, open = +row.open, high = +row.high, low = +row.low, close = +row.close;
+      normalizedRows[index] = { time, open, high, low, close };
+      validRows &&= Number.isSafeInteger(time) && time > previousTime
+        && Number.isFinite(open) && Number.isFinite(high) && Number.isFinite(low) && Number.isFinite(close)
+        && high >= Math.max(open, close, low) && low <= Math.min(open, close, high);
+      previousTime = time;
+    }
     if (!validRows) throw new Error("The candle file failed strict chronology or OHLC validation.");
     if (loadRevision !== symbolLoadRevision) return;
     if (preserve) {
@@ -3306,8 +3335,8 @@ for (const side of ["from", "to"]) {
     const candle = nearestRangeCandle(event.clientX);
     if (!candle) return;
     const time = Number(candle.time);
-    const index = state.data.findIndex((row) => Number(row.time) === time);
-    if (index < 0) return;
+    const index = lowerBoundTime(state.data, time);
+    if (Number(state.data[index]?.time) !== time) return;
     const moved = moveIndicatorRange(state.indicatorRange, side, index, state.data);
     if (!moved) return;
     state.indicatorRange.fromIndex = moved.fromIndex;
@@ -4776,7 +4805,7 @@ function focusObjectOnChart(item) {
   let index;
   if (target < first) index = (target - first) / state.tf;
   else if (target > last) index = (state.data.length - 1) + (target - last) / state.tf;
-  else index = state.data.findIndex((candle) => Number(candle.time) >= target);
+  else index = lowerBoundTime(state.data, target);
   chart.timeScale().setVisibleLogicalRange({
     from: index - 35,
     to: index + 35,
@@ -5329,13 +5358,7 @@ function calculationTraceAggregates(events, direction) {
 }
 function indicatorLogTime(timestamp) {
   const date = new Date(timestamp);
-  const base = new Intl.DateTimeFormat("en-GB", {
-    timeZone: TEHRAN,
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hourCycle: "h23",
-  }).format(date);
+  const base = tehranIndicatorLogTime.format(date);
   return `${base}.${String(date.getMilliseconds()).padStart(3, "0")}`;
 }
 function renderIndicatorActivity() {
@@ -6065,7 +6088,7 @@ function applyRealtimeCandles(file, candles, corrections = [], gapCandles = []) 
   const anchorTime = anchorIndex === null ? null : state.data[anchorIndex]?.time;
   const byTime = new Map(corrections.map(row => [row.time, row]));
   if (byTime.size) state.raw = state.raw.map(row => byTime.get(row.time) || row);
-  if (gapCandles.length) state.raw = mergeChartCandles(state.raw, gapCandles);
+  if (gapCandles.length) state.raw = mergeChronologicalCandles(state.raw, gapCandles);
   if (candles.length) state.raw = state.raw.concat(candles);
   const native = state.tf === sourceTimeframeSeconds(previousFile);
   const repairs = corrections.length || gapCandles.length;
@@ -6465,7 +6488,6 @@ async function runChartUpdate(mode) {
       updateProgress.verified(verifiedSlots);
     };
 
-    const existingTimes = new Set(state.raw.map((c) => c.time));
     const sourceCandles = mergeChartCandles([], fetchedCandles)
       .map((c) => ({ time: +c.time, open: +c.open, high: +c.high, low: +c.low, close: +c.close }));
     if (sourceCandles.some((c) => !Number.isSafeInteger(c.time) || c.time <= 0
@@ -6474,7 +6496,7 @@ async function runChartUpdate(mode) {
       || c.high < Math.max(c.open, c.close, c.low) || c.low > Math.min(c.open, c.close, c.high))) {
       throw new Error(`FARAZ returned candles that cannot be saved in this RAW ${rawTf} file.`);
     }
-    const uniqueNew = sourceCandles.filter((c) => !existingTimes.has(c.time));
+    const uniqueNew = sourceCandles.filter((c) => state.raw[lowerBoundTime(state.raw, c.time)]?.time !== c.time);
     const recovered = uniqueNew.filter((candle) => candle.time <= originalLastTime).length;
     updateProgress.repaired(recovered);
     if (recovered) setUpdateButtonState("warning");
@@ -6520,10 +6542,10 @@ async function runChartUpdate(mode) {
       // The file identity can change after every append. Keep it current so a
       // later request always extends the last successfully persisted batch.
       state.file.id = fileId;
-      persistedCandles.push(...candleBatch);
+      for (const candle of candleBatch) persistedCandles.push(candle);
     }
     state.file.id = fileId;
-    state.raw = mergeChartCandles(state.raw, uniqueNew);
+    state.raw = mergeChronologicalCandles(state.raw, uniqueNew);
     updateProgress.stage("verify", "Recording FARAZ coverage", "Saving checked ranges in this RAW file's metadata");
     await persistVerifiedRanges(fileId);
     state.data = state.tf === sourceTimeframeSeconds() ? state.raw : aggregate(state.raw, state.tf);
@@ -6553,7 +6575,7 @@ async function runChartUpdate(mode) {
     });
   } catch (e) {
     if (persistedCandles.length) {
-      state.raw = mergeChartCandles(state.raw, persistedCandles);
+      state.raw = mergeChronologicalCandles(state.raw, persistedCandles);
       state.data = state.tf === sourceTimeframeSeconds() ? state.raw : aggregate(state.raw, state.tf);
       state.chartRender = null;
       renderChartViewport(null, { force: true });

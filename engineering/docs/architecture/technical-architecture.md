@@ -10,7 +10,7 @@ scope:
   - engine
   - runtime-boundaries
   - state-and-transport
-last_modified_at: 2026-11-19T03:41:13+03:30
+last_modified_at: 2026-11-20T11:55:09+03:30
 ---
 
 # TradingBot Technical Architecture
@@ -137,6 +137,8 @@ Chart is the browser-side workstation and presentation owner. It owns:
 
 Current composition is rooted in the chart application entry point and supporting `src/` feature, chart, drawing, UI, and review modules. These paths are discovery anchors, not an exhaustive future inventory.
 
+Chart startup defers the Algorithm workspace markup, content, and styles until that workspace is requested by navigation or a deep link. The workspace mounts the requested article and maintains its full navigation search independently of the mounted article. Route scroll and disclosure state survive article switches. Full-reference export generates every article on demand.
+
 ### Inputs and outputs
 
 Chart consumes:
@@ -187,7 +189,13 @@ The Vite/local-server layer owns:
 
 Vite launches the Python bridge as a separate process. It provides Engine component locations and request arguments, collects stdout as the final JSON response, and interprets prefixed stderr records as progress events.
 
-Each Apply enters a FIFO coordinator and executes Python. The coordinator defaults to one active Apply and accepts a limit of 1 through 8 through TRADINGBOT_MAX_ENGINE_CONCURRENCY. The server validates RAW and the active calculation Source before publishing the result. Shutdown aborts owned calculations and closes their progress channels. Progress history retains at most 120 events per request. A finished channel is released after its last observer disconnects.
+Apply, active Live replays, and Live recovery share one FIFO coordinator. It defaults to one active calculation and accepts a limit of 1 through 8 through `TRADINGBOT_MAX_ENGINE_CONCURRENCY`. The server reads and verifies the selected RAW at admission and verifies RAW and the active calculation Source before publishing.
+
+A disconnect releases the client's progress stream and its interest in the calculation. Identical in-flight requests retain their remaining subscribers. The coordinator removes abandoned queued work before admission. Active cancellation interrupts the owned read, range transport, or worker operation and keeps the slot until that operation exits. A queued Live cancellation leaves the existing checkpoint available for a future request. A failed Windows range pipe also drains its consumer before the slot can be used again.
+
+Progress history retains at most 120 events per request. A finished channel is released after its last observer disconnects. A late SSE connection can receive a buffered cancellation event followed by EOF. Reconnection can stop with HTTP 204 while the cancellation marker remains in the bounded history. Shutdown aborts owned calculations and closes progress channels.
+
+Manual Review opens the report identity of an individual calculation. The server keeps a bounded registry of recent Live results and can save an individual report when Manual Review opens it. [Local State](../operations/local-state.md)
 
 Vite does not reproduce Engine trading stages. Its calculation responsibility ends at validation, input preparation, process orchestration, transport, and persistence of already-serialized reports.
 
@@ -213,6 +221,10 @@ FARAZ integration owns:
 - persistence of acquired/updated RAW resources through the RAW store.
 
 The current implementation can coordinate a Chromium-based browser process for session capture and reuse. Session material remains in the project-local secret boundary and must never be exposed in architecture documentation or logs.
+
+Passive status requests share one in-flight upstream check for the current local session file. The server can reuse its status for up to 30 seconds while the file identity is unchanged. File replacement, deletion, logout, and shutdown invalidate or cancel the passive work. Explicit status checks invalidate the passive result and verify upstream using the selected symbol. Export startup also verifies upstream.
+
+Export cancellation closes active history requests and releases unpublished candles while a coverage decision is pending. Finished jobs keep their public status and discard the internal packet plan. Downloads stream the saved RAW file with backpressure and close the read stream on client disconnect.
 
 ### Boundary invariant
 

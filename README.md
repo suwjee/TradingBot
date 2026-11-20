@@ -3,12 +3,12 @@ title: TradingBot
 document_role: reference
 lifecycle: maintained
 owner: project-navigation
-last_modified_at: 2026-11-18T17:01:34+03:30
+last_modified_at: 2026-11-20T11:55:09+03:30
 ---
 
 # TradingBot
 
-TradingBot is a Windows candlestick workstation. The chart application acquires and displays candles, drawings, indicators and review tables. Python under `engine/` owns trading calculations; the browser renders serialized results.
+TradingBot is a Windows candlestick workstation for inspecting market history, drawing on charts, running indicators, and opening calculation reports. It can acquire candles from FARAZ and continue an applied indicator as confirmed candles arrive. The browser shows the chart and results. The local Vite server coordinates RAW files and calculation requests. The Python Engine owns trading calculations.
 
 ## Project ownership
 
@@ -16,24 +16,18 @@ TradingBot is a Windows candlestick workstation. The chart application acquires 
 | --- | --- |
 | `apps/chart/` | Browser application, local HTTP/SSE server, application state and chart tests |
 | `engine/` | Calculation bridge, stage owners, current exact-source references and local Engine verification |
+| `scripts/` | Windows startup, GitHub release tooling, and repository verification |
 | `engineering/` | Maintained documentation, historical archives and local verification evidence |
-
-The root `scripts/` directory preserves the public Windows startup paths used by existing shortcuts and the VMware shared checkout. Root Git/editor files, `AGENTS.md` and this README stay at their tool discovery boundaries.
-
-**Every project-owned file stays inside this TradingBot directory.** RAW and sidecars use `apps/chart/state/data/raw/`, persistent drawings/calculations/templates use `apps/chart/state/cache/`, FARAZ authentication uses `apps/chart/state/secret/`, and temporary files use `apps/chart/state/tmp/`. Machine-local state, dependencies, caches, temporary files and rebuildable output are excluded according to current repository policy; legitimate tests, maintained documentation, curated baseline evidence and meaningful engineering evidence may be tracked. See [local storage](engineering/docs/operations/local-state.md).
-
-`TRADINGBOT_LOCAL_STATE_ROOT` is optional. Its default is `apps/chart/state`; a configured value must resolve to that directory or a descendant. External roots and source directories are rejected. Vite denies direct static access to state; the established `/api` resources remain available.
 
 ## Install and start
 
-Use Node.js `20.19+` (Node.js 22 requires `22.12+`) and Python `3.12+`. Python runtime dependencies are `orjson` and `tzdata`.
+Run the Windows launcher from the repository root. It locates or installs the supported runtimes, checks Python dependencies, and installs Chart dependencies with the lockfile when needed. It starts the installed Vite CLI directly with the native configuration loader for compatibility with the VMware shared checkout.
 
 ```powershell
-Set-Location 'D:\My-Projects\TradingBot'
 .\scripts\launch.bat
 ```
 
-The launcher checks runtimes and installs missing dependencies before starting Vite. For manual development:
+Open the URL printed by the launcher. For manual development on the local computer, use Node.js 20.19 or newer in the 20.x line, or Node.js 22.12 or newer. Use Python 3.12 or newer.
 
 ```powershell
 python -m pip install orjson tzdata
@@ -44,10 +38,27 @@ npm.cmd run dev -- --host 127.0.0.1 --configLoader native
 
 Build with `npm.cmd run build` from `apps/chart`. These commands keep generated output inside the project.
 
+## Workstation workflows
+
+- Open a RAW file in Chart, choose a display timeframe, and add drawings or apply an indicator to the full chart or a selected range.
+- Use Real-time Chart to acquire confirmed candles and continue an indicator applied in the current tab. Apply and Live run a fresh calculation and share one active calculation slot by default. Set `TRADINGBOT_MAX_ENGINE_CONCURRENCY` to an integer from `1` to `8` before launch to change that limit.
+- Open Manual Review from a completed calculation to inspect or export the saved report separately from the active Chart.
+- Use FARAZ for acquisition and coverage decisions, Algorithm for the searchable reference, and Alerts to monitor configured rules against published live events. [Workstation controls and behavior](engineering/docs/architecture/ui-ux-reference.md)
+
 In dev mode, saving a stylesheet or an indicator-renderer module updates the open chart. Saving a watched Python calculation file refreshes an already-applied indicator for its selected chart and range. The tab stays open when a change requires loading a new interface shell. The chart displays a notification for such changes. Dev mode polls the UI and active Python sources every 1,500 ms by default. Set `TRADINGBOT_VITE_POLLING=false` before starting Vite to disable this check, or set `TRADINGBOT_VITE_POLL_INTERVAL_MS` to adjust it with a 500 ms minimum.
 
-## Local verification and navigation
+## Local data
 
-Tests are discovered from the current repository, manifests and runners rather than treated as a fixed local-only bundle. The current project contains Chart and Engine test/verification trees, but their layout and runner set are not permanent contracts. See [Testing](engineering/docs/development/testing.md) for dynamic discovery, execution status, RAW and regression policy.
+The default Chart state root is `apps/chart/state`. RAW and sidecars use `data/raw/`, drawings and saved reports and templates use `cache/`, FARAZ authentication uses `secret/`, and temporary files use `tmp/`. Set `TRADINGBOT_LOCAL_STATE_ROOT` to a descendant of this state root to isolate a workstation run or test. The launcher and server both enforce that boundary.
 
-Read [AGENTS.md](AGENTS.md) and the [AI engineering workflow](engineering/docs/ai/engineering-workflow.md) before engineering work. Trading semantics require the Intelligence Plugin and canonical Knowledge Vault. Use the [engineering document index](engineering/docs/README.md) for Current maintained navigation. Historical single-root migration evidence is preserved at [engineering/verification/history/single-root-migration.md](engineering/verification/history/single-root-migration.md).
+Git and release rules exclude machine-local state, credentials, installed dependencies, and fresh build output. Curated baseline data and classified engineering evidence can be tracked by the main branch. [Local State](engineering/docs/operations/local-state.md)
+
+## Verify and publish
+
+Run `npm.cmd test` from `apps/chart` for Chart unit checks. Discover the appropriate integration, browser, Engine and repository checks in [Testing](engineering/docs/development/testing.md).
+
+The Git Manager entry point is `scripts\git\git.bat`. The maintained workflow validates candidates for `main` and the runtime-only `production` branch before publishing a tag and GitHub Release. [Release Operations](scripts/git/README.md)
+
+## Documentation
+
+Start with the [Engineering Documentation index](engineering/docs/README.md) and [root operating contract](AGENTS.md). Trading semantics are maintained through the Intelligence Plugin, canonical Knowledge Vault, and accepted Algorithm References. The [historical migration record](engineering/verification/history/single-root-migration.md) preserves the transition to the present directory layout.

@@ -9,7 +9,7 @@ scope:
   - sessions
   - cache
   - raw
-last_modified_at: 2026-11-19T00:09:15+03:30
+last_modified_at: 2026-11-20T11:55:09+03:30
 ---
 
 # TradingBot Local State
@@ -33,7 +33,7 @@ TradingBot has more than one kind of local state. Classify an artifact by its ow
 | Dedicated filesystem state | Chart/Vite/FARAZ integration | Machine-local, under the Chart-owned state root | Depends on the child category | Never delete the whole state root by category name alone |
 | Browser workspace/preferences | Chart | Browser-local persistent state | Some preferences can be recreated; user work may not be reconstructable exactly | Clear only through a scoped user/maintenance action |
 | Saved drawings/templates | Chart | Persistent filesystem/browser state | User-created; not assumed rebuildable | Preserve unless deletion is explicitly requested and scoped |
-| Calculation cache | Vite/Chart integration | Persistent filesystem cache | Rebuildable only when required Source, RAW, configuration, and request context remain available | Invalidate through the owning cache contract; do not infer safety from “cache” |
+| Calculation reports | Vite/Chart integration | Filesystem snapshots and bounded in-memory Live reports | Exact recovery depends on retained snapshot, original inputs, configuration, and Source | Clear only through the scoped report or cache controls |
 | FARAZ authentication/session | FARAZ integration | Persistent secret-sensitive state | Normally reacquired by authentication, not reconstructed from public project data | Treat as credentials; never commit, report, or copy casually |
 | FARAZ acquisition temporary output | FARAZ integration | Ephemeral filesystem state | Recreated by the acquisition workflow | Remove only when no active job or unpublished result depends on it |
 | Vite/process coordination state | Vite/local server | Process-local ephemeral state | Recreated on process start | Ends with the owning process unless explicitly persisted elsewhere |
@@ -70,7 +70,7 @@ Chart owns user-facing workspace persistence. Current Source uses browser persis
 Filesystem persistence under the Chart cache owner currently includes durable concepts such as:
 
 - drawings;
-- indicator calculation results;
+- saved indicator report snapshots;
 - indicator templates.
 
 These categories have different recovery properties. Saved drawings and templates can contain user-created state and are not presumed reproducible. Saved calculation results are report snapshots tied to their original input and Source. Apply and Live updates compute a fresh result from RAW.
@@ -84,6 +84,8 @@ Vite/local-server owns orchestration state required while the workstation runs, 
 Process-local maps, channels, subprocess coordination, and similar transient structures are not persisted operational state merely because they influence a request.
 
 The server also owns the persistent calculation/drawing/template storage boundary assigned to the Chart state root. Persistent filesystem state and process memory must not be conflated.
+
+An active Live report can exist only in server memory until opened or explicitly saved through Manual Review. A server restart drops the transient report registry. Previously saved reports remain in the calculation report directory, and a still-open Chart can recover Live using its validated inputs and session proof.
 
 Generated build output and installed dependencies are rebuildable development artifacts, not workstation user state. Their Git/release classification belongs to [Repository Integrity](../verification/repository-integrity.md) and the release subsystem.
 
@@ -106,6 +108,8 @@ Never copy actual credentials, cookies, tokens, session identifiers, browser sto
 - release metadata.
 
 A logout/session-clear action may remove the saved session. Expiry or invalidation is an authentication lifecycle event, not evidence that unrelated local state is disposable.
+
+Passive status sharing is an in-memory feature of the current server. Its result is tied to the current session file identity and expires. The shared response is distinct from the stored credential/session file. [Technical Architecture](../architecture/technical-architecture.md)
 
 ## 7. FARAZ acquisition state and RAW publication
 
@@ -189,7 +193,7 @@ No formal project-wide backup mechanism for all local state is established by Cu
 - **Tracked repository content:** recover through Git according to repository/release policy.
 - **User-created Chart state:** drawings/templates/browser state can be unique; preserve or back up deliberately before destructive maintenance.
 - **RAW evidence:** preserve independently when it is unique or needed for regression; do not rely on reacquisition as guaranteed recovery.
-- **Calculation caches:** rebuild only when their authoritative inputs and Current calculation contract remain available.
+- **Calculation reports:** retain a report when it records evidence that cannot be reproduced exactly. A fresh result requires its authoritative inputs and the applicable calculation contract.
 - **FARAZ session:** normally recover by authenticating again; do not treat copying a clear-text session as a normal backup strategy.
 - **Verification/archive evidence:** preserve when it records a non-reproducible execution or provenance fact.
 - **Temporary/process state:** normally recreated by the owning workflow after a clean restart, once no unpublished result depends on it.

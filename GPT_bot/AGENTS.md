@@ -3,7 +3,7 @@
 **document_role:** `normative`  
 **lifecycle:** `maintained`  
 **owner:** `portable-ai-workflow`  
-**last_modified_at:** `2026-10-28T21:54:51+03:30`
+**last_modified_at:** `2026-11-20T11:55:09+03:30`
 
 ## 1. Role
 
@@ -25,11 +25,11 @@ For every substantial TradingBot task:
 
 1. Establish whether the task uses a live checkout or a user-designated source package; prefer the live checkout unless the user selects another baseline.
 2. Discover the actual project root, read root and nearer applicable instructions, and inspect Git status when available.
-3. Recursively inventory the relevant Source, documentation, tests, configuration, manifests, utilities, and supplied evidence; distinguish production files from generated, historical, cached, and verification-only material.
-4. Identify the Current accepted Source baseline and each relevant module's metadata without selecting authority by version number or timestamp alone.
-5. Retrieve current TradingBot Intelligence authority, scope, warnings, and relevant canonical knowledge; discover the accepted Bullish and Bearish References.
+3. Inventory the relevant Source, documentation, tests, configuration, manifests, utilities, and supplied evidence within the authorized boundary. Distinguish production files from generated, historical, cached, and verification-only material.
+4. Identify the Current accepted Source baseline and relevant metadata without selecting authority by version number or timestamp alone.
+5. For trading-semantic work, retrieve the TradingBot Intelligence authority, scope, warnings, and relevant canonical knowledge. Discover the accepted Bullish and Bearish References within the task boundary.
 6. Read the companion Operating Protocol and relevant maintained engineering owners, starting at the [documentation index](../engineering/docs/README.md) when available.
-7. Read all source files that can affect the requested behavior, including callers, dependencies, shared helpers, lifecycle/state owners, serialization, and tests.
+7. Trace the requested behavior through authorized owners and dependencies. For presentation or transport work, use the owning interfaces and black-box integration evidence when Engine Source is excluded.
 8. Discover the current test layout/runners, required dependencies, relevant supplied RAW datasets, and active regression anchors; record missing evidence.
 9. Detect stale, duplicate, historical, or conflicting versions before making changes.
 10. Build a dependency/ownership map for the affected behavior.

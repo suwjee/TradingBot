@@ -1,7 +1,8 @@
 import fs from "node:fs";
+import { pipeline } from "node:stream/promises";
 
 function entityTag(stat) {
-  return `"${Number(stat.size).toString(16)}-${Math.trunc(Number(stat.mtimeMs)).toString(16)}"`;
+  return `"${[stat.dev, stat.ino, stat.size, stat.mtimeNs, stat.ctimeNs].map(value => value.toString(16)).join("-")}"`;
 }
 
 function matchesEntityTag(header, expected) {
@@ -11,25 +12,22 @@ function matchesEntityTag(header, expected) {
     .includes(expected);
 }
 
-export function sendCandleFile(req, res, dataPath) {
-  return new Promise((resolve, reject) => {
-    const stat = fs.statSync(dataPath);
+export async function sendCandleFile(req, res, dataPath) {
+  const file = await fs.promises.open(dataPath, "r");
+  try {
+    const stat = await file.stat({ bigint: true });
     const etag = entityTag(stat);
     res.setHeader("Content-Type", "application/json; charset=utf-8");
     res.setHeader("Cache-Control", "private, no-cache");
     res.setHeader("ETag", etag);
-    res.setHeader("Content-Length", stat.size);
     if (matchesEntityTag(req.headers?.["if-none-match"], etag)) {
       res.statusCode = 304;
-      res.removeHeader?.("Content-Length");
       res.end();
-      resolve();
       return;
     }
-    const stream = fs.createReadStream(dataPath);
-    stream.on("error", reject);
-    res.on("finish", resolve);
-    res.on("error", reject);
-    stream.pipe(res);
-  });
+    res.setHeader("Content-Length", stat.size.toString());
+    await pipeline(file.createReadStream({ autoClose: false }), res);
+  } finally {
+    await file.close();
+  }
 }

@@ -1,7 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import path from "node:path";
 
 import { rawInventoryPresentation, sortRawInventory } from "../../src/features/raw-inventory.js";
 import { fullChartId, shortChartId } from "../../src/ui/chart-identity.js";
@@ -51,7 +50,7 @@ test("RAW inventory sorts a data table by broker, symbol, and updated date", () 
 });
 
 test("RAW inventory exposes From and To as sortable timestamp columns", () => {
-  const exporterSource = fs.readFileSync(path.resolve("src/features/candle-export.js"), "utf8");
+  const exporterSource = fs.readFileSync(new URL("../../src/features/candle-export.js", import.meta.url), "utf8");
 
   assert.match(exporterSource, /data-raw-sort-key="from"/);
   assert.match(exporterSource, /data-raw-sort-key="to"/);
@@ -66,8 +65,8 @@ test("RAW inventory exposes From and To as sortable timestamp columns", () => {
 });
 
 test("RAW table leads with its exact filename and receives live inventory changes", () => {
-  const exporterSource = fs.readFileSync(path.resolve("src/features/candle-export.js"), "utf8");
-  const mainSource = fs.readFileSync(path.resolve("src/main.js"), "utf8");
+  const exporterSource = fs.readFileSync(new URL("../../src/features/candle-export.js", import.meta.url), "utf8");
+  const mainSource = fs.readFileSync(new URL("../../src/main.js", import.meta.url), "utf8");
 
   assert.match(exporterSource, /data-raw-sort-key="filename">File name/);
   assert.match(exporterSource, /const cells = \[row\.filename, row\.symbol,/);
@@ -77,7 +76,7 @@ test("RAW table leads with its exact filename and receives live inventory change
 });
 
 test("symbol rows display compact IDs with an accessible copy action and collapsible groups", () => {
-  const source = fs.readFileSync(path.resolve("src/main.js"), "utf8");
+  const source = fs.readFileSync(new URL("../../src/main.js", import.meta.url), "utf8");
 
   assert.match(source, /shortChartId\(item\.chartId\)/);
   assert.match(source, /data-copy-chart-id=/);
@@ -86,7 +85,7 @@ test("symbol rows display compact IDs with an accessible copy action and collaps
 });
 
 test("FARAZ current-time controls expose a live timestamp outside the hidden date row", () => {
-  const source = fs.readFileSync(path.resolve("src/features/candle-export.js"), "utf8");
+  const source = fs.readFileSync(new URL("../../src/features/candle-export.js", import.meta.url), "utf8");
 
   assert.match(source, /data-current-time-output="count"/);
   assert.match(source, /data-current-time-output="range"/);
@@ -95,7 +94,7 @@ test("FARAZ current-time controls expose a live timestamp outside the hidden dat
 });
 
 test("RAW file names use compact table typography", () => {
-  const styles = fs.readFileSync(path.resolve("src/styles/candle-export.css"), "utf8");
+  const styles = fs.readFileSync(new URL("../../src/styles/candle-export.css", import.meta.url), "utf8");
 
   assert.match(styles, /\.candle-raw-table td:first-child[^}]*font-size:\s*11px/);
 });

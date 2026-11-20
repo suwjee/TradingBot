@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { createInterface } from "node:readline";
+import { createCalculationWork } from "./calculation-coordinator.js";
 
 const EXPIRED = "The live indicator session is unavailable. Use Apply again.";
 
@@ -12,8 +13,10 @@ export class LiveEngineError extends Error {
   }
 }
 
-export function startLiveEngineWorker({ command, args, env, onProgress, timeoutMs = 300_000 }) {
+export function startLiveEngineWorker({ command, args, env, onProgress, signal, timeoutMs = 300_000 }) {
+  signal?.throwIfAborted();
   const child = spawn(command, args, { env, windowsHide: true });
+  const exited = new Promise(resolve => child.once("close", resolve));
   const output = createInterface({ input: child.stdout, crlfDelay: Infinity });
   const errors = createInterface({ input: child.stderr, crlfDelay: Infinity });
   let pending;
@@ -22,9 +25,10 @@ export function startLiveEngineWorker({ command, args, env, onProgress, timeoutM
 
   function settle(error, message) {
     if (!pending) return;
-    const { resolve, reject, timer } = pending;
+    const { resolve, reject, timer, taskSignal, abort } = pending;
     pending = null;
     clearTimeout(timer);
+    taskSignal?.removeEventListener("abort", abort);
     if (error) reject(error);
     else resolve(message);
   }
@@ -39,23 +43,31 @@ export function startLiveEngineWorker({ command, args, env, onProgress, timeoutM
     child.kill();
   }
 
-  function receive(type, request, reportProgress) {
-    if (closed) return Promise.reject(new LiveEngineError(410, EXPIRED, "LIVE_SESSION_CLOSED"));
-    if (pending) return Promise.reject(new LiveEngineError(429, "The live indicator is busy."));
-    return new Promise((resolve, reject) => {
-      const timer = setTimeout(() => close(new LiveEngineError(410,
-        "The live Engine did not respond. Use Apply again.", "LIVE_ENGINE_TIMEOUT")), timeoutMs);
-      timer.unref();
-      pending = { type, resolve, reject, timer, reportProgress };
-      if (request) {
-        const { bytes, sha256, baseSha256 } = request;
-        child.stdin.write(`${JSON.stringify({ bytes: bytes.length, sha256, baseSha256,
-          ...(reportProgress && { progress: true }) })}\n`);
-        child.stdin.write(bytes, error => {
-          if (error) close();
-        });
-      }
-    });
+  async function receive(type, request, reportProgress, taskSignal) {
+    taskSignal?.throwIfAborted();
+    if (closed) throw new LiveEngineError(410, EXPIRED, "LIVE_SESSION_CLOSED");
+    if (pending) throw new LiveEngineError(429, "The live indicator is busy.");
+    try {
+      return await new Promise((resolve, reject) => {
+        const timer = setTimeout(() => close(new LiveEngineError(410,
+          "The live Engine did not respond. Use Apply again.", "LIVE_ENGINE_TIMEOUT")), timeoutMs);
+        timer.unref();
+        const abort = () => close(taskSignal.reason);
+        pending = { type, resolve, reject, timer, reportProgress, taskSignal, abort };
+        taskSignal?.addEventListener("abort", abort, { once: true });
+        if (request) {
+          const { bytes, sha256, baseSha256 } = request;
+          child.stdin.write(`${JSON.stringify({ bytes: bytes.length, sha256, baseSha256,
+            ...(reportProgress && { progress: true }) })}\n`);
+          child.stdin.write(bytes, error => {
+            if (error) close();
+          });
+        }
+      });
+    } catch (error) {
+      if (closed) await exited;
+      throw error;
+    }
   }
 
   errors.on("line", line => {
@@ -96,12 +108,13 @@ export function startLiveEngineWorker({ command, args, env, onProgress, timeoutM
   child.stdin.on("error", () => close());
   child.on("close", () => close());
 
+  const seed = receive("seed", undefined, undefined, signal);
   return {
-    seed: receive("seed"),
+    seed,
     get closed() { return closed; },
-    async update(bytes, sha256, baseSha256, reportProgress) {
+    async update(bytes, sha256, baseSha256, reportProgress, taskSignal) {
       if (!Buffer.isBuffer(bytes)) throw new TypeError("The live Engine requires RAW bytes.");
-      return (await receive("update", { bytes, sha256, baseSha256 }, reportProgress)).payload;
+      return (await receive("update", { bytes, sha256, baseSha256 }, reportProgress, taskSignal)).payload;
     },
     close,
   };
@@ -177,33 +190,51 @@ export function createLiveEngineSessions({ maxSessions = 4, idleTtlMs = 30 * 60_
     activeSession(sessionId, chartId, tabId, sourceFingerprint).touched = now();
   }
 
-  async function advance({ sessionId, chartId, tabId, sourceFingerprint, rawSha256, data }, { validate, publish, readAppend, reportProgress }) {
+  async function advance({ sessionId, chartId, tabId, sourceFingerprint, rawSha256, data }, {
+    validate, publish, readAppend, reportProgress, signal, schedule = work => work(),
+  }) {
+    signal?.throwIfAborted();
     const session = activeSession(sessionId, chartId, tabId, sourceFingerprint);
+    const consumer = { signal, onProgress: reportProgress };
     if (session.pending) {
-      if (session.pending.rawSha256 === rawSha256 && session.pending.data === data) return session.pending.result;
+      const { work } = session.pending;
+      if (!work.controller.signal.aborted && session.pending.rawSha256 === rawSha256 && session.pending.data === data) {
+        session.pending.reportProgress ||= Boolean(reportProgress);
+        return work.subscribe(consumer);
+      }
       throw new LiveEngineError(429, "The live indicator is already updating.");
     }
+
+    const work = createCalculationWork();
+    const pending = { rawSha256, data, work, reportProgress: Boolean(reportProgress) };
+    session.pending = pending;
+    const result = work.subscribe(consumer);
 
     const isActive = () => {
       if (sessions.get(sessionId) !== session) throw new LiveEngineError(410, EXPIRED, "LIVE_SESSION_EXPIRED");
     };
-    async function update() {
+    async function update(_progress, taskSignal = work.controller.signal) {
+      taskSignal.throwIfAborted();
+      isActive();
       const baseSha256 = session.rawSha256;
       let delta = baseSha256 && baseSha256 !== rawSha256 && readAppend?.(baseSha256);
-      let bytes = await validate(!delta, Boolean(delta));
+      let bytes = await validate(!delta, Boolean(delta), taskSignal);
+      taskSignal.throwIfAborted();
       isActive();
+      const report = pending.reportProgress ? work.publish : undefined;
       let payload;
       try {
         if (delta) {
-          try { payload = await session.worker.update(delta, rawSha256, baseSha256, reportProgress); }
+          try { payload = await session.worker.update(delta, rawSha256, baseSha256, report, taskSignal); }
           catch (error) {
             if (error.code !== "RAW_DELTA_MISMATCH") throw error;
             delta = null;
-            bytes = await validate(true);
+            bytes = await validate(true, false, taskSignal);
+            taskSignal.throwIfAborted();
             isActive();
           }
         }
-        if (!delta) payload = await session.worker.update(bytes, rawSha256, undefined, reportProgress);
+        if (!delta) payload = await session.worker.update(bytes, rawSha256, undefined, report, taskSignal);
       } catch (error) {
         if (error.code !== "RAW_RETRY") discard(sessionId);
         throw error;
@@ -211,17 +242,24 @@ export function createLiveEngineSessions({ maxSessions = 4, idleTtlMs = 30 * 60_
       // Only the input lineage survives publication failures, so retrying
       // the same RAW starts a fresh Engine calculation.
       session.rawSha256 = rawSha256;
-      await validate(false, Boolean(delta));
+      await validate(false, Boolean(delta), taskSignal);
+      taskSignal.throwIfAborted();
       isActive();
       return publish(payload, session.request);
     }
 
-    session.pending = { rawSha256, data, result: update() };
-    try { return await session.pending.result; }
-    finally {
+    function finish(succeeded, value) {
       session.pending = null;
       session.touched = now();
+      work.settle(succeeded, value);
     }
+    try {
+      Promise.resolve(schedule(update, { signal: work.controller.signal }))
+        .then(value => finish(true, value), error => finish(false, error));
+    } catch (error) {
+      finish(false, error);
+    }
+    return result;
   }
 
   function close() {

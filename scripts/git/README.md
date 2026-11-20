@@ -3,7 +3,7 @@ title: TradingBot Release Operations
 document_role: procedure
 lifecycle: maintained
 owner: release-tooling
-last_modified_at: 2026-11-19T23:27:10+03:30
+last_modified_at: 2026-11-20T11:53:46+03:30
 ---
 
 # TradingBot release operations
@@ -50,8 +50,9 @@ The main release stops if an excluded artifact is already tracked, including one
 
 `production` uses a dependency-derived runtime inventory from the exact committed main SHA. Every eligible file under the runtime-owned `apps/chart`, `engine`, and `scripts` roots is included, even if it is not imported yet. Import traversal validates dependencies and adds referenced paths; it does not decide whether a new runtime file is eligible. Dedicated and colocated tests, engineering evidence, development documentation, Algorithm References, ZIP snapshots, local chart state, credentials, dependencies, and disposable artifacts stay outside production. The workflow validates policy, sensitive markers, PowerShell and JavaScript syntax, Python AST, both Engine entry points, `npm ci`, and the chart build in an isolated worktree.
 
-On startup, the launcher runs `npm ci` when the chart lockfile differs from the last successful launcher installation. It stores the lockfile digest in the local `node_modules` directory and reuses the installation on subsequent launches with the same lockfile.
-The launcher requires the chart lockfile and both Engine entry points. Its Python syntax check discovers the current bridge and pipeline modules.
+Run the workstation from `scripts\launch.bat`. The batch file resolves the checkout relative to itself and passes the local startup exit code back to the caller. The PowerShell startup script requires the chart lockfile and both Engine entry points. Its Python syntax check discovers the current bridge and pipeline modules.
+
+Startup runs `npm ci` when the chart lockfile differs from the last successful launcher installation or a required package file is missing. It stores the lockfile digest under `node_modules` and reuses a complete installation with a matching digest. After validation it starts the installed Vite CLI directly with the native config loader.
 
 A new `engine/pipeline/xyz.py`, a new configuration file, or a renamed runtime folder is picked up automatically. Runtime package markers and helpers remain eligible even before a caller imports them; exclusions describe non-runtime categories rather than individual source filenames. Additions, modifications, renames, and deletions appear in the branch previews. Main includes all eligible project files; eligible files accidentally matching `.gitignore` are explicitly staged after policy and sensitive-content checks. Individual detector filenames are not a permanent production allowlist.
 
@@ -91,14 +92,15 @@ Production previews show the complete runtime inventory. Full production validat
 
 Validation captures stdout and stderr concurrently, preserving multiline arguments and Unicode paths. This avoids stalls when a validator fills its stderr pipe and gives consistent diagnostics in Windows PowerShell 5.1 and PowerShell 7.
 
-Run both focused test suites without publishing to the configured project remote:
+Run the focused launcher and release suites without publishing to the configured project remote:
 
 ```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\verification\test-launcher.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\git\Test-GitManager.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\git\Test-ReleaseWorkflow.ps1
 ```
 
-Tests use disposable local repositories and local bare remotes. They preserve the active checkout's index, branches, tags, and merge state. They do not prove live GitHub authorization or branch protection behavior.
+The launcher fixture checks dependency repair, warm startup, a missing lockfile, and the batch exit code from a different working directory. The publication fixtures use disposable repositories and local bare remotes. They preserve the active checkout's index, branches, tags, and merge state. They do not prove live GitHub authorization or branch protection behavior.
 
 Coverage includes a production inventory exceeding the Windows command-line limit and a real `git.bat` Both operation through commit, runtime validation, and push to a disposable local remote. That operation verifies new and ignored-but-eligible files, edits, renames, deletions, the different main/production content policies, and preservation of excluded local state.
 

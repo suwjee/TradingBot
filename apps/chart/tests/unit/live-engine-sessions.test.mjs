@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createLiveEngineSessions, startLiveEngineWorker } from "../../server/live-engine-sessions.js";
+import { createCalculationCoordinator } from "../../server/calculation-coordinator.js";
 
 const indicator = marker => ({ timeframe: 30, directions: { bullish: { marker } } });
 const seedArgs = { chartId: "chart", sourceFingerprint: "engine", request: { from: 100 } };
@@ -137,6 +138,106 @@ test("overlapping advances are serialized and identical requests share a result"
   assert.equal(await first, await same);
 });
 
+test("live advances share the calculation slots and read RAW only when admitted", async t => {
+  const f = fixture(t);
+  const coordinator = createCalculationCoordinator();
+  t.after(coordinator.close);
+  const first = await f.sessions.seed(seedArgs, f.worker);
+  const second = await f.sessions.seed({ ...seedArgs, tabId: "other" }, f.worker);
+  let finishManual;
+  const manual = coordinator.run(Symbol(), () => new Promise(resolve => { finishManual = resolve; }));
+  const reads = [];
+  const hooks = {
+    ...defaultHooks,
+    validate: async includeBytes => {
+      if (includeBytes) reads.push("read");
+      return validate(includeBytes);
+    },
+    schedule: work => coordinator.run(Symbol(), work),
+  };
+  const left = f.sessions.advance(snapshot(first.sessionId), hooks);
+  const duplicate = f.sessions.advance(snapshot(first.sessionId), hooks);
+  const right = f.sessions.advance(snapshot(second.sessionId, { tabId: "other" }), hooks);
+  const admission = coordinator.stats();
+  const beforeRelease = reads.length;
+  finishManual();
+  await manual;
+  assert.equal(await left, await duplicate);
+  await right;
+  assert.deepEqual(admission, { active: 1, pending: 2, inFlight: 3 });
+  assert.equal(beforeRelease, 0);
+  assert.equal(reads.length, 2);
+  await f.sessions.advance(snapshot(first.sessionId), hooks);
+  assert.equal(reads.length, 3);
+  // Recovery already owning the only slot may continue its worker inline.
+  await coordinator.run(Symbol(), () => f.sessions.advance(snapshot(first.sessionId), defaultHooks));
+  assert.equal(f.paths.length, 4);
+});
+
+test("abandoned queued Live replay performs no read or worker update and leaves the checkpoint available", async t => {
+  const f = fixture(t);
+  const coordinator = createCalculationCoordinator();
+  t.after(coordinator.close);
+  const first = await f.sessions.seed(seedArgs, f.worker);
+  const second = await f.sessions.seed({ ...seedArgs, tabId: "other" }, f.worker);
+  let finishManual;
+  const manual = coordinator.run(Symbol(), () => new Promise(resolve => { finishManual = resolve; }));
+  const client = new AbortController();
+  const reads = [];
+  const hooks = {
+    ...defaultHooks,
+    validate: async includeBytes => {
+      if (includeBytes) reads.push("read");
+      return validate(includeBytes);
+    },
+    schedule: (work, options) => coordinator.run(Symbol(), work, undefined, options),
+  };
+  const abandoned = f.sessions.advance(snapshot(first.sessionId), { ...hooks, signal: client.signal });
+  const next = f.sessions.advance(snapshot(second.sessionId, { tabId: "other" }), hooks);
+  const result = Promise.allSettled([abandoned, next]);
+  client.abort();
+  const pendingAfterDisconnect = coordinator.stats().pending;
+  finishManual();
+  await manual;
+  const [left, right] = await result;
+  assert.equal(pendingAfterDisconnect, 1);
+  assert.equal(left.reason?.name, "AbortError");
+  assert.equal(right.status, "fulfilled");
+  assert.deepEqual(reads, ["read"]);
+  assert.deepEqual(f.paths, ["current.json"]);
+  assert.equal(f.closes, 0);
+  assert.doesNotThrow(() => f.sessions.keepAlive(snapshot(first.sessionId)));
+});
+
+test("a disconnected Live caller stops receiving progress while its identical retry keeps the worker", async t => {
+  const f = fixture(t);
+  const client = new AbortController();
+  const firstEvents = [], nextEvents = [];
+  let complete;
+  let receivedSignal;
+  const { sessionId } = await f.sessions.seed(seedArgs, () => ({
+    ...f.worker(),
+    update(_bytes, _sha256, _base, report, signal) {
+      receivedSignal = signal;
+      report("started");
+      return new Promise(resolve => { complete = () => { report("finished"); resolve(indicator("result")); }; });
+    },
+  }));
+  const first = f.sessions.advance(snapshot(sessionId), { ...defaultHooks, reportProgress: event => firstEvents.push(event), signal: client.signal });
+  await Promise.resolve();
+  const next = f.sessions.advance(snapshot(sessionId), { ...defaultHooks, reportProgress: event => nextEvents.push(event) });
+  const result = Promise.allSettled([first, next]);
+  client.abort();
+  complete();
+  const [left, right] = await result;
+  assert.equal(left.reason?.name, "AbortError");
+  assert.equal(right.status, "fulfilled");
+  assert.equal(receivedSignal?.aborted, false);
+  assert.deepEqual(firstEvents, ["started"]);
+  assert.deepEqual(nextEvents, ["started", "finished"]);
+  assert.equal(f.closes, 0);
+});
+
 test("bounded sessions evict idle workers and expired checkpoints cannot continue", async t => {
   let now = 0;
   const f = fixture(t, { maxSessions: 1, idleTtlMs: 1_000, now: () => now });
@@ -191,9 +292,11 @@ test("a worker update sends the exact RAW bytes and digest without a file path",
       emit({ type: "update", payload: { directions: {}, header, raw } });
     });
   `;
-  const worker = startLiveEngineWorker({ command: process.execPath, args: ["-e", source] });
+  const controller = new AbortController();
+  const worker = startLiveEngineWorker({ command: process.execPath, args: ["-e", source], signal: controller.signal });
   t.after(worker.close);
   assert.equal((await worker.seed).ready, true);
+  controller.abort(); // A completed seed no longer belongs to the Apply request.
   await assert.rejects(worker.update("X:/current RAW.json", "a".repeat(64)), TypeError);
   const raw = Buffer.from('\ufeff[\r\n {"close":1.00,"note":"نفت"}\r\n]\n');
   for (const [bytes, baseSha256] of [[raw, undefined], [Buffer.from(",{\"time\":10}"), "b".repeat(64)]]) {
@@ -206,4 +309,32 @@ test("a worker update sends the exact RAW bytes and digest without a file path",
   }
   const noObserver = await worker.update(raw, "a".repeat(64));
   assert.equal(Object.hasOwn(noObserver.header, "progress"), false);
+});
+
+test("aborting Apply closes an unfinished live seed", async t => {
+  const controller = new AbortController();
+  const worker = startLiveEngineWorker({
+    command: process.execPath, args: ["-e", "setInterval(() => {}, 1000)"], signal: controller.signal,
+  });
+  t.after(worker.close);
+  const rejected = assert.rejects(worker.seed, { name: "AbortError" });
+  controller.abort();
+  await rejected;
+  assert.equal(worker.closed, true);
+});
+
+test("aborting a running Live update closes the child and waits for its exit", { timeout: 5_000 }, async t => {
+  const source = `
+    console.log(JSON.stringify({type:"seed", ready:true, payload:{directions:{}}}));
+    process.stdin.on("data", () => {
+      console.log(JSON.stringify({type:"progress", event:{label:"Worker is running"}}));
+    });
+  `;
+  const worker = startLiveEngineWorker({ command: process.execPath, args: ["-e", source], timeoutMs: 1_000 });
+  t.after(worker.close);
+  await worker.seed;
+  const controller = new AbortController();
+  const pending = worker.update(Buffer.from("[]"), "digest", undefined, () => controller.abort(), controller.signal);
+  await assert.rejects(pending, { name: "AbortError" });
+  assert.equal(worker.closed, true);
 });

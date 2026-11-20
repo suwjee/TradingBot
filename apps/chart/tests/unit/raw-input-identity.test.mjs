@@ -18,6 +18,9 @@ test("queued calculations reject a RAW file changed after selection", async () =
     assert.equal(captured.sha256, createHash("sha256").update(captured.bytes).digest("hex"));
     assert.equal(captured.sha256, selected.sha256);
     await assert.doesNotReject(assertRawInputUnchanged(sourcePath, selected));
+    assert.deepEqual(await assertRawInputUnchanged(sourcePath, selected, { includeBytes: true }), captured.bytes);
+    const signal = AbortSignal.abort();
+    await assert.rejects(assertRawInputUnchanged(sourcePath, selected, { signal }), { name: "AbortError" });
     fs.writeFileSync(sourcePath, "[1]");
     await assert.rejects(assertRawInputUnchanged(sourcePath, selected), /RAW file changed/i);
     fs.rmSync(sourcePath);

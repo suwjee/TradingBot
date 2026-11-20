@@ -231,7 +231,25 @@ export function createRawResourceStore({ rootDir }) {
 
   function get(id) {
     const resource = resolve(id);
-    if (!resource) return null;
+    return resource ? readItem(resource) : null;
+  }
+
+  function getListed(id) {
+    if (typeof id !== "string" || !id.endsWith(".json")) return null;
+    const resource = resolve(id);
+    if (resource?.id !== id) return null;
+    try {
+      const actual = fs.realpathSync.native(resource.dataPath);
+      const relative = path.relative(fs.realpathSync.native(root), actual).split(path.sep).join("/");
+      // The inventory lists exact filename casing and skips links and junctions.
+      if (relative !== id || !fs.lstatSync(resource.dataPath).isFile()) return null;
+    } catch {
+      return null;
+    }
+    return readItem(resource);
+  }
+
+  function readItem(resource) {
     const { dataPath, metaPath } = resource;
     const filename = path.basename(dataPath);
     const identity = parseRawFilename(filename);
@@ -557,6 +575,6 @@ export function createRawResourceStore({ rootDir }) {
     inventoryCache.delete(item.id);
     return true;
   }
-  return { root, resolve, version, get, write, list, read, readForVerification, appendLatest, readAppendDelta,
+  return { root, resolve, version, get, getListed, write, list, read, readForVerification, appendLatest, readAppendDelta,
     readCommittedCandleAppend, canServeAppendSnapshot, cut, recordFarazCoverage, remove };
 }

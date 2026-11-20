@@ -10,7 +10,7 @@ scope:
   - source-reference-synchronization
 supersedes: engineering/archive/documentation/standalone-reference-specification-legacy-2026-09-30.md
 created_at: 2026-09-30T11:40:11+03:30
-last_modified_at: 2026-09-30T11:40:11+03:30
+last_modified_at: 2026-11-20T11:55:09+03:30
 ---
 
 # TradingBot Algorithm Reference Maintenance
@@ -26,6 +26,8 @@ It answers:
 It does **not** reproduce the trading algorithm. Current intended semantics belong to the canonical trading-knowledge system and accepted Algorithm References; current executable behavior belongs to production Source.
 
 Use root [`AGENTS.md`](../../../AGENTS.md) for authority and ambiguity handling, [Documentation Governance](../documentation-governance.md) for document lifecycle, and [Testing](testing.md) for execution/evidence rules.
+
+The in-app Algorithm workspace has a separate presentation and export contract. A change to how it mounts articles, searches, or renders an export should be verified against the [UI/UX Reference](../architecture/ui-ux-reference.md). Update the accepted directional References when the Source or their maintained reference contract changes.
 
 ## 2. Maintenance boundary
 

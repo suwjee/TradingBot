@@ -25,6 +25,7 @@ export function appendCandleBuckets(existing, rows, seconds) {
   const last = existing.at(-1);
   const extendsLastBucket = last && Math.floor(rows[0].time / seconds) * seconds === last.time;
   const changed = aggregateRows(rows, seconds, extendsLastBucket ? last : null);
-  const prefix = extendsLastBucket ? existing.slice(0, -1) : existing;
-  return { data: prefix.concat(changed), changed };
+  const data = existing.concat(extendsLastBucket ? changed.slice(1) : changed);
+  if (extendsLastBucket) data[existing.length - 1] = changed[0];
+  return { data, changed };
 }

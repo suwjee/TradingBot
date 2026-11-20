@@ -2,6 +2,7 @@ const HISTORY_LIMIT = 120;
 
 export function createProgressChannels({ maxIdleChannels = 128 } = {}) {
   const channels = new Map();
+  const cancelled = new Set();
   let closed = false;
 
   function get(id) {
@@ -25,6 +26,10 @@ export function createProgressChannels({ maxIdleChannels = 128 } = {}) {
   function publish(id, event) {
     if (!id || closed) return;
     const channel = get(id);
+    if (event.status === "started") {
+      channel.cancelled = false;
+      cancelled.delete(id);
+    }
     channel.events.push(event);
     if (channel.events.length > HISTORY_LIMIT) channel.events.shift();
     const message = `data: ${JSON.stringify(event)}\n\n`;
@@ -42,7 +47,7 @@ export function createProgressChannels({ maxIdleChannels = 128 } = {}) {
   }
 
   function attach(id, client) {
-    if (closed) { client.end(); return () => {}; }
+    if (shouldStopReconnect(id)) { client.end(); return () => {}; }
     const channel = get(id);
     channel.clients.add(client);
     channel.observed = true;
@@ -50,22 +55,50 @@ export function createProgressChannels({ maxIdleChannels = 128 } = {}) {
       try { client.write(`data: ${JSON.stringify(event)}\n\n`); }
       catch { channel.clients.delete(client); break; }
     }
+    if (channel.cancelled) {
+      rememberCancellation(id);
+      endClients(channel);
+      releaseIfObserved(id, channel);
+    }
     return () => {
       channel.clients.delete(client);
       releaseIfObserved(id, channel);
     };
   }
 
+  function endClients(channel) {
+    for (const client of channel.clients) {
+      try { client.end(); } catch { /* A disconnected response cannot block cleanup. */ }
+    }
+    channel.clients.clear();
+  }
+
+  function rememberCancellation(id) {
+    cancelled.delete(id);
+    cancelled.add(id);
+    if (cancelled.size > maxIdleChannels) cancelled.delete(cancelled.values().next().value);
+  }
+
+  function shouldStopReconnect(id) {
+    return closed || (cancelled.has(id) && !channels.has(id));
+  }
+
+  function cancel(id, event) {
+    if (!id || closed) return;
+    const channel = get(id);
+    channel.cancelled = true;
+    rememberCancellation(id);
+    publish(id, event);
+    endClients(channel);
+    releaseIfObserved(id, channel);
+  }
+
   function close() {
     if (closed) return;
     closed = true;
-    for (const channel of channels.values()) {
-      for (const client of channel.clients) {
-        try { client.end(); } catch { /* A disconnected response cannot block shutdown. */ }
-      }
-      channel.clients.clear();
-    }
+    for (const channel of channels.values()) endClients(channel);
     channels.clear();
+    cancelled.clear();
   }
 
   function stats() {
@@ -74,5 +107,5 @@ export function createProgressChannels({ maxIdleChannels = 128 } = {}) {
     return { channels: channels.size, clients };
   }
 
-  return { publish, attach, close, stats };
+  return { publish, attach, cancel, shouldStopReconnect, close, stats };
 }

@@ -2,7 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { preserveOpenChart } from '../../server/ui-live-update.js';
+
+const chartRoot = fileURLToPath(new URL('../../', import.meta.url));
 
 function watchOptions(polling) {
   const program = `
@@ -20,6 +23,7 @@ function watchOptions(polling) {
     }));
   `;
   return JSON.parse(execFileSync(process.execPath, ['--input-type=module', '-e', program], {
+    cwd: chartRoot,
     encoding: 'utf8',
     env: { ...process.env, TRADINGBOT_LOCAL_STATE_ROOT: '', TRADINGBOT_VITE_POLLING: polling,
       TRADINGBOT_VITE_POLL_INTERVAL_MS: '' },
@@ -47,7 +51,7 @@ test('filesystem polling can still be disabled explicitly', () => {
 test('live updates defer navigation and circular imports while passing ordinary HMR', () => {
   const delivered = [];
   const hot = { send: payload => delivered.push(payload) };
-  const workspaceRoot = path.resolve('..', '..');
+  const workspaceRoot = path.resolve(chartRoot, '..', '..');
   preserveOpenChart({ workspaceRoot, engineStyles: path.join(workspaceRoot, 'engine', 'styles') })
     .configureServer({ watcher: { add() {} }, environments: { client: { hot } } });
   const regular = { type: 'update', updates: [{ type: 'css-update' }] };

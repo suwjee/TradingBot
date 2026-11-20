@@ -13,7 +13,7 @@ scope:
   - release-tooling
 supersedes: engineering/archive/documentation/local-tests-legacy-2026-09-30.md
 created_at: 2026-09-30T11:40:11+03:30
-last_modified_at: 2026-11-19T00:28:34+03:30
+last_modified_at: 2026-11-20T11:55:09+03:30
 ---
 
 # TradingBot Testing
@@ -72,7 +72,9 @@ Before executing tests, inspect the live project for:
 
 Use the current supported command from those sources. Do not copy an old command merely because it worked in a previous report.
 
-Run the live-indicator regressions from `apps/chart` with `node --test tests/integration/live-indicator-recovery.test.mjs` on Windows. They start isolated Vite processes and use the configured Python Engine. The restart case checks both directions, RAW renames, idle-session recovery, rewritten history, and catch-up of a five-minute backlog with isolation from disk cache and other tabs. Set `TRADINGBOT_LIVE_TEST_RAW` to a representative 5-second RAW file to run this case on recorded market data. The confirmed-append case uses simulated FARAZ responses, verifies that the realtime RAW route retains the same worker, and compares its output with a fresh Apply.
+Run `npm.cmd test` from `apps/chart` for the manifest's Chart unit command. Run `node --test tests/integration/live-indicator-recovery.test.mjs` there on Windows for the Live integration tests. They start isolated Vite processes and use the configured Python Engine through application endpoints.
+
+The Live tests cover disconnection while queued or active, remaining subscribers to identical requests, late cancellation progress, restart/catch-up, and confirmed append parity against fresh Apply. They use synthetic market input by default. The restart case also accepts an explicitly authorized representative five-second RAW file via `TRADINGBOT_LIVE_TEST_RAW`. A recorded input and simulated FARAZ responses establish different evidence scopes.
 
 If no supported runner exists for a required check, report that limitation explicitly instead of inventing a false PASS.
 
@@ -308,7 +310,9 @@ For changes to local calculation dispatch, cache, RAW identity, or progress tran
 - a failed execution releases its slot so a later request can retry; server shutdown aborts owned active work and rejects queued work;
 - every Apply and each sequential Live calculation runs the Engine, including repeats with unchanged settings. Changed RAW bytes with the same size and modification time are rejected or calculated from the new source. Test saved report access separately.
 - RAW changes while a request waits or runs cause rejection before its result is persisted;
-- late or reconnected progress subscribers receive ordered, bounded history and terminal state; disconnection and shutdown release the appropriate progress resources.
+- a disconnected queued request with no remaining subscriber never starts validation. Active abandoned work drains before its slot is reused. An identical request that still has a subscriber can complete;
+- late or reconnected progress subscribers receive ordered, bounded history and terminal state. For cancellation, verify the terminal event and closed stream, including a connection that arrives after the POST disconnects. Verify that a reconnect can stop cleanly;
+- a cancelled or failed range transport releases the pipe and waits for the owned consumer to exit before admitting another calculation.
 
 Use [Technical Architecture](../architecture/technical-architecture.md) for the current process, cache, and progress contract. A helper-level unit result does not by itself verify the HTTP route, persisted artifact, or user-visible status; add server/browser runtime checks when those boundaries change.
 

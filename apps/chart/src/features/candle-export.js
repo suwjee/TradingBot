@@ -10,6 +10,9 @@ import { shortChartId } from "../ui/chart-identity.js";
 const $id = (root, id) => root.querySelector(`#${id}`);
 const CANDLE_EXPORT_STATE_KEY = "qg:candle-export:v1";
 const DEFAULT_ACTION_HINT = "Completed RAW is saved locally.";
+const AUTH_ACTIVE_INTERVAL_MS = 5_000;
+const AUTH_IDLE_INTERVAL_MS = 15_000;
+const AUTH_BACKGROUND_INTERVAL_MS = 60_000;
 const VALIDATION_CHECKS = [
   ["chronology", "Timestamp order"],
   ["firstLast", "First and last candle"],
@@ -139,6 +142,10 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
   let mode = "count";
   let currentJobId = null;
   let visible = false;
+  let waitingForLogin = false;
+  let authTimer = null;
+  let authRequest = null;
+  let readableTimeTimer = null;
   let defaultsSet = false;
   let jobTimer = null;
   let hostInitialized = false;
@@ -327,6 +334,7 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
 
   function setConnected(status) {
     connected = Boolean(status.connected);
+    waitingForLogin = status.state === "waiting_for_login";
     controls.disabled = !connected;
     lockedNotice.classList.toggle("hidden", connected);
     authBadge.dataset.state = connected ? "connected" : "locked";
@@ -341,7 +349,7 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
     signIn.setAttribute("aria-label", connected ? "Sign out of FARAZ" : "Sign in to FARAZ");
     signIn.title = connected ? "Sign out of FARAZ" : "Sign in to FARAZ";
     signIn.innerHTML = icon(connected ? "logout" : "login", 18);
-    $id(view, "candleStatusStage").textContent = connected ? "Ready" : "Locked";
+    if (!currentJobId) $id(view, "candleStatusStage").textContent = connected ? "Ready" : "Locked";
     $id(view, "candleInfoSite").textContent = connected ? `${status.host || "faraz.io"} active` : "Unavailable";
     const ping = $id(view, "candleInfoPing");
     const pingAvailable = connected && Number.isFinite(Number(status.pingMs));
@@ -370,17 +378,42 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
     renderJob({ stage: connected ? "Waiting" : "Locked", totalPackets: 0, receivedPackets: 0, receivedRows: 0, candleCountResult: 0, logs: [] });
   }
 
-  async function refreshAuth() {
-    try {
-      const symbol = encodeURIComponent(farazSymbol($id(view, "candleExportSymbol").value || getDefaults().symbol || "FXCM:USOIL"));
-      const status = await request(`/api/faraz/auth/status?symbolName=${symbol}`);
-      setConnected(status);
-      return status;
-    } catch (error) {
-      const status = { connected: false, error: error.message };
-      setConnected(status);
-      return status;
-    }
+  function scheduleAuthRefresh() {
+    clearTimeout(authTimer);
+    if (authRequest) return;
+    const interval = waitingForLogin ? AUTH_ACTIVE_INTERVAL_MS
+      : document.hidden ? AUTH_BACKGROUND_INTERVAL_MS
+        : visible ? AUTH_ACTIVE_INTERVAL_MS : AUTH_IDLE_INTERVAL_MS;
+    authTimer = setTimeout(refreshAuth, interval);
+  }
+
+  function cancelAuthRefresh() {
+    clearTimeout(authTimer);
+    const pending = authRequest;
+    authRequest = null;
+    pending?.controller.abort();
+  }
+
+  function refreshAuth({ fresh = false } = {}) {
+    if (authRequest && (!fresh || authRequest.fresh)) return authRequest.promise;
+    cancelAuthRefresh();
+    const controller = new AbortController();
+    const pending = { controller, fresh };
+    authRequest = pending;
+    const query = fresh ? `symbolName=${encodeURIComponent(farazSymbol($id(view, "candleExportSymbol").value || getDefaults().symbol || "FXCM:USOIL"))}`
+      : "passive=1";
+    pending.promise = request(`/api/faraz/auth/status?${query}`, { signal: controller.signal })
+      .catch((error) => ({ connected: false, error: error.message }))
+      .then((status) => {
+        if (authRequest !== pending) return;
+        setConnected(status);
+        return status;
+      }).finally(() => {
+        if (authRequest !== pending) return;
+        authRequest = null;
+        scheduleAuthRefresh();
+      });
+    return pending.promise;
   }
 
   function setActionBusy(button, busy) {
@@ -397,7 +430,8 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
     try {
       await request("/api/faraz/auth/open", { method: "POST" });
       authDetail.textContent = "Complete sign-in in the FARAZ browser. After the local session is saved, that browser closes automatically.";
-      const status = await refreshAuth();
+      cancelAuthRefresh();
+      const status = await refreshAuth({ fresh: true });
       authDetail.textContent = farazLoginWaitingDetail(status) || authDetail.textContent;
     } catch (error) {
       toast(error.message, "error");
@@ -411,6 +445,7 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
     setActionBusy(openFarazButton, true);
     try {
       await request("/api/faraz/auth/browser", { method: "POST" });
+      void refreshAuth({ fresh: true });
       toast("FARAZ opened in your browser", "success");
     } catch (error) {
       toast(error.message, "error");
@@ -424,7 +459,9 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
     setActionBusy(signIn, true);
     try {
       await request("/api/faraz/auth/logout", { method: "POST" });
+      cancelAuthRefresh();
       setConnected({ connected: false, state: "not_connected" });
+      scheduleAuthRefresh();
       toast("Local FARAZ session removed", "success");
     } catch (error) {
       toast(error.message, "error");
@@ -766,7 +803,7 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
   checkSession.onclick = async () => {
     setActionBusy(checkSession, true);
     try {
-      await refreshAuth();
+      await refreshAuth({ fresh: true });
       toast(connected ? "FARAZ session refreshed" : "FARAZ session is not connected", connected ? "success" : "error");
     } finally {
       setActionBusy(checkSession, false);
@@ -843,11 +880,21 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
     view.querySelector('[data-current-time-output="count"]').textContent = readableJobTime(now);
     view.querySelector('[data-current-time-output="range"]').textContent = readableJobTime(now);
   }
-  setInterval(renderReadableTimes, 1000);
+
+  function updateReadableTimeTimer() {
+    clearInterval(readableTimeTimer);
+    if (!visible || document.hidden) return;
+    renderReadableTimes();
+    readableTimeTimer = setInterval(renderReadableTimes, 1_000);
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    updateReadableTimeTimer();
+    if (document.hidden) scheduleAuthRefresh();
+    else void refreshAuth();
+  });
+  window.addEventListener("focus", () => { if (!document.hidden) void refreshAuth(); });
   void refreshAuth();
-  // The footer remains visible outside the exporter. Keep it synchronized
-  // with manual edits or deletion of the sole local session file.
-  setInterval(refreshAuth, 5000);
 
   return {
     open() {
@@ -856,7 +903,7 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
       view.classList.remove("hidden");
       root.classList.add("candle-export-active");
       applyDefaults();
-      renderReadableTimes();
+      updateReadableTimeTimer();
       persistState();
       void refreshRawInventory();
       refreshAuth();
@@ -869,6 +916,8 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
     },
     close() {
       visible = false;
+      updateReadableTimeTimer();
+      scheduleAuthRefresh();
       view.classList.add("hidden");
       restoreWorkspaceHeader(view, header);
       root.classList.remove("candle-export-active");

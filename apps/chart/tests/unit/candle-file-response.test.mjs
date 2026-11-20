@@ -39,3 +39,33 @@ test("candle responses revalidate an unchanged RAW file across browser tabs", as
   assert.equal(second.response.statusCode, 304);
   assert.equal(Buffer.concat(second.chunks).length, 0);
 });
+
+test("a same-size edit with the original mtime sends current RAW bytes", async t => {
+  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "candle-rewrite-"));
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+  const dataPath = path.join(rootDir, "raw.json");
+  const savedTime = new Date("2026-01-02T03:04:05Z");
+  fs.writeFileSync(dataPath, "[1]");
+  fs.utimesSync(dataPath, savedTime, savedTime);
+  const first = responseCapture();
+  await sendCandleFile({ headers: {} }, first.response, dataPath);
+
+  const replacement = path.join(rootDir, "replacement.json");
+  fs.writeFileSync(replacement, "[2]");
+  fs.utimesSync(replacement, savedTime, savedTime);
+  fs.renameSync(replacement, dataPath);
+  const second = responseCapture();
+  await sendCandleFile({ headers: { "if-none-match": first.headers.get("etag") } }, second.response, dataPath);
+  assert.equal(second.response.statusCode, 200);
+  assert.equal(Buffer.concat(second.chunks).toString(), "[2]");
+});
+
+test("a disconnected client settles the file stream", { timeout: 1_000 }, async t => {
+  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "candle-disconnect-"));
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+  const dataPath = path.join(rootDir, "raw.json");
+  fs.writeFileSync(dataPath, Buffer.alloc(256 * 1024));
+  const response = new Writable({ write() { this.destroy(); } });
+  response.setHeader = () => {};
+  await assert.rejects(sendCandleFile({ headers: {} }, response, dataPath), { code: "ERR_STREAM_PREMATURE_CLOSE" });
+});

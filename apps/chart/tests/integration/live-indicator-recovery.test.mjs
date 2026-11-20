@@ -24,16 +24,48 @@ const startVite = `
         h: selected.map(row => row.high), l: selected.map(row => row.low), c: selected.map(row => row.close) });
     };
   }
-  const server = await createServer({ configLoader: "native", server: { port: 0, host: "127.0.0.1", ws: false } });
+  const heldPath = process.env.TRADINGBOT_TEST_HOLD_RAW;
+  let gatePlugin;
+  if (heldPath) {
+    let release, reads = 0, cancelled = 0, holdAt = 1;
+    const readFile = fs.readFile;
+    fs.readFile = async (file, options) => {
+      if (file !== heldPath || ++reads !== holdAt) return readFile(file, options);
+      const signal = options?.signal;
+      function abort() { cancelled++; release(); }
+      try {
+        await new Promise(resolve => {
+          release = resolve;
+          signal?.addEventListener("abort", abort, { once: true });
+          if (signal?.aborted) abort();
+        });
+        signal?.throwIfAborted();
+      } finally {
+        signal?.removeEventListener("abort", abort);
+      }
+      return readFile(file, options);
+    };
+    gatePlugin = { name: "test-raw-read-gate", configureServer(server) {
+      server.middlewares.use("/__test/raw-read-gate", (req, res) => {
+        if (req.method === "POST") release?.();
+        if (req.method === "PUT") holdAt = reads + 1;
+        res.setHeader("Content-Type", "application/json");
+        res.end(JSON.stringify({ reads, cancelled }));
+      });
+    } };
+  }
+  const server = await createServer({ configLoader: "native", plugins: [gatePlugin],
+    server: { port: 0, host: "127.0.0.1", ws: false } });
   await server.listen();
   console.log("TEST_PORT:" + server.httpServer.address().port);
   process.stdin.resume();
   process.stdin.once("end", () => server.close());
 `;
 
-async function launch(stateRoot, marketFixture = "") {
+async function launch(stateRoot, marketFixture = "", holdRaw = "") {
   const child = spawn(process.execPath, ["--input-type=module", "-e", startVite], {
-    cwd: chart, env: { ...process.env, TRADINGBOT_LOCAL_STATE_ROOT: stateRoot, TRADINGBOT_TEST_MARKET: marketFixture }, windowsHide: true,
+    cwd: chart, env: { ...process.env, TRADINGBOT_LOCAL_STATE_ROOT: stateRoot,
+      TRADINGBOT_TEST_MARKET: marketFixture, TRADINGBOT_TEST_HOLD_RAW: holdRaw }, windowsHide: true,
   });
   const closed = once(child, "close");
   const output = createInterface({ input: child.stdout });
@@ -48,13 +80,15 @@ async function launch(stateRoot, marketFixture = "") {
     if (!line.startsWith("TEST_PORT:")) continue;
     const port = Number(line.slice("TEST_PORT:".length));
     const report = (id, method) => fetch(`http://127.0.0.1:${port}/api/info/${id}`, { method });
-    const post = (route, body) => fetch(`http://127.0.0.1:${port}/api${route}`, {
+    const post = (route, body, signal = AbortSignal.timeout(90_000)) => fetch(`http://127.0.0.1:${port}/api${route}`, {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body), signal: AbortSignal.timeout(90_000),
+      body: JSON.stringify(body), signal,
     });
     return { stop, getReport: id => report(id, "GET"), saveReport: id => report(id, "POST"),
-      post: (route, body) => post(`/reactions${route}`, body),
+      post: (route, body, signal) => post(`/reactions${route}`, body, signal),
       update: body => post("/candle-files/realtime", body),
+      rawReadGate: (method = "GET") => fetch(`http://127.0.0.1:${port}/__test/raw-read-gate`, { method })
+        .then(response => response.json()),
       progress: requestId => fetch(`http://127.0.0.1:${port}/api/reactions/progress?requestId=${encodeURIComponent(requestId)}`,
         { signal: AbortSignal.timeout(30_000) }) };
   }
@@ -62,30 +96,36 @@ async function launch(stateRoot, marketFixture = "") {
   assert.fail(`Vite did not start. ${stderr}`);
 }
 
-async function indicatorProgress(response) {
+async function* progressEvents(response) {
   assert.equal(response.status, 200);
   assert.match(response.headers.get("Content-Type"), /^text\/event-stream/);
-  const events = [];
   const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
   let pending = "";
   try {
     for (;;) {
       const { done, value } = await reader.read();
-      if (done) assert.fail("Engine progress ended without a terminal event");
+      if (done) return;
       pending += value;
       let end;
       while ((end = pending.indexOf("\n\n")) >= 0) {
         const message = pending.slice(0, end);
         pending = pending.slice(end + 2);
         if (!message.startsWith("data: ")) continue;
-        const event = JSON.parse(message.slice(6));
-        events.push(event);
-        if (event.status === "finished" || event.status === "failed") return events;
+        yield JSON.parse(message.slice(6));
       }
     }
   } finally {
     await reader.cancel();
   }
+}
+
+async function indicatorProgress(response) {
+  const events = [];
+  for await (const event of progressEvents(response)) {
+    events.push(event);
+    if (event.status === "finished" || event.status === "failed") return events;
+  }
+  assert.fail("Engine progress ended without a terminal event");
 }
 
 async function indicator(response) {
@@ -94,6 +134,114 @@ async function indicator(response) {
   const { timings, ...output } = payload;
   return output;
 }
+
+test("disconnecting calculation tabs releases abandoned work and retains identical surviving requests", {
+  skip: process.platform !== "win32" && "Selected-range Engine input uses Windows named pipes",
+  timeout: 30_000,
+}, async t => {
+  const directory = path.resolve(chart, "state", "tmp");
+  await fs.mkdir(directory, { recursive: true });
+  const stateRoot = await fs.mkdtemp(path.join(directory, "live-disconnect-test-"));
+  t.after(async () => {
+    assert.equal(path.dirname(stateRoot), directory);
+    await fs.rm(stateRoot, { recursive: true, force: true });
+  });
+  const start = 1_795_000_020;
+  const rows = Array.from({ length: 650 }, (_, index) => {
+    const close = 100 + index % 7;
+    return { time: start + index * 5, open: close, high: close + 1, low: close - 1, close };
+  });
+  const store = createRawResourceStore({ rootDir: path.join(stateRoot, "data", "raw") });
+  const raw = store.write({ broker: "TEST", symbol: "DISCONNECT", timeframe: "5S", candles: rows });
+  const server = await launch(stateRoot, "", raw.dataPath);
+  const request = { direction: "bullish", timeframe: 30, chartTimeframe: 30, blueLines: true, from: start,
+    to: Math.floor(rows.at(-1).time / 30) * 30 };
+  const clients = [];
+  async function waitForRawRead(reads, cancelled) {
+    for (let attempt = 0; attempt < 100; attempt++) {
+      const status = await server.rawReadGate();
+      if (status.reads === reads && status.cancelled === cancelled) return;
+      await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    assert.fail(`Expected ${reads} admitted RAW reads and ${cancelled} cancellations`);
+  }
+  async function startRecovery(tabId, expectedEvents, requestId = `request-${tabId}`) {
+    const client = new AbortController();
+    const stream = expectedEvents ? progressEvents(await server.progress(requestId)) : null;
+    const pending = server.post("/continue", { id: raw.id, chartId: raw.chartId, tabId,
+      proof: { chartId: raw.chartId, tabId, request, to: request.to }, requestId }, client.signal);
+    pending.catch(() => {});
+    clients.push({ client, stream, pending });
+    for (const expected of expectedEvents || []) assert.equal((await stream.next()).value?.label, expected);
+    return { client, stream, pending };
+  }
+  async function cancelledProgress(stream) {
+    assert.deepEqual(await stream.next(), { done: false, value: { status: "failed", label: "Calculation cancelled" } });
+    assert.equal((await stream.next()).done, true);
+  }
+  async function disconnect({ client, stream, pending }) {
+    client.abort();
+    await assert.rejects(pending, { name: "AbortError" });
+    if (stream) await cancelledProgress(stream);
+  }
+  try {
+    const validating = "Validate RAW checkpoint";
+    const first = await startRecovery("tab-first", [validating, "Recover live Engine checkpoint"]);
+    assert.deepEqual(await server.rawReadGate(), { reads: 1, cancelled: 0 });
+    const queued = await startRecovery("tab-abandoned", [validating]);
+    const survivor = await startRecovery("tab-survivor");
+    await disconnect(queued);
+    assert.deepEqual(await server.rawReadGate(), { reads: 1, cancelled: 0 });
+    await disconnect(first);
+    const response = await survivor.pending;
+    await indicator(response);
+    assert.match(response.headers.get("X-QG-Live-Session"), /^[a-f0-9]{32}$/);
+    assert.deepEqual(await server.rawReadGate(), { reads: 2, cancelled: 1 });
+
+    await server.rawReadGate("PUT");
+    const recoveryEvents = [validating, "Recover live Engine checkpoint"];
+    const original = await startRecovery("tab-retry", recoveryEvents);
+    const duplicate = await startRecovery("tab-retry", recoveryEvents, "request-tab-retry-duplicate");
+    await disconnect(original);
+    assert.deepEqual(await server.rawReadGate("POST"), { reads: 3, cancelled: 1 });
+    const continued = await duplicate.pending;
+    await indicator(continued);
+    assert.match(continued.headers.get("X-QG-Live-Session"), /^[a-f0-9]{32}$/);
+    let finished = false;
+    for await (const event of duplicate.stream) {
+      assert.notEqual(event.status, "failed");
+      if (event.status === "finished") {
+        finished = true;
+        break;
+      }
+    }
+    assert.equal(finished, true);
+    assert.deepEqual(await server.rawReadGate(), { reads: 3, cancelled: 1 });
+
+    await server.rawReadGate("PUT");
+    const applyId = "request-abandoned-apply";
+    const controller = new AbortController();
+    const pending = server.post("", { ...request, to: request.to - 30, id: raw.id,
+      chartId: raw.chartId, requestId: applyId }, controller.signal);
+    pending.catch(() => {});
+    clients.push({ client: controller, pending });
+    await waitForRawRead(4, 1);
+    await disconnect({ client: controller, pending });
+    await waitForRawRead(4, 2);
+    const late = progressEvents(await server.progress(applyId));
+    try { await cancelledProgress(late); }
+    finally { await late.return(); }
+    assert.equal((await server.progress(applyId)).status, 204);
+    assert.deepEqual(await server.rawReadGate(), { reads: 4, cancelled: 2 });
+  } finally {
+    for (const { client, stream } of clients) {
+      client.abort();
+      await stream?.return();
+    }
+    try { await server.rawReadGate("POST"); }
+    finally { await server.stop(); }
+  }
+});
 
 test("a tab catches up after five minutes and recovers across a restart without calculation files", {
   skip: process.platform !== "win32" && "Selected-range Engine input uses Windows named pipes",
@@ -320,6 +468,13 @@ test("a confirmed realtime append continues in the same worker and matches a fre
     assert.ok(completed.every(event => event.totalStages === 6));
     const expected = await indicator(await server.post("", { ...request, id: updated.file.id, to: Math.floor(updated.file.to / 30) * 30 }));
     assert.deepEqual(actual, expected);
+    const reportId = continued.headers.get("X-QG-Calculation-Id");
+    const report = await server.getReport(reportId);
+    const review = await report.json();
+    assert.equal(report.status, 200);
+    assert.equal(review.snapshot.calculation.calculationId, reportId);
+    const { timings, ...reviewed } = review.payload;
+    assert.deepEqual(reviewed, actual);
   } finally {
     if (server) await server.stop();
     assert.equal(path.dirname(stateRoot), directory);

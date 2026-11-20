@@ -3,7 +3,7 @@
 **document_role:** `procedure`  
 **lifecycle:** `maintained`  
 **owner:** `portable-ai-workflow`  
-**last_modified_at:** `2026-10-28T21:54:51+03:30`
+**last_modified_at:** `2026-11-20T11:55:09+03:30`
 
 ## 1. Role
 
@@ -28,8 +28,8 @@ A task may use a live checkout or an explicitly designated source package. Prefe
 For every substantial TradingBot task:
 
 1. Identify the accessible baseline and discover its actual project root. Read root and nearer applicable instructions; inspect Git status when a working tree is available.
-2. Recursively inventory the relevant tree and supplied package contents. Before extraction reject absolute/traversal paths and unsafe link targets; extract into an isolated task directory without overwriting existing user files.
-3. Inspect the complete relevant Source closure from runtime entry points, loading, imports, configuration, and dependencies, not only the file named in the bug report. Include newly added production modules dynamically.
+2. Inventory the relevant tree and supplied package contents within the authorized scope. Before extraction reject absolute/traversal paths and unsafe link targets and extract into an isolated task directory.
+3. Trace the relevant Source closure through runtime entry points, loading, imports, configuration, and dependencies within the authorized boundary. Include newly added production modules dynamically. Use application contracts and black-box evidence when access to a subsystem's Source is excluded.
 4. Identify:
    - source modules;
    - versions;
@@ -1269,6 +1269,8 @@ Before declaring work complete verify all relevant:
 If any required item is unknown, do not present the work as fully verified.
 
 Confirm user work and secrets were preserved, explicit edit boundaries were honored, required canonical knowledge/owner documents were synchronized or pending updates disclosed, and changed local links/metadata were checked. Distinguish implementation, verification, synchronization, delivery, and authorized publication outcomes. Packaging requirements come from the current task/release contract, not from a universal filename rule.
+
+For an authorized GitHub release in the live project, follow [Release Operations](../scripts/git/README.md). Verify each relevant remote ref and the GitHub Release before reporting publication.
 
 ---
 

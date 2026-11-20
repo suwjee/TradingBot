@@ -271,3 +271,44 @@ test("range pipe handles an abrupt reader disconnect without an unhandled socket
     /pipe|reset|broken|closed|EPIPE|ECONNRESET/i,
   );
 });
+
+test("an aborted range transport waits for its owned consumer to exit", {
+  skip: process.platform !== "win32",
+}, async () => {
+  const controller = new AbortController();
+  const rows = candles(5, 400_000);
+  let exited = false;
+  const operation = withIndicatorRangePipe(rows, pipePath => new Promise((resolve, reject) => {
+    const socket = net.createConnection(pipePath, () => {
+      controller.abort();
+      socket.destroy();
+      setTimeout(() => {
+        exited = true;
+        resolve();
+      }, 100);
+    });
+    socket.on("error", reject);
+  }), { signal: controller.signal });
+  await assert.rejects(operation, /pipe|reset|broken|closed|EPIPE|ECONNRESET/i);
+  assert.equal(exited, true);
+});
+
+test("a broken range pipe aborts and drains its owned consumer without aborting the caller signal", {
+  skip: process.platform !== "win32",
+}, async () => {
+  const parent = new AbortController();
+  let exited = false;
+  const operation = withIndicatorRangePipe(candles(5, 400_000), (pipePath, signal) => new Promise((resolve, reject) => {
+    signal?.addEventListener("abort", () => {
+      setImmediate(() => {
+        exited = true;
+        resolve();
+      });
+    }, { once: true });
+    const socket = net.createConnection(pipePath, () => socket.destroy());
+    socket.on("error", reject);
+  }), { signal: parent.signal });
+  await assert.rejects(operation, /pipe|reset|broken|closed|EPIPE|ECONNRESET/i);
+  assert.equal(parent.signal.aborted, false);
+  assert.equal(exited, true);
+});

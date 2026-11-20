@@ -7,7 +7,7 @@ scope:
   - engineering-task-execution
   - documentation-synchronization
 created_at: 2026-09-30T10:14:08+03:30
-last_modified_at: 2026-09-30T11:40:11+03:30
+last_modified_at: 2026-11-20T11:55:09+03:30
 ---
 
 # TradingBot AI Engineering Workflow
@@ -53,6 +53,7 @@ Before substantial work:
 - locate the actual repository root from the current environment;
 - inspect current branch, remote, and working-tree state when a working tree is available;
 - preserve staged, unstaged, untracked, deleted, renamed, and local-only user work;
+- apply the task's explicit scope to repository inspection, test execution, and documentation synchronization;
 - recursively inspect the project structure to the depth required by the task;
 - discover current Source, tests, manifests, configuration, documentation, and evidence dynamically;
 - follow imports, runtime entry points, references, and ownership boundaries far enough to understand impact.
@@ -131,6 +132,8 @@ Commit or push only when the current user instruction explicitly authorizes it a
 Release mechanics are owned by [TradingBot release operations](../../../scripts/git/README.md). Do not recreate release mechanics here.
 
 After any authorized remote write, verify the resulting remote branch/commit and key paths. A write request alone is not proof of successful synchronization.
+
+When a task requests a release, verify the annotated tag, production commit, main source commit, and actual GitHub Release through the maintained workflow. Report any branch, tag, or release action that completed before a later step failed.
 
 ## 10. Final delivery
 

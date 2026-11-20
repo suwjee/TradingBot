@@ -6,6 +6,7 @@ import fs from "node:fs";
 import http from "node:http";
 import os from "node:os";
 import path from "node:path";
+import { Readable } from "node:stream";
 
 import { buildCandleFilename, buildCoverageRecoveryChunks, createFarazCandleApi as createProductionFarazCandleApi, findCandleCoverageGaps, normalizeClearTextSession } from "../../server/faraz-candle-api.js";
 import { buildChartVerificationRanges } from "../../src/features/candle-update.js";
@@ -713,6 +714,40 @@ test("FARAZ cannot start an extraction after shutdown during auth probing", asyn
   assert.equal(requests, 2); // Probe and profile only; no extraction packets.
 });
 
+test("cancelling an extraction aborts the response body after its headers arrived", { timeout: 5_000 }, async t => {
+  const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-cancel-body-"));
+  t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
+  writeFakeSession(workspaceRoot);
+  const reading = deferred();
+  const aborted = deferred();
+  const api = createFarazCandleApi({ workspaceRoot, fetchImpl: async (url, { signal }) => {
+    if (new URL(url).searchParams.get("from") !== "100") {
+      return new Response("{}", { headers: { "content-type": "application/json" } });
+    }
+    return { text: () => new Promise((_, reject) => {
+      signal.addEventListener("abort", () => {
+        aborted.resolve();
+        reject(signal.reason);
+      }, { once: true });
+      reading.resolve();
+    }) };
+  } });
+  const origin = await listenForApi(t, api);
+  const post = (route, body) => fetch(`${origin}/api/faraz/candles/${route}`, {
+    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body),
+  });
+  try {
+    const response = await post("start", { mode: "range", symbolName: "TEST:PAIR", resolution: "5S", from: 100, to: 120 });
+    assert.equal(response.status, 202);
+    const { id } = await response.json();
+    await reading.promise;
+    assert.equal((await post("cancel", { id })).status, 200);
+    await aborted.promise;
+  } finally {
+    await api.shutdown();
+  }
+});
+
 test("FARAZ history cannot use cached credentials after the session file is removed", async (t) => {
   const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-history-file-"));
   t.after(() => {
@@ -866,6 +901,193 @@ test("editable clear-text FARAZ sessions stay readable and manual changes take e
   assert.equal(secondStatus.connected, true);
   assert.deepEqual(observedTokens, ["first-test-token", "edited-test-token"]);
   assert.equal(JSON.parse(fs.readFileSync(sessionPath, "utf8")).format, "clear-text");
+});
+
+test("FARAZ footer polls share a probe across tabs and bypass retained status on a secret change", async (t) => {
+  const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-status-poll-"));
+  t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
+  const sessionPath = writeFakeSession(workspaceRoot);
+  const signals = [];
+  let clock = 100_000;
+  const api = createFarazCandleApi({
+    workspaceRoot,
+    now: () => clock,
+    fetchImpl: async (url, options) => {
+      const token = options.headers["x-access-token"];
+      signals.push({ endpoint: new URL(url).pathname, token });
+      return Response.json({ _id: token });
+    },
+  });
+  const origin = await listenForApi(t, api);
+  const request = (symbol, passive = true) => fetch(
+    `${origin}/api/faraz/auth/status?symbolName=${encodeURIComponent(symbol)}${passive ? "&passive=1" : ""}`,
+  ).then(response => response.json());
+  const symbols = ["FXCM:USOIL", "FOREXCOM:XAUUSD", "TEST:PAIR"];
+  for (const offset of [0, 5_000, 15_000]) {
+    clock = 100_000 + offset;
+    const responses = await Promise.all(symbols.map(symbol => request(symbol)));
+    assert.ok(responses.every(status => status.connected && status.userId === "test-file-token"));
+  }
+  assert.equal(signals.length, 2, "nine background status requests use one history probe and one profile fetch");
+  clock = 130_000;
+  await request(symbols[0]);
+  assert.equal(signals.length, 4, "a badge refreshes its upstream status after 30 seconds");
+  await request(symbols[0], false);
+  assert.equal(signals.length, 6, "an explicit check bypasses the badge result");
+
+  fs.writeFileSync(sessionPath, JSON.stringify({ format: "clear-text", "x-access-token": "replacement-token" }));
+  assert.equal((await request(symbols[1])).userId, "replacement-token");
+  assert.equal(signals.length, 8);
+  fs.unlinkSync(sessionPath);
+  assert.equal((await request(symbols[2])).state, "not_connected");
+  assert.equal(signals.length, 8, "a deleted secret is reflected immediately without FARAZ access");
+});
+
+test("removing a FARAZ session during a slow footer probe cannot resurrect its status", { timeout: 5_000 }, async (t) => {
+  const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-status-race-"));
+  t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
+  writeFakeSession(workspaceRoot);
+  const entered = deferred();
+  const release = deferred();
+  let probeSignal;
+  const api = createFarazCandleApi({
+    workspaceRoot,
+    fetchImpl: async (_url, { signal }) => {
+      probeSignal ||= signal;
+      entered.resolve();
+      await release.promise;
+      signal.throwIfAborted();
+      return Response.json({});
+    },
+  });
+  const origin = await listenForApi(t, api);
+  const statusUrl = `${origin}/api/faraz/auth/status?passive=1`;
+  const pending = fetch(statusUrl).then(response => response.json());
+  await entered.promise;
+  const logout = await fetch(`${origin}/api/faraz/auth/logout`, { method: "POST" });
+  assert.equal(logout.status, 200);
+  release.resolve();
+  assert.equal((await pending).state, "not_connected");
+  assert.equal(probeSignal.aborted, true);
+});
+
+test("an explicit FARAZ check invalidates a cached footer status in both directions", async (t) => {
+  const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-status-explicit-"));
+  t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
+  writeFakeSession(workspaceRoot);
+  let permitted = true;
+  const checkedSymbols = [];
+  const api = createFarazCandleApi({
+    workspaceRoot,
+    fetchImpl: async (url) => {
+      const symbol = new URL(url).searchParams.get("symbolName");
+      if (symbol) checkedSymbols.push(symbol);
+      return Response.json({}, { status: permitted ? 200 : 401 });
+    },
+  });
+  const origin = await listenForApi(t, api);
+  const status = (query) => fetch(`${origin}/api/faraz/auth/status?${query}`).then(response => response.json());
+  const passive = () => status("passive=1");
+  const explicit = () => status("symbolName=FOREXCOM%3AXAUUSD");
+  assert.equal((await passive()).connected, true);
+  permitted = false;
+  assert.equal((await explicit()).connected, false);
+  assert.equal((await passive()).connected, false);
+  permitted = true;
+  assert.equal((await explicit()).connected, true);
+  assert.equal((await passive()).connected, true);
+  assert.deepEqual(checkedSymbols, ["FXCM_USOIL", "FOREXCOM_XAUUSD", "FXCM_USOIL", "FOREXCOM_XAUUSD", "FXCM_USOIL"]);
+});
+
+test("an in-flight FARAZ footer probe yields to a newer explicit check", { timeout: 5_000 }, async (t) => {
+  const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-status-explicit-race-"));
+  t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
+  writeFakeSession(workspaceRoot);
+  const entered = deferred();
+  const release = deferred();
+  let firstSignal;
+  const api = createFarazCandleApi({
+    workspaceRoot,
+    fetchImpl: async (_url, { signal }) => {
+      if (!firstSignal) {
+        firstSignal = signal;
+        entered.resolve();
+        await release.promise;
+        return Response.json({});
+      }
+      return Response.json({}, { status: 401 });
+    },
+  });
+  const origin = await listenForApi(t, api);
+  const status = (query) => fetch(`${origin}/api/faraz/auth/status?${query}`).then(response => response.json());
+  const pending = status("passive=1");
+  await entered.promise;
+  try {
+    assert.equal((await status("symbolName=FOREXCOM%3AXAUUSD")).connected, false);
+  } finally {
+    release.resolve();
+  }
+  assert.equal((await pending).connected, false);
+  assert.equal(firstSignal.aborted, true);
+});
+
+test("FARAZ shutdown ends a shared slow footer probe without starting another", async (t) => {
+  const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-status-shutdown-"));
+  t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
+  writeFakeSession(workspaceRoot);
+  const release = deferred();
+  const requests = [];
+  const api = createFarazCandleApi({
+    workspaceRoot,
+    fetchImpl: async (url, { signal }) => {
+      requests.push({ route: new URL(url).pathname, signal });
+      await release.promise;
+      signal.throwIfAborted();
+      return Response.json({});
+    },
+  });
+  let statusHandler;
+  api.configureServer({ middlewares: { use(route, handler) {
+    if (route === "/api/faraz/auth/status") statusHandler = handler;
+  } } });
+  const poll = (symbol) => new Promise((resolve, reject) => {
+    const res = { setHeader() {}, end(body) { resolve(JSON.parse(body)); } };
+    statusHandler({ url: `/?passive=1&symbolName=${symbol}` }, res).catch(reject);
+  });
+  const pending = [poll("FXCM%3AUSOIL"), poll("FOREXCOM%3AXAUUSD")];
+  assert.equal(requests.length, 1, "both tabs wait on the same upstream history probe");
+  await api.shutdown();
+  release.resolve();
+  for (const status of await Promise.all(pending)) assert.equal(status.state, "not_connected");
+  assert.equal((await poll("TEST%3APAIR")).state, "not_connected");
+  assert.equal(requests.length, 1);
+  assert.equal(requests[0].signal.aborted, true);
+});
+
+test("logging out during a pending FARAZ browser capture leaves the secret deleted", { timeout: 5_000 }, async (t) => {
+  const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-capture-logout-"));
+  t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
+  const managed = fakeFarazLoginBrowser();
+  const entered = deferred();
+  const release = deferred();
+  const storageState = managed.context.storageState;
+  managed.context.storageState = async () => {
+    entered.resolve();
+    await release.promise;
+    return storageState();
+  };
+  const api = createFarazCandleApi({
+    workspaceRoot, launchBrowser: async () => managed, fetchImpl: async () => Response.json({}),
+  });
+  const origin = await listenForApi(t, api);
+  const auth = `${origin}/api/faraz/auth`;
+  assert.equal((await fetch(`${auth}/open`, { method: "POST" })).status, 200);
+  const pending = fetch(`${auth}/status?passive=1`).then(response => response.json());
+  await entered.promise;
+  assert.equal((await fetch(`${auth}/logout`, { method: "POST" })).status, 200);
+  release.resolve();
+  assert.equal((await pending).state, "not_connected");
+  assert.equal(fs.existsSync(path.join(workspaceRoot, "apps/chart/state/secret/faraz-session.dpapi.json")), false);
 });
 
 test("a rejected FARAZ session remains editable until explicit logout", async (t) => {
@@ -1485,6 +1707,34 @@ test("FARAZ exporter replays a successful response that starts after the request
   assert.equal(job.suspiciousGaps[0].status, "recovered");
   const rows = JSON.parse(fs.readFileSync(path.join(path.join(workspaceRoot, "apps", "chart", "state"), job.savedPath), "utf8"));
   assert.deepEqual(rows.map((row) => row.time), [100, 105, 110, 115, 120]);
+
+  const downloadUrl = `${origin}/api/faraz/candles/download?id=${started.id}`;
+  const download = await fetch(downloadUrl);
+  assert.equal(download.status, 200);
+  assert.match(download.headers.get("content-disposition"), /^attachment;/);
+  assert.deepEqual(await download.json(), rows);
+
+  // Hold a RAW read open after the first chunk so client disconnect happens
+  // before EOF, regardless of socket buffering or disk speed.
+  const stream = new Readable({ read() {} });
+  t.mock.method(fs, "createReadStream", () => stream);
+  const controller = new AbortController();
+  const closed = new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => reject(new Error("Disconnected download did not close its RAW stream.")), 1_000);
+    stream.once("close", () => { clearTimeout(timeout); resolve(); });
+  });
+  const pendingDownload = fetch(downloadUrl, { signal: controller.signal });
+  stream.push("[");
+  const partial = await pendingDownload;
+  const reader = partial.body.getReader();
+  assert.equal(Buffer.from((await reader.read()).value).toString(), "[");
+  controller.abort();
+  try {
+    await closed;
+  } finally {
+    reader.releaseLock();
+    stream.destroy();
+  }
 });
 
 test("FARAZ does not publish an incomplete range until the user continues from the first available candle", async (t) => {
@@ -1550,6 +1800,31 @@ test("FARAZ does not publish an incomplete range until the user continues from t
   assert.equal(continued.effectiveRequestedFrom, 105);
   const rows = JSON.parse(fs.readFileSync(path.join(path.join(workspaceRoot, "apps", "chart", "state"), continued.savedPath), "utf8"));
   assert.deepEqual(rows.map((row) => row.time), [105, 110, 115, 120]);
+
+  const cancelled = await fetch(`${origin}/api/faraz/candles/start`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ mode: "range", symbolName: "TEST:PAIR", resolution: "5S", from: 100, to: 120, packetSize: 10, rateLimitMs: 30 }),
+  }).then(response => response.json());
+  const statusUrl = `${origin}/api/faraz/candles/status?id=${cancelled.id}`;
+  let pending = cancelled;
+  for (let attempt = 0; pending.running && attempt < 100; attempt++) {
+    await new Promise(resolve => setTimeout(resolve, 20));
+    pending = await fetch(statusUrl).then(response => response.json());
+  }
+  assert.equal(pending.awaitingCoverageDecision, true);
+  const cancel = await fetch(`${origin}/api/faraz/candles/cancel`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ id: cancelled.id }),
+  });
+  assert.equal(cancel.status, 200);
+  const final = await fetch(statusUrl).then(response => response.json());
+  assert.equal(final.awaitingCoverageDecision, false);
+  assert.equal(final.cancelledByUser, true);
+  const staleContinue = await fetch(`${origin}/api/faraz/candles/coverage-decision`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ id: cancelled.id, decision: "continue_from_available" }),
+  });
+  assert.equal(staleContinue.status, 400);
 });
 
 test("FARAZ exporter snaps a manual range inward to complete timeframe slots", async (t) => {

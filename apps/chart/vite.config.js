@@ -79,7 +79,6 @@ function liveSourceFingerprint(sourceFingerprint) {
     throw error;
   }
 }
-const inventoryMeta = new Map();
 // Durable, human-navigable cache root.  Calculation results must never rely on
 // Vite's process memory: restarting the dev server must preserve the exact
 // serialized payload and each chart source gets an independent drawing file.
@@ -185,9 +184,10 @@ function resolveCalculationReport(id) {
 
 function livePublication(item, request, to, payload, workerFingerprint, tabId) {
   const reportId = `live/${randomUUID().replaceAll('-', '')}`;
-  liveReports.set(reportId, { payload, calculation: calculationMetadata(item, { ...request, to }, reportId) });
+  const output = JSON.stringify(payload);
+  liveReports.set(reportId, { output, calculation: calculationMetadata(item, { ...request, to }, reportId) });
   if (liveReports.size > 16) liveReports.delete(liveReports.keys().next().value);
-  return { calculationId: reportId, output: JSON.stringify(payload), proof: {
+  return { calculationId: reportId, output, proof: {
     chartId: item.chartId, tabId, request, to, workerFingerprint,
     rawBytes: item.metadata.dataBytes, rawSha256: item.metadata.dataSha256, resultDigest: indicatorDigest(payload),
   } };
@@ -200,13 +200,14 @@ function engineCalculationArgs(dataPath, request, bounds) {
     '--a-zones', 'enabled', '--s-zones', 'enabled', '--bridge-output'];
 }
 
-function seedLiveEngine({ chartId, tabId, workerFingerprint, request, sourcePath, args, onProgress, rawSha256 }) {
+function seedLiveEngine({ chartId, tabId, workerFingerprint, request, sourcePath, args, onProgress, rawSha256, signal }) {
+  signal?.throwIfAborted();
   return liveEngineSessions.seed({ chartId, tabId, sourceFingerprint: workerFingerprint, request, rawSha256 },
     () => startLiveEngineWorker({
       command: pythonCommand, args: [liveBridgePath, ...engineArgs, ...args],
       env: { ...process.env, PYTHONDONTWRITEBYTECODE: '1', PYTHONUTF8: '1',
         TRADINGBOT_LIVE_RAW_SOURCE: sourcePath, TRADINGBOT_LIVE_CHART_TIMEFRAME: String(request.chartTimeframe) },
-      onProgress,
+      onProgress, signal,
     }));
 }
 
@@ -221,11 +222,12 @@ function validLiveProof(proof, selected, tabId) {
     && ['bullish', 'bearish'].includes(request.direction) && typeof request.blueLines === 'boolean';
 }
 
-async function recoverLiveEngine({ selected, proof, tabId, workerFingerprint, onProgress }) {
+async function recoverLiveEngine({ selected, proof, tabId, workerFingerprint, onProgress, signal }) {
   if (!validLiveProof(proof, selected, tabId)) {
     throw new LiveEngineError(404, 'Run an indicator calculation with Apply in this tab before enabling automatic continuation.', 'NO_INDICATOR_CALCULATION');
   }
-  const current = await captureRawInputIdentity(selected.dataPath, { includeBytes: true }).catch(() => null);
+  const current = await captureRawInputIdentity(selected.dataPath, { includeBytes: true, signal }).catch(() => null);
+  signal.throwIfAborted();
   if (!current || current.sha256 !== selected.metadata.dataSha256) {
     throw new LiveEngineError(503, 'RAW changed during recovery. Retrying at the next check.', 'RAW_RETRY');
   }
@@ -234,21 +236,32 @@ async function recoverLiveEngine({ selected, proof, tabId, workerFingerprint, on
   const completedSeed = (seed, request, to) => ({
     token: seed.sessionId, fresh: { payload: seed.payload, request, to, identity },
   });
-  const runSeed = (rows, sourcePath, applied, to, rawSha256) => runIndicatorRangeCalculation({
-    rows, sourcePath, from: applied.from, to, chartTimeframeSeconds: applied.chartTimeframe,
-    run: (input, bounds) => seedLiveEngine({
-      chartId: selected.chartId, tabId, workerFingerprint, request: applied, sourcePath,
-      args: engineCalculationArgs(input, applied, bounds), rawSha256, onProgress,
-    }),
+  const runSeed = (rows, sourcePath, applied, to, rawSha256, seedSignal = signal) => runIndicatorRangeCalculation({
+    rows, sourcePath, from: applied.from, to, chartTimeframeSeconds: applied.chartTimeframe, signal: seedSignal,
+    run: async (input, bounds, taskSignal) => {
+      const seed = await seedLiveEngine({
+        chartId: selected.chartId, tabId, workerFingerprint, request: applied, sourcePath,
+        args: engineCalculationArgs(input, applied, bounds), rawSha256, onProgress, signal: taskSignal,
+      });
+      checkSeed(seed, taskSignal);
+      return seed;
+    },
   });
+  function checkSeed(seed, taskSignal = signal) {
+    if (taskSignal.aborted && seed?.sessionId) liveEngineSessions.discard(seed.sessionId);
+    taskSignal.throwIfAborted();
+  }
   const decode = bytes => JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/, ''));
   const snapshot = proof.workerFingerprint === workerFingerprint && restoreRawSnapshot(bytes, proof);
   if (snapshot) {
-    const seed = await withIndicatorInputPipe(snapshot, sourcePath => runSeed(decode(snapshot), sourcePath, request, proof.to, proof.rawSha256))
+    const seed = await withIndicatorInputPipe(snapshot,
+      (sourcePath, taskSignal) => runSeed(decode(snapshot), sourcePath, request, proof.to, proof.rawSha256, taskSignal), { signal })
       .catch(error => {
+        signal.throwIfAborted();
         if (error.status === 429 || error.status === 503) throw error;
         return null;
       });
+    checkSeed(seed);
     if (seed?.sessionId) {
       if (indicatorDigest(seed.payload) === proof.resultDigest) {
         const currentTo = Math.floor(selected.to / request.chartTimeframe) * request.chartTimeframe;
@@ -270,6 +283,7 @@ async function recoverLiveEngine({ selected, proof, tabId, workerFingerprint, on
   const to = Math.floor(rows.at(-1).time / request.chartTimeframe) * request.chartTimeframe;
   const recoveredRequest = { ...request, from };
   const seed = await runSeed(rows, selected.dataPath, recoveredRequest, to, current.sha256);
+  checkSeed(seed);
   if (!seed.sessionId) throw new LiveEngineError(503, 'The indicator worker is unavailable. Retrying at the next check.');
   return completedSeed(seed, recoveredRequest, to);
 }
@@ -392,23 +406,6 @@ function runDetector(args, onProgress = () => {}, signal) {
   });
 }
 
-function candleRows(filename) {
-  const source = fs.readFileSync(path.join(inputDir, filename), "utf8");
-  const rows = JSON.parse(source);
-  if (!Array.isArray(rows) || !rows.length) return null;
-  const keys = ["time", "open", "high", "low", "close"];
-  const valid = rows.every((row, index) => {
-    if (!row || Object.keys(row).length !== keys.length || !keys.every((key) => Object.hasOwn(row, key))) return false;
-    const candle = Object.fromEntries(keys.map((key) => [key, Number(row[key])]));
-    return Number.isSafeInteger(candle.time) && candle.time > 0
-      && [candle.open, candle.high, candle.low, candle.close].every(Number.isFinite)
-      && candle.high >= Math.max(candle.open, candle.close, candle.low)
-      && candle.low <= Math.min(candle.open, candle.close, candle.high)
-      && (!index || candle.time > Number(rows[index - 1].time));
-  });
-  return valid ? rows : null;
-}
-
 function inventory() {
   return rawStore.list().map((item) => {
     return {
@@ -431,16 +428,33 @@ function localDataApi() {
   return {
     name: 'local-candle-data-api',
     configureServer(server) {
+      const progressOwners = new Map();
+      function claimProgress(id, owner) {
+        if (!id) return () => false;
+        const owners = progressOwners.get(id) || new Set();
+        progressOwners.set(id, owners);
+        owners.add(owner);
+        return () => {
+          if (!owners.delete(owner) || owners.size) return false;
+          progressOwners.delete(id);
+          return true;
+        };
+      }
       ensureStateDirectories();
       server.watcher.once('close', shutdownCalculations);
       server.httpServer?.once('close', shutdownCalculations);
       server.middlewares.use('/api/reactions/progress', (req, res) => {
         const requestId = new URL(req.url ?? '', 'http://localhost').searchParams.get('requestId');
         if (!requestId || !/^[a-zA-Z0-9-]{8,80}$/.test(requestId)) { res.statusCode = 400; res.end('Invalid progress request'); return; }
+        if (progressChannels.shouldStopReconnect(requestId)) {
+          res.writeHead(204, { 'Cache-Control': 'no-store' });
+          res.end();
+          return;
+        }
         res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', Connection: 'keep-alive' });
         res.write(': connected\n\n');
         const detach = progressChannels.attach(requestId, res);
-        req.once('close', detach);
+        res.once('close', detach);
       });
       server.middlewares.use('/api/symbols', (_req, res) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -457,7 +471,8 @@ function localDataApi() {
             if (fs.existsSync(file)) { res.end(fs.readFileSync(file)); return; }
             const report = liveReports.get(route);
             if (!report) throw new Error('The live report is unavailable. Update the indicator in its chart tab.');
-            const output = JSON.stringify({ payload: report.payload, snapshot: { timezone: 'Asia/Tehran', calculation: report.calculation } });
+            const snapshot = JSON.stringify({ timezone: 'Asia/Tehran', calculation: report.calculation });
+            const output = `{"payload":${report.output},"snapshot":${snapshot}}`;
             if (req.method === 'POST') {
               const temporary = `${file}.${randomUUID()}.tmp`;
               fs.mkdirSync(path.dirname(file), { recursive: true });
@@ -495,7 +510,6 @@ function localDataApi() {
           if (!valid) { res.statusCode = 404; res.end(JSON.stringify({ error: 'Candle file was not found.' })); return; }
           if (!rawStore.remove(valid.id)) { res.statusCode = 404; res.end(JSON.stringify({ error: 'Candle file was not found.' })); return; }
           const artifacts = removeChartArtifacts(valid);
-          inventoryMeta.delete(valid.id);
           res.setHeader('Content-Type', 'application/json; charset=utf-8');
           res.setHeader('Cache-Control', 'no-store');
           res.end(JSON.stringify({ ok: true, deleted: valid.id, ...artifacts }));
@@ -516,7 +530,6 @@ function localDataApi() {
           const mode = body.mode === 'new' ? 'new' : body.mode === 'replace' ? 'replace' : '';
           if (!id || !mode || !Number.isSafeInteger(from) || !Number.isSafeInteger(to)) throw new Error('A valid file and inclusive candle range are required.');
           const result = rawStore.cut(id, { from, to, mode });
-          inventoryMeta.clear();
           res.end(JSON.stringify({ ok: true, ...result }));
         } catch (error) {
           res.statusCode = 400;
@@ -530,7 +543,6 @@ function localDataApi() {
           if (req.method !== 'POST') throw new Error('POST is required.');
           const body = await readJson(req);
           const report = migrateFlatRawFiles({ rootDir: inputDir, apply: body.apply === true });
-          inventoryMeta.clear();
           res.end(JSON.stringify({ ok: true, applied: body.apply === true, report }));
         } catch (error) {
           res.statusCode = 400;
@@ -545,6 +557,7 @@ function localDataApi() {
           if (!resource) { res.statusCode = 404; res.end('Candle file not found'); return; }
           await sendCandleFile(req, res, resource.dataPath);
         } catch (error) {
+          if (res.destroyed) return;
           if (!res.headersSent) res.statusCode = 500;
           if (!res.writableEnded) res.end('Unable to read candle file');
         }
@@ -677,7 +690,6 @@ function localDataApi() {
               fs.writeFileSync(target, JSON.stringify(importedDrawings, null, 2), 'utf8');
             },
           });
-          inventoryMeta.clear();
           res.end(JSON.stringify({ ok: true, id: item.id, symbol: item.symbol, broker: item.broker, timeframe: item.timeframe, drawings }));
         } catch (error) {
           res.statusCode = 400;
@@ -721,11 +733,23 @@ function localDataApi() {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         let requestId = null;
+        let releaseProgress = () => false;
+        const client = new AbortController();
+        const disconnect = () => {
+          if (res.writableFinished) return;
+          client.abort();
+          if (releaseProgress()) progressChannels.cancel(requestId, { status: 'failed', label: 'Calculation cancelled' });
+        };
+        res.once('close', disconnect);
         const report = event => publishProgress(requestId, event);
         try {
           if (req.method !== 'POST') throw new LiveEngineError(405, 'POST is required.');
           const { id, chartId, tabId = null, sessionId, keepAlive, proof, requestId: progressId } = await readJson(req).catch(error => { throw new LiveEngineError(400, error.message); });
-          if (typeof progressId === 'string' && /^[a-zA-Z0-9-]{8,80}$/.test(progressId)) requestId = progressId;
+          client.signal.throwIfAborted();
+          if (typeof progressId === 'string' && /^[a-zA-Z0-9-]{8,80}$/.test(progressId)) {
+            requestId = progressId;
+            releaseProgress = claimProgress(requestId, client);
+          }
           if (typeof id !== 'string' || typeof chartId !== 'string' || !chartId ||
               (tabId !== null && (typeof tabId !== 'string' || !/^[a-zA-Z0-9-]{8,80}$/.test(tabId))) ||
               (sessionId != null && (typeof sessionId !== 'string' || !/^[a-f0-9]{32}$/.test(sessionId)))) {
@@ -741,7 +765,8 @@ function localDataApi() {
           const { dataPath, metadata } = selected;
           let rawIdentity;
           let currentSessionId = sessionId;
-          async function validate(includeBytes = false, delta = false) {
+          async function validate(includeBytes = false, delta = false, signal) {
+            signal?.throwIfAborted();
             if (liveSourceFingerprint(calculationSourceFingerprint()) !== workerFingerprint) {
               liveEngineSessions.discard(currentSessionId);
               throw new LiveEngineError(409, 'Calculation sources changed. Use Apply again.', 'ENGINE_CHANGED');
@@ -752,23 +777,31 @@ function localDataApi() {
                 return;
               }
               if (rawIdentity) {
-                try { await assertRawInputUnchanged(dataPath, rawIdentity); }
-                catch (error) { if (!rawStore.canServeAppendSnapshot(selected)) throw error; }
+                try { await assertRawInputUnchanged(dataPath, rawIdentity, { signal }); }
+                catch (error) {
+                  signal?.throwIfAborted();
+                  if (!rawStore.canServeAppendSnapshot(selected)) throw error;
+                }
                 return;
               }
-              const { bytes, ...identity } = await captureRawInputIdentity(dataPath, { includeBytes });
+              const { bytes, ...identity } = await captureRawInputIdentity(dataPath, { includeBytes, signal });
               if (identity.sha256 !== metadata.dataSha256) throw new Error('The selected RAW changed.');
               rawIdentity = identity;
               return bytes;
             } catch {
+              signal?.throwIfAborted();
               throw new LiveEngineError(503, 'The selected RAW changed during the indicator update. The next poll will retry.');
             }
           }
           const session = { chartId, tabId, sourceFingerprint: workerFingerprint };
-          function advance(token, reportProgress = requestId ? report : undefined) {
+          function advance(token, {
+            reportProgress = requestId ? report : undefined, ownsCalculationSlot = false, signal = client.signal,
+          } = {}) {
             return liveEngineSessions.advance({
               ...session, sessionId: token, rawSha256: metadata.dataSha256, data: dataPath,
-            }, { validate, reportProgress, readAppend: base => rawStore.readAppendDelta(selected, base), publish(payload, request) {
+            }, { validate, reportProgress, signal,
+              schedule: ownsCalculationSlot ? undefined : (work, options) => calculationCoordinator.run(Symbol(), work, undefined, options),
+              readAppend: base => rawStore.readAppendDelta(selected, base), publish(payload, request) {
               const to = Math.floor(selected.to / request.chartTimeframe) * request.chartTimeframe;
               return livePublication(selected, request, to, payload, workerFingerprint, tabId);
             } });
@@ -784,51 +817,69 @@ function localDataApi() {
             report({ status: 'started', label: 'Validate RAW checkpoint' });
             result = await advance(sessionId);
           } catch (error) {
+            client.signal.throwIfAborted();
             const lostSession = ['LIVE_SESSION_EXPIRED', 'LIVE_SESSION_CLOSED', 'LIVE_ENGINE_TIMEOUT',
               'LIVE_ENGINE_FAILED', 'LIVE_ENGINE_PROTOCOL'].includes(error.code);
             const staleHistory = ['ENGINE_CHANGED', 'RAW_CHANGED'].includes(error.code);
             if (!lostSession && !(proof && staleHistory)) throw error;
             const key = JSON.stringify(['live-recovery', chartId, tabId, sessionId, proof, metadata.dataSha256, workerFingerprint]);
-            const recovered = await calculationCoordinator.run(key, async publish => {
+            const recovered = await calculationCoordinator.run(key, async (publish, signal) => {
               publish({ status: 'started', label: 'Recover live Engine checkpoint' });
-              const { token, fresh } = await recoverLiveEngine({ selected, proof, tabId, workerFingerprint, onProgress: publish });
+              const { token, fresh } = await recoverLiveEngine({ selected, proof, tabId, workerFingerprint, onProgress: publish, signal });
               currentSessionId = token;
               rawIdentity = fresh?.identity;
               try {
-                if (!fresh) return { result: await advance(token, publish), token };
+                if (!fresh) return { result: await advance(token, { reportProgress: publish, ownsCalculationSlot: true, signal }), token };
                 // The successful seed already calculated through the current
                 // RAW tail in this request. Validate it before publication.
-                await validate();
+                await validate(false, false, signal);
+                signal.throwIfAborted();
                 liveEngineSessions.keepAlive({ ...session, sessionId: token });
                 const result = livePublication(selected, fresh.request, fresh.to, fresh.payload, workerFingerprint, tabId);
                 return { result, token };
               }
               catch (recoveryError) { liveEngineSessions.discard(token); throw recoveryError; }
-            }, report);
+            }, report, { signal: client.signal });
+            client.signal.throwIfAborted();
             result = recovered.result;
             res.setHeader('X-QG-Live-Session', recovered.token);
           }
+          client.signal.throwIfAborted();
           res.setHeader('X-QG-Source-Fingerprint', sourceFingerprint);
           res.setHeader('X-QG-Calculation-Id', result.calculationId);
           res.setHeader('X-QG-Live-Proof', JSON.stringify(result.proof));
           report({ status: 'finished', label: 'Response ready' });
           res.end(result.output);
         } catch (error) {
+          if (res.destroyed) return;
           report({ status: 'failed', label: error.message });
           res.statusCode = error.status || 500;
           res.end(JSON.stringify({ error: error.message, code: error.code }));
+        } finally {
+          releaseProgress();
+          res.off('close', disconnect);
         }
       });
       server.middlewares.use('/api/reactions', async (req, res) => {
         const requestStarted = performance.now();
         let requestId = null;
+        let releaseProgress = () => false;
+        const client = new AbortController();
+        const disconnect = () => {
+          if (res.writableFinished) return;
+          client.abort();
+          if (releaseProgress()) progressChannels.cancel(requestId, { status: 'failed', label: 'Calculation cancelled' });
+        };
+        res.once('close', disconnect);
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         try {
           if (req.method !== 'POST') throw new Error('POST is required');
           const body = JSON.parse(await readBody(req));
+          client.signal.throwIfAborted();
           requestId = typeof body.requestId === 'string' && /^[a-zA-Z0-9-]{8,80}$/.test(body.requestId) ? body.requestId : null;
-          const valid = inventory().find((item) => item.id === body.id);
+          releaseProgress = claimProgress(requestId, client);
+          const valid = rawStore.getListed(body.id);
           if (!valid) throw new Error('Candle file not found');
           if (body.chartId && body.chartId !== valid.chartId) throw new Error('Chart identity does not match the selected RAW file');
           const timeframe = Number(body.timeframe), chartTimeframe = Number(body.chartTimeframe), from = Number(body.from), to = Number(body.to);
@@ -841,11 +892,8 @@ function localDataApi() {
           }
           if (!['bullish', 'bearish'].includes(body.direction)) throw new Error('Invalid reaction direction');
           if (typeof body.blueLines !== 'boolean') throw new Error('Invalid Blue Line setting');
-          const sourcePath = path.join(inputDir, valid.id);
-          const rawIdentity = await captureRawInputIdentity(sourcePath);
-          if (rawIdentity.sha256 !== valid.metadata?.dataSha256) {
-            throw new Error('The selected RAW file changed while calculating. Apply again with the current file.');
-          }
+          const sourcePath = valid.dataPath;
+          const rawIdentity = { stat: fs.statSync(sourcePath), sha256: valid.metadata.dataSha256 };
           const sourceFingerprint = calculationSourceFingerprint();
           const inputScope = from === sourceFromBucket && to === sourceToBucket ? 'complete-source' : 'selected-range';
           const bridgeOutput = true;
@@ -857,10 +905,13 @@ function localDataApi() {
           }
           const workerFingerprint = liveRequested && valid.chartId ? liveSourceFingerprint(sourceFingerprint) : null;
           const calculated = await calculationCoordinator.run(Symbol(), async (publish, signal) => {
-            await assertRawInputUnchanged(sourcePath, rawIdentity);
+            let selectedBytes = await assertRawInputUnchanged(sourcePath, rawIdentity, {
+              includeBytes: inputScope === 'selected-range', signal,
+            });
             let jobDetectorMs = 0;
             let jobLiveSessionId = null;
-            const runCalculation = async (calculationInputPath, bounds) => {
+            const runCalculation = async (calculationInputPath, bounds, taskSignal = signal) => {
+              taskSignal.throwIfAborted();
               const detectorStarted = performance.now();
               publish({ status: 'started', label: 'Start Python calculation' });
               const args = engineCalculationArgs(calculationInputPath, calculationRequest, bounds);
@@ -868,14 +919,16 @@ function localDataApi() {
               if (workerFingerprint) {
                 try {
                   const seed = await seedLiveEngine({ chartId: valid.chartId, tabId, workerFingerprint,
-                    request: calculationRequest, sourcePath, args, onProgress: publish, rawSha256: rawIdentity.sha256 });
+                    request: calculationRequest, sourcePath, args, onProgress: publish, rawSha256: rawIdentity.sha256, signal: taskSignal });
                   jobLiveSessionId = seed.sessionId;
-                  result = JSON.stringify(seed.payload);
+                  taskSignal.throwIfAborted();
+                  result = { payload: seed.payload };
                 } catch {
+                  taskSignal.throwIfAborted();
                   // The tab can still perform its manual calculation using the Engine.
                 }
               }
-              if (!result) result = await runDetector(args, publish, signal);
+              if (!result) result = { output: await runDetector(args, publish, taskSignal) };
               jobDetectorMs = performance.now() - detectorStarted;
               publish({ status: 'completed', label: 'Start Python calculation', durationMs: jobDetectorMs });
               return result;
@@ -887,15 +940,15 @@ function localDataApi() {
               } else {
                 const inputPreparationStarted = performance.now();
                 publish({ status: 'started', label: 'Filter raw range' });
-                const rows = rawStore.read(valid.id);
-                if (!rows) throw new Error('Candle file not found');
+                const rows = JSON.parse(selectedBytes);
+                selectedBytes = null;
                 result = await runIndicatorRangeCalculation({
                   rows, sourcePath, from, to, chartTimeframeSeconds: chartTimeframe,
                   onPrepared: () => publish({
                     status: 'completed', label: 'Filter raw range',
                     durationMs: performance.now() - inputPreparationStarted,
                   }),
-                  run: runCalculation,
+                  run: runCalculation, signal,
                 });
               }
               if (calculationSourceFingerprint() !== sourceFingerprint) {
@@ -904,16 +957,24 @@ function localDataApi() {
               if (workerFingerprint && liveSourceFingerprint(sourceFingerprint) !== workerFingerprint) {
                 throw new Error('Live calculation sources changed while running. Apply again with the current engines.');
               }
-              await assertRawInputUnchanged(sourcePath, rawIdentity);
-              return { output: result, detectorMs: jobDetectorMs, liveSessionId: jobLiveSessionId };
+              await assertRawInputUnchanged(sourcePath, rawIdentity, { signal });
+              return { ...result, detectorMs: jobDetectorMs, liveSessionId: jobLiveSessionId };
             } catch (error) {
               if (jobLiveSessionId) liveEngineSessions.discard(jobLiveSessionId);
               throw error;
             }
-          }, event => publishProgress(requestId, event));
-          const { output, detectorMs, liveSessionId } = calculated;
+          }, event => {
+            if (!client.signal.aborted) publishProgress(requestId, event);
+          }, { signal: client.signal });
+          const { payload, detectorMs, liveSessionId } = calculated;
+          if (client.signal.aborted) {
+            if (liveSessionId) liveEngineSessions.discard(liveSessionId);
+            return;
+          }
+          let { output } = calculated;
           if (liveRequested) {
-            const live = livePublication(valid, calculationRequest, to, JSON.parse(output), workerFingerprint, tabId);
+            const live = livePublication(valid, calculationRequest, to, payload ?? JSON.parse(output), workerFingerprint, tabId);
+            output ??= live.output;
             res.setHeader('X-QG-Live-Proof', JSON.stringify(live.proof));
             res.setHeader('X-QG-Calculation-Id', live.calculationId);
           } else {
@@ -936,9 +997,13 @@ function localDataApi() {
           publishProgress(requestId, { status: 'finished', label: 'Response ready', durationMs: performance.now() - requestStarted });
           res.end(output);
         } catch (error) {
+          if (res.destroyed) return;
           publishProgress(requestId, { status: 'failed', label: error.message });
           res.statusCode = 400;
           res.end(JSON.stringify({ error: error.message }));
+        } finally {
+          releaseProgress();
+          res.off('close', disconnect);
         }
       });
     },

@@ -14,9 +14,20 @@ import {
   chunkCandleUpdates,
   chunkCandleUpdatesByBytes,
   mergeChartCandles,
+  mergeChronologicalCandles,
 } from "../../src/features/candle-update.js";
 
 const candle = (time, close = 1) => ({ time, open: close, high: close, low: close, close });
+
+test("merging validated chronological RAW keeps the existing identity on equal timestamps", () => {
+  const existing = Object.freeze([candle(10), candle(30), candle(70)]);
+  const incoming = Object.freeze([candle(5), candle(20), candle(30, 9), candle(40), candle(85)]);
+  const result = mergeChronologicalCandles(existing, incoming);
+  assert.deepEqual(result, mergeChartCandles(existing, incoming));
+  assert.equal(result[3], existing[1]);
+  assert.deepEqual(mergeChronologicalCandles(existing, [candle(80)]), [...existing, candle(80)]);
+  assert.deepEqual(mergeChronologicalCandles([], incoming), incoming);
+});
 
 test("full gap detection requests only the exclusive missing source-timeframe slots", () => {
   assert.deepEqual(buildGapDetectionRanges([candle(100), candle(120)], 5, { mode: "full" }), [

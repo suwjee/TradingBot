@@ -12,7 +12,7 @@ scope:
   - faraz-ui
   - algorithm-reference-ui
   - responsive-accessibility
-last_modified_at: 2026-11-19T00:09:15+03:30
+last_modified_at: 2026-11-20T11:55:09+03:30
 ---
 
 # TradingBot UI/UX Reference
@@ -369,6 +369,8 @@ from this page does not remove it from the authoritative calculation payload.
 
 The report identity opens its immutable calculation snapshot. Category/date filters affect the current view and export without changing the underlying report. Manual Review creates no True/False verdict state and does not read or restore historical local verdict selections. Existing report payloads remain readable as saved evidence.
 
+Opening an available Live report saves its snapshot. If the server no longer has an unsaved Live result, the report page prompts the user to update the indicator in the Chart tab. Saved reports can reopen without starting a calculation.
+
 ### 11.4 Review navigation
 
 Manual Review is intentionally independent of Chart interaction. Users return to the workstation by switching/closing browser tabs rather than by mutating the originating Chart calculation from the report.
@@ -382,6 +384,8 @@ FARAZ UI is a market-data acquisition workflow, not a trading-calculation workfl
 The workspace visibly distinguishes connected, disconnected, waiting-for-login, rejected/expired, and error conditions where applicable.
 
 When not connected, extraction controls remain unavailable. Sign-in is user-driven through the supported browser/session flow. The UI can refresh session status, open FARAZ in a browser, and sign out through supported controls.
+
+Status polls run after the preceding request finishes. The panel polls every five seconds while it is in the foreground or waiting for sign-in, every 15 seconds while the workstation tab is visible and the panel is closed, and every 60 seconds in a hidden tab outside the sign-in flow. Returning to a visible tab refreshes the footer. The exporter's display clock runs while the panel and tab are visible.
 
 Secret/session contents are never a user-facing trading result and must not be exposed in maintained documentation.
 
@@ -439,7 +443,7 @@ Current user-facing capabilities include:
 - copy of the current page in a reusable textual/rich form;
 - export of the reference view through supported browser save/print flows.
 
-Language, direction, and applicable navigation preferences persist locally.
+Language, direction, and applicable navigation preferences persist locally. Search covers the complete navigation even when only the requested article is mounted. Returning to an article restores its open disclosures and scroll position. A full HTML or PDF export prepares the complete reference when requested.
 
 The Algorithm workspace is a convenience reference surface. Its content does not replace the authority order in root AGENTS or establish that a displayed explanation is synchronized with canonical knowledge, accepted References, or current executable Source. Verify the affected rule against those owners before relying on the workspace as engineering evidence.
 
