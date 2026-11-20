@@ -28,8 +28,8 @@ from order_audit_engine import (
 
 
 E_ZONE_VERSION = "6.16.2"
-E_ZONE_IMPLEMENTATION_VERSION = "6.20.3"
-E_ZONE_LAST_MODIFIED = "2026-11-19T01:11:09+03:30"
+E_ZONE_IMPLEMENTATION_VERSION = "6.20.4"
+E_ZONE_LAST_MODIFIED = "2026-11-20T22:00:58+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -366,12 +366,14 @@ class EZoneDetector(OrderAuditEngineMixin):
         self.range_start = self.times[self.start_index]
         self.range_end = self.times[self.end_index] + self.timeframe
         self._shared_main_extreme = None
-        if (live_continuation is None and self.timeframe.total_seconds() == 1
-                and getattr(self.lower_index, "candles", None) is self.candles):
-            # The one-second bridge already built a range tree over this
-            # same sequence. Both queries assign equality to the first row.
+        market_index = getattr(chronology, "main_range_index", None)
+        if market_index is None and self.timeframe.total_seconds() == 1:
+            market_index = self.lower_index
+        if live_continuation is None and getattr(market_index, "candles", None) is self.candles:
+            # Use the prepared range tree over this exact main sequence.
+            # Both queries assign equality to the first row.
             self._shared_main_extreme = getattr(
-                self.lower_index,
+                market_index,
                 "range_minimum" if direction == "bullish" else "range_maximum",
                 None,
             )

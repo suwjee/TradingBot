@@ -10,9 +10,12 @@ from __future__ import annotations
 
 import bisect
 from array import array
+from collections import OrderedDict
+from copy import copy
 from dataclasses import dataclass, replace
 from datetime import datetime, timedelta
 from decimal import Decimal
+from operator import ge, le
 from typing import Iterable, Sequence
 
 from core_utils import ChronologicalContainmentIndex, as_decimal as _decimal_value
@@ -20,10 +23,11 @@ from direction_policy import policy_for
 
 
 REACTION_ENGINE_VERSION = "9.9.1"
-REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.13.3"
-REACTION_ENGINE_LAST_MODIFIED = "2026-11-19T00:13:11+03:30"
+REACTION_ENGINE_IMPLEMENTATION_VERSION = "9.13.4"
+REACTION_ENGINE_LAST_MODIFIED = "2026-11-20T22:06:11+03:30"
 
 _ORDER_GATE_CACHE_MAX_ENTRIES = 32_768
+_LIVE_CROSSING_CACHE_MAX_ENTRIES = 16_384
 
 _SEQUENCE_TIME_INDEXES: dict[int, tuple[Sequence[Candle], list[datetime]]] = {}
 
@@ -880,14 +884,15 @@ def published_reaction_candidate(
 
 
 class LowerTimeframeIndex:
-    """Immutable segment index for exact first strict High/Low crossings.
+    """Segment index for exact first strict High/Low crossings.
 
     The index is direction-agnostic and shared by A/S/E so heavy 1-second
     inputs are not rescanned for every stop/trigger lookup.
     """
 
-    def __init__(self, candles: Sequence[Candle]) -> None:
+    def __init__(self, candles: Sequence[Candle], *, retain_crossings: bool = False) -> None:
         self.candles = candles
+        self._crossings = OrderedDict() if retain_crossings else None
         self.times = [getattr(item, "timestamp") for item in candles]
         size = 1
         while size < len(candles):
@@ -898,13 +903,19 @@ class LowerTimeframeIndex:
         self.maximum: list[Decimal | None] = [None] * (2 * size)
         self.minimum_position = array("i", [-1]) * (2 * size)
         self.maximum_position = array("i", [-1]) * (2 * size)
-        for position, candle in enumerate(candles):
-            node = size + position
+        self._fill_leaves(0)
+        self._update_parents(size - 1, 0)
+
+    def _fill_leaves(self, first: int) -> None:
+        for position in range(first, self.length):
+            candle = self.candles[position]
+            node = self.size + position
             self.minimum[node] = _decimal_value(getattr(candle, "low"))
             self.maximum[node] = _decimal_value(getattr(candle, "high"))
             self.minimum_position[node] = position
             self.maximum_position[node] = position
-        for node in range(size - 1, 0, -1):
+    def _update_parents(self, last: int, before_first: int) -> None:
+        for node in range(last, before_first, -1):
             left, right = node * 2, node * 2 + 1
             low_left, low_right = self.minimum[left], self.minimum[right]
             high_left, high_right = self.maximum[left], self.maximum[right]
@@ -927,11 +938,29 @@ class LowerTimeframeIndex:
                 self.maximum[node] = high_right
                 self.maximum_position[node] = self.maximum_position[right]
 
+    def refresh_suffix(self, first: int) -> None:
+        """Refresh an owned tail and its ancestors before exposing the next market view."""
+        length = len(self.candles)
+        if not 0 <= first <= self.length <= length <= self.size:
+            raise ValueError("Invalid range-index suffix.")
+        if first == length:
+            return
+        if self._crossings is not None and first < self.length - 1:
+            self._crossings.clear()
+        self.times[first:] = [self.candles[position].timestamp for position in range(first, length)]
+        self.length = length
+        self._fill_leaves(first)
+        left, right = (self.size + first) >> 1, (self.size + length - 1) >> 1
+        while left:
+            self._update_parents(right, left - 1)
+            left >>= 1
+            right >>= 1
+
     def first_less(self, left: int, right: int, level: Decimal) -> int | None:
-        return self._first(1, 0, self.size, left, right, level, True)
+        return self._first(left, right, level, self.minimum, ge)
 
     def first_greater(self, left: int, right: int, level: Decimal) -> int | None:
-        return self._first(1, 0, self.size, left, right, level, False)
+        return self._first(left, right, level, self.maximum, le)
 
     def range_minimum(self, left: int, right: int) -> tuple[Decimal, int]:
         """Return the minimum Low and earliest owning position in [left, right)."""
@@ -979,24 +1008,65 @@ class LowerTimeframeIndex:
             raise ValueError("Range contains no lower-timeframe candles.")
         return best_value, best_position
 
-    def _first(
-        self, node: int, start: int, end: int, left: int, right: int,
-        level: Decimal, less: bool,
-    ) -> int | None:
-        if end <= left or right <= start or start >= self.length:
+    def _first(self, left, right, level, values, excludes) -> int | None:
+        left, right = max(0, left), min(self.length, right)
+        if left >= right:
             return None
-        extreme = self.minimum[node] if less else self.maximum[node]
-        if extreme is None or (extreme >= level if less else extreme <= level):
+        if self._crossings is None:
+            return self._search_first(left, right, level, values, excludes)
+        return self._first_with_history(left, right, level, values, excludes)
+
+    def _first_with_history(self, left, right, level, values, excludes) -> int | None:
+        # Only remember searches through settled rows. The latest candle can
+        # still receive quotes and must be evaluated again on the next append.
+        key = left, level, excludes
+        examined, crossed = self._crossings.get(key, (left, None))
+        if crossed is not None:
+            return crossed if crossed < right else None
+        if examined >= right:
             return None
-        if end - start == 1:
-            return start
-        middle = (start + end) // 2
-        found = self._first(node * 2, start, middle, left, right, level, less)
-        if found is not None:
-            return found
-        return self._first(
-            node * 2 + 1, middle, end, left, right, level, less
-        )
+        crossed = self._search_first(examined, right, level, values, excludes)
+        settled = self.length - 1
+        through = min(right, settled)
+        if crossed is not None and crossed < settled:
+            self._remember_crossing(key, (crossed, crossed))
+        elif through > examined:
+            self._remember_crossing(key, (through, None))
+        return crossed
+
+    def _remember_crossing(self, key, evidence) -> None:
+        self._crossings[key] = evidence
+        if len(self._crossings) > _LIVE_CROSSING_CACHE_MAX_ENTRIES:
+            self._crossings.popitem(last=False)
+
+    def _search_first(self, left, right, level, values, excludes) -> int | None:
+        if values[1] is None or excludes(values[1], level):
+            return None
+        left += self.size
+        right += self.size
+        deferred = []
+        # Right edge intervals are discovered in reverse chronological order.
+        while left < right:
+            if left & 1:
+                if not excludes(values[left], level):
+                    return self._descend_first(left, values, level, excludes)
+                left += 1
+            if right & 1:
+                right -= 1
+                deferred.append(right)
+            left >>= 1
+            right >>= 1
+        for node in reversed(deferred):
+            if not excludes(values[node], level):
+                return self._descend_first(node, values, level, excludes)
+        return None
+
+    def _descend_first(self, node, values, level, excludes) -> int:
+        while node < self.size:
+            node <<= 1
+            if excludes(values[node], level):
+                node += 1
+        return node - self.size
 
 
 _LOWER_TIMEFRAME_INDEXES: dict[
@@ -1005,10 +1075,15 @@ _LOWER_TIMEFRAME_INDEXES: dict[
 
 
 def shared_lower_timeframe_index(
-    candles: Sequence[Candle],
+    candles: Sequence[Candle], *, prepared: LowerTimeframeIndex | None = None,
 ) -> LowerTimeframeIndex:
-    """Reuse one immutable lower-timeframe index per source sequence."""
+    """Reuse one prepared range index per source sequence within the calculation."""
     key = id(candles)
+    if prepared is not None:
+        if prepared.candles is not candles:
+            raise ValueError("The prepared index belongs to a different candle sequence.")
+        _LOWER_TIMEFRAME_INDEXES[key] = (candles, prepared)
+        return prepared
     cached = _LOWER_TIMEFRAME_INDEXES.get(key)
     if cached is not None and cached[0] is candles:
         return cached[1]
@@ -1069,6 +1144,7 @@ class MarketChronology:
         "second_times",
         "timeframe",
         "lower_index",
+        "main_range_index",
         "_confirmation_cache",
         "_reset_time_cache",
         "_e_main_extremes",
@@ -1080,12 +1156,13 @@ class MarketChronology:
         seconds: Sequence[Candle],
         timeframe_seconds: int,
         lower_index: LowerTimeframeIndex | None = None,
+        main_range_index: LowerTimeframeIndex | None = None,
     ) -> None:
         if timeframe_seconds < 1:
             raise ValueError("Timeframe must be at least one second.")
         self.candles = candles
         self.seconds = seconds
-        self.times = [getattr(item, "timestamp") for item in candles]
+        self.times = main_range_index.times if main_range_index is not None else [getattr(item, "timestamp") for item in candles]
         self.second_times = (
             lower_index.times
             if lower_index is not None
@@ -1093,6 +1170,7 @@ class MarketChronology:
         )
         self.timeframe = timedelta(seconds=timeframe_seconds)
         self.lower_index = lower_index or shared_lower_timeframe_index(seconds)
+        self.main_range_index = main_range_index
         self._confirmation_cache: dict[tuple[object, ...], datetime] = {}
         self._reset_time_cache: dict[tuple[object, ...], datetime] = {}
         # E feedback detectors share only immutable main-candle geometry.
@@ -2001,7 +2079,7 @@ class UnifiedReactionDetector(DetectorBase):
         cache_key = (direction, gate_index, limit, gate_event_time)
         if cache_key in self._order_gate_geometry_cache:
             cached = self._order_gate_geometry_cache[cache_key]
-            return replace(cached) if cached is not None else None
+            return copy(cached) if cached is not None else None
 
         def cache_result(result: Candidate | None) -> Candidate | None:
             # The cache is run-scoped and bounded. FIFO eviction is sufficient
@@ -2010,7 +2088,7 @@ class UnifiedReactionDetector(DetectorBase):
                 oldest = next(iter(self._order_gate_geometry_cache))
                 del self._order_gate_geometry_cache[oldest]
             self._order_gate_geometry_cache[cache_key] = (
-                replace(result) if result is not None else None
+                copy(result) if result is not None else None
             )
             return result
 

@@ -1866,6 +1866,7 @@ async function loadFile(item, { reconcileLive = false } = {}) {
   const loadRevision = ++symbolLoadRevision;
   const started = performance.now();
   let reconciledCandles = false;
+  let repairedHistory = false;
   log.chart.info("SYMBOL_LOAD_STARTED", { id: item.id, symbol: item.symbol });
   $("#loading").classList.remove("hidden");
   $("#progress").textContent = `Loading ${item.symbol}…`;
@@ -1894,10 +1895,8 @@ async function loadFile(item, { reconcileLive = false } = {}) {
       const delta = reconcilePublishedCandles(state.raw, normalizedRows);
       if (delta) {
         const { candles, corrections, gapCandles } = delta;
-        const context = state.indicator.resultContext;
-        if (context && (corrections.length || gapCandles.length)) {
-          state.indicator.resultContext = { ...context, needsCandleRepair: true };
-        }
+        repairedHistory = Boolean(corrections.length || gapCandles.length);
+        if (repairedHistory) invalidateRealtimeIndicatorHistory();
         applyRealtimeCandles(item, candles, corrections, gapCandles);
         reconciledCandles = Boolean(candles.length || corrections.length || gapCandles.length);
         return;
@@ -1948,7 +1947,7 @@ async function loadFile(item, { reconcileLive = false } = {}) {
       if (!preserve) realtimeChart?.contextChanged();
       else if (reconciledCandles) {
         realtimeChart?.useStoredVerification(item.chartId, item.metadata?.candleVerification);
-        if (!chartUpdateRunning) realtimeChart?.requestIndicatorUpdate();
+        if (!chartUpdateRunning) realtimeChart?.requestIndicatorUpdate({ repair: repairedHistory });
       }
     }
   }
@@ -5941,8 +5940,28 @@ let chartUpdateRunning = false;
 let realtimeHistoryRevision = 0;
 let realtimeIndicatorRunning = false;
 let queuedRealtimeIndicator = null;
-let nextRapidHistoryCheck = 0;
-let rapidHistoryChartId = null;
+let recentVerification = null;
+
+function invalidateRealtimeIndicatorHistory() {
+  realtimeHistoryRevision += 1;
+  const context = state.indicator.resultContext;
+  if (!context || context.chartId !== state.file?.chartId) return;
+  state.indicator.resultContext = { ...context, needsCandleRepair: true, liveSessionId: null };
+  state.indicator.results = null;
+  state.indicator.lastCalculation = null;
+  if (state.indicator.selectedObjectId) {
+    state.indicator.selectedObjectId = null;
+    updateToolbar();
+  }
+  state.indicator.hitBoxes = [];
+  // Keep previous identities for override matching when the rebuilt result arrives.
+  state.indicator.objects = [];
+  renderObjectTree();
+  state.indicator.infoDetailsDirty = true;
+  if ($("#indicatorModal:not(.hidden)") && $('[data-indicator-tab="info"].active'))
+    renderIndicatorInfo();
+  scheduleDraw();
+}
 
 async function waitForRealtimeCandles(isCurrent, committedLatest = null) {
   while (isCurrent() && realtimeUpdateOwner && realtimeUpdateOwner !== committedLatest) {
@@ -5990,21 +6009,24 @@ async function continueRealtimeIndicator(context, file, signal, operationIsCurre
 
 async function fetchAndApplyRealtimeIndicator({ context, file, signal, isCurrent, keepAlive, repairOnly, rawTo, requestId }) {
   const monitoringAlerts = alertLiveReady;
+  const rebuild = repairOnly || context.needsCandleRepair;
   const proof = context.liveProof || { chartId: file.chartId, tabId: liveIndicatorTabId, to: context.to,
     request: { from: context.from, to: context.to, direction: context.direction,
       timeframe: context.analysisTimeframe, chartTimeframe: context.chartTimeframe, blueLines: true, bridgeOutput: true } };
-  const request = repairOnly ? {
-    ...proof.request, id: file.id, chartId: file.chartId, tabId: liveIndicatorTabId, to: context.to, liveSession: true,
+  const request = rebuild ? {
+    ...proof.request, id: file.id, chartId: file.chartId, tabId: liveIndicatorTabId,
+    to: repairOnly ? context.to : Math.floor(rawTo / context.chartTimeframe) * context.chartTimeframe,
+    liveSession: true,
   } : { id: file.id, chartId: file.chartId, tabId: liveIndicatorTabId, sessionId: context.liveSessionId, proof,
     ...(keepAlive ? { keepAlive: true } : {}) };
-  const response = await fetch(repairOnly ? "/api/reactions" : "/api/reactions/continue", {
+  const response = await fetch(rebuild ? "/api/reactions" : "/api/reactions/continue", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(requestId ? { ...request, requestId } : request),
     signal,
   });
   if (!isCurrent()) return false;
-  if (response.status === 204) {
+  if (response.status === 204 && !rebuild) {
     if (!(await waitForRealtimeCandles(isCurrent)) || !isCurrent()) return false;
     state.indicator.resultContext = { ...context, liveRawTo: rawTo, liveContactAt: performance.now() };
     return false;
@@ -6032,7 +6054,7 @@ async function fetchAndApplyRealtimeIndicator({ context, file, signal, isCurrent
     fileId: file.id, chartId: file.chartId, symbol: file.symbol, source: Object.freeze(clone(file)),
     from, to, direction, analysisTimeframe, chartTimeframe,
     calculationKey: nextKey, calculationId: response.headers.get("X-QG-Calculation-Id"),
-    liveSessionId: response.headers.get("X-QG-Live-Session") || (repairOnly ? null : context.liveSessionId),
+    liveSessionId: response.headers.get("X-QG-Live-Session") || (rebuild ? null : context.liveSessionId),
     liveProof,
     sourceFingerprint, liveRawTo: repairOnly ? null : rawTo, liveContactAt: performance.now(),
   };
@@ -6049,9 +6071,8 @@ async function fetchAndApplyRealtimeIndicator({ context, file, signal, isCurrent
   scheduleDraw();
   if (monitoringAlerts && alertLiveReady) {
     const refreshedEngine = context.needsSourceRefresh || (context.sourceFingerprint && context.sourceFingerprint !== sourceFingerprint);
-    if (repairOnly || refreshedEngine) alertController.baseline(rawTo);
-    else alertController.advance(state.indicator.results, rawTo, formatSymbolWithBroker(file),
-      { revalidateHistory: Boolean(context.needsCandleRepair) });
+    if (rebuild || refreshedEngine) alertController.baseline(rawTo);
+    else alertController.advance(state.indicator.results, rawTo, formatSymbolWithBroker(file));
   }
   return true;
 }
@@ -6122,7 +6143,7 @@ function applyRealtimeCandles(file, candles, corrections = [], gapCandles = []) 
 }
 
 async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, indicatorSignal, indicatorOnly, verifyAll,
-  pollIntervalMs, reportProgress, reportVerification, reportIndicatorProgress, refreshIndicatorSource = false }) {
+  reportProgress, reportVerification, reportIndicatorProgress, refreshIndicatorSource = false }) {
   if (chartUpdateRunning || indicatorCalculationOwner) return "Chart is busy. Retrying at the next interval.";
   const file = state.file;
   const lastCandleTime = state.raw.at(-1)?.time;
@@ -6130,8 +6151,10 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
     throw new Error("Load a RAW candle file first.");
   const loadRevision = symbolLoadRevision;
   const viewTimeframe = state.tf;
-  const appliedIndicator = () => state.indicator.enabled && state.indicator.results && state.indicator.resultContext?.chartId === chartId
-    ? state.indicator.resultContext : null;
+  function appliedIndicator() {
+    const { enabled, results, resultContext } = state.indicator;
+    return resultContext?.chartId === chartId && ((enabled && results) || resultContext.needsCandleRepair) ? resultContext : null;
+  }
   const autoContinue = () => indicatorCalculation && !indicatorSignal?.aborted;
   const needsRepair = context => refreshIndicatorSource || context?.needsSourceRefresh || context?.needsCandleRepair;
   const chartIsCurrent = () => !signal.aborted && loadRevision === symbolLoadRevision && !symbolLoadController
@@ -6153,8 +6176,10 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
       const publishedFile = state.file;
       const historyRevision = realtimeHistoryRevision;
       const repairOnly = !autoContinue() && needsRepair(context);
-      const continuationSignal = !repairOnly && indicatorSignal ? AbortSignal.any([signal, indicatorSignal]) : signal;
-      const operationIsCurrent = () => chartIsCurrent() && state.indicator.enabled && historyRevision === realtimeHistoryRevision;
+      const continuationSignal = !repairOnly && !context.needsCandleRepair && indicatorSignal
+        ? AbortSignal.any([signal, indicatorSignal]) : signal;
+      const operationIsCurrent = () => chartIsCurrent() && (state.indicator.enabled || context.needsCandleRepair)
+        && historyRevision === realtimeHistoryRevision;
       try {
         if (await continueRealtimeIndicator(context, publishedFile, continuationSignal, operationIsCurrent, repairOnly, reportIndicatorProgress))
           return { status: "Indicator updated." };
@@ -6188,22 +6213,15 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
   }
   try {
     let verification;
+    let supportsRecentVerification = false;
     let added = 0, corrected = 0, recovered = 0;
-    // Bound automatic historical work on short polling intervals. The latest
-    // request and explicit Verify All keep their full data contracts.
-    const rapidPolling = pollIntervalMs <= 5_000;
-    if (rapidHistoryChartId !== chartId) {
-      rapidHistoryChartId = chartId;
-      nextRapidHistoryCheck = 0;
-    }
-    const phases = verifyAll ? [null] : ["latest", "history"];
+    if (recentVerification && (recentVerification.chartId !== chartId
+      || state.raw[lowerBoundTime(state.raw, recentVerification.previousTail)]?.time !== recentVerification.previousTail
+      || recentVerification.previousTail >= state.raw.at(-1).time)) recentVerification = null;
+    const phases = verifyAll ? [null] : ["latest", "recent"];
     for (const phase of phases) {
-      if (phase === "history" && verification?.status !== "pending") break;
-      if (phase === "history" && rapidPolling) {
-        const now = performance.now();
-        if (now < nextRapidHistoryCheck) break;
-        nextRapidHistoryCheck = now + 30_000;
-      }
+      if (phase === "recent" && (!recentVerification || !supportsRecentVerification
+        || verification?.status === "unavailable")) break;
       const base = state.file;
       const baseTail = state.raw.at(-1).time;
       rawVerified = false;
@@ -6212,7 +6230,7 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
         headers: { "Content-Type": "application/json", Accept: "application/x-ndjson" },
         body: JSON.stringify({ id: base.id, chartId, lastCandleTime: baseTail, baseSha256: base.metadata?.dataSha256,
           ...(verifyAll ? { verifyAll: true } : { phase }),
-          ...(rapidPolling && phase === "history" ? { historyPacketLimit: 1 } : {}) }),
+          ...(phase === "recent" ? { previousTail: recentVerification.previousTail } : {}) }),
         signal,
       });
       const { status, result } = await readRealtimeUpdate(response, value => reportProgress?.(
@@ -6237,6 +6255,9 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
       }
       rawVerified = true;
       verification = result.verification;
+      if (phase === "latest") supportsRecentVerification = result.supportsRecentVerification === true;
+      if ((phase === "recent" || verifyAll) && verification?.status !== "unavailable") recentVerification = null;
+      if (corrections.length || gapCandles.length) invalidateRealtimeIndicatorHistory();
       if (candles.length || corrections.length || gapCandles.length) {
         applyRealtimeCandles(updatedFile, candles, corrections, gapCandles);
         earlyIndicator = null;
@@ -6244,19 +6265,14 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
         state.file = { ...base, ...updatedFile };
         state.inventory = state.inventory.map(item => item.chartId === chartId ? state.file : item);
       }
-      if (corrections.length || gapCandles.length) realtimeHistoryRevision += 1;
-      const indicatorContext = appliedIndicator();
-      const affectsIndicator = row => row.time >= indicatorContext.from
-        && row.time < indicatorContext.to + indicatorContext.chartTimeframe;
-      if (indicatorContext && (corrections.some(affectsIndicator) || gapCandles.some(affectsIndicator))) {
-        state.indicator.resultContext = { ...indicatorContext, needsCandleRepair: true };
-      }
       if (verification) reportVerification?.(verification);
       if (candles.length) {
+        if (phase === "latest") recentVerification ??= { chartId, previousTail: baseTail };
         log.chart.info("REALTIME_CANDLES_APPENDED", { chartId, count: candles.length, to: updatedFile.to });
         // Fetch against the committed latest rows while history is being checked.
         // Publication still waits for the check and rejects intervening repairs.
-        if (phase === "latest" && verification?.status === "pending" && autoContinue()) {
+        if (phase === "latest" && verification?.status !== "unavailable" && autoContinue()
+          && !appliedIndicator()?.needsCandleRepair) {
           earlyIndicator = updateIndicator("", undefined, owner);
         }
       }
@@ -6268,6 +6284,7 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
       added ? `Added ${added.toLocaleString("en-US")} closed ${state.file.timeframe} candles.` : "",
       corrected ? `Corrected ${corrected.toLocaleString("en-US")} candle${corrected === 1 ? "" : "s"}.` : "",
       recovered ? `Filled ${recovered.toLocaleString("en-US")} missing candle${recovered === 1 ? "" : "s"}.` : "",
+      !verifyAll && recentVerification && !supportsRecentVerification ? "Restart TradingBot to enable recent candle verification." : "",
     ].filter(Boolean).join(" ");
     return finishCheck(candleStatus || (verifyAll || verification?.status === "unavailable" ? "" : "No new closed candles."), verification);
   } catch (error) {

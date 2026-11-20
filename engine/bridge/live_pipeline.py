@@ -12,11 +12,11 @@ from pathlib import Path
 import sys
 
 from trading_pipeline import (
-    LiveMarketBuckets, calculate_live_from_buckets, emit_progress, load_engines, parse_arguments, progress_events_to,
+    LiveMarketBuckets, LiveMarketViews, calculate_live_from_buckets, emit_progress, load_engines, parse_arguments, progress_events_to,
 )
 
 
-LIVE_PIPELINE_VERSION = "1.2.0"
+LIVE_PIPELINE_VERSION = "1.3.0"
 
 
 class LivePipelineContinuation:
@@ -30,6 +30,7 @@ class LivePipelineContinuation:
         self.args = copy(args)
         self.engines = engines
         self._buckets = LiveMarketBuckets(args.timeframe)
+        self._market_views = LiveMarketViews()
 
     def append(self, rows: list[dict]) -> dict[str, object]:
         previous_time = self._buckets.last_raw_time
@@ -55,11 +56,17 @@ class LivePipelineContinuation:
                           totalStages=direction_count + 4)
 
         emit_progress("started", "Build live market chronology", liveProgress=True)
-        with self._buckets.stage_append(rows):
-            payload = calculate_live_from_buckets(
-                args, self.engines, self._buckets, report_stage=report_stage,
-            )
-            report_stage("Calculated result ready for validation")
+        try:
+            with self._buckets.stage_append(rows) as delta:
+                payload = calculate_live_from_buckets(
+                    args, self.engines, self._buckets, live_views=self._market_views, bucket_delta=delta,
+                    report_stage=report_stage,
+                )
+                report_stage("Calculated result ready for validation")
+        except BaseException:
+            # The input transaction rolled back. Rebuild geometry on retry.
+            self._market_views = LiveMarketViews()
+            raise
         return payload
 
 
