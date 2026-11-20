@@ -333,3 +333,25 @@ export function mergeChartCandles(existingCandles, incomingCandles) {
   }
   return [...byTime.values()].sort((left, right) => left.time - right.time);
 }
+
+// Both inputs are already validated, ordered RAW. Preserve the existing row on a tie.
+export function mergeChronologicalCandles(existing, incoming) {
+  if (!existing.length || !incoming.length || existing.at(-1).time < incoming[0].time) {
+    return existing.concat(incoming);
+  }
+  const merged = new Array(existing.length + incoming.length);
+  let left = 0, right = 0, written = 0;
+  while (left < existing.length && right < incoming.length) {
+    const previous = existing[left], next = incoming[right];
+    if (previous.time <= next.time) {
+      merged[written++] = existing[left++];
+      if (previous.time === next.time) right++;
+    } else {
+      merged[written++] = incoming[right++];
+    }
+  }
+  while (left < existing.length) merged[written++] = existing[left++];
+  while (right < incoming.length) merged[written++] = incoming[right++];
+  merged.length = written;
+  return merged;
+}

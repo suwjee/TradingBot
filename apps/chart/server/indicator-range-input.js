@@ -54,12 +54,13 @@ export function prepareIndicatorRangeInput(rows, { from, to, chartTimeframeSecon
   return { rows: selected, usesCompleteSource: false };
 }
 
-export async function withIndicatorRangePipe(rows, consume) {
+export async function withIndicatorRangePipe(rows, consume, options) {
   if (!Array.isArray(rows) || !rows.length) throw new Error("A non-empty indicator range is required.");
-  return withIndicatorInputPipe(Buffer.from(JSON.stringify(rows), "utf8"), consume);
+  return withIndicatorInputPipe(Buffer.from(JSON.stringify(rows), "utf8"), consume, options);
 }
 
-export async function withIndicatorInputPipe(payload, consume) {
+export async function withIndicatorInputPipe(payload, consume, { signal } = {}) {
+  signal?.throwIfAborted();
   if (process.platform !== "win32") {
     throw new Error("In-memory ranged indicator input requires Windows named-pipe support.");
   }
@@ -69,6 +70,8 @@ export async function withIndicatorInputPipe(payload, consume) {
 
   const pipePath = `\\\\.\\pipe\\tradingbot-indicator-range-${process.pid}-${randomUUID()}`;
   const sockets = new Set();
+  const transport = signal && new AbortController();
+  const taskSignal = transport && AbortSignal.any([signal, transport.signal]);
   let rejectTransport;
   let transportSettled = false;
   const transportFailure = new Promise((_, reject) => { rejectTransport = reject; });
@@ -77,6 +80,7 @@ export async function withIndicatorInputPipe(payload, consume) {
     const failure = new Error(`Indicator range pipe failed: ${error.message}`);
     failure.cause = error;
     rejectTransport(failure);
+    transport?.abort(failure);
   };
   const server = net.createServer((socket) => {
     sockets.add(socket);
@@ -95,15 +99,19 @@ export async function withIndicatorInputPipe(payload, consume) {
   });
   server.on("error", failTransport);
 
+  const consuming = Promise.resolve().then(() => {
+    taskSignal?.throwIfAborted();
+    return consume(pipePath, taskSignal);
+  });
   try {
-    return await Promise.race([
-      Promise.resolve().then(() => consume(pipePath)),
-      transportFailure,
-    ]);
+    return await Promise.race([consuming, transportFailure]);
   } finally {
     transportSettled = true;
     for (const socket of sockets) socket.destroy();
     await new Promise((resolve) => server.close(resolve));
+    // The pipe may report a broken socket while the aborted consumer is
+    // still exiting. Preserve the calculation slot until the consumer stops.
+    if (taskSignal?.aborted) await consuming.catch(() => {});
   }
 }
 
@@ -115,7 +123,9 @@ export async function runIndicatorRangeCalculation({
   chartTimeframeSeconds,
   onPrepared = () => {},
   run,
+  signal,
 } = {}) {
+  signal?.throwIfAborted();
   if (typeof sourcePath !== "string" || !sourcePath || typeof run !== "function") {
     throw new Error("The indicator calculation source and runner are required.");
   }
@@ -127,6 +137,6 @@ export async function runIndicatorRangeCalculation({
     rowCount: prepared.rows.length,
   };
   onPrepared(bounds);
-  if (prepared.usesCompleteSource) return run(sourcePath, bounds);
-  return withIndicatorRangePipe(prepared.rows, (pipePath) => run(pipePath, bounds));
+  if (prepared.usesCompleteSource) return run(sourcePath, bounds, signal);
+  return withIndicatorRangePipe(prepared.rows, (pipePath, taskSignal) => run(pipePath, bounds, taskSignal), { signal });
 }

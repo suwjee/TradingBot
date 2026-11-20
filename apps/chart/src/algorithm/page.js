@@ -386,9 +386,93 @@ function pageMarkup(icon) {
             <li><a class="algorithm-reference-link" href="#algorithm-glossary" data-page-link data-search="glossary terminology aliases exact code names"><i aria-hidden="true"></i><span>R3</span><strong>${localized("Glossary", "واژه‌نامه")}</strong></a></li>
           </ol><p id="algorithmSearchStatus" class="algorithm-search-status" hidden>No matching page</p></nav>
       </aside>
-      <main id="algorithmMain" class="algorithm-main" tabindex="-1">${overview()}${FAMILY_ORDER.map((family, index) => familySection(family, index, icon)).join("")}${familySection(BRIDGE_REFERENCE, "R1", icon)}${reactionGeometryPage(icon)}${glossaryPage()}</main>
+      <main id="algorithmMain" class="algorithm-main" tabindex="-1"></main>
     </div>
   </section>`;
+}
+
+function pageRenderers(icon) {
+  return new Map([
+    ["algorithm-overview", overview],
+    ...FAMILY_ORDER.map((family, index) => [`algorithm-${family.id}`, () => familySection(family, index, icon)]),
+    ["algorithm-bridge", () => familySection(BRIDGE_REFERENCE, "R1", icon)],
+    ["algorithm-reaction-geometry", () => reactionGeometryPage(icon)],
+    ["algorithm-glossary", glossaryPage],
+  ]);
+}
+
+function mirrorFamilyForCopy(element) {
+  if (!element || element.closest(".algorithm-direction")) return "";
+  const owner = element.closest("[data-family], [data-nav-family]");
+  const familyId = owner?.dataset.family || owner?.dataset.navFamily || "";
+  return isBearishMirrorFamily(familyId) ? familyId : "";
+}
+
+function applyLocalizedLabels(scope, language, direction) {
+  scope.querySelectorAll("[data-label-en]").forEach((element) => {
+    const label = element.dataset[language === "fa" ? "labelFa" : "labelEn"];
+    const family = direction === "bearish" && mirrorFamilyForCopy(element);
+    element.setAttribute("aria-label", family ? mirrorDirectionalText(label, family) : label);
+  });
+}
+
+function applyLanguageToCopy(scope, language, direction) {
+  scope.querySelectorAll(".algorithm-copy-en").forEach((element) => { element.hidden = language !== "en"; });
+  scope.querySelectorAll(".algorithm-copy-fa").forEach((element) => { element.hidden = language !== "fa"; });
+  applyLocalizedLabels(scope, language, direction);
+}
+
+function createDirectionalCopy() {
+  // Detached articles can be collected after navigating away.
+  const originalText = new WeakMap();
+  const originalAttributes = new WeakMap();
+  const directionalAttributes = ["data-search", "aria-label", "title"];
+  const selector = "[data-search], [aria-label], [title]";
+  return (scope, direction) => {
+    const bearish = direction === "bearish";
+    const translations = new Map();
+    function translate(value, family) {
+      const key = `${family}\n${value}`;
+      if (!translations.has(key)) translations.set(key, mirrorDirectionalText(value, family));
+      return translations.get(key);
+    }
+    const walker = document.createTreeWalker(scope, document.defaultView.NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      if (!bearish) {
+        if (originalText.has(node)) node.nodeValue = originalText.get(node);
+        continue;
+      }
+      const familyId = node.nodeValue.trim() && mirrorFamilyForCopy(node.parentElement);
+      if (!familyId) continue;
+      const original = originalText.get(node) ?? node.nodeValue;
+      const mirrored = translate(original, familyId);
+      if (mirrored === node.nodeValue) continue;
+      originalText.set(node, original);
+      node.nodeValue = mirrored;
+    }
+
+    for (const element of [scope, ...scope.querySelectorAll(selector)]) {
+      const saved = originalAttributes.get(element);
+      if (!bearish) {
+        if (saved) for (const [name, value] of Object.entries(saved)) element.setAttribute(name, value);
+        continue;
+      }
+      const familyId = mirrorFamilyForCopy(element);
+      if (!familyId) continue;
+      const originals = saved || {};
+      for (const name of directionalAttributes) {
+        if (!element.hasAttribute(name) || (name === "aria-label" && element.hasAttribute("data-label-en"))) continue;
+        const value = element.getAttribute(name);
+        const original = originals[name] ?? value;
+        const mirrored = translate(original, familyId);
+        if (mirrored === value) continue;
+        originals[name] = original;
+        element.setAttribute(name, mirrored);
+      }
+      if (Object.keys(originals).length) originalAttributes.set(element, originals);
+    }
+  };
 }
 
 function storedLanguage() {
@@ -536,13 +620,11 @@ function collectStyleText() {
   }).join("\n");
 }
 
-function exportDocument(main, language, direction = "bullish") {
-  const clone = main.cloneNode(true);
-  clone.removeAttribute("tabindex");
-  clone.querySelectorAll("[hidden]").forEach((element) => element.removeAttribute("hidden"));
-  clone.querySelectorAll("details").forEach((details) => { details.open = true; });
-  clone.querySelectorAll("button, .algorithm-type-header a").forEach((element) => element.remove());
-  clone.querySelectorAll("[tabindex]").forEach((element) => element.removeAttribute("tabindex"));
+function exportDocument(main, language, direction) {
+  main.querySelectorAll("[hidden]").forEach((element) => element.removeAttribute("hidden"));
+  main.querySelectorAll("details").forEach((details) => { details.open = true; });
+  main.querySelectorAll("button, .algorithm-type-header a").forEach((element) => element.remove());
+  main.querySelectorAll("[tabindex]").forEach((element) => element.removeAttribute("tabindex"));
   const lang = language === "fa" ? "fa" : "en";
   const title = direction === "bearish"
     ? (lang === "fa" ? "مرجع الگوریتم نزولی TradingBot" : "TradingBot Bearish Algorithm Reference")
@@ -562,7 +644,7 @@ function exportDocument(main, language, direction = "bullish") {
     .algorithm-export .algorithm-table-en{display:${lang === "fa" ? "none" : "table"}!important}
     @media print{body{padding:0}.algorithm-export .algorithm-family{break-before:page}.algorithm-ide{max-height:none!important;overflow:visible!important}}
   `;
-  return `<!doctype html><html lang="${lang}" dir="${lang === "fa" ? "rtl" : "ltr"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${collectStyleText()}${exportCss}</style></head><body><section class="algorithm-view algorithm-export" data-language="${lang}"><main class="algorithm-main">${clone.innerHTML}</main></section></body></html>`;
+  return `<!doctype html><html lang="${lang}" dir="${lang === "fa" ? "rtl" : "ltr"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${collectStyleText()}${exportCss}</style></head><body><section class="algorithm-view algorithm-export" data-language="${lang}"><main class="algorithm-main">${main.innerHTML}</main></section></body></html>`;
 }
 
 export function initAlgorithmPage({ root, headerRoot, icon, showChart }) {
@@ -580,49 +662,28 @@ export function initAlgorithmPage({ root, headerRoot, icon, showChart }) {
   const actionStatus = view.querySelector("#algorithmActionStatus");
   const directionBullishButton = view.querySelector("#algorithmDirectionBullish");
   const directionBearishButton = view.querySelector("#algorithmDirectionBearish");
-  const overviewPage = view.querySelector("#algorithm-overview");
-  const familyPages = [...view.querySelectorAll(".algorithm-family")];
-  const referencePages = [...view.querySelectorAll(".algorithm-reference-page")];
+  const renderPages = pageRenderers(icon);
   const app = root.closest(".app");
   const isolated = [...root.children].filter((child) => child !== view);
   const previousAria = new Map();
   const pageScroll = new Map();
+  const openDisclosures = new Map();
   const narrowScreen = window.matchMedia("(max-width: 760px)");
   let visible = false;
   let currentRoute = null;
   let lastAlgorithmHash = "#algorithm-overview";
   let previousExternalHash = "";
   let direction = "bullish";
-  const originalTextNodes = new Map();
-  const originalAttributes = new Map();
+  const applyDirectionalCopy = createDirectionalCopy();
 
   function setDirection(nextDirection, persist = true) {
-    direction = nextDirection === "bearish" ? "bearish" : "bullish";
-    view.dataset.direction = direction;
-    const walker = document.createTreeWalker(view, document.defaultView?.NodeFilter?.SHOW_TEXT || 4);
-    while (walker.nextNode()) {
-      const node = walker.currentNode;
-      if (node.parentElement?.closest(".algorithm-direction")) continue;
-      if (!originalTextNodes.has(node)) originalTextNodes.set(node, node.nodeValue || "");
-      const owner = node.parentElement?.closest("[data-family], [data-nav-family]");
-      const familyId = owner?.dataset.family || owner?.dataset.navFamily || "";
-      node.nodeValue = direction === "bearish" && isBearishMirrorFamily(familyId)
-        ? mirrorDirectionalText(originalTextNodes.get(node), familyId)
-        : originalTextNodes.get(node);
+    const next = nextDirection === "bearish" ? "bearish" : "bullish";
+    if (next !== direction) {
+      applyDirectionalCopy(view, next);
+      applyLocalizedLabels(view, view.dataset.language, next);
     }
-    view.querySelectorAll("[data-search], [aria-label], [title]").forEach((element) => {
-      if (element.closest(".algorithm-direction")) return;
-      const owner = element.closest("[data-family], [data-nav-family]");
-      const familyId = owner?.dataset.family || owner?.dataset.navFamily || "";
-      const shouldMirror = direction === "bearish" && isBearishMirrorFamily(familyId);
-      ["data-search", "aria-label", "title"].forEach((attribute) => {
-        if (!element.hasAttribute(attribute)) return;
-        if (!originalAttributes.has(element)) originalAttributes.set(element, {});
-        const saved = originalAttributes.get(element);
-        if (!(attribute in saved)) saved[attribute] = element.getAttribute(attribute) || "";
-        element.setAttribute(attribute, shouldMirror ? mirrorDirectionalText(saved[attribute], familyId) : saved[attribute]);
-      });
-    });
+    direction = next;
+    view.dataset.direction = direction;
     const setLocalizedLabel = (selector, english, persian) => {
       const element = view.querySelector(selector) || header.querySelector(selector);
       if (!element) return;
@@ -661,9 +722,8 @@ export function initAlgorithmPage({ root, headerRoot, icon, showChart }) {
     const next = language === "fa" ? "fa" : "en";
     view.dataset.language = next;
     header.dataset.language = next;
-    [...view.querySelectorAll(".algorithm-copy-en"), ...header.querySelectorAll(".algorithm-copy-en")].forEach((element) => { element.hidden = next !== "en"; });
-    [...view.querySelectorAll(".algorithm-copy-fa"), ...header.querySelectorAll(".algorithm-copy-fa")].forEach((element) => { element.hidden = next !== "fa"; });
-    [...view.querySelectorAll("[data-label-en]"), ...header.querySelectorAll("[data-label-en]")].forEach((element) => { element.setAttribute("aria-label", element.dataset[next === "fa" ? "labelFa" : "labelEn"]); });
+    applyLanguageToCopy(view, next, direction);
+    if (!view.contains(header)) applyLanguageToCopy(header, next, direction);
     englishButton.setAttribute("aria-pressed", String(next === "en"));
     persianButton.setAttribute("aria-pressed", String(next === "fa"));
     searchInput.placeholder = next === "fa" ? "جست‌وجوی رفتار، قانون یا آبجکت" : "Search a behavior, rule, or object";
@@ -748,18 +808,39 @@ export function initAlgorithmPage({ root, headerRoot, icon, showChart }) {
     return String(hash || "").replace(/^#/, "") === route.anchor;
   }
 
+  function mountPage(pageId) {
+    const previous = main.firstElementChild;
+    if (previous?.id === pageId) return previous;
+    if (previous) {
+      const open = [];
+      previous.querySelectorAll("details").forEach((details, index) => {
+        if (details.open) open.push(index);
+      });
+      if (open.length) openDisclosures.set(previous.id, open);
+      else openDisclosures.delete(previous.id);
+    }
+    main.innerHTML = renderPages.get(pageId)();
+    const page = main.firstElementChild;
+    page.hidden = false;
+    applyLanguageToCopy(page, view.dataset.language, direction);
+    if (direction === "bearish") applyDirectionalCopy(page, direction);
+    const restored = openDisclosures.get(pageId);
+    if (restored) {
+      const details = page.querySelectorAll("details");
+      for (const index of restored) details[index].open = true;
+    }
+    return page;
+  }
+
   function showPage(hash, { focus = true, restore = false } = {}) {
     const route = routeFromHash(hash);
     if (currentRoute) pageScroll.set(currentRoute.anchor, main.scrollTop);
-    overviewPage.hidden = route.pageId !== "algorithm-overview";
-    for (const page of familyPages) {
-      page.hidden = page.id !== route.pageId;
-      if (page.hidden) continue;
+    const page = mountPage(route.pageId);
+    if (route.familyId) {
       page.classList.toggle("algorithm-type-route", Boolean(route.typeId));
       page.querySelectorAll("[data-family-only]").forEach((element) => { element.hidden = Boolean(route.typeId); });
       page.querySelectorAll("[data-type-panel]").forEach((element) => { element.hidden = Boolean(route.typeId) && element.dataset.typePanel !== route.typeId; });
     }
-    for (const page of referencePages) page.hidden = page.id !== route.pageId;
     view.dataset.page = route.familyId || route.referenceId || "overview";
     view.querySelectorAll("[data-nav-family]").forEach((item) => {
       const active = item.dataset.navFamily === route.familyId;
@@ -777,8 +858,8 @@ export function initAlgorithmPage({ root, headerRoot, icon, showChart }) {
     const savedScroll = restore ? pageScroll.get(route.anchor) || 0 : 0;
     main.scrollTop = savedScroll;
     requestAnimationFrame(() => {
-      const page = view.querySelector(`#${route.pageId}`);
-      const target = route.typeId ? view.querySelector(`#${route.anchor}`) : page;
+      if (!visible || currentRoute !== route) return;
+      const target = route.typeId ? document.getElementById(route.anchor) : page;
       main.scrollTop = savedScroll;
       if (focus) target?.focus({ preventScroll: true });
     });
@@ -824,17 +905,27 @@ export function initAlgorithmPage({ root, headerRoot, icon, showChart }) {
     if (normalized && narrowScreen.matches) setSidebarOpen(true);
   }
 
+  function completeReference(language, exportDirection) {
+    const reference = document.createElement("main");
+    reference.innerHTML = [...renderPages.values()].map((render) => render()).join("");
+    if (exportDirection === "bearish") applyDirectionalCopy(reference, exportDirection);
+    applyLocalizedLabels(reference, language, exportDirection);
+    return exportDocument(reference, language, exportDirection);
+  }
+
   async function saveHtml() {
     const language = view.dataset.language;
-    const html = exportDocument(main, language, direction);
-    const filename = `tradingbot-${direction}-algorithm-${language}.html`;
+    const exportDirection = direction;
+    const filename = `tradingbot-${exportDirection}-algorithm-${language}.html`;
     if ("showSaveFilePicker" in window) {
       const handle = await window.showSaveFilePicker({ suggestedName: filename, types: [{ description: "HTML document", accept: { "text/html": [".html"] } }] });
       const writable = await handle.createWritable();
+      const html = completeReference(language, exportDirection);
       await writable.write(new Blob([html], { type: "text/html;charset=utf-8" }));
       await writable.close();
       return;
     }
+    const html = completeReference(language, exportDirection);
     const href = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" }));
     const link = document.createElement("a");
     link.href = href;
@@ -847,7 +938,7 @@ export function initAlgorithmPage({ root, headerRoot, icon, showChart }) {
     const popup = window.open("", "_blank");
     if (!popup) throw new Error("Print window was blocked");
     popup.document.open();
-    popup.document.write(exportDocument(main, view.dataset.language, direction));
+    popup.document.write(completeReference(view.dataset.language, direction));
     popup.document.close();
     window.setTimeout(() => { popup.focus(); popup.print(); }, 400);
   }
@@ -892,7 +983,7 @@ export function initAlgorithmPage({ root, headerRoot, icon, showChart }) {
   sidebar.addEventListener("dragstart", (event) => event.preventDefault());
   header.querySelector("#algorithmCopyPage").onclick = async () => {
     const button = header.querySelector("#algorithmCopyPage");
-    const page = view.querySelector(`#${currentRoute?.pageId || "algorithm-overview"}`);
+    const page = main.firstElementChild;
     if (!page) return;
     button.disabled = true;
     actionStatus.textContent = view.dataset.language === "fa" ? "در حال کپی…" : "Copying…";
