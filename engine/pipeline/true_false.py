@@ -11,6 +11,7 @@ from lifecycle_engine import sequence_priority
 
 VERDICT = "trueFalse"
 REPAIR = "trueFalseRepairTime"
+REPEATED = "trueFalseRepeated"
 
 
 def repair_crossing_lookup(lower_index, from_epoch, to_epoch, *, through):
@@ -31,7 +32,8 @@ def repair_crossing_lookup(lower_index, from_epoch, to_epoch, *, through):
 @dataclass(slots=True)
 class BasicRepeat:
     latest: dict
-    count: int
+    repair_count: int
+    verdict_count: int
 
 
 def _basic_rank(key, row):
@@ -61,7 +63,8 @@ def _basic_verdicts(direction, events, first_crossing):
         time = row["sourceTime"]
         lower = [other for other in repeats if other < rank]
         parent = known.get(row.get("parentSourceTime"))
-        if is_s or any(repeats[other].count >= 2 for other in lower):
+        engulf = any(repeats[other].verdict_count >= 2 for other in lower)
+        if is_s or engulf:
             verdict = "T"
         elif parent is not None:
             verdict = "F" if parent == "T" else "T"
@@ -72,38 +75,57 @@ def _basic_verdicts(direction, events, first_crossing):
 
         for other in lower:
             prior = repeats.pop(other)
-            if prior.latest[VERDICT] == "F" and prior.count == 1:
+            if prior.latest[VERDICT] == "F" and prior.repair_count == 1:
                 repair(prior.latest, time)
 
+        if engulf:
+            # Start verdict repetition at this behavior; keep existing F repair history.
+            for repeat in repeats.values():
+                repeat.verdict_count = 0
         previous = repeats.get(rank)
-        count = 1
+        repair_count = verdict_count = 1
         if previous is not None and previous.latest[VERDICT] == verdict:
-            count += previous.count
+            repair_count += previous.repair_count
+            verdict_count += previous.verdict_count
             if verdict == "F":
                 if previous.latest.get(REPAIR, -1) >= time:
                     previous.latest.pop(REPAIR)
                 repair(row, time)
-        repeats[rank] = BasicRepeat(row, count)
+        repeats[rank] = BasicRepeat(row, repair_count, verdict_count)
 
 
-def _stopall_verdicts(rows):
+def _stopall_verdicts(rows, confirmation_closed):
     previous_number = 0
-    first_eligible = 1
-    first_assessed = None
+    previous_series_end = largest_prior_end = 0
+    group_start = verdict_start = None
+    repeated_prefix = []
+    restart_verdicts = False
     for row in rows:
         number = row["number"]
-        if number <= previous_number:
-            first_eligible = previous_number + 1
-            first_assessed = None
+        if group_start is None or number <= previous_number:
+            previous_series_end = previous_number
+            largest_prior_end = max(largest_prior_end, previous_series_end)
+            group_start = verdict_start = number
+            repeated_prefix.clear()
+            restart_verdicts = False
+        elif restart_verdicts:
+            verdict_start = number
+            restart_verdicts = False
         previous_number = number
-        if number < first_eligible:
-            continue
-        if first_assessed is None:
-            first_assessed = number
-        row[VERDICT] = "T" if (number - first_assessed) % 2 == 0 else "F"
+
+        row[VERDICT] = "T" if (number - verdict_start) % 2 == 0 else "F"
+        if number <= largest_prior_end:
+            repeated_prefix.append(row)
+            if (number in (previous_series_end, largest_prior_end)
+                    and (confirmation_closed is None or confirmation_closed(row))):
+                # A larger match absorbs the temporary fresh count after the first match.
+                for repeated in repeated_prefix:
+                    repeated[REPEATED] = True
+                    repeated[VERDICT] = "T" if (repeated["number"] - group_start) % 2 == 0 else "F"
+                restart_verdicts = True
 
 
-def apply_true_false(direction, group, first_crossing=None):
+def apply_true_false(direction, group, first_crossing=None, *, stopall_confirmation_closed=None):
     """Annotate final rows by source time, without changing native behavior."""
     primary_key = "primaryLows" if direction == "bullish" else "primaryHighs"
     by_source = {}
@@ -113,6 +135,7 @@ def apply_true_false(direction, group, first_crossing=None):
         for row in group.get(key, ()):
             row.pop(VERDICT, None)
             row.pop(REPAIR, None)
+            row.pop(REPEATED, None)
             if row.get("calculationValid") is not False:
                 by_source.setdefault(row["sourceTime"], (key, row))
     basic = []
@@ -121,7 +144,7 @@ def apply_true_false(direction, group, first_crossing=None):
         # A published candidate with no verdict receives a neutral label.
         row[VERDICT] = None
         if key == primary_key:
-            _stopall_verdicts(stops)
+            _stopall_verdicts(stops, stopall_confirmation_closed)
             stops.clear()
             if row["number"] in (1, 2, 3):
                 row[VERDICT] = "T" if row["number"] == 1 else "F"
@@ -130,4 +153,4 @@ def apply_true_false(direction, group, first_crossing=None):
         else:
             basic.append((key, row))
     _basic_verdicts(direction, basic, first_crossing)
-    _stopall_verdicts(stops)
+    _stopall_verdicts(stops, stopall_confirmation_closed)

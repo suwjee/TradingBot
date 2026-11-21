@@ -120,15 +120,46 @@ def test_bullish_secondary_ph_keeps_strict_first_gate_and_first_direct_a_lock():
     assert resolver("PH", 1, 4, moment(125)) == []
 
 
-def test_bullish_pl2_rejects_only_b_while_reset_pl1_accepts_it():
+def test_native_pl_continuation_exposes_reset_leg_order_for_the_primary_gate():
     from test_order_audit_lifecycle_contracts import detector_state, moment
     from test_pl_ph_detector import accepted_order
     service, _, physical = detector_state("bullish")
     resolver = primary.NativePrimaryOrders(service.chronology,
         {"bullish": {"OrderAudit": [accepted_order(service, physical, "reset-leg")]}},
         direction="bullish")
-    assert resolver("PL", 2, 4, moment(125)) == []
+    assert resolver("PL", 2, 4, moment(125))[0].causes == ("reset-leg",)
     assert resolver("PL", 1, 4, moment(125))[0].causes == ("reset-leg",)
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_reset_leg_box_must_strictly_extend_the_primary_to_win_continuation(direction):
+    values = fixture(initial({12: ("111", "90"), 13: ("120", "90"),
+                              18: ("121", "90"), 19: ("130", "90")}))
+    market = values[0]
+    initial_order = order(market, 8, 10)
+    equal_box = replace(order(market, 12, 14, "reset-leg"), box_top=Decimal("110"))
+    outside_box = replace(order(market, 12, 14, "reset-leg"), box_top=Decimal("109"))
+    second_order = replace(order(market, 12, 15, "reset-leg"), box_top=Decimal("111"))
+    third_order = replace(order(market, 18, 20, "reset-leg"), box_top=Decimal("121"))
+    by_gate = {8: [initial_order], 12: [equal_box, outside_box, second_order, order(market, 12, 16)],
+               18: [third_order]}
+
+    def resolve(kind, number, gate, event):
+        candidates = by_gate.get(gate, [])
+        if direction == "bearish":
+            return candidates
+        return [replace(item, direction="bearish", box_top=None,
+                        box_bottom=item.box_top.copy_negate() if item.box_top is not None else None)
+                for item in candidates]
+
+    if direction == "bullish":
+        points = primary.detect_bullish(*mirror_values(values), resolve).lows
+    else:
+        points = primary.detect_bearish(*values, resolve).highs
+    assert [(point.number, point.source_index, point.decision_index) for point in points] == [
+        (1, 9, 10), (2, 13, 15), (3, 19, 20),
+    ]
+    assert [point.order.causes for point in points[1:]] == [("reset-leg",)] * 2
 
 
 @pytest.mark.parametrize("changes,choices", [

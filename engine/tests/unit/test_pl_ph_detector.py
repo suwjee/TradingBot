@@ -190,12 +190,12 @@ def accepted_order(service, reaction, cause="parent-stop"):
         "causes":[{"kind":cause}]}
 
 
-def test_ph_after_first_excludes_reset_leg_only_order_b():
+def test_native_ph_continuation_exposes_reset_leg_order_for_the_primary_gate():
     from PL_PH_detector import NativePrimaryOrders
     from test_order_audit_lifecycle_contracts import detector_state, moment
     service,_,physical=detector_state("bearish")
     resolver=NativePrimaryOrders(service.chronology,{"bearish":{"OrderAudit":[accepted_order(service,physical,"reset-leg")]}})
-    assert resolver("PH",2,4,moment(125)) == []
+    assert resolver("PH",2,4,moment(125))[0].causes == ("reset-leg",)
     assert resolver("PH",1,4,moment(125))[0].causes == ("reset-leg",)
 
 

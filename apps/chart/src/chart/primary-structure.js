@@ -278,7 +278,7 @@ export function drawPrimaryStructures(ctx, group, {
         ctx.fillText(text, marker.x, label.baselineY);
         const below = marker.textBaseline === "top";
         drawTrueFalseLabel(ctx, item.trueFalse, settings.trueFalseVisible, size,
-          marker.x, below ? label.bottom : label.top, below, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT);
+          marker.x, below ? label.bottom : label.top, below, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, false, 2);
         onHit({ objectId, shape: "rect", left: label.left, right: label.right,
           top: label.top, bottom: label.bottom });
       }

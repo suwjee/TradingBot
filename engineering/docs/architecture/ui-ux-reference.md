@@ -12,7 +12,7 @@ scope:
   - faraz-ui
   - algorithm-reference-ui
   - responsive-accessibility
-last_modified_at: 2026-11-20T20:59:47+03:30
+last_modified_at: 2026-11-21T18:39:37+03:30
 ---
 
 # TradingBot UI/UX Reference
@@ -254,7 +254,7 @@ For repeated directional regimes, Chart renders each Engine-finalized calculatio
 
 Users can control presentation properties such as visibility, line/fill appearance, label styling, and selected object appearance.
 
-Configure and Appearance expose the supported native indicator objects, including primary structures and physical Orders. Visibility and style controls update the existing finalized result, participate in saved preferences/templates and reset through the standard style controls. In Configure, T/F labels toggles the smaller Engine-supplied marks alongside visible native labels. Explicitly unassigned candidates show N/A in `#b8b8b8` at font weight 300. Basic verdicts use font weight 300. StopAll and primary T/F verdicts use font weight 700. It redraws the current chart without an Engine request. The setting is on by default and participates in saved preferences and templates.
+Configure and Appearance expose the supported native indicator objects, including primary structures and physical Orders. Visibility and style controls update the existing finalized result, participate in saved preferences/templates and reset through the standard style controls. In Configure, T/F labels toggles the smaller Engine-supplied marks alongside visible native labels. Explicitly unassigned candidates show N/A in `#b8b8b8` at font weight 300. For a repeated StopAll, Chart places N/A between its number and its T/F verdict, using the Engine's repetition flag. Basic verdicts use font weight 300. StopAll and primary T/F verdicts use font weight 700. PH and PL T/F verdicts are 2 px larger than the standard verdict size. It redraws the current chart without an Engine request. The setting is on by default and participates in saved preferences and templates.
 
 Presentation objects may support UI-only customization such as:
 

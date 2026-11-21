@@ -27,3 +27,15 @@ test("T/F labels are smaller and sit beyond the native label in either direction
   assert.deepEqual(rendered.map(({ weight }) => weight), [300, 700, 300]);
   assert.equal(rendered[2].color, "#b8b8b8");
 });
+
+test("repeated StopAll renders N/A and its verdict outward in both directions", () => {
+  const rendered = [];
+  const ctx = { save() {}, restore() {}, fillText(text, x, y) { rendered.push({ text, x, y }); } };
+  drawTrueFalseLabel(ctx, "F", true, 14, 20, 40, true, 700, true);
+  drawTrueFalseLabel(ctx, "T", true, 14, 20, 40, false, 700, true);
+  drawTrueFalseLabel(ctx, "F", false, 14, 20, 40, true, 700, true);
+  assert.deepEqual(rendered, [
+    { text: "N/A", x: 20, y: 43 }, { text: "F", x: 20, y: 54 },
+    { text: "N/A", x: 20, y: 37 }, { text: "T", x: 20, y: 26 },
+  ]);
+});

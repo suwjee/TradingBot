@@ -42,10 +42,76 @@ def test_three_groups_and_unequal_repeat_labels(direction, primary_key, other_ke
     assert [row["trueFalse"] for row in group["sZones"]] == ["T", "T", "T"]
     assert [row["trueFalse"] for row in group["eZones"]] == ["T", "F", "F", "T"]
     assert [row["trueFalse"] for row in group["stopAlls"]] == [
-        "T", None, "T", "F", None, None, None, None, "T", "F",
+        "T", "T", "T", "F", "T", "F", "T", "F", "T", "T",
     ]
+    assert [i for i, row in enumerate(group["stopAlls"]) if row.get("trueFalseRepeated")] == [1, 6, 7, 8]
     assert [row["trueFalse"] for row in group[primary_key]] == ["T", "F", "F"]
     assert "trueFalse" not in group[other_key][0]
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+@pytest.mark.parametrize("colors, expected", [
+    ("bB bB bbbB", "TFTFTTTT"),
+    ("bB bB bb rR", "TFTFTTTF"),
+    ("rbbrR", "TTTTF"),
+])
+def test_basic_schematic_repetition_restarts(direction, colors, expected):
+    from true_false import apply_true_false
+
+    group = {"sZones": [], "eZones": []}
+    rows = []
+    for time, marker in enumerate(colors.replace(" ", "")):
+        family = "blue" if marker.lower() == "b" else "red"
+        if marker.islower():
+            parent = time
+            row = behavior(time, family=family)
+            group["sZones"].append(row)
+        else:
+            row = behavior(time, number=1, family=family, parent=parent)
+            group["eZones"].append(row)
+        rows.append(row)
+    apply_true_false(direction, group)
+    assert [row["trueFalse"] for row in rows] == list(expected)
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+@pytest.mark.parametrize("lengths, verdicts, overlaps", [
+    ((3, 4), ("TFT", "TFTT"), (0, 3)),
+    ((3, 3, 2, 4, 1, 2, 5), ("TFT", "TFT", "TF", "TFTT", "T", "TT", "TFTFT"), (0, 3, 0, 3, 0, 1, 4)),
+    ((1, 2, 2), ("T", "TT", "TF"), (0, 1, 2)),
+])
+def test_stopall_schematic_series(direction, lengths, verdicts, overlaps):
+    from true_false import apply_true_false
+
+    series = []
+    start = 0
+    for length in lengths:
+        series.append([behavior(start + number, number=number) for number in range(1, length + 1)])
+        start += length
+    apply_true_false(direction, {"stopAlls": [row for rows in series for row in rows]})
+    assert ["".join(row["trueFalse"] for row in rows) for rows in series] == list(verdicts)
+    assert [[row.get("trueFalseRepeated", False) for row in rows] for rows in series] == [
+        [number < overlap for number in range(length)] for length, overlap in zip(lengths, overlaps)
+    ]
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_largest_stopall_repeat_rebases_the_prefix_only_after_confirmation_close(direction):
+    from true_false import apply_true_false
+
+    prior = [behavior(time, number=number) for time, number in enumerate((1, 2, 3, 4, 1))]
+    current = [behavior(4 + number, number=number) for number in range(1, 6)]
+
+    def evaluate(visible, closed_through):
+        apply_true_false(direction, {"stopAlls": prior + visible},
+                         stopall_confirmation_closed=lambda row: row["sourceTime"] <= closed_through)
+        return ("".join(row["trueFalse"] for row in visible),
+                [row["number"] for row in visible if row.get("trueFalseRepeated")])
+
+    assert evaluate(current[:3], 7) == ("TTF", [1])
+    assert evaluate(current[:4], 7) == ("TTFT", [1])
+    assert evaluate(current[:4], 8) == ("TFTF", [1, 2, 3, 4])
+    assert evaluate(current, 9) == ("TFTFT", [1, 2, 3, 4])
 
 
 @pytest.mark.parametrize("direction, primary_key, other_key", [
@@ -75,6 +141,38 @@ def test_each_directional_primary_restarts_stopall_verdicts(direction, primary_k
     ]
     assert [row["trueFalse"] for row in group[primary_key]] == ["T", "F"]
     assert "trueFalse" not in group[other_key][0]
+
+
+@pytest.mark.parametrize("direction, primary_key", [("bullish", "primaryLows"), ("bearish", "primaryHighs")])
+def test_after_primary_the_first_series_has_no_repetition_marker(direction, primary_key):
+    from true_false import apply_true_false
+
+    stops = [behavior(time, number=number) for time, number in [(1, 1), (3, 1), (4, 1), (5, 1), (6, 2)]]
+    apply_true_false(direction, {"stopAlls": stops, primary_key: [behavior(2, number=1)]})
+    assert [row["trueFalse"] for row in stops] == ["T"] * 5
+    assert [row.get("trueFalseRepeated", False) for row in stops] == [False, False, True, True, False]
+
+
+def test_live_stopall_repeats_only_after_the_confirmation_candle_closes(tmp_path, monkeypatch):
+    from live_pipeline import LivePipelineContinuation
+
+    start = 1_795_000_020
+    args = setup("bullish", tmp_path / "raw.json", start, start + 210)
+    args.raw_timeframe = 5
+    worker = LivePipelineContinuation(args, pipeline.load_engines(args, {}))
+    stopalls = [dict(behavior(start + offset, number=number), decisionTime=start + decision)
+                for offset, number, decision in [(0, 1, 30), (30, 2, 60), (60, 3, 90),
+                                                  (90, 1, 120), (120, 2, 150), (150, 3, 180)]]
+    group = {"stopAlls": stopalls}
+    monkeypatch.setattr(pipeline, "build_direction_output", lambda *_: deepcopy(group))
+    rows = [dict(time=start + offset, low=100, high=101, open=100, close=101)
+            for offset in range(0, 210, 5)]
+    before = worker.append(rows[:-1])["directions"]["bullish"]["stopAlls"]
+    assert [row["trueFalse"] for row in before[3:]] == ["T", "F", "T"]
+    assert all("trueFalseRepeated" not in row for row in before)
+    closed = worker.append(rows[-1:])["directions"]["bullish"]["stopAlls"]
+    assert [row["trueFalse"] for row in closed[3:]] == ["T", "F", "T"]
+    assert all(row["trueFalseRepeated"] for row in closed[3:])
 
 
 @pytest.mark.parametrize("direction, price, peer_price, cross", [

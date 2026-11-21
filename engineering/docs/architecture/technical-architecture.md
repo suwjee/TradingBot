@@ -10,7 +10,7 @@ scope:
   - engine
   - runtime-boundaries
   - state-and-transport
-last_modified_at: 2026-11-20T22:04:08+03:30
+last_modified_at: 2026-11-21T18:39:37+03:30
 ---
 
 # TradingBot Technical Architecture
@@ -96,7 +96,7 @@ This path does not perform trading calculation.
 
 A manual Apply can start a dedicated Engine session scoped to its selected start, direction and analysis timeframe. The worker retains epoch-aligned RAW buckets, append lineage, and their market indexes. A verified append refreshes affected input buckets and index ranges, including the provisional tail. The trading stages recalculate at the requested horizon, including the last analysis candle. The bridge publishes the same indicator schema as the CLI.
 
-The Engine publishes Basic, StopAll and directional primary T/F labels on final behavior rows. Each finalized directional primary resets the StopAll verdict history at its source candle. The shared response builder applies this stage for manual and live calculation. RAW repair lookup uses the reference direction, including after reversal. Chart renders those labels as presentation, and Manual Review continues to present finalized events. The previous automatic position/setup stage remains retired.
+The Engine publishes Basic, StopAll and directional primary T/F labels on final behavior rows. Each finalized directional primary resets the StopAll verdict history at its source candle. The shared response builder applies this stage for manual and live calculation. It computes the closed-candle horizon from the RAW duration supplied by Vite. Repeated StopAll rows carry both their evaluated verdict and the repetition flag. RAW repair lookup uses the reference direction, including after reversal. Chart renders those labels as presentation, and Manual Review continues to present finalized events. The previous automatic position/setup stage remains retired.
 
 During development, Vite polls the Chart sources, UI assets, Engine styles and the registered active Python files. Chart's indicator renderer can be replaced in memory while the chart instance and its state stay in place. Vite sends a status event for changes that require loading a new interface shell. Python source changes reuse the existing indicator calculation context for a new request that validates RAW and the active Source fingerprint. The recalculation refreshes the alert baseline. RAW, cache, tests, historical artifacts and server configuration remain outside this source watcher.
 

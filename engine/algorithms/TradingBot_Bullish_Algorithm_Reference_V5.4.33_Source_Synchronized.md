@@ -1,16 +1,16 @@
 # TradingBot Bullish Algorithm Reference — Current Standalone Specification
 
 **Document Version:** `5.4.33`  
-**Last Modified:** `2026-11-20T19:38:40+03:30`  
-**last_modified_at:** `2026-11-20T22:06:11+03:30`  
+**Last Modified:** `2026-11-21T14:05:39+03:30`  
+**last_modified_at:** `2026-11-21T14:05:39+03:30`  
 **document_role:** `reference`  
 **lifecycle:** `maintained`  
 **owner:** `engine/algorithms`  
 **scope:** `accepted directional specification and exact Source; bidirectional primary structures and isolated alternating regimes; independent T/F labels`  
-**Status:** `ACTIVE SOURCE-SYNCHRONIZED — Engine Source matches the v2.8.2 production release`  
+**Status:** `ACTIVE SOURCE-SYNCHRONIZED — primary structures and corrected StopAll verdicts`  
 **Target Direction:** `bullish`  
 **Opposite Direction:** `bearish`  
-**Production Source Behavioral Change:** `NONE in this documentation revision`  
+**Production Source Behavioral Change:** `StopAll T/F now compares both the preceding and the largest earlier series within the current history`  
 **Mirror Contract:** Standard upstream geometry retains its directional mirror contract. The user-approved primary mirror and first-Reaction bootstrap apply symmetrically to newly isolated regimes; time, physical identity, provenance and S/E families remain invariant.
 
 > **Historical baseline source lineage:** V5.4.33 starts from the exact newly uploaded V5.4.32 `engine(1).zip`. V5.4.32 remains the historical baseline; older unmerged branches are not silently introduced.
@@ -19,7 +19,7 @@
 
 ### Independent T/F labels
 
-The Engine evaluates the final published behavior of each source candle. It assigns T/F independently for Basic (S/E), StopAll, and the directional primary structures. Section 13.10 defines the rules and output. Chart exposes smaller marks alongside native labels through its T/F labels control.
+The Engine evaluates the final published behavior of each source candle. It assigns T/F independently for Basic (S/E), StopAll, and the directional primary structures. Section 13.10 defines the rules and output. Chart exposes smaller marks alongside native labels through its T/F labels control. The [bidirectional primary and T/F standalone companion](TradingBot_Primary_Structures_and_True_False_Algorithm_Reference.md) covers the full feature contract, exact Source, reconstruction and verification.
 
 ### Earlier local change - assessment removal and implementation refactor (HISTORICAL)
 
@@ -132,7 +132,7 @@ This earlier synchronization described a supplied `engine.zip` without a root pa
 | `__init__.py` | Engine package marker | `unversioned` | 0 | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 | `bridge/__init__.py` | Bridge package marker | `unversioned` | 1 | 64 | `2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8` |
 | `bridge/live_pipeline.py` | Production module | `1.3.0` | 225 | 9694 | `5c0effe89dd5ce47c996187ca4da2689915aa83bcc16271432f2c0ee62c2240d` |
-| `bridge/trading_pipeline.py` | Final reconciled calculation objects | `1.14.0 (impl 1.20.3)` | 3745 | 149435 | `e7a1af5937efb23649149f92da660da89a9e3bda026da7c66e2d6e8409bfcc5a` |
+| `bridge/trading_pipeline.py` | Final reconciled calculation objects | `1.15.0 (impl 1.21.0)` | 3756 | 150038 | `c6979687fb175ead907d4069553f75a649b43754ee09b2a3af5d9f2cd0ae4d18` |
 | `pipeline/__init__.py` | Compatibility package wrapper | `unversioned` | 28 | 653 | `d22a1b81495a6c97b5eccc4d921b1ba4b709bfbcd39be6ef34b9014690b9f460` |
 | `pipeline/a_zone_detector.py` | BlueState and first-stop/inherited/double-stop routes | `1.7.0 (impl 1.8.1)` | 1069 | 43435 | `a77c57d1c2e148461e5c9a5f1f9ea569a1a66c64e5b97b08380ec0d6a16d8593` |
 | `pipeline/blue_line_detector.py` | Confirmed Reaction/Reset, Fibonacci, exact confirmation prefix | `2.4.1` | 590 | 21498 | `0171a1bfc48bc40b3b82781ac935614b75905a740e69b703ef3654d897d76df5` |
@@ -141,12 +141,12 @@ This earlier synchronization described a supplied `engine.zip` without a root pa
 | `pipeline/e_zone_detector.py` | S/E/Order lineage and parent stops | `6.16.2 (impl 6.20.4)` | 1538 | 70071 | `e05301a5812657f599c58e24525486e14e92910203004a1193c411d8a90d9f96` |
 | `pipeline/lifecycle_engine.py` | Final S/E dominance, accepted strict behavior stops | `1.18.6 (impl 1.22.2)` | 1610 | 67191 | `304848d425630ac4bce8f8e6e976d36312e1b16dac148a226efec4cf84f4f3f2` |
 | `pipeline/order_audit_engine.py` | Physical Order identity and cause ledger | `1.8.2 (impl 1.9.5)` | 2713 | 118217 | `a7912855fb8ee9bf9447cc5304cf805752bbb1d939015457fea868faaf5d3b8d` |
-| `pipeline/PL_PH_detector.py` | Primary High / Low / Matching Behavior Leg | `1.4.0` | 833 | 37041 | `0da974cd7dc50b70c943a091345d18dc2956a051989e9d733bfea1958152b7fc` |
+| `pipeline/PL_PH_detector.py` | Primary High / Low / Matching Behavior Leg | `1.5.0` | 839 | 37487 | `4fcc4820ddd4d374440698d3fcc8fc827e618268b2e378581ac54b5e865b7e6f` |
 | `pipeline/reaction_engine.py` | Canonical First candidate, Break, strict Reset, lower-TF chronology | `9.9.1 (impl 9.13.4)` | 2907 | 127156 | `0b37fbf91a0f2cdd65fec85eee6c39095e835bc928a98c657f1fe808e204b066` |
 | `pipeline/s_zone_detector.py` | Accepted A stop, aligned Reaction, physical opposite Order | `4.20.1 (impl 4.22.2)` | 1551 | 66301 | `3da3424c2a292ee8fb0f08854462bce57f075721bb370c9619d3e795fd134b78` |
-| `pipeline/true_false.py` | Independent final behavior T/F and strict repair evidence | `unversioned` | 133 | 4719 | `13408ddcedff2b5960b2fe790c444a4c430a77788b9e38501a9db584caa6a1ec` |
+| `pipeline/true_false.py` | Independent final behavior T/F and strict repair evidence | `unversioned` | 156 | 6086 | `ac536ea31872c20a872b252171a8be352cfc87859e19a67773fc6f796cb633b2` |
 
-Generated Source-inventory evidence at `2026-11-20T22:06:11+03:30`. Recursive live production discovery includes package markers and all production Python under Bridge and Pipeline. Tests, historical archives and caches are excluded.
+Generated Source-inventory evidence at `2026-11-21T11:08:13+03:30`. Recursive live production discovery includes package markers and all production Python under Bridge and Pipeline. Tests, historical archives and caches are excluded.
 
 Section 16 embeds the exact bytes represented by this manifest.
 
@@ -191,7 +191,7 @@ Mode A is the first Reaction of a leg. The detector establishes the contiguous c
 
 ### 4.4 Mode B / normal ownership
 
-After a confirmed Reaction, normal search uses the running directional context and the required First color. A confirmation main candle may itself seed the next Mode-B First only when the post-confirmation remainder does not first Reset the just-confirmed structure. The complete confirmation candle can be the next First when its market color has the required role; post-event chronology still controls which prices are eligible for the new boundary.
+After a confirmed Reaction, normal search uses the running directional context and the required First color. A confirmation main candle may itself seed the next Mode-B First only when the post-confirmation remainder does not first Reset the just-confirmed structure. The confirmation candle can be the next First when its market color has the required role. First check strictly later RAW within that same candle for an immediate Reset against the confirmed opposite edge. A strict Reset there disqualifies reuse. With no such Reset and with RAW rows available, use the entire confirmation candle from its main open through its exclusive end to build the successor box. BoxTop is its maximum RAW High and BoxBottom is its minimum RAW Low, with the earliest RAW occurrence on equality. Both edge source indexes and times name the main candle. Mode B starts its intrabar search at that main open. The full-candle geometry rule and the later-only Reset check apply after the initial and later confirmed Reactions in both directions.
 
 This handoff applies identically to the **initial confirmed Reaction** and to every later confirmed Reaction. Initial-confirmation status is not a reason to discard an otherwise eligible same-candle continuation; a same-remainder Reset still owns precedence exactly as before.
 
@@ -342,7 +342,7 @@ Order stop provenance comes from `MarketChronology.canonical_order_stop`. For Mo
 
 ### 9.3 Parent validity and retention
 
-An S explicitly identified in invalid_s_root_identities is calculation evidence, not an accepted S parent, and cannot create or retain a `parent-stop` Order_A cause. An E derived from that S may be accepted only when its chosen physical Order has a valid creating cause independent of the invalid S. This applies to ordinary chain reconciliation, consumed-S continuation, and independent-root restoration; provisional geometry alone cannot publish an E or StopAll. Once a valid canonical Order_A enters the identity-keyed ledger, later E/lifecycle reconciliation may change who uses it but cannot delete that physical identity/provenance. A shared Order_B identity may add reset-leg provenance without erasing valid parent-stop provenance.
+An S explicitly identified in invalid_s_root_identities is calculation evidence, not an accepted S parent, and cannot create or retain a `parent-stop` Order_A cause. An E derived from that S may be accepted only when its chosen physical Order has a valid creating cause independent of the invalid S. This applies to ordinary chain reconciliation, consumed-S continuation, and independent-root restoration; provisional geometry alone cannot publish an E or StopAll. Ordinary E/lifecycle reconciliation can change who uses a valid accepted physical Order_A while retaining its valid causes and identity. Confirmed directional primary ownership has the explicit exception in Sections 13.4a–13.4b: revoke or transfer an obsolete same-stop StopAll parent cause and remove the identity only if no independently valid cause remains. A shared Order_B identity retains its independently accepted reset-leg provenance.
 
 The same acceptance rule applies during every OrderAudit rebuild/reconciliation pass: nonaccepted A causes are removed before a physical identity is retained on A provenance. This prevents a provisional A cause from being reintroduced after downstream E reconciliation while preserving independent valid S/E or reset-leg provenance for the same physical Order.
 
@@ -457,7 +457,7 @@ Legacy serialization contains no trading recalculation. Decimal prices are strin
 
 ### 13.3 Response envelope
 
-The envelope contains `engine`, `version`, `pipelineVersion`, `blueLineVersion`, `aVersion`, `sVersion`, `eVersion`, `stopAllVersion`, enablement booleans, `timeframe`, `actualFrom`, `actualTo`, `directions`, and runtime `timings`. Each requested direction owns its own Reaction/Reset/Blue/A/S/E/StopAll/OrderAudit arrays.
+The envelope contains `engine`, `version`, `pipelineVersion`, nullable `primaryVersion`, `blueLineVersion`, `aVersion`, `sVersion`, nullable `eVersion` and `stopAllVersion`, enablement booleans, `timeframe`, `actualFrom`, `actualTo`, and `directions`. The runtime telemetry is `timings.phasesMs` and `timings.bridgeTotalMs`. `activeDirection` is added only when a reversal is published within the request horizon. Each calculated direction owns its finalized Reaction/Reset/Blue/A/S/E/StopAll/OrderAudit arrays. Section 13.10 specifies the subsequent verdict annotations.
 
 ### 13.4 Optional Bridge Output
 
@@ -474,10 +474,10 @@ The envelope contains `engine`, `version`, `pipelineVersion`, `blueLineVersion`,
 
 #### Matching setup and first PH gate
 
-1. The accepted StopAll sequence must reach at least `StopAll3`; later numbered StopAll events may precede qualification.
+1. For a new matching pair, use the latest accepted StopAll as its reference only if its number is at least 3. Every new StopAll clears incomplete matching. A latest StopAll below 3 prevents a new qualification until an eligible reference arrives.
 2. At or after that boundary, accept at least two **exact dominant** S/E occurrences under `lifecycle_engine.advance_dominant_behavior`, the same owner/count resolver used by StopAll. S identity is `(S, color)`; E identity is `(E, family, number)`. Shared priority is S Blue < E Blue < S Red < E Red, with the existing higher-E-number rule within one family. A lower-priority intervening occurrence does not replace the owner; a higher-priority owner replacement restarts its count. Use accepted final events: an E/S source belonging to StopAll is not simultaneously an independent matching occurrence, and an invalid calculation event does not count.
-3. Retain the last qualifying StopAll **before each matching leg**, the second accepted matching occurrence's main source candle, and the qualification event. Qualification becomes available no earlier than the reference StopAll decision and both matching decisions; do not treat a retrospective source timestamp as confirmation. A subsequent StopAll does not by itself invalidate an already qualified pair. Keep that pair pending while also evaluating newly qualified legs; an earlier unbroken reference must not block later valid setups.
-4. For each pending qualified leg, find its first authoritative RAW `High > reference StopAll main-candle High`. Equality does not open PH space. **Every activated qualified leg starts an independent cycle**, even while older cycles remain active or their MBLs remain unbroken. An eligible activation freezes an internal candidate leg; it does not yet form a public MBL. Earlier qualification does not block a later setup that crosses first. Its owning calculation candle is the initial PH trigger candle. Activation order follows exact break time, then qualification time, reference source index and second-behavior source index for deterministic ties.
+3. Freeze the qualifying leg's preceding reference, the second accepted matching occurrence's main source candle and the latest of the three exact decisions (reference and both occurrences). A retrospective source timestamp does not substitute for qualification. A subsequent StopAll does not by itself invalidate an already qualified pair. Keep that pair pending while also evaluating newly qualified legs; an earlier unbroken reference must not block later valid setups.
+4. For each pending qualified leg, find its first authoritative RAW `High > reference StopAll main-candle High` strictly after its exact qualification time. A crossing at the same timestamp as qualification does not activate the leg. Equality does not open PH space. **Every activated qualified leg starts an independent cycle**, even while older cycles remain active or their MBLs remain unbroken. An eligible activation freezes an internal candidate leg; it does not yet form a public MBL. Earlier qualification does not block a later setup that crosses first. Its owning calculation candle is the initial PH trigger candle. Activation order follows exact break time, then qualification time, reference source index and second-behavior source index for deterministic ties.
 5. Resolve only eligible accepted conceptual Bearish Orders of creation type Order_A or Order_B. The first eligible exact Order stop confirms PH-1; its source and its later confirmation are separate events.
 
 #### Independent cycle ownership and exact shared chronology
@@ -559,10 +559,10 @@ This is the existing native Order contract, not a changed price comparator. The 
 - Reuse full-history `prepare_order_audit(detector, 0, final_index, s_detector, accepted_a_sources)`. It merges accepted S/E ledgers, removes rejected A creation causes, deduplicates exact physical `(FirstIndex, BreakIndex)` and applies the established one-physical-Order_A-per-parent-stop cause rule.
 - **Order_A** is accepted `parent-stop` provenance. **Order_B** is accepted `reset-leg` provenance. Native physical Reaction **Mode A/B is independent of creation type**; a Mode-B physical Reaction carrying only `parent-stop` is Order_A.
 - An unconfirmed structure crossing does **not** manufacture a physical Order or Order_B. The strict stop of an already confirmed PH is a genuine parent-stop event and creates native bearish-owner Order_A through the existing OrderAudit owner, as specified below. Order_B must already satisfy accepted A/S/E/StopAll lifecycle stop ownership, the correct directional Reset, the accepted geometric anchor and strictly extending LL/HH boundary, strict post-Reset boundary break, accepted-A expiry, canonical opposite physical Reaction, confirmation and native strict Order stop.
-- Logical initial PH-1 and logical PH-1 following a reset admit accepted Order_A and Order_B. Logical PH-2 and every later same-cycle PH admit accepted Order_A. Final physical renumbering does not change this Order eligibility or replay the race.
+- Logical initial PH-1 and logical PH-1 following a reset admit accepted Order_A and Order_B. Logical PH-2 and PH-3 admit accepted Order_A. An accepted Order_B can also confirm either point when its physical BoxTop is strictly above the preceding confirmed PH High. Final physical renumbering does not change this Order eligibility or replay the race.
 - **Every specified PL, including PL-1, admits both conceptual Bullish Order_A and Order_B.** This supersedes earlier B-only PL-1 teaching. For PL Order_A, the first eligible accepted canonical Bearish physical Reaction after the trigger supplies the direct candidate, even if its Order is still open; a later stopped Order_A must not replace this first valid candidate. Do not substitute an arbitrary unaccepted canonical Reaction; do not label noncanonical order-only geometry as a canonical PL candidate. Continue evaluating all eligible accepted Order_B candidates in the same race.
 - **PH consumption gate:** an already accepted native Order is eligible when its exact confirmation is **at or after** the structure crossing. Its physical First may precede that crossing. A joint confirmation/crossing in one finest RAW timestamp is eligible; do not invent an ordering between these compatible same-direction events. An Order confirmed strictly before the new crossing is not admitted by this rule. This applies to initial/reset PH-1 and subsequent PH with their existing creation-type restrictions. **PL keeps its existing gate:** First belongs to the trigger main candle or later, and confirmation is strictly after the crossing. The selected exact Order stop remains strictly after confirmation and the crossing. This consumption gate does not loosen the separate native creation rule for a new Order_A caused by stopping a confirmed PH.
-- Choose the earliest eligible **exact stop event**, regardless of creation time, proximity, public Reaction number or A/B type. Retain all accepted creation types on a shared physical identity. Exact Order-stop ties use deterministic physical identity ordering, without an A/B type preference.
+- Choose the earliest eligible **exact stop event**, regardless of creation time, proximity, public Reaction number or A/B type. Retain all accepted creation types on a shared physical identity. Exact Order-stop ties prefer the larger physical First index, then the smaller Break index. Order type gives no tie preference. For the secondary direct-A lock, select the canonical candidate by lower physical First index, earlier confirmation, then lower Break index before testing whether it has stopped. A shared identity with accepted B provenance can still compete on the B route.
 
 #### PH replaces StopAll and owns its subsequent Order_A
 
@@ -576,9 +576,9 @@ Independent valid Reset routes retain creation type **Order_B**. Their post-stop
 
 #### PH continuation through PH3
 
-After confirming PH-1 or PH-2, wait for the first strict `High > PH-n.price`. That main candle opens PH-(n+1). Use the earliest eligible accepted Order_A stop after that gate. The new PH price is the maximum High from the breakout main candle through the selected Order-stop main candle, including both whole candles; earliest equality owns the source. Source and exact later confirmation remain distinct.
+After confirming PH-1 or PH-2, wait for the first strict `High > PH-n.price`. That main candle opens PH-(n+1). Use the earliest eligible exact Order stop after that gate. The ordinary Order_A path remains eligible. The additional Order_B path requires a strictly higher BoxTop than the previous PH High, with equality excluded. The new PH price is the maximum High from the breakout main candle through the selected Order-stop main candle, including both whole candles; earliest equality owns the source. Source and exact later confirmation remain distinct.
 
-The approved sequence stops at PH3. The former unlimited-PH rule is superseded. No PH4 is confirmed or registered as a native PH parent.
+The approved directional regime changes on the first strict stop of a confirmed final physical PH-3. This bounds the normal local progression. Public physical numbering is reconciled across independent cycles and can retain or produce a higher final number. Reversal selection tests final number 3 rather than imposing a blanket numeric cap on the serializer.
 
 #### PH3 stop and bullish regime start
 
@@ -643,7 +643,7 @@ The Chart receives final calculation truth. It never reconstructs matching, cros
 
 Default arrow extent and label font are `12px`. Colors follow point kind: PH is green `#056656`; PL is pink `#ec407a`. Both bearish PL and bullish PH circles default to radius `4px` (diameter `8px`) and opacity `100%`; circle label font is `12px` in the point's color. Explicit marker/radius/appearance customization remains supported. Candle-to-nearest-marker-edge gap is `12px`; marker-to-visible-label-edge gap is `10px`. Text is `PH-n` / `PL-n` using the finalized number; repeated PH-1 after reset retains a distinct stable object identity.
 
-MBL uses the finalized source/price and strict end event, dotted line size `2`, color `#b22833`, and centered `MBL` text at `9px`, with a label gap in the line. Display at most 400 subsequent actual analysis candles. An earlier strict break ends the line at that candle. The cap applies equally to the latest and all earlier MBLs; no later break extends a line beyond the cap. At a bearish-to-bullish handoff, historical drawing is bounded by the explicit calculation end. A PH reset does not itself create such a newer MBL. Source `capTime` preserves actual main-candle chronology across market-data gaps; the Chart does not scan prices for a substitute end.
+MBL uses the finalized source/price and strict end event, dotted line size `2`, color `#b22833`, and centered `MBL` text at `9px`, with a label gap in the line. Display at most 400 subsequent actual analysis candles. An earlier strict break ends the line at that candle. The cap applies equally to the latest and all earlier MBLs; no later break extends a line beyond the cap. At a bearish-to-bullish handoff, historical drawing is bounded by the explicit calculation end. A PH reset does not itself create such a newer MBL. Source `capTime` is the timestamp at source index + 400 when that actual candle is available. For shorter supplied input, extrapolate the remaining analysis slots from the last available main candle. A stopped regime clamps the cap to its exclusive calculation boundary. Chart uses the supplied end or the legacy time-based display fallback when an older payload lacks it. Chart does not search raw prices for a substitute end.
 
 Configure contains a PH/PL section with marker/label visibility switches for PH, PL and MBL. Appearance exposes colors, marker/label sizes, circle opacity/radius, gaps and line style/width using the same persistence and reset patterns as existing controls. Per-object hide/unhide uses the existing object tree and stable IDs. All stated appearance values are defaults, not fixed calculation rules.
 
@@ -657,7 +657,7 @@ At a bearish start, draw the symmetric red dashed full-height boundary and a red
 
 The Engine supplies `trendTransitions` on the incoming direction with stable identity, direction/previousDirection, source and exact event time, stopped PH3 or PL3 provenance, and nullable target-candle High or Low. The Chart does not search OHLC for a trend event. Historical paint, hit testing and selection all respect the owning segment's end bound; new segment anchors come from fresh finalized input and user presentation offsets may move drawings; Section 13.4b specifies the complete repeated-regime contract.
 
-The approved full-October USOIL 5s RAW calculated at 30s retains bearish PH1 at `2026-10-07 00:13:30`, PH2 at `03:55:30` and PH3 at `04:47:00`, with PH3 High `90.573`. Its strict stop starts the bullish context at `16:57:30`. FirstRed/BoxTop are `16:57:30`, BoxBottom is `16:59:30` and Break is `17:00:30`. The 50th candle is `17:22:00`. These are bounded acceptance anchors, never production special cases.
+A historical full-October USOIL 5s RAW acceptance run at 30s recorded bearish PH1 at `2026-10-07 00:13:30`, PH2 at `03:55:30` and PH3 at `04:47:00`, with PH3 High `90.573`. Its strict stop starts the bullish context at `16:57:30`. FirstRed/BoxTop are `16:57:30`, BoxBottom is `16:59:30` and Break is `17:00:30`. The 50th candle is `17:22:00`. These are bounded acceptance anchors, never production special cases.
 
 #### Bounded authoritative-RAW acceptance example
 
@@ -667,11 +667,11 @@ The earliest accepted eligible bearish-owner Order stop is physical Bullish iden
 
 This is bounded acceptance evidence of the general accepted-audit, chronological race and inclusive-extrema rules. None of these timestamps, indices, prices or RAW names is a production branch or universal market rule.
 
-#### Bounded USOIL joint-confirmation acceptance example
+#### Historical USOIL joint-confirmation acceptance example
 
 On the user-selected USOIL RAW chart identity `107aa8c4-ca51-47b7-925f-401df4200f0c`, supplied from October 1 through October 23 and calculated bearish at 30 seconds, reference StopAll5 is `2026-10-06 08:21:00`, High `90.028`. The first two matching S Red sources after it are `11:45:30` and `14:37:00`; repeating the same source in a written list does not create a second physical behavior. The immutable MBL remains `2026-10-06 15:50:30`, price `86.867`.
 
-The reference breaks strictly at `2026-10-07 00:13:45`, belonging to main candle `00:13:30`. The accepted bearish-owner physical Bullish Order has First `00:10:30`, exact confirmation `00:13:45`, native stop `89.803`, and exact stop `01:31:00`. It has physical Reaction Mode B but accepted creation type Order_A. The user explicitly confirmed that this older-First, jointly confirmed Order validates PH-1. The inclusive whole-candle range has maximum `90.034` on `00:13:30`, so that candle owns PH-1; `01:31:00` is its confirmation, not its source. The MBL unbroken-display cap is `16:40:30`, 100 actual analysis candles after its source.
+The reference breaks strictly at `2026-10-07 00:13:45`, belonging to main candle `00:13:30`. The accepted bearish-owner physical Bullish Order has First `00:10:30`, exact confirmation `00:13:45`, native stop `89.803`, and exact stop `01:31:00`. It has physical Reaction Mode B but accepted creation type Order_A. The user explicitly confirmed that this older-First, jointly confirmed Order validates PH-1. The inclusive whole-candle range has maximum `90.034` on `00:13:30`, so that candle owns PH-1; `01:31:00` is its confirmation, not its source. That older run recorded an unbroken-display cap at `16:40:30` under the superseded 100-candle setting. Current display uses the 400-candle rule above.
 
 The previous gate required First at or after the crossing candle and confirmation strictly later than the crossing; it wrongly excluded this accepted Order and selected `03:55:30` as the first PH source. The general PH confirmation gate above corrects that earliest divergence. These timestamps, prices and the chart identity are bounded acceptance evidence only; production contains no corresponding special case.
 
@@ -694,15 +694,14 @@ its whole cycle is invalid. After recalculation, October7 17:09 remains PH-4;
 October8 12:30 is PH-5 and14:21 is PH-6. The general physical number-precedence
 rule remains unchanged; invalid cycle roles no longer participate in it.
 
-#### Bounded USOIL rejected MBL examples
+#### Historical USOIL rejected MBL examples
 
 Reject the candidate MBL source `2026-10-07 11:51:30`: reference index8894 is
 the PH-3 source at04:47, confirmed04:55:05 before its would-be activation.
 Reject candidate source `2026-10-08 18:01:00`: reference index12832 is an
 already-confirmed PH source at14:41:30. Neither historical StopAll may seed a
 new independent cycle. These identities are test evidence only, not production
-conditions. Preserve the valid original MBL at October6 15:50:30 and independent
-October22 MBL at18:56:30, each confirmed by its own PH.
+conditions. The original acceptance run retained the October 6 leg at 15:50:30 and a separately confirmed October 22 leg at 18:56:30 under its then-active regime boundaries. The October 22 object is historical evidence and is not a current full-range expectation after a prior regime reversal.
 
 <!-- PRIMARY-STRUCTURES-END -->
 
@@ -736,7 +735,7 @@ The user has approved the bullish PL/PH/MBL mirror and subsequent bearish restar
 | Bullish point | Conceptual Order owner | Opposite physical Reaction | Accepted creation types | Structure consumption gate |
 |---|---|---|---|---|
 | Initial/reset local PL1 | `bullish` | `bearish` | Order_A and Order_B | confirmation at or after crossing; older First allowed |
-| Local PL2 / PL3 | `bullish` | `bearish` | Order_A | confirmation at or after crossing; older First allowed |
+| Local PL2 / PL3 | `bullish` | `bearish` | Order_A, or Order_B with BoxBottom strictly below the previous PL Low | confirmation at or after crossing; older First allowed |
 | PH1 / PH2 / PH3 | `bearish` | `bullish` | Order_A and Order_B | First in trigger main candle or later; confirmation strictly after crossing |
 
 Conceptual bullish Orders use native physical bearish `High > stopLevel`; conceptual bearish Orders use native physical bullish `Low < stopLevel`. Creation type is accepted parent-stop/reset-leg provenance, independent of physical Reaction Mode A/B. An Order stop must be strictly after both its confirmation and the structure crossing. The earliest exact eligible stop wins; exact stop ties prefer larger FirstIndex, then BreakIndex, with no A/B preference. For opposite PH, preserve canonical Reaction eligibility and the first valid direct Order_A lock: an open first eligible direct A cannot be replaced by a later direct A, while accepted B candidates still race normally.
@@ -745,13 +744,13 @@ Confirm each PL at the minimum Low over the whole trigger main candle through th
 
 #### Continuation, cancellation and final physical PL ownership
 
-After confirmed PL1 or PL2, the first strict break of that PL Low opens the next local PL stage. Before a pending PL confirms, an MBL High break cancels it and enters the PH path. If an earlier PH exists, a later PH still requires its own preceding PH High break; cancellation alone cannot invent that crossing.
+After confirmed PL1 or PL2, the first strict break of that PL Low opens the next local PL stage. The ordinary Order_A path and each qualifying Order_B compete by earliest exact stop. An Order_B whose BoxBottom equals the previous PL Low does not qualify. Before a pending PL confirms, an MBL High break cancels it and enters the PH path. If an earlier PH exists, a later PH still requires its own preceding PH High break; cancellation alone cannot invent that crossing.
 
 PH1 opens at the first strict `High > MBL.price`; subsequent PH stages require the first strict break above the last PH High after its confirmation. PH numbering survives a PL reset. If PH is pending and no new PH has confirmed since the latest PL, strict loss of that PL Low cancels the pending PH and resumes the next local PL. A confirmed PH resets local PL confirmation to PL1 at the next valid downward gate with A/B eligibility; the original MBL and PH counter persist.
 
 `resolve_primary_lows` reconciles final physical PL roles before presentation filtering. Coincident roles publish one greatest local number; chronological ties retain the same deterministic identity-source rule as PH. A distinct next confirmed physical PL strictly lower than the preceding final PL-n takes at least n+1, retaining a larger qualified local number. Equal/higher price does not force that continuation. Final renumbering preserves native Order eligibility, exact events, logical cycle membership and stable object IDs. Native PL aliases and frozen selected-Order causes use that same final source-to-number map without rediscovering Orders.
 
-No PL4 is confirmed or registered as a new primary parent. The first strict stop of any confirmed final PL3 ends all bullish cycles, as described below. Opposite PH stops after PH3 retain eligible conceptual bearish Order_A/B evidence as `postPH3Orders`, without forming PH4. This evidence does not override a PL3 regime reversal.
+The first strict stop of any confirmed final physical PL-3 ends all bullish cycles, as described below. Separate this local continuation/reversal boundary from final public numbering across independent cycles, which can reconcile a higher displayed number. Opposite PH stops after PH3 retain eligible conceptual bearish Order_A/B evidence as `postPH3Orders`, without forming PH4. This evidence does not override a PL3 regime reversal.
 
 #### Confirmed PL parent and StopAll ownership
 
@@ -775,7 +774,7 @@ An explicit bullish request starts bullish primary calculation; `both` retains t
 
 Both directions expose finalized `primaryHighs`, `primaryLows`, `matchingBehaviorLegs`, `primaryStatus` and `primaryCycles`. Bearish retains `postPL3Orders`; bullish exposes `postPH3Orders` with conceptual bearish owner and physical bullish direction. Primary prices remain Decimal strings. Bullish primary PL objects expose participating `cycleIds`; each bullish cycle joins them through `lowIds`, matching bearish `highIds`. Absolute input offsets participate in stable point/cycle/MBL identities, so a later same-direction regime cannot reuse an earlier regime's IDs.
 
-Each incoming direction receives Engine-finalized `trendTransitions` with stable `id`, `direction`, `previousDirection`, boundary `sourceIndex/sourceTime`, exact `eventTime` and stopped `level`. Bullish-start provenance uses `phNumber/phSourceIndex/phSourceTime`; bearish-start provenance uses the corresponding `pl*` fields. `iconCandleIndex/iconCandleTime` target the actual 50th calculation candle counting the boundary as 1. Bullish exposes `iconCandleHigh`; bearish exposes `iconCandleLow`. Target fields are null when that actual candle does not exist. The envelope's `activeDirection` identifies the latest published regime.
+Each incoming direction receives Engine-finalized `trendTransitions` with stable `id`, `direction`, `previousDirection`, boundary `sourceIndex/sourceTime`, exact `eventTime` and stopped `level`. Bullish-start provenance uses `phNumber/phSourceIndex/phSourceTime`; bearish-start provenance uses the corresponding `pl*` fields. `iconCandleIndex/iconCandleTime` target the actual 50th calculation candle counting the boundary as 1. Bullish exposes `iconCandleHigh`; bearish exposes `iconCandleLow`. Target fields are null when that actual candle does not exist. When a reversal is published within the requested horizon, the envelope's `activeDirection` identifies the latest published regime. Without a published reversal the field is absent.
 
 Both trend-start icons remain `28 × 28` CSS pixels. The bullish icon's bottom edge is exactly `100px` above its target candle's High; the bearish icon's top edge is exactly `100px` below its target candle's Low. These are screen-pixel clearances during pan/zoom and do not change the actual-candle-50 target. The latest explicit user instruction restores `100px` clearance and supersedes the earlier `500px` clarification. Current automatic calculation remains unchanged; Auto/Manual controls are not part of this approved change. Historical verification retains the geometry tested at that time.
 
@@ -816,9 +815,9 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 - Assignment `_PIPELINE_DIR = _ENGINE_ROOT / 'pipeline'` (L33).
 - Assignment `_pipeline_dir_text = str(_PIPELINE_DIR)` (L34).
 - Assignment `_DTFMT = '{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}'` (L42).
-- Assignment `TRADING_PIPELINE_VERSION = '1.14.0'` (L45).
-- Assignment `TRADING_PIPELINE_IMPLEMENTATION_VERSION = '1.20.3'` (L46).
-- Assignment `TRADING_PIPELINE_LAST_MODIFIED = '2026-11-20T22:00:58+03:30'` (L47).
+- Assignment `TRADING_PIPELINE_VERSION = '1.15.0'` (L45).
+- Assignment `TRADING_PIPELINE_IMPLEMENTATION_VERSION = '1.21.0'` (L46).
+- Assignment `TRADING_PIPELINE_LAST_MODIFIED = '2026-11-21T11:08:13+03:30'` (L47).
 - Assignment `MBL_EXTENSION_CANDLES = 400` (L48).
 - Assignment `TEHRAN = ZoneInfo('Asia/Tehran')` (L50).
 - Assignment `_progress_sink = ContextVar('progress_sink', default=None)` (L51).
@@ -916,89 +915,90 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 - Function `market_segment(market, start, stop, *, initial_bullish_trend=None, initial_bearish_trend=None)` (L1755-L1775).
 - Function `absolute_payload_indexes(value, offset)` (L1778-L1789).
 - Function `serialize_trend_transition(transition, market)` (L1792-L1812).
-- Function `parse_arguments(argv=None)` (L1815-L1885).
-- Function `load_engines(args, timings: dict[str, float])` (L1888-L1923).
-- Function `prepare_market_context(args, engines: EngineBundle, timings: dict[str, float])` (L1926-L1941).
-- Function `_prepare_market_context_from_rows(args, engines: EngineBundle, timings: dict[str, float], source_rows: list[dict])` (L1944-L1966).
-- Function `_prepare_market_context_from_buckets(args, engines: EngineBundle, timings: dict[str, float], second_buckets: list[dict], timeframe_buckets: list[dict], live_views: LiveMarketViews | None=None, bucket_delta: BucketAppend | None=None)` (L1969-L2025).
-- Class `PipelineState` (L2028-L2046).
-- Assignment `directions: tuple[str, ...]` (L2031).
-- Assignment `results: dict[str, object]` (L2032).
-- Assignment `reusable_full_context: bool` (L2033).
-- Assignment `initial_order_geometry: dict[str, object]` (L2034).
-- Assignment `internal_reaction_identities: dict[str, set[tuple[int, int]]]` (L2035).
-- Assignment `full_e_zones: dict[str, list[object]]` (L2036).
-- Assignment `full_e_detectors: dict[str, object]` (L2037).
-- Assignment `full_s_detectors: dict[str, object]` (L2038).
-- Assignment `full_lines_by_direction: dict[str, list[object]]` (L2039).
-- Assignment `full_a_by_direction: dict[str, list[object]]` (L2040).
-- Assignment `invalid_a_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2041).
-- Assignment `invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2042).
-- Assignment `full_s_by_direction: dict[str, list[object]]` (L2043).
-- Assignment `full_s_candidates_by_direction: dict[str, list[object]]` (L2044).
-- Assignment `primary_result: object | None = None` (L2045).
-- Assignment `live_stages: object | None = None` (L2046).
-- Class `FullDirectionState` (L2050-L2062).
-- Assignment `e_zones: list[object]` (L2053).
-- Assignment `e_detector: object` (L2054).
-- Assignment `s_detector: object` (L2055).
-- Assignment `blue_lines: list[object]` (L2056).
-- Assignment `a_zones: list[object]` (L2057).
-- Assignment `invalid_a_identities: set[tuple[datetime, int]]` (L2058).
-- Assignment `invalid_s_identities: set[tuple[datetime, int]]` (L2059).
-- Assignment `s_zones: list[object]` (L2060).
-- Assignment `s_candidates: list[object]` (L2061).
-- Assignment `initial_s_zones: list[object]` (L2062).
-- Function `create_e_detector(direction: str, e_engine, full_results: dict[str, object], s_zones: list[object], chronology, geometry_detectors: dict[str, object], initial_order_audit, lifecycle_engine, *, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[object]=(), live_continuation=None, order_geometry=None, live_scope=())` (L2065-L2120).
-- Function `create_e_detector.direct_geometry(geometry_direction, geometry_start, geometry_end, gate_event)` (L2087-L2100).
-- Function `calculate_full_direction_state(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], order_b_legs: Sequence[object]=(), shared_stages: FullDirectionState | None=None, live=None, feedback_index: int=0)` (L2123-L2478).
-- Function `calculate_direction_with_order_b_feedback(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], *, stopall_enabled: bool, live=None)` (L2481-L2545).
-- Function `prepare_pipeline_state(args, engines: EngineBundle, market: MarketContext, timings: dict[str, float], *, live=None, report_stage=None)` (L2548-L2699).
-- Class `DirectionRangeState` (L2703-L2712).
-- Assignment `blue_lines: list[object]` (L2706).
-- Assignment `a_zones: list[object]` (L2707).
-- Assignment `s_candidates: list[object]` (L2708).
-- Assignment `accepted_s_zones: list[object]` (L2709).
-- Assignment `e_zones: list[object]` (L2710).
-- Assignment `invalid_a_identities: set[tuple[datetime, int]]` (L2711).
-- Assignment `invalid_s_identities: set[tuple[datetime, int]]` (L2712).
-- Class `DirectionVisibilityState` (L2716-L2731).
-- Assignment `blue_lines: list[object]` (L2719).
-- Assignment `a_zones: list[object]` (L2720).
-- Assignment `s_zones: list[object]` (L2721).
-- Assignment `e_zones: list[object]` (L2722).
-- Assignment `stopalls: list[object]` (L2723).
-- Assignment `prepared_order_audit: list[object]` (L2724).
-- Assignment `projection_s_zones: list[object]` (L2728).
-- Assignment `projection_e_zones: list[object]` (L2729).
-- Assignment `projection_stopalls: list[object]` (L2730).
-- Assignment `primary_groups: dict[str, list[object]] = field(default_factory=dict, kw_only=True)` (L2731).
-- Function `calculate_direction_range_state(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L2734-L2833).
-- Function `finalize_direction_visibility(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, direction_state: DirectionRangeState, timings: dict[str, float])` (L2836-L3072).
-- Function `serialize_direction_payload(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, timings: dict[str, float])` (L3075-L3213).
-- Function `serialize_direction_payload.build_legacy_payload()` (L3102-L3125).
-- Function `serialize_direction_payload.serialize_reactions_from_one_selection()` (L3134-L3142).
-- Function `serialize_direction_payload.build_payload()` (L3175-L3209).
-- Function `serialize_primary_order(order, market, owner_direction)` (L3216-L3242).
-- Function `serialize_primary_order.value(item)` (L3219-L3224).
-- Function `serialize_primary_structures(primary, market)` (L3245-L3364).
-- Function `serialize_primary_structures.cycle_identity(value)` (L3256-L3261).
-- Function `serialize_primary_structures.point(item)` (L3262-L3285).
-- Function `calculate_primary_structures(args, engines, market, state, visibility, timings, direction='bearish')` (L3367-L3420).
-- Function `calculate_primary_structures.commit_high(point)` (L3390-L3398).
-- Function `build_direction_output(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L3423-L3463).
-- Function `merge_regime_outputs(regimes)` (L3465-L3491).
-- Function `build_reversed_trend_outputs(args, engines, market, transition, timings, *, live=None)` (L3494-L3587).
-- Function `build_reversed_trend_outputs.calculate(context, direction, continuation=None)` (L3502-L3510).
-- Function `build_reversed_trend_outputs.publish(group, index_offset, first_time, *, stopped=False)` (L3512-L3527).
-- Function `build_reversed_trend_outputs.calculate_closed(current=current, boundary=boundary, current_direction=current_direction)` (L3534-L3550).
-- Function `build_reversed_trend_outputs.empty_lists(item)` (L3560-L3565).
-- Function `build_response_payload(args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float], pipeline_started: float)` (L3590-L3656).
-- Function `_market_calculation_scope(reaction)` (L3660-L3674).
-- Function `calculate_live_from_raw(args, engines: EngineBundle, rows: list[dict], *, report_stage=None)` (L3677-L3681).
-- Function `calculate_live_from_buckets(args, engines: EngineBundle, buckets: LiveMarketBuckets, *, live_views: LiveMarketViews | None=None, bucket_delta: BucketAppend | None=None, report_stage=None)` (L3684-L3692).
-- Function `_run_live_calculation(args, engines, prepare_market, market_inputs, report_stage)` (L3695-L3703).
-- Function `main()` (L3706-L3737).
+- Function `parse_arguments(argv=None)` (L1815-L1889).
+- Function `load_engines(args, timings: dict[str, float])` (L1892-L1927).
+- Function `prepare_market_context(args, engines: EngineBundle, timings: dict[str, float])` (L1930-L1945).
+- Function `_prepare_market_context_from_rows(args, engines: EngineBundle, timings: dict[str, float], source_rows: list[dict])` (L1948-L1970).
+- Function `_prepare_market_context_from_buckets(args, engines: EngineBundle, timings: dict[str, float], second_buckets: list[dict], timeframe_buckets: list[dict], live_views: LiveMarketViews | None=None, bucket_delta: BucketAppend | None=None)` (L1973-L2029).
+- Class `PipelineState` (L2032-L2050).
+- Assignment `directions: tuple[str, ...]` (L2035).
+- Assignment `results: dict[str, object]` (L2036).
+- Assignment `reusable_full_context: bool` (L2037).
+- Assignment `initial_order_geometry: dict[str, object]` (L2038).
+- Assignment `internal_reaction_identities: dict[str, set[tuple[int, int]]]` (L2039).
+- Assignment `full_e_zones: dict[str, list[object]]` (L2040).
+- Assignment `full_e_detectors: dict[str, object]` (L2041).
+- Assignment `full_s_detectors: dict[str, object]` (L2042).
+- Assignment `full_lines_by_direction: dict[str, list[object]]` (L2043).
+- Assignment `full_a_by_direction: dict[str, list[object]]` (L2044).
+- Assignment `invalid_a_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2045).
+- Assignment `invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2046).
+- Assignment `full_s_by_direction: dict[str, list[object]]` (L2047).
+- Assignment `full_s_candidates_by_direction: dict[str, list[object]]` (L2048).
+- Assignment `primary_result: object | None = None` (L2049).
+- Assignment `live_stages: object | None = None` (L2050).
+- Class `FullDirectionState` (L2054-L2066).
+- Assignment `e_zones: list[object]` (L2057).
+- Assignment `e_detector: object` (L2058).
+- Assignment `s_detector: object` (L2059).
+- Assignment `blue_lines: list[object]` (L2060).
+- Assignment `a_zones: list[object]` (L2061).
+- Assignment `invalid_a_identities: set[tuple[datetime, int]]` (L2062).
+- Assignment `invalid_s_identities: set[tuple[datetime, int]]` (L2063).
+- Assignment `s_zones: list[object]` (L2064).
+- Assignment `s_candidates: list[object]` (L2065).
+- Assignment `initial_s_zones: list[object]` (L2066).
+- Function `create_e_detector(direction: str, e_engine, full_results: dict[str, object], s_zones: list[object], chronology, geometry_detectors: dict[str, object], initial_order_audit, lifecycle_engine, *, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[object]=(), live_continuation=None, order_geometry=None, live_scope=())` (L2069-L2124).
+- Function `create_e_detector.direct_geometry(geometry_direction, geometry_start, geometry_end, gate_event)` (L2091-L2104).
+- Function `calculate_full_direction_state(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], order_b_legs: Sequence[object]=(), shared_stages: FullDirectionState | None=None, live=None, feedback_index: int=0)` (L2127-L2482).
+- Function `calculate_direction_with_order_b_feedback(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], *, stopall_enabled: bool, live=None)` (L2485-L2549).
+- Function `prepare_pipeline_state(args, engines: EngineBundle, market: MarketContext, timings: dict[str, float], *, live=None, report_stage=None)` (L2552-L2703).
+- Class `DirectionRangeState` (L2707-L2716).
+- Assignment `blue_lines: list[object]` (L2710).
+- Assignment `a_zones: list[object]` (L2711).
+- Assignment `s_candidates: list[object]` (L2712).
+- Assignment `accepted_s_zones: list[object]` (L2713).
+- Assignment `e_zones: list[object]` (L2714).
+- Assignment `invalid_a_identities: set[tuple[datetime, int]]` (L2715).
+- Assignment `invalid_s_identities: set[tuple[datetime, int]]` (L2716).
+- Class `DirectionVisibilityState` (L2720-L2735).
+- Assignment `blue_lines: list[object]` (L2723).
+- Assignment `a_zones: list[object]` (L2724).
+- Assignment `s_zones: list[object]` (L2725).
+- Assignment `e_zones: list[object]` (L2726).
+- Assignment `stopalls: list[object]` (L2727).
+- Assignment `prepared_order_audit: list[object]` (L2728).
+- Assignment `projection_s_zones: list[object]` (L2732).
+- Assignment `projection_e_zones: list[object]` (L2733).
+- Assignment `projection_stopalls: list[object]` (L2734).
+- Assignment `primary_groups: dict[str, list[object]] = field(default_factory=dict, kw_only=True)` (L2735).
+- Function `calculate_direction_range_state(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L2738-L2837).
+- Function `finalize_direction_visibility(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, direction_state: DirectionRangeState, timings: dict[str, float])` (L2840-L3076).
+- Function `serialize_direction_payload(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, timings: dict[str, float])` (L3079-L3217).
+- Function `serialize_direction_payload.build_legacy_payload()` (L3106-L3129).
+- Function `serialize_direction_payload.serialize_reactions_from_one_selection()` (L3138-L3146).
+- Function `serialize_direction_payload.build_payload()` (L3179-L3213).
+- Function `serialize_primary_order(order, market, owner_direction)` (L3220-L3246).
+- Function `serialize_primary_order.value(item)` (L3223-L3228).
+- Function `serialize_primary_structures(primary, market)` (L3249-L3368).
+- Function `serialize_primary_structures.cycle_identity(value)` (L3260-L3265).
+- Function `serialize_primary_structures.point(item)` (L3266-L3289).
+- Function `calculate_primary_structures(args, engines, market, state, visibility, timings, direction='bearish')` (L3371-L3424).
+- Function `calculate_primary_structures.commit_high(point)` (L3394-L3402).
+- Function `build_direction_output(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L3427-L3467).
+- Function `merge_regime_outputs(regimes)` (L3469-L3495).
+- Function `build_reversed_trend_outputs(args, engines, market, transition, timings, *, live=None)` (L3498-L3591).
+- Function `build_reversed_trend_outputs.calculate(context, direction, continuation=None)` (L3506-L3514).
+- Function `build_reversed_trend_outputs.publish(group, index_offset, first_time, *, stopped=False)` (L3516-L3531).
+- Function `build_reversed_trend_outputs.calculate_closed(current=current, boundary=boundary, current_direction=current_direction)` (L3538-L3554).
+- Function `build_reversed_trend_outputs.empty_lists(item)` (L3564-L3569).
+- Function `build_response_payload(args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float], pipeline_started: float)` (L3594-L3667).
+- Function `build_response_payload.stopall_confirmation_closed(row)` (L3654-L3655).
+- Function `_market_calculation_scope(reaction)` (L3671-L3685).
+- Function `calculate_live_from_raw(args, engines: EngineBundle, rows: list[dict], *, report_stage=None)` (L3688-L3692).
+- Function `calculate_live_from_buckets(args, engines: EngineBundle, buckets: LiveMarketBuckets, *, live_views: LiveMarketViews | None=None, bucket_delta: BucketAppend | None=None, report_stage=None)` (L3695-L3703).
+- Function `_run_live_calculation(args, engines, prepare_market, market_inputs, report_stage)` (L3706-L3714).
+- Function `main()` (L3717-L3748).
 
 #### `pipeline/__init__.py`
 - Assignment `_pipeline_dir = str(Path(__file__).resolve().parent)` (L10).
@@ -1522,8 +1522,8 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 - Function `SOrderAuditMixin._shared_order_stop_cross(self, confirmation: datetime, level: Decimal)` (L2688-L2712).
 
 #### `pipeline/PL_PH_detector.py`
-- Assignment `PL_PH_VERSION = '1.4.0'` (L21).
-- Assignment `PL_PH_LAST_MODIFIED = '2026-11-18T22:28:23+03:30'` (L22).
+- Assignment `PL_PH_VERSION = '1.5.0'` (L21).
+- Assignment `PL_PH_LAST_MODIFIED = '2026-11-21T11:08:13+03:30'` (L22).
 - Class `StructureOrder` (L26-L40).
 - Assignment `direction: str` (L27).
 - Assignment `reaction_number: int` (L28).
@@ -1620,39 +1620,39 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 - Function `_PrimaryRun.cross(self, chronology, event, level, above)` (L474-L487).
 - Function `_refresh_cycle_mbl(chronology, checkpoint, cross)` (L490-L497).
 - Function `_activate_cycle(chronology, activation, *, cross=strict_cross)` (L500-L515).
-- Function `_next_point(chronology, checkpoint, orders, *, before_event=None, cross=strict_cross)` (L518-L613).
-- Class `NativePrimaryOrders` (L616-L674).
-- Function `NativePrimaryOrders.__init__(self, chronology, groups, *, on_high=None, direction='bearish')` (L626-L629).
-- Function `NativePrimaryOrders.confirm_high(self, point)` (L631-L634).
-- Function `NativePrimaryOrders.__call__(self, kind, number, gate_index, event)` (L636-L674).
-- Function `_negate_price(value)` (L677-L679).
-- Class `_ReflectedRow` (L683-L692).
-- Assignment `original: object` (L684).
-- Function `_ReflectedRow.high(self)` (L687-L688).
-- Function `_ReflectedRow.low(self)` (L691-L692).
-- Class `_ReflectedRows` (L695-L705).
-- Function `_ReflectedRows.__init__(self, rows: Sequence[object])` (L698-L699).
-- Function `_ReflectedRows.__len__(self)` (L701-L702).
-- Function `_ReflectedRows.__getitem__(self, index: int)` (L704-L705).
-- Class `_ReflectedPriceIndex` (L708-L717).
-- Function `_ReflectedPriceIndex.__init__(self, original)` (L710-L711).
-- Function `_ReflectedPriceIndex.first_greater(self, left, right, level)` (L713-L714).
-- Function `_ReflectedPriceIndex.first_less(self, left, right, level)` (L716-L717).
-- Class `_ReflectedChronology` (L720-L726).
-- Function `_ReflectedChronology.__init__(self, original)` (L721-L726).
-- Function `_reflect_structure_order(order)` (L729-L734).
-- Function `detect_bullish(chronology, s_zones, e_zones, stopalls, orders, *, _run=None)` (L737-L791).
-- Function `detect_bullish.cycle_id(value)` (L746-L747).
-- Function `detect_bullish.point(item)` (L749-L762).
-- Function `detect_bullish.status(value)` (L764-L766).
-- Function `detect_bullish.result(item)` (L768-L778).
-- Class `detect_bullish.ReflectedOrders` (L780-L788).
-- Function `detect_bullish.ReflectedOrders.__call__(self, kind, number, gate, event)` (L781-L783).
-- Function `detect_bullish.ReflectedOrders.confirm_high(self, item)` (L785-L788).
-- Class `LivePrimaryContinuation` (L794-L833).
-- Function `LivePrimaryContinuation.__init__(self, direction, chronology, s_zones, e_zones, stopalls, orders)` (L797-L804).
-- Function `LivePrimaryContinuation.result(self)` (L807-L808).
-- Function `LivePrimaryContinuation.update(self, chronology, s_zones, e_zones, stopalls, orders, *, first_dirty_event: datetime)` (L810-L833).
+- Function `_next_point(chronology, checkpoint, orders, *, before_event=None, cross=strict_cross)` (L518-L621).
+- Class `NativePrimaryOrders` (L624-L680).
+- Function `NativePrimaryOrders.__init__(self, chronology, groups, *, on_high=None, direction='bearish')` (L634-L637).
+- Function `NativePrimaryOrders.confirm_high(self, point)` (L639-L642).
+- Function `NativePrimaryOrders.__call__(self, kind, number, gate_index, event)` (L644-L680).
+- Function `_negate_price(value)` (L683-L685).
+- Class `_ReflectedRow` (L689-L698).
+- Assignment `original: object` (L690).
+- Function `_ReflectedRow.high(self)` (L693-L694).
+- Function `_ReflectedRow.low(self)` (L697-L698).
+- Class `_ReflectedRows` (L701-L711).
+- Function `_ReflectedRows.__init__(self, rows: Sequence[object])` (L704-L705).
+- Function `_ReflectedRows.__len__(self)` (L707-L708).
+- Function `_ReflectedRows.__getitem__(self, index: int)` (L710-L711).
+- Class `_ReflectedPriceIndex` (L714-L723).
+- Function `_ReflectedPriceIndex.__init__(self, original)` (L716-L717).
+- Function `_ReflectedPriceIndex.first_greater(self, left, right, level)` (L719-L720).
+- Function `_ReflectedPriceIndex.first_less(self, left, right, level)` (L722-L723).
+- Class `_ReflectedChronology` (L726-L732).
+- Function `_ReflectedChronology.__init__(self, original)` (L727-L732).
+- Function `_reflect_structure_order(order)` (L735-L740).
+- Function `detect_bullish(chronology, s_zones, e_zones, stopalls, orders, *, _run=None)` (L743-L797).
+- Function `detect_bullish.cycle_id(value)` (L752-L753).
+- Function `detect_bullish.point(item)` (L755-L768).
+- Function `detect_bullish.status(value)` (L770-L772).
+- Function `detect_bullish.result(item)` (L774-L784).
+- Class `detect_bullish.ReflectedOrders` (L786-L794).
+- Function `detect_bullish.ReflectedOrders.__call__(self, kind, number, gate, event)` (L787-L789).
+- Function `detect_bullish.ReflectedOrders.confirm_high(self, item)` (L791-L794).
+- Class `LivePrimaryContinuation` (L800-L839).
+- Function `LivePrimaryContinuation.__init__(self, direction, chronology, s_zones, e_zones, stopalls, orders)` (L803-L810).
+- Function `LivePrimaryContinuation.result(self)` (L813-L814).
+- Function `LivePrimaryContinuation.update(self, chronology, s_zones, e_zones, stopalls, orders, *, first_dirty_event: datetime)` (L816-L839).
 
 #### `pipeline/reaction_engine.py`
 - Assignment `REACTION_ENGINE_VERSION = '9.9.1'` (L25).
@@ -1963,16 +1963,18 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 #### `pipeline/true_false.py`
 - Assignment `VERDICT = 'trueFalse'` (L12).
 - Assignment `REPAIR = 'trueFalseRepairTime'` (L13).
-- Function `repair_crossing_lookup(lower_index, from_epoch, to_epoch, *, through)` (L16-L28).
-- Function `repair_crossing_lookup.find(direction: str, start: int, level: str)` (L20-L26).
-- Class `BasicRepeat` (L32-L34).
-- Assignment `latest: dict` (L33).
-- Assignment `count: int` (L34).
-- Function `_basic_rank(key, row)` (L37-L40).
-- Function `_basic_verdicts(direction, events, first_crossing)` (L43-L86).
-- Function `_basic_verdicts.repair(row, start)` (L48-L52).
-- Function `_stopall_verdicts(rows)` (L89-L103).
-- Function `apply_true_false(direction, group, first_crossing=None)` (L106-L133).
+- Assignment `REPEATED = 'trueFalseRepeated'` (L14).
+- Function `repair_crossing_lookup(lower_index, from_epoch, to_epoch, *, through)` (L17-L29).
+- Function `repair_crossing_lookup.find(direction: str, start: int, level: str)` (L21-L27).
+- Class `BasicRepeat` (L33-L36).
+- Assignment `latest: dict` (L34).
+- Assignment `repair_count: int` (L35).
+- Assignment `verdict_count: int` (L36).
+- Function `_basic_rank(key, row)` (L39-L42).
+- Function `_basic_verdicts(direction, events, first_crossing)` (L45-L94).
+- Function `_basic_verdicts.repair(row, start)` (L50-L54).
+- Function `_stopall_verdicts(rows, confirmation_closed)` (L97-L125).
+- Function `apply_true_false(direction, group, first_crossing=None, *, stopall_confirmation_closed=None)` (L128-L156).
 
 ### 13.6 Master Bullish ↔ Bearish directional mirror matrix
 
@@ -2075,7 +2077,7 @@ This table makes the stage chain reconstructable without relying on examples. Th
 
 ### 13.9 Historical package/source integrity notes
 
-**Patch branch note:** All 12 real Python Source paths from the uploaded engine.zip are embedded byte-exact; the legacy historical Source audit below refers only to the 5.4.26 baseline and is not new regression evidence.
+**Source lineage:** The historical uploaded engine package is prior evidence. Section 16 embeds the exact current live production closure. The legacy audit concerns its own baseline and supplies no new regression result.
 
 1. The earlier supplied package contained 12 Python Source paths and lacked a root package marker. Section 1 records the current live inventory, including `engine/__init__.py`.
 2. Section 16 embeds each current production Python file byte-for-byte.
@@ -2084,22 +2086,29 @@ This table makes the stage chain reconstructable without relying on examples. Th
 
 ### 13.10 Independent T/F evaluation
 
-- Input is the final published behavior, in source-candle date/time order in each calculation regime. A native StopAll that consumes S/E provides only the final StopAll input. Each behavior group has its own verdict history. A finalized directional primary starts a fresh StopAll verdict history at its source candle. The next directional regime starts a fresh label calculation.
-- Basic starts at S. The simple S → E1 → E2 → E3 chain is T → F → T → F. An E with a published parent alternates from that parent's verdict. When a final E's parent is absent from the published result, its number supplies the simple-chain verdict. A larger behavior following at least two repetitions with matching identity and verdict is an engulf and receives T. A smaller intervening behavior preserves the pair. A larger intervening behavior ends it. Use the existing S/E family and E number ranking.
-- Each PL in Bullish and each PH in Bearish restarts the StopAll verdict calculation. The first published StopAll after that source candle is T and seeds the series from its own number. Within that history, the first eligible StopAll in a series is T. Subsequent numbers alternate relative to that starting number. A restart in the published numbering begins a new series. The preceding series' last published number determines the cutoff for the next series, including when a short intervening series ends below an earlier cutoff. Numbers through that cutoff carry no verdict in the new series. Examples: a series after StopAll-1 starts with StopAll-2 (T), then StopAll-3 (F). A series after StopAll-2 starts with StopAll-3 (T), then StopAll-4 (F).
-- Primary labels apply to PL in Bullish and PH in Bearish. Within the taught primary sequence, number 1 is T, and numbers 2 and 3 are F. Other native numbers are outside the primary T/F sequence.
-- The recognized correction reference for a repeated F group is its latest occurrence. A larger distinct Basic behavior can leave an isolated F available for correction. Use the earliest strict RAW crossing through the last visible candle, including lower RAW within its bucket. The horizon advances with live appends. An existing reference continues after trend reversal with its original price direction. Bullish requires Low < level and Bearish requires High > level. Repair evidence is separate from the original label. The selection policy among multiple outstanding groups is deferred.
-- Final candidate rows expose `trueFalse` with T, F, or null. Chart displays null as N/A. A missing field denotes a row outside this assessment or an older payload. For a recognized Basic correction, the row also exposes `trueFalseRepairTime` as epoch seconds. Chart uses `trueFalse` alongside its corresponding visible native label. Existing physical identities and native objects retain their own lifecycles. The retired automatic position and setup fields remain outside this contract.
+- Evaluate final native source-candle owners in each published calculation segment. At an equal source time, the first valid row wins in the order directional primary, StopAll, E, S. A suppressed same-source donor cannot produce a second Basic result. The opposite primary and the nested `bridgeOutput` projection are outside this annotation pass. Because verdicts are calculated on already-selected published rows, an omitted pre-range source does not supply a Basic parent or a StopAll comparison baseline.
+- Basic begins with the first admitted S. S is T. An admitted E alternates from its published parent verdict when available, or uses number parity otherwise (odd F, even T). E before the first S remains neutral. A higher-ranked behavior following at least two occurrences with matching exact rank and T/F is an engulf and receives T. A larger intervening behavior displaces lower repeat records. A smaller behavior ordinarily preserves a larger repeat, except when it triggers its own engulf and clears all surviving verdict repetition counts. Start the fresh verdict count with the engulfing behavior. Retain earlier assigned parent verdicts and separate F repair history.
+- A finalized PL in bullish or PH in bearish restarts StopAll verdict evaluation at its source candle. Within that history, an equal or decreasing published number opens a new series. It starts at its first published number with T and alternates by native number distance. The two comparison endpoints are the immediately preceding series' last number and the largest last number among all preceding series in the same history. Reaching either exact endpoint with a closed confirmation candle marks the current prefix through it as N/A. When the largest endpoint is greater and then qualifies, extend N/A through it and recompute T/F from the original group start. The first higher entry after each qualifying endpoint starts a fresh count at T. If the series ends below the preceding endpoint, its T/F is ordinary and its rows have no repeat flag. Section 8.4 of the standalone companion gives the A–G example and pending-close cases.
+- Bridge recognizes that close when `decisionTime + analysisDuration <= min(lastVisibleMainStart + analysisDuration, lastSuppliedRawStart + rawDuration)`. The reference at series start is the actual published native number. Native StopAll ownership and numbering remain upstream of this verdict pass. Starting a fresh verdict series after a primary does not renumber native objects.
+- In the directional primary collection, final number 1 is T and numbers 2 and 3 are F. Other eligible directional numbers are neutral. An admitted finalized directional primary still resets StopAll verdicts. A fresh trend starts its own label calculation.
+- For a repeated F group use its latest occurrence, searching at or after that occurrence's source. If a new matching F supersedes a prior repair attributed at or after the new source, move the active reference to the new row. An earlier valid historical repair may remain. A larger distinct behavior can arm a displaced singleton F from the larger behavior's source. Search available original RAW through the last visible main bucket inclusively. Strict repair uses the original reference direction, Low below the level in bullish or High above it in bearish, including for historical reference rows in earlier regimes. Repair does not rewrite the displayed F. Each eligible F reference is searched independently. The Engine does not wait for one F to be repaired before evaluating another, and no global newest-first or oldest-first queue exists. If a single RAW event strictly crosses several separately eligible references after their own search starts, each may receive that same epoch in `trueFalseRepairTime`. The rule that the latest occurrence represents a repeated F group still applies within that group.
+- A chosen owner publishes `trueFalse` as T, F or null. An unassessed row omits the field. A repeated StopAll adds `trueFalseRepeated: true` next to its T/F. A recognized Basic repair adds `trueFalseRepairTime` in epoch seconds. Chart draws N/A and T/F for the repeated StopAll using the Engine result. PL/PH T and F render at `max(1, min(9, parentSize - 2)) + 2` CSS px (11 px by default). Neutral N/A uses the standard size. The automatic position/setup extension is outside this evaluation.
 
 ## 14. Verification scope and historical evidence
 
-### 14.0m Current bullish primary mirror synchronization boundary
+### 14.0 Standalone primary and T/F revision
 
-The current approved delta is specified in Section 13.4b. Source blocks, manifest metadata and the complete AST index in both References are regenerated together from the live production closure. Their byte reconstruction, parse and documentation checks are structural evidence; they do not independently prove trading correctness.
+The [bidirectional primary and T/F companion](TradingBot_Primary_Structures_and_True_False_Algorithm_Reference.md) includes standalone extraction, verification and the documented market anchors. The current revision corrects the StopAll comparison history and T/F restart in Section 13.10. The corrected A–G sequence and the close-gated extension pass in both directions. Older reports below remain evidence for their own revisions.
 
-Current integrated Engine/Chart, RAW, determinism, performance, browser and independent-review evidence belongs to the dated task record under `engineering/verification/bullish-primary-mirror-2026-11-01/`. No historical PASS below is promoted to a current mirror result. The earlier Section 14.0p describes an older bearish MBL correction, including its then-deferred bullish scope and then-unavailable Plugin, not the current approval or tool availability.
+The independent bearish XAUUSD continuation also passed on current Engine Source. On `RAW FOREXCOM_XAUUSD 5S FROM 2026-09-28 20-44-00 TO 2026-10-06 19-32-40.json`, with 5-second RAW, 30-second analysis and initial bearish, PH-2 is sourced at `2026-09-29 23:30:30`, High 4177.595, and confirms at `23:40:40`. The first strict PH-2 break is `2026-09-30 00:03:15`. A native bullish Order with only accepted `reset-leg` provenance has First `00:26:30`, confirmation `00:27:30`, BoxTop 4181.610 and stop level 4179.335. Its exact first strict stop is `02:03:15`. It confirms PH-3 at source `00:15:00`, High 4185.255 and verdict F. The RAW extreme belongs to `00:15:15`. The same physical source is absent from both the final native StopAll array and its Bridge projection. All times are Tehran local. The strict trigger and stop, inclusive extreme and matching cycle were checked against the original RAW. The field values are acceptance evidence and do not participate in production conditionals. Two mirrored Basic probes confirmed that separately eligible F references may share one exact repair timestamp.
 
-Current Plugin retrieval supplies bounded upstream knowledge and retains the disclosed `REF-REACTION-SUCCESSOR` ambiguity. Standalone PH/PL/MBL knowledge remains excluded by user instruction; the explicit approved teaching and these local accepted References own this extension. Vault source/reference recapture remains pending a clean committed Source snapshot. No Vault synchronization, RAW mutation, release or publication is claimed here.
+### 14.0m Earlier bullish primary mirror synchronization boundary
+
+The approved mirror delta from that synchronization is described in Section 13.4b. Source blocks, manifest metadata and the complete AST index in both References are regenerated together from the live production closure. Their byte reconstruction, parse and documentation checks are structural evidence; they do not independently prove trading correctness.
+
+The original integrated Engine/Chart, RAW, determinism, performance, browser and review evidence belongs to the dated task record under `engineering/verification/bullish-primary-mirror-2026-11-01/`. No historical PASS below is promoted to a current mirror result. The earlier Section 14.0p describes an older bearish MBL correction, including its then-deferred bullish scope and then-unavailable Plugin, not the current approval or tool availability.
+
+The user confirmed that the current Source is authoritative for the former `REF-REACTION-SUCCESSOR` question and for tracking multiple eligible F references. Section 4.4 fixes the full-candle successor geometry and the later-only Reset check. Section 13.10 records independent F repair searches. These documentary clarifications preserve the existing runtime.
 
 ### 14.0p Earlier bearish MBL correction verification — HISTORICAL
 <!-- PRIMARY-VERIFICATION-BEGIN -->
@@ -2580,9 +2589,9 @@ if __name__ == "__main__":
 
 ### 16.4 `bridge/trading_pipeline.py` — Final reconciled calculation objects
 
-**SHA-256:** `e7a1af5937efb23649149f92da660da89a9e3bda026da7c66e2d6e8409bfcc5a`  
-**Bytes:** `149435`  
-**LF count:** `3745`
+**SHA-256:** `c6979687fb175ead907d4069553f75a649b43754ee09b2a3af5d9f2cd0ae4d18`  
+**Bytes:** `150038`  
+**LF count:** `3756`
 
 <!-- EXACT-SOURCE-BEGIN:bridge/trading_pipeline.py -->
 ````python
@@ -2630,9 +2639,9 @@ from true_false import apply_true_false, repair_crossing_lookup
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.14.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.20.3"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-11-20T22:00:58+03:30"
+TRADING_PIPELINE_VERSION = "1.15.0"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.21.0"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-11-21T11:08:13+03:30"
 MBL_EXTENSION_CANDLES = 400
 
 TEHRAN = ZoneInfo("Asia/Tehran")
@@ -4462,6 +4471,8 @@ def parse_arguments(argv=None):
     parser.add_argument("--pl-ph", choices=("enabled", "disabled"), default="enabled")
     parser.add_argument("--data", type=Path, required=True)
     parser.add_argument("--timeframe", type=int, required=True)
+    parser.add_argument("--raw-timeframe", type=int, default=1,
+                        help="Duration in seconds of each closed RAW input candle.")
     parser.add_argument("--from-time", type=int, required=True)
     parser.add_argument("--to-time", type=int, required=True)
     parser.add_argument(
@@ -4470,6 +4481,8 @@ def parse_arguments(argv=None):
     args = parser.parse_args(argv)
     if args.timeframe < 1:
         raise ValueError("Timeframe must be at least one second.")
+    if args.raw_timeframe < 1:
+        raise ValueError("RAW timeframe must be at least one second.")
     return args
 
 
@@ -6232,9 +6245,16 @@ def build_response_payload(
     through = (market.candles[market.end_index].timestamp
                + market.chronology.timeframe - timedelta(seconds=1))
     find_repair = repair_crossing_lookup(market.lower_index, local_datetime, epoch, through=through)
+    raw_timeframe = getattr(args, "raw_timeframe", 1)
+    closed_through = min(epoch(through) + 1, epoch(market.seconds[-1].timestamp) + raw_timeframe)
+
+    def stopall_confirmation_closed(row):
+        return row["decisionTime"] + args.timeframe <= closed_through
+
     for direction, group in payload["directions"].items():
         for segment in group.get("calculationSegments", (group,)):
-            apply_true_false(direction, segment, find_repair)
+            apply_true_false(direction, segment, find_repair,
+                             stopall_confirmation_closed=stopall_confirmation_closed)
     payload["timings"] = {
         "phasesMs": {
             label: round(duration, 2) for label, duration in timings.items()
@@ -14108,9 +14128,9 @@ class SOrderAuditMixin:
 
 ### 16.13 `pipeline/PL_PH_detector.py` — Primary High / Low / Matching Behavior Leg
 
-**SHA-256:** `0da974cd7dc50b70c943a091345d18dc2956a051989e9d733bfea1958152b7fc`  
-**Bytes:** `37041`  
-**LF count:** `833`
+**SHA-256:** `4fcc4820ddd4d374440698d3fcc8fc827e618268b2e378581ac54b5e865b7e6f`  
+**Bytes:** `37487`  
+**LF count:** `839`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/PL_PH_detector.py -->
 ````python
@@ -14134,8 +14154,8 @@ from core_utils import as_decimal
 from lifecycle_engine import advance_dominant_behavior
 from order_audit_engine import relabel_primary_causes
 
-PL_PH_VERSION = "1.4.0"
-PL_PH_LAST_MODIFIED = "2026-11-18T22:28:23+03:30"
+PL_PH_VERSION = "1.5.0"
+PL_PH_LAST_MODIFIED = "2026-11-21T11:08:13+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -14668,9 +14688,17 @@ def _next_point(chronology, checkpoint, orders, *, before_event=None, cross=stri
             result.status = "waiting-for-trend-reversal"
             return prospective, None
         number = high_number if phase == "PH" else low_number
+        continues_primary = phase == "PH" and number > 1
+        # The normal parent-stop route remains eligible. A reset-leg Order can
+        # also continue the primary if its box strictly extends the prior point.
+        # In bullish markets the shared detector sees the reflected BoxBottom.
         candidates = [item for item in orders(phase, number, gate_index, cursor)
                       if order_meets_structure_gate(phase, item.first_index,
                           item.confirmation_event_time, gate_index, cursor)
+                      and (not continues_primary or "parent-stop" in item.causes or (
+                          "reset-leg" in item.causes and item.box_top is not None
+                          and item.box_top > high_level
+                      ))
                       and item.stop_event_time > item.confirmation_event_time]
         winner = min(candidates, key=lambda item: (
             item.stop_event_time, -item.first_index, item.break_index
@@ -14766,8 +14794,6 @@ class NativePrimaryOrders:
                 continue
             # PL Order_A's first valid downward Reaction must be canonical.
             if not is_primary and int(entry["reaction_number"]) <= 0:
-                continue
-            if is_primary and number > 1 and "parent-stop" not in causes:
                 continue
             records.append((prepared, first, breakout, confirmation, causes))
         direct = [row for row in records if "parent-stop" in row[4]]
@@ -19432,9 +19458,9 @@ def detect_s_zones(
 
 ### 16.16 `pipeline/true_false.py` — Independent final behavior T/F and strict repair evidence
 
-**SHA-256:** `13408ddcedff2b5960b2fe790c444a4c430a77788b9e38501a9db584caa6a1ec`  
-**Bytes:** `4719`  
-**LF count:** `133`
+**SHA-256:** `ac536ea31872c20a872b252171a8be352cfc87859e19a67773fc6f796cb633b2`  
+**Bytes:** `6086`  
+**LF count:** `156`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/true_false.py -->
 ````python
@@ -19451,6 +19477,7 @@ from lifecycle_engine import sequence_priority
 
 VERDICT = "trueFalse"
 REPAIR = "trueFalseRepairTime"
+REPEATED = "trueFalseRepeated"
 
 
 def repair_crossing_lookup(lower_index, from_epoch, to_epoch, *, through):
@@ -19471,7 +19498,8 @@ def repair_crossing_lookup(lower_index, from_epoch, to_epoch, *, through):
 @dataclass(slots=True)
 class BasicRepeat:
     latest: dict
-    count: int
+    repair_count: int
+    verdict_count: int
 
 
 def _basic_rank(key, row):
@@ -19501,7 +19529,8 @@ def _basic_verdicts(direction, events, first_crossing):
         time = row["sourceTime"]
         lower = [other for other in repeats if other < rank]
         parent = known.get(row.get("parentSourceTime"))
-        if is_s or any(repeats[other].count >= 2 for other in lower):
+        engulf = any(repeats[other].verdict_count >= 2 for other in lower)
+        if is_s or engulf:
             verdict = "T"
         elif parent is not None:
             verdict = "F" if parent == "T" else "T"
@@ -19512,38 +19541,57 @@ def _basic_verdicts(direction, events, first_crossing):
 
         for other in lower:
             prior = repeats.pop(other)
-            if prior.latest[VERDICT] == "F" and prior.count == 1:
+            if prior.latest[VERDICT] == "F" and prior.repair_count == 1:
                 repair(prior.latest, time)
 
+        if engulf:
+            # Start verdict repetition at this behavior; keep existing F repair history.
+            for repeat in repeats.values():
+                repeat.verdict_count = 0
         previous = repeats.get(rank)
-        count = 1
+        repair_count = verdict_count = 1
         if previous is not None and previous.latest[VERDICT] == verdict:
-            count += previous.count
+            repair_count += previous.repair_count
+            verdict_count += previous.verdict_count
             if verdict == "F":
                 if previous.latest.get(REPAIR, -1) >= time:
                     previous.latest.pop(REPAIR)
                 repair(row, time)
-        repeats[rank] = BasicRepeat(row, count)
+        repeats[rank] = BasicRepeat(row, repair_count, verdict_count)
 
 
-def _stopall_verdicts(rows):
+def _stopall_verdicts(rows, confirmation_closed):
     previous_number = 0
-    first_eligible = 1
-    first_assessed = None
+    previous_series_end = largest_prior_end = 0
+    group_start = verdict_start = None
+    repeated_prefix = []
+    restart_verdicts = False
     for row in rows:
         number = row["number"]
-        if number <= previous_number:
-            first_eligible = previous_number + 1
-            first_assessed = None
+        if group_start is None or number <= previous_number:
+            previous_series_end = previous_number
+            largest_prior_end = max(largest_prior_end, previous_series_end)
+            group_start = verdict_start = number
+            repeated_prefix.clear()
+            restart_verdicts = False
+        elif restart_verdicts:
+            verdict_start = number
+            restart_verdicts = False
         previous_number = number
-        if number < first_eligible:
-            continue
-        if first_assessed is None:
-            first_assessed = number
-        row[VERDICT] = "T" if (number - first_assessed) % 2 == 0 else "F"
+
+        row[VERDICT] = "T" if (number - verdict_start) % 2 == 0 else "F"
+        if number <= largest_prior_end:
+            repeated_prefix.append(row)
+            if (number in (previous_series_end, largest_prior_end)
+                    and (confirmation_closed is None or confirmation_closed(row))):
+                # A larger match absorbs the temporary fresh count after the first match.
+                for repeated in repeated_prefix:
+                    repeated[REPEATED] = True
+                    repeated[VERDICT] = "T" if (repeated["number"] - group_start) % 2 == 0 else "F"
+                restart_verdicts = True
 
 
-def apply_true_false(direction, group, first_crossing=None):
+def apply_true_false(direction, group, first_crossing=None, *, stopall_confirmation_closed=None):
     """Annotate final rows by source time, without changing native behavior."""
     primary_key = "primaryLows" if direction == "bullish" else "primaryHighs"
     by_source = {}
@@ -19553,6 +19601,7 @@ def apply_true_false(direction, group, first_crossing=None):
         for row in group.get(key, ()):
             row.pop(VERDICT, None)
             row.pop(REPAIR, None)
+            row.pop(REPEATED, None)
             if row.get("calculationValid") is not False:
                 by_source.setdefault(row["sourceTime"], (key, row))
     basic = []
@@ -19561,7 +19610,7 @@ def apply_true_false(direction, group, first_crossing=None):
         # A published candidate with no verdict receives a neutral label.
         row[VERDICT] = None
         if key == primary_key:
-            _stopall_verdicts(stops)
+            _stopall_verdicts(stops, stopall_confirmation_closed)
             stops.clear()
             if row["number"] in (1, 2, 3):
                 row[VERDICT] = "T" if row["number"] == 1 else "F"
@@ -19570,6 +19619,6 @@ def apply_true_false(direction, group, first_crossing=None):
         else:
             basic.append((key, row))
     _basic_verdicts(direction, basic, first_crossing)
-    _stopall_verdicts(stops)
+    _stopall_verdicts(stops, stopall_confirmation_closed)
 ````
 <!-- EXACT-SOURCE-END:pipeline/true_false.py -->

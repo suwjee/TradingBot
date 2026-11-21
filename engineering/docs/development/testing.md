@@ -13,7 +13,7 @@ scope:
   - release-tooling
 supersedes: engineering/archive/documentation/local-tests-legacy-2026-09-30.md
 created_at: 2026-09-30T11:40:11+03:30
-last_modified_at: 2026-11-20T11:55:09+03:30
+last_modified_at: 2026-11-21T18:39:37+03:30
 ---
 
 # TradingBot Testing
@@ -134,7 +134,7 @@ Never promote compile/import success, static inspection, an old report, or a vis
 
 Current removal checks verify that manual and live calculation payloads omit the retired setup-assessment fields while native behavior, physical Order/OrderAudit, primary structures and ordinary validity flags remain intact. Chart checks cover legacy drawing/history normalization, supported drawing tools and settings, and Manual Review filtering/export without verdict annotations. Discover the current tests from the live source and runner configuration. The [assessment and position removal audit](../../verification/engine-refactor-20261117/contracts-audit.md) records the dated scope and execution evidence.
 
-The current T/F checks cover independent groups, relative StopAll series, matching repeat verdicts, mirrored strict price crossings and presentation. Native output comparisons exclude only the additive T/F fields and timing telemetry when comparing to the pre-label baseline.
+The current T/F checks cover independent groups, relative StopAll series, live confirmation-candle closure, matching repeat verdicts, mirrored strict price crossings and stacked labels. The primary continuation checks cover strict mirrored Order_B box eligibility, order-stop precedence and source ownership. Native output comparisons exclude only the additive T/F fields and timing telemetry when comparing to the pre-label baseline.
 
 The earlier [bullish setup verification](../../verification/bullish-setups-20261102/verification-report.md) is Historical evidence for the removed feature. Its former positive setup expectations are not Current acceptance criteria and do not authorize restoring that feature.
 

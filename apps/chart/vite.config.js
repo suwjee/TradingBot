@@ -5,7 +5,7 @@ import { spawn } from 'node:child_process';
 import { performance } from 'node:perf_hooks';
 import { createHash, randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { createFarazCandleApi } from './server/faraz-candle-api.js';
+import { createFarazCandleApi, parseResolutionToSeconds } from './server/faraz-candle-api.js';
 import { createChartTransferBundle, importChartTransferBundle } from './server/chart-transfer.js';
 import { runIndicatorRangeCalculation, withIndicatorInputPipe } from './server/indicator-range-input.js';
 import { migrateFlatRawFiles } from './server/migrate-raw-resources.js';
@@ -193,8 +193,9 @@ function livePublication(item, request, to, payload, workerFingerprint, tabId) {
   } };
 }
 
-function engineCalculationArgs(dataPath, request, bounds) {
+function engineCalculationArgs(dataPath, request, bounds, rawTimeframe) {
   return ['--data', dataPath, '--timeframe', String(request.timeframe),
+    '--raw-timeframe', String(parseResolutionToSeconds(rawTimeframe)),
     '--from-time', String(bounds.fromTime), '--to-time', String(bounds.toTime),
     '--direction', request.direction, '--blue-lines', request.blueLines ? 'enabled' : 'disabled',
     '--a-zones', 'enabled', '--s-zones', 'enabled', '--bridge-output'];
@@ -241,7 +242,7 @@ async function recoverLiveEngine({ selected, proof, tabId, workerFingerprint, on
     run: async (input, bounds, taskSignal) => {
       const seed = await seedLiveEngine({
         chartId: selected.chartId, tabId, workerFingerprint, request: applied, sourcePath,
-        args: engineCalculationArgs(input, applied, bounds), rawSha256, onProgress, signal: taskSignal,
+        args: engineCalculationArgs(input, applied, bounds, selected.timeframe), rawSha256, onProgress, signal: taskSignal,
       });
       checkSeed(seed, taskSignal);
       return seed;
@@ -914,7 +915,7 @@ function localDataApi() {
               taskSignal.throwIfAborted();
               const detectorStarted = performance.now();
               publish({ status: 'started', label: 'Start Python calculation' });
-              const args = engineCalculationArgs(calculationInputPath, calculationRequest, bounds);
+              const args = engineCalculationArgs(calculationInputPath, calculationRequest, bounds, valid.timeframe);
               let result;
               if (workerFingerprint) {
                 try {

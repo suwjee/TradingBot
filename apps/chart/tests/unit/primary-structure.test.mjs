@@ -305,20 +305,23 @@ test("MBL line visibility leaves its independently enabled label visible", async
   assert.deepEqual(context.strokes, []);
 });
 
-test("primary PH and PL render their T and F verdicts at weight 700", async () => {
+test("primary PH and PL render verdicts two pixels larger at weight 700", async () => {
   const { drawPrimaryStructures } = await import(source);
   const context = primaryPaintContext();
   const verdicts = [];
   context.fillText = function (text) {
-    if (text === "T" || text === "F") verdicts.push([text, this.font.split(" ")[0]]);
+    if (["T", "F", "N/A"].includes(text)) verdicts.push([text, ...this.font.split(" ").slice(0, 2)]);
   };
-  drawPrimaryStructures(context, { primaryHighs: [{ number: 1, sourceTime: 10, price: "20", trueFalse: "T" }] }, {
+  drawPrimaryStructures(context, { primaryHighs: [
+    { number: 1, sourceTime: 10, price: "20", trueFalse: "T" },
+    { number: 4, sourceTime: 12, price: "23", trueFalse: null },
+  ] }, {
     direction: "bearish", timeframe: 30, timeToX: value => value, priceToY: value => value,
   });
   drawPrimaryStructures(context, { primaryLows: [{ number: 2, sourceTime: 15, price: "10", trueFalse: "F" }] }, {
     direction: "bullish", timeframe: 30, timeToX: value => value, priceToY: value => value,
   });
-  assert.deepEqual(verdicts, [["T", "700"], ["F", "700"]]);
+  assert.deepEqual(verdicts, [["T", "700", "11px"], ["N/A", "300", "9px"], ["F", "700", "11px"]]);
 });
 
 test("per-object hidden suppresses both primary marker and label", async () => {
