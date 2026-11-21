@@ -756,8 +756,8 @@ function Test-ProductionSnapshot {
   else {
     Push-Location (Join-Path $Snapshot.WorktreePath 'apps\chart')
     try {
-      if ($ProgressCallback) { & $ProgressCallback 'Installing production chart dependencies: npm ci' }
-      $npmCi = Invoke-ReleaseExecutable -FilePath $npm.Source -Arguments @('ci') -WorkingDirectory (Get-Location).Path
+      if ($ProgressCallback) { & $ProgressCallback 'Installing release validation dependencies: npm ci --include=dev' }
+      $npmCi = Invoke-ReleaseExecutable -FilePath $npm.Source -Arguments @('ci', '--include=dev') -WorkingDirectory (Get-Location).Path
       $ciExit = $npmCi.ExitCode
       if ($ciExit -eq 0) {
         if ($ProgressCallback) { & $ProgressCallback 'Building production chart: npm run build' }

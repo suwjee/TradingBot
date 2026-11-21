@@ -84,6 +84,11 @@ function New-MainPolicyFixture {
   Write-FixtureFile $fixture 'engineering/verification/performance/local-runs/inputs.json' '{"workspace":"local"}'
   Write-FixtureFile $fixture 'engineering/verification/performance/local-runs/capture/candidate.stable.json.gz' 'generated comparison output'
   Write-FixtureFile $fixture 'apps/chart/state/data/raw/BaseLine/temp/partial.json' '{}'
+  Write-FixtureFile $fixture 'apps/chart/state/data/raw/BaseLine/session.HAR' '{}'
+  Write-FixtureFile $fixture 'market.har' '{}'
+  Write-FixtureFile $fixture 'apps/chart/server/session.har.gz' 'compressed local capture'
+  Write-FixtureFile $fixture 'engineering/verification/market/session.har.zip' 'archived local capture'
+  Write-FixtureFile $fixture 'engineering/verification/market/sample.faraz-responses.ndjson' '{}'
   Write-FixtureFile $fixture 'engineering/verification/regenerated-artifacts/node_modules/package/index.js' 'rebuildable dependency'
   Write-FixtureFile $fixture 'node_modules/package/index.js' 'root dependency installation'
   Write-FixtureFile $fixture 'working.tmp' 'disposable temporary file'
@@ -117,6 +122,7 @@ function New-FixtureRemote {
 
 function New-ProductionFixture {
   $fixture = New-RootFixture
+  Write-FixtureFile $fixture '.gitattributes' "engine/** -text`n*.bat text eol=crlf`n"
   Write-FixtureFile $fixture 'scripts/launch.bat'
   Write-FixtureFile $fixture 'scripts/start.ps1'
   Write-FixtureFile $fixture 'apps/chart/package-lock.json' '{}'
@@ -204,6 +210,11 @@ function Invoke-MainPolicyTests {
       'engineering/verification/performance/local-runs/inputs.json'
       'engineering/verification/performance/local-runs/capture/candidate.stable.json.gz'
       'apps/chart/state/data/raw/BaseLine/temp/partial.json'
+      'apps/chart/state/data/raw/BaseLine/session.HAR'
+      'market.har'
+      'apps/chart/server/session.har.gz'
+      'engineering/verification/market/session.har.zip'
+      'engineering/verification/market/sample.faraz-responses.ndjson'
       'engineering/verification/regenerated-artifacts/node_modules/package/index.js'
       'node_modules/package/index.js'
       'working.tmp'
@@ -285,7 +296,7 @@ function Invoke-ProductionClosureTests {
     Assert-True ((Test-ProductionFileSet -FileSet $fileSet -Policy $policy).Errors.Count -eq 0) 'fixture file set passes integrity checks'
     $currentPolicy = Import-PowerShellDataFile (Join-Path $PSScriptRoot 'production-policy.psd1')
     $currentSet = Get-ProductionFileSet -Root $fixture.Root -MainSha $fixture.Sha -Policy $currentPolicy
-    foreach ($path in @('engine/bridge/__init__.py', 'engine/bridge/live_pipeline.py', 'apps/chart/server/raw-integrity.js')) {
+    foreach ($path in @('.gitattributes', 'engine/bridge/__init__.py', 'engine/bridge/live_pipeline.py', 'apps/chart/server/raw-integrity.js')) {
       Assert-True ($currentSet.Paths -contains $path) "maintained policy includes runtime-owned package markers and helpers: $path"
     }
     Assert-True ($currentSet.Errors.Count -eq 0) 'maintained policy fixture has no missing runtime dependencies'
@@ -328,6 +339,12 @@ function Invoke-RepositoryCoverageTests {
   Assert-True (($runtime.Errors.Count + $runtime.Drift.Count) -eq 0) (($runtime.Errors + $runtime.Drift) -join "`n")
   $validation = Test-ProductionFileSet -FileSet $runtime -Policy $policy
   Assert-True ($validation.Errors.Count -eq 0) ($validation.Errors -join "`n")
+  foreach ($path in @('apps/chart/state/secret/session.json', 'apps/chart/state/qa/secret/session.json', 'apps/chart/state/qa/data/raw/example.csv', 'apps/chart/state/data/raw/BaseLine/probe.HAR', 'apps/chart/state/data/raw/BaseLine/temp/partial.json', 'apps/chart/server/run.faraz-responses.ndjson')) {
+    $ignore = Invoke-ReleaseGit -Root $root -Arguments @('check-ignore', '-q', '--no-index', '--', $path)
+    Assert-True ($ignore.ExitCode -eq 0) "the working tree ignores local material: $path"
+  }
+  $reference = Invoke-ReleaseGit -Root $root -Arguments @('check-ignore', '-q', '--no-index', '--', 'apps/chart/state/data/raw/BaseLine/reference.json')
+  Assert-True ($reference.ExitCode -eq 1) 'the working tree keeps curated BaseLine data eligible'
 }
 
 function Invoke-SnapshotTests {

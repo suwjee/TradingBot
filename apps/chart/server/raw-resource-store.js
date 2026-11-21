@@ -91,9 +91,9 @@ function runtimeCoverage(coverage) {
   };
 }
 
-function runtimeMetadata(metadata) {
+function runtimeMetadata(metadata, farazCoverage = runtimeCoverage(metadata.farazCoverage)) {
   const actualRange = runtimeRange(metadata.actualRange || metadata.effectiveRange);
-  return { ...metadata, actualRange, effectiveRange: actualRange, requestedRange: runtimeRange(metadata.requestedRange), farazCoverage: runtimeCoverage(metadata.farazCoverage) };
+  return { ...metadata, actualRange, effectiveRange: actualRange, requestedRange: runtimeRange(metadata.requestedRange), farazCoverage };
 }
 
 function snapshotData(candles, serialized) {
@@ -155,7 +155,7 @@ function persistedMetadata({ broker, symbol, timeframe, source, filename, snapsh
     actualRange: readableRange({ from, to }),
     createdAt: createdAt || now,
     updatedAt: previousSha256 === dataSha256 && typeof updatedAt === "string" ? updatedAt : now,
-    ...(farazCoverage ? { farazCoverage: readableCoverage(runtimeCoverage(farazCoverage)) } : {}),
+    ...(farazCoverage ? { farazCoverage: readableCoverage(farazCoverage) } : {}),
     ...(candleVerification ? { candleVerification } : {}),
   };
 }
@@ -213,7 +213,7 @@ export function createRawResourceStore({ rootDir }) {
     const snapshot = snapshotData(candles, serialized);
     const metadata = persistedMetadata({
       broker: brokerSegment, symbol: symbolSegment, timeframe: normalizedTimeframe, source, filename, snapshot, requestedRange,
-      farazCoverage: farazCoverage ?? existing.farazCoverage, chartId: chartId || existing.chartId, createdAt: createdAt || existing.createdAt,
+      farazCoverage: runtimeCoverage(farazCoverage ?? existing.farazCoverage), chartId: chartId || existing.chartId, createdAt: createdAt || existing.createdAt,
       candleVerification: existing.dataSha256 === snapshot.dataSha256 ? existing.candleVerification : undefined,
       updatedAt: existing.updatedAt, previousSha256: existing.dataSha256,
     });
@@ -222,9 +222,9 @@ export function createRawResourceStore({ rootDir }) {
     return { id, dataPath, metaPath: sidecarPath(dataPath), ...runtimeMetadata(metadata), chartId: metadata.chartId, count: candles.length, bytes: Buffer.byteLength(serialized) };
   }
 
-  function cacheItem(resource, metadata, snapshot, timeframeSeconds) {
+  function cacheItem(resource, metadata, snapshot, timeframeSeconds, farazCoverage) {
     const stat = fs.statSync(resource.dataPath);
-    const item = { ...resource, broker: metadata.broker, symbol: metadata.symbol, timeframe: metadata.timeframe, chartId: metadata.chartId, from: snapshot.from, to: snapshot.to, count: snapshot.count, bytes: stat.size, savedAt: stat.mtimeMs, metadata: runtimeMetadata(metadata), createdAt: metadata.createdAt, updatedAt: metadata.updatedAt };
+    const item = { ...resource, broker: metadata.broker, symbol: metadata.symbol, timeframe: metadata.timeframe, chartId: metadata.chartId, from: snapshot.from, to: snapshot.to, count: snapshot.count, bytes: stat.size, savedAt: stat.mtimeMs, metadata: runtimeMetadata(metadata, farazCoverage), createdAt: metadata.createdAt, updatedAt: metadata.updatedAt };
     inventoryCache.set(item.id, { signature: inventorySignature(item.dataPath, item.metaPath), item, timeframeSeconds });
     return item;
   }
@@ -268,12 +268,15 @@ export function createRawResourceStore({ rootDir }) {
       if (fs.existsSync(metaPath)) {
         try { previous = JSON.parse(fs.readFileSync(metaPath, "utf8")) || {}; } catch { previous = {}; }
       }
-      const hydratedPrevious = runtimeMetadata(previous);
-      const metadata = persistedMetadata({ ...identity, source: previous.source || "import", filename, snapshot, requestedRange: hydratedPrevious.requestedRange, farazCoverage: previous.farazCoverage,
+      const farazCoverage = runtimeCoverage(previous.farazCoverage);
+      const metadata = persistedMetadata({ ...identity, source: previous.source || "import", filename, snapshot, requestedRange: runtimeRange(previous.requestedRange), farazCoverage,
         candleVerification: previous.dataSha256 === snapshot.dataSha256 ? previous.candleVerification : undefined,
         chartId: previous.chartId, createdAt: typeof previous.createdAt === "string" ? previous.createdAt : undefined, updatedAt: previous.updatedAt, previousSha256: previous.dataSha256 });
-      if (JSON.stringify(previous) !== JSON.stringify(metadata)) atomicWrite(metaPath, `${JSON.stringify(metadata, null, 2)}\n`);
-      return cacheItem(resource, metadata, snapshot, matchesGrid ? timeframeSeconds : null);
+      const changed = JSON.stringify(previous) !== JSON.stringify(metadata);
+      if (changed) atomicWrite(metaPath, `${JSON.stringify(metadata, null, 2)}\n`);
+      // Reuse hydration from the current sidecar. A repaired sidecar can
+      // normalize legacy values, so its persisted form owns the new snapshot.
+      return cacheItem(resource, metadata, snapshot, matchesGrid ? timeframeSeconds : null, changed ? undefined : farazCoverage);
     } catch {
       inventoryCache.set(resource.id, { signature, item: null });
       return null;

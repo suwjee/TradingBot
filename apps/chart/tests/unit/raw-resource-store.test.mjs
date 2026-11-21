@@ -212,6 +212,9 @@ test("RAW store records a human-readable gap checkpoint while hydrating runtime 
     { from: "1970-01-01 03:31:40 Asia/Tehran", to: "1970-01-01 03:31:45 Asia/Tehran", status: "complete" },
   ]);
   assert.equal(/"(?:from|to|checkedFrom|checkedTo)":\s*\d/.test(JSON.stringify(persisted)), false);
+  const freshStore = createRawResourceStore({ rootDir });
+  assert.deepEqual(freshStore.get(item.id).metadata.farazCoverage, recorded.farazCoverage);
+  assert.deepEqual(JSON.parse(fs.readFileSync(item.metaPath, "utf8")), persisted);
 });
 
 test("FARAZ empty coverage marks only its own RAW file checked", async (t) => {

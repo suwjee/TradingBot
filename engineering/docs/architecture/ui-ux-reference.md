@@ -12,7 +12,7 @@ scope:
   - faraz-ui
   - algorithm-reference-ui
   - responsive-accessibility
-last_modified_at: 2026-11-21T18:39:37+03:30
+last_modified_at: 2026-11-21T21:58:31+03:30
 ---
 
 # TradingBot UI/UX Reference
@@ -406,14 +406,11 @@ A running extraction can be cancelled through the explicit cancellation action.
 
 ### 12.4 Coverage decisions
 
-If FARAZ cannot provide all requested source intervals after the normal recovery path, the UI does not silently present the request as fully successful.
+Previous-candle exports automatically save the requested count after collection and validation. The extraction report records any source gaps found during the search.
 
-Instead, the coverage decision dialog explains the unresolved source gap and asks the user to either:
+**Save available candles** is enabled by default for time-range exports. After recovery attempts, the exporter saves the validated source candles and reports incomplete date-range coverage. The saved file uses the first and last available candle timestamps.
 
-- cancel without publishing an incomplete result; or
-- explicitly continue from the first available source data when that option is available.
-
-Focus moves into the decision dialog and keyboard Tab navigation is constrained to its decision controls while it is active.
+Turning off this option keeps the coverage decision dialog. The user can cancel the export or explicitly save the available range. Focus moves into the dialog and keyboard Tab navigation stays within its decision controls.
 
 ### 12.5 Local RAW inventory and Chart update
 
@@ -536,7 +533,7 @@ Examples of current behavior include:
 - missing/unavailable data is reported instead of producing an empty success;
 - server/Engine calculation failures update indicator status, runtime/error information, and user notification;
 - FARAZ authentication/acquisition errors keep the workflow recoverable and expose concise user-readable messages;
-- unresolved FARAZ source gaps require explicit user decision;
+- a time-range export with automatic saving disabled requires an explicit decision for unresolved FARAZ source gaps;
 - malformed drawing persistence does not discard valid recovered drawings;
 - missing Manual Review reports remain an inline report error;
 - destructive RAW deletion requires explicit confirmation.

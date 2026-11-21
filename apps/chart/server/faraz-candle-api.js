@@ -45,6 +45,17 @@ export function parseResolutionToSeconds(value) {
   return Number(match[1]) * UNIT_SECONDS[match[2]];
 }
 
+function farazHistoryResolution(resolution) {
+  if (resolution.endsWith("M")) return resolution.slice(0, -1);
+  if (resolution.endsWith("H")) return String(parseResolutionToSeconds(resolution) / UNIT_SECONDS.M);
+  return resolution;
+}
+
+function usesSessionAlignedHistory(timeframeSeconds) {
+  return timeframeSeconds < UNIT_SECONDS.D && timeframeSeconds % UNIT_SECONDS.M === 0
+    && UNIT_SECONDS.H % timeframeSeconds !== 0;
+}
+
 export function normalizeHistoryPayload(payload) {
   return normalizeHistoryPayloadDetails(payload).candles;
 }
@@ -117,16 +128,20 @@ export function findCandleCoverageGaps(candles, { from, to, timeframeSeconds } =
   if (!Number.isFinite(from) || !Number.isFinite(to) || !Number.isSafeInteger(timeframe) || timeframe < 1 || from > to) {
     throw new Error("Coverage range and timeframe are invalid.");
   }
-  const firstExpected = Math.ceil(from / timeframe) * timeframe;
-  const lastExpected = Math.floor(to / timeframe) * timeframe;
+  const sessionAligned = usesSessionAlignedHistory(timeframe);
+  // Intraday bars that do not divide the hour can follow the market session,
+  // including an anchor change at a daylight-saving transition.
+  const anchor = sessionAligned ? candles[0]?.time ?? from : 0;
+  const firstExpected = anchor + Math.ceil((from - anchor) / timeframe) * timeframe;
+  const lastExpected = sessionAligned ? to : Math.floor(to / timeframe) * timeframe;
   if (firstExpected > lastExpected) return [];
   const gaps = [];
   let expected = firstExpected;
   for (const candle of candles) {
     if (!Number.isSafeInteger(candle?.time) || candle.time < expected) continue;
     if (candle.time > lastExpected) break;
-    if (candle.time > expected) {
-      const gapTo = candle.time - timeframe;
+    const gapTo = expected + (Math.floor((candle.time - expected) / timeframe) - 1) * timeframe;
+    if (gapTo >= expected) {
       gaps.push({
         key: `${expected}:${gapTo}:${timeframe}`,
         previousTime: expected - timeframe,
@@ -139,13 +154,14 @@ export function findCandleCoverageGaps(candles, { from, to, timeframeSeconds } =
     expected = candle.time + timeframe;
   }
   if (expected <= lastExpected) {
+    const gapTo = expected + Math.floor((lastExpected - expected) / timeframe) * timeframe;
     gaps.push({
-      key: `${expected}:${lastExpected}:${timeframe}`,
+      key: `${expected}:${gapTo}:${timeframe}`,
       previousTime: expected - timeframe,
-      nextTime: lastExpected + timeframe,
+      nextTime: gapTo + timeframe,
       from: expected,
-      to: lastExpected,
-      missingCandles: (lastExpected - expected) / timeframe + 1,
+      to: gapTo,
+      missingCandles: (gapTo - expected) / timeframe + 1,
     });
   }
   return gaps;
@@ -209,11 +225,10 @@ function tehranDisplayTime(epochSeconds) {
 
 /**
  * This runs on the parsed temporary RAW file immediately before the atomic
- * move into data/raw.  Gaps are allowed (a market may have no candle),
- * but every present interval must be an integral multiple of the requested
- * timeframe and must stay inside the exact requested epoch bounds.
+ * move into data/raw. Keep timestamps inside the exact requested bounds.
+ * Session-aligned exports can change grid phase across market closures.
  */
-export function verifySavedCandles(candles, { from, to, timeframeSeconds } = {}) {
+export function verifySavedCandles(candles, { from, to, timeframeSeconds, sessionAligned = false } = {}) {
   const rows = Array.isArray(candles) ? candles : [];
   const validRow = (candle) => candle && Object.keys(candle).length === 5
     && ["time", "open", "high", "low", "close"].every((key) => Object.hasOwn(candle, key))
@@ -229,13 +244,17 @@ export function verifySavedCandles(candles, { from, to, timeframeSeconds } = {})
     && rows.length > 0 && rows.every((candle) => candle.time >= from && candle.time <= to);
   const timeframe = Number(timeframeSeconds);
   const timeframeValid = Number.isSafeInteger(timeframe) && timeframe > 0 && rows.length > 0
-    && rows.every((candle, index) => !index || (candle.time - rows[index - 1].time) % timeframe === 0);
+    && rows.every((candle, index) => {
+      if (!index) return true;
+      const interval = candle.time - rows[index - 1].time;
+      return sessionAligned ? interval >= timeframe : interval % timeframe === 0;
+    });
   const checks = [
     { key: "chronology", label: "Timestamp order", passed: chronological, detail: chronological ? "Strict ascending timestamps; no duplicates." : "Rows are not strictly chronological or contain invalid data." },
     { key: "firstLast", label: "First and last candle", passed: Number.isFinite(first) && Number.isFinite(last), detail: Number.isFinite(first) && Number.isFinite(last) ? `First ${tehranDisplayTime(first)} · Last ${tehranDisplayTime(last)}` : "The saved file does not contain a valid first and last candle." },
     { key: "range", label: "Requested range", passed: bounds, detail: `Requested ${tehranDisplayTime(from)} → ${tehranDisplayTime(to)} · stored ${tehranDisplayTime(first)} → ${tehranDisplayTime(last)}` },
     { key: "integrity", label: "Saved OHLC integrity", passed: rows.length > 0 && rows.every(validRow), detail: rows.length ? `${rows.length.toLocaleString("en-US")} rows have exact fields and valid OHLC bounds.` : "No candles were saved." },
-    { key: "timeframe", label: "Requested timeframe", passed: timeframeValid, detail: timeframeValid ? `Every adjacent stored interval is a multiple of ${timeframe} seconds; market gaps are retained.` : `Stored intervals do not match the requested ${timeframe || "unknown"}-second timeframe.` },
+    { key: "timeframe", label: "Requested timeframe", passed: timeframeValid, detail: timeframeValid ? `Adjacent stored candle spacing: ${sessionAligned ? "minimum" : "multiples of"} ${timeframe} seconds. Market gaps are retained.` : `Stored intervals do not match the requested ${timeframe || "unknown"}-second timeframe.` },
   ];
   return { valid: checks.every((check) => check.passed), checks };
 }
@@ -370,7 +389,7 @@ function chunkRange(from, to, timeframeSeconds, packetSize, startIndex = 0) {
   for (let cursor = from, index = startIndex; cursor <= to; index++) {
     if (chunks.length >= MAX_PACKETS) throw new Error("The request exceeds the packet safety limit.");
     const chunkTo = Math.min(to, cursor + (maximum - 1) * timeframeSeconds);
-    chunks.push({ index, from: cursor, to: chunkTo, countback: Math.floor((chunkTo - cursor) / timeframeSeconds) + 1, firstDataRequest: index === 0, latest: chunkTo >= to });
+    chunks.push({ index, from: cursor, to: chunkTo, countback: Math.floor((chunkTo - cursor) / timeframeSeconds) + 1 });
     cursor = chunkTo + timeframeSeconds;
   }
   return chunks;
@@ -623,8 +642,9 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       for (const [key, value] of Object.entries({
         // FARAZ's upper bound is exclusive. Keep the inclusive RAW bound in
         // mergeCandles so the next, potentially open candle is never accepted.
-        symbolName: endpointSymbolName(symbolName), resolution, from: packet.from, to: packet.to + (realtime ? timeframeSeconds : 0),
-        countback: packet.countback, firstDataRequest: false, latest: packet.latest,
+        symbolName: endpointSymbolName(symbolName), resolution: farazHistoryResolution(resolution),
+        from: packet.from, to: packet.to + (realtime ? timeframeSeconds : 0),
+        countback: packet.countback, firstDataRequest: false, latest: packet.to >= to,
         adjustType: historyAuth?.adjustType || "2", json: true,
       })) url.searchParams.set(key, String(value));
       let lastError;
@@ -1098,19 +1118,13 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     job.updatedAt = Date.now();
   }
 
-  function captureHistoryResponse(job, chunk, response, text) {
+  function captureHistoryResponse(job, request, response, text) {
     if (!job.responseAuditPath) return;
     try {
       const record = {
         capturedAt: new Date().toISOString(),
         stage: job.stage,
-        request: {
-          from: chunk.from,
-          to: chunk.to,
-          countback: chunk.countback,
-          firstDataRequest: Boolean(chunk.firstDataRequest),
-          latest: Boolean(chunk.latest),
-        },
+        request,
         response: { status: response.status, ok: response.ok, body: text },
       };
       fs.appendFileSync(job.responseAuditPath, `${JSON.stringify(record)}\n`, "utf8");
@@ -1195,11 +1209,15 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
 
   async function fetchChunkOnce(job, chunk) {
     const url = new URL(job.endpoint);
-    for (const [key, value] of Object.entries({
-      symbolName: job.endpointSymbolName, resolution: job.resolution, from: chunk.from, to: chunk.to,
-      countback: chunk.countback, firstDataRequest: chunk.firstDataRequest, latest: chunk.latest,
+    // FARAZ excludes `to`. Cover the full window up to the next packet, while
+    // accepting only candle timestamps within the user's inclusive range.
+    const request = {
+      symbolName: job.endpointSymbolName, resolution: farazHistoryResolution(job.resolution),
+      from: chunk.from, to: Math.min(chunk.to + job.timeframeSeconds, job.requestedTo + 1),
+      countback: chunk.countback, firstDataRequest: false, latest: false,
       adjustType: job.adjustType, json: true,
-    })) url.searchParams.set(key, String(value));
+    };
+    for (const [key, value] of Object.entries(request)) url.searchParams.set(key, String(value));
     let response, text;
     const requestController = new AbortController();
     job.requestController = requestController;
@@ -1216,7 +1234,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       if (job.requestController === requestController) job.requestController = null;
       job.requestControllers?.delete(requestController);
     }
-    captureHistoryResponse(job, chunk, response, text);
+    captureHistoryResponse(job, request, response, text);
     if (!response.ok) {
       const error = new Error(`FARAZ history request failed with HTTP ${response.status}: ${text}`);
       error.status = response.status;
@@ -1233,7 +1251,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     if (normalized.rejectedRows) {
       throw new Error(`FARAZ packet ${chunk.index + 1} contained ${normalized.rejectedRows} malformed or invalid candle row(s).`);
     }
-    const inRange = normalized.candles.filter((candle) => candle.time >= chunk.from && candle.time <= chunk.to);
+    const inRange = normalized.candles.filter((candle) => candle.time >= request.from && candle.time < request.to);
     const outsideRange = normalized.candles.length - inRange.length;
     if (outsideRange) {
       job.outsideRangePackets = (job.outsideRangePackets || 0) + 1;
@@ -1354,6 +1372,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       from: job.mode === "count" ? candles[0]?.time : job.requestedFrom,
       to: job.requestedTo,
       timeframeSeconds: job.timeframeSeconds,
+      sessionAligned: usesSessionAlignedHistory(job.timeframeSeconds),
     });
     if (!verification.valid) {
       const failed = verification.checks.filter((check) => !check.passed).map((check) => `${check.label}: ${check.detail}`).join("; ");
@@ -1365,7 +1384,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     return candles;
   }
 
-  function saveExtractedCandles(job, candles, { coverageComplete, effectiveRequestedFrom }) {
+  function saveExtractedCandles(job, candles, { coverageComplete, effectiveRequestedFrom, continuedFromAvailable = false }) {
     const saveFrom = Number(effectiveRequestedFrom);
     if (!Number.isSafeInteger(saveFrom) || !candles.length || candles[0].time < saveFrom) {
       throw new Error("The selected FARAZ continuation range is invalid.");
@@ -1378,12 +1397,12 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     const { broker, symbol } = marketIdentity(job.symbolName);
     job.outputPath = path.join(outputDir, broker.toUpperCase(), symbol.toUpperCase(), filename);
     const serialized = JSON.stringify(candles);
+    const validationRange = { from: saveFrom, to: job.requestedTo, timeframeSeconds: job.timeframeSeconds,
+      sessionAligned: usesSessionAlignedHistory(job.timeframeSeconds) };
     if (fs.existsSync(job.outputPath)) {
       const existing = fs.readFileSync(job.outputPath, "utf8");
       if (existing !== serialized) throw new Error(`A different candle file already exists at data/raw/${filename}.`);
-      const validation = verifySavedCandles(JSON.parse(existing), {
-        from: saveFrom, to: job.requestedTo, timeframeSeconds: job.timeframeSeconds,
-      });
+      const validation = verifySavedCandles(JSON.parse(existing), validationRange);
       job.validation = validation.checks;
       if (!validation.valid) throw new Error("Existing RAW file validation failed; it was not reused.");
     } else {
@@ -1392,9 +1411,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       try {
         fs.writeFileSync(temporaryPath, serialized, { encoding: "utf8", flag: "wx" });
         const written = fs.readFileSync(temporaryPath);
-        const validation = verifySavedCandles(JSON.parse(written), {
-          from: saveFrom, to: job.requestedTo, timeframeSeconds: job.timeframeSeconds,
-        });
+        const validation = verifySavedCandles(JSON.parse(written), validationRange);
         job.validation = validation.checks;
         if (!validation.valid) {
           for (const check of validation.checks.filter((item) => !item.passed)) log(job, "error", `Saved-file check failed: ${check.label}. ${check.detail}`);
@@ -1418,10 +1435,10 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       running: false,
       done: true,
       completedAt: Date.now(),
-      stage: coverageComplete ? "Saved to data/raw" : "Saved from first available source candle",
+      stage: continuedFromAvailable ? "Saved from first available source candle" : "Saved to data/raw",
       status: coverageComplete ? "Done" : "Saved from available source data",
       coverageComplete,
-      continuedFromAvailable: !coverageComplete,
+      continuedFromAvailable,
       awaitingCoverageDecision: false,
       candleCountResult: candles.length,
       gaps,
@@ -1469,10 +1486,11 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           const density = merged.candles.length / currentSlots;
           const extensionSlots = Math.max(job.packetSize, Math.ceil((missing / Math.max(0.05, density)) * 1.15));
           const expandedFrom = job.requestedFrom - extensionSlots * job.timeframeSeconds;
-          const extra = chunkRange(expandedFrom, job.requestedFrom, job.timeframeSeconds, job.packetSize, job.chunks.length);
+          const extra = chunkRange(expandedFrom, job.requestedFrom - job.timeframeSeconds, job.timeframeSeconds, job.packetSize, job.chunks.length);
           if (job.chunks.length + extra.length > MAX_PACKETS) throw new Error("The request exceeds the packet safety limit.");
           job.requestedFrom = expandedFrom;
           for (const extraChunk of extra) job.chunks.push(extraChunk);
+          job.totalPackets += extra.length;
           log(job, "warn", `${merged.candles.length}/${job.candleCount} candles collected; appended ${extra.length} older packet(s).`);
         }
       }
@@ -1486,7 +1504,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     verifyCollectedCandles(job, candles, coverageRecovery.coverageComplete);
     // Both collection and recovery already rejected conflicts and removed duplicates.
     Object.assign(job, { duplicates: 0, conflicts: 0, suspiciousGaps: coverageRecovery.records });
-    if (!coverageRecovery.coverageComplete) {
+    if (!coverageRecovery.coverageComplete && job.mode === "range" && !job.saveAvailable) {
       Object.assign(job, {
         running: false,
         done: false,
@@ -1500,7 +1518,10 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       log(job, "warn", `FARAZ has no data for part of the requested range. No file was saved; choose whether to cancel or continue from ${tehranDisplayTime(candles[0].time)}.`);
       return;
     }
-    saveExtractedCandles(job, candles, { coverageComplete: true, effectiveRequestedFrom: job.requestedFrom });
+    saveExtractedCandles(job, candles, {
+      coverageComplete: coverageRecovery.coverageComplete,
+      effectiveRequestedFrom: job.mode === "count" ? candles[0].time : job.requestedFrom,
+    });
   }
 
   function resolveCoverageDecision(job, decision) {
@@ -1520,7 +1541,9 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     if (decision !== "continue_from_available") throw new Error("Choose cancel or continue_from_available.");
     const candles = job.pendingCandles?.filter((candle) => candle.time >= job.continueFrom) || [];
     if (!candles.length) throw new Error("No FARAZ candles are available after the selected continuation point.");
-    saveExtractedCandles(job, candles, { coverageComplete: false, effectiveRequestedFrom: job.continueFrom });
+    saveExtractedCandles(job, candles, {
+      coverageComplete: false, effectiveRequestedFrom: job.continueFrom, continuedFromAvailable: true,
+    });
     delete job.pendingCandles;
     log(job, "warn", `The user continued the export from the first available FARAZ candle at ${tehranDisplayTime(job.continueFrom)}.`);
     return publicJob(job);
@@ -1536,15 +1559,20 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     const rateLimitValue = Number(params.rateLimitMs);
     const rateLimitMs = Math.min(MAX_RATE_LIMIT_MS, Math.max(30, Number.isFinite(rateLimitValue) ? Math.trunc(rateLimitValue) : 30));
     const mode = params.mode === "range" ? "range" : "count";
+    const saveAvailable = mode === "range" && params.saveAvailable === true;
     const originalRequestedTo = Math.trunc(Number(params.to));
+    if (!Number.isFinite(originalRequestedTo) || originalRequestedTo <= 0) throw new Error("End timestamp must be a valid Unix epoch.");
+    // A candle open at the upper boundary is eligible only after its full
+    // timeframe has elapsed. An older explicit end stays inclusive.
+    const closedTo = Math.min(originalRequestedTo, Math.floor(now() / 1000) - timeframeSeconds);
     const candleCount = mode === "count" ? Math.max(1, Math.trunc(Number(params.candleCount) || 1000)) : null;
     const originalRequestedFrom = mode === "count"
-      ? originalRequestedTo - Math.ceil(candleCount * timeframeSeconds * 1.35)
+      ? closedTo - Math.ceil(candleCount * timeframeSeconds * 1.35)
       : Math.trunc(Number(params.from));
-    if (!Number.isFinite(originalRequestedTo) || originalRequestedTo <= 0) throw new Error("End timestamp must be a valid Unix epoch.");
     if (mode === "range" && (!Number.isFinite(originalRequestedFrom) || originalRequestedFrom >= originalRequestedTo)) throw new Error("From timestamp must be earlier than To.");
-    const requestedFrom = mode === "range" ? Math.ceil(originalRequestedFrom / timeframeSeconds) * timeframeSeconds : originalRequestedFrom;
-    const requestedTo = Math.floor(originalRequestedTo / timeframeSeconds) * timeframeSeconds;
+    const sessionAligned = usesSessionAlignedHistory(timeframeSeconds);
+    const requestedFrom = sessionAligned ? originalRequestedFrom : Math.ceil(originalRequestedFrom / timeframeSeconds) * timeframeSeconds;
+    const requestedTo = sessionAligned ? closedTo : Math.floor(closedTo / timeframeSeconds) * timeframeSeconds;
     if (requestedFrom > requestedTo) throw new Error("The selected range contains no complete timeframe slot.");
     const chunks = chunkRange(requestedFrom, requestedTo, timeframeSeconds, packetSize);
     const id = randomUUID();
@@ -1553,7 +1581,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     const captureResponses = Boolean(params.captureResponses);
     const responseAuditPath = captureResponses ? path.join(temporaryOutputDir, `${id}.faraz-responses.ndjson`) : null;
     if (responseAuditPath) fs.mkdirSync(temporaryOutputDir, { recursive: true });
-    const job = { id, running: true, done: false, error: null, stage: "Preparing", status: "Starting", mode, symbolName, endpointSymbolName: endpointSymbolName(symbolName), resolution, timeframeSeconds, packetSize, rateLimitMs, candleCount, requestedFrom, originalRequestedFrom, requestedTo, originalRequestedTo, rangeAdjusted: requestedFrom !== originalRequestedFrom || requestedTo !== originalRequestedTo, host, endpoint: capturedEndpoint || `https://${host}${HISTORY_PATH}`, adjustType: historyAuth?.adjustType || "2", primaryConcurrency: PRIMARY_CONCURRENCY, retryConcurrency: PRIMARY_CONCURRENCY, sentPackets: 0, receivedPackets: 0, receivedRows: 0, outsideRangePackets: 0, outsideRangeRows: 0, totalPackets: chunks.length, coverageComplete: null, captureResponses, responseAuditPath, capturedResponseCount: 0, createdAt: Date.now(), updatedAt: Date.now(), chunks, logs: [], validation: [], abort: { cancelled: false }, cancelRequested: false, requestControllers: new Set(), nextRequestAt: Date.now(), retryCooldownUntil: 0 };
+    const job = { id, running: true, done: false, error: null, stage: "Preparing", status: "Starting", mode, saveAvailable, symbolName, endpointSymbolName: endpointSymbolName(symbolName), resolution, timeframeSeconds, packetSize, rateLimitMs, candleCount, requestedFrom, originalRequestedFrom, requestedTo, originalRequestedTo, rangeAdjusted: requestedFrom !== originalRequestedFrom || requestedTo !== originalRequestedTo, host, endpoint: capturedEndpoint || `https://${host}${HISTORY_PATH}`, adjustType: historyAuth?.adjustType || "2", primaryConcurrency: PRIMARY_CONCURRENCY, retryConcurrency: PRIMARY_CONCURRENCY, sentPackets: 0, receivedPackets: 0, receivedRows: 0, outsideRangePackets: 0, outsideRangeRows: 0, totalPackets: chunks.length, coverageComplete: null, captureResponses, responseAuditPath, capturedResponseCount: 0, createdAt: Date.now(), updatedAt: Date.now(), chunks, logs: [], validation: [], abort: { cancelled: false }, cancelRequested: false, requestControllers: new Set(), nextRequestAt: Date.now(), retryCooldownUntil: 0 };
     jobs.set(id, job);
     log(job, "info", `Extraction prepared with ${chunks.length} packet(s).`);
     runJob(job).catch((error) => {

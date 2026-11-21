@@ -10,7 +10,7 @@ scope:
   - engine
   - runtime-boundaries
   - state-and-transport
-last_modified_at: 2026-11-21T18:39:37+03:30
+last_modified_at: 2026-11-21T22:21:02+03:30
 ---
 
 # TradingBot Technical Architecture
@@ -228,6 +228,8 @@ The current implementation can coordinate a Chromium-based browser process for s
 
 Passive status requests share one in-flight upstream check for the current local session file. The server can reuse its status for up to 30 seconds while the file identity is unchanged. File replacement, deletion, logout, and shutdown invalidate or cancel the passive work. Explicit status checks invalidate the passive result and verify upstream using the selected symbol. Export startup also verifies upstream.
 
+FARAZ history requests use bare minute counts for minute and hour timeframes, including `15` for `15M` and `240` for `4H`. Second and daily requests retain their suffixes. RAW names and metadata use the workstation timeframe. Historical export packets use an exclusive source end with an inclusive user-selected range bounded by the last closed candle. Session-aligned intraday exports keep source timestamps through changes in the market session, including daylight-saving transitions. Live append and verification currently require a fixed native timeframe grid.
+
 Export cancellation closes active history requests and releases unpublished candles while a coverage decision is pending. Finished jobs keep their public status and discard the internal packet plan. Downloads stream the saved RAW file with backpressure and close the read stream on client disconnect.
 
 ### Boundary invariant
@@ -348,7 +350,7 @@ The server exposes a content fingerprint to validate the running Source. A calcu
 
 The RAW store may cache validated inventory entries keyed by filesystem change evidence. When a RAW resource or sidecar changes, the store revalidates and refreshes its inventory representation. The store may repair current metadata sidecars as part of that ownership.
 
-This cache accelerates inventory work and does not change candle/trading semantics.
+The initial scan validates RAW bytes and converts current coverage timestamps to runtime seconds once per sidecar. Chart retries a timed-out startup inventory request once. Later inventory refreshes reuse validated snapshots while the filesystem version matches.
 
 ### Browser caches and storage
 

@@ -10,7 +10,7 @@ const indicatorFlow = main.slice(main.indexOf("let chartUpdateRunning = false;")
   main.indexOf("function moveRealtimeIndicatorPreferences("));
 const updateFlow = main.slice(main.indexOf("async function runRealtimeChartUpdate("),
   main.indexOf("function setUpdateButtonState("));
-const inventoryFlow = main.slice(main.indexOf("function refreshSymbolInventory("), main.indexOf("async function loadFile("));
+const inventoryFlow = main.slice(main.indexOf("async function requestSymbolInventory("), main.indexOf("async function loadFile("));
 const tabId = "same-tab-fixture";
 const proof = to => ({ chartId: "chart", tabId, to,
   request: { from: 100, to: 200, direction: "bearish", timeframe: 30, chartTimeframe: 30, blueLines: true, bridgeOutput: true } });
@@ -147,6 +147,27 @@ test("inventory applies a proven RAW rename as an append and immediately request
   assert.deepEqual(actions, ["append", ["chart", coverage], "continue"]);
   assert.equal(state.file, updated);
   assert.equal(state.raw.at(-1).time, 330);
+});
+
+test("startup retries an inventory timeout during the response body once", async () => {
+  const item = { id: "loaded.json", chartId: "loaded" };
+  const state = { file: null, inventory: [] };
+  const timeout = Object.assign(new Error("Inventory response timed out"), { name: "TimeoutError" });
+  let attempts = 0;
+  const sandbox = vm.createContext({
+    state, AbortSignal, inventoryRefreshPromise: null, realtimeUpdateOwner: null, indicatorCalculationOwner: null,
+    realtimePublicationRevision: 0, inventorySignature: JSON.stringify, candleExportController: null,
+    renderSymbolList() {}, log: { chart: { info() {} } },
+    async fetch(url) {
+      assert.equal(url, "/api/symbols");
+      const attempt = ++attempts;
+      return { ok: true, async json() { if (attempt === 1) throw timeout; return [item]; } };
+    },
+  });
+  vm.runInContext(inventoryFlow, sandbox);
+  await vm.runInContext("refreshSymbolInventory({ initial: true })", sandbox);
+  assert.equal(attempts, 2);
+  assert.deepEqual(state.inventory, [item]);
 });
 
 test("a historical repair refreshes the alert baseline without evaluating a trigger", async () => {

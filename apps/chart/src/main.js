@@ -1756,25 +1756,24 @@ let inventoryRefreshPromise = null;
 function inventorySignature(items) {
   return items.map((item) => `${item.id}|${item.chartId || ""}|${item.bytes}|${item.savedAt}|${item.metadata?.dataSha256 || ""}`).join("\n");
 }
+async function requestSymbolInventory() {
+  const response = await fetch("/api/symbols", { signal: AbortSignal.timeout(12_000), cache: "no-store" });
+  if (!response.ok) {
+    const error = new Error(`Symbol inventory request failed with HTTP ${response.status}`);
+    log.chart.error("SYMBOL_INVENTORY_FAILED", error, { status: response.status });
+    throw error;
+  }
+  return response.json();
+}
 function refreshSymbolInventory({ initial = false } = {}) {
   if (inventoryRefreshPromise) return inventoryRefreshPromise;
   if (realtimeUpdateOwner || indicatorCalculationOwner) return Promise.resolve(false);
   const publication = realtimePublicationRevision;
   const refresh = (async () => {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 12000);
-    let r;
-    try {
-      r = await fetch("/api/symbols", { signal: controller.signal, cache: "no-store" });
-    } finally {
-      clearTimeout(timeout);
-    }
-    if (!r.ok) {
-      const error = new Error(`Symbol inventory request failed with HTTP ${r.status}`);
-      log.chart.error("SYMBOL_INVENTORY_FAILED", error, { status: r.status });
-      throw error;
-    }
-    const nextInventory = await r.json();
+    const nextInventory = await requestSymbolInventory().catch((error) => {
+      if (!initial || error?.name !== "TimeoutError") throw error;
+      return requestSymbolInventory();
+    });
     if (realtimeUpdateOwner || indicatorCalculationOwner || publication !== realtimePublicationRevision) return false;
     const previousFile = state.file;
     const changed = inventorySignature(state.inventory) !== inventorySignature(nextInventory);
@@ -7304,8 +7303,8 @@ if (import.meta.hot) {
   });
 }
 loadInventory().then(restoreWorkspaceAfterRefresh).catch((err) => {
-  const message = err?.name === "AbortError"
-    ? "Market data service timed out. Restart the dev server from the repository root."
+  const message = err?.name === "TimeoutError"
+    ? "Loading the local RAW inventory timed out. Reload this tab to retry."
     : (err?.message || "Unable to load local market data.");
   $("#loading").classList.remove("hidden");
   $("#progress").textContent = message;

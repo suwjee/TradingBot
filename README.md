@@ -3,7 +3,7 @@ title: TradingBot
 document_role: reference
 lifecycle: maintained
 owner: project-navigation
-last_modified_at: 2026-11-20T11:55:09+03:30
+last_modified_at: 2026-11-21T22:21:02+03:30
 ---
 
 # TradingBot
@@ -32,7 +32,7 @@ Open the URL printed by the launcher. For manual development on the local comput
 ```powershell
 python -m pip install orjson tzdata
 Set-Location apps/chart
-npm.cmd ci
+npm.cmd ci --include=dev
 npm.cmd run dev -- --host 127.0.0.1 --configLoader native
 ```
 

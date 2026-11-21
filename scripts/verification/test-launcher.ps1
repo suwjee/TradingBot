@@ -36,7 +36,7 @@ $tokens = $null
 $errors = $null
 $ast = [Management.Automation.Language.Parser]::ParseFile((Join-Path $repoRoot 'scripts\start.ps1'), [ref]$tokens, [ref]$errors)
 Assert-Launcher ($errors.Count -eq 0) 'The launcher must parse in Windows PowerShell.'
-foreach ($name in @('Ensure-NpmDependencies', 'Start-DevServer')) {
+foreach ($name in @('Ensure-NpmDependencies', 'Start-DevServer', 'Find-SupportedPython')) {
   $functionDefinition = $ast.Find({
     param($node)
     $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq $name
@@ -46,6 +46,17 @@ foreach ($name in @('Ensure-NpmDependencies', 'Start-DevServer')) {
 }
 
 try {
+  $fixtureBin = Join-Path $fixture 'runtime-bin'
+  [void][IO.Directory]::CreateDirectory($fixtureBin)
+  [IO.File]::WriteAllLines((Join-Path $fixtureBin 'python.cmd'), @('@echo off', 'echo Python was not found 1>&2', 'exit /b 9'))
+  [IO.File]::WriteAllLines((Join-Path $fixtureBin 'py.cmd'), @('@echo off', 'echo Python 3.12.4', 'exit /b 0'))
+  $previousPath = $env:Path
+  try {
+    $env:Path = $fixtureBin
+    $runtime = Find-SupportedPython
+    Assert-Launcher ($runtime.Path -eq (Join-Path $fixtureBin 'py.cmd')) 'Python discovery must continue after a broken executable.'
+  } finally { $env:Path = $previousPath }
+
   New-InstalledDependencies
   $lockfile = Join-Path $ChartRoot 'package-lock.json'
   $stamp = Join-Path $ChartRoot 'node_modules\.tradingbot-lock-sha256'
@@ -54,7 +65,7 @@ try {
 
   Remove-Item -LiteralPath $ViteCommand
   Ensure-NpmDependencies 'Invoke-FakeNpm'
-  Assert-Launcher ($script:installCalls.Count -eq 1 -and $script:installCalls[0] -eq 'ci') 'A current lock stamp must not hide a missing Vite CLI.'
+  Assert-Launcher ($script:installCalls.Count -eq 1 -and $script:installCalls[0] -eq 'ci --include=dev') 'A missing Vite CLI must trigger a locked install that includes the development dependencies.'
   Assert-Launcher (Test-Path -LiteralPath $ViteCommand -PathType Leaf) 'The Vite CLI was not repaired.'
   Ensure-NpmDependencies 'Invoke-FakeNpm'
   Assert-Launcher ($script:installCalls.Count -eq 1) 'A complete warm install must not rerun npm.'

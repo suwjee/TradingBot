@@ -22,7 +22,7 @@ export function farazLoginWaitingDetail({ connected, state } = {}) {
   return "Complete sign-in in the FARAZ browser. After the local session is saved, that browser closes automatically.";
 }
 
-export function farazExtractionOutcome({ done, coverageComplete, continuedFromAvailable, candleCountResult } = {}) {
+export function farazExtractionOutcome({ done, coverageComplete, continuedFromAvailable, candleCountResult, mode, saveAvailable } = {}) {
   const candleCount = Number(candleCountResult || 0).toLocaleString("en-US");
   if (done && continuedFromAvailable) {
     return {
@@ -32,6 +32,9 @@ export function farazExtractionOutcome({ done, coverageComplete, continuedFromAv
     };
   }
   if (done && coverageComplete === false) {
+    if (mode === "count" || saveAvailable) {
+      return { state: "success", message: `${candleCount} candles were saved. See the extraction report for source gaps.`, type: "info" };
+    }
     return {
       state: "error",
       message: `${candleCount} candles were saved, but FARAZ still has unresolved source gaps.`,

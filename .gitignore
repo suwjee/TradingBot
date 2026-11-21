@@ -1,3 +1,13 @@
+# Machine-local chart state, including alternate workstation state roots.
+# The global rules below still exclude disposable files and captures inside
+# the curated BaseLine directory.
+/apps/chart/state/*
+!/apps/chart/state/data/
+/apps/chart/state/data/*
+!/apps/chart/state/data/[Rr][Aa][Ww]/
+/apps/chart/state/data/[Rr][Aa][Ww]/*
+!/apps/chart/state/data/[Rr][Aa][Ww]/BaseLine/
+
 # Dependencies and local environments restored from manifests.
 /apps/chart/node_modules/
 **/node_modules/
@@ -49,17 +59,11 @@
 *.crdownload
 *~
 
-# Machine-local chart state. The curated BaseLine RAW reference is explicitly
-# retained because it is reproducibility evidence, not ordinary acquired state.
-/apps/chart/state/cache/
-/apps/chart/state/secret/
-/apps/chart/state/tmp/
-/apps/chart/state/data/raw/*
-!/apps/chart/state/data/raw/BaseLine/
-!/apps/chart/state/data/raw/BaseLine/**
-/apps/chart/state/data/RAW/*
-!/apps/chart/state/data/RAW/BaseLine/
-!/apps/chart/state/data/RAW/BaseLine/**
+# Browser and FARAZ response captures stay on the workstation.
+*.[hH][aA][rR]
+*.[hH][aA][rR].[gG][zZ]
+*.[hH][aA][rR].[zZ][iI][pP]
+*.faraz-responses.ndjson
 
 # Reconstructible Graphify and verification execution residue. Reports, graphs,
 # manifests, inventories, and historical evidence remain eligible for Git.

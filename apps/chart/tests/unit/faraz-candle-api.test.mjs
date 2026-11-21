@@ -1722,6 +1722,7 @@ test("FARAZ exporter replays a successful response that starts after the request
   const candlePayload = (times) => ({
     s: "ok", t: times, o: times.map(() => 1), h: times.map(() => 1), l: times.map(() => 1), c: times.map(() => 1),
   });
+  let historyRequests = 0;
   const api = createFarazCandleApi({
     workspaceRoot,
     fetchImpl: async (url) => {
@@ -1729,10 +1730,10 @@ test("FARAZ exporter replays a successful response that starts after the request
       if (request.pathname.endsWith("/authentication/me")) return new Response("{}", { headers: { "content-type": "application/json" } });
       const from = Number(request.searchParams.get("from"));
       const to = Number(request.searchParams.get("to"));
-      const firstDataRequest = request.searchParams.get("firstDataRequest") === "true";
+      if (from > 120) return Response.json(candlePayload([])); // Authentication probe.
       const times = [];
-      for (let time = from; time <= to; time += 5) times.push(time);
-      return new Response(JSON.stringify(candlePayload(firstDataRequest ? times.filter((time) => time !== 100) : times)), {
+      for (let time = from; time < to; time += 5) times.push(time);
+      return new Response(JSON.stringify(candlePayload(++historyRequests === 1 ? times.slice(1) : times)), {
         headers: { "content-type": "application/json" },
       });
     },
@@ -1812,11 +1813,11 @@ test("FARAZ does not publish an incomplete range until the user continues from t
     fetchImpl: async (url) => {
       const request = new URL(url);
       if (request.pathname.endsWith("/authentication/me")) return new Response("{}", { headers: { "content-type": "application/json" } });
-      if (request.pathname.endsWith("/trading-view/history") && Number(request.searchParams.get("to")) <= 120) historyRequests++;
       const from = Number(request.searchParams.get("from"));
       const to = Number(request.searchParams.get("to"));
+      if (from <= 120) historyRequests++;
       const times = [];
-      for (let time = from; time <= to; time += 5) if (time !== 100) times.push(time);
+      for (let time = from; time < to; time += 5) if (time !== 100) times.push(time);
       return new Response(JSON.stringify({ s: "ok", t: times, o: times.map(() => 1), h: times.map(() => 1), l: times.map(() => 1), c: times.map(() => 1) }), {
         headers: { "content-type": "application/json" },
       });
@@ -1884,6 +1885,72 @@ test("FARAZ does not publish an incomplete range until the user continues from t
   assert.equal(staleContinue.status, 400);
 });
 
+test("FARAZ can save requested candles with source gaps without a second confirmation", async (t) => {
+  const base = 1_800_000;
+  const available = [1_800_000, 1_800_300, 1_800_900, 1_801_200, 1_801_800];
+  const cases = [
+    { label: "previous candles", inputs: { mode: "count", candleCount: 4 }, expected: [1_800_300, 1_800_900, 1_801_200, 1_801_800] },
+    { label: "time range with automatic saving", inputs: { mode: "range", from: base, saveAvailable: true }, expected: available },
+  ];
+  for (const { label, inputs, expected } of cases) {
+    await t.test(label, async (t) => {
+      const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-export-with-gaps-"));
+      t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
+      writeFakeSession(workspaceRoot);
+      const origin = await listenForApi(t, createFarazCandleApi({
+        workspaceRoot,
+        fetchImpl: async (url) => historyResponse(available.filter(time =>
+          time >= Number(url.searchParams.get("from")) && time < Number(url.searchParams.get("to")))),
+      }));
+      const started = await fetch(`${origin}/api/faraz/candles/start`, {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ ...inputs, symbolName: "TEST:PAIR", resolution: "5M", to: 1_802_100, packetSize: 3 }),
+      });
+      assert.equal(started.status, 202);
+      let job = await started.json();
+      const statusUrl = `${origin}/api/faraz/candles/status?id=${job.id}`;
+      for (let attempt = 0; job.running && attempt < 100; attempt++) {
+        await new Promise(resolve => setTimeout(resolve, 20));
+        job = await (await fetch(statusUrl)).json();
+      }
+
+      assert.equal(job.done, true, job.error || job.stage);
+      assert.equal(job.awaitingCoverageDecision, false);
+      assert.equal(job.coverageComplete, false);
+      assert.ok(job.suspiciousGaps.some(gap => gap.status === "source_gap"));
+      assert.deepEqual(JSON.parse(fs.readFileSync(path.join(workspaceRoot, "apps", "chart", "state", job.savedPath), "utf8"))
+        .map(row => row.time), expected);
+    });
+  }
+});
+
+test("FARAZ previous candles saves only closed candles when the end is now", async (t) => {
+  const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-unclosed-export-"));
+  t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
+  writeFakeSession(workspaceRoot);
+  const openTimes = [1_801_200, 1_801_500, 1_801_800, 1_802_100];
+  const nowSeconds = 1_802_220;
+  const origin = await listenForApi(t, createFarazCandleApi({
+    workspaceRoot, now: () => nowSeconds * 1000,
+    fetchImpl: async (url) => historyResponse(openTimes.filter(time =>
+      time >= Number(url.searchParams.get("from")) && time < Number(url.searchParams.get("to")))),
+  }));
+  const started = await fetch(`${origin}/api/faraz/candles/start`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ mode: "count", candleCount: 2, symbolName: "TEST:PAIR", resolution: "5M", to: nowSeconds }),
+  });
+  assert.equal(started.status, 202);
+  let job = await started.json();
+  const statusUrl = `${origin}/api/faraz/candles/status?id=${job.id}`;
+  for (let attempt = 0; job.running && attempt < 100; attempt++) {
+    await new Promise(resolve => setTimeout(resolve, 20));
+    job = await (await fetch(statusUrl)).json();
+  }
+  assert.equal(job.done, true, job.error || job.stage);
+  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(workspaceRoot, "apps", "chart", "state", job.savedPath), "utf8"))
+    .map(row => row.time), [1_801_500, 1_801_800]);
+});
+
 test("FARAZ exporter snaps a manual range inward to complete timeframe slots", async (t) => {
   const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-exporter-snap-"));
   t.after(() => {
@@ -1899,7 +1966,7 @@ test("FARAZ exporter snaps a manual range inward to complete timeframe slots", a
       const from = Number(request.searchParams.get("from"));
       const to = Number(request.searchParams.get("to"));
       const times = [];
-      for (let time = from; time <= to; time += 5) times.push(time);
+      for (let time = from; time < to; time += 5) times.push(time);
       return new Response(JSON.stringify({ s: "ok", t: times, o: times.map(() => 1), h: times.map(() => 1), l: times.map(() => 1), c: times.map(() => 1) }), { headers: { "content-type": "application/json" } });
     },
   });
@@ -1919,4 +1986,60 @@ test("FARAZ exporter snaps a manual range inward to complete timeframe slots", a
   assert.equal(job.requestedFrom, 105);
   assert.equal(job.requestedTo, 115);
   assert.deepEqual(JSON.parse(fs.readFileSync(path.join(path.join(workspaceRoot, "apps", "chart", "state"), job.savedPath), "utf8")).map((row) => row.time), [105, 110, 115]);
+});
+
+test("FARAZ exports native resolutions with exclusive packet ends and preserves session timestamps", async (t) => {
+  const from = 1_800_000;
+  const cases = [
+    { frame: "30S", wire: "30S", seconds: 30, offset: 0 },
+    { frame: "1M", wire: "1", seconds: 60, offset: 0 },
+    { frame: "5M", wire: "5", seconds: 300, offset: 0 },
+    { frame: "10M", wire: "10", seconds: 600, offset: 0 },
+    { frame: "15M", wire: "15", seconds: 900, offset: 0 },
+    { frame: "45M", wire: "45", seconds: 2700, offset: 1800, shift: 900 },
+    { frame: "1H", wire: "60", seconds: 3600, offset: 0 },
+    { frame: "4H", wire: "240", seconds: 14400, offset: 10800, shift: 3600 },
+    { frame: "1D", wire: "1D", seconds: 86400, offset: 0 },
+  ];
+  for (const { frame, wire, seconds, offset, shift = 0 } of cases) {
+    await t.test(frame, async (t) => {
+      const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-export-resolution-"));
+      t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
+      writeFakeSession(workspaceRoot);
+      const start = Math.ceil(from / seconds) * seconds;
+      const times = [0, 1, 2, 3, 4].map(index => start + offset + index * seconds + (index >= 2 ? shift : 0));
+      const to = times.at(-1);
+      const requests = [];
+      const origin = await listenForApi(t, createFarazCandleApi({
+        workspaceRoot,
+        fetchImpl: async (url) => {
+          const request = new URL(url);
+          const params = request.searchParams;
+          if (+params.get("from") > to || request.pathname.endsWith("/authentication/me")) return Response.json({ s: "no_data" });
+          const lo = +params.get("from");
+          const hi = +params.get("to");
+          requests.push([params.get("resolution"), params.get("firstDataRequest"), params.get("latest"), lo, hi]);
+          const rows = [times[0] - seconds, ...times, to + 1].filter(time => time >= lo - seconds && time < hi);
+          return historyResponse(rows);
+        },
+      }));
+      let job = await fetch(`${origin}/api/faraz/candles/start`, {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ mode: "range", symbolName: "TEST:PAIR", resolution: frame, from: start, to, packetSize: 2 }),
+      }).then(response => response.json());
+      const statusUrl = `${origin}/api/faraz/candles/status?id=${job.id}`;
+      for (let attempt = 0; job.running && attempt < 100; attempt++) {
+        await new Promise(resolve => setTimeout(resolve, 20));
+        job = await (await fetch(statusUrl)).json();
+      }
+
+      assert.equal(job.done, true, job.error);
+      assert.equal(job.outsideRangeRows > 0, true);
+      assert.equal(requests.length, 3);
+      assert.deepEqual(requests.map(request => request.slice(0, 3)), Array.from({ length: 3 }, () => [wire, "false", "false"]));
+      assert.deepEqual(requests.map(request => request.slice(3)), [[start, start + 2 * seconds], [start + 2 * seconds, start + 4 * seconds], [start + 4 * seconds, to + 1]]);
+      assert.equal(job.resolution, frame);
+      assert.deepEqual(JSON.parse(fs.readFileSync(path.join(workspaceRoot, "apps", "chart", "state", job.savedPath), "utf8")).map(row => row.time), times);
+    });
+  }
 });

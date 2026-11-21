@@ -46,6 +46,14 @@ test("FARAZ continuation confirms the saved available-data range", () => {
   });
 });
 
+test("FARAZ confirms automatic saves while directing the reader to source gaps", () => {
+  for (const options of [{ mode: "count" }, { mode: "range", saveAvailable: true }]) {
+    assert.deepEqual(farazExtractionOutcome({ ...options, done: true, coverageComplete: false, candleCountResult: 42 }), {
+      state: "success", message: "42 candles were saved. See the extraction report for source gaps.", type: "info",
+    });
+  }
+});
+
 test("FARAZ symbol feedback identifies the affected symbol", () => {
   assert.deepEqual(farazActivityNotice("symbol-added", "FXCM:EURUSD"), {
     message: "FXCM:EURUSD added to FARAZ symbols.",

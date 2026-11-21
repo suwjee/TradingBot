@@ -40,6 +40,10 @@
       '**/*.rej',
       '**/*.part',
       '**/*.crdownload',
+      '**/*.har',
+      '**/*.har.gz',
+      '**/*.har.zip',
+      '**/*.faraz-responses.ndjson',
       '**/*~'
     )
     ExcludedPathPatterns = @(
@@ -133,6 +137,7 @@
   }
   Production = @{
     MandatoryPaths = @(
+      '.gitattributes',
       'scripts/launch.bat',
       'scripts/start.ps1',
       'apps/chart/package.json',

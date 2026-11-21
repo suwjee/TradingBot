@@ -3,7 +3,7 @@ title: TradingBot Release Operations
 document_role: procedure
 lifecycle: maintained
 owner: release-tooling
-last_modified_at: 2026-11-20T11:53:46+03:30
+last_modified_at: 2026-11-21T22:21:02+03:30
 ---
 
 # TradingBot release operations
@@ -42,17 +42,17 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\git\Invoke-Tradi
 
 `main` is inclusion-first. Legitimate tests, maintained documentation, meaningful engineering evidence, meaningful Graphify reports/manifests/inventories, and classified `BaseLine` reference data remain eligible. The policy classifies files by producer, consumer, and enduring value rather than directory name.
 
-Only narrowly proven disposable material is excluded: dependencies restored from manifests, build products, interpreter caches, temporary files, local secrets, and machine-local chart state. `apps/chart/state` is never copied to production; the launcher creates required directories at runtime without deploying current local contents.
+Only narrowly proven disposable material is excluded: dependencies restored from manifests, build products, interpreter caches, temporary files, local secrets, and machine-local chart state. The launcher creates an empty `apps/chart/state` during startup. Working-tree ignore rules also cover configured state subdirectories. Browser HAR files and FARAZ response captures stay local, including copies stored under curated data or engineering paths.
 
 Engine audit reports, reviewed manifests, review notes and reproduction scripts remain eligible for `main`. Keep full market captures, repeated benchmark outputs, derived market fixtures, local prompt and connector captures under `apps/chart/state/tmp/` or a `local-runs/` directory inside `engineering/verification/`. The release policy and `.gitignore` exclude those locations, including when a benchmark writes its results alongside an eligible report.
 
 The main release stops if an excluded artifact is already tracked, including one staged for modification. Staged removal of such an artifact is allowed. Eligible ZIP archives are checked for embedded cache, build, temporary, dependency, or unsafe parent-directory paths. The two historical project snapshots containing those entries remain on the workstation but are excluded from Git; archived test logs remain eligible as verification evidence.
 
-`production` uses a dependency-derived runtime inventory from the exact committed main SHA. Every eligible file under the runtime-owned `apps/chart`, `engine`, and `scripts` roots is included, even if it is not imported yet. Import traversal validates dependencies and adds referenced paths; it does not decide whether a new runtime file is eligible. Dedicated and colocated tests, engineering evidence, development documentation, Algorithm References, ZIP snapshots, local chart state, credentials, dependencies, and disposable artifacts stay outside production. The workflow validates policy, sensitive markers, PowerShell and JavaScript syntax, Python AST, both Engine entry points, `npm ci`, and the chart build in an isolated worktree.
+`production` uses a dependency-derived runtime inventory from the exact committed main SHA. Every eligible file under the runtime-owned `apps/chart`, `engine`, and `scripts` roots is included, even if it is not imported yet. Import traversal validates dependencies and adds referenced paths; it does not decide whether a new runtime file is eligible. Dedicated and colocated tests, engineering evidence, development documentation, Algorithm References, ZIP snapshots, local chart state, credentials, dependencies, and disposable artifacts stay outside production. The snapshot also carries `.gitattributes` so Windows and Linux honor the source checkout rules. The workflow validates policy, sensitive markers, PowerShell and JavaScript syntax, Python AST, both Engine entry points, `npm ci --include=dev`, and the chart build in an isolated worktree.
 
 Run the workstation from `scripts\launch.bat`. The batch file resolves the checkout relative to itself and passes the local startup exit code back to the caller. The PowerShell startup script requires the chart lockfile and both Engine entry points. Its Python syntax check discovers the current bridge and pipeline modules.
 
-Startup runs `npm ci` when the chart lockfile differs from the last successful launcher installation or a required package file is missing. It stores the lockfile digest under `node_modules` and reuses a complete installation with a matching digest. After validation it starts the installed Vite CLI directly with the native config loader.
+Startup validates available Python executables before installing a runtime. It runs `npm ci --include=dev` when the chart lockfile differs from the last successful launcher installation or a required package file is missing. It stores the lockfile digest under `node_modules` and reuses a complete installation with a matching digest. After validation it starts the installed Vite CLI directly with the native config loader.
 
 A new `engine/pipeline/xyz.py`, a new configuration file, or a renamed runtime folder is picked up automatically. Runtime package markers and helpers remain eligible even before a caller imports them; exclusions describe non-runtime categories rather than individual source filenames. Additions, modifications, renames, and deletions appear in the branch previews. Main includes all eligible project files; eligible files accidentally matching `.gitignore` are explicitly staged after policy and sensitive-content checks. Individual detector filenames are not a permanent production allowlist.
 

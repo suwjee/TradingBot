@@ -46,6 +46,19 @@ function Find-Command([string[]]$Names) {
   return $null
 }
 
+function Find-SupportedPython {
+  $candidates = Get-Command -Name @('python.exe', 'python', 'py.exe', 'py') -CommandType Application -All -ErrorAction SilentlyContinue |
+    Select-Object -ExpandProperty Source -Unique
+  foreach ($candidate in $candidates) {
+    try { $versionText = (& $candidate --version 2>$null | Out-String).Trim() }
+    catch { continue }
+    if ($LASTEXITCODE -eq 0 -and $versionText -match '^Python\s+(\d+\.\d+)' -and [version]$Matches[1] -ge [version]'3.12') {
+      return [pscustomobject]@{ Path = $candidate; VersionText = $versionText }
+    }
+  }
+  return $null
+}
+
 function Refresh-Path {
   $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' +
     [Environment]::GetEnvironmentVariable('Path', 'User')
@@ -143,21 +156,13 @@ function Ensure-Runtimes {
   $npm = Find-Command @('npm.cmd', 'npm')
   if (-not $npm) { throw 'npm was not found alongside Node.js.' }
 
-  $python = Find-Command @('python.exe', 'python', 'py.exe', 'py')
-  if (-not $python) {
+  $pythonRuntime = Find-SupportedPython
+  if (-not $pythonRuntime) {
     Install-Winget 'Python.Python.3.12' 'Python 3.12'
-    $python = Find-Command @('python.exe', 'python', 'py.exe', 'py')
+    $pythonRuntime = Find-SupportedPython
   }
-  if (-not $python) { throw 'Python is unavailable after installation.' }
-
-  $pythonVersionText = (& $python --version 2>&1).ToString().Trim()
-  if ($pythonVersionText -notmatch 'Python\s+(\d+)\.(\d+)') {
-    throw "Unable to determine Python version: $pythonVersionText"
-  }
-  $pythonVersion = [version]("{0}.{1}" -f $Matches[1], $Matches[2])
-  if ($pythonVersion -lt [version]'3.12') {
-    throw "Python 3.12 or newer is required; found $pythonVersionText."
-  }
+  if (-not $pythonRuntime) { throw 'A working Python 3.12 or newer was not found after installation.' }
+  $python = $pythonRuntime.Path
 
   $findMissing = 'import importlib.util, sys; print(chr(10).join(p for p in sys.argv[1:] if importlib.util.find_spec(p) is None))'
   $missingPackages = @(& $python -B -c $findMissing @PythonPackages)
@@ -173,7 +178,7 @@ function Ensure-Runtimes {
   & $python -B -c $checkSyntax $Root
   if ($LASTEXITCODE -ne 0) { throw 'Python Engine syntax validation failed.' }
 
-  Write-Step "Node v$nodeVersion and $pythonVersionText" Green
+  Write-Step "Node v$nodeVersion and $($pythonRuntime.VersionText)" Green
 
   return [pscustomobject]@{
     Node = $node
@@ -210,7 +215,7 @@ function Ensure-NpmDependencies([string]$Npm) {
     $missing = @($requiredFiles | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) })
     if ($missing.Count -gt 0 -or $lockHash -ne $installedLockHash) {
       Write-Step 'Installing npm dependencies for this checkout...' Yellow
-      & $Npm ci
+      & $Npm ci --include=dev
       if ($LASTEXITCODE -ne 0) {
         throw "npm dependency installation failed (exit code $LASTEXITCODE)."
       }
