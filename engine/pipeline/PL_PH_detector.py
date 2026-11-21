@@ -18,8 +18,8 @@ from core_utils import as_decimal
 from lifecycle_engine import advance_dominant_behavior
 from order_audit_engine import relabel_primary_causes
 
-PL_PH_VERSION = "1.4.0"
-PL_PH_LAST_MODIFIED = "2026-11-18T22:28:23+03:30"
+PL_PH_VERSION = "1.5.0"
+PL_PH_LAST_MODIFIED = "2026-11-21T11:08:13+03:30"
 
 
 @dataclass(frozen=True, slots=True)
@@ -552,9 +552,17 @@ def _next_point(chronology, checkpoint, orders, *, before_event=None, cross=stri
             result.status = "waiting-for-trend-reversal"
             return prospective, None
         number = high_number if phase == "PH" else low_number
+        continues_primary = phase == "PH" and number > 1
+        # The normal parent-stop route remains eligible. A reset-leg Order can
+        # also continue the primary if its box strictly extends the prior point.
+        # In bullish markets the shared detector sees the reflected BoxBottom.
         candidates = [item for item in orders(phase, number, gate_index, cursor)
                       if order_meets_structure_gate(phase, item.first_index,
                           item.confirmation_event_time, gate_index, cursor)
+                      and (not continues_primary or "parent-stop" in item.causes or (
+                          "reset-leg" in item.causes and item.box_top is not None
+                          and item.box_top > high_level
+                      ))
                       and item.stop_event_time > item.confirmation_event_time]
         winner = min(candidates, key=lambda item: (
             item.stop_event_time, -item.first_index, item.break_index
@@ -650,8 +658,6 @@ class NativePrimaryOrders:
                 continue
             # PL Order_A's first valid downward Reaction must be canonical.
             if not is_primary and int(entry["reaction_number"]) <= 0:
-                continue
-            if is_primary and number > 1 and "parent-stop" not in causes:
                 continue
             records.append((prepared, first, breakout, confirmation, causes))
         direct = [row for row in records if "parent-stop" in row[4]]

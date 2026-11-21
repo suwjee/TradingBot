@@ -357,7 +357,8 @@ export function drawIndicator(canvasWidth, canvasHeight, {
       ctx.textBaseline = bullish ? "top" : "bottom";
       ctx.fillText(object?.text ?? String(zone.number), shifted.x, labelY);
       drawTrueFalseLabel(ctx, zone.trueFalse, settings.trueFalseVisible, labelSize,
-        shifted.x, labelY + (bullish ? labelSize : -labelSize), bullish, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT);
+        shifted.x, labelY + (bullish ? labelSize : -labelSize), bullish,
+        TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, zone.trueFalseRepeated === true);
       ctx.restore();
     }
     if (settings.orderStopVisible) {

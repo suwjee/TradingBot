@@ -83,6 +83,7 @@ function markup(icon) {
               <div class="candle-date-row"><span>From</span><span class="candle-date-control"><button id="candleRangeFromButton" class="candle-date-button" type="button"><b id="candleRangeFromDisplay">Select date & time</b>${icon("calendar", 16)}</button><output id="candleRangeFromReadable" class="candle-readable-time">—</output></span><input id="candleRangeFrom" type="hidden"></div>
               <div class="candle-toggle-row"><span><b>End at current time</b><output class="candle-current-time" data-current-time-output="range" aria-live="off">—</output></span><input id="candleRangeToNow" type="checkbox" checked aria-label="End at current time"></div>
               <div id="candleRangeToRow" class="candle-date-row hidden"><span>To</span><span class="candle-date-control"><button id="candleRangeToButton" class="candle-date-button" type="button"><b id="candleRangeToDisplay">Select date & time</b>${icon("calendar", 16)}</button><output id="candleRangeToReadable" class="candle-readable-time">—</output></span><input id="candleRangeTo" type="hidden"></div>
+              <label class="candle-toggle-row"><span><b>Save available candles</b><small>Save automatically if FARAZ has gaps in this date range.</small></span><input id="candleSaveAvailable" type="checkbox" checked></label>
             </div>
           </section>
 
@@ -259,6 +260,7 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
       rangeFrom: $id(view, "candleRangeFrom").value,
       rangeToNow: $id(view, "candleRangeToNow").checked,
       rangeTo: $id(view, "candleRangeTo").value,
+      saveAvailable: $id(view, "candleSaveAvailable").checked,
     };
   }
 
@@ -298,6 +300,7 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
     }
     if (typeof saved.countToNow === "boolean") $id(view, "candleCountToNow").checked = saved.countToNow;
     if (typeof saved.rangeToNow === "boolean") $id(view, "candleRangeToNow").checked = saved.rangeToNow;
+    if (typeof saved.saveAvailable === "boolean") $id(view, "candleSaveAvailable").checked = saved.saveAvailable;
     currentJobId = typeof saved.currentJobId === "string" ? saved.currentJobId : null;
     // A saved host is only a previous preference.  The current FARAZ history
     // request remains authoritative when this dev-server session reconnects.
@@ -499,7 +502,7 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
     if (mode === "count") return { ...common, candleCount: Number($id(view, "candleExportCount").value) };
     const from = epoch($id(view, "candleRangeFrom").value, "start date and time");
     if (from >= to) throw new Error("From must be earlier than To.");
-    return { ...common, from };
+    return { ...common, from, saveAvailable: $id(view, "candleSaveAvailable").checked };
   }
 
   function renderLogs(logs = []) {
@@ -556,7 +559,8 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
     if (retryMessages.length) lines.push("", "HTTP retries:", ...retryMessages.map((message, index) => `${index + 1}. ${message}`));
     if (recovered.length) lines.push("", `Coverage replays recovered ${recovered.reduce((sum, gap) => sum + Number(gap.recoveredCandles || 0), 0)} candle(s) across ${recovered.length} interval(s).`);
     if (unresolved.length) {
-      lines.push("", `Unresolved source gaps after precise replays: ${unresolved.length} interval(s), ${unresolved.reduce((sum, gap) => sum + Number(gap.remainingCandles || 0), 0)} missing candle(s). The export is marked incomplete.`);
+      const outcome = job?.mode === "count" && job.done ? "The requested candle count was saved." : "The requested date range has incomplete coverage.";
+      lines.push("", `Unresolved source gaps after precise replays: ${unresolved.length} interval(s), ${unresolved.reduce((sum, gap) => sum + Number(gap.remainingCandles || 0), 0)} unfilled timeframe slot(s). ${outcome}`);
       lines.push(...unresolved.slice(0, 24).map((gap) => `- ${readableJobTime(gap.from)} → ${readableJobTime(gap.to)}: ${gap.remainingCandles} candle(s) remain after ${gap.attempts} replay(s).`));
       if (unresolved.length > 24) lines.push(`- ${unresolved.length - 24} additional unresolved interval(s) are included in the count above.`);
     }
@@ -777,6 +781,7 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
     $id(view, "candleExportCount").value = "1000";
     $id(view, "candleCountToNow").checked = true;
     $id(view, "candleRangeToNow").checked = true;
+    $id(view, "candleSaveAvailable").checked = true;
     setMode("range");
     renderJob({ stage: connected ? "Ready" : "Locked", status: connected ? "Ready after authentication." : "Authentication required.", logs: [], validation: [] });
     applyDefaults();

@@ -42,9 +42,9 @@ from true_false import apply_true_false, repair_crossing_lookup
 _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
-TRADING_PIPELINE_VERSION = "1.14.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.20.3"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-11-20T22:00:58+03:30"
+TRADING_PIPELINE_VERSION = "1.15.0"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.21.0"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-11-21T11:08:13+03:30"
 MBL_EXTENSION_CANDLES = 400
 
 TEHRAN = ZoneInfo("Asia/Tehran")
@@ -1874,6 +1874,8 @@ def parse_arguments(argv=None):
     parser.add_argument("--pl-ph", choices=("enabled", "disabled"), default="enabled")
     parser.add_argument("--data", type=Path, required=True)
     parser.add_argument("--timeframe", type=int, required=True)
+    parser.add_argument("--raw-timeframe", type=int, default=1,
+                        help="Duration in seconds of each closed RAW input candle.")
     parser.add_argument("--from-time", type=int, required=True)
     parser.add_argument("--to-time", type=int, required=True)
     parser.add_argument(
@@ -1882,6 +1884,8 @@ def parse_arguments(argv=None):
     args = parser.parse_args(argv)
     if args.timeframe < 1:
         raise ValueError("Timeframe must be at least one second.")
+    if args.raw_timeframe < 1:
+        raise ValueError("RAW timeframe must be at least one second.")
     return args
 
 
@@ -3644,9 +3648,16 @@ def build_response_payload(
     through = (market.candles[market.end_index].timestamp
                + market.chronology.timeframe - timedelta(seconds=1))
     find_repair = repair_crossing_lookup(market.lower_index, local_datetime, epoch, through=through)
+    raw_timeframe = getattr(args, "raw_timeframe", 1)
+    closed_through = min(epoch(through) + 1, epoch(market.seconds[-1].timestamp) + raw_timeframe)
+
+    def stopall_confirmation_closed(row):
+        return row["decisionTime"] + args.timeframe <= closed_through
+
     for direction, group in payload["directions"].items():
         for segment in group.get("calculationSegments", (group,)):
-            apply_true_false(direction, segment, find_repair)
+            apply_true_false(direction, segment, find_repair,
+                             stopall_confirmation_closed=stopall_confirmation_closed)
     payload["timings"] = {
         "phasesMs": {
             label: round(duration, 2) for label, duration in timings.items()
