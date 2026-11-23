@@ -35,6 +35,16 @@ jobs:
           cd golden-original
           export PYTHONPATH="$PWD/engine/pipeline:$PWD/engine/bridge:$PWD/engine/tests/unit"
           python -m pytest engine/tests/unit -ra --junitxml="$GITHUB_WORKSPACE/pinned-engine-unit.xml"
+      - name: Export exact pinned official test suite as reusable audit fixture
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-pinned-official-tests-01d54ecf
+          path: |
+            golden-original/engine/tests/unit
+            golden-original/engine/tests/regression
+            golden-original/engine/tests/verification
+          if-no-files-found: error
       - name: Attach test evidence
         if: always()
         uses: actions/upload-artifact@v4
