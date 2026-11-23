@@ -42,6 +42,8 @@ def run_variant(item,variant,root):
         while proc.poll() is None:
             try:
                 peak_rss=max(peak_rss,p.memory_info().rss)
+                if peak_rss > 4500*1048576:
+                    proc.kill();raise MemoryError('Instrumented run exceeded safety cap 4500 MiB RSS')
                 t=p.cpu_times();cpu=max(cpu,t.user+t.system)
                 polls+=1
             except psutil.NoSuchProcess:break
