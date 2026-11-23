@@ -17,7 +17,7 @@ def rows(path):
         for line in fp:
             ordinal+=1
             r=json.loads(line)
-            if r.get('schema')!='tradingbot.v9.internal-observer.v1' or r.get('event_ordinal')!=ordinal:
+            if r.get('schema') not in ('tradingbot.v9.internal-observer.v1','tradingbot.v9.internal-observer.v2') or r.get('event_ordinal')!=ordinal:
                 raise ValueError('Invalid event ordinals at '+str(ordinal))
             if r['stage']+':'+r['method'] in IMPL_ONLY:continue
             yield r
@@ -45,6 +45,13 @@ def project(row):
     if row is None:return None
     return {k:row[k] for k in FIELDS if k in row}
 
+def provenance_fields(row):
+    if row is None:return None
+    v=row.get('entity_provenance') or row.get('first_entity_provenance') or {}
+    wanted=('source_time','source_index','parent_type','parent_source_time',
+            'parent_source_index','decision_event_time','number','family')
+    return {k:v[k] for k in wanted if k in v}
+
 def first_diff(path_a,path_b,context_radius=2,compare_inputs=False):
     from itertools import zip_longest
     from collections import deque
@@ -60,10 +67,10 @@ def first_diff(path_a,path_b,context_radius=2,compare_inputs=False):
             result={'status':'FAIL','compared_position':index,'first_field':pointer,
                     'original':{'stage':row_a.get('stage'),'method':row_a.get('method'),
                                 'direction':row_a.get('direction'),'event_ordinal':row_a.get('event_ordinal'),
-                                'raw_time':row_a.get('raw_epoch_derived',row_a.get('raw_time_observed'))} if row_a else None,
+                                'raw_time':row_a.get('raw_epoch_derived',row_a.get('raw_time_observed')),'entity_provenance':provenance_fields(row_a)} if row_a else None,
                     'candidate':{'stage':row_b.get('stage'),'method':row_b.get('method'),
                                  'direction':row_b.get('direction'),'event_ordinal':row_b.get('event_ordinal'),
-                                 'raw_time':row_b.get('raw_epoch_derived',row_b.get('raw_time_observed'))} if row_b else None,
+                                 'raw_time':row_b.get('raw_epoch_derived',row_b.get('raw_time_observed')),'entity_provenance':provenance_fields(row_b)} if row_b else None,
                     'original_value':left,'candidate_value':right,
                     'prior_context':list(before),
                     'following_context':[],'compare_inputs':compare_inputs,

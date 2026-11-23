@@ -17,11 +17,11 @@ from global_semantic_trace_compare import report as global_report
 
 INPUTS=json.loads(Path('/mnt/data/V9_work/tooling/inputs_verified.json').read_text())['datasets']
 ROOTS={
-    'original':Path('/mnt/data/V9_work/golden/github_engine_commit_01d54ecf/engine'),
-    'v81':Path('/mnt/data/V9_work/v81/engine'),
+    'original':Path('/mnt/data/V9_continue/metered_orig_v2/engine'),
+    'v81':Path('/mnt/data/V9_continue/metered_v81_v2/engine'),
 }
 GOLDEN=Path('/mnt/data/V9_work/golden/runs/github_baseline')
-OBSERVER=Path('/mnt/data/V9_continue/tooling/semantic_trace.py')
+OBSERVER=HERE/'semantic_trace_v3.py'
 
 
 def run_variant(item,variant,root):
@@ -33,10 +33,11 @@ def run_variant(item,variant,root):
     cmd=[sys.executable,'-B',str(OBSERVER),'--engine-root',str(ROOTS[variant]),
          '--raw',str(raw),'--from-time',str(item['first_time']),
          '--to-time',str(item['last_time']),'--trace-out',str(out)+'.trace.jsonl.gz',
-         '--summary',str(out)+'.trace.manifest.json']
+         '--summary',str(out)+'.trace.manifest.json',
+         '--stage-profile',str(out)+'.stage_cpu_rss.json']
     started=time.perf_counter();peak_rss=0;cpu=0;polls=0
     with Path(str(out)+'.native.json').open('wb') as f,Path(str(out)+'.stderr.log').open('wb') as err:
-        proc=subprocess.Popen(cmd,stdout=f,stderr=err,env={**os.environ,'PYTHONHASHSEED':'0','PYTHONDONTWRITEBYTECODE':'1'})
+        proc=subprocess.Popen(cmd,stdout=f,stderr=err,env={**os.environ,'PYTHONHASHSEED':'0','PYTHONDONTWRITEBYTECODE':'1','PYTHONPATH':'/mnt/data/V9_continue/tooling'})
         p=psutil.Process(proc.pid)
         while proc.poll() is None:
             try:

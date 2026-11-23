@@ -14,7 +14,7 @@ from strict_golden import sha256,stable_payload
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from global_semantic_trace_compare import report
 INPUTS=json.loads((ROOT/'output/V9_SYNTHETIC_INPUTS.json').read_text())
-ORIGINAL={'original':ROOT/'golden/github_engine_commit_01d54ecf/engine','v81':ROOT/'v81/engine'}
+ORIGINAL={'original':Path('/mnt/data/V9_continue/metered_orig_v2/engine'),'v81':Path('/mnt/data/V9_continue/metered_v81_v2/engine')}
 
 
 def main(out):
@@ -25,14 +25,15 @@ def main(out):
     for variant,engine in ORIGINAL.items():
         print('START 1M SYNTHETIC',variant,flush=True)
         base=root/variant
-        cmd=[sys.executable,'-B','/mnt/data/V9_continue/tooling/semantic_trace.py',
+        cmd=[sys.executable,'-B',str(Path(__file__).resolve().parent/'semantic_trace_v3.py'),
              '--engine-root',str(engine),'--raw',str(raw),
              '--from-time',str(item['first_time']),'--to-time',str(item['last_time']),
              '--trace-out',str(base)+'.trace.jsonl.gz',
-             '--summary',str(base)+'.manifest.json']
+             '--summary',str(base)+'.manifest.json',
+             '--stage-profile',str(base)+'.stage_cpu_rss.json']
         start=time.perf_counter();cpu=0;rss=0
         with Path(str(base)+'.native.json').open('wb') as fout,Path(str(base)+'.stderr.log').open('wb') as ferr:
-            proc=subprocess.Popen(cmd,stdout=fout,stderr=ferr,env={**os.environ,'PYTHONHASHSEED':'0','PYTHONDONTWRITEBYTECODE':'1'})
+            proc=subprocess.Popen(cmd,stdout=fout,stderr=ferr,env={**os.environ,'PYTHONHASHSEED':'0','PYTHONDONTWRITEBYTECODE':'1','PYTHONPATH':'/mnt/data/V9_continue/tooling'})
             p=psutil.Process(proc.pid)
             while proc.poll() is None:
                 try:

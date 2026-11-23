@@ -15,7 +15,7 @@ IMPL_ONLY={
  'order_audit_engine:OrderAuditEngineMixin._register_order_audit',
  'e_zone_detector:EZoneDetector._parent_stop',
 }
-FIELDS=('stage','method','direction','result','pre_state','post_state',
+FIELDS=('stage','method','direction','phase_label','result','pre_state','post_state','authoritative_boundary_state','lifecycle_new_events','lifecycle_output_count_before','lifecycle_output_count_after','entity_provenance','first_entity_provenance',
         'raw_time_local_iran','raw_epoch_derived','raw_time_observed',
         'decision','rejection_reason')
 
@@ -26,7 +26,7 @@ def records(path):
         for line in file:
             raw_count+=1
             row=json.loads(line)
-            if row.get('schema')!='tradingbot.v9.internal-observer.v1':
+            if row.get('schema') not in ('tradingbot.v9.internal-observer.v1','tradingbot.v9.internal-observer.v2'):
                 raise ValueError(f'Wrong schema event {raw_count} in {path}')
             if type(row.get('event_ordinal')) is not int or row['event_ordinal']!=raw_count:
                 raise ValueError(f'Noncontiguous global event ordinal {raw_count} in {path}')
