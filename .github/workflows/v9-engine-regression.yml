@@ -74,6 +74,21 @@ jobs:
         run: |
           export PYTHONPATH="$PWD/engine/pipeline:$PWD/engine/bridge:$PWD/engine/tests/unit"
           python -m pytest engine/tests/unit -ra --junitxml="$GITHUB_WORKSPACE/refactor-engine-unit.xml"
+      - name: Validate all V9 test-only tooling compiles
+        run: python -m compileall -q engineering/refactor-v9
+      - name: Mutate globally ordered semantic trace (strict mismatch detection)
+        run: python engineering/refactor-v9/tooling/test_global_semantic_compare.py "$RUNNER_TEMP/v9_global_mutations.json"
+      - name: Mutate earlier family-local comparator and report its known limitations
+        run: python engineering/refactor-v9/tooling/test_internal_trace.py "$RUNNER_TEMP/v9_internal_mutations.json"
+      - name: Publish V9 tooling mutation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-trace-mutators
+          path: |
+            ${{ runner.temp }}/v9_global_mutations.json
+            ${{ runner.temp }}/v9_internal_mutations.json
+          if-no-files-found: warn
       - name: Attach test evidence
         if: always()
         uses: actions/upload-artifact@v4
