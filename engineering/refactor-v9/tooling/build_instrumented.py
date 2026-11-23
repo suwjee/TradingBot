@@ -41,6 +41,12 @@ class Meter(ast.NodeTransformer):
         return self.add_tick(node,'while_iteration')
     def visit_If(self,node):
         node=self.generic_visit(node)
+        if self.enabled() and self.path=='pipeline/e_zone_detector.py' and self.current[-1]=='_zone':
+            condition=ast.unparse(node.test)
+            if 'order_match is None' in condition:
+                self.add_tick(node,'reject_no_eligible_order')
+            elif '_order_created_only_by_disowned_s' in condition:
+                self.add_tick(node,'skip_disowned_s_order')
         if (self.enabled() and self.current[-1]=='_first_parent_stop'
              and isinstance(node.test,ast.Compare) and isinstance(node.test.left,ast.Name)
              and node.test.left.id=='cached' and len(node.test.ops)==1

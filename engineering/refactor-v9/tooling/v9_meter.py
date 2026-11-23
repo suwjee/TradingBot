@@ -1,8 +1,12 @@
 """Test-only operation counters. No production state access or mutation."""
 from collections import defaultdict
 COUNTS=defaultdict(int)
+LAST_REASON=None
 def tick(tag):
+    global LAST_REASON
     COUNTS[tag]+=1
+    if ':reject_no_eligible_order' in tag:LAST_REASON='NO_ELIGIBLE_ORDER_AFTER_CANONICAL_ROUTE_FILTER'
+    elif ':skip_disowned_s_order' in tag:LAST_REASON='DISOWNED_S_ROUTE_SKIPPED'
 def tap(tag, func, *args, **kwargs):
     COUNTS[tag]+=1
     return func(*args,**kwargs)

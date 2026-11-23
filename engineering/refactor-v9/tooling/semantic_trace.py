@@ -163,6 +163,11 @@ def instrument_module(module, writer):
         def observer(*args,**kwargs):
             self_obj=args[0] if args and hasattr(args[0],'__dict__') and not dataclasses.is_dataclass(args[0]) else None
             before=state_snapshot(stage,self_obj) if self_obj is not None else {}
+            if stage=='e_zone_detector' and method.endswith('._zone'):
+                try:
+                    import v9_meter
+                    v9_meter.LAST_REASON=None
+                except ImportError:pass
             output=func(*args,**kwargs)
             after=state_snapshot(stage,self_obj) if self_obj is not None else {}
             observed_direction=getattr(self_obj,'direction',None)
@@ -177,7 +182,13 @@ def instrument_module(module, writer):
             event={'stage':stage,'method':method,'direction':observed_direction,
                    'inputs':in_repr,'result':r_repr,
                    'pre_state':before,'post_state':after,**time_hints}
-            if output is None:event['decision']='no_result_or_rejected_undetermined'
+            if output is None:
+                event['decision']='no_result_or_rejected_undetermined'
+                if stage=='e_zone_detector' and method.endswith('._zone'):
+                    try:
+                        import v9_meter
+                        if v9_meter.LAST_REASON:event['rejection_reason']=v9_meter.LAST_REASON
+                    except ImportError:pass
             elif output is False:event['decision']='false_return_unknown_reason'
             writer.emit(event)
             return output

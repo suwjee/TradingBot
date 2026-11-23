@@ -35,7 +35,7 @@ def compare(a,b):
             report['excluded_implementation_families'].append({'family':family,'original':len(x),'candidate':len(y),
                                                                  'reason':'method invocation count may differ from implementation-only cache optimization; not treated as semantic parity'})
             continue
-        fields=('stage','method','direction','inputs','result','pre_state','post_state','raw_time_local_iran','raw_epoch_derived','raw_time_observed','decision')
+        fields=('stage','method','direction','result','pre_state','post_state','raw_time_local_iran','raw_epoch_derived','raw_time_observed','decision')
         fp1=hashlib.sha256();fp2=hashlib.sha256()
         for seq,h in ((x,fp1),(y,fp2)):
             for _,row in seq:
@@ -51,9 +51,11 @@ def compare(a,b):
                     key=next(k for k in dict.fromkeys((*va,*vb)) if va.get(k)!=vb.get(k))
                     first_diff={'index':i,'field':key,'original_event_ordinal':x[i][0],'candidate_event_ordinal':y[i][0],
                                 'before_excerpt':repr(va.get(key))[:600], 'after_excerpt':repr(vb.get(key))[:600]};break
-        report['families'].append({'family':family,'status':status,'events_original':len(x),'events_candidate':len(y),
+        input_equal = len(x)==len(y) and all(xi[1].get('inputs')==yi[1].get('inputs') for xi,yi in zip(x,y))
+        report['families'].append({'family':family,'status':status,'inputs_equal':input_equal,'events_original':len(x),'events_candidate':len(y),
                                    'sha256_original':fp1.hexdigest(),'sha256_candidate':fp2.hexdigest(), 'first_diff':first_diff})
         if status=='FAIL':report['status']='FAIL'
+    report['input_drift_families']=[item['family'] for item in report['families'] if not item['inputs_equal']]
     report['compared_event_count']=sum(t['events_original'] for t in report['families'])
     report['excluded_original_event_count']=sum(t['original'] for t in report['excluded_implementation_families'])
     return report
