@@ -458,24 +458,28 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
   let browserPid = null;
   let historyAuth = null;
   let credentials = { xAccessToken: "", farazSession: "" };
-  let storedStorageState = { cookies: [], origins: [] };
-  let sessionCapturePending = null;
-  let authCaptureArmed = false;
+  let loginCapture = null;
   let passiveAuthProbe = null;
   const explicitAuthChecks = new Map();
-  let loginBrowser = null;
   let nextChartHistoryRequestAt = 0;
   let shutdownPromise = null;
   let shuttingDown = false;
   const pendingLaunches = new Set();
   const observedHistoryPages = new WeakSet();
 
-  async function waitForChartHistoryRequestSlot(signal) {
+  async function startChartHistoryRequest(start, signal) {
+    let waitMs;
+    while ((waitMs = nextChartHistoryRequestAt - performance.now()) > 0) {
+      await delay(Math.ceil(waitMs), undefined, { signal });
+    }
     signal?.throwIfAborted();
-    const now = Date.now();
-    const scheduledAt = Math.max(now, nextChartHistoryRequestAt);
-    nextChartHistoryRequestAt = scheduledAt + CHART_UPDATE_RATE_LIMIT_MS;
-    if (scheduledAt > now) await delay(scheduledAt - now, undefined, { signal });
+    try {
+      return start();
+    } finally {
+      // directRequest reads the session and calls fetch before yielding. Start
+      // the gap after that synchronous work so slow headers cannot spend it.
+      nextChartHistoryRequestAt = performance.now() + CHART_UPDATE_RATE_LIMIT_MS;
+    }
   }
 
   function loadStoredSession() {
@@ -495,22 +499,20 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     if (!restored) throw new Error("The stored FARAZ session file is empty or has an unsupported format.");
     credentials = restored.credentials;
     historyAuth = restored.historyAuth;
-    storedStorageState = restored.storageState;
-    if (migrateLegacyDpapi) persistStorageState(storedStorageState);
-    return storedStorageState;
+    if (migrateLegacyDpapi) persistStorageState(restored.storageState, credentials, historyAuth);
+    return restored.storageState;
   }
 
-  function persistStorageState(storageState) {
+  function persistStorageState(storageState, sessionCredentials, sessionHistoryAuth) {
     fs.mkdirSync(secretDir, { recursive: true, mode: 0o700 });
-    storedStorageState = storageState;
     const session = {
       format: "clear-text",
       version: SESSION_FILE_VERSION,
       updatedAt: new Date().toISOString(),
-      "x-access-token": credentials.xAccessToken,
-      farazSession: credentials.farazSession,
+      "x-access-token": sessionCredentials.xAccessToken,
+      farazSession: sessionCredentials.farazSession,
       storageState,
-      historyAuth,
+      historyAuth: sessionHistoryAuth,
     };
     const temporaryPath = path.join(secretDir, `.faraz-session-${randomUUID()}.json.tmp`);
     fs.writeFileSync(temporaryPath, `${JSON.stringify(session, null, 2)}\n`, { encoding: "utf8", mode: 0o600, flag: "wx" });
@@ -521,31 +523,22 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     }
   }
 
-  async function persistSession() {
-    const captureContext = context;
-    const capturePage = authPage;
-    if (!authCaptureArmed || !captureContext) return false;
+  async function persistCapturedSession(capture, captureContext, capturePage) {
     const storageState = await captureContext.storageState({ indexedDB: true });
-    let pageToken;
-    if (authCaptureArmed && context === captureContext && !credentials.xAccessToken && capturePage && !capturePage.isClosed()) {
+    let pageToken = "";
+    if (loginCapture === capture && !capture.credentials.xAccessToken && !capturePage.isClosed()) {
       pageToken = await capturePage.evaluate(() => {
         const values = Object.values(localStorage);
         return values.map((value) => String(value).match(/eyJ[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+/)?.[0]).find(Boolean) || "";
       }).catch(() => "");
     }
-    if (!authCaptureArmed || context !== captureContext || fs.existsSync(secretPath)) return false;
+    if (loginCapture !== capture || sessionFileIdentity() !== capture.identity) return false;
     const sessionCookie = storageState.cookies.find((cookie) => cookie?.name === "farazSession" && /(^|\.)faraz\.io$/i.test(cookie.domain || ""));
-    if (sessionCookie?.value) credentials.farazSession = sessionCookie.value;
-    if (!credentials.xAccessToken && pageToken) credentials.xAccessToken = pageToken;
-    persistStorageState(storageState);
-    authCaptureArmed = false;
-    return true;
-  }
-
-  async function finalizeCapturedSession() {
-    const captureContext = context;
-    if (!await persistSession() || context !== captureContext) return;
-    if (!fs.existsSync(secretPath)) throw new Error("FARAZ session was not saved locally.");
+    const freshCredentials = {
+      xAccessToken: capture.credentials.xAccessToken || pageToken,
+      farazSession: sessionCookie?.value || capture.credentials.farazSession,
+    };
+    persistStorageState(storageState, freshCredentials, capture.historyAuth);
     await closeBrowserContext();
   }
 
@@ -559,8 +552,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     const closingBrowser = browser;
     const closingServer = browserServer;
     const closingPid = browserPid;
-    if (loginBrowser === closingBrowser) loginBrowser = null;
-    authCaptureArmed = false;
+    loginCapture = null;
     browser = null;
     browserServer = null;
     browserPid = null;
@@ -579,7 +571,6 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     cancelAuthStatusChecks();
     historyAuth = null;
     credentials = { xAccessToken: "", farazSession: "" };
-    storedStorageState = { cookies: [], origins: [] };
     if (fs.existsSync(secretPath)) fs.unlinkSync(secretPath);
     await closeBrowserContext();
   }
@@ -650,10 +641,11 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       let lastError;
       const attempts = realtime ? 1 : MAX_PACKET_ATTEMPTS;
       for (let attempt = 1; attempt <= attempts; attempt++) {
-        await waitForChartHistoryRequestSlot(signal);
         try {
-          const requestSignal = realtime ? AbortSignal.any([signal, AbortSignal.timeout(5_000)]) : signal;
-          const { response, text } = await directRequest(url, { timeoutMs: 30_000, signal: requestSignal, fresh, readResponse: readResponseText });
+          const { response, text } = await startChartHistoryRequest(() => {
+            const requestSignal = realtime ? AbortSignal.any([signal, AbortSignal.timeout(5_000)]) : signal;
+            return directRequest(url, { timeoutMs: 30_000, signal: requestSignal, fresh, readResponse: readResponseText });
+          }, signal);
           signal?.throwIfAborted();
           if (response.status !== 200) {
             throw Object.assign(new Error(`FARAZ returned HTTP ${response.status}: ${text}`), { status: response.status });
@@ -845,11 +837,12 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     };
   }
 
-  function captureHistoryRequest(request) {
+  function captureHistoryRequest(capture, request) {
+    if (loginCapture !== capture) return;
     try {
       const url = new URL(request.url());
       if (!ALLOWED_HOSTS.has(url.host) || url.pathname !== HISTORY_PATH) return;
-      historyAuth = {
+      capture.historyAuth = {
         host: url.host,
         protocol: url.protocol,
         symbolName: url.searchParams.get("symbolName") || "",
@@ -860,29 +853,23 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
         capturedAt: Date.now(),
       };
       const headers = request.headers();
-      credentials = {
-        xAccessToken: String(headers["x-access-token"] || headers.authorization || credentials.xAccessToken || "").replace(/^Bearer\s+/i, ""),
-        farazSession: readCookieValue(headers.cookie, "farazSession") || credentials.farazSession,
+      capture.credentials = {
+        xAccessToken: String(headers["x-access-token"] || headers.authorization || capture.credentials.xAccessToken || "").replace(/^Bearer\s+/i, ""),
+        farazSession: readCookieValue(headers.cookie, "farazSession") || capture.credentials.farazSession,
       };
     } catch {}
   }
 
-  function captureHistoryResponse(response) {
-    try {
-      const url = new URL(response.url());
-      if (!ALLOWED_HOSTS.has(url.host) || url.pathname !== HISTORY_PATH || !response.ok) return;
-      if (sessionCapturePending || !authCaptureArmed || loginBrowser !== browser || fs.existsSync(secretPath)) return;
-      sessionCapturePending = (async () => {
-        await finalizeCapturedSession();
-      })().catch(() => {}).finally(() => { sessionCapturePending = null; });
-    } catch {}
-  }
-
-  function observeHistoryRequests(page) {
-    if (!page || observedHistoryPages.has(page)) return;
+  function observeHistoryRequests(capture, page) {
+    if (!capture || observedHistoryPages.has(page)) return;
     observedHistoryPages.add(page);
-    page.on("request", captureHistoryRequest);
-    page.on("response", captureHistoryResponse);
+    page.on("request", request => captureHistoryRequest(capture, request));
+    page.on("response", response => {
+      const url = new URL(response.url());
+      if (loginCapture === capture && response.ok() && ALLOWED_HOSTS.has(url.host) && url.pathname === HISTORY_PATH) {
+        void capturePendingBrowserLogin().catch(() => {});
+      }
+    });
   }
 
   function endpointSymbolName(symbolName) {
@@ -894,11 +881,8 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
 
   async function ensureContext({ showLogin = false, showBrowser = false } = {}) {
     if (shuttingDown) throw new Error("FARAZ service is shutting down.");
-    if (context && (showLogin || showBrowser) && !authCaptureArmed && !fs.existsSync(secretPath)) {
+    if (context && !loginCapture && (showLogin || (showBrowser && !fs.existsSync(secretPath)))) {
       await closeBrowserContext();
-      credentials = { xAccessToken: "", farazSession: "" };
-      storedStorageState = { cookies: [], origins: [] };
-      historyAuth = null;
     }
     if (context && (showLogin || showBrowser) && contextHeadless) await closeBrowserContext();
     if (!context) {
@@ -906,8 +890,12 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
         await pendingLaunches.values().next().value;
       } else {
         const executablePath = launchBrowser ? (process.env.FARAZ_BROWSER_PATH || null) : browserExecutable();
-        const storageState = loadStoredSession();
-        if ((showLogin || showBrowser) && !storageState) authCaptureArmed = true;
+        const savedStorageState = loadStoredSession();
+        const storageState = showLogin ? null : savedStorageState;
+        const capture = (showLogin || (showBrowser && !savedStorageState))
+          ? { identity: sessionFileIdentity(), credentials: { xAccessToken: "", farazSession: "" }, historyAuth: null, pending: null }
+          : null;
+        loginCapture = capture;
         const headless = !showLogin && !showBrowser;
         const launch = launchBrowser || (async ({ executablePath }) => {
           const launchedServer = await chromium.launchServer({
@@ -928,20 +916,20 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
         const launching = (async () => {
           const launched = await launch({ executablePath, headless, storageState });
           browser = launched.browser;
-          if (authCaptureArmed && (showLogin || showBrowser)) loginBrowser = launched.browser;
           context = launched.context;
           browserServer = launched.browserServer || null;
           browserPid = Number(launched.browserPid) || null;
           contextHeadless = headless;
           try {
             if (shuttingDown) throw new Error("FARAZ service is shutting down.");
-            if (credentials.xAccessToken) await context.setExtraHTTPHeaders({ "x-access-token": credentials.xAccessToken });
-            context.on?.("page", observeHistoryRequests);
-            context.pages().forEach(observeHistoryRequests);
+            if (capture && loginCapture !== capture) throw new Error("FARAZ sign-in was cancelled.");
+            if (storageState && credentials.xAccessToken) await context.setExtraHTTPHeaders({ "x-access-token": credentials.xAccessToken });
+            const observe = page => observeHistoryRequests(capture, page);
+            context.on?.("page", observe);
+            context.pages().forEach(observe);
             browser.on?.("disconnected", () => {
               if (browser === launched.browser) {
-                if (loginBrowser === launched.browser) loginBrowser = null;
-                authCaptureArmed = false;
+                loginCapture = null;
                 browser = null;
                 context = null;
                 authPage = null;
@@ -955,13 +943,17 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
         })();
         pendingLaunches.add(launching);
         try { await launching; }
+        catch (error) {
+          if (loginCapture === capture) loginCapture = null;
+          throw error;
+        }
         finally { pendingLaunches.delete(launching); }
       }
     }
     if (shuttingDown) throw new Error("FARAZ service is shutting down.");
     const pages = context.pages();
     authPage = pages.find((page) => /^https:\/\/([^.]+\.)?faraz\.io\//i.test(page.url())) || pages[0] || await context.newPage();
-    observeHistoryRequests(authPage);
+    observeHistoryRequests(loginCapture, authPage);
     if (showLogin) {
       await authPage.goto(`${FARAZ_ORIGIN}/account/login`, { waitUntil: "domcontentloaded" });
     } else if (!/^https:\/\/([^.]+\.)?faraz\.io\//i.test(authPage.url())) {
@@ -973,23 +965,28 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     return authPage;
   }
 
-  async function capturePendingBrowserLogin(symbolName) {
-    if (!authCaptureArmed || !context || loginBrowser !== browser || !authPage || authPage.isClosed()) return false;
-    const cookies = await context.cookies([FARAZ_ORIGIN]);
-    if (!cookies.some((cookie) => /(^|\.)faraz\.io$/i.test(cookie?.domain || ""))) return false;
-    if (!/^https:\/\/([^.]+\.)?faraz\.io\//i.test(authPage.url())) await authPage.goto(FARAZ_ORIGIN, { waitUntil: "domcontentloaded" });
-    const probe = await authPage.evaluate(async ({ endpoint }) => {
-      const response = await fetch(endpoint, { credentials: "include", cache: "no-store", headers: { Accept: "application/json, text/plain, */*" } });
-      return {
-        status: response.status,
-        ok: response.ok,
-        contentType: response.headers.get("content-type") || "",
-        redirectedToLogin: response.redirected && /\/account\/login/i.test(response.url),
-      };
-    }, { endpoint: `${FARAZ_ORIGIN}${AUTH_PROFILE_PATH}` });
-    if (!probe.ok || probe.status === 401 || probe.status === 403 || !/(?:application|text)\/json/i.test(probe.contentType) || probe.redirectedToLogin) return false;
-    await finalizeCapturedSession();
-    return fs.existsSync(secretPath);
+  async function capturePendingBrowserLogin() {
+    const capture = loginCapture;
+    const captureContext = context;
+    const capturePage = authPage;
+    if (!capture || !captureContext || !capturePage || capturePage.isClosed() || sessionFileIdentity() !== capture.identity) return;
+    if (capture.pending) return capture.pending;
+    capture.pending = (async () => {
+      const cookies = await captureContext.cookies([FARAZ_ORIGIN]);
+      if (!cookies.some((cookie) => /(^|\.)faraz\.io$/i.test(cookie?.domain || ""))) return;
+      if (!/^https:\/\/([^.]+\.)?faraz\.io\//i.test(capturePage.url())) return;
+      const probe = await capturePage.evaluate(async ({ endpoint }) => {
+        const response = await fetch(endpoint, { credentials: "include", cache: "no-store", headers: { Accept: "application/json, text/plain, */*" } });
+        return {
+          ok: response.ok,
+          contentType: response.headers.get("content-type") || "",
+          redirectedToLogin: response.redirected && /\/account\/login/i.test(response.url),
+        };
+      }, { endpoint: `${FARAZ_ORIGIN}${AUTH_PROFILE_PATH}` });
+      if (!probe.ok || !/(?:application|text)\/json/i.test(probe.contentType) || probe.redirectedToLogin || loginCapture !== capture) return;
+      await persistCapturedSession(capture, captureContext, capturePage);
+    })().finally(() => { capture.pending = null; });
+    return capture.pending;
   }
 
   function sessionFileIdentity() {
@@ -999,19 +996,19 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
 
   async function authStatus(symbolName = "FXCM:USOIL", signal) {
     try {
-      if (!fs.existsSync(secretPath)) {
-        if (authCaptureArmed && await capturePendingBrowserLogin(symbolName)) {
-          // Browser data is only used to create the file; the status below is
-          // decided by re-reading that file and probing with its credentials.
-        } else if (authCaptureArmed) {
-          return { connected: false, state: "waiting_for_login" };
-        } else {
-          if (context) await closeBrowserContext();
-          credentials = { xAccessToken: "", farazSession: "" };
-          storedStorageState = { cookies: [], origins: [] };
-          historyAuth = null;
-          return { connected: false, state: "not_connected" };
+      const capture = loginCapture;
+      if (capture) {
+        await capturePendingBrowserLogin();
+        if (loginCapture === capture) {
+          if (sessionFileIdentity() === capture.identity) return { connected: false, state: "waiting_for_login" };
+          await closeBrowserContext();
         }
+      }
+      if (!fs.existsSync(secretPath)) {
+        if (context && !loginCapture) await closeBrowserContext();
+        credentials = { xAccessToken: "", farazSession: "" };
+        historyAuth = null;
+        return { connected: false, state: loginCapture ? "waiting_for_login" : "not_connected" };
       }
       const storageState = loadStoredSession();
       const verifiedIdentity = sessionFileIdentity();
@@ -1039,8 +1036,8 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
         savedCookies: storageState.cookies.filter((cookie) => /(^|\.)faraz\.io$/i.test(cookie?.domain || "")).length,
       };
     } catch (error) {
-      if (!fs.existsSync(secretPath) && !authCaptureArmed) return { connected: false, state: "not_connected" };
-      return { connected: false, state: authCaptureArmed ? "waiting_for_login" : "expired_session", error: error.message };
+      if (!fs.existsSync(secretPath) && !loginCapture) return { connected: false, state: "not_connected" };
+      return { connected: false, state: loginCapture ? "waiting_for_login" : "expired_session", error: error.message };
     }
   }
 
@@ -1085,7 +1082,8 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
     }
     if (passiveAuthProbe?.identity === identity) {
       if (passiveAuthProbe.pending) return passiveAuthProbe.pending;
-      if (identity && now() - passiveAuthProbe.completedAt < PASSIVE_AUTH_STATUS_MS) return passiveAuthProbe.status;
+      if (identity && !loginCapture && passiveAuthProbe.status.state !== "waiting_for_login"
+          && now() - passiveAuthProbe.completedAt < PASSIVE_AUTH_STATUS_MS) return passiveAuthProbe.status;
     }
     cancelPassiveAuthProbe();
     const attempt = { identity, controller: new AbortController() };

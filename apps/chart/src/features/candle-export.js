@@ -344,9 +344,9 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
     authBadge.querySelector("b").textContent = connected ? "Session connected" : "Authentication required";
     authDetail.textContent = connected
       ? `${status.host || "faraz.io"} · Session verified from the local secret file`
-      : status.error ? summarizeUiError(status.error)
-        : status.state === "expired_session" ? "Saved session was rejected by FARAZ. Edit the secret file or sign in again."
-          : "Sign in before configuring an export.";
+      : farazLoginWaitingDetail(status) || (status.error ? summarizeUiError(status.error)
+        : status.state === "expired_session" ? "FARAZ rejected the saved session. Select Sign in to renew it."
+          : "Sign in before configuring an export.");
     signIn.classList.toggle("danger", connected);
     signIn.classList.toggle("primary", !connected);
     signIn.setAttribute("aria-label", connected ? "Sign out of FARAZ" : "Sign in to FARAZ");
@@ -434,8 +434,7 @@ export function initCandleExport({ root, headerRoot, icon, toast, getDefaults, i
       await request("/api/faraz/auth/open", { method: "POST" });
       authDetail.textContent = "Complete sign-in in the FARAZ browser. After the local session is saved, that browser closes automatically.";
       cancelAuthRefresh();
-      const status = await refreshAuth({ fresh: true });
-      authDetail.textContent = farazLoginWaitingDetail(status) || authDetail.textContent;
+      await refreshAuth({ fresh: true });
     } catch (error) {
       toast(error.message, "error");
       authDetail.textContent = error.message;

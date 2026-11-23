@@ -1,5 +1,5 @@
 import { clipHistoricalHitBoxes, drawPrimaryStructures, drawTrendTransitions, indicatorCalculationSegments } from "./primary-structure.js";
-import { drawTrueFalseLabel, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT } from "./true-false-label.js";
+import { drawTrueFalseLabel, trueFalseAppearance, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT } from "./true-false-label.js";
 
 export const INDICATOR_MARKER_DEFAULTS = Object.freeze({
   aSize: 10,
@@ -12,12 +12,15 @@ export const INDICATOR_MARKER_DEFAULTS = Object.freeze({
 export function drawIndicator(canvasWidth, canvasHeight, {
   ctx, state, indicatorTimeToCoordinate, overlayPriceCoordinate, priceToY,
   indicatorObject, indicatorOffsetPixels, offsetIndicatorPoint, offsetIndicatorRect,
-  rgba, dash,
+  rgba, dash, plotWidth = canvasWidth, plotHeight = canvasHeight,
 }) {
   state.indicator.hitBoxes = [];
   if (!state.indicator.enabled || !state.indicator.results) return;
   const settings = state.indicator.settings,
-    timeframe = Number(state.indicator.results.timeframe || state.tf);
+    timeframe = Number(state.indicator.results.timeframe || state.tf),
+    foundationVerdict = trueFalseAppearance(settings, "foundation"),
+    secondaryVerdict = trueFalseAppearance(settings, "secondary");
+  const trendTransitions = [];
   for (const { direction, group, objectOffsets } of indicatorCalculationSegments(state.indicator.results)) {
     ctx.save();
     const firstHitIndex = state.indicator.hitBoxes.length;
@@ -246,8 +249,9 @@ export function drawIndicator(canvasWidth, canvasHeight, {
       ctx.textAlign = "center";
       ctx.textBaseline = bullish ? "top" : "bottom";
       ctx.fillText(labelObject?.text ?? "S", shiftedLabel.x, shiftedLabel.y);
-      drawTrueFalseLabel(ctx, zone.trueFalse, settings.trueFalseVisible, labelSize,
-        shiftedLabel.x, shiftedLabel.y + (bullish ? labelSize : -labelSize), bullish);
+      drawTrueFalseLabel(ctx, zone.trueFalse, foundationVerdict.visible, labelSize,
+        shiftedLabel.x, shiftedLabel.y + (bullish ? labelSize : -labelSize), bullish,
+        undefined, false, 0, foundationVerdict);
       ctx.restore();
     }
     for (const [zoneIndex, zone] of (group.eZones || []).entries()) {
@@ -301,8 +305,9 @@ export function drawIndicator(canvasWidth, canvasHeight, {
       ctx.textAlign = "center";
       ctx.textBaseline = bullish ? "top" : "bottom";
       ctx.fillText(labelObject?.text ?? `E${zone.number}`, shiftedLabel.x, shiftedLabel.y);
-      drawTrueFalseLabel(ctx, zone.trueFalse, settings.trueFalseVisible, labelSize,
-        shiftedLabel.x, shiftedLabel.y + (bullish ? labelSize : -labelSize), bullish);
+      drawTrueFalseLabel(ctx, zone.trueFalse, foundationVerdict.visible, labelSize,
+        shiftedLabel.x, shiftedLabel.y + (bullish ? labelSize : -labelSize), bullish,
+        undefined, false, 0, foundationVerdict);
       ctx.restore();
     }
     for (const [zoneIndex, zone] of (group.stopAlls || []).entries()) {
@@ -356,9 +361,9 @@ export function drawIndicator(canvasWidth, canvasHeight, {
       ctx.textAlign = "center";
       ctx.textBaseline = bullish ? "top" : "bottom";
       ctx.fillText(object?.text ?? String(zone.number), shifted.x, labelY);
-      drawTrueFalseLabel(ctx, zone.trueFalse, settings.trueFalseVisible, labelSize,
+      drawTrueFalseLabel(ctx, zone.trueFalse, secondaryVerdict.visible, labelSize,
         shifted.x, labelY + (bullish ? labelSize : -labelSize), bullish,
-        TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, zone.trueFalseRepeated === true);
+        TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, zone.trueFalseRepeated === true, 0, secondaryVerdict);
       ctx.restore();
     }
     if (settings.orderStopVisible) {
@@ -506,10 +511,13 @@ export function drawIndicator(canvasWidth, canvasHeight, {
         state.indicator.hitBoxes.splice(firstHitIndex), historicalEndX));
     }
     ctx.restore();
-    drawTrendTransitions(ctx, group, {
-      timeToX: indicatorTimeToCoordinate,
-      priceToY,
-      height: canvasHeight,
-    });
+    for (const transition of group.trendTransitions || []) trendTransitions.push(transition);
   }
+  drawTrendTransitions(ctx, { trendTransitions }, {
+    timeToX: indicatorTimeToCoordinate,
+    priceToY,
+    width: plotWidth,
+    height: plotHeight,
+    settings,
+  });
 }

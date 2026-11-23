@@ -370,9 +370,11 @@
 .toggle-row strong { color: var(--ui-text-primary); font-size: var(--ui-text-xs); font-weight: var(--ui-weight-medium); }
 .module-row small,
 .toggle-row small { margin-top: 2px; color: var(--ui-text-muted); font-size: var(--ui-text-2xs); line-height: var(--ui-leading-normal); }
-.module-row { cursor: pointer; }
+.module-row { position: relative; cursor: pointer; }
 .module-toggle-input {
   position: absolute;
+  inset-block-start: 50%;
+  inset-inline-end: 0;
   width: 1px;
   height: 1px;
   opacity: 0;
@@ -455,6 +457,9 @@
 .style-group.collapsed .style-group-chevron { transform: rotate(-90deg); }
 .style-group.collapsed .style-group-body { display: none; }
 .style-group-body { background: var(--ui-bg-surface); }
+[data-indicator-page="inputs"] .style-group-body { padding-inline: var(--ui-space-4); }
+[data-indicator-page="inputs"] .style-group-body .module-row { min-height: 39px; }
+.style-group-header:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: -2px; }
 
 .style-module { border-bottom: 1px solid var(--ui-border-subtle); }
 .style-module:last-child { border-bottom: 0; }
