@@ -26,7 +26,7 @@ def records(path):
         for line in file:
             raw_count+=1
             row=json.loads(line)
-            if row.get('schema') not in ('tradingbot.v9.internal-observer.v1','tradingbot.v9.internal-observer.v2'):
+            if row.get('schema') not in ('tradingbot.v9.internal-observer.v1','tradingbot.v9.internal-observer.v2','tradingbot.v9.internal-observer.v3'):
                 raise ValueError(f'Wrong schema event {raw_count} in {path}')
             if type(row.get('event_ordinal')) is not int or row['event_ordinal']!=raw_count:
                 raise ValueError(f'Noncontiguous global event ordinal {raw_count} in {path}')

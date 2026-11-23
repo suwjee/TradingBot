@@ -18,14 +18,16 @@ import os
 import sys
 import traceback
 import time
+import types
 import psutil
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 from types import SimpleNamespace
 from zoneinfo import ZoneInfo
 
-SCHEMA = 'tradingbot.v9.internal-observer.v2'
+SCHEMA = 'tradingbot.v9.internal-observer.v3'
+_CONTEXT_WRITER=None
 TRACED = {
     'reaction_engine': {'_append_reaction', '_append_reset', 'canonical_order_stop', 'detect'},
     'blue_line_detector': {'_build_reset_blue_line', 'detect_blue_lines', 'detect', 'update'},
@@ -62,6 +64,19 @@ def stable_object(obj, depth=0, max_depth=12, allow_namespace=False):
         return {'$float_repr': repr(obj)}
     if isinstance(obj, Decimal):
         return {'$decimal': str(obj)}
+    if isinstance(obj, bytes):
+        # The input is SHA-pinned and stored separately, not an ambiguous
+        # decoded string; digest + byte length are the stable source reference.
+        return {'$immutable_bytes_source':{'length':len(obj),'sha256':hashlib.sha256(obj).hexdigest()}}
+    if isinstance(obj, types.ModuleType):
+        # Imported source is independently pinned by 15 Git blob hashes.
+        return {'$module_import_identity':obj.__name__}
+    if isinstance(obj, timedelta):
+        return {'$timedelta_total_microseconds':(obj.days*86400+obj.seconds)*1000000+obj.microseconds}
+    if type(obj).__name__=='MarketChronology' and type(obj).__module__=='reaction_engine':
+        if _CONTEXT_WRITER is None:
+            raise Unsupported('market_chronology_requires_trace_sidecar')
+        return {'$immutable_chronology_ref':_CONTEXT_WRITER.save_chronology(obj)}
     if isinstance(obj, datetime):
         return {'$datetime': obj.isoformat(sep=' ')}
     if isinstance(obj, date):
@@ -71,6 +86,17 @@ def stable_object(obj, depth=0, max_depth=12, allow_namespace=False):
             raise Unsupported('namespace_seen_in_non_ledger_hot_path')
         return {'$simple_namespace': [[k,stable_object(v,depth+1,max_depth,allow_namespace)]
                                      for k,v in vars(obj).items()]}
+    if _CONTEXT_WRITER is not None and isinstance(obj,(list,tuple,dict)) and len(obj)>=32:
+        # Large immutable Candle views and source Reaction Candidate ledgers
+        # are copied once into independent lossless snapshot sidecars. The
+        # original container order and every original dataclass field remain
+        # present. Mutable Candidate freshness is separately flagged as a
+        # coverage caveat; it is NOT silently asserted immutable.
+        representative=(next(iter(obj.values())) if isinstance(obj,dict) else obj[0])
+        if (dataclasses.is_dataclass(representative) and
+            type(representative).__module__=='reaction_engine' and
+            type(representative).__name__ in ('Candle','Candidate')):
+            return {'$ordered_collection_snapshot':_CONTEXT_WRITER.save_collection(obj)}
     if dataclasses.is_dataclass(obj) and not isinstance(obj, type):
         return {'$class': type(obj).__module__ + '.' + type(obj).__qualname__,
                 '$fields': [[f.name, stable_object(getattr(obj, f.name), depth+1, max_depth, allow_namespace)] for f in dataclasses.fields(obj)]}
@@ -167,6 +193,82 @@ class EventWriter:
         self.unsupported=collections.Counter()
         self.checkpoints=[]
         self.active=False
+        self.context_refs={}
+        self.context_files=[]
+        self.collection_refs={}
+        self.collection_objects={}
+        self.collection_files=[]
+    def save_collection(self,source):
+        key=id(source)
+        if key in self.collection_refs:
+            # Hold strong references to prevent reuse of id for a different
+            # list/dict. A Reaction Candidate list can be mutable; this is a
+            # first-observation snapshot only and its freshness is not proved.
+            assert self.collection_objects[key] is source
+            return self.collection_refs[key]
+        ordinal=len(self.collection_files)+1
+        dest=Path(str(self.dest)+f'.collection.{ordinal:04d}.jsonl.gz')
+        entries=source.items() if isinstance(source,dict) else enumerate(source)
+        n=0;bytes_count=0;digest=hashlib.sha256()
+        fp=dest.open('wb')
+        try:
+            with gzip.GzipFile(fileobj=fp,mode='wb',filename='',mtime=0,compresslevel=5) as z:
+                for position,value in entries:
+                    row={'source_ordinal':n,'source_key':stable_object(position,0,32,allow_namespace=True),
+                         'source_value':stable_object(value,0,32,allow_namespace=True)}
+                    payload=json.dumps(row,ensure_ascii=False,separators=(',',':')).encode()+b'\n'
+                    digest.update(payload);z.write(payload);n+=1;bytes_count+=len(payload)
+        finally:fp.close()
+        kind=type(source).__name__;sample=(next(iter(source.values())) if isinstance(source,dict) else source[0])
+        element_type=type(sample).__name__
+        immutable=(element_type=='Candle')
+        summary={'file':dest.name,'entry_count':n,'container_kind':kind,
+                 'element_type':element_type,
+                 'source_candle_frozen':immutable,
+                 'candidate_content_is_snapshot_at_first_use_only':not immutable,
+                 'jsonl_sha256':digest.hexdigest(),
+                 'gzip_sha256':hashlib.sha256(dest.read_bytes()).hexdigest(),
+                 'uncompressed_bytes':bytes_count}
+        self.collection_files.append(summary)
+        stable_ref={k:v for k,v in summary.items() if k in ('entry_count','container_kind','element_type','jsonl_sha256','source_candle_frozen','candidate_content_is_snapshot_at_first_use_only')}
+        self.collection_refs[key]=stable_ref
+        self.collection_objects[key]=source
+        return stable_ref
+    def save_chronology(self, chronology):
+        """Lossless, deterministically ordered, separately compressed raw Candle data.
+
+        Caches intentionally excluded; Candle state is the authoritative
+        immutable underlying source. id() is an internal runtime memo only,
+        NEVER emitted as an event identity.
+        """
+        key=id(chronology)
+        if key in self.context_refs:return self.context_refs[key]
+        ordinal=len(self.context_files)+1
+        dest=Path(str(self.dest)+f'.chronology.{ordinal:04d}.jsonl.gz')
+        raw_hash=hashlib.sha256();uncompressed=0;count=0
+        fp=dest.open('wb')
+        try:
+            with gzip.GzipFile(fileobj=fp,mode='wb',filename='',mtime=0,compresslevel=5) as z:
+                for name,sequence in (('main',chronology.candles),('lower_5s',chronology.seconds)):
+                    for n,candle in enumerate(sequence):
+                        row={'type':name,'ordinal':n,'source_candle':stable_object(candle,0,32,allow_namespace=True)}
+                        payload=json.dumps(row,ensure_ascii=False,separators=(',',':')).encode('utf8')+b'\n'
+                        z.write(payload);raw_hash.update(payload)
+                        uncompressed+=len(payload);count+=1
+        finally:fp.close()
+        summary={'sidecar':dest.name,'record_count':count,
+                 'main_count':len(chronology.candles),'lower_count':len(chronology.seconds),
+                 'timeframe_us':int(chronology.timeframe.total_seconds()*1000000),
+                 'jsonl_sha256':raw_hash.hexdigest(),
+                 'gzip_sha256':hashlib.sha256(dest.read_bytes()).hexdigest(),
+                 'uncompressed_bytes':uncompressed,
+                 'meaning':'IMMUTABLE_INPUT_CANDLES_ONLY; derived caches not part of semantic state'}
+        self.context_files.append(summary)
+        # This content-addressed descriptor can be compared without mutable
+        # Python process identity or sidecar path differences.
+        descriptor={k:v for k,v in summary.items() if k in ('record_count','main_count','lower_count','timeframe_us','jsonl_sha256')}
+        self.context_refs[key]=descriptor
+        return descriptor
     def emit(self, payload):
         if self.active:raise RuntimeError('Recursive Trace emission')
         self.active=True
@@ -189,7 +291,9 @@ class EventWriter:
            'events':self.ordinal,'jsonl_sha256':self.digest.hexdigest(),
            'gzip_sha256':hashlib.sha256(self.dest.read_bytes()).hexdigest(),
            'uncompressed_bytes':self.uncompressed,'index':self.checkpoints,
-           'families':dict(self.counts),'unsupported_counts':dict(self.unsupported)}
+           'families':dict(self.counts),'unsupported_counts':dict(self.unsupported),
+           'chronology_input_sidecars':self.context_files,
+           'ordered_collection_sidecars':self.collection_files}
         (Path(str(self.dest)+'.manifest.json')).write_text(json.dumps(m,indent=2),encoding='utf8')
         return m
 
@@ -225,8 +329,8 @@ def instrument_module(module, writer):
                 observed_direction=next((v for v in args if v in ('bullish','bearish')),None) if args else None
             input_args=args[1:] if self_obj is not None else args
             # Bound representation limit is explicit; no partial trace counts as full verification.
-            in_repr=representation(input_args)
-            if kwargs:in_repr={'status':'complete_supported','value':{'$args':in_repr,'$kwargs':representation(kwargs)}}
+            in_repr=representation(input_args,allow_namespace=True)
+            if kwargs:in_repr={'status':'complete_supported','value':{'$args':in_repr,'$kwargs':representation(kwargs,allow_namespace=True)}}
             r_repr=representation(output)
             time_hints=event_epoch(output) if not isinstance(output,(list,tuple)) else (event_epoch(output[0]) if output else {})
             event={'stage':stage,'method':method,'direction':observed_direction,
@@ -278,6 +382,8 @@ def execute(args):
     sys.modules['trading_pipeline']=pipeline
     spec.loader.exec_module(pipeline)
     writer=EventWriter(args.trace_out) if args.trace_out else None
+    global _CONTEXT_WRITER
+    _CONTEXT_WRITER=writer
     stage_metrics=[]
     proc_for_stages=psutil.Process() if args.stage_profile else None
     if writer is not None:

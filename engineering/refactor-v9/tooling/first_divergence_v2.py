@@ -17,7 +17,7 @@ def rows(path):
         for line in fp:
             ordinal+=1
             r=json.loads(line)
-            if r.get('schema') not in ('tradingbot.v9.internal-observer.v1','tradingbot.v9.internal-observer.v2') or r.get('event_ordinal')!=ordinal:
+            if r.get('schema') not in ('tradingbot.v9.internal-observer.v1','tradingbot.v9.internal-observer.v2','tradingbot.v9.internal-observer.v3') or r.get('event_ordinal')!=ordinal:
                 raise ValueError('Invalid event ordinals at '+str(ordinal))
             if r['stage']+':'+r['method'] in IMPL_ONLY:continue
             yield r

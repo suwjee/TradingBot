@@ -9,7 +9,7 @@ from __future__ import annotations
 import argparse,collections,csv,gzip,hashlib,json
 from pathlib import Path
 
-SCHEMAS={'tradingbot.v9.internal-observer.v1','tradingbot.v9.internal-observer.v2'}
+SCHEMAS={'tradingbot.v9.internal-observer.v1','tradingbot.v9.internal-observer.v2','tradingbot.v9.internal-observer.v3'}
 
 def inspect(path):
     path=Path(path)
@@ -60,8 +60,44 @@ def inspect(path):
     if uncompressed!=manifest['uncompressed_bytes']:raise AssertionError('uncompressed bytes mismatch')
     if dict(families)!=manifest['families']:
         raise AssertionError('family counts do not match manifest')
+    sidecar_results=[]
+    for desc in manifest.get('chronology_input_sidecars',[]):
+        f=path.parent/desc['sidecar']
+        if hashlib.sha256(f.read_bytes()).hexdigest()!=desc['gzip_sha256']:
+            raise AssertionError('Chronology sidecar gzip SHA mismatch '+str(f))
+        n=0;h=hashlib.sha256();byte_count=0;by_kind=collections.Counter()
+        with gzip.open(f,'rb') as inp:
+            for raw in inp:
+                row=json.loads(raw);by_kind[row['type']]+=1
+                if row['ordinal']!=by_kind[row['type']]-1:
+                    raise AssertionError('Sidecar chronology ordinal not sequential')
+                h.update(raw);byte_count+=len(raw);n+=1
+        if n!=desc['record_count'] or n!=desc['main_count']+desc['lower_count']:
+            raise AssertionError('Sidecar chronology record count inconsistent')
+        if h.hexdigest()!=desc['jsonl_sha256'] or byte_count!=desc['uncompressed_bytes']:
+            raise AssertionError('Sidecar chronology JSONL digest/size mismatch')
+        sidecar_results.append({'file':str(f),'verified':'PASS','record_count':n,
+            'main_count':by_kind['main'],'lower_count':by_kind['lower_5s'],
+            'sha256':h.hexdigest()})
+    collections_verified=[]
+    for desc in manifest.get('ordered_collection_sidecars',[]):
+        f=path.parent/desc['file']
+        if hashlib.sha256(f.read_bytes()).hexdigest()!=desc['gzip_sha256']:
+            raise AssertionError('Ordered source collection sidecar gzip SHA mismatch')
+        n=0;length=0;h=hashlib.sha256()
+        with gzip.open(f,'rb') as stream:
+            for raw in stream:
+                row=json.loads(raw)
+                if row.get('source_ordinal')!=n:raise AssertionError('Collection sidecar ordinal drift')
+                n+=1;h.update(raw);length+=len(raw)
+        if n!=desc['entry_count'] or length!=desc['uncompressed_bytes'] or h.hexdigest()!=desc['jsonl_sha256']:
+            raise AssertionError('Collection sidecar has corrupt length or digest')
+        collections_verified.append({'file':str(f),'status':'PASS','record_count':n,
+                  'type':desc['element_type'],
+                  'mutable_candidate_first_use_snapshot_only':desc['candidate_content_is_snapshot_at_first_use_only']})
     return {'path':str(path),'integrity':'PASS','sha256_jsonl':digest.hexdigest(),
-            'raw_events':count,'stages_pair_count':len(stages)//2,
+            'raw_events':count,'verified_immutable_chronology_sidecars':sidecar_results,
+            'verified_ordered_collection_sidecars':collections_verified,'stages_pair_count':len(stages)//2,
             'stages':stages,'families':dict(families),'full_authoritative_boundaries':dict(boundary),
             'ledger_field_coverage':dict(coverage),'unsupported_items':dict(partials),
             'missing_required':dict(missing),'nondeterministic_legacy_set_markers':dict(nonsafe),
