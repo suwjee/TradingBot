@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "scope": "7 complete supplied 5s RAW files, 791174 bars, both directional 30s execution",
+  "golden_commit": "01d54ecf0149ebd15de92798be18810b6e2eb791",
+  "stages": [
+    {
+      "stage": "Baseline",
+      "status": "FROZEN_ORIGINAL",
+      "golden_files_pass": 7,
+      "raw_records": 791174,
+      "wall_s_sum": 139.11554,
+      "output": "Complete original JSON, .stable.json, timing telemetry per RAW in GoldenBaseline ZIP; SHA256 per file in inputs.json.",
+      "caveat": "ZIP full payload in account Library, not in this repository tree."
+    },
+    {
+      "stage": "V7",
+      "status": "EXPERIMENTAL_PARITY_PASS",
+      "golden_files_pass": 7,
+      "wall_s_sum": 118.64768,
+      "change_pct_vs_golden": -14.713,
+      "modules_changed": [
+        "bridge/trading_pipeline.py",
+        "pipeline/e_zone_detector.py",
+        "pipeline/order_audit_engine.py"
+      ],
+      "notes": "Decimal/time formatting optimization; indexed OrderAudit and E reconciliation; E parent-stop dedup and selection allocation reductions. Timing one unpaired run per dataset."
+    },
+    {
+      "stage": "V8.1",
+      "status": "EXPERIMENTAL_PARITY_PASS",
+      "golden_files_pass": 7,
+      "wall_s_sum": 109.76965,
+      "change_pct_vs_v7": -7.483,
+      "changed_from_previous": [
+        "bridge/trading_pipeline.py"
+      ],
+      "tested": {
+        "e_internal": 40,
+        "native_stage": 42,
+        "live": 3,
+        "paired_full_raw_runs": 12
+      },
+      "paired_median_speedup": [
+        {
+          "dataset": "XAU-20260928",
+          "ratio": 1.05517
+        },
+        {
+          "dataset": "OIL-20261016",
+          "ratio": 1.0457
+        }
+      ],
+      "notes": "Shared strictly pure parent-stop results among non-Live same-direction E passes. No performance guarantee."
+    },
+    {
+      "stage": "V8.2",
+      "status": "EXPERIMENTAL_PARITY_PASS_PERFORMANCE_NOT_PROMOTED",
+      "golden_files_pass": 7,
+      "wall_s_sum": 110.518,
+      "change_pct_vs_v8_1": 0.682,
+      "changed_from_previous": [
+        "bridge/trading_pipeline.py",
+        "pipeline/order_audit_engine.py"
+      ],
+      "tested": {
+        "e_internal": 35,
+        "native_stage": 42,
+        "live": 3,
+        "paired_full_raw_runs": 12
+      },
+      "paired_median_speedup": [
+        {
+          "dataset": "XAU-20260928",
+          "ratio": 0.9955944
+        },
+        {
+          "dataset": "OIL-20261016",
+          "ratio": 1.036497
+        }
+      ],
+      "synthetic": [
+        {
+          "bars": 100000,
+          "v8_1_s": 6.023,
+          "v8_2_s": 5.72
+        },
+        {
+          "bars": 250000,
+          "v8_1_s": 16.964,
+          "v8_2_s": 20.51
+        },
+        {
+          "bars": 500000,
+          "v8_1_s": 71.644,
+          "v8_2_s": 73.99
+        },
+        {
+          "bars": 1000000,
+          "v8_1_s": 270.378,
+          "v8_2_s": 267.401
+        }
+      ],
+      "synthetic_1m_rss_mib": {
+        "v8_1": 1654.92,
+        "v8_2": 1656.98
+      },
+      "rejected": [
+        "span-based _discover_candidate_chains refactor",
+        "separate-process bullish/bearish recombination"
+      ],
+      "notes": "Shared pure cross_order and canonical stop caches; reuse validated OrderAudit index. No significant consistent million-bar improvement; V8.1 remains performance reference."
+    }
+  ],
+  "limits": [
+    "One unpaired complete run per version/file does not determine statistically stable performance.",
+    "Exact stable JSON excludes numeric timings only; its schema is checked separately.",
+    "Selected internal E and Live tests do not prove every hidden state or callback scenario.",
+    "RSS and CPU figures are sampled; peak RSS is a lower bound.",
+    "Original RAW 5m file explicitly retired by user and excluded from active suite."
+  ]
+}
