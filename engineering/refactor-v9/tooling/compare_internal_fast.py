@@ -12,8 +12,13 @@ FIELDS=('stage','method','direction','result','pre_state','post_state','raw_time
 def digests(path):
     result=collections.defaultdict(lambda:{'count':0,'hash':hashlib.sha256(),'inputs_hash':hashlib.sha256(),'input_partial':0})
     with gzip.open(path,'rt',encoding='utf8') as fp:
-        for line in fp:
-            rec=json.loads(line);k=rec['stage']+':'+rec['method'];state=result[k]
+        for expected_ordinal,line in enumerate(fp,1):
+            rec=json.loads(line)
+            if rec.get('schema') != 'tradingbot.v9.internal-observer.v1':
+                raise ValueError('Unexpected internal trace schema at line '+str(expected_ordinal))
+            if type(rec.get('event_ordinal')) is not int or rec['event_ordinal']!=expected_ordinal:
+                raise ValueError('Non-contiguous event ordinal at line '+str(expected_ordinal))
+            k=rec['stage']+':'+rec['method'];state=result[k]
             row={key:rec[key] for key in FIELDS if key in rec}
             state['hash'].update(json.dumps(row,ensure_ascii=False,separators=(',',':')).encode()+b'\n')
             state['inputs_hash'].update(json.dumps(rec.get('inputs'),ensure_ascii=False,separators=(',',':')).encode()+b'\n')

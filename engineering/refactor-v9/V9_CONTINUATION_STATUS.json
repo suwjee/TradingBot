@@ -1,0 +1,113 @@
+{
+  "schema": "tradingbot.v9.continuation.v1",
+  "date": "2026-11-24",
+  "branch": "refactor",
+  "release_status": "INCOMPLETE",
+  "trace_coverage": "TRACE_COVERAGE_PARTIAL",
+  "claim_speedup": false,
+  "pinned_correctness_oracle": "01d54ecf0149ebd15de92798be18810b6e2eb791",
+  "performance_reference": "V8.1",
+  "prod_engine_source_changed": false,
+  "raw_modified": false,
+  "old_v9_results": {
+    "freeze": true,
+    "real_golden_stable_pass": "7/7",
+    "synthetic_stable_pass": "4/4 (100k,250k,500k,1M)",
+    "output_boundary_trace_pass": "7/7",
+    "deep_E_selected_pass": true,
+    "live_selected_pass": "3/3",
+    "strict_golden_mutation_assertions_pass": "16/16"
+  },
+  "new_evidence": {
+    "internal_trace_observer_on_off_stable": "2/2 short RAW, original & V8.1 full native both; all four stable equal",
+    "internal_trace_scoped_family_sequence_equal": "2/2 PASS for selected family-local outcome comparison, not global chronology",
+    "oil_15k_rejection_reasons_observed_each": 151,
+    "internal_observer_trace_events": {
+      "oil15k_orig.summary": 16372,
+      "xau15k_original.summary": 14821,
+      "oil15k_v81.summary": 15079,
+      "xau15k_v81.summary": 13921
+    },
+    "internal_comparator_mutation_tests": "6/6",
+    "ast_meter_original_vs_v81_on_oil_15k": "PASS stable bytes",
+    "ast_meter_real_v81_completed": [
+      "0",
+      "1",
+      "2",
+      "4",
+      "5"
+    ],
+    "ast_meter_real_v81_complete_count": 5,
+    "ast_meter_real_v81_incomplete": [
+      "3 (247851-row RAW): execution time exceeded tool limit",
+      "6 (284184-row RAW): not run"
+    ],
+    "abba100k_native_runs": "4/4 PASS, one ABBA block",
+    "abba100k_median_observed_ratio_no_promotion": 1.183975,
+    "instrumented_loop_site_counts": {
+      "original": 45,
+      "v81": 46
+    }
+  },
+  "unmet_hard_gates": [
+    "Lossless full in-process internal trace for all seven RAW and synthetic 1M, with all candidate and lifecycle transitions",
+    "Cross-family global chronological tie order and complete pre/post authoritative state parity",
+    "Full raw timestamp and exact rejection reason coverage for every candidate/gate and all OrderAudit branches",
+    "Global exact scanned historical rows/cache hit-miss/sorts/heap and allocation counters for all high-volume RAW and 1M",
+    "Repeated 1M unprofiled ABBA paired benchmarks (at least 3 full blocks)",
+    "Full official regression test suite; selected E/Live/edge tests were executed previously, not entire repository test matrix",
+    "Large metered RAW completion: instrumented 247851 rows timed out at 300s and 284184 rows not run"
+  ],
+  "status_rule": "Never label TOOLING VERIFIED or claim full-trace parity until every mandatory gate completes",
+  "raw_integrity": [
+    {
+      "file": "RAW FOREXCOM_XAUUSD 5S FROM 2026-09-22 11-00-00 TO 2026-09-29 11-55-05.json",
+      "expected_sha256": "1e29ebef3265283c156ed0177567382030ffd990338e3668e0d512a6d0701f85",
+      "actual_sha256": "1e29ebef3265283c156ed0177567382030ffd990338e3668e0d512a6d0701f85",
+      "bytes": 6796540,
+      "status": "PASS"
+    },
+    {
+      "file": "RAW FOREXCOM_XAUUSD 5S FROM 2026-09-28 20-44-00 TO 2026-10-06 19-32-40.json",
+      "expected_sha256": "b49dd7d1edd11b9d2fd7187953058030fb5f60cbca8e48d6fbce7fb89a16366c",
+      "actual_sha256": "b49dd7d1edd11b9d2fd7187953058030fb5f60cbca8e48d6fbce7fb89a16366c",
+      "bytes": 8003316,
+      "status": "PASS"
+    },
+    {
+      "file": "RAW FOREXCOM_XAUUSD 5S FROM 2026-10-08 19-35-30 TO 2026-10-09 18-14-25.json",
+      "expected_sha256": "5acdcaf7a0516037b51a0e44558150c2a2708cb1ef4d2abeb2d3f105355de7e4",
+      "actual_sha256": "5acdcaf7a0516037b51a0e44558150c2a2708cb1ef4d2abeb2d3f105355de7e4",
+      "bytes": 1270051,
+      "status": "PASS"
+    },
+    {
+      "file": "RAW FOREXCOM_XAUUSD 5S FROM 2026-11-02 02-31-00 TO 2026-11-21 01-29-35.json",
+      "expected_sha256": "8726c0fa9be1c09abf9e0bb3e7b167d90a8fab41ce4eaf2664357a01022cb157",
+      "actual_sha256": "8726c0fa9be1c09abf9e0bb3e7b167d90a8fab41ce4eaf2664357a01022cb157",
+      "bytes": 20241504,
+      "status": "PASS"
+    },
+    {
+      "file": "RAW FXCM_USOIL 5S FROM 2026-10-16 12-00-05 TO 2026-10-21 18-21-55.json",
+      "expected_sha256": "587321ff2b81fbc9e584520d1b68b3d74f7abe61611c9a26962fd7a7b7b44c5f",
+      "actual_sha256": "587321ff2b81fbc9e584520d1b68b3d74f7abe61611c9a26962fd7a7b7b44c5f",
+      "bytes": 3703028,
+      "status": "PASS"
+    },
+    {
+      "file": "RAW FXCM_USOIL 5S FROM 2026-10-22 19-25-25 TO 2026-10-23 19-25-25.json",
+      "expected_sha256": "70da6116bb79d04f26bea45057de993c9f77504f7af8f326c8428e778d5e9cbf",
+      "actual_sha256": "70da6116bb79d04f26bea45057de993c9f77504f7af8f326c8428e778d5e9cbf",
+      "bytes": 1190530,
+      "status": "PASS"
+    },
+    {
+      "file": "RAW FXCM_USOIL 5S FROM 2026-10-28 00-01-30 TO 2026-11-23 22-37-55.json",
+      "expected_sha256": "3710ea0a533c982438e794a434732b1c80de79ea5babd594cfdef5099604f490",
+      "actual_sha256": "3710ea0a533c982438e794a434732b1c80de79ea5babd594cfdef5099604f490",
+      "bytes": 21963462,
+      "status": "PASS"
+    }
+  ]
+}
