@@ -4,6 +4,8 @@ import { once } from "node:events";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { createInterface } from "node:readline";
+import { chromium } from "playwright-core";
+import { reviewRecords } from "../../src/features/manual-review/render.js";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { createRawResourceStore } from "../../server/raw-resource-store.js";
@@ -84,7 +86,7 @@ async function launch(stateRoot, marketFixture = "", holdRaw = "") {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body), signal,
     });
-    return { stop, getReport: id => report(id, "GET"), saveReport: id => report(id, "POST"),
+    return { stop, origin: `http://127.0.0.1:${port}`, getReport: id => report(id, "GET"), saveReport: id => report(id, "POST"),
       post: (route, body, signal) => post(`/reactions${route}`, body, signal),
       update: body => post("/candle-files/realtime", body),
       rawReadGate: (method = "GET") => fetch(`http://127.0.0.1:${port}/__test/raw-read-gate`, { method })
@@ -131,6 +133,10 @@ async function indicatorProgress(response) {
 async function indicator(response) {
   const payload = await response.json();
   assert.equal(response.status, 200, JSON.stringify(payload));
+  return withoutTimings(payload);
+}
+
+function withoutTimings(payload) {
   const { timings, ...output } = payload;
   return output;
 }
@@ -243,7 +249,285 @@ test("disconnecting calculation tabs releases abandoned work and retains identic
   }
 });
 
-test("a tab catches up after five minutes and recovers across a restart without calculation files", {
+test("latest applied and live results survive server restart and are isolated by chart timeframe", {
+  skip: process.platform !== "win32" && "Selected-range Engine input uses Windows named pipes",
+  timeout: 90_000,
+}, async t => {
+  const directory = path.resolve(chart, "state", "tmp");
+  await fs.mkdir(directory, { recursive: true });
+  const stateRoot = await fs.mkdtemp(path.join(directory, "calculation-persistence-test-"));
+  const store = createRawResourceStore({ rootDir: path.join(stateRoot, "data", "raw") });
+  let server;
+  t.after(async () => {
+    if (server) await server.stop();
+    await fs.rm(stateRoot, { recursive: true, force: true });
+  });
+  const start = 1_795_000_020;
+  const candles = Array.from({ length: 270 }, (_, index) => {
+    const close = 100 + (index * 13 % 41);
+    return { time: start + index * 5, open: close, high: close + 1, low: close - 1, close };
+  });
+  let raw = store.get(store.write({ broker: "TEST", symbol: "PERSIST", timeframe: "5S", candles: candles.slice(0, 240) }).id);
+  const other = store.get(store.write({ broker: "OTHER", symbol: "PERSIST", timeframe: "5S", candles }).id);
+  function cached(chartTimeframe, source = raw, tabId = "restored-tab") {
+    const query = new URLSearchParams({ id: source.id, chartId: source.chartId, chartTimeframe, tabId });
+    return fetch(`${server.origin}/api/reactions/cached?${query}`);
+  }
+  server = await launch(stateRoot);
+  assert.equal((await cached(30)).status, 404);
+  const results = new Map();
+  const request = { id: raw.id, chartId: raw.chartId, direction: "bullish", timeframe: 30,
+    from: start, to: start + 1_140, blueLines: true, liveSession: true, tabId: "original-tab" };
+  for (const chartTimeframe of [30, 60]) {
+    const response = await server.post("", { ...request, chartTimeframe });
+    results.set(chartTimeframe, await indicator(response));
+  }
+  assert.equal((await cached(30, other)).status, 404);
+  await server.stop();
+  server = await launch(stateRoot);
+  for (const chartTimeframe of [30, 60]) {
+    const restored = await cached(chartTimeframe);
+    assert.equal(restored.status, 200);
+    const { payload, snapshot, proof } = await restored.json();
+    assert.deepEqual(withoutTimings(payload), results.get(chartTimeframe));
+    assert.equal(snapshot.calculation.chartTimeframe, chartTimeframe);
+    assert.equal(proof.tabId, "restored-tab");
+  }
+  const { payload: cachedPayload, proof } = await (await cached(30)).json();
+  async function continueSavedResult() {
+    raw = await store.appendLatest(raw, candles.slice(240), 5, store.version(raw.id), new AbortController().signal);
+    const response = await server.post("/continue", { id: raw.id, chartId: raw.chartId, tabId: "restored-tab", proof });
+    return { payload: await indicator(response), id: response.headers.get("X-QG-Calculation-Id") };
+  }
+  let updated;
+  const chrome = ["C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"];
+  for (const executablePath of chrome) {
+    if (!(await fs.stat(executablePath).catch(() => null))?.isFile()) continue;
+    const browser = await chromium.launch({ executablePath });
+    try {
+      const context = await browser.newContext({ permissions: ["clipboard-read", "clipboard-write"] });
+      const tab = await context.newPage();
+      const errors = [];
+      tab.on("pageerror", error => errors.push(error.message));
+      tab.on("console", message => { if (message.type() === "error" || message.type() === "warning") errors.push(message.text()); });
+      const initialUrl = `${server.origin}/?chartId=${raw.chartId}&tf=30`;
+      await tab.goto(initialUrl);
+      await tab.waitForSelector('#indicatorStatusFooter[data-state="active"]', { timeout: 10_000 }).catch(error => {
+        throw new Error(`${error.message}\n${errors.join("\n")}`);
+      });
+      await tab.reload();
+      await tab.waitForSelector('#indicatorStatusFooter[data-state="active"]', { timeout: 10_000 });
+      await tab.locator("#indicatorStatusFooter").click();
+      await tab.locator('[data-indicator-tab="info"]').click();
+      const duration = await tab.locator(".info-last-calculation strong").textContent();
+      const [, minutes, seconds, milliseconds] = duration.match(/^(?:(\d+)m )?(\d+(?:\.\d+)?)s$|^(\d+(?:\.\d+)?)ms$/) ?? [];
+      const displayedMs = milliseconds !== undefined ? Number(milliseconds) : Number(minutes ?? 0) * 60_000 + Number(seconds) * 1000;
+      assert.equal(Math.abs(displayedMs - cachedPayload.timings.bridgeTotalMs) <= 0.5, true,
+        `Expected cached Engine timing of ${cachedPayload.timings.bridgeTotalMs}ms, got ${duration}`);
+      await tab.locator("#closeIndicator").click();
+      const otherTab = await context.newPage();
+      await otherTab.goto(tab.url());
+      await otherTab.waitForSelector('#indicatorStatusFooter[data-state="active"]', { timeout: 10_000 });
+      await tab.bringToFront();
+      assert.equal(await tab.locator("#indicatorStatusFooter").getAttribute("data-state"), "active");
+      await tab.locator("#copyRawFilename").click();
+      assert.equal(await tab.evaluate(() => navigator.clipboard.readText()), raw.id.split("/").at(-1));
+      assert.deepEqual(await tab.locator(".status-runtime .status-state b").allTextContents(),
+        ["Healthy", "Indicator", "Cache", "FARAZ", "Real-Time", "Live-Calculation"]);
+      const styles = await tab.locator(".status-runtime .status-state").evaluateAll(states => states.map(state => {
+        const label = getComputedStyle(state.querySelector("b"));
+        const dot = state.querySelector(".dot").getBoundingClientRect();
+        const item = getComputedStyle(state);
+        return [label.fontSize, label.fontWeight, dot.width, dot.height, item.gap, item.paddingInline,
+          getComputedStyle(state, "::before").content];
+      }));
+      assert.ok(styles.every(style => JSON.stringify(style) === JSON.stringify(styles[0])));
+      assert.equal(styles[0][2], styles[0][3]);
+      assert.equal(styles[0].at(-1), "none");
+      const borders = await tab.locator(".statusbar .status-cluster").evaluateAll(groups =>
+        groups.map(group => getComputedStyle(group).borderTopWidth));
+      assert.deepEqual(borders, ["1px", "1px", "1px"]);
+      assert.equal(await tab.locator(".statusbar .status-separator").count(), 2);
+      await tab.setViewportSize({ width: 390, height: 720 });
+      const clockInset = await tab.locator("#clock").evaluate(clock => {
+        const footer = clock.closest(".statusbar");
+        return [footer.getBoundingClientRect().right - clock.getBoundingClientRect().right,
+          Number.parseFloat(getComputedStyle(footer).paddingRight)];
+      });
+      assert.deepEqual(clockInset, [6, 6]);
+      await tab.setViewportSize({ width: 1280, height: 720 });
+      await tab.waitForSelector('#realtimeStatusFooter[data-state="active"]');
+      assert.equal(await tab.locator("#liveCalculationStatusFooter").getAttribute("data-state"), "inactive");
+
+      const cacheButton = tab.locator("#cacheStatusFooter");
+      const cacheDialog = tab.locator("#cacheClearModal");
+      await cacheButton.click();
+      await cacheDialog.waitFor();
+      await tab.keyboard.press("Escape");
+      await cacheDialog.waitFor({ state: "hidden" });
+      assert.equal(await tab.evaluate(() => document.activeElement.id), "cacheStatusFooter");
+
+      const realtimeButton = tab.locator("#realtimeStatusFooter");
+      const preview = tab.locator("#realtimeChartPreview");
+      const realtimePopup = tab.locator("#realtimeChartPopup");
+      await realtimeButton.hover();
+      await preview.waitFor();
+      assert.match(await preview.innerText(), /Next poll\s+\d/);
+      assert.match(await preview.innerText(), /Full verification\s+\d/);
+      const previewBounds = await preview.boundingBox();
+      const footerBounds = await realtimeButton.boundingBox();
+      assert.ok(previewBounds.y + previewBounds.height <= footerBounds.y);
+      assert.equal(await realtimeButton.getAttribute("aria-expanded"), "false");
+      await realtimeButton.click();
+      await realtimePopup.waitFor();
+      await preview.waitFor({ state: "hidden" });
+      assert.equal(await realtimeButton.getAttribute("aria-expanded"), "true");
+      await realtimePopup.locator("[data-enable]").click();
+      await tab.keyboard.press("Escape");
+      await realtimePopup.waitFor({ state: "hidden" });
+      assert.equal(await tab.evaluate(() => document.activeElement.id), "realtimeStatusFooter");
+      await tab.locator("#chart").hover();
+      await realtimeButton.hover();
+      assert.match(await preview.innerText(), /Next poll\s+Paused/);
+      assert.match(await preview.innerText(), /Full verification\s+Paused/);
+      await tab.locator("#realtimeChartBtn").click();
+      await realtimePopup.locator("[data-enable]").click();
+      await tab.keyboard.press("Escape");
+
+      await context.setOffline(true);
+      await tab.waitForSelector('#realtimeStatusFooter[data-state="error"]');
+      await tab.waitForSelector('#farazStatusFooter[data-state="error"]');
+      assert.equal(await tab.locator("#farazStatusFooter .dot").evaluate(dot => getComputedStyle(dot).animationName),
+        "status-error-pulse");
+      await tab.emulateMedia({ reducedMotion: "reduce" });
+      assert.equal(await tab.locator("#farazStatusFooter .dot").evaluate(dot => getComputedStyle(dot).animationName), "none");
+      await tab.emulateMedia({ reducedMotion: "no-preference" });
+      await context.setOffline(false);
+
+      const [report] = await Promise.all([tab.waitForEvent("popup"), tab.locator("#reportBtn").click()]);
+      assert.equal(new URL(report.url()).searchParams.get("follow"), "1");
+      await report.waitForSelector('#timeline');
+      const initialHash = await report.locator("body").getAttribute("data-payload-hash");
+      const reportId = new URL(report.url()).pathname.slice("/info/".length);
+      const latestUrl = `${server.origin}/api/info/${reportId}?latest=1`;
+      const latest = await fetch(latestUrl);
+      assert.equal(latest.status, 200);
+      assert.equal((await fetch(latestUrl, { headers: { "If-None-Match": latest.headers.get("etag") } })).status, 304);
+      await report.locator("#filter-search").fill("Reaction");
+      updated = await continueSavedResult();
+      await report.waitForFunction(hash => document.body.dataset.payloadHash !== hash, initialHash);
+      assert.equal(await report.locator("#filter-search").inputValue(), "Reaction");
+      assert.equal(await report.locator(".event").count(), reviewRecords(updated.payload).length);
+      assert.notEqual((await (await server.getReport(reportId)).json()).snapshot.calculation.calculationId, updated.id);
+      await report.close();
+      await tab.locator("#timeframeMenuButton").click();
+      await tab.locator('[data-timeframe-select="60"]').click();
+      await tab.waitForURL("**&tf=60");
+      await tab.waitForSelector('#indicatorStatusFooter[data-state="active"]', { timeout: 10_000 });
+
+      const settingsTab = await browser.newPage({ viewport: { width: 1280, height: 820 } });
+      await settingsTab.addInitScript(() => {
+        window.overlayLabels = [];
+        const { clearRect, fillText } = CanvasRenderingContext2D.prototype;
+        CanvasRenderingContext2D.prototype.clearRect = function (...args) {
+          if (this.canvas.id === "draw") window.overlayLabels = [];
+          return clearRect.apply(this, args);
+        };
+        CanvasRenderingContext2D.prototype.fillText = function (label, ...args) {
+          if (this.canvas.id === "draw") window.overlayLabels.push(String(label));
+          return fillText.call(this, label, ...args);
+        };
+      });
+      const marker = candles[120];
+      await settingsTab.route("**/api/reactions/cached?*", async route => {
+        const response = await route.fetch();
+        if (!response.ok()) return route.fulfill({ response });
+        const record = await response.json();
+        const bullish = record.payload.directions.bullish;
+        const segment = bullish.calculationSegments?.[0] || bullish;
+        segment.trendTransitions = [{ direction: "bullish", sourceTime: marker.time,
+          eventTime: marker.time + 3, iconCandleTime: marker.time, iconCandleHigh: marker.high }];
+        await route.fulfill({ json: record });
+      });
+      await settingsTab.goto(initialUrl);
+      await settingsTab.waitForFunction(() => window.overlayLabels.includes("2026-11-18 14:47:00"));
+      await settingsTab.locator("#indicatorStatusFooter").click();
+      const sectionNames = ["Foundation", "Secondary", "PH-PL"];
+      const configure = settingsTab.locator('[data-indicator-page="inputs"]');
+      const moduleSwitch = selector => configure.locator(".module-row").filter({ has: settingsTab.locator(selector) });
+      assert.deepEqual(await configure.locator(".style-group-header strong").allTextContents(), sectionNames);
+      await configure.locator('[data-style-group="secondary"] .style-group-header').click();
+      await configure.locator('[data-style-group="primary"] .style-group-header').click();
+      for (const viewport of [{ width: 1280, height: 820 }, { width: 700, height: 680 }]) {
+        await settingsTab.setViewportSize(viewport);
+        await settingsTab.locator(".indicator-body").evaluate(body => { body.scrollTop = body.scrollHeight; });
+        const panelPosition = () => settingsTab.locator(".indicator-panel").evaluate(panel => ({
+          header: panel.querySelector(".indicator-header").getBoundingClientRect().top,
+          footer: panel.querySelector(":scope > footer").getBoundingClientRect().bottom,
+          scroll: panel.scrollTop,
+        }));
+        const before = await panelPosition();
+        assert.equal(before.scroll, 0);
+        for (const selector of ["#phGroupVisible", "#plGroupVisible"]) {
+          const input = settingsTab.locator(selector);
+          await moduleSwitch(selector).click();
+          assert.equal(await input.isChecked(), false);
+          assert.deepEqual(await panelPosition(), before, `${selector} moved the outer panel on click`);
+          await input.press("Space");
+          assert.equal(await input.isChecked(), true);
+          assert.deepEqual(await panelPosition(), before, `${selector} moved the outer panel on keyboard activation`);
+        }
+      }
+      await settingsTab.setViewportSize({ width: 1280, height: 820 });
+      await moduleSwitch("#secondaryTfVisible").click();
+      assert.equal(await configure.locator("#secondaryTfVisible").isChecked(), false);
+      assert.equal(await configure.locator("#foundationTfVisible").isChecked(), true);
+      assert.equal(await configure.locator("#primaryTfVisible").isChecked(), true);
+      await moduleSwitch("#trendLineVisible").click();
+      await settingsTab.waitForFunction(() => !window.overlayLabels.includes("2026-11-18 14:47:00"));
+      await moduleSwitch("#trendLineVisible").click();
+      await settingsTab.waitForFunction(() => window.overlayLabels.includes("2026-11-18 14:47:00"));
+      await configure.locator('[data-style-group="primary"] .style-group-header').click();
+      assert.equal(await configure.locator("#mblGroupVisible").isVisible(), false);
+
+      await settingsTab.locator('[data-indicator-tab="style"]').click();
+      const appearance = settingsTab.locator('[data-indicator-page="style"]');
+      assert.deepEqual(await appearance.locator(".style-group-header strong").allTextContents(), sectionNames);
+      await appearance.locator('[data-style-group="secondary"] .style-group-header').click();
+      await appearance.locator('[data-appearance-open="secondary-verdict"]').click();
+      await settingsTab.locator("#secondaryTfSize").selectOption("14");
+      await settingsTab.locator('#appearance-secondary-verdict button[aria-label="Close appearance settings"]').click();
+      await settingsTab.reload();
+      await settingsTab.waitForSelector('#indicatorStatusFooter[data-state="active"]');
+      await settingsTab.locator("#indicatorStatusFooter").click();
+      await settingsTab.locator('[data-indicator-tab="style"]').click();
+      await appearance.locator('[data-style-group="secondary"] .style-group-header').click();
+      await appearance.locator('[data-appearance-open="secondary-verdict"]').click();
+      assert.equal(await settingsTab.locator("#secondaryTfSize").inputValue(), "14");
+      await settingsTab.close();
+    } finally {
+      await browser.close();
+    }
+    break;
+  }
+  const { payload: continuedPayload, id: continuedId } = updated || await continueSavedResult();
+  await server.stop();
+  server = await launch(stateRoot);
+  assert.deepEqual(withoutTimings((await (await cached(30)).json()).payload), continuedPayload);
+  assert.deepEqual(withoutTimings((await (await cached(60)).json()).payload), results.get(60));
+  assert.equal((await server.getReport(continuedId)).status, 200);
+  const cleared = await fetch(`${server.origin}/api/reactions/cache?scope=all&layers=calculations`, { method: "DELETE" });
+  assert.equal(cleared.status, 200);
+  assert.equal((await cached(30)).status, 404);
+  assert.equal((await cached(60)).status, 404);
+  assert.equal((await server.getReport(continuedId)).status, 404);
+  const stale = await server.post("/continue", { id: raw.id, chartId: raw.chartId, tabId: "restored-tab", proof });
+  assert.equal(stale.status, 409);
+  assert.equal((await stale.json()).code, "CALCULATION_CACHE_CLEARED");
+});
+
+test("a tab catches up after five minutes and recovers its checkpoint across a restart", {
   skip: process.platform !== "win32" && "Selected-range Engine input uses Windows named pipes",
   timeout: 180_000,
 }, async () => {
@@ -273,10 +557,9 @@ test("a tab catches up after five minutes and recovers across a restart without 
   try {
     server = await launch(stateRoot);
     const cache = path.join(stateRoot, "cache", "indicator-calculations");
-    // Opening a report explicitly saves its immutable snapshot. Polling and
-    // recovery must leave ordinary calculation caches alone.
+    // Polling updates the latest result and leaves ordinary reports alone.
     const cacheFiles = async () => (await fs.readdir(cache, { recursive: true }))
-      .filter(entry => entry !== "live" && !/^live[\\/]/.test(entry));
+      .filter(entry => !entry.split(/[\\/]/).some(part => ["live", "active", "live-reports"].includes(part)));
     const legacyResponse = await server.post("", { ...requests[0], id: raw.id });
     const baseline = await indicator(legacyResponse);
     const legacyId = legacyResponse.headers.get("X-QG-Calculation-Id");
@@ -313,7 +596,7 @@ test("a tab catches up after five minutes and recovers across a restart without 
       const proof = JSON.parse(response.headers.get("X-QG-Live-Proof"));
       const reportId = response.headers.get("X-QG-Calculation-Id");
       assert(sessionId && proof);
-      assert.match(reportId, /^live\/[a-f0-9]{32}$/);
+      assert.match(reportId, /^live\/RECOVERY\/30s\/[a-f0-9]{16}\/[a-f0-9]{32}$/);
       const report = await server.getReport(reportId);
       assert.equal(report.status, 200);
       assert.equal((await report.json()).snapshot.calculation.direction, request.direction);

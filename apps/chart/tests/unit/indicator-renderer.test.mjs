@@ -46,3 +46,40 @@ test("A, S, E and StopAll render at the default dimensions and honor style overr
   assert.deepEqual(fontSizes, { A: 12, S: 13, E1: 16, 2: 20 });
   assert.deepEqual(radii, [5, 8]);
 });
+
+test("verdict visibility and appearance are independent for Foundation, Secondary and PH-PL", () => {
+  const verdicts = [];
+  const ctx = {
+    save() {}, restore() {}, beginPath() {}, fill() {}, stroke() {}, arc() {},
+    setLineDash() {}, moveTo() {}, lineTo() {}, measureText() { return { width: 20 }; },
+    fillText(text, x) {
+      if (["T", "F", "N/A"].includes(text)) verdicts.push([text, x, this.fillStyle, this.font.split(" ")[1]]);
+    },
+  };
+  const settings = { aVisible: true, sVisible: true, eVisible: true, stopAllVisible: true,
+    trueFalseVisible: false, foundationTfVisible: true, foundationTfTrueColor: "#048844",
+    foundationTfSize: 14, secondaryTfVisible: false, primaryTfVisible: true, primaryTfFalseColor: "#994422" };
+  const dependencies = {
+    ctx,
+    state: { tf: 30, indicator: { enabled: true, settings, results: { directions: { bullish: {
+      reactions: [],
+      sZones: [{ sourceIndex: 1, sourceTime: 30, price: 100, trueFalse: "T" }],
+      eZones: [{ sourceIndex: 2, sourceTime: 60, price: 100, number: 1, trueFalse: null }],
+      stopAlls: [{ sourceIndex: 3, sourceTime: 90, price: 100, number: 2, trueFalse: "T" }],
+      primaryLows: [{ number: 3, sourceTime: 120, price: 100, trueFalse: "F" }],
+    } } } } },
+    indicatorTimeToCoordinate: time => time,
+    priceToY: price => price,
+    indicatorObject: () => null,
+    offsetIndicatorPoint: (_object, x, y) => ({ x, y }),
+    rgba: () => "#fff",
+  };
+  drawIndicator(200, 200, dependencies);
+  assert.deepEqual(verdicts, [["T", 30, "#048844", "14px"], ["N/A", 60, "#b8b8b8", "14px"],
+    ["F", 120, "#994422", "11px"]]);
+  verdicts.length = 0;
+  Object.assign(settings, { trueFalseVisible: true, foundationTfVisible: false,
+    secondaryTfVisible: true, primaryTfVisible: false });
+  drawIndicator(200, 200, dependencies);
+  assert.deepEqual(verdicts, [["T", 90, "#047857", "9px"]]);
+});

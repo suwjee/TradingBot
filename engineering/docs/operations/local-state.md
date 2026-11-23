@@ -9,7 +9,7 @@ scope:
   - sessions
   - cache
   - raw
-last_modified_at: 2026-11-20T11:55:09+03:30
+last_modified_at: 2026-11-23T23:18:36+03:30
 ---
 
 # TradingBot Local State
@@ -33,7 +33,7 @@ TradingBot has more than one kind of local state. Classify an artifact by its ow
 | Dedicated filesystem state | Chart/Vite/FARAZ integration | Machine-local, under the Chart-owned state root | Depends on the child category | Never delete the whole state root by category name alone |
 | Browser workspace/preferences | Chart | Browser-local persistent state | Some preferences can be recreated; user work may not be reconstructable exactly | Clear only through a scoped user/maintenance action |
 | Saved drawings/templates | Chart | Persistent filesystem/browser state | User-created; not assumed rebuildable | Preserve unless deletion is explicitly requested and scoped |
-| Calculation reports | Vite/Chart integration | Filesystem snapshots and bounded in-memory Live reports | Exact recovery depends on retained snapshot, original inputs, configuration, and Source | Clear only through the scoped report or cache controls |
+| Calculation results and reports | Vite/Chart integration | Latest result per chart and display timeframe, saved report snapshots, and bounded in-memory report history | The latest snapshot can be displayed directly. Live recovery validates the current inputs and Source. | Use Reload cache and select Server calculations |
 | FARAZ authentication/session | FARAZ integration | Persistent secret-sensitive state | Normally reacquired by authentication, not reconstructed from public project data | Treat as credentials; never commit, report, or copy casually |
 | FARAZ acquisition temporary output | FARAZ integration | Ephemeral filesystem state | Recreated by the acquisition workflow | Remove only when no active job or unpublished result depends on it |
 | Vite/process coordination state | Vite/local server | Process-local ephemeral state | Recreated on process start | Ends with the owning process unless explicitly persisted elsewhere |
@@ -85,7 +85,7 @@ Process-local maps, channels, subprocess coordination, and similar transient str
 
 The server also owns the persistent calculation/drawing/template storage boundary assigned to the Chart state root. Persistent filesystem state and process memory must not be conflated.
 
-An active Live report can exist only in server memory until opened or explicitly saved through Manual Review. A server restart drops the transient report registry. Previously saved reports remain in the calculation report directory, and a still-open Chart can recover Live using its validated inputs and session proof.
+The indicator-calculations directory stores the latest successful Apply or Live result for each stable chart identity and display timeframe. Each publication atomically replaces that entry with the finalized result and its RAW and calculation provenance. Reload cache removes entries in the selected scope when Server calculations is selected. The latest entry and explicitly saved Manual Review reports survive a server restart. Unopened previous Live revisions are retained in memory for a limited time.
 
 Generated build output and installed dependencies are rebuildable development artifacts, not workstation user state. Their Git/release classification belongs to [Repository Integrity](../verification/repository-integrity.md) and the release subsystem.
 
@@ -106,6 +106,8 @@ Never copy actual credentials, cookies, tokens, session identifiers, browser sto
 - delivered artifacts;
 - commit messages;
 - release metadata.
+
+An explicit FARAZ sign-in opens a fresh browser session. TradingBot retains the existing session file while sign-in is pending and replaces it only after FARAZ authenticates the new browser session. If the file changes or is removed during sign-in, the pending capture cannot overwrite it.
 
 A logout/session-clear action may remove the saved session. Expiry or invalidation is an authentication lifecycle event, not evidence that unrelated local state is disposable.
 

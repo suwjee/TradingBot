@@ -3,7 +3,7 @@ title: TradingBot
 document_role: reference
 lifecycle: maintained
 owner: project-navigation
-last_modified_at: 2026-11-21T22:21:02+03:30
+last_modified_at: 2026-11-23T23:18:36+03:30
 ---
 
 # TradingBot
@@ -41,7 +41,7 @@ Build with `npm.cmd run build` from `apps/chart`. These commands keep generated 
 ## Workstation workflows
 
 - Open a RAW file in Chart, choose a display timeframe, and add drawings or apply an indicator to the full chart or a selected range.
-- Use Real-time Chart to acquire confirmed candles and continue an indicator applied in the current tab. Apply and Live run a fresh calculation and share one active calculation slot by default. Set `TRADINGBOT_MAX_ENGINE_CONCURRENCY` to an integer from `1` to `8` before launch to change that limit.
+- Use Real-time Chart to acquire confirmed candles and continue the applied indicator. The chart restores its latest saved result for the selected timeframe. Apply and Live calculate from RAW and share one active calculation slot by default. Set `TRADINGBOT_MAX_ENGINE_CONCURRENCY` to an integer from `1` to `8` before launch to change that limit.
 - Open Manual Review from a completed calculation to inspect or export the saved report separately from the active Chart.
 - Use FARAZ for acquisition and coverage decisions, Algorithm for the searchable reference, and Alerts to monitor configured rules against published live events. [Workstation controls and behavior](engineering/docs/architecture/ui-ux-reference.md)
 

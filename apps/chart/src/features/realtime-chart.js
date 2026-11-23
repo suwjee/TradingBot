@@ -1,5 +1,5 @@
 import { icon } from "../ui/icons.js";
-import { setAnchoredPopoverOpen } from "../ui/popover.js";
+import { positionAnchoredPopover, setAnchoredPopoverOpen } from "../ui/popover.js";
 
 const INTERVALS = new Map([
   [1_000, "1s"],
@@ -46,6 +46,8 @@ export function createRealtimeChartScheduler({ runUpdate, render, onVerification
   let intervalMs = DEFAULT_INTERVAL_MS;
   let indicatorCalculation = false;
   let indicatorError = "";
+  let liveCalculationError = "";
+  let realtimeError = "";
   let status = "";
   let indicatorStatus = "";
   let indicatorUpdate = null;
@@ -78,7 +80,7 @@ export function createRealtimeChartScheduler({ runUpdate, render, onVerification
     const verifyAllState = currentCheck?.verifyAll ? "running" : verifyAllWaiting ? "queued" : verifyAllOutcome;
     render({
       hasChart: Boolean(chartId), enabled, intervalMs, intervals, minimumIntervalMs,
-      indicatorCalculation, indicatorError, indicatorProgress,
+      indicatorCalculation, indicatorError, indicatorProgress, liveCalculationError, realtimeError,
       status: failed ? status : [status, indicatorStatus].filter(Boolean).join(" "), failed,
       verification, verificationPercent: candleCoverage(verification), progress,
       busy: enabled && Boolean(currentCheck && !currentCheck.verifyAll && !currentCheck.indicatorOnly),
@@ -131,13 +133,15 @@ export function createRealtimeChartScheduler({ runUpdate, render, onVerification
     }
     indicatorUpdate = update;
     indicatorStatus = "Updating indicator…";
-    function finish(nextStatus) {
+    function finish(nextStatus, error = "") {
       if (signal.aborted || indicatorUpdate !== update) return;
       indicatorUpdate = null;
       indicatorStatus = nextStatus;
+      liveCalculationError = error;
       notify();
     }
-    void update.then(result => finish(result?.status || ""), () => finish("Indicator update deferred. Retrying at the next check."));
+    void update.then(result => finish(result?.status || "", result?.indicatorError),
+      error => finish("Indicator update deferred. Retrying at the next check.", error?.message || "Indicator calculation failed."));
   }
 
   function resetIndicatorProgress() {
@@ -210,6 +214,9 @@ export function createRealtimeChartScheduler({ runUpdate, render, onVerification
     if (enabled) timer = setTimeout(wake, Math.min(1000, nextFullVerification - now()));
     try {
       const result = await runUpdate(request);
+      if (!signal.aborted && !indicatorOnly) {
+        realtimeError = result?.verification?.status === "unavailable" ? "Market data verification is unavailable." : "";
+      }
       if (!signal.aborted && result?.verification) {
         verification = result.verification;
         if (!indicatorOnly) {
@@ -240,6 +247,8 @@ export function createRealtimeChartScheduler({ runUpdate, render, onVerification
       }
       if (!signal.aborted && (!indicatorOnly || !indicatorSignal?.aborted)) {
         status = error?.message || "Could not check for new candles.";
+        if (indicatorOnly) liveCalculationError = status;
+        else realtimeError = status;
         failed = true;
       }
     } finally {
@@ -280,6 +289,8 @@ export function createRealtimeChartScheduler({ runUpdate, render, onVerification
     status = "";
     failed = false;
     indicatorError = "";
+    liveCalculationError = "";
+    realtimeError = "";
     progress = null;
     verifyAllProgress = null;
     verifyAllOutcome = "idle";
@@ -319,6 +330,7 @@ export function createRealtimeChartScheduler({ runUpdate, render, onVerification
     if (!enabled) return;
     const wasEnabled = indicatorCalculation;
     indicatorError = "";
+    liveCalculationError = "";
     indicatorCalculation = nextValue;
     if (!indicatorCalculation) resetIndicatorProgress();
     if (!indicatorCalculation && indicatorAbort) {
@@ -388,7 +400,7 @@ export async function readRealtimeUpdate(response, reportProgress) {
   }
 }
 
-export function mountRealtimeChart({ trigger, runUpdate, getChartId, getSourceTimeframeSeconds, getStoredVerification,
+export function mountRealtimeChart({ trigger, footerTrigger, runUpdate, getChartId, getSourceTimeframeSeconds, getStoredVerification,
   onVerificationComplete, onStateChange }) {
   const document = trigger.ownerDocument;
   const window = document.defaultView;
@@ -456,14 +468,25 @@ export function mountRealtimeChart({ trigger, runUpdate, getChartId, getSourceTi
       <p class="realtime-chart-error" id="realtimeChartIndicatorError" role="status"></p>
     </section>
     <p data-status class="realtime-chart-feedback" role="status"></p>`;
-  document.body.append(menu);
+  const preview = document.createElement("div");
+  preview.id = "realtimeChartPreview";
+  preview.className = "popover realtime-chart-preview";
+  preview.hidden = true;
+  preview.setAttribute("role", "tooltip");
+  preview.innerHTML = `<span>Next poll</span><b data-next-poll></b>
+    <span>Full verification</span><b data-next-verification></b>`;
+  document.body.append(menu, preview);
 
   trigger.classList.add("realtime-chart-button");
   trigger.innerHTML = `<span class="realtime-chart-icon" aria-hidden="true">${icon("activity", 13)}</span>`;
   trigger.setAttribute("aria-label", "Real-time Chart");
-  trigger.setAttribute("aria-haspopup", "dialog");
-  trigger.setAttribute("aria-controls", menu.id);
-  trigger.setAttribute("aria-expanded", "false");
+  const triggers = [trigger, footerTrigger];
+  for (const button of triggers) {
+    button.setAttribute("aria-haspopup", "dialog");
+    button.setAttribute("aria-controls", menu.id);
+    button.setAttribute("aria-expanded", "false");
+  }
+  footerTrigger.setAttribute("aria-describedby", preview.id);
 
   const toggle = menu.querySelector("[data-enable]");
   const liveMode = menu.querySelector("[data-live-mode]");
@@ -484,13 +507,37 @@ export function mountRealtimeChart({ trigger, runUpdate, getChartId, getSourceTi
   const verifyResult = menu.querySelector("[data-verify-result]");
   const verification = menu.querySelector("[data-verification]");
   const verificationValue = menu.querySelector("[data-verification-value]");
+  const previewPoll = preview.querySelector("[data-next-poll]");
+  const previewVerification = preview.querySelector("[data-next-verification]");
   let displayedIntervals;
   let open = false;
   let enabled = false;
+  let anchor = trigger;
+  let previewTimer;
 
-  function setOpen(next, restoreFocus = false) {
-    open = setAnchoredPopoverOpen({ menu, trigger, open: next });
-    if (!open && restoreFocus) trigger.focus();
+  function setOpen(next, restoreFocus = false, nextAnchor = anchor) {
+    if (restoreFocus) anchor.focus();
+    if (nextAnchor !== anchor) anchor.setAttribute("aria-expanded", "false");
+    anchor = nextAnchor;
+    open = setAnchoredPopoverOpen({ menu, trigger: anchor, open: next });
+    if (open) hidePreview();
+  }
+
+  function showPreview() {
+    window.clearTimeout(previewTimer);
+    if (open) return;
+    preview.hidden = false;
+    positionAnchoredPopover({ menu: preview, trigger: footerTrigger, gap: 5 });
+  }
+
+  function hidePreview() {
+    window.clearTimeout(previewTimer);
+    preview.hidden = true;
+  }
+
+  function queuePreviewHide() {
+    window.clearTimeout(previewTimer);
+    if (document.activeElement !== footerTrigger) previewTimer = window.setTimeout(hidePreview, 150);
   }
 
   function renderProgress(element, value) {
@@ -527,12 +574,12 @@ export function mountRealtimeChart({ trigger, runUpdate, getChartId, getSourceTi
       if (Number(interval.value) !== view.intervalMs) interval.value = String(view.intervalMs);
       renderProgress(progress, view.busy ? view.progress : null);
       indicator.checked = view.indicatorCalculation;
-      indicator.setAttribute("aria-invalid", String(Boolean(view.indicatorError)));
+      indicator.setAttribute("aria-invalid", String(Boolean(view.indicatorError || view.liveCalculationError)));
       renderProgress(indicatorProgress, view.indicatorProgress?.percent);
       const stage = view.indicatorProgress?.stage || "";
       indicatorStage.hidden = !stage;
       updateText(indicatorStage, stage);
-      updateText(indicatorError, view.indicatorError);
+      updateText(indicatorError, view.indicatorError || view.liveCalculationError);
       const transient = ["Checking for new candles…", "Verifying all candles…", "Waiting for the previous check to finish…"];
       updateText(status, !view.hasChart ? "Open a RAW chart to enable live updates."
         : transient.includes(view.status) ? "" : view.status);
@@ -548,9 +595,11 @@ export function mountRealtimeChart({ trigger, runUpdate, getChartId, getSourceTi
       const { verifyAllState, verifyAllProgress, verifyAllRemainingMs } = view;
       verifyPanel.dataset.state = verifyAllState;
       updateText(verifyAll, verifyAllState === "queued" ? "Queued" : verifyAllState === "running" ? "Verifying…" : "Verify All");
-      updateText(verifyCountdown, verifyAllState === "queued" ? "Queued" : verifyAllRemainingMs === null
+      const verificationTime = verifyAllState === "queued" ? "Queued" : verifyAllRemainingMs === null
         ? (view.hasChart ? "Paused" : "—") : verifyAllRemainingMs === 0 && verifyAllState === "running"
-          ? "After this run" : formatCountdown(verifyAllRemainingMs));
+          ? "After this run" : formatCountdown(verifyAllRemainingMs);
+      updateText(verifyCountdown, verificationTime);
+      updateText(previewVerification, verifyAllState === "running" ? "Verifying…" : verificationTime);
       verifyMeter.hidden = verifyAllProgress === null;
       verifyProgress.hidden = verifyMeter.hidden;
       verifyResult.hidden = !verifyMeter.hidden;
@@ -561,38 +610,59 @@ export function mountRealtimeChart({ trigger, runUpdate, getChartId, getSourceTi
       updateText(verificationValue, offline && view.verificationPercent !== null ? `${coverage} · Offline`
         : offline ? "Offline" : coverage);
 
-      updateText(countdown, view.busy ? "Checking…" : view.remainingMs === null ? "—" : formatCountdown(view.remainingMs));
+      const pollTime = view.busy ? "Checking…" : view.remainingMs === null ? "—" : formatCountdown(view.remainingMs);
+      updateText(countdown, pollTime);
+      updateText(previewPoll, view.hasChart && !view.enabled ? "Paused" : pollTime);
       const fill = view.busy ? 1 : 1 - (view.remainingMs ?? view.intervalMs) / view.intervalMs;
       trigger.style.setProperty("--realtime-chart-fill", `${360 * fill}deg`);
       onStateChange?.(view);
     },
   });
 
-  trigger.addEventListener("click", () => {
-    setOpen(!open);
-    if (open) (toggle.disabled ? menu : toggle).focus();
+  for (const button of triggers) {
+    button.addEventListener("click", () => {
+      setOpen(!open || anchor !== button, false, button);
+      if (open) (toggle.disabled ? menu : toggle).focus();
+    });
+  }
+  footerTrigger.addEventListener("pointerenter", event => {
+    if (event.pointerType !== "touch") showPreview();
   });
+  footerTrigger.addEventListener("pointerleave", queuePreviewHide);
+  footerTrigger.addEventListener("focus", showPreview);
+  footerTrigger.addEventListener("blur", hidePreview);
+  preview.addEventListener("pointerenter", showPreview);
+  preview.addEventListener("pointerleave", queuePreviewHide);
   toggle.addEventListener("click", () => {
     if (enabled) scheduler.stop();
     else scheduler.enable();
   });
   interval.addEventListener("change", () => scheduler.setInterval(Number(interval.value)));
-  indicator.addEventListener("change", () => scheduler.setIndicatorCalculation(indicator.checked));
+  indicator.addEventListener("change", () => {
+    scheduler.setIndicatorCalculation(indicator.checked);
+    const chartId = getChartId();
+    if (!chartId) return;
+    try {
+      sessionStorage.setItem(`market-canvas:${chartId}:realtime-indicator`, String(indicator.checked));
+    } catch { /* The scheduler already applied the tab's current preference. */ }
+  });
   verifyAll.addEventListener("click", scheduler.verifyAll);
 
   function closeOutside(event) {
-    if (open && !menu.contains(event.target) && !trigger.contains(event.target)) setOpen(false);
+    if (open && !menu.contains(event.target) && !triggers.some(button => button.contains(event.target))) setOpen(false);
   }
   function reposition(event) {
     if (open && !(event.target instanceof window.Node && menu.contains(event.target))) setOpen(true);
+    if (!preview.hidden) showPreview();
   }
   document.addEventListener("click", closeOutside);
   document.addEventListener("focusin", closeOutside);
   document.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape" || !open) return;
+    if (event.key !== "Escape" || (!open && preview.hidden)) return;
     event.preventDefault();
     event.stopPropagation();
-    setOpen(false, true);
+    if (open) setOpen(false, true);
+    hidePreview();
   }, true);
   document.addEventListener("scroll", reposition, { capture: true, passive: true });
   window.addEventListener("resize", reposition, { passive: true });
@@ -601,7 +671,10 @@ export function mountRealtimeChart({ trigger, runUpdate, getChartId, getSourceTi
   new window.ResizeObserver(() => {
     if (open) setOpen(true);
   }).observe(menu);
-  document.addEventListener("fullscreenchange", () => setOpen(false));
+  document.addEventListener("fullscreenchange", () => {
+    setOpen(false);
+    hidePreview();
+  });
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) scheduler.wake();
   });
@@ -610,7 +683,15 @@ export function mountRealtimeChart({ trigger, runUpdate, getChartId, getSourceTi
     const chartId = getChartId();
     scheduler.contextChanged(chartId, chartId ? getSourceTimeframeSeconds?.() : undefined,
       chartId ? getStoredVerification?.() : null);
+    if (chartId) {
+      try {
+        if (sessionStorage.getItem(`market-canvas:${chartId}:realtime-indicator`) === "true") {
+          scheduler.setIndicatorCalculation(true);
+        }
+      } catch { /* The default preference is available without storage. */ }
+    }
     if (open) setOpen(false, menu.contains(document.activeElement));
+    hidePreview();
   }
   contextChanged();
   return { contextChanged, stop: scheduler.stop, getIndicatorSignal: scheduler.getIndicatorSignal,

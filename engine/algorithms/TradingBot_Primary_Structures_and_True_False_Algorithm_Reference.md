@@ -9,16 +9,16 @@ scope:
   - reconstructable-Engine-Source
   - primary-and-verdict-Chart-rendering
 created_at: 2026-11-21T11:41:00+03:30
-last_modified_at: 2026-11-21T18:39:37+03:30
+last_modified_at: 2026-11-24T01:38:15+03:30
 ---
 
 # TradingBot Primary Structures and True/False Algorithm Reference
 
-**Document Version:** `1.0.0`  
+**Document Version:** `1.1.0`  
 **Status:** `ACTIVE SOURCE-SYNCHRONIZED`  
 **Directions:** `bullish` and `bearish`  
 **Production Source Behavioral Change:** `StopAll T/F now compares both the preceding and the largest earlier series within the current history`  
-**Source provenance:** This document captures the Engine rebuilt from the GitHub v2.8.4 release base with the approved refinements. The focused Chart snapshots use their committed LF bytes. The source manifest identifies the exact captured bytes.
+**Source provenance:** This document captures the Engine rebuilt from the GitHub v2.8.4 release base with the approved refinements. Version 1.1.0 refreshes the Chart presentation and its local imports for the three indicator groups and exact market-change timestamps. The Engine payload and trading rules retain the captured v2.8.4-based refinement. The focused Chart snapshots and their formatter use LF checkout bytes. The source manifest identifies the exact captured bytes.
 
 ## 0. Scope, authority and reading order
 
@@ -53,12 +53,13 @@ Paths are relative to the reconstruction destination. The manifest is generated 
 | `engine/pipeline/reaction_engine.py` | Canonical First candidate, Break, strict Reset, lower-TF chronology | `9.9.1 (impl 9.13.4)` | 2907 | 127156 | `0b37fbf91a0f2cdd65fec85eee6c39095e835bc928a98c657f1fe808e204b066` |
 | `engine/pipeline/s_zone_detector.py` | Accepted A stop, aligned Reaction, physical opposite Order | `4.20.1 (impl 4.22.2)` | 1551 | 66301 | `3da3424c2a292ee8fb0f08854462bce57f075721bb370c9619d3e795fd134b78` |
 | `engine/pipeline/true_false.py` | Independent final behavior T/F and strict repair evidence | `unversioned` | 156 | 6086 | `ac536ea31872c20a872b252171a8be352cfc87859e19a67773fc6f796cb633b2` |
-| `engine/styles/reaction-detector.css` | Engine-owned Chart stylesheet | `unversioned` | 955 | 44704 | `98f561ed97f1cd14301c1fcac0feddc5482a1fa488e71c1ddf97fe2cd4a71a8a` |
-| `apps/chart/src/chart/indicator-renderer.js` | Chart presentation | `unversioned` | 515 | 26530 | `086e24eae33f348a460250bddb1f694a7bc5a3c2a3eaa3c69be99bd7cffe01c7` |
-| `apps/chart/src/chart/primary-structure.js` | Chart presentation | `unversioned` | 340 | 13665 | `7d7c0b120940cc1e5a9e3e16b74a563ac8361db673c834638444491ad5398d84` |
-| `apps/chart/src/chart/true-false-label.js` | Chart presentation | `unversioned` | 28 | 1208 | `2a1f6303bc0c99d012a4229f3350cae22822864195383c63db41e91299e67e78` |
+| `engine/styles/reaction-detector.css` | Engine-owned Chart stylesheet | `unversioned` | 960 | 45040 | `e222faa3b2c6313e497951cdd631a0df09983a12e0148186911d38cfbe873a2a` |
+| `apps/chart/src/chart/indicator-renderer.js` | Chart presentation | `unversioned` | 523 | 27019 | `1e8d3f8d91d28f6aefabe1a8e47d80bf7ef7cff5232976fa88e2cc398de6698d` |
+| `apps/chart/src/chart/primary-structure.js` | Chart presentation | `unversioned` | 399 | 16545 | `e78f698afa891f4727685f7e25099a52a3258c51bed9e0ffa5d7e8c721d5adc5` |
+| `apps/chart/src/chart/true-false-label.js` | Chart presentation | `unversioned` | 51 | 2224 | `9e818d17a6646cac8918a84b9a23bd0864c31224dbd67592e5136fde70d58e59` |
+| `apps/chart/src/features/raw-file-contract.js` | Tehran timestamp formatting dependency | `unversioned` | 54 | 2839 | `bba680048147f385d38a97b30e702e1c1d3a00d8777b852bcef8e95025c29616` |
 
-Observed inventory captured at `2026-11-21T11:43:31+03:30`. This records the task-time Source closure.
+The Engine Python inventory was captured at `2026-11-21T11:43:31+03:30`. The Chart presentation closure was refreshed at `2026-11-24T01:36:53+03:30`.
 
 
 ## 2. Execution, ownership and time model
@@ -307,13 +308,13 @@ The current production worker stages incremental normalized RAW buckets and inde
 
 ## 10. Chart rendering
 
-Chart consumes the normalized public result as presentation data. Default primary label and directional-chevron extent are 12 CSS px. The directional primary chevron is pink upward for bullish PL and green downward for bearish PH. The opposite point is a filled circle with its kind's color, default radius 4 px and opacity 100%. PH labels are above their markers, PL labels below. The default candle-to-marker gap is 12 px and marker-to-label gap is 10 px. Per-object appearance uses stable IDs and the existing settings owner.
+Chart consumes the normalized public result as presentation data. Default primary label and directional-chevron extent are 12 CSS px. The directional primary chevron is pink upward for bullish PL and green downward for bearish PH. The opposite point is a filled circle with its kind's color, default radius 4 px and opacity 100%. PH labels are above their markers, PL labels below. The default candle-to-marker gap is 12 px and marker-to-label gap is 10 px. Per-object appearance uses stable IDs and the existing settings owner. The PH and PL visibility switches each cover their marker and label. The MBL switch covers its line and label.
 
-The common verdict size is `max(1, min(9, parentSize - 2))` CSS px. **PL and PH T/F add 2 px after applying that formula**, so their default T/F size is 11 px. Unassigned N/A uses the standard size. Basic weight is 300, StopAll and primary verdict weight is 700, and N/A weight is 300. Colors are T `#047857`, F `#be123c`, and N/A `#b8b8b8`. The first verdict mark starts 3 px beyond the native label. For a repeated StopAll, draw N/A first and the actual T/F farther outward by the standard badge size + 2 px. StopAll and Basic render outward from the direction-specific label side. Primary markers use the side belonging to the point kind.
+Configuration and Appearance use the same three groups. Foundation controls verdicts on S/E, Secondary controls verdicts on StopAll, and PH-PL controls verdicts on the directional primary structure. Each group has independent visibility, T/F/N/A colors, and font sizing. The default automatic verdict size is `max(1, min(9, parentSize - 2))` CSS px. **PL and PH T/F add 2 px after applying that formula**, so their default T/F size is 11 px. Unassigned N/A uses the standard size. Basic weight is 300, StopAll and primary verdict weight is 700, and N/A weight is 300. Colors are T `#047857`, F `#be123c`, and N/A `#b8b8b8`. The first verdict mark starts 3 px beyond the native label. For a repeated StopAll, draw N/A first and the actual T/F farther outward by the standard badge size + 2 px. StopAll and Basic render outward from the direction-specific label side. Primary markers use the side belonging to the point kind.
 
-MBL uses its engine-supplied source, level, break/cap and owning segment bounds. Defaults are a dotted line, width 2, color `#b22833`, and 9 px MBL label. The transition uses a full-height dashed line at the boundary. Its icon is anchored to the actual 50th candle inclusive, 28 × 28 CSS px, with 100 px vertical clearance above the bullish target High or below the bearish target Low. If the engine has no target candle, display only the boundary.
+MBL uses its engine-supplied source, level, break/cap and owning segment bounds. Defaults are a dotted line, width 2, color `#b22833`, and 9 px MBL label. The Change market line is dashed by default and uses the Engine's published boundary candle. The badge beneath it shows the plotted candle's exact `sourceTime` in Asia/Tehran through seconds. The Engine's distinct intrabar crossing time remains in `eventTime`. Overlapping badges are staggered within the chart plot. The transition icon uses the actual 50th candle inclusive, 28 × 28 CSS px by default, with 100 px default clearance above the bullish target High or below the bearish target Low. A missing target leaves the boundary and its timestamp visible. The market-change visibility switch controls the line, icon and badge together.
 
-A row with an absent verdict renders no T/F mark. The T/F visibility toggle affects existing data and does not run Engine. It applies to the stacked pair as well as standalone marks. A legacy payload can omit the repeat flag. A legacy MBL lacking a cap timestamp uses the time-based chart fallback, while current output supplies the actual/synthesized cap. See the embedded renderers for exact shape, label and compatibility behavior.
+A row with an absent verdict renders no T/F mark. T/F appearance and visibility operate on the existing result. The Secondary switch also controls both marks in a repeated StopAll pair. Saved settings with one legacy T/F switch provide the defaults for any missing group switches. A legacy payload can omit the repeat flag. A legacy MBL lacking a cap timestamp uses the time-based chart fallback, while current output supplies the actual/synthesized cap. See the embedded renderers for exact shape, label and compatibility behavior.
 
 ## 11. Worked acceptance cases
 
@@ -384,6 +385,14 @@ The live invocation uses `engine/bridge/live_pipeline.py` with the same flags an
 
 ## 13.1 Verification record
 
+| Version 1.1.0 check | Result | Evidence and scope |
+|---|---|---|
+| Document-only reconstruction and renderer import closure | PASS | The embedded extractor restored 21 files into an empty destination. All matched the live Source byte for byte. The extracted renderer and its three local JavaScript modules passed syntax checks and imported within the reconstructed tree with an ES-module test wrapper. All 16 Engine Python blocks retain their version 1.0.0 bytes. |
+| Directional reference comparison | PASS | The maintained directional verifier checked the exact bytes, declared identities and Python syntax of all 16 Engine files in each reference. |
+| Chart presentation | PASS | 36 focused primary-structure, indicator renderer and verdict tests passed. A Chromium Canvas fixture checked independent verdict groups, market-change visibility, exact Tehran timestamp rendering and separation of nearby timestamps. |
+
+The following results record the version 1.0.0 capture. The Engine and market evidence retain their original scope.
+
 | Check | Result | Evidence and scope |
 |---|---|---|
 | Document-only reconstruction | PASS | The included extractor restored 20 files into an empty destination from only this Markdown. All reconstructed files matched the live working tree byte for byte. The set contains 16 production Engine Python files, one Engine stylesheet, and three Chart rendering modules. |
@@ -431,7 +440,8 @@ def safe_relative(raw: bytes) -> PurePosixPath:
         or ":" in name
         or any(part in {"", ".", ".."} for part in name.split("/"))
         or path.as_posix() != name
-        or not name.startswith(("engine/", "apps/chart/src/chart/"))
+        or (not name.startswith(("engine/", "apps/chart/src/chart/"))
+            and name != "apps/chart/src/features/raw-file-contract.js")
     ):
         raise ValueError(f"Unsafe or unsupported snapshot path: {name}")
     return path
@@ -19685,9 +19695,9 @@ def apply_true_false(direction, group, first_crossing=None, *, stopall_confirmat
 
 ### 16.17 `engine/styles/reaction-detector.css` — Engine-owned Chart stylesheet
 
-**SHA-256:** `98f561ed97f1cd14301c1fcac0feddc5482a1fa488e71c1ddf97fe2cd4a71a8a`  
-**Bytes:** `44704`  
-**LF count:** `955`
+**SHA-256:** `e222faa3b2c6313e497951cdd631a0df09983a12e0148186911d38cfbe873a2a`  
+**Bytes:** `45040`  
+**LF count:** `960`
 
 <!-- EXACT-SOURCE-BEGIN:engine/styles/reaction-detector.css -->
 ````css
@@ -20063,9 +20073,11 @@ def apply_true_false(direction, group, first_crossing=None, *, stopall_confirmat
 .toggle-row strong { color: var(--ui-text-primary); font-size: var(--ui-text-xs); font-weight: var(--ui-weight-medium); }
 .module-row small,
 .toggle-row small { margin-top: 2px; color: var(--ui-text-muted); font-size: var(--ui-text-2xs); line-height: var(--ui-leading-normal); }
-.module-row { cursor: pointer; }
+.module-row { position: relative; cursor: pointer; }
 .module-toggle-input {
   position: absolute;
+  inset-block-start: 50%;
+  inset-inline-end: 0;
   width: 1px;
   height: 1px;
   opacity: 0;
@@ -20148,6 +20160,9 @@ def apply_true_false(direction, group, first_crossing=None, *, stopall_confirmat
 .style-group.collapsed .style-group-chevron { transform: rotate(-90deg); }
 .style-group.collapsed .style-group-body { display: none; }
 .style-group-body { background: var(--ui-bg-surface); }
+[data-indicator-page="inputs"] .style-group-body { padding-inline: var(--ui-space-4); }
+[data-indicator-page="inputs"] .style-group-body .module-row { min-height: 39px; }
+.style-group-header:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: -2px; }
 
 .style-module { border-bottom: 1px solid var(--ui-border-subtle); }
 .style-module:last-child { border-bottom: 0; }
@@ -20651,14 +20666,14 @@ def apply_true_false(direction, group, first_crossing=None, *, stopall_confirmat
 
 ### 16.18 `apps/chart/src/chart/indicator-renderer.js` — Chart presentation
 
-**SHA-256:** `086e24eae33f348a460250bddb1f694a7bc5a3c2a3eaa3c69be99bd7cffe01c7`  
-**Bytes:** `26530`  
-**LF count:** `515`
+**SHA-256:** `1e8d3f8d91d28f6aefabe1a8e47d80bf7ef7cff5232976fa88e2cc398de6698d`  
+**Bytes:** `27019`  
+**LF count:** `523`
 
 <!-- EXACT-SOURCE-BEGIN:apps/chart/src/chart/indicator-renderer.js -->
 ````javascript
 import { clipHistoricalHitBoxes, drawPrimaryStructures, drawTrendTransitions, indicatorCalculationSegments } from "./primary-structure.js";
-import { drawTrueFalseLabel, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT } from "./true-false-label.js";
+import { drawTrueFalseLabel, trueFalseAppearance, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT } from "./true-false-label.js";
 
 export const INDICATOR_MARKER_DEFAULTS = Object.freeze({
   aSize: 10,
@@ -20671,12 +20686,15 @@ export const INDICATOR_MARKER_DEFAULTS = Object.freeze({
 export function drawIndicator(canvasWidth, canvasHeight, {
   ctx, state, indicatorTimeToCoordinate, overlayPriceCoordinate, priceToY,
   indicatorObject, indicatorOffsetPixels, offsetIndicatorPoint, offsetIndicatorRect,
-  rgba, dash,
+  rgba, dash, plotWidth = canvasWidth, plotHeight = canvasHeight,
 }) {
   state.indicator.hitBoxes = [];
   if (!state.indicator.enabled || !state.indicator.results) return;
   const settings = state.indicator.settings,
-    timeframe = Number(state.indicator.results.timeframe || state.tf);
+    timeframe = Number(state.indicator.results.timeframe || state.tf),
+    foundationVerdict = trueFalseAppearance(settings, "foundation"),
+    secondaryVerdict = trueFalseAppearance(settings, "secondary");
+  const trendTransitions = [];
   for (const { direction, group, objectOffsets } of indicatorCalculationSegments(state.indicator.results)) {
     ctx.save();
     const firstHitIndex = state.indicator.hitBoxes.length;
@@ -20905,8 +20923,9 @@ export function drawIndicator(canvasWidth, canvasHeight, {
       ctx.textAlign = "center";
       ctx.textBaseline = bullish ? "top" : "bottom";
       ctx.fillText(labelObject?.text ?? "S", shiftedLabel.x, shiftedLabel.y);
-      drawTrueFalseLabel(ctx, zone.trueFalse, settings.trueFalseVisible, labelSize,
-        shiftedLabel.x, shiftedLabel.y + (bullish ? labelSize : -labelSize), bullish);
+      drawTrueFalseLabel(ctx, zone.trueFalse, foundationVerdict.visible, labelSize,
+        shiftedLabel.x, shiftedLabel.y + (bullish ? labelSize : -labelSize), bullish,
+        undefined, false, 0, foundationVerdict);
       ctx.restore();
     }
     for (const [zoneIndex, zone] of (group.eZones || []).entries()) {
@@ -20960,8 +20979,9 @@ export function drawIndicator(canvasWidth, canvasHeight, {
       ctx.textAlign = "center";
       ctx.textBaseline = bullish ? "top" : "bottom";
       ctx.fillText(labelObject?.text ?? `E${zone.number}`, shiftedLabel.x, shiftedLabel.y);
-      drawTrueFalseLabel(ctx, zone.trueFalse, settings.trueFalseVisible, labelSize,
-        shiftedLabel.x, shiftedLabel.y + (bullish ? labelSize : -labelSize), bullish);
+      drawTrueFalseLabel(ctx, zone.trueFalse, foundationVerdict.visible, labelSize,
+        shiftedLabel.x, shiftedLabel.y + (bullish ? labelSize : -labelSize), bullish,
+        undefined, false, 0, foundationVerdict);
       ctx.restore();
     }
     for (const [zoneIndex, zone] of (group.stopAlls || []).entries()) {
@@ -21015,9 +21035,9 @@ export function drawIndicator(canvasWidth, canvasHeight, {
       ctx.textAlign = "center";
       ctx.textBaseline = bullish ? "top" : "bottom";
       ctx.fillText(object?.text ?? String(zone.number), shifted.x, labelY);
-      drawTrueFalseLabel(ctx, zone.trueFalse, settings.trueFalseVisible, labelSize,
+      drawTrueFalseLabel(ctx, zone.trueFalse, secondaryVerdict.visible, labelSize,
         shifted.x, labelY + (bullish ? labelSize : -labelSize), bullish,
-        TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, zone.trueFalseRepeated === true);
+        TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, zone.trueFalseRepeated === true, 0, secondaryVerdict);
       ctx.restore();
     }
     if (settings.orderStopVisible) {
@@ -21165,27 +21185,31 @@ export function drawIndicator(canvasWidth, canvasHeight, {
         state.indicator.hitBoxes.splice(firstHitIndex), historicalEndX));
     }
     ctx.restore();
-    drawTrendTransitions(ctx, group, {
-      timeToX: indicatorTimeToCoordinate,
-      priceToY,
-      height: canvasHeight,
-    });
+    for (const transition of group.trendTransitions || []) trendTransitions.push(transition);
   }
+  drawTrendTransitions(ctx, { trendTransitions }, {
+    timeToX: indicatorTimeToCoordinate,
+    priceToY,
+    width: plotWidth,
+    height: plotHeight,
+    settings,
+  });
 }
 ````
 <!-- EXACT-SOURCE-END:apps/chart/src/chart/indicator-renderer.js -->
 
 ### 16.19 `apps/chart/src/chart/primary-structure.js` — Chart presentation
 
-**SHA-256:** `7d7c0b120940cc1e5a9e3e16b74a563ac8361db673c834638444491ad5398d84`  
-**Bytes:** `13665`  
-**LF count:** `340`
+**SHA-256:** `e78f698afa891f4727685f7e25099a52a3258c51bed9e0ffa5d7e8c721d5adc5`  
+**Bytes:** `16545`  
+**LF count:** `399`
 
 <!-- EXACT-SOURCE-BEGIN:apps/chart/src/chart/primary-structure.js -->
 ````javascript
 // Presentation of finalized Engine PH, PL and matching-behavior-leg results.
 // Price crossings, structure validity and numbering remain Engine-owned.
-import { drawTrueFalseLabel, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT } from "./true-false-label.js";
+import { formatTehranMetadataTime } from "../features/raw-file-contract.js";
+import { drawTrueFalseLabel, trueFalseAppearance, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT } from "./true-false-label.js";
 
 export const PRIMARY_VISUAL_DEFAULTS = Object.freeze({
   phVisible: true,
@@ -21210,10 +21234,16 @@ export const PRIMARY_VISUAL_DEFAULTS = Object.freeze({
 
 const FONT = 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
 const MBL_UNBROKEN_CANDLES = 400;
-const TREND_COLOR = "#00a886";
-const BEARISH_TREND_COLOR = "#f23645";
-const TREND_ICON_SIZE = 28;
-const TREND_ICON_CLEARANCE = 100;
+export const TREND_VISUAL_DEFAULTS = Object.freeze({
+  trendLineVisible: true,
+  trendBullColor: "#00a886",
+  trendBearColor: "#f23645",
+  trendLineWidth: 1,
+  trendLineStyle: "dash",
+  trendIconSize: 28,
+  trendIconGap: 100,
+  trendLabelSize: 10,
+});
 
 export function clipHistoricalHitBoxes(hits, right) {
   if (right < 0) return [];
@@ -21237,7 +21267,7 @@ export function clipHistoricalHitBoxes(hits, right) {
   });
 }
 
-export function trendTransitionLayout(transition, { timeToX, priceToY, height }) {
+export function trendTransitionLayout(transition, { timeToX, priceToY, height, settings = {} }) {
   const lineX = timeToX(transition.sourceTime);
   const bullish = transition.direction !== "bearish";
   const targetPrice = bullish ? transition.iconCandleHigh : transition.iconCandleLow;
@@ -21246,29 +21276,37 @@ export function trendTransitionLayout(transition, { timeToX, priceToY, height })
     const centerX = timeToX(transition.iconCandleTime);
     const priceY = priceToY(Number(targetPrice));
     if (Number.isFinite(centerX) && Number.isFinite(priceY)) {
-      const top = bullish ? priceY - TREND_ICON_CLEARANCE - TREND_ICON_SIZE
-        : priceY + TREND_ICON_CLEARANCE;
-      icon = { left: centerX - TREND_ICON_SIZE / 2, top,
-        right: centerX + TREND_ICON_SIZE / 2, bottom: top + TREND_ICON_SIZE, size: TREND_ICON_SIZE };
+      const size = settings.trendIconSize ?? TREND_VISUAL_DEFAULTS.trendIconSize;
+      const gap = settings.trendIconGap ?? TREND_VISUAL_DEFAULTS.trendIconGap;
+      const top = bullish ? priceY - gap - size : priceY + gap;
+      icon = { left: centerX - size / 2, top, right: centerX + size / 2, bottom: top + size, size };
     }
   }
   return { lineX, lineBottom: height, icon };
 }
 
-export function drawTrendTransitions(ctx, group, { timeToX, priceToY, height }) {
-  for (const transition of group.trendTransitions || []) {
+export function drawTrendTransitions(ctx, group, { timeToX, priceToY, width = Infinity, height, settings = {} }) {
+  const transitions = group.trendTransitions;
+  if (!transitions?.length || settings.trendLineVisible === false) return;
+  const style = settingsWithDefaults(settings, TREND_VISUAL_DEFAULTS);
+  const labels = [];
+  for (const transition of transitions) {
     const bullish = transition.direction !== "bearish";
-    const color = bullish ? TREND_COLOR : BEARISH_TREND_COLOR;
-    const marker = trendTransitionLayout(transition, { timeToX, priceToY, height });
+    const color = bullish ? style.trendBullColor : style.trendBearColor;
+    const marker = trendTransitionLayout(transition, { timeToX, priceToY, height, settings });
     ctx.save();
     ctx.strokeStyle = color;
-    ctx.lineWidth = 1;
-    ctx.setLineDash([6, 5]);
-    if (Number.isFinite(marker.lineX)) {
+    ctx.lineWidth = style.trendLineWidth;
+    ctx.lineCap = style.trendLineStyle === "dot" ? "round" : "butt";
+    ctx.setLineDash(style.trendLineStyle === "dot" ? [0, style.trendLineWidth * 3]
+      : style.trendLineStyle === "dash" ? [6, 5] : []);
+    if (Number.isFinite(marker.lineX) && marker.lineX >= 0 && marker.lineX <= width) {
+      const label = trendTimestampLayout(ctx, transition.sourceTime, marker.lineX, width, height, style.trendLabelSize, labels);
       ctx.beginPath();
       ctx.moveTo(marker.lineX, 0);
-      ctx.lineTo(marker.lineX, marker.lineBottom);
+      ctx.lineTo(marker.lineX, label?.top ?? marker.lineBottom);
       ctx.stroke();
+      if (label) labels.push({ ...label, color });
     }
     if (marker.icon) {
       const { left, top, size } = marker.icon;
@@ -21296,10 +21334,49 @@ export function drawTrendTransitions(ctx, group, { timeToX, priceToY, height }) 
     }
     ctx.restore();
   }
+  for (const label of labels) drawTrendTimestamp(ctx, label);
 }
 
-function settingsWithDefaults(settings = {}) {
-  const output = { ...PRIMARY_VISUAL_DEFAULTS };
+function trendTimestampLayout(ctx, sourceTime, lineX, width, height, size, labels) {
+  const epoch = Number(sourceTime);
+  if (!Number.isSafeInteger(epoch) || epoch < 1 || width < 32 || height < size + 12) return null;
+  const text = formatTehranMetadataTime(epoch).slice(0, 19);
+  const font = `600 ${size}px ${FONT}`;
+  const margin = 2;
+  const padding = 4;
+  ctx.save();
+  ctx.font = font;
+  const badgeWidth = Math.min(ctx.measureText(text).width + padding * 2, width - margin * 2);
+  ctx.restore();
+  const badgeHeight = size + padding * 2;
+  const left = Math.min(Math.max(lineX - badgeWidth / 2, margin), width - margin - badgeWidth);
+  let top = height - margin - badgeHeight;
+  const spacing = 3;
+  while (labels.some(label => label.top === top && left < label.left + label.width + spacing
+    && label.left < left + badgeWidth + spacing)) top -= badgeHeight + spacing;
+  if (top < margin) return null;
+  return { text, font, left, top, width: badgeWidth, height: badgeHeight, padding };
+}
+
+function drawTrendTimestamp(ctx, label) {
+  const { text, font, left, top, width, height, padding, color } = label;
+  ctx.save();
+  ctx.setLineDash([]);
+  ctx.lineWidth = 0.75;
+  ctx.fillStyle = "rgba(255,255,255,.96)";
+  ctx.fillRect(left, top, width, height);
+  ctx.strokeStyle = color;
+  ctx.strokeRect(left, top, width, height);
+  ctx.fillStyle = "#111827";
+  ctx.font = font;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, left + width / 2, top + height / 2, width - padding * 2);
+  ctx.restore();
+}
+
+function settingsWithDefaults(settings = {}, defaults = PRIMARY_VISUAL_DEFAULTS) {
+  const output = { ...defaults };
   for (const key of Object.keys(output)) {
     if (settings[key] != null) output[key] = settings[key];
   }
@@ -21422,9 +21499,12 @@ export function drawPrimaryStructures(ctx, group, {
   onHit = () => {},
 }) {
   const style = settingsWithDefaults(settings);
+  const verdict = trueFalseAppearance(settings, "primary");
   for (const [kind, rows, visible, labelVisible] of [
-    ["PH", group.primaryHighs, style.phVisible, style.phLabelVisible],
-    ["PL", group.primaryLows, style.plVisible, style.plLabelVisible],
+    ["PH", group.primaryHighs, settings.phGroupVisible ?? style.phVisible,
+      settings.phGroupVisible ?? style.phLabelVisible],
+    ["PL", group.primaryLows, settings.plGroupVisible ?? style.plVisible,
+      settings.plGroupVisible ?? style.plLabelVisible],
   ]) {
     if (!visible && !labelVisible) continue;
     for (const item of rows || []) {
@@ -21462,15 +21542,17 @@ export function drawPrimaryStructures(ctx, group, {
         const label = primaryLabelLayout({ ...marker, fontSize: size }, ctx.measureText(text));
         ctx.fillText(text, marker.x, label.baselineY);
         const below = marker.textBaseline === "top";
-        drawTrueFalseLabel(ctx, item.trueFalse, settings.trueFalseVisible, size,
-          marker.x, below ? label.bottom : label.top, below, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, false, 2);
+        drawTrueFalseLabel(ctx, item.trueFalse, verdict.visible, size,
+          marker.x, below ? label.bottom : label.top, below, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, false, 2, verdict);
         onHit({ objectId, shape: "rect", left: label.left, right: label.right,
           top: label.top, bottom: label.bottom });
       }
       ctx.restore();
     }
   }
-  if (!style.mblVisible && !style.mblLabelVisible) return;
+  const mblVisible = settings.mblGroupVisible ?? style.mblVisible;
+  const mblLabelVisible = settings.mblGroupVisible ?? style.mblLabelVisible;
+  if (!mblVisible && !mblLabelVisible) return;
   const legs = (group.matchingBehaviorLegs || []).filter(item => item.calculationValid !== false);
   const latest = legs.reduce((chosen, item) => !chosen ||
     Number(item.triggerEventTime ?? item.triggerTime ?? item.sourceTime) >
@@ -21498,7 +21580,7 @@ export function drawPrimaryStructures(ctx, group, {
     ctx.font = `500 ${fontSize}px ${FONT}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    const gap = style.mblLabelVisible ? ctx.measureText(label).width / 2 + 6 : 0;
+    const gap = mblLabelVisible ? ctx.measureText(label).width / 2 + 6 : 0;
     ctx.beginPath();
     if (!gap) {
       ctx.moveTo(line.x1, line.y1);
@@ -21513,14 +21595,14 @@ export function drawPrimaryStructures(ctx, group, {
         ctx.lineTo(line.x2, line.y2);
       }
     }
-    if (style.mblVisible) ctx.stroke();
-    if (style.mblLabelVisible) {
+    if (mblVisible) ctx.stroke();
+    if (mblLabelVisible) {
       ctx.fillText(label, middle, line.y1);
       onHit({ objectId, shape: "rect", left: middle - gap, right: middle + gap,
         top: line.y1 - fontSize / 2, bottom: line.y1 + fontSize / 2 });
     }
     ctx.restore();
-    if (style.mblVisible) onHit({ objectId, shape: "line", ...line });
+    if (mblVisible) onHit({ objectId, shape: "line", ...line });
   }
 }
 ````
@@ -21528,39 +21610,127 @@ export function drawPrimaryStructures(ctx, group, {
 
 ### 16.20 `apps/chart/src/chart/true-false-label.js` — Chart presentation
 
-**SHA-256:** `2a1f6303bc0c99d012a4229f3350cae22822864195383c63db41e91299e67e78`  
-**Bytes:** `1208`  
-**LF count:** `28`
+**SHA-256:** `9e818d17a6646cac8918a84b9a23bd0864c31224dbd67592e5136fde70d58e59`  
+**Bytes:** `2224`  
+**LF count:** `51`
 
 <!-- EXACT-SOURCE-BEGIN:apps/chart/src/chart/true-false-label.js -->
 ````javascript
 const FONT = 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
 const LABEL_COLORS = { T: "#047857", F: "#be123c", "N/A": "#b8b8b8" };
+const LABEL_SETTINGS = { T: "TrueColor", F: "FalseColor", "N/A": "NaColor" };
 export const TRUE_FALSE_LABEL_WEIGHT = 300;
 export const TRUE_FALSE_STOPALL_PRIMARY_WEIGHT = 700;
+export const TRUE_FALSE_VISUAL_DEFAULTS = Object.freeze(Object.fromEntries(
+  ["foundation", "secondary", "primary"].flatMap(prefix => [
+    [`${prefix}TfVisible`, true],
+    [`${prefix}TfSize`, 0],
+    ...Object.entries(LABEL_SETTINGS).map(([label, key]) => [`${prefix}Tf${key}`, LABEL_COLORS[label]]),
+  ]),
+));
+
+export function trueFalseAppearance(settings, group) {
+  const prefix = `${group}Tf`;
+  return {
+    visible: settings[`${prefix}Visible`] ?? settings.trueFalseVisible,
+    size: settings[`${prefix}Size`],
+    colors: Object.fromEntries(Object.entries(LABEL_SETTINGS).map(([label, key]) => [
+      label, settings[`${prefix}${key}`] ?? LABEL_COLORS[label],
+    ])),
+  };
+}
 
 export function drawTrueFalseLabel(ctx, verdict, visible, parentSize, x, edgeY, below,
-  weight = TRUE_FALSE_LABEL_WEIGHT, repeated = false, verdictSizeOffset = 0) {
+  weight = TRUE_FALSE_LABEL_WEIGHT, repeated = false, verdictSizeOffset = 0, appearance = {}) {
   const label = verdict === null ? "N/A" : verdict;
   if (visible === false || !Object.hasOwn(LABEL_COLORS, label)) return;
-  const size = Math.max(1, Math.min(9, parentSize - 2));
-  const labelSize = label === "N/A" ? size : size + verdictSizeOffset;
+  const customSize = Number(appearance.size);
+  const useCustomSize = customSize > 0 && Number.isFinite(customSize);
+  const autoSize = Math.max(1, Math.min(9, parentSize - 2));
+  const size = useCustomSize ? customSize : autoSize;
+  const labelSize = label !== "N/A" && !useCustomSize ? size + verdictSizeOffset : size;
   const labelWeight = label === "N/A" ? 300 : weight;
+  const colors = appearance.colors ?? LABEL_COLORS;
   const direction = below ? 1 : -1;
   let y = edgeY + 3 * direction;
   ctx.save();
   ctx.textAlign = "center";
   ctx.textBaseline = below ? "top" : "bottom";
   if (repeated && label !== "N/A") {
-    ctx.fillStyle = LABEL_COLORS["N/A"];
+    ctx.fillStyle = colors["N/A"];
     ctx.font = `300 ${size}px ${FONT}`;
     ctx.fillText("N/A", x, y);
     y += (size + 2) * direction;
   }
-  ctx.fillStyle = LABEL_COLORS[label];
+  ctx.fillStyle = colors[label];
   ctx.font = `${labelWeight} ${labelSize}px ${FONT}`;
   ctx.fillText(label, x, y);
   ctx.restore();
 }
 ````
 <!-- EXACT-SOURCE-END:apps/chart/src/chart/true-false-label.js -->
+
+### 16.21 `apps/chart/src/features/raw-file-contract.js` — Tehran timestamp formatting dependency
+
+**SHA-256:** `bba680048147f385d38a97b30e702e1c1d3a00d8777b852bcef8e95025c29616`  
+**Bytes:** `2839`  
+**LF count:** `54`
+
+<!-- EXACT-SOURCE-BEGIN:apps/chart/src/features/raw-file-contract.js -->
+````javascript
+const RAW_FILENAME_PATTERN = /^RAW ([A-Z0-9.-]+)_([A-Z0-9][A-Z0-9._-]*) (\d+[SMHD]) FROM (\d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2}) TO (\d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2})\.json$/;
+
+const tehranParts = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Asia/Tehran", year: "numeric", month: "2-digit", day: "2-digit",
+  hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23",
+});
+
+function partsAt(epochSeconds) {
+  return tehranParts.formatToParts(new Date(Number(epochSeconds) * 1000))
+    .reduce((result, part) => ((result[part.type] = part.value), result), {});
+}
+
+function safePart(value, label) {
+  const result = String(value || "").trim().toUpperCase().replace(/:/g, "_");
+  if (!result || !/^[A-Z0-9][A-Z0-9._-]*$/.test(result)) throw new Error(`The RAW ${label} is invalid.`);
+  return result;
+}
+
+export function formatTehranFileTime(epochSeconds) {
+  if (!Number.isSafeInteger(Number(epochSeconds)) || Number(epochSeconds) <= 0) throw new Error("The RAW candle time is invalid.");
+  const parts = partsAt(epochSeconds);
+  return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}-${parts.minute}-${parts.second}`;
+}
+
+export function formatTehranMetadataTime(epochSeconds) {
+  return `${formatTehranFileTime(epochSeconds).replace(/ (\d{2})-(\d{2})-(\d{2})$/, " $1:$2:$3")} Asia/Tehran`;
+}
+
+export function parseTehranMetadataTime(value) {
+  const match = String(value || "").trim().match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2}) Asia\/Tehran$/);
+  if (!match) return NaN;
+  const desiredUtc = Date.UTC(+match[1], +match[2] - 1, +match[3], +match[4], +match[5], +match[6]);
+  let candidate = Math.floor(desiredUtc / 1000);
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const parts = partsAt(candidate);
+    const renderedUtc = Date.UTC(+parts.year, +parts.month - 1, +parts.day, +parts.hour, +parts.minute, +parts.second);
+    candidate += Math.round((desiredUtc - renderedUtc) / 1000);
+  }
+  return formatTehranMetadataTime(candidate) === String(value).trim() ? candidate : NaN;
+}
+
+export function buildRawFilename({ broker, symbol, timeframe, firstTime, lastTime }) {
+  const normalizedBroker = safePart(broker, "broker");
+  const normalizedSymbol = safePart(symbol, "symbol");
+  const normalizedTimeframe = String(timeframe || "").trim().toUpperCase();
+  if (!/^\d+[SMHD]$/.test(normalizedTimeframe)) throw new Error("The RAW timeframe is invalid.");
+  return `RAW ${normalizedBroker}_${normalizedSymbol} ${normalizedTimeframe} FROM ${formatTehranFileTime(firstTime)} TO ${formatTehranFileTime(lastTime)}.json`;
+}
+
+export function parseRawFilename(filename) {
+  const match = String(filename || "").match(RAW_FILENAME_PATTERN);
+  if (!match || match[1] === "FARAZ") return null;
+  return { broker: match[1], symbol: match[2], timeframe: match[3], fromTehran: match[4], toTehran: match[5] };
+}
+````
+<!-- EXACT-SOURCE-END:apps/chart/src/features/raw-file-contract.js -->

@@ -12,7 +12,7 @@ scope:
   - faraz-ui
   - algorithm-reference-ui
   - responsive-accessibility
-last_modified_at: 2026-11-21T21:58:31+03:30
+last_modified_at: 2026-11-24T01:11:41+03:30
 ---
 
 # TradingBot UI/UX Reference
@@ -211,7 +211,7 @@ Apply starts a fresh Engine calculation for the selected Source, direction, anal
 
 During a calculation the Apply control is disabled and the progress UI tracks the request from browser/server work through Engine phases and result preparation.
 
-Progress events are presented incrementally. The completed result also exposes summarized timing/activity information useful for inspection without changing the result itself.
+Progress events appear incrementally. Activity shows the original Engine duration of the latest successful calculation for Apply, Live and cache restoration. Older results without measured timing display a dash. Activity builds detailed event rows only while the tab is visible.
 
 ### 8.4 Completion and failure
 
@@ -254,7 +254,9 @@ For repeated directional regimes, Chart renders each Engine-finalized calculatio
 
 Users can control presentation properties such as visibility, line/fill appearance, label styling, and selected object appearance.
 
-Configure and Appearance expose the supported native indicator objects, including primary structures and physical Orders. Visibility and style controls update the existing finalized result, participate in saved preferences/templates and reset through the standard style controls. In Configure, T/F labels toggles the smaller Engine-supplied marks alongside visible native labels. Explicitly unassigned candidates show N/A in `#b8b8b8` at font weight 300. For a repeated StopAll, Chart places N/A between its number and its T/F verdict, using the Engine's repetition flag. Basic verdicts use font weight 300. StopAll and primary T/F verdicts use font weight 700. PH and PL T/F verdicts are 2 px larger than the standard verdict size. It redraws the current chart without an Engine request. The setting is on by default and participates in saved preferences and templates.
+Configure and Appearance use the same collapsible groups. Foundation contains Reaction, Blue Line, A, S, E, E stop lines, Order reactions and Order stops. Secondary contains StopAll. PH-PL contains PH, PL, MBL and Change market line. Configure links PH and PL markers with their labels, and the MBL line with its label. The Change market line switch controls the vertical line, icon and timestamp together. Its label shows the line's source candle time to the second in Asia/Tehran.
+
+Each group has its own T/F visibility, color and font size controls. Foundation shows finalized S and E verdicts, Secondary shows StopAll verdicts, and PH-PL shows primary verdicts. Existing default verdict sizes, weights and repeated StopAll placement apply unless the corresponding appearance control changes them. Changes repaint the finalized result and participate in saved preferences and templates.
 
 Presentation objects may support UI-only customization such as:
 
@@ -294,7 +296,7 @@ A drawing can be selected on Chart or from the Object Tree. Current interaction 
 - duplication;
 - deletion.
 
-Line drawing supports constrained directional placement while the relevant modifier is held.
+Line drawing supports constrained directional placement while the relevant modifier is held. Ctrl-drag on an unlocked drawing previews a copy and saves it on drop as one undoable action. Ctrl-drag from blank chart space selects a group. Escape cancels a pending copy. Routine drawing actions and cancellation use the chart's interaction feedback without toast messages.
 
 ### 10.3 Drawing toolbar
 
@@ -320,7 +322,7 @@ Persistence location details belong to [Local State](../operations/local-state.m
 
 ### 11.1 Entry
 
-Manual Review opens as a separate browser document under the report route. Opening a live calculation saves its report snapshot. The link opens that same snapshot as new calculations complete and after a server restart.
+Manual Review opens in a separate browser tab. When opened from a current chart calculation, it follows the latest published result for that chart and display timeframe. New results refresh the timeline and export while preserving the reader's filters. Opening a live report also saves the initial snapshot for its fixed report link.
 
 If no valid report identity exists, or the persisted report cannot be found/loaded, the review page shows an inline failure state rather than fabricating a report.
 
@@ -367,9 +369,9 @@ from this page does not remove it from the authoritative calculation payload.
 
 ### 11.3 Report identity and local state
 
-The report identity opens its immutable calculation snapshot. Category/date filters affect the current view and export without changing the underlying report. Manual Review creates no True/False verdict state and does not read or restore historical local verdict selections. Existing report payloads remain readable as saved evidence.
+A fixed report link opens its immutable calculation snapshot. Category and date filters affect the current view and export. Manual Review creates no True/False verdict state and does not read or restore historical local verdict selections. Existing report payloads remain readable as saved evidence.
 
-Opening an available Live report saves its snapshot. If the server no longer has an unsaved Live result, the report page prompts the user to update the indicator in the Chart tab. Saved reports can reopen without starting a calculation.
+Opening an available Live report saves its snapshot. The latest result for each chart and timeframe can also be opened after a server restart. If an older result was never opened and is no longer available, the report page prompts the user to update the indicator in the Chart tab.
 
 ### 11.4 Review navigation
 
@@ -420,13 +422,13 @@ Chart also exposes an update-data workflow for the currently loaded RAW resource
 
 FARAZ acquisition and Chart update affect input data availability. They do not define trading semantics.
 
-The Real-time Chart control sits before Cut Candles. Opening a RAW chart starts Real-time Chart by default. The polling menu includes 1s and 5s and disables intervals shorter than the RAW candle timeframe. The menu also offers the exact RAW timeframe when it falls between or exceeds the presets. The default is 1m when allowed and the RAW timeframe otherwise. The timer schedules checks at local system-clock boundaries for the selected interval plus two seconds. After a delayed wake, one immediate check catches up and later checks resume that alignment. A running candle check finishes before another starts. The green ring fills until the next check. Disable stops the timer and disables the other options. Loading another chart or a RAW revision that removes previously loaded candles ends the current live session. Appends, gap fills and corrections published by another tab on the same chart can be reconciled with the current session. New candles retain the RAW source timeframe and are displayed using the current chart timeframe. The chart follows incoming candles when already at the latest edge and preserves a historical viewport when browsing older candles.
+The Real-time Chart control sits before Cut Candles. Opening a RAW chart starts Real-time Chart by default. The polling menu includes 1s and 5s and disables intervals shorter than the RAW candle timeframe. The menu also offers the exact RAW timeframe when it falls between or exceeds the presets. The default is 1m when allowed and the RAW timeframe otherwise. The timer schedules checks at local system-clock boundaries for the selected interval plus two seconds. After a delayed wake, one immediate check catches up and later checks resume that alignment. A running candle check finishes before another starts. The green ring fills until the next check. Disable stops the timer and disables the other options. Loading another chart changes the live session. Appends, gap fills and corrections published by another tab on the same chart can be reconciled with the current session. When verification requires a rebuild, the chart keeps displaying the last successful indicator result until the rebuild succeeds. New candles retain the RAW source timeframe and are displayed using the current chart timeframe. The chart follows incoming candles when already at the latest edge and preserves a historical viewport when browsing older candles.
 
 While Real-time Chart is enabled, Verify All runs every ten minutes independently of the candle polling interval. If another check is active, the scheduled scan waits for it to finish. Verify All compares the complete closed RAW history and fills historical gaps with confirmed FARAZ candles. After each committed append, a separate check starts at the preceding candle and includes up to 1,000 earlier stored candles. One request covers overlapping windows for a batch, and short files start at their first candle. These checks use the RAW timeframe independently of the display timeframe.
 
 The popover groups candle polling, full verification and indicator calculation in separate sections. Candle polling shows its own countdown and active check progress. Full verification shows the time until the next scheduled Verify All beside its progress percentage. Candles verified is a separate coverage metric for the stored RAW. Automatic checks update the panel quietly. Manual Verify All remains available when Real-time Chart is disabled and reports the number of candles compared, corrected, and restored from gaps on completion. When FARAZ is unavailable, the panel marks verification Offline and shows the known coverage. Corrections refresh displayed candles and recalculate affected indicator results using the current tab's applied selection.
 
-Indicator Calculation starts with the result displayed in the current browser tab. Enabling it immediately processes the backlog through the latest available RAW candle, then continues at the configured interval. The panel shows the active calculation's reported percentage and stage while candle polling continues. The calculation reaches 100% when the chart accepts the updated result. Apply is required when the current tab has no displayed calculation, including after a browser reload. The open tab retains its calculation selection through a worker loss and can recover without reading saved calculation files. Temporary failures keep the last result and retry, and stored candles can be processed while the market-data source is unavailable.
+Indicator Calculation starts with the result displayed in the current browser tab. Enabling it immediately processes the backlog through the latest available RAW candle, then continues at the configured interval. The panel shows the active calculation's reported percentage and stage while candle polling continues. The calculation reaches 100% when the chart accepts the updated result. Opening or refreshing a chart restores the latest saved result for that chart and display timeframe. Apply is required when that timeframe has no saved result. The tab remembers its Indicator Calculation setting across reloads. Temporary failures keep the last result visible and retry. Stored candles can be processed while the market-data source is unavailable.
 
 ## 13. Algorithm reference workspace
 
@@ -477,7 +479,7 @@ Users should expect the following current restoration behavior:
 - indicator input form/range can restore, but a prior active calculation is not treated as live merely because its form values return;
 - FARAZ exporter preferences and a still-valid acquisition job identity can restore;
 - Algorithm language/direction/navigation preferences can restore;
-- Manual Review report links reopen the saved calculation snapshot; retired verdict selections are not restored.
+- Fixed Manual Review links reopen the saved calculation snapshot. A report opened in follow mode resumes following the current calculation after refresh.
 
 Cache clearing is explicit and scoped. The UI distinguishes calculation cache, browser storage/cache, IndexedDB, drawings, and—only for the broadest clear operation—local FARAZ session state.
 
@@ -538,7 +540,7 @@ Examples of current behavior include:
 - missing Manual Review reports remain an inline report error;
 - destructive RAW deletion requires explicit confirmation.
 
-A runtime health control reflects recorded application errors and provides access to the current error log. User-facing summaries intentionally avoid dumping sensitive credential/session implementation details.
+The workstation footer groups Health, Indicator, Cache, FARAZ, Real-Time and Live-Calculation in one compact bordered cluster. Market context and the right-aligned clock have separate borders and dividers. At narrow widths the two left groups can scroll while the clock stays visible. Real-Time reflects candle polling and verification. Live-Calculation reflects the indicator continuation switch and its calculation errors. Active states have green indicators, inactive states have amber indicators, and errors pulse red with a steady red indicator when reduced motion is enabled. The health control opens the error log. Cache opens the Reload cache dialog. Real-Time opens the same popover as the toolbar control. Hovering over or focusing Real-Time shows the next candle poll and full verification countdowns. Clicking the From/To range copies the full filename of the selected RAW file, including its extension.
 
 ## 19. Responsive layout
 

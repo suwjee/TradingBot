@@ -4,6 +4,7 @@ import test from "node:test";
 import vm from "node:vm";
 import { readRealtimeUpdate } from "../../src/features/realtime-chart.js";
 import { startLiveIndicatorProgress } from "../../src/features/indicator-live-progress.js";
+import { engineCalculationDuration } from "../../src/features/indicator-lifecycle.js";
 
 const main = await readFile(new URL("../../src/main.js", import.meta.url), "utf8");
 const indicatorFlow = main.slice(main.indexOf("let chartUpdateRunning = false;") + "let chartUpdateRunning = false;".length,
@@ -36,7 +37,8 @@ function fixture({ candles = [{ time: 330 }], corrections = [], onContinue, next
     drawings: [{ id: "position" }],
   };
   const controls = { "#indicatorFrom": { value: "100" }, "#indicatorTo": { value: "200" }, "#indicatorEnabled": { checked: false } };
-  const payload = { directions: { bearish: { reactions: [], resets: [] } }, timeframe: 30 };
+  const payload = { directions: { bearish: { reactions: [], resets: [] } }, timeframe: 30,
+    timings: { bridgeTotalMs: 62_500 } };
   const requests = [], rebuilt = [], failures = [], alertPublications = [];
   const rawResponse = {
     file: { ...state.file, id: candles.length ? "new.json" : state.file.id,
@@ -46,7 +48,8 @@ function fixture({ candles = [{ time: 330 }], corrections = [], onContinue, next
   };
   const noop = () => {};
   const sandbox = vm.createContext({
-    state, AbortController, AbortSignal, performance, readRealtimeUpdate, symbolLoadController: null, symbolLoadRevision: 1,
+    state, AbortController, AbortSignal, performance, readRealtimeUpdate, engineCalculationDuration,
+    symbolLoadController: null, symbolLoadRevision: 1,
     liveIndicatorTabId: tabId, createUniqueId: () => "live-progress-fixture",
     startLiveIndicatorProgress: options => startLiveIndicatorProgress({ ...options, connect: connectProgress }),
     alertLiveReady: alertsReady, formatSymbolWithBroker: file => file.id,
@@ -54,7 +57,8 @@ function fixture({ candles = [{ time: 330 }], corrections = [], onContinue, next
       baseline: time => alertPublications.push({ kind: "baseline", time }),
       advance: (result, time, symbol) => alertPublications.push({ kind: "advance", result, time, symbol }),
     },
-    indicatorCalculationOwner: null, realtimeUpdateOwner: null, chartUpdateRunning: false,
+    indicatorCalculationOwner: null, indicatorRestoreController: null, indicatorCacheClearing: false,
+    realtimeUpdateOwner: null, chartUpdateRunning: false, setFooterCacheStatus: noop,
     lowerBoundTime: (rows, time) => rows.findIndex(row => row.time >= time),
     clone: structuredClone, removeInvalidIndicatorCalculations: value => value,
     calculationKey: ({ direction }, from, to) => [direction, from, to].join(":"),
@@ -115,6 +119,7 @@ test("an accepted continuation publishes the result to the alert monitor with th
   const chart = fixture({ alertsReady: true });
   await chart.update();
   assert.deepEqual(chart.alertPublications, [{ kind: "advance", result: chart.payload, time: 330, symbol: "new.json" }]);
+  assert.equal(chart.state.indicator.lastCalculation?.durationMs, 62_500);
 });
 
 test("inventory applies a proven RAW rename as an append and immediately requests indicator continuation", async () => {
@@ -334,8 +339,8 @@ test("a recent verification correction outside the old range invalidates Live an
   await chart.update();
   assert.equal(corrected, true);
   assert.equal(chart.state.raw[0].close, 42);
-  assert.equal(chart.state.indicator.results, null);
-  assert.equal(chart.state.indicator.objects.length, 0);
+  assert.equal(chart.state.indicator.results, chart.originalResult);
+  assert.equal(chart.state.indicator.objects[0].id, "old-result-object");
   assert.equal(chart.state.indicator.selectedObjectId, null);
   assert.deepEqual(chart.alertPublications, []);
   await chart.update();
@@ -396,7 +401,7 @@ test("a hidden calculation does not start live indicator work", async () => {
   const chart = fixture();
   chart.state.indicator.enabled = false;
   const result = await chart.update();
-  assert.match(result.indicatorError, /Apply in this tab/);
+  assert.match(result.indicatorError, /with Apply/);
   assert.deepEqual(chart.requests.map(([, body]) => body.phase), ["latest", "recent"]);
 });
 
@@ -499,7 +504,7 @@ test("a continuation waits for an overlapping verification and cannot publish su
   finishVerification({ file: { ...chart.state.file, metadata: { dataSha256: "corrected" } }, candles: [], corrections: [{ time: 300, close: 42 }] });
   await new Promise(resolve => setImmediate(resolve));
   assert.equal(chart.state.raw[0].close, 42);
-  assert.equal(chart.state.indicator.results, null);
+  assert.equal(chart.state.indicator.results, chart.originalResult);
   assert.equal(advances.length, 2);
   assert.equal(advances[1].url, "/api/reactions");
   complete(advances[1], 300);

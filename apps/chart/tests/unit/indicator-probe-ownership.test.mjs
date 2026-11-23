@@ -46,15 +46,18 @@ function harness() {
   };
   const runtime = vm.createContext(sandbox);
   const invalidateStart = main.indexOf("function invalidateIndicatorCalculation() {");
-  const invalidate = invalidateStart < 0 ? "" : main.slice(invalidateStart, main.indexOf("\nfunction clearActiveIndicatorCalculation()", invalidateStart));
+  const invalidate = invalidateStart < 0 ? "" : main.slice(invalidateStart, main.indexOf("\nfunction clearActiveIndicatorCalculation(", invalidateStart));
   vm.runInContext(`let indicatorCalculationOwner = null;
 let realtimeUpdateOwner = null;
 let symbolLoadRevision = 0;
+let symbolLoadController = null;
+let indicatorRestoreController = null;
+let indicatorCacheClearing = false;
 ${invalidate}\n${actualCalculate}`, runtime);
   return { state, controls, inputs, posts, applied, runtime,
     calculate: () => vm.runInContext("calculateIndicator()", runtime),
     resolve: (index = 0) => replies[index]({ ok: true,
-      headers: { get: () => null }, json: async () => ({ directions: {} }) }),
+      headers: { get: () => null }, json: async () => ({ directions: {}, timings: { bridgeTotalMs: 61_250 } }) }),
   };
 }
 
@@ -89,6 +92,7 @@ test("Apply requests a fresh calculation even when its existing result matches",
   h.resolve();
   await running;
   assert.equal(h.applied.length, 1);
+  assert.equal(h.state.indicator.lastCalculation.durationMs, 61_250);
   assert.equal(h.state.indicator.loading, false);
 });
 

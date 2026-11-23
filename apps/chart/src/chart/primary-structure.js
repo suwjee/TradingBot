@@ -1,6 +1,7 @@
 // Presentation of finalized Engine PH, PL and matching-behavior-leg results.
 // Price crossings, structure validity and numbering remain Engine-owned.
-import { drawTrueFalseLabel, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT } from "./true-false-label.js";
+import { formatTehranMetadataTime } from "../features/raw-file-contract.js";
+import { drawTrueFalseLabel, trueFalseAppearance, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT } from "./true-false-label.js";
 
 export const PRIMARY_VISUAL_DEFAULTS = Object.freeze({
   phVisible: true,
@@ -25,10 +26,16 @@ export const PRIMARY_VISUAL_DEFAULTS = Object.freeze({
 
 const FONT = 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
 const MBL_UNBROKEN_CANDLES = 400;
-const TREND_COLOR = "#00a886";
-const BEARISH_TREND_COLOR = "#f23645";
-const TREND_ICON_SIZE = 28;
-const TREND_ICON_CLEARANCE = 100;
+export const TREND_VISUAL_DEFAULTS = Object.freeze({
+  trendLineVisible: true,
+  trendBullColor: "#00a886",
+  trendBearColor: "#f23645",
+  trendLineWidth: 1,
+  trendLineStyle: "dash",
+  trendIconSize: 28,
+  trendIconGap: 100,
+  trendLabelSize: 10,
+});
 
 export function clipHistoricalHitBoxes(hits, right) {
   if (right < 0) return [];
@@ -52,7 +59,7 @@ export function clipHistoricalHitBoxes(hits, right) {
   });
 }
 
-export function trendTransitionLayout(transition, { timeToX, priceToY, height }) {
+export function trendTransitionLayout(transition, { timeToX, priceToY, height, settings = {} }) {
   const lineX = timeToX(transition.sourceTime);
   const bullish = transition.direction !== "bearish";
   const targetPrice = bullish ? transition.iconCandleHigh : transition.iconCandleLow;
@@ -61,29 +68,37 @@ export function trendTransitionLayout(transition, { timeToX, priceToY, height })
     const centerX = timeToX(transition.iconCandleTime);
     const priceY = priceToY(Number(targetPrice));
     if (Number.isFinite(centerX) && Number.isFinite(priceY)) {
-      const top = bullish ? priceY - TREND_ICON_CLEARANCE - TREND_ICON_SIZE
-        : priceY + TREND_ICON_CLEARANCE;
-      icon = { left: centerX - TREND_ICON_SIZE / 2, top,
-        right: centerX + TREND_ICON_SIZE / 2, bottom: top + TREND_ICON_SIZE, size: TREND_ICON_SIZE };
+      const size = settings.trendIconSize ?? TREND_VISUAL_DEFAULTS.trendIconSize;
+      const gap = settings.trendIconGap ?? TREND_VISUAL_DEFAULTS.trendIconGap;
+      const top = bullish ? priceY - gap - size : priceY + gap;
+      icon = { left: centerX - size / 2, top, right: centerX + size / 2, bottom: top + size, size };
     }
   }
   return { lineX, lineBottom: height, icon };
 }
 
-export function drawTrendTransitions(ctx, group, { timeToX, priceToY, height }) {
-  for (const transition of group.trendTransitions || []) {
+export function drawTrendTransitions(ctx, group, { timeToX, priceToY, width = Infinity, height, settings = {} }) {
+  const transitions = group.trendTransitions;
+  if (!transitions?.length || settings.trendLineVisible === false) return;
+  const style = settingsWithDefaults(settings, TREND_VISUAL_DEFAULTS);
+  const labels = [];
+  for (const transition of transitions) {
     const bullish = transition.direction !== "bearish";
-    const color = bullish ? TREND_COLOR : BEARISH_TREND_COLOR;
-    const marker = trendTransitionLayout(transition, { timeToX, priceToY, height });
+    const color = bullish ? style.trendBullColor : style.trendBearColor;
+    const marker = trendTransitionLayout(transition, { timeToX, priceToY, height, settings });
     ctx.save();
     ctx.strokeStyle = color;
-    ctx.lineWidth = 1;
-    ctx.setLineDash([6, 5]);
-    if (Number.isFinite(marker.lineX)) {
+    ctx.lineWidth = style.trendLineWidth;
+    ctx.lineCap = style.trendLineStyle === "dot" ? "round" : "butt";
+    ctx.setLineDash(style.trendLineStyle === "dot" ? [0, style.trendLineWidth * 3]
+      : style.trendLineStyle === "dash" ? [6, 5] : []);
+    if (Number.isFinite(marker.lineX) && marker.lineX >= 0 && marker.lineX <= width) {
+      const label = trendTimestampLayout(ctx, transition.sourceTime, marker.lineX, width, height, style.trendLabelSize, labels);
       ctx.beginPath();
       ctx.moveTo(marker.lineX, 0);
-      ctx.lineTo(marker.lineX, marker.lineBottom);
+      ctx.lineTo(marker.lineX, label?.top ?? marker.lineBottom);
       ctx.stroke();
+      if (label) labels.push({ ...label, color });
     }
     if (marker.icon) {
       const { left, top, size } = marker.icon;
@@ -111,10 +126,49 @@ export function drawTrendTransitions(ctx, group, { timeToX, priceToY, height }) 
     }
     ctx.restore();
   }
+  for (const label of labels) drawTrendTimestamp(ctx, label);
 }
 
-function settingsWithDefaults(settings = {}) {
-  const output = { ...PRIMARY_VISUAL_DEFAULTS };
+function trendTimestampLayout(ctx, sourceTime, lineX, width, height, size, labels) {
+  const epoch = Number(sourceTime);
+  if (!Number.isSafeInteger(epoch) || epoch < 1 || width < 32 || height < size + 12) return null;
+  const text = formatTehranMetadataTime(epoch).slice(0, 19);
+  const font = `600 ${size}px ${FONT}`;
+  const margin = 2;
+  const padding = 4;
+  ctx.save();
+  ctx.font = font;
+  const badgeWidth = Math.min(ctx.measureText(text).width + padding * 2, width - margin * 2);
+  ctx.restore();
+  const badgeHeight = size + padding * 2;
+  const left = Math.min(Math.max(lineX - badgeWidth / 2, margin), width - margin - badgeWidth);
+  let top = height - margin - badgeHeight;
+  const spacing = 3;
+  while (labels.some(label => label.top === top && left < label.left + label.width + spacing
+    && label.left < left + badgeWidth + spacing)) top -= badgeHeight + spacing;
+  if (top < margin) return null;
+  return { text, font, left, top, width: badgeWidth, height: badgeHeight, padding };
+}
+
+function drawTrendTimestamp(ctx, label) {
+  const { text, font, left, top, width, height, padding, color } = label;
+  ctx.save();
+  ctx.setLineDash([]);
+  ctx.lineWidth = 0.75;
+  ctx.fillStyle = "rgba(255,255,255,.96)";
+  ctx.fillRect(left, top, width, height);
+  ctx.strokeStyle = color;
+  ctx.strokeRect(left, top, width, height);
+  ctx.fillStyle = "#111827";
+  ctx.font = font;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, left + width / 2, top + height / 2, width - padding * 2);
+  ctx.restore();
+}
+
+function settingsWithDefaults(settings = {}, defaults = PRIMARY_VISUAL_DEFAULTS) {
+  const output = { ...defaults };
   for (const key of Object.keys(output)) {
     if (settings[key] != null) output[key] = settings[key];
   }
@@ -237,9 +291,12 @@ export function drawPrimaryStructures(ctx, group, {
   onHit = () => {},
 }) {
   const style = settingsWithDefaults(settings);
+  const verdict = trueFalseAppearance(settings, "primary");
   for (const [kind, rows, visible, labelVisible] of [
-    ["PH", group.primaryHighs, style.phVisible, style.phLabelVisible],
-    ["PL", group.primaryLows, style.plVisible, style.plLabelVisible],
+    ["PH", group.primaryHighs, settings.phGroupVisible ?? style.phVisible,
+      settings.phGroupVisible ?? style.phLabelVisible],
+    ["PL", group.primaryLows, settings.plGroupVisible ?? style.plVisible,
+      settings.plGroupVisible ?? style.plLabelVisible],
   ]) {
     if (!visible && !labelVisible) continue;
     for (const item of rows || []) {
@@ -277,15 +334,17 @@ export function drawPrimaryStructures(ctx, group, {
         const label = primaryLabelLayout({ ...marker, fontSize: size }, ctx.measureText(text));
         ctx.fillText(text, marker.x, label.baselineY);
         const below = marker.textBaseline === "top";
-        drawTrueFalseLabel(ctx, item.trueFalse, settings.trueFalseVisible, size,
-          marker.x, below ? label.bottom : label.top, below, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, false, 2);
+        drawTrueFalseLabel(ctx, item.trueFalse, verdict.visible, size,
+          marker.x, below ? label.bottom : label.top, below, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, false, 2, verdict);
         onHit({ objectId, shape: "rect", left: label.left, right: label.right,
           top: label.top, bottom: label.bottom });
       }
       ctx.restore();
     }
   }
-  if (!style.mblVisible && !style.mblLabelVisible) return;
+  const mblVisible = settings.mblGroupVisible ?? style.mblVisible;
+  const mblLabelVisible = settings.mblGroupVisible ?? style.mblLabelVisible;
+  if (!mblVisible && !mblLabelVisible) return;
   const legs = (group.matchingBehaviorLegs || []).filter(item => item.calculationValid !== false);
   const latest = legs.reduce((chosen, item) => !chosen ||
     Number(item.triggerEventTime ?? item.triggerTime ?? item.sourceTime) >
@@ -313,7 +372,7 @@ export function drawPrimaryStructures(ctx, group, {
     ctx.font = `500 ${fontSize}px ${FONT}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    const gap = style.mblLabelVisible ? ctx.measureText(label).width / 2 + 6 : 0;
+    const gap = mblLabelVisible ? ctx.measureText(label).width / 2 + 6 : 0;
     ctx.beginPath();
     if (!gap) {
       ctx.moveTo(line.x1, line.y1);
@@ -328,13 +387,13 @@ export function drawPrimaryStructures(ctx, group, {
         ctx.lineTo(line.x2, line.y2);
       }
     }
-    if (style.mblVisible) ctx.stroke();
-    if (style.mblLabelVisible) {
+    if (mblVisible) ctx.stroke();
+    if (mblLabelVisible) {
       ctx.fillText(label, middle, line.y1);
       onHit({ objectId, shape: "rect", left: middle - gap, right: middle + gap,
         top: line.y1 - fontSize / 2, bottom: line.y1 + fontSize / 2 });
     }
     ctx.restore();
-    if (style.mblVisible) onHit({ objectId, shape: "line", ...line });
+    if (mblVisible) onHit({ objectId, shape: "line", ...line });
   }
 }

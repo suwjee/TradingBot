@@ -47,6 +47,7 @@
       '**/*~'
     )
     ExcludedPathPatterns = @(
+      'engine/engine.zip',
       'engineering/verification/history/cleanup-2026-09-29/pre-cleanup-project.zip',
       'engineering/verification/single-root-2026-09-29/project-before-migration.zip',
       'apps/chart/node_modules/**',

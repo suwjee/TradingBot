@@ -6,7 +6,7 @@ import {
 import "./platform/browser-compat.js";
 import { icon } from "./ui/icons.js";
 import { drawingArray, normalizeHistorySnapshot, CHART_TIMEFRAME_KEY, restoredTimeframe, indicatorControlId, drawingToolOrder } from "./chart/state.js";
-import { PRIMARY_VISUAL_DEFAULTS, primaryVisualObjects as initialPrimaryVisualObjects } from "./chart/primary-structure.js";
+import { PRIMARY_VISUAL_DEFAULTS, TREND_VISUAL_DEFAULTS, primaryVisualObjects as initialPrimaryVisualObjects } from "./chart/primary-structure.js";
 import { drawIndicator as initialPaintIndicator, INDICATOR_MARKER_DEFAULTS } from "./chart/indicator-renderer.js";
 import { startLiveIndicatorProgress } from "./features/indicator-live-progress.js";
 import * as initialVerdictLabels from "./chart/true-false-label.js";
@@ -18,7 +18,7 @@ import { coordinateToRawTime, createViewAnchorCache, rawIndexAtTime, rawIndexToC
 import { updateStageAggregate } from "./chart/progress.js";
 import { cacheClearLayers, clearIndicatorBrowserState } from "./features/indicator-cache.js";
 import { buildIndicatorCalculationRequest } from "./features/indicator-calculation-request.js";
-import { captureCalculationInputs, calculationInputsMatch, restoreIndicatorLifecycle } from "./features/indicator-lifecycle.js";
+import { captureCalculationInputs, calculationInputsMatch, engineCalculationDuration, migrateIndicatorVisibility, restoreIndicatorLifecycle } from "./features/indicator-lifecycle.js";
 import { primaryDetectionSummary } from "./features/primary-detection-summary.js";
 import { applyWorkspaceState } from "./ui/workspace-state.js";
 import { openManualReviewTab } from "./features/manual-review/tab.js";
@@ -265,7 +265,6 @@ const stitchDrawingIcon = (name) => {
     rect: '<svg viewBox="0 0 28 28" aria-hidden="true"><path d="M7.5 6h13v-1h-13zM7.5 23h13v-1h-13zM5 7.5v13h1v-13zM22 7.5v13h1v-13zM5.5 8A2.5 2.5 0 1 1 5.5 3a2.5 2.5 0 0 1 0 5zm17 0A2.5 2.5 0 1 1 22.5 3a2.5 2.5 0 0 1 0 5zm0 17a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm-17 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>',
     circle: '<svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
     fib: '<svg viewBox="0 0 28 28" aria-hidden="true"><path d="M4.5 5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM2 6.5A2.5 2.5 0 0 1 6.95 6H24v1H6.95A2.5 2.5 0 0 1 2 6.5zm2.5 8.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM2 16.5a2.5 2.5 0 0 1 4.95-.5h13.1a2.5 2.5 0 1 1 0 1H6.95A2.5 2.5 0 0 1 2 16.5zm18 1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm-15.5 3a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM2 22.5a2.5 2.5 0 0 1 4.95-.5H24v1H6.95A2.5 2.5 0 0 1 2 22.5z"/></svg>',
-    measure: '<svg viewBox="0 0 28 28" aria-hidden="true"><path d="M4.5 24a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM2 22.5a2.5 2.5 0 0 0 4.95.5H24v-1H6.95A2.5 2.5 0 0 0 2 22.5zm2.5-8.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM2 12.5a2.5 2.5 0 0 0 4.95.5h13.1a2.5 2.5 0 1 0 0-1H6.95A2.5 2.5 0 0 0 2 12.5zM22.5 14a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zM4.5 8a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM2 6.5A2.5 2.5 0 0 0 6.95 7H24V6H6.95A2.5 2.5 0 0 0 2 6.5z"/></svg>',
     text: '<svg viewBox="0 0 28 28" aria-hidden="true"><path d="M8 6.5c0-.28.22-.5.5-.5H14v16h-2v1h5v-1h-2V6h5.5c.28 0 .5.22.5.5V9h1V6.5c0-.83-.67-1.5-1.5-1.5h-12C7.67 5 7 5.67 7 6.5V9h1z"/></svg>',
     arrow: '<svg viewBox="0 0 28 28" aria-hidden="true"><path d="M11 10.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm4 7a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0zm11-8.8V13h1V7h-6v1h4.3l-7.42 7.41a2.49 2.49 0 0 0-2.76 0l-3.53-3.53a2.5 2.5 0 1 0-4.17 0L1 18.29l.7.71 6.42-6.41a2.49 2.49 0 0 0 2.76 0l3.53 3.53a2.5 2.5 0 1 0 4.17 0z"/></svg>',
   };
@@ -274,7 +273,7 @@ const stitchDrawingIcon = (name) => {
     line: '<svg viewBox="0 0 28 28" aria-hidden="true"><g fill="currentColor" fill-rule="nonzero"><path d="M7.354 21.354l14-14-.707-.707-14 14z"/><path d="M22.5 7c.828 0 1.5-.672 1.5-1.5S23.328 4 22.5 4 21 4.672 21 5.5 21.672 7 22.5 7zm0 1c-1.381 0-2.5-1.119-2.5-2.5S21.119 3 22.5 3 25 4.119 25 5.5 23.881 8 22.5 8zM5.5 24c.828 0 1.5-.672 1.5-1.5S6.328 21 5.5 21 4 21.672 4 22.5 4.672 24 5.5 24zm0 1C4.119 25 3 23.881 3 22.5S4.119 20 5.5 20 8 21.119 8 22.5 6.881 25 5.5 25z"/></g></svg>',
     fib: '<svg viewBox="0 0 28 28" aria-hidden="true"><g fill="currentColor" fill-rule="nonzero"><path d="M3 5h22V4H3zM3 17h22v-1H3zM3 11h19.5v-1H3zM5.5 23H25v-1H5.5z"/><path d="M3.5 24c.828 0 1.5-.672 1.5-1.5S4.328 21 3.5 21 2 21.672 2 22.5 2.672 24 3.5 24zm0 1C2.119 25 1 23.881 1 22.5S2.119 20 3.5 20 6 21.119 6 22.5 4.881 25 3.5 25zm21-13c.828 0 1.5-.672 1.5-1.5S25.328 9 24.5 9s-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5S23.119 8 24.5 8 27 9.119 27 10.5 25.881 13 24.5 13z"/></g></svg>',
     vline: '<svg viewBox="0 0 28 28" aria-hidden="true"><g fill="currentColor" fill-rule="nonzero"><path d="M15 12.5V4h-1v8.5zM14 16.5V25h1v-8.5z"/><path d="M14.5 16c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"/></g></svg>',
-    measure: '<svg viewBox="0 0 28 28" aria-hidden="true"><path fill="currentColor" d="M5.5 20c1.2 0 2.22.86 2.45 2H25v1H7.95a2.5 2.5 0 1 1-2.45-3m0 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M25 18H5v-1h20zm-11-4h3v1h-4V9h1zM5.5 4c1.2 0 2.22.86 2.45 2H25v1H7.95A2.5 2.5 0 1 1 5.5 4m0 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3"/></svg>',
+    measure: '<svg viewBox="0 0 28 28" aria-hidden="true"><g transform="rotate(-45 14 14)" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><rect x="2.7" y="9.4" width="22.6" height="9.2" rx="1.3"/><path d="M7 9.4v4.5m4.6-4.5v3m4.8-3v4.5m4.6-4.5v3"/></g></svg>',
     arrow: '<svg viewBox="0 0 28 28" aria-hidden="true"><g fill="currentColor"><path fill-rule="nonzero" d="M7.354 21.354l14-14-.707-.707-14 14z"/><path d="m21 7-8 3 5 5z"/><path fill-rule="nonzero" d="M22.5 7c.828 0 1.5-.672 1.5-1.5S23.328 4 22.5 4 21 4.672 21 5.5 21.672 7 22.5 7zm0 1c-1.381 0-2.5-1.119-2.5-2.5S21.119 3 22.5 3 25 4.119 25 5.5 23.881 8 22.5 8zM5.5 24c.828 0 1.5-.672 1.5-1.5S6.328 21 5.5 21 4 21.672 4 22.5 4.672 24 5.5 24zm0 1C4.119 25 3 23.881 3 22.5S4.119 20 5.5 20 8 21.119 8 22.5 6.881 25 5.5 25z"/></g></svg>',
     hline: '<svg viewBox="0 0 28 28" aria-hidden="true"><g fill="currentColor" fill-rule="nonzero"><path d="M4 15h8.5v-1H4zM16.5 15H25v-1h-8.5z"/><path d="M14.5 16c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"/></g></svg>',
     path: '<svg viewBox="0 0 28 28" aria-hidden="true"><path fill="currentColor" d="M11 10.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm4 7a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0zm11-8.8V13h1V7h-6v1h4.3l-7.42 7.41a2.49 2.49 0 0 0-2.76 0l-3.53-3.53a2.5 2.5 0 1 0-4.17 0L1 18.29l.7.71 6.42-6.41a2.49 2.49 0 0 0 2.76 0l3.53 3.53a2.5 2.5 0 1 0 4.17 0z"/></svg>',
@@ -453,7 +452,25 @@ document.querySelector("#app").innerHTML = `<main class="app">
  <div class="top-actions"><button class="icon-btn update-data-btn" id="updateDataBtn" title="Update chart data · Ready" aria-label="Update chart data · Ready" data-update-state="idle"><span class="ud-wrap"><svg class="ud-icon ud-idle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6v5h-5"/><path d="M4 18v-5h5"/><path d="M18.4 9A7 7 0 0 0 6.2 6.4L4 9"/><path d="M5.6 15A7 7 0 0 0 17.8 17.6L20 15"/></svg><svg class="ud-icon ud-load" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8" opacity="0.16"/><path d="M12 4a8 8 0 0 1 8 8" stroke-linecap="round"/></svg><svg class="ud-icon ud-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 12.3L9.6 16.3L18.5 7.5"/></svg><svg class="ud-icon ud-warning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.8 21 20.2H3L12 3.8Z"/><path d="M12 9v5.1"/><path d="M12 17.5h.01"/></svg><svg class="ud-icon ud-err" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 7L17 17"/><path d="M17 7L7 17"/></svg></span></button><button class="icon-btn" id="undoBtn" title="Undo" aria-label="Undo">${materialIcon("undo")}</button><button class="icon-btn" id="redoBtn" title="Redo" aria-label="Redo">${materialIcon("redo")}</button><button class="icon-btn" id="hideAllBtn" title="Hide drawings" aria-label="Hide drawings" aria-pressed="false">${materialIcon("visibility")}</button><div class="divider"></div><button class="icon-btn" id="screenshotBtn" title="Screenshot chart" aria-label="Screenshot chart"><span class="material-symbols-outlined">photo_camera</span></button><button class="icon-btn" id="reportBtn" title="Calculation report" aria-label="Calculation report">${icon("exportCandles", 17)}</button><button class="icon-btn" id="fullscreenBtn" title="Full screen" aria-label="Full screen">${materialIcon("fullscreen")}</button><button class="icon-btn" id="reloadIndicatorBtn" title="Reload indicator cache" aria-label="Reload indicator cache">${materialIcon("refresh")}</button><button class="icon-btn" id="gotoBtn" title="Go to date" aria-label="Go to date">${materialIcon("event")}</button></div></div></header>
  <section class="workspace"><aside class="leftbar" aria-label="Workspace navigation">${navigationItems.map(([name, label, id]) => `<button class="tool nav-item ${id === "chartNavBtn" ? "active" : ""}" id="${id}" data-label="${label}" title="${label}" aria-label="${label}">${id === "candleExportBtn" ? icon(name, 18) : materialIcon(name)}</button>`).join("")}</aside>
  <div class="chart-shell"><div id="chart" class="chart"></div><canvas id="draw" class="drawing-layer"></canvas><div class="chart-head"><div class="instrument"><span id="chartSymbol">—</span><span class="badge" id="chartTf">1m</span></div><div class="ohlc" aria-label="Open high low close"><span>O <b id="o">—</b></span><span>H <b id="h">—</b></span><span>L <b id="l">—</b></span><span>C <b id="c">—</b></span></div></div><div id="indicatorRangeHandles" class="indicator-range-handles hidden" aria-hidden="true"><div id="rangeFromGuide" class="range-guide from"></div><div id="rangeToGuide" class="range-guide to"></div><button id="rangeFromHandle" class="range-handle from" type="button" aria-label="Indicator range From"><span class="material-symbols-outlined range-handle-mark" aria-hidden="true">drag_handle</span><span class="range-handle-tip"></span></button><button id="rangeToHandle" class="range-handle to" type="button" aria-label="Indicator range To"><span class="material-symbols-outlined range-handle-mark" aria-hidden="true">drag_handle</span><span class="range-handle-tip"></span></button></div><div class="chart-nav-wrap"><button class="chart-nav-btn" id="navGoFirst" title="First candle" aria-label="First candle"><span class="material-symbols-outlined">keyboard_double_arrow_left</span></button><button class="chart-nav-btn" id="navGoLast" title="Last candle" aria-label="Last candle"><span class="material-symbols-outlined">keyboard_double_arrow_right</span></button></div><div id="loading" class="loading"><div class="loader-card"><div class="spinner"></div><div class="progress" id="progress">Loading market data...</div></div></div></div></section>
- <footer class="statusbar" aria-label="Workstation status"><div class="status-cluster status-runtime" aria-label="Runtime status"><button class="status-group status-health" id="healthStatus" type="button" data-state="healthy" title="Application health"><i class="dot" aria-hidden="true"></i><b id="healthLabel">Healthy</b></button><button class="status-group status-state status-indicator" id="indicatorStatusFooter" type="button" data-state="inactive" title="Open indicator settings" aria-label="Open indicator settings"><i class="dot" aria-hidden="true"></i><b>Indicator</b></button><span class="status-group status-state status-cache" id="cacheStatusFooter" data-state="idle" title="No indicator calculation source yet"><i class="dot" aria-hidden="true"></i><b>Cache</b></span><button class="status-group status-state status-faraz" id="farazStatusFooter" type="button" data-state="inactive" title="Open FARAZ Exporter" aria-label="Open FARAZ Exporter"><i class="dot" aria-hidden="true"></i><b>FARAZ</b></button></div><span class="status-separator" aria-hidden="true"></span><div class="status-cluster status-market" aria-label="Visible chart range"><span class="status-group status-data" title="Candle count for the selected chart timeframe"><span id="candleCount">0 candles</span></span><span class="status-group status-range" title="First and last candle in local system time"><span>From <time id="chartFrom">—</time></span><span>To <time id="chartTo">—</time></span></span></div><span class="status-separator" aria-hidden="true"></span><time class="status-clock" id="clock" title="Local workstation time"></time></footer></main>
+ <footer class="statusbar" aria-label="Workstation status">
+  <div class="status-scroll">
+   <div class="status-cluster status-runtime" aria-label="Runtime status">
+     <button class="status-group status-state status-health" id="healthStatus" type="button" data-state="healthy" title="Application health"><i class="dot" aria-hidden="true"></i><b id="healthLabel">Healthy</b></button>
+     <button class="status-group status-state status-indicator" id="indicatorStatusFooter" type="button" data-state="inactive" title="Open indicator settings" aria-label="Open indicator settings"><i class="dot" aria-hidden="true"></i><b>Indicator</b></button>
+     <button class="status-group status-state status-cache" id="cacheStatusFooter" type="button" data-state="idle" title="Reload indicator cache" aria-haspopup="dialog" aria-controls="cacheClearModal"><i class="dot" aria-hidden="true"></i><b>Cache</b></button>
+     <button class="status-group status-state status-faraz" id="farazStatusFooter" type="button" data-state="inactive" title="Open FARAZ Exporter" aria-label="Open FARAZ Exporter"><i class="dot" aria-hidden="true"></i><b>FARAZ</b></button>
+     <button class="status-group status-state status-realtime" id="realtimeStatusFooter" type="button" data-state="inactive" aria-label="Real-Time · Disabled"><i class="dot" aria-hidden="true"></i><b>Real-Time</b></button>
+     <span class="status-group status-state status-live-calculation" id="liveCalculationStatusFooter" data-state="inactive" title="Live-Calculation is disabled"><i class="dot" aria-hidden="true"></i><b>Live-Calculation</b></span>
+   </div>
+   <span class="status-separator" aria-hidden="true"></span>
+   <div class="status-cluster status-market" aria-label="Visible chart range">
+     <span class="status-group status-data" title="Candle count for the selected chart timeframe"><span id="candleCount">0 candles</span></span>
+     <button class="status-group status-range" id="copyRawFilename" type="button" aria-label="Copy complete RAW filename" title="Copy RAW filename" disabled><span>From <time id="chartFrom">—</time></span><span>To <time id="chartTo">—</time></span></button>
+   </div>
+   <span class="status-separator" aria-hidden="true"></span>
+  </div>
+   <time class="status-cluster status-clock" id="clock" title="Local workstation time"></time>
+ </footer></main>
  <div id="symbolMenu" class="popover symbol-menu hidden" role="dialog" aria-label="Local symbols"><div id="symbolList" role="list"></div></div>
  <div id="updateChoiceModal" class="modal-backdrop hidden"><section class="modal update-choice-dialog" role="dialog" aria-modal="true" aria-labelledby="updateChoiceTitle" aria-describedby="updateChoiceDescription"><header class="modal-title"><strong id="updateChoiceTitle">Update chart data</strong><button id="closeUpdateChoice" class="icon-btn modal-close" type="button" aria-label="Close update options">${icon("close", 18)}</button></header><p id="updateChoiceDescription">Choose exactly one operation. FARAZ requests always use this RAW file's source timeframe.</p><div class="update-choice-options" role="radiogroup" aria-label="Chart data operation"><label class="update-choice-option"><input type="radio" name="chartUpdateMode" value="gap-full" checked><span><strong>Gap Detector — Full File</strong><small>Scan every stored interval and request every missing source slot.</small></span></label><label class="update-choice-option"><input type="radio" name="chartUpdateMode" value="gap-since"><span><strong>Gap Detector — Since Last Check</strong><small>Scan from the last durable checkpoint; first use scans the full file.</small></span></label><label class="update-choice-option"><input type="radio" name="chartUpdateMode" value="latest"><span><strong>Update Candle</strong><small>Append new closed candles after the current final RAW candle.</small></span></label></div><footer class="modal-actions"><button id="cancelUpdateChoice" class="btn" type="button">Cancel</button><button id="runChartUpdate" class="btn primary" type="button">Run</button></footer></section></div>
  <div id="updateProgressModal" class="modal-backdrop hidden"><section class="modal update-dialog update-status-dialog" role="dialog" aria-modal="true" aria-labelledby="updateProgressTitle" aria-describedby="updateProgressFile" tabindex="-1"><header class="modal-title"><div><strong id="updateProgressTitle">Updating chart data</strong><small id="updateProgressFile">Selected RAW file</small></div><time id="updateProgressElapsed">0s</time></header><div class="update-progress"><div class="update-steps" aria-label="Update stages"><span data-update-step="fetch">Fetch from FARAZ</span><span data-update-step="compare">Check coverage</span><span data-update-step="save">Save RAW</span><span data-update-step="verify">Record verification</span></div><div class="update-current" aria-live="polite"><strong id="updateProgressStage">Preparing source packets</strong><small id="updateProgressDetail">Starting</small></div><div class="update-progress-track" role="progressbar" aria-label="Chart update progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="updateProgressFill"></i></div><div class="update-metrics"><span><small>FARAZ packets</small><b id="updateProgressPackets">0 / 0</b></span><span><small>Source candles</small><b id="updateProgressReceived">0</b></span><span><small>RAW gaps repaired</small><b id="updateProgressRepaired">0</b></span><span><small>Verified slots</small><b id="updateProgressVerified">0</b></span></div><p class="update-note">HTTP 200 with an empty valid response means FARAZ has no candle for that source interval. No candle is fabricated.</p></div></section></div>
@@ -561,7 +578,7 @@ function errorLogText() {
     ].filter(Boolean).join("\n");
   }).join("\n\n────────────────────────────────\n\n");
 }
-async function copyErrorLogText(text) {
+async function copyTextToClipboard(text) {
   if (window.isSecureContext && navigator.clipboard?.writeText) {
     try {
       await navigator.clipboard.writeText(text);
@@ -610,7 +627,7 @@ $("#copyErrorLogs").onclick = async () => {
   const text = errorLogText();
   if (!text) return toast("No errors to copy", "info");
   try {
-    await copyErrorLogText(text);
+    await copyTextToClipboard(text);
     toast("Error log copied", "success");
   } catch (error) {
     log.chart.error("ERROR_LOG_COPY_FAILED", error);
@@ -679,6 +696,62 @@ function styleModule(key, title, rows, resetIds = []) {
     ? `<button type="button" class="style-reset-btn" data-style-reset="${resetIds.join(",")}" title="Reset to defaults">${icon("refresh", 14)}</button>`
     : "";
   return `<section class="style-module" data-style-module="${key}"><header class="style-module-header"><strong>${title}</strong><div class="style-module-actions">${reset}<span class="style-chevron">${icon("chevron", 14)}</span></div></header><div class="style-module-body">${rows.join("")}</div></section>`;
+}
+const indicatorLayerGroups = [
+  { id: "foundation", title: "Foundation", rows: [
+    ["reactionVisible", "Reaction"], ["blueLineEnabled", "Blue Line"], ["aVisible", "A"],
+    ["sVisible", "S"], ["eVisible", "E"], ["eStopVisible", "E stop line", false],
+    ["orderVisible", "Order reaction"], ["orderStopVisible", "Order stop"],
+    ["foundationTfVisible", "Foundation T/F label"],
+  ] },
+  { id: "secondary", title: "Secondary", rows: [
+    ["stopAllVisible", "StopAll"], ["secondaryTfVisible", "Secondary T/F label"],
+  ] },
+  { id: "primary", title: "PH-PL", rows: [
+    ["phGroupVisible", "PH", true, "Marker and label"], ["plGroupVisible", "PL", true, "Marker and label"],
+    ["mblGroupVisible", "MBL", true, "Line and label"], ["primaryTfVisible", "Third T/F label"],
+    ["trendLineVisible", "Change market line", true, "Line, icon and timestamp"],
+  ] },
+];
+const indicatorDisplayDefaults = {
+  ...Object.fromEntries(indicatorLayerGroups.flatMap(group => group.rows.map(([id, , checked = true]) => [id, checked]))),
+  ...Object.fromEntries(Object.entries(PRIMARY_VISUAL_DEFAULTS).filter(([id]) => !id.endsWith("Visible"))),
+  ...initialVerdictLabels.TRUE_FALSE_VISUAL_DEFAULTS,
+  ...TREND_VISUAL_DEFAULTS,
+};
+function indicatorSettingsGroup(tab, key, body) {
+  const group = indicatorLayerGroups.find(({ id }) => id === key);
+  const expanded = key === "foundation";
+  const bodyId = `indicator-${tab}-${key}`;
+  return `<section class="style-group${expanded ? "" : " collapsed"}" data-style-group="${key}"><button type="button" class="style-group-header" aria-controls="${bodyId}" aria-expanded="${expanded}"><strong>${group.title}</strong><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div id="${bodyId}" class="style-group-body">${body}</div></section>`;
+}
+function verdictAppearance(prefix, title) {
+  const trueColor = `${prefix}TfTrueColor`, falseColor = `${prefix}TfFalseColor`;
+  const unavailableColor = `${prefix}TfNaColor`, size = `${prefix}TfSize`;
+  const options = Array.from({ length: 21 }, (_, i) => i + 6)
+    .map(value => `<option value="${value}">${value}px</option>`).join("");
+  return styleModule(`${prefix}-verdict`, title, [
+    appearancePopup(`${prefix}-verdict`, `${title} appearance`, "", [
+      swatchRow([[trueColor, "T", "color", indicatorDisplayDefaults[trueColor]],
+        [falseColor, "F", "color", indicatorDisplayDefaults[falseColor]],
+        [unavailableColor, "N/A", "color", indicatorDisplayDefaults[unavailableColor]]]),
+      `<div class="setting-row"><label for="${size}">Font size</label><select id="${size}"><option value="0">Auto</option>${options}</select></div>`,
+    ], [trueColor, falseColor, unavailableColor, size]),
+  ]);
+}
+function marketTransitionAppearance() {
+  const style = TREND_VISUAL_DEFAULTS;
+  return styleModule("trend-transition", "Change market line", [
+    appearancePopup("trend-transition", "Change market line appearance", "", [
+      swatchRow([["trendBullColor", "Bullish", "color", style.trendBullColor],
+        ["trendBearColor", "Bearish", "color", style.trendBearColor]]),
+      widthRow("trendLineWidth", "Line width", style.trendLineWidth),
+      lineStyleRow("trendLineStyle", style.trendLineStyle),
+      rangeRow("trendIconSize", "Icon size", 10, 48, style.trendIconSize, "px"),
+      rangeRow("trendIconGap", "Icon distance from candle", 0, 150, style.trendIconGap, "px"),
+      fontSizeRow("trendLabelSize", "Timestamp font size", style.trendLabelSize),
+    ], ["trendBullColor", "trendBearColor", "trendLineWidth", "trendLineStyle", "trendIconSize", "trendIconGap", "trendLabelSize"]),
+  ]);
 }
 document.body.insertAdjacentHTML(
   "beforeend",
@@ -867,11 +940,47 @@ const isAlgorithmHash = () => /^#algorithm-(?:overview|[a-z0-9_-]+)$/i.test(wind
 let symbolLoadController = null;
 let symbolLoadRevision = 0;
 let indicatorCalculationOwner = null;
+let indicatorRestoreController = null;
+let indicatorCacheClearing = false;
+const indicatorCacheClearEventKey = "market-canvas:calculation-cache-cleared";
 let realtimeChart = null;
 let realtimeUpdateOwner = null;
 let realtimePublicationRevision = 0;
 let alertLiveView;
 let alertLiveReady = false;
+let farazFooterConnection;
+function setFooterState(id, status, label, { nativeTitle = true } = {}) {
+  const element = $(id);
+  if (element.dataset.state !== status) element.dataset.state = status;
+  if (nativeTitle && element.title !== label) element.title = label;
+  if (element.getAttribute("aria-label") !== label) element.setAttribute("aria-label", label);
+}
+function updateLiveFooter() {
+  const view = alertLiveView || {};
+  const realtimeError = view.enabled && navigator.onLine === false ? "Network unavailable" : view.realtimeError;
+  const calculationError = view.enabled && (view.indicatorError || view.liveCalculationError);
+  const calculationActive = view.enabled && view.indicatorCalculation;
+  setFooterState("#realtimeStatusFooter", realtimeError ? "error" : view.enabled ? "active" : "inactive",
+    realtimeError ? `Real-Time · ${realtimeError}` : `Real-Time · ${view.enabled ? "Enabled" : "Disabled"}`,
+    { nativeTitle: false });
+  setFooterState("#liveCalculationStatusFooter", calculationError ? "error" : calculationActive ? "active" : "inactive",
+    calculationError ? `Live-Calculation · ${calculationError}` : `Live-Calculation · ${calculationActive ? "Enabled" : "Disabled"}`);
+}
+function updateFarazFooter() {
+  const { connected, status } = farazFooterConnection || {};
+  const problem = navigator.onLine === false ? "Network unavailable"
+    : status?.error ? summarizeUiError(status.error)
+      : status?.state === "expired_session" ? "Saved session was rejected" : "";
+  const message = problem || (connected ? `Session active on ${status?.host || "faraz.io"}` : "No saved session");
+  setFooterState("#farazStatusFooter", problem ? "error" : connected ? "active" : "inactive",
+    `Open FARAZ Exporter · ${message}`);
+}
+for (const event of ["online", "offline"]) {
+  window.addEventListener(event, () => {
+    updateLiveFooter();
+    updateFarazFooter();
+  });
+}
 const alertController = mountAlerts({
   root: $(".chart-shell"), headerRoot: $(".workspace-header-slot"), toast, createId: createUniqueId,
   formatTime: time => formatSystemDateTime(time * 1000),
@@ -921,15 +1030,8 @@ candleExportController = initCandleExport({
   setDateTimeValue,
   openDateTimePicker,
   onConnectionChange: (connected, status) => {
-    const footer = $("#farazStatusFooter");
-    const hasError = Boolean(status?.error);
-    const expired = status?.state === "expired_session";
-    footer.dataset.state = connected ? "active" : hasError || expired ? "error" : "inactive";
-    footer.title = connected
-      ? `Open FARAZ Exporter · session active on ${status.host || "faraz.io"}`
-      : hasError ? `Open FARAZ Exporter · ${summarizeUiError(status.error)}`
-        : expired ? "Open FARAZ Exporter · saved session was rejected" : "Open FARAZ Exporter · no saved session";
-    footer.setAttribute("aria-label", footer.title);
+    farazFooterConnection = { connected, status };
+    updateFarazFooter();
   },
   onInventoryChanged: () => { void refreshSymbolInventory(); },
 });
@@ -1156,57 +1258,35 @@ $(".indicator-body").innerHTML = `
       <div class="range-dates"><label><span>From • Asia/Tehran</span><button class="date-field" id="indicatorFromButton"><b id="indicatorFromDisplay">Select start</b>${icon("calendar", 16)}</button><input id="indicatorFrom" type="hidden"></label><label><span>To • Asia/Tehran</span><button class="date-field" id="indicatorToButton"><b id="indicatorToDisplay">Select end</b>${icon("calendar", 16)}</button><input id="indicatorTo" type="hidden"></label></div>
       <div class="range-shortcuts"><button data-range="all">All available data</button><button data-range="visible">Visible chart</button></div>
     </section>
-    <section class="tv-section"><h3>Modules</h3>
-      ${[
-        ["reactionVisible", "Reaction", ""],
-        ["blueLineEnabled", "Blue Line", ""],
-        ["aVisible", "A zone", ""],
-        ["sVisible", "S module", ""],
-        ["eVisible", "E module", ""],
-        ["stopAllVisible", "StopAll module", ""],
-        ["trueFalseVisible", "T/F labels", ""],
-        ["eStopVisible", "E stop lines", ""],
-        ["orderVisible", "Order reactions", ""],
-        ["orderStopVisible", "Order stops", ""],
-      ].map(([id, title]) => `<label class="module-row"><span><b>${title}</b></span><input id="${id}" class="module-toggle-input" type="checkbox" aria-label="Toggle ${title}"${id === "eStopVisible" ? "" : " checked"}><span class="module-toggle" aria-hidden="true"></span></label>`).join("")}
-    </section>
-    <section class="tv-section"><h3>PH/PL</h3>
-      ${[
-        ["phVisible", "PH markers"], ["phLabelVisible", "PH labels"],
-        ["plVisible", "PL markers"], ["plLabelVisible", "PL labels"],
-        ["mblVisible", "MBL line"], ["mblLabelVisible", "MBL label"],
-      ].map(([id, title]) => `<label class="module-row"><span><b>${title}</b></span><input id="${id}" class="module-toggle-input" type="checkbox" aria-label="Toggle ${title}" checked><span class="module-toggle" aria-hidden="true"></span></label>`).join("")}
-    </section>
+    ${indicatorLayerGroups.map(({ id, rows }) => indicatorSettingsGroup("configure", id,
+      rows.map(([key, title, checked = true, description]) => `<label class="module-row"><span><b>${title}</b>${description ? `<small>${description}</small>` : ""}</span><input id="${key}" class="module-toggle-input" type="checkbox" aria-label="Toggle ${title}"${checked ? " checked" : ""}><span class="module-toggle" aria-hidden="true"></span></label>`).join(""),
+    )).join("")}
   </div>
   <div class="indicator-tab" data-indicator-page="style">
-    <section class="style-group" data-style-group="foundation"><button type="button" class="style-group-header" aria-expanded="true"><span><strong>Foundation</strong><small>Reaction • Blue Line • A</small></span><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div class="style-group-body">
+    ${indicatorSettingsGroup("style", "foundation", `
       ${styleModule("reaction", "Bullish reaction", [appearancePopup("reaction-bull", "Bullish reaction appearance", "Fill, opacity and border", [swatchRow([["bullFill", "Fill", "color", "#86efac"], ["bullBorder", "Border", "color", "#22c55e"]]), rangeRow("bullOpacity", "Fill opacity", 0, 100, 20, "%"), widthRow("bullWidth", "Border width", 0.25), lineStyleRow("bullLineStyle", "solid")], ["bullFill", "bullBorder", "bullOpacity", "bullWidth", "bullLineStyle"])])}
       ${styleModule("reaction-bear", "Bearish reaction", [appearancePopup("reaction-bear", "Bearish reaction appearance", "Fill, opacity and border", [swatchRow([["bearFill", "Fill", "color", "#fca5a5"], ["bearBorder", "Border", "color", "#ef4444"]]), rangeRow("bearOpacity", "Fill opacity", 0, 100, 20, "%"), widthRow("bearWidth", "Border width", 0.25), lineStyleRow("bearLineStyle", "solid")], ["bearFill", "bearBorder", "bearOpacity", "bearWidth", "bearLineStyle"])])}
       ${styleModule("blue", "Blue Line", [appearancePopup("blue", "Blue Line appearance", "Color, width and line style", [swatchRow([["blueColor", "Line color", "color", "#06b6d4"]]), rangeRow("blueOpacity", "Opacity", 0, 100, 100, "%"), widthRow("blueWidth", "Line width", 3), lineStyleRow("blueLineStyle", "solid")], ["blueColor", "blueOpacity", "blueWidth", "blueLineStyle"])])}
       ${styleModule("a", "A label", [appearancePopup("a", "A label color", "Label color", [swatchRow([["aColor", "Label color", "color", "#7c3aed"]])], ["aColor"]), fontSizeRow("aSize", "Font size", INDICATOR_MARKER_DEFAULTS.aSize), rangeRow("aGap", "Distance from candle", 4, 32, 12, "px")])}
-    </div>
-    </section>
-    <section class="style-group" data-style-group="se"><button type="button" class="style-group-header" aria-expanded="true"><span><strong>S & E behaviors</strong><small>S • E</small></span><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div class="style-group-body">
       ${styleModule("s", "S labels", [appearancePopup("s", "S label colors", "Bullish and bearish colors", [swatchRow([["sBullColor", "Bullish", "color", "#2563eb"], ["sBearColor", "Bearish", "color", "#f23645"]])], ["sBullColor", "sBearColor"]), fontSizeRow("sSize", "Font size", INDICATOR_MARKER_DEFAULTS.sSize), rangeRow("sGap", "Distance from candle", 4, 32, 12, "px")])}
       ${styleModule("e", "E labels", [appearancePopup("e", "E label colors", "Blue and red family colors", [swatchRow([["eBlueColor", "Blue family", "color", "#1e3a8a"], ["eRedColor", "Red family", "color", "#7f1d1d"]])], ["eBlueColor", "eRedColor"]), fontSizeRow("eSize", "Font size", INDICATOR_MARKER_DEFAULTS.eSize), rangeRow("eGap", "Distance from candle", 4, 32, 12, "px")])}
       ${styleModule("e-stop", "E stop lines", [appearancePopup("e-stop", "E stop line appearance", "Color, width and dotted style", [swatchRow([["eStopColor", "Line color", "color", "#111111"]]), widthRow("eStopWidth", "Line width", 1), lineStyleRow("eStopLineStyle", "dot")], ["eStopColor", "eStopWidth", "eStopLineStyle"])])}
-    </div>
-    </section>
-    <section class="style-group" data-style-group="stopall"><button type="button" class="style-group-header" aria-expanded="true"><span><strong>StopAll</strong><small>StopAll</small></span><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div class="style-group-body">
+      ${styleModule("order", "Order reaction boxes", [appearancePopup("order", "Order reaction appearance", "Fill, opacity and border", [swatchRow([["orderFill", "Fill", "color", "#d1d3d6"], ["orderColor", "Border", "color", "#8a8f98"]]), rangeRow("orderOpacity", "Fill opacity", 0, 100, 20, "%"), widthRow("orderWidth", "Border width", 0.25), lineStyleRow("orderLineStyle", "solid")], ["orderFill", "orderColor", "orderOpacity", "orderWidth", "orderLineStyle"])])}
+      ${styleModule("order-stop", "Order stop lines", [appearancePopup("order-stop", "Order stop line appearance", "Color, width and dotted style", [swatchRow([["orderStopColor", "Line color", "color", "#ef4444"]]), widthRow("orderStopWidth", "Line width", 1), lineStyleRow("orderStopLineStyle", "dot")], ["orderStopColor", "orderStopWidth", "orderStopLineStyle"]), `<div class="setting-row"><label>Unbroken stop cap</label><input id="orderStopCap" type="number" min="1" max="200" value="200"></div>`])}
+      ${verdictAppearance("foundation", "Foundation T/F label")}
+    `)}
+    ${indicatorSettingsGroup("style", "secondary", `
       ${styleModule("stopall", "StopAll marker", [appearancePopup("stopall", "StopAll appearance", "Fill, opacity and border", [swatchRow([["stopAllFill", "Fill", "color", "#ff9800"], ["stopAllBorder", "Border", "color", "#ff9800"]]), rangeRow("stopAllOpacity", "Fill opacity", 0, 100, 20, "%"), widthRow("stopAllWidth", "Border width", 0.25)], ["stopAllFill", "stopAllBorder", "stopAllOpacity", "stopAllWidth"]), fontSizeRow("stopAllSize", "Label font size", INDICATOR_MARKER_DEFAULTS.stopAllSize), rangeRow("stopAllRadius", "Circle radius", 4, 16, INDICATOR_MARKER_DEFAULTS.stopAllRadius, "px"), rangeRow("stopAllGap", "Label distance", 4, 32, 16, "px")])}
-    </div>
-    </section>
-    <section class="style-group" data-style-group="primary"><button type="button" class="style-group-header" aria-expanded="true"><span><strong>PH/PL</strong><small>Primary High • Primary Low • MBL</small></span><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div class="style-group-body">
+      ${verdictAppearance("secondary", "Secondary T/F label")}
+    `)}
+    ${indicatorSettingsGroup("style", "primary", `
       ${styleModule("primary-arrow", "Primary arrows", [appearancePopup("primary-arrow", "Primary arrow appearance", "PH color and arrow size", [swatchRow([["primaryArrowColor", "PH marker and label color", "color", "#056656"]]), rangeRow("primaryArrowSize", "Arrow size", 4, 32, 12, "px")], ["primaryArrowColor", "primaryArrowSize"])])}
       ${styleModule("primary-circle", "Primary circles", [appearancePopup("primary-circle", "Primary circle appearance", "PL color, circle opacity and radius", [swatchRow([["primaryCircleColor", "PL marker and label color", "color", "#ec407a"]]), rangeRow("primaryCircleOpacity", "Circle opacity", 0, 100, 100, "%"), rangeRow("primaryCircleRadius", "Circle radius", 4, 28, 4, "px")], ["primaryCircleColor", "primaryCircleOpacity", "primaryCircleRadius"])])}
       ${styleModule("primary-label", "Primary labels and spacing", [fontSizeRow("primaryLabelSize", "Label font size", 12), rangeRow("primaryGap", "Distance from candle", 0, 48, 12, "px"), rangeRow("primaryLabelGap", "Distance from marker", 0, 48, 10, "px")], ["primaryLabelSize", "primaryGap", "primaryLabelGap"])}
       ${styleModule("mbl", "Matching behavior leg", [appearancePopup("mbl", "MBL appearance", "Line, label and dotted style", [swatchRow([["mblColor", "Line and label color", "color", "#b22833"]]), widthRow("mblWidth", "Line width", 2), lineStyleRow("mblLineStyle", "dot"), fontSizeRow("mblSize", "Label font size", PRIMARY_VISUAL_DEFAULTS.mblSize)], ["mblColor", "mblWidth", "mblLineStyle", "mblSize"])])}
-    </div></section>
-    <section class="style-group" data-style-group="order"><button type="button" class="style-group-header" aria-expanded="true"><span><strong>Order reactions</strong><small>Order Reaction</small></span><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div class="style-group-body">
-      ${styleModule("order", "Order reaction boxes", [appearancePopup("order", "Order reaction appearance", "Fill, opacity and border", [swatchRow([["orderFill", "Fill", "color", "#d1d3d6"], ["orderColor", "Border", "color", "#8a8f98"]]), rangeRow("orderOpacity", "Fill opacity", 0, 100, 20, "%"), widthRow("orderWidth", "Border width", 0.25), lineStyleRow("orderLineStyle", "solid")], ["orderFill", "orderColor", "orderOpacity", "orderWidth", "orderLineStyle"])])}
-      ${styleModule("order-stop", "Order stop lines", [appearancePopup("order-stop", "Order stop line appearance", "Color, width and dotted style", [swatchRow([["orderStopColor", "Line color", "color", "#ef4444"]]), widthRow("orderStopWidth", "Line width", 1), lineStyleRow("orderStopLineStyle", "dot")], ["orderStopColor", "orderStopWidth", "orderStopLineStyle"]), `<div class="setting-row"><label>Unbroken stop cap</label><input id="orderStopCap" type="number" min="1" max="200" value="200"></div>`])}
-    </div>
-    </section>
+      ${verdictAppearance("primary", "Third T/F label")}
+      ${marketTransitionAppearance()}
+    `)}
   </div>
   <div class="indicator-tab" data-indicator-page="info">
     <section class="tv-section">
@@ -1244,7 +1324,8 @@ function refreshAppearancePreviews() {
     const popup = $(`[data-appearance-popup="${preview.dataset.appearancePreview}"]`);
     const colors = [...popup.querySelectorAll("input[type='color']")].map((input) => input.value);
     preview.style.background = colors.length > 1
-      ? `linear-gradient(135deg, ${colors[0]} 0 50%, ${colors[1]} 50% 100%)`
+      ? `linear-gradient(135deg, ${colors.map((color, index) =>
+        `${color} ${100 * index / colors.length}% ${100 * (index + 1) / colors.length}%`).join(", ")})`
       : colors[0] || "var(--tv-border)";
   });
 }
@@ -1483,7 +1564,10 @@ function activateIndicatorTab(target, moveFocus = false) {
     page.classList.toggle('active', active);
     page.hidden = !active;
   });
-  if (target === "info" && state.indicator.infoDetailsDirty) renderIndicatorInfo();
+  if (target === "info") {
+    if (state.indicator.infoDetailsDirty) renderIndicatorInfo();
+    else renderIndicatorActivity();
+  }
 }
 $('.indicator-tabs').setAttribute('role', 'tablist');
 $('.indicator-tabs').setAttribute('aria-label', 'Indicator settings');
@@ -1696,6 +1780,9 @@ function renderChartIdentity(item = state.file) {
   }
   if ($("#chartSymbol")) $("#chartSymbol").textContent = symbol;
   if ($("#symbolBtn")) $("#symbolBtn").innerHTML = `${escapeHtml(symbol)} ${materialIcon("expand_more")}`;
+  const range = $("#copyRawFilename");
+  range.disabled = !item;
+  range.title = item ? `Copy RAW filename · ${item.id.split("/").at(-1)}` : "Open a RAW chart to copy its filename";
 }
 function sourceTimeframeSeconds(item = state.file) {
   const match = String(item?.timeframe || "").match(/^(\d+)([SMHD])$/i);
@@ -1855,7 +1942,7 @@ async function readCommittedRealtimeAppend(file, lastCandleTime) {
 async function loadFile(item, { reconcileLive = false } = {}) {
   if (!item) return;
   const previous = state.file;
-  let preserve = Boolean(reconcileLive && previous?.chartId && item.chartId === previous.chartId
+  const preserve = Boolean(reconcileLive && previous?.chartId && item.chartId === previous.chartId
     && item.timeframe === previous.timeframe && item.symbol === previous.symbol && item.broker === previous.broker);
   invalidateIndicatorCalculation();
   symbolLoadController?.abort();
@@ -1900,29 +1987,32 @@ async function loadFile(item, { reconcileLive = false } = {}) {
         reconciledCandles = Boolean(candles.length || corrections.length || gapCandles.length);
         return;
       }
-      preserve = false;
+      repairedHistory = true;
+      reconciledCandles = true;
+      invalidateRealtimeIndicatorHistory();
     }
-    if (typeof saveChartIndicatorContext === "function") saveChartIndicatorContext();
+    if (!preserve) saveChartIndicatorContext();
     state.file = item;
     state.raw = normalizedRows;
     renderChartIdentity(item);
     localStorage.setItem("qg:last-symbol", item.id);
-    persistWorkspaceRefresh();
-    const persistedIndicator = restoreIndicatorLifecycle(readPersistedIndicatorState(item.id));
-    if ($("#rangePreset")) $("#rangePreset").value = "all";
-    if ($("#indicatorFrom"))
-      setDateTimeValue("#indicatorFrom", inputFromTehran(state.raw[0].time));
-    if ($("#indicatorTo"))
-      setDateTimeValue("#indicatorTo", inputFromTehran(state.raw.at(-1).time));
-    if (persistedIndicator.form) applyIndicatorForm(persistedIndicator.form);
-    if (persistedIndicator.from) setDateTimeValue("#indicatorFrom", persistedIndicator.from);
-    if (persistedIndicator.to) setDateTimeValue("#indicatorTo", persistedIndicator.to);
-    state.history = [];
-    state.redo = [];
-    state.drawings = [];
-    restoreChartIndicatorContext(item.id);
-    loadDrawings();
+    if (preserve) {
+      moveRealtimeIndicatorPreferences(previous.id, item.id);
+    } else {
+      resetChartIndicatorContext();
+      const persistedIndicator = restoreIndicatorLifecycle(readPersistedIndicatorState(item.id));
+      if ($("#rangePreset")) $("#rangePreset").value = "all";
+      setDateTimeValue("#indicatorFrom", persistedIndicator.from || inputFromTehran(state.raw[0].time));
+      setDateTimeValue("#indicatorTo", persistedIndicator.to || inputFromTehran(state.raw.at(-1).time));
+      if (persistedIndicator.form) applyIndicatorForm(persistedIndicator.form);
+      openIndicator.restoredFor = persistedIndicator.form ? item.id : null;
+      state.history = [];
+      state.redo = [];
+      state.drawings = [];
+      loadDrawings();
+    }
     updateTimeframeAvailability();
+    persistWorkspaceRefresh();
     persistChartTabUrl(item);
     renderChartIdentity(item);
     renderSymbolList();
@@ -1935,6 +2025,8 @@ async function loadFile(item, { reconcileLive = false } = {}) {
       rawCandles: state.raw.length,
       durationMs: Math.round((performance.now() - started) * 100) / 100,
     });
+    if (!preserve) await restoreCachedIndicator();
+    if (loadRevision !== symbolLoadRevision) return;
     toast(`${parseName(item)} loaded • ${state.raw.length.toLocaleString()} candles`, "success");
   } catch (error) {
     if (error?.name === "AbortError" || loadRevision !== symbolLoadRevision) return;
@@ -2040,10 +2132,13 @@ chart.subscribeCrosshairMove((p) => {
   if (d) setOHLC(d);
 });
 function selectTimeframe(seconds, label) {
+  if (symbolLoadController) return;
   if (seconds < sourceTimeframeSeconds()) {
     toast(`The selected dataset cannot display below ${state.file.timeframe}`, "error");
     return;
   }
+  if (state.tf === seconds) return;
+  resetChartIndicatorContext();
   state.tf = seconds;
   try { localStorage.setItem(CHART_TIMEFRAME_KEY, String(seconds)); }
   catch (error) { log.chart.warn("TIMEFRAME_PERSIST_FAILED", { message: error.message }); }
@@ -2051,7 +2146,7 @@ function selectTimeframe(seconds, label) {
   persistChartTabUrl();
   renderTimeframeControls(false);
   renderTf();
-  clearActiveIndicatorCalculation();
+  void restoreCachedIndicator().then(() => realtimeChart?.requestIndicatorUpdate());
   toast(`Chart timeframe changed to ${label}`, "info");
 }
 renderTimeframeControls();
@@ -2144,7 +2239,7 @@ $("#symbolList").onclick = async (e) => {
   if (copyButton) {
     const fullId = decodeURIComponent(copyButton.dataset.copyChartId || "");
     try {
-      await copyErrorLogText(fullId);
+      await copyTextToClipboard(fullId);
       toast("Chart ID copied", "success");
     } catch (error) {
       log.chart.error("CHART_ID_COPY_FAILED", error);
@@ -2237,6 +2332,17 @@ function refreshCurrentFileMetadata() {
     : refreshed;
 }
 $("#reportBtn").onclick = exportChartData;
+$("#copyRawFilename").onclick = async () => {
+  const filename = state.file?.id.split("/").at(-1);
+  if (!filename) return;
+  try {
+    await copyTextToClipboard(filename);
+    toast("RAW filename copied", "success");
+  } catch (error) {
+    log.chart.error("RAW_FILENAME_COPY_FAILED", error);
+    toast(`Could not copy the RAW filename: ${error.message}`, "error");
+  }
+};
 $("#gotoBtn").onclick = () => {
   setDateTimeValue(
     "#gotoInput",
@@ -2413,20 +2519,73 @@ function saveChartIndicatorContext() {
     }));
   } catch (error) { log.chart.warn("INDICATOR_STATE_STORAGE_FAILED", { message: error.message }); }
 }
-function restoreChartIndicatorContext(fileId) {
-  invalidateIndicatorCalculation();
-  state.indicator.results = null;
-  state.indicator.settings = null;
-  state.indicator.calculationKey = null;
-  state.indicator.resultContext = null;
-  state.indicator.lastCalculation = null;
-  state.indicator.enabled = false;
-  state.indicator.objects = [];
-  state.indicator.objectMap = new Map();
-  state.indicator.selectedObjectId = null;
+function resetChartIndicatorContext() {
+  clearActiveIndicatorCalculation({ persist: false, redraw: false });
+  $("#indicatorEnabled").checked = false;
+  setFooterCacheStatus();
   state.indicatorRange = { from: null, to: null, dragging: null, preview: false };
 }
+async function restoreCachedIndicator() {
+  const file = state.file;
+  if (!file || indicatorCacheClearing) return;
+  indicatorRestoreController?.abort();
+  const controller = new AbortController();
+  indicatorRestoreController = controller;
+  const { signal } = controller;
+  const chartTimeframe = state.tf;
+  const isCurrent = () => !signal.aborted && state.tf === chartTimeframe && state.file?.id === file.id
+    && !indicatorCalculationOwner && !state.indicator.resultContext;
+  const query = new URLSearchParams({ id: file.id, chartTimeframe, tabId: liveIndicatorTabId });
+  if (file.chartId) query.set("chartId", file.chartId);
+  try {
+    const response = await fetch(`/api/reactions/cached?${query}`, {
+      cache: "no-store", signal: AbortSignal.any([signal, AbortSignal.timeout(30_000)]),
+    });
+    if (response.status === 404) return;
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const { payload, snapshot, proof, sourceFingerprint } = await response.json();
+    if (!isCurrent()) return;
+    const { calculationId, chartId, direction, timeframe, from, to } = snapshot.calculation;
+    const form = captureIndicatorForm();
+    if (form.controls.indicatorTf !== "follow" || timeframe !== chartTimeframe) {
+      form.controls.indicatorTf = String(timeframe);
+    }
+    applyIndicatorForm({ ...form, direction });
+    setDateTimeValue("#indicatorFrom", inputFromTehran(from));
+    setDateTimeValue("#indicatorTo", inputFromTehran(to));
+    $("#indicatorEnabled").checked = true;
+    const settings = indicatorSettings();
+    const key = calculationKey(settings, from, to, timeframe, chartTimeframe);
+    state.indicator.settings = settings;
+    state.indicator.results = removeInvalidIndicatorCalculations(payload);
+    state.indicator.calculationKey = key;
+    state.indicator.resultContext = {
+      fileId: file.id, chartId, symbol: file.symbol, source: file,
+      chartTimeframe, analysisTimeframe: timeframe, from, to, direction,
+      calculationId, calculationKey: key, sourceFingerprint, liveProof: proof,
+    };
+    state.indicator.lastCalculation = {
+      status: "Restored from calculation cache", cache: "file", timeframe, direction,
+      durationMs: engineCalculationDuration(payload),
+    };
+    openIndicator.restoredFor = file.id;
+    rebuildIndicatorObjects({ preserveOverrides: true });
+    state.indicator.infoDetailsDirty = true;
+    if ($("#indicatorModal:not(.hidden)") && $('[data-indicator-tab="info"].active')) renderIndicatorInfo();
+    setFooterCacheStatus("file");
+    setIndicatorVisibility(true);
+    indicatorStatus("Cached indicator restored", "success");
+  } catch (error) {
+    if (isCurrent()) {
+      setFooterCacheStatus("error");
+      log.indicator.warn("CALCULATION_CACHE_RESTORE_FAILED", { message: error.message });
+    }
+  } finally {
+    if (indicatorRestoreController === controller) indicatorRestoreController = null;
+  }
+}
 function invalidateIndicatorCalculation() {
+  indicatorRestoreController?.abort();
   const owner = indicatorCalculationOwner;
   if (!owner) return;
   indicatorCalculationOwner = null;
@@ -2435,9 +2594,8 @@ function invalidateIndicatorCalculation() {
   state.indicator.loading = false;
   $("#applyIndicator").disabled = false;
 }
-function clearActiveIndicatorCalculation() {
+function clearActiveIndicatorCalculation({ persist = true, redraw = true } = {}) {
   invalidateIndicatorCalculation();
-  const hadResult = Boolean(state.indicator.results);
   state.indicator.results = null;
   state.indicator.settings = null;
   state.indicator.calculationKey = null;
@@ -2447,8 +2605,8 @@ function clearActiveIndicatorCalculation() {
   state.indicator.objects = [];
   state.indicator.objectMap = new Map();
   state.indicator.selectedObjectId = null;
-  setIndicatorVisibility(false);
-  if (hadResult) drawAll();
+  state.indicator.infoDetailsDirty = true;
+  setIndicatorVisibility(false, { persist, redraw });
 }
 function readIndicatorOverrides() {
   try {
@@ -3475,6 +3633,8 @@ function indicatorTimeToCoordinate(time) {
 function drawIndicator(canvasWidth, canvasHeight) {
   paintIndicator(canvasWidth, canvasHeight, {
     ctx, state, indicatorTimeToCoordinate, overlayPriceCoordinate,
+    plotHeight: canvasHeight - chart.timeScale().height(),
+    plotWidth: canvasWidth - series.priceScale().width(),
     priceToY: price => series.priceToCoordinate(price),
     indicatorObject, indicatorOffsetPixels, offsetIndicatorPoint, offsetIndicatorRect,
     rgba, dash,
@@ -3528,6 +3688,9 @@ function drawOverlay(width, height) {
   for (const d of state.drawings)
     if (!d.hidden) drawOne(d, d.id === state.selected || selectedIds?.has(d.id), width, height);
   if (state.draft) drawOne(state.draft, false, width, height);
+  if (state.interaction?.preview && drawingCopyIsCurrent(state.interaction)) {
+    drawOne(state.interaction.preview, false, width, height);
+  }
   if (state.selectionBox) {
     const { a, b } = state.selectionBox;
     ctx.save();
@@ -3983,8 +4146,25 @@ function moveDrawing(d, dt, dp, deltaBars) {
   Object.assign(d, candidate);
   return true;
 }
+function drawingCopyIsCurrent(interaction) {
+  return interaction.chartIdentity === (state.file?.chartId || state.file?.id)
+    && interaction.timeframe === state.tf && state.drawings.includes(interaction.source)
+    && !interaction.source.locked && !interaction.source.hidden;
+}
+function clearDrawingCopy(interaction) {
+  state.interaction = null;
+  canvas.classList.remove("selection-active");
+  if (shell.hasPointerCapture(interaction.pointerId)) shell.releasePointerCapture(interaction.pointerId);
+}
+function cancelDrawingCopy(event) {
+  const interaction = state.interaction;
+  if (interaction?.mode !== "copy" || (event && event.pointerId !== interaction.pointerId)) return;
+  clearDrawingCopy(interaction);
+  drawAll();
+}
 function selectDrawingTool(tool) {
   if (tool !== "cursor" && !chartWorkspaceActive()) return;
+  if (tool !== "cursor") cancelDrawingCopy();
   if (state.tool !== tool) state.draft = null;
   state.tool = tool;
   $$("[data-tool]").forEach((item) =>
@@ -4005,6 +4185,7 @@ function setDrawingToolsActive(active) {
   });
   if (!active) $("#drawingToolbar")?.classList.add("hidden");
   else updateToolbar();
+  if (!active) cancelDrawingCopy();
   if (!active && (state.tool !== "cursor" || state.draft)) {
     state.draft = null;
     state.interaction = null;
@@ -4013,10 +4194,10 @@ function setDrawingToolsActive(active) {
   }
 }
 function cancelDrawingTool(reason, { preservePath = false } = {}) {
+  cancelDrawingCopy();
   if (preservePath && state.draft?.type === "path" && state.draft.points.length > 1) {
     const id = state.draft.id;
     finishDraft();
-    toast("Path kept and drawing tool deselected");
     log.chart.info("PATH_DRAFT_PRESERVED", { id, reason });
     return;
   }
@@ -4026,7 +4207,6 @@ function cancelDrawingTool(reason, { preservePath = false } = {}) {
   selectDrawingTool("cursor");
   drawAll();
   if (wasActive) {
-    toast("Drawing tool cancelled");
     log.chart.info("DRAWING_TOOL_CANCELLED", { reason });
   }
 }
@@ -4042,7 +4222,6 @@ function moveDrawingTool(id, direction) {
   [drawingTools[from], drawingTools[to]] = [drawingTools[to], drawingTools[from]];
   localStorage.setItem(DRAWING_TOOL_ORDER_KEY, JSON.stringify(drawingTools));
   renderDrawingToolbar(id);
-  toast(`${drawingToolById.get(id)} moved ${direction < 0 ? "left" : "right"}`);
 }
 const drawingToolbar = $(".top-drawing-tools");
 // Let the browser pan the outer mobile header, including gestures starting on
@@ -4101,7 +4280,6 @@ drawingToolbar.addEventListener("drop", (event) => {
   drawingTools.splice(to, 0, source);
   localStorage.setItem(DRAWING_TOOL_ORDER_KEY, JSON.stringify(drawingTools));
   renderDrawingToolbar(source);
-  toast(`${drawingToolById.get(source)} order saved`);
 });
 drawingToolbar.addEventListener("keydown", (event) => {
   const button = event.target.closest("[data-drawing-tool]");
@@ -4133,10 +4311,7 @@ canvas.onpointerdown = (e) => {
     return;
   }
   let p = point(e);
-  if (p.time == null || p.price == null) {
-    toast("Load candle data before drawing");
-    return;
-  }
+  if (p.time == null || p.price == null) return;
   if (state.tool === "zoom") {
     const scale = chart.timeScale();
     const current = scale.options().barSpacing || 8;
@@ -4172,7 +4347,6 @@ canvas.onpointerdown = (e) => {
     if (!state.draft) {
       state.draft = newDrawing("path", p);
       state.draft.preview = p;
-      toast("Click to add points • Enter or double-click to finish");
     } else {
       state.draft.points.push(p);
       state.draft.b = clone(p);
@@ -4260,16 +4434,17 @@ shell.addEventListener(
 shell.addEventListener(
   "pointerdown",
   (e) => {
-    if (state.tool !== "cursor" || e.target === canvas) return;
+    if (state.tool !== "cursor" || e.target === canvas || e.button !== 0) return;
     // The floating editor lives above the chart but is still inside the shell.
     // Do not treat a click on one of its controls (including the drag grip) as
     // an empty-chart click that clears the selected drawing.
     if (e.target.closest("#drawingToolbar")) return;
     const p = point(e);
     if (!isDrawingSurface(p)) return;
-    if ((e.ctrlKey || e.metaKey) && startGroupSelection(e)) return;
-    const d = hitTest(p),
-      indicatorItem = d ? null : indicatorHitTest(p);
+    const duplicate = e.ctrlKey || e.metaKey;
+    const d = hitTest(p);
+    if (duplicate && !d && startGroupSelection(e)) return;
+    const indicatorItem = d ? null : indicatorHitTest(p);
     if (indicatorItem) {
       e.preventDefault();
       e.stopPropagation();
@@ -4291,6 +4466,17 @@ shell.addEventListener(
     e.stopPropagation();
     selectDrawing(d.id);
     if (d.locked) return;
+    if (duplicate) {
+      const start = isPosition(d) ? point(e, true) : p;
+      if (!validDrawingPoint(start)) return;
+      state.interaction = {
+        id: d.id, mode: "copy", pointerId: e.pointerId, start, source: d,
+        chartIdentity: state.file?.chartId || state.file?.id, timeframe: state.tf,
+      };
+      canvas.classList.add("selection-active");
+      shell.setPointerCapture(e.pointerId);
+      return;
+    }
     checkpoint();
     const a = xy(d.a),
       b = xy(d.b || d.a);
@@ -4330,7 +4516,22 @@ shell.addEventListener(
     e.stopPropagation();
     const p = point(e);
     if (!isDrawingSurface(p)) return;
-    if (state.interaction.mode === "select") {
+    const interaction = state.interaction;
+    if (interaction.mode === "copy") {
+      if (e.pointerId !== interaction.pointerId || !drawingCopyIsCurrent(interaction) || !validDrawingPoint(p)) return;
+      const { start, source } = interaction;
+      interaction.preview = null;
+      if (Math.hypot(p.x - start.x, p.y - start.y) >= 3 && (p.time !== start.time || p.price !== start.price)) {
+        const copy = clone(source);
+        const deltaBars = isPosition(source) ? positionWidthBars(state.data, start.time, p.time, state.tf) : undefined;
+        if (moveDrawing(copy, Number(p.time) - Number(start.time), Number(p.price) - Number(start.price), deltaBars)) {
+          interaction.preview = copy;
+        }
+      }
+      drawAll();
+      return;
+    }
+    if (interaction.mode === "select") {
       state.selectionBox.b = p;
       drawAll();
       return;
@@ -4387,6 +4588,19 @@ shell.addEventListener(
     if (!state.interaction) return;
     e.preventDefault();
     e.stopPropagation();
+    const interaction = state.interaction;
+    if (interaction.mode === "copy") {
+      if (e.pointerId !== interaction.pointerId) return;
+      clearDrawingCopy(interaction);
+      if (interaction.preview && drawingCopyIsCurrent(interaction) && isDrawingSurface(point(e))) {
+        checkpoint();
+        const copy = { ...interaction.preview, id: createUniqueId() };
+        state.drawings.push(copy);
+        selectDrawing(copy.id);
+        saveDrawings();
+      } else drawAll();
+      return;
+    }
     if (state.interaction.mode === "select" && state.selectionBox) {
       const { a, b } = state.selectionBox,
         left = Math.min(a.x, b.x),
@@ -4408,7 +4622,6 @@ shell.addEventListener(
         .map((drawing) => drawing.id);
       state.selected = state.selectedIds[0] || null;
       state.selectionBox = null;
-      toast(`${state.selectedIds.length} drawings selected`);
       log.chart.info("DRAWING_MULTI_SELECTION_COMPLETED", {
         selectedCount: state.selectedIds.length,
         ids: state.selectedIds,
@@ -4431,7 +4644,6 @@ for (const [id, level] of [["positionTarget", "target"], ["positionStop", "stop"
     if (!isPosition(d) || d.locked) return;
     const edited = event.target.value.trim() ? editPositionLevel(d, level, event.target.value) : null;
     if (!edited) {
-      toast(`Keep the ${level} on its side of the entry price`, "error");
       updateToolbar();
       return;
     }
@@ -4443,7 +4655,6 @@ $("#positionBars").addEventListener("change", (event) => {
   const d = selected(), bars = Number(event.target.value);
   if (!isPosition(d) || d.locked) return;
   if (!Number.isFinite(bars) || bars <= 0) {
-    toast("Position width must be greater than zero", "error");
     updateToolbar();
     return;
   }
@@ -4453,7 +4664,12 @@ $("#positionBars").addEventListener("change", (event) => {
   checkpoint();
   applyPositionEdit(d, edited);
 });
-shell.addEventListener("pointercancel", () => {
+shell.addEventListener("lostpointercapture", cancelDrawingCopy);
+shell.addEventListener("pointercancel", (event) => {
+  if (state.interaction?.mode === "copy") {
+    cancelDrawingCopy(event);
+    return;
+  }
   if (!state.interaction?.id || !isPosition(selected())) return;
   state.interaction = null;
   canvas.classList.remove("selection-active");
@@ -4808,7 +5024,6 @@ function focusObjectOnChart(item) {
     from: index - 35,
     to: index + 35,
   });
-  toast("Focused object on chart");
 }
 function selectTreeObject(id, append = false) {
   const item = objectByTreeId(id);
@@ -4992,16 +5207,6 @@ function indicatorSettings() {
     bearOpacity: +$("#bearOpacity").value,
     bearWidth: +$("#bearWidth").value,
     bearLineStyle: $("#bearLineStyle").value,
-    reactionVisible: $("#reactionVisible").checked,
-    blueLineEnabled: $("#blueLineEnabled").checked,
-    aVisible: $("#aVisible").checked,
-    sVisible: $("#sVisible").checked,
-    eVisible: $("#eVisible").checked,
-    stopAllVisible: $("#stopAllVisible").checked,
-    trueFalseVisible: $("#trueFalseVisible").checked,
-    eStopVisible: $("#eStopVisible").checked,
-    orderVisible: $("#orderVisible").checked,
-    orderStopVisible: $("#orderStopVisible").checked,
     blueColor: $("#blueColor").value,
     blueOpacity: +$("#blueOpacity").value,
     blueWidth: +$("#blueWidth").value,
@@ -5036,7 +5241,7 @@ function indicatorSettings() {
     eStopColor: $("#eStopColor").value,
     eStopWidth: +$("#eStopWidth").value,
     eStopLineStyle: $("#eStopLineStyle").value,
-    ...Object.fromEntries(Object.entries(PRIMARY_VISUAL_DEFAULTS).map(([id, fallback]) => {
+    ...Object.fromEntries(Object.entries(indicatorDisplayDefaults).map(([id, fallback]) => {
       const control = $("#" + id);
       return [id, typeof fallback === "boolean" ? control.checked
         : typeof fallback === "number" ? Number(control.value) : control.value];
@@ -5299,10 +5504,10 @@ function eventDetails(direction, group, type) {
     })
     .join("");
 }
-function setIndicatorVisibility(enabled) {
+function setIndicatorVisibility(enabled, { persist = true, redraw = true } = {}) {
   state.indicator.enabled = Boolean(enabled && state.indicator.results);
   syncAlertMonitoring();
-  if (typeof saveChartIndicatorContext === "function") saveChartIndicatorContext();
+  if (persist) saveChartIndicatorContext();
   $("#indicatorBtn").classList.toggle("active", state.indicator.enabled);
   const footer = $("#indicatorStatusFooter");
   if (footer) {
@@ -5318,13 +5523,13 @@ function setIndicatorVisibility(enabled) {
   // This switch changes presentation only. Keep the calculation payload,
   // request identity, and manual drawings intact for an immediate restore.
   try {
-    const saved = localStorage.getItem("market-canvas:reaction-indicator");
+    const saved = persist && localStorage.getItem("market-canvas:reaction-indicator");
     if (saved) {
       localStorage.setItem("market-canvas:reaction-indicator",
         JSON.stringify({ ...JSON.parse(saved), enabled: Boolean(enabled) }));
     }
   } catch { /* A storage failure must not block render-only visibility. */ }
-  drawAll();
+  if (redraw) drawAll();
 }
 function setFooterCacheStatus(cache) {
   const source = String(cache || "").toLowerCase();
@@ -5334,7 +5539,9 @@ function setFooterCacheStatus(cache) {
   const cold = source === "miss" || source === "cold" || source === "bypass";
   const failed = source === "error";
   footer.dataset.state = failed ? "error" : fromCache ? "cache" : cold ? "cold" : "idle";
-  footer.title = failed ? "Indicator cache error" : fromCache ? "Indicator result loaded from cache" : cold ? "Indicator result calculated without a cache hit" : "Calculation source is not available";
+  const status = failed ? "Indicator cache error" : fromCache ? "Indicator result loaded from cache"
+    : cold ? "Indicator result calculated without a cache hit" : "Calculation source is not available";
+  footer.title = `Reload indicator cache · ${status}`;
   footer.setAttribute("aria-label", footer.title);
 }
 function formatDuration(durationMs) {
@@ -5366,9 +5573,10 @@ function renderIndicatorActivity() {
   const logs = state.indicator.activity
     .slice()
     .reverse()
-    .map((entry) => `<li data-level="${entry.level.toLowerCase()}"><time>${indicatorLogTime(entry.time)}</time><b>${entry.level}</b><span>${entry.message}${entry.durationMs != null ? ` • ${formatDuration(entry.durationMs)}` : ""}</span></li>`)
+    .map((entry) => `<li data-level="${escapeHtml(entry.level.toLowerCase())}"><time>${indicatorLogTime(entry.time)}</time><b>${escapeHtml(entry.level)}</b><span>${escapeHtml(entry.message)}${entry.durationMs != null ? ` • ${formatDuration(entry.durationMs)}` : ""}</span></li>`)
     .join("");
-  root.innerHTML = `<section class="info-last-calculation"><span>Last calculation</span><strong>${last ? formatDuration(last.durationMs) : "—"}</strong><small>${last?.status || "No completed calculation"}</small></section><section class="indicator-activity"><h4>Activity, warnings & errors</h4><ol>${logs || '<li class="activity-empty"><span>Calculation events, warnings, and errors will appear here.</span></li>'}</ol></section>${state.indicator.infoDetails || ""}`;
+  const duration = last?.durationMs == null ? "—" : formatDuration(last.durationMs);
+  root.innerHTML = `<section class="info-last-calculation"><span>Last calculation</span><strong title="Original Engine calculation time">${duration}</strong><small>${escapeHtml(last?.status || "No completed calculation")}</small></section><section class="indicator-activity"><h4>Activity, warnings & errors</h4><ol>${logs || '<li class="activity-empty"><span>Calculation events, warnings, and errors will appear here.</span></li>'}</ol></section>${state.indicator.infoDetails || ""}`;
   if ($("#infoBadge")) $("#infoBadge").textContent = String(state.indicator.activity.length);
 }
 function pushIndicatorActivity(level, message, details = {}) {
@@ -5380,7 +5588,10 @@ function pushIndicatorActivity(level, message, details = {}) {
   });
   if (state.indicator.activity.length > 150)
     state.indicator.activity.splice(0, state.indicator.activity.length - 150);
-  renderIndicatorActivity();
+  if ($("#infoBadge")) $("#infoBadge").textContent = String(state.indicator.activity.length);
+  if (!state.indicator.infoDetailsDirty
+      && $("#indicatorModal:not(.hidden)") && $('[data-indicator-tab="info"].active'))
+    renderIndicatorActivity();
 }
 function renderIndicatorInfo() {
   state.indicator.infoDetailsDirty = false;
@@ -5442,8 +5653,9 @@ function renderIndicatorInfo() {
     .map((event) => `<li data-status="${escapeHtml(event.status)}"><time>${formatDuration(event.elapsedMs)}</time><span${calculationStageTitle(event.label)}>${escapeHtml(event.label)}</span><b>${event.durationMs != null ? formatDuration(event.durationMs) : escapeHtml(event.status)}</b></li>`)
     .join("") || '<li><span>No popup trace was captured for this calculation.</span></li>';
   const timingSource = state.indicator.lastCalculation?.cache || "unknown";
-  const bridgeTotal = payload.timings?.bridgeTotalMs;
-  state.indicator.infoDetails = `<details class="info-analysis-details" open><summary>Calculation details <b>${reactionTotal} reactions</b></summary><div class="info-metrics"><div><span>Reactions</span><strong>${reactionTotal}</strong></div><div><span>Blue Lines</span><strong>${blueLineTotal}</strong></div><div><span>A</span><strong>${aTotal}</strong></div><div><span>S</span><strong>${sTotal}</strong></div><div><span>E</span><strong>${eTotal}</strong></div><div><span>StopAll</span><strong>${stopAllTotal}</strong></div><div><span>PH</span><strong>${phTotal}</strong></div><div><span>PL</span><strong>${plTotal}</strong></div><div><span>MBL</span><strong>${mblTotal}</strong></div><div><span>Resets</span><strong>${resetTotal}</strong></div><div><span>Timeframe</span><strong>${payload.timeframe || "—"}s</strong></div></div><section class="info-timing info-stage-summary"><header><span>Execution timing</span><strong>${formatDuration(state.indicator.lastCalculation?.durationMs)}</strong></header><p>Cache: ${escapeHtml(timingSource)}${Number.isFinite(Number(bridgeTotal)) ? ` • Python bridge total: ${formatDuration(bridgeTotal)}` : ""}</p><ol>${stageRows}</ol></section><section class="info-timing info-engine-timing"><header><span>Engine timing details</span><strong>${backendPhases.length} measurements</strong></header><div class="info-timing-grid">${timingRows}</div></section><section class="info-timing info-progress-trace"><header><span>Complete execution log</span><strong>${progressTrace.length} events</strong></header><ol>${progressRows}</ol></section><div class="info-meta"><span>Engines</span><b>Reaction ${payload.version || "9.2.1"} • Blue Line ${payload.blueLineVersion || "3.0.0"} • A ${payload.aVersion || "2.0.0"} • S ${payload.sVersion || "4.0.0"} • E ${payload.eVersion || "—"} • StopAll ${payload.stopAllVersion || "—"} • PH/PL ${payload.primaryVersion || "—"}</b><span>Range</span><b>${formatTehran(payload.actualFrom, false)} → ${formatTehran(payload.actualTo, false)}</b></div>${groups}</details>`;
+  const engineDuration = state.indicator.lastCalculation?.durationMs;
+  const executionDuration = engineDuration == null ? "—" : formatDuration(engineDuration);
+  state.indicator.infoDetails = `<details class="info-analysis-details" open><summary>Calculation details <b>${reactionTotal} reactions</b></summary><div class="info-metrics"><div><span>Reactions</span><strong>${reactionTotal}</strong></div><div><span>Blue Lines</span><strong>${blueLineTotal}</strong></div><div><span>A</span><strong>${aTotal}</strong></div><div><span>S</span><strong>${sTotal}</strong></div><div><span>E</span><strong>${eTotal}</strong></div><div><span>StopAll</span><strong>${stopAllTotal}</strong></div><div><span>PH</span><strong>${phTotal}</strong></div><div><span>PL</span><strong>${plTotal}</strong></div><div><span>MBL</span><strong>${mblTotal}</strong></div><div><span>Resets</span><strong>${resetTotal}</strong></div><div><span>Timeframe</span><strong>${payload.timeframe || "—"}s</strong></div></div><section class="info-timing info-stage-summary"><header><span>Original Engine timing</span><strong>${executionDuration}</strong></header><p>Result source: ${escapeHtml(timingSource)}</p><ol>${stageRows}</ol></section><section class="info-timing info-engine-timing"><header><span>Engine timing details</span><strong>${backendPhases.length} measurements</strong></header><div class="info-timing-grid">${timingRows}</div></section><section class="info-timing info-progress-trace"><header><span>Complete execution log</span><strong>${progressTrace.length} events</strong></header><ol>${progressRows}</ol></section><div class="info-meta"><span>Engines</span><b>Reaction ${payload.version || "9.2.1"} • Blue Line ${payload.blueLineVersion || "3.0.0"} • A ${payload.aVersion || "2.0.0"} • S ${payload.sVersion || "4.0.0"} • E ${payload.eVersion || "—"} • StopAll ${payload.stopAllVersion || "—"} • PH/PL ${payload.primaryVersion || "—"}</b><span>Range</span><b>${formatTehran(payload.actualFrom, false)} → ${formatTehran(payload.actualTo, false)}</b></div>${groups}</details>`;
   renderIndicatorActivity();
 }
 const pickerState = { target: null, trigger: null, year: 0, month: 0, day: 1, applyAfterSave: false };
@@ -5601,7 +5813,7 @@ function openIndicator() {
         )
           ? saved.settings.direction
           : null;
-        for (const [id, value] of Object.entries(saved.settings)) {
+        for (const [id, value] of Object.entries({ ...indicatorDisplayDefaults, ...migrateIndicatorVisibility(saved.settings) })) {
           const element = $("#" + indicatorControlId(id));
           if (!element) continue;
           let normalizedValue = id === "orderColor" && value === "#f59e0b"
@@ -5647,8 +5859,10 @@ function openIndicator() {
     if (!$("#indicatorTo").value)
       setDateTimeValue("#indicatorTo", inputFromTehran(state.raw.at(-1).time));
   }
-  if (state.indicator.infoDetailsDirty && $('[data-indicator-tab="info"].active')) renderIndicatorInfo();
-  else renderIndicatorActivity();
+  if ($('[data-indicator-tab="info"].active')) {
+    if (state.indicator.infoDetailsDirty) renderIndicatorInfo();
+    else renderIndicatorActivity();
+  }
   $("#indicatorModal").classList.remove("hidden");
   requestAnimationFrame(() => {
     resize();
@@ -5665,7 +5879,8 @@ async function calculateIndicator() {
       return;
     }
   }
-  if (state.indicator.loading || !state.file) return;
+  if (state.indicator.loading || indicatorCacheClearing || !state.file || symbolLoadController) return;
+  indicatorRestoreController?.abort();
   const calculationStarted = performance.now();
   const direction = $("[data-direction].active")?.dataset.direction;
   const enabled = $("#indicatorEnabled").checked;
@@ -5874,17 +6089,17 @@ async function calculateIndicator() {
       counts,
     };
     state.indicator.lastCalculation = {
-      durationMs: completedTiming.durationMs,
+      durationMs: engineCalculationDuration(payload),
       status: "Completed successfully",
       cache: completedTiming.serverCache,
       timeframe,
       direction: settings.direction,
       timing: completedTiming.timing,
     };
+    state.indicator.infoDetailsDirty = true;
     pushIndicatorActivity("SUCCESS", "Indicator calculation completed", {
-      durationMs: completedTiming.durationMs,
+      durationMs: state.indicator.lastCalculation.durationMs,
     });
-    renderIndicatorInfo();
     window.__QG_PERF__ = {
       ...(window.__QG_PERF__ || {}),
       indicator: completedTiming,
@@ -5896,11 +6111,6 @@ async function calculateIndicator() {
   } catch (error) {
     if (!operationIsCurrent()) return;
     const failedDurationMs = Math.round((performance.now() - calculationStarted) * 100) / 100;
-    state.indicator.lastCalculation = {
-      durationMs: failedDurationMs,
-      status: "Failed",
-      timeframe: null,
-    };
     pushIndicatorActivity("ERROR", error.message || "Indicator calculation failed", {
       durationMs: failedDurationMs,
     });
@@ -5918,7 +6128,8 @@ async function calculateIndicator() {
   } finally {
     if (indicatorCalculationOwner === owner) {
       if (progressTimer) stopCalculationProgress(progressTimer, succeeded);
-      if (succeeded) renderIndicatorInfo();
+      if (succeeded && $("#indicatorModal:not(.hidden)") && $('[data-indicator-tab="info"].active'))
+        renderIndicatorInfo();
       indicatorCalculationOwner = null;
       state.indicator.loading = false;
       $("#applyIndicator").disabled = false;
@@ -5946,20 +6157,10 @@ function invalidateRealtimeIndicatorHistory() {
   const context = state.indicator.resultContext;
   if (!context || context.chartId !== state.file?.chartId) return;
   state.indicator.resultContext = { ...context, needsCandleRepair: true, liveSessionId: null };
-  state.indicator.results = null;
-  state.indicator.lastCalculation = null;
   if (state.indicator.selectedObjectId) {
     state.indicator.selectedObjectId = null;
     updateToolbar();
   }
-  state.indicator.hitBoxes = [];
-  // Keep previous identities for override matching when the rebuilt result arrives.
-  state.indicator.objects = [];
-  renderObjectTree();
-  state.indicator.infoDetailsDirty = true;
-  if ($("#indicatorModal:not(.hidden)") && $('[data-indicator-tab="info"].active'))
-    renderIndicatorInfo();
-  scheduleDraw();
 }
 
 async function waitForRealtimeCandles(isCurrent, committedLatest = null) {
@@ -5989,7 +6190,10 @@ async function continueRealtimeIndicator(context, file, signal, operationIsCurre
   const keepAlive = !repairOnly && !context.needsCandleRepair && !context.needsSourceRefresh
     && Boolean(context.liveSessionId) && context.liveRawTo === rawTo
     && context.source?.metadata?.dataSha256 === file.metadata?.dataSha256;
-  if (!isCurrent() || (keepAlive && performance.now() - context.liveContactAt < 10 * 60_000))
+  const restoredAtTail = !context.liveSessionId && !context.needsCandleRepair && !context.needsSourceRefresh
+    && context.liveProof?.rawSha256 && context.liveProof.rawSha256 === file.metadata?.dataSha256
+    && context.to === Math.floor(rawTo / context.chartTimeframe) * context.chartTimeframe;
+  if (!isCurrent() || restoredAtTail || (keepAlive && performance.now() - context.liveContactAt < 10 * 60_000))
     return false;
   const progress = !keepAlive && reportProgress && startLiveIndicatorProgress({ operationId: createUniqueId(), signal, report: reportProgress });
   let outcome = "idle";
@@ -6015,7 +6219,7 @@ async function fetchAndApplyRealtimeIndicator({ context, file, signal, isCurrent
   const request = rebuild ? {
     ...proof.request, id: file.id, chartId: file.chartId, tabId: liveIndicatorTabId,
     to: repairOnly ? context.to : Math.floor(rawTo / context.chartTimeframe) * context.chartTimeframe,
-    liveSession: true,
+    liveSession: true, rebuildCached: proof.cached === true,
   } : { id: file.id, chartId: file.chartId, tabId: liveIndicatorTabId, sessionId: context.liveSessionId, proof,
     ...(keepAlive ? { keepAlive: true } : {}) };
   const response = await fetch(rebuild ? "/api/reactions" : "/api/reactions/continue", {
@@ -6033,6 +6237,7 @@ async function fetchAndApplyRealtimeIndicator({ context, file, signal, isCurrent
   const payload = await response.json();
   if (!(await waitForRealtimeCandles(isCurrent)) || !isCurrent()) return false;
   if (!response.ok) {
+    if (payload.code === "CALCULATION_CACHE_CLEARED") clearDisplayedCalculationCache();
     const problem = payload.error || "Could not continue the indicator.";
     throw Object.assign(new Error(problem), { code: payload.code });
   }
@@ -6058,6 +6263,11 @@ async function fetchAndApplyRealtimeIndicator({ context, file, signal, isCurrent
     sourceFingerprint, liveRawTo: repairOnly ? null : rawTo, liveContactAt: performance.now(),
   };
   state.indicator.calculationKey = nextKey;
+  state.indicator.lastCalculation = {
+    status: "Live calculation completed", cache: "bypass", timeframe: analysisTimeframe, direction,
+    durationMs: engineCalculationDuration(payload),
+  };
+  setFooterCacheStatus("bypass");
   if (!state.indicatorRange.dragging && parseTehranInput($("#indicatorFrom").value) === context.from
       && parseTehranInput($("#indicatorTo").value) === context.to) {
     setDateTimeValue("#indicatorTo", inputFromTehran(to));
@@ -6156,7 +6366,7 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
   }
   const autoContinue = () => indicatorCalculation && !indicatorSignal?.aborted;
   const needsRepair = context => refreshIndicatorSource || context?.needsSourceRefresh || context?.needsCandleRepair;
-  const chartIsCurrent = () => !signal.aborted && loadRevision === symbolLoadRevision && !symbolLoadController
+  const chartIsCurrent = () => !signal.aborted && loadRevision === symbolLoadRevision && !symbolLoadController && !indicatorCacheClearing
     && state.file?.chartId === chartId && state.tf === viewTimeframe && !indicatorCalculationOwner
     && (!chartUpdateRunning || Boolean(realtimeUpdateOwner));
 
@@ -6165,7 +6375,7 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
     if (!chartIsCurrent() || (!autoContinue() && !needsRepair(indicatorContext)))
       return verification ? { status: candleStatus, verification } : candleStatus;
     if (!indicatorContext) return { status: candleStatus, verification,
-      indicatorError: "Run an indicator calculation with Apply in this tab before enabling automatic continuation." };
+      indicatorError: indicatorRestoreController ? "" : "Run an indicator calculation with Apply before enabling automatic continuation." };
 
     async function run() {
       if (!(await waitForRealtimeCandles(chartIsCurrent, committedLatest)) || !chartIsCurrent()) return;
@@ -6185,8 +6395,7 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
       } catch (error) {
         if (continuationSignal.aborted || !operationIsCurrent() || state.indicator.resultContext !== context) return;
         log.indicator.warn("REALTIME_INDICATOR_CONTINUATION_DEFERRED", { chartId, code: error.code, message: error.message });
-        return { status: "Indicator update deferred. Retrying at the next check.",
-          ...(refreshIndicatorSource ? { indicatorError: error.message } : {}) };
+        return { status: "Indicator update deferred. Retrying at the next check.", indicatorError: error.message };
       }
     }
 
@@ -6689,9 +6898,10 @@ if ($("#navGoLast")) {
 }
 
 // ---- Symbol switch: clear drawings ----
+let cacheClearOpener;
 function closeCacheClearDialog({ restoreFocus = true } = {}) {
   $("#cacheClearModal").classList.add("hidden");
-  if (restoreFocus) $("#reloadIndicatorBtn").focus();
+  if (restoreFocus) cacheClearOpener?.focus();
 }
 function selectedCacheScope() {
   return $("input[name='cacheScope']:checked")?.value === "all" ? "all" : "symbol";
@@ -6706,8 +6916,9 @@ function updateCacheScope() {
 function selectedCacheLayersFromDialog() {
   return $$("#cacheClearModal .cache-layer-options input:checked:not(:disabled)").map((input) => input.value);
 }
-function openCacheClearDialog() {
+function openCacheClearDialog(opener) {
   if (state.indicator.loading || !state.file) return;
+  cacheClearOpener = opener;
   $("#cacheClearSymbol").textContent = `${parseName(state.file)} only`;
   $("input[name='cacheScope'][value='symbol']").checked = true;
   $$("#cacheClearModal .cache-layer-options input").forEach((input) => { input.checked = input.value !== "drawings" && input.value !== "secret"; });
@@ -6715,14 +6926,31 @@ function openCacheClearDialog() {
   $("#cacheClearModal").classList.remove("hidden");
   $("input[name='cacheScope'][value='symbol']").focus();
 }
+function clearDisplayedCalculationCache() {
+  resetChartIndicatorContext();
+  state.indicator.activity = [];
+  indicatorStatus("Cache cleared. Use Apply to run the indicator.");
+  drawAll();
+}
+window.addEventListener("storage", (event) => {
+  if (event.key !== indicatorCacheClearEventKey || !event.newValue || !state.file) return;
+  try {
+    const { scope, symbol } = JSON.parse(event.newValue);
+    if (scope === "all" || symbol === state.file.symbol) clearDisplayedCalculationCache();
+  } catch (error) {
+    log.indicator.warn("CACHE_CLEAR_NOTIFICATION_FAILED", { message: error.message });
+  }
+});
 async function clearIndicatorCache(scope, selectedLayers) {
   const button = $("#reloadIndicatorBtn");
-  if (state.indicator.loading || !state.file) return;
+  const file = state.file;
+  if (!file || state.indicator.loading || indicatorCacheClearing) return;
   button.classList.add("is-loading");
   try {
     const browserLayers = selectedLayers.filter((layer) => cacheClearLayers(scope).includes(layer));
     const serverLayers = browserLayers.filter((layer) => ["calculations", "drawings", "secret"].includes(layer));
-    const query = new URLSearchParams({ scope, ...(scope === "symbol" ? { symbol: state.file.symbol || "" } : {}) });
+    indicatorCacheClearing = serverLayers.includes("calculations");
+    const query = new URLSearchParams({ scope, ...(scope === "symbol" ? { symbol: file.symbol || "" } : {}) });
     if (serverLayers.length) query.set("layers", serverLayers.join(","));
     const result = serverLayers.length
       ? await fetch(`/api/reactions/cache?${query}`, { method: "DELETE" }).then(async (response) => {
@@ -6730,38 +6958,29 @@ async function clearIndicatorCache(scope, selectedLayers) {
           return response.json();
         })
       : { filesCleared: 0, drawingsCleared: 0, localSessionCleared: false };
-    const scopedFiles = scope === "symbol"
-      ? state.inventory.filter((item) => item.symbol === state.file.symbol)
-      : [];
+    const affected = () => scope === "all" || state.file?.symbol === file.symbol;
+    if (indicatorCacheClearing) {
+      if (affected()) clearDisplayedCalculationCache();
+      try {
+        localStorage.setItem(indicatorCacheClearEventKey, JSON.stringify({ scope, symbol: file.symbol, id: createUniqueId() }));
+      } catch { /* The filesystem clear already succeeded. */ }
+    }
+    const scopedFiles = scope === "symbol" ? state.inventory.filter((item) => item.symbol === file.symbol) : [];
     const browserCache = await clearIndicatorBrowserState({
       scope,
-      fileId: state.file.id,
+      fileId: file.id,
       fileIds: scopedFiles.map((item) => item.id),
-      symbol: state.file.symbol,
+      symbol: file.symbol,
       layers: browserLayers,
     });
-    if (browserLayers.some((layer) => layer !== "drawings" && layer !== "secret")) {
-      state.indicator.results = null;
-      state.indicator.settings = null;
-      state.indicator.resultContext = null;
-      state.indicator.lastCalculation = null;
-      state.indicator.activity = [];
-      state.indicator.calculationKey = null;
-      state.indicator.objects = [];
-      state.indicator.objectMap = new Map();
-      state.indicator.selectedObjectId = null;
-      state.indicatorRange = { from: null, to: null, dragging: null, preview: false };
-      openIndicator.restoredFor = null;
-      $("#indicatorEnabled").checked = false;
+    if (browserLayers.includes("browser-storage") && affected()) {
       applyIndicatorForm(indicatorDefaults);
-      setFooterCacheStatus();
-      setIndicatorVisibility(false);
-      indicatorStatus("Cache cleared. Use Apply & calculate to run the indicator.");
+      openIndicator.restoredFor = null;
     }
-    if (browserLayers.includes("drawings")) state.drawings = [];
+    if (browserLayers.includes("drawings") && affected()) state.drawings = [];
     drawAll();
     log.indicator.info("CACHE_CLEARED", { ...result, ...browserCache, selectedLayers: browserLayers });
-    const description = scope === "symbol" ? `for ${parseName(state.file)}` : "for all symbols";
+    const description = scope === "symbol" ? `for ${parseName(file)}` : "for all symbols";
     const counts = [`${result.filesCleared} calculation cache ${result.filesCleared === 1 ? "file" : "files"}`];
     if (browserLayers.includes("drawings")) counts.push(`${result.drawingsCleared || 0} drawing file${result.drawingsCleared === 1 ? "" : "s"}`);
     if (result.localSessionCleared) counts.push("local FARAZ session");
@@ -6771,10 +6990,11 @@ async function clearIndicatorCache(scope, selectedLayers) {
     setFooterCacheStatus("error");
     toast(error.message, "error");
   } finally {
+    indicatorCacheClearing = false;
     button.classList.remove("is-loading");
   }
 }
-$("#reloadIndicatorBtn").onclick = () => openCacheClearDialog();
+$("#reloadIndicatorBtn").onclick = $("#cacheStatusFooter").onclick = event => openCacheClearDialog(event.currentTarget);
 $("#closeCacheClear").onclick = $("#cancelCacheClear").onclick = () => closeCacheClearDialog();
 $("#cacheClearModal").onclick = (event) => {
   if (event.target === $("#cacheClearModal")) closeCacheClearDialog();
@@ -6791,9 +7011,10 @@ $("#clearSelectedCache").onclick = async () => {
   const layers = selectedCacheLayersFromDialog();
   if (!layers.length) return toast("Select at least one cache layer", "error");
   if (layers.includes("secret") && !window.confirm("Remove the local FARAZ session too? This does not sign you out of the FARAZ website.")) return;
+  const opener = cacheClearOpener;
   closeCacheClearDialog({ restoreFocus: false });
   await clearIndicatorCache(scope, layers);
-  $("#reloadIndicatorBtn").focus();
+  opener?.focus();
 };
 $("#closeIndicator").onclick = $("#cancelIndicator").onclick = () =>
   closeSidePanel($("#indicatorModal"));
@@ -6825,7 +7046,7 @@ $$("[data-direction]").forEach(
 );
 $("#indicatorEnabled").onchange = () => {
   const enabled = $("#indicatorEnabled").checked;
-  if (!enabled) clearActiveIndicatorCalculation();
+  if (!enabled) invalidateIndicatorCalculation();
   setIndicatorVisibility(enabled);
   indicatorStatus(enabled
     ? state.indicator.results ? "Cached indicator restored" : "Ready to calculate"
@@ -6885,7 +7106,7 @@ $("#pickerSave").onclick = () => {
   if (applyAfterSave) $("#gotoApply").click();
 };
 const visualSettingIds = [
-  ...Object.keys(PRIMARY_VISUAL_DEFAULTS),
+  ...Object.keys(indicatorDisplayDefaults),
   "bullFill",
   "bullBorder",
   "bullOpacity",
@@ -6896,16 +7117,6 @@ const visualSettingIds = [
   "bearOpacity",
   "bearWidth",
   "bearLineStyle",
-  "reactionVisible",
-  "blueLineEnabled",
-  "aVisible",
-  "sVisible",
-  "eVisible",
-  "stopAllVisible",
-  "trueFalseVisible",
-  "eStopVisible",
-  "orderVisible",
-  "orderStopVisible",
   "blueColor",
   "blueOpacity",
   "blueWidth",
@@ -6943,13 +7154,14 @@ const visualSettingIds = [
 ];
 for (const id of visualSettingIds) {
   $("#" + id).oninput = () => {
-    if (id !== "trueFalseVisible") invalidateIndicatorCalculation();
+    if (!id.endsWith("TfVisible")) invalidateIndicatorCalculation();
     const valueLabel = $("#" + id + "Value");
     if (valueLabel)
       valueLabel.textContent =
         $("#" + id).value + (id.includes("Opacity") ? "%" : id.includes("Width") ? "" : "px");
     refreshAppearancePreviews();
     if (state.indicator.results) applyVisualSettings();
+    else saveChartIndicatorContext();
   };
   $("#" + id).onchange = $("#" + id).oninput;
 }
@@ -6991,7 +7203,8 @@ function captureIndicatorForm() {
 const indicatorDefaults = captureIndicatorForm();
 function applyIndicatorForm(snapshot) {
   if (!snapshot?.controls) return;
-  for (const [id, value] of Object.entries(snapshot.controls)) {
+  const controls = { ...indicatorDisplayDefaults, ...migrateIndicatorVisibility(snapshot.controls) };
+  for (const [id, value] of Object.entries(controls)) {
     const element = $("#" + id);
     if (!element) continue;
     if (element.type === "checkbox") element.checked = Boolean(value);
@@ -7206,12 +7419,14 @@ document.addEventListener("keydown", (event) => {
 });
 realtimeChart = mountRealtimeChart({
   trigger: $("#realtimeChartBtn"),
+  footerTrigger: $("#realtimeStatusFooter"),
   getChartId: () => symbolLoadController ? null : state.file?.chartId,
   getSourceTimeframeSeconds: () => sourceTimeframeSeconds(),
   getStoredVerification: () => state.file?.metadata?.candleVerification,
   runUpdate: runRealtimeChartUpdate,
   onStateChange(view) {
     alertLiveView = view;
+    updateLiveFooter();
     syncAlertMonitoring();
   },
   onVerificationComplete({ checkedCount, correctedCount, recoveredCount }) {

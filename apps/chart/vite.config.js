@@ -16,7 +16,8 @@ import { createCalculationCoordinator, parseEngineConcurrency } from './server/c
 import { readBoundedBody } from './server/request-body.js';
 import { createProgressChannels } from './server/progress-channels.js';
 import { assertRawInputUnchanged, captureRawInputIdentity } from './server/raw-input-identity.js';
-import { writeCalculationCache } from './server/calculation-cache.js';
+import { writeAtomicCalculationCache, writeCalculationCache } from './server/calculation-cache.js';
+import { isCalculationReportId, isLiveReportId, liveReportLocation } from './src/features/manual-review/tab.js';
 import { createLiveEngineSessions, LiveEngineError, startLiveEngineWorker } from './server/live-engine-sessions.js';
 import { indicatorDigest, restoreRawSnapshot } from './server/live-engine-recovery.js';
 import { chartWatchOptions, preserveOpenChart } from './server/ui-live-update.js';
@@ -94,6 +95,8 @@ const calculationCoordinator = createCalculationCoordinator({
 const activeDetectorChildren = new Set();
 const liveEngineSessions = createLiveEngineSessions();
 const liveReports = new Map();
+let calculationClearRevision = 0;
+const symbolClearRevisions = new Map();
 
 function shutdownCalculations() {
   calculationCoordinator.close();
@@ -182,15 +185,77 @@ function resolveCalculationReport(id) {
   return file.startsWith(`${path.resolve(calculationsDir)}${path.sep}`) && fs.existsSync(file) ? file : null;
 }
 
-function livePublication(item, request, to, payload, workerFingerprint, tabId) {
-  const reportId = `live/${randomUUID().replaceAll('-', '')}`;
+function activeCalculationPath(symbol, timeframe, chartKey) {
+  return path.join(calculationsDir, symbol, 'active', timeframe, `${chartKey}.json`);
+}
+
+function activeCalculationFile(item, chartTimeframe) {
+  return activeCalculationPath(cacheSegment(item.symbol, 'unnamed-symbol'), `${chartTimeframe}s`,
+    identityDigest(item.chartId || item.id));
+}
+
+function assertActiveCalculationExists(item, chartTimeframe) {
+  if (!fs.existsSync(activeCalculationFile(item, chartTimeframe))) {
+    throw new LiveEngineError(409, 'Calculation cache was cleared. Use Apply again.', 'CALCULATION_CACHE_CLEARED');
+  }
+}
+
+function calculationClearGuard(symbol) {
+  const revision = calculationClearRevision;
+  const symbolRevision = symbolClearRevisions.get(symbol);
+  return () => {
+    if (calculationClearRevision !== revision || symbolClearRevisions.get(symbol) !== symbolRevision) {
+      throw new LiveEngineError(409, 'Calculation cache was cleared. Use Apply again.', 'CALCULATION_CACHE_CLEARED');
+    }
+  };
+}
+
+function readCalculationRecord(file) {
+  try {
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch (error) {
+    if (error?.code === 'ENOENT') return null;
+    throw error;
+  }
+}
+
+function sendCurrentCalculationReport(req, res, file) {
+  const descriptor = fs.openSync(file, 'r');
+  try {
+    // Use the same open file for the validator and response across atomic replacements.
+    const { ino, size, mtimeNs, ctimeNs } = fs.fstatSync(descriptor, { bigint: true });
+    const tag = `"${ino}-${size}-${mtimeNs}-${ctimeNs}"`;
+    res.setHeader('ETag', tag);
+    if (req.headers['if-none-match'] === tag) {
+      res.statusCode = 304;
+      res.end();
+      return;
+    }
+    const { payload, snapshot } = JSON.parse(fs.readFileSync(descriptor, 'utf8'));
+    res.end(JSON.stringify({ payload, snapshot }));
+  } finally {
+    fs.closeSync(descriptor);
+  }
+}
+
+function livePublication(item, request, to, payload, sourceFingerprint, workerFingerprint, tabId) {
+  const symbol = cacheSegment(item.symbol, 'unnamed-symbol');
+  const timeframe = `${request.chartTimeframe}s`;
+  const chartKey = identityDigest(item.chartId || item.id);
+  const reportId = `live/${symbol}/${timeframe}/${chartKey}/${randomUUID().replaceAll('-', '')}`;
   const output = JSON.stringify(payload);
-  liveReports.set(reportId, { output, calculation: calculationMetadata(item, { ...request, to }, reportId) });
-  if (liveReports.size > 16) liveReports.delete(liveReports.keys().next().value);
-  return { calculationId: reportId, output, proof: {
-    chartId: item.chartId, tabId, request, to, workerFingerprint,
+  const proof = {
+    chartId: item.chartId, tabId, request, to, workerFingerprint, cached: true,
     rawBytes: item.metadata.dataBytes, rawSha256: item.metadata.dataSha256, resultDigest: indicatorDigest(payload),
-  } };
+  };
+  const snapshot = JSON.stringify({ timezone: 'Asia/Tehran', calculation: calculationMetadata(item, { ...request, to }, reportId) });
+  const report = `{"payload":${output},"snapshot":${snapshot}}`;
+  const provenance = JSON.stringify({ sourceFingerprint, proof });
+  writeAtomicCalculationCache(activeCalculationPath(symbol, timeframe, chartKey),
+    `{"payload":${output},"snapshot":${snapshot},"provenance":${provenance}}`);
+  liveReports.set(reportId, { report, symbol: item.symbol });
+  if (liveReports.size > 16) liveReports.delete(liveReports.keys().next().value);
+  return { calculationId: reportId, output, proof };
 }
 
 function engineCalculationArgs(dataPath, request, bounds, rawTimeframe) {
@@ -466,24 +531,31 @@ function localDataApi() {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         try {
-          const route = decodeURIComponent(new URL(req.url ?? '/', 'http://localhost').pathname).replace(/^\/+/, '');
-          if (/^live\/[a-f0-9]{32}$/.test(route) && ['GET', 'POST'].includes(req.method)) {
-            const file = path.join(calculationsDir, `${route}.json`);
+          const url = new URL(req.url ?? '/', 'http://localhost');
+          const route = decodeURIComponent(url.pathname).replace(/^\/+/, '');
+          const live = liveReportLocation(route);
+          if (req.method === 'GET' && url.searchParams.get('latest') === '1') {
+            if (!live) throw new Error('This calculation does not have a live report.');
+            const file = activeCalculationPath(live.symbol, live.timeframe, live.chartKey);
+            if (!fs.existsSync(file)) throw new Error('No current calculation is saved for this chart timeframe.');
+            sendCurrentCalculationReport(req, res, file);
+            return;
+          }
+          if (isLiveReportId(route) && ['GET', 'POST'].includes(req.method)) {
+            const { symbol, timeframe, chartKey, revision } = live || {};
+            const file = live
+              ? path.join(calculationsDir, symbol, 'live-reports', timeframe, chartKey, `${revision}.json`)
+              : path.join(calculationsDir, `${route}.json`);
             if (fs.existsSync(file)) { res.end(fs.readFileSync(file)); return; }
-            const report = liveReports.get(route);
-            if (!report) throw new Error('The live report is unavailable. Update the indicator in its chart tab.');
-            const snapshot = JSON.stringify({ timezone: 'Asia/Tehran', calculation: report.calculation });
-            const output = `{"payload":${report.output},"snapshot":${snapshot}}`;
-            if (req.method === 'POST') {
-              const temporary = `${file}.${randomUUID()}.tmp`;
-              fs.mkdirSync(path.dirname(file), { recursive: true });
-              try {
-                fs.writeFileSync(temporary, output, { encoding: 'utf8', flag: 'wx' });
-                fs.renameSync(temporary, file);
-              } finally {
-                fs.rmSync(temporary, { force: true });
+            let output = liveReports.get(route)?.report;
+            if (!output && live) {
+              const active = readCalculationRecord(activeCalculationPath(symbol, timeframe, chartKey));
+              if (active?.snapshot.calculation.calculationId === route) {
+                output = JSON.stringify({ payload: active.payload, snapshot: active.snapshot });
               }
             }
+            if (!output) throw new Error('The live report is unavailable. Update the indicator in its chart tab.');
+            if (req.method === 'POST') writeAtomicCalculationCache(file, output);
             res.end(output);
             return;
           }
@@ -615,7 +687,17 @@ function localDataApi() {
         }
         const filesCleared = layers.includes('calculations') ? cacheFileCount(calculationTarget) : 0;
         const drawingsCleared = layers.includes('drawings') ? storedFileCount(drawingsTarget) : 0;
-        if (layers.includes('calculations')) fs.rmSync(calculationTarget, { recursive: true, force: true });
+        if (layers.includes('calculations')) {
+          fs.rmSync(calculationTarget, { recursive: true, force: true });
+          if (scope === 'all') {
+            calculationClearRevision += 1;
+            symbolClearRevisions.clear();
+            liveReports.clear();
+          } else {
+            symbolClearRevisions.set(symbol, (symbolClearRevisions.get(symbol) || 0) + 1);
+            for (const [id, report] of liveReports) if (report.symbol === symbol) liveReports.delete(id);
+          }
+        }
         if (layers.includes('drawings')) fs.rmSync(drawingsTarget, { recursive: true, force: true });
         fs.mkdirSync(calculationsDir, { recursive: true });
         fs.mkdirSync(drawingsDir, { recursive: true });
@@ -730,6 +812,31 @@ function localDataApi() {
           res.end(JSON.stringify({ error: 'Calculation source identity is unavailable' }));
         }
       });
+      server.middlewares.use('/api/reactions/cached', (req, res) => {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-store');
+        try {
+          if (req.method !== 'GET') throw new LiveEngineError(405, 'GET is required.');
+          const query = new URL(req.url ?? '', 'http://localhost').searchParams;
+          const chartId = query.get('chartId') || null;
+          const chartTimeframe = Number(query.get('chartTimeframe'));
+          const tabId = query.get('tabId');
+          if (!Number.isSafeInteger(chartTimeframe) || chartTimeframe < 1
+              || !/^[a-zA-Z0-9-]{8,80}$/.test(tabId || '')) {
+            throw new LiveEngineError(400, 'Invalid chart timeframe or indicator tab identity.');
+          }
+          const item = rawStore.getListed(query.get('id'));
+          if (!item || (item.chartId || null) !== chartId) throw new LiveEngineError(404, 'Chart not found.');
+          const record = readCalculationRecord(activeCalculationFile(item, chartTimeframe));
+          if (!record) throw new LiveEngineError(404, 'No saved calculation for this chart timeframe.');
+          const { payload, snapshot, provenance } = record;
+          res.end(JSON.stringify({ payload, snapshot, sourceFingerprint: provenance.sourceFingerprint,
+            proof: { ...provenance.proof, tabId } }));
+        } catch (error) {
+          res.statusCode = error.status || 500;
+          res.end(JSON.stringify({ error: error.message }));
+        }
+      });
       server.middlewares.use('/api/reactions/continue', async (req, res) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
@@ -764,6 +871,10 @@ function localDataApi() {
             throw new LiveEngineError(503, 'The selected RAW changed before the indicator update. The next poll will retry.');
           }
           const { dataPath, metadata } = selected;
+          if (proof?.cached && validLiveProof(proof, selected, tabId)) {
+            assertActiveCalculationExists(selected, proof.request.chartTimeframe);
+          }
+          const assertCacheNotCleared = calculationClearGuard(selected.symbol);
           let rawIdentity;
           let currentSessionId = sessionId;
           async function validate(includeBytes = false, delta = false, signal) {
@@ -804,7 +915,8 @@ function localDataApi() {
               schedule: ownsCalculationSlot ? undefined : (work, options) => calculationCoordinator.run(Symbol(), work, undefined, options),
               readAppend: base => rawStore.readAppendDelta(selected, base), publish(payload, request) {
               const to = Math.floor(selected.to / request.chartTimeframe) * request.chartTimeframe;
-              return livePublication(selected, request, to, payload, workerFingerprint, tabId);
+              assertCacheNotCleared();
+              return livePublication(selected, request, to, payload, sourceFingerprint, workerFingerprint, tabId);
             } });
           }
           let result;
@@ -836,7 +948,8 @@ function localDataApi() {
                 await validate(false, false, signal);
                 signal.throwIfAborted();
                 liveEngineSessions.keepAlive({ ...session, sessionId: token });
-                const result = livePublication(selected, fresh.request, fresh.to, fresh.payload, workerFingerprint, tabId);
+                assertCacheNotCleared();
+                const result = livePublication(selected, fresh.request, fresh.to, fresh.payload, sourceFingerprint, workerFingerprint, tabId);
                 return { result, token };
               }
               catch (recoveryError) { liveEngineSessions.discard(token); throw recoveryError; }
@@ -883,9 +996,11 @@ function localDataApi() {
           const valid = rawStore.getListed(body.id);
           if (!valid) throw new Error('Candle file not found');
           if (body.chartId && body.chartId !== valid.chartId) throw new Error('Chart identity does not match the selected RAW file');
+          const assertCacheNotCleared = calculationClearGuard(valid.symbol);
           const timeframe = Number(body.timeframe), chartTimeframe = Number(body.chartTimeframe), from = Number(body.from), to = Number(body.to);
           if (!Number.isInteger(timeframe) || timeframe < 1 || !Number.isInteger(chartTimeframe) || chartTimeframe < 1
             || !Number.isSafeInteger(from) || !Number.isSafeInteger(to) || from > to) throw new Error('Invalid indicator range or timeframe');
+          if (body.rebuildCached === true) assertActiveCalculationExists(valid, chartTimeframe);
           const sourceFromBucket = Math.floor(Number(valid.from) / chartTimeframe) * chartTimeframe;
           const sourceToBucket = Math.floor(Number(valid.to) / chartTimeframe) * chartTimeframe;
           if (from % chartTimeframe !== 0 || to % chartTimeframe !== 0 || from < sourceFromBucket || to > sourceToBucket) {
@@ -973,8 +1088,9 @@ function localDataApi() {
             return;
           }
           let { output } = calculated;
+          assertCacheNotCleared();
           if (liveRequested) {
-            const live = livePublication(valid, calculationRequest, to, payload ?? JSON.parse(output), workerFingerprint, tabId);
+            const live = livePublication(valid, calculationRequest, to, payload ?? JSON.parse(output), sourceFingerprint, workerFingerprint, tabId);
             output ??= live.output;
             res.setHeader('X-QG-Live-Proof', JSON.stringify(live.proof));
             res.setHeader('X-QG-Calculation-Id', live.calculationId);
@@ -1000,8 +1116,8 @@ function localDataApi() {
         } catch (error) {
           if (res.destroyed) return;
           publishProgress(requestId, { status: 'failed', label: error.message });
-          res.statusCode = 400;
-          res.end(JSON.stringify({ error: error.message }));
+          res.statusCode = error.status || 400;
+          res.end(JSON.stringify({ error: error.message, code: error.code }));
         } finally {
           releaseProgress();
           res.off('close', disconnect);
@@ -1018,9 +1134,8 @@ function infoPage() {
     name: 'info-page',
     configureServer(server) {
       server.middlewares.use('/info', (req, res, next) => {
-        const route = req.url ?? '';
-        const calculationRoute = /^\/[a-zA-Z0-9._-]+\/\d+s\/(bullish|bearish)\/\d+-\d+--[a-f0-9]{16}\.json(?:\?.*)?$/.test(route);
-        if (req.method !== 'GET' || (route.includes('.') && !calculationRoute)) { next(); return; }
+        const route = new URL(req.url ?? '/', 'http://localhost').pathname.replace(/^\//, '');
+        if (req.method !== 'GET' || (route && !isCalculationReportId(route))) { next(); return; }
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         res.end(fs.readFileSync(pagePath, 'utf8'));

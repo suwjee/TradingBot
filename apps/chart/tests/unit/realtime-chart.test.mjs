@@ -81,6 +81,28 @@ test("Verify All works while polling is off and reports an unavailable connectio
   assert.equal(fixture.view.remainingMs, null);
 });
 
+test("live calculation failures are tracked independently and clear after the next successful update", async (t) => {
+  let indicatorCheck = 0;
+  const fixture = createScheduler(t, {
+    runUpdate({ indicatorOnly }) {
+      if (!indicatorOnly) return { verification: { status: "unavailable" } };
+      const indicatorError = ++indicatorCheck === 1 ? "Live Engine is unavailable." : "";
+      return { indicatorUpdate: Promise.resolve({ indicatorError }) };
+    },
+  });
+  t.mock.timers.tick(2_000);
+  await settle();
+  assert.match(fixture.view.realtimeError, /unavailable/i);
+  fixture.scheduler.setIndicatorCalculation(true);
+  await settle();
+  assert.equal(fixture.view.liveCalculationError, "Live Engine is unavailable.");
+  assert.equal(fixture.view.indicatorCalculation, true);
+  fixture.scheduler.requestIndicatorUpdate();
+  await settle();
+  assert.equal(fixture.view.liveCalculationError, "");
+  assert.match(fixture.view.realtimeError, /unavailable/i);
+});
+
 test("background Verify All runs every ten minutes independently of the candle interval", async (t) => {
   const notices = [];
   const fixture = createScheduler(t, { sourceTimeframeSeconds: 3_600, start: new Date(2026, 10, 20).getTime(),

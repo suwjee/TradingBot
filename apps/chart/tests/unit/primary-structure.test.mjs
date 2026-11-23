@@ -128,6 +128,7 @@ test("bearish trend paints the red line and a downward reflected arrow", async (
   const strokes = [], scales = [], fills = [];
   const ctx = { save() {}, restore() {}, beginPath() {}, closePath() {},
     moveTo() {}, lineTo() {}, setLineDash() {}, translate() {},
+    fillRect() {}, strokeRect() {}, fillText() {}, measureText: text => ({ width: text.length * 8 }),
     scale(x, y) { scales.push([x, y]); },
     stroke() { strokes.push(this.strokeStyle); }, fill() { fills.push(this.fillStyle); } };
   drawTrendTransitions(ctx, { trendTransitions: [{ direction: "bearish", sourceTime: 10,
@@ -137,6 +138,62 @@ test("bearish trend paints the red line and a downward reflected arrow", async (
   assert.deepEqual(fills, ["#f23645"]);
   assert.deepEqual(scales, [[1.4, -1.4]]);
 });
+
+test("a trend label prints the line's Tehran candle timestamp to seconds and stays in the plot", async () => {
+  const { drawTrendTransitions } = await import(source);
+  const { context, labels, strokes } = trendPaintContext();
+  const sourceTime = Date.UTC(2026, 10, 24, 20, 0, 5) / 1000;
+  drawTrendTransitions(context, { trendTransitions: [{ direction: "bearish", sourceTime,
+    eventTime: sourceTime + 21, iconCandleTime: sourceTime + 50, iconCandleLow: "30" }] }, {
+    timeToX: time => time - sourceTime + 3, priceToY: () => 100,
+    width: 440, height: 240,
+    settings: { trendBearColor: "#b12233", trendLineWidth: 3, trendLineStyle: "dot",
+      trendIconSize: 20, trendIconGap: 20, trendLabelSize: 12 },
+  });
+  assert.equal(labels[0].text, "2026-11-24 23:30:05");
+  assert.equal(labels[0].size, "12px");
+  assert.ok(labels[0].x >= 76 && labels[0].x < 220);
+  assert.ok(labels[0].y < 240 && labels[0].y > 200);
+  assert.deepEqual(strokes[0], { color: "#b12233", width: 3, dash: [0, 9] });
+  assert.equal(strokes[1].color, "#b12233");
+});
+
+test("the market change visibility switch hides the line, icon and timestamp", async () => {
+  const { drawTrendTransitions } = await import(source);
+  const { context, labels, strokes, fills } = trendPaintContext();
+  drawTrendTransitions(context, { trendTransitions: [{ direction: "bearish", sourceTime: 15,
+    iconCandleTime: 20, iconCandleLow: "30" }] }, {
+    timeToX: value => value, priceToY: value => value, width: 500, height: 340,
+    settings: { trendLineVisible: false },
+  });
+  assert.deepEqual([labels, strokes, fills], [[], [], []]);
+});
+
+test("nearby market changes keep their timestamps on separate rows", async () => {
+  const { drawTrendTransitions } = await import(source);
+  const { context, labels } = trendPaintContext();
+  drawTrendTransitions(context, { trendTransitions: [{ direction: "bullish", sourceTime: 100 },
+    { direction: "bearish", sourceTime: 107 }] }, {
+    timeToX: time => time, priceToY: value => value, width: 500, height: 340,
+  });
+  assert.deepEqual(labels.map(({ text, x }) => [text, x]), [
+    ["1970-01-01 03:31:40", 100], ["1970-01-01 03:31:47", 107],
+  ]);
+  assert.ok(labels[0].y - labels[1].y > 18);
+});
+
+function trendPaintContext() {
+  const labels = [], strokes = [], fills = [];
+  return { labels, strokes, fills, context: {
+    save() {}, restore() {}, beginPath() {}, closePath() {}, moveTo() {}, lineTo() {},
+    translate() {}, scale() {}, fillRect() {}, strokeRect() {},
+    measureText(text) { return { width: text.length * 8 }; },
+    setLineDash(dash) { this.dash = dash; },
+    stroke() { strokes.push({ color: this.strokeStyle, width: this.lineWidth, dash: this.dash }); },
+    fill() { fills.push(this.fillStyle); },
+    fillText(text, x, y) { labels.push({ text, x, y, size: this.font.split(" ")[1] }); },
+  } };
+}
 
 test("repeated regimes retain separate clip bounds and aggregate object indexes", async () => {
   const { indicatorCalculationSegments } = await import(source);
@@ -303,6 +360,28 @@ test("MBL line visibility leaves its independently enabled label visible", async
   });
   assert.deepEqual(context.labels, ["MBL"]);
   assert.deepEqual(context.strokes, []);
+});
+
+test("PH, PL, and MBL master switches control both the label and geometry", async () => {
+  const { drawPrimaryStructures } = await import(source);
+  const group = {
+    primaryHighs: [{ id: "high", number: 1, sourceTime: 10, price: "20" }],
+    primaryLows: [{ id: "low", number: 2, sourceTime: 20, price: "10" }],
+    matchingBehaviorLegs: [{ id: "leg", sourceTime: 10, sourceIndex: 0, price: "20" }],
+  };
+  const context = primaryPaintContext();
+  const options = { direction: "bullish", timeframe: 30, timeToX: time => time, priceToY: price => price };
+  drawPrimaryStructures(context, group, { ...options,
+    settings: { phGroupVisible: false, plGroupVisible: false, mblGroupVisible: false } });
+  assert.deepEqual([context.labels, context.strokes, context.circles], [[], [], []]);
+  drawPrimaryStructures(context, group, { ...options, settings: {
+    phGroupVisible: true, plGroupVisible: true, mblGroupVisible: true,
+    phVisible: false, phLabelVisible: false, plVisible: false, plLabelVisible: false,
+    mblVisible: false, mblLabelVisible: false,
+  } });
+  assert.deepEqual(context.labels, ["PH-1", "PL-2", "MBL"]);
+  assert.deepEqual(context.strokes, ["#ec407a", "#b22833"]);
+  assert.equal(context.circles.length, 1);
 });
 
 test("primary PH and PL render verdicts two pixels larger at weight 700", async () => {

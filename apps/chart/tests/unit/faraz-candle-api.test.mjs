@@ -1164,6 +1164,43 @@ test("a rejected FARAZ session remains editable until explicit logout", async (t
   assert.equal(fs.existsSync(sessionPath), true);
 });
 
+test("signing in replaces a rejected FARAZ session only after verifying the new login", async (t) => {
+  const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "faraz-replace-session-"));
+  t.after(() => fs.rmSync(workspaceRoot, { recursive: true, force: true }));
+  const sessionPath = writeFakeSession(workspaceRoot);
+  const oldSession = fs.readFileSync(sessionPath, "utf8");
+  const managed = fakeFarazLoginBrowser();
+  const evaluate = managed.page.evaluate;
+  let signedIn = false;
+  let initialStorageState;
+  managed.page.evaluate = async (fn, args) => {
+    if (args?.endpoint && !signedIn) return { status: 401, ok: false };
+    return evaluate(fn, args);
+  };
+  const api = createFarazCandleApi({ workspaceRoot, launchBrowser: async ({ storageState }) => {
+    initialStorageState = storageState;
+    return managed;
+  }, fetchImpl: async (_url, { headers }) => {
+    const fresh = headers.Cookie === "farazSession=test-browser-cookie" && !headers["x-access-token"];
+    return Response.json({}, { status: fresh ? 200 : 401 });
+  } });
+  const origin = await listenForApi(t, api);
+  const auth = `${origin}/api/faraz/auth`;
+  const status = () => fetch(`${auth}/status?passive=1`).then(response => response.json());
+
+  assert.equal((await status()).state, "expired_session");
+  assert.equal((await fetch(`${auth}/open`, { method: "POST" })).status, 200);
+  assert.equal((await status()).state, "waiting_for_login");
+  assert.equal(initialStorageState, null);
+  assert.equal(fs.readFileSync(sessionPath, "utf8"), oldSession);
+  assert.equal(managed.isClosed(), false);
+
+  signedIn = true;
+  assert.equal((await status()).state, "saved_session");
+  assert.equal(JSON.parse(fs.readFileSync(sessionPath, "utf8")).farazSession, "test-browser-cookie");
+  assert.equal(managed.isClosed(), true);
+});
+
 test("manually edited top-level FARAZ session replaces a stale stored cookie", () => {
   const restored = normalizeClearTextSession({
     format: "clear-text",
@@ -1389,14 +1426,24 @@ test("chart updates use 1000-candle FARAZ packets paced by at least 30ms", async
     fs.rmSync(workspaceRoot, { recursive: true, force: true });
     fs.rmSync(path.join(workspaceRoot, "apps", "chart", "state"), { recursive: true, force: true });
   });
-  writeFakeSession(workspaceRoot);
+  const sessionPath = writeFakeSession(workspaceRoot);
+  const readFileSync = fs.readFileSync;
+  let sessionReads = 0;
+  t.mock.method(fs, "readFileSync", (target, ...args) => {
+    // The first request reads the session again while preparing its headers.
+    // Slow preparation must not spend the gap between actual request starts.
+    if (target === sessionPath && ++sessionReads === 2) {
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 50);
+    }
+    return readFileSync(target, ...args);
+  });
   const calls = [];
   const api = createFarazCandleApi({
     workspaceRoot,
     fetchImpl: async (url) => {
       const request = new URL(url);
       if (request.pathname.endsWith("/authentication/me")) return new Response("{}", { headers: { "content-type": "application/json" } });
-      calls.push({ at: Date.now(), from: Number(request.searchParams.get("from")), to: Number(request.searchParams.get("to")), countback: Number(request.searchParams.get("countback")) });
+      calls.push({ at: performance.now(), from: Number(request.searchParams.get("from")), to: Number(request.searchParams.get("to")), countback: Number(request.searchParams.get("countback")) });
       return new Response(JSON.stringify({ s: "ok", t: [], o: [], h: [], l: [], c: [] }), {
         headers: { "content-type": "application/json" },
       });
@@ -1404,18 +1451,25 @@ test("chart updates use 1000-candle FARAZ packets paced by at least 30ms", async
   });
   const origin = await listenForApi(t, api);
 
-  const response = await fetch(`${origin}/api/faraz/history`, {
+  const history = (from, to) => fetch(`${origin}/api/faraz/history`, {
     method: "POST", headers: { "content-type": "application/json" },
-    body: JSON.stringify({ symbolName: "TEST:PAIR", resolution: "1S", from: 100, to: 1200, packetSize: 1, rateLimitMs: 900, retryCount: 0 }),
+    body: JSON.stringify({ symbolName: "TEST:PAIR", resolution: "1S", from, to, packetSize: 1, rateLimitMs: 900, retryCount: 0 }),
   });
+  const [response, concurrentResponse] = await Promise.all([history(100, 1200), history(1500, 1500)]);
   const candles = await response.json();
   const chartPackets = calls.filter((call) => call.from >= 100 && call.to >= call.from && call.to <= 1200);
 
   assert.equal(response.status, 200);
+  assert.equal(concurrentResponse.status, 200);
+  assert.deepEqual(await concurrentResponse.json(), []);
   assert.equal(candles.length, 0);
+  assert.equal(calls.length, 3);
   assert.equal(chartPackets.length, 2);
   assert.ok(chartPackets.every((call) => call.countback <= 1000));
-  assert.ok(chartPackets[1].at - chartPackets[0].at >= 28, "FARAZ packet starts must be paced at 30ms");
+  for (let index = 1; index < calls.length; index += 1) {
+    const startSpacing = calls[index].at - calls[index - 1].at;
+    assert.ok(startSpacing >= 30, `FARAZ packet starts must be paced at 30ms, got ${startSpacing.toFixed(2)}ms`);
+  }
 });
 
 test("chart history proxy accepts a one-candle recovery range", async (t) => {

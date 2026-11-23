@@ -64,6 +64,7 @@ function New-MainPolicyFixture {
   Write-FixtureFile $fixture '.gitignore' "engineering/docs/hidden.md`n"
   Write-FixtureFile $fixture 'apps/chart/tests/unit/chart.test.mjs'
   Write-FixtureFile $fixture 'engine/tests/unit/engine_test.py'
+  Write-FixtureFile $fixture 'engine/engine.zip' 'workstation Engine backup'
   Write-FixtureFile $fixture 'engineering/docs/architecture.md'
   Write-FixtureFile $fixture 'engineering/docs/hidden.md'
   Write-FixtureFile $fixture 'engineering/archive/repository-graphify/graph.json' '{}'
@@ -205,6 +206,7 @@ function Invoke-MainPolicyTests {
       'apps/chart/state/data/raw/acquired.json',
       'apps/chart/state/cache/runtime.json',
       'apps/chart/state/secret/session.dpapi.json',
+      'engine/engine.zip',
       'apps/chart/dist/index.html'
       'engineering/verification/regenerated-artifacts/dist/index.html'
       'engineering/verification/performance/local-runs/inputs.json'
@@ -339,7 +341,7 @@ function Invoke-RepositoryCoverageTests {
   Assert-True (($runtime.Errors.Count + $runtime.Drift.Count) -eq 0) (($runtime.Errors + $runtime.Drift) -join "`n")
   $validation = Test-ProductionFileSet -FileSet $runtime -Policy $policy
   Assert-True ($validation.Errors.Count -eq 0) ($validation.Errors -join "`n")
-  foreach ($path in @('apps/chart/state/secret/session.json', 'apps/chart/state/qa/secret/session.json', 'apps/chart/state/qa/data/raw/example.csv', 'apps/chart/state/data/raw/BaseLine/probe.HAR', 'apps/chart/state/data/raw/BaseLine/temp/partial.json', 'apps/chart/server/run.faraz-responses.ndjson')) {
+  foreach ($path in @('apps/chart/state/secret/session.json', 'apps/chart/state/qa/secret/session.json', 'apps/chart/state/qa/data/raw/example.csv', 'apps/chart/state/data/raw/BaseLine/probe.HAR', 'apps/chart/state/data/raw/BaseLine/temp/partial.json', 'apps/chart/server/run.faraz-responses.ndjson', 'engine/engine.zip')) {
     $ignore = Invoke-ReleaseGit -Root $root -Arguments @('check-ignore', '-q', '--no-index', '--', $path)
     Assert-True ($ignore.ExitCode -eq 0) "the working tree ignores local material: $path"
   }

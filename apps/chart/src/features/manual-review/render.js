@@ -532,7 +532,7 @@ function reportFilterMarkup(families) {
   }).join("");
 }
 
-export function reviewRuntime(initialBridgeData = null) {
+export function reviewRuntime(initialBridgeData = null, { signal } = {}) {
   const q = (selector) => document.querySelector(selector);
   let bridgeData = initialBridgeData && typeof initialBridgeData === "object" ? initialBridgeData : {};
   q("#bridge-data")?.remove();
@@ -650,7 +650,7 @@ export function reviewRuntime(initialBridgeData = null) {
     try { await navigator.clipboard.writeText(text); }
     catch { const input = document.createElement("textarea"); input.value = text; document.body.append(input); input.select(); document.execCommand("copy"); input.remove(); }
   }
-  document.addEventListener("toggle", (event) => { const details = event.target; if (details instanceof HTMLDetailsElement && details.open && details.matches("[data-bridge-id]")) renderBridgeOutput(details); }, true);
+  document.addEventListener("toggle", (event) => { const details = event.target; if (details instanceof HTMLDetailsElement && details.open && details.matches("[data-bridge-id]")) renderBridgeOutput(details); }, { capture: true, signal });
   document.addEventListener("click", async (event) => {
     if (event.target.closest?.(".filter-group-checkbox")) {
       event.stopPropagation();
@@ -667,7 +667,7 @@ export function reviewRuntime(initialBridgeData = null) {
     }
     const copyButton = event.target.closest?.("[data-copy-yaml]");
     if (copyButton) { const text = copyButton.closest("details")?.querySelector(".bridge-yaml")?.textContent?.trimEnd(); if (text) await copy(text); return; }
-  });
+  }, { signal });
   filters.forEach((input) => { input.onchange = update; });
   parents.forEach((parent) => { parent.onchange = () => { filters.filter((input) => input.dataset.filterFamily === parent.dataset.filterParent).forEach((input) => { input.checked = parent.checked; }); update(); }; });
   allFilters && (allFilters.onchange = () => { filters.forEach((input) => { input.checked = allFilters.checked; }); update(); });
@@ -684,6 +684,7 @@ export function reviewRuntime(initialBridgeData = null) {
   q("#reset") && (q("#reset").onclick = () => { q("#from").value = ""; q("#to").value = ""; update(); });
   q("#copy") && (q("#copy").onclick = () => copy(q("#report-text").value));
   q("#download") && (q("#download").onclick = () => { const url = URL.createObjectURL(new Blob([q("#report-text").value], { type: "text/plain;charset=utf-8" })); const a = document.createElement("a"); a.href = url; a.download = manualReviewFilename(new Date(), "txt"); a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); });
+  if (q("#filter-search")?.value) applySearch();
   update();
 }
 

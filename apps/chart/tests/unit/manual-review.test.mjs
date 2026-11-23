@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import vm from "node:vm";
+import { calculationInfoPath } from "../../src/features/manual-review/tab.js";
 
 import {
   buildReviewBody,
@@ -11,6 +12,14 @@ import {
   reviewRuntime,
   reviewColor,
 } from "../../src/features/manual-review/render.js";
+
+test("the chart opens a durable live report in follow mode and keeps legacy links readable", () => {
+  const current = "live/XAU.USD/30s/1234567890abcdef/00112233445566778899aabbccddeeff";
+  const legacy = "live/00112233445566778899aabbccddeeff";
+  assert.equal(calculationInfoPath({ calculationId: current }), `/info/${current}?follow=1`);
+  assert.equal(calculationInfoPath({ calculationId: legacy }), `/info/${legacy}`);
+  assert.throws(() => calculationInfoPath({ calculationId: current.replace("XAU.USD", "..") }));
+});
 
 test("counted report labels retain finalized behavior numbers", () => {
   for (const [family, number, expected] of [
