@@ -1,0 +1,121 @@
+{
+  "phase": "V9",
+  "branch": "refactor",
+  "correctness_oracle": "01d54ecf0149ebd15de92798be18810b6e2eb791",
+  "overall": "INCOMPLETE",
+  "trace_coverage": "TRACE_COVERAGE_PARTIAL",
+  "production_runtime_changed": false,
+  "no_V9_speedup_claim": true,
+  "gate_counts": {
+    "PASS": 13,
+    "FAIL": 0,
+    "INCOMPLETE": 2,
+    "NOT RUN": 0
+  },
+  "gates": [
+    {
+      "gate": "Pinned commit, baseline ZIP SHA, 15 blobs, 7 RAW",
+      "status": "PASS",
+      "details": null,
+      "source": "/mnt/data/V9_final/V9_FREEZE_AUDIT.json"
+    },
+    {
+      "gate": "V8.1 source unchanged",
+      "status": "PASS",
+      "details": null,
+      "source": "/mnt/data/V9_final/V9_V81_SOURCE_IMMUTABILITY.json"
+    },
+    {
+      "gate": "7/7 Golden output parity",
+      "status": "PASS",
+      "details": null,
+      "source": "/mnt/data/V9_work/output/V9_REAL_PARITY.json"
+    },
+    {
+      "gate": "Synthetic 100k/250k/500k/1m Golden parity",
+      "status": "PASS",
+      "details": null,
+      "source": "/mnt/data/V9_work/output/V9_SYNTHETIC_PARITY.json"
+    },
+    {
+      "gate": "7/7 real RAW AST selected-site metering",
+      "status": "PASS",
+      "details": null,
+      "source": "/mnt/data/V9_final/V9_METER_COMPLETE_7_OF_7.json"
+    },
+    {
+      "gate": "4 x 2 complete synthetic selected-site meters",
+      "status": "PASS",
+      "details": {
+        "completed": 8,
+        "expected": 8
+      },
+      "source": "/mnt/data/V9_completion_20261124/V9_SYNTHETIC_METER_COMBINED.json"
+    },
+    {
+      "gate": "3-block synthetic 1m native unprofiled ABBA",
+      "status": "PASS",
+      "details": {
+        "runs": 12
+      },
+      "source": "/mnt/data/V9_final/abba1m/paired_report.json"
+    },
+    {
+      "gate": "4 real datasets x 3-block ABBA/BAAB",
+      "status": "PASS",
+      "details": null,
+      "source": "/mnt/data/V9_final/abba_real/aggregate.json"
+    },
+    {
+      "gate": "7 full RAW pair selected internal traces and global comparators",
+      "status": "PASS",
+      "details": {
+        "native_trace_runs": 14,
+        "expected": 14,
+        "global_selected_equal_pairs": 7,
+        "expected_pairs": 7,
+        "coverage": "SELECTED ONLY"
+      },
+      "source": "/mnt/data/V9_final/trace/trace_matrix_report.json"
+    },
+    {
+      "gate": "Full synthetic 1m selected in-process traces, native output parity",
+      "status": "INCOMPLETE",
+      "details": null,
+      "source": "/mnt/data/V9_final/trace_synthetic/synthetic_trace_report.json"
+    },
+    {
+      "gate": "545 official tests on AST V8.1",
+      "status": "PASS",
+      "details": null,
+      "source": "/mnt/data/V9_final/tests/v81_ast_instrumented_official_unit.log"
+    },
+    {
+      "gate": "545 official pinned tests",
+      "status": "PASS",
+      "details": null,
+      "source": "/mnt/data/V9_completion_20261124/audits/official_full_pytest.log"
+    },
+    {
+      "gate": "Global first-divergence mutation suite",
+      "status": "PASS",
+      "details": null,
+      "source": "/mnt/data/V9_final/V9_GLOBAL_MUTATION_V3.json"
+    },
+    {
+      "gate": "Hash/sidecar corruption mutation suite",
+      "status": "PASS",
+      "details": null,
+      "source": "/mnt/data/V9_final/V9_SIDECAR_MUTATION_TESTS.json"
+    },
+    {
+      "gate": "All semantic mutators and arbitrary Live state covered losslessly",
+      "status": "INCOMPLETE",
+      "details": {
+        "untraced_potential_mutator_functions": 103,
+        "restriction": "Cannot assert full coverage of all possible state transitions from selected wrappers; missing mutation event topology."
+      },
+      "source": "/mnt/data/V9_completion_20261124/V9_AST_TRACE_GAPS.json"
+    }
+  ]
+}
