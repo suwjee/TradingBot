@@ -1,0 +1,721 @@
+--- a/engine/bridge/trading_pipeline.py
++++ b/engine/bridge/trading_pipeline.py
+@@ -43,8 +43,8 @@
+ 
+ 
+ TRADING_PIPELINE_VERSION = "1.15.0"
+-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.21.0"
+-TRADING_PIPELINE_LAST_MODIFIED = "2026-11-21T11:08:13+03:30"
++TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.21.1"
++TRADING_PIPELINE_LAST_MODIFIED = "2026-11-23T02:38:54+03:30"
+ MBL_EXTENSION_CANDLES = 400
+ 
+ TEHRAN = ZoneInfo("Asia/Tehran")
+@@ -192,12 +192,14 @@
+     def cached_decimal(value: object) -> Decimal:
+         # Keep the first normalized representation for each type/value pair.
+         key = (type(value), value)
+-        try:
+-            return decimal_cache[key]
+-        except KeyError:
++        normalized = decimal_cache.get(key)
++        if normalized is None:
++            # Every successful normalization returns Decimal, never None.
++            # A miss therefore needs no exception allocation; retain the
++            # original (type, value) key and first-value representation.
+             normalized = to_decimal(value)
+             decimal_cache[key] = normalized
+-            return normalized
++        return normalized
+ 
+     return _aggregate_candle_buckets(rows, timeframe, cached_decimal, lower_only=lower_only)
+ 
+@@ -310,20 +312,14 @@
+     candle_type = engine.Candle
+     classify = engine.classify_candle_color
+     local = local_datetime
+-    fmt = _DTFMT.format
+     for index, item in enumerate(buckets, start=start_index):
+         stamp = local(item["time"])
+         append(candle_type(
+             index=index,
+             timestamp=stamp,
+-            display_time=fmt(
+-                stamp.year,
+-                stamp.month,
+-                stamp.day,
+-                stamp.hour,
+-                stamp.minute,
+-                stamp.second,
+-            ),
++            # Same six zero-padded date/time components; C-level formatter
++            # avoids six Python attribute loads and format arguments.
++            display_time=stamp.isoformat(" ", timespec="seconds"),
+             tag=classify(item["open"], item["close"]),
+             open=item["open"],
+             high=item["high"],
+@@ -2196,6 +2192,24 @@
+     s_candidates = list(s_zones)
+     live_e = live.e_continuation if live is not None else None
+     order_geometry = live.order_geometry if live is not None else None
++    # Private to this directional calculation, never shared across Live,
++    # directions, input histories or feedback iterations. It does not own any
++    # E lifecycle state and is discarded once the calculation completes.
++    shared_parent_stop_cache = {} if live is None else None
++
++    def make_e_detector(*args, **kwargs):
++        # Keep create_e_detector's original signature and invocation contract.
++        # Only share pure parent-stop crossings; every pass owns its mutable
++        # accepted-source sets, OrderAudit ledger and all order caches.
++        detector = create_e_detector(*args, **kwargs)
++        if (
++            shared_parent_stop_cache is not None
++            and type(detector) is e_engine.EZoneDetector
++            and getattr(e_engine.EZoneDetector, "__module__", None) == "e_zone_detector"
++            and getattr(detector, "_parent_stop_query_cache", None) is not None
++        ):
++            detector._parent_stop_query_cache = shared_parent_stop_cache
++        return detector
+ 
+     # A detection is provisional. Only A that survives S ownership may create
+     # a parent-stop Order_A used by downstream E/Order state. Later lifecycle
+@@ -2206,7 +2220,7 @@
+         s_detector.order_audit, s_accepted_a_sources
+     )
+ 
+-    e_detector = create_e_detector(
++    e_detector = make_e_detector(
+         direction,
+         e_engine,
+         full_results,
+@@ -2236,7 +2250,7 @@
+             blocked_s_sources = {
+                 getattr(item, "source_time") for item in s_zones if item not in valid_s_zones
+             }
+-        e_detector = create_e_detector(
++        e_detector = make_e_detector(
+             direction,
+             e_engine,
+             full_results,
+@@ -2352,7 +2366,7 @@
+         ),
+         e_parent_order_first_exceptions_out=e_parent_exceptions,
+     )
+-    e_detector = create_e_detector(
++    e_detector = make_e_detector(
+         direction,
+         e_engine,
+         full_results,
+@@ -2398,7 +2412,7 @@
+             )
+             for item in s_candidates
+         ]
+-        e_detector = create_e_detector(
++        e_detector = make_e_detector(
+             direction,
+             e_engine,
+             full_results,
+--- a/engine/pipeline/e_zone_detector.py
++++ b/engine/pipeline/e_zone_detector.py
+@@ -8,9 +8,9 @@
+ from __future__ import annotations
+ 
+ from heapq import merge
+-from itertools import groupby
+-
+-from bisect import bisect_left, insort
++from itertools import chain, groupby, islice
++
++from bisect import bisect_left, bisect_right, insort
+ from dataclasses import dataclass, replace
+ from datetime import datetime
+ from decimal import Decimal
+@@ -28,8 +28,10 @@
+ 
+ 
+ E_ZONE_VERSION = "6.16.2"
+-E_ZONE_IMPLEMENTATION_VERSION = "6.20.4"
+-E_ZONE_LAST_MODIFIED = "2026-11-20T22:00:58+03:30"
++E_ZONE_IMPLEMENTATION_VERSION = "6.20.12"
++E_ZONE_LAST_MODIFIED = "2026-11-23T20:40:00+03:30"
++
++_UNSEEN_PARENT_STOP = object()
+ 
+ 
+ @dataclass(frozen=True, slots=True)
+@@ -98,6 +100,86 @@
+     evidence: tuple
+     steps: tuple[_EReconciliationStep, ...]
+     native_numbered: tuple[EZone, ...]
++
++
++class _RedSDecisionIndex:
++    """Run-scoped suffix minimum over unaccepted Red S decision times.
++
++    A Red S competes with an E precisely when its source time is strictly
++    later than the E parent's source, it is not yet E-owned, and its decision
++    event strictly precedes that parent's stop. The index answers this same
++    existential predicate without rescanning all eligible Red S rows.
++
++    The original source order and duplicate physical identities are retained.
++    Only accepted E sources are removed; chronology remains authoritative.
++    """
++
++    def __init__(self, rows: tuple[object, ...], accepted: set[tuple[datetime, int]]) -> None:
++        length = len(rows)
++        base = 1 << (length - 1).bit_length()
++        self._base = base
++        self._tree: list[datetime | None] = [None] * (2 * base)
++        locations: dict[tuple[datetime, int], list[int]] = {}
++        for offset, item in enumerate(rows):
++            identity = (item.source_time, int(item.source_index))
++            locations.setdefault(identity, []).append(offset)
++            if identity not in accepted:
++                self._tree[base + offset] = item.decision_event_time
++        self._locations = locations
++        for index in range(base - 1, 0, -1):
++            self._tree[index] = self._earlier(self._tree[2 * index], self._tree[2 * index + 1])
++
++    @staticmethod
++    def _earlier(a: datetime | None, b: datetime | None) -> datetime | None:
++        if a is None:
++            return b
++        if b is None:
++            return a
++        return a if a <= b else b
++
++    def accept(self, identity: tuple[datetime, int]) -> None:
++        for offset in self._locations.get(identity, ()):
++            position = self._base + offset
++            if self._tree[position] is None:
++                continue
++            self._tree[position] = None
++            position //= 2
++            while position:
++                self._tree[position] = self._earlier(
++                    self._tree[position * 2], self._tree[position * 2 + 1]
++                )
++                position //= 2
++
++    def has_earlier_after(self, first: int, deadline: datetime) -> bool:
++        """True iff any surviving row at index >= first is < deadline."""
++        left, right = self._base + first, self._base * 2
++        while left < right:
++            if left & 1:
++                value = self._tree[left]
++                if value is not None and value < deadline:
++                    return True
++                left += 1
++            if right & 1:
++                right -= 1
++                value = self._tree[right]
++                if value is not None and value < deadline:
++                    return True
++            left //= 2
++            right //= 2
++        return False
++
++
++def _e_order_choice_key(match: OrderMatch) -> tuple[datetime, int]:
++    """Canonical E selection priority: stop chronology, then latest First."""
++    return match[6][2], -int(match[1].first_idx)
++
++
++def _e_sorted_eligible_route(route: Sequence[OrderMatch]) -> list[OrderMatch]:
++    """Preserve legacy stable ties while avoiding unnecessary singleton sort."""
++    eligible = [item for item in route if item[6] is not None]
++    if len(eligible) > 1:
++        eligible.sort(key=_e_order_choice_key)
++    return eligible
+ 
+ 
+ class LiveEContinuation:
+@@ -355,6 +437,13 @@
+             ),
+         )
+         self.opposite_resets = sorted(opposite_resets, key=self._reset_time)
++        # Read-only, detector-scoped view of Red S parents. The existing S
++        # ordering is source-time monotonic; bisection below preserves the
++        # original strict inequalities and original iteration order.
++        self._red_s_zones = tuple(
++            zone for zone in self.s_zones if str(getattr(zone, "color")) == "red"
++        )
++        self._red_s_source_times = tuple(zone.source_time for zone in self._red_s_zones)
+         self.candles = chronology.candles
+         self.lower = chronology.seconds
+         self.lower_times = chronology.second_times
+@@ -365,6 +454,14 @@
+         self.end_index = len(self.candles) - 1 if end_index is None else int(end_index)
+         self.range_start = self.times[self.start_index]
+         self.range_end = self.times[self.end_index] + self.timeframe
++        # Strict parent-stop geometry is pure for a non-live immutable run.
++        # Keep a detector-local result (including a verified "no crossing")
++        # to avoid rerunning the same lower-timeframe range search for every
++        # reconciliation attempt. Live continuation owns its own dirty frontier.
++        self._parent_stop_query_cache: dict[
++            tuple[datetime, Decimal, datetime, datetime],
++            tuple[int, datetime] | None,
++        ] = {}
+         self._shared_main_extreme = None
+         market_index = getattr(chronology, "main_range_index", None)
+         if market_index is None and self.timeframe.total_seconds() == 1:
+@@ -390,6 +487,10 @@
+         self.visual_lifecycle_starts: set[datetime] = set()
+         self._consumed_s_evidence: list[tuple[object, tuple[int, datetime]]] = []
+         self._last_candidate_zones: list[EZone] = []
++        # Only active during non-Live detect(). Duplicate registrations of
++        # the same immutable E parent add the exact same cause to the same
++        # append-only physical Order ledger. Never cache S or external calls.
++        self._registered_e_parent_stops: set[tuple] | None = None
+ 
+     @property
+     def sequence_resets(self) -> dict[datetime, int]:
+@@ -400,6 +501,9 @@
+         """Publish hard boundaries and refresh their dependent query state once."""
+         self._sequence_resets = dict(resets)
+         self._sequence_reset_times = sorted(self._sequence_resets)
++        registrations = getattr(self, "_registered_e_parent_stops", None)
++        if registrations is not None:
++            registrations.clear()
+         for cache_name in (
+             "_order_candidates_cache",
+             "_carried_orders_cache",
+@@ -508,6 +612,27 @@
+         self, source_time: datetime, level: Decimal
+     ) -> tuple[int, datetime] | None:
+         start = max(source_time, self.range_start)
++        # For native finite Decimal prices, equal levels have identical strict
++        # crossing truth independently of Decimal exponent/scale. The parent
++        # retains its original price representation in every public object.
++        # Non-native/live paths retain the authoritative uncached scan.
++        use_cache = (
++            self._live_continuation is None
++            and type(source_time) is datetime
++            and type(level) is Decimal
++            and level.is_finite()
++            and source_time.tzinfo is self.range_start.tzinfo
++        )
++        if use_cache:
++            key = (source_time, level, self.range_start, self.range_end)
++            missing = _UNSEEN_PARENT_STOP
++            cached = self._parent_stop_query_cache.get(key, missing)
++            if cached is not missing:
++                return cached
++            event = self._search_parent_stop(start, self.range_end, level)
++            result = (self._main_index(event), event) if event is not None else None
++            self._parent_stop_query_cache[key] = result
++            return result
+         if self._live_continuation is None:
+             event = self._search_parent_stop(start, self.range_end, level)
+         else:
+@@ -609,6 +734,7 @@
+         self, family: str, number: int, parent_type: str,
+         parent: object, stop_event: datetime,
+         *, e_owned_source_times: set[datetime] | None = None,
++        pre_registered_s: bool = False,
+     ) -> EZone | None:
+         # Every E-space cycle starts at the strict parent stop. Parent-stop
+         # and reset-leg are creation causes; carried/accepted are use routes.
+@@ -619,7 +745,31 @@
+         )
+         gate_owned = self._gate_owned_initial_order(stop_event)
+         carried = self._carried_orders_for_parent(parent, stop_event)
+-        self._register_order_audit(parent_type, parent, stop_event)
++        # The initial S-discovery pass registers *every* stopped S before
++        # exploring E chains. Registering that same S again is an exact
++        # duplicate: same physical identity, parent-stop and causes. Keep
++        # all reconciliation/reopened paths on the original registration path.
++        if not (pre_registered_s and parent_type == "S"):
++            registered = self._registered_e_parent_stops
++            if (
++                parent_type == "E" and registered is not None
++                and type(self) is EZoneDetector and type(parent) is EZone
++                and type(self.order_audit) is dict
++            ):
++                # The Order ledger only gains parent-stop causes until the
++                # final rebuild. Re-registering an identical native parent
++                # cannot create a second physical cause, and it repeatedly
++                # invokes expensive candidate discovery. Preserve the native
++                # path for novel parent geometry and for all Live/custom cases.
++                identity = (
++                    parent.source_index, parent.source_time, parent.family,
++                    parent.number, stop_event,
++                )
++                if identity not in registered:
++                    self._register_order_audit(parent_type, parent, stop_event)
++                    registered.add(identity)
++            else:
++                self._register_order_audit(parent_type, parent, stop_event)
+         post_stop_accepted = self._iter_post_stop_accepted_orders(
+             parent, stop_event
+         )
+@@ -639,26 +789,76 @@
+         # E consumption owns one global adjudication across every eligible
+         # physical Order route. Route-local reductions must not discard a
+         # later First before the canonical exact-stop tie-break can run.
+-        choice_key = lambda item: (item[6][2], -int(item[1].first_idx))
++        # Avoid sorting/filtering empty and singleton routes. For the exact
++        # native detector, carried Orders are *already* sorted by precisely
++        # this key in OrderAuditEngineMixin._carried_orders_for_parent, and
++        # every carried match has a non-None stop. All overrides and instance
++        # patches use the original full filtering/sorting path instead.
++        direct_choices = _e_sorted_eligible_route(direct)
++        inherited_choices = _e_sorted_eligible_route(inherited)
++        if (
++            type(self) is EZoneDetector
++            and "_carried_orders_for_parent" not in self.__dict__
++            and EZoneDetector._carried_orders_for_parent
++                is OrderAuditEngineMixin._carried_orders_for_parent
++            and type(carried) is list
++        ):
++            carried_choices = carried
++        else:
++            carried_choices = _e_sorted_eligible_route(carried)
++
++        # For the exact native non-Live accepted-Order iterator, the First
++        # attribute is an inert canonical integer field. A one-item stop-time
++        # group does not require Python's sorted() allocation/key evaluation.
++        # Keep original evaluation on subclass/custom/Live iterator paths.
++        native_group_fast_path = (
++            self._live_continuation is None
++            and type(self) is EZoneDetector
++            and "_iter_post_stop_accepted_orders" not in self.__dict__
++            and EZoneDetector._iter_post_stop_accepted_orders
++                is OrderAuditEngineMixin._iter_post_stop_accepted_orders
++        )
+ 
+         def post_stop_choices():
+-            # The public accepted-Order query orders exact stop ties by
+-            # confirmation first. E adjudication instead orders by First;
+-            # materialize only that one stop-time group to preserve both.
++            # Public accepted-Order ties prioritize confirmation. E instead
++            # prioritizes First; preserve exact original group boundaries.
+             for _, group in groupby(post_stop_accepted, key=lambda item: item[6][2]):
+-                yield from sorted(group, key=choice_key)
++                if native_group_fast_path:
++                    first = next(group)
++                    second = next(group, None)
++                    if second is None:
++                        yield first
++                        continue
++                    yield from sorted(chain((first, second), group), key=_e_order_choice_key)
++                else:
++                    yield from sorted(group, key=_e_order_choice_key)
+ 
+         choices = merge(
+-            *(sorted((item for item in route if item[6] is not None), key=choice_key)
+-              for route in (direct, inherited, carried)),
+-            post_stop_choices(), key=choice_key,
++            direct_choices, inherited_choices, carried_choices,
++            post_stop_choices(), key=_e_order_choice_key,
+         )
+         owned_sources = e_owned_source_times if e_owned_source_times is not None else {
+             source_time for source_time, _index in self._accepted_e_source_identities
+         }
+         order_match = None
++        # When several physical Orders have an identical strict stop event,
++        # the E source extreme interval is exactly the same. Do not query the
++        # same immutable range index repeatedly within this one native call.
++        # Live and custom detectors retain the exact original lookup path.
++        reuse_extreme = (
++            self._live_continuation is None and type(self) is EZoneDetector
++            and "_extreme_between" not in self.__dict__
++        )
++        last_extreme_end = None
++        last_extreme = None
+         for match in choices:
+-            prospective_source = self._extreme_between(stop_event, max(stop_event, match[6][2]))
++            extreme_end = max(stop_event, match[6][2])
++            if reuse_extreme and last_extreme_end == extreme_end and last_extreme is not None:
++                prospective_source = last_extreme
++            else:
++                prospective_source = self._extreme_between(stop_event, extreme_end)
++                if reuse_extreme:
++                    last_extreme_end, last_extreme = extreme_end, prospective_source
+             if self._order_created_only_by_disowned_s(
+                 (int(match[1].first_idx), int(match[1].break_idx)),
+                 owned_sources, prospective_source[1],
+@@ -1048,9 +1248,21 @@
+                 self._register_order_audit("S", s_zone, stop_event)
+                 stopped_parents.append((s_zone, stop_event))
+ 
++        # Native detection only needs per-root lineage lists when the invalid-S
++        # cross-family conflict rule can activate. Otherwise the authoritative
++        # candidate list already preserves every zone and its creation order.
++        # Keep the legacy path for custom detectors, whose mutable state may
++        # change during discovery.
++        track_chains = bool(self.invalid_s_root_identities) or type(self) is not EZoneDetector
+         chains: list[tuple[object, list[EZone]]] = []
++        # In the fast path retain only offsets, not a second copy of each
++        # provisional chain. If a custom callback mutates invalid-S ownership
++        # during discovery, these offsets reconstruct the *exact same* lists
++        # before conflict resolution instead of silently changing behavior.
++        deferred_chains: list[tuple[object, int]] = []
+         candidates: list[EZone] = []
+         for s_zone, stop_event in stopped_parents:
++            chain_begin = len(candidates)
+             # Every fully formed S starts an independent provisional E chain.
+             # Final lifecycle eligibility is resolved after all candidate
+             # continuations are visible, so exact same-source cross-family
+@@ -1061,16 +1273,18 @@
+             parent_type: str = "S"
+             parent: object = s_zone
+             chain_sources: set[int] = set()
+-            chain: list[EZone] = []
++            chain: list[EZone] | None = [] if track_chains else None
+             owned_sources = {source_time for source_time, _index in self._accepted_e_source_identities}
+             while True:
+                 zone = self._zone(family, number, parent_type, parent, stop_event,
+-                                  e_owned_source_times=owned_sources)
++                                  e_owned_source_times=owned_sources,
++                                  pre_registered_s=(parent_type == "S"))
+                 if zone is None:
+                     break
+                 if zone.source_index in chain_sources:
+                     break
+-                chain.append(zone)
++                if chain is not None:
++                    chain.append(zone)
+                 candidates.append(zone)
+                 chain_sources.add(zone.source_index)
+                 owned_sources.add(zone.source_time)
+@@ -1082,9 +1296,21 @@
+                 number += 1
+             if chain:
+                 chains.append((s_zone, chain))
++            elif len(candidates) != chain_begin:
++                deferred_chains.append((s_zone, chain_begin))
+ 
+         if not self.invalid_s_root_identities or not candidates:
+             return candidates
++
++        if not track_chains:
++            # This is normally unreachable (native invalid roots were empty),
++            # but preserves original semantics if the set was modified by an
++            # external geometry callback while candidate discovery ran.
++            chains = [
++                (parent, candidates[start:deferred_chains[i + 1][1]
++                                    if i + 1 < len(deferred_chains) else len(candidates)])
++                for i, (parent, start) in enumerate(deferred_chains)
++            ]
+ 
+         continuation_families: dict[tuple[datetime, int], set[str]] = {}
+         for zone in candidates:
+@@ -1158,6 +1384,17 @@
+         accepted_sources = {(item.source_time, item.source_index) for item in numbered}
+         accepted_source_times = {item.source_time for item in numbered}
+         self._accepted_e_source_identities = accepted_sources
++        # The index is created only for native datetime rows; non-native
++        # timestamp/subclass semantics stay on the original sequential scan.
++        red_s_index = None
++        if len(self._red_s_zones) >= 512 and all(
++            type(item.source_time) is datetime
++            and type(item.decision_event_time) is datetime
++            and item.source_time.tzinfo is self.range_start.tzinfo
++            and item.decision_event_time.tzinfo is self.range_start.tzinfo
++            for item in self._red_s_zones
++        ):
++            red_s_index = _RedSDecisionIndex(self._red_s_zones, accepted_sources)
+         sequence_start = checkpoint.sequence_start if checkpoint is not None else None
+ 
+         candidates_by_source_time = {
+@@ -1343,23 +1580,29 @@
+             ]
+             if not eligible:
+                 continue
+-            current_owners = [
+-                item for item in eligible
+-                if not (
+-                    item.parent_type == "E"
+-                    and item.family == "blue"
+-                    and any(
+-                        str(getattr(s_zone, "color")) == "red"
+-                        and (s_zone.source_time, int(s_zone.source_index))
+-                        not in accepted_sources
+-                        and getattr(s_zone, "source_time")
+-                        > item.parent_source_time
+-                        and getattr(s_zone, "decision_event_time")
+-                        < item.parent_stop_event_time
+-                        for s_zone in self.s_zones
++            def competing_red_s(item: EZone) -> bool:
++                if item.parent_type != "E" or item.family != "blue":
++                    return False
++                if (
++                    red_s_index is not None
++                    and type(item.parent_source_time) is datetime
++                    and type(item.parent_stop_event_time) is datetime
++                    and item.parent_source_time.tzinfo is self.range_start.tzinfo
++                    and item.parent_stop_event_time.tzinfo is self.range_start.tzinfo
++                ):
++                    first = bisect_right(self._red_s_source_times, item.parent_source_time)
++                    return red_s_index.has_earlier_after(first, item.parent_stop_event_time)
++                return any(
++                    (s_zone.source_time, int(s_zone.source_index)) not in accepted_sources
++                    and getattr(s_zone, "decision_event_time") < item.parent_stop_event_time
++                    for s_zone in islice(
++                        self._red_s_zones,
++                        bisect_right(self._red_s_source_times, item.parent_source_time),
++                        None,
+                     )
+                 )
+-            ]
++
++            current_owners = [item for item in eligible if not competing_red_s(item)]
+             if current_owners:
+                 eligible = current_owners
+             def ownership_priority(item: EZone) -> int:
+@@ -1444,7 +1687,10 @@
+             numbered_zone = replace(zone, family=family, number=number)
+             numbered.append(numbered_zone)
+             index_numbered(numbered_zone)
+-            accepted_sources.add((numbered_zone.source_time, numbered_zone.source_index))
++            accepted_identity = (numbered_zone.source_time, numbered_zone.source_index)
++            accepted_sources.add(accepted_identity)
++            if red_s_index is not None:
++                red_s_index.accept(accepted_identity)
+             accepted_source_times.add(numbered_zone.source_time)
+             if zone.source_time in self.sequence_resets:
+                 active.clear()
+@@ -1498,12 +1744,18 @@
+         self._clear_order_audit()
+         self.register_order_b_reset_legs(self.order_b_legs)
+         self.visual_lifecycle_starts.clear()
+-        candidates = self._discover_candidate_chains()
+-        self._last_candidate_zones = list(candidates)
+-        numbered = self._reconcile_candidate_chains(candidates)
+-        numbered = self._apply_consumed_s_evidence(numbered)
+-        numbered = self.resolve_same_source_conflicts(numbered)
+-        return self._rebuild_accepted_order_audit(numbered)
++        self._registered_e_parent_stops = set() if self._live_continuation is None else None
++        try:
++            candidates = self._discover_candidate_chains()
++            self._last_candidate_zones = list(candidates)
++            numbered = self._reconcile_candidate_chains(candidates)
++            numbered = self._apply_consumed_s_evidence(numbered)
++            numbered = self.resolve_same_source_conflicts(numbered)
++            return self._rebuild_accepted_order_audit(numbered)
++        finally:
++            # Never retain a registration shortcut across a ledger rebuild,
++            # a second detect(), or any caller-driven calculation phase.
++            self._registered_e_parent_stops = None
+ 
+ 
+ def detect_e_zones(
+--- a/engine/pipeline/order_audit_engine.py
++++ b/engine/pipeline/order_audit_engine.py
+@@ -18,8 +18,8 @@
+     from e_zone_detector import EZone
+ 
+ ORDER_AUDIT_ENGINE_VERSION = "1.8.2"
+-ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION = "1.9.5"
+-ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-20T22:00:58+03:30"
++ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION = "1.9.6"
++ORDER_AUDIT_ENGINE_LAST_MODIFIED = "2026-11-23T15:33:00+03:30"
+ 
+ 
+ def relabel_primary_causes(causes, labels):
+@@ -632,6 +632,14 @@
+         )
+         self._trend_confirmation_times = [item[0] for item in self._trend_by_confirmation]
+         self._trend_leg_order_positions: dict[int, int | None] = {}
++        # Only proved-invalid trend legs are skipped. A leg whose First is
++        # ineligible for this particular start cannot be skipped permanently.
++        # The successor map is detector-local and contains no trading state.
++        self._trend_leg_invalid_successor: dict[int, int] = {}
++        # Constructed lazily on the first Order candidate request; immutable
++        # canonical B legs may then be located by First time without scanning
++        # the complete set on every parent-stop query.
++        self._indexed_order_b_legs = None
+         self._opposite_reset_times_by_first: dict[int, list[datetime]] = {}
+         for reset in self.opposite_resets:
+             self._opposite_reset_times_by_first.setdefault(
+@@ -776,9 +784,24 @@
+         if self.direct_geometry_finder is None:
+             return None
+         first_position = bisect_right(self._trend_confirmation_times, start)
+-        for position in range(first_position, len(self._trend_by_confirmation)):
++        successor = self._trend_leg_invalid_successor
++
++        def next_unproven(position: int) -> int:
++            # Path compression skips only positions already proven to produce
++            # no canonical Order. It never skips a valid leg for this start.
++            path = []
++            while position in successor:
++                path.append(position)
++                position = successor[position]
++            for invalid in path:
++                successor[invalid] = position
++            return position
++
++        position = next_unproven(first_position)
++        while position < len(self._trend_by_confirmation):
+             confirmation, first_time, trend = self._trend_by_confirmation[position]
+             if first_time <= start:
++                position = next_unproven(position + 1)
+                 continue
+             if position not in self._trend_leg_order_positions:
+                 self._trend_leg_order_positions[position] = self._trend_leg_order_position(confirmation, trend)
+@@ -789,7 +812,51 @@
+                     self.opposite_reactions[canonical_position],
+                     self._opposite_confirmations[canonical_position],
+                 )
++            successor[position] = next_unproven(position + 1)
++            position = successor[position]
+         return None
++
++    def _order_b_legs_after(self, start: datetime):
++        """Yield eligible immutable B legs in their original insertion order.
++
++        The original loop filters on strict First > start; index only exact
++        native objects/timestamps. Unsupported shapes follow the original
++        scan without any eager validation or changed exception behavior.
++        """
++        legs = self.order_b_legs
++        if len(legs) < 16 or type(start) is not datetime:
++            return (leg for leg in legs if self._reaction_first_time(leg.physical_reaction) > start)
++        indexed = self._indexed_order_b_legs
++        if indexed is None:
++            try:
++                if any(type(leg) is not OrderBResetLeg for leg in legs):
++                    raise ValueError("noncanonical leg")
++                indexed_rows = []
++                for ordinal, leg in enumerate(legs):
++                    first = getattr(leg.physical_reaction, "first_idx")
++                    if type(first) is not int:
++                        raise ValueError("noncanonical First index")
++                    event = self.times[first]
++                    if type(event) is not datetime or event.tzinfo is not self.range_start.tzinfo:
++                        raise ValueError("noncanonical First time")
++                    indexed_rows.append((event, ordinal))
++                indexed_rows.sort()
++                indexed = (
++                    [event for event, _ in indexed_rows],
++                    [ordinal for _, ordinal in indexed_rows],
++                )
++            except Exception:
++                indexed = False
++            self._indexed_order_b_legs = indexed
++        if indexed is False or start.tzinfo is not self.range_start.tzinfo:
++            return (leg for leg in legs if self._reaction_first_time(leg.physical_reaction) > start)
++        first_times, ordinals = indexed
++        offset = bisect_right(first_times, start)
++        # If most legs qualify, the original ordered scan avoids resorting a
++        # large suffix. Sparse suffixes are retrieved through the index.
++        if len(ordinals) - offset > len(legs) // 4:
++            return (leg for leg in legs if self._reaction_first_time(leg.physical_reaction) > start)
++        return (legs[ordinal] for ordinal in sorted(ordinals[offset:]))
+ 
+     def _trend_leg_order_position(self, confirmation: datetime, trend: object) -> int | None:
+         if bool(getattr(trend, "behavior_internal", False)):
+@@ -1021,10 +1088,8 @@
+ 
+         # Reset-leg provenance is independent of the one-Order-per-parent
+         # parent-stop rule, but shares the canonical physical identity.
+-        for leg in self.order_b_legs:
++        for leg in self._order_b_legs_after(start):
+             reaction = leg.physical_reaction
+-            if self._reaction_first_time(reaction) <= start:
+-                continue
+             identity = reaction_identity(reaction)
+             previous = by_geometry.get(identity)
+             if previous is not None:

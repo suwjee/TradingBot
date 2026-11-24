@@ -1,0 +1,170 @@
+name: Refactor workspace verification
+on:
+  push:
+    branches: [refactor]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  workspace-and-v9-tools:
+    if: github.ref == 'refs/heads/refactor'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install --disable-pip-version-check pytest psutil tzdata orjson
+      - name: Verify standalone layout, exact baseline delta and all active Python syntax
+        run: |
+          python tooling/verify_workspace.py
+          python -m compileall -q tooling versions/V9/tooling
+      - name: Run strict comparator and sidecar security regression
+        run: python -m pytest -q versions/V9/tooling/test_strict_trace_gate_v9.py versions/V9/tooling/test_safe_sidecar.py --junitxml="$RUNNER_TEMP/v9-tools.xml"
+      - name: Large nested stage streaming integrity
+        run: python versions/V9/tooling/test_v9_large_stage_stream.py
+      - name: Checkout prior tooling for historical mutation suites (separate checkout)
+        uses: actions/checkout@v4
+        with:
+          ref: eef50eb2cedb06ba4c77bb82c6ac3b312ef1e7ba
+          path: .scratch/prior
+          sparse-checkout: engineering/refactor-v9/tooling
+          persist-credentials: false
+      - name: Re-run earlier global, family-local and corruption mutation suites
+        run: |
+          python .scratch/prior/engineering/refactor-v9/tooling/test_global_semantic_compare.py "$RUNNER_TEMP/v9-global.json"
+          python .scratch/prior/engineering/refactor-v9/tooling/test_internal_trace.py "$RUNNER_TEMP/v9-internal.json"
+          python .scratch/prior/engineering/refactor-v9/tooling/test_trace_sidecar_integrity.py "$RUNNER_TEMP/v9-sidecar.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v9-tooling-results
+          path: |
+            ${{ runner.temp }}/v9-tools.xml
+            ${{ runner.temp }}/v9-global.json
+            ${{ runner.temp }}/v9-internal.json
+            ${{ runner.temp }}/v9-sidecar.json
+          if-no-files-found: warn
+  pinned-engine-regression:
+    if: github.ref == 'refs/heads/refactor'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [original, v81, prior-refactor]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: workspace
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.variant == 'prior-refactor' && 'eef50eb2cedb06ba4c77bb82c6ac3b312ef1e7ba' || '01d54ecf0149ebd15de92798be18810b6e2eb791' }}
+          path: frozen
+          sparse-checkout: engine
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install --disable-pip-version-check pytest psutil tzdata orjson
+      - name: Verify source hashes and reconstruct V8.1 in the isolated checkout
+        if: matrix.variant != 'prior-refactor'
+        env:
+          VARIANT: ${{ matrix.variant }}
+        run: |
+          python workspace/tooling/verify_baseline.py --manifest workspace/baselines/manifest.json --engine frozen/engine --variant original
+          if [ "$VARIANT" = v81 ]; then
+            git -C frozen apply --check "$GITHUB_WORKSPACE/workspace/baselines/V8.1.patch"
+            git -C frozen apply "$GITHUB_WORKSPACE/workspace/baselines/V8.1.patch"
+            python workspace/tooling/verify_baseline.py --manifest workspace/baselines/manifest.json --engine frozen/engine --variant v81
+          fi
+      - name: Run full selected frozen Engine unit suite
+        working-directory: frozen
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+          PYTHONHASHSEED: '0'
+        run: |
+          export PYTHONPATH="$PWD/engine/pipeline:$PWD/engine/bridge:$PWD/engine/tests/unit"
+          python -m pytest engine/tests/unit -ra --junitxml="$RUNNER_TEMP/engine-unit.xml"
+      - name: Verify frozen source still unchanged after tests
+        if: always() && matrix.variant != 'prior-refactor'
+        env:
+          VARIANT: ${{ matrix.variant }}
+        run: python workspace/tooling/verify_baseline.py --manifest workspace/baselines/manifest.json --engine frozen/engine --variant "$VARIANT"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: engine-unit-${{ matrix.variant }}
+          path: ${{ runner.temp }}/engine-unit.xml
+          if-no-files-found: warn
+  historical-anti-drift:
+    if: github.ref == 'refs/heads/refactor'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: eef50eb2cedb06ba4c77bb82c6ac3b312ef1e7ba
+          persist-credentials: false
+      - run: python3 -m unittest discover -s scripts/verification -p 'test_*.py' -v
+      - run: python3 scripts/verification/anti_drift.py --mode full --format human --verbose
+      - run: |
+          python3 scripts/verification/anti_drift.py --mode full --format json > "$RUNNER_TEMP/anti-drift-1.json"
+          python3 scripts/verification/anti_drift.py --mode full --format json > "$RUNNER_TEMP/anti-drift-2.json"
+          cmp "$RUNNER_TEMP/anti-drift-1.json" "$RUNNER_TEMP/anti-drift-2.json"
+  historical-chart-regression:
+    if: github.ref == 'refs/heads/refactor'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: eef50eb2cedb06ba4c77bb82c6ac3b312ef1e7ba
+          persist-credentials: false
+      - name: Snapshot Engine before tests
+        shell: bash
+        run: find engine -type f -print0 | sort -z | xargs -0 sha256sum > .refactor-engine.before.sha256
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: apps/chart/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check orjson tzdata
+      - working-directory: apps/chart
+        run: npm ci --no-audit --no-fund
+      - working-directory: apps/chart
+        run: npm test
+      - working-directory: apps/chart
+        run: node tests/e2e/chart-startup-smoke.mjs
+      - working-directory: apps/chart
+        run: node tests/e2e/chart-startup-smoke.mjs --profile-memory
+      - working-directory: apps/chart
+        run: node tests/e2e/chart-startup-smoke.mjs --engine-overlay
+      - name: All existing Chart hot-path benchmarks
+        shell: bash
+        working-directory: apps/chart
+        run: |
+          for benchmark in server-hot-paths object-tree-index object-tree-selection stroke-projection historical-hitbox-buffer indicator-order-keys; do
+            node --expose-gc "tests/benchmarks/$benchmark.mjs"
+          done
+      - working-directory: apps/chart
+        run: npm run build
+      - name: Verify Engine unchanged
+        if: always()
+        shell: bash
+        run: |
+          find engine -type f -print0 | sort -z | xargs -0 sha256sum > .refactor-engine.after.sha256
+          diff -u .refactor-engine.before.sha256 .refactor-engine.after.sha256

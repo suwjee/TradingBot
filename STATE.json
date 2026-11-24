@@ -1,0 +1,49 @@
+{
+  "schema": 2,
+  "branch": "refactor",
+  "role": "standalone refactor memory, not deployable source or merge target",
+  "protected_heads_at_start": {
+    "main": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+    "production": "9838fa9809865aa6507adb7be871810d878bdb5f"
+  },
+  "previous_snapshot": "eef50eb2cedb06ba4c77bb82c6ac3b312ef1e7ba",
+  "active_phase": "V9",
+  "release_status": "INCOMPLETE",
+  "trace_coverage": "TRACE_COVERAGE_PARTIAL",
+  "go_to_v10": false,
+  "correctness_oracle": "01d54ecf0149ebd15de92798be18810b6e2eb791",
+  "candidate_manifest": "baselines/manifest.json",
+  "current_gate_manifest": "versions/V9/reports/V9_CURRENT_GATES.json",
+  "prior_reported_gates": {
+    "PASS": 13,
+    "FAIL": 0,
+    "INCOMPLETE": 2,
+    "NOT RUN": 0
+  },
+  "prior_gates_not_all_reexecuted": true,
+  "largest_completed_strict_pair_bars": 250000,
+  "maximum_feasible_not_proven": true,
+  "strict_pair_evidence": [
+    "versions/V9/evidence/2026-11-24/synthetic-100000/pair_report.json",
+    "versions/V9/evidence/2026-11-24/synthetic-250000/pair_report.json"
+  ],
+  "full_artifact_retention": "hash manifests present; full binary traces and native outputs not committed; external durable retention not verified",
+  "remaining": [
+    "Full 1M selected trace pair",
+    "Complete lossless semantic mutator and Live state coverage"
+  ],
+  "next": [
+    "Inspect new standalone CI and record outcomes",
+    "Close state representation and mutation gaps",
+    "Attempt full 1M pair or greatest feasible complete identical-input pair"
+  ],
+  "latest_journal": "journal/2026-11-24-standalone-isolation.md",
+  "archive_index": "archive/pre-isolation-index.json",
+  "ci": {
+    "prior_engine_unit_296": "PASS",
+    "prior_observer_compile": "FAIL, repaired locally",
+    "prior_sonar": "FAIL, PR #5: duplication 21.8%, security E; exact annotations unavailable",
+    "new_ci": "NOT RUN at commit preparation"
+  },
+  "no_runtime_change": true
+}

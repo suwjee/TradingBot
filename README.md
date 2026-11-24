@@ -1,53 +1,20 @@
----
-title: TradingBot
-document_role: reference
-lifecycle: maintained
-owner: project-navigation
-last_modified_at: 2026-11-24T17:20:23+03:30
----
+# TradingBot — Refactor workspace
 
-# TradingBot — refactor workspace
+**Independent engineering memory. Not a deployable copy of TradingBot. Do not merge this branch into main/production.** Only refactor-specific files are tracked here. Product code is fetched read-only at exact commits in an isolated checkout when needed; refactor patches are stored separately.
 
-**Refactor-only branch.** Start at [permanent refactor workspace](engineering/refactor/README.md) and [current state](engineering/refactor/STATE.json). Do not write to main or production without explicit owner permission.
+| Start here | Purpose |
+|---|---|
+| [AGENTS.md](AGENTS.md) | Owner rules and branch boundary |
+| [STATE.json](STATE.json) | Current phase, exact oracle and open gates |
+| [protocols](protocols/README.md) | Engineering procedure and historical authority |
+| [baselines](baselines/README.md) | Pinned sources, verified V8.1 delta and manifest |
+| [prompts](prompts/) | Original refactor instructions |
+| [versions/V9](versions/V9/README.md) | Active V9 tools, reports, test evidence |
+| [journal](journal/) | Durable task records and handoff |
+| [archive](archive/README.md) | Historical commits and exact recovery index |
 
-TradingBot is a Windows candlestick workstation. The chart application acquires and displays candles, drawings, indicators and review tables. Python under `engine/` owns trading calculations; the browser renders serialized results.
+**V9: INCOMPLETE / TRACE_COVERAGE_PARTIAL. V10 NO-GO.** Largest recovered completed strict pair is 250,000 5s candles (not a proven capacity limit). Full million and full state coverage remain open. This reorganization does not rerun the million-candle test.
 
-## Project ownership
+CI checks this standalone workspace, active tooling, frozen Original and reconstructed V8.1 Engine tests, historical refactor Engine tests, historical Chart tests on Linux/Windows, and historical anti-drift tests. Sources are checked out separately at immutable SHAs, not copied into this branch. Prior PR #5 to main is incompatible with the new memory-only role; do not merge it. See the isolation journal for observed check results and limitations.
 
-| Owner | Responsibility |
-| --- | --- |
-| `apps/chart/` | Browser application, local HTTP/SSE server, application state and chart tests |
-| `engine/` | Calculation bridge, stage owners, current exact-source references and local Engine verification |
-| `engineering/` | Maintained documentation, historical archives and local verification evidence |
-
-The root `scripts/` directory preserves the public Windows startup paths used by existing shortcuts and the VMware shared checkout. Root Git/editor files, `AGENTS.md` and this README stay at their tool discovery boundaries.
-
-**Every project-owned file stays inside this TradingBot directory.** RAW and sidecars use `apps/chart/state/data/raw/`, persistent drawings/calculations/templates use `apps/chart/state/cache/`, FARAZ authentication uses `apps/chart/state/secret/`, and temporary files use `apps/chart/state/tmp/`. Machine-local state, dependencies, caches, temporary files and rebuildable output are excluded according to current repository policy; legitimate tests, maintained documentation, curated baseline evidence and meaningful engineering evidence may be tracked. See [local storage](engineering/docs/operations/local-state.md).
-
-`TRADINGBOT_LOCAL_STATE_ROOT` is optional. Its default is `apps/chart/state`; a configured value must resolve to that directory or a descendant. External roots and source directories are rejected. Vite denies direct static access to state; the established `/api` resources remain available.
-
-## Install and start
-
-Use Node.js `20.19+` (Node.js 22 requires `22.12+`) and Python `3.12+`. Python runtime dependencies are `orjson` and `tzdata`.
-
-```powershell
-Set-Location 'D:\My-Projects\TradingBot'
-.\scripts\launch.bat
-```
-
-The launcher checks runtimes and installs missing dependencies before starting Vite. For manual development:
-
-```powershell
-python -m pip install orjson tzdata
-Set-Location apps/chart
-npm.cmd ci
-npm.cmd run dev -- --host 127.0.0.1 --configLoader native
-```
-
-Build with `npm.cmd run build` from `apps/chart`. These commands keep generated output inside the project.
-
-## Local verification and navigation
-
-Tests are discovered from the current repository, manifests and runners rather than treated as a fixed local-only bundle. The current project contains Chart and Engine test/verification trees, but their layout and runner set are not permanent contracts. See [Testing](engineering/docs/development/testing.md) for dynamic discovery, execution status, RAW and regression policy.
-
-Read [AGENTS.md](AGENTS.md) and the [AI engineering workflow](engineering/docs/ai/engineering-workflow.md) before engineering work. Trading semantics require the Intelligence Plugin and canonical Knowledge Vault. Use the [engineering document index](engineering/docs/README.md) for Current maintained navigation. Historical single-root migration evidence is preserved at [engineering/verification/history/single-root-migration.md](engineering/verification/history/single-root-migration.md).
+The Git repository is public and older commits remain reachable. Removing files from the current tree is not deletion of history or access control. No full product source is tracked at this branch HEAD.
