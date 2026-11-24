@@ -34,11 +34,12 @@
     "Complete lossless semantic mutator and Live state coverage"
   ],
   "next": [
-    "Preserve actual 1M result if completed; keep existing run unchanged",
-    "Profile and implement single-pass exact trace validation, prove parity with old tooling and benchmark",
-    "Close remaining full semantic mutation coverage; final release gates remain mandatory"
+    "Record actual million legacy run result; no restart",
+    "Verify 100k/250k checkpoint complete pairs and ABBA full-report equality",
+    "Profile remaining capture and sidecar bottlenecks; design and verify lossless owner-state deltas only with complete coverage",
+    "Audit V9 remaining gates; no V10 until proven"
   ],
-  "latest_journal": "journal/2026-11-24-v9-efficient-validation-plan.md",
+  "latest_journal": "journal/2026-11-24-v9-fused-validation.md",
   "archive_index": "archive/pre-isolation-index.json",
   "ci": {
     "validated_code_commit": "e4ed3a5f4b29777f9b1720075c4b38546616da8a",
@@ -163,16 +164,18 @@
     "second_run_commit": "c35066ddfe687c9e3f05fa1f128c17a2e04c60e8",
     "latest_observed_jobs": [
       {
-        "name": "frozen-synthetic-pair (500000)",
-        "status": "completed",
-        "conclusion": "success",
-        "job_id": 138510636651
-      },
-      {
         "name": "frozen-synthetic-pair (1000000)",
         "status": "in_progress",
         "conclusion": null,
-        "job_id": 138510635890
+        "job_id": 138510635890,
+        "completed_at": null
+      },
+      {
+        "name": "frozen-synthetic-pair (500000)",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138510636651,
+        "completed_at": "2026-11-24T15:10:59Z"
       }
     ],
     "completed_500k": {
@@ -246,7 +249,60 @@
   },
   "efficient_validation_plan": {
     "path": "versions/V9/reports/EFFICIENT_EXACT_VALIDATION_PLAN.md",
-    "status": "PROPOSED_NOT_IMPLEMENTED",
-    "priority": "single-pass validation, profile first; no weakened gates"
+    "status": "PARTIALLY_IMPLEMENTED_AND_REAL_RAW_VALIDATED",
+    "priority": "single-pass validation, profile first; no weakened gates",
+    "implementation": "versions/V9/tooling/single_pass_trace_gate.py",
+    "reference_commit": "64326df566ac0f9be9d7396c7458b7f6471f4510",
+    "local_tests": 56,
+    "stream_checks": 8,
+    "old_new_report_equality": "PASS on complete OIL 15,061 and XAU 15,542 traces; one ABBA block per case",
+    "benchmarks": {
+      "oil": {
+        "median": {
+          "legacy": 6.975830129999963,
+          "fused": 4.513843917500026
+        },
+        "reduction_pct": 35.29309295981883
+      },
+      "xau": {
+        "median": {
+          "legacy": 6.739459494000016,
+          "fused": 4.374257761499962
+        },
+        "reduction_pct": 35.094828221843876
+      }
+    },
+    "full_native_pairs": {
+      "oil": {
+        "records": 15061,
+        "stable_bytes_equal": true,
+        "golden": "PASS",
+        "coverage": "INCOMPLETE"
+      },
+      "xau": {
+        "records": 15542,
+        "stable_bytes_equal": true,
+        "golden": "PASS",
+        "coverage": "INCOMPLETE"
+      }
+    },
+    "private_archive": {
+      "path": "/TradingBot/Versions/V9-2026-11-24/V9_FAST_VALIDATION_REAL_RAW_EVIDENCE_20261124.zip",
+      "sha256": "d3fee266623810c067732fcc1dfaecc8d06822897bda14e124644f00f30ce9c6",
+      "bytes": 20489246,
+      "status": "upload succeeded; ZIP CRC verified locally"
+    },
+    "checkpoint_matrix": [
+      100000,
+      250000
+    ],
+    "checkpoint_status": "NOT RUN at preparation; triggered on this commit",
+    "full_validation": "manual final certification; existing in-flight legacy 1M preserved",
+    "not_implemented": [
+      "lossless semantic mutation delta capture/replay",
+      "exhaustive semantic state coverage",
+      "full cross-owner/cache/lifecycle proof"
+    ],
+    "no_production_speedup_claim": true
   }
 }

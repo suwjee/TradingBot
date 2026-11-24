@@ -16,7 +16,27 @@ def file_sha256(path):
     with Path(path).open("rb") as f:
         return hashlib.file_digest(f, "sha256").hexdigest()
 
-def inspect(path):
+SET_MARKER = '$unordered_set_NONCANONICAL'
+SET_MARKER_BYTES = SET_MARKER.encode('ascii')
+
+
+def has_legacy_set_marker(raw, row):
+    """Same substring predicate as ``SET_MARKER in str(row)`` for UTF-8 JSON.
+
+    ASCII marker characters are preserved by Python string repr. A JSON
+    Unicode escape can hide a marker from the bytes, so preserve the decoded
+    fallback for escaped input. Other encodings use the legacy predicate.
+    """
+    if b'\x00' in raw or raw.startswith(b'\xef\xbb\xbf'):
+        return SET_MARKER in str(row)
+    return SET_MARKER_BYTES in raw or (b'\\u' in raw and SET_MARKER in str(row))
+
+
+def iter_inspected(path, decode=json.loads, *, fast_marker=False):
+    """Yield each decoded event, then return the complete integrity report.
+
+    A caller must exhaust the generator and consume its return value.
+    """
     path=Path(path)
     manifest_path=Path(str(path)+'.manifest.json')
     manifest=json.loads(manifest_path.read_text())
@@ -30,7 +50,7 @@ def inspect(path):
             if count in expected_index and uncompressed!=expected_index[count]:
                 raise AssertionError(f'index offset mismatch at event {count}: {path}')
             uncompressed+=len(raw);digest.update(raw)
-            row=json.loads(raw)
+            row=decode(raw)
             if row.get('schema') not in SCHEMAS or row.get('event_ordinal')!=count:
                 raise AssertionError(f'event format/ordinal at {count}: {path}')
             family=row.get('stage','?')+':'+row.get('method','?')
@@ -56,7 +76,8 @@ def inspect(path):
                 label=row.get('phase_label');stages.append(('end',label,count))
                 if not stack or stack.pop()!=label:
                     raise AssertionError(f'Unbalanced stage boundary {count}: {label}: {path}')
-            if '$unordered_set_NONCANONICAL' in str(row):nonsafe['unordered_set_in_trace']+=1
+            if (has_legacy_set_marker(raw, row) if fast_marker else SET_MARKER in str(row)):nonsafe['unordered_set_in_trace']+=1
+            yield row
     if stack:raise AssertionError(f'Unclosed stage boundaries in {path}')
     if count!=manifest['events'] or digest.hexdigest()!=manifest['jsonl_sha256']:
         raise AssertionError(f'event count/hash mismatch in {path}')
@@ -107,6 +128,12 @@ def inspect(path):
             'ledger_field_coverage':dict(coverage),'unsupported_items':dict(partials),
             'missing_required':dict(missing),'nondeterministic_legacy_set_markers':dict(nonsafe),
             'semantic_completeness':'NOT VERIFIED: only selected method calls, stages and selected authoritative state snapshots'}
+
+def inspect(path):
+    events=iter_inspected(path)
+    while True:
+        try: next(events)
+        except StopIteration as done: return done.value
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--roots',nargs='+',required=True)

@@ -11,6 +11,7 @@ from pathlib import Path
 import psutil
 from strict_golden import stable_payload
 from strict_trace_gate_v9 import compare
+from single_pass_trace_gate import audit_pair
 from audit_trace_coverage import inspect, SCHEMAS
 from verify_streamed_stage_sidecars import audit as audit_stage
 SCHEMAS.add('tradingbot.v9.internal-observer.v9')
@@ -55,28 +56,59 @@ def run(raw, root, variant, case, out):
     if sha!=case['stable_output_sha256']:raise AssertionError('Golden stable hash mismatch: '+variant)
     if source_check(root,case['source_sha256'][variant])!=15 or hash_file(raw)!=case['raw_sha256']:
         raise AssertionError('Source/RAW changed during run')
-    integrity=inspect(trace); stages=audit_stage(manifest)
-    if integrity['integrity']!='PASS' or integrity['missing_required'] or stages['status']!='PASS_INTEGRITY_ONLY':
-        raise AssertionError('Trace integrity or required fields failure: '+variant)
-    write(Path(str(stem)+'.integrity.json'),integrity);write(Path(str(stem)+'.stage_integrity.json'),stages)
     return {'variant':variant,'native_exit':rc,'stable_sha256':sha,'timing_schema':schema,
             'wall_observer_on_s':wall,'sampled_cpu_s':cpu,'sampled_peak_rss_mib':rss/2**20,
-            'events':integrity['raw_events'],'trace_sha256':hash_file(trace),'integrity':'PASS',
-            'stage_sidecars':stages['checked_stage_sidecars'],'stage_profile':profile.name}
+            'integrity':'NOT RUN','stage_profile':profile.name},stable
+
+
+def audit_outputs(out, rows, mode):
+    start=time.perf_counter()
+    paths=[out/(row['variant']+'.trace.jsonl.gz') for row in rows]
+    if mode=='fused':
+        result=audit_pair(*paths)
+        reports=result['reports']; comparison=result['comparison']
+    else:
+        reports=[]
+        for path in paths:
+            reports.append({'integrity':inspect(path),
+                            'stage_integrity':audit_stage(Path(str(path)+'.manifest.json'))})
+        comparison=compare(*paths)
+    for row,path,report in zip(rows,paths,reports,strict=True):
+        integrity=report['integrity']; stages=report['stage_integrity']
+        if integrity['integrity']!='PASS' or integrity['missing_required'] or stages['status']!='PASS_INTEGRITY_ONLY':
+            raise AssertionError('Trace integrity or required fields failure: '+row['variant'])
+        stem=out/row['variant']
+        write(Path(str(stem)+'.integrity.json'),integrity)
+        write(Path(str(stem)+'.stage_integrity.json'),stages)
+        row.update(events=integrity['raw_events'],trace_sha256=hash_file(path),integrity='PASS',
+                   stage_sidecars=stages['checked_stage_sidecars'])
+    write(out/'strict_comparison.json',comparison)
+    return comparison,time.perf_counter()-start
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--case',type=Path,required=True);p.add_argument('--raw',type=Path,required=True);p.add_argument('--original-engine',type=Path,required=True);p.add_argument('--v81-engine',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--case',type=Path,required=True);p.add_argument('--raw',type=Path,required=True);p.add_argument('--original-engine',type=Path,required=True);p.add_argument('--v81-engine',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--audit-mode',choices=('fused','legacy'),default='fused');a=p.parse_args()
     raw=a.raw.resolve();out=a.out.resolve();out.mkdir(parents=True,exist_ok=True)
     if any(out.iterdir()):raise ValueError('Output directory must be empty; preserve evidence from prior runs')
-    case=json.loads(a.case.read_text());r={'status':'INCOMPLETE','full_semantic_state_status':'INCOMPLETE','case':case['name'],'rows':[]}
+    case=json.loads(a.case.read_text());r={'status':'INCOMPLETE','full_semantic_state_status':'INCOMPLETE','case':case['name'],'rows':[],'audit_mode':a.audit_mode}
     dest=out/'pair_report.json';write(dest,r)
     try:
         if hash_file(raw)!=case['raw_sha256']:raise ValueError('RAW SHA mismatch')
         # Count and range from pinned manifest; full input hash prevents prefix substitution.
+        reference_stable=None
         for variant,root in [('original',a.original_engine.resolve()),('v81',a.v81_engine.resolve())]:
-            print('START',variant,case['name'],flush=True);row=run(raw,root,variant,case,out);r['rows'].append(row);write(dest,r);print('END',variant,row['events'],flush=True)
+            print('START',variant,case['name'],flush=True)
+            row,stable=run(raw,root,variant,case,out)
+            r['rows'].append(row);write(dest,r)
+            if reference_stable is None:reference_stable=stable
+            elif stable!=reference_stable:raise AssertionError('Native stable bytes differ')
+            print('END NATIVE',variant,flush=True)
+        del reference_stable,stable
         if r['rows'][0]['timing_schema']!=r['rows'][1]['timing_schema']:raise AssertionError('Timing schema mismatch')
-        c=compare(out/'original.trace.jsonl.gz',out/'v81.trace.jsonl.gz');write(out/'strict_comparison.json',c)
+        c,audit_wall=audit_outputs(out,r['rows'],a.audit_mode)
+        if hash_file(raw)!=case['raw_sha256'] or source_check(a.original_engine.resolve(),case['source_sha256']['original'])!=15 or source_check(a.v81_engine.resolve(),case['source_sha256']['v81'])!=15:
+            raise AssertionError('Final source/RAW integrity check failed')
+        r['audit_wall_s']=audit_wall
+        r['native_stable_bytes_equal']=True
         r['stable_output_status']='PASS';r['selected_event_status']=c['selected_event_status'];r['status']='FAIL' if c['selected_event_status']=='FAIL' else 'INCOMPLETE'
         r['reason']='Selected events do not establish all semantic mutations/Live state.';write(dest,r)
         return 1 if r['status']=='FAIL' else 2
