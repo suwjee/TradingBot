@@ -21,9 +21,9 @@ jobs:
       - name: Verify standalone layout, exact baseline delta and all active Python syntax
         run: |
           python tooling/verify_workspace.py
-          python -m compileall -q tooling versions/V9/tooling
+          python -m compileall -q tooling versions/V9/tooling versions/V10/tooling
       - name: Run strict comparator and sidecar security regression
-        run: python -m pytest -q versions/V9/tooling/test_strict_trace_gate_v9.py versions/V9/tooling/test_safe_sidecar.py versions/V9/tooling/test_e_zone_decision_trace.py versions/V9/tooling/test_single_pass_trace_gate.py versions/V9/tooling/test_replay_frozen_trace.py versions/V9/tooling/test_ledger_delta_v9.py versions/V9/tooling/test_delta_splice_fast_v9.py --junitxml="$RUNNER_TEMP/v9-tools.xml"
+        run: python -m pytest -q versions/V9/tooling/test_strict_trace_gate_v9.py versions/V9/tooling/test_safe_sidecar.py versions/V9/tooling/test_e_zone_decision_trace.py versions/V9/tooling/test_single_pass_trace_gate.py versions/V9/tooling/test_replay_frozen_trace.py versions/V9/tooling/test_ledger_delta_v9.py versions/V9/tooling/test_delta_splice_fast_v9.py versions/V9/tooling/test_audit_lifecycle_v9.py --junitxml="$RUNNER_TEMP/v9-tools.xml"
       - name: Large nested stage streaming integrity
         run: python versions/V9/tooling/test_v9_large_stage_stream.py
       - name: Checkout prior tooling for historical mutation suites (separate checkout)

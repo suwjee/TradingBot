@@ -7,7 +7,7 @@
     "production": "9838fa9809865aa6507adb7be871810d878bdb5f"
   },
   "previous_snapshot": "eef50eb2cedb06ba4c77bb82c6ac3b312ef1e7ba",
-  "active_phase": "V9",
+  "active_phase": "V10",
   "release_status": "INCOMPLETE",
   "trace_coverage": "TRACE_COVERAGE_PARTIAL",
   "go_to_v10": false,
@@ -30,15 +30,16 @@
   ],
   "full_artifact_retention": "hash manifests present; full binary traces and native outputs not committed; external durable retention not verified",
   "remaining": [
-    "Full 1M selected trace pair",
-    "Complete lossless semantic mutator and Live state coverage"
+    "Full 1M selected trace job outcome",
+    "Full ledger boundary delta on 284184 and 247851; local 284184 attempt underway, not complete at preparation",
+    "All intra-boundary semantic mutation and arbitrary Live/cross-owner coverage",
+    "Full per-scale allocation/cache/sort counters and paired overhead proof"
   ],
   "next": [
-    "Re-audit completed 97,930 archived splices with fast transport; complete larger real scoped pairs (247851 and 284184) with bounded resource design, no unnecessary native reruns",
-    "Extend source-site coverage (intra-boundary mutations, cross-direction/lifecycle, cache invalidation and remaining Live internals)",
-    "Observe/persist existing full million trace result; final V9 audit; no V10 until actual gates pass"
+    "V10 experimental: measure actual confirmation-skip branch frequency and scanned rows; profile higher impact E/Order queries before any patch",
+    "V9: record larger ledger attempt and actual million job outcome; do not claim full coverage"
   ],
-  "latest_journal": "journal/2026-11-24-v9-ledger-delta-extended.md",
+  "latest_journal": "journal/2026-11-24-v9-best-effort-v10-preflight.md",
   "archive_index": "archive/pre-isolation-index.json",
   "ci": {
     "validated_code_commit": "e4ed3a5f4b29777f9b1720075c4b38546616da8a",
@@ -681,5 +682,54 @@
         }
       ]
     }
+  },
+  "v9_release_status": "INCOMPLETE",
+  "active_phase_status": "EXPERIMENTAL_PREFLIGHT_STARTED_V9_UNCERTIFIED",
+  "go_to_v10_meaning": "Certified V9 gate remains NO-GO; owner explicitly authorized experimental V10 entry after best-effort V9.",
+  "v10_experimental_entry": {
+    "status": "NO_SAFE_INDEX_PROMOTED",
+    "oracle": "01d54ecf0149ebd15de92798be18810b6e2eb791",
+    "performance_reference": "V8.1 frozen",
+    "prompt": "prompts/V10.md",
+    "scope": "Historical Range-Query & Indexing Engine Optimization",
+    "query_definitions": 14,
+    "name_matched_callsites": 26,
+    "potential_mutation_sites": 986,
+    "controlled_queries": 12500,
+    "query_probe_status": "PASS_SCOPED",
+    "source_patch": "NOT CREATED",
+    "source_integration": "NOT RUN",
+    "full_engine_performance_promotion": "NOT RUN",
+    "report": "versions/V10/reports/V10_QUERY_INVARIANTS.md"
+  },
+  "v9_best_effort": {
+    "prompt_audit": "versions/V9/reports/V9_PROMPT_CLAUSE_AUDIT.md",
+    "freeze": {
+      "status": "PASS",
+      "source_blobs": 15,
+      "zip_members": 51,
+      "raw_cases": 7
+    },
+    "lifecycle": {
+      "status": "PASS_SCOPED",
+      "records": 791174,
+      "events_equal": 55207,
+      "report": "versions/V9/evidence/2026-11-24/v9-best-effort/lifecycle-matrix.json"
+    },
+    "cache_controlled": 14,
+    "local_unit_tests": 69,
+    "golden_mutations": 10,
+    "profile_invocations": 6,
+    "archive_97930_fast_reaudit": {
+      "status": "PASS",
+      "boundaries_per_source": 2552,
+      "crc_and_member_hash": "PASS"
+    },
+    "delivery": {
+      "library_prefix": "/TradingBot/Versions/V9-2026-11-24/",
+      "upload_status": "succeeded",
+      "manifest": "versions/V9/evidence/2026-11-24/v9-best-effort/delivery-manifest.json"
+    },
+    "full_semantic_state_status": "INCOMPLETE"
   }
 }

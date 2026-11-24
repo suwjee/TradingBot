@@ -1,0 +1,173 @@
+{
+  "status": "PASS",
+  "source_sha256": "87e1d9beae3617b26e6cfca94d87506988037f37331316073c8ea822d2725268",
+  "source_line": 912,
+  "seed": 20261124,
+  "total_queries": 12500,
+  "suites": [
+    {
+      "name": "empty",
+      "length": 0,
+      "queries": 2500,
+      "status": "PASS",
+      "build_s": 2.8713e-05,
+      "build_traced_peak_bytes": 776,
+      "reference_examined_rows": 0,
+      "results_sha256": "2f343daf1fc4f68b0002f36d69d046e1f89dbdef155d7c39fc919b8935bc57e2",
+      "runs": [
+        {
+          "mode": "reference",
+          "wall_s": 0.000167753
+        },
+        {
+          "mode": "index",
+          "wall_s": 0.054545984
+        },
+        {
+          "mode": "index",
+          "wall_s": 0.001232562
+        },
+        {
+          "mode": "reference",
+          "wall_s": 0.000289928
+        }
+      ],
+      "median_wall_s": {
+        "reference": 0.00022884050000000002,
+        "index": 0.027889273
+      }
+    },
+    {
+      "name": "one",
+      "length": 1,
+      "queries": 2500,
+      "status": "PASS",
+      "build_s": 2.592e-05,
+      "build_traced_peak_bytes": 768,
+      "reference_examined_rows": 1176,
+      "results_sha256": "83d53745b03d7b788cbb12e823575ecb2e34a29c0ce38ab351ee1825527ef60c",
+      "runs": [
+        {
+          "mode": "reference",
+          "wall_s": 0.000292192
+        },
+        {
+          "mode": "index",
+          "wall_s": 0.001203618
+        },
+        {
+          "mode": "index",
+          "wall_s": 0.001187083
+        },
+        {
+          "mode": "reference",
+          "wall_s": 0.000343589
+        }
+      ],
+      "median_wall_s": {
+        "reference": 0.0003178905,
+        "index": 0.0011953505000000001
+      }
+    },
+    {
+      "name": "duplicate_nonmonotone",
+      "length": 128,
+      "queries": 2500,
+      "status": "PASS",
+      "build_s": 7.4553e-05,
+      "build_traced_peak_bytes": 3472,
+      "reference_examined_rows": 42451,
+      "results_sha256": "cdd3a16e5ca396a26a08951fd1a4e22d7193cf1bf56985e805337892a7fd7e1a",
+      "runs": [
+        {
+          "mode": "reference",
+          "wall_s": 0.003262298
+        },
+        {
+          "mode": "index",
+          "wall_s": 0.003540598
+        },
+        {
+          "mode": "index",
+          "wall_s": 0.003352044
+        },
+        {
+          "mode": "reference",
+          "wall_s": 0.003070849
+        }
+      ],
+      "median_wall_s": {
+        "reference": 0.0031665735,
+        "index": 0.003446321
+      }
+    },
+    {
+      "name": "ordered_with_ties",
+      "length": 2048,
+      "queries": 2500,
+      "status": "PASS",
+      "build_s": 0.004595381,
+      "build_traced_peak_bytes": 49636,
+      "reference_examined_rows": 825145,
+      "results_sha256": "7c19dc99b6666a1af74b00a906a5aeb541913fac11c488db2ca940e732f574f3",
+      "runs": [
+        {
+          "mode": "reference",
+          "wall_s": 0.071667388
+        },
+        {
+          "mode": "index",
+          "wall_s": 0.005367267
+        },
+        {
+          "mode": "index",
+          "wall_s": 0.004815894
+        },
+        {
+          "mode": "reference",
+          "wall_s": 0.070332361
+        }
+      ],
+      "median_wall_s": {
+        "reference": 0.0709998745,
+        "index": 0.0050915805
+      }
+    },
+    {
+      "name": "stress",
+      "length": 8192,
+      "queries": 2500,
+      "status": "PASS",
+      "build_s": 0.018896164,
+      "build_traced_peak_bytes": 197084,
+      "reference_examined_rows": 2392519,
+      "results_sha256": "b574da577cedfda2a4d753e900101b8f160f0da4487ace99bae9b8bd777abeee",
+      "runs": [
+        {
+          "mode": "reference",
+          "wall_s": 0.203828444
+        },
+        {
+          "mode": "index",
+          "wall_s": 0.006617746
+        },
+        {
+          "mode": "index",
+          "wall_s": 0.005853983
+        },
+        {
+          "mode": "reference",
+          "wall_s": 0.210686884
+        }
+      ],
+      "median_wall_s": {
+        "reference": 0.207257664,
+        "index": 0.0062358645
+      }
+    }
+  ],
+  "isolated_rebuild_control": "PASS",
+  "scope": "Only extracted confirmation-skip subquery; excludes gate/blocking/geometry/Order selection. Synthetic microbenchmark, not native hotpath frequency or promotion.",
+  "verdict": "EXPERIMENTAL_NOT_PROMOTED",
+  "full_state_gate": "INCOMPLETE"
+}

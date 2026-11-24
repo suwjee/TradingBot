@@ -1,0 +1,5 @@
+# V10 — Historical Range-Query & Indexing Engine Optimization
+
+**Experimental preflight; NO_SAFE_INDEX_PROMOTED.** Owner authorized this phase entry after best-effort V9; V9 remains uncertified. Original oracle and frozen V8.1 unchanged. Never write to main/production.
+
+[Original prompt](../../prompts/V10.md) (historical main-write instructions superseded), [inventory](reports/V10_HISTORICAL_QUERY_INVENTORY.csv), [invariants](reports/V10_QUERY_INVARIANTS.md), [randomized comparison](reports/V10_RANDOMIZED_EQUIVALENCE.json). 12500 isolated exact queries; no native integration or speed promotion. Run `PYTHONPATH=versions/V9/tooling python -B versions/V10/tooling/inventory_queries_v10.py --help`; `python -B versions/V10/tooling/v10_confirmation_query_probe.py --help`. Use pinned ignored local source copies. Actual branch frequency and cost are next; full RAW/synthetic/Live/trace and performance gates still required.
