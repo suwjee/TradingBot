@@ -1,0 +1,944 @@
+{
+  "variant": "v81",
+  "mode": "cprofile",
+  "records": 97930,
+  "raw_sha256": "b49dd7d1edd11b9d2fd7187953058030fb5f60cbca8e48d6fbce7fb89a16366c",
+  "source_sha256": {
+    "bridge/__init__.py": "2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8",
+    "bridge/live_pipeline.py": "5c0effe89dd5ce47c996187ca4da2689915aa83bcc16271432f2c0ee62c2240d",
+    "bridge/trading_pipeline.py": "033d4ed7564cc5ccbc4588f1d5f3d7ca9820fb490d8fa552d5735bb462881f6b",
+    "pipeline/PL_PH_detector.py": "4fcc4820ddd4d374440698d3fcc8fc827e618268b2e378581ac54b5e865b7e6f",
+    "pipeline/__init__.py": "d22a1b81495a6c97b5eccc4d921b1ba4b709bfbcd39be6ef34b9014690b9f460",
+    "pipeline/a_zone_detector.py": "a77c57d1c2e148461e5c9a5f1f9ea569a1a66c64e5b97b08380ec0d6a16d8593",
+    "pipeline/blue_line_detector.py": "0171a1bfc48bc40b3b82781ac935614b75905a740e69b703ef3654d897d76df5",
+    "pipeline/core_utils.py": "f0764f52943ed3a9b02e90183196f4cabcbcc99217480e063a271cb56c1d4fd0",
+    "pipeline/direction_policy.py": "a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea",
+    "pipeline/e_zone_detector.py": "870a7c68a6d54fae1b1e7eaf195688c50c0d2f74563131ef5e4aaa9d4c3b204f",
+    "pipeline/lifecycle_engine.py": "304848d425630ac4bce8f8e6e976d36312e1b16dac148a226efec4cf84f4f3f2",
+    "pipeline/order_audit_engine.py": "87e1d9beae3617b26e6cfca94d87506988037f37331316073c8ea822d2725268",
+    "pipeline/reaction_engine.py": "0b37fbf91a0f2cdd65fec85eee6c39095e835bc928a98c657f1fe808e204b066",
+    "pipeline/s_zone_detector.py": "3da3424c2a292ee8fb0f08854462bce57f075721bb370c9619d3e795fd134b78",
+    "pipeline/true_false.py": "ac536ea31872c20a872b252171a8be352cfc87859e19a67773fc6f796cb633b2"
+  },
+  "wall_s": 23.03654086100005,
+  "cpu_s": 22.974129034,
+  "peak_rss_mib": 260.93359375,
+  "gc_before": [
+    {
+      "collections": 117,
+      "collected": 603,
+      "uncollectable": 0
+    },
+    {
+      "collections": 10,
+      "collected": 10,
+      "uncollectable": 0
+    },
+    {
+      "collections": 0,
+      "collected": 0,
+      "uncollectable": 0
+    }
+  ],
+  "gc_after": [
+    {
+      "collections": 587,
+      "collected": 60419,
+      "uncollectable": 0
+    },
+    {
+      "collections": 53,
+      "collected": 54558,
+      "uncollectable": 0
+    },
+    {
+      "collections": 4,
+      "collected": 47222,
+      "uncollectable": 0
+    }
+  ],
+  "gc_count_before": [
+    826,
+    7,
+    10
+  ],
+  "gc_count_after": [
+    0,
+    4,
+    9
+  ],
+  "native_exit": 0,
+  "concurrency_note": "Concurrent with large V8.1 query metering; descriptive function costs only, not uncontended native performance.",
+  "profile_functions": 1246,
+  "top_exclusive": [
+    {
+      "source": "~",
+      "line": 0,
+      "function": "<built-in method builtins.getattr>",
+      "primitive_calls": 17067380,
+      "calls": 17067380,
+      "exclusive_s": 1.8347294090000001,
+      "cumulative_s": 1.840531012
+    },
+    {
+      "source": "~",
+      "line": 0,
+      "function": "<method 'get' of 'dict' objects>",
+      "primitive_calls": 5263015,
+      "calls": 5263015,
+      "exclusive_s": 1.0023190690000001,
+      "cumulative_s": 1.0023190690000001
+    },
+    {
+      "source": "/usr/lib/python3.13/dataclasses.py",
+      "line": 1599,
+      "function": "_replace",
+      "primitive_calls": 247393,
+      "calls": 247393,
+      "exclusive_s": 0.783578685,
+      "cumulative_s": 1.383889756
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py",
+      "line": 1049,
+      "function": "order_candidates",
+      "primitive_calls": 71879,
+      "calls": 71879,
+      "exclusive_s": 0.699676488,
+      "cumulative_s": 4.195810973
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py",
+      "line": 1709,
+      "function": "_validated_carried_creation_index",
+      "primitive_calls": 3794,
+      "calls": 3794,
+      "exclusive_s": 0.562327071,
+      "cumulative_s": 1.2658390030000002
+    },
+    {
+      "source": "/usr/lib/python3.13/heapq.py",
+      "line": 316,
+      "function": "merge",
+      "primitive_calls": 140530,
+      "calls": 275245,
+      "exclusive_s": 0.429949193,
+      "cumulative_s": 1.008167167
+    },
+    {
+      "source": "engine/pipeline/core_utils.py",
+      "line": 51,
+      "function": "as_decimal",
+      "primitive_calls": 2212949,
+      "calls": 2212949,
+      "exclusive_s": 0.330382936,
+      "cumulative_s": 0.478788031
+    },
+    {
+      "source": "engine/pipeline/reaction_engine.py",
+      "line": 1042,
+      "function": "_search_first",
+      "primitive_calls": 103107,
+      "calls": 103107,
+      "exclusive_s": 0.32777242900000003,
+      "cumulative_s": 0.6592151260000001
+    },
+    {
+      "source": "engine/pipeline/reaction_engine.py",
+      "line": 1223,
+      "function": "_reaction_cache_key",
+      "primitive_calls": 339153,
+      "calls": 339153,
+      "exclusive_s": 0.31619288500000003,
+      "cumulative_s": 0.529787654
+    },
+    {
+      "source": "/usr/lib/python3.13/copy.py",
+      "line": 248,
+      "function": "_reconstruct",
+      "primitive_calls": 88619,
+      "calls": 88619,
+      "exclusive_s": 0.305406397,
+      "cumulative_s": 0.550757903
+    },
+    {
+      "source": "engine/pipeline/e_zone_detector.py",
+      "line": 733,
+      "function": "_zone",
+      "primitive_calls": 33305,
+      "calls": 33305,
+      "exclusive_s": 0.29753427200000004,
+      "cumulative_s": 7.493035145
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py",
+      "line": 1404,
+      "function": "_register_order_audit",
+      "primitive_calls": 40104,
+      "calls": 40104,
+      "exclusive_s": 0.295698674,
+      "cumulative_s": 4.063300836000001
+    },
+    {
+      "source": "/usr/lib/python3.13/json/decoder.py",
+      "line": 351,
+      "function": "raw_decode",
+      "primitive_calls": 1,
+      "calls": 1,
+      "exclusive_s": 0.289654893,
+      "cumulative_s": 0.289654893
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py",
+      "line": 2085,
+      "function": "_order_created_only_by_disowned_s",
+      "primitive_calls": 99091,
+      "calls": 99091,
+      "exclusive_s": 0.262396043,
+      "cumulative_s": 0.320097736
+    },
+    {
+      "source": "~",
+      "line": 0,
+      "function": "<method 'format' of 'str' objects>",
+      "primitive_calls": 47449,
+      "calls": 47449,
+      "exclusive_s": 0.25374508,
+      "cumulative_s": 0.25374508
+    },
+    {
+      "source": "~",
+      "line": 0,
+      "function": "<built-in method _bisect.bisect_left>",
+      "primitive_calls": 450699,
+      "calls": 450699,
+      "exclusive_s": 0.252652365,
+      "cumulative_s": 0.25266222
+    },
+    {
+      "source": "engine/pipeline/e_zone_detector.py",
+      "line": 690,
+      "function": "_reaction_first_time",
+      "primitive_calls": 976688,
+      "calls": 976688,
+      "exclusive_s": 0.24674659200000001,
+      "cumulative_s": 0.348879023
+    },
+    {
+      "source": "~",
+      "line": 0,
+      "function": "<built-in method _bisect.bisect_right>",
+      "primitive_calls": 664715,
+      "calls": 664715,
+      "exclusive_s": 0.23500320600000002,
+      "cumulative_s": 0.23500320600000002
+    },
+    {
+      "source": "~",
+      "line": 0,
+      "function": "<built-in method builtins.isinstance>",
+      "primitive_calls": 2922560,
+      "calls": 2922560,
+      "exclusive_s": 0.22452374200000003,
+      "cumulative_s": 0.229461555
+    },
+    {
+      "source": "engine/pipeline/reaction_engine.py",
+      "line": 642,
+      "function": "mirror_candle",
+      "primitive_calls": 56311,
+      "calls": 56311,
+      "exclusive_s": 0.21337851800000002,
+      "cumulative_s": 0.319143662
+    },
+    {
+      "source": "engine/pipeline/e_zone_detector.py",
+      "line": 877,
+      "function": "_build_zone",
+      "primitive_calls": 33158,
+      "calls": 33158,
+      "exclusive_s": 0.20915609300000002,
+      "cumulative_s": 0.5272642780000001
+    },
+    {
+      "source": "~",
+      "line": 0,
+      "function": "<built-in method builtins.any>",
+      "primitive_calls": 391206,
+      "calls": 391206,
+      "exclusive_s": 0.20151595600000002,
+      "cumulative_s": 0.513975819
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py",
+      "line": 661,
+      "function": "_order_stop",
+      "primitive_calls": 435349,
+      "calls": 435349,
+      "exclusive_s": 0.20093428000000002,
+      "cumulative_s": 0.39827041500000004
+    },
+    {
+      "source": "engine/pipeline/e_zone_detector.py",
+      "line": 662,
+      "function": "_cross_order",
+      "primitive_calls": 452458,
+      "calls": 452458,
+      "exclusive_s": 0.199876083,
+      "cumulative_s": 0.601591455
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py",
+      "line": 170,
+      "function": "_order_b_boundary",
+      "primitive_calls": 15643,
+      "calls": 15643,
+      "exclusive_s": 0.199776543,
+      "cumulative_s": 0.41051784700000005
+    },
+    {
+      "source": "engine/pipeline/reaction_engine.py",
+      "line": 917,
+      "function": "_update_parents",
+      "primitive_calls": 10,
+      "calls": 10,
+      "exclusive_s": 0.186820388,
+      "cumulative_s": 0.186820388
+    },
+    {
+      "source": "engine/pipeline/e_zone_detector.py",
+      "line": 1231,
+      "function": "_discover_candidate_chains",
+      "primitive_calls": 114,
+      "calls": 114,
+      "exclusive_s": 0.18615457800000001,
+      "cumulative_s": 8.759684628
+    },
+    {
+      "source": "engine/bridge/trading_pipeline.py",
+      "line": 308,
+      "function": "build_candle_objects",
+      "primitive_calls": 2,
+      "calls": 2,
+      "exclusive_s": 0.183430479,
+      "cumulative_s": 0.5948477240000001
+    },
+    {
+      "source": "engine/pipeline/lifecycle_engine.py",
+      "line": 973,
+      "function": "blocked_orders_while_invalid_leg_heads_are_live",
+      "primitive_calls": 30,
+      "calls": 30,
+      "exclusive_s": 0.18189254800000001,
+      "cumulative_s": 0.308194458
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py",
+      "line": 1787,
+      "function": "_carried_orders_for_parent",
+      "primitive_calls": 33305,
+      "calls": 33305,
+      "exclusive_s": 0.18061837700000002,
+      "cumulative_s": 1.605461041
+    },
+    {
+      "source": "~",
+      "line": 0,
+      "function": "<method 'append' of 'list' objects>",
+      "primitive_calls": 1551084,
+      "calls": 1551084,
+      "exclusive_s": 0.17905674100000002,
+      "cumulative_s": 0.17905674100000002
+    },
+    {
+      "source": "~",
+      "line": 0,
+      "function": "<built-in method builtins.min>",
+      "primitive_calls": 471577,
+      "calls": 471577,
+      "exclusive_s": 0.17813525800000002,
+      "cumulative_s": 0.318455665
+    },
+    {
+      "source": "engine/pipeline/reaction_engine.py",
+      "line": 1257,
+      "function": "reaction_confirmation",
+      "primitive_calls": 339153,
+      "calls": 339153,
+      "exclusive_s": 0.175642859,
+      "cumulative_s": 0.90360649
+    },
+    {
+      "source": "engine/pipeline/core_utils.py",
+      "line": 64,
+      "function": "reaction_identity",
+      "primitive_calls": 838391,
+      "calls": 838391,
+      "exclusive_s": 0.17462418500000002,
+      "cumulative_s": 0.17462418500000002
+    },
+    {
+      "source": "~",
+      "line": 0,
+      "function": "<built-in method builtins.len>",
+      "primitive_calls": 1574789,
+      "calls": 1584713,
+      "exclusive_s": 0.17292195900000001,
+      "cumulative_s": 0.175291209
+    },
+    {
+      "source": "engine/pipeline/reaction_engine.py",
+      "line": 1064,
+      "function": "_descend_first",
+      "primitive_calls": 92002,
+      "calls": 92002,
+      "exclusive_s": 0.17057470200000002,
+      "cumulative_s": 0.225480177
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py",
+      "line": 858,
+      "function": "<genexpr>",
+      "primitive_calls": 441315,
+      "calls": 441315,
+      "exclusive_s": 0.16800040200000002,
+      "cumulative_s": 0.406169111
+    },
+    {
+      "source": "engine/bridge/trading_pipeline.py",
+      "line": 140,
+      "function": "_aggregate_candle_buckets",
+      "primitive_calls": 1,
+      "calls": 1,
+      "exclusive_s": 0.16434336500000002,
+      "cumulative_s": 0.5207018
+    },
+    {
+      "source": "engine/pipeline/reaction_engine.py",
+      "line": 909,
+      "function": "_fill_leaves",
+      "primitive_calls": 10,
+      "calls": 10,
+      "exclusive_s": 0.159058211,
+      "cumulative_s": 0.34487326700000004
+    },
+    {
+      "source": "/usr/lib/python3.13/copy.py",
+      "line": 62,
+      "function": "copy",
+      "primitive_calls": 65580,
+      "calls": 65580,
+      "exclusive_s": 0.150373252,
+      "cumulative_s": 0.8427830690000001
+    }
+  ],
+  "note": "Exclusive and cumulative differ; do not sum cumulative across call tree.",
+  "stable_golden_byte_equal": true,
+  "stable_sha256": "390baaab0caf5f3b567060dfee589593c1bb793093875a7f69920629c952b77c",
+  "timing_schema": {
+    "phase_keys": [
+      "Validate request",
+      "Load Reaction engine",
+      "Load Blue Line engine",
+      "Load A engine",
+      "Load S engine",
+      "Load E engine",
+      "Load Lifecycle engine",
+      "Read source file",
+      "Parse source JSON",
+      "Use full RAW calculation context",
+      "Normalize raw candles",
+      "Build lower candle views",
+      "Build timeframe candle views",
+      "Reaction geometry \u2022 Bullish",
+      "Reaction geometry \u2022 Bearish",
+      "Internal Reaction ownership",
+      "Blue Line \u2022 Bullish",
+      "A \u2022 Bullish",
+      "S \u2022 Bullish",
+      "E \u2022 Bullish \u2022 initial",
+      "E \u2022 Bullish \u2022 S reconciliation",
+      "E \u2022 Bullish \u2022 final audit",
+      "E \u2022 Bullish \u2022 shared Order-stop reconciliation",
+      "Blue Line \u2022 Bearish",
+      "A \u2022 Bearish",
+      "S \u2022 Bearish",
+      "E \u2022 Bearish \u2022 initial",
+      "E \u2022 Bearish \u2022 S reconciliation",
+      "E \u2022 Bearish \u2022 final audit",
+      "E \u2022 Bearish \u2022 shared Order-stop reconciliation",
+      "Reconcile S visibility - Bullish",
+      "StopAll - Bullish",
+      "Order_B reset legs - Bullish",
+      "Apply visibility filters - Bullish",
+      "Serialize Reaction - Bullish",
+      "Serialize output - Bullish",
+      "Reconcile S visibility - Bearish",
+      "StopAll - Bearish",
+      "Order_B reset legs - Bearish",
+      "Apply visibility filters - Bearish",
+      "PH/PL - Bearish",
+      "Serialize Reaction - Bearish",
+      "Serialize output - Bearish",
+      "PH/PL - Bullish"
+    ],
+    "phase_types": [
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float"
+    ],
+    "total_type": "float",
+    "timing_keys": [
+      "phasesMs",
+      "bridgeTotalMs"
+    ]
+  },
+  "top_engine_exclusive": [
+    {
+      "source": "pipeline/order_audit_engine.py",
+      "line": 1049,
+      "name": "order_candidates",
+      "primitive_calls": 71879,
+      "calls": 71879,
+      "exclusive_s": 0.699676488,
+      "cumulative_s": 4.195810973
+    },
+    {
+      "source": "pipeline/order_audit_engine.py",
+      "line": 1709,
+      "name": "_validated_carried_creation_index",
+      "primitive_calls": 3794,
+      "calls": 3794,
+      "exclusive_s": 0.562327071,
+      "cumulative_s": 1.2658390030000002
+    },
+    {
+      "source": "pipeline/core_utils.py",
+      "line": 51,
+      "name": "as_decimal",
+      "primitive_calls": 2212949,
+      "calls": 2212949,
+      "exclusive_s": 0.330382936,
+      "cumulative_s": 0.478788031
+    },
+    {
+      "source": "pipeline/reaction_engine.py",
+      "line": 1042,
+      "name": "_search_first",
+      "primitive_calls": 103107,
+      "calls": 103107,
+      "exclusive_s": 0.32777242900000003,
+      "cumulative_s": 0.6592151260000001
+    },
+    {
+      "source": "pipeline/reaction_engine.py",
+      "line": 1223,
+      "name": "_reaction_cache_key",
+      "primitive_calls": 339153,
+      "calls": 339153,
+      "exclusive_s": 0.31619288500000003,
+      "cumulative_s": 0.529787654
+    },
+    {
+      "source": "pipeline/e_zone_detector.py",
+      "line": 733,
+      "name": "_zone",
+      "primitive_calls": 33305,
+      "calls": 33305,
+      "exclusive_s": 0.29753427200000004,
+      "cumulative_s": 7.493035145
+    },
+    {
+      "source": "pipeline/order_audit_engine.py",
+      "line": 1404,
+      "name": "_register_order_audit",
+      "primitive_calls": 40104,
+      "calls": 40104,
+      "exclusive_s": 0.295698674,
+      "cumulative_s": 4.063300836000001
+    },
+    {
+      "source": "pipeline/order_audit_engine.py",
+      "line": 2085,
+      "name": "_order_created_only_by_disowned_s",
+      "primitive_calls": 99091,
+      "calls": 99091,
+      "exclusive_s": 0.262396043,
+      "cumulative_s": 0.320097736
+    },
+    {
+      "source": "pipeline/e_zone_detector.py",
+      "line": 690,
+      "name": "_reaction_first_time",
+      "primitive_calls": 976688,
+      "calls": 976688,
+      "exclusive_s": 0.24674659200000001,
+      "cumulative_s": 0.348879023
+    },
+    {
+      "source": "pipeline/reaction_engine.py",
+      "line": 642,
+      "name": "mirror_candle",
+      "primitive_calls": 56311,
+      "calls": 56311,
+      "exclusive_s": 0.21337851800000002,
+      "cumulative_s": 0.319143662
+    },
+    {
+      "source": "pipeline/e_zone_detector.py",
+      "line": 877,
+      "name": "_build_zone",
+      "primitive_calls": 33158,
+      "calls": 33158,
+      "exclusive_s": 0.20915609300000002,
+      "cumulative_s": 0.5272642780000001
+    },
+    {
+      "source": "pipeline/order_audit_engine.py",
+      "line": 661,
+      "name": "_order_stop",
+      "primitive_calls": 435349,
+      "calls": 435349,
+      "exclusive_s": 0.20093428000000002,
+      "cumulative_s": 0.39827041500000004
+    },
+    {
+      "source": "pipeline/e_zone_detector.py",
+      "line": 662,
+      "name": "_cross_order",
+      "primitive_calls": 452458,
+      "calls": 452458,
+      "exclusive_s": 0.199876083,
+      "cumulative_s": 0.601591455
+    },
+    {
+      "source": "pipeline/order_audit_engine.py",
+      "line": 170,
+      "name": "_order_b_boundary",
+      "primitive_calls": 15643,
+      "calls": 15643,
+      "exclusive_s": 0.199776543,
+      "cumulative_s": 0.41051784700000005
+    },
+    {
+      "source": "pipeline/reaction_engine.py",
+      "line": 917,
+      "name": "_update_parents",
+      "primitive_calls": 10,
+      "calls": 10,
+      "exclusive_s": 0.186820388,
+      "cumulative_s": 0.186820388
+    },
+    {
+      "source": "pipeline/e_zone_detector.py",
+      "line": 1231,
+      "name": "_discover_candidate_chains",
+      "primitive_calls": 114,
+      "calls": 114,
+      "exclusive_s": 0.18615457800000001,
+      "cumulative_s": 8.759684628
+    },
+    {
+      "source": "bridge/trading_pipeline.py",
+      "line": 308,
+      "name": "build_candle_objects",
+      "primitive_calls": 2,
+      "calls": 2,
+      "exclusive_s": 0.183430479,
+      "cumulative_s": 0.5948477240000001
+    },
+    {
+      "source": "pipeline/lifecycle_engine.py",
+      "line": 973,
+      "name": "blocked_orders_while_invalid_leg_heads_are_live",
+      "primitive_calls": 30,
+      "calls": 30,
+      "exclusive_s": 0.18189254800000001,
+      "cumulative_s": 0.308194458
+    },
+    {
+      "source": "pipeline/order_audit_engine.py",
+      "line": 1787,
+      "name": "_carried_orders_for_parent",
+      "primitive_calls": 33305,
+      "calls": 33305,
+      "exclusive_s": 0.18061837700000002,
+      "cumulative_s": 1.605461041
+    },
+    {
+      "source": "pipeline/reaction_engine.py",
+      "line": 1257,
+      "name": "reaction_confirmation",
+      "primitive_calls": 339153,
+      "calls": 339153,
+      "exclusive_s": 0.175642859,
+      "cumulative_s": 0.90360649
+    },
+    {
+      "source": "pipeline/core_utils.py",
+      "line": 64,
+      "name": "reaction_identity",
+      "primitive_calls": 838391,
+      "calls": 838391,
+      "exclusive_s": 0.17462418500000002,
+      "cumulative_s": 0.17462418500000002
+    },
+    {
+      "source": "pipeline/reaction_engine.py",
+      "line": 1064,
+      "name": "_descend_first",
+      "primitive_calls": 92002,
+      "calls": 92002,
+      "exclusive_s": 0.17057470200000002,
+      "cumulative_s": 0.225480177
+    },
+    {
+      "source": "pipeline/order_audit_engine.py",
+      "line": 858,
+      "name": "<genexpr>",
+      "primitive_calls": 441315,
+      "calls": 441315,
+      "exclusive_s": 0.16800040200000002,
+      "cumulative_s": 0.406169111
+    },
+    {
+      "source": "bridge/trading_pipeline.py",
+      "line": 140,
+      "name": "_aggregate_candle_buckets",
+      "primitive_calls": 1,
+      "calls": 1,
+      "exclusive_s": 0.16434336500000002,
+      "cumulative_s": 0.5207018
+    },
+    {
+      "source": "pipeline/reaction_engine.py",
+      "line": 909,
+      "name": "_fill_leaves",
+      "primitive_calls": 10,
+      "calls": 10,
+      "exclusive_s": 0.159058211,
+      "cumulative_s": 0.34487326700000004
+    },
+    {
+      "source": "pipeline/order_audit_engine.py",
+      "line": 557,
+      "name": "_initialize_order_audit",
+      "primitive_calls": 114,
+      "calls": 114,
+      "exclusive_s": 0.149504107,
+      "cumulative_s": 0.871377837
+    },
+    {
+      "source": "pipeline/e_zone_detector.py",
+      "line": 562,
+      "name": "_build_extreme_sparse",
+      "primitive_calls": 10,
+      "calls": 10,
+      "exclusive_s": 0.149236546,
+      "cumulative_s": 0.149295907
+    },
+    {
+      "source": "pipeline/order_audit_engine.py",
+      "line": 1944,
+      "name": "_iter_post_stop_accepted_orders",
+      "primitive_calls": 33305,
+      "calls": 33305,
+      "exclusive_s": 0.140029214,
+      "cumulative_s": 0.335989943
+    },
+    {
+      "source": "pipeline/order_audit_engine.py",
+      "line": 2072,
+      "name": "accepted",
+      "primitive_calls": 67899,
+      "calls": 67899,
+      "exclusive_s": 0.13744040500000002,
+      "cumulative_s": 0.6991748400000001
+    },
+    {
+      "source": "bridge/trading_pipeline.py",
+      "line": 868,
+      "name": "current_order",
+      "primitive_calls": 957,
+      "calls": 957,
+      "exclusive_s": 0.135612427,
+      "cumulative_s": 0.25741584900000003
+    },
+    {
+      "source": "pipeline/order_audit_engine.py",
+      "line": 1524,
+      "name": "_cross_order",
+      "primitive_calls": 452458,
+      "calls": 452458,
+      "exclusive_s": 0.135056385,
+      "cumulative_s": 0.401715372
+    },
+    {
+      "source": "pipeline/e_zone_detector.py",
+      "line": 611,
+      "name": "_first_parent_stop",
+      "primitive_calls": 126484,
+      "calls": 126484,
+      "exclusive_s": 0.12453718600000001,
+      "cumulative_s": 0.251252323
+    },
+    {
+      "source": "pipeline/lifecycle_engine.py",
+      "line": 766,
+      "name": "split_a_zones_by_dominant_stops",
+      "primitive_calls": 30,
+      "calls": 30,
+      "exclusive_s": 0.12407783400000001,
+      "cumulative_s": 0.452955321
+    },
+    {
+      "source": "pipeline/e_zone_detector.py",
+      "line": 1358,
+      "name": "_compute_reconciliation",
+      "primitive_calls": 114,
+      "calls": 114,
+      "exclusive_s": 0.119903093,
+      "cumulative_s": 0.899536183
+    },
+    {
+      "source": "pipeline/reaction_engine.py",
+      "line": 2068,
+      "name": "first_order_reaction_after_gate",
+      "primitive_calls": 65642,
+      "calls": 65642,
+      "exclusive_s": 0.105650674,
+      "cumulative_s": 1.4386285520000002
+    },
+    {
+      "source": "pipeline/order_audit_engine.py",
+      "line": 1700,
+      "name": "_carried_creation_events",
+      "primitive_calls": 113286,
+      "calls": 113286,
+      "exclusive_s": 0.10459987800000001,
+      "cumulative_s": 0.150974153
+    },
+    {
+      "source": "pipeline/e_zone_detector.py",
+      "line": 694,
+      "name": "_parent_stop",
+      "primitive_calls": 126484,
+      "calls": 126484,
+      "exclusive_s": 0.101469081,
+      "cumulative_s": 0.421353521
+    },
+    {
+      "source": "pipeline/order_audit_engine.py",
+      "line": 2063,
+      "name": "eligible",
+      "primitive_calls": 190344,
+      "calls": 190344,
+      "exclusive_s": 0.098851567,
+      "cumulative_s": 0.142668218
+    },
+    {
+      "source": "pipeline/order_audit_engine.py",
+      "line": 2111,
+      "name": "_rebuild_accepted_order_audit",
+      "primitive_calls": 185,
+      "calls": 185,
+      "exclusive_s": 0.08503677500000001,
+      "cumulative_s": 0.9157365590000001
+    },
+    {
+      "source": "bridge/trading_pipeline.py",
+      "line": 192,
+      "name": "cached_decimal",
+      "primitive_calls": 391720,
+      "calls": 391720,
+      "exclusive_s": 0.084221611,
+      "cumulative_s": 0.32438722400000003
+    },
+    {
+      "source": "pipeline/reaction_engine.py",
+      "line": 1185,
+      "name": "main_index",
+      "primitive_calls": 272323,
+      "calls": 272323,
+      "exclusive_s": 0.082036121,
+      "cumulative_s": 0.20230471600000002
+    },
+    {
+      "source": "pipeline/lifecycle_engine.py",
+      "line": 712,
+      "name": "module_priority",
+      "primitive_calls": 144913,
+      "calls": 144913,
+      "exclusive_s": 0.08082214,
+      "cumulative_s": 0.13508045800000001
+    },
+    {
+      "source": "pipeline/order_audit_engine.py",
+      "line": 1200,
+      "name": "register_order_b_reset_legs",
+      "primitive_calls": 310,
+      "calls": 310,
+      "exclusive_s": 0.08026237,
+      "cumulative_s": 0.23342251200000003
+    },
+    {
+      "source": "pipeline/order_audit_engine.py",
+      "line": 697,
+      "name": "_first_healthy_direct_geometry",
+      "primitive_calls": 17076,
+      "calls": 17076,
+      "exclusive_s": 0.078540183,
+      "cumulative_s": 0.692391139
+    },
+    {
+      "source": "pipeline/reaction_engine.py",
+      "line": 1211,
+      "name": "_reset_cache_key",
+      "primitive_calls": 95496,
+      "calls": 95496,
+      "exclusive_s": 0.078305764,
+      "cumulative_s": 0.152588905
+    }
+  ]
+}

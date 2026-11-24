@@ -1,0 +1,249 @@
+{
+  "records": 284184,
+  "raw_sha256": "3710ea0a533c982438e794a434732b1c80de79ea5babd594cfdef5099604f490",
+  "source_sha256": {
+    "bridge/__init__.py": "2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8",
+    "bridge/live_pipeline.py": "5c0effe89dd5ce47c996187ca4da2689915aa83bcc16271432f2c0ee62c2240d",
+    "bridge/trading_pipeline.py": "033d4ed7564cc5ccbc4588f1d5f3d7ca9820fb490d8fa552d5735bb462881f6b",
+    "pipeline/PL_PH_detector.py": "4fcc4820ddd4d374440698d3fcc8fc827e618268b2e378581ac54b5e865b7e6f",
+    "pipeline/__init__.py": "d22a1b81495a6c97b5eccc4d921b1ba4b709bfbcd39be6ef34b9014690b9f460",
+    "pipeline/a_zone_detector.py": "a77c57d1c2e148461e5c9a5f1f9ea569a1a66c64e5b97b08380ec0d6a16d8593",
+    "pipeline/blue_line_detector.py": "0171a1bfc48bc40b3b82781ac935614b75905a740e69b703ef3654d897d76df5",
+    "pipeline/core_utils.py": "f0764f52943ed3a9b02e90183196f4cabcbcc99217480e063a271cb56c1d4fd0",
+    "pipeline/direction_policy.py": "a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea",
+    "pipeline/e_zone_detector.py": "870a7c68a6d54fae1b1e7eaf195688c50c0d2f74563131ef5e4aaa9d4c3b204f",
+    "pipeline/lifecycle_engine.py": "304848d425630ac4bce8f8e6e976d36312e1b16dac148a226efec4cf84f4f3f2",
+    "pipeline/order_audit_engine.py": "87e1d9beae3617b26e6cfca94d87506988037f37331316073c8ea822d2725268",
+    "pipeline/reaction_engine.py": "0b37fbf91a0f2cdd65fec85eee6c39095e835bc928a98c657f1fe808e204b066",
+    "pipeline/s_zone_detector.py": "3da3424c2a292ee8fb0f08854462bce57f075721bb370c9619d3e795fd134b78",
+    "pipeline/true_false.py": "ac536ea31872c20a872b252171a8be352cfc87859e19a67773fc6f796cb633b2"
+  },
+  "status": "COMPLETE_METER",
+  "native_exit": 0,
+  "wall_observed_s": 155.5549155550002,
+  "cpu_observed_s": 155.288809466,
+  "peak_rss_mib": 588.98828125,
+  "counts": {
+    "_discover_candidate_chains": {
+      "calls": 216,
+      "chain_attempt": 445304,
+      "candidate_append": 222447,
+      "returns": 216
+    },
+    "order_candidates": {
+      "calls": 417608,
+      "returns": 417608,
+      "cache_hit": 348427,
+      "reset_leg_eligible": 5234067
+    },
+    "_direct_parent_stop_order": {
+      "calls": 259417,
+      "returns": 259417,
+      "cache_hit": 190216
+    },
+    "_compute_direct_parent_stop_order": {
+      "calls": 69201,
+      "returns": 69201,
+      "blocked_skip": 329,
+      "confirmation_query": 20
+    },
+    "_first_healthy_direct_geometry": {
+      "calls": 69201,
+      "geometry_attempt": 169638,
+      "reset_row": 46875,
+      "returns": 69201
+    },
+    "_cross_order": {
+      "calls": 4424421,
+      "returns": 4424421,
+      "cache_hit": 4349924
+    },
+    "_zone": {
+      "calls": 227392,
+      "returns": 227392
+    },
+    "_carried_orders_for_parent": {
+      "calls": 227392,
+      "returns": 227392,
+      "ledger_row": 502028,
+      "initial_row": 583968,
+      "cache_hit": 127591
+    },
+    "_compute_reconciliation": {
+      "calls": 216,
+      "returns": 216
+    }
+  },
+  "confirmation_skip_histogram": {
+    "0": 20
+  },
+  "confirmation_sequence_length_histogram": {
+    "3929": 3,
+    "429": 2,
+    "3725": 3,
+    "893": 2,
+    "2587": 3,
+    "1269": 2,
+    "1483": 3,
+    "303": 2
+  },
+  "sites": {
+    "order_audit_engine.py:_compute_direct_parent_stop_order": {
+      "913": "confirmation_query",
+      "915": "confirmation_skip",
+      "932": "blocked_skip"
+    },
+    "order_audit_engine.py:_direct_parent_stop_order": {
+      "888": "cache_hit"
+    },
+    "order_audit_engine.py:order_candidates": {
+      "1067": "cache_hit",
+      "1092": "reset_leg_eligible"
+    },
+    "order_audit_engine.py:_first_healthy_direct_geometry": {
+      "716": "geometry_attempt",
+      "744": "reset_row"
+    },
+    "order_audit_engine.py:_carried_orders_for_parent": {
+      "1797": "cache_hit",
+      "1823": "ledger_row",
+      "1848": "initial_row"
+    },
+    "order_audit_engine.py:_cross_order": {
+      "1529": "cache_hit"
+    },
+    "e_zone_detector.py:_discover_candidate_chains": {
+      "1279": "chain_attempt",
+      "1288": "candidate_append"
+    },
+    "e_zone_detector.py:_zone": {},
+    "e_zone_detector.py:_compute_reconciliation": {}
+  },
+  "scope": "source-site executed counts; reset_leg_eligible counts yielded legs, not hidden generator scans; confirmation_skip counts rejected rows, not final successful comparison; not full-state trace or unprofiled performance",
+  "golden_bytes_equal": true,
+  "golden_sha256": "04b3f2fb96be500e217370d9b761f8b54e7b7fe344276d9b41529236c25792b3",
+  "stable_sha256": "04b3f2fb96be500e217370d9b761f8b54e7b7fe344276d9b41529236c25792b3",
+  "timing_schema": {
+    "phase_keys": [
+      "Validate request",
+      "Load Reaction engine",
+      "Load Blue Line engine",
+      "Load A engine",
+      "Load S engine",
+      "Load E engine",
+      "Load Lifecycle engine",
+      "Read source file",
+      "Parse source JSON",
+      "Use full RAW calculation context",
+      "Normalize raw candles",
+      "Build lower candle views",
+      "Build timeframe candle views",
+      "Reaction geometry \u2022 Bullish",
+      "Reaction geometry \u2022 Bearish",
+      "Internal Reaction ownership",
+      "Blue Line \u2022 Bullish",
+      "A \u2022 Bullish",
+      "S \u2022 Bullish",
+      "E \u2022 Bullish \u2022 initial",
+      "E \u2022 Bullish \u2022 S reconciliation",
+      "E \u2022 Bullish \u2022 final audit",
+      "E \u2022 Bullish \u2022 shared Order-stop reconciliation",
+      "Blue Line \u2022 Bearish",
+      "A \u2022 Bearish",
+      "S \u2022 Bearish",
+      "E \u2022 Bearish \u2022 initial",
+      "E \u2022 Bearish \u2022 S reconciliation",
+      "E \u2022 Bearish \u2022 final audit",
+      "E \u2022 Bearish \u2022 shared Order-stop reconciliation",
+      "Reconcile S visibility - Bullish",
+      "StopAll - Bullish",
+      "Order_B reset legs - Bullish",
+      "Apply visibility filters - Bullish",
+      "Serialize Reaction - Bullish",
+      "Serialize output - Bullish",
+      "Reconcile S visibility - Bearish",
+      "StopAll - Bearish",
+      "Order_B reset legs - Bearish",
+      "Apply visibility filters - Bearish",
+      "PH/PL - Bearish",
+      "Serialize Reaction - Bearish",
+      "Serialize output - Bearish",
+      "PH/PL - Bullish"
+    ],
+    "phase_types": [
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float",
+      "float"
+    ],
+    "total_type": "float",
+    "timing_keys": [
+      "phasesMs",
+      "bridgeTotalMs"
+    ]
+  },
+  "command": [
+    "/opt/pyvenv/bin/python",
+    "-B",
+    "/mnt/data/v10_continue/v10_query_meter.py",
+    "--engine-root",
+    "/mnt/data/v9_finish/v81/engine",
+    "--raw",
+    "/mnt/data/RAW FXCM_USOIL 5S FROM 2026-10-28 00-01-30 TO 2026-11-23 22-37-55.json",
+    "--case",
+    "/mnt/data/v9_finish/tooling/case-284184.json",
+    "--report",
+    "/mnt/data/v10_continue/284184/report.json"
+  ],
+  "golden_comparison": {
+    "bytes_equal": true,
+    "timing_schema_equal": true,
+    "golden_stable_sha256": "04b3f2fb96be500e217370d9b761f8b54e7b7fe344276d9b41529236c25792b3",
+    "candidate_stable_sha256": "04b3f2fb96be500e217370d9b761f8b54e7b7fe344276d9b41529236c25792b3",
+    "first_diff_byte": null
+  },
+  "native_sha256": "6b407a5152d6f2538ae21cd1e712bdf5571c310958e0af6d6ce700146e02fb7a",
+  "stderr_sha256": "2fc46a973f379ead5887993844b8f32c4394bcd55f8d3184e7c29b5fdc76a928",
+  "case_sha256": "1cffd6ad2ed446cc97f5becfec872bf6fa35d81af54148a439f9f01dffda01db",
+  "counts_closed": true
+}

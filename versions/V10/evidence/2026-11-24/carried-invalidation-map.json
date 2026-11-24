@@ -1,0 +1,327 @@
+{
+  "status": "SCOPED_STATIC_AND_DYNAMIC_INVENTORY",
+  "source_sha256": {
+    "bridge/__init__.py": "2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8",
+    "bridge/live_pipeline.py": "5c0effe89dd5ce47c996187ca4da2689915aa83bcc16271432f2c0ee62c2240d",
+    "bridge/trading_pipeline.py": "033d4ed7564cc5ccbc4588f1d5f3d7ca9820fb490d8fa552d5735bb462881f6b",
+    "pipeline/PL_PH_detector.py": "4fcc4820ddd4d374440698d3fcc8fc827e618268b2e378581ac54b5e865b7e6f",
+    "pipeline/__init__.py": "d22a1b81495a6c97b5eccc4d921b1ba4b709bfbcd39be6ef34b9014690b9f460",
+    "pipeline/a_zone_detector.py": "a77c57d1c2e148461e5c9a5f1f9ea569a1a66c64e5b97b08380ec0d6a16d8593",
+    "pipeline/blue_line_detector.py": "0171a1bfc48bc40b3b82781ac935614b75905a740e69b703ef3654d897d76df5",
+    "pipeline/core_utils.py": "f0764f52943ed3a9b02e90183196f4cabcbcc99217480e063a271cb56c1d4fd0",
+    "pipeline/direction_policy.py": "a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea",
+    "pipeline/e_zone_detector.py": "870a7c68a6d54fae1b1e7eaf195688c50c0d2f74563131ef5e4aaa9d4c3b204f",
+    "pipeline/lifecycle_engine.py": "304848d425630ac4bce8f8e6e976d36312e1b16dac148a226efec4cf84f4f3f2",
+    "pipeline/order_audit_engine.py": "87e1d9beae3617b26e6cfca94d87506988037f37331316073c8ea822d2725268",
+    "pipeline/reaction_engine.py": "0b37fbf91a0f2cdd65fec85eee6c39095e835bc928a98c657f1fe808e204b066",
+    "pipeline/s_zone_detector.py": "3da3424c2a292ee8fb0f08854462bce57f075721bb370c9619d3e795fd134b78",
+    "pipeline/true_false.py": "ac536ea31872c20a872b252171a8be352cfc87859e19a67773fc6f796cb633b2"
+  },
+  "callsites": [
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 2950,
+      "owner": "finalize_direction_visibility",
+      "call": "detector.register_order_b_reset_legs(reset_legs)",
+      "enclosing_if_tests_innermost_first": [
+        "direction in state.full_e_detectors"
+      ],
+      "note": "Syntax only; branch polarity and dynamic dispatch not resolved."
+    },
+    {
+      "file": "pipeline/e_zone_detector.py",
+      "line": 486,
+      "owner": "__init__",
+      "call": "self._initialize_order_audit()",
+      "enclosing_if_tests_innermost_first": [],
+      "note": "Syntax only; branch polarity and dynamic dispatch not resolved."
+    },
+    {
+      "file": "pipeline/e_zone_detector.py",
+      "line": 1744,
+      "owner": "detect",
+      "call": "self._clear_order_audit()",
+      "enclosing_if_tests_innermost_first": [],
+      "note": "Syntax only; branch polarity and dynamic dispatch not resolved."
+    },
+    {
+      "file": "pipeline/e_zone_detector.py",
+      "line": 1745,
+      "owner": "detect",
+      "call": "self.register_order_b_reset_legs(self.order_b_legs)",
+      "enclosing_if_tests_innermost_first": [],
+      "note": "Syntax only; branch polarity and dynamic dispatch not resolved."
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1182,
+      "owner": "_clear_order_audit",
+      "call": "self._invalidate_carried_order_caches()",
+      "enclosing_if_tests_innermost_first": [],
+      "note": "Syntax only; branch polarity and dynamic dispatch not resolved."
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1773,
+      "owner": "_extend_carried_creation_index",
+      "call": "OrderAuditEngineMixin._validated_carried_creation_index(self, new_entries)",
+      "enclosing_if_tests_innermost_first": [],
+      "note": "Syntax only; branch polarity and dynamic dispatch not resolved."
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 2149,
+      "owner": "_rebuild_accepted_order_audit",
+      "call": "self._clear_order_audit()",
+      "enclosing_if_tests_innermost_first": [],
+      "note": "Syntax only; branch polarity and dynamic dispatch not resolved."
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 2150,
+      "owner": "_rebuild_accepted_order_audit",
+      "call": "self.register_order_b_reset_legs(self.order_b_legs)",
+      "enclosing_if_tests_innermost_first": [],
+      "note": "Syntax only; branch polarity and dynamic dispatch not resolved."
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 2352,
+      "owner": "ensure_accepted_order_audit",
+      "call": "self._invalidate_carried_order_caches()",
+      "enclosing_if_tests_innermost_first": [],
+      "note": "Syntax only; branch polarity and dynamic dispatch not resolved."
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1205,
+      "owner": "register_order_b_reset_legs",
+      "call": "self._invalidate_carried_order_caches()",
+      "enclosing_if_tests_innermost_first": [
+        "legs"
+      ],
+      "note": "Syntax only; branch polarity and dynamic dispatch not resolved."
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1313,
+      "owner": "_reparent_primary_high_causes",
+      "call": "self._invalidate_carried_order_caches()",
+      "enclosing_if_tests_innermost_first": [
+        "changed or revoked"
+      ],
+      "note": "Syntax only; branch polarity and dynamic dispatch not resolved."
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1374,
+      "owner": "_register_primary_point",
+      "call": "self._invalidate_carried_order_caches()",
+      "enclosing_if_tests_innermost_first": [
+        "cause not in entry['causes']"
+      ],
+      "note": "Syntax only; branch polarity and dynamic dispatch not resolved."
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1402,
+      "owner": "_reconcile_primary_labels",
+      "call": "self._invalidate_carried_order_caches()",
+      "enclosing_if_tests_innermost_first": [
+        "changed"
+      ],
+      "note": "Syntax only; branch polarity and dynamic dispatch not resolved."
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1493,
+      "owner": "_register_order_audit",
+      "call": "self._invalidate_carried_order_caches()",
+      "enclosing_if_tests_innermost_first": [
+        "new_entries or earlier_existing_creation"
+      ],
+      "note": "Syntax only; branch polarity and dynamic dispatch not resolved."
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1800,
+      "owner": "_carried_orders_for_parent",
+      "call": "OrderAuditEngineMixin._extend_carried_creation_index(self)",
+      "enclosing_if_tests_innermost_first": [
+        "indexed is None or not self._carried_orders_cache"
+      ],
+      "note": "Syntax only; branch polarity and dynamic dispatch not resolved."
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1264,
+      "owner": "register_order_b_reset_legs",
+      "call": "self._invalidate_carried_order_caches()",
+      "enclosing_if_tests_innermost_first": [
+        "cause not in causes"
+      ],
+      "note": "Syntax only; branch polarity and dynamic dispatch not resolved."
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1804,
+      "owner": "_carried_orders_for_parent",
+      "call": "OrderAuditEngineMixin._validated_carried_creation_index(self, entries)",
+      "enclosing_if_tests_innermost_first": [
+        "indexed is None",
+        "indexed is None or not self._carried_orders_cache"
+      ],
+      "note": "Syntax only; branch polarity and dynamic dispatch not resolved."
+    }
+  ],
+  "profile_case": 97930,
+  "profile_caller_breakdown": [
+    {
+      "function": "_extend_carried_creation_index",
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1764,
+      "calls": 3794,
+      "exclusive_s": 0.008342572000000001,
+      "cumulative_s": 0.064481753,
+      "callers": [
+        {
+          "function": "_carried_orders_for_parent",
+          "file": "pipeline/order_audit_engine.py",
+          "line": 1787,
+          "calls": 3794,
+          "exclusive_s": 0.008342572000000001,
+          "cumulative_s": 0.064481753
+        }
+      ]
+    },
+    {
+      "function": "_order_b_legs_after",
+      "file": "pipeline/order_audit_engine.py",
+      "line": 819,
+      "calls": 17066,
+      "exclusive_s": 0.029139811,
+      "cumulative_s": 0.041482437000000004,
+      "callers": [
+        {
+          "function": "order_candidates",
+          "file": "pipeline/order_audit_engine.py",
+          "line": 1049,
+          "calls": 17066,
+          "exclusive_s": 0.029139811,
+          "cumulative_s": 0.041482437000000004
+        }
+      ]
+    },
+    {
+      "function": "_validated_carried_creation_index",
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1709,
+      "calls": 3794,
+      "exclusive_s": 0.562327071,
+      "cumulative_s": 1.2658390030000002,
+      "callers": [
+        {
+          "function": "_extend_carried_creation_index",
+          "file": "pipeline/order_audit_engine.py",
+          "line": 1764,
+          "calls": 2798,
+          "exclusive_s": 0.027473578000000002,
+          "cumulative_s": 0.051814210000000006
+        },
+        {
+          "function": "_carried_orders_for_parent",
+          "file": "pipeline/order_audit_engine.py",
+          "line": 1787,
+          "calls": 996,
+          "exclusive_s": 0.5348534930000001,
+          "cumulative_s": 1.214024793
+        }
+      ]
+    },
+    {
+      "function": "_invalidate_carried_order_caches",
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1185,
+      "calls": 34497,
+      "exclusive_s": 0.013965789000000001,
+      "cumulative_s": 0.021446625,
+      "callers": [
+        {
+          "function": "_reconcile_primary_labels",
+          "file": "pipeline/order_audit_engine.py",
+          "line": 1385,
+          "calls": 2,
+          "exclusive_s": 2.013e-06,
+          "cumulative_s": 2.5640000000000004e-06
+        },
+        {
+          "function": "register_order_b_reset_legs",
+          "file": "pipeline/order_audit_engine.py",
+          "line": 1200,
+          "calls": 12535,
+          "exclusive_s": 0.003623883,
+          "cumulative_s": 0.005208721
+        },
+        {
+          "function": "ensure_accepted_order_audit",
+          "file": "pipeline/order_audit_engine.py",
+          "line": 2314,
+          "calls": 41,
+          "exclusive_s": 1.7856e-05,
+          "cumulative_s": 2.5978e-05
+        },
+        {
+          "function": "_register_primary_point",
+          "file": "pipeline/order_audit_engine.py",
+          "line": 1351,
+          "calls": 4,
+          "exclusive_s": 3.0760000000000003e-06,
+          "cumulative_s": 4.6470000000000006e-06
+        },
+        {
+          "function": "_register_order_audit",
+          "file": "pipeline/order_audit_engine.py",
+          "line": 1404,
+          "calls": 21608,
+          "exclusive_s": 0.007654233000000001,
+          "cumulative_s": 0.013402520000000001
+        },
+        {
+          "function": "_reparent_primary_high_causes",
+          "file": "pipeline/order_audit_engine.py",
+          "line": 1267,
+          "calls": 8,
+          "exclusive_s": 7.743e-06,
+          "cumulative_s": 1.199e-05
+        },
+        {
+          "function": "_clear_order_audit",
+          "file": "pipeline/order_audit_engine.py",
+          "line": 1179,
+          "calls": 299,
+          "exclusive_s": 0.002656985,
+          "cumulative_s": 0.002790205
+        }
+      ]
+    },
+    {
+      "function": "_carried_creation_events",
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1700,
+      "calls": 113286,
+      "exclusive_s": 0.10459987800000001,
+      "cumulative_s": 0.150974153,
+      "callers": [
+        {
+          "function": "_validated_carried_creation_index",
+          "file": "pipeline/order_audit_engine.py",
+          "line": 1709,
+          "calls": 113286,
+          "exclusive_s": 0.10459987800000001,
+          "cumulative_s": 0.150974153
+        }
+      ]
+    }
+  ],
+  "limitations": "Not full alias or intra-function mutation inventory. No cache retention patch; all owner invalidation required before integration."
+}
