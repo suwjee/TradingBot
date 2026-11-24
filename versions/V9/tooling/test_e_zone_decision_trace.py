@@ -5,6 +5,10 @@ import unittest
 from pathlib import Path
 from e_zone_decision_trace import compare, markers
 from summarize_synthetic_execution import summarize
+from order_audit_mutation_trace import sites
+from live_protocol_trace import stable_messages
+from run_verified_trace_pair_v9 import source_check
+import hashlib
 
 SOURCE = '''class EZoneDetector:
     def _zone(self, choices):
@@ -63,6 +67,34 @@ class DecisionTraceTests(unittest.TestCase):
                 s, result = summarize(d, case, code)
                 self.assertEqual(result, expected)
                 self.assertEqual(s['full_semantic_state_status'], 'INCOMPLETE')
+
+    def test_order_audit_site_mapping(self):
+        source = "class OrderAuditEngineMixin:\n    def _register_order_audit(self):\n        ledger[key] = entry\n        audit_causes.add(cause)\n"
+        self.assertEqual(set(sites(source).values()), {'insert_order', 'add_parent_cause'})
+        with self.assertRaises(ValueError):
+            sites(source.replace('audit_causes.add(cause)', 'audit_causes.clear()'))
+
+    def test_exact_live_telemetry_boundary(self):
+        payload = b'{"timeframe":30,"directions":{"bullish":{"price":"1.000"},"bearish":{}},"timings":{"phasesMs":{"A":1.0},"bridgeTotalMs":2.0}}'
+        a = b'{"type":"update","payload":' + payload + b'}\n'
+        stable, schema, _ = stable_messages(a)
+        self.assertEqual(stable_messages(a.replace(b'2.0', b'7.0'))[:2], (stable, schema))
+        self.assertNotEqual(stable_messages(a.replace(b'1.000', b'1.00'))[0], stable)
+        with self.assertRaises(ValueError):
+            stable_messages(a.replace(b'2.0', b'true'))
+
+    def test_pinned_runtime_source_closure_excludes_test_files(self):
+        with tempfile.TemporaryDirectory() as root:
+            root = Path(root)
+            for dirname in ('bridge', 'pipeline', 'tests'):
+                (root / dirname).mkdir()
+            f = root / 'bridge' / 'source.py'; f.write_bytes(b'x = 1\n')
+            (root / 'tests' / 'test_source.py').write_text('assert True\n')
+            expected = {'bridge/source.py': hashlib.sha256(f.read_bytes()).hexdigest()}
+            self.assertEqual(source_check(root, expected), 1)
+            (root / 'pipeline' / 'unexpected.py').write_text('x = 2\n')
+            with self.assertRaises(ValueError):
+                source_check(root, expected)
 
 
 if __name__ == '__main__':

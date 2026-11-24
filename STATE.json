@@ -33,11 +33,11 @@
     "Complete lossless semantic mutator and Live state coverage"
   ],
   "next": [
-    "Inspect repaired long-run CI and persist actual results",
-    "Cover executed disowned-S rejection, Live path and remaining lossless semantic mutators",
-    "Complete remaining gates; V10 NO-GO until verified"
+    "Inspect and persist actual long-run CI artifacts and results",
+    "Extend exact owner-state coverage across all remaining mutation sites, cross-direction, lifecycle and cache transitions; rerun affected full matrices",
+    "Audit all gates; no V10 until evidence passes"
   ],
-  "latest_journal": "journal/2026-11-24-v9-decision-coverage-and-ci-repair.md",
+  "latest_journal": "journal/2026-11-24-v9-focused-state-live-progress.md",
   "archive_index": "archive/pre-isolation-index.json",
   "ci": {
     "validated_code_commit": "e4ed3a5f4b29777f9b1720075c4b38546616da8a",
@@ -90,7 +90,53 @@
       6,
       9
     ],
-    "previous_sonar_PR_5": "Historical FAIL; closed without merge; no new Sonar rating verified"
+    "previous_sonar_PR_5": "Historical FAIL; closed without merge; no new Sonar rating verified",
+    "latest_observed_code_commit": "c35066ddfe687c9e3f05fa1f128c17a2e04c60e8",
+    "latest_run_id": 45412741181,
+    "latest_checks": [
+      {
+        "name": "historical-chart-regression (windows-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138510637438
+      },
+      {
+        "name": "pinned-engine-regression (prior-refactor)",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138510637302
+      },
+      {
+        "name": "historical-chart-regression (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138510637198
+      },
+      {
+        "name": "historical-anti-drift",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138510637105
+      },
+      {
+        "name": "pinned-engine-regression (original)",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138510637033
+      },
+      {
+        "name": "pinned-engine-regression (v81)",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138510636869
+      },
+      {
+        "name": "workspace-and-v9-tools",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138510636505
+      }
+    ]
   },
   "no_runtime_change": true,
   "last_new_oil_pair": {
@@ -100,7 +146,7 @@
     "report": "versions/V9/evidence/2026-11-24/oil15k-ci-repair/pair_report.json"
   },
   "synthetic_trace_execution": {
-    "status": "first CI attempt blocked before calculations; repaired workflow triggers second attempt",
+    "status": "See actual job status; no complete pair or full semantic certification claimed in this handoff.",
     "first_run_id": 45412144580,
     "first_failure": "Python 3.13.5 unavailable on ubuntu-latest 26.04; both jobs failed setup, not Engine calculations",
     "scales": [
@@ -110,7 +156,24 @@
     "input_hashes_verified_locally": true,
     "workflow": ".github/workflows/v9-synthetic-trace.yml",
     "repair": "available Python 3.13 patch; record actual environment; hash complete bridge/pipeline closure independent of test checkout",
-    "artifact_retention_days": 30
+    "artifact_retention_days": 30,
+    "second_run_id": 45412741149,
+    "second_run_url": "https://github.com/suwjee/TradingBot/actions/runs/45412741149",
+    "second_run_commit": "c35066ddfe687c9e3f05fa1f128c17a2e04c60e8",
+    "latest_observed_jobs": [
+      {
+        "name": "frozen-synthetic-pair (500000)",
+        "status": "in_progress",
+        "conclusion": null,
+        "job_id": 138510636651
+      },
+      {
+        "name": "frozen-synthetic-pair (1000000)",
+        "status": "in_progress",
+        "conclusion": null,
+        "job_id": 138510635890
+      }
+    ]
   },
   "semantic_coverage_progress": {
     "case": "OIL 15061 full native 30s BOTH",
@@ -128,6 +191,47 @@
       "library_path": "/TradingBot/Versions/V9-2026-11-24/V9_E_ZONE_DECISION_OIL15K_20261124.zip",
       "sha256": "748fdc5cde0dd8af911cb4dafa7e958def33c4590b1eeb59bd02690160a9b197",
       "retention_verified": "library upload succeeded; no Git binary body"
+    },
+    "second_real_case": {
+      "records": 15542,
+      "market": "XAU",
+      "decision_events_equal": 3572,
+      "selected_per_variant": 884,
+      "no_match_per_variant": 12,
+      "golden": "PASS",
+      "report": "versions/V9/evidence/2026-11-24/e-zone-decision-xau15k/comparison.json"
+    },
+    "controlled_E_paths": {
+      "fixtures_per_variant": 6,
+      "events_equal": 30,
+      "all_five_marker_sites_exercised": true,
+      "dependency_scope": "controlled providers, actual _zone body, both directions",
+      "report": "versions/V9/evidence/2026-11-24/e-zone-controlled/comparison.json"
+    },
+    "live_protocol": {
+      "status": "PASS",
+      "scope": "actual worker; exact 1700/1800/1900 RAW prefixes, six messages; byte-stable outputs and expected errors",
+      "report": "versions/V9/evidence/2026-11-24/live-protocol-oil15k/report.json"
+    },
+    "order_audit_mutations": {
+      "status": "PASS",
+      "events_equal": 2408,
+      "insert_order": 849,
+      "add_parent_cause": 1559,
+      "original_physical_calls": 2063,
+      "v81_physical_calls": 1632,
+      "golden": "PASS",
+      "scope": "two actual mutation sites only",
+      "report": "versions/V9/evidence/2026-11-24/order-audit-mutation-oil15k/comparison.json"
+    },
+    "local_tests": {
+      "passed": 24,
+      "subtests_passed": 16
+    },
+    "additional_private_archive": {
+      "library_path": "/TradingBot/Versions/V9-2026-11-24/V9_FOCUSED_STATE_LIVE_EVIDENCE_20261124.zip",
+      "sha256": "00a521ea88b981007401d441f0dcc9db87ca776da9b39a357bc3acdbc11200bf",
+      "status": "upload succeeded"
     }
   }
 }
