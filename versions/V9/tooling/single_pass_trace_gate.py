@@ -9,10 +9,23 @@ import argparse
 import json
 from pathlib import Path
 from audit_trace_coverage import iter_inspected, SCHEMAS
-from strict_trace_gate_v9 import Stream, SCHEMA, unique, invalid_constant, compare_streams
+from strict_trace_gate_v9 import (Stream, SCHEMA, unique, invalid_constant, compare_streams,
+                                  REP_STATUSES, REP_MARKER_KEYS)
 from verify_streamed_stage_sidecars import audit as audit_stage
 
 SCHEMAS.add(SCHEMA)
+REP_MARKER_BYTES = tuple(sorted(x.encode('utf-8') for x in REP_STATUSES | REP_MARKER_KEYS))
+
+
+def may_contain_representation_issue(raw):
+    """Conservative guard for strictly decoded UTF-8 JSON.
+
+    Each counted issue needs an exact string value or key from the legacy
+    predicates. Without its UTF-8 spelling or a Unicode escape, JSON cannot
+    encode that string. False positives take the full legacy recursive scan.
+    This never suppresses field-level completeness or lifecycle checks.
+    """
+    return b'\\u' in raw or any(marker in raw for marker in REP_MARKER_BYTES)
 
 
 def strict_decode(raw):
@@ -23,9 +36,19 @@ class AuditedStream(Stream):
     def __init__(self, path):
         super().__init__(path)
         self.integrity = None
+        self._scan_representation = True
+
+    def _decode(self, raw):
+        row = strict_decode(raw)
+        self._scan_representation = may_contain_representation_issue(raw)
+        return row
 
     def rows(self):
-        self.integrity = yield from iter_inspected(self.path, decode=strict_decode, fast_marker=True)
+        self.integrity = yield from iter_inspected(self.path, decode=self._decode, fast_marker=True)
+
+    def check_representation(self, row, family):
+        if self._scan_representation:
+            super().check_representation(row, family)
 
 
 def audit_pair(original, candidate):

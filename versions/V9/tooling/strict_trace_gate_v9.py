@@ -14,6 +14,7 @@ from global_semantic_trace_compare_v9 import IMPL_ONLY
 SCHEMA = 'tradingbot.v9.internal-observer.v9'
 BOUNDARY = {'timed.stage_start', 'timed.stage_end'}
 REP_STATUSES = {'partial_unrepresentable', 'unsupported', 'unclassified'}
+REP_MARKER_KEYS = {'$unordered_set_NONCANONICAL', '$unrepresentable'}
 
 def unique(pairs):
     result = {}
@@ -35,7 +36,7 @@ def check_rep(value, loc, issues):
         if isinstance(status, str) and status in REP_STATUSES:
             issues[f'{loc}:{status}'] += 1
         for k, v in value.items():
-            if k in ('$unordered_set_NONCANONICAL', '$unrepresentable'):
+            if k in REP_MARKER_KEYS:
                 issues[f'{loc}:{k}'] += 1
             check_rep(v, loc, issues)
     elif isinstance(value, list):
@@ -80,6 +81,8 @@ class Stream:
         with gzip.open(self.path, 'rt', encoding='utf-8') as f:
             for line in f:
                 yield json.loads(line, object_pairs_hook=unique, parse_constant=invalid_constant)
+    def check_representation(self, row, family):
+        check_rep(row, family, self.issues)
     def records(self):
         for row in self.rows():
             self.raw += 1
@@ -102,7 +105,7 @@ class Stream:
             for field in ('result','inputs','pre_inputs','lifecycle_new_events'):
                 if field in row and (not isinstance(row[field],dict) or row[field].get('status') != 'complete_supported'):
                     self.issues[family + ':' + field + ':not_complete'] += 1
-            check_rep(row, family, self.issues)
+            self.check_representation(row, family)
             if row.get('lifecycle_existing_state_changed_unverified'):
                 self.issues[family+':unverified_lifecycle_mutation'] += 1
             if family in IMPL_ONLY:

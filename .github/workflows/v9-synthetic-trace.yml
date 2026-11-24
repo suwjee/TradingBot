@@ -3,22 +3,7 @@ on:
   push:
     branches: [refactor]
     paths:
-      - '.github/workflows/v9-synthetic-trace.yml'
-      - 'versions/V9/tooling/single_pass_trace_gate.py'
-      - 'versions/V9/tooling/benchmark_trace_validation.py'
-      - 'versions/V9/tooling/audit_trace_coverage.py'
-      - 'versions/V9/tooling/strict_trace_gate_v9.py'
-      - 'versions/V9/tooling/run_verified_trace_pair_v9.py'
-      - 'versions/V9/tooling/semantic_trace_v9.py'
-      - 'versions/V9/tooling/verify_streamed_stage_sidecars.py'
-      - 'versions/V9/tooling/strict_golden.py'
-      - 'versions/V9/tooling/safe_sidecar.py'
-      - 'versions/V9/tooling/generate_frozen_synthetic.py'
-      - 'versions/V9/tooling/global_semantic_trace_compare_v9.py'
-      - 'versions/V9/tooling/summarize_synthetic_execution.py'
-      - 'versions/V9/tooling/test_single_pass_trace_gate.py'
-      - 'versions/V9/reports/synthetic-frozen-scales.json'
-      - 'baselines/**'
+      - 'versions/V9/reports/SYNTHETIC_RUN_REQUEST.json'
   workflow_dispatch:
     inputs:
       level:
@@ -32,14 +17,50 @@ on:
 permissions:
   contents: read
 jobs:
+  select-scales:
+    if: github.ref == 'refs/heads/refactor'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      bars: ${{ steps.plan.outputs.bars }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: versions/V9/reports
+      - id: plan
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REQUESTED_LEVEL: ${{ inputs.level }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          if os.environ['EVENT_NAME'] == 'push':
+              req = json.loads(Path('versions/V9/reports/SYNTHETIC_RUN_REQUEST.json').read_text())
+              if not isinstance(req.get('request_id'), str) or not req['request_id'].strip():
+                  raise ValueError('An explicit unique request_id is required')
+              level = req['level']
+          else:
+              level = os.environ['REQUESTED_LEVEL']
+          choices = {'checkpoint': [100000, 250000], 'full': [500000, 1000000]}
+          if level not in choices:
+              raise ValueError('Unknown requested test level')
+          print('Explicit synthetic validation level:', level, choices[level])
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write('bars=' + json.dumps(choices[level], separators=(',', ':')) + '\n')
+          PY
   frozen-synthetic-pair:
+    needs: select-scales
     if: github.ref == 'refs/heads/refactor'
     runs-on: ubuntu-latest
     timeout-minutes: 350
     strategy:
       fail-fast: false
       matrix:
-        bars: ${{ fromJSON(github.event_name == 'workflow_dispatch' && inputs.level == 'full' && '[1000000,500000]' || '[100000,250000]') }}
+        bars: ${{ fromJSON(needs.select-scales.outputs.bars) }}
     env:
       PYTHONDONTWRITEBYTECODE: '1'
       PYTHONHASHSEED: '0'
@@ -104,6 +125,8 @@ jobs:
         shell: bash
         run: |
           python -B workspace/versions/V9/tooling/benchmark_trace_validation.py "$RUNNER_TEMP/v9-result/original.trace.jsonl.gz" "$RUNNER_TEMP/v9-result/v81.trace.jsonl.gz" --reference-tooling reference-tools/versions/V9/tooling --blocks 1 --out "$RUNNER_TEMP/v9-result/validator-benchmark.json"
+          rc="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"]+"/v9-result/execution-summary.json"))["runner_exit"])')"
+          python workspace/versions/V9/tooling/summarize_synthetic_execution.py --result "$RUNNER_TEMP/v9-result" --case "$RUNNER_TEMP/v9-input/case.json" --exit-code "$rc" --summary "$GITHUB_STEP_SUMMARY"
       - name: Upload reports and exact compressed trace evidence (finite retention)
         if: always()
         uses: actions/upload-artifact@v4

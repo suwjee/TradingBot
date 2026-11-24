@@ -34,12 +34,11 @@
     "Complete lossless semantic mutator and Live state coverage"
   ],
   "next": [
-    "Record actual million legacy run result; no restart",
-    "Verify 100k/250k checkpoint complete pairs and ABBA full-report equality",
-    "Profile remaining capture and sidecar bottlenecks; design and verify lossless owner-state deltas only with complete coverage",
-    "Audit V9 remaining gates; no V10 until proven"
+    "Observe 500k archive replay; if artifact unavailable/expired/digest mismatch fail closed",
+    "Persist actual 100k/250k checkpoint and old 1M results",
+    "Close semantic mutation coverage and verify final gates; no V10 until proven"
   ],
-  "latest_journal": "journal/2026-11-24-v9-fused-validation.md",
+  "latest_journal": "journal/2026-11-24-v9-guarded-replay.md",
   "archive_index": "archive/pre-isolation-index.json",
   "ci": {
     "validated_code_commit": "e4ed3a5f4b29777f9b1720075c4b38546616da8a",
@@ -249,11 +248,11 @@
   },
   "efficient_validation_plan": {
     "path": "versions/V9/reports/EFFICIENT_EXACT_VALIDATION_PLAN.md",
-    "status": "PARTIALLY_IMPLEMENTED_AND_REAL_RAW_VALIDATED",
+    "status": "FUSED_GUARDED_VALIDATOR_AND_ARCHIVE_REPLAY_IMPLEMENTED_REAL_RAW_VALIDATED",
     "priority": "single-pass validation, profile first; no weakened gates",
     "implementation": "versions/V9/tooling/single_pass_trace_gate.py",
     "reference_commit": "64326df566ac0f9be9d7396c7458b7f6471f4510",
-    "local_tests": 56,
+    "local_tests": 82,
     "stream_checks": 8,
     "old_new_report_equality": "PASS on complete OIL 15,061 and XAU 15,542 traces; one ABBA block per case",
     "benchmarks": {
@@ -296,13 +295,104 @@
       100000,
       250000
     ],
-    "checkpoint_status": "NOT RUN at preparation; triggered on this commit",
+    "checkpoint_status": "Observed jobs only; see GitHub for later actual results",
     "full_validation": "manual final certification; existing in-flight legacy 1M preserved",
     "not_implemented": [
       "lossless semantic mutation delta capture/replay",
       "exhaustive semantic state coverage",
       "full cross-owner/cache/lifecycle proof"
     ],
-    "no_production_speedup_claim": true
+    "no_production_speedup_claim": true,
+    "first_fused_commit": "1117e65e1e56c2eb1289398c0aa27dd358f95134",
+    "guarded_benchmarks": {
+      "oil": {
+        "median": {
+          "legacy": 7.044308838000006,
+          "fused": 4.109140053499914
+        },
+        "reduction_pct": 41.667235948920066
+      },
+      "xau": {
+        "median": {
+          "legacy": 6.788600640500022,
+          "fused": 4.094265758000006
+        },
+        "reduction_pct": 39.68910568145546
+      }
+    },
+    "replay_local": {
+      "status": "PASS",
+      "case": "relocated local OIL 15061 complete pair with reconstructed local execution summary",
+      "member_count": 86,
+      "report": "versions/V9/evidence/2026-11-24/fast-validation/oil/replay-rehearsal.json"
+    },
+    "checkpoint_run_id": 45427374416,
+    "checkpoint_code_commit": "1117e65e1e56c2eb1289398c0aa27dd358f95134",
+    "checkpoint_jobs": [
+      {
+        "name": "frozen-synthetic-pair (250000)",
+        "status": "in_progress",
+        "conclusion": null,
+        "job_id": 138562936655,
+        "active": [
+          "Run both sources to completion and audit all selected trace sidecars"
+        ]
+      },
+      {
+        "name": "frozen-synthetic-pair (100000)",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138562937170,
+        "active": []
+      }
+    ],
+    "routine_ci_code_commit": "1117e65e1e56c2eb1289398c0aa27dd358f95134",
+    "routine_ci_checks": [
+      {
+        "name": "pinned-engine-regression (prior-refactor)",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138562938568
+      },
+      {
+        "name": "historical-anti-drift",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138562938474
+      },
+      {
+        "name": "historical-chart-regression (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138562938350
+      },
+      {
+        "name": "historical-chart-regression (windows-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138562938268
+      },
+      {
+        "name": "pinned-engine-regression (original)",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138562938255
+      },
+      {
+        "name": "pinned-engine-regression (v81)",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138562938226
+      },
+      {
+        "name": "workspace-and-v9-tools",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138562937813
+      }
+    ],
+    "replay_request": "versions/V9/reports/TRACE_REPLAY_REQUEST.json",
+    "replay_500k_status": "NOT RUN at commit preparation; new workflow triggers with pinned archive; no new native execution",
+    "synthetic_scheduling": "Explicit request-manifest push or optional workflow_dispatch; no automatic native long reruns for ordinary tooling changes. Completion criteria unchanged."
   }
 }

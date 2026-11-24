@@ -84,3 +84,37 @@ def test_legacy_marker_exact(raw):
     from audit_trace_coverage import has_legacy_set_marker, SET_MARKER
     row=json.loads(raw)
     assert has_legacy_set_marker(raw,row)==(SET_MARKER in str(row))
+
+
+@pytest.mark.parametrize('raw', [
+    b'{"a":{"status":"partial_unrepresentable"}}',
+    b'{"a":{"status":"unclassified"}}',
+    b'{"a":{"status":"unsupported"}}',
+    b'{"a":{"status":"un\\u0073upported"}}',
+    b'{"a":{"sta\\u0074us":"unsupported"}}',
+    b'{"a":{"\\u0024unrepresentable":7}}',
+    b'{"a":{"$unordered_set_NONCANONICAL":[1,2]}}',
+    b'{"a":[{"a":{"$unrepresentable":null}}, {"status":"unsupported"}]}',
+    b'{"a":"unclassified"}',
+    b'{"a":{"status":"complete_supported","value":null}}',
+    b'{"status":123}',
+    b'{"ordinary":[1,2,3,4]}',
+    b'{"escaped":"\\\\u0073"}',
+])
+def test_representation_guard_no_false_negative(raw):
+    from strict_trace_gate_v9 import check_rep
+    from single_pass_trace_gate import may_contain_representation_issue, strict_decode
+    issues=Counter();check_rep(strict_decode(raw),'family',issues)
+    assert not issues or may_contain_representation_issue(raw)
+    if b'ordinary' in raw: assert not may_contain_representation_issue(raw)
+
+
+def test_fused_unicode_escape_issues(tmp_path):
+    a,b=tmp_path/'a.gz',tmp_path/'b.gz'
+    row=event();row['inputs']=rep({'inner':{'status':'unsupported','$unrepresentable':'x'}})
+    write_trace(a,[row]);raw=gzip.decompress(a.read_bytes()).replace(b'unsupported',b'un\\u0073upported').replace(b'$unrepresentable',b'\\u0024unrepresentable')
+    write_trace(b,[row],raw)
+    result=audit_pair(a,b)
+    assert result==reference(a,b)
+    assert result['comparison']['selected_event_status']=='INCOMPLETE'
+    assert result['comparison']['original_representation_issues']==result['comparison']['candidate_representation_issues']

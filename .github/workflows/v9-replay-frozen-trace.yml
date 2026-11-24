@@ -1,0 +1,81 @@
+name: V9 exact archived trace replay (no Engine rerun)
+on:
+  push:
+    branches: [refactor]
+    paths:
+      - 'versions/V9/reports/TRACE_REPLAY_REQUEST.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  archived-trace-replay:
+    if: github.ref == 'refs/heads/refactor'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      PYTHONHASHSEED: '0'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Resolve exact archived evidence identity
+        id: request
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          req=json.loads(Path('versions/V9/reports/TRACE_REPLAY_REQUEST.json').read_text())
+          assert req['schema']==1 and req['request_id']
+          assert type(req['artifact_id']) is int and req['artifact_id']>0
+          assert type(req['run_id']) is int and req['run_id']>0
+          assert re.fullmatch('[a-f0-9]{64}',req['archive_sha256'])
+          assert re.fullmatch('[a-f0-9]{40}',req['executed_commit'])
+          assert type(req['bars']) is int and req['bars'] in (100000,250000,500000,1000000)
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f:
+              for k in ('artifact_id','archive_sha256','bars'):
+                  f.write(k+'='+str(req[k])+'\n')
+          PY
+      - name: Download and authenticate immutable archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: ${{ steps.request.outputs.artifact_id }}
+          EXPECTED_SHA: ${{ steps.request.outputs.archive_sha256 }}
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/v9-replay/extracted"
+          gh api "/repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID" > "$RUNNER_TEMP/v9-replay/metadata.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          req=json.loads(Path('versions/V9/reports/TRACE_REPLAY_REQUEST.json').read_text())
+          meta=json.loads((Path(os.environ['RUNNER_TEMP'])/'v9-replay/metadata.json').read_text())
+          assert meta['id']==req['artifact_id'] and not meta['expired']
+          assert meta['workflow_run']['id']==req['run_id']
+          assert meta['workflow_run']['head_sha']==req['executed_commit']
+          assert meta['digest']=='sha256:'+req['archive_sha256']
+          PY
+          gh api "/repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID/zip" > "$RUNNER_TEMP/v9-replay/archive.zip"
+          printf '%s  %s\n' "$EXPECTED_SHA" "$RUNNER_TEMP/v9-replay/archive.zip" | sha256sum --check -
+          unzip -q "$RUNNER_TEMP/v9-replay/archive.zip" -d "$RUNNER_TEMP/v9-replay/extracted"
+      - name: Verify every member and exact archived/native report parity
+        env:
+          BARS: ${{ steps.request.outputs.bars }}
+        shell: bash
+        run: |
+          python -B versions/V9/tooling/replay_frozen_trace.py --result "$RUNNER_TEMP/v9-replay/extracted/v9-result" --case "$RUNNER_TEMP/v9-replay/extracted/v9-input/case.json" --frozen versions/V9/reports/synthetic-frozen-scales.json --bars "$BARS" --out "$RUNNER_TEMP/v9-replay/replay-report.json"
+      - name: Publish compact replay proof (do not upload binary archive again)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-exact-archive-replay-proof
+          path: |
+            ${{ runner.temp }}/v9-replay/metadata.json
+            ${{ runner.temp }}/v9-replay/replay-report.json
+          if-no-files-found: warn
+          retention-days: 30
