@@ -5,7 +5,7 @@ Fail closed on stable output, input hashes and timing schema; report clearly
 that selected method-output events != all mutable engine state.
 """
 from __future__ import annotations
-import gzip,hashlib,json,os,subprocess,sys,time
+import gzip,hashlib,json,os,shutil,subprocess,sys,time
 from pathlib import Path
 import psutil
 ROOT=Path('/mnt/data/V9_work')
@@ -40,6 +40,8 @@ def main(out):
                     cpu=max(cpu,sum(p.cpu_times()[:2]));rss=max(rss,p.memory_info().rss)
                     if rss > 2900*1048576:
                         proc.kill();raise MemoryError('Instrumented 1M trace exceeded safe RSS cap 2900 MiB')
+                    if shutil.disk_usage(root).free < 3*1024**3:
+                        proc.kill();raise OSError('Trace capture paused: fewer than 3 GiB free on evidence volume')
                 except psutil.NoSuchProcess:break
                 time.sleep(.05)
             rc=proc.wait()
