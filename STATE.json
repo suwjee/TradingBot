@@ -38,7 +38,7 @@
     "Persist actual 100k/250k checkpoint and old 1M results",
     "Close semantic mutation coverage and verify final gates; no V10 until proven"
   ],
-  "latest_journal": "journal/2026-11-24-v9-guarded-replay.md",
+  "latest_journal": "journal/2026-11-24-v9-fast-checkpoint-observation.md",
   "archive_index": "archive/pre-isolation-index.json",
   "ci": {
     "validated_code_commit": "e4ed3a5f4b29777f9b1720075c4b38546616da8a",
@@ -167,14 +167,18 @@
         "status": "in_progress",
         "conclusion": null,
         "job_id": 138510635890,
-        "completed_at": null
+        "completed_at": null,
+        "active": [
+          "Run both sources to completion and audit all selected trace sidecars"
+        ]
       },
       {
         "name": "frozen-synthetic-pair (500000)",
         "status": "completed",
         "conclusion": "success",
         "job_id": 138510636651,
-        "completed_at": "2026-11-24T15:10:59Z"
+        "completed_at": "2026-11-24T15:10:59Z",
+        "active": []
       }
     ],
     "completed_500k": {
@@ -334,6 +338,7 @@
         "status": "in_progress",
         "conclusion": null,
         "job_id": 138562936655,
+        "completed_at": null,
         "active": [
           "Run both sources to completion and audit all selected trace sidecars"
         ]
@@ -343,6 +348,7 @@
         "status": "completed",
         "conclusion": "success",
         "job_id": 138562937170,
+        "completed_at": "2026-11-24T15:41:02Z",
         "active": []
       }
     ],
@@ -392,7 +398,78 @@
       }
     ],
     "replay_request": "versions/V9/reports/TRACE_REPLAY_REQUEST.json",
-    "replay_500k_status": "NOT RUN at commit preparation; new workflow triggers with pinned archive; no new native execution",
-    "synthetic_scheduling": "Explicit request-manifest push or optional workflow_dispatch; no automatic native long reruns for ordinary tooling changes. Completion criteria unchanged."
+    "replay_500k_status": [
+      {
+        "name": "archived-trace-replay",
+        "status": "in_progress",
+        "conclusion": null,
+        "job_id": 138566998992,
+        "completed_at": null,
+        "active": [
+          "Download and authenticate immutable archive"
+        ]
+      }
+    ],
+    "synthetic_scheduling": "Explicit request-manifest push or optional workflow_dispatch; no automatic native long reruns for ordinary tooling changes. Completion criteria unchanged.",
+    "checkpoint_100k": {
+      "complete_pair_execution": "PASS",
+      "stable_output_status": "PASS",
+      "selected_event_status": "INCOMPLETE",
+      "full_report_equivalence": "PASS (first fused code, CI ABBA completed)",
+      "median_wall_s": {
+        "legacy": 57.346126926,
+        "fused": 37.73908544250001
+      },
+      "reduction_pct": 34.19069871763284,
+      "report": "versions/V9/evidence/2026-11-24/fast-validation/synthetic-100000-ci/report.json",
+      "artifact_id": 14938890863,
+      "artifact_expires_at": "2026-12-24T15:40:56Z"
+    },
+    "replay_500k_run_id": 45428506200,
+    "replay_500k_code_commit": "da13926190ee65d74004c2a198c01f0b4dd2c331",
+    "latest_observed_standard_checks": [
+      {
+        "name": "pinned-engine-regression (prior-refactor)",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138566994919
+      },
+      {
+        "name": "historical-chart-regression (ubuntu-latest)",
+        "status": "in_progress",
+        "conclusion": null,
+        "job_id": 138566994876
+      },
+      {
+        "name": "historical-anti-drift",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138566994836
+      },
+      {
+        "name": "pinned-engine-regression (original)",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138566994827
+      },
+      {
+        "name": "historical-chart-regression (windows-latest)",
+        "status": "in_progress",
+        "conclusion": null,
+        "job_id": 138566994805
+      },
+      {
+        "name": "pinned-engine-regression (v81)",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138566994711
+      },
+      {
+        "name": "workspace-and-v9-tools",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138566994303
+      }
+    ]
   }
 }
