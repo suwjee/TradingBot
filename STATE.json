@@ -34,11 +34,11 @@
     "Complete lossless semantic mutator and Live state coverage"
   ],
   "next": [
-    "Observe 500k archive replay; if artifact unavailable/expired/digest mismatch fail closed",
-    "Persist actual 100k/250k checkpoint and old 1M results",
-    "Close semantic mutation coverage and verify final gates; no V10 until proven"
+    "Record any further completed larger real RAW boundary pairs and resource limits",
+    "Extend source-site mutation coverage, cross-direction lifecycle/cache semantics and arbitrary Live state",
+    "Observe actual one-million legacy result and persist report; no V10 until all criteria proven"
   ],
-  "latest_journal": "journal/2026-11-24-v9-fast-checkpoint-observation.md",
+  "latest_journal": "journal/2026-11-24-v9-ledger-delta-and-archive-proof.md",
   "archive_index": "archive/pre-isolation-index.json",
   "ci": {
     "validated_code_commit": "e4ed3a5f4b29777f9b1720075c4b38546616da8a",
@@ -167,18 +167,14 @@
         "status": "in_progress",
         "conclusion": null,
         "job_id": 138510635890,
-        "completed_at": null,
-        "active": [
-          "Run both sources to completion and audit all selected trace sidecars"
-        ]
+        "completed_at": null
       },
       {
         "name": "frozen-synthetic-pair (500000)",
         "status": "completed",
         "conclusion": "success",
         "job_id": 138510636651,
-        "completed_at": "2026-11-24T15:10:59Z",
-        "active": []
+        "completed_at": "2026-11-24T15:10:59Z"
       }
     ],
     "completed_500k": {
@@ -299,10 +295,10 @@
       100000,
       250000
     ],
-    "checkpoint_status": "Observed jobs only; see GitHub for later actual results",
+    "checkpoint_status": "Both checkpoint jobs completed successfully; selected state incomplete.",
     "full_validation": "manual final certification; existing in-flight legacy 1M preserved",
     "not_implemented": [
-      "lossless semantic mutation delta capture/replay",
+      "lossless capture of every individual semantic mutation (boundary delta pilot implemented)",
       "exhaustive semantic state coverage",
       "full cross-owner/cache/lifecycle proof"
     ],
@@ -334,22 +330,16 @@
     "checkpoint_code_commit": "1117e65e1e56c2eb1289398c0aa27dd358f95134",
     "checkpoint_jobs": [
       {
-        "name": "frozen-synthetic-pair (250000)",
-        "status": "in_progress",
-        "conclusion": null,
-        "job_id": 138562936655,
-        "completed_at": null,
-        "active": [
-          "Run both sources to completion and audit all selected trace sidecars"
-        ]
-      },
-      {
         "name": "frozen-synthetic-pair (100000)",
         "status": "completed",
         "conclusion": "success",
-        "job_id": 138562937170,
-        "completed_at": "2026-11-24T15:41:02Z",
-        "active": []
+        "job_id": 138562937170
+      },
+      {
+        "name": "frozen-synthetic-pair (250000)",
+        "status": "completed",
+        "conclusion": "success",
+        "job_id": 138562936655
       }
     ],
     "routine_ci_code_commit": "1117e65e1e56c2eb1289398c0aa27dd358f95134",
@@ -398,18 +388,22 @@
       }
     ],
     "replay_request": "versions/V9/reports/TRACE_REPLAY_REQUEST.json",
-    "replay_500k_status": [
-      {
-        "name": "archived-trace-replay",
-        "status": "in_progress",
-        "conclusion": null,
-        "job_id": 138566998992,
-        "completed_at": null,
-        "active": [
-          "Download and authenticate immutable archive"
-        ]
+    "replay_500k_status": {
+      "status": "PASS",
+      "full_legacy_report_equality": true,
+      "native_stable_bytes_equal": true,
+      "members": 236,
+      "positions": 734944,
+      "unknown_input_drifts": 0,
+      "report": "versions/V9/evidence/2026-11-24/fast-validation/synthetic-500000-replay/report.json",
+      "proof_artifact": {
+        "id": 14937254908,
+        "name": "v9-exact-archive-replay-proof",
+        "bytes": 1989,
+        "digest": "sha256:df74212cbaf3a7287c3a932f4246c8b21b48fe4eae2c252c360db1c0afda119c",
+        "expires_at": "2026-12-24T15:58:11Z"
       }
-    ],
+    },
     "synthetic_scheduling": "Explicit request-manifest push or optional workflow_dispatch; no automatic native long reruns for ordinary tooling changes. Completion criteria unchanged.",
     "checkpoint_100k": {
       "complete_pair_execution": "PASS",
@@ -470,6 +464,83 @@
         "conclusion": "success",
         "job_id": 138566994303
       }
+    ],
+    "checkpoint_250k": {
+      "complete_pair_execution": "PASS",
+      "stable_output_status": "PASS",
+      "selected_event_status": "INCOMPLETE",
+      "median_wall_s": {
+        "legacy": 304.5267499335,
+        "fused": 201.930902972
+      },
+      "reduction_pct": 33.690257747112206,
+      "report": "versions/V9/evidence/2026-11-24/fast-validation/synthetic-250000-ci/report.json",
+      "artifact_id": 14938639847
+    }
+  },
+  "ledger_delta_progress": {
+    "status": "SCOPED_BOUNDARY_DELTA_PASS",
+    "full_semantic_state_status": "INCOMPLETE",
+    "real_pairs": [
+      {
+        "records": 15061,
+        "status": "PASS",
+        "bytes_equal": true,
+        "boundaries": 212,
+        "changed": 57,
+        "index_checks_per_variant": 182,
+        "gaps": [
+          0,
+          0
+        ],
+        "report": "versions/V9/evidence/2026-11-24/ledger-delta/15061/comparison.json"
+      },
+      {
+        "records": 15542,
+        "status": "PASS",
+        "bytes_equal": true,
+        "boundaries": 223,
+        "changed": 41,
+        "index_checks_per_variant": 198,
+        "gaps": [
+          0,
+          0
+        ],
+        "report": "versions/V9/evidence/2026-11-24/ledger-delta/15542/comparison.json"
+      },
+      {
+        "records": 47462,
+        "status": "PASS",
+        "bytes_equal": true,
+        "boundaries": 322,
+        "changed": 74,
+        "index_checks_per_variant": 288,
+        "gaps": [
+          0,
+          0
+        ],
+        "report": "versions/V9/evidence/2026-11-24/ledger-delta/47462/comparison.json"
+      }
+    ],
+    "live_session": {
+      "status": "PASS",
+      "boundaries": 248,
+      "changed": 59,
+      "report": "versions/V9/evidence/2026-11-24/ledger-delta/live/report.json"
+    },
+    "tests": 41,
+    "archive": {
+      "library_path": "/TradingBot/Versions/V9-2026-11-24/V9_LEDGER_DELTA_INITIAL_EVIDENCE.zip",
+      "sha256": "0c08e1469ecf5500adadc9dcecdae7ada335e8d025c7cb073eb3df7d79352d9e",
+      "bytes": 38466902,
+      "status": "CRC verified; upload succeeded"
+    },
+    "limitations": [
+      "Full typed snapshots still captured at outer boundaries; storage reduction only, no capture speedup claim.",
+      "Nested mutations within boundaries and object identity across snapshots not certified.",
+      "Live scope includes exact RAW lineage, bucket rows, price cache, candle views, index sizes; not full index internals.",
+      "Peak RSS not measured for completed local pairs.",
+      "Larger real RAW matrix started; only completed reports count."
     ]
   }
 }
