@@ -34,11 +34,11 @@
     "Complete lossless semantic mutator and Live state coverage"
   ],
   "next": [
-    "Record any further completed larger real RAW boundary pairs and resource limits",
-    "Extend source-site mutation coverage, cross-direction lifecycle/cache semantics and arbitrary Live state",
-    "Observe actual one-million legacy result and persist report; no V10 until all criteria proven"
+    "Re-audit completed 97,930 archived splices with fast transport; complete larger real scoped pairs (247851 and 284184) with bounded resource design, no unnecessary native reruns",
+    "Extend source-site coverage (intra-boundary mutations, cross-direction/lifecycle, cache invalidation and remaining Live internals)",
+    "Observe/persist existing full million trace result; final V9 audit; no V10 until actual gates pass"
   ],
-  "latest_journal": "journal/2026-11-24-v9-ledger-delta-and-archive-proof.md",
+  "latest_journal": "journal/2026-11-24-v9-ledger-delta-extended.md",
   "archive_index": "archive/pre-isolation-index.json",
   "ci": {
     "validated_code_commit": "e4ed3a5f4b29777f9b1720075c4b38546616da8a",
@@ -479,7 +479,7 @@
     }
   },
   "ledger_delta_progress": {
-    "status": "SCOPED_BOUNDARY_DELTA_PASS",
+    "status": "SCOPED_BOUNDARY_DELTA_PASS_FIVE_REAL_RAWS_AND_LIVE",
     "full_semantic_state_status": "INCOMPLETE",
     "real_pairs": [
       {
@@ -520,6 +520,32 @@
           0
         ],
         "report": "versions/V9/evidence/2026-11-24/ledger-delta/47462/comparison.json"
+      },
+      {
+        "records": 83144,
+        "status": "PASS",
+        "bytes_equal": true,
+        "boundaries": 880,
+        "changed": 79,
+        "index_checks_per_variant": 846,
+        "gaps": [
+          0,
+          0
+        ],
+        "report": "versions/V9/evidence/2026-11-24/ledger-delta/83144/comparison.json"
+      },
+      {
+        "records": 97930,
+        "status": "PASS",
+        "bytes_equal": true,
+        "boundaries": 2552,
+        "changed": 460,
+        "index_checks_per_variant": 2388,
+        "gaps": [
+          0,
+          0
+        ],
+        "report": "versions/V9/evidence/2026-11-24/ledger-delta/97930/comparison.json"
       }
     ],
     "live_session": {
@@ -528,7 +554,7 @@
       "changed": 59,
       "report": "versions/V9/evidence/2026-11-24/ledger-delta/live/report.json"
     },
-    "tests": 41,
+    "tests": 56,
     "archive": {
       "library_path": "/TradingBot/Versions/V9-2026-11-24/V9_LEDGER_DELTA_INITIAL_EVIDENCE.zip",
       "sha256": "0c08e1469ecf5500adadc9dcecdae7ada335e8d025c7cb073eb3df7d79352d9e",
@@ -541,6 +567,119 @@
       "Live scope includes exact RAW lineage, bucket rows, price cache, candle views, index sizes; not full index internals.",
       "Peak RSS not measured for completed local pairs.",
       "Larger real RAW matrix started; only completed reports count."
-    ]
+    ],
+    "total_raw_records": 259139,
+    "total_equal_real_boundaries": 4189,
+    "total_changed_real_boundaries": 711,
+    "total_index_checks_per_variant": 3902,
+    "largest_completed_boundary_pair": 97930,
+    "maximum_feasible_not_proven": true,
+    "fast_transport": {
+      "status": "PASS_SCOPED",
+      "default": "fast",
+      "reference": "legacy selectable for batch --transport legacy",
+      "full_archived_audit_streams": 10,
+      "full_archived_audit_boundaries": 3770,
+      "splice_benchmark": {
+        "status": "PASS",
+        "boundaries": 322,
+        "snapshot_bytes": 62287748,
+        "full_archived_delta_bytes_equal": true,
+        "timing_scope": "sum of per-boundary splice construction only; I/O, snapshot capture, replay and compression excluded; alternating execution order, one full stream",
+        "seconds": {
+          "legacy": 3.713077684,
+          "fast": 0.059759895
+        },
+        "reference_executed": true
+      },
+      "fast_native_pair": "PASS",
+      "fast_native_live": "PASS",
+      "scope": "Exact old delta bytes retained; one measured splice-only comparison, not end-to-end speedup."
+    },
+    "matrix_attempt": {
+      "completed_real_records": [
+        15061,
+        15542,
+        47462,
+        83144,
+        97930
+      ],
+      "not_run": [
+        247851,
+        284184
+      ],
+      "reason": "Interactive task already long; legacy whole snapshots cost ~153 s per source at 97,930, and user requested avoiding repeated expensive calculations. Paused parent to prevent starting next two, let 97,930 finish, stopped queue. Fast-only archived splice audit at 97,930 timed out, no PASS; 97,930 legacy comparison completed before timeout. Max feasible not established."
+    },
+    "archive_extended": {
+      "library_path": "/TradingBot/Versions/V9-2026-11-24/V9_LEDGER_DELTA_EXTENDED_EVIDENCE.zip",
+      "sha256": "92fe6312854fb73994bab266ac63c4eb6bfec6b3dcf3001cdf771e5ce35ba0b3",
+      "bytes": 144676044,
+      "status": "CRC verified; upload succeeded"
+    },
+    "archives_97930": [
+      {
+        "name": "V9_LEDGER_DELTA_97930_ORIGINAL_EVIDENCE.zip",
+        "bytes": 157780956,
+        "sha256": "c075b809d560f590e37ba82f0cec60c86af4331f22bfa577c3bdb2c548182bb9",
+        "crc": "PASS",
+        "library_path": "/TradingBot/Versions/V9-2026-11-24/V9_LEDGER_DELTA_97930_ORIGINAL_EVIDENCE.zip",
+        "status": "upload succeeded"
+      },
+      {
+        "name": "V9_LEDGER_DELTA_97930_V81_EVIDENCE.zip",
+        "bytes": 153724781,
+        "sha256": "c74dc468e826eebe780a708ee7dbcd58e2bf94e849ac285d2bb6e9c945fa2078",
+        "crc": "PASS",
+        "library_path": "/TradingBot/Versions/V9-2026-11-24/V9_LEDGER_DELTA_97930_V81_EVIDENCE.zip",
+        "status": "upload succeeded"
+      }
+    ],
+    "routine_ci": {
+      "validated_code_commit": "efc846baab9c1dbf3ec66bbdadaba080b5af1ae0",
+      "checks": [
+        {
+          "name": "historical-anti-drift",
+          "status": "completed",
+          "conclusion": "success",
+          "job_id": 138617888840
+        },
+        {
+          "name": "pinned-engine-regression (prior-refactor)",
+          "status": "completed",
+          "conclusion": "success",
+          "job_id": 138617888663
+        },
+        {
+          "name": "historical-chart-regression (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "job_id": 138617888419
+        },
+        {
+          "name": "historical-chart-regression (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "job_id": 138617888381
+        },
+        {
+          "name": "pinned-engine-regression (v81)",
+          "status": "completed",
+          "conclusion": "success",
+          "job_id": 138617888235
+        },
+        {
+          "name": "workspace-and-v9-tools",
+          "status": "completed",
+          "conclusion": "success",
+          "job_id": 138617888151
+        },
+        {
+          "name": "pinned-engine-regression (original)",
+          "status": "completed",
+          "conclusion": "success",
+          "job_id": 138617887859
+        }
+      ]
+    }
   }
 }

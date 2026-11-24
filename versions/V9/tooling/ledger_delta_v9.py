@@ -66,7 +66,11 @@ METHODS={
 }
 ABSENT=encode(['absent'])
 class Observer:
-    def __init__(self,root,stream,checkpoints):
+    def __init__(self,root,stream,checkpoints,transport="fast"):
+        if transport not in ("fast","legacy"):raise ValueError("invalid transport")
+        from delta_splice_fast_v9 import make_delta_fast
+        self.delta_builder=make_delta_fast if transport=="fast" else make_delta
+        self.transport=transport
         self.paths={str((root/'pipeline'/name).resolve()):methods for name,methods in METHODS.items()};self.stream=stream;self.checkpoints=checkpoints;self.owners={};self.active={};self.calls=collections.Counter();self.outer=collections.Counter();self.gaps=[];self.ordinal=0;self.delta_bytes=0;self.snapshot_bytes=0;self.changed=0;self.index_checks=0
     @staticmethod
     def fresh(obj):return snapshot(obj.order_audit) if hasattr(obj,'order_audit') else ABSENT
@@ -78,7 +82,7 @@ class Observer:
             if type(idx) is not list or snapshot(idx)!=snapshot(expected):
                 raise ValueError('OrderAudit secondary index inconsistent at '+method+':'+point)
             self.index_checks+=1
-        actual=self.fresh(obj);before=st['last'];d=make_delta(before,actual)
+        actual=self.fresh(obj);before=st['last'];d=self.delta_builder(before,actual)
         if apply_delta(before,d)!=actual or apply_delta(actual,d,True)!=before:raise AssertionError('replay is not byte exact')
         self.ordinal+=1;self.changed+=before!=actual
         row={'ordinal':self.ordinal,'owner':st['owner'],'class':type(st['obj']).__name__,'direction':getattr(st['obj'],'direction',None),'method':method,'point':point,'delta':d}
@@ -148,19 +152,24 @@ def source_check(root,expected):
 
 def main():
     from semantic_trace_v9 import execute
-    p=argparse.ArgumentParser();p.add_argument('--engine-root',type=Path,required=True);p.add_argument('--raw',type=Path,required=True);p.add_argument('--case',type=Path,required=True);p.add_argument('--variant',choices=['original','v81'],required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--engine-root',type=Path,required=True);p.add_argument('--raw',type=Path,required=True);p.add_argument('--case',type=Path,required=True);p.add_argument('--variant',choices=['original','v81'],required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--transport',choices=['fast','legacy'],default='fast');a=p.parse_args()
     root=a.engine_root.resolve();case=json.loads(a.case.read_text());a.out.mkdir(parents=True,exist_ok=False)
     source_check(root,case['source_sha256'][a.variant]);rawhash=sha(a.raw.read_bytes())
     if rawhash!=case['raw_sha256'] or sys.gettrace() is not None:raise ValueError('RAW or trace precondition')
     start=time.perf_counter();cpu=time.process_time();dp=a.out/'delta.jsonl.gz';cp=a.out/'checkpoints.jsonl.gz'
     with gzip.open(dp,'xb',compresslevel=3) as d,gzip.open(cp,'xb',compresslevel=3) as c:
-        obs=Observer(root,d,c);sys.settrace(obs.trace)
+        obs=Observer(root,d,c,a.transport);sys.settrace(obs.trace)
         try:rc=execute(SimpleNamespace(engine_root=root,raw=a.raw,from_time=case['first_time'],to_time=case['last_time'],trace_out=None,stage_profile=None,meter_output=None,summary=None))
         finally:sys.settrace(None)
         obs.finish()
     source_check(root,case['source_sha256'][a.variant])
     if rc or sha(a.raw.read_bytes())!=rawhash:raise ValueError('native exit or RAW changed')
     replay=verify_replay(dp,cp)
-    report={'variant':a.variant,'native_exit':rc,'source_sha256':case['source_sha256'][a.variant],'raw_sha256':rawhash,'records':case['records'],'wall_s':time.perf_counter()-start,'cpu_s':time.process_time()-cpu,'calls':dict(obs.calls),'outer_calls':dict(obs.outer),'gaps':obs.gaps,'index_checks':obs.index_checks,'replay':replay,'delta_uncompressed_bytes':obs.delta_bytes,'checkpoint_uncompressed_bytes':obs.snapshot_bytes,'delta_gzip_bytes':dp.stat().st_size,'checkpoint_gzip_bytes':cp.stat().st_size,'delta_gzip_sha256':sha(dp.read_bytes()),'checkpoint_gzip_sha256':sha(cp.read_bytes()),'scope':'Outer OrderAudit method boundary snapshots, exact typed graph and observed set iteration; no intra-boundary, cross-snapshot identity or complete Live proof.','full_semantic_state_status':'INCOMPLETE'}
+    peak_rss_mib=None
+    try:
+        import resource
+        peak_rss_mib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/(1048576 if sys.platform=='darwin' else 1024)
+    except ImportError:pass
+    report={'transport':a.transport,'peak_rss_mib':peak_rss_mib,'variant':a.variant,'native_exit':rc,'source_sha256':case['source_sha256'][a.variant],'raw_sha256':rawhash,'records':case['records'],'wall_s':time.perf_counter()-start,'cpu_s':time.process_time()-cpu,'calls':dict(obs.calls),'outer_calls':dict(obs.outer),'gaps':obs.gaps,'index_checks':obs.index_checks,'replay':replay,'delta_uncompressed_bytes':obs.delta_bytes,'checkpoint_uncompressed_bytes':obs.snapshot_bytes,'delta_gzip_bytes':dp.stat().st_size,'checkpoint_gzip_bytes':cp.stat().st_size,'delta_gzip_sha256':sha(dp.read_bytes()),'checkpoint_gzip_sha256':sha(cp.read_bytes()),'scope':'Outer OrderAudit method boundary snapshots, exact typed graph and observed set iteration; no intra-boundary, cross-snapshot identity or complete Live proof.','full_semantic_state_status':'INCOMPLETE'}
     (a.out/'report.json').write_text(json.dumps(report,indent=2)+'\n')
 if __name__=='__main__':main()
