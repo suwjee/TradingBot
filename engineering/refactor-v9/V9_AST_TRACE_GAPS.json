@@ -1,0 +1,2455 @@
+{
+  "status": "AUDIT_ONLY_NOT_EXECUTION_COVERAGE",
+  "source_root": "/mnt/data/V9_work/golden/github_engine_commit_01d54ecf/engine",
+  "files": [
+    {
+      "path": "pipeline/PL_PH_detector.py",
+      "sha256": "4fcc4820ddd4d374440698d3fcc8fc827e618268b2e378581ac54b5e865b7e6f",
+      "function_count": 45
+    },
+    {
+      "path": "pipeline/__init__.py",
+      "sha256": "d22a1b81495a6c97b5eccc4d921b1ba4b709bfbcd39be6ef34b9014690b9f460",
+      "function_count": 0
+    },
+    {
+      "path": "pipeline/a_zone_detector.py",
+      "sha256": "a77c57d1c2e148461e5c9a5f1f9ea569a1a66c64e5b97b08380ec0d6a16d8593",
+      "function_count": 39
+    },
+    {
+      "path": "pipeline/blue_line_detector.py",
+      "sha256": "0171a1bfc48bc40b3b82781ac935614b75905a740e69b703ef3654d897d76df5",
+      "function_count": 18
+    },
+    {
+      "path": "pipeline/core_utils.py",
+      "sha256": "f0764f52943ed3a9b02e90183196f4cabcbcc99217480e063a271cb56c1d4fd0",
+      "function_count": 6
+    },
+    {
+      "path": "pipeline/direction_policy.py",
+      "sha256": "a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea",
+      "function_count": 6
+    },
+    {
+      "path": "pipeline/e_zone_detector.py",
+      "sha256": "e05301a5812657f599c58e24525486e14e92910203004a1193c411d8a90d9f96",
+      "function_count": 53
+    },
+    {
+      "path": "pipeline/lifecycle_engine.py",
+      "sha256": "304848d425630ac4bce8f8e6e976d36312e1b16dac148a226efec4cf84f4f3f2",
+      "function_count": 46
+    },
+    {
+      "path": "pipeline/order_audit_engine.py",
+      "sha256": "a7912855fb8ee9bf9447cc5304cf805752bbb1d939015457fea868faaf5d3b8d",
+      "function_count": 82
+    },
+    {
+      "path": "pipeline/reaction_engine.py",
+      "sha256": "0b37fbf91a0f2cdd65fec85eee6c39095e835bc928a98c657f1fe808e204b066",
+      "function_count": 107
+    },
+    {
+      "path": "pipeline/s_zone_detector.py",
+      "sha256": "3da3424c2a292ee8fb0f08854462bce57f075721bb370c9619d3e795fd134b78",
+      "function_count": 50
+    },
+    {
+      "path": "pipeline/true_false.py",
+      "sha256": "ac536ea31872c20a872b252171a8be352cfc87859e19a67773fc6f796cb633b2",
+      "function_count": 7
+    },
+    {
+      "path": "bridge/__init__.py",
+      "sha256": "2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8",
+      "function_count": 0
+    },
+    {
+      "path": "bridge/live_pipeline.py",
+      "sha256": "5c0effe89dd5ce47c996187ca4da2689915aa83bcc16271432f2c0ee62c2240d",
+      "function_count": 13
+    },
+    {
+      "path": "bridge/trading_pipeline.py",
+      "sha256": "c6979687fb175ead907d4069553f75a649b43754ee09b2a3af5d9f2cd0ae4d18",
+      "function_count": 99
+    }
+  ],
+  "total_functions": 571,
+  "functions_with_possible_state_mutations": 118,
+  "possible_state_mutation_functions_without_selected_trace": 103,
+  "possible_state_mutation_points_without_selected_trace": 309,
+  "untraced_mutators": [
+    {
+      "file": "pipeline/PL_PH_detector.py",
+      "line": 147,
+      "function": "_resolve_primary_points",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 153,
+          "operation": "possible_collection_mutation",
+          "target": "physical.setdefault((point.source_index, point.source_time), []).append"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/PL_PH_detector.py",
+      "line": 518,
+      "function": "_next_point",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 620,
+          "operation": "state_attribute_assignment",
+          "target": "prospective.reset_high"
+        },
+        {
+          "line": 586,
+          "operation": "state_attribute_assignment",
+          "target": "result.post_pl3_orders"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/PL_PH_detector.py",
+      "line": 755,
+      "function": "point",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 765,
+          "operation": "state_subscript_assignment",
+          "target": "point_cache[id(item)]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/a_zone_detector.py",
+      "line": 69,
+      "function": "AZoneDetector.__init__",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 80,
+          "operation": "state_attribute_assignment",
+          "target": "self.reactions"
+        },
+        {
+          "line": 81,
+          "operation": "state_attribute_assignment",
+          "target": "self.blue_lines"
+        },
+        {
+          "line": 96,
+          "operation": "state_attribute_assignment",
+          "target": "self._reaction_first_times"
+        },
+        {
+          "line": 100,
+          "operation": "state_attribute_assignment",
+          "target": "self._reaction_break_times"
+        },
+        {
+          "line": 104,
+          "operation": "state_attribute_assignment",
+          "target": "self._reaction_confirmations"
+        },
+        {
+          "line": 107,
+          "operation": "state_attribute_assignment",
+          "target": "self._ordered_firsts"
+        },
+        {
+          "line": 108,
+          "operation": "state_attribute_assignment",
+          "target": "self._ordered_breaks"
+        },
+        {
+          "line": 109,
+          "operation": "state_attribute_assignment",
+          "target": "self._ordered_confirmations"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/a_zone_detector.py",
+      "line": 245,
+      "function": "AZoneDetector._build_blue_states",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 257,
+          "operation": "possible_collection_mutation",
+          "target": "states.append"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/a_zone_detector.py",
+      "line": 868,
+      "function": "_LiveAZoneDetector.__init__",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 873,
+          "operation": "state_attribute_assignment",
+          "target": "self.reaction_inputs"
+        },
+        {
+          "line": 877,
+          "operation": "state_attribute_assignment",
+          "target": "self._same_reactions"
+        },
+        {
+          "line": 878,
+          "operation": "state_attribute_assignment",
+          "target": "self._common_reactions"
+        },
+        {
+          "line": 884,
+          "operation": "state_attribute_assignment",
+          "target": "self._changed_reaction_time"
+        },
+        {
+          "line": 883,
+          "operation": "state_attribute_assignment",
+          "target": "self._common_reactions"
+        },
+        {
+          "line": 881,
+          "operation": "state_attribute_assignment",
+          "target": "self._same_reactions"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/a_zone_detector.py",
+      "line": 898,
+      "function": "_LiveAZoneDetector._reaction_confirmation_time",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 905,
+          "operation": "state_subscript_assignment",
+          "target": "cache[key]"
+        },
+        {
+          "line": 907,
+          "operation": "state_subscript_assignment",
+          "target": "cache[key]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/a_zone_detector.py",
+      "line": 910,
+      "function": "_LiveAZoneDetector._reset_formation_time",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 916,
+          "operation": "state_subscript_assignment",
+          "target": "self.history.reset_formations[key]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/a_zone_detector.py",
+      "line": 919,
+      "function": "_LiveAZoneDetector._first_crossing",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 948,
+          "operation": "state_subscript_assignment",
+          "target": "cache[key]"
+        },
+        {
+          "line": 934,
+          "operation": "state_subscript_assignment",
+          "target": "cache[key]"
+        },
+        {
+          "line": 942,
+          "operation": "state_subscript_assignment",
+          "target": "cache[key]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/a_zone_detector.py",
+      "line": 990,
+      "function": "_LiveAZoneDetector._inherited_stop",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 996,
+          "operation": "state_subscript_assignment",
+          "target": "self.history.inherited_stops[key]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/a_zone_detector.py",
+      "line": 1014,
+      "function": "_LiveAZoneDetector._a_source",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1024,
+          "operation": "state_subscript_assignment",
+          "target": "self.history.sources[key]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/blue_line_detector.py",
+      "line": 333,
+      "function": "_calculate_blue_tail",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 350,
+          "operation": "possible_collection_mutation",
+          "target": "resets_by_first.setdefault(int(getattr(reset, 'from_first_idx')), []).append"
+        },
+        {
+          "line": 350,
+          "operation": "possible_collection_mutation",
+          "target": "resets_by_first.setdefault"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/e_zone_detector.py",
+      "line": 112,
+      "function": "LiveEContinuation.__init__",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 116,
+          "operation": "state_attribute_assignment",
+          "target": "self._stops"
+        },
+        {
+          "line": 117,
+          "operation": "state_attribute_assignment",
+          "target": "self._previous_stops"
+        },
+        {
+          "line": 121,
+          "operation": "state_attribute_assignment",
+          "target": "self._previous_zones"
+        },
+        {
+          "line": 124,
+          "operation": "state_attribute_assignment",
+          "target": "self._scoped_reconciliations"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/e_zone_detector.py",
+      "line": 153,
+      "function": "LiveEContinuation.first_stop",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 173,
+          "operation": "state_subscript_assignment",
+          "target": "self._stops[key]"
+        },
+        {
+          "line": 165,
+          "operation": "state_subscript_assignment",
+          "target": "self._stops[key]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/e_zone_detector.py",
+      "line": 220,
+      "function": "LiveEContinuation.reconcile",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 261,
+          "operation": "state_subscript_assignment",
+          "target": "self._scoped_reconciliations[scope]"
+        },
+        {
+          "line": 262,
+          "operation": "state_attribute_assignment",
+          "target": "detector._last_candidate_zones"
+        },
+        {
+          "line": 263,
+          "operation": "state_attribute_assignment",
+          "target": "detector._accepted_e_source_identities"
+        },
+        {
+          "line": 308,
+          "operation": "state_subscript_assignment",
+          "target": "self._scoped_reconciliations[scope]"
+        },
+        {
+          "line": 242,
+          "operation": "possible_collection_mutation",
+          "target": "grouped.setdefault(zone.source_index, []).append"
+        },
+        {
+          "line": 245,
+          "operation": "possible_collection_mutation",
+          "target": "parents.setdefault(item.source_index, []).append"
+        },
+        {
+          "line": 264,
+          "operation": "possible_collection_mutation",
+          "target": "detector.visual_lifecycle_starts.update"
+        },
+        {
+          "line": 245,
+          "operation": "possible_collection_mutation",
+          "target": "parents.setdefault"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/e_zone_detector.py",
+      "line": 313,
+      "function": "EZoneDetector.__init__",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 344,
+          "operation": "state_attribute_assignment",
+          "target": "self._accepted_e_source_identities"
+        },
+        {
+          "line": 345,
+          "operation": "state_attribute_assignment",
+          "target": "self.sequence_resets"
+        },
+        {
+          "line": 346,
+          "operation": "state_attribute_assignment",
+          "target": "self.order_direction"
+        },
+        {
+          "line": 348,
+          "operation": "state_attribute_assignment",
+          "target": "self.trend_reactions"
+        },
+        {
+          "line": 349,
+          "operation": "state_attribute_assignment",
+          "target": "self.opposite_reactions"
+        },
+        {
+          "line": 350,
+          "operation": "state_attribute_assignment",
+          "target": "self.s_zones"
+        },
+        {
+          "line": 357,
+          "operation": "state_attribute_assignment",
+          "target": "self.opposite_resets"
+        },
+        {
+          "line": 383,
+          "operation": "state_attribute_assignment",
+          "target": "self.blocked_order_first_times"
+        },
+        {
+          "line": 384,
+          "operation": "state_attribute_assignment",
+          "target": "self.e_parent_order_first_exceptions"
+        },
+        {
+          "line": 385,
+          "operation": "state_attribute_assignment",
+          "target": "self.initial_order_audit"
+        },
+        {
+          "line": 386,
+          "operation": "state_attribute_assignment",
+          "target": "self.order_b_legs"
+        },
+        {
+          "line": 390,
+          "operation": "state_attribute_assignment",
+          "target": "self.visual_lifecycle_starts"
+        },
+        {
+          "line": 392,
+          "operation": "state_attribute_assignment",
+          "target": "self._last_candidate_zones"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/e_zone_detector.py",
+      "line": 399,
+      "function": "EZoneDetector.sequence_resets",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 401,
+          "operation": "state_attribute_assignment",
+          "target": "self._sequence_resets"
+        },
+        {
+          "line": 402,
+          "operation": "state_attribute_assignment",
+          "target": "self._sequence_reset_times"
+        },
+        {
+          "line": 411,
+          "operation": "possible_collection_mutation",
+          "target": "cache.clear"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/e_zone_detector.py",
+      "line": 440,
+      "function": "EZoneDetector._initialize_main_extremes",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 445,
+          "operation": "state_attribute_assignment",
+          "target": "self._stop_values"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/e_zone_detector.py",
+      "line": 537,
+      "function": "EZoneDetector._cross_order",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 556,
+          "operation": "state_subscript_assignment",
+          "target": "self._cross_order_cache[key]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/e_zone_detector.py",
+      "line": 824,
+      "function": "EZoneDetector.replace_with_earlier_continuation",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 866,
+          "operation": "state_attribute_assignment",
+          "target": "self._accepted_e_source_identities"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/e_zone_detector.py",
+      "line": 871,
+      "function": "EZoneDetector.resolve_same_source_conflicts",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 903,
+          "operation": "possible_collection_mutation",
+          "target": "order.append"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/e_zone_detector.py",
+      "line": 915,
+      "function": "EZoneDetector.restore_independent_s_roots",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1002,
+          "operation": "state_attribute_assignment",
+          "target": "self._accepted_e_source_identities"
+        },
+        {
+          "line": 1000,
+          "operation": "possible_collection_mutation",
+          "target": "dominant_sources.add"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/e_zone_detector.py",
+      "line": 1175,
+      "function": "EZoneDetector.index_numbered",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1178,
+          "operation": "possible_collection_mutation",
+          "target": "numbered_by_source.setdefault"
+        },
+        {
+          "line": 1180,
+          "operation": "state_subscript_assignment",
+          "target": "first_numbered_at_time[item.source_time]"
+        },
+        {
+          "line": 1186,
+          "operation": "possible_collection_mutation",
+          "target": "numbered_s_parent_times.add"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/e_zone_detector.py",
+      "line": 1193,
+      "function": "EZoneDetector.index_child",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1196,
+          "operation": "state_subscript_assignment",
+          "target": "child_decision_by_parent[identity]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/e_zone_detector.py",
+      "line": 1204,
+      "function": "EZoneDetector.enqueue",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1213,
+          "operation": "state_subscript_assignment",
+          "target": "candidates_by_source_time[zone.source_index, zone.source_time]"
+        },
+        {
+          "line": 1212,
+          "operation": "possible_collection_mutation",
+          "target": "candidates.append"
+        },
+        {
+          "line": 1215,
+          "operation": "possible_collection_mutation",
+          "target": "by_source.setdefault(zone.source_index, []).append"
+        },
+        {
+          "line": 1215,
+          "operation": "possible_collection_mutation",
+          "target": "by_source.setdefault"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/e_zone_detector.py",
+      "line": 1465,
+      "function": "EZoneDetector.collect_lineage",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1470,
+          "operation": "possible_collection_mutation",
+          "target": "self.visual_lifecycle_starts.add"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/lifecycle_engine.py",
+      "line": 151,
+      "function": "StopAllDetector.__init__",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 161,
+          "operation": "state_attribute_assignment",
+          "target": "self.s_zones"
+        },
+        {
+          "line": 162,
+          "operation": "state_attribute_assignment",
+          "target": "self.e_zones"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/lifecycle_engine.py",
+      "line": 475,
+      "function": "StopAllDetector.process_e_event",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 482,
+          "operation": "possible_collection_mutation",
+          "target": "stopped_active.append"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/lifecycle_engine.py",
+      "line": 606,
+      "function": "resolve_order_context",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 636,
+          "operation": "possible_collection_mutation",
+          "target": "blocked_order_first_times.update"
+        },
+        {
+          "line": 691,
+          "operation": "possible_collection_mutation",
+          "target": "e_parent_order_first_exceptions_out.update"
+        },
+        {
+          "line": 670,
+          "operation": "possible_collection_mutation",
+          "target": "reactions_by_first_index.setdefault(int(getattr(reaction, 'first_idx')), []).append"
+        },
+        {
+          "line": 670,
+          "operation": "possible_collection_mutation",
+          "target": "reactions_by_first_index.setdefault"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/lifecycle_engine.py",
+      "line": 695,
+      "function": "visible_a_zones_after_s_stops",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 706,
+          "operation": "possible_collection_mutation",
+          "target": "stop_indices.discard"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/lifecycle_engine.py",
+      "line": 766,
+      "function": "split_a_zones_by_dominant_stops",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 831,
+          "operation": "state_subscript_assignment",
+          "target": "stop_indices[identity]"
+        },
+        {
+          "line": 832,
+          "operation": "state_subscript_assignment",
+          "target": "stop_events[identity]"
+        },
+        {
+          "line": 802,
+          "operation": "possible_collection_mutation",
+          "target": "stopped.append"
+        },
+        {
+          "line": 828,
+          "operation": "possible_collection_mutation",
+          "target": "stopped_modules.append"
+        },
+        {
+          "line": 833,
+          "operation": "possible_collection_mutation",
+          "target": "first_stop_events.setdefault"
+        },
+        {
+          "line": 819,
+          "operation": "possible_collection_mutation",
+          "target": "stopped.append"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/lifecycle_engine.py",
+      "line": 996,
+      "function": "consumed_s_evidence_after_larger_stop",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1034,
+          "operation": "possible_collection_mutation",
+          "target": "stopped_e.append"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/lifecycle_engine.py",
+      "line": 1199,
+      "function": "visible_s_zones_after_module_resets",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1231,
+          "operation": "state_subscript_assignment",
+          "target": "stop_event_cache[key]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/lifecycle_engine.py",
+      "line": 1228,
+      "function": "cached_stop_event",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1231,
+          "operation": "state_subscript_assignment",
+          "target": "stop_event_cache[key]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/lifecycle_engine.py",
+      "line": 1509,
+      "function": "finalize_behavior_visibility",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1549,
+          "operation": "possible_collection_mutation",
+          "target": "final_s_zones.extend"
+        },
+        {
+          "line": 1554,
+          "operation": "possible_collection_mutation",
+          "target": "final_s_zones.sort"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 77,
+      "function": "dominant_post_behavior_stops",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 132,
+          "operation": "state_subscript_assignment",
+          "target": "by_candle[stop_index]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 442,
+      "function": "discover_accepted_order_b_reset_legs",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 512,
+          "operation": "state_subscript_assignment",
+          "target": "anchors_by_source[key]"
+        },
+        {
+          "line": 493,
+          "operation": "possible_collection_mutation",
+          "target": "anchor_candidates.append"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 557,
+      "function": "OrderAuditEngineMixin._initialize_order_audit",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 559,
+          "operation": "state_attribute_assignment",
+          "target": "self._cross_order_cache"
+        },
+        {
+          "line": 567,
+          "operation": "state_attribute_assignment",
+          "target": "self._canonical_order_stop_cache"
+        },
+        {
+          "line": 574,
+          "operation": "state_attribute_assignment",
+          "target": "self._initial_order_records_cache"
+        },
+        {
+          "line": 578,
+          "operation": "state_attribute_assignment",
+          "target": "self._initial_order_first_times"
+        },
+        {
+          "line": 579,
+          "operation": "state_attribute_assignment",
+          "target": "self._initial_order_confirmation_times"
+        },
+        {
+          "line": 580,
+          "operation": "state_attribute_assignment",
+          "target": "self._initial_order_confirmation_records"
+        },
+        {
+          "line": 584,
+          "operation": "state_attribute_assignment",
+          "target": "self._initial_orders_by_first_time"
+        },
+        {
+          "line": 588,
+          "operation": "state_attribute_assignment",
+          "target": "self._order_candidates_cache"
+        },
+        {
+          "line": 591,
+          "operation": "state_attribute_assignment",
+          "target": "self._carried_orders_cache"
+        },
+        {
+          "line": 594,
+          "operation": "state_attribute_assignment",
+          "target": "self._post_stop_orders_cache"
+        },
+        {
+          "line": 597,
+          "operation": "state_attribute_assignment",
+          "target": "self._direct_parent_stop_cache"
+        },
+        {
+          "line": 601,
+          "operation": "state_attribute_assignment",
+          "target": "self.order_audit"
+        },
+        {
+          "line": 607,
+          "operation": "state_attribute_assignment",
+          "target": "self._order_audit_confirmation_index"
+        },
+        {
+          "line": 610,
+          "operation": "state_attribute_assignment",
+          "target": "self._post_stop_sorted_audit"
+        },
+        {
+          "line": 611,
+          "operation": "state_attribute_assignment",
+          "target": "self._post_stop_pending"
+        },
+        {
+          "line": 612,
+          "operation": "state_attribute_assignment",
+          "target": "self._trend_first_times"
+        },
+        {
+          "line": 615,
+          "operation": "state_attribute_assignment",
+          "target": "self._trend_confirmations"
+        },
+        {
+          "line": 625,
+          "operation": "state_attribute_assignment",
+          "target": "self._trend_by_confirmation"
+        },
+        {
+          "line": 633,
+          "operation": "state_attribute_assignment",
+          "target": "self._trend_confirmation_times"
+        },
+        {
+          "line": 634,
+          "operation": "state_attribute_assignment",
+          "target": "self._trend_leg_order_positions"
+        },
+        {
+          "line": 635,
+          "operation": "state_attribute_assignment",
+          "target": "self._opposite_reset_times_by_first"
+        },
+        {
+          "line": 637,
+          "operation": "possible_collection_mutation",
+          "target": "self._opposite_reset_times_by_first.setdefault(int(getattr(reset, 'from_first_idx')), []).append"
+        },
+        {
+          "line": 637,
+          "operation": "possible_collection_mutation",
+          "target": "self._opposite_reset_times_by_first.setdefault"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 653,
+      "function": "OrderAuditEngineMixin._order_stop",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 671,
+          "operation": "state_subscript_assignment",
+          "target": "self._canonical_order_stop_cache[number]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 764,      "function": "OrderAuditEngineMixin._trend_leg_direct_order",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 784,
+          "operation": "state_subscript_assignment",
+          "target": "self._trend_leg_order_positions[position]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1100,
+      "function": "OrderAuditEngineMixin._index_order_audit_identity",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1107,
+          "operation": "possible_collection_mutation",
+          "target": "self._order_audit_confirmation_index.insert"
+        },
+        {
+          "line": 1111,
+          "operation": "state_attribute_assignment",
+          "target": "self._post_stop_sorted_audit"
+        },
+        {
+          "line": 1109,
+          "operation": "possible_collection_mutation",
+          "target": "self._post_stop_pending.append"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1114,
+      "function": "OrderAuditEngineMixin._clear_order_audit",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1115,
+          "operation": "possible_collection_mutation",
+          "target": "self.order_audit.clear"
+        },
+        {
+          "line": 1116,
+          "operation": "possible_collection_mutation",
+          "target": "self._order_audit_confirmation_index.clear"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1120,
+      "function": "OrderAuditEngineMixin._invalidate_carried_order_caches",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1125,
+          "operation": "possible_collection_mutation",
+          "target": "self._carried_orders_cache.clear"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1129,
+      "function": "OrderAuditEngineMixin._invalidate_post_stop_order_cache",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1131,
+          "operation": "state_attribute_assignment",
+          "target": "self._post_stop_sorted_audit"
+        },
+        {
+          "line": 1130,
+          "operation": "possible_collection_mutation",
+          "target": "self._post_stop_orders_cache.clear"
+        },
+        {
+          "line": 1132,
+          "operation": "possible_collection_mutation",
+          "target": "self._post_stop_pending.clear"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1135,
+      "function": "OrderAuditEngineMixin.register_order_b_reset_legs",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1161,
+          "operation": "state_subscript_assignment",
+          "target": "self.order_audit[identity]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1202,
+      "function": "OrderAuditEngineMixin._reparent_primary_high_causes",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1242,
+          "operation": "state_subscript_assignment",
+          "target": "self._order_audit_confirmation_index[:]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1286,
+      "function": "OrderAuditEngineMixin._register_primary_point",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1304,
+          "operation": "state_subscript_assignment",
+          "target": "self.order_audit[identity]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1320,
+      "function": "OrderAuditEngineMixin._reconcile_primary_labels",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1334,
+          "operation": "state_subscript_assignment",
+          "target": "entry['order_b_causes']"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1459,
+      "function": "OrderAuditEngineMixin._cross_order",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1476,
+          "operation": "state_subscript_assignment",
+          "target": "self._cross_order_cache[cache_key]"
+        },
+        {
+          "line": 1471,
+          "operation": "state_subscript_assignment",
+          "target": "self._cross_order_cache[cache_key]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1524,
+      "function": "OrderAuditEngineMixin._initial_order_records",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1557,
+          "operation": "state_attribute_assignment",
+          "target": "self._initial_order_records_cache"
+        },
+        {
+          "line": 1558,
+          "operation": "state_attribute_assignment",
+          "target": "self._initial_order_first_times"
+        },
+        {
+          "line": 1566,
+          "operation": "state_attribute_assignment",
+          "target": "self._initial_orders_by_first_time"
+        },
+        {
+          "line": 1577,
+          "operation": "state_attribute_assignment",
+          "target": "self._initial_order_confirmation_records"
+        },
+        {
+          "line": 1578,
+          "operation": "state_attribute_assignment",
+          "target": "self._initial_order_confirmation_times"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1722,
+      "function": "OrderAuditEngineMixin._carried_orders_for_parent",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1794,
+          "operation": "state_subscript_assignment",
+          "target": "self._carried_orders_cache[key]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1798,
+      "function": "OrderAuditEngineMixin._post_stop_accepted_orders_for_parent",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1876,
+          "operation": "state_subscript_assignment",
+          "target": "self._post_stop_orders_cache[cache_key]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 1879,
+      "function": "OrderAuditEngineMixin._iter_post_stop_accepted_orders",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1932,
+          "operation": "state_attribute_assignment",
+          "target": "self._post_stop_sorted_initial"
+        },
+        {
+          "line": 1991,
+          "operation": "state_attribute_assignment",
+          "target": "self._post_stop_sorted_audit"
+        },
+        {
+          "line": 1987,
+          "operation": "state_subscript_assignment",
+          "target": "audit[tier]"
+        },
+        {
+          "line": 1984,
+          "operation": "possible_collection_mutation",
+          "target": "audit.pop"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 2249,
+      "function": "OrderAuditEngineMixin.ensure_accepted_order_audit",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 2282,
+          "operation": "state_subscript_assignment",
+          "target": "self.order_audit[identity]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 2404,
+      "function": "_single_owner_parent_stop_causes",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 2423,
+          "operation": "state_subscript_assignment",
+          "target": "parent_rank[key]"
+        },
+        {
+          "line": 2424,
+          "operation": "state_subscript_assignment",
+          "target": "parent_owner[key]"
+        },
+        {
+          "line": 2431,
+          "operation": "possible_collection_mutation",
+          "target": "accepted_causes.append"
+        },
+        {
+          "line": 2435,
+          "operation": "possible_collection_mutation",
+          "target": "accepted_causes.append"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 2462,
+      "function": "accepted_audit_entry",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 2489,
+          "operation": "state_subscript_assignment",
+          "target": "adjusted['a_source_time']"
+        },
+        {
+          "line": 2490,
+          "operation": "state_subscript_assignment",
+          "target": "adjusted['a_stop_event_time']"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 2520,
+      "function": "SOrderAuditMixin._initialize_stopped_a_order_lookup",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 2529,
+          "operation": "state_attribute_assignment",
+          "target": "self._opposite_order_matches"
+        },
+        {
+          "line": 2539,
+          "operation": "state_attribute_assignment",
+          "target": "self._opposite_order_confirmation_times"
+        },
+        {
+          "line": 2542,
+          "operation": "state_attribute_assignment",
+          "target": "self._first_canonical_order_cache"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 2601,
+      "function": "SOrderAuditMixin._first_canonical_order_after",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 2619,
+          "operation": "state_subscript_assignment",
+          "target": "cache[a_stop_event_time]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/order_audit_engine.py",
+      "line": 2622,
+      "function": "SOrderAuditMixin._record_a_order_audit",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 2651,
+          "operation": "state_subscript_assignment",
+          "target": "self.order_audit[identity]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 149,
+      "function": "DetectorBase.__init__",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 163,
+          "operation": "state_attribute_assignment",
+          "target": "self._reaction_break_index_cache"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 346,
+      "function": "BullishDetector._scan",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 387,
+          "operation": "possible_collection_mutation",
+          "target": "resets.append"
+        },
+        {
+          "line": 426,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom"
+        },
+        {
+          "line": 427,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom_source_idx"
+        },
+        {
+          "line": 428,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom_source_time"
+        },
+        {
+          "line": 431,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_idx"
+        },
+        {
+          "line": 432,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_time"
+        },
+        {
+          "line": 439,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom"
+        },
+        {
+          "line": 440,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom_source_idx"
+        },
+        {
+          "line": 441,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom_source_time"
+        },
+        {
+          "line": 446,
+          "operation": "possible_collection_mutation",
+          "target": "reactions.append"
+        },
+        {
+          "line": 467,
+          "operation": "possible_collection_mutation",
+          "target": "resets.append"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 698,
+      "function": "_ReflectedCandles.__init__",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 699,
+          "operation": "state_attribute_assignment",
+          "target": "self.source"
+        },
+        {
+          "line": 700,
+          "operation": "state_attribute_assignment",
+          "target": "self._cache"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 705,
+      "function": "_ReflectedCandles.__getitem__",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 711,
+          "operation": "state_subscript_assignment",
+          "target": "self._cache[index]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 788,
+      "function": "published_reaction_candidate",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 877,
+          "operation": "state_attribute_assignment",
+          "target": "published.box_bottom_source_idx"
+        },
+        {
+          "line": 878,
+          "operation": "state_attribute_assignment",
+          "target": "published.box_bottom_source_time"
+        },
+        {
+          "line": 881,
+          "operation": "state_attribute_assignment",
+          "target": "published.box_top_source_idx"
+        },
+        {
+          "line": 882,
+          "operation": "state_attribute_assignment",
+          "target": "published.box_top_source_time"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 1119,
+      "function": "clear_market_indexes",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1122,
+          "operation": "possible_collection_mutation",
+          "target": "cache.clear"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 1125,
+      "function": "release_market_indexes",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1129,
+          "operation": "possible_collection_mutation",
+          "target": "cache.pop"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 1153,
+      "function": "MarketChronology.__init__",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1174,
+          "operation": "state_attribute_assignment",
+          "target": "self._confirmation_cache"
+        },
+        {
+          "line": 1175,
+          "operation": "state_attribute_assignment",
+          "target": "self._reset_time_cache"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 1238,
+      "function": "MarketChronology.reset_time",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1254,
+          "operation": "state_subscript_assignment",
+          "target": "self._reset_time_cache[cache_key]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 1257,
+      "function": "MarketChronology.reaction_confirmation",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1301,
+          "operation": "state_subscript_assignment",
+          "target": "self._confirmation_cache[cache_key]"
+        },
+        {
+          "line": 1299,
+          "operation": "state_subscript_assignment",
+          "target": "self._confirmation_cache[cache_key]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 1554,
+      "function": "directional_a_stop_order_finder",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1611,
+          "operation": "state_subscript_assignment",
+          "target": "cache[key]"
+        },
+        {
+          "line": 1582,
+          "operation": "state_subscript_assignment",
+          "target": "cache[key]"
+        },
+        {
+          "line": 1602,
+          "operation": "state_subscript_assignment",
+          "target": "detection_cache[detection_key]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 1568,
+      "function": "find",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1611,
+          "operation": "state_subscript_assignment",
+          "target": "cache[key]"
+        },
+        {
+          "line": 1582,
+          "operation": "state_subscript_assignment",
+          "target": "cache[key]"
+        },
+        {
+          "line": 1602,
+          "operation": "state_subscript_assignment",
+          "target": "detection_cache[detection_key]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 1627,
+      "function": "UnifiedReactionDetector.__init__",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1640,
+          "operation": "state_attribute_assignment",
+          "target": "self.initial_bullish_trend"
+        },
+        {
+          "line": 1641,
+          "operation": "state_attribute_assignment",
+          "target": "self.initial_bearish_trend"
+        },
+        {
+          "line": 1646,
+          "operation": "state_attribute_assignment",
+          "target": "self.all_reactions"
+        },
+        {
+          "line": 1650,
+          "operation": "state_attribute_assignment",
+          "target": "self.all_resets"
+        },
+        {
+          "line": 1654,
+          "operation": "state_attribute_assignment",
+          "target": "self._geometry_after_reset_cache"
+        },
+        {
+          "line": 1659,
+          "operation": "state_attribute_assignment",
+          "target": "self._order_gate_geometry_cache"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 1781,
+      "function": "UnifiedReactionDetector._refine",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1793,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom"
+        },
+        {
+          "line": 1794,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom_source_idx"
+        },
+        {
+          "line": 1795,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom_source_time"
+        },
+        {
+          "line": 1797,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top"
+        },
+        {
+          "line": 1798,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top_source_idx"
+        },
+        {
+          "line": 1799,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top_source_time"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 1891,
+      "function": "UnifiedReactionDetector._first_trend_reaction",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1929,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom"
+        },
+        {
+          "line": 1930,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom_source_idx"
+        },
+        {
+          "line": 1931,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom_source_time"
+        },
+        {
+          "line": 1938,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_idx"
+        },
+        {
+          "line": 1939,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_time"
+        },
+        {
+          "line": 1933,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top"
+        },
+        {
+          "line": 1934,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top_source_idx"
+        },
+        {
+          "line": 1935,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top_source_time"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 1993,
+      "function": "UnifiedReactionDetector._first_geometry_after_reset",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 2026,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom"
+        },
+        {
+          "line": 2027,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom_source_idx"
+        },
+        {
+          "line": 2028,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom_source_time"
+        },
+        {
+          "line": 2030,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_idx"
+        },
+        {
+          "line": 2031,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_time"
+        },
+        {
+          "line": 2036,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top"
+        },
+        {
+          "line": 2037,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top_source_idx"
+        },
+        {
+          "line": 2038,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top_source_time"
+        },
+        {
+          "line": 2040,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_idx"
+        },
+        {
+          "line": 2041,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_time"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 2053,
+      "function": "UnifiedReactionDetector._reaction_break_indices",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 2065,
+          "operation": "state_subscript_assignment",
+          "target": "self._reaction_break_index_cache[direction]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 2068,
+      "function": "UnifiedReactionDetector.first_order_reaction_after_gate",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 2090,
+          "operation": "state_subscript_assignment",
+          "target": "self._order_gate_geometry_cache[cache_key]"
+        },
+        {
+          "line": 2190,
+          "operation": "state_attribute_assignment",
+          "target": "result.order_gate_decision"
+        },
+        {
+          "line": 2131,
+          "operation": "state_attribute_assignment",
+          "target": "result.order_gate_decision"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 2084,
+      "function": "UnifiedReactionDetector.cache_result",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 2090,
+          "operation": "state_subscript_assignment",
+          "target": "self._order_gate_geometry_cache[cache_key]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 2217,
+      "function": "UnifiedReactionDetector._earliest_confirmed_geometry",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 2265,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom"
+        },
+        {
+          "line": 2266,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom_source_idx"
+        },
+        {
+          "line": 2267,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom_source_time"
+        },
+        {
+          "line": 2269,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_idx"
+        },
+        {
+          "line": 2270,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_time"
+        },
+        {
+          "line": 2276,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top"
+        },
+        {
+          "line": 2277,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top_source_idx"
+        },
+        {
+          "line": 2278,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top_source_time"
+        },
+        {
+          "line": 2280,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_idx"
+        },
+        {
+          "line": 2281,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_time"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 2349,
+      "function": "UnifiedReactionDetector._scan_direct_candidate",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 2365,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom"
+        },
+        {
+          "line": 2366,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom_source_idx"
+        },
+        {
+          "line": 2367,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom_source_time"
+        },
+        {
+          "line": 2369,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top"
+        },
+        {
+          "line": 2370,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top_source_idx"
+        },
+        {
+          "line": 2371,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top_source_time"
+        },
+        {
+          "line": 2373,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_idx"
+        },
+        {
+          "line": 2374,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_time"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 2517,
+      "function": "UnifiedReactionDetector._scan_normal",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 2663,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom"
+        },
+        {
+          "line": 2664,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom_source_idx"
+        },
+        {
+          "line": 2665,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_bottom_source_time"
+        },
+        {
+          "line": 2667,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_idx"
+        },
+        {
+          "line": 2668,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_time"
+        },
+        {
+          "line": 2701,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top"
+        },
+        {
+          "line": 2702,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top_source_idx"
+        },
+        {
+          "line": 2703,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.box_top_source_time"
+        },
+        {
+          "line": 2705,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_idx"
+        },
+        {
+          "line": 2706,
+          "operation": "state_attribute_assignment",
+          "target": "candidate.break_time"        }
+      ]
+    },
+    {
+      "file": "pipeline/reaction_engine.py",
+      "line": 2873,
+      "function": "LiveReactionContinuation._extend",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 2888,
+          "operation": "state_subscript_assignment",
+          "target": "detector.all_reactions[self._direction]"
+        },
+        {
+          "line": 2889,
+          "operation": "state_subscript_assignment",
+          "target": "detector.all_resets[self._direction]"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/s_zone_detector.py",
+      "line": 67,
+      "function": "SZoneDetector.__init__",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 84,
+          "operation": "state_attribute_assignment",
+          "target": "self.order_direction"
+        },
+        {
+          "line": 85,
+          "operation": "state_attribute_assignment",
+          "target": "self.trend_reactions"
+        },
+        {
+          "line": 86,
+          "operation": "state_attribute_assignment",
+          "target": "self.opposite_reactions"
+        },
+        {
+          "line": 87,
+          "operation": "state_attribute_assignment",
+          "target": "self.opposite_resets"
+        },
+        {
+          "line": 88,
+          "operation": "state_attribute_assignment",
+          "target": "self.initial_order_geometry"
+        },
+        {
+          "line": 89,
+          "operation": "state_attribute_assignment",
+          "target": "self.trend_blue_lines"
+        },
+        {
+          "line": 112,
+          "operation": "state_attribute_assignment",
+          "target": "self.order_audit"
+        },
+        {
+          "line": 117,
+          "operation": "state_attribute_assignment",
+          "target": "self.a_ownership_windows"
+        },
+        {
+          "line": 118,
+          "operation": "state_attribute_assignment",
+          "target": "self._reset_blue_formation_by_reaction"
+        },
+        {
+          "line": 145,
+          "operation": "state_attribute_assignment",
+          "target": "self._confirmations_in_reaction_order"
+        },
+        {
+          "line": 149,
+          "operation": "state_attribute_assignment",
+          "target": "self._ordered_first_indexes"
+        },
+        {
+          "line": 153,
+          "operation": "state_attribute_assignment",
+          "target": "self._trend_ordered"
+        },
+        {
+          "line": 154,
+          "operation": "state_attribute_assignment",
+          "target": "self._trend_ordered_confirmation_times"
+        },
+        {
+          "line": 161,
+          "operation": "state_attribute_assignment",
+          "target": "self._opposite_reset_events"
+        },
+        {
+          "line": 165,
+          "operation": "state_attribute_assignment",
+          "target": "self._opposite_reset_event_times"
+        },
+        {
+          "line": 166,
+          "operation": "state_attribute_assignment",
+          "target": "self._opposite_reset_times_by_owner"
+        },
+        {
+          "line": 171,
+          "operation": "state_attribute_assignment",
+          "target": "self._public_blue_formation_times"
+        },
+        {
+          "line": 128,
+          "operation": "state_subscript_assignment",
+          "target": "self._reset_blue_formation_by_reaction[reaction_number]"
+        },
+        {
+          "line": 168,
+          "operation": "possible_collection_mutation",
+          "target": "self._opposite_reset_times_by_owner.setdefault(int(getattr(reset, 'from_first_idx')), []).append"
+        },
+        {
+          "line": 168,
+          "operation": "possible_collection_mutation",
+          "target": "self._opposite_reset_times_by_owner.setdefault"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/s_zone_detector.py",
+      "line": 1251,
+      "function": "SZoneDetector._detect",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1253,
+          "operation": "possible_collection_mutation",
+          "target": "self.a_ownership_windows.clear"
+        },
+        {
+          "line": 1254,
+          "operation": "possible_collection_mutation",
+          "target": "self.order_audit.clear"
+        },
+        {
+          "line": 1293,
+          "operation": "state_subscript_assignment",
+          "target": "self.a_ownership_windows[-1]"
+        },
+        {
+          "line": 1286,
+          "operation": "possible_collection_mutation",
+          "target": "self.a_ownership_windows.append"
+        }
+      ]
+    },
+    {
+      "file": "pipeline/true_false.py",
+      "line": 128,
+      "function": "apply_true_false",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 148,
+          "operation": "possible_collection_mutation",
+          "target": "stops.clear"
+        },
+        {
+          "line": 140,
+          "operation": "possible_collection_mutation",
+          "target": "by_source.setdefault"
+        },
+        {
+          "line": 152,
+          "operation": "possible_collection_mutation",
+          "target": "stops.append"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 104,
+      "function": "local_datetime",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 109,
+          "operation": "state_subscript_assignment",
+          "target": "_local_dt_cache[epoch]"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 116,
+      "function": "epoch",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 121,
+          "operation": "state_subscript_assignment",
+          "target": "_epoch_cache[local]"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 128,
+      "function": "display_epoch",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 136,
+          "operation": "state_subscript_assignment",
+          "target": "_display_epoch_cache[value]"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 187,
+      "function": "build_candle_buckets",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 199,
+          "operation": "state_subscript_assignment",
+          "target": "decimal_cache[key]"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 192,
+      "function": "cached_decimal",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 199,
+          "operation": "state_subscript_assignment",
+          "target": "decimal_cache[key]"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 373,
+      "function": "select_reaction_serialization_items",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 392,
+          "operation": "possible_collection_mutation",
+          "target": "reactions.append"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 396,
+      "function": "serialize",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 424,
+          "operation": "possible_collection_mutation",
+          "target": "reactions.append"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 801,
+      "function": "BridgeProjection.__init__",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 811,
+          "operation": "state_attribute_assignment",
+          "target": "self.order_direction"
+        },
+        {
+          "line": 812,
+          "operation": "state_attribute_assignment",
+          "target": "self.audit_by_identity"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 1610,
+      "function": "validate_order_audit_bridge",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 1668,
+          "operation": "possible_collection_mutation",
+          "target": "parent_owner.setdefault"
+        },
+        {
+          "line": 1670,
+          "operation": "possible_collection_mutation",
+          "target": "duplicate_parent_causes.append"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 2552,
+      "function": "prepare_pipeline_state",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 2650,
+          "operation": "state_subscript_assignment",
+          "target": "full_e_zones[direction]"
+        },
+        {
+          "line": 2658,
+          "operation": "state_subscript_assignment",
+          "target": "full_s_candidates_by_direction[direction]"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 2738,
+      "function": "calculate_direction_range_state",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 2821,
+          "operation": "state_subscript_assignment",
+          "target": "state.full_s_detectors[direction]"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 3249,
+      "function": "serialize_primary_structures",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 3359,
+          "operation": "possible_collection_mutation",
+          "target": "post_orders.append"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 3371,
+      "function": "calculate_primary_structures",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 3420,
+          "operation": "state_attribute_assignment",
+          "target": "visibility.prepared_order_audit"
+        },
+        {
+          "line": 3390,
+          "operation": "state_subscript_assignment",
+          "target": "accepted_by_owner[owner]"
+        },
+        {
+          "line": 3391,
+          "operation": "state_subscript_assignment",
+          "target": "groups[owner]['OrderAudit']"
+        },
+        {
+          "line": 3399,
+          "operation": "state_subscript_assignment",
+          "target": "groups[direction]['OrderAudit']"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 3394,
+      "function": "commit_high",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 3399,
+          "operation": "state_subscript_assignment",
+          "target": "groups[direction]['OrderAudit']"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 3427,
+      "function": "build_direction_output",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 3454,
+          "operation": "state_attribute_assignment",
+          "target": "state.primary_result"
+        },
+        {
+          "line": 3455,
+          "operation": "state_attribute_assignment",
+          "target": "visibility.stopalls"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 3498,
+      "function": "build_reversed_trend_outputs",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 3522,
+          "operation": "state_subscript_assignment",
+          "target": "group['trendTransitions']"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 3516,
+      "function": "publish",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 3522,
+          "operation": "state_subscript_assignment",
+          "target": "group['trendTransitions']"
+        }
+      ]
+    },
+    {
+      "file": "bridge/trading_pipeline.py",
+      "line": 3671,
+      "function": "_market_calculation_scope",
+      "traced_selected_function_name": false,
+      "possible_mutation_points": [
+        {
+          "line": 3675,
+          "operation": "possible_collection_mutation",
+          "target": "cache.clear"
+        },
+        {
+          "line": 3685,
+          "operation": "possible_collection_mutation",
+          "target": "cache.clear"
+        }
+      ]
+    }
+  ],
+  "note": "Source AST conservative name match; a traced outer function can call untraced inner mutators. Does not prove event coverage or safety."
+}
