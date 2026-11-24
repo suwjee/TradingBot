@@ -1,0 +1,81 @@
+{
+  "phase": "V9",
+  "audit_timestamp_utc": "2026-11-24T13:32:35+00:00",
+  "release_status": "INCOMPLETE",
+  "trace_coverage": "TRACE_COVERAGE_PARTIAL",
+  "tooling_verified": false,
+  "repository": "suwjee/TradingBot",
+  "refactor_head_read_at_start": "75bfd33e15a8eb56d5b832a4e0121f9a33cbd50f",
+  "correctness_oracle": "01d54ecf0149ebd15de92798be18810b6e2eb791",
+  "git_writes_this_turn": 0,
+  "production_runtime_changed": false,
+  "raw_changed": false,
+  "previous_gate_count_reported": {
+    "PASS": 13,
+    "FAIL": 0,
+    "INCOMPLETE": 2,
+    "NOT RUN": 0
+  },
+  "previous_gates_not_all_reexecuted": true,
+  "new_checks": {
+    "freeze": {
+      "status": "PASS",
+      "golden_zip_sha256": "080175abbd7a3895596230b40783062901deb38c0cc8dd3b97fc058ef21cbb88",
+      "golden_crc_and_stable_bytes": "PASS",
+      "original_source_blobs": 15,
+      "v81_source_sha256": 15,
+      "raw_hashes": 7,
+      "raw_records": 791174
+    },
+    "synthetic_input_integrity": {
+      "status": "PASS",
+      "zip_sha256": "753aab83ef3bdcbaeffb15cd3957ab4ce4f00894a68797371d048d7d173ce702",
+      "raw_sha256": "e121e42430cb72800677e55e1412069af3edef1f336ae0ecdc414642936cf60b",
+      "raw_records": 1000000,
+      "bytes": 84000001,
+      "first_time": 1767225600,
+      "last_time": 1772571195,
+      "seed": 20261123
+    },
+    "strict_comparator_mutation_tests": {
+      "status": "PASS",
+      "tests": 15
+    },
+    "large_stage_stream_test": {
+      "status": "PASS",
+      "assertions_reported_by_script": 8
+    },
+    "oil15k": {
+      "records": 15061,
+      "native_stable_output_status": "PASS",
+      "selected_trace_status": "INCOMPLETE",
+      "selected_equal_noninput_positions": 4012,
+      "known_input_hint_drifts": 1061,
+      "unknown_input_drifts": 0,
+      "original_events": 16488,
+      "candidate_events": 15195,
+      "stage_sidecars_integrity": "PASS",
+      "trace_and_chronology_collection_integrity": "PASS",
+      "two_variants_exit_zero": true
+    },
+    "static_trace_gaps": {
+      "original_possible_untraced_mutator_functions": 103,
+      "v81_possible_untraced_mutator_functions": 107,
+      "not_proof_of_runtime_mismatches": true
+    }
+  },
+  "remaining": [
+    {
+      "gate": "Full synthetic 1M selected trace Original + V8.1",
+      "status": "INCOMPLETE",
+      "new_full_run_this_turn": "NOT RUN",
+      "why": "Full pair not executable to completion within this interactive turn; verified inputs and portable runner prepared; prior synthetic native parity evidence retained separately."
+    },
+    {
+      "gate": "All semantic mutators and arbitrary Live state covered losslessly",
+      "status": "INCOMPLETE",
+      "why": "Selected wrappers, excluded physical calls, noncanonical set representations, unsupported nested fields, and untraced mutators remain. No universal claim of equivalence."
+    }
+  ],
+  "no_v9_speedup_claim": true
+}

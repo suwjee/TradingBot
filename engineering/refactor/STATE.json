@@ -25,17 +25,24 @@
   "correctness_oracle": "01d54ecf0149ebd15de92798be18810b6e2eb791",
   "current_gate_manifest": "../refactor-v9/V9_CURRENT_GATES.json",
   "largest_completed_strict_pair_bars": 250000,
-  "strict_pair_evidence_pending_commit": true,
+  "strict_pair_evidence_pending_commit": false,
   "remaining": [
     "Full synthetic 1M selected internal trace pair",
     "Complete lossless semantic mutation and Live state coverage"
   ],
   "next": [
-    "Persist recovered 100k/250k evidence and strict tools",
     "Close representation and untraced mutation gaps",
-    "Attempt larger complete identical-input pairs"
+    "Attempt full 1M selected trace pair or largest feasible complete paired prefix; do not infer full-scale PASS",
+    "Reassess V9 gates after all required runs"
   ],
   "archive_index": "archive-index.json",
-  "journal": "journal/2026-11-24-reorganization.md",
-  "no_runtime_change": true
+  "journal": "journal/2026-11-24-v9-evidence-recovery.md",
+  "no_runtime_change": true,
+  "strict_pair_evidence": [
+    "../refactor-v9/evidence/2026-11-24/synthetic-100000/pair_report.json",
+    "../refactor-v9/evidence/2026-11-24/synthetic-250000/pair_report.json"
+  ],
+  "maximum_feasible_not_proven": true,
+  "reorganization_commit": "7d27b461ea4dd016c1adee2a82ce0ce5f37d8c03",
+  "evidence_retention": "Git stores scripts, frozen cases, exact reports and artifact SHA256 inventories; full trace/native outputs are not committed; verified external storage for them is not established."
 }

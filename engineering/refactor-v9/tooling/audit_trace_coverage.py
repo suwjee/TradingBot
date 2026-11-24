@@ -11,6 +11,10 @@ from pathlib import Path
 
 SCHEMAS={'tradingbot.v9.internal-observer.v1','tradingbot.v9.internal-observer.v2','tradingbot.v9.internal-observer.v3'}
 
+def file_sha256(path):
+    with Path(path).open("rb") as f:
+        return hashlib.file_digest(f, "sha256").hexdigest()
+
 def inspect(path):
     path=Path(path)
     manifest_path=Path(str(path)+'.manifest.json')
@@ -55,7 +59,7 @@ def inspect(path):
     if stack:raise AssertionError(f'Unclosed stage boundaries in {path}')
     if count!=manifest['events'] or digest.hexdigest()!=manifest['jsonl_sha256']:
         raise AssertionError(f'event count/hash mismatch in {path}')
-    if hashlib.sha256(path.read_bytes()).hexdigest()!=manifest['gzip_sha256']:
+    if file_sha256(path)!=manifest['gzip_sha256']:
         raise AssertionError(f'gzip digest mismatch in {path}')
     if uncompressed!=manifest['uncompressed_bytes']:raise AssertionError('uncompressed bytes mismatch')
     if dict(families)!=manifest['families']:
@@ -63,7 +67,7 @@ def inspect(path):
     sidecar_results=[]
     for desc in manifest.get('chronology_input_sidecars',[]):
         f=path.parent/desc['sidecar']
-        if hashlib.sha256(f.read_bytes()).hexdigest()!=desc['gzip_sha256']:
+        if file_sha256(f)!=desc['gzip_sha256']:
             raise AssertionError('Chronology sidecar gzip SHA mismatch '+str(f))
         n=0;h=hashlib.sha256();byte_count=0;by_kind=collections.Counter()
         with gzip.open(f,'rb') as inp:
@@ -82,7 +86,7 @@ def inspect(path):
     collections_verified=[]
     for desc in manifest.get('ordered_collection_sidecars',[]):
         f=path.parent/desc['file']
-        if hashlib.sha256(f.read_bytes()).hexdigest()!=desc['gzip_sha256']:
+        if file_sha256(f)!=desc['gzip_sha256']:
             raise AssertionError('Ordered source collection sidecar gzip SHA mismatch')
         n=0;length=0;h=hashlib.sha256()
         with gzip.open(f,'rb') as stream:
