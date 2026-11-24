@@ -1,10 +1,19 @@
 # TradingBot Project Operating Contract
 
-**last_modified_at:** `2026-09-30T20:12:59+03:30`
+**last_modified_at:** `2026-11-24T17:20:23+03:30`
 
 This root `AGENTS.md` is the durable navigation and operating contract for AI-assisted work in TradingBot. It defines authority, discovery, ownership boundaries, safety rules, engineering workflow, and verification obligations. It is intentionally discovery-first: mutable repository facts must be re-discovered from the live project instead of being frozen here.
 
 Historical snapshots, old audit reports, generated artifacts, previous AI output, and memory are evidence only. They must never silently override maintained instructions, canonical trading knowledge, accepted references, or the current executable project.
+
+## 0. Owner directive: refactor-only write boundary and permanent engineering memory
+
+- **Only `refactor` is authorized for AI writes.** Never edit, push, merge, reset, rebase, delete, or otherwise modify `main`, `production`, or any other branch without fresh explicit owner authorization for that specific action. Read-only comparison is permitted.
+- Resolve the exact refactor HEAD and protected branch heads before every write. Use fast-forward commits with expected HEAD checks. Re-read the remote refs after push. Never force-push or silently overwrite another agent's work.
+- Read [refactor workspace](engineering/refactor/README.md), [current state](engineering/refactor/STATE.json), and the latest journal before working. Record and push every task, including incomplete attempts, blockers, exact inputs/hashes, commands, results, timing, artifacts and next steps. Do not rely on a chat transcript.
+- Keep RAW, Golden oracle, Decimal, computation logic, chronology, identity and lifecycle immutable in implementation-only refactors. Prefer a complete one-million-candle test; if blocked by real limits, complete the greatest feasible identical-input paired test and report the exact scale and constraint. Never promote a smaller test to a full-scale PASS.
+- Keep current source/tests and meaningful evidence. Historical generated clutter may be removed from the active tree only with a recoverable commit/path/blob index or verified external storage. No secrets or machine-local state.
+- No V9 completion or performance claim without its actual required evidence.
 
 ## 1. Purpose and Scope
 

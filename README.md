@@ -3,10 +3,12 @@ title: TradingBot
 document_role: reference
 lifecycle: maintained
 owner: project-navigation
-last_modified_at: 2026-09-30T11:40:11+03:30
+last_modified_at: 2026-11-24T17:20:23+03:30
 ---
 
-# TradingBot
+# TradingBot — refactor workspace
+
+**Refactor-only branch.** Start at [permanent refactor workspace](engineering/refactor/README.md) and [current state](engineering/refactor/STATE.json). Do not write to main or production without explicit owner permission.
 
 TradingBot is a Windows candlestick workstation. The chart application acquires and displays candles, drawings, indicators and review tables. Python under `engine/` owns trading calculations; the browser renders serialized results.
 
