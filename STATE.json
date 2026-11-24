@@ -33,11 +33,11 @@
     "Complete lossless semantic mutator and Live state coverage"
   ],
   "next": [
-    "Observe the actual 1M/500k workflow outcomes and persist reports",
-    "Close full state coverage gaps; do not infer universal parity",
-    "Run final audits and update gates only on evidence"
+    "Inspect repaired long-run CI and persist actual results",
+    "Cover executed disowned-S rejection, Live path and remaining lossless semantic mutators",
+    "Complete remaining gates; V10 NO-GO until verified"
   ],
-  "latest_journal": "journal/2026-11-24-v9-long-execution.md",
+  "latest_journal": "journal/2026-11-24-v9-decision-coverage-and-ci-repair.md",
   "archive_index": "archive/pre-isolation-index.json",
   "ci": {
     "validated_code_commit": "e4ed3a5f4b29777f9b1720075c4b38546616da8a",
@@ -100,14 +100,34 @@
     "report": "versions/V9/evidence/2026-11-24/oil15k-ci-repair/pair_report.json"
   },
   "synthetic_trace_execution": {
-    "status": "NOT RUN at commit preparation; workflow triggers on this change",
+    "status": "first CI attempt blocked before calculations; repaired workflow triggers second attempt",
+    "first_run_id": 45412144580,
+    "first_failure": "Python 3.13.5 unavailable on ubuntu-latest 26.04; both jobs failed setup, not Engine calculations",
     "scales": [
       1000000,
       500000
     ],
     "input_hashes_verified_locally": true,
     "workflow": ".github/workflows/v9-synthetic-trace.yml",
-    "report_policy": "pair execution PASS is separate from selected/full state status; no V9 release PASS",
+    "repair": "available Python 3.13 patch; record actual environment; hash complete bridge/pipeline closure independent of test checkout",
     "artifact_retention_days": 30
+  },
+  "semantic_coverage_progress": {
+    "case": "OIL 15061 full native 30s BOTH",
+    "e_zone_decision_events_equal": 4229,
+    "calls_per_variant": 1095,
+    "selected_per_variant": 944,
+    "no_match_per_variant": 151,
+    "disowned_rejection_executed": 0,
+    "live_route_executed": 0,
+    "stable_output_status": "PASS",
+    "scoped_decision_status": "PASS",
+    "full_semantic_state_status": "INCOMPLETE",
+    "report": "versions/V9/evidence/2026-11-24/e-zone-decision-oil15k/comparison.json",
+    "private_archive": {
+      "library_path": "/TradingBot/Versions/V9-2026-11-24/V9_E_ZONE_DECISION_OIL15K_20261124.zip",
+      "sha256": "748fdc5cde0dd8af911cb4dafa7e958def33c4590b1eeb59bd02690160a9b197",
+      "retention_verified": "library upload succeeded; no Git binary body"
+    }
   }
 }

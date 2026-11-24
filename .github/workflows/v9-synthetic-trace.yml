@@ -4,7 +4,16 @@ on:
     branches: [refactor]
     paths:
       - '.github/workflows/v9-synthetic-trace.yml'
-      - 'versions/V9/tooling/**'
+      - 'versions/V9/tooling/generate_frozen_synthetic.py'
+      - 'versions/V9/tooling/run_verified_trace_pair_v9.py'
+      - 'versions/V9/tooling/semantic_trace_v9.py'
+      - 'versions/V9/tooling/strict_trace_gate_v9.py'
+      - 'versions/V9/tooling/strict_golden.py'
+      - 'versions/V9/tooling/audit_trace_coverage.py'
+      - 'versions/V9/tooling/verify_streamed_stage_sidecars.py'
+      - 'versions/V9/tooling/safe_sidecar.py'
+      - 'versions/V9/tooling/global_semantic_trace_compare_v9.py'
+      - 'versions/V9/tooling/summarize_synthetic_execution.py'
       - 'versions/V9/reports/synthetic-frozen-scales.json'
       - 'baselines/**'
   workflow_dispatch:
@@ -41,8 +50,15 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.13.5'
+          python-version: '3.13'
       - run: python -m pip install --disable-pip-version-check psutil==7.2.2 orjson==3.11.9 tzdata==2026.2
+      - name: Record actual host and interpreter
+        run: |
+          python -VV
+          python -m pip freeze
+          uname -a
+          nproc
+          free -h
       - name: Verify and reconstruct exact frozen sources in isolated checkouts
         shell: bash
         run: |

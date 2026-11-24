@@ -20,7 +20,9 @@ def hash_file(path):
     with path.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 
 def source_check(path, expected):
-    observed={p.relative_to(path).as_posix():hash_file(p) for p in path.rglob('*.py')}
+    observed={p.relative_to(path).as_posix():hash_file(p)
+              for package in ('bridge','pipeline')
+              for p in (path/package).rglob('*.py')}
     if observed!=expected:raise ValueError('Source SHA manifest mismatch: '+str(path))
     return len(observed)
 
