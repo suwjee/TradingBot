@@ -1,0 +1,883 @@
+{
+  "title": "V9 read-only observer gap runtime coverage",
+  "status": "INCOMPLETE_SEMANTIC_COVERAGE",
+  "dataset": "OIL-20261022 15061 raw 5s",
+  "calculation": "both directions one native call 30s/5s",
+  "oracle": "01d54ecf0149ebd15de92798be18810b6e2eb791",
+  "outputs_byte_equal_to_frozen_golden": true,
+  "static_heuristic_risk_functions": 103,
+  "unique_risk_method_keys": 98,
+  "original_called_unique_keys": 81,
+  "v81_called_unique_keys": 81,
+  "original_calls": 141332,
+  "v81_calls": 140901,
+  "limitation": "Methods identified by AST heuristic; call tracing has no pre/post state snapshots and cannot establish mutation semantics, deterministic tie selection or chronology equivalence. Call-count changes are not semantic differences.",
+  "modules": {
+    "PL_PH_detector.py": {
+      "risk_functions": 3,
+      "original_called": 1,
+      "v81_called": 1,
+      "calls_original": 2,
+      "calls_v81": 2,
+      "static_potential_mutation_sites": 4
+    },
+    "a_zone_detector.py": {
+      "risk_functions": 8,
+      "original_called": 7,
+      "v81_called": 7,
+      "calls_original": 1395,
+      "calls_v81": 1395,
+      "static_potential_mutation_sites": 23
+    },
+    "blue_line_detector.py": {
+      "risk_functions": 1,
+      "original_called": 1,
+      "v81_called": 1,
+      "calls_original": 2,
+      "calls_v81": 2,
+      "static_potential_mutation_sites": 2
+    },
+    "e_zone_detector.py": {
+      "risk_functions": 14,
+      "original_called": 10,
+      "v81_called": 10,
+      "calls_original": 9635,
+      "calls_v81": 9204,
+      "static_potential_mutation_sites": 45
+    },
+    "lifecycle_engine.py": {
+      "risk_functions": 9,
+      "original_called": 9,
+      "v81_called": 9,
+      "calls_original": 265,
+      "calls_v81": 265,
+      "static_potential_mutation_sites": 19
+    },
+    "order_audit_engine.py": {
+      "risk_functions": 24,
+      "original_called": 21,
+      "v81_called": 21,
+      "calls_original": 17591,
+      "calls_v81": 17591,
+      "static_potential_mutation_sites": 66
+    },
+    "reaction_engine.py": {
+      "risk_functions": 23,
+      "original_called": 14,
+      "v81_called": 14,
+      "calls_original": 28607,
+      "calls_v81": 28607,
+      "static_potential_mutation_sites": 97
+    },
+    "s_zone_detector.py": {
+      "risk_functions": 2,
+      "original_called": 2,
+      "v81_called": 2,
+      "calls_original": 4,
+      "calls_v81": 4,
+      "static_potential_mutation_sites": 24
+    },
+    "true_false.py": {
+      "risk_functions": 1,
+      "original_called": 1,
+      "v81_called": 1,
+      "calls_original": 2,
+      "calls_v81": 2,
+      "static_potential_mutation_sites": 3
+    },
+    "trading_pipeline.py": {
+      "risk_functions": 18,
+      "original_called": 15,
+      "v81_called": 15,
+      "calls_original": 83829,
+      "calls_v81": 83829,
+      "static_potential_mutation_sites": 26
+    }
+  },
+  "functions": [
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "cached_decimal",
+      "original_calls": 60244,
+      "v81_calls": 60244,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "local_datetime",
+      "original_calls": 17820,
+      "v81_calls": 17820,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "reaction_confirmation",
+      "original_calls": 17071,
+      "v81_calls": 17071,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "e_zone_detector.py",
+      "function": "_cross_order",
+      "original_calls": 5128,
+      "v81_calls": 5128,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_cross_order",
+      "original_calls": 5128,
+      "v81_calls": 5128,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_order_stop",
+      "original_calls": 4385,
+      "v81_calls": 4385,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "reset_time",
+      "original_calls": 4141,
+      "v81_calls": 4141,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "epoch",
+      "original_calls": 3708,
+      "v81_calls": 3708,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "e_zone_detector.py",
+      "function": "sequence_resets",
+      "original_calls": 2864,
+      "v81_calls": 2433,
+      "static_possible_mutation_sites": 3,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "first_order_reaction_after_gate",
+      "original_calls": 2460,
+      "v81_calls": 2460,
+      "static_possible_mutation_sites": 3,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "__getitem__",
+      "original_calls": 2218,
+      "v81_calls": 2218,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_initial_order_records",
+      "original_calls": 2179,
+      "v81_calls": 2179,
+      "static_possible_mutation_sites": 5,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "display_epoch",
+      "original_calls": 2036,
+      "v81_calls": 2036,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_invalidate_carried_order_caches",
+      "original_calls": 1436,
+      "v81_calls": 1436,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_index_order_audit_identity",
+      "original_calls": 1326,
+      "v81_calls": 1326,
+      "static_possible_mutation_sites": 3,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_carried_orders_for_parent",
+      "original_calls": 1095,
+      "v81_calls": 1095,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_iter_post_stop_accepted_orders",
+      "original_calls": 1095,
+      "v81_calls": 1095,
+      "static_possible_mutation_sites": 4,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "e_zone_detector.py",
+      "function": "index_child",
+      "original_calls": 918,
+      "v81_calls": 918,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "published_reaction_candidate",
+      "original_calls": 834,
+      "v81_calls": 834,
+      "static_possible_mutation_sites": 4,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "_refine",
+      "original_calls": 688,
+      "v81_calls": 688,
+      "static_possible_mutation_sites": 6,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "a_zone_detector.py",
+      "function": "_reaction_confirmation_time",
+      "original_calls": 621,
+      "v81_calls": 621,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "a_zone_detector.py",
+      "function": "_first_crossing",
+      "original_calls": 412,
+      "v81_calls": 412,
+      "static_possible_mutation_sites": 3,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "e_zone_detector.py",
+      "function": "collect_lineage",
+      "original_calls": 378,
+      "v81_calls": 378,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "_scan_direct_candidate",
+      "original_calls": 343,
+      "v81_calls": 343,
+      "static_possible_mutation_sites": 8,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "accepted_audit_entry",
+      "original_calls": 308,
+      "v81_calls": 308,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "e_zone_detector.py",
+      "function": "index_numbered",
+      "original_calls": 251,
+      "v81_calls": 251,
+      "static_possible_mutation_sites": 3,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "_reaction_break_indices",
+      "original_calls": 247,
+      "v81_calls": 247,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "cache_result",
+      "original_calls": 247,
+      "v81_calls": 247,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "_earliest_confirmed_geometry",
+      "original_calls": 245,
+      "v81_calls": 245,
+      "static_possible_mutation_sites": 10,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_trend_leg_direct_order",
+      "original_calls": 230,
+      "v81_calls": 230,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "a_zone_detector.py",
+      "function": "_reset_formation_time",
+      "original_calls": 165,
+      "v81_calls": 165,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "lifecycle_engine.py",
+      "function": "cached_stop_event",
+      "original_calls": 126,
+      "v81_calls": 126,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_first_canonical_order_after",
+      "original_calls": 125,
+      "v81_calls": 125,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "a_zone_detector.py",
+      "function": "_inherited_stop",
+      "original_calls": 113,
+      "v81_calls": 113,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "lifecycle_engine.py",
+      "function": "process_e_event",
+      "original_calls": 102,
+      "v81_calls": 102,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "a_zone_detector.py",
+      "function": "_a_source",
+      "original_calls": 80,
+      "v81_calls": 80,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "__init__",
+      "original_calls": 80,
+      "v81_calls": 80,
+      "static_possible_mutation_sites": 11,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_record_a_order_audit",
+      "original_calls": 69,
+      "v81_calls": 69,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "register_order_b_reset_legs",
+      "original_calls": 56,
+      "v81_calls": 56,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_clear_order_audit",
+      "original_calls": 53,
+      "v81_calls": 53,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_invalidate_post_stop_order_cache",
+      "original_calls": 53,
+      "v81_calls": 53,
+      "static_possible_mutation_sites": 3,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "e_zone_detector.py",
+      "function": "resolve_same_source_conflicts",
+      "original_calls": 33,
+      "v81_calls": 33,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "_scan",
+      "original_calls": 29,
+      "v81_calls": 29,
+      "static_possible_mutation_sites": 11,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "e_zone_detector.py",
+      "function": "__init__",
+      "original_calls": 20,
+      "v81_calls": 20,
+      "static_possible_mutation_sites": 17,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "e_zone_detector.py",
+      "function": "_initialize_main_extremes",
+      "original_calls": 20,
+      "v81_calls": 20,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_initialize_order_audit",
+      "original_calls": 20,
+      "v81_calls": 20,
+      "static_possible_mutation_sites": 23,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "e_zone_detector.py",
+      "function": "replace_with_earlier_continuation",
+      "original_calls": 12,
+      "v81_calls": 12,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "e_zone_detector.py",
+      "function": "restore_independent_s_roots",
+      "original_calls": 11,
+      "v81_calls": 11,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "lifecycle_engine.py",
+      "function": "__init__",
+      "original_calls": 8,
+      "v81_calls": 8,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "lifecycle_engine.py",
+      "function": "visible_a_zones_after_s_stops",
+      "original_calls": 8,
+      "v81_calls": 8,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "dominant_post_behavior_stops",
+      "original_calls": 8,
+      "v81_calls": 8,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "discover_accepted_order_b_reset_legs",
+      "original_calls": 8,
+      "v81_calls": 8,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "ensure_accepted_order_audit",
+      "original_calls": 8,
+      "v81_calls": 8,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_single_owner_parent_stop_causes",
+      "original_calls": 6,
+      "v81_calls": 6,
+      "static_possible_mutation_sites": 4,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "lifecycle_engine.py",
+      "function": "resolve_order_context",
+      "original_calls": 5,
+      "v81_calls": 5,
+      "static_possible_mutation_sites": 4,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "lifecycle_engine.py",
+      "function": "split_a_zones_by_dominant_stops",
+      "original_calls": 5,
+      "v81_calls": 5,
+      "static_possible_mutation_sites": 6,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "lifecycle_engine.py",
+      "function": "consumed_s_evidence_after_larger_stop",
+      "original_calls": 5,
+      "v81_calls": 5,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "validate_order_audit_bridge",
+      "original_calls": 4,
+      "v81_calls": 4,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "lifecycle_engine.py",
+      "function": "visible_s_zones_after_module_resets",
+      "original_calls": 3,
+      "v81_calls": 3,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "lifecycle_engine.py",
+      "function": "finalize_behavior_visibility",
+      "original_calls": 3,
+      "v81_calls": 3,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "calculate_direction_range_state",
+      "original_calls": 3,
+      "v81_calls": 3,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "PL_PH_detector.py",
+      "function": "_resolve_primary_points",
+      "original_calls": 2,
+      "v81_calls": 2,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "a_zone_detector.py",
+      "function": "__init__",
+      "original_calls": 2,
+      "v81_calls": 2,
+      "static_possible_mutation_sites": 14,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "a_zone_detector.py",
+      "function": "_build_blue_states",
+      "original_calls": 2,
+      "v81_calls": 2,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "blue_line_detector.py",
+      "function": "_calculate_blue_tail",
+      "original_calls": 2,
+      "v81_calls": 2,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_initialize_stopped_a_order_lookup",
+      "original_calls": 2,
+      "v81_calls": 2,
+      "static_possible_mutation_sites": 3,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "clear_market_indexes",
+      "original_calls": 2,
+      "v81_calls": 2,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "_scan_normal",
+      "original_calls": 2,
+      "v81_calls": 2,
+      "static_possible_mutation_sites": 10,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "s_zone_detector.py",
+      "function": "__init__",
+      "original_calls": 2,
+      "v81_calls": 2,
+      "static_possible_mutation_sites": 20,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "s_zone_detector.py",
+      "function": "_detect",
+      "original_calls": 2,
+      "v81_calls": 2,
+      "static_possible_mutation_sites": 4,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "true_false.py",
+      "function": "apply_true_false",
+      "original_calls": 2,
+      "v81_calls": 2,
+      "static_possible_mutation_sites": 3,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "select_reaction_serialization_items",
+      "original_calls": 2,
+      "v81_calls": 2,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "serialize",
+      "original_calls": 2,
+      "v81_calls": 2,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "__init__",
+      "original_calls": 2,
+      "v81_calls": 2,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "build_direction_output",
+      "original_calls": 2,
+      "v81_calls": 2,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "_market_calculation_scope",
+      "original_calls": 2,
+      "v81_calls": 2,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_reconcile_primary_labels",
+      "original_calls": 1,
+      "v81_calls": 1,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "build_candle_buckets",
+      "original_calls": 1,
+      "v81_calls": 1,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "prepare_pipeline_state",
+      "original_calls": 1,
+      "v81_calls": 1,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "serialize_primary_structures",
+      "original_calls": 1,
+      "v81_calls": 1,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "calculate_primary_structures",
+      "original_calls": 1,
+      "v81_calls": 1,
+      "static_possible_mutation_sites": 4,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "PL_PH_detector.py",
+      "function": "_next_point",
+      "original_calls": 0,
+      "v81_calls": 0,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "PL_PH_detector.py",
+      "function": "point",
+      "original_calls": 0,
+      "v81_calls": 0,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "e_zone_detector.py",
+      "function": "first_stop",
+      "original_calls": 0,
+      "v81_calls": 0,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "e_zone_detector.py",
+      "function": "reconcile",
+      "original_calls": 0,
+      "v81_calls": 0,
+      "static_possible_mutation_sites": 8,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "e_zone_detector.py",
+      "function": "enqueue",
+      "original_calls": 0,
+      "v81_calls": 0,
+      "static_possible_mutation_sites": 4,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_reparent_primary_high_causes",
+      "original_calls": 0,
+      "v81_calls": 0,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_register_primary_point",
+      "original_calls": 0,
+      "v81_calls": 0,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "order_audit_engine.py",
+      "function": "_post_stop_accepted_orders_for_parent",
+      "original_calls": 0,
+      "v81_calls": 0,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "release_market_indexes",
+      "original_calls": 0,
+      "v81_calls": 0,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "directional_a_stop_order_finder",
+      "original_calls": 0,
+      "v81_calls": 0,
+      "static_possible_mutation_sites": 3,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "find",
+      "original_calls": 0,
+      "v81_calls": 0,
+      "static_possible_mutation_sites": 3,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "_first_trend_reaction",
+      "original_calls": 0,
+      "v81_calls": 0,
+      "static_possible_mutation_sites": 8,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "_first_geometry_after_reset",
+      "original_calls": 0,
+      "v81_calls": 0,
+      "static_possible_mutation_sites": 10,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "reaction_engine.py",
+      "function": "_extend",
+      "original_calls": 0,
+      "v81_calls": 0,
+      "static_possible_mutation_sites": 2,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "commit_high",
+      "original_calls": 0,
+      "v81_calls": 0,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "build_reversed_trend_outputs",
+      "original_calls": 0,
+      "v81_calls": 0,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    },
+    {
+      "source_file": "trading_pipeline.py",
+      "function": "publish",
+      "original_calls": 0,
+      "v81_calls": 0,
+      "static_possible_mutation_sites": 1,
+      "status": "POTENTIALLY_STATEFUL_UNTRACED_CALL_COVERAGE_ONLY"
+    }
+  ]
+}
