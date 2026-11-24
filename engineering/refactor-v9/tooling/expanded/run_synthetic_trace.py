@@ -38,8 +38,8 @@ def main(out):
             while proc.poll() is None:
                 try:
                     cpu=max(cpu,sum(p.cpu_times()[:2]));rss=max(rss,p.memory_info().rss)
-                    if rss > 4500*1048576:
-                        proc.kill();raise MemoryError('Instrumented 1M trace exceeded safe RSS cap 4500 MiB')
+                    if rss > 2900*1048576:
+                        proc.kill();raise MemoryError('Instrumented 1M trace exceeded safe RSS cap 2900 MiB')
                 except psutil.NoSuchProcess:break
                 time.sleep(.05)
             rc=proc.wait()
