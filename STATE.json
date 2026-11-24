@@ -21,11 +21,12 @@
     "NOT RUN": 0
   },
   "prior_gates_not_all_reexecuted": true,
-  "largest_completed_strict_pair_bars": 250000,
+  "largest_completed_strict_pair_bars": 500000,
   "maximum_feasible_not_proven": true,
   "strict_pair_evidence": [
     "versions/V9/evidence/2026-11-24/synthetic-100000/pair_report.json",
-    "versions/V9/evidence/2026-11-24/synthetic-250000/pair_report.json"
+    "versions/V9/evidence/2026-11-24/synthetic-250000/pair_report.json",
+    "versions/V9/evidence/2026-11-24/synthetic-500000-ci/report.json"
   ],
   "full_artifact_retention": "hash manifests present; full binary traces and native outputs not committed; external durable retention not verified",
   "remaining": [
@@ -33,11 +34,11 @@
     "Complete lossless semantic mutator and Live state coverage"
   ],
   "next": [
-    "Inspect and persist actual long-run CI artifacts and results",
-    "Extend exact owner-state coverage across all remaining mutation sites, cross-direction, lifecycle and cache transitions; rerun affected full matrices",
-    "Audit all gates; no V10 until evidence passes"
+    "Preserve actual 1M result if completed; keep existing run unchanged",
+    "Profile and implement single-pass exact trace validation, prove parity with old tooling and benchmark",
+    "Close remaining full semantic mutation coverage; final release gates remain mandatory"
   ],
-  "latest_journal": "journal/2026-11-24-v9-focused-state-live-progress.md",
+  "latest_journal": "journal/2026-11-24-v9-efficient-validation-plan.md",
   "archive_index": "archive/pre-isolation-index.json",
   "ci": {
     "validated_code_commit": "e4ed3a5f4b29777f9b1720075c4b38546616da8a",
@@ -163,8 +164,8 @@
     "latest_observed_jobs": [
       {
         "name": "frozen-synthetic-pair (500000)",
-        "status": "in_progress",
-        "conclusion": null,
+        "status": "completed",
+        "conclusion": "success",
         "job_id": 138510636651
       },
       {
@@ -173,7 +174,16 @@
         "conclusion": null,
         "job_id": 138510635890
       }
-    ]
+    ],
+    "completed_500k": {
+      "complete_pair_execution": "PASS",
+      "stable_output_status": "PASS",
+      "selected_event_status": "INCOMPLETE",
+      "full_semantic_state_status": "INCOMPLETE",
+      "artifact_id": 14935881649,
+      "artifact_expires_at": "2026-12-24T15:10:02Z",
+      "report": "versions/V9/evidence/2026-11-24/synthetic-500000-ci/report.json"
+    }
   },
   "semantic_coverage_progress": {
     "case": "OIL 15061 full native 30s BOTH",
@@ -233,5 +243,10 @@
       "sha256": "00a521ea88b981007401d441f0dcc9db87ca776da9b39a357bc3acdbc11200bf",
       "status": "upload succeeded"
     }
+  },
+  "efficient_validation_plan": {
+    "path": "versions/V9/reports/EFFICIENT_EXACT_VALIDATION_PLAN.md",
+    "status": "PROPOSED_NOT_IMPLEMENTED",
+    "priority": "single-pass validation, profile first; no weakened gates"
   }
 }
