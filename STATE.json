@@ -33,17 +33,81 @@
     "Complete lossless semantic mutator and Live state coverage"
   ],
   "next": [
-    "Inspect new standalone CI and record outcomes",
-    "Close state representation and mutation gaps",
-    "Attempt full 1M pair or greatest feasible complete identical-input pair"
+    "Observe the actual 1M/500k workflow outcomes and persist reports",
+    "Close full state coverage gaps; do not infer universal parity",
+    "Run final audits and update gates only on evidence"
   ],
-  "latest_journal": "journal/2026-11-24-standalone-isolation.md",
+  "latest_journal": "journal/2026-11-24-v9-long-execution.md",
   "archive_index": "archive/pre-isolation-index.json",
   "ci": {
-    "prior_engine_unit_296": "PASS",
-    "prior_observer_compile": "FAIL, repaired locally",
-    "prior_sonar": "FAIL, PR #5: duplication 21.8%, security E; exact annotations unavailable",
-    "new_ci": "NOT RUN at commit preparation"
+    "validated_code_commit": "e4ed3a5f4b29777f9b1720075c4b38546616da8a",
+    "run_id": 45410057777,
+    "checks": [
+      {
+        "name": "pinned-engine-regression (original)",
+        "status": "success",
+        "job_id": 138501097434
+      },
+      {
+        "name": "pinned-engine-regression (prior-refactor)",
+        "status": "success",
+        "job_id": 138501097193
+      },
+      {
+        "name": "workspace-and-v9-tools",
+        "status": "success",
+        "job_id": 138501097122
+      },
+      {
+        "name": "historical-chart-regression (windows-latest)",
+        "status": "success",
+        "job_id": 138501097120
+      },
+      {
+        "name": "historical-chart-regression (ubuntu-latest)",
+        "status": "success",
+        "job_id": 138501097114
+      },
+      {
+        "name": "pinned-engine-regression (v81)",
+        "status": "success",
+        "job_id": 138501096841
+      },
+      {
+        "name": "historical-anti-drift",
+        "status": "success",
+        "job_id": 138501096535
+      }
+    ],
+    "original_unit_tests": 545,
+    "v81_unit_tests": 545,
+    "prior_refactor_unit_tests": 296,
+    "strict_and_sidecar_tests": 18,
+    "subtests": 11,
+    "stream_checks": 8,
+    "legacy_mutation_suites": [
+      10,
+      6,
+      9
+    ],
+    "previous_sonar_PR_5": "Historical FAIL; closed without merge; no new Sonar rating verified"
   },
-  "no_runtime_change": true
+  "no_runtime_change": true,
+  "last_new_oil_pair": {
+    "raw_records": 15061,
+    "stable_output_status": "PASS",
+    "selected_event_status": "INCOMPLETE",
+    "report": "versions/V9/evidence/2026-11-24/oil15k-ci-repair/pair_report.json"
+  },
+  "synthetic_trace_execution": {
+    "status": "NOT RUN at commit preparation; workflow triggers on this change",
+    "scales": [
+      1000000,
+      500000
+    ],
+    "input_hashes_verified_locally": true,
+    "workflow": ".github/workflows/v9-synthetic-trace.yml",
+    "report_policy": "pair execution PASS is separate from selected/full state status; no V9 release PASS",
+    "artifact_retention_days": 30
+  }
 }
