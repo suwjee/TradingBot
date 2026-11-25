@@ -27,3 +27,7 @@ Distinguish lower position, timestamp, source/decision/confirmation/stop, main b
 ## Checkpoint 03
 
 [Additional owner boundaries](06_Additional_Owner_Boundaries.md): CH46–CH75; 75 total reviewed clauses. Full semantic closure remains incomplete.
+
+## Checkpoint 05
+
+[Cross-owner chronology and replay boundaries](07_Cross_Owner_Chronology.md): CH76–CH123, 123 reviewed clauses total. [Integration and comparison evidence](../../../Audit/Phase_07/Chronology_Integration.md). Structural checks passed; semantic closure remains incomplete.

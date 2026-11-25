@@ -20,3 +20,7 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 04 — exact AST-site crosswalk
 
 [Crosswalk](Decision_Site_Crosswalk.md) joins all 3,133 decision/control sites, 2,177 comparison rows, 1,074 arithmetic rows and 5,120 call sites to original AST coordinates and owner metadata; all 16 production identities rechecked. [Validation](Decision_Site_Validation.json) records structural readback checks. Semantic certification remains incomplete; Phase 08 blocked.
+
+## Checkpoint 05 — cross-owner semantics and comparison evidence
+
+[Integration report](Chronology_Integration.md) adds 48 directly reviewed clauses (CH76–CH123), a complete 576-procedure Phase 05/06 navigation crosswalk, and all 2,177 comparison operand root partitions (47 chained comparisons). Ten integration structural checks pass. The source-derived owner review is materially expanded; compound operand interpretation, per-site semantic disposition and implicit dependency closure are not certified. **Phase 07 INCOMPLETE; Phase 08 blocked.**
