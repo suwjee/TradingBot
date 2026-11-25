@@ -10,3 +10,7 @@ Scope: the current tree of the algorithm branch. All new documentation must be E
 - Keep historical evidence immutable; new results must identify the baseline, candidate, scope, runtime and status. Distinguish specification coverage, execution coverage and observed equivalence.
 - Do not change main or merge this documentation-only tree into main. Do not use a checkout of this branch as a production application.
 - Before committing, inspect the entire staged tree, reject unapproved file types and embedded implementation snapshots, verify relative links and validate JSON/CSV metadata. A branch restructure is not a computational validation.
+
+## V2.0 baseline selection
+
+For algorithm extraction, the user explicitly assigns latest committed production source on main as the sole implementation authority. Re-resolve main at the start of each phase and pin the exact commit; compare changed source, reference, test and configuration blobs before continuing. Historical Golden baselines and archived packages are evidence only; never promote a different source based on version labels or timestamps. Preserve separate actual/intended semantics and disclose unavailable canonical authority. See Audit/Phase_01/Source_Authority.md. Keep source and runnable tests out of this branch.

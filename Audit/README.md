@@ -22,3 +22,7 @@ Audit contains metadata about the separate implementation baseline and recorded 
 | [Branch cleanup manifest](Branch_Cleanup_Manifest.json) | Current layout migration and scope |
 
 The historical reports remain statements about the runs at their original commits. They must not be interpreted as fresh tests during cleanup. Source paths in the audit refer to the pinned baseline, not files present here.
+
+## Current V2.0 audit checkpoint
+
+Use [Phase 01](Phase_01/README.md) for current baseline evidence. [Source manifest](Phase_01/Source_Manifest.json), [completion report](Phase_01/Phase_01_Completion_Report.md), [test inventory](Phase_01/Test_Inventory.json), [RAW manifest](Phase_01/RAW_Manifest.json), [Golden evidence](Phase_01/Golden_Evidence.json) and [conflicts](Phase_01/Conflicts_Register.md) were created from fresh discovery. The earlier audit records are retained as historical evidence; they are not current baseline discovery authority.
