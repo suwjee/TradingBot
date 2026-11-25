@@ -30,3 +30,8 @@ Use [Phase 01](Phase_01/README.md) for current baseline evidence. [Source manife
 ## V2.0 Phase 02 — Deep Static Analysis
 
 [Phase 02 analysis](Phase_02/README.md) is structurally verified against latest main at commit `466eb875070f02cd0dbfb105033422bbe2fd8c70`. Complete AST inventories and conservative control/data-flow graphs are recorded; dynamic and semantic closure remains partial. Phase 03 must re-resolve main before using this evidence.
+
+
+## Current V3.0 Phase 05 checkpoint
+
+[Module-level algorithm extraction](Phase_05/README.md) is complete for composition and structural traceability, with [validation](Phase_05/Validation.json), [module mapping](Phase_05/Module_Traceability.json) and [dependency analysis](Phase_05/Dependency_Graph.json). This is not final semantic certification. See the [active module catalog](../Algorithms/V3/README.md).
