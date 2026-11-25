@@ -52,3 +52,7 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ### Checkpoint 12 — Order Audit
 
 [Direct context review](Semantic_Context_Review_12.md) and [progress](Semantic_Context_Progress_12.json): 15/16 modules, 631 contexts; Trading Pipeline remains. Phase 07 incomplete; Phase 08 blocked.
+
+## Checkpoint 13 — Trading Pipeline and complete direct context coverage
+
+[Review and cumulative handoff](Semantic_Context_Review_13.md), [final progress](Semantic_Context_Progress_13.json), and [all-ledger validation](Semantic_Context_Coverage_Validation.json): 16/16 source modules, 744 contexts, 3,133 branch sites, 2,177 comparisons, 1,074 arithmetic sites, 5,120 calls; zero unmapped inventoried sites. **Direct source-context review COMPLETE. Broader independent semantic closure NOT CERTIFIED; Phase 08 not started.** Prior evidence remains historical.
