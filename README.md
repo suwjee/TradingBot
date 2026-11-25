@@ -29,10 +29,14 @@ See [AGENTS.md](AGENTS.md) for maintenance rules.
 
 [Phase 01: Source Discovery and Baseline Freeze](Audit/Phase_01/README.md) is COMPLETE for its defined discovery scope. The current implementation baseline is the latest main commit observed on 2026-11-26, `466eb875070f02cd0dbfb105033422bbe2fd8c70`. All 64 engine blobs are inventoried and hashed, with exact reference synchronization and verified RAW and historical Golden evidence. Re-resolve main before each subsequent phase. The specification itself remains PARTIALLY_VERIFIED; Phase 01 does not establish full semantic equivalence.
 
-## V2.0 Phase 02 — Deep Static Analysis
+## V2.0 Phase 02 — Deep Static Analysis (historical checkpoint)
 
 [Phase 02 analysis](Audit/Phase_02/README.md) is structurally verified against latest main at commit `466eb875070f02cd0dbfb105033422bbe2fd8c70`. Complete AST inventories and conservative control/data-flow graphs are recorded; dynamic and semantic closure remains partial. Phase 03 must re-resolve main before using this evidence. See [static closure supplement](Audit/Phase_02/Closure_01/README.md).
 
 ## Active task scope
 
 Per the user's 2026-11-26 instruction, continue source-only reverse engineering. No RAW tests, execution of production calculations, independent executable reconstruction, or benchmark are required for this task. The sole semantic authority is the current committed production source on main. Historical validation reports remain evidence of their original scope, not active completion gates. See [Source-only scope](Audit/Source_Only_Scope.md).
+
+## V3.0 Phase 02 — Source-only static analysis handoff
+
+[Current Phase 02 handoff](Audit/Phase_02/Source_Only_Closure/README.md) is COMPLETE for structural inventory and conservative static handoff under the source-only scope. Exact dispatch, alias lifetime, and path feasibility are not proven; function-level semantic extraction and full source-to-specification coverage remain open. All 16 source identities match main, 5,120 calls and 3,133 decision/control sites are indexed, and 240 previously unclassified calls have source-derived selection categories. No runtime or RAW tests were performed. Proceed to Phase 03 after re-resolving main.

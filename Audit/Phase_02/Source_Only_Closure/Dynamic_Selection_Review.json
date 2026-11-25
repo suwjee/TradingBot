@@ -1,0 +1,3814 @@
+{
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "scope": "Source-derived binding/selection review of all 240 previously unclassified dynamic call sites; not an execution trace or exhaustive interprocedural proof.",
+  "prior_reviewed": 1528,
+  "count": 240,
+  "counts": {
+    "NATIVE_OR_LIBRARY_PROTOCOL": 91,
+    "CALLABLE_PARAMETER_OR_STORED_CALLBACK": 71,
+    "LEXICAL_BINDING": 10,
+    "CONFIGURED_MODULE_MEMBER": 44,
+    "RUNTIME_TYPE_CONSTRUCTION": 1,
+    "CONDITIONAL_CALLABLE_SELECTION": 22,
+    "CLASSMETHOD_CONSTRUCTOR": 1
+  },
+  "rows": [
+    {
+      "site": "engine/bridge/live_pipeline.py:103:20:Call",
+      "scope": "engine/bridge/live_pipeline.py:100:4:_remember_prefix",
+      "callee": "data.rfind",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Locate last closing array bracket for prefix hash lineage.",
+      "named_targets": [
+        "bytes.rfind"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182"
+    },
+    {
+      "site": "engine/bridge/live_pipeline.py:112:15:Call",
+      "scope": "engine/bridge/live_pipeline.py:109:4:_file_digest",
+      "callee": "digest.hexdigest",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Copy prefix hash, update with ending, return hexadecimal digest.",
+      "named_targets": [
+        "hashlib hash.hexdigest"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182"
+    },
+    {
+      "site": "engine/bridge/live_pipeline.py:130:37:Call",
+      "scope": "engine/bridge/live_pipeline.py:129:4:append",
+      "callee": "hashlib.sha256().digest",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Digest newly hashed prefix for comparison.",
+      "named_targets": [
+        "hashlib hash.digest"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182"
+    },
+    {
+      "site": "engine/bridge/live_pipeline.py:130:94:Call",
+      "scope": "engine/bridge/live_pipeline.py:129:4:append",
+      "callee": "self._prefix_hash.digest",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Digest stored prefix hash for comparison.",
+      "named_targets": [
+        "hashlib hash.digest"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182"
+    },
+    {
+      "site": "engine/bridge/live_pipeline.py:173:24:Call",
+      "scope": "engine/bridge/live_pipeline.py:168:0:main",
+      "callee": "args.data.read_bytes",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Read selected data bytes.",
+      "named_targets": [
+        "pathlib.Path.read_bytes"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "POTENTIAL_IO_OR_RUNTIME_BOUNDARY",
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182"
+    },
+    {
+      "site": "engine/bridge/live_pipeline.py:175:73:Call",
+      "scope": "engine/bridge/live_pipeline.py:168:0:main",
+      "callee": "original_path.read_bytes",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Read original path unless selected path is identical.",
+      "named_targets": [
+        "pathlib.Path.read_bytes"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "POTENTIAL_IO_OR_RUNTIME_BOUNDARY",
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182"
+    },
+    {
+      "site": "engine/bridge/live_pipeline.py:184:24:Call",
+      "scope": "engine/bridge/live_pipeline.py:168:0:main",
+      "callee": "pipe.readline",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Read at most 256 bytes from sys.stdin.buffer for header.",
+      "named_targets": [
+        "binary stream.readline"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "POTENTIAL_IO_OR_RUNTIME_BOUNDARY",
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182"
+    },
+    {
+      "site": "engine/bridge/live_pipeline.py:193:18:Call",
+      "scope": "engine/bridge/live_pipeline.py:168:0:main",
+      "callee": "pipe.read",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Read declared byte count; mismatch raises.",
+      "named_targets": [
+        "binary stream.read"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "POTENTIAL_IO_OR_RUNTIME_BOUNDARY",
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182"
+    },
+    {
+      "site": "engine/bridge/live_pipeline.py:205:21:Call",
+      "scope": "engine/bridge/live_pipeline.py:168:0:main",
+      "callee": "hashlib.sha256().hexdigest",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Compute received buffer hex digest; compare to request digest.",
+      "named_targets": [
+        "hashlib hash.hexdigest"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:72:8:Call",
+      "scope": "engine/bridge/trading_pipeline.py:63:0:emit_progress",
+      "callee": "sink",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Progress sink obtained from context variable; called only when non-null; otherwise write progress to stderr.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:80:15:Call",
+      "scope": "engine/bridge/trading_pipeline.py:75:0:timed",
+      "callee": "work",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "timed receives work; call inside try, completion timing emitted in finally.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:88:11:Call",
+      "scope": "engine/bridge/trading_pipeline.py:87:0:load_module",
+      "callee": "importlib.util.spec_from_file_location",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Construct loader specification using configured module name and path.",
+      "named_targets": [
+        "importlib.util.spec_from_file_location"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "POTENTIAL_IO_OR_RUNTIME_BOUNDARY",
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:91:13:Call",
+      "scope": "engine/bridge/trading_pipeline.py:87:0:load_module",
+      "callee": "importlib.util.module_from_spec",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "After non-null spec/loader guard, allocate module.",
+      "named_targets": [
+        "importlib.util.module_from_spec"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:93:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:87:0:load_module",
+      "callee": "spec.loader.exec_module",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register module under spec.name, then invoke selected loader; configured file and loader determine code.",
+      "named_targets": [
+        "loader.exec_module"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "POTENTIAL_IO_OR_RUNTIME_BOUNDARY",
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:151:12:Call",
+      "scope": "engine/bridge/trading_pipeline.py:140:0:_aggregate_candle_buckets",
+      "callee": "cached_decimal",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Aggregation invokes the supplied conversion/cache function separately in open/high/low/close order.",
+      "named_targets": [
+        "build_candle_buckets.cached_decimal"
+      ],
+      "inventory_target_candidates": [
+        "engine/bridge/trading_pipeline.py:192:4:cached_decimal"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:152:15:Call",
+      "scope": "engine/bridge/trading_pipeline.py:140:0:_aggregate_candle_buckets",
+      "callee": "cached_decimal",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Aggregation invokes the supplied conversion/cache function separately in open/high/low/close order.",
+      "named_targets": [
+        "build_candle_buckets.cached_decimal"
+      ],
+      "inventory_target_candidates": [
+        "engine/bridge/trading_pipeline.py:192:4:cached_decimal"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:153:14:Call",
+      "scope": "engine/bridge/trading_pipeline.py:140:0:_aggregate_candle_buckets",
+      "callee": "cached_decimal",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Aggregation invokes the supplied conversion/cache function separately in open/high/low/close order.",
+      "named_targets": [
+        "build_candle_buckets.cached_decimal"
+      ],
+      "inventory_target_candidates": [
+        "engine/bridge/trading_pipeline.py:192:4:cached_decimal"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:154:16:Call",
+      "scope": "engine/bridge/trading_pipeline.py:140:0:_aggregate_candle_buckets",
+      "callee": "cached_decimal",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Aggregation invokes the supplied conversion/cache function separately in open/high/low/close order.",
+      "named_targets": [
+        "build_candle_buckets.cached_decimal"
+      ],
+      "inventory_target_candidates": [
+        "engine/bridge/trading_pipeline.py:192:4:cached_decimal"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:198:25:Call",
+      "scope": "engine/bridge/trading_pipeline.py:192:4:cached_decimal",
+      "callee": "to_decimal",
+      "classification": "LEXICAL_BINDING",
+      "selection_rule": "Alias bound to as_decimal by build_candle_buckets; invoked after KeyError on cache lookup.",
+      "named_targets": [
+        "core_utils.as_decimal"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/core_utils.py:51:0:as_decimal"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:315:16:Call",
+      "scope": "engine/bridge/trading_pipeline.py:306:0:build_candle_objects",
+      "callee": "local",
+      "classification": "LEXICAL_BINDING",
+      "selection_rule": "build_candle_objects binds local to local_datetime before iteration.",
+      "named_targets": [
+        "trading_pipeline.local_datetime"
+      ],
+      "inventory_target_candidates": [
+        "engine/bridge/trading_pipeline.py:104:0:local_datetime"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:316:8:Call",
+      "scope": "engine/bridge/trading_pipeline.py:306:0:build_candle_objects",
+      "callee": "append",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Alias of newly created candles list append; receives constructed candle.",
+      "named_targets": [
+        "list.append"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "POTENTIAL_MUTATION",
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:316:15:Call",
+      "scope": "engine/bridge/trading_pipeline.py:306:0:build_candle_objects",
+      "callee": "candle_type",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Bound to engine.Candle before loop; engine module supplied by caller.",
+      "named_targets": [
+        "reaction_engine.Candle"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:35:0:Candle"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:319:25:Call",
+      "scope": "engine/bridge/trading_pipeline.py:306:0:build_candle_objects",
+      "callee": "fmt",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Bound to _DTFMT.format, called with date/time components.",
+      "named_targets": [
+        "str.format"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:327:16:Call",
+      "scope": "engine/bridge/trading_pipeline.py:306:0:build_candle_objects",
+      "callee": "classify",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Bound to engine.classify_candle_color; call with open and close.",
+      "named_targets": [
+        "reaction_engine.classify_candle_color"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:138:0:classify_candle_color"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:350:19:Call",
+      "scope": "engine/bridge/trading_pipeline.py:346:4:_update_series",
+      "callee": "engine.LowerTimeframeIndex",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select LowerTimeframeIndex from the reaction_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "reaction_engine.LowerTimeframeIndex"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:886:0:LowerTimeframeIndex"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:391:22:Call",
+      "scope": "engine/bridge/trading_pipeline.py:373:0:select_reaction_serialization_items",
+      "callee": "reaction_transform",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional transform; only invoked when not None; source item itself used otherwise.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:677:11:Call",
+      "scope": "engine/bridge/trading_pipeline.py:676:0:bridge_direction",
+      "callee": "str().title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "String conversion followed by title-case projection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:687:11:Call",
+      "scope": "engine/bridge/trading_pipeline.py:684:0:bridge_color",
+      "callee": "str().title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "String conversion followed by title-case projection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1767:17:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1755:0:market_segment",
+      "callee": "type()",
+      "classification": "RUNTIME_TYPE_CONSTRUCTION",
+      "selection_rule": "Construct same runtime chronology type as current market chronology, using segment inputs; type not forced by this expression.",
+      "named_targets": [
+        "reaction_engine.MarketChronology"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:1132:0:MarketChronology"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1768:12:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1755:0:market_segment",
+      "callee": "market.chronology.timeframe.total_seconds",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Chronology timeframe duration conversion.",
+      "named_targets": [
+        "timedelta.total_seconds"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1818:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.add_argument",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register command-line option on parser.",
+      "named_targets": [
+        "argparse.ArgumentParser.add_argument"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1825:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.add_argument",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register command-line option on parser.",
+      "named_targets": [
+        "argparse.ArgumentParser.add_argument"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1832:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.add_argument",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register command-line option on parser.",
+      "named_targets": [
+        "argparse.ArgumentParser.add_argument"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1839:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.add_argument",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register command-line option on parser.",
+      "named_targets": [
+        "argparse.ArgumentParser.add_argument"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1846:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.add_argument",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register command-line option on parser.",
+      "named_targets": [
+        "argparse.ArgumentParser.add_argument"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1853:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.add_argument",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register command-line option on parser.",
+      "named_targets": [
+        "argparse.ArgumentParser.add_argument"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1860:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.add_argument",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register command-line option on parser.",
+      "named_targets": [
+        "argparse.ArgumentParser.add_argument"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1863:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.add_argument",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register command-line option on parser.",
+      "named_targets": [
+        "argparse.ArgumentParser.add_argument"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1866:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.add_argument",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register command-line option on parser.",
+      "named_targets": [
+        "argparse.ArgumentParser.add_argument"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1869:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.add_argument",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register command-line option on parser.",
+      "named_targets": [
+        "argparse.ArgumentParser.add_argument"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1874:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.add_argument",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register command-line option on parser.",
+      "named_targets": [
+        "argparse.ArgumentParser.add_argument"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1875:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.add_argument",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register command-line option on parser.",
+      "named_targets": [
+        "argparse.ArgumentParser.add_argument"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1876:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.add_argument",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register command-line option on parser.",
+      "named_targets": [
+        "argparse.ArgumentParser.add_argument"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1877:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.add_argument",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register command-line option on parser.",
+      "named_targets": [
+        "argparse.ArgumentParser.add_argument"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1879:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.add_argument",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register command-line option on parser.",
+      "named_targets": [
+        "argparse.ArgumentParser.add_argument"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1880:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.add_argument",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register command-line option on parser.",
+      "named_targets": [
+        "argparse.ArgumentParser.add_argument"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1881:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.add_argument",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Register command-line option on parser.",
+      "named_targets": [
+        "argparse.ArgumentParser.add_argument"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1884:11:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1815:0:parse_arguments",
+      "callee": "parser.parse_args",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Parse registered CLI options before timeframe validity checks.",
+      "named_targets": [
+        "argparse.ArgumentParser.parse_args"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1935:45:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1935:37:Lambda",
+      "callee": "args.data.read_bytes",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Read selected input file as bytes; source handling, not executed.",
+      "named_targets": [
+        "pathlib.Path.read_bytes"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "POTENTIAL_IO_OR_RUNTIME_BOUNDARY",
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1940:19:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1930:0:prepare_market_context",
+      "callee": "source_bytes.removeprefix",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Remove matching prefix from selected byte buffer.",
+      "named_targets": [
+        "bytes.removeprefix"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1985:22:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1973:0:_prepare_market_context_from_buckets",
+      "callee": "reaction.shared_lower_timeframe_index",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select shared_lower_timeframe_index from the reaction_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "reaction_engine.shared_lower_timeframe_index"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:1077:0:shared_lower_timeframe_index"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1990:21:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1973:0:_prepare_market_context_from_buckets",
+      "callee": "reaction.MarketChronology",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select MarketChronology from the reaction_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "reaction_engine.MarketChronology"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:1132:0:MarketChronology"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1995:22:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1973:0:_prepare_market_context_from_buckets",
+      "callee": "reaction.shared_lower_timeframe_index",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select shared_lower_timeframe_index from the reaction_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "reaction_engine.shared_lower_timeframe_index"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:1077:0:shared_lower_timeframe_index"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1996:21:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1973:0:_prepare_market_context_from_buckets",
+      "callee": "reaction.shared_lower_timeframe_index",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select shared_lower_timeframe_index from the reaction_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "reaction_engine.shared_lower_timeframe_index"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:1077:0:shared_lower_timeframe_index"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:1997:21:Call",
+      "scope": "engine/bridge/trading_pipeline.py:1973:0:_prepare_market_context_from_buckets",
+      "callee": "reaction.MarketChronology",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select MarketChronology from the reaction_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "reaction_engine.MarketChronology"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:1132:0:MarketChronology"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2095:19:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2091:4:direct_geometry",
+      "callee": "order_geometry",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional shared geometry callback; if supplied call with directional detector and gate; otherwise use detector.first_order_reaction_after_gate.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2106:11:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2069:0:create_e_detector",
+      "callee": "e_engine.EZoneDetector",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select EZoneDetector from the e_zone_detector role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "e_zone_detector.EZoneDetector"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/e_zone_detector.py:312:0:EZoneDetector"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2154:29:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2127:0:calculate_full_direction_state",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2155:20:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2155:12:Lambda",
+      "callee": "live.blue_lines",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional supplied live continuation/stage provider; invoke named member on the active live branch, with scope/gate arguments in source. Actual provider binding is caller-dependent.",
+      "named_targets": [
+        "live.blue_lines"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2155:97:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2155:12:Lambda",
+      "callee": "blue_engine.detect_blue_lines",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select detect_blue_lines from the blue_line_detector role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "blue_line_detector.detect_blue_lines"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/blue_line_detector.py:447:0:detect_blue_lines"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2164:21:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2127:0:calculate_full_direction_state",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2165:20:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2165:12:Lambda",
+      "callee": "live.a_zones",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional supplied live continuation/stage provider; invoke named member on the active live branch, with scope/gate arguments in source. Actual provider binding is caller-dependent.",
+      "named_targets": [
+        "live.a_zones"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2165:116:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2165:12:Lambda",
+      "callee": "a_engine.detect_a_zones",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select detect_a_zones from the a_zone_detector role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "a_zone_detector.detect_a_zones"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/a_zone_detector.py:839:0:detect_a_zones"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2172:21:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2127:0:calculate_full_direction_state",
+      "callee": "s_engine.SZoneDetector",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select SZoneDetector from the s_zone_detector role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "s_zone_detector.SZoneDetector"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/s_zone_detector.py:66:0:SZoneDetector"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2185:30:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2127:0:calculate_full_direction_state",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2186:59:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2186:51:Lambda",
+      "callee": "live.s_zones",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional supplied live continuation/stage provider; invoke named member on the active live branch, with scope/gate arguments in source. Actual provider binding is caller-dependent.",
+      "named_targets": [
+        "live.s_zones"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2224:26:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2127:0:calculate_full_direction_state",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2226:20:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2127:0:calculate_full_direction_state",
+      "callee": "lifecycle_engine.s_zones_for_module_engines",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select s_zones_for_module_engines from the lifecycle_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "lifecycle_engine.s_zones_for_module_engines"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:1138:0:s_zones_for_module_engines"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2256:21:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2127:0:calculate_full_direction_state",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2261:18:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2127:0:calculate_full_direction_state",
+      "callee": "lifecycle_engine.visible_a_zones",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select visible_a_zones from the lifecycle_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "lifecycle_engine.visible_a_zones"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:1604:0:visible_a_zones"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2264:18:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2127:0:calculate_full_direction_state",
+      "callee": "lifecycle_engine.visible_a_zones_after_s_stops",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select visible_a_zones_after_s_stops from the lifecycle_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "lifecycle_engine.visible_a_zones_after_s_stops"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:695:0:visible_a_zones_after_s_stops"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2273:32:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2127:0:calculate_full_direction_state",
+      "callee": "lifecycle_engine.split_a_zones_by_dominant_stops",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select split_a_zones_by_dominant_stops from the lifecycle_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "lifecycle_engine.split_a_zones_by_dominant_stops"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:766:0:split_a_zones_by_dominant_stops"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2332:49:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2127:0:calculate_full_direction_state",
+      "callee": "lifecycle_engine.resolve_order_context",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select resolve_order_context from the lifecycle_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "lifecycle_engine.resolve_order_context"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:606:0:resolve_order_context"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2373:26:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2127:0:calculate_full_direction_state",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2420:21:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2127:0:calculate_full_direction_state",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2429:26:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2127:0:calculate_full_direction_state",
+      "callee": "lifecycle_engine.consumed_s_evidence_after_larger_stop",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select consumed_s_evidence_after_larger_stop from the lifecycle_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "lifecycle_engine.consumed_s_evidence_after_larger_stop"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:996:0:consumed_s_evidence_after_larger_stop"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2516:32:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2485:0:calculate_direction_with_order_b_feedback",
+      "callee": "engines.lifecycle.reconcile_stopall_lifecycle",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select reconcile_stopall_lifecycle from the lifecycle_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "lifecycle_engine.reconcile_stopall_lifecycle"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:1377:0:reconcile_stopall_lifecycle"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2519:31:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2485:0:calculate_direction_with_order_b_feedback",
+      "callee": "live.stopall_finder",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional supplied live continuation/stage provider; invoke named member on the active live branch, with scope/gate arguments in source. Actual provider binding is caller-dependent.",
+      "named_targets": [
+        "live.stopall_finder"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2525:21:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2485:0:calculate_direction_with_order_b_feedback",
+      "callee": "engines.e_zone.discover_accepted_order_b_reset_legs",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select discover_accepted_order_b_reset_legs from the e_zone_detector role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "e_zone_detector.discover_accepted_order_b_reset_legs"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2539:29:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2485:0:calculate_direction_with_order_b_feedback",
+      "callee": "live.order_b_finder",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional supplied live continuation/stage provider; invoke named member on the active live branch, with scope/gate arguments in source. Actual provider binding is caller-dependent.",
+      "named_targets": [
+        "live.order_b_finder"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2590:23:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2589:29:DictComp",
+      "callee": "engine.UnifiedReactionDetector",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select UnifiedReactionDetector from the reaction_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "reaction_engine.UnifiedReactionDetector"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:1617:0:UnifiedReactionDetector"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2601:45:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2598:22:DictComp",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2607:75:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2607:67:Lambda",
+      "callee": "live.reactions",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional supplied live continuation/stage provider; invoke named member on the active live branch, with scope/gate arguments in source. Actual provider binding is caller-dependent.",
+      "named_targets": [
+        "live.reactions"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2611:20:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2611:12:Lambda",
+      "callee": "live.ownership",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional supplied live continuation/stage provider; invoke named member on the active live branch, with scope/gate arguments in source. Actual provider binding is caller-dependent.",
+      "named_targets": [
+        "live.ownership"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2611:69:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2611:12:Lambda",
+      "callee": "engine.build_behavior_reaction_views",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select build_behavior_reaction_views from the reaction_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "reaction_engine.build_behavior_reaction_views"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:1433:0:build_behavior_reaction_views"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2614:12:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2552:0:prepare_pipeline_state",
+      "callee": "report_stage",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional caller-supplied reporting function; invocation under non-null guard.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2623:20:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2621:16:Lambda",
+      "callee": "live.order_geometry",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional supplied live continuation/stage provider; invoke named member on the active live branch, with scope/gate arguments in source. Actual provider binding is caller-dependent.",
+      "named_targets": [
+        "live.order_geometry"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2649:16:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2552:0:prepare_pipeline_state",
+      "callee": "report_stage",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional caller-supplied reporting function; invocation under non-null guard.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2649:32:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2552:0:prepare_pipeline_state",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2661:23:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2660:33:DictComp",
+      "callee": "engine.directional_a_stop_order_finder",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select directional_a_stop_order_finder from the reaction_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "reaction_engine.directional_a_stop_order_finder"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:1554:0:directional_a_stop_order_finder"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2669:32:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2666:18:DictComp",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2670:44:Call:1",
+      "scope": "engine/bridge/trading_pipeline.py:2670:16:Lambda",
+      "callee": "engine.UnifiedReactionDetector",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select UnifiedReactionDetector from the reaction_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "reaction_engine.UnifiedReactionDetector"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:1617:0:UnifiedReactionDetector"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2682:24:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2682:16:Lambda",
+      "callee": "engine.build_behavior_reaction_views",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select build_behavior_reaction_views from the reaction_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "reaction_engine.build_behavior_reaction_views"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:1433:0:build_behavior_reaction_views"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2766:27:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2738:0:calculate_direction_range_state",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2767:20:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2767:12:Lambda",
+      "callee": "engines.blue_line.detect_blue_lines",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select detect_blue_lines from the blue_line_detector role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "blue_line_detector.detect_blue_lines"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/blue_line_detector.py:447:0:detect_blue_lines"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2787:19:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2738:0:calculate_direction_range_state",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2788:20:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2788:12:Lambda",
+      "callee": "engines.a_zone.detect_a_zones",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select detect_a_zones from the a_zone_detector role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "a_zone_detector.detect_a_zones"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/a_zone_detector.py:839:0:detect_a_zones"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2806:25:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2738:0:calculate_direction_range_state",
+      "callee": "engines.s_zone.SZoneDetector",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select SZoneDetector from the s_zone_detector role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "s_zone_detector.SZoneDetector"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/s_zone_detector.py:66:0:SZoneDetector"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2819:32:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2738:0:calculate_direction_range_state",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2855:22:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2840:0:finalize_direction_visibility",
+      "callee": "lifecycle_engine.visible_a_zones",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select visible_a_zones from the lifecycle_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "lifecycle_engine.visible_a_zones"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:1604:0:visible_a_zones"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2858:22:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2840:0:finalize_direction_visibility",
+      "callee": "lifecycle_engine.visible_a_zones_after_s_stops",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select visible_a_zones_after_s_stops from the lifecycle_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "lifecycle_engine.visible_a_zones_after_s_stops"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:695:0:visible_a_zones_after_s_stops"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2890:28:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2840:0:finalize_direction_visibility",
+      "callee": "lifecycle_engine.reconcile_stopall_lifecycle",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select reconcile_stopall_lifecycle from the lifecycle_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "lifecycle_engine.reconcile_stopall_lifecycle"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:1377:0:reconcile_stopall_lifecycle"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2897:27:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2840:0:finalize_direction_visibility",
+      "callee": "state.live_stages.stopall_finder",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional supplied live continuation/stage provider; invoke named member on the active live branch, with scope/gate arguments in source. Actual provider binding is caller-dependent.",
+      "named_targets": [
+        "state.live_stages.stopall_finder"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2914:36:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2840:0:finalize_direction_visibility",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2915:20:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2915:12:Lambda",
+      "callee": "engines.e_zone.discover_accepted_order_b_reset_legs",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select discover_accepted_order_b_reset_legs from the e_zone_detector role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "e_zone_detector.discover_accepted_order_b_reset_legs"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2929:33:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2915:12:Lambda",
+      "callee": "state.live_stages.order_b_finder",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional supplied live continuation/stage provider; invoke named member on the active live branch, with scope/gate arguments in source. Actual provider binding is caller-dependent.",
+      "named_targets": [
+        "state.live_stages.order_b_finder"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2951:38:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2840:0:finalize_direction_visibility",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:2952:16:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2952:8:Lambda",
+      "callee": "lifecycle_engine.finalize_behavior_visibility",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select finalize_behavior_visibility from the lifecycle_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "lifecycle_engine.finalize_behavior_visibility"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:1509:0:finalize_behavior_visibility"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3023:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2840:0:finalize_direction_visibility",
+      "callee": "engines.blue_line.mark_internal_blue_lines",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select mark_internal_blue_lines from the blue_line_detector role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "blue_line_detector.mark_internal_blue_lines"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/blue_line_detector.py:526:0:mark_internal_blue_lines"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3029:8:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2840:0:finalize_direction_visibility",
+      "callee": "lifecycle_engine.filter_internal_behavior_outputs",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select filter_internal_behavior_outputs from the lifecycle_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "lifecycle_engine.filter_internal_behavior_outputs"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:1496:0:filter_internal_behavior_outputs"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3050:8:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2840:0:finalize_direction_visibility",
+      "callee": "lifecycle_engine.prepare_order_audit",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select prepare_order_audit from the lifecycle_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "lifecycle_engine.prepare_order_audit"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3066:19:Call",
+      "scope": "engine/bridge/trading_pipeline.py:2840:0:finalize_direction_visibility",
+      "callee": "engines.blue_line.public_blue_lines",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select public_blue_lines from the blue_line_detector role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "blue_line_detector.public_blue_lines"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/blue_line_detector.py:517:0:public_blue_lines"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3095:36:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3079:0:serialize_direction_payload",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3100:48:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3100:35:Lambda",
+      "callee": "engines.reaction.published_reaction_candidate",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select published_reaction_candidate from the reaction_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "reaction_engine.published_reaction_candidate"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:788:0:published_reaction_candidate"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3132:43:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3079:0:serialize_direction_payload",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3135:38:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3135:25:Lambda",
+      "callee": "engines.reaction.published_reaction_candidate",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select published_reaction_candidate from the reaction_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "reaction_engine.published_reaction_candidate"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:788:0:published_reaction_candidate"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3150:32:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3079:0:serialize_direction_payload",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3216:39:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3079:0:serialize_direction_payload",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3237:54:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3220:0:serialize_primary_order",
+      "callee": "stamp",
+      "classification": "LEXICAL_BINDING",
+      "selection_rule": "Local lambda maps candle index to epoch of candle timestamp.",
+      "named_targets": [
+        "trading_pipeline.serialize_primary_order"
+      ],
+      "inventory_target_candidates": [
+        "engine/bridge/trading_pipeline.py:3220:0:serialize_primary_order"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3238:54:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3220:0:serialize_primary_order",
+      "callee": "stamp",
+      "classification": "LEXICAL_BINDING",
+      "selection_rule": "Local lambda maps candle index to epoch of candle timestamp.",
+      "named_targets": [
+        "trading_pipeline.serialize_primary_order"
+      ],
+      "inventory_target_candidates": [
+        "engine/bridge/trading_pipeline.py:3220:0:serialize_primary_order"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3241:26:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3220:0:serialize_primary_order",
+      "callee": "stamp",
+      "classification": "LEXICAL_BINDING",
+      "selection_rule": "Local lambda maps candle index to epoch of candle timestamp.",
+      "named_targets": [
+        "trading_pipeline.serialize_primary_order"
+      ],
+      "inventory_target_candidates": [
+        "engine/bridge/trading_pipeline.py:3220:0:serialize_primary_order"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3242:57:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3220:0:serialize_primary_order",
+      "callee": "stamp",
+      "classification": "LEXICAL_BINDING",
+      "selection_rule": "Local lambda maps candle index to epoch of candle timestamp.",
+      "named_targets": [
+        "trading_pipeline.serialize_primary_order"
+      ],
+      "inventory_target_candidates": [
+        "engine/bridge/trading_pipeline.py:3220:0:serialize_primary_order"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3256:20:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3249:0:serialize_primary_structures",
+      "callee": "<IfExp>",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "serialize_primary_structures selects resolver by bullish flag before invocation; through_index is market.end_index.",
+      "named_targets": [
+        "PL_PH_detector.resolve_primary_lows",
+        "PL_PH_detector.resolve_primary_highs"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/PL_PH_detector.py:141:0:resolve_primary_lows",
+        "engine/pipeline/PL_PH_detector.py:128:0:resolve_primary_highs"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3325:12:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3249:0:serialize_primary_structures",
+      "callee": "selected",
+      "classification": "LEXICAL_BINDING",
+      "selection_rule": "Local selection lambda projects points only within visible source range and decision <= end index.",
+      "named_targets": [
+        "trading_pipeline.serialize_primary_structures"
+      ],
+      "inventory_target_candidates": [
+        "engine/bridge/trading_pipeline.py:3249:0:serialize_primary_structures"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3326:11:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3249:0:serialize_primary_structures",
+      "callee": "selected",
+      "classification": "LEXICAL_BINDING",
+      "selection_rule": "Local selection lambda projects points only within visible source range and decision <= end index.",
+      "named_targets": [
+        "trading_pipeline.serialize_primary_structures"
+      ],
+      "inventory_target_candidates": [
+        "engine/bridge/trading_pipeline.py:3249:0:serialize_primary_structures"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3331:31:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3249:0:serialize_primary_structures",
+      "callee": "dict.fromkeys",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Preserve insertion-order first occurrence of keys; used before list conversion.",
+      "named_targets": [
+        "dict.fromkeys"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3342:25:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3335:17:ListComp",
+      "callee": "selected",
+      "classification": "LEXICAL_BINDING",
+      "selection_rule": "Local selection lambda projects points only within visible source range and decision <= end index.",
+      "named_targets": [
+        "trading_pipeline.serialize_primary_structures"
+      ],
+      "inventory_target_candidates": [
+        "engine/bridge/trading_pipeline.py:3249:0:serialize_primary_structures"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3343:49:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3335:17:ListComp",
+      "callee": "dict.fromkeys",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Preserve insertion-order first occurrence of keys; used before list conversion.",
+      "named_targets": [
+        "dict.fromkeys"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3347:24:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3335:17:ListComp",
+      "callee": "selected",
+      "classification": "LEXICAL_BINDING",
+      "selection_rule": "Local selection lambda projects points only within visible source range and decision <= end index.",
+      "named_targets": [
+        "trading_pipeline.serialize_primary_structures"
+      ],
+      "inventory_target_candidates": [
+        "engine/bridge/trading_pipeline.py:3249:0:serialize_primary_structures"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3391:38:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3371:0:calculate_primary_structures",
+      "callee": "engines.lifecycle.prepare_order_audit",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select prepare_order_audit from the lifecycle_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "lifecycle_engine.prepare_order_audit"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3398:8:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3394:4:commit_high",
+      "callee": "register",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "commit_high chooses detector.register_primary_low for bullish, otherwise register_primary_high.",
+      "named_targets": [
+        "EZoneDetector.register_primary_low",
+        "EZoneDetector.register_primary_high"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3399:42:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3394:4:commit_high",
+      "callee": "engines.lifecycle.prepare_order_audit",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select prepare_order_audit from the lifecycle_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "lifecycle_engine.prepare_order_audit"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3404:15:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3371:0:calculate_primary_structures",
+      "callee": "engines.primary.NativePrimaryOrders",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select NativePrimaryOrders from the PL_PH_detector role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "PL_PH_detector.NativePrimaryOrders"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/PL_PH_detector.py:624:0:NativePrimaryOrders"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3409:8:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3371:0:calculate_primary_structures",
+      "callee": "state.live_stages.primary",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional supplied live continuation/stage provider; invoke named member on the active live branch, with scope/gate arguments in source. Actual provider binding is caller-dependent.",
+      "named_targets": [
+        "state.live_stages.primary"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3410:46:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3371:0:calculate_primary_structures",
+      "callee": "detect",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Primary detection selects configured primary module detect_bullish or detect_bearish; live path may bypass this call.",
+      "named_targets": [
+        "PL_PH_detector.detect_bullish",
+        "PL_PH_detector.detect_bearish"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/PL_PH_detector.py:743:0:detect_bullish",
+        "engine/pipeline/PL_PH_detector.py:287:0:detect_bearish"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3417:4:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3371:0:calculate_primary_structures",
+      "callee": "reconcile",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Reconcile primary labels using direction-selected detector method, after resolver returns.",
+      "named_targets": [
+        "EZoneDetector.reconcile_primary_low_labels",
+        "EZoneDetector.reconcile_primary_high_labels"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3417:14:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3371:0:calculate_primary_structures",
+      "callee": "resolve",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Direction-selected primary resolver; calculate_primary_structures uses low for bullish, high otherwise; calculate_closed uses high for bearish, low otherwise.",
+      "named_targets": [
+        "PL_PH_detector.resolve_primary_lows",
+        "PL_PH_detector.resolve_primary_highs"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/PL_PH_detector.py:141:0:resolve_primary_lows",
+        "engine/pipeline/PL_PH_detector.py:128:0:resolve_primary_highs"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3420:38:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3371:0:calculate_primary_structures",
+      "callee": "engines.lifecycle.prepare_order_audit",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select prepare_order_audit from the lifecycle_engine role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "lifecycle_engine.prepare_order_audit"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3452:44:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3427:0:build_direction_output",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Direction label formatting; not direction selection.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3455:30:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3427:0:build_direction_output",
+      "callee": "engines.primary.resolve_stopall_ownership",
+      "classification": "CONFIGURED_MODULE_MEMBER",
+      "selection_rule": "Select resolve_stopall_ownership from the PL_PH_detector role of the configured engine bundle (or passed module alias). load_engines selects module paths and optional feature modules; this is the pinned main member candidate, not proof of a runtime override.",
+      "named_targets": [
+        "PL_PH_detector.resolve_stopall_ownership"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/PL_PH_detector.py:198:0:resolve_stopall_ownership"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3487:26:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3469:0:merge_regime_outputs",
+      "callee": "dict.fromkeys",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Preserve insertion-order first occurrence of keys; used before list conversion.",
+      "named_targets": [
+        "dict.fromkeys"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3547:28:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3538:8:calculate_closed",
+      "callee": "resolve",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Direction-selected primary resolver; calculate_primary_structures uses low for bullish, high otherwise; calculate_closed uses high for bearish, low otherwise.",
+      "named_targets": [
+        "PL_PH_detector.resolve_primary_lows",
+        "PL_PH_detector.resolve_primary_highs"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/PL_PH_detector.py:141:0:resolve_primary_lows",
+        "engine/pipeline/PL_PH_detector.py:128:0:resolve_primary_highs"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3552:20:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3538:8:calculate_closed",
+      "callee": "release_indexes",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional release callback used in finally; otherwise optional live release path.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3558:17:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3498:0:build_reversed_trend_outputs",
+      "callee": "live.closed_regime",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional supplied live continuation/stage provider; invoke named member on the active live branch, with scope/gate arguments in source. Actual provider binding is caller-dependent.",
+      "named_targets": [
+        "live.closed_regime"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3578:27:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3498:0:build_reversed_trend_outputs",
+      "callee": "live.active_regime",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional supplied live continuation/stage provider; invoke named member on the active live branch, with scope/gate arguments in source. Actual provider binding is caller-dependent.",
+      "named_targets": [
+        "live.active_regime"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3582:16:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3498:0:build_reversed_trend_outputs",
+      "callee": "release_indexes",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional release callback used in finally; otherwise optional live release path.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3678:8:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3671:0:_market_calculation_scope",
+      "callee": "clear_indexes",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional clear_market_indexes obtained via getattr on reaction module; called before yield and in finally if non-null.",
+      "named_targets": [
+        "reaction_engine.clear_market_indexes"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:1119:0:clear_market_indexes"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3683:12:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3671:0:_market_calculation_scope",
+      "callee": "clear_indexes",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional clear_market_indexes obtained via getattr on reaction module; called before yield and in finally if non-null.",
+      "named_targets": [
+        "reaction_engine.clear_market_indexes"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:1119:0:clear_market_indexes"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3710:17:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3706:0:_run_live_calculation",
+      "callee": "prepare_market",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Runner receives either raw-row or bucket preparation callable via public live entry points.",
+      "named_targets": [
+        "trading_pipeline._prepare_market_context_from_rows",
+        "trading_pipeline._prepare_market_context_from_buckets"
+      ],
+      "inventory_target_candidates": [
+        "engine/bridge/trading_pipeline.py:1948:0:_prepare_market_context_from_rows",
+        "engine/bridge/trading_pipeline.py:1973:0:_prepare_market_context_from_buckets"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/bridge/trading_pipeline.py:3712:12:Call",
+      "scope": "engine/bridge/trading_pipeline.py:3706:0:_run_live_calculation",
+      "callee": "report_stage",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional caller-supplied reporting function; invocation under non-null guard.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf"
+    },
+    {
+      "site": "engine/pipeline/PL_PH_detector.py:107:18:Call",
+      "scope": "engine/pipeline/PL_PH_detector.py:101:0:first_bullish_transition",
+      "callee": "<BoolOp>",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Use supplied cross if truthy; otherwise strict_cross.",
+      "named_targets": [
+        "PL_PH_detector.strict_cross"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/PL_PH_detector.py:222:0:strict_cross"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "site": "engine/pipeline/PL_PH_detector.py:230:15:Call",
+      "scope": "engine/pipeline/PL_PH_detector.py:228:0:_cross_from",
+      "callee": "<IfExp>",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Choose lower index first_greater if above, otherwise first_less.",
+      "named_targets": [
+        "LowerTimeframeIndex.first_greater",
+        "LowerTimeframeIndex.first_less"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:962:4:first_greater",
+        "engine/pipeline/reaction_engine.py:959:4:first_less"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "site": "engine/pipeline/PL_PH_detector.py:243:13:Call",
+      "scope": "engine/pipeline/PL_PH_detector.py:239:0:_extreme",
+      "callee": "chooser",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Choose max if high else min; key is selected Decimal candle extreme; native first-equal tie.",
+      "named_targets": [
+        "max",
+        "min"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "site": "engine/pipeline/PL_PH_detector.py:314:18:Call",
+      "scope": "engine/pipeline/PL_PH_detector.py:287:0:detect_bearish",
+      "callee": "cross",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Crossing function propagated from strict_cross default or run.cross cache path; exact crossing result remains input-dependent.",
+      "named_targets": [
+        "PL_PH_detector.strict_cross",
+        "_PrimaryRun.cross"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/PL_PH_detector.py:222:0:strict_cross",
+        "engine/pipeline/PL_PH_detector.py:474:4:cross"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "site": "engine/pipeline/PL_PH_detector.py:347:20:Call",
+      "scope": "engine/pipeline/PL_PH_detector.py:287:0:detect_bearish",
+      "callee": "commit_high",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional commit callback invoked for promoted PH points only if not None; bridge registers ownership.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "site": "engine/pipeline/PL_PH_detector.py:401:16:Call",
+      "scope": "engine/pipeline/PL_PH_detector.py:287:0:detect_bearish",
+      "callee": "commit_high",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional commit callback invoked for promoted PH points only if not None; bridge registers ownership.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "site": "engine/pipeline/PL_PH_detector.py:492:11:Call",
+      "scope": "engine/pipeline/PL_PH_detector.py:490:0:_refresh_cycle_mbl",
+      "callee": "cross",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Crossing function propagated from strict_cross default or run.cross cache path; exact crossing result remains input-dependent.",
+      "named_targets": [
+        "PL_PH_detector.strict_cross",
+        "_PrimaryRun.cross"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/PL_PH_detector.py:222:0:strict_cross",
+        "engine/pipeline/PL_PH_detector.py:474:4:cross"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "site": "engine/pipeline/PL_PH_detector.py:509:13:Call",
+      "scope": "engine/pipeline/PL_PH_detector.py:500:0:_activate_cycle",
+      "callee": "cross",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Crossing function propagated from strict_cross default or run.cross cache path; exact crossing result remains input-dependent.",
+      "named_targets": [
+        "PL_PH_detector.strict_cross",
+        "_PrimaryRun.cross"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/PL_PH_detector.py:222:0:strict_cross",
+        "engine/pipeline/PL_PH_detector.py:474:4:cross"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "site": "engine/pipeline/PL_PH_detector.py:540:17:Call",
+      "scope": "engine/pipeline/PL_PH_detector.py:518:0:_next_point",
+      "callee": "cross",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Crossing function propagated from strict_cross default or run.cross cache path; exact crossing result remains input-dependent.",
+      "named_targets": [
+        "PL_PH_detector.strict_cross",
+        "_PrimaryRun.cross"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/PL_PH_detector.py:222:0:strict_cross",
+        "engine/pipeline/PL_PH_detector.py:474:4:cross"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "site": "engine/pipeline/PL_PH_detector.py:541:19:Call",
+      "scope": "engine/pipeline/PL_PH_detector.py:518:0:_next_point",
+      "callee": "cross",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Crossing function propagated from strict_cross default or run.cross cache path; exact crossing result remains input-dependent.",
+      "named_targets": [
+        "PL_PH_detector.strict_cross",
+        "_PrimaryRun.cross"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/PL_PH_detector.py:222:0:strict_cross",
+        "engine/pipeline/PL_PH_detector.py:474:4:cross"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "site": "engine/pipeline/PL_PH_detector.py:559:39:Call",
+      "scope": "engine/pipeline/PL_PH_detector.py:559:21:ListComp",
+      "callee": "orders",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Order resolver callable receives kind/number/gate/event; reflected path swaps PL/PH before call.",
+      "named_targets": [
+        "NativePrimaryOrders.__call__",
+        "ReflectedOrders.__call__"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/PL_PH_detector.py:644:4:__call__",
+        "engine/pipeline/PL_PH_detector.py:787:8:__call__"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "site": "engine/pipeline/PL_PH_detector.py:570:17:Call",
+      "scope": "engine/pipeline/PL_PH_detector.py:518:0:_next_point",
+      "callee": "cross",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Crossing function propagated from strict_cross default or run.cross cache path; exact crossing result remains input-dependent.",
+      "named_targets": [
+        "PL_PH_detector.strict_cross",
+        "_PrimaryRun.cross"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/PL_PH_detector.py:222:0:strict_cross",
+        "engine/pipeline/PL_PH_detector.py:474:4:cross"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "site": "engine/pipeline/PL_PH_detector.py:642:12:Call",
+      "scope": "engine/pipeline/PL_PH_detector.py:639:4:confirm_high",
+      "callee": "self.on_high",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "NativePrimaryOrders stores optional on_high; confirm_high calls only if non-null.",
+      "named_targets": [
+        "trading_pipeline.commit_high"
+      ],
+      "inventory_target_candidates": [
+        "engine/bridge/trading_pipeline.py:3394:4:commit_high"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "site": "engine/pipeline/PL_PH_detector.py:655:27:Call",
+      "scope": "engine/pipeline/PL_PH_detector.py:644:4:__call__",
+      "callee": "dict.fromkeys",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Deduplicate causes preserving insertion order.",
+      "named_targets": [
+        "dict.fromkeys"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "site": "engine/pipeline/PL_PH_detector.py:685:11:Call",
+      "scope": "engine/pipeline/PL_PH_detector.py:683:0:_negate_price",
+      "callee": "as_decimal().copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Negate normalized Decimal exactly using copy_negate.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "site": "engine/pipeline/PL_PH_detector.py:789:61:Call",
+      "scope": "engine/pipeline/PL_PH_detector.py:789:19:ListComp",
+      "callee": "orders",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Order resolver callable receives kind/number/gate/event; reflected path swaps PL/PH before call.",
+      "named_targets": [
+        "NativePrimaryOrders.__call__",
+        "ReflectedOrders.__call__"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/PL_PH_detector.py:644:4:__call__",
+        "engine/pipeline/PL_PH_detector.py:787:8:__call__"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "site": "engine/pipeline/PL_PH_detector.py:794:16:Call",
+      "scope": "engine/pipeline/PL_PH_detector.py:791:8:confirm_high",
+      "callee": "callback",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional confirm_high obtained from underlying orders via getattr; invoke on reflected point if non-null.",
+      "named_targets": [
+        "NativePrimaryOrders.confirm_high"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/PL_PH_detector.py:639:4:confirm_high"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "site": "engine/pipeline/a_zone_detector.py:184:30:Call",
+      "scope": "engine/pipeline/a_zone_detector.py:171:4:_range_extreme",
+      "callee": "query",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Choose lower_index.range_minimum for bullish, range_maximum otherwise; require nonempty bounded range and non-null index.",
+      "named_targets": [
+        "LowerTimeframeIndex.range_minimum",
+        "LowerTimeframeIndex.range_maximum"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:965:4:range_minimum",
+        "engine/pipeline/reaction_engine.py:969:4:range_maximum"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "431934d2fb597238d5281a769c29fdb51747868b"
+    },
+    {
+      "site": "engine/pipeline/blue_line_detector.py:177:8:Call",
+      "scope": "engine/pipeline/blue_line_detector.py:145:0:count_scale_strikes",
+      "callee": "<IfExp>",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Choose min for bullish low, max for bearish high; called only if available break rows exist.",
+      "named_targets": [
+        "min",
+        "max"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891"
+    },
+    {
+      "site": "engine/pipeline/e_zone_detector.py:172:16:Call",
+      "scope": "engine/pipeline/e_zone_detector.py:153:4:first_stop",
+      "callee": "search",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Live parent-stop cache accepts search callable; after cache and range gates invoke with start, range_end, level.",
+      "named_targets": [
+        "EZoneDetector._search_parent_stop",
+        "EZoneDetector._search_order_stop"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/e_zone_detector.py:519:4:_search_parent_stop",
+        "engine/pipeline/e_zone_detector.py:524:4:_search_order_stop"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f"
+    },
+    {
+      "site": "engine/pipeline/e_zone_detector.py:191:30:Call",
+      "scope": "engine/pipeline/e_zone_detector.py:176:4:extreme",
+      "callee": "query",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Choose prepared main index range_minimum for bullish else range_maximum; right bound end_index+1.",
+      "named_targets": [
+        "LowerTimeframeIndex.range_minimum",
+        "LowerTimeframeIndex.range_maximum"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:965:4:range_minimum",
+        "engine/pipeline/reaction_engine.py:969:4:range_maximum"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f"
+    },
+    {
+      "site": "engine/pipeline/e_zone_detector.py:238:16:Call",
+      "scope": "engine/pipeline/e_zone_detector.py:220:4:reconcile",
+      "callee": "detector.sequence_priority",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Stored sequence-priority callback; constructor rejects None; reconciliation dependency uses parent type and red/blue.",
+      "named_targets": [
+        "lifecycle_engine.sequence_priority"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:37:0:sequence_priority"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f"
+    },
+    {
+      "site": "engine/pipeline/e_zone_detector.py:239:16:Call",
+      "scope": "engine/pipeline/e_zone_detector.py:220:4:reconcile",
+      "callee": "detector.sequence_priority",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Stored sequence-priority callback; constructor rejects None; reconciliation dependency uses parent type and red/blue.",
+      "named_targets": [
+        "lifecycle_engine.sequence_priority"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:37:0:sequence_priority"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f"
+    },
+    {
+      "site": "engine/pipeline/e_zone_detector.py:370:36:Call",
+      "scope": "engine/pipeline/e_zone_detector.py:313:4:__init__",
+      "callee": "self.timeframe.total_seconds",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Chronology timeframe duration; one-second equality permits lower index reuse.",
+      "named_targets": [
+        "timedelta.total_seconds"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f"
+    },
+    {
+      "site": "engine/pipeline/e_zone_detector.py:494:12:Call",
+      "scope": "engine/pipeline/e_zone_detector.py:487:4:_extreme_position",
+      "callee": "length.bit_length",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Integer bit length for range-extreme index.",
+      "named_targets": [
+        "int.bit_length"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f"
+    },
+    {
+      "site": "engine/pipeline/e_zone_detector.py:597:34:Call",
+      "scope": "engine/pipeline/e_zone_detector.py:594:4:_find_extreme",
+      "callee": "self._shared_main_extreme",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Optional prepared market index range_minimum/range_maximum obtained by getattr for direction; only if non-null and range valid.",
+      "named_targets": [
+        "LowerTimeframeIndex.range_minimum",
+        "LowerTimeframeIndex.range_maximum"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:965:4:range_minimum",
+        "engine/pipeline/reaction_engine.py:969:4:range_maximum"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f"
+    },
+    {
+      "site": "engine/pipeline/e_zone_detector.py:890:33:Call",
+      "scope": "engine/pipeline/e_zone_detector.py:889:8:outranks",
+      "callee": "self.sequence_priority",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Stored required resolver; priority comparisons and parent-family ownership.",
+      "named_targets": [
+        "lifecycle_engine.sequence_priority"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:37:0:sequence_priority"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f"
+    },
+    {
+      "site": "engine/pipeline/e_zone_detector.py:891:31:Call",
+      "scope": "engine/pipeline/e_zone_detector.py:889:8:outranks",
+      "callee": "self.sequence_priority",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Stored required resolver; priority comparisons and parent-family ownership.",
+      "named_targets": [
+        "lifecycle_engine.sequence_priority"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:37:0:sequence_priority"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f"
+    },
+    {
+      "site": "engine/pipeline/e_zone_detector.py:1370:23:Call",
+      "scope": "engine/pipeline/e_zone_detector.py:1365:12:ownership_priority",
+      "callee": "self.sequence_priority",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Stored required resolver; priority comparisons and parent-family ownership.",
+      "named_targets": [
+        "lifecycle_engine.sequence_priority"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:37:0:sequence_priority"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f"
+    },
+    {
+      "site": "engine/pipeline/lifecycle_engine.py:658:4:Call",
+      "scope": "engine/pipeline/lifecycle_engine.py:606:0:resolve_order_context",
+      "callee": "blocked_order_first_times.difference_update",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "In-place remove accepted initial First times from blocked set.",
+      "named_targets": [
+        "set.difference_update"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "POTENTIAL_MUTATION",
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+    },
+    {
+      "site": "engine/pipeline/lifecycle_engine.py:676:19:Call",
+      "scope": "engine/pipeline/lifecycle_engine.py:606:0:resolve_order_context",
+      "callee": "stop_finder",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Supplied A stop finder; called on invalid A for exact stop/blocked First analysis.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+    },
+    {
+      "site": "engine/pipeline/lifecycle_engine.py:688:28:Call",
+      "scope": "engine/pipeline/lifecycle_engine.py:606:0:resolve_order_context",
+      "callee": "opposite_confirmation_finder",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional opposite confirmation resolver, guarded together with accepted E stop events.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+    },
+    {
+      "site": "engine/pipeline/lifecycle_engine.py:742:12:Call",
+      "scope": "engine/pipeline/lifecycle_engine.py:735:0:module_stop_event",
+      "callee": "stop_event_finder",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional fallback; used only when explicit stop_event_time is absent.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+    },
+    {
+      "site": "engine/pipeline/lifecycle_engine.py:812:20:Call",
+      "scope": "engine/pipeline/lifecycle_engine.py:766:0:split_a_zones_by_dominant_stops",
+      "callee": "a_stop_event_finder",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional A stop finder; invoked only when non-null.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+    },
+    {
+      "site": "engine/pipeline/lifecycle_engine.py:940:28:Call",
+      "scope": "engine/pipeline/lifecycle_engine.py:934:34:GeneratorExp",
+      "callee": "confirmation_finder",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Supplied confirmation resolver for interior Reaction evidence; short-circuit in generator.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+    },
+    {
+      "site": "engine/pipeline/lifecycle_engine.py:984:15:Call",
+      "scope": "engine/pipeline/lifecycle_engine.py:973:0:blocked_orders_while_invalid_leg_heads_are_live",
+      "callee": "stop_finder",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Supplied A stop finder; called on invalid A for exact stop/blocked First analysis.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+    },
+    {
+      "site": "engine/pipeline/lifecycle_engine.py:1250:16:Call",
+      "scope": "engine/pipeline/lifecycle_engine.py:1199:0:visible_s_zones_after_module_resets",
+      "callee": "source_event_finder",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional source ownership event finder, otherwise use source_time.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+    },
+    {
+      "site": "engine/pipeline/lifecycle_engine.py:1396:50:Call",
+      "scope": "engine/pipeline/lifecycle_engine.py:1396:29:Lambda",
+      "callee": "work",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Fallback timing lambda directly invokes work.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+    },
+    {
+      "site": "engine/pipeline/lifecycle_engine.py:1398:16:Call",
+      "scope": "engine/pipeline/lifecycle_engine.py:1377:0:reconcile_stopall_lifecycle",
+      "callee": "measure",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Use timed_step if truthy, otherwise lambda(label,work) invokes work; used for visible S and StopAll calculation.",
+      "named_targets": [
+        "lifecycle_engine.reconcile_stopall_lifecycle"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:1377:0:reconcile_stopall_lifecycle"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+    },
+    {
+      "site": "engine/pipeline/lifecycle_engine.py:1399:36:Call",
+      "scope": "engine/pipeline/lifecycle_engine.py:1377:0:reconcile_stopall_lifecycle",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Format direction for stage label.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+    },
+    {
+      "site": "engine/pipeline/lifecycle_engine.py:1402:15:Call",
+      "scope": "engine/pipeline/lifecycle_engine.py:1377:0:reconcile_stopall_lifecycle",
+      "callee": "measure",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Use timed_step if truthy, otherwise lambda(label,work) invokes work; used for visible S and StopAll calculation.",
+      "named_targets": [
+        "lifecycle_engine.reconcile_stopall_lifecycle"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:1377:0:reconcile_stopall_lifecycle"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+    },
+    {
+      "site": "engine/pipeline/lifecycle_engine.py:1403:21:Call",
+      "scope": "engine/pipeline/lifecycle_engine.py:1377:0:reconcile_stopall_lifecycle",
+      "callee": "direction.title",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Format direction for stage label.",
+      "named_targets": [
+        "str.title"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+    },
+    {
+      "site": "engine/pipeline/lifecycle_engine.py:1404:16:Call",
+      "scope": "engine/pipeline/lifecycle_engine.py:1404:8:Lambda",
+      "callee": "find_stopalls",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Use stopall_finder if truthy, else detect_stopalls.",
+      "named_targets": [
+        "lifecycle_engine.detect_stopalls"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:593:0:detect_stopalls"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+    },
+    {
+      "site": "engine/pipeline/order_audit_engine.py:87:8:Call",
+      "scope": "engine/pipeline/order_audit_engine.py:86:12:ListComp",
+      "callee": "priority",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Provided priority callback determines rank of accepted lifecycle item; tie fields handled separately.",
+      "named_targets": [
+        "lifecycle_engine.module_priority"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:712:0:module_priority"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+    },
+    {
+      "site": "engine/pipeline/order_audit_engine.py:124:12:Call",
+      "scope": "engine/pipeline/order_audit_engine.py:77:0:dominant_post_behavior_stops",
+      "callee": "priority",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Provided priority callback determines rank of accepted lifecycle item; tie fields handled separately.",
+      "named_targets": [
+        "lifecycle_engine.module_priority"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:712:0:module_priority"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+    },
+    {
+      "site": "engine/pipeline/order_audit_engine.py:187:19:Call",
+      "scope": "engine/pipeline/order_audit_engine.py:180:0:_order_b_crossing",
+      "callee": "find",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "If lower index present, choose first_less for low else first_greater.",
+      "named_targets": [
+        "LowerTimeframeIndex.first_less",
+        "LowerTimeframeIndex.first_greater"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:959:4:first_less",
+        "engine/pipeline/reaction_engine.py:962:4:first_greater"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+    },
+    {
+      "site": "engine/pipeline/order_audit_engine.py:314:49:Call",
+      "scope": "engine/pipeline/order_audit_engine.py:198:0:discover_order_b_reset_legs",
+      "callee": "boundary_at",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Use optional _boundary if truthy, otherwise lambda wraps _order_b_boundary with chronology and attribute.",
+      "named_targets": [
+        "order_audit_engine._order_b_boundary"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/order_audit_engine.py:170:0:_order_b_boundary"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+    },
+    {
+      "site": "engine/pipeline/order_audit_engine.py:326:28:Call",
+      "scope": "engine/pipeline/order_audit_engine.py:198:0:discover_order_b_reset_legs",
+      "callee": "crossing_after",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Use optional _crossing if truthy, otherwise lambda calls _order_b_crossing starting after reset time via bisect_right.",
+      "named_targets": [
+        "order_audit_engine._order_b_crossing"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/order_audit_engine.py:180:0:_order_b_crossing"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+    },
+    {
+      "site": "engine/pipeline/order_audit_engine.py:497:25:Call",
+      "scope": "engine/pipeline/order_audit_engine.py:442:0:discover_accepted_order_b_reset_legs",
+      "callee": "priority",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Provided priority callback determines rank of accepted lifecycle item; tie fields handled separately.",
+      "named_targets": [
+        "lifecycle_engine.module_priority"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/lifecycle_engine.py:712:0:module_priority"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+    },
+    {
+      "site": "engine/pipeline/order_audit_engine.py:515:11:Call",
+      "scope": "engine/pipeline/order_audit_engine.py:442:0:discover_accepted_order_b_reset_legs",
+      "callee": "finder",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Use reset_leg_finder if truthy, otherwise discover_order_b_reset_legs.",
+      "named_targets": [
+        "order_audit_engine.discover_order_b_reset_legs"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/order_audit_engine.py:198:0:discover_order_b_reset_legs"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+    },
+    {
+      "site": "engine/pipeline/order_audit_engine.py:708:24:Call",
+      "scope": "engine/pipeline/order_audit_engine.py:689:4:_first_healthy_direct_geometry",
+      "callee": "self.direct_geometry_finder",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Stored supplied direct geometry callable; invoked with physical order direction and gate; caller guard/contract governs availability.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+    },
+    {
+      "site": "engine/pipeline/order_audit_engine.py:797:20:Call",
+      "scope": "engine/pipeline/order_audit_engine.py:794:4:_trend_leg_order_position",
+      "callee": "self.direct_geometry_finder",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Stored supplied direct geometry callable; invoked with physical order direction and gate; caller guard/contract governs availability.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+    },
+    {
+      "site": "engine/pipeline/order_audit_engine.py:1033:26:Call",
+      "scope": "engine/pipeline/order_audit_engine.py:982:4:order_candidates",
+      "callee": "dict.fromkeys",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "First-occurrence deduplication of candidate values.",
+      "named_targets": [
+        "dict.fromkeys"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+    },
+    {
+      "site": "engine/pipeline/order_audit_engine.py:1974:46:Call",
+      "scope": "engine/pipeline/order_audit_engine.py:1879:4:_iter_post_stop_accepted_orders",
+      "callee": "key",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Local stream ordering key callable; called before stable first/last tie fields.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+    },
+    {
+      "site": "engine/pipeline/order_audit_engine.py:1979:31:Call",
+      "scope": "engine/pipeline/order_audit_engine.py:1879:4:_iter_post_stop_accepted_orders",
+      "callee": "len().bit_length",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Compute tier index from list length, recompute after merging equal tier runs.",
+      "named_targets": [
+        "int.bit_length"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+    },
+    {
+      "site": "engine/pipeline/order_audit_engine.py:1986:35:Call",
+      "scope": "engine/pipeline/order_audit_engine.py:1879:4:_iter_post_stop_accepted_orders",
+      "callee": "len().bit_length",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Compute tier index from list length, recompute after merging equal tier runs.",
+      "named_targets": [
+        "int.bit_length"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+    },
+    {
+      "site": "engine/pipeline/order_audit_engine.py:2563:19:Call",
+      "scope": "engine/pipeline/order_audit_engine.py:2546:4:_first_order_after",
+      "callee": "self.initial_order_geometry",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional initial-order geometry callable; null path returns native candidate.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:170:11:Call",
+      "scope": "engine/pipeline/reaction_engine.py:149:4:__init__",
+      "callee": "self.timeframe.total_seconds",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Validate positive derived main timeframe.",
+      "named_targets": [
+        "timedelta.total_seconds"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:206:24:Call",
+      "scope": "engine/pipeline/reaction_engine.py:202:4:minimum_low",
+      "callee": "value.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:222:24:Call",
+      "scope": "engine/pipeline/reaction_engine.py:218:4:maximum_high",
+      "callee": "value.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:655:13:Call",
+      "scope": "engine/pipeline/reaction_engine.py:642:0:mirror_candle",
+      "callee": "candle.open.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:656:13:Call",
+      "scope": "engine/pipeline/reaction_engine.py:642:0:mirror_candle",
+      "callee": "candle.low.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:657:12:Call",
+      "scope": "engine/pipeline/reaction_engine.py:642:0:mirror_candle",
+      "callee": "candle.high.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:658:14:Call",
+      "scope": "engine/pipeline/reaction_engine.py:642:0:mirror_candle",
+      "callee": "candle.close.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:668:16:Call",
+      "scope": "engine/pipeline/reaction_engine.py:662:0:mirror_candidate",
+      "callee": "candidate.box_bottom.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:669:19:Call",
+      "scope": "engine/pipeline/reaction_engine.py:662:0:mirror_candidate",
+      "callee": "candidate.box_top.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:674:22:Call",
+      "scope": "engine/pipeline/reaction_engine.py:662:0:mirror_candidate",
+      "callee": "candidate.anchor_value.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:676:28:Call",
+      "scope": "engine/pipeline/reaction_engine.py:662:0:mirror_candidate",
+      "callee": "candidate.leg_boundary_value.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:685:46:Call",
+      "scope": "engine/pipeline/reaction_engine.py:681:0:mirror_analysis",
+      "callee": "analysis.extreme.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:707:44:Call",
+      "scope": "engine/pipeline/reaction_engine.py:707:19:ListComp",
+      "callee": "index.indices",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Normalize slice bounds with source length before reflected list construction.",
+      "named_targets": [
+        "slice.indices"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:752:15:Call",
+      "scope": "engine/pipeline/reaction_engine.py:750:4:red_run_bottom_before",
+      "callee": "value.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:767:12:Call",
+      "scope": "engine/pipeline/reaction_engine.py:764:4:confirmed_reset_before_breakdown",
+      "callee": "confirmed_top.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:772:39:Call",
+      "scope": "engine/pipeline/reaction_engine.py:770:4:post_breakdown_reset",
+      "callee": "box_top.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:782:48:Call",
+      "scope": "engine/pipeline/reaction_engine.py:782:19:ListComp",
+      "callee": "reset.broken_level.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:1043:32:Call",
+      "scope": "engine/pipeline/reaction_engine.py:1042:4:_search_first",
+      "callee": "excludes",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Segment-tree predicate passed by first_less/first_greater via _first; ge excludes less search, le excludes greater search.",
+      "named_targets": [
+        "operator.ge",
+        "operator.le"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:1051:23:Call",
+      "scope": "engine/pipeline/reaction_engine.py:1042:4:_search_first",
+      "callee": "excludes",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Segment-tree predicate passed by first_less/first_greater via _first; ge excludes less search, le excludes greater search.",
+      "named_targets": [
+        "operator.ge",
+        "operator.le"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:1060:19:Call",
+      "scope": "engine/pipeline/reaction_engine.py:1042:4:_search_first",
+      "callee": "excludes",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Segment-tree predicate passed by first_less/first_greater via _first; ge excludes less search, le excludes greater search.",
+      "named_targets": [
+        "operator.ge",
+        "operator.le"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:1067:15:Call",
+      "scope": "engine/pipeline/reaction_engine.py:1064:4:_descend_first",
+      "callee": "excludes",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Segment-tree predicate passed by first_less/first_greater via _first; ge excludes less search, le excludes greater search.",
+      "named_targets": [
+        "operator.ge",
+        "operator.le"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:1105:52:Call",
+      "scope": "engine/pipeline/reaction_engine.py:1104:4:first_less",
+      "callee": "level.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:1108:49:Call",
+      "scope": "engine/pipeline/reaction_engine.py:1107:4:first_greater",
+      "callee": "level.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:1112:15:Call",
+      "scope": "engine/pipeline/reaction_engine.py:1110:4:range_minimum",
+      "callee": "value.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:1116:15:Call",
+      "scope": "engine/pipeline/reaction_engine.py:1114:4:range_maximum",
+      "callee": "value.copy_negate",
+      "classification": "NATIVE_OR_LIBRARY_PROTOCOL",
+      "selection_rule": "Exact reflected Decimal negation on selected field/value; preserve representation rather than arithmetic unary negation.",
+      "named_targets": [
+        "Decimal.copy_negate"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:1382:15:Call",
+      "scope": "engine/pipeline/reaction_engine.py:1379:4:from_reaction",
+      "callee": "cls",
+      "classification": "CLASSMETHOD_CONSTRUCTOR",
+      "selection_rule": "Construct bound class from classmethod, nominal _BehaviorReactionSpan; subclass binding not excluded.",
+      "named_targets": [
+        "_BehaviorReactionSpan"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:1371:0:_BehaviorReactionSpan"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/reaction_engine.py:1692:32:Call",
+      "scope": "engine/pipeline/reaction_engine.py:1681:4:_append_reaction",
+      "callee": "<IfExp>",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Select BullishDetector if direction bearish else BearishDetector; instantiate opposite detector under anchor/reset gates.",
+      "named_targets": [
+        "BullishDetector",
+        "BearishDetector"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:235:0:BullishDetector",
+        "engine/pipeline/reaction_engine.py:728:0:BearishDetector"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "site": "engine/pipeline/s_zone_detector.py:1287:21:Call",
+      "scope": "engine/pipeline/s_zone_detector.py:1251:4:_detect",
+      "callee": "resolve_candidate",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Candidate resolver passed to _detect; detect passes self._resolve_candidate; continuation supplies cached resolver wrapper.",
+      "named_targets": [
+        "SZoneDetector._resolve_candidate"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/s_zone_detector.py:1225:4:_resolve_candidate"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7"
+    },
+    {
+      "site": "engine/pipeline/true_false.py:22:46:Call",
+      "scope": "engine/pipeline/true_false.py:21:4:find",
+      "callee": "from_epoch",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Supplied timestamp decoder used before bounded bisect_left.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "d569d16bc493b9eb5da75ed5594c168751856b6f"
+    },
+    {
+      "site": "engine/pipeline/true_false.py:26:19:Call",
+      "scope": "engine/pipeline/true_false.py:21:4:find",
+      "callee": "search",
+      "classification": "CONDITIONAL_CALLABLE_SELECTION",
+      "selection_rule": "Direction policy extreme_attr low selects first_less, otherwise first_greater.",
+      "named_targets": [
+        "LowerTimeframeIndex.first_less",
+        "LowerTimeframeIndex.first_greater"
+      ],
+      "inventory_target_candidates": [
+        "engine/pipeline/reaction_engine.py:959:4:first_less",
+        "engine/pipeline/reaction_engine.py:962:4:first_greater"
+      ],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "d569d16bc493b9eb5da75ed5594c168751856b6f"
+    },
+    {
+      "site": "engine/pipeline/true_false.py:27:45:Call",
+      "scope": "engine/pipeline/true_false.py:21:4:find",
+      "callee": "to_epoch",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Supplied timestamp encoder, called only if crossing exists.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "d569d16bc493b9eb5da75ed5594c168751856b6f"
+    },
+    {
+      "site": "engine/pipeline/true_false.py:52:22:Call",
+      "scope": "engine/pipeline/true_false.py:50:4:repair",
+      "callee": "first_crossing",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional repair callback; invoke only if non-null and repair field absent.",
+      "named_targets": [
+        "true_false.repair_crossing_lookup.find"
+      ],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "d569d16bc493b9eb5da75ed5594c168751856b6f"
+    },
+    {
+      "site": "engine/pipeline/true_false.py:120:56:Call",
+      "scope": "engine/pipeline/true_false.py:97:0:_stopall_verdicts",
+      "callee": "confirmation_closed",
+      "classification": "CALLABLE_PARAMETER_OR_STORED_CALLBACK",
+      "selection_rule": "Optional StopAll closure predicate; evaluated only for matching series endpoint.",
+      "named_targets": [],
+      "inventory_target_candidates": [],
+      "prior_effect_flags": [
+        "DYNAMIC_EFFECT_UNKNOWN"
+      ],
+      "source_blob": "d569d16bc493b9eb5da75ed5594c168751856b6f"
+    }
+  ]
+}
