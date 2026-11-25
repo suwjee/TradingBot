@@ -69,7 +69,7 @@ Registers selected mapping by sourceTime, basic events buffer, StopAll buffer. D
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
 | TFC01 | INIT | Direction group | Visit primary,stopAlls,eZones,sZones in order, remove three keys; if calculationValid is not exact false retain first row per sourceTime | SORT | TF07 |
-| TFC02 | SORT | Selected rows sorted sourceTime | Set each selected verdict null; non-winning rows not annotated | EVENT | TF07 |
+| TFC02 | SORT | Selected rows sorted sourceTime | Traverse selected rows by sourceTime; set current row verdict null immediately before processing that row; non-winning rows not annotated | EVENT | TF07 |
 | TFC03 | EVENT | Primary row | Flush StopAll recurrence and clear buffer; number1 T,2/3 F, else null | EVENT | TF06,TF07 |
 | TFC04 | EVENT | StopAll row | Append to stop buffer | EVENT | TF07 |
 | TFC05 | EVENT | S or E row | Append to basic buffer; primary does not reset basic | EVENT | TF07 |
