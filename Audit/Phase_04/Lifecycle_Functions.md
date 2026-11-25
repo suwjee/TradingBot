@@ -7,16 +7,16 @@ Baseline: main `466eb875070f02cd0dbfb105033422bbe2fd8c70`, `engine/pipeline/life
 ### LC01 — sequence_priority (37–39)
 Normalize kind and family with str().lower(); dictionary lookup S blue=1, E blue=2, S red=3, E red=4. Unknown pair raises KeyError.
 
-### LC02 — _DominantBehavior.priority (106–108)
+### LC02 — _DominantBehavior.priority (106–107)
 Property delegates to LC01 on kind/family. Frozen slotted record also carries number, count, latest object.
 
-### LC03 — _DominantBehavior.armed (110–112)
+### LC03 — _DominantBehavior.armed (110–111)
 True precisely when count >=2.
 
-### LC04 — _DominantBehavior.key (114–119)
+### LC04 — _DominantBehavior.key (114–118)
 Format E number and family if kind exactly E; otherwise S and family.
 
-### LC05 — advance_dominant_behavior (121–140)
+### LC05 — advance_dominant_behavior (121–139)
 Create incoming owner count=1. No prior owner => incoming. Exact kind/family/number match => replace previous count+1 and latest. Otherwise replace only on higher priority, or equal priority with both E and LC08 dominance. Otherwise return previous object unchanged. No mutation of owner record.
 
 ## StopAll detection
@@ -24,19 +24,19 @@ Create incoming owner count=1. No prior owner => incoming. Exact kind/family/num
 ### LC06 — StopAllDetector.__init__ (151–168)
 Validate direction against bullish/bearish. Copy S/E collections; retain chronology, main/lower candles, corresponding times and lower index. Checkpoint record defaults owner/pending null, active tuple empty, output_count zero. StopAll record is frozen/slotted, with explicit donor metadata separate from underlying owner.
 
-### LC07 — StopAllDetector._strict_stop (170–185)
+### LC07 — StopAllDetector._strict_stop (170–184)
 Lower-bound start on lower times; first_less for B or first_greater for R to end of lower candles. Null if no crossing. Otherwise return clamped containing main index, main time, exact lower event. Equality is not a stop; no coarse fallback.
 
 ### LC08 — StopAllDetector._dominates_e (187–194)
 Same family: strictly greater number. Different families: red dominates blue, not reverse.
 
-### LC09 — StopAllDetector._stopall_from_e (196–253)
+### LC09 — StopAllDetector._stopall_from_e (196–252)
 Construct immutable StopAll using donor E source/time/price and decision index/time/event. Number, gate type/event and stopped behavior metadata are caller-supplied. Preserve underlying E family/number and full Order provenance (normalize integer fields and Decimal prices); causes tuple defaults empty, parent cause time defaults null. Stop index/time/event initially null. Donor type E, source index/time, family, number and price populated separately; donor-stop fields default null. Do not substitute stopped owner's geometry for donor geometry.
 
-### LC10 — StopAllDetector._optional_int (255–257)
+### LC10 — StopAllDetector._optional_int (255–256)
 Null stays null; otherwise int conversion.
 
-### LC11 — StopAllDetector._optional_decimal (259–261)
+### LC11 — StopAllDetector._optional_decimal (259–260)
 Null stays null; otherwise shared as_decimal conversion.
 
 ### LC12 — StopAllDetector._stopall_from_s (262–348)
@@ -66,13 +66,13 @@ Evaluate strict stop of each active StopAll from its own decision. Select all st
 ### LC20 — StopAllDetector._resolve_stop (525–531)
 Start decision event, or max(decision, optional after). Find strict stop LC07. Replace stop index/time/event, null triple if no hit; other fields preserved.
 
-### LC21 — LiveStopAllContinuation.__init__ (537–545)
+### LC21 — LiveStopAllContinuation.__init__ (537–544)
 Store direction, one default checkpoint, empty event keys/output/result and null covered_until. Call update first_dirty_main=0.
 
 ### LC22 — LiveStopAllContinuation.result (547–548)
 Return shallow list copy, not internal result list.
 
-### LC23 — LiveStopAllContinuation.update (550–591)
+### LC23 — LiveStopAllContinuation.update (550–590)
 Validate dirty index 0..len(main times). Dirty = main time at index or null at end; rewind to covered_until if non-null and earlier than dirty (or dirty null). New detector/event list; keys (kind, repr(record)). Common prefix while equal keys and max(source, decision) < dirty if dirty present. Restore prefix checkpoint/output and rerun suffix with checkpoint capture. For prefix outputs, reuse prior resolved record if stop exists and before dirty (or dirty null); otherwise LC20 after dirty. Newly emitted outputs resolve normally. Replace checkpoints, keys, unresolved output and result. covered_until = last lower time +1 microsecond, else null. Return result copy. No claim of runtime append equivalence.
 
 ### LC24 — detect_stopalls (593–599)
@@ -114,7 +114,7 @@ Validate direction. Accepted identity pairs (A source,S source). Sort E source/i
 ### LC35 — s_zones_for_module_engines (1138–1178)
 Sort E by source only and S by source only. For each S choose latest prior E or already accepted S (strictly earlier); S replaces prior E only on strictly later source. LC36 resolves duplicate timestamps. For lower/equal priority reject if A source < prior source or A price strictly beyond prior price or S price strictly beyond prior price. Higher priority bypasses these filters. Append otherwise. Return visible S.
 
-### LC36 — s_zones_for_module_engines.latest_prior (1145–1152)
+### LC36 — s_zones_for_module_engines.latest_prior (1145–1151)
 Lower bound source minus one; negative => null; find first index at selected prior timestamp (lower bound). First duplicate wins.
 
 ### LC37 — s_zones_for_stopall (1180–1197)
@@ -123,25 +123,25 @@ Apply LC35, then remove S whose exact (integer index,source time) appears in E.
 ### LC38 — visible_s_zones_after_module_resets (1199–1375)
 Validate direction, sort external owners by source/index, optionally build candle times; per-call stop cache LC39. For each sorted S, ownership event = source-event callback if supplied else source main time (valid directions override initial A stop). Consider prior external and accepted S strictly earlier by source and not consumed. Latest prior external by source/index establishes cutoff: ignore earlier prior modules. When ownership event non-null, stopped prior are those exact stop<=ownership event. If candles available and stopped external, latest such external by source/index: when new S priority lower and both stop-main/source indexes in range, skip candidate if source Close strictly beyond stop-main Close, without consumption. Otherwise choose dominant max (exact stop,priority,number,source,index). If both S and new priority strictly greater, append. If new S price not strictly beyond dominant, append. Else consume all stopped prior of priority <= dominant and skip candidate. When no applicable stop, append. Return visible list; no mutation of input records.
 
-### LC39 — visible_s_zones_after_module_resets.cached_stop_event (1228–1234)
+### LC39 — visible_s_zones_after_module_resets.cached_stop_event (1228–1232)
 Cache module_stop_event result (including null) by id(module), invoke finder at most once per object per call.
 
-### LC40 — reconcile_stopall_lifecycle (1377–1410)
+### LC40 — reconcile_stopall_lifecycle (1377–1409)
 Use supplied timed_step or immediate callable wrapper, stopall_finder or LC24. Measure LC37 visible S, then detect StopAll. Assign detector.sequence_resets map source_time:number (later duplicate overwrites). Return copy of E list and StopAll list; do not rebuild E.
 
 ### LC41 — visible_a_zones_after_module_boundaries (1412–1457)
 Direction unused. Sort modules S/E (caller may include StopAll) and A by source/index. Gather stopped prior with source<=A source and non-null stop<=A source. Choose LC31 priority-based dominant, get stop again. If minimum of Blue1/Blue2/continuation/Reaction First provenance times < boundary, exclude. Else include. Equality allowed. Return retained A.
 
-### LC42 — reaction_number_is_internal (1459–1471)
+### LC42 — reaction_number_is_internal (1459–1470)
 Null false, convert number to int, require 1..len(reactions); check physical order_identity(first_idx,break_idx) in identities.
 
-### LC43 — point_is_inside_healthy_reaction (1473–1494)
+### LC43 — point_is_inside_healthy_reaction (1473–1493)
 Null time or price false. Normalize price. For each reaction with First and confirmation non-null, require First < source <= confirmation and bottom < price < top. True first match, false otherwise. No explicit healthy flag in this function.
 
 ### LC44 — filter_internal_behavior_outputs (1496–1507)
 Ignore last three inputs; return list copies of A/S/E/StopAll in that order.
 
-### LC45 — finalize_behavior_visibility (1509–1602)
+### LC45 — finalize_behavior_visibility (1509–1601)
 Build integer StopAll source indexes, remove E collisions. Compute visible S with final E+StopAll via LC38. Restore historical S referenced by final E parent type.upper()==S at parent_source_time if module_identity absent from original visible set; set is not updated during extension. Sort S source/index. Filter A via LC41 with S and E+StopAll. Restore historical A referenced by S a_source_time, using all_a_zones if non-null otherwise original A; compare (source time,int index) against initial visible identity set; sort. Occupied indexes E+StopAll: remove collisions from A/S; also remove S whose (source_time,index) in invalid identities. Return (final E, final S, final A).
 
 ### LC46 — visible_a_zones (1604–1610)
