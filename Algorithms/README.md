@@ -1,5 +1,7 @@
 # Algorithm catalog
 
+**Active V3 module-level specifications: [read the 23-module catalog](V3/README.md).** The numbered files in this directory are retained historical specifications. Use V3 for the current module composition; reconcile conflicts with pinned-source evidence rather than combining inconsistent older rules.
+
 All algorithm files are English semantic specifications. Numbering provides a stable reading order, not a claim of complete branch coverage. Follow explicit per-module gates, strict comparisons and ties rather than inferring missing rules.
 
 - [Reaction Engine](01_Reaction_Engine.md)
