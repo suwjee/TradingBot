@@ -14,3 +14,8 @@ Status: COMPLETE for source discovery and baseline selection; overall engine spe
 - [Completion report and handoff](Phase_01_Completion_Report.md)
 
 Source_Manifest.json in this directory is the newly discovered, main-pinned Phase 01 inventory. The earlier Audit/Source_Manifest.json describes the prior publication and is historical. Audit evidence is not a substitute for a standalone semantic specification.
+
+## External authority follow-up
+
+- [External knowledge authority addendum](External_Knowledge_Addendum.md): direct repository access verified; historical snapshot drift and scope limitations documented.
+- [External source comparison](External_Source_Comparison.json): pinned cross-repository Git blob comparison; no source bodies.
