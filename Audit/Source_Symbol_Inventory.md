@@ -1,0 +1,1195 @@
+# Baseline source-symbol inventory
+
+Audit metadata only. Paths, function and class declarations, field/type labels and line ranges identify the pinned baseline. Assignment initializer expressions are omitted to avoid embedding implementation fragments; this inventory is not an algorithm or executable source. No claim of function-level or branch-level semantic coverage.
+
+### 13.5 Complete module/class symbol and schema coverage
+
+#### `__init__.py`
+
+#### `bridge/__init__.py`
+
+#### `bridge/live_pipeline.py`
+- Symbol `LIVE_PIPELINE_VERSION` (L19).
+- Class `LivePipelineContinuation` (L22-L70).
+- Function `LivePipelineContinuation.__init__(self, args, engines)` (L25-L33).
+- Function `LivePipelineContinuation.append(self, rows: list[dict])` (L35-L70).
+- Function `LivePipelineContinuation.append.report_stage(label)` (L52-L56).
+- Class `LiveRawChanged` (L73-L74).
+- Class `LiveRawDeltaMismatch` (L77-L78).
+- Function `_decode_raw(data)` (L81-L85).
+- Class `LiveRawSource` (L88-L156).
+- Function `LiveRawSource.__init__(self, selected, data, original)` (L91-L98).
+- Function `LiveRawSource._remember_prefix(self, data)` (L100-L106).
+- Function `LiveRawSource._file_digest(prefix_hash, ending)` (L109-L112).
+- Function `LiveRawSource.append_delta(self, data, base_sha256, raw_sha256, pipeline)` (L114-L127).
+- Function `LiveRawSource.append(self, data, pipeline)` (L129-L145).
+- Function `LiveRawSource._append_rows(self, new_rows, pipeline)` (L147-L156).
+- Function `_send_worker_message(kind, **fields)` (L159-L160).
+- Function `_report_worker_progress(event)` (L163-L165).
+- Function `main()` (L168-L221).
+
+#### `bridge/trading_pipeline.py`
+- Symbol `_ENGINE_ROOT` (L32).
+- Symbol `_PIPELINE_DIR` (L33).
+- Symbol `_pipeline_dir_text` (L34).
+- Symbol `_DTFMT` (L42).
+- Symbol `TRADING_PIPELINE_VERSION` (L45).
+- Symbol `TRADING_PIPELINE_IMPLEMENTATION_VERSION` (L46).
+- Symbol `TRADING_PIPELINE_LAST_MODIFIED` (L47).
+- Symbol `MBL_EXTENSION_CANDLES` (L48).
+- Symbol `TEHRAN` (L50).
+- Symbol `_progress_sink` (L51).
+- Function `progress_events_to(sink)` (L55-L60).
+- Function `emit_progress(status: str, label: str, duration_ms: float | None=None, **details)` (L63-L72).
+- Function `timed(timings: dict[str, float], label: str, work)` (L75-L84).
+- Function `load_module(name: str, path: Path)` (L87-L94).
+- Function `load_engine(path: Path)` (L97-L98).
+- Symbol `_local_dt_cache: dict[int, datetime]` (L101).
+- Function `local_datetime(epoch: int)` (L104-L110).
+- Symbol `_epoch_cache: dict[datetime, int]` (L113).
+- Function `epoch(local: datetime)` (L116-L122).
+- Symbol `_display_epoch_cache: dict[str, int]` (L125).
+- Function `display_epoch(value: str | datetime)` (L128-L137).
+- Function `_aggregate_candle_buckets(rows: Iterable[dict], timeframe: int, cached_decimal: Callable[[object], Decimal], *, second_tail: dict | None=None, main_tail: dict | None=None, lower_only: bool=False)` (L140-L184).
+- Function `build_candle_buckets(rows: list[dict], timeframe: int, *, lower_only: bool=False)` (L187-L202).
+- Function `build_candle_buckets.cached_decimal(value: object)` (L192-L200).
+- Class `BucketAppend` (L206-L210).
+- Symbol `first_dirty_second: int` (L207).
+- Symbol `first_dirty_main: int` (L208).
+- Symbol `settled_seconds: int` (L209).
+- Symbol `settled_main: int` (L210).
+- Class `LiveMarketBuckets` (L213-L303).
+- Function `LiveMarketBuckets.__init__(self, timeframe: int)` (L216-L223).
+- Function `LiveMarketBuckets.append(self, rows: Sequence[dict])` (L225-L227).
+- Function `LiveMarketBuckets.stage_append(self, rows: Sequence[dict])` (L230-L295).
+- Function `LiveMarketBuckets.stage_append.checked_rows()` (L255-L264).
+- Function `LiveMarketBuckets.stage_append.cached_decimal(value: object)` (L266-L272).
+- Function `LiveMarketBuckets._delta(self, dirty_second: int, dirty_main: int)` (L297-L303).
+- Function `build_candle_objects(engine, buckets: list[dict], *, start_index: int=0)` (L306-L333).
+- Class `LiveMarketViews` (L336-L363).
+- Function `LiveMarketViews.__init__(self)` (L339-L343).
+- Function `LiveMarketViews._update_series(engine, buckets, candles, index, first_dirty)` (L346-L352).
+- Function `LiveMarketViews.update(self, engine, timeframe, second_buckets, main_buckets, delta, timings)` (L354-L363).
+- Function `_index_selected(index: object, start_index: int | None, end_index: int | None)` (L365-L370).
+- Function `select_reaction_serialization_items(result, start_index=None, end_index=None, reaction_transform=None)` (L373-L393).
+- Function `serialize(result, start_index=None, end_index=None, reaction_transform=None, selected_items=None)` (L396-L437).
+- Function `serialize_blue_lines(items, start_index=None, end_index=None)` (L440-L457).
+- Function `serialize_a_zones(items)` (L460-L484).
+- Function `serialize_s_zones(items)` (L487-L549).
+- Function `serialize_e_zones(items)` (L552-L592).
+- Function `serialize_stopalls(items)` (L595-L659).
+- Function `bridge_datetime(value: object | None)` (L662-L673).
+- Function `bridge_direction(direction: str)` (L676-L677).
+- Function `bridge_mode(mode: object)` (L680-L681).
+- Function `bridge_color(value: object | None)` (L684-L687).
+- Function `_bridge_horizon(market: MarketContext)` (L690-L694).
+- Function `_bridge_in_horizon(market: MarketContext, value: datetime | None)` (L697-L698).
+- Function `_bridge_proven_strict_event(market: MarketContext, direction: str, level: object | None, event_time: datetime | None)` (L701-L738).
+- Function `_bridge_stop_view(market: MarketContext, direction: str, price: object | None, stop_time: datetime | None, stop_event_time: datetime | None)` (L741-L758).
+- Function `_bridge_reaction_confirmation(market: MarketContext, direction: str, reaction: object, *, use_intrabar_start: bool=True)` (L761-L782).
+- Function `_bridge_order_identity(item: object)` (L785-L790).
+- Class `BridgeProjection` (L793-L984).
+- Function `BridgeProjection.__init__(self, *, direction: str, market: MarketContext, prepared_order_audit: list[object], order_direction: str)` (L801-L818).
+- Function `BridgeProjection.physical_order(self, prepared: object | None)` (L820-L863).
+- Function `BridgeProjection.parent_order(self, behavior: object)` (L865-L870).
+- Function `BridgeProjection.current_order(self, behavior: object, parent_type: str, parent_family: str | None, strict_stop_event: datetime | None)` (L872-L925).
+- Function `BridgeProjection.order_audit(self, prepared: object)` (L927-L984).
+- Function `_bridge_parent_stop(projection: BridgeProjection, detector: object | None, parent_type: str, item: object)` (L987-L1005).
+- Function `_bridge_a_stop(projection: BridgeProjection, s_detector: object | None, item: object)` (L1008-L1026).
+- Function `_bridge_behavior_stop(projection: BridgeProjection, direction: str, price: object, stop_time: datetime | None, stop_event_time: datetime | None)` (L1029-L1041).
+- Function `_bridge_blue_formation(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L1044-L1064).
+- Function `_bridge_project_reaction(projection: BridgeProjection, direction: str, raw: object, public: object)` (L1067-L1107).
+- Function `_bridge_project_reset(projection: BridgeProjection, direction: str, reset: object)` (L1110-L1130).
+- Function `_bridge_project_blue(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L1133-L1166).
+- Function `_bridge_full_lines_by_ordinal(lines: list[object])` (L1169-L1178).
+- Function `_bridge_project_a(projection: BridgeProjection, direction: str, item: object, lines_by_ordinal: dict[int, object], reactions: list[object], s_detector: object | None)` (L1181-L1268).
+- Function `_bridge_project_s(projection: BridgeProjection, direction: str, item: object, e_detector: object | None)` (L1271-L1324).
+- Function `_bridge_source_index(item: object)` (L1327-L1332).
+- Function `_bridge_parent_behavior_for_e(projection: BridgeProjection, direction: str, item: object, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1335-L1376).
+- Function `_bridge_project_e(projection: BridgeProjection, direction: str, item: object, e_detector: object | None, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1379-L1423).
+- Function `_bridge_project_stopall(projection: BridgeProjection, direction: str, item: object)` (L1426-L1492).
+- Function `_bridge_audit_order_key(prepared: object, detector: object)` (L1495-L1502).
+- Function `build_bridge_output(direction: str, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, selected_reactions: list[tuple[object, object]], selected_resets: list[object], selected_blue_lines: list[object], selected_a_zones: list[object], selected_s_zones: list[object], selected_e_zones: list[object], selected_stopalls: list[object], selected_order_audit: list[object])` (L1505-L1607).
+- Function `validate_order_audit_bridge(prepared_items, s_zones, e_zones, stopalls)` (L1610-L1675).
+- Function `serialize_order_audit(prepared_items, detector)` (L1678-L1728).
+- Class `EngineBundle` (L1732-L1739).
+- Symbol `reaction: object` (L1733).
+- Symbol `blue_line: object` (L1734).
+- Symbol `a_zone: object` (L1735).
+- Symbol `s_zone: object` (L1736).
+- Symbol `e_zone: object | None` (L1737).
+- Symbol `lifecycle: object | None` (L1738).
+- Symbol `primary: object | None` (L1739).
+- Class `MarketContext` (L1743-L1752).
+- Symbol `seconds: list[object]` (L1744).
+- Symbol `candles: list[object]` (L1745).
+- Symbol `lower_index: object` (L1746).
+- Symbol `chronology: object` (L1747).
+- Symbol `start_index: int` (L1748).
+- Symbol `end_index: int` (L1749).
+- Symbol `index_offset: int` (L1750).
+- Symbol `initial_bullish_trend: bool` (L1751).
+- Symbol `initial_bearish_trend: bool` (L1752).
+- Function `market_segment(market, start, stop, *, initial_bullish_trend=None, initial_bearish_trend=None)` (L1755-L1775).
+- Function `absolute_payload_indexes(value, offset)` (L1778-L1789).
+- Function `serialize_trend_transition(transition, market)` (L1792-L1812).
+- Function `parse_arguments(argv=None)` (L1815-L1889).
+- Function `load_engines(args, timings: dict[str, float])` (L1892-L1927).
+- Function `prepare_market_context(args, engines: EngineBundle, timings: dict[str, float])` (L1930-L1945).
+- Function `_prepare_market_context_from_rows(args, engines: EngineBundle, timings: dict[str, float], source_rows: list[dict])` (L1948-L1970).
+- Function `_prepare_market_context_from_buckets(args, engines: EngineBundle, timings: dict[str, float], second_buckets: list[dict], timeframe_buckets: list[dict], live_views: LiveMarketViews | None=None, bucket_delta: BucketAppend | None=None)` (L1973-L2029).
+- Class `PipelineState` (L2032-L2050).
+- Symbol `directions: tuple[str, ...]` (L2035).
+- Symbol `results: dict[str, object]` (L2036).
+- Symbol `reusable_full_context: bool` (L2037).
+- Symbol `initial_order_geometry: dict[str, object]` (L2038).
+- Symbol `internal_reaction_identities: dict[str, set[tuple[int, int]]]` (L2039).
+- Symbol `full_e_zones: dict[str, list[object]]` (L2040).
+- Symbol `full_e_detectors: dict[str, object]` (L2041).
+- Symbol `full_s_detectors: dict[str, object]` (L2042).
+- Symbol `full_lines_by_direction: dict[str, list[object]]` (L2043).
+- Symbol `full_a_by_direction: dict[str, list[object]]` (L2044).
+- Symbol `invalid_a_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2045).
+- Symbol `invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2046).
+- Symbol `full_s_by_direction: dict[str, list[object]]` (L2047).
+- Symbol `full_s_candidates_by_direction: dict[str, list[object]]` (L2048).
+- Symbol `primary_result: object | None` (L2049).
+- Symbol `live_stages: object | None` (L2050).
+- Class `FullDirectionState` (L2054-L2066).
+- Symbol `e_zones: list[object]` (L2057).
+- Symbol `e_detector: object` (L2058).
+- Symbol `s_detector: object` (L2059).
+- Symbol `blue_lines: list[object]` (L2060).
+- Symbol `a_zones: list[object]` (L2061).
+- Symbol `invalid_a_identities: set[tuple[datetime, int]]` (L2062).
+- Symbol `invalid_s_identities: set[tuple[datetime, int]]` (L2063).
+- Symbol `s_zones: list[object]` (L2064).
+- Symbol `s_candidates: list[object]` (L2065).
+- Symbol `initial_s_zones: list[object]` (L2066).
+- Function `create_e_detector(direction: str, e_engine, full_results: dict[str, object], s_zones: list[object], chronology, geometry_detectors: dict[str, object], initial_order_audit, lifecycle_engine, *, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[object]=(), live_continuation=None, order_geometry=None, live_scope=())` (L2069-L2124).
+- Function `create_e_detector.direct_geometry(geometry_direction, geometry_start, geometry_end, gate_event)` (L2091-L2104).
+- Function `calculate_full_direction_state(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], order_b_legs: Sequence[object]=(), shared_stages: FullDirectionState | None=None, live=None, feedback_index: int=0)` (L2127-L2482).
+- Function `calculate_direction_with_order_b_feedback(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], *, stopall_enabled: bool, live=None)` (L2485-L2549).
+- Function `prepare_pipeline_state(args, engines: EngineBundle, market: MarketContext, timings: dict[str, float], *, live=None, report_stage=None)` (L2552-L2703).
+- Class `DirectionRangeState` (L2707-L2716).
+- Symbol `blue_lines: list[object]` (L2710).
+- Symbol `a_zones: list[object]` (L2711).
+- Symbol `s_candidates: list[object]` (L2712).
+- Symbol `accepted_s_zones: list[object]` (L2713).
+- Symbol `e_zones: list[object]` (L2714).
+- Symbol `invalid_a_identities: set[tuple[datetime, int]]` (L2715).
+- Symbol `invalid_s_identities: set[tuple[datetime, int]]` (L2716).
+- Class `DirectionVisibilityState` (L2720-L2735).
+- Symbol `blue_lines: list[object]` (L2723).
+- Symbol `a_zones: list[object]` (L2724).
+- Symbol `s_zones: list[object]` (L2725).
+- Symbol `e_zones: list[object]` (L2726).
+- Symbol `stopalls: list[object]` (L2727).
+- Symbol `prepared_order_audit: list[object]` (L2728).
+- Symbol `projection_s_zones: list[object]` (L2732).
+- Symbol `projection_e_zones: list[object]` (L2733).
+- Symbol `projection_stopalls: list[object]` (L2734).
+- Symbol `primary_groups: dict[str, list[object]]` (L2735).
+- Function `calculate_direction_range_state(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L2738-L2837).
+- Function `finalize_direction_visibility(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, direction_state: DirectionRangeState, timings: dict[str, float])` (L2840-L3076).
+- Function `serialize_direction_payload(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, timings: dict[str, float])` (L3079-L3217).
+- Function `serialize_direction_payload.build_legacy_payload()` (L3106-L3129).
+- Function `serialize_direction_payload.serialize_reactions_from_one_selection()` (L3138-L3146).
+- Function `serialize_direction_payload.build_payload()` (L3179-L3213).
+- Function `serialize_primary_order(order, market, owner_direction)` (L3220-L3246).
+- Function `serialize_primary_order.value(item)` (L3223-L3228).
+- Function `serialize_primary_structures(primary, market)` (L3249-L3368).
+- Function `serialize_primary_structures.cycle_identity(value)` (L3260-L3265).
+- Function `serialize_primary_structures.point(item)` (L3266-L3289).
+- Function `calculate_primary_structures(args, engines, market, state, visibility, timings, direction='bearish')` (L3371-L3424).
+- Function `calculate_primary_structures.commit_high(point)` (L3394-L3402).
+- Function `build_direction_output(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L3427-L3467).
+- Function `merge_regime_outputs(regimes)` (L3469-L3495).
+- Function `build_reversed_trend_outputs(args, engines, market, transition, timings, *, live=None)` (L3498-L3591).
+- Function `build_reversed_trend_outputs.calculate(context, direction, continuation=None)` (L3506-L3514).
+- Function `build_reversed_trend_outputs.publish(group, index_offset, first_time, *, stopped=False)` (L3516-L3531).
+- Function `build_reversed_trend_outputs.calculate_closed(current=current, boundary=boundary, current_direction=current_direction)` (L3538-L3554).
+- Function `build_reversed_trend_outputs.empty_lists(item)` (L3564-L3569).
+- Function `build_response_payload(args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float], pipeline_started: float)` (L3594-L3667).
+- Function `build_response_payload.stopall_confirmation_closed(row)` (L3654-L3655).
+- Function `_market_calculation_scope(reaction)` (L3671-L3685).
+- Function `calculate_live_from_raw(args, engines: EngineBundle, rows: list[dict], *, report_stage=None)` (L3688-L3692).
+- Function `calculate_live_from_buckets(args, engines: EngineBundle, buckets: LiveMarketBuckets, *, live_views: LiveMarketViews | None=None, bucket_delta: BucketAppend | None=None, report_stage=None)` (L3695-L3703).
+- Function `_run_live_calculation(args, engines, prepare_market, market_inputs, report_stage)` (L3706-L3714).
+- Function `main()` (L3717-L3748).
+
+#### `pipeline/__init__.py`
+- Symbol `_pipeline_dir` (L10).
+- Symbol `__all__` (L22).
+
+#### `pipeline/a_zone_detector.py`
+- Symbol `A_ZONE_VERSION` (L20).
+- Symbol `A_ZONE_IMPLEMENTATION_VERSION` (L21).
+- Symbol `A_ZONE_LAST_MODIFIED_DATE` (L22).
+- Class `BlueState` (L26-L35).
+- Symbol `ordinal: int` (L27).
+- Symbol `line: object` (L28).
+- Symbol `formation_index: int` (L29).
+- Symbol `formation_time: datetime` (L30).
+- Symbol `stop_index: int | None` (L31).
+- Symbol `stop_time: datetime | None` (L32).
+- Symbol `stop_event_time: datetime | None` (L33).
+- Symbol `stop_level: Decimal` (L34).
+- Symbol `stop_event_extreme: Decimal | None` (L35).
+- Class `AZone` (L39-L65).
+- Symbol `direction: str` (L40).
+- Symbol `blue_1_ordinal: int` (L41).
+- Symbol `blue_2_ordinal: int` (L42).
+- Symbol `blue_1_source_time: datetime` (L43).
+- Symbol `blue_2_source_time: datetime` (L44).
+- Symbol `blue_1_stop_time: datetime` (L45).
+- Symbol `blue_2_stop_time: datetime` (L46).
+- Symbol `blue_1_stop_level: Decimal` (L47).
+- Symbol `blue_2_stop_level: Decimal` (L48).
+- Symbol `continuation_level: Decimal` (L49).
+- Symbol `continuation_source_index: int` (L50).
+- Symbol `continuation_source_time: datetime` (L51).
+- Symbol `trigger_index: int` (L52).
+- Symbol `trigger_time: datetime` (L53).
+- Symbol `trigger_event_time: datetime` (L54).
+- Symbol `reaction_number: int` (L55).
+- Symbol `reaction_first_time: datetime` (L56).
+- Symbol `reaction_break_time: datetime` (L57).
+- Symbol `source_index: int` (L58).
+- Symbol `source_time: datetime` (L59).
+- Symbol `price: Decimal` (L60).
+- Symbol `formation_route: str | None` (L63).
+- Symbol `blue_1_stop_event_time: datetime | None` (L64).
+- Symbol `blue_2_stop_event_time: datetime | None` (L65).
+- Class `AZoneDetector` (L68-L836).
+- Function `AZoneDetector.__init__(self, direction: str, reactions: Sequence[object], blue_lines: Sequence[object], chronology: object)` (L69-L109).
+- Function `AZoneDetector.extreme_name(self)` (L112-L113).
+- Function `AZoneDetector._strict_cross(self, value: Decimal, level: Decimal)` (L115-L116).
+- Function `AZoneDetector._better(self, value: Decimal, current: Decimal)` (L118-L119).
+- Function `AZoneDetector._main_index(self, timestamp: datetime)` (L121-L122).
+- Function `AZoneDetector._lower_window(self, start: datetime, end: datetime | None)` (L124-L127).
+- Function `AZoneDetector._first_crossing(self, level: Decimal, start: datetime, end: datetime | None)` (L129-L169).
+- Function `AZoneDetector._range_extreme(self, start: datetime, end: datetime)` (L171-L214).
+- Function `AZoneDetector._formation(self, line: object)` (L216-L231).
+- Function `AZoneDetector._reset_formation_time(self, line: object, source_index: int)` (L233-L243).
+- Function `AZoneDetector._build_blue_states(self)` (L245-L272).
+- Function `AZoneDetector._double_stop_a_candidates(self)` (L274-L335).
+- Function `AZoneDetector._pair_trigger(self, previous: BlueState, current: BlueState, expires_at: datetime | None)` (L337-L495).
+- Function `AZoneDetector._reaction_confirmation_time(self, reaction: object)` (L497-L500).
+- Function `AZoneDetector._first_reaction_after(self, trigger_event_time: datetime, *, not_before: datetime | None=None, start_position: int=0)` (L502-L531).
+- Function `AZoneDetector._inherited_stop(self, previous: BlueState, current: BlueState)` (L533-L590).
+- Function `AZoneDetector._a_source(self, trigger_index: int, reaction: object)` (L592-L611).
+- Function `AZoneDetector._detect_ordinary_a(self, states: list[BlueState])` (L613-L732).
+- Function `AZoneDetector._filter_special_a(self, special: list[AZone], ordinary: list[AZone])` (L734-L796).
+- Function `AZoneDetector.detect(self)` (L798-L808).
+- Function `AZoneDetector._zone(self, **fields)` (L810-L811).
+- Function `AZoneDetector._a_was_stopped_before(self, zone: AZone, end_time: datetime, *, not_before: datetime | None=None)` (L813-L836).
+- Function `detect_a_zones(direction: str, reactions: Sequence[object], blue_lines: Sequence[object], chronology: object)` (L839-L845).
+- Symbol `_MarketEvent` (L848).
+- Symbol `_EventKey` (L849).
+- Class `_AHistory` (L853-L862).
+- Symbol `confirmations: dict[_EventKey, datetime]` (L854).
+- Symbol `reset_formations: dict[_EventKey, datetime]` (L855).
+- Symbol `crossings: dict[_EventKey, tuple[_MarketEvent | None, bool]]` (L856).
+- Symbol `extremes: dict[_EventKey, tuple[Decimal, int, datetime]]` (L857).
+- Symbol `matches: dict[_EventKey, int | None]` (L858).
+- Symbol `inherited_stops: dict[_EventKey, tuple | None]` (L859).
+- Symbol `triggers: dict[_EventKey, tuple | None]` (L860).
+- Symbol `sources: dict[_EventKey, _MarketEvent | None]` (L861).
+- Symbol `zones: dict[_EventKey, AZone]` (L862).
+- Class `_LiveAZoneDetector` (L865-L1036).
+- Function `_LiveAZoneDetector.__init__(self, direction, reactions, blue_lines, chronology, previous, dirty_time)` (L868-L888).
+- Function `_LiveAZoneDetector._settled(self, event_time: datetime)` (L890-L891).
+- Function `_LiveAZoneDetector._settled_reaction_window(self, end: datetime)` (L893-L896).
+- Function `_LiveAZoneDetector._reaction_confirmation_time(self, reaction)` (L898-L908).
+- Function `_LiveAZoneDetector._reset_formation_time(self, line, source_index)` (L910-L917).
+- Function `_LiveAZoneDetector._first_crossing(self, level, start, end)` (L919-L949).
+- Function `_LiveAZoneDetector._range_extreme(self, start, end)` (L951-L960).
+- Function `_LiveAZoneDetector._first_reaction_after(self, trigger_event_time, *, not_before=None)` (L962-L979).
+- Function `_LiveAZoneDetector._blue_key(state)` (L982-L988).
+- Function `_LiveAZoneDetector._inherited_stop(self, previous, current)` (L990-L997).
+- Function `_LiveAZoneDetector._pair_trigger(self, previous, current, expires_at)` (L999-L1012).
+- Function `_LiveAZoneDetector._a_source(self, trigger_index, reaction)` (L1014-L1025).
+- Function `_LiveAZoneDetector._zone(self, **fields)` (L1027-L1036).
+- Class `LiveAZoneContinuation` (L1039-L1069).
+- Function `LiveAZoneContinuation.__init__(self, direction, reactions, blue_lines, chronology)` (L1042-L1046).
+- Function `LiveAZoneContinuation.result(self)` (L1049-L1050).
+- Function `LiveAZoneContinuation.update(self, reactions, blue_lines, chronology, *, first_dirty_main: int)` (L1052-L1069).
+
+#### `pipeline/blue_line_detector.py`
+- Symbol `BLUE_LINE_VERSION` (L21).
+- Symbol `FIBONACCI_RATIO` (L22).
+- Class `ScaleStrike` (L26-L29).
+- Symbol `source_index: int` (L27).
+- Symbol `source_time: datetime` (L28).
+- Symbol `extreme: Decimal` (L29).
+- Class `BlueLine` (L33-L48).
+- Symbol `direction: str` (L34).
+- Symbol `kind: str` (L35).
+- Symbol `reaction_number: int` (L36).
+- Symbol `previous_strike_count: int | None` (L37).
+- Symbol `strike_count: int | None` (L38).
+- Symbol `fibonacci_level: Decimal | None` (L39).
+- Symbol `source_index: int` (L40).
+- Symbol `source_time: datetime` (L41).
+- Symbol `source_extreme: Decimal` (L42).
+- Symbol `broken_level: Decimal | None` (L43).
+- Symbol `line_price: Decimal` (L44).
+- Symbol `start_time: datetime` (L45).
+- Symbol `end_time: datetime` (L46).
+- Symbol `calculation_valid: bool` (L47).
+- Symbol `behavior_internal: bool` (L48).
+- Function `_is_color(candle: object, color: str)` (L51-L52).
+- Function `_main_candle(candles_by_index: dict[int, object], index: int)` (L55-L59).
+- Function `_stops_on_index(direction: str, line: object, candles: Sequence[object], start_index: int, end_index: int)` (L62-L75).
+- Function `fibonacci_level(direction: str, reaction: object, reference: Decimal)` (L78-L84).
+- Function `_intrabar_pending_confirmation(direction: str, chronology: object, reaction: object, comparison_extreme: Decimal, start_time: datetime, break_time: datetime, candles_by_index: dict[int, object])` (L87-L142).
+- Function `count_scale_strikes(direction: str, reaction: object, chronology: object, reference: Decimal, candles_by_index: dict[int, object] | None=None)` (L145-L230).
+- Function `_build_scale_blue_line(direction: str, reaction_number: int, previous_count: int, level: Decimal, strikes: Sequence[ScaleStrike], candles_by_index: dict[int, object], chronology: object, behavior_internal: bool)` (L233-L268).
+- Function `_build_reset_blue_line(direction: str, reaction_number: int, reset: object, previous_line: BlueLine | None, candles: Sequence[object], candles_by_index: dict[int, object], chronology: object, behavior_internal: bool)` (L271-L323).
+- Class `_BlueCheckpoint` (L326-L330).
+- Symbol `previous_reaction: object | None` (L327).
+- Symbol `previous_count: int | None` (L328).
+- Symbol `healthy_since_blue: int` (L329).
+- Symbol `line_count: int` (L330).
+- Function `_calculate_blue_tail(direction: str, reactions: Sequence[object], chronology: object, resets: Sequence[object], *, start: int, checkpoint: _BlueCheckpoint, output: list[BlueLine], checkpoints: list[_BlueCheckpoint] | None=None)` (L333-L444).
+- Function `detect_blue_lines(direction: str, reactions: Sequence[object], chronology: object, resets: Sequence[object]=())` (L447-L459).
+- Class `LiveBlueLineContinuation` (L462-L514).
+- Function `LiveBlueLineContinuation.__init__(self, direction: str, reactions: Sequence[object], chronology: object, resets: Sequence[object]=())` (L470-L481).
+- Function `LiveBlueLineContinuation.result(self)` (L484-L485).
+- Function `LiveBlueLineContinuation.update(self, reactions: Sequence[object], chronology: object, resets: Sequence[object], *, first_changed: int, first_dirty_main: int | None=None)` (L487-L514).
+- Function `public_blue_lines(lines: Sequence[BlueLine])` (L517-L524).
+- Function `mark_internal_blue_lines(lines: Sequence[BlueLine], owner_reactions: Sequence[object], all_behavior_reactions: Sequence[object])` (L526-L590).
+- Function `mark_internal_blue_lines.index_interiors()` (L541-L552).
+- Function `mark_internal_blue_lines.owner_is_internal(line: BlueLine)` (L554-L558).
+- Function `mark_internal_blue_lines.geometry_is_internal(line: BlueLine)` (L560-L586).
+
+#### `pipeline/core_utils.py`
+- Symbol `CORE_UTILS_VERSION` (L11).
+- Symbol `_Payload` (L14).
+- Class `ChronologicalContainmentIndex` (L17-L41).
+- Function `ChronologicalContainmentIndex.__init__(self, intervals: Iterable[tuple[datetime, datetime, _Payload]])` (L20-L34).
+- Function `ChronologicalContainmentIndex.enclosing(self, start: datetime, end: datetime)` (L36-L41).
+- Function `ordered_naive_datetimes(values: Sequence[datetime])` (L44-L48).
+- Function `as_decimal(value: object)` (L51-L53).
+- Symbol `OrderIdentity: TypeAlias` (L56).
+- Function `order_identity(first_index: object, break_index: object)` (L59-L61).
+- Function `reaction_identity(reaction: object)` (L64-L66).
+
+#### `pipeline/direction_policy.py`
+- Symbol `DIRECTION_POLICY_VERSION` (L11).
+- Symbol `Direction` (L17).
+- Class `DirectionPolicy` (L21-L46).
+- Symbol `direction: Direction` (L22).
+- Symbol `extreme_attr: Literal['low', 'high']` (L23).
+- Symbol `opposite_extreme_attr: Literal['high', 'low']` (L24).
+- Symbol `first_reaction_tag: Literal['RED', 'GREEN']` (L25).
+- Symbol `context_tag: Literal['GREEN', 'RED']` (L26).
+- Function `DirectionPolicy.opposite_direction(self)` (L29-L30).
+- Function `DirectionPolicy.strict_cross(self, value: Decimal, level: Decimal)` (L32-L33).
+- Function `DirectionPolicy.better_extreme(self, value: Decimal, current: Decimal)` (L35-L36).
+- Function `DirectionPolicy.choose_extreme(self, left: Decimal, right: Decimal)` (L38-L39).
+- Function `DirectionPolicy.confirmation_cross(self, value: Decimal, level: Decimal)` (L41-L46).
+- Function `policy_for(direction: str)` (L49-L54).
+- Symbol `BULLISH` (L57).
+- Symbol `BEARISH` (L64).
+
+#### `pipeline/e_zone_detector.py`
+- Symbol `E_ZONE_VERSION` (L30).
+- Symbol `E_ZONE_IMPLEMENTATION_VERSION` (L31).
+- Symbol `E_ZONE_LAST_MODIFIED` (L32).
+- Class `EZone` (L36-L71).
+- Symbol `direction: str` (L37).
+- Symbol `family: str` (L38).
+- Symbol `number: int` (L39).
+- Symbol `parent_type: str` (L40).
+- Symbol `parent_source_index: int` (L41).
+- Symbol `parent_source_time: datetime` (L42).
+- Symbol `parent_price: Decimal` (L43).
+- Symbol `parent_stop_index: int` (L44).
+- Symbol `parent_stop_time: datetime` (L45).
+- Symbol `parent_stop_event_time: datetime` (L46).
+- Symbol `order_direction: str` (L47).
+- Symbol `order_reaction_number: int` (L48).
+- Symbol `order_mode: str` (L49).
+- Symbol `order_causes: tuple[str, ...]` (L50).
+- Symbol `order_parent_stop_cause_time: datetime | None` (L51).
+- Symbol `order_first_index: int` (L52).
+- Symbol `order_first_time: datetime` (L53).
+- Symbol `order_break_index: int` (L54).
+- Symbol `order_break_time: datetime` (L55).
+- Symbol `order_confirmation_time: datetime` (L56).
+- Symbol `order_box_top: Decimal` (L57).
+- Symbol `order_box_top_source_index: int` (L58).
+- Symbol `order_box_top_source_time: datetime` (L59).
+- Symbol `order_box_bottom: Decimal` (L60).
+- Symbol `order_box_bottom_source_index: int` (L61).
+- Symbol `order_box_bottom_source_time: datetime` (L62).
+- Symbol `order_stop_level: Decimal` (L63).
+- Symbol `order_stop_source_index: int` (L64).
+- Symbol `order_stop_source_time: datetime` (L65).
+- Symbol `source_index: int` (L66).
+- Symbol `source_time: datetime` (L67).
+- Symbol `price: Decimal` (L68).
+- Symbol `decision_index: int` (L69).
+- Symbol `decision_time: datetime` (L70).
+- Symbol `decision_event_time: datetime` (L71).
+- Class `_ParentStopProgress` (L75-L77).
+- Symbol `scanned_until: datetime` (L76).
+- Symbol `event: datetime | None` (L77).
+- Class `_EReconciliationStep` (L81-L85).
+- Symbol `source: int` (L82).
+- Symbol `count: int` (L83).
+- Symbol `active: tuple[EZone, ...]` (L84).
+- Symbol `sequence_start: datetime | None` (L85).
+- Class `_ReopenedERace` (L88-L89).
+- Class `_ReconciledE` (L93-L100).
+- Symbol `candidates: tuple[EZone, ...]` (L94).
+- Symbol `numbered: tuple[EZone, ...]` (L95).
+- Symbol `accepted: frozenset[tuple[datetime, int]]` (L96).
+- Symbol `lifecycle_starts: frozenset[datetime]` (L97).
+- Symbol `evidence: tuple` (L98).
+- Symbol `steps: tuple[_EReconciliationStep, ...]` (L99).
+- Symbol `native_numbered: tuple[EZone, ...]` (L100).
+- Class `LiveEContinuation` (L103-L309).
+- Function `LiveEContinuation.__init__(self)` (L112-L126).
+- Function `LiveEContinuation.advance(self, chronology: object, *, first_dirty_main: int)` (L128-L146).
+- Function `LiveEContinuation._dirty_time(self, detector: EZoneDetector)` (L148-L151).
+- Function `LiveEContinuation.first_stop(self, detector: EZoneDetector, start: datetime, level: Decimal, *, less: bool, search: Callable[[datetime, datetime, Decimal], datetime | None])` (L153-L174).
+- Function `LiveEContinuation.extreme(self, detector: EZoneDetector, start_index: int, end_index: int)` (L176-L194).
+- Function `LiveEContinuation.zone(self, detector: EZoneDetector, family: str, number: int, parent_type: str, parent: object, stop_event: datetime, match: OrderMatch, source: tuple[int, datetime, Decimal])` (L196-L218).
+- Function `LiveEContinuation.reconcile(self, detector: EZoneDetector, candidates: list[EZone])` (L220-L309).
+- Class `EZoneDetector` (L312-L1506).
+- Function `EZoneDetector.__init__(self, direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], s_zones: Sequence[object], opposite_resets: Sequence[object], chronology: object, start_index: int=0, end_index: int | None=None, direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None=None, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), initial_order_audit: dict[tuple[int, int], dict[str, object]] | None=None, sequence_resets: dict[datetime, int] | None=None, sequence_priority: Callable[[str, str], int] | None=None, invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[OrderBResetLeg]=(), live_continuation: LiveEContinuation | None=None, live_scope: tuple=())` (L313-L392).
+- Function `EZoneDetector.sequence_resets(self)` (L395-L396).
+- Function `EZoneDetector.sequence_resets(self, resets: dict[datetime, int])` (L399-L411).
+- Function `EZoneDetector._reset_time(self, reset: object)` (L413-L414).
+- Function `EZoneDetector._main_index(self, value: datetime)` (L416-L417).
+- Function `EZoneDetector._first_cross_position(self, left: int, right: int, level: Decimal, *, less: bool)` (L420-L435).
+- Function `EZoneDetector._stop_value(self, item: object)` (L437-L438).
+- Function `EZoneDetector._initialize_main_extremes(self)` (L440-L456).
+- Function `EZoneDetector._build_extreme_sparse(self)` (L458-L485).
+- Function `EZoneDetector._extreme_position(self, left: int, right: int)` (L487-L504).
+- Function `EZoneDetector._first_parent_stop(self, source_time: datetime, level: Decimal)` (L507-L517).
+- Function `EZoneDetector._search_parent_stop(self, start: datetime, end: datetime, level: Decimal)` (L519-L522).
+- Function `EZoneDetector._search_order_stop(self, start: datetime, end: datetime, level: Decimal)` (L524-L527).
+- Function `EZoneDetector._search_strict_cross(self, start: datetime, end: datetime, level: Decimal, *, less: bool)` (L529-L535).
+- Function `EZoneDetector._cross_order(self, start: datetime, level: Decimal)` (L537-L557).
+- Function `EZoneDetector._confirmation_for(self, reaction: object, direction: str)` (L559-L560).
+- Function `EZoneDetector._confirmation(self, reaction: object)` (L562-L563).
+- Function `EZoneDetector._reaction_first_time(self, reaction: object)` (L565-L566).
+- Function `EZoneDetector._parent_stop(self, parent_type: str, parent: object)` (L569-L572).
+- Function `EZoneDetector.parent_stop(self, parent_type: str, parent: object)` (L574-L578).
+- Function `EZoneDetector._extreme_between(self, start: datetime, end: datetime)` (L581-L592).
+- Function `EZoneDetector._find_extreme(self, start_index: int, end_index: int)` (L594-L606).
+- Function `EZoneDetector._zone(self, family: str, number: int, parent_type: str, parent: object, stop_event: datetime, *, e_owned_source_times: set[datetime] | None=None)` (L608-L675).
+- Function `EZoneDetector._zone.post_stop_choices()` (L644-L649).
+- Function `EZoneDetector._build_zone(self, family: str, number: int, parent_type: str, parent: object, stop_event: datetime, order_match: OrderMatch, prospective_source: tuple[int, datetime, Decimal])` (L677-L733).
+- Function `EZoneDetector.set_consumed_s_evidence(self, evidence: Sequence[tuple[object, object]])` (L735-L745).
+- Function `EZoneDetector._apply_consumed_s_evidence(self, zones: Sequence[EZone])` (L747-L763).
+- Function `EZoneDetector.continuation_chain_from_s(self, owner: EZone, s_zone: object, independent_a_order_identities: frozenset[tuple[int, int]]=frozenset())` (L765-L822).
+- Function `EZoneDetector.replace_with_earlier_continuation(self, base_zones: Sequence[EZone], owner: EZone, continuation: Sequence[EZone])` (L824-L869).
+- Function `EZoneDetector.replace_with_earlier_continuation.descends_from_owner(item: EZone)` (L833-L847).
+- Function `EZoneDetector.resolve_same_source_conflicts(self, zones: Sequence[EZone])` (L871-L913).
+- Function `EZoneDetector.resolve_same_source_conflicts.outranks(candidate: EZone, current: EZone)` (L889-L896).
+- Function `EZoneDetector.restore_independent_s_roots(self, dominant_zones: Sequence[EZone])` (L915-L1005).
+- Function `EZoneDetector._invalid_s_without_order_cause(self, zone: EZone)` (L1007-L1029).
+- Function `EZoneDetector._discover_candidate_chains(self)` (L1031-L1122).
+- Function `EZoneDetector._reconcile_candidate_chains(self, candidates: list[EZone])` (L1124-L1130).
+- Function `EZoneDetector._compute_reconciliation(self, candidates: list[EZone], *, steps=None, checkpoint=None, previous=None, frontier=0)` (L1132-L1492).
+- Function `EZoneDetector._compute_reconciliation.index_numbered(item: EZone)` (L1175-L1186).
+- Function `EZoneDetector._compute_reconciliation.index_child(zone: EZone)` (L1193-L1199).
+- Function `EZoneDetector._compute_reconciliation.enqueue(zone: EZone | None, current_source: int)` (L1204-L1218).
+- Function `EZoneDetector._compute_reconciliation.valid_order(zone: EZone)` (L1220-L1227).
+- Function `EZoneDetector._compute_reconciliation.parent_active(zone: EZone, seen: set[tuple[int, datetime]] | None=None)` (L1229-L1285).
+- Function `EZoneDetector._compute_reconciliation.stopped_by(zone: EZone, prior: EZone)` (L1287-L1292).
+- Function `EZoneDetector._compute_reconciliation.ownership_priority(item: EZone)` (L1365-L1370).
+- Function `EZoneDetector._compute_reconciliation.collect_lineage(zone: EZone, seen: set[tuple[int, datetime]])` (L1465-L1477).
+- Function `EZoneDetector.detect(self)` (L1495-L1506).
+- Function `detect_e_zones(direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], s_zones: Sequence[object], opposite_resets: Sequence[object], chronology: object, start_index: int=0, end_index: int | None=None, direct_geometry_finder: Callable[[str, int, int, datetime], object | None] | None=None, blocked_order_first_times: set[datetime] | None=None, initial_order_audit: dict[tuple[int, int], dict[str, object]] | None=None, sequence_priority: Callable[[str, str], int] | None=None, invalid_s_root_identities: set[tuple[datetime, int]] | None=None)` (L1509-L1538).
+
+#### `pipeline/lifecycle_engine.py`
+- Symbol `STOP_ALL_VERSION` (L24).
+- Symbol `STOP_ALL_IMPLEMENTATION_VERSION` (L25).
+- Symbol `STOP_ALL_LAST_MODIFIED` (L26).
+- Symbol `SEQUENCE_PRIORITY` (L29).
+- Function `sequence_priority(kind: str, family: str)` (L37-L39).
+- Class `StopAll` (L43-L92).
+- Symbol `direction: str` (L44).
+- Symbol `number: int` (L45).
+- Symbol `source_index: int` (L46).
+- Symbol `source_time: datetime` (L47).
+- Symbol `price: Decimal` (L48).
+- Symbol `decision_index: int` (L49).
+- Symbol `decision_time: datetime` (L50).
+- Symbol `decision_event_time: datetime` (L51).
+- Symbol `gate_type: str` (L52).
+- Symbol `gate_event_time: datetime` (L53).
+- Symbol `stopped_behavior_type: str` (L54).
+- Symbol `stopped_behavior_key: str` (L55).
+- Symbol `stopped_behavior_count: int` (L56).
+- Symbol `underlying_e_family: str | None` (L57).
+- Symbol `underlying_e_number: int | None` (L58).
+- Symbol `order_direction: str | None` (L59).
+- Symbol `order_reaction_number: int | None` (L60).
+- Symbol `order_mode: str | None` (L61).
+- Symbol `order_causes: tuple[str, ...]` (L62).
+- Symbol `order_parent_stop_cause_time: datetime | None` (L63).
+- Symbol `order_first_index: int | None` (L64).
+- Symbol `order_first_time: datetime | None` (L65).
+- Symbol `order_break_index: int | None` (L66).
+- Symbol `order_break_time: datetime | None` (L67).
+- Symbol `order_confirmation_time: datetime | None` (L68).
+- Symbol `order_box_top: Decimal | None` (L69).
+- Symbol `order_box_top_source_index: int | None` (L70).
+- Symbol `order_box_top_source_time: datetime | None` (L71).
+- Symbol `order_box_bottom: Decimal | None` (L72).
+- Symbol `order_box_bottom_source_index: int | None` (L73).
+- Symbol `order_box_bottom_source_time: datetime | None` (L74).
+- Symbol `order_stop_level: Decimal | None` (L75).
+- Symbol `order_stop_source_index: int | None` (L76).
+- Symbol `order_stop_source_time: datetime | None` (L77).
+- Symbol `stop_index: int | None` (L78).
+- Symbol `stop_time: datetime | None` (L79).
+- Symbol `stop_event_time: datetime | None` (L80).
+- Symbol `donor_type: str | None` (L85).
+- Symbol `donor_source_index: int | None` (L86).
+- Symbol `donor_source_time: datetime | None` (L87).
+- Symbol `donor_color: str | None` (L88).
+- Symbol `donor_number: int | None` (L89).
+- Symbol `donor_price: Decimal | None` (L90).
+- Symbol `donor_stop_time: datetime | None` (L91).
+- Symbol `donor_stop_event_time: datetime | None` (L92).
+- Class `_DominantBehavior` (L96-L118).
+- Symbol `kind: str` (L99).
+- Symbol `family: str` (L100).
+- Symbol `number: int | None` (L101).
+- Symbol `count: int` (L102).
+- Symbol `latest: object` (L103).
+- Function `_DominantBehavior.priority(self)` (L106-L107).
+- Function `_DominantBehavior.armed(self)` (L110-L111).
+- Function `_DominantBehavior.key(self)` (L114-L118).
+- Function `advance_dominant_behavior(owner: _DominantBehavior | None, kind: str, family: str, number: int | None, item: object)` (L121-L139).
+- Class `_StopAllCheckpoint` (L143-L147).
+- Symbol `owner: _DominantBehavior | None` (L144).
+- Symbol `pending_stop: tuple[_DominantBehavior, datetime] | None` (L145).
+- Symbol `active: tuple[StopAll, ...]` (L146).
+- Symbol `output_count: int` (L147).
+- Class `StopAllDetector` (L150-L531).
+- Function `StopAllDetector.__init__(self, direction: str, s_zones: Sequence[object], e_zones: Sequence[object], chronology: object)` (L151-L168).
+- Function `StopAllDetector._strict_stop(self, start: datetime, level: Decimal)` (L170-L184).
+- Function `StopAllDetector._dominates_e(new: tuple[str, int], old: tuple[str, int])` (L187-L194).
+- Function `StopAllDetector._stopall_from_e(self, item: object, number: int, gate_type: str, gate_event: datetime, behavior_type: str, behavior_key: str, behavior_count: int)` (L196-L252).
+- Function `StopAllDetector._optional_int(value: object | None)` (L255-L256).
+- Function `StopAllDetector._optional_decimal(value: object | None)` (L259-L260).
+- Function `StopAllDetector._stopall_from_s(self, item: object, behavior_type: str, behavior_key: str, behavior_count: int, underlying_e_key: tuple[str, int] | None, gate_event: datetime)` (L262-L348).
+- Function `StopAllDetector._events(self)` (L350-L354).
+- Function `StopAllDetector.detect(self)` (L356-L359).
+- Function `StopAllDetector._detect_events(self, events, checkpoint, output, checkpoints=None)` (L361-L523).
+- Function `StopAllDetector._detect_events.armed_stop_before(boundary: datetime, donor_e: object | None=None)` (L368-L416).
+- Function `StopAllDetector._detect_events.accept(kind: str, family: str, number: int | None, item: object)` (L418-L420).
+- Function `StopAllDetector._detect_events.process_s_event(s_item: object)` (L422-L473).
+- Function `StopAllDetector._detect_events.process_e_event(e_item: object)` (L475-L515).
+- Function `StopAllDetector._resolve_stop(self, item: StopAll, *, after: datetime | None=None)` (L525-L531).
+- Class `LiveStopAllContinuation` (L534-L590).
+- Function `LiveStopAllContinuation.__init__(self, direction, s_zones, e_zones, chronology)` (L537-L544).
+- Function `LiveStopAllContinuation.result(self)` (L547-L548).
+- Function `LiveStopAllContinuation.update(self, s_zones, e_zones, chronology, *, first_dirty_main: int)` (L550-L590).
+- Function `detect_stopalls(direction: str, s_zones: Sequence[object], e_zones: Sequence[object], chronology: object)` (L593-L599).
+- Function `resolve_order_context(order_audit: dict, accepted_a_sources: set[datetime], inherited_blocked_first_times: set[datetime], invalid_a_zones: Sequence[object], pending_s_a_sources: set[datetime], opposite_reactions: Sequence[object], candles: Sequence[object], direction: str, stop_finder, *, accepted_e_stop_events: set[datetime] | None=None, opposite_confirmation_finder=None, e_parent_order_first_exceptions_out: set[tuple[datetime, datetime]] | None=None)` (L606-L692).
+- Function `visible_a_zones_after_s_stops(a_zones, s_zones, candles)` (L695-L710).
+- Function `module_priority(item: object)` (L712-L724).
+- Function `module_identity(item: object)` (L726-L733).
+- Function `module_stop_event(item: object, stop_event_finder=None)` (L735-L747).
+- Function `strictly_beyond_boundary(price: Decimal, boundary: Decimal, direction: str)` (L749-L752).
+- Function `dominant_module(modules: Sequence[object])` (L754-L763).
+- Function `split_a_zones_by_dominant_stops(a_zones, s_zones, e_zones, stopalls, candles, direction, stop_event_finder=None, trend_reactions=None, confirmation_finder=None, a_stop_event_finder=None, stage_invalid_a_identities=None)` (L766-L971).
+- Function `blocked_orders_while_invalid_leg_heads_are_live(invalid_a_zones, opposite_reactions, candles, direction, stop_finder)` (L973-L993).
+- Function `consumed_s_evidence_after_larger_stop(s_candidates, accepted_s_zones, e_zones, direction, stop_event_finder, candles)` (L996-L1136).
+- Function `s_zones_for_module_engines(s_zones, e_zones, direction)` (L1138-L1178).
+- Function `s_zones_for_module_engines.latest_prior(items, times, source)` (L1145-L1151).
+- Function `s_zones_for_stopall(s_zones, e_zones, direction)` (L1180-L1197).
+- Function `visible_s_zones_after_module_resets(s_zones, e_zones, direction, stop_event_finder=None, source_event_finder=None, candles=None)` (L1199-L1375).
+- Function `visible_s_zones_after_module_resets.cached_stop_event(module: object)` (L1228-L1232).
+- Function `reconcile_stopall_lifecycle(detector, s_zones, e_zones, chronology, direction, timed_step=None, *, stopall_finder=None)` (L1377-L1409).
+- Function `visible_a_zones_after_module_boundaries(a_zones, s_zones, e_zones, direction, stop_event_finder=None)` (L1412-L1457).
+- Function `reaction_number_is_internal(items, number, identities)` (L1459-L1470).
+- Function `point_is_inside_healthy_reaction(source_time, price, reactions)` (L1473-L1493).
+- Function `filter_internal_behavior_outputs(a_zones, s_zones, e_zones, stopalls, opposite_reactions, opposite_internal_identities, all_behavior_reactions)` (L1496-L1507).
+- Function `finalize_behavior_visibility(a_zones, s_zones, e_zones, stopalls, direction, invalid_s_identities, stop_event_finder, source_event_finder, candles, *, all_a_zones=None)` (L1509-L1601).
+- Function `visible_a_zones(a_zones: Sequence[object], s_zones: Sequence[object])` (L1604-L1610).
+
+#### `pipeline/order_audit_engine.py`
+- Symbol `ORDER_AUDIT_ENGINE_VERSION` (L20).
+- Symbol `ORDER_AUDIT_ENGINE_IMPLEMENTATION_VERSION` (L21).
+- Symbol `ORDER_AUDIT_ENGINE_LAST_MODIFIED` (L22).
+- Function `relabel_primary_causes(causes, labels)` (L25-L37).
+- Class `PostBehaviorStop` (L40-L44).
+- Symbol `behavior_type: str` (L41).
+- Symbol `behavior_source_index: int` (L42).
+- Symbol `behavior_source_time: datetime` (L43).
+- Symbol `event_time: datetime` (L44).
+- Class `OrderBBehaviorAnchor` (L48-L53).
+- Symbol `behavior_type: str` (L49).
+- Symbol `behavior_source_index: int` (L50).
+- Symbol `behavior_source_time: datetime` (L51).
+- Symbol `priority: int` (L52).
+- Symbol `number: int` (L53).
+- Class `OrderBResetLeg` (L57-L74).
+- Symbol `post_stop: PostBehaviorStop` (L58).
+- Symbol `anchor_behavior_type: str` (L59).
+- Symbol `anchor_behavior_source_index: int` (L60).
+- Symbol `anchor_behavior_source_time: datetime` (L61).
+- Symbol `anchor_behavior_extreme: Decimal` (L62).
+- Symbol `reset_reaction: object` (L63).
+- Symbol `reset_confirmation_time: datetime` (L64).
+- Symbol `reset_source_index: int` (L65).
+- Symbol `reset_broken_level: Decimal` (L66).
+- Symbol `reset_time: datetime` (L67).
+- Symbol `leg_boundary: Decimal` (L68).
+- Symbol `leg_source_index: int` (L69).
+- Symbol `leg_source_time: datetime` (L70).
+- Symbol `strict_break_time: datetime` (L71).
+- Symbol `reaction_number: int` (L72).
+- Symbol `physical_reaction: object` (L73).
+- Symbol `physical_confirmation_time: datetime` (L74).
+- Function `dominant_post_behavior_stops(chronology: object, lifetimes: Sequence[tuple[str, object, datetime | None]], priority: Callable[[object], int])` (L77-L136).
+- Function `order_b_reset_event_time(direction: str, chronology: object, reset: object)` (L139-L167).
+- Function `_order_b_boundary(chronology, first: int, last: int, attribute: str)` (L170-L177).
+- Function `_order_b_crossing(chronology, attribute: str, left: int, boundary: Decimal)` (L180-L195).
+- Function `discover_order_b_reset_legs(direction: str, chronology: object, trend_reactions: Sequence[object], resets: Sequence[object], opposite_reactions: Sequence[object], post_stops: Sequence[PostBehaviorStop], a_formation_times: Sequence[datetime], *, behavior_anchors: Sequence[OrderBBehaviorAnchor]=(), _boundary=None, _crossing=None)` (L198-L375).
+- Class `LiveOrderBResetLegs` (L378-L439).
+- Function `LiveOrderBResetLegs.__init__(self, direction: str)` (L381-L388).
+- Function `LiveOrderBResetLegs.update(self, chronology, trend_reactions, resets, opposite_reactions, post_stops, a_formation_times, *, behavior_anchors, first_dirty_main: int)` (L390-L439).
+- Function `LiveOrderBResetLegs.update.boundary(first, last)` (L406-L414).
+- Function `LiveOrderBResetLegs.update.crossing(reset_time, level)` (L416-L429).
+- Function `discover_accepted_order_b_reset_legs(direction: str, chronology: object, trend_reactions: Sequence[object], trend_resets: Sequence[object], opposite_reactions: Sequence[object], a_zones: Sequence[object], invalid_a_identities: set[tuple[datetime, int]], s_zones: Sequence[object], e_zones: Sequence[object], stopalls: Sequence[object], s_detector: object, e_detector: object, priority: Callable[[object], int], *, reset_leg_finder=None)` (L442-L520).
+- Symbol `OrderMatch` (L523).
+- Function `order_b_leg_identity(items: Sequence[object])` (L530-L550).
+- Class `OrderAuditEngineMixin` (L554-L2288).
+- Function `OrderAuditEngineMixin._initialize_order_audit(self)` (L557-L651).
+- Function `OrderAuditEngineMixin._order_stop(self, number: int, reaction: object, context_start: datetime | None=None)` (L653-L679).
+- Function `OrderAuditEngineMixin.order_stop(self, reaction_number: int, reaction: object)` (L682-L686).
+- Function `OrderAuditEngineMixin._first_healthy_direct_geometry(self, start: datetime, allow_bounded_continue: bool=False)` (L689-L761).
+- Function `OrderAuditEngineMixin._trend_leg_direct_order(self, start: datetime)` (L764-L792).
+- Function `OrderAuditEngineMixin._trend_leg_order_position(self, confirmation: datetime, trend: object)` (L794-L806).
+- Function `OrderAuditEngineMixin._direct_parent_stop_order(self, start: datetime, continuous_deadline: datetime | None, allow_bounded_continue: bool, e_parent: bool=False, *, confirmation_after: datetime | None=None)` (L809-L827).
+- Function `OrderAuditEngineMixin._compute_direct_parent_stop_order(self, start: datetime, continuous_deadline: datetime | None, allow_bounded_continue: bool, e_parent: bool=False, *, confirmation_after: datetime | None=None)` (L829-L918).
+- Function `OrderAuditEngineMixin._merge_order_candidate(self, by_geometry: dict[tuple[int, int], OrderMatch], number: int, reaction: object, confirmation: datetime, *, parent_stop_cause_time: datetime)` (L921-L952).
+- Function `OrderAuditEngineMixin._enforce_single_parent_stop_owner(self, by_geometry: dict[tuple[int, int], OrderMatch])` (L955-L979).
+- Function `OrderAuditEngineMixin.order_candidates(self, start: datetime, continuous_deadline: datetime | None=None, allow_bounded_continue: bool=False, allow_trend_leg_continue: bool=False, e_parent: bool=False)` (L982-L1070).
+- Function `OrderAuditEngineMixin._first_order(self, start: datetime, continuous_deadline: datetime | None=None, allow_bounded_continue: bool=False, allow_trend_leg_continue: bool=False)` (L1073-L1086).
+- Function `OrderAuditEngineMixin._has_sequence_reset_between(self, start: datetime, end: datetime)` (L1089-L1097).
+- Function `OrderAuditEngineMixin._index_order_audit_identity(self, identity: tuple[int, int], confirmation: datetime)` (L1100-L1111).
+- Function `OrderAuditEngineMixin._clear_order_audit(self)` (L1114-L1118).
+- Function `OrderAuditEngineMixin._invalidate_carried_order_caches(self)` (L1120-L1127).
+- Function `OrderAuditEngineMixin._invalidate_post_stop_order_cache(self)` (L1129-L1132).
+- Function `OrderAuditEngineMixin.register_order_b_reset_legs(self, legs: Sequence[OrderBResetLeg])` (L1135-L1199).
+- Function `OrderAuditEngineMixin._reparent_primary_high_causes(self, parent, stop_event, direct_identity)` (L1202-L1248).
+- Function `OrderAuditEngineMixin.register_primary_high(self, parent)` (L1250-L1258).
+- Function `OrderAuditEngineMixin.register_primary_low(self, parent)` (L1260-L1264).
+- Function `OrderAuditEngineMixin._primary_parent_order(self, parent)` (L1266-L1275).
+- Function `OrderAuditEngineMixin.primary_order_dependency(self, parent)` (L1277-L1284).
+- Function `OrderAuditEngineMixin._register_primary_point(self, parent)` (L1286-L1310).
+- Function `OrderAuditEngineMixin.reconcile_primary_high_labels(self, highs)` (L1312-L1314).
+- Function `OrderAuditEngineMixin.reconcile_primary_low_labels(self, lows)` (L1316-L1318).
+- Function `OrderAuditEngineMixin._reconcile_primary_labels(self, points, prefix)` (L1320-L1337).
+- Function `OrderAuditEngineMixin._register_order_audit(self, parent_type: str, parent: object, parent_stop: datetime)` (L1339-L1433).
+- Function `OrderAuditEngineMixin.visual_order_lifecycle(self, start: datetime)` (L1437-L1456).
+- Function `OrderAuditEngineMixin._cross_order(self, start: datetime, level: Decimal)` (L1459-L1477).
+- Function `OrderAuditEngineMixin.cross_order(self, confirmation_time: datetime, stop_level: Decimal)` (L1480-L1484).
+- Function `OrderAuditEngineMixin._unconsumed_s_orders(self, parent: object, parent_stop: datetime)` (L1487-L1521).
+- Function `OrderAuditEngineMixin._initial_order_records(self)` (L1524-L1579).
+- Function `OrderAuditEngineMixin._initial_record_match(record: tuple[datetime, datetime, int, object, Decimal, int, datetime, tuple[int, datetime, datetime] | None], causes: tuple[str, ...])` (L1583-L1594).
+- Function `OrderAuditEngineMixin._initial_order_match(self, entry: dict[str, object], causes: tuple[str, ...])` (L1597-L1609).
+- Function `OrderAuditEngineMixin._gate_owned_initial_order(self, parent_stop: datetime)` (L1612-L1632).
+- Function `OrderAuditEngineMixin._carried_creation_events(entry: dict[str, object])` (L1636-L1642).
+- Function `OrderAuditEngineMixin._validated_carried_creation_index(self, entries)` (L1644-L1697).
+- Function `OrderAuditEngineMixin._extend_carried_creation_index(self)` (L1699-L1720).
+- Function `OrderAuditEngineMixin._carried_orders_for_parent(self, parent: object, parent_stop: datetime)` (L1722-L1795).
+- Function `OrderAuditEngineMixin._post_stop_accepted_orders_for_parent(self, parent: object, parent_stop: datetime)` (L1798-L1877).
+- Function `OrderAuditEngineMixin._post_stop_accepted_orders_for_parent.add_match(match: OrderMatch)` (L1812-L1829).
+- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders(self, parent, parent_stop)` (L1879-L2017).
+- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.native_time(value)` (L1890-L1891).
+- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.native_match(match)` (L1893-L1905).
+- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.eligible(items, times, *, audit_rows=False)` (L1998-L2005).
+- Function `OrderAuditEngineMixin._iter_post_stop_accepted_orders.accepted()` (L2007-L2015).
+- Function `OrderAuditEngineMixin._order_created_only_by_disowned_s(self, identity: tuple[int, int], source_times: set[datetime], prospective_source_time: datetime | None=None)` (L2020-L2033).
+- Function `OrderAuditEngineMixin._blocked_by_gate_owned_order(self, zone: EZone)` (L2035-L2043).
+- Function `OrderAuditEngineMixin._rebuild_accepted_order_audit(self, numbered: list[EZone], supplemental_s_zones: Sequence[object]=())` (L2046-L2231).
+- Function `OrderAuditEngineMixin._rebuild_accepted_order_audit.valid_parent_stop_cause(cause: tuple[object, ...])` (L2060-L2072).
+- Function `OrderAuditEngineMixin.rebuild_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=())` (L2234-L2246).
+- Function `OrderAuditEngineMixin.ensure_accepted_order_audit(self, zones: Sequence[EZone], supplemental_s_zones: Sequence[object]=())` (L2249-L2288).
+- Function `_parent_stop_cause_key(cause: dict[str, object])` (L2291-L2297).
+- Function `_collect_s_ledger_entries(s_detector, accepted_a_sources: set[datetime] | None)` (L2300-L2329).
+- Function `_collect_e_ledger_entries(detector, accepted_a_sources: set[datetime] | None=None)` (L2332-L2358).
+- Function `_merge_prepared_identities(combined: list[tuple[dict[str, object], list[dict[str, object]]]], detector, start_index: int, end_index: int, required_identities: set[tuple[int, int]])` (L2361-L2401).
+- Function `_single_owner_parent_stop_causes(output: list[dict[str, object]])` (L2404-L2439).
+- Function `prepare_order_audit(detector, start_index: int, end_index: int, s_detector=None, accepted_a_sources: set[datetime] | None=None, required_identities: set[tuple[int, int]] | None=None)` (L2442-L2459).
+- Function `accepted_audit_entry(entry: dict[str, object], accepted_sources: set)` (L2462-L2492).
+- Function `accepted_audit_entries(order_audit: dict[tuple[int, int], dict[str, object]], accepted_sources: set[datetime])` (L2495-L2505).
+- Function `order_identity_is_internal(item, internal_identities)` (L2508-L2514).
+- Class `SOrderAuditMixin` (L2517-L2712).
+- Function `SOrderAuditMixin._initialize_stopped_a_order_lookup(self)` (L2520-L2544).
+- Function `SOrderAuditMixin._first_order_after(self, a_stop_event_time: datetime)` (L2546-L2598).
+- Function `SOrderAuditMixin._first_canonical_order_after(self, a_stop_event_time: datetime)` (L2601-L2620).
+- Function `SOrderAuditMixin._record_a_order_audit(self, zone: object, a_stop_event_time: datetime, order_match: tuple[int, object, datetime])` (L2622-L2654).
+- Function `SOrderAuditMixin._audit_stopped_a(self, zone: object)` (L2657-L2667).
+- Function `SOrderAuditMixin._order_stop(self, order_number: int, reaction: object)` (L2670-L2679).
+- Function `SOrderAuditMixin._order_stop_crossed(self, candle: object, level: Decimal)` (L2682-L2685).
+- Function `SOrderAuditMixin._shared_order_stop_cross(self, confirmation: datetime, level: Decimal)` (L2688-L2712).
+
+#### `pipeline/PL_PH_detector.py`
+- Symbol `PL_PH_VERSION` (L21).
+- Symbol `PL_PH_LAST_MODIFIED` (L22).
+- Class `StructureOrder` (L26-L40).
+- Symbol `direction: str` (L27).
+- Symbol `reaction_number: int` (L28).
+- Symbol `first_index: int` (L29).
+- Symbol `break_index: int` (L30).
+- Symbol `confirmation_event_time: datetime` (L31).
+- Symbol `stop_level: Decimal` (L32).
+- Symbol `stop_source_index: int` (L33).
+- Symbol `stop_index: int` (L34).
+- Symbol `stop_event_time: datetime` (L35).
+- Symbol `causes: tuple[str, ...]` (L36).
+- Symbol `box_top: Decimal | None` (L37).
+- Symbol `box_bottom: Decimal | None` (L38).
+- Symbol `reaction_mode: str | None` (L39).
+- Symbol `audit_causes: tuple[dict[str, object], ...]` (L40).
+- Class `PrimaryPoint` (L44-L56).
+- Symbol `kind: str` (L45).
+- Symbol `number: int` (L46).
+- Symbol `source_index: int` (L47).
+- Symbol `source_time: datetime` (L48).
+- Symbol `price: Decimal` (L49).
+- Symbol `trigger_index: int` (L50).
+- Symbol `trigger_event_time: datetime` (L51).
+- Symbol `decision_index: int` (L52).
+- Symbol `decision_event_time: datetime` (L53).
+- Symbol `order: StructureOrder` (L54).
+- Symbol `cycle_id: str | None` (L55).
+- Symbol `identity_source: PrimaryPoint | None` (L56).
+- Class `MatchingBehaviorLeg` (L60-L69).
+- Symbol `source_index: int` (L61).
+- Symbol `source_time: datetime` (L62).
+- Symbol `price: Decimal` (L63).
+- Symbol `reference_stopall_index: int` (L64).
+- Symbol `second_behavior_index: int` (L65).
+- Symbol `trigger_index: int` (L66).
+- Symbol `trigger_event_time: datetime` (L67).
+- Symbol `stop_index: int | None` (L68).
+- Symbol `stop_event_time: datetime | None` (L69).
+- Class `TrendTransition` (L73-L84).
+- Symbol `index: int` (L75).
+- Symbol `event_time: datetime` (L76).
+- Symbol `level: Decimal` (L77).
+- Symbol `high: PrimaryPoint` (L78).
+- Symbol `target_direction: str` (L79).
+- Function `TrendTransition.point(self)` (L82-L84).
+- Class `PrimaryResult` (L88-L98).
+- Symbol `highs: list[PrimaryPoint]` (L89).
+- Symbol `lows: list[PrimaryPoint]` (L90).
+- Symbol `mbl: MatchingBehaviorLeg | None` (L91).
+- Symbol `status: str` (L92).
+- Symbol `post_pl3_orders: list[StructureOrder]` (L93).
+- Symbol `cycle_id: str | None` (L94).
+- Symbol `cycles: list[PrimaryResult]` (L95).
+- Symbol `qualification_event_time: datetime | None` (L96).
+- Symbol `transition: TrendTransition | None` (L97).
+- Symbol `direction: str` (L98).
+- Function `first_bullish_transition(chronology, primary, *, cross=None)` (L101-L112).
+- Function `first_bearish_transition(chronology, primary)` (L115-L125).
+- Function `resolve_primary_highs(primary, *, through_index)` (L128-L138).
+- Function `resolve_primary_lows(primary, *, through_index)` (L141-L144).
+- Function `_resolve_primary_points(points, cycles, through_index, *, above)` (L147-L172).
+- Function `_resolve_primary_points.role_order(point)` (L160-L163).
+- Function `relabel_primary_order(order, highs)` (L175-L178).
+- Function `formed_matching_legs(primary, *, through_index)` (L181-L195).
+- Function `resolve_stopall_ownership(stopalls, primary: PrimaryResult, *, through_index: int)` (L198-L208).
+- Function `order_meets_structure_gate(kind, first_index, confirmation, gate_index, event)` (L211-L219).
+- Function `strict_cross(chronology, event: datetime, level: Decimal, above: bool)` (L222-L225).
+- Function `_cross_from(chronology, left, level, above)` (L228-L236).
+- Function `_extreme(chronology, left: int, right: int, high: bool)` (L239-L245).
+- Function `_matching_seeds(s_zones, e_zones, stopalls)` (L248-L284).
+- Function `detect_bearish(chronology, s_zones: Sequence[object], e_zones: Sequence[object], stopalls: Sequence[object], orders: Callable[[str, int, int, datetime], Sequence[StructureOrder]], *, _run: _PrimaryRun | None=None)` (L287-L418).
+- Class `_CycleCheckpoint` (L422-L428).
+- Symbol `result: PrimaryResult` (L423).
+- Symbol `reference_price: Decimal` (L424).
+- Symbol `gate_index: int` (L425).
+- Symbol `cursor: datetime` (L426).
+- Symbol `phase: str` (L427).
+- Symbol `reset_high: bool` (L428).
+- Function `_activation_identity(activation)` (L431-L436).
+- Class `_PrimaryStep` (L440-L445).
+- Symbol `event_time: datetime` (L441).
+- Symbol `activations: int` (L442).
+- Symbol `cycle_index: int | None` (L443).
+- Symbol `checkpoint: _CycleCheckpoint | None` (L444).
+- Symbol `point: PrimaryPoint | None` (L445).
+- Class `_PrimaryRun` (L449-L487).
+- Symbol `previous: _PrimaryRun | None` (L450).
+- Symbol `dirty_event: datetime | None` (L451).
+- Symbol `schedule: tuple` (L452).
+- Symbol `steps: list[_PrimaryStep]` (L453).
+- Symbol `crossings: dict[tuple, tuple[int, datetime] | None]` (L454).
+- Symbol `projected_points: dict[int, tuple[PrimaryPoint, PrimaryPoint]]` (L455).
+- Function `_PrimaryRun.retained_steps(self)` (L457-L472).
+- Function `_PrimaryRun.cross(self, chronology, event, level, above)` (L474-L487).
+- Function `_refresh_cycle_mbl(chronology, checkpoint, cross)` (L490-L497).
+- Function `_activate_cycle(chronology, activation, *, cross=strict_cross)` (L500-L515).
+- Function `_next_point(chronology, checkpoint, orders, *, before_event=None, cross=strict_cross)` (L518-L621).
+- Class `NativePrimaryOrders` (L624-L680).
+- Function `NativePrimaryOrders.__init__(self, chronology, groups, *, on_high=None, direction='bearish')` (L634-L637).
+- Function `NativePrimaryOrders.confirm_high(self, point)` (L639-L642).
+- Function `NativePrimaryOrders.__call__(self, kind, number, gate_index, event)` (L644-L680).
+- Function `_negate_price(value)` (L683-L685).
+- Class `_ReflectedRow` (L689-L698).
+- Symbol `original: object` (L690).
+- Function `_ReflectedRow.high(self)` (L693-L694).
+- Function `_ReflectedRow.low(self)` (L697-L698).
+- Class `_ReflectedRows` (L701-L711).
+- Function `_ReflectedRows.__init__(self, rows: Sequence[object])` (L704-L705).
+- Function `_ReflectedRows.__len__(self)` (L707-L708).
+- Function `_ReflectedRows.__getitem__(self, index: int)` (L710-L711).
+- Class `_ReflectedPriceIndex` (L714-L723).
+- Function `_ReflectedPriceIndex.__init__(self, original)` (L716-L717).
+- Function `_ReflectedPriceIndex.first_greater(self, left, right, level)` (L719-L720).
+- Function `_ReflectedPriceIndex.first_less(self, left, right, level)` (L722-L723).
+- Class `_ReflectedChronology` (L726-L732).
+- Function `_ReflectedChronology.__init__(self, original)` (L727-L732).
+- Function `_reflect_structure_order(order)` (L735-L740).
+- Function `detect_bullish(chronology, s_zones, e_zones, stopalls, orders, *, _run=None)` (L743-L797).
+- Function `detect_bullish.cycle_id(value)` (L752-L753).
+- Function `detect_bullish.point(item)` (L755-L768).
+- Function `detect_bullish.status(value)` (L770-L772).
+- Function `detect_bullish.result(item)` (L774-L784).
+- Class `detect_bullish.ReflectedOrders` (L786-L794).
+- Function `detect_bullish.ReflectedOrders.__call__(self, kind, number, gate, event)` (L787-L789).
+- Function `detect_bullish.ReflectedOrders.confirm_high(self, item)` (L791-L794).
+- Class `LivePrimaryContinuation` (L800-L839).
+- Function `LivePrimaryContinuation.__init__(self, direction, chronology, s_zones, e_zones, stopalls, orders)` (L803-L810).
+- Function `LivePrimaryContinuation.result(self)` (L813-L814).
+- Function `LivePrimaryContinuation.update(self, chronology, s_zones, e_zones, stopalls, orders, *, first_dirty_event: datetime)` (L816-L839).
+
+#### `pipeline/reaction_engine.py`
+- Symbol `REACTION_ENGINE_VERSION` (L25).
+- Symbol `REACTION_ENGINE_IMPLEMENTATION_VERSION` (L26).
+- Symbol `REACTION_ENGINE_LAST_MODIFIED` (L27).
+- Symbol `_ORDER_GATE_CACHE_MAX_ENTRIES` (L29).
+- Symbol `_LIVE_CROSSING_CACHE_MAX_ENTRIES` (L30).
+- Symbol `_SEQUENCE_TIME_INDEXES: dict[int, tuple[Sequence[Candle], list[datetime]]]` (L32).
+- Class `Candle` (L35-L43).
+- Symbol `index: int` (L36).
+- Symbol `timestamp: datetime` (L37).
+- Symbol `display_time: str` (L38).
+- Symbol `tag: str` (L39).
+- Symbol `open: Decimal` (L40).
+- Symbol `high: Decimal` (L41).
+- Symbol `low: Decimal` (L42).
+- Symbol `close: Decimal` (L43).
+- Class `Candidate` (L47-L71).
+- Symbol `first_idx: int` (L48).
+- Symbol `first_time: str` (L49).
+- Symbol `box_top_source_idx: int` (L50).
+- Symbol `box_top_source_time: str` (L51).
+- Symbol `box_top: Decimal` (L52).
+- Symbol `box_bottom_source_idx: int` (L53).
+- Symbol `box_bottom_source_time: str` (L54).
+- Symbol `box_bottom: Decimal` (L55).
+- Symbol `mode: str` (L56).
+- Symbol `anchor_idx: int | None` (L57).
+- Symbol `anchor_value: Decimal | None` (L58).
+- Symbol `leg_boundary_value: Decimal | None` (L59).
+- Symbol `break_idx: int | None` (L60).
+- Symbol `break_time: str | None` (L61).
+- Symbol `intrabar_start: datetime | None` (L62).
+- Symbol `cross_direction_origin: bool` (L63).
+- Symbol `cross_direction_chain_owner: bool` (L64).
+- Symbol `order_gate_decision: str | None` (L65).
+- Symbol `behavior_public_number: int | None` (L66).
+- Symbol `behavior_public_box_top: Decimal | None` (L67).
+- Symbol `behavior_public_box_bottom: Decimal | None` (L68).
+- Symbol `behavior_confirmation_time: datetime | None` (L69).
+- Symbol `behavior_first_time: datetime | None` (L70).
+- Symbol `behavior_internal: bool` (L71).
+- Class `ResetEvent` (L75-L80).
+- Symbol `index: int` (L76).
+- Symbol `display_time: str` (L77).
+- Symbol `second_time: str | None` (L78).
+- Symbol `broken_level: Decimal` (L79).
+- Symbol `from_first_idx: int` (L80).
+- Class `IntrabarAnalysis` (L84-L87).
+- Symbol `event_second: Candle` (L85).
+- Symbol `extreme: Decimal` (L86).
+- Symbol `extreme_source: Candle` (L87).
+- Class `DetectionResult` (L91-L96).
+- Symbol `direction: str` (L92).
+- Symbol `reactions: list[Candidate]` (L93).
+- Symbol `resets: list[ResetEvent]` (L94).
+- Symbol `start_index: int` (L95).
+- Symbol `end_index: int` (L96).
+- Class `_NormalReactionCursor` (L100-L106).
+- Symbol `next_index: int` (L101).
+- Symbol `previous: Candidate` (L102).
+- Symbol `candidate: Candidate | None` (L103).
+- Symbol `running_value: Decimal` (L104).
+- Symbol `running_source: int` (L105).
+- Symbol `pending_reset_index: int | None` (L106).
+- Class `_ReactionCheckpoint` (L110-L113).
+- Symbol `cursor: _NormalReactionCursor` (L111).
+- Symbol `reaction_count: int` (L112).
+- Symbol `reset_count: int` (L113).
+- Class `_InitialLegCursor` (L117-L124).
+- Symbol `next_index: int` (L118).
+- Symbol `state: str` (L119).
+- Symbol `leg_open_low: Decimal | None` (L120).
+- Symbol `leg_just_started: bool` (L121).
+- Symbol `anchor: Candle | None` (L122).
+- Symbol `anchor_origin: str | None` (L123).
+- Symbol `candidate: Candidate | None` (L124).
+- Class `_TrendLegCursor` (L128-L131).
+- Symbol `next_index: int` (L129).
+- Symbol `fixed_source: Candle` (L130).
+- Symbol `candidate: Candidate | None` (L131).
+- Class `LiveReactionUnavailable` (L134-L135).
+- Function `classify_candle_color(open_price: Decimal, close_price: Decimal)` (L138-L140).
+- Function `opposite_direction(direction: str)` (L143-L145).
+- Class `DetectorBase` (L148-L232).
+- Function `DetectorBase.__init__(self, candles: Sequence[Candle], one_second_candles: Sequence[Candle], start_index: int, end_index: int)` (L149-L171).
+- Function `DetectorBase._shared_time_index(candles: Sequence[Candle])` (L174-L182).
+- Function `DetectorBase.seconds_between(self, start: datetime, end: datetime)` (L184-L187).
+- Function `DetectorBase.main_source_for_time(self, timestamp: datetime)` (L189-L200).
+- Function `DetectorBase.minimum_low(self, start_index: int, end_index: int)` (L202-L216).
+- Function `DetectorBase.maximum_high(self, start_index: int, end_index: int)` (L218-L232).
+- Class `BullishDetector` (L235-L639).
+- Function `BullishDetector.green_run_peak_before(self, first_red_index: int)` (L236-L244).
+- Function `BullishDetector.breakout_analysis(self, candidate: Candidate, breakout_candle: Candle)` (L246-L270).
+- Function `BullishDetector.mode_a_invalidation_before_breakout(self, candidate: Candidate, candle: Candle)` (L272-L306).
+- Function `BullishDetector.confirmed_reset_before_breakout(self, candidate: Candidate | None, candle: Candle, confirmed_bottom: Decimal)` (L308-L326).
+- Function `BullishDetector.post_breakout_reset(self, analysis: IntrabarAnalysis | None, box_bottom: Decimal, breakout_candle: Candle)` (L328-L341).
+- Function `BullishDetector.detect(self, *, first_only: bool=False)` (L343-L344).
+- Function `BullishDetector._scan(self, *, first_only: bool, initial: _InitialLegCursor | None=None, retain_initial: bool=False)` (L346-L639).
+- Function `mirror_candle(candle: Candle)` (L642-L659).
+- Function `mirror_candidate(candidate: Candidate | None)` (L662-L679).
+- Function `mirror_analysis(analysis: IntrabarAnalysis | None)` (L681-L687).
+- Class `_ReflectedCandles` (L690-L712).
+- Function `_ReflectedCandles.__init__(self, source: Sequence[Candle])` (L698-L700).
+- Function `_ReflectedCandles.__len__(self)` (L702-L703).
+- Function `_ReflectedCandles.__getitem__(self, index)` (L705-L712).
+- Symbol `_REFLECTED_VIEWS: dict[int, tuple[Sequence[Candle], _ReflectedCandles]]` (L715).
+- Function `_reflected_view(source: Sequence[Candle])` (L718-L725).
+- Class `BearishDetector` (L728-L785).
+- Function `BearishDetector.__init__(self, candles, one_second_candles, start_index, end_index)` (L736-L748).
+- Function `BearishDetector.red_run_bottom_before(self, first_green_index)` (L750-L752).
+- Function `BearishDetector.breakdown_analysis(self, candidate, breakdown_candle)` (L754-L757).
+- Function `BearishDetector.invalidation_high_break_before_breakdown(self, candidate, candle)` (L759-L762).
+- Function `BearishDetector.confirmed_reset_before_breakdown(self, candidate, candle, confirmed_top)` (L764-L768).
+- Function `BearishDetector.post_breakdown_reset(self, analysis, box_top, breakdown_candle)` (L770-L775).
+- Function `BearishDetector.detect(self, *, first_only: bool=False)` (L777-L785).
+- Function `published_reaction_candidate(direction: str, candidate: Candidate, chronology: object)` (L788-L883).
+- Class `LowerTimeframeIndex` (L886-L1069).
+- Function `LowerTimeframeIndex.__init__(self, candles: Sequence[Candle], *, retain_crossings: bool=False)` (L893-L907).
+- Function `LowerTimeframeIndex._fill_leaves(self, first: int)` (L909-L916).
+- Function `LowerTimeframeIndex._update_parents(self, last: int, before_first: int)` (L917-L939).
+- Function `LowerTimeframeIndex.refresh_suffix(self, first: int)` (L941-L957).
+- Function `LowerTimeframeIndex.first_less(self, left: int, right: int, level: Decimal)` (L959-L960).
+- Function `LowerTimeframeIndex.first_greater(self, left: int, right: int, level: Decimal)` (L962-L963).
+- Function `LowerTimeframeIndex.range_minimum(self, left: int, right: int)` (L965-L967).
+- Function `LowerTimeframeIndex.range_maximum(self, left: int, right: int)` (L969-L971).
+- Function `LowerTimeframeIndex._range_query(self, left: int, right: int, *, minimum: bool)` (L973-L1009).
+- Function `LowerTimeframeIndex._first(self, left, right, level, values, excludes)` (L1011-L1017).
+- Function `LowerTimeframeIndex._first_with_history(self, left, right, level, values, excludes)` (L1019-L1035).
+- Function `LowerTimeframeIndex._remember_crossing(self, key, evidence)` (L1037-L1040).
+- Function `LowerTimeframeIndex._search_first(self, left, right, level, values, excludes)` (L1042-L1062).
+- Function `LowerTimeframeIndex._descend_first(self, node, values, level, excludes)` (L1064-L1069).
+- Symbol `_LOWER_TIMEFRAME_INDEXES: dict[int, tuple[Sequence[Candle], LowerTimeframeIndex]]` (L1072).
+- Function `shared_lower_timeframe_index(candles: Sequence[Candle], *, prepared: LowerTimeframeIndex | None=None)` (L1077-L1092).
+- Class `ReflectedLowerTimeframeIndex` (L1095-L1116).
+- Symbol `__slots__` (L1098).
+- Function `ReflectedLowerTimeframeIndex.__init__(self, base: LowerTimeframeIndex)` (L1100-L1102).
+- Function `ReflectedLowerTimeframeIndex.first_less(self, left: int, right: int, level: Decimal)` (L1104-L1105).
+- Function `ReflectedLowerTimeframeIndex.first_greater(self, left: int, right: int, level: Decimal)` (L1107-L1108).
+- Function `ReflectedLowerTimeframeIndex.range_minimum(self, left: int, right: int)` (L1110-L1112).
+- Function `ReflectedLowerTimeframeIndex.range_maximum(self, left: int, right: int)` (L1114-L1116).
+- Function `clear_market_indexes()` (L1119-L1122).
+- Function `release_market_indexes(*sequences: Sequence[Candle])` (L1125-L1129).
+- Class `MarketChronology` (L1132-L1367).
+- Symbol `__slots__` (L1140).
+- Function `MarketChronology.__init__(self, candles: Sequence[Candle], seconds: Sequence[Candle], timeframe_seconds: int, lower_index: LowerTimeframeIndex | None=None, main_range_index: LowerTimeframeIndex | None=None)` (L1153-L1178).
+- Function `MarketChronology.opposite_direction(direction: str)` (L1181-L1183).
+- Function `MarketChronology.main_index(self, timestamp: datetime, *, clamp: bool=False)` (L1185-L1192).
+- Function `MarketChronology.lower_bounds(self, start: datetime, end: datetime | None=None)` (L1194-L1203).
+- Function `MarketChronology.lower_window(self, start: datetime, end: datetime | None=None)` (L1205-L1209).
+- Function `MarketChronology._reset_cache_key(reset: object)` (L1212-L1221).
+- Function `MarketChronology._reaction_cache_key(reaction: object, direction: str, use_intrabar_start: bool)` (L1224-L1236).
+- Function `MarketChronology.reset_time(self, reset: object)` (L1238-L1255).
+- Function `MarketChronology.reaction_confirmation(self, direction: str, reaction: object, *, use_intrabar_start: bool=True)` (L1257-L1302).
+- Function `MarketChronology.canonical_order_stop(self, order_direction: str, reaction_number: int, reaction: object, opposite_reactions: Sequence[object], *, start_index: int=0)` (L1305-L1367).
+- Class `_BehaviorReactionSpan` (L1371-L1406).
+- Symbol `identity: tuple[int, int]` (L1372).
+- Symbol `first_time: datetime` (L1373).
+- Symbol `confirmed_at: datetime` (L1374).
+- Symbol `top: Decimal` (L1375).
+- Symbol `bottom: Decimal` (L1376).
+- Function `_BehaviorReactionSpan.from_reaction(cls, direction, reaction, chronology)` (L1379-L1386).
+- Function `_BehaviorReactionSpan.may_contain(self, inner: _BehaviorReactionSpan)` (L1388-L1394).
+- Function `_BehaviorReactionSpan.path_extremes(self, chronology: MarketChronology)` (L1396-L1403).
+- Function `_BehaviorReactionSpan.contains_path(self, extremes: tuple[Decimal, Decimal] | None)` (L1405-L1406).
+- Function `_apply_behavior_reaction_views(full_results, chronology, spans, blocked)` (L1409-L1430).
+- Function `build_behavior_reaction_views(full_results: dict[str, object], chronology: MarketChronology)` (L1433-L1478).
+- Class `_LiveBehaviorReactionEntry` (L1482-L1485).
+- Symbol `geometry: tuple` (L1483).
+- Symbol `span: _BehaviorReactionSpan` (L1484).
+- Symbol `extremes: tuple[Decimal, Decimal] | None` (L1485).
+- Class `LiveBehaviorReactionViews` (L1488-L1551).
+- Function `LiveBehaviorReactionViews.__init__(self, full_results: dict[str, object], chronology: MarketChronology)` (L1496-L1499).
+- Function `LiveBehaviorReactionViews.update(self, full_results: dict[str, object], chronology: MarketChronology, *, first_dirty_main: int)` (L1501-L1551).
+- Function `directional_a_stop_order_finder(candles: Sequence[Candle], seconds: Sequence[Candle], direction: str)` (L1554-L1614).
+- Function `directional_a_stop_order_finder.find(gate_index: int, gate_event: datetime, end_index: int)` (L1568-L1612).
+- Class `UnifiedReactionDetector` (L1617-L2781).
+- Function `UnifiedReactionDetector.__init__(self, candles: Sequence[Candle], one_second_candles: Sequence[Candle], start_index: int, end_index: int, output_direction: str, *, initial_bullish_trend: bool=False, initial_bearish_trend: bool=False)` (L1627-L1663).
+- Function `UnifiedReactionDetector.bull(self)` (L1666-L1671).
+- Function `UnifiedReactionDetector.bear(self)` (L1674-L1679).
+- Function `UnifiedReactionDetector._append_reaction(self, direction: str, candidate: Candidate)` (L1681-L1761).
+- Function `UnifiedReactionDetector._append_reset(self, direction: str, candle: Candle, level: Decimal, first_idx: int, second_time: str | None=None)` (L1763-L1779).
+- Function `UnifiedReactionDetector._refine(self, direction: str, candidate: Candidate, candle: Candle)` (L1781-L1800).
+- Function `UnifiedReactionDetector._candidate_from_confirmation_remainder(self, direction: str, confirmed: Candidate, candle: Candle, analysis: IntrabarAnalysis | None)` (L1802-L1851).
+- Function `UnifiedReactionDetector._first_initial(self, direction: str, *, initial_cursor: _InitialLegCursor | _TrendLegCursor | None=None, retain_initial: bool=False)` (L1853-L1885).
+- Function `UnifiedReactionDetector._first_bullish_trend_reaction(self)` (L1887-L1889).
+- Function `UnifiedReactionDetector._first_trend_reaction(self, direction: str, *, initial: _TrendLegCursor | None=None, retain_initial: bool=False)` (L1891-L1944).
+- Function `UnifiedReactionDetector._first_direct_same_direction_after_reset(self, direction: str, reset_index: int)` (L1947-L1958).
+- Function `UnifiedReactionDetector._direct_reset_search(self, direction: str, reset_index: int)` (L1960-L1991).
+- Function `UnifiedReactionDetector._first_geometry_after_reset(self, direction: str, reset_index: int, end_index: int | None=None)` (L1993-L2044).
+- Function `UnifiedReactionDetector.first_geometry_after_reset(self, direction: str, reset_index: int, end_index: int)` (L2046-L2050).
+- Function `UnifiedReactionDetector._reaction_break_indices(self, direction: str)` (L2053-L2066).
+- Function `UnifiedReactionDetector.first_order_reaction_after_gate(self, direction: str, gate_index: int, end_index: int | None=None, gate_event_time: datetime | None=None)` (L2068-L2215).
+- Function `UnifiedReactionDetector.first_order_reaction_after_gate.cache_result(result: Candidate | None)` (L2084-L2093).
+- Function `UnifiedReactionDetector.first_order_reaction_after_gate.confirmed_no_later_than_gate(reaction: Candidate)` (L2095-L2113).
+- Function `UnifiedReactionDetector._earliest_confirmed_geometry(self, direction: str, start_index: int, end_index: int | None=None)` (L2217-L2289).
+- Function `UnifiedReactionDetector._build_direct_candidate(self, direction: str, reset_index: int, first_index: int)` (L2291-L2346).
+- Function `UnifiedReactionDetector._scan_direct_candidate(self, direction: str, candidate: Candidate, stop_index: int)` (L2349-L2377).
+- Function `UnifiedReactionDetector._owner_boundary_before_confirmation(self, direction: str, candidate: Candidate, candle: Candle)` (L2379-L2417).
+- Function `UnifiedReactionDetector._result(self)` (L2420-L2427).
+- Function `UnifiedReactionDetector.detect(self, *, stop_after_first_at_or_after: int | None=None)` (L2429-L2432).
+- Function `UnifiedReactionDetector._detect(self, stop_after_first_at_or_after: int | None, *, retain_cursor: bool, initial_cursor: _InitialLegCursor | _TrendLegCursor | None=None)` (L2434-L2515).
+- Function `UnifiedReactionDetector._scan_normal(self, cursor: _NormalReactionCursor, stop_after_first_at_or_after: int | None, *, retain_cursor: bool)` (L2517-L2781).
+- Class `LiveReactionContinuation` (L2784-L2905).
+- Function `LiveReactionContinuation.__init__(self, candles: Sequence[Candle], lower: Sequence[Candle], direction: str, *, timeframe_seconds: int, initial_bullish_trend: bool=False, initial_bearish_trend: bool=False)` (L2792-L2819).
+- Function `LiveReactionContinuation.result(self)` (L2822-L2823).
+- Function `LiveReactionContinuation._snapshot(result: DetectionResult)` (L2826-L2831).
+- Function `LiveReactionContinuation._detector(self, candles: list[Candle], lower: list[Candle])` (L2833-L2834).
+- Function `LiveReactionContinuation._release_indexes(*sequences: list[Candle])` (L2837-L2838).
+- Function `LiveReactionContinuation._validate_extension(self, candles: Sequence[Candle], lower: Sequence[Candle], previous_main: Candle | None, previous_lower: Candle | None)` (L2840-L2864).
+- Function `LiveReactionContinuation.advance(self, candles: Sequence[Candle], lower: Sequence[Candle])` (L2866-L2867).
+- Function `LiveReactionContinuation.preview(self, candles: Sequence[Candle], lower: Sequence[Candle])` (L2869-L2871).
+- Function `LiveReactionContinuation._extend(self, candles: Sequence[Candle], lower: Sequence[Candle], *, commit: bool)` (L2873-L2905).
+
+#### `pipeline/s_zone_detector.py`
+- Symbol `S_ZONE_VERSION` (L22).
+- Symbol `S_ZONE_IMPLEMENTATION_VERSION` (L23).
+- Symbol `S_ZONE_LAST_MODIFIED` (L24).
+- Class `SZone` (L28-L63).
+- Symbol `direction: str` (L29).
+- Symbol `color: str` (L30).
+- Symbol `formation_type: str` (L31).
+- Symbol `a_ordinal: int` (L32).
+- Symbol `a_source_index: int` (L33).
+- Symbol `a_source_time: datetime` (L34).
+- Symbol `a_price: Decimal` (L35).
+- Symbol `a_stop_index: int` (L36).
+- Symbol `a_stop_time: datetime` (L37).
+- Symbol `a_stop_event_time: datetime` (L38).
+- Symbol `order_direction: str | None` (L39).
+- Symbol `order_reaction_number: int | None` (L40).
+- Symbol `order_mode: str | None` (L41).
+- Symbol `order_first_index: int | None` (L42).
+- Symbol `order_first_time: datetime | None` (L43).
+- Symbol `order_break_index: int | None` (L44).
+- Symbol `order_break_time: datetime | None` (L45).
+- Symbol `order_confirmation_time: datetime | None` (L46).
+- Symbol `order_box_top: Decimal | None` (L47).
+- Symbol `order_box_top_source_index: int | None` (L48).
+- Symbol `order_box_top_source_time: datetime | None` (L49).
+- Symbol `order_box_bottom: Decimal | None` (L50).
+- Symbol `order_box_bottom_source_index: int | None` (L51).
+- Symbol `order_box_bottom_source_time: datetime | None` (L52).
+- Symbol `order_stop_level: Decimal | None` (L53).
+- Symbol `order_stop_source_index: int | None` (L54).
+- Symbol `order_stop_source_time: datetime | None` (L55).
+- Symbol `reset_reaction_number: int | None` (L56).
+- Symbol `reset_time: datetime | None` (L57).
+- Symbol `source_index: int` (L58).
+- Symbol `source_time: datetime` (L59).
+- Symbol `price: Decimal` (L60).
+- Symbol `decision_index: int` (L61).
+- Symbol `decision_time: datetime` (L62).
+- Symbol `decision_event_time: datetime` (L63).
+- Class `SZoneDetector` (L66-L1421).
+- Function `SZoneDetector.__init__(self, direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], trend_blue_lines: Sequence[object], a_zones: Sequence[object], chronology: object, start_index: int | None=None, end_index: int | None=None, opposite_resets: Sequence[object]=(), initial_order_geometry: Callable[[int, datetime, int], object | None] | None=None)` (L67-L176).
+- Function `SZoneDetector._main_index(self, timestamp: datetime)` (L178-L179).
+- Function `SZoneDetector._lower_window(self, start: datetime, end: datetime | None)` (L181-L184).
+- Function `SZoneDetector._reaction_confirmation_time(self, reaction: object, direction: str)` (L186-L189).
+- Function `SZoneDetector.reaction_confirmation_time(self, reaction: object, direction: str)` (L191-L195).
+- Function `SZoneDetector._reset_time(self, reset: object)` (L198-L199).
+- Function `SZoneDetector._a_confirmation_time(self, zone: object)` (L201-L207).
+- Function `SZoneDetector._trend_extreme(self, candle: object)` (L209-L212).
+- Function `SZoneDetector._a_stopped(self, value: Decimal, level: Decimal)` (L214-L215).
+- Function `SZoneDetector._first_a_stop(self, level: Decimal, start: datetime)` (L217-L251).
+- Function `SZoneDetector.first_a_stop(self, level: Decimal, start: datetime)` (L253-L257).
+- Function `SZoneDetector._resolved_order_backed_zone(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], first_order_match: tuple[int, object, datetime])` (L260-L276).
+- Function `SZoneDetector._candidate_source(self, start_index: int, end_index: int)` (L279-L292).
+- Function `SZoneDetector._candidate_source_last(self, start_index: int, end_index: int)` (L294-L312).
+- Function `SZoneDetector._first_trend_reaction_after_order(self, order_confirmation_time: datetime)` (L314-L331).
+- Function `SZoneDetector._nested_trend_reaction(self, order: object, order_confirmation_time: datetime)` (L334-L367).
+- Function `SZoneDetector._simple_candidate(self, order: object, reaction: object)` (L369-L376).
+- Function `SZoneDetector._type3_reset_leg(self, reset: object)` (L378-L392).
+- Function `SZoneDetector._type3_has_trend_reaction(self, a_stop_event: datetime, crossing: datetime)` (L394-L401).
+- Function `SZoneDetector._first_type3(self, a_stop_event: datetime, deadline: datetime)` (L403-L450).
+- Function `SZoneDetector._type4_has_blue(self, candidate_source_index: int, crossing_event: datetime)` (L453-L462).
+- Function `SZoneDetector._first_type4(self, a_stop: tuple[int, datetime, datetime], deadline: datetime)` (L464-L532).
+- Function `SZoneDetector._build_type4_zone(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], type4: tuple[int, datetime, Decimal, int, datetime, int, datetime])` (L534-L584).
+- Function `SZoneDetector._candidate_after_order(self, order_confirmation_time: datetime, reaction: object)` (L587-L626).
+- Function `SZoneDetector._a_source_event_time(self, zone: object)` (L628-L635).
+- Function `SZoneDetector._a_owned_by_s(self, zone: object)` (L637-L676).
+- Function `SZoneDetector._a_pair_is_reset_reset(self, zone: object)` (L678-L689).
+- Function `SZoneDetector.eligible_a_zones(self)` (L692-L694).
+- Function `SZoneDetector._candidate_timing(self, a_stop_index: int, order: object, order_confirmation_time: datetime, a_stop_event_time: datetime | None=None)` (L696-L739).
+- Function `SZoneDetector._candidate_before_order(self, a_stop_index: int, order: object, a_stop_event_time: datetime | None=None)` (L741-L783).
+- Function `SZoneDetector._candidate_event_time(self, source_index: int, level: Decimal, not_before: datetime)` (L785-L798).
+- Function `SZoneDetector.candidate_event_time(self, source_index: int, price: Decimal, fallback: datetime)` (L800-L804).
+- Function `SZoneDetector._blue_formation_time(self, line: object)` (L807-L835).
+- Function `SZoneDetector._candidate_cross_has_blue(self, reaction_number: int, event_time: datetime)` (L837-L852).
+- Function `SZoneDetector._has_ordinary_trend_reaction(self, behavior_start: datetime, event_time: datetime)` (L854-L862).
+- Function `SZoneDetector._candidate_crossed(self, candle: object, level: Decimal)` (L865-L867).
+- Function `SZoneDetector._decision(self, candidate_level: Decimal, order_stop_level: Decimal, start: datetime, trend_reaction_number: int, behavior_start: datetime, candidate_start: datetime | None=None, fallback_on_unqualified_cross: bool=False)` (L870-L993).
+- Function `SZoneDetector._build_type3_zone(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], type3: tuple[int, datetime, Decimal, int, datetime, int, datetime, datetime])` (L996-L1052).
+- Function `SZoneDetector._build_order_backed_zone(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], order_match: tuple[int, object, datetime])` (L1054-L1223).
+- Function `SZoneDetector._resolve_candidate(self, zone: object, a_ordinal: int, a_price: Decimal, a_stop: tuple[int, datetime, datetime], order_match: tuple[int, object, datetime] | None)` (L1225-L1246).
+- Function `SZoneDetector.detect(self)` (L1248-L1249).
+- Function `SZoneDetector._detect(self, resolve_candidate: Callable[..., SZone | None])` (L1251-L1304).
+- Function `SZoneDetector.reconcile_shared_order_stops(self, zones: Sequence[SZone], order_entries: Sequence[dict[str, object]])` (L1307-L1421).
+- Function `_s_reaction_inputs(item: object)` (L1424-L1430).
+- Class `LiveSZoneContinuation` (L1433-L1525).
+- Function `LiveSZoneContinuation.__init__(self)` (L1443-L1446).
+- Function `LiveSZoneContinuation._current_dependencies(detector: SZoneDetector)` (L1449-L1466).
+- Function `LiveSZoneContinuation._settled_through(detector: SZoneDetector, zone: SZone, order_match: tuple[int, object, datetime] | None)` (L1469-L1490).
+- Function `LiveSZoneContinuation.update(self, detector: SZoneDetector, *, first_dirty_main: int)` (L1492-L1525).
+- Function `LiveSZoneContinuation.update.resolve(zone, ordinal, price, stop, order)` (L1509-L1521).
+- Function `detect_s_zones(direction: str, trend_reactions: Sequence[object], opposite_reactions: Sequence[object], trend_blue_lines: Sequence[object], a_zones: Sequence[object], chronology: object, start_index: int | None=None, end_index: int | None=None, opposite_resets: Sequence[object]=(), initial_order_geometry: Callable[[int, datetime, int], object | None] | None=None)` (L1528-L1551).
+
+#### `pipeline/true_false.py`
+- Symbol `VERDICT` (L12).
+- Symbol `REPAIR` (L13).
+- Symbol `REPEATED` (L14).
+- Function `repair_crossing_lookup(lower_index, from_epoch, to_epoch, *, through)` (L17-L29).
+- Function `repair_crossing_lookup.find(direction: str, start: int, level: str)` (L21-L27).
+- Class `BasicRepeat` (L33-L36).
+- Symbol `latest: dict` (L34).
+- Symbol `repair_count: int` (L35).
+- Symbol `verdict_count: int` (L36).
+- Function `_basic_rank(key, row)` (L39-L42).
+- Function `_basic_verdicts(direction, events, first_crossing)` (L45-L94).
+- Function `_basic_verdicts.repair(row, start)` (L50-L54).
+- Function `_stopall_verdicts(rows, confirmation_closed)` (L97-L125).
+- Function `apply_true_false(direction, group, first_crossing=None, *, stopall_confirmation_closed=None)` (L128-L156).

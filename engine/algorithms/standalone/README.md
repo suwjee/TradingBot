@@ -1,7 +1,0 @@
-# TradingBot Standalone Algorithm Specification — English edition
-
-Baseline: `466eb875070f02cd0dbfb105033422bbe2fd8c70` (main). Status: PARTIALLY_VERIFIED; not a certified full-engine reconstruction. This is an English migration and expansion of the v1.1 partial package. The independently expressed module summaries and explicit pseudocode are supplemented by the pinned repository's existing English semantic reference sections, without their embedded production-source appendices. The prior audit evidence is distinct from new repository publication checks.
-
-Start with [Master specification](00_Master_Specification.md), [global invariants](01_Global_Invariants.md), [architecture](06_Architecture_And_Dependencies.md), [Algorithms](Algorithms/), [Directional](Directional/), [Contracts](Contracts/), [Verification](Verification/) and [Audit](Audit/). Read the final audit before using the package to rebuild any production logic. All tests and reports apply only to their explicit scope. No production code, existing references or tests are replaced. RAW datasets are external inputs, not copied here. No automatic trading-rule changes, merge or deployment.
-
-A full independent implementation, exhaustive branch mapping, exact all-indicator differential checks, full Live/Batch checks and formal equivalence are still required. Do not infer these from reference-block equality or isolated tests.
