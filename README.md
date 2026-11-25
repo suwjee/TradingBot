@@ -75,3 +75,7 @@ Per the user's 2026-11-26 instruction, continue source-only reverse engineering.
 ### Phase 07 checkpoint 03
 
 [Additional owner-specific chronology](Algorithms/V3/Chronology/06_Additional_Owner_Boundaries.md) expands the reviewed source clauses to 75. Phase 07 semantic closure remains INCOMPLETE; Phase 08 blocked.
+
+### Phase 07 checkpoint 04
+
+[Exact AST-site crosswalk](Audit/Phase_07/Decision_Site_Crosswalk.md) maps all inventoried branch/control, comparison, arithmetic and call sites. Structural coverage does not establish semantic closure; Phase 08 remains blocked.

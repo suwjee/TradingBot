@@ -16,3 +16,7 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 03 — additional owner boundaries
 
 [Supplementary rules](Reviewed_Rules_Supplement.json) and [owner chronology clauses](../../Algorithms/V3/Chronology/06_Additional_Owner_Boundaries.md) add 30 directly reviewed source ranges (CH46–CH75), for 75 total. Each supplementary clause carries the pinned source blob, source interval and overlapping procedure IDs from the verified inventory. The original 45-rule index remains historical and was not relabeled as a complete crosswalk. Remaining semantic decisions, implicit dependencies and end-to-end cross-owner ordering are not certified. **Phase 07 INCOMPLETE; Phase 08 blocked.** No RAW reads, runtime tests, benchmarks or production source changes.
+
+## Checkpoint 04 — exact AST-site crosswalk
+
+[Crosswalk](Decision_Site_Crosswalk.md) joins all 3,133 decision/control sites, 2,177 comparison rows, 1,074 arithmetic rows and 5,120 call sites to original AST coordinates and owner metadata; all 16 production identities rechecked. [Validation](Decision_Site_Validation.json) records structural readback checks. Semantic certification remains incomplete; Phase 08 blocked.
