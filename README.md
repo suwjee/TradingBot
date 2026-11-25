@@ -57,3 +57,8 @@ Per the user's 2026-11-26 instruction, continue source-only reverse engineering.
 ## V3.0 Phase 05 — Module-level algorithm extraction
 
 [Phase 05 handoff](Audit/Phase_05/README.md) is COMPLETE for module composition and structural traceability. The active [V3 module specifications](Algorithms/V3/README.md) contain 23 English module documents, 89 composed rule sections and all 576 named procedures exactly once. All 16 source modules, 85 classes, 1,168 scopes and 91 distinct per-document relative links are mapped; [validation](Audit/Phase_05/Validation.json) records 12 passing structural checks. [Dependency review](Audit/Phase_05/Dependency_Graph.json) separates the guarded E/Order type-import cycle from native feedback/replay. The earlier Algorithms documents are retained as historical references. Semantic path equivalence and final reconstruction sufficiency are not certified. No RAW or Engine execution; main remains frozen. Proceed to Phase 06 formal state and lifecycle extraction.
+
+
+## V3.0 Phase 06 — State Machine & Lifecycle
+
+[Phase 06 handoff](Audit/Phase_06/README.md) is COMPLETE for guarded state-model and lifecycle documentation. The [active state-machine registry](Algorithms/V3/State_Machines/README.md) contains nine English specifications, 49 extended-state models and 491 guarded transitions. All 576 named procedure roles are accounted for (550 direct references, 26 supporting-only); all 16 source blob identities match the frozen main. [Validation](Audit/Phase_06/Validation.json) records 13 passing structural checks. These analytical tables are not an executable FSM or proof of every source decision path. Phase 07 shall extract chronology and exact event-ordering semantics. No RAW data reads, engine execution or production changes.
