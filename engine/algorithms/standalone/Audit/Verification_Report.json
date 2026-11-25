@@ -1,0 +1,368 @@
+{
+  "commit": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "python": "3.13.5",
+  "scope": "isolated primitives, TF annotation, batch aggregation only",
+  "source_hashes": {
+    "core_utils.py": {
+      "git_blob_sha1": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "sha256": "f0764f52943ed3a9b02e90183196f4cabcbcc99217480e063a271cb56c1d4fd0",
+      "matches": true
+    },
+    "direction_policy.py": {
+      "git_blob_sha1": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+      "sha256": "a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea",
+      "matches": true
+    },
+    "true_false.py": {
+      "git_blob_sha1": "d569d16bc493b9eb5da75ed5594c168751856b6f",
+      "sha256": "ac536ea31872c20a872b252171a8be352cfc87859e19a67773fc6f796cb633b2",
+      "matches": true
+    }
+  },
+  "synthetic_runs": [
+    {
+      "seed": 31,
+      "checks": 1460,
+      "elapsed_seconds": 0.350242,
+      "status": "PASS"
+    },
+    {
+      "seed": 73,
+      "checks": 1460,
+      "elapsed_seconds": 0.36434,
+      "status": "PASS"
+    },
+    {
+      "seed": 191,
+      "checks": 1460,
+      "elapsed_seconds": 0.353391,
+      "status": "PASS"
+    }
+  ],
+  "raw_runs": [
+    {
+      "dataset": "RAW FOREXCOM_XAUUSD 5S FROM 2026-09-22 11-00-00 TO 2026-09-29 11-55-05.json",
+      "sha256": "1e29ebef3265283c156ed0177567382030ffd990338e3668e0d512a6d0701f85",
+      "bytes": 6796540,
+      "rows": 83144,
+      "first_time": 1790062200,
+      "last_time": 1790670305,
+      "nonincreasing_pairs": 0,
+      "invalid_ohlc_rows": 0,
+      "cases": [
+        {
+          "tf": 1,
+          "lower_only": true,
+          "status": "PASS",
+          "lower_count": 83144,
+          "main_count": 0,
+          "lower_exact_sha256": "cbd44fcf9945b9badcaa51f80e57b3a6788ae5ea77086e3007ae0571acee72fd",
+          "main_exact_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "baseline_seconds": 0.550299,
+          "candidate_seconds": 0.40052
+        },
+        {
+          "tf": 60,
+          "lower_only": false,
+          "status": "PASS",
+          "lower_count": 83144,
+          "main_count": 6955,
+          "lower_exact_sha256": "cbd44fcf9945b9badcaa51f80e57b3a6788ae5ea77086e3007ae0571acee72fd",
+          "main_exact_sha256": "b1ee322ed736175c61260a5acd62cc935818d68d3c7b5b3839839407d4131046",
+          "baseline_seconds": 0.121478,
+          "candidate_seconds": 0.394959
+        },
+        {
+          "tf": 300,
+          "lower_only": false,
+          "status": "PASS",
+          "lower_count": 83144,
+          "main_count": 1392,
+          "lower_exact_sha256": "cbd44fcf9945b9badcaa51f80e57b3a6788ae5ea77086e3007ae0571acee72fd",
+          "main_exact_sha256": "df772596e796dd289d35c477d48036da906a990fa79767a503fc02bc8eb61375",
+          "baseline_seconds": 0.118588,
+          "candidate_seconds": 0.382232
+        }
+      ],
+      "elapsed_seconds": 4.685988
+    },
+    {
+      "dataset": "RAW FOREXCOM_XAUUSD 5S FROM 2026-09-28 20-44-00 TO 2026-10-06 19-32-40.json",
+      "sha256": "b49dd7d1edd11b9d2fd7187953058030fb5f60cbca8e48d6fbce7fb89a16366c",
+      "bytes": 8003316,
+      "rows": 97930,
+      "first_time": 1790615640,
+      "last_time": 1791302560,
+      "nonincreasing_pairs": 0,
+      "invalid_ohlc_rows": 0,
+      "cases": [
+        {
+          "tf": 1,
+          "lower_only": true,
+          "status": "PASS",
+          "lower_count": 97930,
+          "main_count": 0,
+          "lower_exact_sha256": "8d8f7a640a6b17985af01b790df7c7653b232d14ce5ee788fbff33d07be4e957",
+          "main_exact_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "baseline_seconds": 0.684064,
+          "candidate_seconds": 0.464832
+        },
+        {
+          "tf": 60,
+          "lower_only": false,
+          "status": "PASS",
+          "lower_count": 97930,
+          "main_count": 8192,
+          "lower_exact_sha256": "8d8f7a640a6b17985af01b790df7c7653b232d14ce5ee788fbff33d07be4e957",
+          "main_exact_sha256": "c880d50eb00a2c895d48c7d51bc82c4b6e3d693c8085c3a8bd5721ac735610f7",
+          "baseline_seconds": 0.132002,
+          "candidate_seconds": 0.45315
+        },
+        {
+          "tf": 300,
+          "lower_only": false,
+          "status": "PASS",
+          "lower_count": 97930,
+          "main_count": 1640,
+          "lower_exact_sha256": "8d8f7a640a6b17985af01b790df7c7653b232d14ce5ee788fbff33d07be4e957",
+          "main_exact_sha256": "3d6649f38b5ff1eed1e182743645cea1c16d951826ae1408959ade8d3b8dcabf",
+          "baseline_seconds": 0.130138,
+          "candidate_seconds": 0.424603
+        }
+      ],
+      "elapsed_seconds": 5.327105
+    },
+    {
+      "dataset": "RAW FOREXCOM_XAUUSD 5S FROM 2026-10-08 19-35-30 TO 2026-10-09 18-14-25.json",
+      "sha256": "5acdcaf7a0516037b51a0e44558150c2a2708cb1ef4d2abeb2d3f105355de7e4",
+      "bytes": 1270051,
+      "rows": 15542,
+      "first_time": 1791475530,
+      "last_time": 1791557065,
+      "nonincreasing_pairs": 0,
+      "invalid_ohlc_rows": 0,
+      "cases": [
+        {
+          "tf": 1,
+          "lower_only": true,
+          "status": "PASS",
+          "lower_count": 15542,
+          "main_count": 0,
+          "lower_exact_sha256": "0f02f3995ea6215ea88c6e0586b2b13710ef849be16844dfac1fa9e9cbe175e1",
+          "main_exact_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "baseline_seconds": 0.119337,
+          "candidate_seconds": 0.026223
+        },
+        {
+          "tf": 60,
+          "lower_only": false,
+          "status": "PASS",
+          "lower_count": 15542,
+          "main_count": 1300,
+          "lower_exact_sha256": "0f02f3995ea6215ea88c6e0586b2b13710ef849be16844dfac1fa9e9cbe175e1",
+          "main_exact_sha256": "07c2761a757168559498e9d5ff8569755f86c5734b9e03e85ce273610709eb41",
+          "baseline_seconds": 0.021302,
+          "candidate_seconds": 0.02956
+        },
+        {
+          "tf": 300,
+          "lower_only": false,
+          "status": "PASS",
+          "lower_count": 15542,
+          "main_count": 260,
+          "lower_exact_sha256": "0f02f3995ea6215ea88c6e0586b2b13710ef849be16844dfac1fa9e9cbe175e1",
+          "main_exact_sha256": "82e64c0e89d01600629c45e1459c14e992f23c86e54213d45a4aa7dc17118dd1",
+          "baseline_seconds": 0.020874,
+          "candidate_seconds": 0.029319
+        }
+      ],
+      "elapsed_seconds": 0.704965
+    },
+    {
+      "dataset": "RAW FXCM_USOIL 5S FROM 2026-10-16 12-00-05 TO 2026-10-21 18-21-55.json",
+      "sha256": "587321ff2b81fbc9e584520d1b68b3d74f7abe61611c9a26962fd7a7b7b44c5f",
+      "bytes": 3703028,
+      "rows": 47462,
+      "first_time": 1792139405,
+      "last_time": 1792594315,
+      "nonincreasing_pairs": 0,
+      "invalid_ohlc_rows": 0,
+      "cases": [
+        {
+          "tf": 1,
+          "lower_only": true,
+          "status": "PASS",
+          "lower_count": 47462,
+          "main_count": 0,
+          "lower_exact_sha256": "9e396f0535fddd1a14c9ab72770e4fa1f8d8e371eb6d66f18afdf31c7274e88d",
+          "main_exact_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "baseline_seconds": 0.33251,
+          "candidate_seconds": 0.08909
+        },
+        {
+          "tf": 60,
+          "lower_only": false,
+          "status": "PASS",
+          "lower_count": 47462,
+          "main_count": 4495,
+          "lower_exact_sha256": "9e396f0535fddd1a14c9ab72770e4fa1f8d8e371eb6d66f18afdf31c7274e88d",
+          "main_exact_sha256": "2091059782e08f47b4eadc55badde77dc5883dfbe86d9bb10a56443c6b280ec4",
+          "baseline_seconds": 0.050186,
+          "candidate_seconds": 0.223958
+        },
+        {
+          "tf": 300,
+          "lower_only": false,
+          "status": "PASS",
+          "lower_count": 47462,
+          "main_count": 902,
+          "lower_exact_sha256": "9e396f0535fddd1a14c9ab72770e4fa1f8d8e371eb6d66f18afdf31c7274e88d",
+          "main_exact_sha256": "ac3fcb893ab54ad9322563ae4c13371c51c694fa704833556b44239ad7a30c72",
+          "baseline_seconds": 0.048929,
+          "candidate_seconds": 0.080773
+        }
+      ],
+      "elapsed_seconds": 2.246153
+    },
+    {
+      "dataset": "RAW FXCM_USOIL 5S FROM 2026-10-22 19-25-25 TO 2026-10-23 19-25-25.json",
+      "sha256": "70da6116bb79d04f26bea45057de993c9f77504f7af8f326c8428e778d5e9cbf",
+      "bytes": 1190530,
+      "rows": 15061,
+      "first_time": 1792684525,
+      "last_time": 1792770925,
+      "nonincreasing_pairs": 0,
+      "invalid_ohlc_rows": 0,
+      "cases": [
+        {
+          "tf": 1,
+          "lower_only": true,
+          "status": "PASS",
+          "lower_count": 15061,
+          "main_count": 0,
+          "lower_exact_sha256": "33b4c737866c3ec84ce4a559d8a903afe0dfa7afc495679ac9ec6d7d32f7649b",
+          "main_exact_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "baseline_seconds": 0.104104,
+          "candidate_seconds": 0.024215
+        },
+        {
+          "tf": 60,
+          "lower_only": false,
+          "status": "PASS",
+          "lower_count": 15061,
+          "main_count": 1380,
+          "lower_exact_sha256": "33b4c737866c3ec84ce4a559d8a903afe0dfa7afc495679ac9ec6d7d32f7649b",
+          "main_exact_sha256": "c31e831543f7b9be05ce520c4668bf9007895774d66593964fc7b4dc55989770",
+          "baseline_seconds": 0.01552,
+          "candidate_seconds": 0.026084
+        },
+        {
+          "tf": 300,
+          "lower_only": false,
+          "status": "PASS",
+          "lower_count": 15061,
+          "main_count": 277,
+          "lower_exact_sha256": "33b4c737866c3ec84ce4a559d8a903afe0dfa7afc495679ac9ec6d7d32f7649b",
+          "main_exact_sha256": "6d3dc404c6ef50d65fd1d96f7ac22919c4eea0ade0de707dbe5b360a3e7dd446",
+          "baseline_seconds": 0.01455,
+          "candidate_seconds": 0.024748
+        }
+      ],
+      "elapsed_seconds": 0.646405
+    },
+    {
+      "dataset": "RAW FOREXCOM_XAUUSD 5S FROM 2026-11-02 02-31-00 TO 2026-11-21 01-29-35.json",
+      "sha256": "8726c0fa9be1c09abf9e0bb3e7b167d90a8fab41ce4eaf2664357a01022cb157",
+      "bytes": 20241504,
+      "rows": 247851,
+      "first_time": 1793574060,
+      "last_time": 1795211975,
+      "nonincreasing_pairs": 0,
+      "invalid_ohlc_rows": 0,
+      "cases": [
+        {
+          "tf": 1,
+          "lower_only": true,
+          "status": "PASS",
+          "lower_count": 247851,
+          "main_count": 0,
+          "lower_exact_sha256": "cadfa8c813731e6a8136dd4a3dcfa738b4b3f9b96b12146f28d651787aaff88d",
+          "main_exact_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "baseline_seconds": 1.467459,
+          "candidate_seconds": 1.51658
+        },
+        {
+          "tf": 60,
+          "lower_only": false,
+          "status": "PASS",
+          "lower_count": 247851,
+          "main_count": 20697,
+          "lower_exact_sha256": "cadfa8c813731e6a8136dd4a3dcfa738b4b3f9b96b12146f28d651787aaff88d",
+          "main_exact_sha256": "7957242e329028110b8cbe02bb516c43bc93c8cbbea753260cfe31f68a8f7cc8",
+          "baseline_seconds": 0.892358,
+          "candidate_seconds": 1.17278
+        },
+        {
+          "tf": 300,
+          "lower_only": false,
+          "status": "PASS",
+          "lower_count": 247851,
+          "main_count": 4140,
+          "lower_exact_sha256": "cadfa8c813731e6a8136dd4a3dcfa738b4b3f9b96b12146f28d651787aaff88d",
+          "main_exact_sha256": "510382f0cb6431cd00d83755a3467e1bc50368e88193b0c6196232431f120fd3",
+          "baseline_seconds": 0.92153,
+          "candidate_seconds": 1.696748
+        }
+      ],
+      "elapsed_seconds": 15.312443
+    },
+    {
+      "dataset": "RAW FXCM_USOIL 5S FROM 2026-10-28 00-01-30 TO 2026-11-23 22-37-55.json",
+      "sha256": "3710ea0a533c982438e794a434732b1c80de79ea5babd594cfdef5099604f490",
+      "bytes": 21963462,
+      "rows": 284184,
+      "first_time": 1793133090,
+      "last_time": 1795460875,
+      "nonincreasing_pairs": 0,
+      "invalid_ohlc_rows": 0,
+      "cases": [
+        {
+          "tf": 1,
+          "lower_only": true,
+          "status": "PASS",
+          "lower_count": 284184,
+          "main_count": 0,
+          "lower_exact_sha256": "f2d5067a70e6838f85e8a8911c250fa4d81a42a61d76656648c909afa328d988",
+          "main_exact_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "baseline_seconds": 1.633469,
+          "candidate_seconds": 0.996033
+        },
+        {
+          "tf": 60,
+          "lower_only": false,
+          "status": "PASS",
+          "lower_count": 284184,
+          "main_count": 25995,
+          "lower_exact_sha256": "f2d5067a70e6838f85e8a8911c250fa4d81a42a61d76656648c909afa328d988",
+          "main_exact_sha256": "719f81b683627483af16b019c153e6f35ef71dbf7010ce423d7387522574b090",
+          "baseline_seconds": 0.844245,
+          "candidate_seconds": 1.669501
+        },
+        {
+          "tf": 300,
+          "lower_only": false,
+          "status": "PASS",
+          "lower_count": 284184,
+          "main_count": 5204,
+          "lower_exact_sha256": "f2d5067a70e6838f85e8a8911c250fa4d81a42a61d76656648c909afa328d988",
+          "main_exact_sha256": "203c50b159ee1df8d89f549f1a76180e15cede066f563d6452ef58e5f557ef59",
+          "baseline_seconds": 0.302795,
+          "candidate_seconds": 1.103778
+        }
+      ],
+      "elapsed_seconds": 14.542742
+    }
+  ],
+  "failures": [],
+  "overall_partial_status": "PASS"
+}
