@@ -1,0 +1,3 @@
+# Chronology and time model
+
+RAW time is epoch seconds. Lower observations retain the actual timestamp, even if sampled every five seconds. Main bucket timestamp = floor(epoch / timeframe) * timeframe. Source time locates geometry; confirmation time proves it; decision time commits the behavior; stop event time records the first strict crossing; stop time may be a main bucket time. Events sharing a RAW row cannot be assigned an invented intrarow ordering. The Bridge uses Asia/Tehran local times; full conversion/cache behavior is not fully audited. Calculation horizon is not the visible range. Each module's inclusive/exclusive bounds are authoritative for its own path.

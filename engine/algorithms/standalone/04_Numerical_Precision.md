@@ -1,0 +1,3 @@
+# Numerical precision
+
+Batch JSON parsing uses Decimal for fractional tokens, integer for integer tokens; UTF-8 BOM is removed. Normalize an existing Decimal by returning it unchanged; otherwise Decimal(string representation). Aggregation cache key is (runtime type, equality value), retaining the first normalized representation for each key: Decimal 1.00 and 1.0 may share the first representation. Equal high/low operands preserve the earlier representation. No new quantization. Strict stop comparator is low < level for bullish and high > level for bearish; confirmation is the reverse. Full Decimal context and all serializers remain subject to detailed audit. See Algorithms/21_RAW_Aggregation_Contract.md.
