@@ -1,0 +1,126 @@
+# Lifecycle — cross-stage acceptance, priority and visibility (V3)
+
+**Conventions:** B = bullish, R = bearish. A strict trend stop means Low < level for B, High > level for R; improvement uses the same predicate. Main source identity and exact event chronology are separate. Preserve Decimal representation, operation order and stable ordering. Required record fields/defaults are in [record interfaces](../../Contracts/Declared_Record_Schemas.md); shared searches in [Index and cache contracts](20_Indexes_And_Caching.md). Procedure labels identify semantic operations, not required implementation symbols.
+
+
+## LC-M01 — Separate priorities
+
+| Kind/family | Sequence priority | Module priority |
+|---|---:|---:|
+| A / other | not a sequence | 0 |
+| S blue | 1 | 1 |
+| E blue | 2 | 2 |
+| S red | 3 | 3 |
+| E red | 4 | 4 |
+| StopAll | not a sequence | 5 |
+
+Sequence rank uses exact normalized pair; unsupported pair fails. Dominant sequence owner is (kind,family,number,count,latest). Same exact key increments count (armed at >=2); higher priority replaces with count 1, same-priority E only if higher same-family number or red over blue per helper. Lower owner ignored (same reference). Module priority inferred from attribute shape, not label alone; rank tie uses number,source time,index. No global priority applies to every race: E source arbitration, stop ownership and public collision each have specific chronology.
+
+## LC-M02 — A/S/E calculation acceptance
+
+Initial S filters A ownership. Provisional S/E may suppress A display; to determine invalid A use ALL eligible A and provisional S candidates. Collect actual strict stop events from S/E/StopAll and optionally A, map to containing main. Sweep A in source order and hold ready stopped owners until consumed. Candidate A must strictly extend winning stop owner (latest stop main, priority, number, source,index, earliest ordinal on tie) to be invalid; if no eligible owner or no strict extension, retain. Prior A stop owner excluded when A trigger strictly after that stop. Interior exception: between owner's first stop main and A First main choose directional extreme; if earlier than A source, strictly beyond A price, and an aligned completed trend Reaction begins at/after head through A First and confirms before A source, retain A and consume eligible owners of no higher priority. Otherwise invalid; S winner marks stage-invalid identity without consuming, other winner consumes. Derive stage-invalid S from those A sources; remove only those from later calculation, preserve other suppressed S evidence until appropriate gates.
+
+## LC-M03 — Accepted Order context
+
+Filter initial A ledger to accepted source set. For invalid A with pending S root, block opposite First in [invalid A source,first strict stop exact). Keep inherited blocked set, subtract accepted initial First times. Accepted E exception requires exact simultaneous invalid A/E stop, candidate First main in blocked but not inherited blocked, First >= invalid A source and strictly before stop, opposite confirmation > stop. Exception key exact (E stop,First main), never globally unblock. See [Order_A](06_Order_A.md). This pass may invalidate A creation without invalidating independently valid Order_B or S/E causes.
+
+## LC-M04 — S eligibility and consumed evidence
+
+For S engine input choose latest strictly prior E or accepted S (first duplicate at a timestamp, S supersedes only strictly later source). If new S no higher priority, reject when A source predates prior source or A/S price strictly extends prior price; otherwise accept. StopAll input additionally removes exact physical E/S source collisions. Consumed S evidence after larger E stop requires nonaccepted S candidate, earlier E source and exact E stop before candidate A source, E priority>S and strict source Close beyond stopped-main Close. Prefer latest prior E if qualified, or older higher rank whose stop follows latest E decision and is no earlier than latest qualified stop main. Keep earliest S evidence per owner. E rerace handles actual replacement.
+
+## LC-M05 — Final visibility sequence
+
+1. Initial A display removes S source collisions and A on main containing S decision event.
+2. StopAll detection on accepted S and E (including independently restored missing physical donors where pipeline permits); apply sequence reset map to detector. Do not rebuild E merely in this reconciliation helper.
+3. Remove E whose source index occupied by StopAll. Evaluate visible S against stopped previous external modules and accepted S: latest prior external establishes cutoff, source event from callback or source main; actual prior stop <= ownership event. If lower-priority S source Close strictly beyond stopped external main Close, suppress without consuming. Otherwise dominant stopped prior by exact stop then rank; higher-priority S vs S may remain; if S price strictly beyond prior boundary, consume stopped prior no higher priority and suppress candidate, else retain. Cache exact stop per object only within pass.
+4. Restore historical S required by accepted E parent (source time); sort. Remove A whose earliest Blue1/Blue2/continuation/First provenance is before dominant prior module stop boundary. Restore historical A referenced by S. Then remove A/S on E or StopAll source indexes and invalid S physical identities. Public range filter and invalid A filtering are bridge-owned. Internal behavior filter currently returns list copies of A/S/E/StopAll; it does not remove additional records. Blue has independent internal filter. Do not infer missing rule from helper name.
+
+## LC-M06 — Lifecycle callbacks and guarantees
+
+Actual stop time comes from non-null explicit record field, else supplied finder; tuple finder last element. No callback => unknown. Priority only compares eligible records; source chronology may differ from confirmation chronology. Error handling, duplicate-time rules, optional callback branches and exact acceptance conditions are in procedures. [StopAll](11_StopAll.md) owns group promotion and numbering; [E](09_E_Zone.md) owns recursive E chains. No new lifecycle rules.
+
+## Detailed lifecycle procedures
+
+### LC01 — sequence_priority
+Normalize kind and family with str().lower(); dictionary lookup S blue=1, E blue=2, S red=3, E red=4. Unknown pair raises KeyError.
+
+### LC02 — _DominantBehavior.priority
+Property delegates to LC01 on kind/family. Frozen slotted record also carries number, count, latest object.
+
+### LC03 — _DominantBehavior.armed
+True precisely when count >=2.
+
+### LC04 — _DominantBehavior.key
+Format E number and family if kind exactly E; otherwise S and family.
+
+### LC05 — advance_dominant_behavior
+Create incoming owner count=1. No prior owner => incoming. Exact kind/family/number match => replace previous count+1 and latest. Otherwise replace only on higher priority, or equal priority with both E and LC08 dominance. Otherwise return previous object unchanged. No mutation of owner record.
+
+## StopAll detection
+
+### LC25 — resolve_order_context
+Filter initial Order audit with accepted_audit_entry against accepted A sources; retain non-null entries under original keys. Copy inherited blocked First times and add LC33 for invalid A whose source belongs to pending S A sources. Normalize accepted initial reaction First strings with format %Y-%m-%d %H:%M:%S; subtract accepted First times from blocked. Optional E-specific exceptions: if accepted E stop events and opposite confirmation callback, group opposite reactions by integer First index. For each pending invalid A with stop exact event in accepted E stops, map to containing main via upper_bound-1; skip negative. For reactions in that main, require First in blocked, not in inherited blocked, invalid A source <= First < exact stop, and opposite confirmation > stop. Add pair (exact stop, First). Update supplied exception set if not null; return accepted audit and blocked times. Never globally unblock the E exception.
+
+### LC26 — visible_a_zones_after_s_stops
+Map each S decision event to containing main index via upper_bound-1; discard -1. Retain A whose integer source index is not in that set. This uses S decision, not its own eventual stop.
+
+### LC27 — module_priority
+Attribute presence order: stopped_behavior_type =>5; family =>4 if lowercase red else2; a_source_time =>3 if lowercase color red else1; otherwise0.
+
+### LC28 — module_identity
+Tuple (runtime type name, family or default color, number default null, required source_time, source_index default null). No price identity.
+
+### LC29 — module_stop_event
+Return explicit non-null stop_event_time first. If no finder or null finder result => null. Tuple finder result => last element; otherwise return result directly.
+
+### LC30 — strictly_beyond_boundary
+Use validated direction policy strict_cross. No equality crossing.
+
+### LC31 — dominant_module
+Max by (module priority, integer number default0, source time, integer source index default -1). First item wins equal key; empty input follows max error.
+
+### LC32 — split_a_zones_by_dominant_stops
+Validate direction. Sort S/E/StopAll by (source time,index); gather non-null exact stops and containing main positions >=0. Optional A stop finder adds A owners (tuple last or direct event), recording identities. For each stopped entry retain ordinal and source; maps stop index/event overwritten for identical identity, first_stop_event set once. Sort enumerated stop rows by main position. Process A sorted source time/index; move all stops at index<=A source index into ready identity groups unless consumed. Eligible rows require owner source strictly earlier and row stop index<=A index; exclude A owner if new A trigger (default source) > last stop exact. No eligible => valid. Choose max (identity's last stop index, priority, number, owner source, index, negative ordinal). If candidate price not strictly beyond winner => valid without consumption.
+Interior exception: winner not A, trend reactions and confirmation callback present, A index>0 and reaction_first_time present. Map winner's first stop event and A First to main indexes. If valid interval, select first min Low (B) or max High (R), Decimal(str), over inclusive interval. Head must occur before A index and strictly beyond A price. Then any trend reaction with First >= head index and <= A First main, Break < A index, and exact confirmation < A source time permits interior. Interior => valid and consume ready eligible identities of priority <= winner. Otherwise invalid; if winner has a_source_time (S), optionally record stage_invalid_a_identities (source,index) but consume none. For other winner consume ready eligible identities of priority <= winner. Return valid/invalid. Ready groups are removed only on consumption; comparison is price-directional while source/stop ordering is invariant.
+
+### LC33 — blocked_orders_while_invalid_leg_heads_are_live
+For each invalid A, get stop; skip null. For every opposite reaction, main First time at integer first_idx in [A source, stop[2]) is added to set. Direction not used. Return set.
+
+### LC34 — consumed_s_evidence_after_larger_stop
+Validate direction. Accepted identity pairs (A source,S source). Sort E source/index, precompute non-null stops mapped inside main range. Iterate S candidates sorted source/index, skip accepted and out-of-range source. Normalize candidate source Close. Eligible owner must precede A source, exact stop strictly before A source, outrank S, and candidate Close strictly beyond stop-main Close. Find latest prior E by reverse sorted source strictly before A source. Retain latest if qualified, or older owner with strictly higher (priority,number), stop after latest E decision (default source), and stop main index >= latest qualified owner's when present. Choose max (stop main index,priority,number,source,index). Keep earliest S (source,index) per owner identity. Return sorted pairs (candidate,owner) by candidate source/index. No owner means no evidence.
+
+### LC35 — s_zones_for_module_engines
+Sort E by source only and S by source only. For each S choose latest prior E or already accepted S (strictly earlier); S replaces prior E only on strictly later source. LC36 resolves duplicate timestamps. For lower/equal priority reject if A source < prior source or A price strictly beyond prior price or S price strictly beyond prior price. Higher priority bypasses these filters. Append otherwise. Return visible S.
+
+### LC36 — s_zones_for_module_engines.latest_prior
+Lower bound source minus one; negative => null; find first index at selected prior timestamp (lower bound). First duplicate wins.
+
+### LC37 — s_zones_for_stopall
+Apply LC35, then remove S whose exact (integer index,source time) appears in E.
+
+### LC38 — visible_s_zones_after_module_resets
+Validate direction, sort external owners by source/index, optionally build candle times; per-call stop cache LC39. For each sorted S, ownership event = source-event callback if supplied else source main time (valid directions override initial A stop). Consider prior external and accepted S strictly earlier by source and not consumed. Latest prior external by source/index establishes cutoff: ignore earlier prior modules. When ownership event non-null, stopped prior are those exact stop<=ownership event. If candles available and stopped external, latest such external by source/index: when new S priority lower and both stop-main/source indexes in range, skip candidate if source Close strictly beyond stop-main Close, without consumption. Otherwise choose dominant max (exact stop,priority,number,source,index). If both S and new priority strictly greater, append. If new S price not strictly beyond dominant, append. Else consume all stopped prior of priority <= dominant and skip candidate. When no applicable stop, append. Return visible list; no mutation of input records.
+
+### LC39 — visible_s_zones_after_module_resets.cached_stop_event
+Cache module_stop_event result (including null) by id(module), invoke finder at most once per object per call.
+
+### LC40 — reconcile_stopall_lifecycle
+Use supplied timed_step or immediate callable wrapper, stopall_finder or LC24. Measure LC37 visible S, then detect StopAll. Assign detector.sequence_resets map source_time:number (later duplicate overwrites). Return copy of E list and StopAll list; do not rebuild E.
+
+### LC41 — visible_a_zones_after_module_boundaries
+Direction unused. Sort modules S/E (caller may include StopAll) and A by source/index. Gather stopped prior with source<=A source and non-null stop<=A source. Choose LC31 priority-based dominant, get stop again. If minimum of Blue1/Blue2/continuation/Reaction First provenance times < boundary, exclude. Else include. Equality allowed. Return retained A.
+
+### LC42 — reaction_number_is_internal
+Null false, convert number to int, require 1..len(reactions); check physical order_identity(first_idx,break_idx) in identities.
+
+### LC43 — point_is_inside_healthy_reaction
+Null time or price false. Normalize price. For each reaction with First and confirmation non-null, require First < source <= confirmation and bottom < price < top. True first match, false otherwise. No explicit healthy flag in this function.
+
+### LC44 — filter_internal_behavior_outputs
+Ignore last three inputs; return list copies of A/S/E/StopAll in that order.
+
+### LC45 — finalize_behavior_visibility
+Build integer StopAll source indexes, remove E collisions. Compute visible S with final E+StopAll via LC38. Restore historical S referenced by final E parent type.upper()==S at parent_source_time if module_identity absent from original visible set; set is not updated during extension. Sort S source/index. Filter A via LC41 with S and E+StopAll. Restore historical A referenced by S a_source_time, using all_a_zones if non-null otherwise original A; compare (source time,int index) against initial visible identity set; sort. Occupied indexes E+StopAll: remove collisions from A/S; also remove S whose (source_time,index) in invalid identities. Return (final E, final S, final A).
+
+### LC46 — visible_a_zones
+Build final S integer source index set; retain A outside it.
