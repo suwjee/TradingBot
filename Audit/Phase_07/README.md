@@ -28,3 +28,7 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 06 — stepwise direct source-context review
 
 [Semantic context review](Semantic_Context_Review.md) and [progress ledger](Semantic_Context_Progress.json) document 8 source files, 128 reviewed contexts and all 223 branch sites, 158 comparisons, 85 arithmetic rows and 365 calls within those files. Eight larger modules remain pending; Phase 07 INCOMPLETE. Corrected the CH83 source interval without rewriting historical evidence.
+
+## Checkpoint 07 — A and Primary direct source review
+
+[Review](Semantic_Context_Review_07.md) and [progress](Semantic_Context_Progress_07.json) record 10/16 files, 233 contexts, 617 branch sites, 434 comparisons, 202 arithmetic rows and 956 calls. Source-range corrections for CH86–88 and CH114–115 are explicit. Six larger modules remain pending. **Phase 07 INCOMPLETE.**
