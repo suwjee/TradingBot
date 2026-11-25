@@ -1,6 +1,6 @@
 # TradingBot — Standalone Algorithm Specification
 
-**Documentation-only branch | English | PARTIALLY_VERIFIED**
+**Documentation-only branch | English | SOURCE-ONLY REVERSE ENGINEERING IN PROGRESS**
 
 This branch is an independent reading and distribution surface for algorithmic knowledge. Its current checked-out tree contains only Markdown specifications, language-neutral pseudocode, diagrams, structured metadata and verification evidence. It contains no production application or engine files, runnable test scripts, copied source appendices, build workflows, archives or RAW market datasets.
 
@@ -14,7 +14,7 @@ The implementation baseline is commit `466eb875070f02cd0dbfb105033422bbe2fd8c70`
 | [Algorithms](Algorithms/README.md) | Reaction, Blue, A, S, Orders, E, Lifecycle, primary structures, bridge, serialization and T/F |
 | [Directional](Directional/README.md) | Bullish and Bearish semantic maps and mirror rules |
 | [Contracts](Contracts/README.md) | Input, output and inter-module interfaces |
-| [Verification](Verification/README.md) | Test specifications, independent reconstruction and acceptance gates |
+| [Verification](Verification/README.md) | Static specification acceptance and historical test evidence |
 | [Audit](Audit/README.md) | Baseline traceability, open gaps, coverage, historical measurements and publication evidence |
 
 Read [the final audit](Audit/Final_Audit_Report.md) before using any algorithm for production reconstruction. The earlier measured checks and their limitations are preserved; reorganizing documents is not a new execution or proof of equivalence.
@@ -31,4 +31,8 @@ See [AGENTS.md](AGENTS.md) for maintenance rules.
 
 ## V2.0 Phase 02 — Deep Static Analysis
 
-[Phase 02 analysis](Audit/Phase_02/README.md) is structurally verified against latest main at commit `466eb875070f02cd0dbfb105033422bbe2fd8c70`. Complete AST inventories and conservative control/data-flow graphs are recorded; dynamic and semantic closure remains partial. Phase 03 must re-resolve main before using this evidence.
+[Phase 02 analysis](Audit/Phase_02/README.md) is structurally verified against latest main at commit `466eb875070f02cd0dbfb105033422bbe2fd8c70`. Complete AST inventories and conservative control/data-flow graphs are recorded; dynamic and semantic closure remains partial. Phase 03 must re-resolve main before using this evidence. See [static closure supplement](Audit/Phase_02/Closure_01/README.md).
+
+## Active task scope
+
+Per the user's 2026-11-26 instruction, continue source-only reverse engineering. No RAW tests, execution of production calculations, independent executable reconstruction, or benchmark are required for this task. The sole semantic authority is the current committed production source on main. Historical validation reports remain evidence of their original scope, not active completion gates. See [Source-only scope](Audit/Source_Only_Scope.md).

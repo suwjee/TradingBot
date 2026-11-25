@@ -1,19 +1,17 @@
-# Full reconstruction acceptance gates
+# Source-only algorithm specification acceptance gates
 
-| Gate | Current status |
+Active user scope: 2026-11-26. See [scope decision](../Audit/Source_Only_Scope.md).
+
+| Gate | Status at scope change |
 |---|---|
-| Source file/module inventory | DOCUMENTED |
-| Validated function and branch mapping | INCOMPLETE |
-| Complete model/serialization contracts | INCOMPLETE |
-| Standalone executable pseudocode with no undefined operations | INCOMPLETE |
-| Isolated synthetic/aggregation comparisons | PASS in recorded scope only |
-| Independent clean-room candidate | NOT RUN |
-| Full Unit and Regression suites | NOT RUN |
-| Complete RAW indicator differential checks | NOT RUN |
-| Both directions, all supported horizons and flags | NOT VERIFIED |
-| Live/Batch differential and rollback | NOT RUN |
-| Mutation, property and boundary coverage | NOT MEASURED |
-| Formal equivalence | NOT PROVEN |
-| Full-engine benchmark and peak memory | NOT MEASURED |
+| Pin latest main and identify relevant production modules | PASS at pinned baseline |
+| Complete structural source inventory | PASS in recorded scope |
+| Complete source-derived function and branch semantics | INCOMPLETE |
+| Complete model, state, ownership and serialization contracts | INCOMPLETE |
+| Self-contained language-neutral pseudocode and decision rules | INCOMPLETE |
+| Both directions, equality, time windows, event ordering and numerical precision documented from source | INCOMPLETE |
+| Source-to-spec traceability and documented dynamic conditions | INCOMPLETE |
+| Internal documentation consistency and publication integrity | Required for each publication |
+| RAW tests, runtime branch coverage, executable candidate, differential regression and benchmarking | OUT OF SCOPE |
 
-Run these gates outside this branch. Verify candidate against baseline with exact numeric representation, identity, ownership, source/confirmation/decision/stop times, arrays, ordering, provenance and contractual JSON. Report zero observed discrepancies only for the inputs actually tested. Never accept a successful documentation layout check as engine correctness.
+Static extraction must not silently assert a dynamic receiver, alias, feasible path or external behavior that source does not establish. Record conditions and unknowns explicitly. A complete source specification is not a proof of runtime equivalence. Historical acceptance reports retain their original status.

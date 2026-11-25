@@ -1,4 +1,6 @@
-# Reconstruction acceptance gate
+# Historical reconstruction acceptance protocol
+
+**Superseded for the active source-only task.** Retained below as historical procedure, not authorization or a completion condition. See [active scope](../Audit/Source_Only_Scope.md).
 
 1. Install exact pinned baseline externally; record runtime and SHA.
 2. Independent implementer receives semantic specs and authorized fixtures only, not production source or audit source mapping.
