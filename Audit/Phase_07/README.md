@@ -24,3 +24,7 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 05 — cross-owner semantics and comparison evidence
 
 [Integration report](Chronology_Integration.md) adds 48 directly reviewed clauses (CH76–CH123), a complete 576-procedure Phase 05/06 navigation crosswalk, and all 2,177 comparison operand root partitions (47 chained comparisons). Ten integration structural checks pass. The source-derived owner review is materially expanded; compound operand interpretation, per-site semantic disposition and implicit dependency closure are not certified. **Phase 07 INCOMPLETE; Phase 08 blocked.**
+
+## Checkpoint 06 — stepwise direct source-context review
+
+[Semantic context review](Semantic_Context_Review.md) and [progress ledger](Semantic_Context_Progress.json) document 8 source files, 128 reviewed contexts and all 223 branch sites, 158 comparisons, 85 arithmetic rows and 365 calls within those files. Eight larger modules remain pending; Phase 07 INCOMPLETE. Corrected the CH83 source interval without rewriting historical evidence.
