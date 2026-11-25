@@ -35,3 +35,8 @@ Use [Phase 01](Phase_01/README.md) for current baseline evidence. [Source manife
 ## Current V3.0 Phase 05 checkpoint
 
 [Module-level algorithm extraction](Phase_05/README.md) is complete for composition and structural traceability, with [validation](Phase_05/Validation.json), [module mapping](Phase_05/Module_Traceability.json) and [dependency analysis](Phase_05/Dependency_Graph.json). This is not final semantic certification. See the [active module catalog](../Algorithms/V3/README.md).
+
+
+## Current V3.0 Phase 06 checkpoint
+
+[State Machine & Lifecycle](Phase_06/README.md) is complete for guarded state-model documentation, with [validation](Phase_06/Validation.json) and [transition traceability](Phase_06/Transition_Traceability.json). See the [active registry](../Algorithms/V3/State_Machines/README.md). Final semantic and path certification remain open.
