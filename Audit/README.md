@@ -26,3 +26,7 @@ The historical reports remain statements about the runs at their original commit
 ## Current V2.0 audit checkpoint
 
 Use [Phase 01](Phase_01/README.md) for current baseline evidence. [Source manifest](Phase_01/Source_Manifest.json), [completion report](Phase_01/Phase_01_Completion_Report.md), [test inventory](Phase_01/Test_Inventory.json), [RAW manifest](Phase_01/RAW_Manifest.json), [Golden evidence](Phase_01/Golden_Evidence.json) and [conflicts](Phase_01/Conflicts_Register.md) were created from fresh discovery. The earlier audit records are retained as historical evidence; they are not current baseline discovery authority.
+
+## V2.0 Phase 02 — Deep Static Analysis
+
+[Phase 02 analysis](Phase_02/README.md) is structurally verified against latest main at commit `466eb875070f02cd0dbfb105033422bbe2fd8c70`. Complete AST inventories and conservative control/data-flow graphs are recorded; dynamic and semantic closure remains partial. Phase 03 must re-resolve main before using this evidence.

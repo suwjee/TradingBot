@@ -1,0 +1,5 @@
+# Call graph
+
+All 5120 AST call sites have source IDs and candidate status. 1248 have one or more internal scope candidates; 1164 are explicitly unresolved dynamic or inherited dispatch sites. The others are builtin or imported external/dynamic candidates. See `calls` in every module JSON and `call_resolution_counts` in the summary. A candidate is not a guaranteed runtime target. Method dispatch through engine bundle objects, closures, timed callbacks, getattr, importlib and dynamically selected modules requires later owner-specific analysis. Cross-module calls retain stable scope IDs, including candidate sets. Do not assign an unsupported unique target or delete a definition simply because no static call points to it.
+
+The critical orchestration owner is Trading Bridge: market preparation, pipeline state, and response projection are distinct entry points; native and Live reuse them. Dynamic loading and type-only import boundaries are described in [Dependency Graph](Dependency_Graph.md).

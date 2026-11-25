@@ -1,0 +1,3 @@
+# Dead-code and reachability review
+
+Statement graph abstraction: 0 structurally unreachable statement/handler nodes. Compiled block graph abstraction: 0 unreachable blocks. Neither result proves that all code is feasible or used. Compiler optimizations, guards, mutually inconsistent predicates, exception types, dynamic calls, input restrictions and conditional module loading can make paths infeasible. Do not label code dead merely because a direct call edge is missing. No code was removed. Exact semantic reachability and branch feasibility are NOT PROVEN. Treat this as structural screening only; later symbolic/fixture and runtime checks may narrow the set.

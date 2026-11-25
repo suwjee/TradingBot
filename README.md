@@ -28,3 +28,7 @@ See [AGENTS.md](AGENTS.md) for maintenance rules.
 ## Formal specification V2.0 — Phase 01
 
 [Phase 01: Source Discovery and Baseline Freeze](Audit/Phase_01/README.md) is COMPLETE for its defined discovery scope. The current implementation baseline is the latest main commit observed on 2026-11-26, `466eb875070f02cd0dbfb105033422bbe2fd8c70`. All 64 engine blobs are inventoried and hashed, with exact reference synchronization and verified RAW and historical Golden evidence. Re-resolve main before each subsequent phase. The specification itself remains PARTIALLY_VERIFIED; Phase 01 does not establish full semantic equivalence.
+
+## V2.0 Phase 02 — Deep Static Analysis
+
+[Phase 02 analysis](Audit/Phase_02/README.md) is structurally verified against latest main at commit `466eb875070f02cd0dbfb105033422bbe2fd8c70`. Complete AST inventories and conservative control/data-flow graphs are recorded; dynamic and semantic closure remains partial. Phase 03 must re-resolve main before using this evidence.
