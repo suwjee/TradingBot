@@ -44,3 +44,7 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 10 — Lifecycle and StopAll direct review
 
 [Review](Semantic_Context_Review_10.md) and [progress](Semantic_Context_Progress_10.json) record 13/16 files, 443 contexts, 1475 branch sites, 1017 comparisons, 510 arithmetic rows and 2457 calls. Three larger modules remain pending. **Phase 07 INCOMPLETE.**
+
+## Checkpoint 11 — Reaction direct source-context review
+
+[Review](Semantic_Context_Review_11.md) and [progress](Semantic_Context_Progress_11.json) record 14/16 files, 539 contexts, 2030 branch sites, 1470 comparisons, 789 arithmetic rows and 3047 calls. Two larger modules remain pending. **Phase 07 INCOMPLETE.**

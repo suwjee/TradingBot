@@ -103,3 +103,7 @@ Per the user's 2026-11-26 instruction, continue source-only reverse engineering.
 ### Phase 07 checkpoint 10
 
 [Lifecycle and StopAll direct semantic context review](Audit/Phase_07/Semantic_Context_Review_10.md): 13/16 files, three pending. Phase 07 INCOMPLETE; Phase 08 blocked.
+
+### Phase 07 checkpoint 11
+
+[Reaction direct semantic context review](Audit/Phase_07/Semantic_Context_Review_11.md): 14/16 files, two pending. Phase 07 INCOMPLETE; Phase 08 blocked.
