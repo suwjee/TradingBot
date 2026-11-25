@@ -54,7 +54,7 @@ Registers full sorted Blue ordinals (including invalid), filtered valid states w
 | AP14 | ADVANCE | First strict A stop from confirmation exists and next Blue formation >= that stop event | Allow current ordinal bridge reuse; advance one | PAIR | A07,A18 |
 | AP15 | ADVANCE | Otherwise | Clear reuse, skip all states through cycle_after | PAIR | A18 |
 
-Stop/cross helper: lower interval nonempty means no main fallback on miss. Empty lower interval permits established main search. Pair expiry is exclusive for crossing queries, but stop guard rejects only >expiry; simultaneous AP09 can trigger at equality. Inheritance requires previous formation before current; chained route requires earlier actual stop and noninternal lines, otherwise current must not be Scale. Its aligned Reaction First strictly after start, Break strictly before current formation; chained includes full Break, other route ends at Break open. These conditions are gates, not state fields.
+Stop/cross helper: lower interval nonempty means no main fallback on miss. Empty lower interval permits established main search. Pair expiry is exclusive for crossing queries, but stop guard rejects only >expiry; simultaneous AP09 can trigger at equality. Inheritance requires previous formation before current; chained route requires earlier actual stop and noninternal lines, otherwise previous line must not be Scale. Its aligned Reaction First strictly after start, Break strictly before current formation; chained includes full Break, other route ends at Break open. These conditions are gates, not state fields.
 
 ## AD — Invalid Reset Blue (special double-stop) and ordinary collision resolution
 
@@ -63,7 +63,7 @@ Stop/cross helper: lower interval nonempty means no main fallback on miss. Empty
 | AD01 | INIT | Full sorted Blue sequence | Previous valid=null, special empty | SCAN | A12 |
 | AD02 | SCAN | Valid line | Retain as previous valid | SCAN | A12 |
 | AD03 | SCAN | Invalid line and previous valid absent or strict crossing not on invalid source main | Skip invalid; retain previous | SCAN | A12 |
-| AD04 | SCAN | Invalid line with previous valid stop on invalid main | Align first Reaction after exact trigger and not before invalid source; valid source required | FORM or SCAN | A12,A15,A17 |
+| AD04 | SCAN | Invalid line with previous valid stop on invalid main | Align first Reaction with confirmation >= exact trigger and First main time >= invalid source time; valid source required | FORM or SCAN | A12,A15,A17 |
 | AD05 | FORM | Successful geometry | Emit double-stop A, both effective stop mains invalid main, continuation prior source, no exact Blue stop fields; consume previous | SCAN | A12 |
 | AD06 | SCAN | Horizon | Filter special by ordinary Reaction ordinal collision | RESOLVE | A19,A20 |
 | AD07 | RESOLVE | Latest earlier ordinary A first stop before special First and >= special Blue1 source | Reject special; later recross is not first stop | RESOLVE | A19,A22 |
