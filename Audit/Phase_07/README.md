@@ -36,3 +36,7 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 08 — S direct source-context review
 
 [Review](Semantic_Context_Review_08.md) and [progress](Semantic_Context_Progress_08.json) record 11/16 files, 302 contexts, 855 branch sites, 605 comparisons, 302 arithmetic rows and 1409 calls. Five larger modules remain pending. **Phase 07 INCOMPLETE.**
+
+## Checkpoint 09 — E direct source-context review
+
+[Review](Semantic_Context_Review_09.md) and [progress](Semantic_Context_Progress_09.json) record 12/16 files, 373 contexts, 1189 branch sites, 823 comparisons, 406 arithmetic rows and 1862 calls. Four larger modules remain pending. **Phase 07 INCOMPLETE.**
