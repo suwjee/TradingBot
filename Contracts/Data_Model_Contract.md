@@ -2,6 +2,8 @@
 
 Status: DOCUMENTED / INCOMPLETE. The semantic field contracts are distributed through the following modules; the declaration inventory has been moved to Audit because it is evidence about the implementation, not a standalone formal data schema.
 
+The foundational Candle, normalized bucket, MarketContext and BucketAppend contracts are now expanded in [Candle and market input](../Specification/07_Candles_And_Market_Input.md). Full model-by-model extraction remains open.
+
 | Model family | Semantic contract |
 |---|---|
 | RAW and main OHLC candles, bucket results | [RAW aggregation](../Algorithms/21_RAW_Aggregation_Contract.md) |

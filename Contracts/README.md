@@ -8,4 +8,7 @@
 - [Live transport](../Algorithms/23_Live_Transport_Contract.md)
 - [True/False annotation](../Algorithms/22_True_False_Exact_Contract.md)
 
+- [Foundational candle and market models](../Specification/07_Candles_And_Market_Input.md)
+- [Search and cache primitives](../Specification/08_Range_Indexes_And_Caches.md)
+
 The model and schema specification is incomplete; the audit inventory is traceability metadata, not a source dependency or a complete formal schema.

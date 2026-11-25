@@ -19,11 +19,11 @@ Source is the geometric owner; confirmation is the evidence of formation; decisi
 
 ## 3. Global invariants
 
-1. **Decimal:** JSON floating-number lexemes are parsed directly with `parse_float=Decimal`, then normalized with `Decimal(str(value))`; no binary-float decision is authoritative.
+1. **Decimal:** JSON floating-number lexemes are parsed directly with `parse_float=Decimal`, then normalized by preserving an existing Decimal or converting from the native string representation; the aggregation cache can retain the first representation of an equal type/value key. No binary-float intermediate is introduced by normal RAW parsing. See [numerical precision](02_Numerical_Precision.md).
 2. **Candle color:** `GREEN` iff `close >= open`; `RED` iff `close < open`; a Doji is always GREEN in both market directions.
 3. **Strict crossing:** equality never satisfies a strict price crossing. For Bullish behavior-space stops the directional primitive is `Low < Level`; the Bearish mirror uses the opposite strict comparator.
 4. **Chronology / calculation timeframe:** trading eligibility is evaluated on the configured calculation timeframe unless the active rule explicitly requires intrabar ordering. Lower-timeframe RAW is authoritative only for those explicit within-candle chronology questions and exact event provenance; it must not by itself move a main-timeframe eligibility gate to a later calculation candle. Time is never mirrored.
 5. **Reaction identity:** physical Reaction/Order identity is `(FirstIndex, BreakIndex)`. Identity, provenance structure, stable ordering, lifecycle priority, behavior-family names and public schemas are direction-invariant.
-6. **Determinism:** candidate ordering and tie-breaking are explicit. Equal main-candle extremes keep the earliest source unless the owning rule explicitly requests last-on-equality (S Type-3/Type-4 candidate construction).
+6. **Determinism:** candidate ordering and tie-breaking are explicit. Equal range-index extremes keep the earliest position; other main-candle extrema and candidate choices use the owning algorithm's exact tie rule. S Type-3/Type-4 candidate construction is among the last-on-equality paths.
 7. **Canonical mirror:** the Bearish Reaction path mechanically reflects the shared Bullish coordinate state machine. Independently inspect explicit directional branches and policies. Reflect prices/roles; preserve time, state ownership, canonical identity, cause structure and lifecycle families.
 8. **Calculation vs presentation:** internal/historical objects may remain necessary for later calculation even when they are not independently visible. Final filters cannot rewrite upstream truth.

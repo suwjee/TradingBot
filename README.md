@@ -40,3 +40,7 @@ Per the user's 2026-11-26 instruction, continue source-only reverse engineering.
 ## V3.0 Phase 02 — Source-only static analysis handoff
 
 [Current Phase 02 handoff](Audit/Phase_02/Source_Only_Closure/README.md) is COMPLETE for structural inventory and conservative static handoff under the source-only scope. Exact dispatch, alias lifetime, and path feasibility are not proven; function-level semantic extraction and full source-to-specification coverage remain open. All 16 source identities match main, 5,120 calls and 3,133 decision/control sites are indexed, and 240 previously unclassified calls have source-derived selection categories. No runtime or RAW tests were performed. Proceed to Phase 03 after re-resolving main.
+
+## V3.0 Phase 03 — Fundamental computational contracts
+
+[Phase 03 checkpoint 01](Audit/Phase_03/README.md) is IN PROGRESS. Numerical representation, chronology, candles and input aggregation, and shared search/cache primitives have been expanded directly from the pinned main source. Identity, full shared data and module-specific cache/visibility contracts remain open. No RAW tests or engine execution.
