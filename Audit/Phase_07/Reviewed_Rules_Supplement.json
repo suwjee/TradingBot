@@ -1,0 +1,391 @@
+{
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "status": "REVIEWED_SELECTED_SOURCE_RANGES",
+  "rules": [
+    {
+      "id": "CH46",
+      "title": "Breakout analysis",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 250,
+      "end": 270,
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "overlapping_procedure_ids": [
+        "RE10"
+      ],
+      "rule": "Start at top-source + 1 when that source predates First, otherwise top-source; an intrabar start overrides. Lower search is [start, Break end). First strict high above top owns confirmation; minimum low includes its crossing row. Missing crossing or unmappable source returns null."
+    },
+    {
+      "id": "CH47",
+      "title": "Standalone invalidation and Reset race",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 272,
+      "end": 326,
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "overlapping_procedure_ids": [
+        "RE11",
+        "RE12"
+      ],
+      "rule": "Mode A chooses anchor value, otherwise leg boundary. No boundary or no strict low penetration rejects invalidation. Penetration without main confirmation accepts invalidation. When both are possible, compare first lower positions in the same main interval: invalidation wins equality; absent invalidation wins only when breakout is also absent. Confirmed Reset race follows the same lower-position tie and missing-hit handling, with null candidate or absent main breakout allowing Reset."
+    },
+    {
+      "id": "CH48",
+      "title": "Post-breakout Reset",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 328,
+      "end": 341,
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "overlapping_procedure_ids": [
+        "RE13"
+      ],
+      "rule": "Search strictly after confirmation (event + one microsecond) through Break open + timeframe, exclusive. Missing analysis returns null."
+    },
+    {
+      "id": "CH49",
+      "title": "Unified refinement and Break reuse",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 1781,
+      "end": 1851,
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "overlapping_procedure_ids": [
+        "RE78",
+        "RE79"
+      ],
+      "rule": "Refine the opposite edge only if Break owns that edge. Reuse the Break as the next First only with required color and exact analysis; strict opposite-edge crossing in its later remainder disqualifies reuse. Reused geometry uses the full candle lower interval, earliest timestamp on extreme ties, and main open as intrabar start."
+    },
+    {
+      "id": "CH50",
+      "title": "Direct post-Reset search",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 1960,
+      "end": 1991,
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "overlapping_procedure_ids": [
+        "RE84"
+      ],
+      "rule": "Scan First indices from Reset + 1 through the inclusive end. Skip indices through the blocked frontier and require the color transition. Return the first completed candidate in First order with the earlier-pending flag; invalidation advances the blocked frontier through its index. No completion returns null and pending true."
+    },
+    {
+      "id": "CH51",
+      "title": "Geometry-only post-Reset search",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 1993,
+      "end": 2066,
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "overlapping_procedure_ids": [
+        "RE85",
+        "RE86",
+        "RE87"
+      ],
+      "rule": "This path ignores lifecycle invalidation. First indices ascend, followed by candidate scan from First + 1 through the inclusive limit. Return first strict geometrical completion after refinement. Cache lookup includes direction, Reset and limit; cached Break index list is tied to append-only stream length."
+    },
+    {
+      "id": "CH52",
+      "title": "Initial Unified continuation",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 2434,
+      "end": 2515,
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "overlapping_procedure_ids": [
+        "RE97"
+      ],
+      "rule": "Commit initial Reaction and advance to Break + 1. Optional stop-after-First threshold includes equality. Post-confirmation Reset uses the exact analyzed edge, not the expanded public box, with main fallback when analysis is missing. Record exact pending Break Reset, or reuse candidate through the shared rule."
+    },
+    {
+      "id": "CH53",
+      "title": "Unified Reset race",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 2517,
+      "end": 2575,
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "overlapping_procedure_ids": [
+        "RE98"
+      ],
+      "rule": "Pending Reset or strict confirmed-edge penetration initiates Reset; competing candidate confirmation is resolved by lower-position race. Winning Reset uses pending Reset index or current main index. Optional cursor captures pre-Reset state and last Reset from-First prevents duplicate publication."
+    },
+    {
+      "id": "CH54",
+      "title": "Double-stop candidate",
+      "source": "engine/pipeline/a_zone_detector.py",
+      "start": 274,
+      "end": 335,
+      "source_blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "overlapping_procedure_ids": [
+        "A12"
+      ],
+      "rule": "An invalid Blue pairs with the last calculation-valid Blue. First crossing of prior source level is sought from invalid Blue formation time to its source candle end exclusive; crossing must belong to that same main candle. Reaction confirmation is at or after trigger, First no earlier than formation. Successful formation consumes the previous pointer."
+    },
+    {
+      "id": "CH55",
+      "title": "Pair expiry",
+      "source": "engine/pipeline/a_zone_detector.py",
+      "start": 337,
+      "end": 364,
+      "source_blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "overlapping_procedure_ids": [
+        "A13"
+      ],
+      "rule": "Missing prior stop returns null. A stop strictly after expires_at is rejected; equality is allowed."
+    },
+    {
+      "id": "CH56",
+      "title": "Inherited continuation level",
+      "source": "engine/pipeline/a_zone_detector.py",
+      "start": 533,
+      "end": 590,
+      "source_blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "overlapping_procedure_ids": [
+        "A16"
+      ],
+      "rule": "Previous formation must precede current formation. Chained case needs previous exact stop strictly before current formation and both lines not behavior-internal. Nonchained previous Scale is excluded. Start at previous stop main time for chained, otherwise prior formation. First strictly later than start; Break strictly before current formation. Chained range includes whole Break candle; nonchained ends at Break open, inclusive under range helper."
+    },
+    {
+      "id": "CH57",
+      "title": "First A stop ownership",
+      "source": "engine/pipeline/a_zone_detector.py",
+      "start": 813,
+      "end": 836,
+      "source_blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "overlapping_procedure_ids": [
+        "A22"
+      ],
+      "rule": "Start at next main candle after source, end exclusive. If first strict stop precedes not_before it is not owned by this lifecycle; a later recross cannot substitute. Equality to not_before is valid."
+    },
+    {
+      "id": "CH58",
+      "title": "A dirty frontier and crossing cache",
+      "source": "engine/pipeline/a_zone_detector.py",
+      "start": 890,
+      "end": 949,
+      "source_blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "overlapping_procedure_ids": [
+        "A25",
+        "A26",
+        "A27",
+        "A28",
+        "A29"
+      ],
+      "rule": "Settled event is strictly before dirty; settled Reaction window additionally ends no later than changed Reaction time. Prior confirmation or Reset formation reused only with settled main time. Prior crossing reused when bounded end <= dirty or old hit < dirty and lower-presence unchanged. Unchanged lower evidence suppresses main fallback even if no suffix lower rows remain. Otherwise resume according to prior lower presence and dirty."
+    },
+    {
+      "id": "CH59",
+      "title": "Type-3 candidate race",
+      "source": "engine/pipeline/s_zone_detector.py",
+      "start": 403,
+      "end": 450,
+      "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "overlapping_procedure_ids": [
+        "S20"
+      ],
+      "rule": "Reset timestamps strictly after A stop and before deadline. Owner confirmation <= A stop; any first owner Reset <= A stop excludes. Boundary crossing starts at Reset timestamp inclusive, deadline exclusive, requires trend qualifier. Earliest exact crossing wins; equal timestamp retains earlier iteration winner."
+    },
+    {
+      "id": "CH60",
+      "title": "Type-4 candidate replacement",
+      "source": "engine/pipeline/s_zone_detector.py",
+      "start": 453,
+      "end": 532,
+      "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "overlapping_procedure_ids": [
+        "S21",
+        "S22"
+      ],
+      "rule": "Trend confirmation strictly after A stop and before deadline; Break index >= A stop index. Rebuild candidate from A-stop main through Break main using candidate_source_last. Search starts max(confirmation,candidate event,A stop), ends min(deadline,next confirmation) exclusive. First crossing requires public valid Blue between candidate-source main and crossing inclusive; otherwise discard and next aligned Reaction rebuilds."
+    },
+    {
+      "id": "CH61",
+      "title": "Pre-Order candidate partial first main",
+      "source": "engine/pipeline/s_zone_detector.py",
+      "start": 741,
+      "end": 783,
+      "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "overlapping_procedure_ids": [
+        "S30"
+      ],
+      "rule": "Initial candidate uses A-stop main through Order First inclusive. If lower remainder [exact A stop, stop main end) exists, restrict first main to that remainder and compare later whole main candles through First. Later candidate wins only strict improvement; tie retains A-stop remainder. Empty lower remainder retains original main candidate; missing A stop event defaults to main open."
+    },
+    {
+      "id": "CH62",
+      "title": "Qualification time",
+      "source": "engine/pipeline/s_zone_detector.py",
+      "start": 837,
+      "end": 862,
+      "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "overlapping_procedure_ids": [
+        "S34",
+        "S35"
+      ],
+      "rule": "Aligned Reset Blue formation <= candidate crossing; ordinary trend confirmation must be strictly after behavior start and <= crossing."
+    },
+    {
+      "id": "CH63",
+      "title": "E continuation and cache frontier",
+      "source": "engine/pipeline/e_zone_detector.py",
+      "start": 128,
+      "end": 193,
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "overlapping_procedure_ids": [
+        "E02",
+        "E03",
+        "E04",
+        "E05"
+      ],
+      "rule": "Validate nonempty chronology and dirty main index in [0,length]. Dirty is changed main open or last main + timeframe. Retain previous caches only if first time and timeframe unchanged. Prior stop event at or after dirty or absent rewinds scanned frontier to min(previous scan,dirty); retained stop must be strictly before range end. Search resumes at max(start,scanned frontier). Extreme cache reused only when end main is strictly before dirty; new query includes end main."
+    },
+    {
+      "id": "CH64",
+      "title": "E source heap and accepted order",
+      "source": "engine/pipeline/e_zone_detector.py",
+      "start": 1132,
+      "end": 1189,
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "overlapping_procedure_ids": [
+        "E44",
+        "E45"
+      ],
+      "rule": "Group candidates by source index. Heap key is minimum source time, minimum decision time and source index; only groups at or beyond frontier enter initial heap. Restore accepted prefix and active state from checkpoint. First accepted object at each equal source timestamp wins, including regenerated sources inserted out of order."
+    },
+    {
+      "id": "CH65",
+      "title": "E parent and child chronology",
+      "source": "engine/pipeline/e_zone_detector.py",
+      "start": 1191,
+      "end": 1262,
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "overlapping_procedure_ids": [
+        "E44",
+        "E46",
+        "E47",
+        "E48",
+        "E49"
+      ],
+      "rule": "Index latest child decision per parent. Enqueue unique regenerated candidates. Reject missing or disowned S; after sequence reset, S source must be strictly later and A source no earlier. Prior E is strictly earlier source time. Rebuilt S source strictly after prior E and A source no earlier; exception preserves unconsumed red S predating blue E."
+    },
+    {
+      "id": "CH66",
+      "title": "E reopened race and dominance",
+      "source": "engine/pipeline/e_zone_detector.py",
+      "start": 1287,
+      "end": 1345,
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "overlapping_procedure_ids": [
+        "E44",
+        "E50"
+      ],
+      "rule": "Stop an E only with strictly later decision and strict directional price penetration. Reopen disowned-S-only Order when parent active; checkpoint path raises rewind, otherwise regenerate. Lower-priority S that stops active owner is blocked when owner is red or candidate blue and known child decision >= candidate decision."
+    },
+    {
+      "id": "CH67",
+      "title": "S donor precedence",
+      "source": "engine/pipeline/lifecycle_engine.py",
+      "start": 422,
+      "end": 474,
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "overlapping_procedure_ids": [
+        "LC15",
+        "LC18"
+      ],
+      "rule": "Accepted red S directly reverses armed Blue when owner decision strictly precedes S decision; no prior price stop or Mode B required. Otherwise use frozen pending stop or armed stop strictly before S source. Red Mode B with completed Blue qualifies StopAll; retain pending completion otherwise."
+    },
+    {
+      "id": "CH68",
+      "title": "E donor precedence",
+      "source": "engine/pipeline/lifecycle_engine.py",
+      "start": 475,
+      "end": 523,
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "overlapping_procedure_ids": [
+        "LC15",
+        "LC19"
+      ],
+      "rule": "Active StopAll with strict stop <= E decision qualifies. Multiple stopped active owners contribute highest number and earliest exact stop gate; remove stopped group and append new object. Otherwise pending or qualifying armed stop before E source with donor exception produces StopAll1; else accept E. Optional checkpoint follows each ordered event."
+    },
+    {
+      "id": "CH69",
+      "title": "StopAll replay frontier",
+      "source": "engine/pipeline/lifecycle_engine.py",
+      "start": 550,
+      "end": 590,
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "overlapping_procedure_ids": [
+        "LC23"
+      ],
+      "rule": "Dirty index in [0,length]; cap dirty by prior covered horizon (last lower timestamp + one microsecond). Unchanged event prefix requires identical kind and repr, and max(source,decision) < dirty. Restore checkpoint prefix. Prior resolved stop strictly before dirty remains; otherwise re-resolve after dirty. Update observed covered horizon."
+    },
+    {
+      "id": "CH70",
+      "title": "Native Order stop",
+      "source": "engine/pipeline/order_audit_engine.py",
+      "start": 1459,
+      "end": 1484,
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "overlapping_procedure_ids": [
+        "OA42",
+        "OA43"
+      ],
+      "rule": "Start at max(requested start,range start) inclusive, end exclusive; no crossing caches null. Store exact lower stop separately from owning main time."
+    },
+    {
+      "id": "CH71",
+      "title": "Gate-owned initial Order",
+      "source": "engine/pipeline/order_audit_engine.py",
+      "start": 1612,
+      "end": 1632,
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "overlapping_procedure_ids": [
+        "OA48"
+      ],
+      "rule": "First main equals parent-stop owning main. Confirmation and crossing must both be >= parent stop. Select earliest exact stop then Reaction First time. Separate route from E global race."
+    },
+    {
+      "id": "CH72",
+      "title": "Carried creation windows",
+      "source": "engine/pipeline/order_audit_engine.py",
+      "start": 1722,
+      "end": 1795,
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "overlapping_procedure_ids": [
+        "OA52"
+      ],
+      "rule": "Ledger creation event strictly within (lifecycle decision,parent stop), confirmation <= parent stop, crossed >= parent stop. Indexed path deduplicates ordinals in insertion order. Initial A records instead use closed First main window [lifecycle decision,parent stop], same confirmation/stop bounds. Sort exact stop then descending First; absent lifecycle start returns empty."
+    },
+    {
+      "id": "CH73",
+      "title": "Accepted-live initial view",
+      "source": "engine/pipeline/order_audit_engine.py",
+      "start": 1879,
+      "end": 1934,
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "overlapping_procedure_ids": [
+        "OA55",
+        "OA56",
+        "OA57"
+      ],
+      "rule": "Order stream key exact stop, confirmation, negative First. Initial view accepts stop strictly after confirmation; native geometry must have required types and consistent identity times, otherwise fall back to full authoritative scan. This clause covers initial view, not entire accepted stream."
+    },
+    {
+      "id": "CH74",
+      "title": "MBL activation and refresh",
+      "source": "engine/pipeline/PL_PH_detector.py",
+      "start": 490,
+      "end": 515,
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "overlapping_procedure_ids": [
+        "P20",
+        "P21"
+      ],
+      "rule": "MBL stop is strict crossing strictly later than trigger. Activation takes complete main extreme from second behavior through gate inclusive and finds MBL stop from exact gate event. Refresh preserves existing record if resolved stop identity unchanged."
+    },
+    {
+      "id": "CH75",
+      "title": "Primary continuation dirty rewind",
+      "source": "engine/pipeline/PL_PH_detector.py",
+      "start": 816,
+      "end": 839,
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "overlapping_procedure_ids": [
+        "P46"
+      ],
+      "rule": "Require original timeframe and datetime dirty event. Rewind dirty frontier to owning main open if dirty lies inside that candle in old or new chronology; whole decision or trigger main participates in source price. Run new frontier with fresh Orders."
+    }
+  ]
+}

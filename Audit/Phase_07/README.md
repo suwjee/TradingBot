@@ -11,3 +11,8 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 02 — source inventory
 
 [Source inventory](Source_Index_README.md) records 16/16 directly re-fetched source blobs, 576/576 named procedures, 1168/1168 prior scopes, 2177 comparison rows and 1074 arithmetic rows; 5975 lexical candidate lines across 495 named procedures. [Validation](Validation.json) records 10 structural checks. A failed initial attempt to interpret prior AST node indices as source lines was caught before publication; the final index preserves node indices separately and uses direct source line candidates. Full source-rule semantic reconciliation remains INCOMPLETE; no production change.
+
+
+## Checkpoint 03 — additional owner boundaries
+
+[Supplementary rules](Reviewed_Rules_Supplement.json) and [owner chronology clauses](../../Algorithms/V3/Chronology/06_Additional_Owner_Boundaries.md) add 30 directly reviewed source ranges (CH46–CH75), for 75 total. Each supplementary clause carries the pinned source blob, source interval and overlapping procedure IDs from the verified inventory. The original 45-rule index remains historical and was not relabeled as a complete crosswalk. Remaining semantic decisions, implicit dependencies and end-to-end cross-owner ordering are not certified. **Phase 07 INCOMPLETE; Phase 08 blocked.** No RAW reads, runtime tests, benchmarks or production source changes.

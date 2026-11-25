@@ -23,3 +23,7 @@
 | T/F | Primary, StopAll, E, S projection precedence; not physical ordering. |
 
 Distinguish lower position, timestamp, source/decision/confirmation/stop, main bucket and visibility horizon. Never invent intrarow market chronology. See [foundations](../../../Specification/03_Chronology_And_Time_Model.md), [state registry](../State_Machines/README.md) and [audit](../../../Audit/Phase_07/README.md).
+
+## Checkpoint 03
+
+[Additional owner boundaries](06_Additional_Owner_Boundaries.md): CH46–CH75; 75 total reviewed clauses. Full semantic closure remains incomplete.
