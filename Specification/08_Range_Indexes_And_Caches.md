@@ -42,6 +42,6 @@ Chronological containment index partitions source intervals into monotonically o
 
 DetectorBase minimum_low and maximum_high scan inclusive start/end when end-start<16, updating only on a strict better value. At end-start>=16 use range index on [start,end+1); reflected sources delegate to reversed extreme and copy-negate. This is the source threshold, not a benchmark result.
 
-## Boundaries
+## Module-specific continuation
 
-Order gate cache maximum is declared as 32,768 in Reaction; its exact keys, eviction and invalidation, plus E/S/Order/Primary continuation caches, require the next foundation pass or function-level extraction. This contract does not claim full cache coverage. No execution, benchmark or dataset access.
+See [module cache contracts](11_Module_Cache_Contracts.md) for the Order gate key/capacity, Reaction, Blue, A, S, E, Order Audit, StopAll and Primary continuation dependencies. Detailed function-level extraction remains separate. No execution, benchmark or dataset access.

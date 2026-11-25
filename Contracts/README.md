@@ -11,4 +11,7 @@
 - [Foundational candle and market models](../Specification/07_Candles_And_Market_Input.md)
 - [Search and cache primitives](../Specification/08_Range_Indexes_And_Caches.md)
 
+- [All declared record schemas](Declared_Record_Schemas.md)
+- [Identity, provenance and visibility](../Specification/09_Identity_Ownership_And_Visibility.md)
+
 The model and schema specification is incomplete; the audit inventory is traceability metadata, not a source dependency or a complete formal schema.

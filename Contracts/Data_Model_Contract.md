@@ -1,8 +1,8 @@
 # Data model contract map
 
-Status: DOCUMENTED / INCOMPLETE. The semantic field contracts are distributed through the following modules; the declaration inventory has been moved to Audit because it is evidence about the implementation, not a standalone formal data schema.
+Status: DECLARED RECORD SCHEMAS COMPLETE / FIELD-USE AND SERIALIZATION SEMANTICS INCOMPLETE. The semantic field contracts are distributed through the following modules; the declaration inventory has been moved to Audit because it is evidence about the implementation, not a standalone formal data schema.
 
-The foundational Candle, normalized bucket, MarketContext and BucketAppend contracts are now expanded in [Candle and market input](../Specification/07_Candles_And_Market_Input.md). Full model-by-model extraction remains open.
+The foundational Candle, normalized bucket, MarketContext and BucketAppend contracts are now expanded in [Candle and market input](../Specification/07_Candles_And_Market_Input.md). See [declared record schemas](Declared_Record_Schemas.md) for all 46 dataclasses and 438 fields, types and defaults. Dynamic instance fields, detailed field-use semantics and serialized payloads remain later phase work.
 
 | Model family | Semantic contract |
 |---|---|
