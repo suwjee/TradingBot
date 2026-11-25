@@ -1,0 +1,322 @@
+{
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "e0480eee6c8725f558442cfdde691ea8b04a6006",
+  "status": "REVIEWED_SELECTED_SOURCE_RANGES",
+  "rules": [
+    {
+      "id": "CH01",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 1185,
+      "end": 1209,
+      "rule": "MarketChronology main owner is upper bound minus one; before first raises unless clamp. Lower window [start,end) uses lower bounds at both endpoints; absent end uses physical length."
+    },
+    {
+      "id": "CH02",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 1238,
+      "end": 1255,
+      "rule": "Reset time precedence is nonempty second_time, display_time, native timestamp; no invented precision."
+    },
+    {
+      "id": "CH03",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 1257,
+      "end": 1302,
+      "rule": "Reaction confirmation scans [valid intrabar start,Break open + timeframe), strict high above BoxTop bullish / low below BoxBottom bearish. Invalid start and absent crossing fall back to Break open. A disables intrabar start."
+    },
+    {
+      "id": "CH04",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 973,
+      "end": 1009,
+      "rule": "Lower extreme uses half-open position range; invalid/empty raises; equal price selects earliest position."
+    },
+    {
+      "id": "CH05",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 1011,
+      "end": 1062,
+      "rule": "First crossing clamps bounds and visits intervals chronologically. Cached evidence excludes final mutable lower row from settled history. Cached crossing must be strictly before requested right."
+    },
+    {
+      "id": "CH06",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 2095,
+      "end": 2129,
+      "rule": "Gate owner on same main candle qualifies if confirmation <= exact gate; without exact gate use Break index <= gate. Missing lower confirmation uses Break open. New scan starts gate index + 1."
+    },
+    {
+      "id": "CH07",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 2217,
+      "end": 2289,
+      "rule": "Overlapping direct candidates: first completing main candle wins; within that candle choose smallest First index, not an independently ranked intrabar confirmation time."
+    },
+    {
+      "id": "CH08",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 2379,
+      "end": 2417,
+      "rule": "Leg invalidation requires strict penetration. Same main candle race scans lower rows in order, invalidation before confirmation within each row. Absent decisive lower evidence defaults to invalidation."
+    },
+    {
+      "id": "CH09",
+      "source": "engine/pipeline/blue_line_detector.py",
+      "start": 62,
+      "end": 75,
+      "rule": "Main stop query scans max(0,start) through end inclusive; returns whether first strict penetration belongs to end index."
+    },
+    {
+      "id": "CH10",
+      "source": "engine/pipeline/blue_line_detector.py",
+      "start": 87,
+      "end": 142,
+      "rule": "Pending scale scans lower rows through Break end exclusive, stops after confirmation time (equality included). Add penetration before checking same-row breakout; first breakout with eligible evidence selects accumulated directional extreme, earliest on equal price."
+    },
+    {
+      "id": "CH11",
+      "source": "engine/pipeline/a_zone_detector.py",
+      "start": 129,
+      "end": 169,
+      "rule": "A strict crossing window [start,end) or physical lower end. Nonempty lower window with no hit returns null. Empty lower window alone falls back to main starts selected by lower bounds."
+    },
+    {
+      "id": "CH12",
+      "source": "engine/pipeline/a_zone_detector.py",
+      "start": 171,
+      "end": 214,
+      "rule": "A extreme range includes exact endpoints (end + one microsecond), rejects reversed bounds. Earliest equal extreme; absent lower rows uses complete owning main candles of both endpoints."
+    },
+    {
+      "id": "CH13",
+      "source": "engine/pipeline/a_zone_detector.py",
+      "start": 216,
+      "end": 243,
+      "rule": "Scale Blue formation/stop scan use A's Break-open confirmation. Reset Blue forms at first strict lower Reset crossing or source open fallback; stop scan starts at source open + timeframe."
+    },
+    {
+      "id": "CH14",
+      "source": "engine/pipeline/a_zone_detector.py",
+      "start": 497,
+      "end": 531,
+      "rule": "A selects first list position with confirmation >= trigger and optional First time >= not-before, using binary search only under ordered conditions."
+    },
+    {
+      "id": "CH15",
+      "source": "engine/pipeline/s_zone_detector.py",
+      "start": 217,
+      "end": 251,
+      "rule": "S A-stop scan [max(start,range start),range end). Nonempty lower no-hit returns null. Empty lower window uses main starts >= original start within stage indices, duplicating main time as event."
+    },
+    {
+      "id": "CH16",
+      "source": "engine/pipeline/s_zone_detector.py",
+      "start": 785,
+      "end": 798,
+      "rule": "Candidate event is first exact lower extreme equal to level in [max(source open,not-before),source open+timeframe). No equality hit returns max(source open,not-before), not proof of physical event."
+    },
+    {
+      "id": "CH17",
+      "source": "engine/pipeline/s_zone_detector.py",
+      "start": 870,
+      "end": 960,
+      "rule": "S Order stop independent of candidate qualification. Candidate gate max(scan start,candidate start); nonfallback uses earliest available Reset Blue or strictly post-behavior ordinary trend confirmation, then max with gate. Compare lower positions, same-position joint hits reject. Earlier Order red, earlier candidate blue or fallback according to qualification."
+    },
+    {
+      "id": "CH18",
+      "source": "engine/pipeline/s_zone_detector.py",
+      "start": 962,
+      "end": 993,
+      "rule": "No lower rows: S race starts at owning main candle and scans through stage end. Same main row with both hits rejects; otherwise Order red, qualified candidate blue, permitted unqualified fallback."
+    },
+    {
+      "id": "CH19",
+      "source": "engine/pipeline/order_audit_engine.py",
+      "start": 139,
+      "end": 167,
+      "rule": "Order_B trusts precise Reset second_time through Reset resolver; otherwise requires strict crossing in Reset main [open,open+timeframe). Missing crossing returns null, no open fallback."
+    },
+    {
+      "id": "CH20",
+      "source": "engine/pipeline/order_audit_engine.py",
+      "start": 170,
+      "end": 195,
+      "rule": "Order_B boundary includes both main endpoints; earliest equal extreme. Default strict crossing begins at upper bound of Reset timestamp (see 232–238)."
+    },
+    {
+      "id": "CH21",
+      "source": "engine/pipeline/order_audit_engine.py",
+      "start": 232,
+      "end": 272,
+      "rule": "Order_B sorts Reaction by confirmation, First, Break, ordinal/number; Reset by event time, from-First, ordinal. Reset exact event must exist."
+    },
+    {
+      "id": "CH22",
+      "source": "engine/pipeline/order_audit_engine.py",
+      "start": 300,
+      "end": 354,
+      "rule": "Order_B latest post-stop and anchor strictly before Reset Reaction First main time; strict anchor extension and boundary source precedes First. Opposite First may equal strict-cross main; confirmation > exact crossing. Next A after First expires leg if A main index <= crossing main."
+    },
+    {
+      "id": "CH23",
+      "source": "engine/pipeline/order_audit_engine.py",
+      "start": 2546,
+      "end": 2620,
+      "rule": "Order_A post-stop: First >= gate main, confirmation strictly later. Native search uses upper bound of stop on confirmations. Independent geometry may map to canonical identity or number zero; wins only if (First,confirmation) lexicographically earlier."
+    },
+    {
+      "id": "CH24",
+      "source": "engine/pipeline/e_zone_detector.py",
+      "start": 420,
+      "end": 435,
+      "rule": "E first strict crossing is in half-open lower positions, indexed or linear; no main fallback in this primitive."
+    },
+    {
+      "id": "CH25",
+      "source": "engine/pipeline/e_zone_detector.py",
+      "start": 507,
+      "end": 557,
+      "rule": "E parent-stop scans [max(source time,range start),range end). Parent and opposite Order have separate directional stop policies; optional continuation retains exact event and main owner."
+    },
+    {
+      "id": "CH26",
+      "source": "engine/pipeline/e_zone_detector.py",
+      "start": 581,
+      "end": 606,
+      "rule": "E extreme uses full main candles containing parent and Order stops, both included and clamped to stage bounds. Lower events determine chronology without truncating boundary OHLC."
+    },
+    {
+      "id": "CH27",
+      "source": "engine/pipeline/e_zone_detector.py",
+      "start": 608,
+      "end": 675,
+      "rule": "E four merged consumption routes: direct, inherited, carried, post-stop accepted; gate-owned lookup is not fifth stream. Earliest exact Order stop, then latest First. Reorder equal-stop accepted groups; reject disowned-S-only causes using prospective source. S with no carried route uses earliest inherited stop or range end as deadline."
+    },
+    {
+      "id": "CH28",
+      "source": "engine/pipeline/e_zone_detector.py",
+      "start": 677,
+      "end": 730,
+      "rule": "E decision event is max(parent stop,Order stop). Source, decision, confirmation and stop remain separate."
+    },
+    {
+      "id": "CH29",
+      "source": "engine/pipeline/lifecycle_engine.py",
+      "start": 170,
+      "end": 194,
+      "rule": "StopAll strict stop starts inclusive, scans physical lower length; null if no hit. E dominance same family requires larger number, red dominates blue."
+    },
+    {
+      "id": "CH30",
+      "source": "engine/pipeline/lifecycle_engine.py",
+      "start": 350,
+      "end": 359,
+      "rule": "StopAll S/E iteration sorts (source time, kind string, source index); E before S on same source time, not physical intrarow order."
+    },
+    {
+      "id": "CH31",
+      "source": "engine/pipeline/lifecycle_engine.py",
+      "start": 368,
+      "end": 416,
+      "rule": "Armed stop normally strictly before boundary; E donor exception requires stop <= donor decision, either inside source main bucket with matching mapped index and strict directional price, or exact matching parent kind/index/time/price/stop event."
+    },
+    {
+      "id": "CH32",
+      "source": "engine/pipeline/lifecycle_engine.py",
+      "start": 525,
+      "end": 531,
+      "rule": "StopAll final strict-stop starts at decision or max(decision, optional after); absent crossing retains null stop fields."
+    },
+    {
+      "id": "CH33",
+      "source": "engine/pipeline/PL_PH_detector.py",
+      "start": 101,
+      "end": 125,
+      "rule": "Reversal uses confirmed physical number-three points; first strictly later crossing wins by (event time, source index, cycle ID or empty); bullish target PH3 upward, bearish target PL3 downward."
+    },
+    {
+      "id": "CH34",
+      "source": "engine/pipeline/PL_PH_detector.py",
+      "start": 211,
+      "end": 245,
+      "rule": "PH gate confirmation >= event irrespective of First; PL requires First >= gate main and confirmation > event. Primary strict cross excludes equal timestamp via upper bound; extreme main endpoints inclusive, earliest equal."
+    },
+    {
+      "id": "CH35",
+      "source": "engine/pipeline/PL_PH_detector.py",
+      "start": 518,
+      "end": 553,
+      "rule": "Primary seek: no hits waits, equal-time up/down ambiguous, else earliest sets phase. Cursor >= reversal cutoff waits before commitment."
+    },
+    {
+      "id": "CH36",
+      "source": "engine/pipeline/PL_PH_detector.py",
+      "start": 554,
+      "end": 621,
+      "rule": "Primary Orders stop strictly after confirmation; rank (stop event, negative First, Break). Earlier cancellation takes precedence, equal cancellation/winner ambiguous; opposing extreme in cancellation row may also make ambiguous. Post-PL3 accepts only stop before cancellation, no PL4. Source extreme gate main through stop main inclusive, committed cursor advances to stop event."
+    },
+    {
+      "id": "CH37",
+      "source": "engine/bridge/trading_pipeline.py",
+      "start": 690,
+      "end": 738,
+      "rule": "Projection horizon exclusive visible last start + timeframe. Recorded strict event verified only at same timestamp including duplicate lower times. Missing/unproven/late event null; no replacement search."
+    },
+    {
+      "id": "CH38",
+      "source": "engine/bridge/trading_pipeline.py",
+      "start": 1755,
+      "end": 1789,
+      "rule": "Independent segment main [start,stop), lower [first main,next main or final + duration); local indices reset, offset accumulated, visible bounds adjusted. Projection offsets nonnegative integer index fields and identity components, not timestamps."
+    },
+    {
+      "id": "CH39",
+      "source": "engine/bridge/trading_pipeline.py",
+      "start": 225,
+      "end": 295,
+      "rule": "Live accepts equal positive integer epochs, rejects descending; dirty lower rolls back one on equal timestamp, dirty main on same bucket. One-second timeframe shares frontier. Transaction on exception restores suffixes/time and removes new cached prices."
+    },
+    {
+      "id": "CH40",
+      "source": "engine/bridge/live_pipeline.py",
+      "start": 35,
+      "end": 70,
+      "rule": "Append validation before transaction; request end moves to latest RAW time. Active path full replay from buckets; failure resets retained market views and rethrows. No generalized rollback of external callback effects."
+    },
+    {
+      "id": "CH41",
+      "source": "engine/pipeline/true_false.py",
+      "start": 17,
+      "end": 29,
+      "rule": "Repair through endpoint included by upper bound; start inclusive; reference direction strict crossing; missing hit null."
+    },
+    {
+      "id": "CH42",
+      "source": "engine/pipeline/true_false.py",
+      "start": 45,
+      "end": 94,
+      "rule": "Basic T/F starts first S and consumes supplied event order. Higher rank repairs prior singleton F starting current source time; repeated same-rank F removes old repair if >= current time then searches new repair. Engulf resets verdict count only."
+    },
+    {
+      "id": "CH43",
+      "source": "engine/pipeline/true_false.py",
+      "start": 97,
+      "end": 125,
+      "rule": "StopAll verdict groups restart when number <= previous; parity from current verdict start. Repeat prefix requires prior-series or largest-prior-end match and confirmation closure if supplied."
+    },
+    {
+      "id": "CH44",
+      "source": "engine/pipeline/true_false.py",
+      "start": 128,
+      "end": 157,
+      "rule": "T/F clears old annotations, excludes calculationValid=false, first row per source time wins in order directional Primary, StopAll, E, S. Sort selected by source time; Primary flushes StopAll verdict group. No native geometry changes."
+    },
+    {
+      "id": "CH45",
+      "source": "engine/bridge/trading_pipeline.py",
+      "start": 3639,
+      "end": 3655,
+      "rule": "Reversed outputs applied only if transition index <= visible end. Active direction chosen by maximal (segment start index,direction). Repair through = visible last start + duration - one second; closed-through min(through epoch + 1,last lower epoch + raw timeframe). StopAll closure decision epoch + timeframe <= closed-through."
+    }
+  ]
+}

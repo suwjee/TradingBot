@@ -73,3 +73,8 @@ Source imports and semantic data/feedback dependencies are different. The type-r
 ## Phase 06 companion
 
 Read the [state-machine and lifecycle registry](State_Machines/README.md) alongside the module contracts. It adds source-derived guarded transitions, register lifetimes, ownership and replay states without changing the existing source or historical Phase 05 module text.
+
+
+## Phase 07 companion
+
+[Chronology registry](Chronology/README.md) records selected source-reviewed rules. Semantic closure remains incomplete.
