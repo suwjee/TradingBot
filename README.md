@@ -48,3 +48,7 @@ Per the user's 2026-11-26 instruction, continue source-only reverse engineering.
 ### V3.0 Phase 03 — checkpoint 02
 
 [Current foundational handoff](Audit/Phase_03/Closure_02.md) is COMPLETE for shared primitive contracts and declared record interfaces (46 records, 438 fields). The checkpoint 01 report above remains historical. Module-specific function semantics, dynamic fields and full serialization remain open for later phases. User confirms main is frozen until further notice; do not modify it. Proceed to Phase 04 with the pinned main source and Phase 02/03 evidence. No RAW or engine execution.
+
+## V3.0 Phase 04 — Function-level reverse engineering
+
+[Checkpoint 01](Audit/Phase_04/Checkpoint_01.md) is IN PROGRESS. 32 of 576 named function declarations have initial source-derived semantic descriptions (core utilities, direction policy, T/F, Live bridge). Three package initialization surfaces were also reviewed. The remaining 544 declarations and full call/control/effect/exit traceability remain open; no runtime testing or production modification.
