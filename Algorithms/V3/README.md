@@ -68,3 +68,8 @@ Source imports and semantic data/feedback dependencies are different. The type-r
 - All cache optimizations are defined per owner and depend on validated chronology, dirty frontier and key identity. Do not assume arbitrary mutation safety or universal incremental equivalence.
 - This collection is an implementation-oriented module composition, not a formal proof of every branch or all-input runtime behavior. Formal state machines, full event-order crosswalk, executable-neutral decision tables, directional integration and forensic completeness are later phase deliverables. The active task excludes RAW, execution, differential reconstruction and benchmark.
 
+
+
+## Phase 06 companion
+
+Read the [state-machine and lifecycle registry](State_Machines/README.md) alongside the module contracts. It adds source-derived guarded transitions, register lifetimes, ownership and replay states without changing the existing source or historical Phase 05 module text.
