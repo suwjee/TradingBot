@@ -48,3 +48,7 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 11 — Reaction direct source-context review
 
 [Review](Semantic_Context_Review_11.md) and [progress](Semantic_Context_Progress_11.json) record 14/16 files, 539 contexts, 2030 branch sites, 1470 comparisons, 789 arithmetic rows and 3047 calls. Two larger modules remain pending. **Phase 07 INCOMPLETE.**
+
+### Checkpoint 12 — Order Audit
+
+[Direct context review](Semantic_Context_Review_12.md) and [progress](Semantic_Context_Progress_12.json): 15/16 modules, 631 contexts; Trading Pipeline remains. Phase 07 incomplete; Phase 08 blocked.
