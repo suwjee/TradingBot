@@ -1,0 +1,64 @@
+{
+  "checkpoint": 382,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded S40–S43 physical Order and lifecycle boundaries",
+  "consumers": [
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2546,
+        2620
+      ],
+      "meaning": "Native first canonical lookup by gate, cached nullable by event; callback optional, physical first >=gate and confirmation>stop; canonical mapping by First and First/Break identity, ordinal zero if unmapped; native wins equality in (First,confirmation), remapped confirmation recomputed."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2622,
+        2667
+      ],
+      "meaning": "Audit computes stop, physical key and cause; first entry retained, unique cause appended; called on all A before S filtering. Local audit is not accepted ledger."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2688,
+        2712
+      ],
+      "meaning": "Shared Order strict stop lower-only indexed/linear; indexed miss no fallback, linear exhaustion None. S43 rejects event<=confirmation."
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        403,
+        586
+      ],
+      "meaning": "Type3 and Type4 candidates constructed separately, exact arbitration in S40."
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        637,
+        695
+      ],
+      "meaning": "S26 window consumer, first matching window and trigger/Reset exception; S28 eligibility not global accepted."
+    }
+  ],
+  "remaining": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02",
+    "CP372-F02"
+  ],
+  "cross_owner": [
+    "Prove physical first Order and accepted creator/consumer ledger, not merely local audit or provided entry shape.",
+    "Preserve exact event/source and tie ordering, external aliases, partial mutation and rollback obligations."
+  ]
+}
