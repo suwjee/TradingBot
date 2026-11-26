@@ -1,0 +1,2888 @@
+{
+  "checkpoint": 392,
+  "phase": "07/W3",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "e97944b2e1ed2b7e16c65ade647775f7728aa698",
+  "scope": "B05-09 OA25–OA29 independent local",
+  "source": {
+    "path": "engine/pipeline/order_audit_engine.py",
+    "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+    "range": [
+      1089,
+      1134
+    ],
+    "canonical": "8e8de138a2e4d165994792923d427ee6d1ac9c09",
+    "historical": "7bd521e1566a7824f1f50bda2b79272cb19537e7",
+    "reconciliation": [
+      "129048fd58a4b43304e467134baae83c36145417",
+      "a35141b33fdcfa207597258ebcccadd7d2b8e9e2",
+      "0ba1af5bdffc8988a7897f277ec51aeb56ec527b"
+    ],
+    "crosswalk": "62645cd2b92c3cbe35f6c0a9500299ec6f44cbc8"
+  },
+  "groups": [
+    {
+      "id": "OA25-A",
+      "span": [
+        1089,
+        1093
+      ],
+      "contract": "Read owner-published sorted reset timestamps. Upper bound on exact start skips every equal timestamp and selects the earliest strictly later entry in a sorted comparable sequence. No timestamp conversion, sorting or mutation in query."
+    },
+    {
+      "id": "OA25-B",
+      "span": [
+        1094,
+        1098
+      ],
+      "contract": "Return ordered conjunction: position in range before reading element, then timestamp <= end. Empty/exhausted array returns false without access; equal end included, equal start excluded; inverted/equal interval yields false under sorted comparable native timestamps. No local interval normalization or exception recovery."
+    },
+    {
+      "id": "OA26-A",
+      "span": [
+        1100,
+        1107
+      ],
+      "contract": "Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort."
+    },
+    {
+      "id": "OA26-B",
+      "span": [
+        1108,
+        1112
+      ],
+      "contract": "After index insertion, inspect sorted-audit state by isinstance(dict), including subclasses and empty dictionary. If true append same tuple to pending list; otherwise set sorted-audit reference None, including prior False fallback sentinel, without clearing pending. Does not clear post-stop result or carried cache here. Index mutation remains if subsequent append or attribute operation fails."
+    },
+    {
+      "id": "OA27-A",
+      "span": [
+        1114,
+        1119
+      ],
+      "contract": "Clear existing authoritative ledger in place, then existing confirmation index in place, invoke carried invalidator, then post-stop invalidator. Native aliases observe clears; no replacement, transaction, catch, finally or rollback. Exception stops subsequent operations. Does not reset candidate/direct/cross/canonical stop/initial-order/other geometry caches by itself."
+    },
+    {
+      "id": "OA28-A",
+      "span": [
+        1120,
+        1128
+      ],
+      "contract": "Clear carried result mapping in place; then assign creation index None; then creation append None. Do not clear post-stop state or authoritative ledger/index. Source comment describes creation dependency; actual caller decides whether mutation changes eligibility. If clear fails, later assignments not reached."
+    },
+    {
+      "id": "OA29-A",
+      "span": [
+        1129,
+        1134
+      ],
+      "contract": "Clear post-stop result mapping in place, set sorted accepted-audit reference None, clear pending list in place, in that exact sequence. No change to carried state, initial sorted stream or authoritative ledger/index. Existing issued references are not explicitly revoked. No catch or rollback."
+    }
+  ],
+  "rows": [
+    {
+      "category": "branches",
+      "current_row": 188,
+      "node": 4031,
+      "ast_node": 4031,
+      "span": [
+        1095,
+        12,
+        1096,
+        59
+      ],
+      "operation": [
+        67,
+        "BoolOp",
+        [
+          "operand_0_continue",
+          "operand_0_short_circuit"
+        ]
+      ],
+      "group": "OA25-B",
+      "contained_groups": [
+        "OA25-B"
+      ],
+      "semantic_role": "branches [67,\"BoolOp\",[\"operand_0_continue\",\"operand_0_short_circuit\"]]; Return ordered conjunction: position in range before reading element, then timestamp <= end. Empty/exhausted array returns false without access; equal end included, equal start excluded; inverted/equal interval yields false under sorted comparable native timestamps. No local interval normalization or exception recovery.",
+      "prior_w1": {
+        "original_id": 4031,
+        "disposition": "SOURCE_CONDITIONAL",
+        "interpretation": "Short-circuit AND: in-range position then timestamp<=end."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 189,
+      "node": 4082,
+      "ast_node": 4082,
+      "span": [
+        1108,
+        8,
+        1111,
+        47
+      ],
+      "operation": [
+        68,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "OA26-B",
+      "contained_groups": [
+        "OA26-B"
+      ],
+      "semantic_role": "branches [68,\"If\",[\"true\",\"false\"]]; After index insertion, inspect sorted-audit state by isinstance(dict), including subclasses and empty dictionary. If true append same tuple to pending list; otherwise set sorted-audit reference None, including prior False fallback sentinel, without clearing pending. Does not clear post-stop result or carried cache here. Index mutation remains if subsequent append or attribute operation fails.",
+      "prior_w1": {
+        "original_id": 4082,
+        "disposition": "SOURCE_CONDITIONAL",
+        "interpretation": "isinstance(sorted audit,dict) accepts subclasses; when true append pending tuple, otherwise assign sorted audit None without clearing pending."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 129,
+      "node": 4032,
+      "ast_node": 4032,
+      "span": [
+        1095,
+        12,
+        1095,
+        54
+      ],
+      "operation": [
+        67,
+        [
+          "Lt"
+        ]
+      ],
+      "group": "OA25-B",
+      "contained_groups": [
+        "OA25-B"
+      ],
+      "semantic_role": "comparisons [67,[\"Lt\"]]; Return ordered conjunction: position in range before reading element, then timestamp <= end. Empty/exhausted array returns false without access; equal end included, equal start excluded; inverted/equal interval yields false under sorted comparable native timestamps. No local interval normalization or exception recovery.",
+      "prior_w1": {
+        "original_id": 4032,
+        "disposition": "SOURCE_CONDITIONAL",
+        "interpretation": "Position < length guard before indexing."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 130,
+      "node": 4038,
+      "ast_node": 4038,
+      "span": [
+        1096,
+        16,
+        1096,
+        59
+      ],
+      "operation": [
+        67,
+        [
+          "LtE"
+        ]
+      ],
+      "group": "OA25-B",
+      "contained_groups": [
+        "OA25-B"
+      ],
+      "semantic_role": "comparisons [67,[\"LtE\"]]; Return ordered conjunction: position in range before reading element, then timestamp <= end. Empty/exhausted array returns false without access; equal end included, equal start excluded; inverted/equal interval yields false under sorted comparable native timestamps. No local interval normalization or exception recovery.",
+      "prior_w1": {
+        "original_id": 4038,
+        "disposition": "VERIFIED",
+        "interpretation": "Next reset timestamp <= end inclusive."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 279,
+      "node": 4025,
+      "ast_node": 4025,
+      "span": [
+        1093,
+        19,
+        1093,
+        66
+      ],
+      "operation": [
+        67,
+        "bisect_right",
+        "IMPORTED_EXTERNAL_OR_DYNAMIC",
+        [],
+        2,
+        []
+      ],
+      "group": "OA25-A",
+      "contained_groups": [
+        "OA25-A"
+      ],
+      "semantic_role": "calls [67,\"bisect_right\",\"IMPORTED_EXTERNAL_OR_DYNAMIC\",[],2,[]]; Read owner-published sorted reset timestamps. Upper bound on exact start skips every equal timestamp and selects the earliest strictly later entry in a sorted comparable sequence. No timestamp conversion, sorting or mutation in query.",
+      "prior_w1": {
+        "original_id": 4025,
+        "disposition": "SOURCE_CONDITIONAL",
+        "interpretation": "Upper bound start in sorted reset timestamp array; skips every reset exactly equal to start."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 280,
+      "node": 4034,
+      "ast_node": 4034,
+      "span": [
+        1095,
+        23,
+        1095,
+        54
+      ],
+      "operation": [
+        67,
+        "len",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "OA25-B",
+      "contained_groups": [
+        "OA25-B"
+      ],
+      "semantic_role": "calls [67,\"len\",\"BUILTIN_CANDIDATE\",[],1,[]]; Return ordered conjunction: position in range before reading element, then timestamp <= end. Empty/exhausted array returns false without access; equal end included, equal start excluded; inverted/equal interval yields false under sorted comparable native timestamps. No local interval normalization or exception recovery.",
+      "prior_w1": {
+        "original_id": 4034,
+        "disposition": "SOURCE_CONDITIONAL",
+        "interpretation": "Get reset list length for guard."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 281,
+      "node": 4070,
+      "ast_node": 4070,
+      "span": [
+        1106,
+        19,
+        1106,
+        75
+      ],
+      "operation": [
+        68,
+        "bisect_right",
+        "IMPORTED_EXTERNAL_OR_DYNAMIC",
+        [],
+        2,
+        []
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "calls [68,\"bisect_right\",\"IMPORTED_EXTERNAL_OR_DYNAMIC\",[],2,[]]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": {
+        "original_id": 4070,
+        "disposition": "SOURCE_CONDITIONAL",
+        "interpretation": "Upper-bound full tuple for right insertion."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 282,
+      "node": 4076,
+      "ast_node": 4076,
+      "span": [
+        1107,
+        8,
+        1107,
+        67
+      ],
+      "operation": [
+        68,
+        "self._order_audit_confirmation_index.insert",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        2,
+        []
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "calls [68,\"self._order_audit_confirmation_index.insert\",\"UNRESOLVED_DYNAMIC\",[],2,[]]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": {
+        "original_id": 4076,
+        "disposition": "VERIFIED",
+        "interpretation": "Insert at upper-bound position in existing list."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 283,
+      "node": 4083,
+      "ast_node": 4083,
+      "span": [
+        1108,
+        11,
+        1108,
+        57
+      ],
+      "operation": [
+        68,
+        "isinstance",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "OA26-B",
+      "contained_groups": [
+        "OA26-B"
+      ],
+      "semantic_role": "calls [68,\"isinstance\",\"BUILTIN_CANDIDATE\",[],2,[]]; After index insertion, inspect sorted-audit state by isinstance(dict), including subclasses and empty dictionary. If true append same tuple to pending list; otherwise set sorted-audit reference None, including prior False fallback sentinel, without clearing pending. Does not clear post-stop result or carried cache here. Index mutation remains if subsequent append or attribute operation fails.",
+      "prior_w1": {
+        "original_id": 4083,
+        "disposition": "SOURCE_CONDITIONAL",
+        "interpretation": "Check isinstance(dict), including subclass; not exact type."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 284,
+      "node": 4089,
+      "ast_node": 4089,
+      "span": [
+        1109,
+        12,
+        1109,
+        48
+      ],
+      "operation": [
+        68,
+        "self._post_stop_pending.append",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        1,
+        []
+      ],
+      "group": "OA26-B",
+      "contained_groups": [
+        "OA26-B"
+      ],
+      "semantic_role": "calls [68,\"self._post_stop_pending.append\",\"UNRESOLVED_DYNAMIC\",[],1,[]]; After index insertion, inspect sorted-audit state by isinstance(dict), including subclasses and empty dictionary. If true append same tuple to pending list; otherwise set sorted-audit reference None, including prior False fallback sentinel, without clearing pending. Does not clear post-stop result or carried cache here. Index mutation remains if subsequent append or attribute operation fails.",
+      "prior_w1": {
+        "original_id": 4089,
+        "disposition": "VERIFIED",
+        "interpretation": "Append same tuple to pending list if dict."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 285,
+      "node": 4102,
+      "ast_node": 4102,
+      "span": [
+        1115,
+        8,
+        1115,
+        32
+      ],
+      "operation": [
+        69,
+        "self.order_audit.clear",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        0,
+        []
+      ],
+      "group": "OA27-A",
+      "contained_groups": [
+        "OA27-A"
+      ],
+      "semantic_role": "calls [69,\"self.order_audit.clear\",\"UNRESOLVED_DYNAMIC\",[],0,[]]; Clear existing authoritative ledger in place, then existing confirmation index in place, invoke carried invalidator, then post-stop invalidator. Native aliases observe clears; no replacement, transaction, catch, finally or rollback. Exception stops subsequent operations. Does not reset candidate/direct/cross/canonical stop/initial-order/other geometry caches by itself.",
+      "prior_w1": {
+        "original_id": 4102,
+        "disposition": "VERIFIED",
+        "interpretation": "Clear ledger in place first."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 286,
+      "node": 4107,
+      "ast_node": 4107,
+      "span": [
+        1116,
+        8,
+        1116,
+        52
+      ],
+      "operation": [
+        69,
+        "self._order_audit_confirmation_index.clear",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        0,
+        []
+      ],
+      "group": "OA27-A",
+      "contained_groups": [
+        "OA27-A"
+      ],
+      "semantic_role": "calls [69,\"self._order_audit_confirmation_index.clear\",\"UNRESOLVED_DYNAMIC\",[],0,[]]; Clear existing authoritative ledger in place, then existing confirmation index in place, invoke carried invalidator, then post-stop invalidator. Native aliases observe clears; no replacement, transaction, catch, finally or rollback. Exception stops subsequent operations. Does not reset candidate/direct/cross/canonical stop/initial-order/other geometry caches by itself.",
+      "prior_w1": {
+        "original_id": 4107,
+        "disposition": "VERIFIED",
+        "interpretation": "Clear confirmation index in place second."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 287,
+      "node": 4112,
+      "ast_node": 4112,
+      "span": [
+        1117,
+        8,
+        1117,
+        47
+      ],
+      "operation": [
+        69,
+        "self._invalidate_carried_order_caches",
+        "SELF_CLASS_CANDIDATE",
+        [
+          "engine/pipeline/order_audit_engine.py:1120:4:_invalidate_carried_order_caches"
+        ],
+        0,
+        []
+      ],
+      "group": "OA27-A",
+      "contained_groups": [
+        "OA27-A"
+      ],
+      "semantic_role": "calls [69,\"self._invalidate_carried_order_caches\",\"SELF_CLASS_CANDIDATE\",[\"engine/pipeline/order_audit_engine.py:1120:4:_invalidate_carried_order_caches\"],0,[]]; Clear existing authoritative ledger in place, then existing confirmation index in place, invoke carried invalidator, then post-stop invalidator. Native aliases observe clears; no replacement, transaction, catch, finally or rollback. Exception stops subsequent operations. Does not reset candidate/direct/cross/canonical stop/initial-order/other geometry caches by itself.",
+      "prior_w1": {
+        "original_id": 4112,
+        "disposition": "VERIFIED",
+        "interpretation": "Call carried invalidator third."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 288,
+      "node": 4116,
+      "ast_node": 4116,
+      "span": [
+        1118,
+        8,
+        1118,
+        48
+      ],
+      "operation": [
+        69,
+        "self._invalidate_post_stop_order_cache",
+        "SELF_CLASS_CANDIDATE",
+        [
+          "engine/pipeline/order_audit_engine.py:1129:4:_invalidate_post_stop_order_cache"
+        ],
+        0,
+        []
+      ],
+      "group": "OA27-A",
+      "contained_groups": [
+        "OA27-A"
+      ],
+      "semantic_role": "calls [69,\"self._invalidate_post_stop_order_cache\",\"SELF_CLASS_CANDIDATE\",[\"engine/pipeline/order_audit_engine.py:1129:4:_invalidate_post_stop_order_cache\"],0,[]]; Clear existing authoritative ledger in place, then existing confirmation index in place, invoke carried invalidator, then post-stop invalidator. Native aliases observe clears; no replacement, transaction, catch, finally or rollback. Exception stops subsequent operations. Does not reset candidate/direct/cross/canonical stop/initial-order/other geometry caches by itself.",
+      "prior_w1": {
+        "original_id": 4116,
+        "disposition": "VERIFIED",
+        "interpretation": "Call post-stop invalidator fourth."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 289,
+      "node": 4123,
+      "ast_node": 4123,
+      "span": [
+        1125,
+        8,
+        1125,
+        42
+      ],
+      "operation": [
+        70,
+        "self._carried_orders_cache.clear",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        0,
+        []
+      ],
+      "group": "OA28-A",
+      "contained_groups": [
+        "OA28-A"
+      ],
+      "semantic_role": "calls [70,\"self._carried_orders_cache.clear\",\"UNRESOLVED_DYNAMIC\",[],0,[]]; Clear carried result mapping in place; then assign creation index None; then creation append None. Do not clear post-stop state or authoritative ledger/index. Source comment describes creation dependency; actual caller decides whether mutation changes eligibility. If clear fails, later assignments not reached.",
+      "prior_w1": {
+        "original_id": 4123,
+        "disposition": "VERIFIED",
+        "interpretation": "Clear carried query dictionary in place; subsequent assignments set creation index and append state to None; leave post-stop structures intact."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 290,
+      "node": 4139,
+      "ast_node": 4139,
+      "span": [
+        1130,
+        8,
+        1130,
+        44
+      ],
+      "operation": [
+        71,
+        "self._post_stop_orders_cache.clear",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        0,
+        []
+      ],
+      "group": "OA29-A",
+      "contained_groups": [
+        "OA29-A"
+      ],
+      "semantic_role": "calls [71,\"self._post_stop_orders_cache.clear\",\"UNRESOLVED_DYNAMIC\",[],0,[]]; Clear post-stop result mapping in place, set sorted accepted-audit reference None, clear pending list in place, in that exact sequence. No change to carried state, initial sorted stream or authoritative ledger/index. Existing issued references are not explicitly revoked. No catch or rollback.",
+      "prior_w1": {
+        "original_id": 4139,
+        "disposition": "VERIFIED",
+        "interpretation": "Clear post-stop query cache in place; assign sorted audit None before clearing pending."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 291,
+      "node": 4148,
+      "ast_node": 4148,
+      "span": [
+        1132,
+        8,
+        1132,
+        39
+      ],
+      "operation": [
+        71,
+        "self._post_stop_pending.clear",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        0,
+        []
+      ],
+      "group": "OA29-A",
+      "contained_groups": [
+        "OA29-A"
+      ],
+      "semantic_role": "calls [71,\"self._post_stop_pending.clear\",\"UNRESOLVED_DYNAMIC\",[],0,[]]; Clear post-stop result mapping in place, set sorted accepted-audit reference None, clear pending list in place, in that exact sequence. No change to carried state, initial sorted stream or authoritative ledger/index. Existing issued references are not explicitly revoked. No catch or rollback.",
+      "prior_w1": {
+        "original_id": 4148,
+        "disposition": "VERIFIED",
+        "interpretation": "Clear pending list in place; no carried cache mutation here."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2218,
+      "node": 4018,
+      "ast_node": 4018,
+      "span": [
+        1090,
+        21,
+        1090,
+        29
+      ],
+      "operation": [
+        39,
+        4015,
+        "Load",
+        "datetime"
+      ],
+      "group": "OA25-A",
+      "contained_groups": [
+        "OA25-A"
+      ],
+      "semantic_role": "accesses [39,4015,\"Load\",\"datetime\"]; Read owner-published sorted reset timestamps. Upper bound on exact start skips every equal timestamp and selects the earliest strictly later entry in a sorted comparable sequence. No timestamp conversion, sorting or mutation in query.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2219,
+      "node": 4020,
+      "ast_node": 4020,
+      "span": [
+        1090,
+        36,
+        1090,
+        44
+      ],
+      "operation": [
+        39,
+        4015,
+        "Load",
+        "datetime"
+      ],
+      "group": "OA25-A",
+      "contained_groups": [
+        "OA25-A"
+      ],
+      "semantic_role": "accesses [39,4015,\"Load\",\"datetime\"]; Read owner-published sorted reset timestamps. Upper bound on exact start skips every equal timestamp and selects the earliest strictly later entry in a sorted comparable sequence. No timestamp conversion, sorting or mutation in query.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2220,
+      "node": 4024,
+      "ast_node": 4024,
+      "span": [
+        1093,
+        8,
+        1093,
+        16
+      ],
+      "operation": [
+        67,
+        4023,
+        "Store",
+        "position"
+      ],
+      "group": "OA25-A",
+      "contained_groups": [
+        "OA25-A"
+      ],
+      "semantic_role": "accesses [67,4023,\"Store\",\"position\"]; Read owner-published sorted reset timestamps. Upper bound on exact start skips every equal timestamp and selects the earliest strictly later entry in a sorted comparable sequence. No timestamp conversion, sorting or mutation in query.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2221,
+      "node": 4026,
+      "ast_node": 4026,
+      "span": [
+        1093,
+        19,
+        1093,
+        31
+      ],
+      "operation": [
+        67,
+        4023,
+        "Load",
+        "bisect_right"
+      ],
+      "group": "OA25-A",
+      "contained_groups": [
+        "OA25-A"
+      ],
+      "semantic_role": "accesses [67,4023,\"Load\",\"bisect_right\"]; Read owner-published sorted reset timestamps. Upper bound on exact start skips every equal timestamp and selects the earliest strictly later entry in a sorted comparable sequence. No timestamp conversion, sorting or mutation in query.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2222,
+      "node": 4027,
+      "ast_node": 4027,
+      "span": [
+        1093,
+        32,
+        1093,
+        58
+      ],
+      "operation": [
+        67,
+        4023,
+        "Load",
+        "self._sequence_reset_times"
+      ],
+      "group": "OA25-A",
+      "contained_groups": [
+        "OA25-A"
+      ],
+      "semantic_role": "accesses [67,4023,\"Load\",\"self._sequence_reset_times\"]; Read owner-published sorted reset timestamps. Upper bound on exact start skips every equal timestamp and selects the earliest strictly later entry in a sorted comparable sequence. No timestamp conversion, sorting or mutation in query.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2223,
+      "node": 4028,
+      "ast_node": 4028,
+      "span": [
+        1093,
+        32,
+        1093,
+        36
+      ],
+      "operation": [
+        67,
+        4023,
+        "Load",
+        "self"
+      ],
+      "group": "OA25-A",
+      "contained_groups": [
+        "OA25-A"
+      ],
+      "semantic_role": "accesses [67,4023,\"Load\",\"self\"]; Read owner-published sorted reset timestamps. Upper bound on exact start skips every equal timestamp and selects the earliest strictly later entry in a sorted comparable sequence. No timestamp conversion, sorting or mutation in query.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2224,
+      "node": 4029,
+      "ast_node": 4029,
+      "span": [
+        1093,
+        60,
+        1093,
+        65
+      ],
+      "operation": [
+        67,
+        4023,
+        "Load",
+        "start"
+      ],
+      "group": "OA25-A",
+      "contained_groups": [
+        "OA25-A"
+      ],
+      "semantic_role": "accesses [67,4023,\"Load\",\"start\"]; Read owner-published sorted reset timestamps. Upper bound on exact start skips every equal timestamp and selects the earliest strictly later entry in a sorted comparable sequence. No timestamp conversion, sorting or mutation in query.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2225,
+      "node": 4033,
+      "ast_node": 4033,
+      "span": [
+        1095,
+        12,
+        1095,
+        20
+      ],
+      "operation": [
+        67,
+        4030,
+        "Load",
+        "position"
+      ],
+      "group": "OA25-B",
+      "contained_groups": [
+        "OA25-B"
+      ],
+      "semantic_role": "accesses [67,4030,\"Load\",\"position\"]; Return ordered conjunction: position in range before reading element, then timestamp <= end. Empty/exhausted array returns false without access; equal end included, equal start excluded; inverted/equal interval yields false under sorted comparable native timestamps. No local interval normalization or exception recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2226,
+      "node": 4035,
+      "ast_node": 4035,
+      "span": [
+        1095,
+        23,
+        1095,
+        26
+      ],
+      "operation": [
+        67,
+        4030,
+        "Load",
+        "len"
+      ],
+      "group": "OA25-B",
+      "contained_groups": [
+        "OA25-B"
+      ],
+      "semantic_role": "accesses [67,4030,\"Load\",\"len\"]; Return ordered conjunction: position in range before reading element, then timestamp <= end. Empty/exhausted array returns false without access; equal end included, equal start excluded; inverted/equal interval yields false under sorted comparable native timestamps. No local interval normalization or exception recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2227,
+      "node": 4036,
+      "ast_node": 4036,
+      "span": [
+        1095,
+        27,
+        1095,
+        53
+      ],
+      "operation": [
+        67,
+        4030,
+        "Load",
+        "self._sequence_reset_times"
+      ],
+      "group": "OA25-B",
+      "contained_groups": [
+        "OA25-B"
+      ],
+      "semantic_role": "accesses [67,4030,\"Load\",\"self._sequence_reset_times\"]; Return ordered conjunction: position in range before reading element, then timestamp <= end. Empty/exhausted array returns false without access; equal end included, equal start excluded; inverted/equal interval yields false under sorted comparable native timestamps. No local interval normalization or exception recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2228,
+      "node": 4037,
+      "ast_node": 4037,
+      "span": [
+        1095,
+        27,
+        1095,
+        31
+      ],
+      "operation": [
+        67,
+        4030,
+        "Load",
+        "self"
+      ],
+      "group": "OA25-B",
+      "contained_groups": [
+        "OA25-B"
+      ],
+      "semantic_role": "accesses [67,4030,\"Load\",\"self\"]; Return ordered conjunction: position in range before reading element, then timestamp <= end. Empty/exhausted array returns false without access; equal end included, equal start excluded; inverted/equal interval yields false under sorted comparable native timestamps. No local interval normalization or exception recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2229,
+      "node": 4039,
+      "ast_node": 4039,
+      "span": [
+        1096,
+        16,
+        1096,
+        52
+      ],
+      "operation": [
+        67,
+        4030,
+        "Load",
+        "self._sequence_reset_times[]"
+      ],
+      "group": "OA25-B",
+      "contained_groups": [
+        "OA25-B"
+      ],
+      "semantic_role": "accesses [67,4030,\"Load\",\"self._sequence_reset_times[]\"]; Return ordered conjunction: position in range before reading element, then timestamp <= end. Empty/exhausted array returns false without access; equal end included, equal start excluded; inverted/equal interval yields false under sorted comparable native timestamps. No local interval normalization or exception recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2230,
+      "node": 4040,
+      "ast_node": 4040,
+      "span": [
+        1096,
+        16,
+        1096,
+        42
+      ],
+      "operation": [
+        67,
+        4030,
+        "Load",
+        "self._sequence_reset_times"
+      ],
+      "group": "OA25-B",
+      "contained_groups": [
+        "OA25-B"
+      ],
+      "semantic_role": "accesses [67,4030,\"Load\",\"self._sequence_reset_times\"]; Return ordered conjunction: position in range before reading element, then timestamp <= end. Empty/exhausted array returns false without access; equal end included, equal start excluded; inverted/equal interval yields false under sorted comparable native timestamps. No local interval normalization or exception recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2231,
+      "node": 4041,
+      "ast_node": 4041,
+      "span": [
+        1096,
+        16,
+        1096,
+        20
+      ],
+      "operation": [
+        67,
+        4030,
+        "Load",
+        "self"
+      ],
+      "group": "OA25-B",
+      "contained_groups": [
+        "OA25-B"
+      ],
+      "semantic_role": "accesses [67,4030,\"Load\",\"self\"]; Return ordered conjunction: position in range before reading element, then timestamp <= end. Empty/exhausted array returns false without access; equal end included, equal start excluded; inverted/equal interval yields false under sorted comparable native timestamps. No local interval normalization or exception recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2232,
+      "node": 4042,
+      "ast_node": 4042,
+      "span": [
+        1096,
+        43,
+        1096,
+        51
+      ],
+      "operation": [
+        67,
+        4030,
+        "Load",
+        "position"
+      ],
+      "group": "OA25-B",
+      "contained_groups": [
+        "OA25-B"
+      ],
+      "semantic_role": "accesses [67,4030,\"Load\",\"position\"]; Return ordered conjunction: position in range before reading element, then timestamp <= end. Empty/exhausted array returns false without access; equal end included, equal start excluded; inverted/equal interval yields false under sorted comparable native timestamps. No local interval normalization or exception recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2233,
+      "node": 4043,
+      "ast_node": 4043,
+      "span": [
+        1096,
+        56,
+        1096,
+        59
+      ],
+      "operation": [
+        67,
+        4030,
+        "Load",
+        "end"
+      ],
+      "group": "OA25-B",
+      "contained_groups": [
+        "OA25-B"
+      ],
+      "semantic_role": "accesses [67,4030,\"Load\",\"end\"]; Return ordered conjunction: position in range before reading element, then timestamp <= end. Empty/exhausted array returns false without access; equal end included, equal start excluded; inverted/equal interval yields false under sorted comparable native timestamps. No local interval normalization or exception recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2234,
+      "node": 4044,
+      "ast_node": 4044,
+      "span": [
+        1091,
+        9,
+        1091,
+        13
+      ],
+      "operation": [
+        39,
+        4015,
+        "Load",
+        "bool"
+      ],
+      "group": "OA25-A",
+      "contained_groups": [
+        "OA25-A"
+      ],
+      "semantic_role": "accesses [39,4015,\"Load\",\"bool\"]; Read owner-published sorted reset timestamps. Upper bound on exact start skips every equal timestamp and selects the earliest strictly later entry in a sorted comparable sequence. No timestamp conversion, sorting or mutation in query.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2235,
+      "node": 4048,
+      "ast_node": 4048,
+      "span": [
+        1101,
+        24,
+        1101,
+        39
+      ],
+      "operation": [
+        39,
+        4045,
+        "Load",
+        "tuple[]"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [39,4045,\"Load\",\"tuple[]\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2236,
+      "node": 4049,
+      "ast_node": 4049,
+      "span": [
+        1101,
+        24,
+        1101,
+        29
+      ],
+      "operation": [
+        39,
+        4045,
+        "Load",
+        "tuple"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [39,4045,\"Load\",\"tuple\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2237,
+      "node": 4051,
+      "ast_node": 4051,
+      "span": [
+        1101,
+        30,
+        1101,
+        33
+      ],
+      "operation": [
+        39,
+        4045,
+        "Load",
+        "int"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [39,4045,\"Load\",\"int\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2238,
+      "node": 4052,
+      "ast_node": 4052,
+      "span": [
+        1101,
+        35,
+        1101,
+        38
+      ],
+      "operation": [
+        39,
+        4045,
+        "Load",
+        "int"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [39,4045,\"Load\",\"int\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2239,
+      "node": 4054,
+      "ast_node": 4054,
+      "span": [
+        1101,
+        55,
+        1101,
+        63
+      ],
+      "operation": [
+        39,
+        4045,
+        "Load",
+        "datetime"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [39,4045,\"Load\",\"datetime\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2240,
+      "node": 4059,
+      "ast_node": 4059,
+      "span": [
+        1104,
+        8,
+        1104,
+        19
+      ],
+      "operation": [
+        68,
+        4057,
+        "Store",
+        "first_index"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [68,4057,\"Store\",\"first_index\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2241,
+      "node": 4060,
+      "ast_node": 4060,
+      "span": [
+        1104,
+        21,
+        1104,
+        32
+      ],
+      "operation": [
+        68,
+        4057,
+        "Store",
+        "break_index"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [68,4057,\"Store\",\"break_index\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2242,
+      "node": 4061,
+      "ast_node": 4061,
+      "span": [
+        1104,
+        35,
+        1104,
+        43
+      ],
+      "operation": [
+        68,
+        4057,
+        "Load",
+        "identity"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [68,4057,\"Load\",\"identity\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2243,
+      "node": 4063,
+      "ast_node": 4063,
+      "span": [
+        1105,
+        8,
+        1105,
+        12
+      ],
+      "operation": [
+        68,
+        4062,
+        "Store",
+        "item"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [68,4062,\"Store\",\"item\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2244,
+      "node": 4065,
+      "ast_node": 4065,
+      "span": [
+        1105,
+        16,
+        1105,
+        28
+      ],
+      "operation": [
+        68,
+        4062,
+        "Load",
+        "confirmation"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [68,4062,\"Load\",\"confirmation\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2245,
+      "node": 4066,
+      "ast_node": 4066,
+      "span": [
+        1105,
+        30,
+        1105,
+        41
+      ],
+      "operation": [
+        68,
+        4062,
+        "Load",
+        "first_index"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [68,4062,\"Load\",\"first_index\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2246,
+      "node": 4067,
+      "ast_node": 4067,
+      "span": [
+        1105,
+        43,
+        1105,
+        54
+      ],
+      "operation": [
+        68,
+        4062,
+        "Load",
+        "break_index"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [68,4062,\"Load\",\"break_index\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2247,
+      "node": 4069,
+      "ast_node": 4069,
+      "span": [
+        1106,
+        8,
+        1106,
+        16
+      ],
+      "operation": [
+        68,
+        4068,
+        "Store",
+        "position"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [68,4068,\"Store\",\"position\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2248,
+      "node": 4071,
+      "ast_node": 4071,
+      "span": [
+        1106,
+        19,
+        1106,
+        31
+      ],
+      "operation": [
+        68,
+        4068,
+        "Load",
+        "bisect_right"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [68,4068,\"Load\",\"bisect_right\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2249,
+      "node": 4072,
+      "ast_node": 4072,
+      "span": [
+        1106,
+        32,
+        1106,
+        68
+      ],
+      "operation": [
+        68,
+        4068,
+        "Load",
+        "self._order_audit_confirmation_index"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [68,4068,\"Load\",\"self._order_audit_confirmation_index\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2250,
+      "node": 4073,
+      "ast_node": 4073,
+      "span": [
+        1106,
+        32,
+        1106,
+        36
+      ],
+      "operation": [
+        68,
+        4068,
+        "Load",
+        "self"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [68,4068,\"Load\",\"self\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2251,
+      "node": 4074,
+      "ast_node": 4074,
+      "span": [
+        1106,
+        70,
+        1106,
+        74
+      ],
+      "operation": [
+        68,
+        4068,
+        "Load",
+        "item"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [68,4068,\"Load\",\"item\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2252,
+      "node": 4077,
+      "ast_node": 4077,
+      "span": [
+        1107,
+        8,
+        1107,
+        51
+      ],
+      "operation": [
+        68,
+        4075,
+        "Load",
+        "self._order_audit_confirmation_index.insert"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [68,4075,\"Load\",\"self._order_audit_confirmation_index.insert\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2253,
+      "node": 4078,
+      "ast_node": 4078,
+      "span": [
+        1107,
+        8,
+        1107,
+        44
+      ],
+      "operation": [
+        68,
+        4075,
+        "Load",
+        "self._order_audit_confirmation_index"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [68,4075,\"Load\",\"self._order_audit_confirmation_index\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2254,
+      "node": 4079,
+      "ast_node": 4079,
+      "span": [
+        1107,
+        8,
+        1107,
+        12
+      ],
+      "operation": [
+        68,
+        4075,
+        "Load",
+        "self"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [68,4075,\"Load\",\"self\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2255,
+      "node": 4080,
+      "ast_node": 4080,
+      "span": [
+        1107,
+        52,
+        1107,
+        60
+      ],
+      "operation": [
+        68,
+        4075,
+        "Load",
+        "position"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [68,4075,\"Load\",\"position\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2256,
+      "node": 4081,
+      "ast_node": 4081,
+      "span": [
+        1107,
+        62,
+        1107,
+        66
+      ],
+      "operation": [
+        68,
+        4075,
+        "Load",
+        "item"
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "accesses [68,4075,\"Load\",\"item\"]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2257,
+      "node": 4084,
+      "ast_node": 4084,
+      "span": [
+        1108,
+        11,
+        1108,
+        21
+      ],
+      "operation": [
+        68,
+        4082,
+        "Load",
+        "isinstance"
+      ],
+      "group": "OA26-B",
+      "contained_groups": [
+        "OA26-B"
+      ],
+      "semantic_role": "accesses [68,4082,\"Load\",\"isinstance\"]; After index insertion, inspect sorted-audit state by isinstance(dict), including subclasses and empty dictionary. If true append same tuple to pending list; otherwise set sorted-audit reference None, including prior False fallback sentinel, without clearing pending. Does not clear post-stop result or carried cache here. Index mutation remains if subsequent append or attribute operation fails.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2258,
+      "node": 4085,
+      "ast_node": 4085,
+      "span": [
+        1108,
+        22,
+        1108,
+        50
+      ],
+      "operation": [
+        68,
+        4082,
+        "Load",
+        "self._post_stop_sorted_audit"
+      ],
+      "group": "OA26-B",
+      "contained_groups": [
+        "OA26-B"
+      ],
+      "semantic_role": "accesses [68,4082,\"Load\",\"self._post_stop_sorted_audit\"]; After index insertion, inspect sorted-audit state by isinstance(dict), including subclasses and empty dictionary. If true append same tuple to pending list; otherwise set sorted-audit reference None, including prior False fallback sentinel, without clearing pending. Does not clear post-stop result or carried cache here. Index mutation remains if subsequent append or attribute operation fails.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2259,
+      "node": 4086,
+      "ast_node": 4086,
+      "span": [
+        1108,
+        22,
+        1108,
+        26
+      ],
+      "operation": [
+        68,
+        4082,
+        "Load",
+        "self"
+      ],
+      "group": "OA26-B",
+      "contained_groups": [
+        "OA26-B"
+      ],
+      "semantic_role": "accesses [68,4082,\"Load\",\"self\"]; After index insertion, inspect sorted-audit state by isinstance(dict), including subclasses and empty dictionary. If true append same tuple to pending list; otherwise set sorted-audit reference None, including prior False fallback sentinel, without clearing pending. Does not clear post-stop result or carried cache here. Index mutation remains if subsequent append or attribute operation fails.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2260,
+      "node": 4087,
+      "ast_node": 4087,
+      "span": [
+        1108,
+        52,
+        1108,
+        56
+      ],
+      "operation": [
+        68,
+        4082,
+        "Load",
+        "dict"
+      ],
+      "group": "OA26-B",
+      "contained_groups": [
+        "OA26-B"
+      ],
+      "semantic_role": "accesses [68,4082,\"Load\",\"dict\"]; After index insertion, inspect sorted-audit state by isinstance(dict), including subclasses and empty dictionary. If true append same tuple to pending list; otherwise set sorted-audit reference None, including prior False fallback sentinel, without clearing pending. Does not clear post-stop result or carried cache here. Index mutation remains if subsequent append or attribute operation fails.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2261,
+      "node": 4090,
+      "ast_node": 4090,
+      "span": [
+        1109,
+        12,
+        1109,
+        42
+      ],
+      "operation": [
+        68,
+        4088,
+        "Load",
+        "self._post_stop_pending.append"
+      ],
+      "group": "OA26-B",
+      "contained_groups": [
+        "OA26-B"
+      ],
+      "semantic_role": "accesses [68,4088,\"Load\",\"self._post_stop_pending.append\"]; After index insertion, inspect sorted-audit state by isinstance(dict), including subclasses and empty dictionary. If true append same tuple to pending list; otherwise set sorted-audit reference None, including prior False fallback sentinel, without clearing pending. Does not clear post-stop result or carried cache here. Index mutation remains if subsequent append or attribute operation fails.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2262,
+      "node": 4091,
+      "ast_node": 4091,
+      "span": [
+        1109,
+        12,
+        1109,
+        35
+      ],
+      "operation": [
+        68,
+        4088,
+        "Load",
+        "self._post_stop_pending"
+      ],
+      "group": "OA26-B",
+      "contained_groups": [
+        "OA26-B"
+      ],
+      "semantic_role": "accesses [68,4088,\"Load\",\"self._post_stop_pending\"]; After index insertion, inspect sorted-audit state by isinstance(dict), including subclasses and empty dictionary. If true append same tuple to pending list; otherwise set sorted-audit reference None, including prior False fallback sentinel, without clearing pending. Does not clear post-stop result or carried cache here. Index mutation remains if subsequent append or attribute operation fails.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2263,
+      "node": 4092,
+      "ast_node": 4092,
+      "span": [
+        1109,
+        12,
+        1109,
+        16
+      ],
+      "operation": [
+        68,
+        4088,
+        "Load",
+        "self"
+      ],
+      "group": "OA26-B",
+      "contained_groups": [
+        "OA26-B"
+      ],
+      "semantic_role": "accesses [68,4088,\"Load\",\"self\"]; After index insertion, inspect sorted-audit state by isinstance(dict), including subclasses and empty dictionary. If true append same tuple to pending list; otherwise set sorted-audit reference None, including prior False fallback sentinel, without clearing pending. Does not clear post-stop result or carried cache here. Index mutation remains if subsequent append or attribute operation fails.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2264,
+      "node": 4093,
+      "ast_node": 4093,
+      "span": [
+        1109,
+        43,
+        1109,
+        47
+      ],
+      "operation": [
+        68,
+        4088,
+        "Load",
+        "item"
+      ],
+      "group": "OA26-B",
+      "contained_groups": [
+        "OA26-B"
+      ],
+      "semantic_role": "accesses [68,4088,\"Load\",\"item\"]; After index insertion, inspect sorted-audit state by isinstance(dict), including subclasses and empty dictionary. If true append same tuple to pending list; otherwise set sorted-audit reference None, including prior False fallback sentinel, without clearing pending. Does not clear post-stop result or carried cache here. Index mutation remains if subsequent append or attribute operation fails.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2265,
+      "node": 4095,
+      "ast_node": 4095,
+      "span": [
+        1111,
+        12,
+        1111,
+        40
+      ],
+      "operation": [
+        68,
+        4094,
+        "Store",
+        "self._post_stop_sorted_audit"
+      ],
+      "group": "OA26-B",
+      "contained_groups": [
+        "OA26-B"
+      ],
+      "semantic_role": "accesses [68,4094,\"Store\",\"self._post_stop_sorted_audit\"]; After index insertion, inspect sorted-audit state by isinstance(dict), including subclasses and empty dictionary. If true append same tuple to pending list; otherwise set sorted-audit reference None, including prior False fallback sentinel, without clearing pending. Does not clear post-stop result or carried cache here. Index mutation remains if subsequent append or attribute operation fails.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2266,
+      "node": 4096,
+      "ast_node": 4096,
+      "span": [
+        1111,
+        12,
+        1111,
+        16
+      ],
+      "operation": [
+        68,
+        4094,
+        "Load",
+        "self"
+      ],
+      "group": "OA26-B",
+      "contained_groups": [
+        "OA26-B"
+      ],
+      "semantic_role": "accesses [68,4094,\"Load\",\"self\"]; After index insertion, inspect sorted-audit state by isinstance(dict), including subclasses and empty dictionary. If true append same tuple to pending list; otherwise set sorted-audit reference None, including prior False fallback sentinel, without clearing pending. Does not clear post-stop result or carried cache here. Index mutation remains if subsequent append or attribute operation fails.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2267,
+      "node": 4103,
+      "ast_node": 4103,
+      "span": [
+        1115,
+        8,
+        1115,
+        30
+      ],
+      "operation": [
+        69,
+        4101,
+        "Load",
+        "self.order_audit.clear"
+      ],
+      "group": "OA27-A",
+      "contained_groups": [
+        "OA27-A"
+      ],
+      "semantic_role": "accesses [69,4101,\"Load\",\"self.order_audit.clear\"]; Clear existing authoritative ledger in place, then existing confirmation index in place, invoke carried invalidator, then post-stop invalidator. Native aliases observe clears; no replacement, transaction, catch, finally or rollback. Exception stops subsequent operations. Does not reset candidate/direct/cross/canonical stop/initial-order/other geometry caches by itself.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2268,
+      "node": 4104,
+      "ast_node": 4104,
+      "span": [
+        1115,
+        8,
+        1115,
+        24
+      ],
+      "operation": [
+        69,
+        4101,
+        "Load",
+        "self.order_audit"
+      ],
+      "group": "OA27-A",
+      "contained_groups": [
+        "OA27-A"
+      ],
+      "semantic_role": "accesses [69,4101,\"Load\",\"self.order_audit\"]; Clear existing authoritative ledger in place, then existing confirmation index in place, invoke carried invalidator, then post-stop invalidator. Native aliases observe clears; no replacement, transaction, catch, finally or rollback. Exception stops subsequent operations. Does not reset candidate/direct/cross/canonical stop/initial-order/other geometry caches by itself.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2269,
+      "node": 4105,
+      "ast_node": 4105,
+      "span": [
+        1115,
+        8,
+        1115,
+        12
+      ],
+      "operation": [
+        69,
+        4101,
+        "Load",
+        "self"
+      ],
+      "group": "OA27-A",
+      "contained_groups": [
+        "OA27-A"
+      ],
+      "semantic_role": "accesses [69,4101,\"Load\",\"self\"]; Clear existing authoritative ledger in place, then existing confirmation index in place, invoke carried invalidator, then post-stop invalidator. Native aliases observe clears; no replacement, transaction, catch, finally or rollback. Exception stops subsequent operations. Does not reset candidate/direct/cross/canonical stop/initial-order/other geometry caches by itself.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2270,
+      "node": 4108,
+      "ast_node": 4108,
+      "span": [
+        1116,
+        8,
+        1116,
+        50
+      ],
+      "operation": [
+        69,
+        4106,
+        "Load",
+        "self._order_audit_confirmation_index.clear"
+      ],
+      "group": "OA27-A",
+      "contained_groups": [
+        "OA27-A"
+      ],
+      "semantic_role": "accesses [69,4106,\"Load\",\"self._order_audit_confirmation_index.clear\"]; Clear existing authoritative ledger in place, then existing confirmation index in place, invoke carried invalidator, then post-stop invalidator. Native aliases observe clears; no replacement, transaction, catch, finally or rollback. Exception stops subsequent operations. Does not reset candidate/direct/cross/canonical stop/initial-order/other geometry caches by itself.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2271,
+      "node": 4109,
+      "ast_node": 4109,
+      "span": [
+        1116,
+        8,
+        1116,
+        44
+      ],
+      "operation": [
+        69,
+        4106,
+        "Load",
+        "self._order_audit_confirmation_index"
+      ],
+      "group": "OA27-A",
+      "contained_groups": [
+        "OA27-A"
+      ],
+      "semantic_role": "accesses [69,4106,\"Load\",\"self._order_audit_confirmation_index\"]; Clear existing authoritative ledger in place, then existing confirmation index in place, invoke carried invalidator, then post-stop invalidator. Native aliases observe clears; no replacement, transaction, catch, finally or rollback. Exception stops subsequent operations. Does not reset candidate/direct/cross/canonical stop/initial-order/other geometry caches by itself.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2272,
+      "node": 4110,
+      "ast_node": 4110,
+      "span": [
+        1116,
+        8,
+        1116,
+        12
+      ],
+      "operation": [
+        69,
+        4106,
+        "Load",
+        "self"
+      ],
+      "group": "OA27-A",
+      "contained_groups": [
+        "OA27-A"
+      ],
+      "semantic_role": "accesses [69,4106,\"Load\",\"self\"]; Clear existing authoritative ledger in place, then existing confirmation index in place, invoke carried invalidator, then post-stop invalidator. Native aliases observe clears; no replacement, transaction, catch, finally or rollback. Exception stops subsequent operations. Does not reset candidate/direct/cross/canonical stop/initial-order/other geometry caches by itself.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2273,
+      "node": 4113,
+      "ast_node": 4113,
+      "span": [
+        1117,
+        8,
+        1117,
+        45
+      ],
+      "operation": [
+        69,
+        4111,
+        "Load",
+        "self._invalidate_carried_order_caches"
+      ],
+      "group": "OA27-A",
+      "contained_groups": [
+        "OA27-A"
+      ],
+      "semantic_role": "accesses [69,4111,\"Load\",\"self._invalidate_carried_order_caches\"]; Clear existing authoritative ledger in place, then existing confirmation index in place, invoke carried invalidator, then post-stop invalidator. Native aliases observe clears; no replacement, transaction, catch, finally or rollback. Exception stops subsequent operations. Does not reset candidate/direct/cross/canonical stop/initial-order/other geometry caches by itself.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2274,
+      "node": 4114,
+      "ast_node": 4114,
+      "span": [
+        1117,
+        8,
+        1117,
+        12
+      ],
+      "operation": [
+        69,
+        4111,
+        "Load",
+        "self"
+      ],
+      "group": "OA27-A",
+      "contained_groups": [
+        "OA27-A"
+      ],
+      "semantic_role": "accesses [69,4111,\"Load\",\"self\"]; Clear existing authoritative ledger in place, then existing confirmation index in place, invoke carried invalidator, then post-stop invalidator. Native aliases observe clears; no replacement, transaction, catch, finally or rollback. Exception stops subsequent operations. Does not reset candidate/direct/cross/canonical stop/initial-order/other geometry caches by itself.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2275,
+      "node": 4117,
+      "ast_node": 4117,
+      "span": [
+        1118,
+        8,
+        1118,
+        46
+      ],
+      "operation": [
+        69,
+        4115,
+        "Load",
+        "self._invalidate_post_stop_order_cache"
+      ],
+      "group": "OA27-A",
+      "contained_groups": [
+        "OA27-A"
+      ],
+      "semantic_role": "accesses [69,4115,\"Load\",\"self._invalidate_post_stop_order_cache\"]; Clear existing authoritative ledger in place, then existing confirmation index in place, invoke carried invalidator, then post-stop invalidator. Native aliases observe clears; no replacement, transaction, catch, finally or rollback. Exception stops subsequent operations. Does not reset candidate/direct/cross/canonical stop/initial-order/other geometry caches by itself.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2276,
+      "node": 4118,
+      "ast_node": 4118,
+      "span": [
+        1118,
+        8,
+        1118,
+        12
+      ],
+      "operation": [
+        69,
+        4115,
+        "Load",
+        "self"
+      ],
+      "group": "OA27-A",
+      "contained_groups": [
+        "OA27-A"
+      ],
+      "semantic_role": "accesses [69,4115,\"Load\",\"self\"]; Clear existing authoritative ledger in place, then existing confirmation index in place, invoke carried invalidator, then post-stop invalidator. Native aliases observe clears; no replacement, transaction, catch, finally or rollback. Exception stops subsequent operations. Does not reset candidate/direct/cross/canonical stop/initial-order/other geometry caches by itself.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2277,
+      "node": 4124,
+      "ast_node": 4124,
+      "span": [
+        1125,
+        8,
+        1125,
+        40
+      ],
+      "operation": [
+        70,
+        4122,
+        "Load",
+        "self._carried_orders_cache.clear"
+      ],
+      "group": "OA28-A",
+      "contained_groups": [
+        "OA28-A"
+      ],
+      "semantic_role": "accesses [70,4122,\"Load\",\"self._carried_orders_cache.clear\"]; Clear carried result mapping in place; then assign creation index None; then creation append None. Do not clear post-stop state or authoritative ledger/index. Source comment describes creation dependency; actual caller decides whether mutation changes eligibility. If clear fails, later assignments not reached.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2278,
+      "node": 4125,
+      "ast_node": 4125,
+      "span": [
+        1125,
+        8,
+        1125,
+        34
+      ],
+      "operation": [
+        70,
+        4122,
+        "Load",
+        "self._carried_orders_cache"
+      ],
+      "group": "OA28-A",
+      "contained_groups": [
+        "OA28-A"
+      ],
+      "semantic_role": "accesses [70,4122,\"Load\",\"self._carried_orders_cache\"]; Clear carried result mapping in place; then assign creation index None; then creation append None. Do not clear post-stop state or authoritative ledger/index. Source comment describes creation dependency; actual caller decides whether mutation changes eligibility. If clear fails, later assignments not reached.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2279,
+      "node": 4126,
+      "ast_node": 4126,
+      "span": [
+        1125,
+        8,
+        1125,
+        12
+      ],
+      "operation": [
+        70,
+        4122,
+        "Load",
+        "self"
+      ],
+      "group": "OA28-A",
+      "contained_groups": [
+        "OA28-A"
+      ],
+      "semantic_role": "accesses [70,4122,\"Load\",\"self\"]; Clear carried result mapping in place; then assign creation index None; then creation append None. Do not clear post-stop state or authoritative ledger/index. Source comment describes creation dependency; actual caller decides whether mutation changes eligibility. If clear fails, later assignments not reached.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2280,
+      "node": 4128,
+      "ast_node": 4128,
+      "span": [
+        1126,
+        8,
+        1126,
+        36
+      ],
+      "operation": [
+        70,
+        4127,
+        "Store",
+        "self._carried_creation_index"
+      ],
+      "group": "OA28-A",
+      "contained_groups": [
+        "OA28-A"
+      ],
+      "semantic_role": "accesses [70,4127,\"Store\",\"self._carried_creation_index\"]; Clear carried result mapping in place; then assign creation index None; then creation append None. Do not clear post-stop state or authoritative ledger/index. Source comment describes creation dependency; actual caller decides whether mutation changes eligibility. If clear fails, later assignments not reached.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2281,
+      "node": 4129,
+      "ast_node": 4129,
+      "span": [
+        1126,
+        8,
+        1126,
+        12
+      ],
+      "operation": [
+        70,
+        4127,
+        "Load",
+        "self"
+      ],
+      "group": "OA28-A",
+      "contained_groups": [
+        "OA28-A"
+      ],
+      "semantic_role": "accesses [70,4127,\"Load\",\"self\"]; Clear carried result mapping in place; then assign creation index None; then creation append None. Do not clear post-stop state or authoritative ledger/index. Source comment describes creation dependency; actual caller decides whether mutation changes eligibility. If clear fails, later assignments not reached.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2282,
+      "node": 4132,
+      "ast_node": 4132,
+      "span": [
+        1127,
+        8,
+        1127,
+        37
+      ],
+      "operation": [
+        70,
+        4131,
+        "Store",
+        "self._carried_creation_append"
+      ],
+      "group": "OA28-A",
+      "contained_groups": [
+        "OA28-A"
+      ],
+      "semantic_role": "accesses [70,4131,\"Store\",\"self._carried_creation_append\"]; Clear carried result mapping in place; then assign creation index None; then creation append None. Do not clear post-stop state or authoritative ledger/index. Source comment describes creation dependency; actual caller decides whether mutation changes eligibility. If clear fails, later assignments not reached.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2283,
+      "node": 4133,
+      "ast_node": 4133,
+      "span": [
+        1127,
+        8,
+        1127,
+        12
+      ],
+      "operation": [
+        70,
+        4131,
+        "Load",
+        "self"
+      ],
+      "group": "OA28-A",
+      "contained_groups": [
+        "OA28-A"
+      ],
+      "semantic_role": "accesses [70,4131,\"Load\",\"self\"]; Clear carried result mapping in place; then assign creation index None; then creation append None. Do not clear post-stop state or authoritative ledger/index. Source comment describes creation dependency; actual caller decides whether mutation changes eligibility. If clear fails, later assignments not reached.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2284,
+      "node": 4140,
+      "ast_node": 4140,
+      "span": [
+        1130,
+        8,
+        1130,
+        42
+      ],
+      "operation": [
+        71,
+        4138,
+        "Load",
+        "self._post_stop_orders_cache.clear"
+      ],
+      "group": "OA29-A",
+      "contained_groups": [
+        "OA29-A"
+      ],
+      "semantic_role": "accesses [71,4138,\"Load\",\"self._post_stop_orders_cache.clear\"]; Clear post-stop result mapping in place, set sorted accepted-audit reference None, clear pending list in place, in that exact sequence. No change to carried state, initial sorted stream or authoritative ledger/index. Existing issued references are not explicitly revoked. No catch or rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2285,
+      "node": 4141,
+      "ast_node": 4141,
+      "span": [
+        1130,
+        8,
+        1130,
+        36
+      ],
+      "operation": [
+        71,
+        4138,
+        "Load",
+        "self._post_stop_orders_cache"
+      ],
+      "group": "OA29-A",
+      "contained_groups": [
+        "OA29-A"
+      ],
+      "semantic_role": "accesses [71,4138,\"Load\",\"self._post_stop_orders_cache\"]; Clear post-stop result mapping in place, set sorted accepted-audit reference None, clear pending list in place, in that exact sequence. No change to carried state, initial sorted stream or authoritative ledger/index. Existing issued references are not explicitly revoked. No catch or rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2286,
+      "node": 4142,
+      "ast_node": 4142,
+      "span": [
+        1130,
+        8,
+        1130,
+        12
+      ],
+      "operation": [
+        71,
+        4138,
+        "Load",
+        "self"
+      ],
+      "group": "OA29-A",
+      "contained_groups": [
+        "OA29-A"
+      ],
+      "semantic_role": "accesses [71,4138,\"Load\",\"self\"]; Clear post-stop result mapping in place, set sorted accepted-audit reference None, clear pending list in place, in that exact sequence. No change to carried state, initial sorted stream or authoritative ledger/index. Existing issued references are not explicitly revoked. No catch or rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2287,
+      "node": 4144,
+      "ast_node": 4144,
+      "span": [
+        1131,
+        8,
+        1131,
+        36
+      ],
+      "operation": [
+        71,
+        4143,
+        "Store",
+        "self._post_stop_sorted_audit"
+      ],
+      "group": "OA29-A",
+      "contained_groups": [
+        "OA29-A"
+      ],
+      "semantic_role": "accesses [71,4143,\"Store\",\"self._post_stop_sorted_audit\"]; Clear post-stop result mapping in place, set sorted accepted-audit reference None, clear pending list in place, in that exact sequence. No change to carried state, initial sorted stream or authoritative ledger/index. Existing issued references are not explicitly revoked. No catch or rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2288,
+      "node": 4145,
+      "ast_node": 4145,
+      "span": [
+        1131,
+        8,
+        1131,
+        12
+      ],
+      "operation": [
+        71,
+        4143,
+        "Load",
+        "self"
+      ],
+      "group": "OA29-A",
+      "contained_groups": [
+        "OA29-A"
+      ],
+      "semantic_role": "accesses [71,4143,\"Load\",\"self\"]; Clear post-stop result mapping in place, set sorted accepted-audit reference None, clear pending list in place, in that exact sequence. No change to carried state, initial sorted stream or authoritative ledger/index. Existing issued references are not explicitly revoked. No catch or rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2289,
+      "node": 4149,
+      "ast_node": 4149,
+      "span": [
+        1132,
+        8,
+        1132,
+        37
+      ],
+      "operation": [
+        71,
+        4147,
+        "Load",
+        "self._post_stop_pending.clear"
+      ],
+      "group": "OA29-A",
+      "contained_groups": [
+        "OA29-A"
+      ],
+      "semantic_role": "accesses [71,4147,\"Load\",\"self._post_stop_pending.clear\"]; Clear post-stop result mapping in place, set sorted accepted-audit reference None, clear pending list in place, in that exact sequence. No change to carried state, initial sorted stream or authoritative ledger/index. Existing issued references are not explicitly revoked. No catch or rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2290,
+      "node": 4150,
+      "ast_node": 4150,
+      "span": [
+        1132,
+        8,
+        1132,
+        31
+      ],
+      "operation": [
+        71,
+        4147,
+        "Load",
+        "self._post_stop_pending"
+      ],
+      "group": "OA29-A",
+      "contained_groups": [
+        "OA29-A"
+      ],
+      "semantic_role": "accesses [71,4147,\"Load\",\"self._post_stop_pending\"]; Clear post-stop result mapping in place, set sorted accepted-audit reference None, clear pending list in place, in that exact sequence. No change to carried state, initial sorted stream or authoritative ledger/index. Existing issued references are not explicitly revoked. No catch or rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2291,
+      "node": 4151,
+      "ast_node": 4151,
+      "span": [
+        1132,
+        8,
+        1132,
+        12
+      ],
+      "operation": [
+        71,
+        4147,
+        "Load",
+        "self"
+      ],
+      "group": "OA29-A",
+      "contained_groups": [
+        "OA29-A"
+      ],
+      "semantic_role": "accesses [71,4147,\"Load\",\"self\"]; Clear post-stop result mapping in place, set sorted accepted-audit reference None, clear pending list in place, in that exact sequence. No change to carried state, initial sorted stream or authoritative ledger/index. Existing issued references are not explicitly revoked. No catch or rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 132,
+      "node": 4076,
+      "ast_node": 4076,
+      "span": [
+        1107,
+        8,
+        1107,
+        67
+      ],
+      "operation": [
+        68,
+        "self._order_audit_confirmation_index.insert",
+        [
+          "POTENTIAL_MUTATION",
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "OA26-A",
+      "contained_groups": [
+        "OA26-A"
+      ],
+      "semantic_role": "effects [68,\"self._order_audit_confirmation_index.insert\",[\"POTENTIAL_MUTATION\",\"DYNAMIC_EFFECT_UNKNOWN\"]]; Unpack supplied physical identity as two values, no integer coercion or validation. Form tuple (exact confirmation, First, Break), compute right insertion by lexicographic full tuple, then insert into existing index list in place. Earlier/equal timestamps ordered by integer First then Break under native contract; exact duplicate placed after equals, not deduplicated. No ledger existence check, ledger mutation or independent resort.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 133,
+      "node": 4089,
+      "ast_node": 4089,
+      "span": [
+        1109,
+        12,
+        1109,
+        48
+      ],
+      "operation": [
+        68,
+        "self._post_stop_pending.append",
+        [
+          "POTENTIAL_MUTATION",
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "OA26-B",
+      "contained_groups": [
+        "OA26-B"
+      ],
+      "semantic_role": "effects [68,\"self._post_stop_pending.append\",[\"POTENTIAL_MUTATION\",\"DYNAMIC_EFFECT_UNKNOWN\"]]; After index insertion, inspect sorted-audit state by isinstance(dict), including subclasses and empty dictionary. If true append same tuple to pending list; otherwise set sorted-audit reference None, including prior False fallback sentinel, without clearing pending. Does not clear post-stop result or carried cache here. Index mutation remains if subsequent append or attribute operation fails.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 134,
+      "node": 4095,
+      "ast_node": 4095,
+      "span": [
+        1111,
+        12,
+        1111,
+        40
+      ],
+      "operation": [
+        68,
+        "self._post_stop_sorted_audit",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "OA26-B",
+      "contained_groups": [
+        "OA26-B"
+      ],
+      "semantic_role": "effects [68,\"self._post_stop_sorted_audit\",[\"EXPLICIT_OBJECT_MUTATION\"]]; After index insertion, inspect sorted-audit state by isinstance(dict), including subclasses and empty dictionary. If true append same tuple to pending list; otherwise set sorted-audit reference None, including prior False fallback sentinel, without clearing pending. Does not clear post-stop result or carried cache here. Index mutation remains if subsequent append or attribute operation fails.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 135,
+      "node": 4102,
+      "ast_node": 4102,
+      "span": [
+        1115,
+        8,
+        1115,
+        32
+      ],
+      "operation": [
+        69,
+        "self.order_audit.clear",
+        [
+          "POTENTIAL_MUTATION",
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "OA27-A",
+      "contained_groups": [
+        "OA27-A"
+      ],
+      "semantic_role": "effects [69,\"self.order_audit.clear\",[\"POTENTIAL_MUTATION\",\"DYNAMIC_EFFECT_UNKNOWN\"]]; Clear existing authoritative ledger in place, then existing confirmation index in place, invoke carried invalidator, then post-stop invalidator. Native aliases observe clears; no replacement, transaction, catch, finally or rollback. Exception stops subsequent operations. Does not reset candidate/direct/cross/canonical stop/initial-order/other geometry caches by itself.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 136,
+      "node": 4107,
+      "ast_node": 4107,
+      "span": [
+        1116,
+        8,
+        1116,
+        52
+      ],
+      "operation": [
+        69,
+        "self._order_audit_confirmation_index.clear",
+        [
+          "POTENTIAL_MUTATION",
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "OA27-A",
+      "contained_groups": [
+        "OA27-A"
+      ],
+      "semantic_role": "effects [69,\"self._order_audit_confirmation_index.clear\",[\"POTENTIAL_MUTATION\",\"DYNAMIC_EFFECT_UNKNOWN\"]]; Clear existing authoritative ledger in place, then existing confirmation index in place, invoke carried invalidator, then post-stop invalidator. Native aliases observe clears; no replacement, transaction, catch, finally or rollback. Exception stops subsequent operations. Does not reset candidate/direct/cross/canonical stop/initial-order/other geometry caches by itself.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 137,
+      "node": 4123,
+      "ast_node": 4123,
+      "span": [
+        1125,
+        8,
+        1125,
+        42
+      ],
+      "operation": [
+        70,
+        "self._carried_orders_cache.clear",
+        [
+          "POTENTIAL_MUTATION",
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "OA28-A",
+      "contained_groups": [
+        "OA28-A"
+      ],
+      "semantic_role": "effects [70,\"self._carried_orders_cache.clear\",[\"POTENTIAL_MUTATION\",\"DYNAMIC_EFFECT_UNKNOWN\"]]; Clear carried result mapping in place; then assign creation index None; then creation append None. Do not clear post-stop state or authoritative ledger/index. Source comment describes creation dependency; actual caller decides whether mutation changes eligibility. If clear fails, later assignments not reached.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 138,
+      "node": 4128,
+      "ast_node": 4128,
+      "span": [
+        1126,
+        8,
+        1126,
+        36
+      ],
+      "operation": [
+        70,
+        "self._carried_creation_index",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "OA28-A",
+      "contained_groups": [
+        "OA28-A"
+      ],
+      "semantic_role": "effects [70,\"self._carried_creation_index\",[\"EXPLICIT_OBJECT_MUTATION\"]]; Clear carried result mapping in place; then assign creation index None; then creation append None. Do not clear post-stop state or authoritative ledger/index. Source comment describes creation dependency; actual caller decides whether mutation changes eligibility. If clear fails, later assignments not reached.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 139,
+      "node": 4132,
+      "ast_node": 4132,
+      "span": [
+        1127,
+        8,
+        1127,
+        37
+      ],
+      "operation": [
+        70,
+        "self._carried_creation_append",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "OA28-A",
+      "contained_groups": [
+        "OA28-A"
+      ],
+      "semantic_role": "effects [70,\"self._carried_creation_append\",[\"EXPLICIT_OBJECT_MUTATION\"]]; Clear carried result mapping in place; then assign creation index None; then creation append None. Do not clear post-stop state or authoritative ledger/index. Source comment describes creation dependency; actual caller decides whether mutation changes eligibility. If clear fails, later assignments not reached.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 140,
+      "node": 4139,
+      "ast_node": 4139,
+      "span": [
+        1130,
+        8,
+        1130,
+        44
+      ],
+      "operation": [
+        71,
+        "self._post_stop_orders_cache.clear",
+        [
+          "POTENTIAL_MUTATION",
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "OA29-A",
+      "contained_groups": [
+        "OA29-A"
+      ],
+      "semantic_role": "effects [71,\"self._post_stop_orders_cache.clear\",[\"POTENTIAL_MUTATION\",\"DYNAMIC_EFFECT_UNKNOWN\"]]; Clear post-stop result mapping in place, set sorted accepted-audit reference None, clear pending list in place, in that exact sequence. No change to carried state, initial sorted stream or authoritative ledger/index. Existing issued references are not explicitly revoked. No catch or rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 141,
+      "node": 4144,
+      "ast_node": 4144,
+      "span": [
+        1131,
+        8,
+        1131,
+        36
+      ],
+      "operation": [
+        71,
+        "self._post_stop_sorted_audit",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "OA29-A",
+      "contained_groups": [
+        "OA29-A"
+      ],
+      "semantic_role": "effects [71,\"self._post_stop_sorted_audit\",[\"EXPLICIT_OBJECT_MUTATION\"]]; Clear post-stop result mapping in place, set sorted accepted-audit reference None, clear pending list in place, in that exact sequence. No change to carried state, initial sorted stream or authoritative ledger/index. Existing issued references are not explicitly revoked. No catch or rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 142,
+      "node": 4148,
+      "ast_node": 4148,
+      "span": [
+        1132,
+        8,
+        1132,
+        39
+      ],
+      "operation": [
+        71,
+        "self._post_stop_pending.clear",
+        [
+          "POTENTIAL_MUTATION",
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "OA29-A",
+      "contained_groups": [
+        "OA29-A"
+      ],
+      "semantic_role": "effects [71,\"self._post_stop_pending.clear\",[\"POTENTIAL_MUTATION\",\"DYNAMIC_EFFECT_UNKNOWN\"]]; Clear post-stop result mapping in place, set sorted accepted-audit reference None, clear pending list in place, in that exact sequence. No change to carried state, initial sorted stream or authoritative ledger/index. Existing issued references are not explicitly revoked. No catch or rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 64,
+      "node": 4030,
+      "ast_node": 4030,
+      "span": [
+        1094,
+        8,
+        1097,
+        9
+      ],
+      "operation": [
+        67,
+        "Return",
+        null
+      ],
+      "group": "OA25-B",
+      "contained_groups": [
+        "OA25-B"
+      ],
+      "semantic_role": "exits [67,\"Return\",null]; Return ordered conjunction: position in range before reading element, then timestamp <= end. Empty/exhausted array returns false without access; equal end included, equal start excluded; inverted/equal interval yields false under sorted comparable native timestamps. No local interval normalization or exception recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    }
+  ],
+  "supplemental": [
+    {
+      "id": "B05-09-S1",
+      "span": [
+        1089,
+        1097
+      ],
+      "prior_interpretation": "Query only first reset strictly later than start via upper bound; if in range, equality with end qualifies. No local sort, interval normalization, or mutation.",
+      "groups": [
+        "OA25-A",
+        "OA25-B"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "id": "B05-09-S2",
+      "span": [
+        1100,
+        1111
+      ],
+      "prior_interpretation": "Full tuple upper bound, duplicate insertion allowed; dictionary (including subclass) sorted-audit state adds pending tuple. Non-dict sets sorted audit null without clearing pending.",
+      "groups": [
+        "OA26-A",
+        "OA26-B"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "id": "B05-09-S3",
+      "span": [
+        1114,
+        1118
+      ],
+      "prior_interpretation": "Clear ledger and secondary index in place, then carried, then post-stop invalidation. Preserves container identity; no reset of unrelated direct/candidate or canonical geometry caches.",
+      "groups": [
+        "OA27-A"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "id": "B05-09-S4",
+      "span": [
+        1120,
+        1132
+      ],
+      "prior_interpretation": "Carried invalidator clears results and nulls creation index/append state; post-stop invalidator clears results, nulls sorted audit, clears pending in place. Distinct mutation contracts, no broad flush.",
+      "groups": [
+        "OA28-A",
+        "OA29-A"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "id": "B05-09-S5",
+      "span": [
+        1089,
+        1097
+      ],
+      "prior_interpretation": "Owner sequence_resets setter copies mapping, sorts keys and clears existing dependent query caches; getter returns underlying map. Local reset query assumes synchronization; mutation via returned map is not proven safe.",
+      "groups": [
+        "OA25-A",
+        "OA25-B"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    }
+  ],
+  "validation": {
+    "category_counts": {
+      "branches": 2,
+      "comparisons": 2,
+      "arithmetic": 0,
+      "calls": 13,
+      "accesses": 74,
+      "effects": 11,
+      "exits": 1
+    },
+    "rows": 103,
+    "w1": 17,
+    "additional": 86,
+    "supplemental": 5,
+    "identity_errors": 0,
+    "overlap": 0,
+    "prior_rows_revalidated": 3067,
+    "prior_registers": [
+      "5141c2ab2b056226e0f7d9a65aa5e8e7766b2da7",
+      "60b00bd427681009ec0affd686715fe056cff60f",
+      "f19d3ccbd57fd9d1bb37b73798402e2f857c7929",
+      "7360353b463cab1583d578fd231afde72aa6b05a",
+      "342d0f3087825d76fc9a55ceeb6179a219fefabe",
+      "d5a7cf21c597c33d1a77b68d1d3fcb8ec239a0d0",
+      "edfc54179362ceb4e147c2a65bd29c7981648643",
+      "d5ee7b7bf2adef9032e8a1da15f38a2e276d49a6"
+    ],
+    "range": [
+      1089,
+      1134
+    ],
+    "runtime": "NOT RUN",
+    "raw_payload": "NOT READ"
+  },
+  "findings": [
+    {
+      "id": "CP392-F01",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "description": "Clarified exact full tuple insertion without coercion, dict/False/None state distinction, sequential partial mutation, reset setter versus dedicated invalidators and retained unrelated caches; no runtime freshness or production defect asserted."
+    }
+  ],
+  "limitations": [
+    "Separate source-first pass by GPT, not independently staffed. Local review only; sorted/comparable input, exact identity and owner cache lifecycle remain conditional; cross-owner closure not asserted.",
+    "No runtime, RAW payload, ZIP or production changes."
+  ]
+}

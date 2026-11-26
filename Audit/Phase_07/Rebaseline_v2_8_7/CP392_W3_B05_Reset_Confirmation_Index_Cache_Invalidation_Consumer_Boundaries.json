@@ -1,0 +1,23 @@
+{
+  "checkpoint": 392,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "local consumer boundaries, not independent cross-owner acceptance",
+  "boundaries": [
+    {
+      "source": "engine/pipeline/e_zone_detector.py:393–417",
+      "contract": "Getter returns underlying reset mapping, setter creates dictionary copy, sorts its keys into reset array, clears existing candidate/carried/post-stop/direct result caches in that order. Setter is not OA28/OA29 and does not explicitly null creation/index/pending/sorted-audit state. Direct mutation through getter is not proven synchronized. No empirical stale-cache claim."
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py:557–612,1371–1434,1685–1732",
+      "contract": "Ledger/index/pending initially fresh; accepted new row published before OA26, then causes; carried invalidation on new entries or earlier existing creation (including conservative exception). Validated append may be deferred, consumed on next query. OA26 does not itself flush carried. Cache/comment alone does not establish safety for arbitrary mutation."
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py:1798–1826,1920–2008",
+      "contract": "Post-stop result cache key includes parent stop and confirmation-index length; strict crossing after stop and confirmation and no reset in (stop,cross]. Sorted view rebuilds from whole index if None, otherwise pending, under local Decimal context; validation exception sets False and clears pending, then falls back. OA26 appends only with dict state, otherwise invalidates sentinel by None. Sorted initial side independent of OA29. Native consistency and caller-managed replacement/revocation required."
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py:1220–1250,2068–2088",
+      "contract": "Revocation removes ledger entries, filters index in place, explicitly invalidates post-stop on revocation and carried on changed/revoked. Rebuild snapshots prior entries then OA27 and re-registers B legs. OA27 does not certify full rebuilding or rollback. No direction-specific price arithmetic in reviewed functions."
+    }
+  ]
+}
