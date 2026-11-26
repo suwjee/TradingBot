@@ -167,3 +167,15 @@ Source anchors: pinned main engine/bridge/trading_pipeline.py:1756–1823, 1826�
 ## CP293 source-first clarification
 
 LX09 is limited to the actual nested protection boundaries: TB14 publishes cache/suffix/time before its rollback try; L02 catches failures in its own protected body and discards retained views, not arbitrary earlier setup or external side effects. See [CP293 input review](../../../Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Market_Input_Review_01.json). IX02–IX04 retain the native no-shrink and crossing-cache invalidation rules.
+
+### CP374 — A history publication and rollback boundary (A24–A39)
+
+| State | Guard/action | Retained authority |
+|---|---|---|
+| Candidate initialization | Allocate current history, reference previous history, set dirty, then virtual confirmation in base constructor | Old wrapper fields unchanged; prior dictionaries are references, not transactional snapshots |
+| Replay | Owner-specific strict dirty settlement, current/prior lookup priorities and nullable retention; source and Reaction ordinal handling as A27–A36 | Candidate history only; timestamp prefix and cache keys are not complete cross-owner identity proofs |
+| Candidate detection succeeds | Replace candidate previous-history reference with fresh history, publish detector/result | Wrapper now retains candidate; no external alias rollback promise |
+| Return | Shallow list copy via A38 | Copy failure propagates after publication; no local rollback |
+| Earlier failure | Timeframe/index/default/construction/detection failure before publication | Existing wrapper fields retained, external provider/input state not certified restored |
+
+CP372-F02 remains OPEN; native progress depends on chronology and cache freshness, not a proven Runtime bug. B03 local exact coverage is independent from W3 cross-owner acceptance.
