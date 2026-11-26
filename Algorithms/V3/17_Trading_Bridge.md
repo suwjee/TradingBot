@@ -167,3 +167,35 @@ Legacy S, E and StopAll serializers map caller-selected native records in encoun
 The additive projection datetime helper passes strings through unchanged, rejects non-datetime non-string values with null, and formats datetime components without timezone conversion or fractional seconds. Direction and nonempty color labels use string title casing without validation; mode mapping accepts exactly A or B, yielding Leg Start or Normal respectively, otherwise null. These are presentation transformations, not directional trading rules. [Pinned source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L663-L688).
 
 Projection horizon equals the last visible main candle timestamp plus its chronology timeframe. A non-null event is in horizon only when strictly earlier than that exclusive boundary; equality is excluded. This helper does not enforce a lower bound, clamp to actual RAW availability, or select a replacement event. Missing or incompatible market fields and time comparisons can propagate exceptions. [Pinned source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L691-L699). [CP301 evidence](../../Audit/Phase_07/Rebaseline_v2_8_7/CP301_Completion.json).
+
+## CP302 source-only clarification — Strict Event Proof and BridgeProjection
+
+**Proof guard (702–720).** Null level/event or event outside exclusive horizon returns null; no substitute timestamp.
+
+**Exact recorded timestamp (721–739).** as_decimal level; second_times if not None, else derive; bisect left and inspect only contiguous equal-time rows. Bearish high > level, otherwise low < level; equality excluded; first crossing returns recorded event. Fallback main-open not intrinsically tagged, may pass if exact evidence exists.
+
+**Stop view (742–759).** Null/out-of-horizon main stop nulls both fields; otherwise retain main time and independently prove event. No local exception catch.
+
+**Reaction confirmation (762–783).** Native confirmation with intrabar flag; bullish box top else bottom. Catch AttributeError, IndexError, TypeError, ValueError only for retrieval. Opposite direction and proof outside catch. Native confirmation can cache/fall back to main open.
+
+**Physical identity (786–791).** Optional First/Break pair, missing either null, int conversion and canonical pair, errors propagate.
+
+**Projection index (794–819).** Retain market/directions; map prepared audit by converted native pair, later duplicate overwrites; references retained.
+
+**Physical Order bounds (821–833).** Null prepared null; entry/reaction required; both indices independently in [0,len candles), no relative-order constraint.
+
+**Physical view (834–864).** Optional crossed triple positions 1/2, native confirmation in order direction, main candle first/break times and exact stop price string; horizon/proof stop view.
+
+**Parent Order (866–871).** Use recorded formation identity only, final audit lookup or null, delegate physical formatter.
+
+**Creator prerequisites (873–890).** Require strict stop event and source time; otherwise null; final audit causes only.
+
+**Parent-stop match (891–907).** Exact parent type, source time and event; requested family None accepts None/empty only, otherwise exact family.
+
+**Reset-leg and ambiguity (908–926).** Exact postBehaviorType or generic E/StopAll for requested prefix; exact source/stop times; no family test for reset-leg; ignore other kinds. Distinct physical identity dedup, exactly one match else null.
+
+**Audit causes (928–949).** Invalid physical view RuntimeError; parent-stop required keys and normalized family/times; reset-leg copy keys, datetime-only conversion; ignore other kinds, retain encounter order.
+
+**Audit schema (950–985).** Direction/mode normalized, physical first/break plus int indices; box strings including str(None) from missing default; stop level/source time and stoppedAt, causes; no sort.
+
+[Pinned source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L702-L987). [CP302 evidence](../../Audit/Phase_07/Rebaseline_v2_8_7/CP302_Completion.json).
