@@ -43,7 +43,7 @@ Suffix refresh requires 0<=first<=old length<=new length<=capacity. Replace time
 | Order | physical number/identity, start and level, parent/deadline/flags, ledger creation/confirmation indexes, reset map; native validation fallback and invalidations |
 | StopAll | event representation keys, checkpoint state and covered lower horizon |
 | Primary | activation schedule, exact dirty boundary, strict crossing cache and reflected object identity |
-| Bridge | epoch/local/display conversion keys scoped to calculation, bucket/view suffix transaction |
+| Bridge | epoch/local/display conversion keys scoped to calculation, bucket/view suffix transaction; closed-prefix cache by complete independent regime key and dirty main frontier (TB103,TB105,TB106); MarketIndexWindow translates local bounds/positions (TB104,TB107–TB112) |
 
 Exact per-owner keys and reuse gates are defined in owning module procedures, not generalized to a shared cache policy. [Live Bridge](18_Live_Bridge.md) distinguishes active replay from conditional continuation.
 

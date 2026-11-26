@@ -1,0 +1,3 @@
+# CP291 / RB06 — State machine rebaseline entry
+
+Baseline: c99b4c957e932d9ee70c492ca03ce80711447fc1. Status: INCOMPLETE. RB05 scoped composition acceptance permits this stage. Prior state registry has nine documents and historical transition evidence. Current changes affect feedback and stored lifecycle results, independent closed-prefix cache/window, reversal and final T/F recurrence. Reconcile affected rows directly against source, validate all procedure links and distinct transition IDs, distinguish analytical states from actual source fields. No runtime or RAW execution. No ZIP. CP289 site-level obligation remains for RB07/RB08.
