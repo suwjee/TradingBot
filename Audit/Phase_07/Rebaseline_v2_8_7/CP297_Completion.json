@@ -1,0 +1,170 @@
+{
+  "checkpoint": 297,
+  "batch": "RB08/W1/B09",
+  "status": "PASS_SCOPED_DIRECTION_AND_PRIMARY_SERIALIZATION_LOCAL_SEMANTIC_REVIEW",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "d7399e4f90c18250e757b426fb1d504f9c019f4d",
+  "validated_algorithm": "16bc8935c8214a424b04d551852f2c005b1e4f15",
+  "source_path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+  "source_ranges": [
+    [
+      3113,
+      3253
+    ],
+    [
+      3254,
+      3282
+    ],
+    [
+      3283,
+      3404
+    ]
+  ],
+  "scope": "Three complete serialization procedures, including optional primary structures; local semantic acceptance, not W2/W3/W4 or runtime equivalence.",
+  "counts": {
+    "w1_this_checkpoint": 248,
+    "w1_previous": 795,
+    "w1_reviewed": 1043,
+    "w1_denominator": 2317,
+    "w1_remaining": 1274,
+    "by_category": {
+      "branches": {
+        "reviewed": 285,
+        "total": 562,
+        "remaining": 277
+      },
+      "comparisons": {
+        "reviewed": 162,
+        "total": 337,
+        "remaining": 175
+      },
+      "arithmetic": {
+        "reviewed": 84,
+        "total": 173,
+        "remaining": 89
+      },
+      "calls": {
+        "reviewed": 512,
+        "total": 1245,
+        "remaining": 733
+      }
+    },
+    "additional_this_checkpoint": {
+      "accesses": 739,
+      "effects": 30,
+      "exits": 15,
+      "total": 784
+    },
+    "additional_cumulative": 4217,
+    "all_sites_this_checkpoint": 1032,
+    "all_sites_cumulative": 5260,
+    "contracts_this_checkpoint": 24,
+    "contracts_cumulative": 142,
+    "historical_w1_continuity": 248,
+    "new_w1_sites": 0,
+    "retired_historical_w1": 0,
+    "new_additional_sites": 0,
+    "retired_historical_additional": 0,
+    "duplicate_or_prior_overlap": 0
+  },
+  "evidence_blobs": {
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP297_B09_Serialization_Review.json": "d3b10a98a2879e3b5911d448b2f0fb3ae0ca9c1c",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP297_B09_Serialization_Additional_Sites.json": "9ed2ec3b5c384d4a6933bb9035214c8003a4c314",
+    "Algorithms/V3/19_Serialization.md": "1cefbbdc5da6b823a12f741d2fb604117b23ab8a"
+  },
+  "validation": {
+    "source_blob_match": true,
+    "exact_full_scope_source_relocation": true,
+    "historical_range": [
+      3079,
+      3370
+    ],
+    "historical_inventory_blob": "0f0ac9496634808eb76847494cdedcf71dc2dae0",
+    "historical_census": {
+      "branches": 72,
+      "comparisons": 41,
+      "arithmetic": 18,
+      "calls": 117,
+      "accesses": 739,
+      "effects": 30,
+      "exits": 15
+    },
+    "historical_mapped_partition_complete": true,
+    "cp292_current_complement_empty_all_seven_categories": true,
+    "row_node_scope_span_readback": true,
+    "prior_CP293_CP294_CP295_CP296_overlap_zero": true,
+    "all_rows_linked_to_contracts": true,
+    "remote_readback": true,
+    "production_source_raw_unchanged": true
+  },
+  "dependency_interface_review": [
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "anchors": [
+        116,
+        366,
+        374,
+        397,
+        441,
+        461,
+        488,
+        553,
+        596,
+        1496,
+        1506,
+        1679,
+        1860
+      ],
+      "finding": "Epoch/selection/legacy field serialization and optional additive projection remain separate; same selected pairs and lists enter both views. Legacy audit final sort uses firstTime/breakTime; source-only scope does not certify all projection owners."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "anchors": [
+        788
+      ],
+      "finding": "Native published Reaction clone owns strict directional Break geometry presentation; no local trading recomputation by serialization."
+    },
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "anchors": [
+        128,
+        141,
+        147,
+        175,
+        181
+      ],
+      "finding": "Native primary physical grouping and directional numbering through horizon; relabel returns replaced Order audit cause snapshot; formed leg requires confirmed main-side point through end."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP297-F01",
+      "detail": "Legacy audit map membership and additive non-null detector gates differ; equivalence assumes valid pipeline state."
+    },
+    {
+      "id": "CP297-F02",
+      "detail": "Additive Blue is selected once; legacy audit serializer sorts emitted rows again using stable First/Break timestamp key."
+    },
+    {
+      "id": "CP297-F03",
+      "detail": "Primary cycle counting is directionally asymmetric in actual source: selected highs and bullish lows execute full point projection, bearish lowCount counts existing low rows. Activated visible cycle status can precede formed MBL."
+    },
+    {
+      "id": "CP297-F04",
+      "detail": "Native primary owns physical numbering and relabeling; identity offsets affect IDs, not local row indexes; epoch main/event timestamps remain separate; Decimal string representation unquantized."
+    }
+  ],
+  "documentation_changes": 4,
+  "limitations": [
+    "No independent full current AST regeneration; exact historical source continuity, canonical inventory, CP287 and empty CP292 complement underpin acceptance.",
+    "Owner interfaces inspected locally, not complete cross-owner acceptance. No Engine, RAW or runtime byte-equivalence tests executed.",
+    "Project archive startup superseded by explicitly authorized pinned GitHub baseline; no ZIP or production edits. No presentation preferences added to repository."
+  ],
+  "runtime": "NOT RUN",
+  "raw": "NOT RUN",
+  "next": "CP298 / RB08 / W1 / B09 — calculate_primary_structures (3405–3460), build_direction_output (3461–3501), merge_regime_outputs (3502–3530); build_reversed_trend_outputs (3531–3632) only if complete-procedure validation capacity permits. Preserve prior coverage."
+}
