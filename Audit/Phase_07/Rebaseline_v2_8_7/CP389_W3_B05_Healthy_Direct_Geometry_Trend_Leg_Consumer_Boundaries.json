@@ -1,0 +1,19 @@
+{
+  "checkpoint": 389,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "local consumer boundaries, not independent cross-owner acceptance",
+  "boundaries": [
+    {
+      "source": "engine/pipeline/e_zone_detector.py:382–417,559–566",
+      "contract": "Owner installs finder and initializes audit, blocked set and exception tuple. Sequence reset setter clears candidate/carried/post-stop/direct caches but not the trend-leg-position cache. Main index delegates clamp=True; confirmation delegates chronology; First derives from times[int(first_idx)]. Cache reuse assumes run-consistent sorted position, geometry, arrays and callbacks."
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py:809–920",
+      "contract": "OA20 calls OA16 before native fallback; confirmation_after applies to returned canonical geometry; separate native selection and E exception rules are not local OA16 rules. Candidate rejection in OA16 does not eliminate OA20 fallback."
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py:983–1030",
+      "contract": "order_candidates calls direct path first; optional allow_trend_leg_continue gates OA17 separately, and successful matches enter identity merge. Local geometry result does not itself prove final parent-stop ownership, stop or crossing."
+    }
+  ]
+}
