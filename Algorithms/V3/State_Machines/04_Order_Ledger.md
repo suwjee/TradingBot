@@ -68,11 +68,11 @@ Ledger has independent dimensions: confirmation (native physical geometry), stri
 | OLR03 | AVAILABLE | Strict Order crossing requested | Native (start,level) cache incl null; strict lower [max(confirmation,range start),range end), indexed miss no retry; clamp main, candle.timestamp and exact event; no fabricated main crossing | AVAILABLE | OA42,OA82 |
 | OLR04 | AVAILABLE | Unconsumed S Blue recorded evidence | str(color)==blue, confirmation/level non-null, crossing>=new parent stop; copy recorded geometry into carried-live match, no creation cause | USE_CANDIDATE | OA44 |
 | OLR05 | AVAILABLE | Gate-owned initial A match | Lazy initial records and by-First index; exact First main=gate bucket, confirmation>=parent stop and crossing non-null>=parent stop; select min crossing then First, first tie | USE_CANDIDATE | OA48 |
-| OLR06 | AVAILABLE | Carried accepted ledger entry | Earliest parent-stop creation or any reset-leg confirmation strictly within (lifecycle start,parent stop), confirmation<=parent stop, crossing>=parent stop | USE_CANDIDATE | OA49,OA52 |
-| OLR07 | AVAILABLE | Carried initial A entry | Initial First in allowed inclusive lifecycle/stop window plus original confirmation/crossing gates | USE_CANDIDATE | OA45,OA52 |
-| OLR08 | AVAILABLE | Accepted post-stop request | Confirmation>parent stop and crossing>both; no sequence reset in (parent stop,crossing]; dedup identities | USE_CANDIDATE | OA25,OA53,OA55 |
-| OLR09 | USE_CANDIDATE | Native optimized index preconditions hold | Use validated time/Decimal/crossing shape and sorted merge; preserve legacy ties | AVAILABLE | OA50,OA51,OA55,OA56,OA57,OA58,OA59 |
-| OLR10 | USE_CANDIDATE | Native optimization prerequisites fail | Legacy scan/sort with same eligibility; no new acceptance from invalid cache data | AVAILABLE | OA50,OA53,OA55 |
+| OLR06 | AVAILABLE | Carried accepted ledger entry | Earliest parent-stop or any B confirmation strictly within (lifecycle start,parent stop), native ordinal selection or lazy legacy scan; confirmation<=stop and stored crossing non-null>=stop; no recompute | USE_CANDIDATE | OA49,OA52 |
+| OLR07 | AVAILABLE | Carried initial A entry | Separate inclusive First [lifecycle start,parent stop] slice after accepted pass; same confirmation/cross gates, no creation test or cross-route dedup; stable sort crossing then -First | USE_CANDIDATE | OA45,OA52 |
+| OLR08 | AVAILABLE | Accepted post-stop request | Initial confirmation>stop; accepted index upper bound (stop,2^63−1,2^63−1), actual entry confirmation used without final strict recheck; crossing>stop and >confirmation, no sequence reset (stop,cross]; identity arbitration | USE_CANDIDATE | OA25,OA53,OA55 |
+| OLR09 | USE_CANDIDATE | Native optimized index preconditions hold | Carried exact types/timezone identity, local Decimal context; per-row event dedup and ordinal order, append validates new prefix extension; post-stop sorted merge subject to separate native gates | AVAILABLE | OA50,OA51,OA52,OA55,OA56,OA57,OA58,OA59 |
+| OLR10 | USE_CANDIDATE | Native optimization prerequisites fail | Carried OA50 null payload or incompatible query uses lazy OA49 scan; post-stop eager OA53 fallback, preserve legacy evaluation/errors; no acceptance from invalid cache data | AVAILABLE | OA50,OA52,OA53,OA55 |
 
 ## OLC — Acceptance, revocation and final projection
 

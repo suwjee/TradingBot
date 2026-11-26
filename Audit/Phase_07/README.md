@@ -321,3 +321,18 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 61 — Initial A Order Records, Gate Ownership and Creation Event Projection
 
 [Local review](Semantic_Closure_B05_15.md) and [site evidence](Semantic_Closure_B05_15.json): 66 original rows, 7 supplemental items, 5 resolved findings; local PASS. Order Audit 1036/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 62 — Native Carried Creation Validation and Incremental Index Extension
+
+[Local review](Semantic_Closure_B05_16.md) and [site evidence](Semantic_Closure_B05_16.json): 94 original rows, 6 supplemental items, 3 resolved findings; local PASS. Order Audit 1130/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 63 — Carried Order Eligibility, Native/Legacy Selection and Stable Ordering
+
+[Local review](Semantic_Closure_B05_17.md) and [site evidence](Semantic_Closure_B05_17.json): 77 original rows, 6 supplemental items, 4 resolved findings; local PASS. Order Audit 1207/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 64 — Eager Post-Stop Accepted Orders and Physical Identity Arbitration
+
+[Local review](Semantic_Closure_B05_18.md) and [site evidence](Semantic_Closure_B05_18.json): 78 original rows, 7 supplemental items, 5 resolved findings; local PASS. Order Audit 1285/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
