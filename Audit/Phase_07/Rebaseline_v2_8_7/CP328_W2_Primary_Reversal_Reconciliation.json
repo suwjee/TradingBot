@@ -1,0 +1,559 @@
+{
+  "checkpoint": 328,
+  "status": "PASS_SCOPED_W2_PRIMARY_REVERSAL",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "47990f199cdb029f39fe0f540cbb5b4e0276904e",
+  "entry_tree": "68857f62466975759072c0ca559504481f307da0",
+  "scope": "Primary PL/PH and MBL qualification, exact activation/decision/cancel/reversal races, native accepted Order gates, physical ownership, reflection, conditional live replay and Bridge regime integration.",
+  "prior": [
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "blob": "1027cb4a9241b8adb5a0b7f11c8c2a5fcbfa9c45",
+      "rows": 29
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "blob": "9dcc81cc416ffced36e2ef87e86ad58504c28201",
+      "rows": 44
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "blob": "44bc985228f9d698da7b1fb30173f55f886b60f4",
+      "rows": 29
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "blob": "77967520d746b0ce52e86784822bbe923a6c8966",
+      "rows": 45
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json",
+      "blob": "33054fd8ab3eb582072c663997b88037f53c4c24",
+      "rows": 36
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "blob": "c4bbd89d36ed64d604733c91c1aeec7fb249bafa",
+      "rows": 30
+    }
+  ],
+  "source_modules": [
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "lines": 840
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "lines": 3810
+    }
+  ],
+  "additional_rows": [
+    {
+      "id": "CP328-S01",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        25,
+        99
+      ],
+      "procedure_refs": "Primary records",
+      "contract": "Frozen StructureOrder, PrimaryPoint, MBL and TrendTransition separate physical Order identity, gate/trigger, decision, source, optional stop and cycle identity; identity_source keyword-only; point aliases high for compatibility. PrimaryResult is mutable slotted with independent list factories, optional MBL/transition and default bearish direction."
+    },
+    {
+      "id": "CP328-S02",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        101,
+        125
+      ],
+      "procedure_refs": "P02–03",
+      "contract": "Resolve physical primary points through full main horizon. Exactly number3 only; first strict later crossing above PH for bearish or below PL for bullish; choose min exact event,source index,cycle id or empty. No hit null; bearish-to-bullish helper supports optional cross callback."
+    },
+    {
+      "id": "CP328-S03",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        128,
+        172
+      ],
+      "procedure_refs": "P04–07",
+      "contract": "Filter decision_index<=through_index before grouping by raw physical index/time. Sort groups by min decision, source time/index. Earliest role identity by decision,cycle list index (unknown uses len),cycle id,trigger index,number; winner highest number then same role order. Strict progressive price vs previous final point advances number to max(local,previous+1); equality not advance. identity_source earliest role's existing truthy identity or role; logical states unchanged."
+    },
+    {
+      "id": "CP328-S04",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        175,
+        195
+      ],
+      "procedure_refs": "P08–09",
+      "contract": "Last source-time label wins; replace Order audit_causes using relabel helper, preserve Order geometry. MBL public only if activation index within horizon and at least one actual primary decision within horizon; iterate cycles or root fallback, choose earliest qualifying decision. Direction selects lows for bullish, highs otherwise."
+    },
+    {
+      "id": "CP328-S05",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        198,
+        219
+      ],
+      "procedure_refs": "P10–11",
+      "contract": "StopAll public ownership removed only at physical index/time of confirmed primary through horizon; historical collection unchanged. PH reference gate confirmation>=event, no First constraint; other role requires First>=gate main and confirmation>event."
+    },
+    {
+      "id": "CP328-S06",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        222,
+        245
+      ],
+      "procedure_refs": "P12–14",
+      "contract": "Strict later crossing starts bisect_right(exact event), uses lower index first greater/less through len(seconds); no main fallback. Map exact hit to clamped main. Main extreme inclusive both endpoints, min/max normalized Decimal, first tie; return actual selected index/price."
+    },
+    {
+      "id": "CP328-S07",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        248,
+        284
+      ],
+      "procedure_refs": "P15 matching seeds",
+      "contract": "StopAll index occupancy excludes coincident S/E; exclude only calculation_valid is False (not general falsiness). Stable sort source,StopAll/S/E rank,raw index; dedup kind,int index,time. Every StopAll resets owner/confirmation/qualified and sets reference iff number>=3. Accept via exact sequence owner, skip same object; clear confirmations on absent/new count1. Armed yields once per reference, qualification max(reference decision,all accepted owner confirmations)."
+    },
+    {
+      "id": "CP328-S08",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        287,
+        325
+      ],
+      "procedure_refs": "P16 seed activation",
+      "contract": "Earliest qualification retained even if no activation. Dedup reference/second int source indexes; level reference main High; strict later cross after qualification; sort activation exact,qualification,reference/second indexes. Store optional run schedule. None activated returns initial status or waiting-for-stopall-break."
+    },
+    {
+      "id": "CP328-S09",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        326,
+        349
+      ],
+      "procedure_refs": "P16 retained schedule",
+      "contract": "Restore retained step activation counter and cycle checkpoints, append prior points, record promoted PH physical sources and replay callback before fresh proposal. Refresh MBL own stops, compute initial reversal from retained confirmed points."
+    },
+    {
+      "id": "CP328-S10",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        350,
+        385
+      ],
+      "procedure_refs": "P16 global race",
+      "contract": "Generate pending prospective for every cycle without existing entry, including null proposals. Earliest decision tuple(exact event,cycle index). Reversal <= both next decision and activation wins; otherwise activation <= decision wins. Consume activation, skip already promoted physical reference, optionally record skip step. Other activation builds checkpoint and records step."
+    },
+    {
+      "id": "CP328-S11",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        386,
+        418
+      ],
+      "procedure_refs": "P16 commit and aggregate",
+      "contract": "No decision ends loop. Commit selected proposal into cycle and aggregate lists, capture step. Only PH marks promoted source and invokes callback; if callback exists clear ALL pending proposals; recompute reversal after PH. Aggregate cycles from pending prospective state if present else committed; first MBL,last status or reversed; dedup post-PL3 Orders by direction/First/Break first encountered, sort stop,-First,Break."
+    },
+    {
+      "id": "CP328-S12",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        421,
+        455
+      ],
+      "procedure_refs": "P17 run records",
+      "contract": "Cycle checkpoint phase PH and reset_high False, reference price/gate/cursor. Activation identity exact cross/main, reference/second index/time and qualification (not price). Step frozen wrapper may reference mutable checkpoint; run retains previous, dirty event, schedule, steps, crossing cache, point projection map."
+    },
+    {
+      "id": "CP328-S13",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        457,
+        487
+      ],
+      "procedure_refs": "P18–19 replay boundary",
+      "contract": "Rewind frontier to earliest differing old/new activation time after equal schedule prefix; retain previous steps strictly before frontier. Strict crossing cache key exact event,str(level),above; current hit returned; previous hit strictly before dirty reused; otherwise search from max(strict original left,dirty lower bound). Prior null still constrains left; caller supplies valid dirty."
+    },
+    {
+      "id": "CP328-S14",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        490,
+        515
+      ],
+      "procedure_refs": "P20–21 MBL freeze",
+      "contract": "Refresh only MBL stop via strict later crossing from original trigger; preserve same checkpoint if unchanged. Activate cycle id reference/second source indexes, reference main High, freeze min main Low second..gate inclusive, first tie; own stop later below floor; initial phase PH. MBL source time from selected main."
+    },
+    {
+      "id": "CP328-S15",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        518,
+        553
+      ],
+      "procedure_refs": "P22 seek",
+      "contract": "Prospective result copies highs/lows/post-PL3 lists, no commitment. Levels last PH or reference, last PL or floor; PH resets to1 on reset_high/no highs, PL increments. Seek strict crossings after cursor; none waiting, equal exact ambiguous, earlier sets PH/PL gate. If cursor>=before_event transition boundary wait."
+    },
+    {
+      "id": "CP328-S16",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        554,
+        574
+      ],
+      "procedure_refs": "P22 Order race",
+      "contract": "Request role/number/gate/cursor. Enforce role gate, continuing PH>1 parent-stop OR reset-leg with non-null boxTop strictly > high level; actual stop>confirmation. Winner min stop,-First,Break. Cancellation PH floor Low, PL high-level High; next if PL>3 or absent winner or earlier cancellation."
+    },
+    {
+      "id": "CP328-S17",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        575,
+        596
+      ],
+      "procedure_refs": "P22 ambiguity/post-secondary",
+      "contract": "When cancellation next, inspect lower row selected by bisect_right(cancel exact)-1, opposing High>high_level for PH or Low<floor for PL => ambiguous. PL number>3 retains all eligible Orders stopping before cancel (or all absent cancel); no PL4, absent cancel returns post-pl3-orders-only else switch PH and advance. Ordinary equal cancel/winner stop ambiguous."
+    },
+    {
+      "id": "CP328-S18",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        597,
+        621
+      ],
+      "procedure_refs": "P22 cancel/confirm",
+      "contract": "Earlier cancel advances gate/cursor; PL->PH; PH with prior lows switches PL only if cancel row Low<prior low else seek, without prior lows PL. No winner waits role Order stop. Winner freezes full inclusive main gate..stop extreme (PH high/PL low), first tie. Point exact trigger/decision and physical Order; prospective cursor=winner stop, phase seek, reset_high only if PL. Commit globally later."
+    },
+    {
+      "id": "CP328-S19",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        624,
+        642
+      ],
+      "procedure_refs": "P23–24 native owner callback",
+      "contract": "Native service retains chronology/groups/direction, optional confirm_high invokes callback only when non-null. Creation through confirmed primary parent registration, not speculative crossing."
+    },
+    {
+      "id": "CP328-S20",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        644,
+        662
+      ],
+      "procedure_refs": "P25 native gate",
+      "contract": "Owner bearish for requested PH else bullish; primary iff requested role matches active direction's PL or PH. Physical direction opposite owner. Read prepared accepted ledger, int First/Break, native confirmation, crossed and cause kinds dedup encounter order. Gate as primary PH or secondary PL; secondary requires reaction_number>0."
+    },
+    {
+      "id": "CP328-S21",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        663,
+        680
+      ],
+      "procedure_refs": "P25 native selection",
+      "contract": "Earliest direct parent-stop record by First,confirmation,Break, before stop eligibility filtering. Secondary permits reset-leg or exact selected direct record object. Require crossed nonnull and exact stop>max(confirmation,event). Build StructureOrder with Decimal stop and box prices, int identity/source/stop, reaction mode, deep-copied audit causes. No new Order creation by query."
+    },
+    {
+      "id": "CP328-S22",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        683,
+        732
+      ],
+      "procedure_refs": "P26–34 mirror primitives",
+      "contract": "Decimal copy_negate exact sign without context rounding; lazy reflected high=-original Low, low=-original High, snapshot tuple row refs. Reuse original lower index with first_greater->first_less and negated level, converse for less. Times, second_times, main_index shared. No reverse time."
+    },
+    {
+      "id": "CP328-S23",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        735,
+        740
+      ],
+      "procedure_refs": "P35 reflect Order",
+      "contract": "Replace direction bullish->bearish else bullish, negate stop level, swap/negate nullable box edges. Preserve physical First/Break, confirmation, stop event, source indexes and causes."
+    },
+    {
+      "id": "CP328-S24",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        743,
+        768
+      ],
+      "procedure_refs": "P36–37 point projection",
+      "contract": "Cache by object id; prior projected pair reused only when original object is same. Swap PH/PL, exact sign price/Order reflection, replace cycle prefix once, recursively reflect identity_source. Save projection pair for live run."
+    },
+    {
+      "id": "CP328-S25",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        770,
+        797
+      ],
+      "procedure_refs": "P38–41 bullish dispatch",
+      "contract": "Swap status ph/pl with temporary placeholder and reversal target. Project bullish result highs from core lows, lows from highs, negate MBL price and transition level, reflect cycles and post-secondary Orders, target bearish. Native resolver receives original requested swapped kind, unchanged gate/time; callback receives projected point. S/E families and market colors unchanged."
+    },
+    {
+      "id": "CP328-S26",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        800,
+        814
+      ],
+      "procedure_refs": "P42 live initialization",
+      "contract": "Validate direction; choose detector, retain timeframe and times, run initial detection with run state. Result returns same mutable object, not copy."
+    },
+    {
+      "id": "CP328-S27",
+      "module": "P",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        816,
+        839
+      ],
+      "procedure_refs": "P43 live update",
+      "contract": "Reject timeframe changes and non-datetime dirty event. Rewind frontier to containing main open in both old/new times when event within bucket, since full candle extrema can change from later lower row. New run(previous,frontier), detect using fresh Orders and replay callbacks; detach previous then publish run/result/times. No independent proof of immutable prefix."
+    },
+    {
+      "id": "CP328-S28",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3449,
+        3458
+      ],
+      "procedure_refs": "TB88 final label/audit",
+      "contract": "Resolve final physical primary labels through selected market.end_index; direction selects low/high reconcile. Rebuild range OrderAudit after label reconciliation, retain all identities previously prepared via required set."
+    },
+    {
+      "id": "CP328-S29",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3461,
+        3500
+      ],
+      "procedure_refs": "TB89 direction dispatch",
+      "contract": "Calculate and finalize visibility, primary only selected primary direction (both defaults bearish), primary engine/E/lifecycle present. Save primary_result; remove public StopAll at confirmed primary ownership through end; validate prepared audit against final S/E/StopAll. Serialize direction then update with primary structures."
+    },
+    {
+      "id": "CP328-S30",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3502,
+        3528
+      ],
+      "procedure_refs": "TB90 regime merge",
+      "contract": "Group segments by direction. Single segment unchanged; multiple use shallow last segment copy, concatenate list-valued fields from all segments and bridgeOutput lists with first key encounter order. Remove aggregate calculationEndTime; retain calculationSegments. No geometry recalculation."
+    }
+  ],
+  "reference_anchors": [
+    {
+      "path": "Algorithms/V3/12_Primary_Structures.md",
+      "blob": "08540a02fe83decb38378953bbc9c45975a7a9ef"
+    },
+    {
+      "path": "Algorithms/V3/13_Primary_High.md",
+      "blob": "5e783235d167da404cfda9f6d396220e5e6a6932"
+    },
+    {
+      "path": "Algorithms/V3/14_Matching_Behavior_Leg.md",
+      "blob": "42e6d44cbb1823f27310e205213b7dd8dbecedde"
+    },
+    {
+      "path": "Algorithms/V3/15_Trend_Reversal.md",
+      "blob": "c9c9bc34355605d07d66ee7c271678f5f1e95661"
+    },
+    {
+      "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+      "blob": "4bd1da51ffdb20bc0069eaf565772d98ca2db641"
+    }
+  ],
+  "retained_prior_boundaries": [
+    {
+      "id": "CP323-P25",
+      "module": "BR",
+      "range": [
+        1756,
+        1785
+      ],
+      "contract": "Closed-regime cache distinct from optional detector live protocol. Key direction, absolute offset/end, boundary timestamp, visible start/end and trend flags. Reuse iff exclusive end <= dirty main; replace published set only after successful stage exit."
+    },
+    {
+      "id": "CP323-P28",
+      "module": "BR",
+      "range": [
+        3531,
+        3630
+      ],
+      "contract": "Reversal independently calculates prefix before boundary; optional closed resolver. Validate boundary and independent Primary3 evidence. New regime fresh market at boundary and target initial flags; optional active_regime protocol conditional; release indexes in finally."
+    },
+    {
+      "id": "CP323-S33",
+      "module": "BR",
+      "range": [
+        3405,
+        3448
+      ],
+      "contract": "Build opposite range/visibility and both owner groups; accepted A sources from S eligible excluding invalid pairs for full OrderAudit. Native Primary callback registers and refreshes owner audit; optional live protocol only if state.live_stages non-null."
+    },
+    {
+      "id": "CP325-S21",
+      "module": "OA",
+      "range": [
+        1202,
+        1248
+      ],
+      "contract": "Primary reparent parent-stop StopAll-prefix same source TIME, non-null equal stop strictly after decision; matching cause relabelled only on selected direct identity otherwise revoked. B post-stop relabel exact source pair/equal stop/strict decision bound, independent of direct identity. B anchor relabel exact pair, truthy Reset identity and Reset First main>=decision; independent of stop. Delete all causeless rows, filter index in place, flush post-stop on revocation and carried on change/revocation. Sequence reset history untouched."
+    },
+    {
+      "id": "CP325-S22",
+      "module": "OA",
+      "range": [
+        1250,
+        1310
+      ],
+      "contract": "PH bearish / PL bullish owner only; strict primary stop lower (decision,range_end), direct confirmation_after=stop (OA20 caveat). Dependency stop,null or stop,repr(direct),str(level),source index/time,cross. Reparent before null-direct return, add selected row/index if absent and exact primary parent-stop cause, invalidate carried on addition."
+    },
+    {
+      "id": "CP325-S23",
+      "module": "OA",
+      "range": [
+        1312,
+        1337
+      ],
+      "contract": "Last source wins label map. Parent tuples relabel prefix-specific only, set dedup; B helper accepts either PH/PL prefix using supplied map, deep-copy/dedup. Mutate only changed collections and invalidate carried; no rediscovery/index change."
+    },
+    {
+      "id": "CP327-S03",
+      "module": "LC",
+      "range": [
+        95,
+        139
+      ],
+      "contract": "Owner exact raw (kind,family,number), count/latest. Armed iff count>=2; E key formatted with number. No owner creates count1; exact key increments and replaces latest without priority check. Higher sequence priority or equal priority both E with dominance replaces count1; otherwise retain old object."
+    }
+  ],
+  "cross_owner_edges": [
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3405,
+        3448
+      ],
+      "contract": "Full-history owner groups, accepted A source causes, exact physical ledger, callback registers primary and refreshes owner audit before further proposals. Optional live protocol only if state.live_stages present; CP323-S33 retained."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3531,
+        3630
+      ],
+      "contract": "Validate advancing boundary inside current candles; independent prefix [0,boundary) requires number3 same source time and Decimal price before publication even if cached. If no visible history clear public arrays recursively after proof. Publish historical status/end, cap MBL; new regime boundary inclusive with target bootstrap and fresh state; release segment indexes in finally. Live closed resolver precedes explicit closed callback. Continue only while next transition within selected end. CP323-P28 retained."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6fbcf97de",
+      "range": [
+        1202,
+        1337
+      ],
+      "contract": "Primary confirmed parent reparent/revocation and ledger label reconciliation preserve physical identity; CP325-S21–23 retained."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        121,
+        139
+      ],
+      "contract": "Exact dominant owner transition shared by MBL and StopAll; CP327-S03 retained."
+    }
+  ],
+  "qualifications": [
+    "Role-specific reference-core PH/PL gate is mapped in native bullish path; do not treat PH label globally as primary.",
+    "Source price includes complete main decision/gate endpoint candles; exact event ownership separate.",
+    "Prior CP323 reversal rows and CP325 ledger records linked, not recounted.",
+    "Conditional continuation source reviewed without runtime parity or append validation."
+  ],
+  "validation": {
+    "prior_transition_rows": 213,
+    "new_transition_rows": 30,
+    "cumulative_transition_rows": 243,
+    "prior_overlap": 0,
+    "new_overlap": 0,
+    "duplicate_ids": 0,
+    "source_blobs_verified": 2,
+    "reference_anchors": 5,
+    "cross_owner_edges": 4,
+    "runtime": "NOT_RUN_BY_SCOPE",
+    "raw": "NOT_RUN_BY_SCOPE"
+  },
+  "remaining": "CP329 / W2 Bridge projection, serialization and final horizon/identity rules; then live/RAW aggregation boundary reconciliation, W2 closure and W3/W4."
+}
