@@ -1,0 +1,192 @@
+{
+  "checkpoint": 296,
+  "batch": "RB08/W1/B09",
+  "status": "PASS_SCOPED_RANGE_AND_VISIBILITY_LOCAL_SEMANTIC_REVIEW",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "3858f150142b43ef73f655344ff19ef262618c73",
+  "validated_algorithm": "d968b1f11a4c5f0cda3d97006afbbd86256371ab",
+  "source_path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+  "scope": "Complete two declarations and two procedures, including optional finalize_direction_visibility. Local source contract, not W2/W3/W4 or runtime certification.",
+  "source_ranges": [
+    [
+      2805,
+      2836
+    ],
+    [
+      2837,
+      2938
+    ],
+    [
+      2939,
+      3112
+    ]
+  ],
+  "counts": {
+    "w1_this_checkpoint": 150,
+    "w1_previous": 645,
+    "w1_reviewed": 795,
+    "w1_denominator": 2317,
+    "w1_remaining": 1522,
+    "by_category": {
+      "branches": {
+        "reviewed": 213,
+        "total": 562,
+        "remaining": 349
+      },
+      "comparisons": {
+        "reviewed": 121,
+        "total": 337,
+        "remaining": 216
+      },
+      "arithmetic": {
+        "reviewed": 66,
+        "total": 173,
+        "remaining": 107
+      },
+      "calls": {
+        "reviewed": 395,
+        "total": 1245,
+        "remaining": 850
+      }
+    },
+    "additional_this_checkpoint": {
+      "accesses": 582,
+      "effects": 31,
+      "exits": 2,
+      "total": 615
+    },
+    "additional_cumulative": 3433,
+    "all_sites_this_checkpoint": 765,
+    "all_sites_cumulative": 4228,
+    "contracts_this_checkpoint": 20,
+    "contracts_cumulative": 118,
+    "historical_w1_continuity": 143,
+    "new_w1_sites": 7,
+    "retired_historical_w1": 38,
+    "new_additional_sites": 14,
+    "retired_historical_additional": 152,
+    "duplicate_or_prior_overlap": 0
+  },
+  "evidence_blobs": {
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP296_B09_Range_Visibility_Review.json": "750e6c7263fdf0e7c2ff03815289a35c7e33c652",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP296_B09_Range_Visibility_Additional_Sites.json": "b27be02aad5112af65378abe35d28336352b4811",
+    "Algorithms/V3/17_Trading_Bridge.md": "e6514c3a5b89bd3c2ef5cc8d28eebbc16471d5f7"
+  },
+  "validation": {
+    "source_blob_match": true,
+    "exact_source_relocation": true,
+    "historical_inventory_blob": "0f0ac9496634808eb76847494cdedcf71dc2dae0",
+    "historical_census": {
+      "branches": 57,
+      "comparisons": 30,
+      "arithmetic": 1,
+      "calls": 93,
+      "accesses": 711,
+      "effects": 39,
+      "exits": 3
+    },
+    "historical_mapped_and_retired_partition_complete": true,
+    "current_complement_from_CP292": true,
+    "row_node_scope_span_readback": true,
+    "prior_CP293_CP294_CP295_overlap_zero": true,
+    "all_rows_linked_to_contracts": true,
+    "remote_readback": true,
+    "production_source_raw_unchanged": true
+  },
+  "dependency_interface_review": [
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "anchors": [
+        695,
+        1496,
+        1509,
+        1604
+      ],
+      "finding": "A visibility excludes occupied indexes and S decision candle; lineage closure restores referenced S/A parents then sorts/excludes occupied and invalid S; internal behavior helper is now only a shallow-list pass-through; prepare_order_audit imported."
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "anchors": [
+        447,
+        517,
+        526
+      ],
+      "finding": "Native detection consumes authoritative chronology, public Blue validity/internal flags, mark internal uses owner and strict interior semantics."
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "anchors": [
+        839
+      ],
+      "finding": "A detection delegates native detector with Blue and chronology."
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "anchors": [
+        66,
+        253,
+        800,
+        1248
+      ],
+      "finding": "S constructor owns directional policy and input copies; stop and candidate event methods delegate native exact chronology; detect resets ledger before processing."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "anchors": [
+        2442
+      ],
+      "finding": "Prepare audit collects S/E ledgers, merges required identities and enforces single owner per parent-stop cause."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "anchors": [
+        1611,
+        3113
+      ],
+      "finding": "Bridge validation is consistency check, not trading owner; serialization begins next procedure."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP296-F01",
+      "detail": "Reusable S overwrites clipped A; fallback S full range and aliases candidates; native Blue/A fallback has no local clip."
+    },
+    {
+      "id": "CP296-F02",
+      "detail": "Projection lists are shallow copies retaining underlying item references."
+    },
+    {
+      "id": "CP296-F03",
+      "detail": "Native internal behavior handoff discards Reaction context and copies lists; real internal Blue marking remains separate."
+    },
+    {
+      "id": "CP296-F04",
+      "detail": "Audit uses E map key presence distinct from non-null E callback gate; full A source set directly indexes S detector."
+    },
+    {
+      "id": "CP296-F05",
+      "detail": "Native lineage closure returns E/S/A not StopAll, with source ownership and chronological sorting."
+    },
+    {
+      "id": "CP296-F06",
+      "detail": "Historical final-signature mismatch exception removed rather than relocated; feedback owns distinct convergence failures."
+    }
+  ],
+  "limitations": [
+    "Historical canonical rows + exact current crosswalk and CP292 projected current complement; no independently regenerated full current AST inventory.",
+    "Native dependency interface review only; W2/W3/W4 not certified, no runtime or RAW execution.",
+    "Initial historical join failed because some partition records use plural category labels; repaired by exact kind normalization plus ID/span/operation matching, not by relaxing identity.",
+    "Three initial guessed owner filenames returned 404; pinned tree established correct detector paths, then actual owner source was inspected.",
+    "Uploaded project instructions read; pinned GitHub baseline used instead of obsolete archive workflow per explicit user instructions. No archive created."
+  ],
+  "runtime": "NOT RUN",
+  "raw": "NOT RUN",
+  "next": "CP297 / RB08 / W1 / B09 — serialize_direction_payload (3113–3253), serialize_primary_order (3254–3282); serialize_primary_structures (3283–3404) if complete-procedure validation capacity permits. Preserve all prior evidence."
+}
