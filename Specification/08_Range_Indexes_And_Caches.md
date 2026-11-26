@@ -42,6 +42,12 @@ Chronological containment index partitions source intervals into monotonically o
 
 DetectorBase minimum_low and maximum_high scan inclusive start/end when end-start<16, updating only on a strict better value. At end-start>=16 use range index on [start,end+1); reflected sources delegate to reversed extreme and copy-negate. This is the source threshold, not a benchmark result.
 
+## I06 — MarketIndexWindow (v2.8.7)
+
+Store the supplied candle sequence, a slice of the parent timestamp array [start,stop), and logical length stop-start. For a parent window, retain its underlying base index and add start to its base offset; otherwise retain the supplied index and start. Nested windows therefore compose their base offsets. Crossing queries clamp left to at least zero and right to at most the window length; return null for an empty range. Invoke the matching base strict crossing method at translated bounds [base_offset+left,base_offset+right), then subtract base_offset from a non-null position. Extreme queries require 0 <= left < right <= length, otherwise ValueError; return the base extreme value without price conversion and the translated local position. The window delegates tie-breaking and crossing strictness to the base index. The constructor itself does not validate all input bounds or assert that the supplied candles equal the parent's selected records. The caller constructs the valid segment and registers the prepared index by sequence identity.
+
+Source anchor: engine/bridge/trading_pipeline.py:1785–1851 on main c99b4c957e932d9ee70c492ca03ce80711447fc1.
+
 ## Module-specific continuation
 
 See [module cache contracts](11_Module_Cache_Contracts.md) for the Order gate key/capacity, Reaction, Blue, A, S, E, Order Audit, StopAll and Primary continuation dependencies. Detailed function-level extraction remains separate. No execution, benchmark or dataset access.
