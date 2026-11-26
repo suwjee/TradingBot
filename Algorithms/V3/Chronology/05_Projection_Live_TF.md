@@ -16,13 +16,13 @@ Independent segment main [start,stop), lower [first main,next main or final + du
 
 ## CH39
 
-Live accepts equal positive integer epochs, rejects descending; dirty lower rolls back one on equal timestamp, dirty main on same bucket. One-second timeframe shares frontier. Transaction on exception restores suffixes/time and removes new cached prices.
+Live accepts equal positive integer epochs, rejects descending; dirty lower rolls back one on equal timestamp, dirty main on same bucket. One-second timeframe shares frontier. The nonempty bucket rollback try starts after committing cache additions, suffixes and last time; BaseException during delta construction or consumer body restores suffixes/time and removes new cached prices. Earlier commit assignments are outside the inner try; empty input has no bucket changes.
 
 [Source engine/bridge/trading_pipeline.py:225–295](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L225-L295)
 
 ## CH40
 
-Append validation before transaction; request end moves to latest RAW time. Active path prepares trading state from buckets; optional exact-key reuse of settled historical closed prefixes. Failure resets retained market views (including cache) and rethrows. No generalized rollback of external callback effects.
+Append validation before transaction; request end moves to latest RAW time. Active path prepares trading state from buckets; optional exact-key reuse of settled historical closed prefixes. BaseException in the protected append block (including context exit) resets retained market views (including cache) and rethrows; input prevalidation and initial progress are outside that catch. No generalized rollback of external callback effects.
 
 [Source engine/bridge/live_pipeline.py:35–70](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/live_pipeline.py#L35-L70)
 
