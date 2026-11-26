@@ -1,0 +1,228 @@
+{
+  "checkpoint": 294,
+  "batch": "RB08/W1/B09",
+  "status": "PASS_SCOPED_FULL_DIRECTION_LOCAL_SEMANTIC_REVIEW",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "d180d8e75a2841a2920ec688f35bfe090107c7cb",
+  "validated_algorithm": "ed6bede382ff627b58ecfa538b55d2558808eee1",
+  "source_path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+  "scope": "PipelineState and FullDirectionState, create_e_detector and nested direct_geometry, complete calculate_full_direction_state. EngineBundle was reviewed in CP293 and is not counted again. Local owner contract only.",
+  "source_ranges": [
+    [
+      2113,
+      2566
+    ]
+  ],
+  "counts": {
+    "w1_this_checkpoint": 197,
+    "w1_previous": 339,
+    "w1_reviewed": 536,
+    "w1_denominator": 2317,
+    "w1_remaining": 1781,
+    "by_category": {
+      "branches": {
+        "reviewed": 135,
+        "total": 562,
+        "remaining": 427
+      },
+      "comparisons": {
+        "reviewed": 77,
+        "total": 337,
+        "remaining": 260
+      },
+      "arithmetic": {
+        "reviewed": 62,
+        "total": 173,
+        "remaining": 111
+      },
+      "calls": {
+        "reviewed": 262,
+        "total": 1245,
+        "remaining": 983
+      }
+    },
+    "additional_this_checkpoint": {
+      "accesses": 828,
+      "effects": 43,
+      "exits": 5,
+      "total": 876
+    },
+    "additional_cumulative": 2263,
+    "all_sites_this_checkpoint": 1073,
+    "all_sites_cumulative": 2799,
+    "contracts_this_checkpoint": 16,
+    "contracts_cumulative": 82,
+    "historical_w1_continuity": 196,
+    "new_w1_sites": 1,
+    "new_additional_accesses": 13,
+    "duplicate_or_cp293_overlap": 0
+  },
+  "evidence_blobs": {
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP294_B09_Full_Direction_Review_01.json": "09317196bc54ab830608fd3238ddccc3c64ed067",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP294_B09_Full_Direction_Additional_Sites.json": "350ea3665b16b1fcc76689a437e142cc550c0747",
+    "Algorithms/V3/17_Trading_Bridge.md": "f3656180d4656b6a1d8e5c80360fb6a63c8329b9"
+  },
+  "validation": {
+    "source_blob_match": true,
+    "old_source_exact_relocation_ranges": [
+      [
+        2113,
+        2122,
+        82
+      ],
+      [
+        2124,
+        2149,
+        83
+      ],
+      [
+        2153,
+        2566,
+        84
+      ]
+    ],
+    "new_field_lines": [
+      2123,
+      2150
+    ],
+    "canonical_historical_inventory_blob": "0f0ac9496634808eb76847494cdedcf71dc2dae0",
+    "canonical_old_row_census": {
+      "branches": 47,
+      "comparisons": 23,
+      "arithmetic": 8,
+      "calls": 118,
+      "accesses": 815,
+      "effects": 43,
+      "exits": 5
+    },
+    "current_new_rows": {
+      "calls": 1,
+      "accesses": 13
+    },
+    "historical_inventory_completeness_in_scope": true,
+    "mapped_row_node_scope_and_span_checks": true,
+    "synthetic_branch_filter_id_check": true,
+    "previous_CP293_overlap_zero": true,
+    "all_rows_reference_local_contracts": true,
+    "independent_remote_readback": true,
+    "changed_paths_before_completion": [
+      "Audit/Phase_07/Rebaseline_v2_8_7/CP294_B09_Full_Direction_Review_01.json",
+      "Audit/Phase_07/Rebaseline_v2_8_7/CP294_B09_Full_Direction_Additional_Sites.json",
+      "Algorithms/V3/17_Trading_Bridge.md"
+    ],
+    "source_and_raw_paths_unchanged": true
+  },
+  "dependency_interface_review": [
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "anchors": [
+        143,
+        1181,
+        1257,
+        2068
+      ],
+      "finding": "Direction inversion delegates to shared policy; native direct Order geometry accepts direction, gate index, end index and gate event, bounds gate locally; confirmation default uses intrabar start. Delegated detailed reachability deferred."
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "anchors": [
+        447
+      ],
+      "finding": "Native Blue wrapper validates direction and consumes full reactions, chronology, resets."
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "anchors": [
+        839
+      ],
+      "finding": "Native A wrapper constructs and executes detector using direction, reactions, Blue and chronology."
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "anchors": [
+        67,
+        191,
+        253,
+        692,
+        1248,
+        1307
+      ],
+      "finding": "Native S accepts both reaction streams, opposite resets, range and initial order geometry; eligible A property excludes A owned by S; strict A-stop and confirmation APIs and shared Order-stop reconciliation belong to S, not Bridge."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "anchors": [
+        313,
+        574,
+        765,
+        824,
+        1495
+      ],
+      "finding": "E constructor requires sequence priority, sorts S and resets, validates direction and indexes supplied range; no empty-range normalization. Native parent-stop, continuation, replacement and detection own delegated semantics."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "anchors": [
+        2234,
+        2462,
+        2495
+      ],
+      "finding": "Accepted A provenance filters causes and selects first surviving cause; unchanged entry reused only under exact cause match. External E continuation audit rebuild delegates to canonical Order ledger."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "anchors": [
+        37,
+        606,
+        695,
+        766,
+        996,
+        1138,
+        1604
+      ],
+      "finding": "Lifecycle owns priority, A visibility/dominant-stop rules, consumed evidence and S eligibility. Resolve_order_context filters A causes, removes accepted firsts from blocks and adds parent-specific exact-stop/First exceptions, not global unblock. S eligibility returns ordered list; bridge separately gates replacement on length."
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "anchors": [
+        22,
+        35
+      ],
+      "finding": "Production live worker wraps bucket replay; current Bridge _run_live_calculation 3756–3767 passes no live stage callback to prepare_pipeline_state. Conditional live interfaces retained but no claim of active incremental behavior path."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP294-F01",
+      "status": "DOCUMENTATION_CLARIFIED",
+      "detail": "FullDirectionState return in this procedure omits stopalls; fresh empty default, subsequently owned by feedback."
+    },
+    {
+      "id": "CP294-F02",
+      "status": "DOCUMENTATION_CLARIFIED",
+      "detail": "Overview now matches detailed TB73: only differing length triggers S reconciliation and equal-length list is not substituted."
+    },
+    {
+      "id": "CP294-F03",
+      "status": "DOCUMENTATION_CLARIFIED",
+      "detail": "Optional live callback branch is not the production worker's current dispatch; worker invokes state preparation with default live=None."
+    }
+  ],
+  "limitations": [
+    "Historical canonical report and CP287 row/node crosswalk plus CP292 new-site linkage are used; no independent regeneration of complete current AST inventory.",
+    "Dependency interface checks are scoped to local caller obligations; full cross-owner semantic equivalence, W2/W3/W4 and runtime/RAW not certified.",
+    "The first CP294 report remains an immutable partial-stage record; this completion supersedes its status after additional evidence, documentation and remote readback."
+  ],
+  "runtime": "NOT RUN",
+  "raw": "NOT RUN",
+  "next": "CP295 / RB08 / W1 / B09 — calculate_direction_with_order_b_feedback (2569–2645) and prepare_pipeline_state (2648–2803), complete-procedure partitions, then range/visibility and projection/serialization remaining owners."
+}
