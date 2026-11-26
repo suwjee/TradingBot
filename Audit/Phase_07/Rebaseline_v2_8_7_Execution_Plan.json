@@ -406,7 +406,7 @@
       "phase": "07",
       "title": "Cross-owner reconciliation",
       "status": "IN_PROGRESS",
-      "last_completed_checkpoint": 328,
+      "last_completed_checkpoint": 329,
       "completed_checkpoints": [
         {
           "id": 322,
@@ -442,10 +442,15 @@
           "id": 328,
           "status": "PASS_SCOPED",
           "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_Completion.json"
+        },
+        {
+          "id": 329,
+          "status": "PASS_SCOPED",
+          "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_Completion.json"
         }
       ],
-      "completed_scope": "Complete direct named chronology accessor fan-out: reaction_confirmation, reset_time, order_b_reset_event_time, _bridge_reaction_confirmation, plus source provider contracts. First bounded W2 partition only, not all Reaction/Reset lifecycle or Blue/A freeze. CP323 completes bounded Reaction/Reset state transition ownership and Blue/A freeze with immediate downstream gates, native/conditional live distinction, 73 transition rows; CP322 direct accessor census remains separate. CP324 reconciles 29 new bounded S/physical Order_A/canonical stop transition rows plus 4 immediate handoff references. CP325 reconciles 45 new Order_A/Order_B ledger and invalidation records plus six referenced cross-owner handoffs; retains 102 earlier transition records. CP326 reconciles 36 new E transitions and six cross-owner handoff references; 147 previous transition rows retained (183 cumulative). CP327 reconciles 30 new lifecycle/StopAll transitions and four cross-owner handoff references, retaining prior LC boundaries (213 cumulative). CP328 reconciles 30 new Primary/MBL/reversal and Bridge integration transitions plus four cross-owner handoff references (243 cumulative).",
-      "remaining_scope": "CP329 / W2 Bridge projection, serialization and final horizon/identity rules; then live/RAW aggregation boundary reconciliation, W2 closure and W3/W4."
+      "completed_scope": "Complete direct named chronology accessor fan-out: reaction_confirmation, reset_time, order_b_reset_event_time, _bridge_reaction_confirmation, plus source provider contracts. First bounded W2 partition only, not all Reaction/Reset lifecycle or Blue/A freeze. CP323 completes bounded Reaction/Reset state transition ownership and Blue/A freeze with immediate downstream gates, native/conditional live distinction, 73 transition rows; CP322 direct accessor census remains separate. CP324 reconciles 29 new bounded S/physical Order_A/canonical stop transition rows plus 4 immediate handoff references. CP325 reconciles 45 new Order_A/Order_B ledger and invalidation records plus six referenced cross-owner handoffs; retains 102 earlier transition records. CP326 reconciles 36 new E transitions and six cross-owner handoff references; 147 previous transition rows retained (183 cumulative). CP327 reconciles 30 new lifecycle/StopAll transitions and four cross-owner handoff references, retaining prior LC boundaries (213 cumulative). CP328 reconciles 30 new Primary/MBL/reversal and Bridge integration transitions plus four cross-owner handoff references (243 cumulative). CP329 reconciles 40 new projection, serialization, identity and T/F transitions (283 cumulative); prior accessor edges retained separately.",
+      "remaining_scope": "CP330 / W2 Live/market aggregation, cache and input/entry integration: review source only (no RAW payload access), actual native dispatch versus optional protocols, cache invalidation and rollback, market segment/index windows and timestamp/Decimal conversion; then W2 closure and W3/W4."
     },
     {
       "id": "W3",
@@ -466,7 +471,7 @@
       "status": "BLOCKED"
     }
   ],
-  "next": "CP329 / W2 Bridge projection, serialization and final horizon/identity rules; then live/RAW aggregation boundary reconciliation, W2 closure and W3/W4.",
+  "next": "CP330 / W2 Live/market aggregation, cache and input/entry integration: review source only (no RAW payload access), actual native dispatch versus optional protocols, cache invalidation and rollback, market segment/index windows and timestamp/Decimal conversion; then W2 closure and W3/W4.",
   "scope": "Source-only; checkpoint count not fixed; target 25 when feasible; preserve historical evidence.",
   "artifact_policy": "GitHub individual files only; never create or send ZIP archives.",
   "reporting_contract": {
@@ -478,6 +483,6 @@
       "A complete ready-to-copy prompt for the next chat, including next checkpoint, pinned baseline, source ranges, validation and publication rules"
     ],
     "checkpoint_count_policy": "Do not invent a fixed remaining checkpoint count or overall percent. Checkpoint partitions are adaptive; the existing target is indicative only.",
-    "next_prompt": "Execute CP329 / W2 from latest verified algorithm HEAD, pin main c99b4c957e932d9ee70c492ca03ce80711447fc1. Read AGENTS.md, Operating Protocol, execution plan, CP323–CP328 Completion and evidence. Preserve 243 transition records. Audit Bridge projection, serialization and final horizon/identity, including all remaining owner-specific output gates, physical and absolute index identity, OrderAudit, T/F annotation, range and regime outputs directly from source. Count only nonoverlapping new rows. No RAW, runtime, ZIP or production change. Independently publish via candidate tree diff, CAS and Remote readback. Up to 10 checkpoints only as gates allow."
+    "next_prompt": "Execute CP330 / W2 from latest verified algorithm HEAD, pin main c99b4c957e932d9ee70c492ca03ce80711447fc1. Read AGENTS.md, Operating Protocol, execution plan, CP323–CP329 Completion and evidence. Preserve 283 transition records. Audit live/market aggregation, cache and input/entry integration directly from source only: actual native dispatch versus optional protocols, cache invalidation/rollback, market segment/index windows and timestamp/Decimal conversion. Do not access RAW payloads. Count only nonoverlapping new rows. No runtime, ZIP or production change. Independently publish via candidate tree diff, CAS and Remote readback. Up to 10 checkpoints only as gates allow."
   }
 }

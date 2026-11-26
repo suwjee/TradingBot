@@ -1,0 +1,631 @@
+{
+  "checkpoint": 329,
+  "status": "PASS_SCOPED_W2_PROJECTION_SERIALIZATION_TF",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "7964685bb2c9cc32fabd29f03ab11229c233f22b",
+  "entry_tree": "8901b51e12feaa261ed52897860a99d52be396b3",
+  "scope": "Legacy and nested output, physical and absolute identity, exact event proof/horizon, primary and regime presentation, T/F annotation. Input/live aggregation and final W2 acceptance remain separate.",
+  "prior": [
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "blob": "1027cb4a9241b8adb5a0b7f11c8c2a5fcbfa9c45",
+      "rows": 29
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "blob": "9dcc81cc416ffced36e2ef87e86ad58504c28201",
+      "rows": 44
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "blob": "44bc985228f9d698da7b1fb30173f55f886b60f4",
+      "rows": 29
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "blob": "77967520d746b0ce52e86784822bbe923a6c8966",
+      "rows": 45
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json",
+      "blob": "33054fd8ab3eb582072c663997b88037f53c4c24",
+      "rows": 36
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "blob": "c4bbd89d36ed64d604733c91c1aeec7fb249bafa",
+      "rows": 30
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "blob": "100720890299236ba3340e7bd5586ca06470624a",
+      "rows": 30
+    }
+  ],
+  "source_modules": [
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "lines": 3810
+    },
+    {
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "lines": 189
+    }
+  ],
+  "additional_rows": [
+    {
+      "id": "CP329-S01",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        441,
+        458
+      ],
+      "procedure_refs": "Legacy Blue",
+      "contract": "Serialize selected Blue by inclusive source index when bounds supplied; retain order, ordinal and strike counts, explicit nullable Fibonacci/broken level, source extreme/line price strings, main start/end epochs."
+    },
+    {
+      "id": "CP329-S02",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        461,
+        485
+      ],
+      "procedure_refs": "Legacy A",
+      "contract": "All supplied A in input order; Blue pair ordinals/source/stop main times and levels, continuation and trigger main/exact, Reaction First/Break main times, source price string; calculationValid true, no new validity check. Exact Blue stop events not legacy fields."
+    },
+    {
+      "id": "CP329-S03",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        488,
+        550
+      ],
+      "procedure_refs": "Legacy S",
+      "contract": "Serialize color/type, A parent/source/stop triple, optional Order First/Break/confirmation/box/stop-source fields with explicit nullable guards, optional Reset identity/time, source/decision exact/main; price strings, calculationValid true. No reconstruction."
+    },
+    {
+      "id": "CP329-S04",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        553,
+        594
+      ],
+      "procedure_refs": "Legacy E",
+      "contract": "Required parent, Order geometry, source/decision fields; causes list and optional parent cause event, prices strings. No separate calculationValid field or filtering."
+    },
+    {
+      "id": "CP329-S05",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        596,
+        660
+      ],
+      "procedure_refs": "Legacy StopAll",
+      "contract": "Serialize number/source/decision, gate exact event/stopped owner and underlying E, nullable Order fields and own stop triple. Gate not actual stop; donor metadata omitted in legacy. Stop time truthiness guard. Preserve causes and prices."
+    },
+    {
+      "id": "CP329-S06",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        663,
+        688
+      ],
+      "procedure_refs": "Display conversions",
+      "contract": "Bridge timestamp: None->null, strings unchanged, datetime components formatted to seconds without timezone conversion, other type null. Direction title-case string; exact mode A/B map; color None/empty->null else title-case. No Decimal rounding."
+    },
+    {
+      "id": "CP329-S07",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        691,
+        739
+      ],
+      "procedure_refs": "Horizon and exact proof",
+      "contract": "Horizon last visible main timestamp+timeframe; event must be nonnull and strictly earlier (no lower horizon bound). Normalize level, lower bound exact event in chronology second_times or candle timestamps fallback; scan only same-timestamp rows, High>level bearish else Low<level; any hit returns recorded time, otherwise null, no substitute crossing."
+    },
+    {
+      "id": "CP329-S08",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        742,
+        759
+      ],
+      "procedure_refs": "Stop view",
+      "contract": "If stop main time absent/outside horizon both time and event null. Else format main time and independent exact strict proof event; lack of proof does not remove main time."
+    },
+    {
+      "id": "CP329-S09",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        786,
+        819
+      ],
+      "procedure_refs": "Projection identity",
+      "contract": "Behavior parent Order identity requires both First and Break nonnull; normalize int pair. Build fresh final audit identity map, last duplicate wins. Preserve direction and market references; no choice of new Order."
+    },
+    {
+      "id": "CP329-S10",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        821,
+        871
+      ],
+      "procedure_refs": "Physical and formation Order",
+      "contract": "Absent audit or out-of-range First/Break returns null. Read entry and crossed tuple (main,exact); native confirmation proof for physical Order direction default intrabar flag. Display physical First/Break main, exact proof and stop level/time; parent Order uses recorded physical pair only if final audit retained it."
+    },
+    {
+      "id": "CP329-S11",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        873,
+        926
+      ],
+      "procedure_refs": "Current Order exact cause",
+      "contract": "Require proven strict stop and behavior source_time. Match parent-stop exact type,source time,event and family (None accepts None/empty). Reset-leg accepts matching post type or generic E/StopAll matching prefix, exact post source and stop; no family gate there. Dedup by physical pair; exactly one match projects, zero/conflict null. No positional or formation Order inference."
+    },
+    {
+      "id": "CP329-S12",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        928,
+        985
+      ],
+      "procedure_refs": "Nested OrderAudit",
+      "contract": "Require valid physical projection else RuntimeError. Parent-stop fields formatted and family title-case; reset-leg all fields convert datetime only; unknown cause kinds omitted. Physical First/Break indices and source box times/prices, stop source and main/exact proof displayed."
+    },
+    {
+      "id": "CP329-S13",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        988,
+        1042
+      ],
+      "procedure_refs": "Authoritative stop adapters",
+      "contract": "Parent stop uses supplied detector.parent_stop and bounds returned index; catches AttributeError/TypeError/ValueError only around call. A uses existing S detector first_a_stop(price,_a_confirmation_time), catches also IndexError. No new detector or substitute search; helper itself may execute native stop lookup. Format stop with proof and price string."
+    },
+    {
+      "id": "CP329-S14",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1045,
+        1108
+      ],
+      "procedure_refs": "Blue/Reaction formation proof",
+      "contract": "Non-scale Blue source time and absent event; scale requires 1-based Reaction ordinal and bounded Break; proof false intrabar flag. Reaction uses raw First/Break and native candle tag plus public box geometry; default true proof uses raw candidate, never public clipped level."
+    },
+    {
+      "id": "CP329-S15",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1111,
+        1167
+      ],
+      "procedure_refs": "Reset and standalone Blue view",
+      "contract": "Reset occurrence recorded display/second strings, previous First main only if bounded, broken level string; no substitute proof. Blue mapped Scale/Reset, source line/extreme string, formation proof; standalone stop main/exact always null (not retained), stop price sourceExtreme. BrokenLevel only reset."
+    },
+    {
+      "id": "CP329-S16",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1170,
+        1179
+      ],
+      "procedure_refs": "Full Blue ordinal join",
+      "contract": "Stable sort full lines by int Reaction number,source time,string kind; enumerate from1. Join not visible list index; includes full invalid/internal lines as supplied."
+    },
+    {
+      "id": "CP329-S17",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1182,
+        1269
+      ],
+      "procedure_refs": "A nested projection",
+      "contract": "Find full Blue by each ordinal, absent yields null formation. Retained A exact Blue stop proof via each recorded stop level/time/event, not recomputed. A stop from authoritative S helper; strict proof for current Order. Route ordinary/double-stop Type-1/2, parent null, optional 1-based Reaction proof false flag; source and prices retained."
+    },
+    {
+      "id": "CP329-S18",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1272,
+        1325
+      ],
+      "procedure_refs": "S nested projection",
+      "contract": "Read own stop from E parent service, prove event. Blue formation maps simple/advanced/type3/type4 to Type1–4, other colors null. Parent A formed source/price and recorded stop proof; formation Order via final physical pair. Current Order from exact S source/color/stop cause, no replacement of source."
+    },
+    {
+      "id": "CP329-S19",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1328,
+        1377
+      ],
+      "procedure_refs": "E parent identity join",
+      "contract": "Source pair int index/time required. Exact stored parent type S/E/StopAll selects corresponding map to get color/number; missing parent keeps stored type/source/price/stop metadata but unavailable color/number null. No temporal-nearest join."
+    },
+    {
+      "id": "CP329-S20",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1380,
+        1424
+      ],
+      "procedure_refs": "E nested projection",
+      "contract": "Own stop via E service and strict proof; E family/number, stored source; parent exact identity and recorded formation Order. Current Order exact E<number>/family/source/stop cause; no native ledger change."
+    },
+    {
+      "id": "CP329-S21",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1427,
+        1493
+      ],
+      "procedure_refs": "StopAll nested projection",
+      "contract": "Formation gate type maps sequence-group/stopall/opposite-S to Type1/2/3. Parent represents donor type/color/number/source/price and independent donor actual stop fields, NOT stopped-group gate; null if unavailable. Formation Order final pair; current Order exact StopAll<number>/empty family/own strict stop. Own stop separate."
+    },
+    {
+      "id": "CP329-S22",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1496,
+        1503
+      ],
+      "procedure_refs": "OrderAudit ordering",
+      "contract": "Sort key First and Break main epochs from actual detector candles; no rank by owner cause."
+    },
+    {
+      "id": "CP329-S23",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1506,
+        1608
+      ],
+      "procedure_refs": "Shared additive projection",
+      "contract": "Use exact selected arrays shared with legacy. Physical Order direction E detector or opposite fallback. Full Blue ordinal map; S parent map from captured full S, E/StopAll maps full then selected (last wins), skip absent pairs. Reactions raw from native results. Build fresh arrays in selected order; nested out-of-range historical parents not republished as independent rows."
+    },
+    {
+      "id": "CP329-S24",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1611,
+        1676
+      ],
+      "procedure_refs": "Bridge consistency assertions",
+      "contract": "Collect physical audit pair set. Every public S/E/StopAll with both Order indexes must exist; missing raises. Parent-stop key exact type/family/event/source time maps one identity; same key/same identity allowed, different identity raises. No repair, re-ranking or creation; assertion not an independent completeness proof."
+    },
+    {
+      "id": "CP329-S25",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1679,
+        1729
+      ],
+      "procedure_refs": "Legacy accepted audit",
+      "contract": "Serialize prepared identities only; cause type parent-stop epoch fields, reset-leg datetimes converted, other omitted. Truthy behavior_public_number overrides native ordinal. Preserve physical geometry and source/stop hit fields, nullable crossing; sort First/Break epoch, stable tie."
+    },
+    {
+      "id": "CP329-S26",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1860,
+        1871
+      ],
+      "procedure_refs": "Absolute index projection",
+      "contract": "Recursively copy lists/dicts even offset0. Offset only exact int nonnegative keys index or suffix Index (not bool); physicalOrderIdentity/resetReactionIdentity list/tuple parts independently offset exact nonnegative ints, output list. Other values recurse or stay unchanged; IDs/times not generally rewritten."
+    },
+    {
+      "id": "CP329-S27",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1874,
+        1894
+      ],
+      "procedure_refs": "Trend transition serialization",
+      "contract": "Source actual boundary candle, target direction, previous opposite label, absolute source and stopped Primary3 source indexes, exact event and Decimal level string. ID direction+trend+source epoch. Icon actual +49 main candle (50th inclusive) with High for bullish/Low bearish else null."
+    },
+    {
+      "id": "CP329-S28",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3176,
+        3251
+      ],
+      "procedure_refs": "Additive shared selection",
+      "contract": "One selected Reaction/reset pair list feeds legacy serialization and nested bridge. Blue flag plus inclusive source range, A flag, S/E/StopAll final visibility lists, audit sorted by physical time if nonnull detector. Build legacy arrays then bridgeOutput from SAME lists. Prior legacy-only branch CP323-S32 retained."
+    },
+    {
+      "id": "CP329-S29",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3254,
+        3280
+      ],
+      "procedure_refs": "Primary Order serialization",
+      "contract": "Separate conceptual owner from physical direction. Types fixed Order_A then Order_B if causes present. Audit causes map datetime to epoch and Decimal to string (top-level values); source times from market candles, exact confirmation/stop fields and nullable box levels. No new filtering."
+    },
+    {
+      "id": "CP329-S30",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3283,
+        3326
+      ],
+      "procedure_refs": "Primary point identity/horizon",
+      "contract": "Resolve physical final primary through selected end, native secondary points otherwise. Stable ID from identity_source or point's original role/number/trigger/decision absolute indexes, non-first cycle suffix, cycle ID offset for four-part cycle syntax. Display winner number/source/price; local numeric indexes until absolute projection. Relabel audit causes via final primary. Select source inclusive and decision<=end."
+    },
+    {
+      "id": "CP329-S31",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3327,
+        3358
+      ],
+      "procedure_refs": "MBL publication",
+      "contract": "Visible cycles trigger<=end. Public leg from formed_matching_legs with primary confirmation at horizon; no additional source-start clip. ID reference/second absolute indexes; cap actual source+400 candle or extrapolate last+TF, not calculation stop. Stop fields hidden if stop index>end. Preserve trigger/confirmation exact and main time."
+    },
+    {
+      "id": "CP329-S32",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3359,
+        3402
+      ],
+      "procedure_refs": "Primary cycle and post-secondary output",
+      "contract": "Final primary rows vs logical secondary rows; cycleIds dedup encounter order for same physical source and confirmed decision. Cycle rows through activation horizon, high/low count rules as source; primary IDs joined by source. Post-secondary3 orders per visible cycle with stop<=end, no global dedup here. Status last visible cycle else qualified before exclusive horizon waiting break else waiting matching; role-specific postPH3/postPL3 key."
+    },
+    {
+      "id": "CP329-S33",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3633,
+        3679
+      ],
+      "procedure_refs": "Response envelope",
+      "contract": "Publish engine versions, flag rules (E present+S enabled; StopAll explicit lifecycle+E+S), selected actual bucket epochs and requested timeframe; direction outputs for state.directions. No business rule substitution."
+    },
+    {
+      "id": "CP329-S34",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3680,
+        3710
+      ],
+      "procedure_refs": "Final reversal and T/F horizon",
+      "contract": "Replace groups only if transition index<=visible end; activeDirection max(calculationStartIndex default -1,direction lexical tie). Repair horizon last visible main+TF-1 second inclusive; closed_through min(epoch(through)+1,last lower epoch+raw_timeframe). StopAll closure decision main epoch+TF<=closed_through. Annotate each segment independently (not aggregate concatenated arrays anew). Timing only rounded 2 decimals."
+    },
+    {
+      "id": "CP329-S35",
+      "module": "TF",
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "range": [
+        18,
+        30
+      ],
+      "procedure_refs": "TF01–02",
+      "contract": "Capture inclusive through upper bound once; closure left lower bound converted start restricted to right; policy strict low/high; Decimal(level), first hit epoch or null. No main fallback."
+    },
+    {
+      "id": "CP329-S36",
+      "module": "TF",
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "range": [
+        33,
+        55
+      ],
+      "procedure_refs": "TF03/08",
+      "contract": "Rank S (priority,0), E (priority,number). Active repeat counts separate from reference frontier. Search largest smaller rank descending, lower bound transformed price then latest preceding strictly lower reference; equality excluded."
+    },
+    {
+      "id": "CP329-S37",
+      "module": "TF",
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "range": [
+        58,
+        100
+      ],
+      "procedure_refs": "TF04/05 start and verdict",
+      "contract": "Reset references/started and zero verdict/base counts on non-S/E, retaining repair_count/latest. S starts Basic interval, E before S skipped. Direction low transforms Decimal by exact sign copy. Engulf lower rank base_count>=2 and display_restart lower verdict_count>=2 independent. S/engulf T, otherwise invert largest smaller strictly crossed reference, absent uses odd F/even T. Repair callback only when key missing, not null."
+    },
+    {
+      "id": "CP329-S38",
+      "module": "TF",
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "range": [
+        101,
+        128
+      ],
+      "procedure_refs": "TF04 repeat/repair recurrence",
+      "contract": "Assign verdict, pop reference frontier while >= transformed price, append. Evict smaller repeat ranks and repair only latest F with repair_count1, do not delete references. Same-rank same verdict accumulates repair_count; verdict_count only when no display_restart, mark prior/current repeated at>=2. Same F removes prior repair>=current source and attempts current repair. base_count increments whenever prior rank exists regardless verdict. No final sweep."
+    },
+    {
+      "id": "CP329-S39",
+      "module": "TF",
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "range": [
+        131,
+        159
+      ],
+      "procedure_refs": "TF06 StopAll recurrence",
+      "contract": "New series on first/nonincreasing number; track previous end/largest prior, restart group parity, clear prefix. Otherwise pending restart sets verdict start current. Assign parity T even relative start. Prefix rows number<=largest prior; exact boundary equal previous end or largest and closure callback absent/true marks entire prefix repeated and group parity, sets next restart. No repair."
+    },
+    {
+      "id": "CP329-S40",
+      "module": "TF",
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "range": [
+        162,
+        188
+      ],
+      "procedure_refs": "TF07 final annotation",
+      "contract": "Clear all three annotation keys on every visited primary/StopAll/E/S row. First row by sourceTime in traversal primary directional then StopAll,E,S, exclude exactly False validity. Sort selected; verdict null initially; primary flushes StopAll buffer, numbers1/2/3 T/F/F; Basic on entire event stream then trailing StopAll. Nonwinning rows no annotation, A/Blue/secondary not visited; mutates final dicts only."
+    }
+  ],
+  "reference_anchors": [
+    {
+      "path": "Algorithms/V3/19_Serialization.md",
+      "blob": "1cefbbdc5da6b823a12f741d2fb604117b23ab8a"
+    },
+    {
+      "path": "Algorithms/V3/17_Trading_Bridge.md",
+      "blob": "fd709462a61df11ebeb5bf4f4e5dc66be794bef5"
+    },
+    {
+      "path": "Algorithms/V3/16_True_False.md",
+      "blob": "9a307be021c5f1e8dd1c285ee7ff1247ddd36b90"
+    },
+    {
+      "path": "Algorithms/V3/22_True_False_Exact_Contract.md",
+      "blob": "6a05b77cb7d74b6a2b90aeffb57118223e6fca7a"
+    }
+  ],
+  "retained_prior_boundaries": [
+    {
+      "id": "CP323-P28",
+      "range": [
+        3531,
+        3630
+      ],
+      "contract": "Reversal independently calculates prefix before boundary; optional closed resolver. Validate boundary and independent Primary3 evidence. New regime fresh market at boundary and target initial flags; optional active_regime protocol conditional; release indexes in finally."
+    },
+    {
+      "id": "CP323-S25",
+      "range": [
+        374,
+        438
+      ],
+      "contract": "Preserve native result order. Reset selection by main index; Reaction by First index, optional public clone; keep raw/public pair. Serialize prices as strings and separate nullable secondTime; no canonical ledger mutation."
+    },
+    {
+      "id": "CP323-S31",
+      "range": [
+        2939,
+        3108
+      ],
+      "contract": "A occupancy and S stop labels first; projection captures accepted S/E/StopAll before lifecycle visibility; Primary A from range state's non-invalid A before display clipping, S/E after lifecycle visibility. Inclusive source range, invalid A/S pairs filtered, accepted out-of-range A Order causes retained. Mark Blue internal after calculation using all behavior records, then public filter; current A/S/E/StopAll internal helper copies only. Required Order identity from visible accepted rows; validation only when E detector exists."
+    },
+    {
+      "id": "CP323-S32",
+      "range": [
+        3113,
+        3175
+      ],
+      "contract": "Legacy optional transform calls published clone on native reaction; additive path prepares same raw/public selection once. Public geometry does not feed back into native ledger."
+    },
+    {
+      "id": "CP328-S29",
+      "range": [
+        3461,
+        3500
+      ],
+      "contract": "Calculate and finalize visibility, primary only selected primary direction (both defaults bearish), primary engine/E/lifecycle present. Save primary_result; remove public StopAll at confirmed primary ownership through end; validate prepared audit against final S/E/StopAll. Serialize direction then update with primary structures."
+    },
+    {
+      "id": "CP328-S30",
+      "range": [
+        3502,
+        3528
+      ],
+      "contract": "Group segments by direction. Single segment unchanged; multiple use shallow last segment copy, concatenate list-valued fields from all segments and bridgeOutput lists with first key encounter order. Remove aggregate calculationEndTime; retain calculationSegments. No geometry recalculation."
+    }
+  ],
+  "accessor_evidence": {
+    "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP322_W2_Chronology_Accessor_Edges.json",
+    "blob": "bde767dbcf80522c0561ec7dd2efe2b26b6ba57e",
+    "note": "CP322-E01–05 accessor calls retained separately; function 762–783 not counted as new transition row; surrounding projection contracts are distinct scoped transition records."
+  },
+  "qualifications": [
+    "Authoritative stop adapters call existing detector methods, which may execute native lookup; no assertion of zero search computation merely because projection is read-only.",
+    "Legacy and additive selection share object lists on active additive path; no runtime byte-equivalence claim.",
+    "Only exact recorded lower timestamp can prove event; absence leaves null without alternate event selection.",
+    "T/F operates on finalized dictionaries and can annotate earlier selected rows; no feedback into native calculation."
+  ],
+  "validation": {
+    "prior_transition_rows": 243,
+    "new_transition_rows": 40,
+    "cumulative_transition_rows": 283,
+    "prior_overlap": 0,
+    "new_overlap": 0,
+    "duplicate_ids": 0,
+    "source_blobs_verified": 2,
+    "reference_anchors": 4,
+    "runtime": "NOT_RUN_BY_SCOPE",
+    "raw": "NOT_RUN_BY_SCOPE"
+  },
+  "remaining": "CP330 / W2 Live/market aggregation, cache and input/entry integration: review source only (no RAW payload access), actual native dispatch versus optional protocols, cache invalidation and rollback, market segment/index windows and timestamp/Decimal conversion; then W2 closure and W3/W4."
+}
