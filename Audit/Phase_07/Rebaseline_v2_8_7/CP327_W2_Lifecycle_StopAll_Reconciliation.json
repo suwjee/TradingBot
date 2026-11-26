@@ -1,0 +1,514 @@
+{
+  "checkpoint": 327,
+  "status": "PASS_SCOPED_W2_LIFECYCLE_STOPALL",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "b7b0f3ff233f0aef17de9903d40d8c78759102f0",
+  "entry_tree": "25e9805026d16abd5e5a4539fe2b7a32714adbe7",
+  "scope": "Remaining lifecycle and StopAll transitions, native and conditional live paths, exact owner/stop/consumption/visibility gates. Previously reconciled LC25–32 and LC41–46 retained.",
+  "prior": [
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "blob": "1027cb4a9241b8adb5a0b7f11c8c2a5fcbfa9c45",
+      "rows": 29
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "blob": "9dcc81cc416ffced36e2ef87e86ad58504c28201",
+      "rows": 44
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "blob": "44bc985228f9d698da7b1fb30173f55f886b60f4",
+      "rows": 29
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "blob": "77967520d746b0ce52e86784822bbe923a6c8966",
+      "rows": 45
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json",
+      "blob": "33054fd8ab3eb582072c663997b88037f53c4c24",
+      "rows": 36
+    }
+  ],
+  "source_modules": [
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "lines": 1611
+    }
+  ],
+  "additional_rows": [
+    {
+      "id": "CP327-S01",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        29,
+        39
+      ],
+      "procedure_refs": "LC01",
+      "contract": "Normalize kind and family with str().lower(); exact sequence rank S Blue 1,E Blue 2,S Red 3,E Red 4; unknown key raises. Module rank separately uses attribute shape and includes StopAll 5, prior CP323-S39."
+    },
+    {
+      "id": "CP327-S02",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        42,
+        92
+      ],
+      "procedure_refs": "StopAll record",
+      "contract": "Frozen slotted output separates donor source/price/decision, gate exact event, stopped behavior key/count, underlying E, Order provenance and own eventual stop. Eight keyword-only donor fields default null, constructor donor provenance is presentation-only; no inference that gate equals donor stop."
+    },
+    {
+      "id": "CP327-S03",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        95,
+        139
+      ],
+      "procedure_refs": "LC02–05",
+      "contract": "Owner exact raw (kind,family,number), count/latest. Armed iff count>=2; E key formatted with number. No owner creates count1; exact key increments and replaces latest without priority check. Higher sequence priority or equal priority both E with dominance replaces count1; otherwise retain old object."
+    },
+    {
+      "id": "CP327-S04",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        142,
+        168
+      ],
+      "procedure_refs": "LC06",
+      "contract": "Checkpoint owner/pending null, active tuple empty, output_count0. Validate direction; shallow copy S/E, retain chronology/main/lower arrays and lower index references."
+    },
+    {
+      "id": "CP327-S05",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        170,
+        194
+      ],
+      "procedure_refs": "LC07–08",
+      "contract": "Strict stop from bisect_left(start) through all lower candles; bullish first_less, bearish first_greater; no main fallback. Clamped containing main index/time/exact event. E same-family higher number wins; across families Red beats Blue."
+    },
+    {
+      "id": "CP327-S06",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        196,
+        252
+      ],
+      "procedure_refs": "LC09",
+      "contract": "E donor constructs immutable StopAll with source/price/decision copied, supplied gate/type/key/count/number, underlying E family/number, physical Order geometry/causes. Normalize specified indexes and Decimal; order causes tuple, parent cause optional. Own stop triple null; donor type/source/color/number/price stored separately, donor-stop fields default null."
+    },
+    {
+      "id": "CP327-S07",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        254,
+        348
+      ],
+      "procedure_refs": "LC10–12",
+      "contract": "Optional int/Decimal conversion only bypasses None. S donor constructs number1, opposite-s-group-stop, gate provided, underlying E from tuple when present. Optional Order geometry retained; causes empty, parent stop cause time is S a_stop_event_time; own stop triple null, donor number null. No promotion validation inside constructors."
+    },
+    {
+      "id": "CP327-S08",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        350,
+        366
+      ],
+      "procedure_refs": "LC13–15 entry",
+      "contract": "Stable events sort by source_time,kind,raw source_index (E before S at equal time), not decision time. Native detect uses empty checkpoint/output, resolves each own stop after traversal. Replay restores owner/pending/active directly; supplied output not truncated here."
+    },
+    {
+      "id": "CP327-S09",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        368,
+        416
+      ],
+      "procedure_refs": "LC16",
+      "contract": "Armed owner only; first strict stop from latest decision/price. Return when stop<boundary. Otherwise E donor required and stop<=donor decision. Same-main exception needs mapped stop index=donor source index, source<=stop<source+timeframe and donor price strict beyond owner. Alternatively exact donor parent type/index/time/normalized price/stop event matches owner; no same-main requirement on parent match. Null otherwise."
+    },
+    {
+      "id": "CP327-S10",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        418,
+        446
+      ],
+      "procedure_refs": "LC17–18 direct",
+      "contract": "Accept updates only owner via shared rule. Direct Red S route requires current Blue owner armed and owner.latest exact decision strictly earlier than S decision. Emit StopAll1 gate S decision, active singleton, clear owner/pending. Neither price stop nor Order Mode B required."
+    },
+    {
+      "id": "CP327-S11",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        448,
+        473
+      ],
+      "procedure_refs": "LC18 fallback",
+      "contract": "Query armed stop at S source even if pending exists. Completed = truthy pending else owner/gate pair. Red S plus completed Blue owner and uppercased Order mode B emits StopAll1 with completed exact stop; singleton active, clear owner/pending. Otherwise freeze first completed pending only if absent then accept S."
+    },
+    {
+      "id": "CP327-S12",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        475,
+        496
+      ],
+      "procedure_refs": "LC19 active StopAll",
+      "contract": "For E donor scan strict stops of all active StopAll from own decision/price. All hits <= E decision qualify. Highest number and earliest stop independently determine new number highest+1 and gate. Count stopped entries; remove active by Python object id, append new to output and active, clear owner/pending."
+    },
+    {
+      "id": "CP327-S13",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        498,
+        515
+      ],
+      "procedure_refs": "LC19 armed group",
+      "contract": "If no active stop, armed query with donor E even if pending exists; pending wins. Any completed owner emits StopAll1 sequence-group-stop from E, appends to active (not singleton), clears owner/pending. Otherwise accept E with lowercase family/int number."
+    },
+    {
+      "id": "CP327-S14",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        517,
+        531
+      ],
+      "procedure_refs": "LC15/20 output",
+      "contract": "Dispatch exact S tag else E; optional checkpoint after each successful event, recording count. Own stop resolution uses max(decision,after) if supplied, else decision inclusive, replaces only stop index/time/event nullable triple. Gate and donor unchanged."
+    },
+    {
+      "id": "CP327-S15",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        534,
+        548
+      ],
+      "procedure_refs": "LC21–22",
+      "contract": "Live continuation initializes empty event keys/output/result, default checkpoint and null covered_until, invokes update(0). Result returns shallow list copy."
+    },
+    {
+      "id": "CP327-S16",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        550,
+        571
+      ],
+      "procedure_refs": "LC23 prefix",
+      "contract": "Validate dirty index inclusive 0..len. Dirty main timestamp or null at end; lower it to previous covered_until if earlier or dirty null. New detector/events; keys kind and repr(record), retaining Decimal representation. Zip common prefix until key mismatch or max(source,decision)>=dirty. Restore checkpoint and unresolved output prefix, replay suffix."
+    },
+    {
+      "id": "CP327-S17",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        572,
+        590
+      ],
+      "procedure_refs": "LC23 own-stop replay",
+      "contract": "Retained output reuses prior resolved hit only if exists and strictly before dirty or dirty null. Otherwise rescan from max(decision,dirty); new output scans from decision. Assign new checkpoints, keys, unresolved output/result and coverage last lower timestamp+1 microsecond else null. No independent proof of unchanged input prefix."
+    },
+    {
+      "id": "CP327-S18",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        593,
+        599
+      ],
+      "procedure_refs": "LC24",
+      "contract": "Wrapper instantiates detector and detects; no local catch or fallback."
+    },
+    {
+      "id": "CP327-S19",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        973,
+        993
+      ],
+      "procedure_refs": "LC33",
+      "contract": "For each invalid A with non-null stop, add opposite Reaction First main timestamps in [A source,exact stop[2]). Direct int First index lookup; no local bounds guard or direction use. No stop skips that A."
+    },
+    {
+      "id": "CP327-S20",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        996,
+        1034
+      ],
+      "procedure_refs": "LC34 consumed S setup",
+      "contract": "Validate direction. Accepted S identity (A source,S source), not price/index. Sort E source/index; compute exact stop once per E entry; retain containing main inside range."
+    },
+    {
+      "id": "CP327-S21",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1036,
+        1066
+      ],
+      "procedure_refs": "LC34 eligibility",
+      "contract": "Sort S candidates source/index; skip accepted pair and invalid source index. Eligible E source and exact stop strictly before candidate A source, E priority higher, source-main Close strictly beyond stop-main Close. Decimal(str) comparison, no substitute zone price."
+    },
+    {
+      "id": "CP327-S22",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1073,
+        1108
+      ],
+      "procedure_refs": "LC34 latest prior boundary",
+      "contract": "Latest prior E from all E (including unstopped/ineligible) by reverse sorted order, source strictly before A. Latest qualified recognized by object identity; older eligible only rank(priority,number)>latest, stop>latest decision(default source), stop-main>=latest qualified main if any. Retain latest itself if eligible."
+    },
+    {
+      "id": "CP327-S23",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1112,
+        1136
+      ],
+      "procedure_refs": "LC34 owner choice",
+      "contract": "Rank latest stopped MAIN index then module priority,number,source,index; first complete tie. Earliest S source/index per module_identity replaces only strictly earlier. Output sorted candidate source/index, original records."
+    },
+    {
+      "id": "CP327-S24",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1138,
+        1178
+      ],
+      "procedure_refs": "LC35–36",
+      "contract": "Stable source-only E and S sorts; prior is latest strictly earlier timestamp, FIRST duplicate chosen by second lower bound. Accepted prior S wins only if strictly later than prior E (E wins tie). Lower/equal S rejected if A source earlier than prior source, A price strict beyond prior, or S price strict beyond prior. Higher rank bypasses these filters."
+    },
+    {
+      "id": "CP327-S25",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1180,
+        1197
+      ],
+      "procedure_refs": "LC37",
+      "contract": "Apply engine S eligibility first, then exclude any exact (integer source index,time) occupied by supplied E for StopAll grouping. Preserve order and references."
+    },
+    {
+      "id": "CP327-S26",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1199,
+        1232
+      ],
+      "procedure_refs": "LC38–39 init",
+      "contract": "Validate direction, sort external by source/index. Optional candle times materialized once. Exact stop cache keyed object id per invocation, includes null; module_stop_event contract from CP323-S39."
+    },
+    {
+      "id": "CP327-S27",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1234,
+        1285
+      ],
+      "procedure_refs": "LC38 ownership frontier",
+      "contract": "Sort S source/index. Ownership event source callback else source time, NOT initial A stop for valid directions. Eligible prior external/visible S strictly earlier and not consumed. Latest prior external (including consumed external) bounds current lifecycle source; discard older prior modules. Stop<=ownership event qualifies, equality included."
+    },
+    {
+      "id": "CP327-S28",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1286,
+        1322
+      ],
+      "procedure_refs": "LC38 Close suppression",
+      "contract": "From stopped external (no a_source_time attr) choose latest source/index. With candles, lower-priority S and valid indexes, strict candidate source Close beyond stop-main Close suppresses without consuming. Decimal(str) normalization."
+    },
+    {
+      "id": "CP327-S29",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1328,
+        1375
+      ],
+      "procedure_refs": "LC38 stop arbitration",
+      "contract": "Choose max exact stop,priority,number,source,index, not stop-main index. Higher S priority versus S retained; if candidate price not strict beyond dominant (including equality) retain. Otherwise consume identities of all stopped prior <= dominant priority and omit S. Without applicable owner append. No input geometry mutation."
+    },
+    {
+      "id": "CP327-S30",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1377,
+        1409
+      ],
+      "procedure_refs": "LC40 hard reset",
+      "contract": "Truthiness callback defaults; measure S-for-StopAll then detect StopAll once per invocation from provided E. Publish source_time:number reset mapping (last duplicate wins) via E setter. Return shallow E copy and original StopAll result. No retroactive E reconstruction within function."
+    }
+  ],
+  "reference_anchors": [
+    {
+      "path": "Algorithms/V3/10_Lifecycle.md",
+      "blob": "0acca58662ee6d975da3b53cca8237e9578f9bb5"
+    },
+    {
+      "path": "Algorithms/V3/11_StopAll.md",
+      "blob": "e74cfff9d841197e7483851dcf0d50ed3278a0b1"
+    },
+    {
+      "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+      "blob": "02a57040358f45f22aa0091bbd73837bcdb2ce4f"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "blob": "118a4e00b9f8c647ac3ebdb7dabfa04a7f39ffd3"
+    }
+  ],
+  "retained_prior_boundaries": [
+    {
+      "id": "CP323-S39",
+      "range": [
+        695,
+        763
+      ],
+      "contract": "A visible suppression by main containing S decision; module identity type/family-or-color/number/source time/index; exact stop attribute else callback tuple last; priority StopAll>E red>S red>E blue>S blue>A/default; dominance stable rank key."
+    },
+    {
+      "id": "CP323-S40",
+      "range": [
+        766,
+        971
+      ],
+      "contract": "Register exact stopped S/E/StopAll and optional A with containing main; last duplicate identity stop map vs first stop for interior. Candidate A ordered source/index; eligible owner source strictly earlier and stop main <= A, prior A trigger>stop escapes. Rank latest stop main,priority,number,source,index,earliest ordinal; strict beyond price required to reject. Interior exception requires main head directional extreme from owner stop to A First and head before A plus aligned trend First/Break/exact confirmation strictly bounded. Interior valid consumes eligible <= priority; invalid S-owned A does not consume S, records stage invalid; other invalid consumes <= priority. No source mutation."
+    },
+    {
+      "id": "CP323-S41",
+      "range": [
+        1412,
+        1610
+      ],
+      "contract": "Provenance boundary uses earliest A Blue1/Blue2/continuation/First vs dominant prior exact stop, not price. Internal point and reaction helpers exist but current filter copies lists only. Final lineage restores historical S for E and A for S, sorted by source/index; original identity snapshots not updated during extension; E/StopAll occupancy then invalid S removes records, no second lineage pass; public A index occupancy separately."
+    },
+    {
+      "id": "CP325-S44",
+      "range": [
+        606,
+        693
+      ],
+      "contract": "Filter accepted A audit by accepted source; union inherited First veto and invalid-A pending-S leg blocks; remove accepted initial First times (parse strings). E-only exception exact stop equal accepted E stop, First same stop main and blocked not inherited, invalid A source<=First<exact stop, opposite confirmation>stop. Return accepted ledger and blocks, optional set update; no global unblock."
+    }
+  ],
+  "cross_owner_edges": [
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2508,
+        2567
+      ],
+      "contract": "Consumed S evidence integration and accepted audit refresh; previously reviewed, not counted."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2569,
+        2645
+      ],
+      "contract": "Eight-pass Order_B feedback; shared geometry; StopAll enabled donors accepted E plus missing independent source roots; LC40 per pass; restore independent roots and ensure audit before reset-leg discovery; stable identity returns; repeated changed identity or exhausted passes raises. Disabled StopAll empty."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2939,
+        3006
+      ],
+      "contract": "Visibility consumes converged E/StopAll, does not run StopAll again; callbacks differ by E presence, capture accepted projection before filtering, Primary groups formed before range clip."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        394,
+        411
+      ],
+      "contract": "Reset setter copies/sorts map and clears only specified four caches; no native reconstruction within LC40."
+    }
+  ],
+  "qualifications": [
+    "LC38 dominance exact stop differs from LC34 latest stopped main rank.",
+    "Direct S Red promotion requires neither strict stop nor Mode B; fallback route does require Mode B.",
+    "Native and optional live source semantics only; no runtime parity or RAW validation.",
+    "Feedback is bounded in Bridge; LC40 does not itself run a fixed-point loop. Public final visibility is downstream, separate from accepted calculation state."
+  ],
+  "validation": {
+    "prior_transition_rows": 183,
+    "new_transition_rows": 30,
+    "cumulative_transition_rows": 213,
+    "prior_overlap": 0,
+    "new_overlap": 0,
+    "duplicate_ids": 0,
+    "source_blobs_verified": 2,
+    "reference_anchors": 4,
+    "cross_owner_edges": 4,
+    "runtime": "NOT_RUN_BY_SCOPE",
+    "raw": "NOT_RUN_BY_SCOPE"
+  },
+  "remaining": "CP328 / W2 Primary PL/PH and reversal regime: qualification, activation/decision race, exact confirmation/ownership, native and conditional live scheduler, StopAll promotion and regime boundary; then projection/live and W3/W4."
+}
