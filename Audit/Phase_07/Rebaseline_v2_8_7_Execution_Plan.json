@@ -589,7 +589,54 @@
       "id": "W3",
       "phase": "07",
       "title": "Separate forensic review",
-      "status": "NOT RUN"
+      "status": "INCOMPLETE",
+      "last_completed_checkpoint": 351,
+      "completed_checkpoints": [
+        {
+          "id": 351,
+          "status": "PASS_SCOPED_W3_ENTRY_B01_LOCAL",
+          "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP351_Completion.json"
+        }
+      ],
+      "completed_scope": "Entry evidence reconciliation and independent B01 local source owner category review; bounded consumer sample review only",
+      "remaining_scope": "B02–B10 independent local review; full cross-owner consumer and dependency forensic review including B01; independent W3 acceptance gate.",
+      "current_w3": {
+        "local_modules": {
+          "reviewed": 5,
+          "denominator": 16
+        },
+        "local_owner_batches": {
+          "reviewed": 1,
+          "denominator": 10
+        },
+        "local_category_rows": {
+          "reviewed": 336,
+          "denominator": 50220
+        },
+        "w1_category_rows": {
+          "reviewed": 74,
+          "denominator": 11575
+        },
+        "additional_category_rows": {
+          "reviewed": 262,
+          "denominator": 38645
+        },
+        "b01_category_rows": {
+          "reviewed": 336,
+          "denominator": 336
+        },
+        "b01_supplemental": {
+          "reviewed": 14,
+          "denominator": 14
+        },
+        "cross_owner_denominator": null
+      },
+      "supplementary_evidence": [
+        "Audit/Phase_07/Rebaseline_v2_8_7/CP351_W3_B01_Local_Forensic_Register.json",
+        "Audit/Phase_07/Rebaseline_v2_8_7/CP351_W3_Entry_And_Boundary_Register.json",
+        "Algorithms/V3/20_Indexes_And_Caching.md",
+        "Algorithms/V3/Chronology/36_W3_Entry_And_Shared_Primitives_Forensic.md"
+      ]
     },
     {
       "id": "W4",
@@ -604,7 +651,7 @@
       "status": "BLOCKED"
     }
   ],
-  "next": "CP351 / W3 separate independent forensic source review, starting from the published CP350 algorithm commit/tree and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Read AGENTS.md, Operating Protocol, Execution Plan, CP321–350 evidence. Independently define W3 forensic obligations from actual source and historical evidence, verify W1/W2 dispositions and known conditional paths without assuming W2 proves W3; preserve all earlier evidence; no RAW payload, runtime, ZIP, production or main change. Each checkpoint requires exact candidate recursive tree diff, CAS expected parent without force, and remote readback. W4 only after actual W3 acceptance; report scoped denominators and unknown remaining checkpoint count.",
+  "next": "CP352 / W3 B02 Reaction independent source review, starting from the actual published CP351 algorithm commit/tree (resolve HEAD/tree and verify CP351 artifacts) and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Read AGENTS.md, Operating Protocol, active Execution Plan, CP351 completion and both registers, CP321–350 evidence. Independently review engine/pipeline/reaction_engine.py (1877 W1 and 6820 additional canonical category rows), beginning with exact procedure/statement ranges, chronology/index predicates and ownership; partition adaptively, record row-specific source roles, order, effects, exceptions and new obligations. Finish B01 caller paths during owner passes, then B03–B10 and all cross-owner obligations, including accepted ledger, physical identity, creator/consumer, conditional dispatch, Decimal, event ordering, cache/dirty frontier, rollback, failure, projection and serialization. Preserve all prior evidence and CP350 scoped resolutions. Do not equate overlap/census with independent proof. W3 acceptance only when all obligations closed; W4 G01–G08 separate. RB02 WAIVED_NON_BLOCKING; no RAW payload, project runtime, ZIP, production or main change. Each checkpoint separately validate full recursive candidate tree diff, CAS expected parent force=false, and actual remote readback. Up to 10 checkpoints if substantively supported; report exact status, denominators, unknown remaining count and continuation.",
   "scope": "Source-only; checkpoint count not fixed; target 25 when feasible; preserve historical evidence.",
   "artifact_policy": "GitHub individual files only; never create or send ZIP archives.",
   "reporting_contract": {
@@ -616,6 +663,6 @@
       "A complete ready-to-copy prompt for the next chat, including next checkpoint, pinned baseline, source ranges, validation and publication rules"
     ],
     "checkpoint_count_policy": "Do not invent a fixed remaining checkpoint count or overall percent. Checkpoint partitions are adaptive; the existing target is indicative only.",
-    "next_prompt": "CP351 / W3 separate independent forensic source review, starting from the published CP350 algorithm commit/tree and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Read AGENTS.md, Operating Protocol, Execution Plan, CP321–350 evidence. Independently define W3 forensic obligations from actual source and historical evidence, verify W1/W2 dispositions and known conditional paths without assuming W2 proves W3; preserve all earlier evidence; no RAW payload, runtime, ZIP, production or main change. Each checkpoint requires exact candidate recursive tree diff, CAS expected parent without force, and remote readback. W4 only after actual W3 acceptance; report scoped denominators and unknown remaining checkpoint count."
+    "next_prompt": "CP352 / W3 B02 Reaction independent source review, starting from the actual published CP351 algorithm commit/tree (resolve HEAD/tree and verify CP351 artifacts) and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Read AGENTS.md, Operating Protocol, active Execution Plan, CP351 completion and both registers, CP321–350 evidence. Independently review engine/pipeline/reaction_engine.py (1877 W1 and 6820 additional canonical category rows), beginning with exact procedure/statement ranges, chronology/index predicates and ownership; partition adaptively, record row-specific source roles, order, effects, exceptions and new obligations. Finish B01 caller paths during owner passes, then B03–B10 and all cross-owner obligations, including accepted ledger, physical identity, creator/consumer, conditional dispatch, Decimal, event ordering, cache/dirty frontier, rollback, failure, projection and serialization. Preserve all prior evidence and CP350 scoped resolutions. Do not equate overlap/census with independent proof. W3 acceptance only when all obligations closed; W4 G01–G08 separate. RB02 WAIVED_NON_BLOCKING; no RAW payload, project runtime, ZIP, production or main change. Each checkpoint separately validate full recursive candidate tree diff, CAS expected parent force=false, and actual remote readback. Up to 10 checkpoints if substantively supported; report exact status, denominators, unknown remaining count and continuation."
   }
 }
