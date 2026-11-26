@@ -106,3 +106,18 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 22 — Unified initialization, canonical append, refinement and Break reuse
 
 [Local review](Semantic_Closure_B02_08.md) and [site evidence](Semantic_Closure_B02_08.json): 114 original rows, 9 supplemental items, 4 resolved local documentation omissions/clarifications; sub-batch PASS. B02 1131/1877; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 23 — Initial Reaction dispatch and isolated trend bootstrap
+
+[Local review](Semantic_Closure_B02_09.md) and [site evidence](Semantic_Closure_B02_09.json): 86 original rows, 5 supplemental items, 2 resolved local documentation omissions/clarifications; sub-batch PASS. B02 1217/1877; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 24 — Post-Reset structural/geometry search and Break-index cache
+
+[Local review](Semantic_Closure_B02_10.md) and [site evidence](Semantic_Closure_B02_10.json): 82 original rows, 5 supplemental items, 1 resolved local documentation omissions/clarifications; sub-batch PASS. B02 1299/1877; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 25 — Order gate chronology, cache, and earliest healthy geometry
+
+[Local review](Semantic_Closure_B02_11.md) and [site evidence](Semantic_Closure_B02_11.json): 182 original rows, 9 supplemental items, 2 resolved local documentation omissions/clarifications; sub-batch PASS. B02 1481/1877; Phase 07 INCOMPLETE; Phase 08 BLOCKED.

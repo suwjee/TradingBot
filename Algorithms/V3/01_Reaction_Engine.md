@@ -192,13 +192,13 @@ Directional analysis RE10/25 (exact bullish selects breakout, otherwise breakdow
 Require Break correct First color (RED B/GREEN R) and analysis. Reject if exact lower after confirmation through Break end strictly crosses analysis.extreme outward. Collect entire Break lower interval; absent=>null. Choose max key (High, negative native timestamp.timestamp() epoch float) and min key (Low, datetime); equal full keys retain first encountered row. Bullish evaluates top then bottom, otherwise bottom then top. Native epoch conversion and precision govern top tie behavior, not an additional exact datetime comparison. Return mode B candidate with First and both sources current main, levels from lower, intrabar_start main open. No partial-remainder-only levels. confirmed argument unused.
 
 ### RE80 — _first_initial
-With retain_initial, trend flag routes RE82 and asserts cursor type; otherwise reference B or reflected R _scan first_only with initial cursor, retain its cursor, return first clone or mirror or null. Without retain flag use trend bootstrap if relevant else directional detect first_only, clone first or null.
+With retain_initial, trend flag routes RE82 and asserts cursor type; otherwise reference B or reflected R _scan first_only with initial cursor, retain its cursor, return first clone or mirror or null. Without retain flag ignore supplied cursor; check exact bullish trend then exact bearish trend, else directional detect first_only, clone first or null. Retaining ordinary bearish route scans reflected reference then mirrors candidate once; cursor type assertions depend on native assertion configuration.
 
 ### RE81 — _first_bullish_trend_reaction
 RE82 bullish.
 
 ### RE82 — _first_trend_reaction
-Empty window null. Fixed source from cursor or first main; restore candidate clone and next index. Before candidate update fixed peak High B/trough Low R strictly; on required First color create mode A using fixed confirmation edge and current opposite edge, leg boundary initial main Low B/High R; continue (cannot confirm same First). After candidate update opposite edge strictly; strict directional confirmation sets Break and refines, returns. If unresolved and retaining cursor save next=end+1,fixed source,candidate; null. No initial boundary invalidation.
+Empty window null. Fixed source from cursor or first main; restore candidate clone and next index. Before candidate update fixed peak High B/trough Low R strictly; on required First color create mode A using fixed confirmation edge and current opposite edge, leg boundary initial main Low B/High R; continue (cannot confirm same First). After candidate update opposite edge strictly; First, improved opposite source and Break use loop positions, whereas initial box source indices come from Candle.index. Strict directional confirmation sets Break and refines, returns without saving a new cursor. Only normal exhaustion with retention saves next=end+1,fixed source,candidate reference; null. Empty window returns before cursor save. No initial boundary invalidation.
 
 ### RE83 — _first_direct_same_direction_after_reset
 First element RE84.
@@ -213,16 +213,16 @@ Limit min requested/end, cache lookup key direction/reset/limit; clone non-null 
 RE85 public wrapper.
 
 ### RE87 — _reaction_break_indices
-Cache direction and list length; if length unchanged return cached ascending Break index list; else rebuild int values.
+Cache direction and list length; if cached entry nonnull and length unchanged return same list reference; else rebuild int Break values in current stream order. No local sort, duplicate check or freshness check; ascending append-only stream is a caller invariant.
 
 ### RE88 — first_order_reaction_after_gate
-Bound limit; reject gate<start or gate>=limit. Cache key direction/gate/limit/exact gate, return copy on hit. Latest prior confirmed owner via lower_bound Break; same-main Break qualifies only RE90. Default search gate+1. No owner: RE91, set gate no-history if result, cache RE89. Owner: outer boundary min Low B/max High R from owner First through max(First,gate-1); gate boundary gate High B/Low R. Search lower [exact gate or gate main,limit main end). Empty or neither strict crossing => cached null. Restart when outward crosses before or equal gate boundary crossing; continuation otherwise. Restart maps event to selected main, search from that index+1, null unmappable. Reject start>limit. RE91 first complete geometry, assign decision. Continue with missing anchor index or value: latest prior reset index strictly before result First, reconstruct outer extreme reset..First-1 and assign anchor index/value/leg boundary; existing complete anchor never overwritten. Cache and return.
+Bound limit; reject gate<start or gate>=limit. Cache key direction/gate/limit/exact gate, return copy on hit. Latest prior confirmed owner via lower_bound Break; same-main Break qualifies only RE90. Default search gate+1. No owner: RE91, set gate no-history if result, cache RE89. Owner: outer boundary min Low B/max High R from owner First through max(First,gate-1); gate boundary gate High B/Low R. Search lower [exact gate or gate main,limit main end). Empty or neither strict crossing => cached null. Restart when outward crosses before or equal gate boundary crossing; continuation otherwise. Restart maps event to selected main, search from that index+1, null unmappable. Reject start>limit. RE91 first complete geometry, assign decision. Continue with missing anchor index or value: latest prior reset index strictly before result First, reconstruct outer extreme reset..First-1 and assign all anchor index/value/leg boundary fields, even if one anchor component was already populated; existing complete anchor never overwritten. Without a prior Reset leave the incomplete anchor unchanged. Cache and return.
 
 ### RE89 — first_order_reaction_after_gate.cache_result
 If cache >=32768 delete oldest insertion; store shallow copy or null, return original.
 
 ### RE90 — first_order_reaction_after_gate.confirmed_no_later_than_gate
-Break<gate or no exact gate => Break<=gate; Break>gate false. Equal main: scan from intrabar_start or main through end; first strict directional confirmation <=gate event; absent => compare Break main time.
+Break<gate or no exact gate => Break<=gate; Break>gate false. Equal main: scan from truthy intrabar_start or Break main open to Break end exclusive without RE61's start clamp; first strict directional confirmation <=gate event; absent => compare Break main open to gate (fallback, not observed confirmation).
 
 ### RE91 — _earliest_confirmed_geometry
 Scan main from start to bounded end. reset_index=max(detector start,start-1). Each eligible color transition strictly after reset adds RE92 candidate. For all active candidates skip scan<=First; reject RE94 invalidation; update opposite edge strictly; strict confirmation sets Break/refines and collects confirmed. Keep survivors. First main with confirmations returns min First index among confirmed (does not sort exact lower confirmation times among same-main candidates). Null if none.

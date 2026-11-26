@@ -1,0 +1,3253 @@
+{
+  "checkpoint": 23,
+  "batch": "B02",
+  "sub_batch": "B02-09",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "e4437706c34c96d708ef1f1ccc1fef7012674302",
+  "path": "engine/pipeline/reaction_engine.py",
+  "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+  "source_range": [
+    1853,
+    1946
+  ],
+  "procedures": [
+    "RE80",
+    "RE81",
+    "RE82"
+  ],
+  "review_pass": "W1 source-first local owner review; W3 pending",
+  "status": "PASS",
+  "scope": "Local source contracts only; cross-owner, runtime equivalence and independent forensic gate not certified.",
+  "counts": {
+    "original_rows": 86,
+    "by_category": {
+      "branches": 37,
+      "comparisons": 22,
+      "arithmetic": 10,
+      "calls": 17
+    },
+    "supplemental_items": 5
+  },
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 7114,
+      "source_span": [
+        1857,
+        8,
+        1871,
+        96
+      ],
+      "procedure": "RE80",
+      "original_operation": "If",
+      "original_context": "RE-SC61",
+      "interpretation": "Retention-enabled route takes precedence over ordinary dispatch.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1857-L1871",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7118,
+      "source_span": [
+        1859,
+        16,
+        1859,
+        100
+      ],
+      "procedure": "RE80",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC61",
+      "interpretation": "Exact bullish selects bullish initial trend flag; otherwise bearish flag.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1859-L1859",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7126,
+      "source_span": [
+        1861,
+        12,
+        1863,
+        105
+      ],
+      "procedure": "RE80",
+      "original_operation": "If",
+      "original_context": "RE-SC61",
+      "interpretation": "Truthy trend flag routes to trend cursor/bootstrap instead of ordinary leg.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1861-L1863",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7128,
+      "source_span": [
+        1862,
+        16,
+        1862,
+        92
+      ],
+      "procedure": "RE80",
+      "original_operation": "Assert",
+      "original_context": "RE-SC61",
+      "interpretation": "Assert trend cursor absent or correct class, if assertions enabled.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Native assertion enforcement depends on runtime configuration; no alternate repair path.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1862-L1862",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7129,
+      "source_span": [
+        1862,
+        23,
+        1862,
+        92
+      ],
+      "procedure": "RE80",
+      "original_operation": "BoolOp",
+      "original_context": "RE-SC61",
+      "interpretation": "Null cursor bypasses isinstance; otherwise check trend cursor class.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1862-L1862",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7146,
+      "source_span": [
+        1864,
+        12,
+        1864,
+        90
+      ],
+      "procedure": "RE80",
+      "original_operation": "Assert",
+      "original_context": "RE-SC61",
+      "interpretation": "Assert ordinary cursor absent or correct class, if assertions enabled.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Native assertion enforcement depends on runtime configuration; no alternate repair path.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1864-L1864",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7147,
+      "source_span": [
+        1864,
+        19,
+        1864,
+        90
+      ],
+      "procedure": "RE80",
+      "original_operation": "BoolOp",
+      "original_context": "RE-SC61",
+      "interpretation": "Null cursor bypasses isinstance; otherwise check initial leg cursor class.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1864-L1864",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7157,
+      "source_span": [
+        1865,
+        21,
+        1865,
+        81
+      ],
+      "procedure": "RE80",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC61",
+      "interpretation": "Exact bullish selects native bull helper; otherwise reflected bear reference.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1865-L1865",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7182,
+      "source_span": [
+        1868,
+        12,
+        1869,
+        27
+      ],
+      "procedure": "RE80",
+      "original_operation": "If",
+      "original_context": "RE-SC61",
+      "interpretation": "Empty reactions returns null after copying helper cursor state.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1868-L1869",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7195,
+      "source_span": [
+        1871,
+        19,
+        1871,
+        96
+      ],
+      "procedure": "RE80",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC61",
+      "interpretation": "Copy first bullish candidate or mirror reflected candidate back otherwise.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1871-L1871",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7205,
+      "source_span": [
+        1872,
+        8,
+        1873,
+        55
+      ],
+      "procedure": "RE80",
+      "original_operation": "If",
+      "original_context": "RE-SC61",
+      "interpretation": "Without retention, exact bullish and bullish trend flag route bullish trend bootstrap.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1872-L1873",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7206,
+      "source_span": [
+        1872,
+        11,
+        1872,
+        64
+      ],
+      "procedure": "RE80",
+      "original_operation": "BoolOp",
+      "original_context": "RE-SC61",
+      "interpretation": "Check exact bullish before reading flag.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1872-L1872",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7216,
+      "source_span": [
+        1874,
+        8,
+        1875,
+        56
+      ],
+      "procedure": "RE80",
+      "original_operation": "If",
+      "original_context": "RE-SC61",
+      "interpretation": "Without retention and no bullish trend route, exact bearish and bearish flag route trend bootstrap.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1874-L1875",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7217,
+      "source_span": [
+        1874,
+        11,
+        1874,
+        64
+      ],
+      "procedure": "RE80",
+      "original_operation": "BoolOp",
+      "original_context": "RE-SC61",
+      "interpretation": "Check exact bearish before reading flag.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1874-L1874",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7230,
+      "source_span": [
+        1877,
+        12,
+        1879,
+        50
+      ],
+      "procedure": "RE80",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC61",
+      "interpretation": "Exact bullish selects bull.detect; otherwise bear.detect.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1877-L1879",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7247,
+      "source_span": [
+        1882,
+        12,
+        1884,
+        21
+      ],
+      "procedure": "RE80",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC61",
+      "interpretation": "Return copied first reaction only if list truthy, otherwise null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1882-L1884",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7286,
+      "source_span": [
+        1901,
+        8,
+        1902,
+        23
+      ],
+      "procedure": "RE82",
+      "original_operation": "If",
+      "original_context": "RE-SC62",
+      "interpretation": "Start>end returns null before cursor or source reads.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1901-L1902",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7301,
+      "source_span": [
+        1904,
+        23,
+        1904,
+        102
+      ],
+      "procedure": "RE82",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC62",
+      "interpretation": "Nonnull trend cursor supplies fixed source; otherwise initial main row.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1904-L1904",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7314,
+      "source_span": [
+        1905,
+        20,
+        1905,
+        113
+      ],
+      "procedure": "RE82",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC62",
+      "interpretation": "Copy saved pending candidate only when cursor and candidate nonnull.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1905-L1905",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7315,
+      "source_span": [
+        1905,
+        50,
+        1905,
+        103
+      ],
+      "procedure": "RE82",
+      "original_operation": "BoolOp",
+      "original_context": "RE-SC62",
+      "interpretation": "Cursor presence first, then candidate presence.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1905-L1905",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7330,
+      "source_span": [
+        1906,
+        22,
+        1906,
+        85
+      ],
+      "procedure": "RE82",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC62",
+      "interpretation": "Nonnull cursor supplies resume next_index; else selected start.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1906-L1906",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7338,
+      "source_span": [
+        1907,
+        8,
+        1941,
+        32
+      ],
+      "procedure": "RE82",
+      "original_operation": "For",
+      "original_context": "RE-SC62",
+      "interpretation": "Increasing main loop from resume index through end inclusive.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1907-L1941",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7353,
+      "source_span": [
+        1909,
+        12,
+        1927,
+        24
+      ],
+      "procedure": "RE82",
+      "original_operation": "If",
+      "original_context": "RE-SC62",
+      "interpretation": "Absent candidate enters fixed-source tracking and First selection.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1909-L1927",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7357,
+      "source_span": [
+        1910,
+        16,
+        1912,
+        41
+      ],
+      "procedure": "RE82",
+      "original_operation": "If",
+      "original_context": "RE-SC62",
+      "interpretation": "Replace fixed source only for strict directional improvement.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1910-L1912",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7358,
+      "source_span": [
+        1910,
+        20,
+        1911,
+        60
+      ],
+      "procedure": "RE82",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC62",
+      "interpretation": "Bullish selects high greater; otherwise low lesser.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1910-L1911",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7373,
+      "source_span": [
+        1913,
+        16,
+        1926,
+        21
+      ],
+      "procedure": "RE82",
+      "original_operation": "If",
+      "original_context": "RE-SC62",
+      "interpretation": "Current required tag creates initial candidate; consume row regardless, no same-First confirmation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1913-L1926",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7377,
+      "source_span": [
+        1913,
+        34,
+        1913,
+        63
+      ],
+      "procedure": "RE82",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC62",
+      "interpretation": "RED bullish, GREEN otherwise.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1913-L1913",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7383,
+      "source_span": [
+        1914,
+        33,
+        1914,
+        68
+      ],
+      "procedure": "RE82",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC62",
+      "interpretation": "Bullish top source fixed; otherwise current candle.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1914-L1914",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7389,
+      "source_span": [
+        1915,
+        36,
+        1915,
+        71
+      ],
+      "procedure": "RE82",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC62",
+      "interpretation": "Bullish bottom source current; otherwise fixed.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1915-L1915",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7423,
+      "source_span": [
+        1924,
+        44,
+        1925,
+        84
+      ],
+      "procedure": "RE82",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC62",
+      "interpretation": "Leg boundary is initial selected main Low bullish or High otherwise.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1924-L1925",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7438,
+      "source_span": [
+        1928,
+        12,
+        1935,
+        67
+      ],
+      "procedure": "RE82",
+      "original_operation": "If",
+      "original_context": "RE-SC63",
+      "interpretation": "Pending bullish candidate updates bottom on strict Low improvement.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1928-L1935",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7439,
+      "source_span": [
+        1928,
+        15,
+        1928,
+        60
+      ],
+      "procedure": "RE82",
+      "original_operation": "BoolOp",
+      "original_context": "RE-SC63",
+      "interpretation": "Bullish flag first then strict Low comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1928-L1928",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7460,
+      "source_span": [
+        1932,
+        12,
+        1935,
+        67
+      ],
+      "procedure": "RE82",
+      "original_operation": "If",
+      "original_context": "RE-SC63",
+      "interpretation": "Only if prior guard false, nonbullish and strict High improves top.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1932-L1935",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7461,
+      "source_span": [
+        1932,
+        17,
+        1932,
+        64
+      ],
+      "procedure": "RE82",
+      "original_operation": "BoolOp",
+      "original_context": "RE-SC63",
+      "interpretation": "Test not bullish before High comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1932-L1932",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7483,
+      "source_span": [
+        1936,
+        12,
+        1941,
+        32
+      ],
+      "procedure": "RE82",
+      "original_operation": "If",
+      "original_context": "RE-SC63",
+      "interpretation": "After opposite-edge update, strict directional confirmation sets Break/refines/returns.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1936-L1941",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7484,
+      "source_span": [
+        1936,
+        16,
+        1937,
+        60
+      ],
+      "procedure": "RE82",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC63",
+      "interpretation": "Bullish High>top; otherwise Low<bottom.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1936-L1937",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 7514,
+      "source_span": [
+        1942,
+        8,
+        1943,
+        95
+      ],
+      "procedure": "RE82",
+      "original_operation": "If",
+      "original_context": "RE-SC63",
+      "interpretation": "Only normal exhaustion with retention saves trend cursor.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1942-L1943",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7119,
+      "source_span": [
+        1859,
+        46,
+        1859,
+        68
+      ],
+      "procedure": "RE80",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC61",
+      "interpretation": "Exact bullish selects bullish trend flag.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1859-L1859",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7130,
+      "source_span": [
+        1862,
+        23,
+        1862,
+        45
+      ],
+      "procedure": "RE80",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "RE-SC61",
+      "interpretation": "Cursor identity null satisfies trend assertion.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1862-L1862",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7148,
+      "source_span": [
+        1864,
+        19,
+        1864,
+        41
+      ],
+      "procedure": "RE80",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "RE-SC61",
+      "interpretation": "Cursor identity null satisfies ordinary assertion.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1864-L1864",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7158,
+      "source_span": [
+        1865,
+        34,
+        1865,
+        56
+      ],
+      "procedure": "RE80",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC61",
+      "interpretation": "Exact bullish selects bull helper.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1865-L1865",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7196,
+      "source_span": [
+        1871,
+        41,
+        1871,
+        63
+      ],
+      "procedure": "RE80",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC61",
+      "interpretation": "Exact bullish copies rather than reflects.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1871-L1871",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7207,
+      "source_span": [
+        1872,
+        11,
+        1872,
+        33
+      ],
+      "procedure": "RE80",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC61",
+      "interpretation": "Exact bullish plus flag selects bullish trend entry.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1872-L1872",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7218,
+      "source_span": [
+        1874,
+        11,
+        1874,
+        33
+      ],
+      "procedure": "RE80",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC61",
+      "interpretation": "Exact bearish plus flag selects bearish trend entry.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1874-L1874",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7231,
+      "source_span": [
+        1878,
+        15,
+        1878,
+        37
+      ],
+      "procedure": "RE80",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC61",
+      "interpretation": "Exact bullish selects bull.detect.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1878-L1878",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7287,
+      "source_span": [
+        1901,
+        11,
+        1901,
+        44
+      ],
+      "procedure": "RE82",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "RE-SC62",
+      "interpretation": "Start strictly greater than end means empty.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1901-L1901",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7296,
+      "source_span": [
+        1903,
+        18,
+        1903,
+        40
+      ],
+      "procedure": "RE82",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC62",
+      "interpretation": "Exact bullish sets directional Boolean.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1903-L1903",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7302,
+      "source_span": [
+        1904,
+        47,
+        1904,
+        66
+      ],
+      "procedure": "RE82",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "RE-SC62",
+      "interpretation": "Cursor identity nonnull selects saved fixed source.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1904-L1904",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7316,
+      "source_span": [
+        1905,
+        50,
+        1905,
+        69
+      ],
+      "procedure": "RE82",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "RE-SC62",
+      "interpretation": "Cursor identity nonnull before candidate field.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1905-L1905",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7319,
+      "source_span": [
+        1905,
+        74,
+        1905,
+        103
+      ],
+      "procedure": "RE82",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "RE-SC62",
+      "interpretation": "Saved candidate identity nonnull permits copy.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1905-L1905",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7331,
+      "source_span": [
+        1906,
+        44,
+        1906,
+        63
+      ],
+      "procedure": "RE82",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "RE-SC62",
+      "interpretation": "Cursor identity nonnull selects next_index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1906-L1906",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7354,
+      "source_span": [
+        1909,
+        15,
+        1909,
+        32
+      ],
+      "procedure": "RE82",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "RE-SC62",
+      "interpretation": "Candidate identity null selects First-discovery path.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1909-L1909",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7360,
+      "source_span": [
+        1910,
+        21,
+        1910,
+        52
+      ],
+      "procedure": "RE82",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "RE-SC62",
+      "interpretation": "Current High strictly greater than fixed High replaces source.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1910-L1910",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7365,
+      "source_span": [
+        1911,
+        30,
+        1911,
+        59
+      ],
+      "procedure": "RE82",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "RE-SC62",
+      "interpretation": "Current Low strictly less than fixed Low replaces source.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1911-L1911",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7374,
+      "source_span": [
+        1913,
+        19,
+        1913,
+        64
+      ],
+      "procedure": "RE82",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC62",
+      "interpretation": "Tag exactly required directional First.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1913-L1913",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7441,
+      "source_span": [
+        1928,
+        27,
+        1928,
+        60
+      ],
+      "procedure": "RE82",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "RE-SC63",
+      "interpretation": "Current Low strictly below candidate bottom updates.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1928-L1928",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7464,
+      "source_span": [
+        1932,
+        33,
+        1932,
+        64
+      ],
+      "procedure": "RE82",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "RE-SC63",
+      "interpretation": "Current High strictly above candidate top updates.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1932-L1932",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7486,
+      "source_span": [
+        1936,
+        17,
+        1936,
+        48
+      ],
+      "procedure": "RE82",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "RE-SC63",
+      "interpretation": "High strictly greater than top confirms bullish.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1936-L1936",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7491,
+      "source_span": [
+        1937,
+        26,
+        1937,
+        59
+      ],
+      "procedure": "RE82",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "RE-SC63",
+      "interpretation": "Low strictly less than bottom confirms otherwise.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1937-L1937",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 7105,
+      "source_span": [
+        1854,
+        49,
+        1854,
+        91
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "RE-SC61",
+      "interpretation": "Nullable/type-union annotation, not executed trading arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Type annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1854-L1854",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 7106,
+      "source_span": [
+        1854,
+        49,
+        1854,
+        84
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "RE-SC61",
+      "interpretation": "Nullable/type-union annotation, not executed trading arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Type annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1854-L1854",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 7183,
+      "source_span": [
+        1868,
+        15,
+        1868,
+        35
+      ],
+      "procedure": "RE80",
+      "original_operation": "Not",
+      "original_context": "RE-SC61",
+      "interpretation": "Negate reaction-list truthiness for empty result.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1868-L1868",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 7257,
+      "source_span": [
+        1856,
+        9,
+        1856,
+        25
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "RE-SC61",
+      "interpretation": "Nullable/type-union annotation, not executed trading arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Type annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1856-L1856",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 7269,
+      "source_span": [
+        1887,
+        47,
+        1887,
+        63
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "RE-SC61",
+      "interpretation": "Nullable/type-union annotation, not executed trading arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Type annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1887-L1887",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 7277,
+      "source_span": [
+        1892,
+        42,
+        1892,
+        64
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "RE-SC62",
+      "interpretation": "Nullable/type-union annotation, not executed trading arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Type annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1892-L1892",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 7343,
+      "source_span": [
+        1907,
+        40,
+        1907,
+        58
+      ],
+      "procedure": "RE82",
+      "original_operation": "Add",
+      "original_context": "RE-SC62",
+      "interpretation": "End+1 includes last main position.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1907-L1907",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 7462,
+      "source_span": [
+        1932,
+        17,
+        1932,
+        28
+      ],
+      "procedure": "RE82",
+      "original_operation": "Not",
+      "original_context": "RE-SC63",
+      "interpretation": "Negate bullish Boolean for bearish-style branch.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1932-L1932",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 7521,
+      "source_span": [
+        1943,
+        51,
+        1943,
+        69
+      ],
+      "procedure": "RE82",
+      "original_operation": "Add",
+      "original_context": "RE-SC63",
+      "interpretation": "End+1 saves next cursor position.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1943-L1943",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 7529,
+      "source_span": [
+        1894,
+        9,
+        1894,
+        25
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "RE-SC62",
+      "interpretation": "Nullable/type-union annotation, not executed trading arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Type annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1894-L1894",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 7133,
+      "source_span": [
+        1862,
+        49,
+        1862,
+        92
+      ],
+      "procedure": "RE80",
+      "original_operation": "isinstance",
+      "original_context": "RE-SC61",
+      "interpretation": "Check supplied nonnull cursor is trend class.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1862-L1862",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 7138,
+      "source_span": [
+        1863,
+        23,
+        1863,
+        105
+      ],
+      "procedure": "RE80",
+      "original_operation": "self._first_trend_reaction",
+      "original_context": "RE-SC61",
+      "interpretation": "Delegate trend search with cursor and retention true.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1863-L1863",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 7151,
+      "source_span": [
+        1864,
+        45,
+        1864,
+        90
+      ],
+      "procedure": "RE80",
+      "original_operation": "isinstance",
+      "original_context": "RE-SC61",
+      "interpretation": "Check supplied nonnull cursor ordinary class.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1864-L1864",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 7168,
+      "source_span": [
+        1866,
+        21,
+        1866,
+        95
+      ],
+      "procedure": "RE80",
+      "original_operation": "helper._scan",
+      "original_context": "RE-SC61",
+      "interpretation": "Run selected reference scan first_only and retention, with supplied cursor.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1866-L1866",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 7199,
+      "source_span": [
+        1871,
+        19,
+        1871,
+        37
+      ],
+      "procedure": "RE80",
+      "original_operation": "replace",
+      "original_context": "RE-SC61",
+      "interpretation": "Copy bullish first result.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1871-L1871",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 7202,
+      "source_span": [
+        1871,
+        69,
+        1871,
+        96
+      ],
+      "procedure": "RE80",
+      "original_operation": "mirror_candidate",
+      "original_context": "RE-SC61",
+      "interpretation": "Mirror reflected first result.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1871-L1871",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 7213,
+      "source_span": [
+        1873,
+        19,
+        1873,
+        55
+      ],
+      "procedure": "RE80",
+      "original_operation": "self._first_bullish_trend_reaction",
+      "original_context": "RE-SC61",
+      "interpretation": "Delegate bullish trend wrapper.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1873-L1873",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 7224,
+      "source_span": [
+        1875,
+        19,
+        1875,
+        56
+      ],
+      "procedure": "RE80",
+      "original_operation": "self._first_trend_reaction",
+      "original_context": "RE-SC61",
+      "interpretation": "Delegate exact bearish trend search.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1875-L1875",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 7234,
+      "source_span": [
+        1877,
+        12,
+        1877,
+        45
+      ],
+      "procedure": "RE80",
+      "original_operation": "self.bull.detect",
+      "original_context": "RE-SC61",
+      "interpretation": "Run bull first_only detection.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1877-L1877",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 7240,
+      "source_span": [
+        1879,
+        17,
+        1879,
+        50
+      ],
+      "procedure": "RE80",
+      "original_operation": "self.bear.detect",
+      "original_context": "RE-SC61",
+      "interpretation": "Run bear first_only detection.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1879-L1879",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 7250,
+      "source_span": [
+        1882,
+        12,
+        1882,
+        48
+      ],
+      "procedure": "RE80",
+      "original_operation": "replace",
+      "original_context": "RE-SC61",
+      "interpretation": "Copy first returned candidate on nonempty list.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1882-L1882",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 194,
+        "heading": "_first_initial"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXI",
+          "transition": "RXI01",
+          "line": 11
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 7265,
+      "source_span": [
+        1889,
+        15,
+        1889,
+        52
+      ],
+      "procedure": "RE81",
+      "original_operation": "self._first_trend_reaction",
+      "original_context": "RE-SC61",
+      "interpretation": "Delegate exact bullish trend search.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1889-L1889",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 197,
+        "heading": "_first_bullish_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/09_Shared_Services.md",
+          "machine": "MC",
+          "transition": "MC11",
+          "line": 34
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 7323,
+      "source_span": [
+        1905,
+        20,
+        1905,
+        46
+      ],
+      "procedure": "RE82",
+      "original_operation": "replace",
+      "original_context": "RE-SC62",
+      "interpretation": "Copy saved candidate for resumed trend scan.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1905-L1905",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 7340,
+      "source_span": [
+        1907,
+        21,
+        1907,
+        59
+      ],
+      "procedure": "RE82",
+      "original_operation": "range",
+      "original_context": "RE-SC62",
+      "interpretation": "Construct inclusive main traversal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1907-L1907",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 7395,
+      "source_span": [
+        1916,
+        32,
+        1926,
+        21
+      ],
+      "procedure": "RE82",
+      "original_operation": "Candidate",
+      "original_context": "RE-SC62",
+      "interpretation": "Create mode A initial candidate with positional First, fixed/current source fields, frozen initial boundary.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1916-L1926",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 7506,
+      "source_span": [
+        1940,
+        16,
+        1940,
+        58
+      ],
+      "procedure": "RE82",
+      "original_operation": "self._refine",
+      "original_context": "RE-SC63",
+      "interpretation": "Refine candidate after Break set; return value ignored.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1940-L1940",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 7519,
+      "source_span": [
+        1943,
+        35,
+        1943,
+        95
+      ],
+      "procedure": "RE82",
+      "original_operation": "_TrendLegCursor",
+      "original_context": "RE-SC63",
+      "interpretation": "Save cursor with next=end+1, fixed source and pending candidate reference.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal traversal, geometry, provenance, cache or decision ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1943-L1943",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 200,
+        "heading": "_first_trend_reaction"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU01",
+          "line": 35
+        }
+      ]
+    }
+  ],
+  "supplemental_items": [
+    {
+      "supplemental_id": "B02-09-S1",
+      "source_span": [
+        1857,
+        1871
+      ],
+      "discovery_reason": "Source-first review of mutation, data flow, cursor lifetime, cache, ordered guard or implicit dependency beyond original category labels.",
+      "interpretation": "Retention path selects trend flag by exact bullish versus otherwise, validates cursor class via conditional assertions, and either directly delegates trend or uses bull/reflected bear reference scan; helper cursor assigned before null-result guard. Bearish ordinary candidate is mirrored from reference, not double-mirrored.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1857-L1871"
+    },
+    {
+      "supplemental_id": "B02-09-S2",
+      "source_span": [
+        1872,
+        1889
+      ],
+      "discovery_reason": "Source-first review of mutation, data flow, cursor lifetime, cache, ordered guard or implicit dependency beyond original category labels.",
+      "interpretation": "Nonretaining path checks exact bullish trend then exact bearish trend; otherwise uses bull or bear.detect first_only. Supplied cursor ignored on this route. Copy first native result, no further reflection.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1872-L1889"
+    },
+    {
+      "supplemental_id": "B02-09-S3",
+      "source_span": [
+        1901,
+        1908
+      ],
+      "discovery_reason": "Source-first review of mutation, data flow, cursor lifetime, cache, ordered guard or implicit dependency beyond original category labels.",
+      "interpretation": "Empty selected interval returns before reading source or retaining cursor. Restore fixed source and optional candidate copy; next index not clamped. Start/end inclusive.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1901-L1908"
+    },
+    {
+      "supplemental_id": "B02-09-S4",
+      "source_span": [
+        1909,
+        1927
+      ],
+      "discovery_reason": "Source-first review of mutation, data flow, cursor lifetime, cache, ordered guard or implicit dependency beyond original category labels.",
+      "interpretation": "Track strict directional confirmation-side extreme before First, equality retains existing fixed source. Mode A First at boundary allowed; candidate First index is loop position while box source indices come from Candle.index. Frozen boundary from original start. Continue consumes First without confirmation.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1909-L1927"
+    },
+    {
+      "supplemental_id": "B02-09-S5",
+      "source_span": [
+        1928,
+        1944
+      ],
+      "discovery_reason": "Source-first review of mutation, data flow, cursor lifetime, cache, ordered guard or implicit dependency beyond original category labels.",
+      "interpretation": "After First, strictly update opposite edge (source index is loop position, display from current candle), then strict confirmation; Break also loop position, refine and return. No owner-boundary invalidation. Normal exhaustion optionally saves next=end+1 with candidate reference; early returns do not save a new cursor.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1928-L1944"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B02-09-F01",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        1857,
+        1885
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1857-L1885",
+      "description": "Clarify cursor handling, dispatch order and reflected reference versus native bearish result.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/01_Reaction_Engine.md",
+          "prior_blob": "4203945d616dcfeec00ef0f419a4b28dc222405c",
+          "procedure": "RE80"
+        }
+      ],
+      "resolution": "Without retain flag ignore supplied cursor; check exact bullish trend then exact bearish trend, else directional detect first_only, clone first or null. Retaining ordinary bearish route scans reflected reference then mirrors candidate once; cursor type assertions depend on native assertion configuration.",
+      "recheck": "W2 caller and W3 forensic recheck remain pending."
+    },
+    {
+      "id": "B02-09-F02",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        1901,
+        1944
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1901-L1944",
+      "description": "Distinguish positional versus source indices, save-by-reference and early-return cursor behavior.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/01_Reaction_Engine.md",
+          "prior_blob": "4203945d616dcfeec00ef0f419a4b28dc222405c",
+          "procedure": "RE82"
+        }
+      ],
+      "resolution": "After candidate update opposite edge strictly; First, improved opposite source and Break use loop positions, whereas initial box source indices come from Candle.index. Strict directional confirmation sets Break and refines, returns without saving a new cursor. Only normal exhaustion with retention saves next=end+1,fixed source,candidate reference; null. Empty window returns before cursor save.",
+      "recheck": "W2 caller and W3 forensic recheck remain pending."
+    }
+  ],
+  "open_dependencies": [
+    "Review retained cursor lifecycle RE97–RE107 and source index alignment at callers.",
+    "W2 and W3 remain open."
+  ]
+}

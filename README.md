@@ -163,3 +163,18 @@ Per the user's 2026-11-26 instruction, continue source-only reverse engineering.
 ### Phase 07 — checkpoint 22
 
 [Unified initialization, canonical append, refinement and Break reuse](Audit/Phase_07/Semantic_Closure_B02_08.md): 114 original rows, local PASS; B02 INCOMPLETE. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 23
+
+[Initial Reaction dispatch and isolated trend bootstrap](Audit/Phase_07/Semantic_Closure_B02_09.md): 86 original rows, local PASS; B02 INCOMPLETE. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 24
+
+[Post-Reset structural/geometry search and Break-index cache](Audit/Phase_07/Semantic_Closure_B02_10.md): 82 original rows, local PASS; B02 INCOMPLETE. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 25
+
+[Order gate chronology, cache, and earliest healthy geometry](Audit/Phase_07/Semantic_Closure_B02_11.md): 182 original rows, local PASS; B02 INCOMPLETE. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
