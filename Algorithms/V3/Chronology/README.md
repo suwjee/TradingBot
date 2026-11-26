@@ -31,3 +31,7 @@ Distinguish lower position, timestamp, source/decision/confirmation/stop, main b
 ## Checkpoint 05
 
 [Cross-owner chronology and replay boundaries](07_Cross_Owner_Chronology.md): CH76–CH123, 123 reviewed clauses total. [Integration and comparison evidence](../../../Audit/Phase_07/Chronology_Integration.md). Structural checks passed; semantic closure remains incomplete.
+
+## CP292 current-baseline supplement
+
+[Current chronology rebaseline](08_Current_Chronology_Rebaseline.md): 18 scoped source reviews; RB07 remains INCOMPLETE, including unresolved exact site linkage.
