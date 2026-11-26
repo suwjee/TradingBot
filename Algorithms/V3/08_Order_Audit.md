@@ -167,12 +167,12 @@ For each exact parent cause key select physical row min (confirmation,First,Brea
 Normalize required identities set; collect S then E entries; OA69 and OA70. Return prepared rows. Set(required identities or empty) without per-pair normalization; S collector then E, merge then ownership, no final sort/serialization.
 
 ### OA72 — accepted_audit_entry
-Use a_causes or fallback; filter by accepted source set. No accepted => null. First accepted selected. If original selected source/stop and full list unchanged return original object; else shallow copy, replace selected source/stop and accepted causes.
+Use a_causes or fallback; filter by accepted source set. No accepted => null. First accepted selected. If original selected source/stop and full list unchanged return original object; else shallow copy, replace selected source/stop and accepted causes. Truthy a_causes else required singleton pair; preserve accepted pair order/duplicates, source membership only (no null/stop test). Compare selected source then stop via get default None, then list(causes) equality, short-circuit; all equal returns exact original row. Otherwise shallow copy and replace only three A fields; reiterability assumed.
 
 ### OA73 — accepted_audit_entries
-Map physical identities to non-null OA72 results.
+Map physical identities to non-null OA72 results. Input mapping order, OA72 once per row, retain non-null under original key (no key normalization).
 
 ### OA74 — order_identity_is_internal
-Both order First/Break required; check normalized identity in internal identities, else false.
+Both order First/Break required; check normalized identity in internal identities, else false. Read both optional attributes before ordered None guard; zero allowed, int conversion then supplied membership, no bounds validation.
 
 ## S-side physical Order_A

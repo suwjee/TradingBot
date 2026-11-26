@@ -361,3 +361,22 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 69 — Presentation Ledger Collection, Physical Merge and Single Cause Ownership
 
 [Local review](Semantic_Closure_B05_23.md) and [site evidence](Semantic_Closure_B05_23.json): 98 original rows, 7 supplemental items, 6 resolved findings; local PASS. Order Audit 1754/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 70 — Accepted A Provenance and Internal Physical Identity
+
+[Local review](Semantic_Closure_B05_24.md) and [site evidence](Semantic_Closure_B05_24.json): 31 original rows, 4 supplemental items, 4 resolved findings; local PASS. Order Audit 1785/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 71 — S Native and Independent Stopped-A Order Selection
+
+[Local review](Semantic_Closure_B05_25.md) and [site evidence](Semantic_Closure_B05_25.json): 56 original rows, 7 supplemental items, 5 resolved findings; local PASS. Order Audit 1841/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 72 — S Initial Order Ledger Registration and Shared Strict Crossing
+
+[Local review](Semantic_Closure_B05_26.md) and [site evidence](Semantic_Closure_B05_26.json): 51 original rows, 7 supplemental items, 5 resolved findings; local PASS. Order Audit 1892/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## B05 completion — W1 local Order Audit
+
+[Completion report](Semantic_Closure_B05_Completion.md) and [completion evidence](Semantic_Closure_B05_Completion.json): 26 contiguous checkpoints, 1,892/1,892 original rows, 159 supplemental items, 108 resolved local findings. W1 cumulative 5950/11504. Next B06; W2/W3/W4 remain open. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

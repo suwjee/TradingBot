@@ -18,7 +18,7 @@
     "calls": 5120
   },
   "original_site_category_rows": 11504,
-  "verified_independent_site_rows_in_this_plan": 5812,
+  "verified_independent_site_rows_in_this_plan": 5950,
   "scope_note": "No new semantic verification is claimed. Prior context review remains valid for its original scope. Counts are category rows, not necessarily distinct AST nodes.",
   "batches": [
     {
@@ -706,7 +706,7 @@
     {
       "id": "B05",
       "title": "Order Audit",
-      "status": "INCOMPLETE",
+      "status": "PASS",
       "modules": [
         {
           "path": "engine/pipeline/order_audit_engine.py",
@@ -720,9 +720,9 @@
         }
       ],
       "site_category_rows": 1892,
-      "review_scope": "W1 local source-first owner review; W2/W3 remain open",
-      "reviewed_original_rows": 1754,
-      "supplemental_items": 141,
+      "review_scope": "Order Audit W1 local owner review complete; W2/W3 remain open",
+      "reviewed_original_rows": 1892,
+      "supplemental_items": 159,
       "sub_batches": [
         {
           "id": "B05-01",
@@ -1091,9 +1091,59 @@
             "Audit/Phase_07/Semantic_Closure_B05_23.json",
             "Audit/Phase_07/Semantic_Closure_B05_23.md"
           ]
+        },
+        {
+          "id": "B05-24",
+          "status": "PASS",
+          "source_range": [
+            2462,
+            2516
+          ],
+          "procedures": "OA72–OA73–OA74",
+          "original_rows": 31,
+          "supplemental_items": 4,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_24.json",
+            "Audit/Phase_07/Semantic_Closure_B05_24.md"
+          ]
+        },
+        {
+          "id": "B05-25",
+          "status": "PASS",
+          "source_range": [
+            2517,
+            2621
+          ],
+          "procedures": "OA75–OA76–OA77",
+          "original_rows": 56,
+          "supplemental_items": 7,
+          "resolved_findings": 5,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_25.json",
+            "Audit/Phase_07/Semantic_Closure_B05_25.md"
+          ]
+        },
+        {
+          "id": "B05-26",
+          "status": "PASS",
+          "source_range": [
+            2622,
+            2714
+          ],
+          "procedures": "OA78–OA79–OA80–OA81–OA82",
+          "original_rows": 51,
+          "supplemental_items": 7,
+          "resolved_findings": 5,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_26.json",
+            "Audit/Phase_07/Semantic_Closure_B05_26.md"
+          ]
         }
       ],
-      "next_source_line": 2462
+      "next_source_line": null,
+      "next_module": null,
+      "completion_evidence": "Audit/Phase_07/Semantic_Closure_B05_Completion.json"
     },
     {
       "id": "B06",
@@ -1269,5 +1319,5 @@
       "evidence": []
     }
   ],
-  "next_action": "B05-24 Order Audit Engine, OA72 accepted_audit_entry and subsequent complete procedures, begin pinned source line 2462; W2 and W3 open."
+  "next_action": "B06 E Zone, first complete procedure(s) from pinned engine/pipeline/e_zone_detector.py line 1; W2/W3/W4 open."
 }

@@ -10,11 +10,11 @@ The S-stage provisional ledger and E-stage accepted ledger are distinct. Identit
 |---|---|---|---|---|---|
 | OAS01 | INIT | Exact A stop, containing gate main | Find native canonical opposite match with First>=gate and confirmation>stop; cache result by stop | NATIVE | OA75,OA77 |
 | OAS02 | NATIVE | No independent callback or incomplete result, First<gate, confirmation<=stop | Keep native (may be null) | SELECTED | OA76 |
-| OAS03 | NATIVE | Complete independent result passes exact gates | Match native by physical identity if present; else number=0, no synthetic canonical Reaction | COMPARE | OA76 |
-| OAS04 | COMPARE | Native absent or independent (First,confirmation) strictly earlier | Freeze independent; otherwise retain native (tie native) | SELECTED | OA76 |
+| OAS03 | NATIVE | Complete independent result passes First>=gate and confirmation>stop | Last-wins First map, require normalized physical identity; canonical number/object and recomputed confirmation without recheck; otherwise number=0 | COMPARE | OA76 |
+| OAS04 | COMPARE | Native absent or independent (original First,current confirmation) strictly earlier | Select independent; otherwise native (tie native) | SELECTED | OA76 |
 | OAS05 | SELECTED | Match absent | No provisional Order_A | RETURN | OA79 |
-| OAS06 | SELECTED | Physical match exists | Derive canonical stop and crossing; enter provisional physical ledger, append distinct A-source/stop cause | RECORDED | OA78,OA79,OA80,OA82,RE62 |
-| OAS07 | RECORDED | Final A acceptance supplied | Remove rejected A provenance; preserve other valid cause pairs and independent causes | FILTERED | OA72,OA73,LC25 |
+| OAS06 | SELECTED | Physical match exists | Eager canonical stop (even existing row), register first geometry and append distinct A source/stop pair; no crossing or confirmation-index insertion here; separate OA82 crossing query | RECORDED | OA78,OA79,OA80,OA82,RE62 |
+| OAS07 | RECORDED | Final A acceptance supplied | Source-only membership on A pairs; preserve order/duplicates, choose first accepted, return original row if selected fields and full list equal else shallow adjusted copy; omit null results | FILTERED | OA72,OA73,LC25 |
 
 ## OAP — S/E/primary direct parent-stop path
 
@@ -78,7 +78,7 @@ Ledger has independent dimensions: confirmation (native physical geometry), stri
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
-| OLC01 | PROVISIONAL | A eligibility resolved | Filter initial A source/stop provenance against accepted A; retain independent valid causes | ACCEPTANCE | OA72,OA73,LC25 |
+| OLC01 | PROVISIONAL | A eligibility resolved | Filter A cause pairs by accepted source, choose first accepted; no accepted => null; original object on matching fields/full list else shallow copy; preserve keys, order and accepted duplicates | ACCEPTANCE | OA72,OA73,LC25 |
 | OLC02 | ACCEPTANCE | E or S source ownership changes | Disowned S-only iff entry has parent causes, no B causes or initial identity, every cause exact parent-stop S with source in disowned set or prospective source; gate-owned initial veto only parent-stop label and its confirmation<zone Order First; separate rebuild invalid-S filter | ACCEPTANCE | OA60,OA61,OA62,OA63 |
 | OLC03 | ACCEPTANCE | Rebuild accepted S/E, historical evidence and reset legs | Filter invalid S by source time; snapshot, clear, B then S then numbered parents. Recover absent identities only with valid parent cause; retain prior valid parent causes (current geometry wins). Ensure restores absent rows with remaining cause or B, indexes and invalidates carried | ACCEPTED | OA62,OA63,OA64,OA65 |
 | OLC04 | ACCEPTED | Primary point committed in matching owner direction | Derive strict stop in (decision,range_end); request direct with confirmation_after=stop (OA20 sequential-skip caveat, no final local recheck); reparent before optional registration | ACCEPTED | OA32,OA33,OA34,OA36 |

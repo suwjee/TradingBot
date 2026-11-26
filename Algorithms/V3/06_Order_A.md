@@ -69,25 +69,25 @@ Cache (start,level) including null. Search strict crossing over lower [max(start
 Public OA42 wrapper. Forward unchanged arguments and return unchanged result.
 
 ### OA75 — SOrderAuditMixin._initialize_stopped_a_order_lookup
-Opposite First map int->(1-based number,reaction), last duplicate wins. Sort native matches (confirmation,First,Break,number,reaction), confirmation times list; empty first-canonical cache.
+Opposite First map int->(1-based number,reaction), last duplicate wins. Sort native matches (confirmation,First,Break,number,reaction), confirmation times list; empty first-canonical cache. Two independent one-based enumerations in input order; full tuple lexicographic sort, ordinal unique before object comparison; exact confirmation callback evaluated before int indexes. Publish map then sorted tuples then confirmation array then new cache; no local freezing/validation.
 
 ### OA76 — _first_order_after
-Native OA77. If no initial geometry callback return native. Else call with gate main index,exact A stop,end. Null/incomplete physical, First<gate or confirmation<=stop => native. If physical identity matches mapped same First, use canonical number/object and recompute confirmation; else number0. Return independent if native absent or (First index,confirmation) strictly earlier than native; otherwise native. No public Reaction invented for order-only geometry.
+Native OA77. If no initial geometry callback return native. Else call with gate main index,exact A stop,end. Null/incomplete physical, First<gate or confirmation<=stop => native. If physical identity matches mapped same First, use canonical number/object and recompute confirmation; else number0. Return independent if native absent or (First index,confirmation) strictly earlier than native; otherwise native. No public Reaction invented for order-only geometry. Native evaluated eagerly before callback check; exact None disables, callback gets mapped gate,exact stop,end. Reject physical None or Break None (optional default), First<gate, confirmation<=stop; no returned upper-bound validation. S main map delegates chronology without explicit clamp. Last-wins First map only; mapped pair equality uses normalized identities. Recompute mapped confirmation without repeating strict gate; independent rank uses original First and current confirmation. Equal rank native.
 
 ### OA77 — _first_canonical_order_after
-Cache by exact A stop incl null; upper_bound confirmation stop; first sorted match whose First index>=gate main. Return number,reaction,confirmation or null.
+Cache by exact A stop incl null; upper_bound confirmation stop; first sorted match whose First index>=gate main. Return number,reaction,confirmation or null. Membership cache hit before gate mapping, incl cached None. Upper bound excludes equal confirmations; scan sorted native tuple rows until First>=gate; no crossing gate; store match or None. Immutable run chronology premise not locally enforced.
 
 ### OA78 — _record_a_order_audit
-Compute stop via OA80, physical identity. If absent create row with reaction number/object/confirmation, stop geometry, A source/stop and empty a_causes. Append unique (A source,stop). Existing geometry and first selected cause preserved.
+Compute stop via OA80, physical identity. If absent create row with reaction number/object/confirmation, stop geometry, A source/stop and empty a_causes. Append unique (A source,stop). Existing geometry and first selected cause preserved. Stop computed eagerly even on existing row before physical identity lookup. New row has no stop_cross or confirmation-index insertion; no crossing calculation here. setdefault retains existing list (even empty), full pair equality dedup, append in input order; first selected source/stop unchanged. No rollback.
 
 ### OA79 — _audit_stopped_a
-Normalize A price; first A stop after its confirmation; absent => return. OA76 at exact event; if match OA78.
+Normalize required A price; resolve owner A confirmation then first A stop with normalized level and confirmation (owner lower interval includes effective start, excludes range end; strict price, not necessarily strictly later time). None => return. Unpack third exact A stop event, OA76, None => return, else OA78. No crossed-Order gate; implicit None.
 
 ### OA80 — SOrderAuditMixin._order_stop
-Delegate chronology.canonical_order_stop with order_direction,number,reaction,opposite list,start_index. No local cache.
+Delegate chronology.canonical_order_stop with order_direction,number,reaction,opposite list,start_index. No local cache. Return owner result unchanged, no local conversion or fallback.
 
 ### OA81 — _order_stop_crossed
-Bearish Order normalized High>level; otherwise normalized Low<level.
+Bearish Order normalized High>level; otherwise normalized Low<level. Exact bearish only; read and normalize selected High or Low attribute, supplied level unchanged, equality never crosses.
 
 ### OA82 — _shared_order_stop_cross
-Lower range [max(confirmation,range_start),range_end). If nonempty and lower index exists, first_greater bearish/first_less otherwise, return null if none; else scan slice OA81. Return main index/timestamp/exact lower event at first crossing or null.
+Lower range [max(confirmation,range_start),range_end). If nonempty and lower index exists, first_greater bearish/first_less otherwise, return null if none; else scan slice OA81. Return main index/timestamp/exact lower event at first crossing or null. Use index iff right>left and non-null (falsey non-null allowed); indexed miss immediate None, no scan retry. Index exact timestamp from lower_times; scan from row.timestamp only on first strict cross. Both use owner main index and candle.timestamp, not self.times. No local cache or returned-position validation.
