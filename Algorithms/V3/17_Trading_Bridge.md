@@ -303,3 +303,7 @@ Projection horizon equals the last visible main candle timestamp plus its chrono
 **Primary bundle (2005–2009).** Fixed PL_PH_detector path only pl_ph equals enabled (missing defaults disabled), untimed; bundle positional order reaction/Blue/A/S/E/lifecycle/primary.
 
 [Pinned source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1897-L2011). [CP307 evidence](../../Audit/Phase_07/Rebaseline_v2_8_7/CP307_Completion.json).
+
+## CP308 — Current B09 local owner reconciliation
+
+All 2,317 W1 category rows and 8,030 additional access/effect/exit rows are uniquely accounted for at the current pinned Bridge baseline. CP308 reopens 21 local review artifacts, reconciles the seven category ranges against the current crosswalk, and supplements 153 historical anchor-only access spans from the exact CP292 node/statement/scope linkage without modifying prior evidence. The 279 accepted contracts and four rechecked groups cover all executable physical lines; remaining group-line gaps are blank lines, six explanatory comments and the terminal line convention. This is local source-only owner closure, not independent AST regeneration, overall W1 acceptance, cross-owner/forensic closure or runtime equivalence. [CP308 completion](../../Audit/Phase_07/Rebaseline_v2_8_7/CP308_Completion.json).
