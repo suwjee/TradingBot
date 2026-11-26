@@ -1,0 +1,630 @@
+{
+  "checkpoint": 323,
+  "status": "PASS_SCOPED_SOURCE_RECONCILIATION",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "71977f53073b96115a9b2f0ba89a94528526453e",
+  "entry_tree": "f4f2af79a29fb5102ad857e4c78fd6246f05175b",
+  "scope": "Complete CP323 bounded native Reaction/Reset state transition and Blue/A freeze register, their conditional live/batch ownership and immediate Bridge, S/lifecycle/Order handoffs. Not all W2 transitive downstream decisions.",
+  "prior": {
+    "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+    "blob": "1027cb4a9241b8adb5a0b7f11c8c2a5fcbfa9c45",
+    "rows": 29
+  },
+  "cp322": {
+    "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP322_W2_Chronology_Accessor_Edges.json",
+    "blob": "bde767dbcf80522c0561ec7dd2efe2b26b6ba57e",
+    "retained_site_count": 20
+  },
+  "additional_rows": [
+    {
+      "id": "CP323-S01",
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        35,
+        174
+      ],
+      "procedure_refs": "RE01–04",
+      "contract": "Native Candidate mutable, Reset/IntrabarAnalysis/DetectionResult frozen records (lists still mutable); initial cursor records pre-confirmation state. GREEN includes doji. Detector timeframe first two actual main times or 1 second; positive required, distinct from configured continuation validation timeframe; time/index identity not price identity."
+    },
+    {
+      "id": "CP323-S02",
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        184,
+        244
+      ],
+      "procedure_refs": "RE05–09",
+      "contract": "Lower windows half-open; map lower time using upper bound minus one within selected main range, next actual main open or last+duration. Main extrema inclusive, switch indexed at difference>=16, reflect opposite extrema exactly, strict improvement preserves first tie; GREEN run requires immediate previous GREEN."
+    },
+    {
+      "id": "CP323-S03",
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        246,
+        341
+      ],
+      "procedure_refs": "RE10–13",
+      "contract": "Breakout analysis start uses intrabar_start if truthy else top-source+1 when earlier than First, otherwise top source; through Break end exclusive. First strict crossing, min lower through crossing inclusive, map owner; absent crossing or owner null. Mode A invalidation anchor else leg floor; when both main predicates lower race invalidation<=confirmation; neither evidence invalidates. Confirmed Reset race separately same tie; post-confirmation search event+1us to Break end exclusive."
+    },
+    {
+      "id": "CP323-S04",
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        346,
+        503
+      ],
+      "procedure_refs": "RE15/RXI01–09",
+      "contract": "Restore only initial cursor subset and clone candidate. Standalone reset before candidate, clear confirmed/peak/leg state and retain reset context; invalidation clears candidate without Reset. Opposite edge updates strictly then Break; append copy and first_only returns before post-reset. Later exact reset records precise time; standalone RED Break otherwise seeds B using full main OHLC without exact-analysis requirement."
+    },
+    {
+      "id": "CP323-S05",
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        504,
+        639
+      ],
+      "procedure_refs": "RE15/RXI10–15",
+      "contract": "Initial leg freezes low; RED after GREEN reset with Low>=reset Low opens A using preceding GREEN peak (wins tie), otherwise anchor. Later GREEN→RED gate clears invalidation anchor only when both lows strictly below it; candidate passes anchor floor or previous/leg floor. Failed RED replaces anchor, DOJI/NEUTRAL tag clears (native doji GREEN). B scanning running peak tie wins; end retains initial cursor only when requested."
+    },
+    {
+      "id": "CP323-S06",
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        642,
+        785
+      ],
+      "procedure_refs": "RE16–29",
+      "contract": "Bearish reference swaps role tags and exact Decimal sign-copy OHLC, preserving native market color, timestamps and identity; mirrored candidates swap box/source and negate optional anchor/leg values only. Reflection cache per sequence identity; lower index reflected. Return mirrored candidates/resets with unchanged bounds; no separate divergent initial/race rules."
+    },
+    {
+      "id": "CP323-S07",
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        788,
+        883
+      ],
+      "procedure_refs": "RE30/RXV01",
+      "contract": "Public clone only; invalid/missing Break returns unchanged. Only opposite source==Break triggers clipping; first main seed then strict improvements in full pre-Break mains; scan Break lower from open, update opposite edge before confirmation in same row, no hit leaves clone. First==Break allowed: seeds full main extreme, so clipping is not universal. No native mutation."
+    },
+    {
+      "id": "CP323-S08",
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1371,
+        1408
+      ],
+      "procedure_refs": "RE63–66",
+      "contract": "Physical (First,Break) identity; published clone supplies box, original native candidate default confirmation supplies time. Outer First strictly earlier; box and end inclusive; require nonempty observed lower path through confirmation inclusive, not gap-free proof. Entire observed directional extrema must fit inclusively."
+    },
+    {
+      "id": "CP323-S09",
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1409,
+        1478
+      ],
+      "procedure_refs": "RE67–68",
+      "contract": "Build both directions, indexed only exact naive datetime; fallback scans opposite list. For each inner compute path once when possible owner; stop on null path or first containing owner. Mutate original Candidate metadata including internal flag, numbering unchanged and both full result objects retained; zip truncates if mismatched; blocked First time sets."
+    },
+    {
+      "id": "CP323-S10",
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1481,
+        1551
+      ],
+      "procedure_refs": "RE69–70",
+      "contract": "Live entry key First/Break/intrabar and string geometry/source indexes; reuse same position only when geometry equal and Break<dirty. Changed set only entry inequality; retain old successful pairs within new bounds and unchanged positions. Changed inner checks all opposite, unchanged inner only changed outer; preserve multiple owners; reapply mutable metadata, commit entries/matches, no local rollback."
+    },
+    {
+      "id": "CP323-S11",
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1554,
+        1680
+      ],
+      "procedure_refs": "RE71–75",
+      "contract": "Non-full bridge fallback A-stop closure keys gate/end, ignores exact gate event; finds first adjacent role transition from max(1,gate), extends context backward, runs Unified bounded with First threshold on cache miss; cached order returned by reference. Unified holds direction-separated canonical ledgers, lazy helpers and geometry caches."
+    },
+    {
+      "id": "CP323-S12",
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1781,
+        1851
+      ],
+      "procedure_refs": "RE78–79",
+      "contract": "Refine only when opposite source is current Break and analysis exists. Unified same-Break successor requires correct main tag and exact analysis; strict post-confirmation breach rejects; entire Break lower rows then determine both extrema, min(Low,time)/max(High,-epoch) with first equal full key; source fields main Break, intrabar_start main open. Not standalone full-OHLC seed."
+    },
+    {
+      "id": "CP323-S13",
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1853,
+        1944
+      ],
+      "procedure_refs": "RE80–82",
+      "contract": "Initial retained cursor dispatch checks expected cursor type; ordinary bearish retains reflected reference cursor and mirrors returned candidate. Trend bootstrap at isolated boundary allows immediate correct color; strict fixed confirmation-side improvement before First, no previous boundary invalidation; later strict opposite update/confirmation refine, or retain trend cursor at horizon."
+    },
+    {
+      "id": "CP323-S14",
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1947,
+        2051
+      ],
+      "procedure_refs": "RE83–86",
+      "contract": "Direct Reset search First after reset, prior context and block-through; invalidation blocks subsequent First through that main; unfinished earlier First sets pending but does not stop bounded scan; first completed in First order returned with pending flag, none always still_open. Separate geometry-only route ignores structural invalidation; lookup cache exists but shown body never populates it."
+    },
+    {
+      "id": "CP323-S15",
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2053,
+        2215
+      ],
+      "procedure_refs": "RE87–90",
+      "contract": "Break index cache keyed direction and ledger length; gate bounded, cache key direction/gate/limit/event with copy on cache hit and bounded FIFO store. Same-main owner confirmation uses intrabar start or Break open (no clamp in this local helper) and first strict lower hit else open. Outer boundary from owner First..max(First,gate-1); outward vs gate strict hits, outward wins equal lower position; restart mapped main+1, continue gate+1; reconstruct missing anchor only on continue from latest earlier Reset."
+    },
+    {
+      "id": "CP323-S16",
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2217,
+        2417
+      ],
+      "procedure_refs": "RE91–94",
+      "contract": "Concurrent direct geometry: earliest confirming MAIN wins, smallest First within same main, not sorted exact lower times; remove invalidated candidate before opposite-edge update. Builder requires adjacent role and local extreme gate, context run plus preceding First-color run bounded by reset; frozen anchor from Reset..First-1. Outer invalidation strict; if both main predicates scan lower in order outward before confirmation, neither defaults invalidation. Geometry only, no ledger append."
+    },
+    {
+      "id": "CP323-S17",
+      "module": "BL",
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "range": [
+        33,
+        85
+      ],
+      "procedure_refs": "BL01–04",
+      "contract": "Frozen record with separate validity/internal flags. Color string uppercase; missing source map raises ValueError. First strict prior Blue stop within inclusive positional main slice, compare found candle.index to end. Fibonacci Decimal 0.618 with original arithmetic order; no quantization."
+    },
+    {
+      "id": "CP323-S18",
+      "module": "BL",
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "range": [
+        87,
+        230
+      ],
+      "procedure_refs": "BL05–06",
+      "contract": "Main First..Break inclusive; Break prefix <= default confirmation, no prefix skips row including color. Pending replaces only on strict improvement vs threshold and pending; confirming main color can create/confirm same row. Unresolved pending lower scan from its source open through Break end, capped at confirmation; penetration before same-row confirmation; most directional earliest tie; map decisive lower price to main source."
+    },
+    {
+      "id": "CP323-S19",
+      "module": "BL",
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "range": [
+        517,
+        590
+      ],
+      "procedure_refs": "BL14–18",
+      "contract": "Public only valid and not internal, input order. Internal owner ordinal or both semantic/rendered prices strictly inside same public box with First<source<=confirmation; no separate healthy predicate. Lazy exact naive datetime index else scan; mark original frozen record true via forced assignment, never clear; geometry unchanged, no rollback."
+    },
+    {
+      "id": "CP323-S20",
+      "module": "A",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        26,
+        128
+      ],
+      "procedure_refs": "A01–06",
+      "contract": "AZone frozen; exact stop and route provenance not calculation inputs. Copy reactions in original order; stable Blue sort (reaction number,source time,kind) includes invalid/internal. Precompute First/Break/confirmation arrays, ordered-naive conditions. Policy strict and extreme direction mirror; main/time lookup delegated."
+    },
+    {
+      "id": "CP323-S21",
+      "module": "A",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        129,
+        214
+      ],
+      "procedure_refs": "A07–08",
+      "contract": "Strict crossing lower [start,end), indexed or linear; nonempty miss suppresses main fallback; empty lower uses main opens >=start and <end. Extreme range inclusive end+1us; reversed error; earliest strict improvement tie; lower maps to main position/time; empty lower fallback includes entire containing main candles of endpoints, so no exact intrabar freeze proof."
+    },
+    {
+      "id": "CP323-S22",
+      "module": "A",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        308,
+        335
+      ],
+      "procedure_refs": "A12",
+      "contract": "Special route output retains sorted Blue ordinals, both effective stop mains invalid source main, continuation prior Blue source and price, trigger and matched reaction/source fields. Exact Blue stop provenance defaults null; clear previous only after successful emission, not failed attempts. Invalid kind not locally restricted to Reset."
+    },
+    {
+      "id": "CP323-S23",
+      "module": "A",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        337,
+        496
+      ],
+      "procedure_refs": "A13",
+      "contract": "Previous exact/main stop required; >expiry rejects (equality allowed). Inherited route crossing [current formation,expiry) and no alternative if missing. Else previous stop<formation: range previous exact stop..current formation main open-1us, reversed interval may raise; first current formation remainder crossing to min(end,expiry), else current actual stop and crossing. Else require current stop, stable sort exact time then higher level B/lower R (native unary minus), equal exact times trigger directly at second with no extra crossing; unequal strict crossing from second stop to exclusive expiry. Effective stop mains differ by route."
+    },
+    {
+      "id": "CP323-S24",
+      "module": "A",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        731,
+        836
+      ],
+      "procedure_refs": "A18–22",
+      "contract": "Return ordinary detection order. Remove special whose reaction ordinal in ordinary; latest strictly earlier ordinary source (first equal tie) suppresses if first strict stop from next source main open before special First and >= Blue1 source. Do not recross. Retained special suppresses ordinary sharing ordinal only with strictly later trigger. Stable combined sort source_time,trigger_event_time. No public filter."
+    },
+    {
+      "id": "CP323-S25",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        374,
+        438
+      ],
+      "procedure_refs": "TB legacy selection",
+      "contract": "Preserve native result order. Reset selection by main index; Reaction by First index, optional public clone; keep raw/public pair. Serialize prices as strings and separate nullable secondTime; no canonical ledger mutation."
+    },
+    {
+      "id": "CP323-S26",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2153,
+        2208
+      ],
+      "procedure_refs": "TB E handoff",
+      "contract": "Direct geometry closure dispatch optional order_geometry otherwise native detector first_order_reaction_after_gate, same gate and bounds; E receives both canonical Reaction lists, opposite Reset list and accepted Order inputs. Candidate geometry not automatic accepted Order."
+    },
+    {
+      "id": "CP323-S27",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2284,
+        2469
+      ],
+      "procedure_refs": "TB full direction A acceptance",
+      "contract": "S eligible A (not visible A) supplies accepted audit causes; provisional S visibility separate. Initial E then S-valid reconciliation if needed; all eligible A feed dominant-stop split even when hidden, stage-invalid A recorded. Invalid A physical source pair excludes accepted A; invalid S by a_source_time; only S-stage-invalid descendants removed from later calculation immediately; resolve accepted Order context then rebuild final E. CP322 confirmation accessor is linked, not recounted."
+    },
+    {
+      "id": "CP323-S28",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2470,
+        2645
+      ],
+      "procedure_refs": "TB feedback boundary",
+      "contract": "S reconciliation replaces by A/source-time identity, E rebuilt when changed. Consumed S evidence may replace E only with accepted independent A Order identities; rebuild ledger, suppress invalid S. Order_B loop reuses initial Blue/A/S stages, at most eight passes, converged identity returns; repeated changed identity or limit raises. Further S/E/Order chronology is next W2 partition."
+    },
+    {
+      "id": "CP323-S29",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2648,
+        2802
+      ],
+      "procedure_refs": "TB prepare_pipeline_state",
+      "contract": "Behavior Blue/A/S implies both native direction results, reusable full context iff E present and S enabled. Full context native geometry both directions over physical history; optional live.reactions/ownership and order_geometry callbacks, else batch detect and behavior annotation. Primary requests both calculation directions. Non-full context bounded A-stop closure, fresh full physical geometry for required directions, behavior annotation only if modules enabled; optional live not used in that branch. Keep full results and validity separate."
+    },
+    {
+      "id": "CP323-S30",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2915,
+        2936
+      ],
+      "procedure_refs": "TB range S handoff",
+      "contract": "Non-full S detects on supplied Blue/A and sets state detector; replace A with eligible list. Full route uses eligible A (not just clipped A), returns invalid identities and copied E list."
+    },
+    {
+      "id": "CP323-S31",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2939,
+        3108
+      ],
+      "procedure_refs": "TB final visibility",
+      "contract": "A occupancy and S stop labels first; projection captures accepted S/E/StopAll before lifecycle visibility; Primary A from range state's non-invalid A before display clipping, S/E after lifecycle visibility. Inclusive source range, invalid A/S pairs filtered, accepted out-of-range A Order causes retained. Mark Blue internal after calculation using all behavior records, then public filter; current A/S/E/StopAll internal helper copies only. Required Order identity from visible accepted rows; validation only when E detector exists."
+    },
+    {
+      "id": "CP323-S32",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3113,
+        3175
+      ],
+      "procedure_refs": "TB native/public distinction",
+      "contract": "Legacy optional transform calls published clone on native reaction; additive path prepares same raw/public selection once. Public geometry does not feed back into native ledger."
+    },
+    {
+      "id": "CP323-S33",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3405,
+        3448
+      ],
+      "procedure_refs": "TB Primary handoff",
+      "contract": "Build opposite range/visibility and both owner groups; accepted A sources from S eligible excluding invalid pairs for full OrderAudit. Native Primary callback registers and refreshes owner audit; optional live protocol only if state.live_stages non-null."
+    },
+    {
+      "id": "CP323-S34",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        80,
+        176
+      ],
+      "procedure_refs": "S01",
+      "contract": "S keeps original supplied Blue sequence, sorts A by Break time/source index. Reset formation map first valid reset by ordinal including internal; public Blue formation index only valid noninternal. Trend original order retained, separate chronology sorted tuples; opposite First dict last duplicate, Reset stable time order. Caller ordinal alignment derived from at most one emitted Blue per Reaction, native supplied order ascending ordinal; arbitrary external or reordered inputs not proven."
+    },
+    {
+      "id": "CP323-S35",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        201,
+        251
+      ],
+      "procedure_refs": "S05–08",
+      "contract": "A lifetime uses default S confirmation with valid 1-based Reaction ordinal, not A false-flag freeze. Strict A stop lower [max(start,range_start),range_end) with no fallback if nonempty miss; empty lower main starts >= original start within stage. Return source index/main time/event time, fallback main duplicated."
+    },
+    {
+      "id": "CP323-S36",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        628,
+        694
+      ],
+      "procedure_refs": "S25–28",
+      "contract": "A source event first lower equal extreme within source main, else source open. First matching ownership window [start,end) or open; trigger strictly > start independently eligible; closed-window Reset/Reset exception requires all times, Blue1 source>start, Blue1 stop<Blue2 source, A source=Blue2 stop. Both ordinals index supplied native Blue list, not filtered list. eligible list is fresh sorted A without owned ones."
+    },
+    {
+      "id": "CP323-S37",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        807,
+        852
+      ],
+      "procedure_refs": "S33–34",
+      "contract": "S formation explicit nonnull wins; non-reset with valid ordinal uses default confirmation otherwise source; Reset missing level returns source else first strict lower crossing in source main or open. Valid Reset formation <= candidate event qualifies, no same-main or internal requirement; distinct from A formation."
+    },
+    {
+      "id": "CP323-S38",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1248,
+        1304
+      ],
+      "procedure_refs": "S detect handoff",
+      "contract": "Clear windows/audit then audit all stopped A; traverse sorted A, skip S-owned or cycle-before (equality only when output exists). Stop from S confirmation, reject stop >= next A confirmation. Append open window before resolver; failure retains open; success closes at max(stop,decision+1us), cycle source; stable S sort source/decision."
+    },
+    {
+      "id": "CP323-S39",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        695,
+        763
+      ],
+      "procedure_refs": "LC visibility/identity",
+      "contract": "A visible suppression by main containing S decision; module identity type/family-or-color/number/source time/index; exact stop attribute else callback tuple last; priority StopAll>E red>S red>E blue>S blue>A/default; dominance stable rank key."
+    },
+    {
+      "id": "CP323-S40",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        766,
+        971
+      ],
+      "procedure_refs": "LC32",
+      "contract": "Register exact stopped S/E/StopAll and optional A with containing main; last duplicate identity stop map vs first stop for interior. Candidate A ordered source/index; eligible owner source strictly earlier and stop main <= A, prior A trigger>stop escapes. Rank latest stop main,priority,number,source,index,earliest ordinal; strict beyond price required to reject. Interior exception requires main head directional extreme from owner stop to A First and head before A plus aligned trend First/Break/exact confirmation strictly bounded. Interior valid consumes eligible <= priority; invalid S-owned A does not consume S, records stage invalid; other invalid consumes <= priority. No source mutation."
+    },
+    {
+      "id": "CP323-S41",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1412,
+        1610
+      ],
+      "procedure_refs": "LC41–46",
+      "contract": "Provenance boundary uses earliest A Blue1/Blue2/continuation/First vs dominant prior exact stop, not price. Internal point and reaction helpers exist but current filter copies lists only. Final lineage restores historical S for E and A for S, sorted by source/index; original identity snapshots not updated during extension; E/StopAll occupancy then invalid S removes records, no second lineage pass; public A index occupancy separately."
+    },
+    {
+      "id": "CP323-S42",
+      "module": "LV",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        22,
+        70
+      ],
+      "procedure_refs": "L01–03",
+      "contract": "Public append requires complete pipeline, integer positive timeframe; validates nondecreasing positive integral RAW times, stages buckets then calculation and progress; BaseException rebuilds views on retry after bucket rollback. No detector live object supplied; closed-prefix cache distinct."
+    },
+    {
+      "id": "CP323-S43",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        776,
+        806
+      ],
+      "procedure_refs": "OA immediate internal-owner consumer",
+      "contract": "Trend-leg Order selection excludes behavior_internal trend, requires continue decision, First strictly after confirmation and canonical opposite physical identity. No promotion of independent geometry absent canonical match."
+    },
+    {
+      "id": "CP323-S44",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2105,
+        2122
+      ],
+      "procedure_refs": "OA native/fallback identity boundary",
+      "contract": "Recover opposite by First only if Break matches; otherwise construct Order geometry from stored zone fields with behavior_internal false. Separate provenance representation, not a native Reaction append."
+    }
+  ],
+  "lexical_census": {
+    "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Transition_Symbol_Census.json",
+    "blob": "56091756947b8b56f90100968e91920a44871b2c",
+    "sites": 90,
+    "modules": 15
+  },
+  "reference_readback": [
+    {
+      "path": "Algorithms/V3/01_Reaction_Engine.md",
+      "blob": "b21ad202aaf1fbbc0e098ad553b143c6bb4fc611"
+    },
+    {
+      "path": "Algorithms/V3/02_Reset_Algorithm.md",
+      "blob": "75cbbc87e901ed87bcdddf5432109a933eb9e4f4"
+    },
+    {
+      "path": "Algorithms/V3/03_Blue_Line.md",
+      "blob": "69328918ac76dcde29eee0dc4a444b6412f6d37f"
+    },
+    {
+      "path": "Algorithms/V3/04_A_Zone.md",
+      "blob": "018c6276b6d5203369a95301e7b2480ec22e2d18"
+    },
+    {
+      "path": "Algorithms/V3/05_S_Zone.md",
+      "blob": "8e461aae1a14ac08a39fe7c8d73747d8a4a16ef0"
+    },
+    {
+      "path": "Algorithms/V3/10_Lifecycle.md",
+      "blob": "0acca58662ee6d975da3b53cca8237e9578f9bb5"
+    },
+    {
+      "path": "Algorithms/V3/18_Live_Bridge.md",
+      "blob": "08d94f96b520199bda362c5c88470b10d1804dcc"
+    },
+    {
+      "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+      "blob": "76ff6aa44c365d36a8f1954edb69564344df6030"
+    },
+    {
+      "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+      "blob": "303894c987e262ba4e0b68536805f134a252503f"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/01_Time_Reaction.md",
+      "blob": "9cca7bd5bdbd4b01837ce07d9a3d194a639186b4"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/02_Blue_A_S.md",
+      "blob": "247a11375b5c591b147ec204e10274d8c4e7e139"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "blob": "118a4e00b9f8c647ac3ebdb7dabfa04a7f39ffd3"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/08_Current_Chronology_Rebaseline.md",
+      "blob": "a13e9ac9b7916094e6a7268b362134b39dd2dae9"
+    }
+  ],
+  "reconciliation": [
+    "BL09 emits at most one Blue per native Reaction: Scale sets hasBlue and counter=0, suppressing every same-group Reset; first eligible Reset likewise zeroes counter and suppresses all remaining group members. Native ordinal strictly increases between emissions. Thus A01's stable sort by (reaction_number,source_time,kind) preserves native Blue order, including invalid/internal; S01's copied list aligns with A ordinal in both Bridge paths. Conditional external reordered/synthetic inputs are not proven. The complete native chain uses full Blue for A/S before display filtering; caller of optional live protocol must preserve same sequence and ordinal contract.",
+    "A18 progress: no-match breaks, no-source/trigger skips; after successful match under coherent native chronology, formation events belong to their stated main intervals and A13 trigger is at/after both prior and current formation (inheritance requires previous earlier; no-inheritance route either previous stop earlier or trigger at/after both stops). A15 returns confirmation>=trigger, and A14 scan is bounded to matched Break main or its open fallback. Under ordered native main grid and coherent formation/stop mapping, previous formation index<=matched Break, so skip-through-cycle advances at least current previous position; bridge-reuse also increments. No unconditional index increment is implemented; malformed/external chronology or noncoherent custom timestamps remain conditional, not asserted runtime termination.",
+    "CH13 wording 'Break-open confirmation' means scan START at Break open (false flag), not necessarily confirmation at open; actual strict lower crossing may be later. CH86 later lower rows excluded only when lower evidence exists; A08 empty-lower fallback includes complete endpoint main OHLC. Public Reaction clone First==Break corner is documented; no invented intrabar proof. Native analysis start, published clone start, A false-flag and default confirmation are separate.",
+    "Blue internal flag can be mutated in place after calculation and is monotonic for a retained line object; LiveBlue result shares objects and rewind depends on caller first_changed including removed old resets and changes to prior behavior metadata. LiveBehavior can revise previous inner flags if opposite geometry changes. Optional live protocol implementation is not established by public entry; no guarantee of composed cache equivalence beyond explicit guards.",
+    "Direct source lexical census includes declarations, annotations and references, not all implicit dynamic targets. Source-reviewed procedure ranges overlap CP322 source neighborhoods intentionally for different transition semantics; CP322 20 accessor site IDs remain independent and never added to CP323 transition counts. Full W2 transitive S/E/Order/Primary/etc state machines remain open."
+  ],
+  "validation": {
+    "prior_rows": 29,
+    "new_rows": 44,
+    "total_transition_rows": 73,
+    "prior_span_overlaps": 0,
+    "duplicate_ids": 0,
+    "source_module_blobs_matched": 15,
+    "lexical_sites": 90,
+    "reference_blobs_in_pinned_tree": 13,
+    "source_only": "PASS_SCOPED",
+    "runtime": "NOT RUN",
+    "raw": "NOT RUN",
+    "benchmark": "NOT RUN"
+  },
+  "remaining": "CP324 / W2: S decision chronology (stopped A, opposite Order, Type3/Type4, red/blue/fallback race, shared Order stop, live dependency ownership), then further Order/E/lifecycle/Primary/projection/live chronology and W3/W4. Scope partition chosen from outstanding W2 dependencies."
+}
