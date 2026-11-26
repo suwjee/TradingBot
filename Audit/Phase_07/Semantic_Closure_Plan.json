@@ -7,7 +7,7 @@
   "phase_08": "BLOCKED",
   "scope": "SOURCE_ONLY",
   "planning_status": "COMPLETE",
-  "semantic_audit_status": "NOT RUN",
+  "semantic_audit_status": "INCOMPLETE",
   "prior_inventory": {
     "modules": 16,
     "contexts": 744,
@@ -18,13 +18,13 @@
     "calls": 5120
   },
   "original_site_category_rows": 11504,
-  "verified_independent_site_rows_in_this_plan": 0,
+  "verified_independent_site_rows_in_this_plan": 74,
   "scope_note": "No new semantic verification is claimed. Prior context review remains valid for its original scope. Counts are category rows, not necessarily distinct AST nodes.",
   "batches": [
     {
       "id": "B01",
       "title": "Shared primitives and initialization",
-      "status": "NOT RUN",
+      "status": "PASS",
       "modules": [
         {
           "path": "engine/__init__.py",
@@ -77,7 +77,14 @@
           "calls": 6
         }
       ],
-      "site_category_rows": 74
+      "site_category_rows": 74,
+      "review_scope": "W1 local source-first owner review; W2 and W3 remain open",
+      "evidence": [
+        "Audit/Phase_07/Semantic_Closure_B01.json",
+        "Audit/Phase_07/Semantic_Closure_B01.md"
+      ],
+      "reviewed_original_rows": 74,
+      "supplemental_items": 14
     },
     {
       "id": "B02",
@@ -267,7 +274,7 @@
       "id": "W1",
       "checkpoint": "14 onward",
       "title": "Source-first owner semantic closure",
-      "status": "NOT RUN"
+      "status": "INCOMPLETE"
     },
     {
       "id": "W2",
@@ -335,5 +342,5 @@
       "evidence": []
     }
   ],
-  "next_action": "B01: independently review the pinned shared primitives and initialization; create the first evidence ledger, including temporal disposition and any supplemental expressions."
+  "next_action": "B02 Reaction; split by complete procedures into source-first evidence batches. W2 and W3 remain open."
 }

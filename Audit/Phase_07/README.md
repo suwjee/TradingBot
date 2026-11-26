@@ -61,3 +61,8 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Semantic closure execution plan
 
 [Execution plan](Semantic_Closure_Execution_Plan.md) and [machine-readable register](Semantic_Closure_Plan.json) define the remaining source-only audit, ten owner batches, cross-owner reconciliation, separate forensic review and acceptance gates. Planning COMPLETE; no new semantic site certified by this plan. **Phase 07 INCOMPLETE; Phase 08 BLOCKED.** Next: B01, shared primitives and initialization.
+
+
+## Checkpoint 14 — B01 shared primitives and initialization
+
+[Local review](Semantic_Closure_B01.md) and [site evidence](Semantic_Closure_B01.json): five modules, 74/74 original category rows and 14 supplemental items reviewed in W1. Local review PASS; cross-owner and separate forensic review remain open. No local material specification mismatch identified. Phase 07 INCOMPLETE; Phase 08 BLOCKED. Next B02 Reaction.
