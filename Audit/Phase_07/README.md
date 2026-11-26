@@ -76,3 +76,13 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 16 — B02-02 standalone Reaction scan, post-break Reset and reflection
 
 [Local review](Semantic_Closure_B02_02.md) and [site evidence](Semantic_Closure_B02_02.json): RE13–RE18, lines 328–689, 179 original rows, 15 supplemental items, one resolved local specification omission (B02-02-F01). Sub-batch PASS; B02 350/1877, 1527 pending. Next line 690 / RE19. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 17 — Reflected sequences, Bearish adapters and published geometry
+
+[Local review](Semantic_Closure_B02_03.md) and [site evidence](Semantic_Closure_B02_03.json): 103 original rows, 7 supplemental items, 2 resolved local documentation omissions; sub-batch PASS. B02 453/1877, Phase 07 INCOMPLETE, Phase 08 BLOCKED.
+
+
+## Checkpoint 18 — Segment index, suffix refresh, strict crossing and cache lifecycle
+
+[Local review](Semantic_Closure_B02_04.md) and [site evidence](Semantic_Closure_B02_04.json): 229 original rows, 11 supplemental items, 1 resolved local documentation omissions; sub-batch PASS. B02 682/1877, Phase 07 INCOMPLETE, Phase 08 BLOCKED.

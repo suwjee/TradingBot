@@ -101,7 +101,7 @@ Null=>null. Replace top/bottom and their source fields swapped and sign-reflecte
 Null=>null; mirror event/source candle and negate extreme.
 
 ### RE19 — _ReflectedCandles.__init__
-Retain source and same-length null mirror cache.
+Retain source and allocate null mirror cache to its initial length; current length queries use the source, and no automatic cache resize or freshness check is implemented.
 
 ### RE20 — _ReflectedCandles.__len__
 Source length.
@@ -134,7 +134,7 @@ Mirror analysis/candle, negate top, RE13; mirror non-null result back.
 Reference detect first_only; return R with mirrored candidates, reset broken levels sign-reflected, original start/end.
 
 ### RE30 — published_reaction_candidate
-Clone input. Missing Break or invalid First/Break bounds returns clone unchanged. For B only if bottom source==Break, initialize min Low from First then complete main candles strictly before Break; threshold top. For R only if top source==Break, max High and threshold bottom. Unsupported direction raises after bounds check. Scan lower within Break main; update opposite extreme first, then strict confirmation check on same row; if confirmation found freeze price/source (Break main for lower extreme), earliest equal main source. If no confirmation leave clone unchanged. Does not mutate detection.
+Clone input. Missing Break or invalid First/Break bounds returns clone unchanged. For B only if bottom source==Break, initialize min Low from First then complete main candles strictly before Break; threshold top. For R only if top source==Break, max High and threshold bottom. Unsupported direction raises after bounds check. Scan lower within Break main; update opposite extreme first, then strict confirmation check on same row; if confirmation found freeze price/source (Break main for lower extreme), earliest equal main source. If no confirmation leave clone unchanged. Bounds allow First==Break: initialization then uses the full First/Break main extreme before the lower scan, so the lower scan does not guarantee removal of a later extreme in that case. Do not impose a First<Break guard or reset the initial extreme. Does not mutate detection.
 
 ## Segment indexes
 

@@ -105,7 +105,7 @@ From first through length, normalized low/high and position at leaf size+positio
 Descending nodes last..before_first exclusive. Null left=>right, null right or left min<=right/max>=right=>left, otherwise right; copy corresponding position. Earliest tie.
 
 ### RE34 — refresh_suffix
-Require 0<=first<=old length<=new length<=size; if first==new length no-op. Clear history if dirty first<old length-1. Replace timestamp suffix, update length/leaves, recompute affected ancestor ranges bottom-up.
+Require 0<=first<=old length<=new length<=size; if first==new length no-op. Clear history if present and dirty first<old length-1. Replace timestamp suffix in place, update length/leaves, recompute affected ancestor ranges bottom-up; this helper has no internal rollback.
 
 ### RE35 — first_less
 RE40 minimum tree, exclude nodes with value>=level.
