@@ -238,3 +238,18 @@ Per the user's 2026-11-26 instruction, continue source-only reverse engineering.
 ### Phase 07 — checkpoint 35
 
 [Frozen A source and ordinary adjacent-pair cycle](Audit/Phase_07/Semantic_Closure_B03_07.md): 72 original rows, local PASS. B03 INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 36
+
+[A collision resolution, first-stop ownership and publication](Audit/Phase_07/Semantic_Closure_B03_08.md): 59 original rows, local PASS. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 37
+
+[Live A cache keys, dirty frontier, replay and object publication](Audit/Phase_07/Semantic_Closure_B03_09.md): 198 original rows, local PASS. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — B03 W1 local completion
+
+[Blue and A completion evidence](Audit/Phase_07/Semantic_Closure_B03_Completion.json): 1145/1145 original rows, local PASS. W2/W3 open; next B04 S Zone. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

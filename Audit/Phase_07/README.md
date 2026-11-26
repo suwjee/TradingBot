@@ -181,3 +181,18 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 35 — Frozen A source and ordinary adjacent-pair cycle
 
 [Local review](Semantic_Closure_B03_07.md) and [site evidence](Semantic_Closure_B03_07.json): 72 original rows, 6 supplemental items, 3 resolved findings; local PASS. A 451/708; B03 888/1145. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 36 — A collision resolution, first-stop ownership and publication
+
+[Local review](Semantic_Closure_B03_08.md) and [site evidence](Semantic_Closure_B03_08.json): 59 original rows, 6 supplemental items, 2 resolved findings; local PASS. A 510/708; B03 947/1145. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 37 — Live A cache keys, dirty frontier, replay and object publication
+
+[Local review](Semantic_Closure_B03_09.md) and [site evidence](Semantic_Closure_B03_09.json): 198 original rows, 16 supplemental items, 4 resolved findings; local PASS. A 708/708; B03 1145/1145. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## B03 W1 local completion
+
+[Completion evidence](Semantic_Closure_B03_Completion.json): Blue 437/437 and A 708/708 original rows, 57 procedures, 77 supplemental items. Nine contiguous per-module partitions; local PASS. W2/W3 open; next B04 S Zone. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

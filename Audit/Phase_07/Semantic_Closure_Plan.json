@@ -18,7 +18,7 @@
     "calls": 5120
   },
   "original_site_category_rows": 11504,
-  "verified_independent_site_rows_in_this_plan": 2839,
+  "verified_independent_site_rows_in_this_plan": 3096,
   "scope_note": "No new semantic verification is claimed. Prior context review remains valid for its original scope. Counts are category rows, not necessarily distinct AST nodes.",
   "batches": [
     {
@@ -337,7 +337,7 @@
     {
       "id": "B03",
       "title": "Blue and A",
-      "status": "INCOMPLETE",
+      "status": "PASS",
       "modules": [
         {
           "path": "engine/pipeline/blue_line_detector.py",
@@ -480,14 +480,49 @@
             "Audit/Phase_07/Semantic_Closure_B03_07.json",
             "Audit/Phase_07/Semantic_Closure_B03_07.md"
           ]
+        },
+        {
+          "id": "B03-08",
+          "status": "PASS",
+          "path": "engine/pipeline/a_zone_detector.py",
+          "source_range": [
+            734,
+            847
+          ],
+          "procedures": "A19–A23",
+          "original_rows": 59,
+          "supplemental_items": 6,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B03_08.json",
+            "Audit/Phase_07/Semantic_Closure_B03_08.md"
+          ]
+        },
+        {
+          "id": "B03-09",
+          "status": "PASS",
+          "path": "engine/pipeline/a_zone_detector.py",
+          "source_range": [
+            848,
+            1070
+          ],
+          "procedures": "A24–A39",
+          "original_rows": 198,
+          "supplemental_items": 16,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B03_09.json",
+            "Audit/Phase_07/Semantic_Closure_B03_09.md"
+          ]
         }
       ],
-      "review_scope": "Blue W1 local complete; A local through line 733 / A18; W2/W3 open",
-      "reviewed_original_rows": 888,
-      "supplemental_items": 55,
-      "next_module": "engine/pipeline/a_zone_detector.py",
-      "next_source_line": 734,
-      "blue_completion_evidence": "Audit/Phase_07/Semantic_Closure_B03_Blue_Completion.json"
+      "review_scope": "Blue and A W1 local owner review complete; W2/W3 open",
+      "reviewed_original_rows": 1145,
+      "supplemental_items": 77,
+      "next_module": null,
+      "next_source_line": null,
+      "blue_completion_evidence": "Audit/Phase_07/Semantic_Closure_B03_Blue_Completion.json",
+      "completion_evidence": "Audit/Phase_07/Semantic_Closure_B03_Completion.json"
     },
     {
       "id": "B04",
@@ -699,5 +734,5 @@
       "evidence": []
     }
   ],
-  "next_action": "B03-08 A Zone, line 734 / A19 special collision and live cache; 257 original A rows remain. W2 and W3 open."
+  "next_action": "B04 S Zone, begin pinned source line 1 and original site inventory; W2 and W3 open."
 }

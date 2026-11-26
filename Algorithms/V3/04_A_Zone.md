@@ -23,7 +23,7 @@ Inheritance requires previous formation earlier. Chained requires earlier actual
 
 Walk adjacent valid states; expire pair at next valid state's formation. Skip formations already consumed through previous accepted Reaction Break, except explicitly retained bridge ordinal. After trigger select first Reaction in original order with confirmation >= trigger exact time and First >= max(effective two stop main times); no match breaks ordinary loop. A source is directional extreme from trigger main open through that Reaction exact confirmation inclusive, with earliest equal extreme and main owner. If reversed interval no source. A record freezes continuation, both Blue stops/levels, trigger and aligned Reaction. Exact Blue stop metadata populated only when actual/effective main stop agree. Allow reuse of current Blue with next when A strict stop exists and next formation >= stop exact; otherwise skip consumed formations through Break.
 
-Double-stop iterates full sorted list: valid line replaces retained previous; invalid line can use that previous if first strict crossing previous extreme from invalid source time to source main end belongs to same invalid main. Require first aligned Reaction (confirmation >= exact crossing, First >= invalid formation). Freeze source as ordinary; continuation = previous Blue source, both effective stop main times = invalid source main, route double-stop; no exact Blue stop fields. Successful special consumes retained previous, unsuccessful leaves it. Remove specials sharing ordinary Reaction ordinal. Reject special if latest earlier ordinary has first stop before special Reaction First and not before special Blue1 source (only first stop matters). Remaining special supersedes later-trigger ordinary with overlapping Blue ordinal; equal trigger does not remove. Stable final sort source time,trigger event. A display eligibility is separate.
+Double-stop iterates full sorted list: valid line replaces retained previous; invalid line can use that previous if first strict crossing previous extreme from invalid source time to source main end belongs to same invalid main. Require first aligned Reaction (confirmation >= exact crossing, First >= invalid formation). Freeze source as ordinary; continuation = previous Blue source, both effective stop main times = invalid source main, route double-stop; no exact Blue stop fields. Successful special consumes retained previous, unsuccessful leaves it. Remove specials sharing ordinary Reaction ordinal. Reject special if latest strictly earlier-source ordinary has an A22 first stop from its next source main open to special Reaction First exclusive and not before special Blue1 source (only that owner's first hit in this window matters; no recross or earlier-owner fallback). Remaining special supersedes later-trigger ordinary with overlapping Blue ordinal; equal trigger does not remove. Stable final sort source time,trigger event. A display eligibility is separate.
 
 ## A-M04 — Live state and invariants
 
@@ -155,11 +155,11 @@ A25(end) AND (changed_reaction_time absent OR end<=changed time). Short-circuit.
 
 ### A27 — _LiveAZoneDetector._reaction_confirmation_time
 
-Key=(integer break_idx,string of confirmation-side box_top B / box_bottom R). If absent current confirmations: use previous if main timestamp at index settled and key present, else base A14. Store current and return. String representation preserves Decimal spelling distinctions; no cross-run global cache.
+Key=(integer break_idx,string of confirmation-side box_top B / box_bottom R). If absent current confirmations: use previous if Break main open (not exact confirmation time) settled and key present, else base A14. A caller-owned dirty frontier must cover any affected Break bucket; the local guard does not prove arbitrary intrabar mutation safety. Store current and return. String representation preserves Decimal spelling distinctions; no cross-run global cache.
 
 ### A28 — _LiveAZoneDetector._reset_formation_time
 
-Key=(source index,string broken level). Use prior reset_formations if source main timestamp settled and key present, else base A10. Write current history and return, does not first consult current cache.
+Key=(source index,string broken level). Use prior reset_formations if source main open (not exact Reset event) settled and key present, else base A10; the dirty frontier must cover any changed source bucket. Write current history and return, does not first consult current cache.
 
 ### A29 — _LiveAZoneDetector._first_crossing
 
@@ -195,7 +195,7 @@ End=A27 confirmation; key=(trigger index,end). If end and trigger main timestamp
 
 ### A36 — _LiveAZoneDetector._zone
 
-Key is tuple of (field name,value) in supplied keyword insertion order, with every Decimal value replaced by its native representation tuple (sign,digits,exponent), not equality-normalized. If previous zones key yields non-null, return same record object; otherwise base A21 allocates. Store current result. Unhashable value fails natively; no implicit sorting.
+Key is tuple of (field name,value) in supplied keyword insertion order, with every Decimal value replaced by its native representation tuple (sign,digits,exponent), not equality-normalized. If previous zones key yields non-null, return same record object; otherwise base A21 allocates. Store current result, but do not consult current zones on later calls; only previous.zones lookup can reuse a record. Unhashable value fails natively; no implicit sorting.
 
 ### A37 — LiveAZoneContinuation.__init__
 
@@ -207,4 +207,4 @@ Property returns fresh list of retained records; objects shared.
 
 ### A39 — LiveAZoneContinuation.update
 
-Require revised timeframe equal previous, else ValueError; require 0<=first_dirty_main<=min(old count,new count), else ValueError. Dirty time = min available timestamp at that position across old and new time arrays; default = new last timestamp+timeframe if new times nonempty else null (default expression evaluated even when candidates exist). Construct fresh live detector with prior and dirty; detect; replace its previous history with fresh _AHistory to release old history; commit detector and result to wrapper only after successful calculation. Return A38 copy. No explicit exception catch or change to original source rows.
+Require revised timeframe equal previous, else ValueError; require 0<=first_dirty_main<=min(old count,new count), else ValueError. Dirty time = min available timestamp at that position across old and new time arrays; default = new last timestamp+timeframe if new times nonempty else null (default expression evaluated even when candidates exist). Construct fresh live detector with prior and dirty; detect; replace its previous history with fresh _AHistory to release old history; commit detector and result to wrapper only after successful calculation. Return A38 copy after publishing the detector/result; a failure of that copy has no local rollback. No explicit exception catch or change to original source rows. Dirty index guard does not enforce exact integer type.
