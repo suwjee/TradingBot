@@ -1,0 +1,182 @@
+{
+  "checkpoint": 300,
+  "batch": "RB08/W1/B09",
+  "status": "PASS_SCOPED_CORE_HELPERS_AND_LEGACY_SERIALIZATION_LOCAL_SEMANTIC_REVIEW",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "718ef8a89fa34aca866752408124322222a26bca",
+  "validated_evidence_head": "7433bd67b6ae41fc75591e757de22e2c791befbb",
+  "source_path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+  "source_ranges": [
+    [
+      1,
+      100
+    ],
+    [
+      366,
+      373
+    ],
+    [
+      374,
+      396
+    ],
+    [
+      397,
+      440
+    ],
+    [
+      441,
+      460
+    ],
+    [
+      461,
+      487
+    ]
+  ],
+  "scope": "Module preamble, five progress/loading procedures and five selection/legacy serializer procedures; source-only local semantic review.",
+  "counts": {
+    "w1_previous": 1328,
+    "w1_this_checkpoint": 108,
+    "w1_reviewed": 1436,
+    "w1_denominator": 2317,
+    "w1_remaining": 881,
+    "by_category": {
+      "branches": {
+        "reviewed": 387,
+        "total": 562,
+        "remaining": 175
+      },
+      "comparisons": {
+        "reviewed": 224,
+        "total": 337,
+        "remaining": 113
+      },
+      "arithmetic": {
+        "reviewed": 117,
+        "total": 173,
+        "remaining": 56
+      },
+      "calls": {
+        "reviewed": 708,
+        "total": 1245,
+        "remaining": 537
+      }
+    },
+    "additional_this_checkpoint": {
+      "accesses": 319,
+      "effects": 21,
+      "exits": 11,
+      "total": 351
+    },
+    "additional_cumulative": 5606,
+    "additional_cumulative_by_category": {
+      "accesses": 5161,
+      "effects": 340,
+      "exits": 105
+    },
+    "all_sites_this_checkpoint": 459,
+    "all_sites_cumulative": 7042,
+    "contracts_this_checkpoint": 22,
+    "contracts_cumulative": 203,
+    "exact_mapped_spans": 457,
+    "newly_accepted_CP292_accesses": 2,
+    "retired_historical_accesses": 2,
+    "duplicate_or_prior_overlap": 0,
+    "remaining_owner_intervals": 36
+  },
+  "evidence_blobs": {
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP300_B09_Core_Helpers_Serialization_Review.json": "783ba91dee5fe43c4fe8d42e0ac5b3ba07e90b18",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP300_Prior_Overlap_Validation.json": "ecdbfbbb5f13435914f119582ac7deec00b33f4e",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP300_Remaining_Bridge_Owners.json": "fae1c4debdc95e1588912a165543fd319a6b384e"
+  },
+  "validation": {
+    "source_blob_match": true,
+    "exact_mapped_source_span_comparison": true,
+    "historical_mapped_retired_partition_complete": true,
+    "cp292_current_complement_linked": true,
+    "exact_CP299_remaining_ID_match": true,
+    "prior_CP293_through_CP299_overlap_zero": true,
+    "all_rows_linked_to_contracts": true,
+    "remaining_category_complement_complete": true,
+    "individual_evidence_remote_readback": true,
+    "main_unchanged_at_evidence_head": true,
+    "only_new_evidence_files_at_evidence_head": true
+  },
+  "dependency_interface_review": [
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "anchors": [
+        104,
+        116,
+        128,
+        1974,
+        3113,
+        3190,
+        3770
+      ],
+      "finding": "Time conversions and dynamic engine loader callers are native bridge interfaces; legacy and additive serializers share selection when additive output enabled."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "anchors": [
+        31,
+        41,
+        67,
+        788
+      ],
+      "finding": "Candidate/Reset native schemas and presentation clone own geometry; serialization does not rediscover trading events."
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "anchors": [
+        32,
+        66
+      ],
+      "finding": "BlueLine has Decimal prices and optional Fibonacci/broken levels; legacy serializer omits internal validity metadata."
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "anchors": [
+        35,
+        58
+      ],
+      "finding": "AZone has separate trigger event timestamp and optional presentation provenance; legacy serializer does not emit optional route or Blue stop event timestamps."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP300-F01",
+      "detail": "Progress and timing exception ordering: started notification occurs outside protected work; finally completion occurs even for work failure, and cleanup failure may supersede original exception."
+    },
+    {
+      "id": "CP300-F02",
+      "detail": "Dynamic loader inserts module before execution and has no rollback; import bootstrap only inserts exact path if absent."
+    },
+    {
+      "id": "CP300-F03",
+      "detail": "Index selection bypasses int conversion if either bound absent; Reaction filter uses original First index before transformation; non-null selected_items bypasses reselection."
+    },
+    {
+      "id": "CP300-F04",
+      "detail": "Legacy Reaction and Reset output keeps input order and exact str price representation; unguarded Break time conversion requires valid candidate."
+    },
+    {
+      "id": "CP300-F05",
+      "detail": "Blue filters source index only and omits native internal flags; A maps existing items without local filtering, sets calculationValid true and preserves distinct trigger/event times."
+    }
+  ],
+  "documentation_changes": "One source-pinned clarification section appended to Bridge documentation; no production changes.",
+  "limitations": [
+    "No independent full current canonical AST replay; exact historical source spans and CP287/CP292 anchored complements support scoped acceptance.",
+    "Remaining-owner intervals are source grouping, not full runtime ownership proof.",
+    "No runtime, RAW, differential or benchmark testing authorized. Dependency review is interface-local, not W2/W3/W4 acceptance.",
+    "Pinned GitHub source-only workflow supersedes archive startup. No ZIP."
+  ],
+  "runtime": "NOT RUN",
+  "raw": "NOT RUN",
+  "next": "CP301 / RB08 / W1 / B09 — serialize_s_zones (488–552), serialize_e_zones (553–595), serialize_stopalls (596–662), bridge_datetime (663–676), bridge_direction (677–680), bridge_mode (681–684), bridge_color (685–690), _bridge_horizon (691–697), _bridge_in_horizon (698–701) only if complete-procedure verification is feasible; use CP300 remaining exact row IDs."
+}
