@@ -1,0 +1,169 @@
+{
+  "checkpoint": 295,
+  "batch": "RB08/W1/B09",
+  "status": "PASS_SCOPED_FEEDBACK_AND_PIPELINE_STATE_LOCAL_SEMANTIC_REVIEW",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "092b7b88cf1f038cfce20064b593edc8af60b29c",
+  "validated_algorithm": "268f4dfd8f933fd16b43c36e0e5457f4fbc94a34",
+  "source_path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+  "scope": "Complete calculate_direction_with_order_b_feedback and prepare_pipeline_state local contracts, no cross-owner/runtime certification.",
+  "source_ranges": [
+    [
+      2569,
+      2645
+    ],
+    [
+      2648,
+      2802
+    ]
+  ],
+  "counts": {
+    "w1_this_checkpoint": 109,
+    "w1_previous": 536,
+    "w1_reviewed": 645,
+    "w1_denominator": 2317,
+    "w1_remaining": 1672,
+    "by_category": {
+      "branches": {
+        "reviewed": 167,
+        "total": 562,
+        "remaining": 395
+      },
+      "comparisons": {
+        "reviewed": 100,
+        "total": 337,
+        "remaining": 237
+      },
+      "arithmetic": {
+        "reviewed": 65,
+        "total": 173,
+        "remaining": 108
+      },
+      "calls": {
+        "reviewed": 313,
+        "total": 1245,
+        "remaining": 932
+      }
+    },
+    "additional_this_checkpoint": {
+      "accesses": 509,
+      "effects": 42,
+      "exits": 4,
+      "total": 555
+    },
+    "additional_cumulative": 2818,
+    "all_sites_this_checkpoint": 664,
+    "all_sites_cumulative": 3463,
+    "contracts_this_checkpoint": 16,
+    "contracts_cumulative": 98,
+    "historical_w1_continuity": 88,
+    "new_w1_sites": 21,
+    "retired_historical_w1": 11,
+    "new_additional_sites": 108,
+    "retired_historical_additional": 51,
+    "duplicate_or_prior_overlap": 0
+  },
+  "evidence_blobs": {
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP295_B09_Feedback_Pipeline_Review.json": "0d011678c5cec2988547dc3a9e85a8070df8481d",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP295_B09_Feedback_Pipeline_Additional_Sites.json": "d660fa6d2094fa2a1b3caa2adce95daa328e57b7",
+    "Algorithms/V3/17_Trading_Bridge.md": "39387eeba17e21a284022d648b10f438fe4feb69"
+  },
+  "validation": {
+    "source_blob_match": true,
+    "exact_source_relocation": true,
+    "historical_inventory_blob": "0f0ac9496634808eb76847494cdedcf71dc2dae0",
+    "historical_census": {
+      "branches": 29,
+      "comparisons": 22,
+      "arithmetic": 3,
+      "calls": 45,
+      "accesses": 457,
+      "effects": 37,
+      "exits": 4
+    },
+    "historical_mapped_and_retired_partition_complete": true,
+    "current_complement_from_CP292": true,
+    "row_node_scope_span_readback": true,
+    "prior_CP293_CP294_overlap_zero": true,
+    "all_rows_linked_to_contracts": true,
+    "remote_readback": true,
+    "changed_paths_before_completion": [
+      "Audit/Phase_07/Rebaseline_v2_8_7/CP295_B09_Feedback_Pipeline_Review.json",
+      "Audit/Phase_07/Rebaseline_v2_8_7/CP295_B09_Feedback_Pipeline_Additional_Sites.json",
+      "Algorithms/V3/17_Trading_Bridge.md"
+    ],
+    "production_source_raw_unchanged": true
+  },
+  "dependency_interface_review": [
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "anchors": [
+        442,
+        530,
+        1135,
+        2249
+      ],
+      "finding": "Native discovery filters invalid A and constructs accepted lifetimes; signature sorted 17-field tuples; registration merges physical identity; ensure preserves accepted historical audit and indexes. Full owner proof deferred."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "anchors": [
+        25,
+        915
+      ],
+      "finding": "Discovery is imported from OrderAudit; independent-root restoration derives accepted S roots, uses physical source identity, may replace or add E. Bridge keeps original occupied donors before native reconciliation."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "anchors": [
+        712,
+        1377
+      ],
+      "finding": "Priority owned by lifecycle. Reconciliation selects visible S, detects StopAll, assigns sequence_resets, returns shallow E input list and StopAll; no global retroactive E replay."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "anchors": [
+        1433,
+        1554,
+        2068
+      ],
+      "finding": "Native ownership needs both reaction directions; fallback independent finder and full detector geometry are distinct paths. Native full direct finder uses gate event in its bounded geometry cache; fallback finder owns its own behavior."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP295-F01",
+      "status": "DOCUMENTATION_CLARIFIED",
+      "detail": "Donor filter uses fixed occupied set; does not itself deduplicate admitted restored rows."
+    },
+    {
+      "id": "CP295-F02",
+      "status": "DOCUMENTATION_CLARIFIED",
+      "detail": "Convergence checks selected sorted 17-field signature, not whole objects; empty initial signature not preseeded."
+    },
+    {
+      "id": "CP295-F03",
+      "status": "DOCUMENTATION_CLARIFIED",
+      "detail": "Lifecycle reconciles StopAll and publishes sequence_resets without global E replay; returns shallow E input."
+    },
+    {
+      "id": "CP295-F04",
+      "status": "DOCUMENTATION_CLARIFIED",
+      "detail": "Nonreusable path bypasses live reactions/ownership and primary expansion; supplied live reference still retained."
+    }
+  ],
+  "limitations": [
+    "Historical canonical rows + exact current crosswalk and CP292 projected current complement; no full current AST replay.",
+    "Local owner interface review, not W2/W3/W4, not runtime or RAW verification.",
+    "Initial combined publication attempt exceeded connector call limit; separate reports were written and verified. The partial status in first report is preserved as historical entry evidence."
+  ],
+  "runtime": "NOT RUN",
+  "raw": "NOT RUN",
+  "next": "CP296 / RB08 / W1 / B09 — DirectionRangeState and DirectionVisibilityState declarations (2805–2836), calculate_direction_range_state (2837–2938); then finalize_direction_visibility (2939–3112) if complete-procedure scope and validation capacity permit. Preserve all prior evidence."
+}
