@@ -1,0 +1,173 @@
+{
+  "checkpoint": 362,
+  "phase": "07/W3",
+  "status": "PASS_SCOPED_W3_B02_ORDER_GATE_CONCURRENT_GEOMETRY_LOCAL",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "77dfe8f463962addb834dd6e6f34f685a918ae13",
+  "entry_tree": "a50ac728775c7511d13ba1c1621e49f97bb802dc",
+  "scope": "B02 source lines 2068–2290, RE88–RE91, direct Order gate, FIFO cache, gate owner time check and concurrent candidate geometry; complete historical B02-11 and bounded consumers",
+  "evidence": [
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP362_W3_Order_Gate_Concurrent_Geometry_Local_Forensic_Register.json",
+      "sha": "c69806f8319c9cf5e0a23aba1f6e0752bfe73e6d"
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP362_W3_Order_Gate_Concurrent_Geometry_Consumer_Boundaries.json",
+      "sha": "3a9c4a662d2920c848a64cb2e3432d8df8e430b7"
+    },
+    {
+      "path": "Algorithms/V3/01_Reaction_Engine.md",
+      "sha": "bfff71f7fddd0339cd6eaa61faf3fcc62bad91e6"
+    },
+    {
+      "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+      "sha": "eb53c1a19d5b16ec840e3c017611915ffe8862b5"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/47_W3_Order_Gate_Concurrent_Geometry_Forensic.md",
+      "sha": "6115916b42d98779f481b4d38d9810b0b317a6b7"
+    }
+  ],
+  "progress": {
+    "local_modules": {
+      "reviewed": 5,
+      "denominator": 16
+    },
+    "local_owner_batches": {
+      "reviewed": 1,
+      "denominator": 10
+    },
+    "local_category_rows": {
+      "reviewed": 7191,
+      "denominator": 50220
+    },
+    "w1_category_rows": {
+      "reviewed": 1555,
+      "denominator": 11575
+    },
+    "additional_category_rows": {
+      "reviewed": 5636,
+      "denominator": 38645
+    },
+    "b01_category_rows": {
+      "reviewed": 336,
+      "denominator": 336
+    },
+    "b01_supplemental": {
+      "reviewed": 14,
+      "denominator": 14
+    },
+    "cross_owner_denominator": null,
+    "b02_category_rows": {
+      "reviewed": 6855,
+      "denominator": 8697
+    },
+    "b02_w1": {
+      "reviewed": 1481,
+      "denominator": 1877
+    },
+    "b02_additional": {
+      "reviewed": 5374,
+      "denominator": 6820
+    },
+    "b02_completed_ranges": [
+      [
+        1,
+        234
+      ],
+      [
+        235,
+        327
+      ],
+      [
+        886,
+        1131
+      ],
+      [
+        1132,
+        1369
+      ],
+      [
+        328,
+        689
+      ],
+      [
+        690,
+        885
+      ],
+      [
+        1370,
+        1480
+      ],
+      [
+        1481,
+        1616
+      ],
+      [
+        1617,
+        1852
+      ],
+      [
+        1853,
+        1946
+      ],
+      [
+        1947,
+        2067
+      ],
+      [
+        2068,
+        2290
+      ]
+    ],
+    "b02_historical_supplemental_reviewed": 92
+  },
+  "validation": {
+    "new_local_rows": 737,
+    "new_w1_rows": 182,
+    "new_additional_rows": 555,
+    "new_historical_supplemental": 9,
+    "source_contract_groups": 28,
+    "coordinate_join_errors": 0,
+    "synthetic_filter_rows": 1,
+    "prior_b02_rows": 6118,
+    "duplicate_or_prior_overlap": 0
+  },
+  "findings": [
+    {
+      "id": "CP362-F01",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "meaning": "Clarified first equal Break and gate fallback, both indexed queries, positional tie, FIFO eviction before copy failure, partial anchor all-field repair, concurrent same-main First tie. Historical B02-11-F01/F02 retained.",
+      "prior_document_blobs": {
+        "Algorithms/V3/01_Reaction_Engine.md": "753aa6effe0e5e10e4d0a2082d59032d5d4d189e",
+        "Algorithms/V3/State_Machines/01_Reaction_Reset.md": "8a24abcc28b265210c69e93b4ec07b7721ccd5cb"
+      }
+    },
+    {
+      "id": "CP353-F03",
+      "status": "OPEN_CROSS_OWNER_LIFETIME",
+      "meaning": "Native FIFO cache and failure ordering clarified, consumer lifetime/dirty frontier still open."
+    },
+    {
+      "id": "CP355-F02",
+      "status": "OPEN",
+      "meaning": "Direct Order gate arbitration and concurrent candidates reviewed, full owner boundary and downstream admission remain open."
+    }
+  ],
+  "open_findings": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02"
+  ],
+  "prior_w1": "PASS_SCOPED CP321 retained",
+  "prior_w2": "PASS_SCOPED CP350 retained",
+  "w3": "INCOMPLETE",
+  "w4": "NOT RUN",
+  "rb02": "WAIVED_NON_BLOCKING",
+  "phase08": "BLOCKED",
+  "publication_gate": "Verify full candidate recursive tree diff, CAS expected parent force=false and readback before reporting publication.",
+  "prohibitions": "No RAW payload, project runtime, ZIP, production/main change",
+  "next": "CP363 / W3 B02 independent direct candidate builder, direct scan and owner-boundary arbitration review. Recheck actual published CP362 algorithm HEAD/tree and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Read AGENTS.md, Operating Protocol, Source Only Scope, active Execution Plan including full next_prompt and relevant CP321–362 evidence. Start directly from pinned reaction_engine.py line 2291, review complete adaptive source partitions through 2908; match historical B02-12 and later by actual ranges, canonical W1/additional rows including synthetic filter IDs, active specification and cross-owner consumers. Inspect local context/First runs and outer boundary, strict comparisons, position and stored identity, owner invalidation and confirmation chronology, ledger result, normal scan and live checkpoint continuation/rollback. Preserve all prior evidence, CP350 registers, CP321/350 PASS_SCOPED, resolved findings and RE01–RE91 corrections. B02 6855/8697 local rows (1481/1877 W1, 5374/6820 additional), 92 historical supplemental, completed range 1–2290; W3 local category 7191/50220 not overall completion. CP351-F03, CP352-F03, CP353-F03, CP354-F03 and CP355-F02 remain open; complete B02–B10 local and cross-owner obligations, chronology, Decimal, event ordering, physical identity, creator/consumer ownership, accepted ledger, conditional dispatch, cache invalidation, dirty frontier, rollback, failure paths, projection and serialization. Never accept overlap alone. Up to 10 substantive checkpoints; each separately verify full candidate recursive tree diff, CAS expected parent force=false and real remote readback; synchronize evidence JSON, docs, completion and execution plan. No RAW payload, runtime, ZIP, production/main change. RB02 WAIVED_NON_BLOCKING; W3 INCOMPLETE; W4 NOT RUN until independent W3 acceptance; Phase08 BLOCKED. Report measured denominators, open/closed findings, limitations, latest commit/tree and tailored continuation in Persian."
+}

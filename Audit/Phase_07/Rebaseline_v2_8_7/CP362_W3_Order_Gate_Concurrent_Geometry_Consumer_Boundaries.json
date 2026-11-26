@@ -1,0 +1,69 @@
+{
+  "checkpoint": 362,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded native handoffs; no full cross-owner acceptance",
+  "boundaries": [
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2175,
+        2203
+      ],
+      "meaning": "E construction passes direct geometry callback which dispatches optional order_geometry before native RE88. Geometry result is not accepted E/Order record; downstream exact admission and dynamic callbacks remain open."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2716,
+        2727
+      ],
+      "meaning": "Full-context initial Order geometry captures opposite direction in lambda default and uses live.order_geometry if live else RE88 with gate_index, end_index, exact gate_event. Distinct from RE71 fallback."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        319,
+        327
+      ],
+      "meaning": "Optional direct_geometry_finder typed as callable accepting direction, two indices and datetime; stored at line 382. Declaration does not prove execution or acceptance; full E owner review pending."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2558,
+        2598
+      ],
+      "meaning": "Previously inspected consumer callback checks exact confirmation after stop, maps physical identity to canonical record or number zero, selects by First/confirmation against native. Canonical remap recomputes confirmation without reapplying earlier exact gate guard. Callback route is separate from RE88 history/gate owner choice."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2291,
+        2417
+      ],
+      "meaning": "RE91 uses RE92 direct builder and RE94 owner-boundary arbitration, unlike RE85 permissive geometry. RE94 outward check before confirmation on same lower row; unresolved defaults invalidation. Full local review next."
+    }
+  ],
+  "prior": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02",
+    "CP313",
+    "CP321",
+    "CP323-S15",
+    "CP323-S16",
+    "CP335",
+    "CP350",
+    "CP359",
+    "CP361"
+  ],
+  "status": "PARTIAL_CONSUMER_TRACE",
+  "remaining": "Complete builder/invalidation, normal/live continuation and cross-owner accepted ledger, exact gate and cache lifetime."
+}

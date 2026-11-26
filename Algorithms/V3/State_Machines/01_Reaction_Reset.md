@@ -73,7 +73,7 @@ RXU02/09/11 canonicalization: adjacent confirmed opposite anchor may replace con
 | RXG05 | RACE | Neither strict crossing exists | Cache null | RETURN | RE88,RE89 |
 | RXG06 | RACE | Outward exists and <= gate position (or gate absent) | Restart wins, map event to main; start at main+1, invalid map/limit => null | SEARCH or RETURN | RE88 |
 | RXG07 | RACE | Gate crossing strictly earlier or only gate | Continue from gate+1 | SEARCH | RE88 |
-| RXG08 | SEARCH | Earliest main confirmation of any active healthy candidate | Earliest First among same main completions; tag selected route; reconstruct absent anchor only on continue with earlier Reset; copy into bounded cache | RETURN | RE88,RE91,RE92,RE94 |
+| RXG08 | SEARCH | First main with any healthy active confirmations | Minimum First among same-main completions (no exact lower-time sorting); tag route; reconstruct if anchor index OR value missing only on continue with earlier Reset; replace all anchor/leg fields; copy into bounded FIFO cache | RETURN | RE88,RE89,RE91,RE92,RE94 |
 | RXG09 | SEARCH | No completed geometry | Cache null | RETURN | RE89,RE91 |
 
 ## RXV — Native, internal and public geometry
