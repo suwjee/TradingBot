@@ -1,0 +1,584 @@
+{
+  "checkpoint": 330,
+  "status": "PASS_SCOPED_W2_LIVE_MARKET_ENTRY_TRANSPORT",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "a210a601336d7a17c54fc47074439c2be31eb86b",
+  "entry_tree": "a69eda8a90eb9ff2bf2dc20e0cbe5a1010fb76f9",
+  "scope": "Market aggregation, retained index windows, input and worker transport, transaction and entry boundaries; static source only.",
+  "prior": [
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "blob": "1027cb4a9241b8adb5a0b7f11c8c2a5fcbfa9c45",
+      "rows": 29
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "blob": "9dcc81cc416ffced36e2ef87e86ad58504c28201",
+      "rows": 44
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "blob": "44bc985228f9d698da7b1fb30173f55f886b60f4",
+      "rows": 29
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "blob": "77967520d746b0ce52e86784822bbe923a6c8966",
+      "rows": 45
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json",
+      "blob": "33054fd8ab3eb582072c663997b88037f53c4c24",
+      "rows": 36
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "blob": "c4bbd89d36ed64d604733c91c1aeec7fb249bafa",
+      "rows": 30
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "blob": "100720890299236ba3340e7bd5586ca06470624a",
+      "rows": 30
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json",
+      "blob": "2227d763e691615f31d25019c3bde9f0bf7ba4be",
+      "rows": 40
+    }
+  ],
+  "source_modules": [
+    {
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735"
+    },
+    {
+      "module": "LV",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182"
+    },
+    {
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    }
+  ],
+  "additional_rows": [
+    {
+      "id": "CP330-S01",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        54,
+        84
+      ],
+      "procedure_refs": "Progress / timing",
+      "contract": "ContextVar token restored in finally; emit to scoped sink or flushed stderr; duration rounded for output only. Timed stage starts before protected work, adds elapsed milliseconds and emits completion in finally including work failure; telemetry exceptions are not blanket suppressed."
+    },
+    {
+      "id": "CP330-S02",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        87,
+        98
+      ],
+      "procedure_refs": "Module loading",
+      "contract": "Use spec_from_file_location; absent spec/loader raises RuntimeError; register module by spec name before exec_module; engine wrapper fixes reaction_engine name. No independent proof of loaded external module contents."
+    },
+    {
+      "id": "CP330-S03",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        101,
+        137
+      ],
+      "procedure_refs": "Timestamp conversion caches",
+      "contract": "Cache epoch→Asia/Tehran local naive datetime, local→int timestamp by replacing tzinfo with Tehran, and parsed display string→epoch. Native datetime path bypasses display string parsing. No interpolation or timezone conversion of already-local naive values."
+    },
+    {
+      "id": "CP330-S04",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        140,
+        184
+      ],
+      "procedure_refs": "TB09 / aggregation",
+      "contract": "Traverse supplied row order; int timestamp; normalize OHLC; consecutive equal lower time keeps open, max high, min low, latest close. Main key floor(timestamp/timeframe)*timeframe except TF1; lower_only skips main update. Optional tails mutated by reference; no global sort, no synthetic slots; equal extremes keep first argument."
+    },
+    {
+      "id": "CP330-S05",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        187,
+        202
+      ],
+      "procedure_refs": "TB10–11 / Decimal",
+      "contract": "Per-batch cache key (type,value) preserves first normalized representation for equal typed values; as_decimal on miss only. Key equality is not decimal lexeme identity; no binary float introduced by this function."
+    },
+    {
+      "id": "CP330-S06",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        205,
+        227
+      ],
+      "procedure_refs": "TB12–13 / input state",
+      "contract": "BucketAppend stores dirty and exclusive settled counts. Exact int positive TF required; TF1 aliases lower/main; persistent typed-price cache and nullable last timestamp. append delegates to staged context."
+    },
+    {
+      "id": "CP330-S07",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        229,
+        254
+      ],
+      "procedure_refs": "TB14 / dirty boundaries",
+      "contract": "Empty rows yield unchanged dirty lengths. For nonempty, first timestamp determines lower rewind iff equal previous last; main rewind iff same aligned last bucket and nonshared; copy mutable tails before aggregation; TF1 dirty main=dirty lower."
+    },
+    {
+      "id": "CP330-S08",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        255,
+        277
+      ],
+      "procedure_refs": "TB15–16 / validation",
+      "contract": "Checked iterator requires int-converted time equal original numeric value, positive and nondecreasing; equal permitted here. Persistent cache precedes private price additions; aggregate privately using copied tails; no accepted suffix mutation during input validation."
+    },
+    {
+      "id": "CP330-S09",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        278,
+        303
+      ],
+      "procedure_refs": "TB14/TB17 / commit rollback",
+      "contract": "Snapshot old suffixes and last time; commit price additions, suffixes and time before yielding delta. BaseException during yield/delta restores both suffixes (shared once), previous time and deletes new keys; earlier commit assignments outside try. Settled=max(0,len−1) exclusive, final bucket mutable."
+    },
+    {
+      "id": "CP330-S10",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        306,
+        333
+      ],
+      "procedure_refs": "TB18 / Candle identity",
+      "contract": "Enumerate normalized bucket positions starting at supplied index; use engine Candle and classify_candle_color, Tehran naive stamp/display; retain Decimal OHLC references; no independent validity or price repair."
+    },
+    {
+      "id": "CP330-S11",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        336,
+        364
+      ],
+      "procedure_refs": "TB19–21 / retained views",
+      "contract": "Keep lower/main candle lists and indexes plus closed-regime owner. Rebuild dirty suffix, or from zero if no index; replace index when absent or over capacity with retain_crossings=True, else refresh_suffix. TF1 shares views/index. Refresh delegates stricter native validity; outer continuation discards views on protected failure."
+    },
+    {
+      "id": "CP330-S12",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1732,
+        1753
+      ],
+      "procedure_refs": "EngineBundle / MarketContext",
+      "contract": "Bundle selected engines and optional primary; MarketContext is frozen container retaining full lower/main lists, index and chronology, visible bounds, offset and initial trend flags. Container freezing does not freeze underlying lists."
+    },
+    {
+      "id": "CP330-S13",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1788,
+        1823
+      ],
+      "procedure_refs": "TB104/TB107–112 / windows",
+      "contract": "Retain candles, slice times, logical half-open length; flatten nested window to original base plus accumulated offset. First queries clamp left/right, empty returns None, translate hits back (zero valid). Extreme queries reject invalid bounds, preserve base Decimal and tie/position."
+    },
+    {
+      "id": "CP330-S14",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1826,
+        1857
+      ],
+      "procedure_refs": "TB63 / independent segment",
+      "contract": "Require nonempty existing main [start,stop); lower bounds via bisect at first main and exclusive next-main/end+TF. Slice and reindex unless indexed mode with zero corresponding offset; register prepared lower/main windows in indexed mode. Fresh chronology, local visible intersection, accumulated offset; initial flags inherited only at zero unless explicit override."
+    },
+    {
+      "id": "CP330-S15",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1897,
+        1971
+      ],
+      "procedure_refs": "CLI configuration",
+      "contract": "Required reaction/blue/A/S engine paths, data, timeframe, from/to and direction; optional E/lifecycle paths; blue/A/S/PL-PH default enabled, bridge output opt-in, raw timeframe default1. Validate both timeframes >=1; no from/to ordering check in parser."
+    },
+    {
+      "id": "CP330-S16",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1974,
+        2009
+      ],
+      "procedure_refs": "Engine dispatch",
+      "contract": "Load reaction/blue/A/S modules; E only if path provided. Lifecycle loads given path or fixed native fallback even without explicit flag; primary fixed path only if pl_ph enabled (getattr fallback disabled). Bundle retains exact selected engine objects."
+    },
+    {
+      "id": "CP330-S17",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2012,
+        2027
+      ],
+      "procedure_refs": "TB68 / batch input source",
+      "contract": "Timed full file read; remove one UTF8 BOM prefix; json.loads parse_float=Decimal, default integers; delegate full rows. This contract derived from source, no payload accessed."
+    },
+    {
+      "id": "CP330-S18",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2030,
+        2052
+      ],
+      "procedure_refs": "TB69 / full calculation scope",
+      "contract": "Requested range is presentation only; use full input unchanged, reject falsy rows, aggregate lower_only for TF1, then construct market context. No calculation truncation or sorting."
+    },
+    {
+      "id": "CP330-S19",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2055,
+        2079
+      ],
+      "procedure_refs": "TB70 / batch vs live context",
+      "contract": "Batch builds lower candles/shared lower index then main (TF1 alias) and fresh chronology. Live requires delta; update views then register prepared indexes lower/main and construct fresh chronology. Index identity checked by native provider; no rollback inside this helper."
+    },
+    {
+      "id": "CP330-S20",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2081,
+        2111
+      ],
+      "procedure_refs": "TB70 / visible bounds",
+      "contract": "Use lower buckets at TF1, main otherwise; align both requested times by floor except TF1. bisect_left start and end+TF minus1; reject empty before clamping end to final candle. Return full arrays with local display bounds; raw timeframe not used to expand slots."
+    },
+    {
+      "id": "CP330-S21",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2113,
+        2150
+      ],
+      "procedure_refs": "Calculation state records",
+      "contract": "Mutable PipelineState holds per-direction native results/full accepted and candidate sets, invalid identities, detectors, initial geometry, primary and optional live_stages. FullDirectionState retains authoritative owner data including initial S and default empty StopAll list; no new behavior acceptance in declarations."
+    },
+    {
+      "id": "CP330-S22",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3713,
+        3735
+      ],
+      "procedure_refs": "Calculation scope / raw entry",
+      "contract": "Clear three timestamp caches and optional native market indexes before protected work and in finally; no blanket exception suppression. calculate_live_from_raw delegates common runner with fresh row-derived context. Prior CP323-P29 covers bucket entry/active no-live dispatch."
+    },
+    {
+      "id": "CP330-S23",
+      "module": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3788,
+        3809
+      ],
+      "procedure_refs": "CLI result boundary",
+      "contract": "After successful calculation emit pipeline completion; compact JSON encoding, encoding completion and print; return0. Module entry raises SystemExit(main()); ordinary Exception sends JSON error and exit1. Not blanket BaseException handling."
+    },
+    {
+      "id": "CP330-S24",
+      "module": "LV",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        73,
+        85
+      ],
+      "procedure_refs": "L04 / error distinction",
+      "contract": "LiveRawChanged and LiveRawDeltaMismatch distinct ValueError subclasses; decode parse_float=Decimal; require nonempty list else RAW_CHANGED, native parser exceptions propagate; no independent sort/row checks."
+    },
+    {
+      "id": "CP330-S25",
+      "module": "LV",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        88,
+        112
+      ],
+      "procedure_refs": "L05–07 / lineage seed",
+      "contract": "Bisect original on selected first time; if lists not same object require equality with original slice; keep suffix catchup and original last time. Store prefix before last closing bracket using SHA-256 state plus ending; file digest copies hash before adding suffix. No separate bracket-not-found guard."
+    },
+    {
+      "id": "CP330-S26",
+      "module": "LV",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        114,
+        127
+      ],
+      "procedure_refs": "L08 / delta acceptance",
+      "contract": "Require retained base digest and leading comma; clone prefix hash, verify proposed full hash using retained ending before decode/pipeline. Decode bracketed new rows then append; only on success advance byte end, prefix and raw digest; mismatch raises distinct recoverable exception."
+    },
+    {
+      "id": "CP330-S27",
+      "module": "LV",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        129,
+        145
+      ],
+      "procedure_refs": "L09 / full-file append",
+      "contract": "Require file longer than prefix end and exact prefix hash. Strip leading tail whitespace; comma suffix decoded as array, closing bracket with trailing whitespace permits no rows, otherwise changed. Pipeline called before checkpoint advances; new rows remember entire new prefix, suffix-only change updates ending/digest."
+    },
+    {
+      "id": "CP330-S28",
+      "module": "LV",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        147,
+        156
+      ],
+      "procedure_refs": "L10 / temporal lineage",
+      "contract": "New times strictly greater than retained original last and predecessor as supplied, unlike low-level nondecreasing gate. Append catchup+new rows (even empty); clear catchup and update last only after success; no metadata advance on downstream failure."
+    },
+    {
+      "id": "CP330-S29",
+      "module": "LV",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        159,
+        165
+      ],
+      "procedure_refs": "L11–12 / messages",
+      "contract": "Compact JSON flushed on stdout; type field precedes fields (can be overwritten by fields). Progress forwards started or completedStages-bearing events only; native IO/encoding errors propagate."
+    },
+    {
+      "id": "CP330-S30",
+      "module": "LV",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        168,
+        183
+      ],
+      "procedure_refs": "L13 / worker seed",
+      "contract": "Parse CLI, require original path env, read/decode selected; same path reuses data/list else read/decode original separately. Construct lineage and continuation using loaded engines; send seed ready and selected payload; delete local input references."
+    },
+    {
+      "id": "CP330-S31",
+      "module": "LV",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        184,
+        196
+      ],
+      "procedure_refs": "L13 / framing",
+      "contract": "Read header up to256 bytes; require newline; parse JSON, exact positive int bytes and string digest len64 (no hex test). Read exact body length; only progress is True enables scoped progress output."
+    },
+    {
+      "id": "CP330-S32",
+      "module": "LV",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        197,
+        212
+      ],
+      "procedure_refs": "L13 / request routing",
+      "contract": "Non-null base digest selects delta; mismatch sends RAW_DELTA_MISMATCH and continues. Full hash mismatch sends RAW_RETRY and continues. Else append full; success sends update and deletes local payload/raw. No execution of these branches during audit."
+    },
+    {
+      "id": "CP330-S33",
+      "module": "LV",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        213,
+        225
+      ],
+      "procedure_refs": "L13 / terminal errors",
+      "contract": "LiveRawChanged emits RAW_CHANGED and returns1; other Exception logs stderr and emits generic LIVE_ENGINE_FAILED then returns1. EOF returns0, module exit main; BaseException not covered by ordinary handlers."
+    }
+  ],
+  "reference_anchors": [
+    {
+      "path": "Algorithms/V3/18_Live_Bridge.md",
+      "blob": "08d94f96b520199bda362c5c88470b10d1804dcc"
+    },
+    {
+      "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+      "blob": "1344786aac8bde8b309c13a5e40cef8e3e519c7e"
+    },
+    {
+      "path": "Algorithms/V3/23_Live_Transport_Contract.md",
+      "blob": "f8f7c201b0c97cb7fa0c95f8e0dfc1f9e14d15d2"
+    },
+    {
+      "path": "Algorithms/V3/20_Indexes_And_Caching.md",
+      "blob": "1d915fe47adc154f6c8cfc63e4ba18ca0c7c3211"
+    }
+  ],
+  "retained_prior_boundaries": [
+    {
+      "id": "CP323-P25",
+      "range": [
+        1756,
+        1785
+      ],
+      "contract": "Closed-regime cache consults previous map only for settled absolute excluded end; publish current map only after successful stage. No duplicate count."
+    },
+    {
+      "id": "CP323-P29",
+      "range": [
+        3740,
+        3786
+      ],
+      "contract": "Bucket replay stages closed prefix cache; common runner does not supply live detector continuation to prepare_pipeline_state. CLI calculation likewise fresh."
+    },
+    {
+      "id": "CP323-S42",
+      "range": [
+        22,
+        70
+      ],
+      "contract": "Active wrapper prevalidates nondecreasing integer-valued times, stages buckets, resets views on protected BaseException, returns payload only after success."
+    },
+    {
+      "id": "CP323-P28",
+      "range": [
+        3531,
+        3630
+      ],
+      "contract": "Reversal prefix resolution uses independent segments and authoritative Primary3 proof."
+    }
+  ],
+  "cross_owner_handoffs": [
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        941,
+        957
+      ],
+      "contract": "Native refresh requires 0<=first<=old length<=new length<=capacity; no-op at first==length; clears crossing history only when first<old length−1. Bridge capacity gate alone is not sufficient."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1019,
+        1040
+      ],
+      "contract": "Crossing history keyed by left/level/exclusion; retain settled hit or examined prefix only, latest candle remains reevaluable; FIFO eviction by configured limit. No claim of arbitrary edit safety."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1077,
+        1092
+      ],
+      "contract": "Prepared index accepted only for identical source sequence; otherwise identity-keyed shared index. Cached prepared registration is process-local."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1119,
+        1129
+      ],
+      "contract": "Global clear releases all three caches; per-sequence release removes only identity entries, not necessarily independently owned retained view objects."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1153,
+        1178
+      ],
+      "contract": "Fresh MarketChronology retains supplied indexes and initializes empty confirmation/reset/extremes caches; retained index history not equivalent to retained detector state."
+    }
+  ],
+  "qualifications": [
+    "No RAW payload read, runtime execution, ZIP, production changes or broad equivalence claims.",
+    "Typed cache equality does not preserve separate equal Decimal exponents; preserve first normalized representation exactly as source.",
+    "Active live worker replays trading stages fresh; optional detector continuations are not asserted active. Closed-regime reuse is separate.",
+    "W2 closure is not asserted by this partition; independent census and gap assessment required."
+  ],
+  "validation": {
+    "prior_transition_rows": 283,
+    "new_transition_rows": 33,
+    "cumulative_transition_rows": 316,
+    "prior_overlap": 0,
+    "new_overlap": 0,
+    "duplicate_ids": 0,
+    "source_blobs_verified": 3,
+    "reference_anchors": 4,
+    "cross_owner_handoff_references": 5,
+    "runtime": "NOT_RUN_BY_SCOPE",
+    "raw": "NOT_RUN_BY_SCOPE"
+  },
+  "remaining": "CP331 / W2 closure gate: independently reconcile CP322 accessor evidence and CP323–CP330 transition partitions against the pinned source and the ten W1 owner partitions; verify counts, blob/line anchors, handoff and conditional dispatch coverage, identify substantive gaps and publish only defensible closure or a narrower follow-up. W3/W4 remain NOT RUN; Phase 08 blocked."
+}
