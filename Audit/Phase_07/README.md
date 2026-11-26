@@ -171,3 +171,13 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 33 — Blue formation, first stops and invalid-line double-stop candidates
 
 [Local review](Semantic_Closure_B03_05.md) and [site evidence](Semantic_Closure_B03_05.json): 95 original rows, 6 supplemental items, 3 resolved findings; local PASS. A 226/708; B03 663/1145. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 34 — A pair trigger, aligned Reaction and inherited stop
+
+[Local review](Semantic_Closure_B03_06.md) and [site evidence](Semantic_Closure_B03_06.json): 153 original rows, 10 supplemental items, 3 resolved findings; local PASS. A 379/708; B03 816/1145. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 35 — Frozen A source and ordinary adjacent-pair cycle
+
+[Local review](Semantic_Closure_B03_07.md) and [site evidence](Semantic_Closure_B03_07.json): 72 original rows, 6 supplemental items, 3 resolved findings; local PASS. A 451/708; B03 888/1145. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

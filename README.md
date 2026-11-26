@@ -228,3 +228,13 @@ Per the user's 2026-11-26 instruction, continue source-only reverse engineering.
 ### Phase 07 — checkpoint 33
 
 [Blue formation, first stops and invalid-line double-stop candidates](Audit/Phase_07/Semantic_Closure_B03_05.md): 95 original rows, local PASS. B03 INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 34
+
+[A pair trigger, aligned Reaction and inherited stop](Audit/Phase_07/Semantic_Closure_B03_06.md): 153 original rows, local PASS. B03 INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 35
+
+[Frozen A source and ordinary adjacent-pair cycle](Audit/Phase_07/Semantic_Closure_B03_07.md): 72 original rows, local PASS. B03 INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.

@@ -50,7 +50,7 @@ Registers full sorted Blue ordinals (including invalid), filtered valid states w
 | AP10 | TWO_STOPS | Exact stop times differ | Strict cross from second exact stop to exclusive expiry, or reject | MATCH or PAIR | A13 |
 | AP11 | MATCH | No aligned Reaction with confirmation>=trigger and First>=both effective stop mains | Break entire ordinary loop (not merely skip pair) | RETURN | A15,A18 |
 | AP12 | MATCH | Aligned Reaction exists but source window invalid | Advance pair | PAIR | A17,A18 |
-| AP13 | MATCH | Valid aligned source | Freeze price/source from trigger main open through exact confirmation inclusive; emit A and provenance; cycle_after=Break | ADVANCE | A17,A18,A21 |
+| AP13 | MATCH | Valid aligned source | Freeze price/source using A08 from trigger main open through A14 returned confirmation inclusive (including native time and empty-lower main fallback); emit A and provenance; cycle_after=Break | ADVANCE | A17,A18,A21 |
 | AP14 | ADVANCE | First strict A stop from confirmation exists and next Blue formation >= that stop event | Allow current ordinal bridge reuse; advance one | PAIR | A07,A18 |
 | AP15 | ADVANCE | Otherwise | Clear reuse, skip all states through cycle_after | PAIR | A18 |
 
