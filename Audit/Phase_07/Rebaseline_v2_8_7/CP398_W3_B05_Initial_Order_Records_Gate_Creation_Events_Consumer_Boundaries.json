@@ -1,0 +1,131 @@
+{
+  "checkpoint": 398,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Focused conditional source boundaries, not cross-owner acceptance",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          570,
+          587
+        ],
+        [
+          1459,
+          1477
+        ]
+      ],
+      "meaning": "Primary and First list/by-First/confirmation-time cache initialized None; confirmation record tuple initially empty. Base crossing caches exact (start,level), including None; exact lower event and candle timestamp; OA45/OA47 dispatch dynamically and preserve the returned object."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          358,
+          367
+        ],
+        [
+          385,
+          411
+        ],
+        [
+          416,
+          417
+        ],
+        [
+          537,
+          566
+        ]
+      ],
+      "meaning": "Nonempty initial mapping retained by reference; falsey input replaced with new empty dict. Initialization after live state assignment. Sequence reset setter clears only four named query caches, not initial-record or crossing caches. First time via self.times[int(reaction.first_idx)]; main index clamped owner; live crossing may validate dirty chronology and use self.times[index], unlike base candle.timestamp. No runtime dispatch claim."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "ranges": [
+        [
+          1185,
+          1192
+        ]
+      ],
+      "meaning": "Main index = right insertion bound minus one; if below zero clamp returns zero, otherwise native result. Equal main times map to last equal slot under ordered premise."
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "ranges": [
+        [
+          51,
+          53
+        ],
+        [
+          60,
+          66
+        ]
+      ],
+      "meaning": "Existing Decimal instance returned unchanged else Decimal(str(value)); canonical physical geometry pair integer First/Break. Primary sorting uses both indexes but does not deduplicate by identity, and ignores original ledger key."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          608,
+          642
+        ],
+        [
+          651,
+          675
+        ]
+      ],
+      "meaning": "_zone calls gate-owned initial helper before carried lookup and registration. Local gate_owned assignment is not used in that function's merged choice routes; evaluation still materializes/raises. E merge compares exact crossing then descending First int and disowned-S gate; no gate-local winner equivalence."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          2035,
+          2043
+        ]
+      ],
+      "meaning": "Separate _blocked_by_gate_owned_order only queries gate if zone causes include parent-stop; rejects when gate exists and its confirmation strictly precedes zone.order_first_time. Equal confirmation does not block; gate-local selection is not direct final E choice."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          1644,
+          1697
+        ],
+        [
+          1741,
+          1795
+        ]
+      ],
+      "meaning": "OA50 native validation and index creation conditionally call OA49 and deduplicate events per entry, sorted by event/ordinal; fallback legacy scan calls same helper with strict lifecycle_start<creation<parent_stop, confirmation<=parent_stop and crossing>=parent_stop. Initial route uses First inclusive [lifecycle_start,parent_stop], confirmation<=parent_stop, crossing>=parent_stop; carried global sort exact event then descending First. OA50+ local closure is later."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          1812,
+          1836
+        ],
+        [
+          1910,
+          1932
+        ]
+      ],
+      "meaning": "Eager post-stop initial route bisect_right confirmation times, then requires crossing>parent_stop and >confirmation, reset filter and physical identity selection. Stream materializes initial geometry before its localcontext/validation try; native geometry fallback separate. Initial-record cache failures before that try can propagate."
+    }
+  ],
+  "limitations": [
+    "Separate source-first pass by GPT, not independently staffed. Local source review only; immutable input ledger/geometry, native chronology, dynamic base/live crossing, Decimal context and cross-owner ownership remain conditional. Partial cache publication is documented actual behavior, not an observed runtime defect.",
+    "No runtime, RAW payload, ZIP or production changes. Counts derived from pinned canonical source-backed inventory, not newly generated AST. Prior B05 row identity and all supplemental ID/span checks revalidated; unrelated historical artifacts not re-read."
+  ]
+}
