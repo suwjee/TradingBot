@@ -52,12 +52,12 @@ E extreme uses full main candles containing parent and Order stops, both include
 
 ## CH27
 
-E four merged consumption routes: direct, inherited, carried, post-stop accepted; gate-owned lookup is not fifth stream. Earliest exact Order stop, then latest First. Reorder equal-stop accepted groups; reject disowned-S-only causes using prospective source. S with no carried route uses earliest inherited stop or range end as deadline.
+E four merged consumption routes: direct, inherited, carried, post-stop accepted; gate-owned lookup is not fifth stream. Earliest exact Order stop, then latest First. Reorder equal-stop accepted groups; reject disowned-S-only causes using prospective source. S with no carried route uses earliest inherited stop or range end as deadline. The unused gate query executes; carried truthiness gates deadline. Three crossed routes are sorted eagerly, accepted equal-stop groups lazily, with exact merge-key ties in direct/inherited/carried/accepted order. Explicit empty owned set stays empty. Prospective source precedes ownership rejection, no local rollback.
 
 [Source engine/pipeline/e_zone_detector.py:608–675](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L608-L675)
 
 ## CH28
 
-E decision event is max(parent stop,Order stop). Source, decision, confirmation and stop remain separate.
+E decision event is max(parent stop,Order stop). Source, decision, confirmation and stop remain separate. EZone does not store a separate exact Order-crossing field; preserve supplied match stop/source fields and prospective source price, and derive First/Break/box-source main times from detector.times.
 
 [Source engine/pipeline/e_zone_detector.py:677–730](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L677-L730)

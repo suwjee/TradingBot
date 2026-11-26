@@ -9,9 +9,9 @@ Registers parent type/object, parent stop, candidate routes, accepted E source t
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
 | ER01 | INIT | Parent has no strict stop | No child | RETURN | E18,E19,E26 |
-| ER02 | INIT | Stopped parent S or E | Query unconsumed S (S only), gate-owned initial and carried BEFORE registration; register parent audit; obtain post-stop accepted and direct candidates | MERGE | E30,OA40,OA44,OA48,OA52,OA55 |
-| ER03 | MERGE | S with no carried candidates | Continuous deadline earliest inherited stop else range end; direct bounded continuation enabled; E instead allows trend-leg continuation | MERGE | E30,OA23 |
-| ER04 | MERGE | All routes available | Keep crossed candidates; global stable merge by exact stop,negative First; regroup post-stop equal-stop rows by same key | RACE | E30,E31 |
+| ER02 | INIT | Stopped parent S or E | Query unconsumed S (S only), evaluate gate-owned initial even though result unused, then carried BEFORE registration; register parent audit; acquire post-stop iterable before direct candidates; no local rollback | MERGE | E30,OA40,OA44,OA48,OA52,OA55 |
+| ER03 | MERGE | S with falsy carried collection | Continuous deadline earliest inherited stop else range end; direct bounded continuation enabled; E instead allows trend-leg continuation | MERGE | E30,OA23 |
+| ER04 | MERGE | All routes available | Sort crossed direct/inherited/carried eagerly; lazy sort consecutive accepted equal-stop groups; merge by exact stop,negative First; equal keys preserve direct/inherited/carried/accepted route order | RACE | E30,E31 |
 | ER05 | RACE | Candidate's only creating cause is disowned S under accepted/prospective source test | Skip candidate, evaluate next | RACE | E28,E30,OA60 |
 | ER06 | RACE | First remaining physical Order | Freeze source, decision=max(parent stop,Order stop), native Order and parent provenance; use optional cache builder | RETURN | E30,E32,E06 |
 | ER07 | RACE | Exhausted | Null | RETURN | E30 |
@@ -65,10 +65,10 @@ Family promotion is based on stopped active lineage and actual accepted parent, 
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
-| EF01 | INIT | Consumed S evidence linked to larger stopped E | Rebuild continuation from that S only with accepted owner/independent cause and no intervening reset; freeze candidate chain | COMPARE | E33,E34,E35,LC34 |
-| EF02 | COMPARE | New direct continuation strictly earlier than existing earliest child | Keep owner, remove descendants by ancestry walk, merge replacement chain | CONFLICT | E36,E37 |
+| EF01 | INIT | Consumed S evidence linked to larger stopped E | Reject S sharing owner/accepted E identity; require S stop; E35 allows invalid-S candidate only if independent A identity bypass or valid cause; reset in (parent source,child source] blocks; E34 owner lookup in current result, no separate E35 owner membership gate | COMPARE | E33,E34,E35,LC34 |
+| EF02 | COMPARE | Nonempty continuation and no existing direct child, or first supplied continuation decision strictly earlier than earliest direct child's decision | Remove exact ancestry matches (normal acyclic owner retained); no per-descendant decision gate; merge kept then supplied continuation, update accepted identities after conflict resolve | CONFLICT | E36,E37 |
 | EF03 | COMPARE | No earlier valid continuation | Preserve current chain | CONFLICT | E36 |
-| EF04 | CONFLICT | Multiple E at exact physical source | Higher family priority, then higher number; equality retains first; sort source,index,decision | RESTORE | E38,E39 |
+| EF04 | CONFLICT | Multiple E at exact physical source | Higher injected e priority, then higher number only for same family and equal priority; otherwise incumbent; stable sort source,raw index,decision | RESTORE | E38,E39 |
 | EF05 | RESTORE | Independent S root still eligible and not occupied by accepted E | Process root heap; rerace if only-disowned cause, respect direct earliest lineage and conflict checks | RESTORE | E40 |
 | EF06 | RESTORE | Final accepted E list | Rebuild/ensure physical ledger with accepted S and historical valid causes; no creation from display geometry alone | RETURN | E53,OA62,OA64,OA65 |
 

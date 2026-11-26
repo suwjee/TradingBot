@@ -424,3 +424,21 @@ W1 cumulative 6210/11504. Next B06 E09, line 394; W2/W3/W4 open.
 [Local review](Semantic_Closure_B06_10.md) and [site evidence](Semantic_Closure_B06_10.json): 25 original rows, 2 supplemental items, 2 resolved local clarifications; local PASS. E 424/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
 
 W1 cumulative 6374/11504. Next B06 E30, line 608; W2/W3/W4 open.
+
+## Checkpoint 83 — Global Order race, route ordering and prospective E source
+
+[Local review](Semantic_Closure_B06_11.md) and [site evidence](Semantic_Closure_B06_11.json): 50 original rows, 6 supplemental items, 3 resolved local clarifications; local PASS. E 474/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 84 — Exact EZone record construction and consumed S evidence
+
+[Local review](Semantic_Closure_B06_12.md) and [site evidence](Semantic_Closure_B06_12.json): 29 original rows, 3 supplemental items, 2 resolved local clarifications; local PASS. E 503/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 85 — Consumed S continuation, independent cause and reset gates
+
+[Local review](Semantic_Closure_B06_13.md) and [site evidence](Semantic_Closure_B06_13.json): 48 original rows, 4 supplemental items, 2 resolved local clarifications; local PASS. E 551/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 86 — Earlier descendant replacement and physical-source conflict resolution
+
+[Local review](Semantic_Closure_B06_14.md) and [site evidence](Semantic_Closure_B06_14.json): 52 original rows, 3 supplemental items, 2 resolved local clarifications; local PASS. E 603/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+W1 cumulative 6553/11504. Next B06 E40, line 915; W2/W3/W4 open.
