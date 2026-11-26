@@ -1,0 +1,141 @@
+{
+  "checkpoint": 369,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded native provider and consumer handoffs; no cross-owner closure.",
+  "consumers": [
+    {
+      "path": "engine/pipeline/direction_policy.py",
+      "blob": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+      "range": [
+        20,
+        55
+      ],
+      "meaning": "Native selector validates exact direction; strict_cross/better_extreme B< R>; directional attribute supplied by policy. Wrappers do not normalize values."
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "range": [
+        44,
+        53
+      ],
+      "meaning": "Exact datetime and naive timezone then nondecreasing checks, empty passes; Decimal instance preserved unchanged, others Decimal(str(value))."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        909,
+        1041
+      ],
+      "meaning": "Native tree normalized leaves, earliest physical equal position, strict crossing clamps positions, optional settled crossing cache writes; range query rejects invalid bounds, unlike first crossing. No guarantee if captured arrays or index stale."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1185,
+        1209
+      ],
+      "meaning": "Native main mapping right-bisect predecessor no clamp by A05; lower bounds left-bisect start/end, no upper bound or alignment check. A07 uses captured arrays directly, A08 calls chronology lower_bounds."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1257,
+        1302
+      ],
+      "meaning": "Native RE61 false starts Break open, returns first strict lower hit or Break-open fallback; cache lookup before Break read, not observed crossing guarantee."
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        216,
+        273
+      ],
+      "meaning": "Formation derives scan start; ordinary Blue states enumerate full sorted line list then skip invalid; use semantic extreme and first crossing; stop main timestamp dereferences returned index as position, requires native alignment. Full formation review CP370."
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        497,
+        531
+      ],
+      "meaning": "A14 false flag and A15 separate ordered flags control fast path versus original order linear; bounded observation only."
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        868,
+        940
+      ],
+      "meaning": "Live constructor initializes history before super; virtual confirmation uses key (Break index,str(level)), may reuse settled previous history before base call. No whole live freshness acceptance."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2235,
+        2255
+      ],
+      "meaning": "Native batch passes full directional reactions, Blue and chronology; conditional live callback separate."
+    }
+  ],
+  "prior": [
+    {
+      "checkpoint": 314,
+      "blob": "94a686734660a7f30ae2a7a49e7eaf3c4e4f572a",
+      "disposition": "Source identity and historical crosswalk plus constructor and A confirmation qualification retained."
+    },
+    {
+      "checkpoint": 350,
+      "transition_ids": [
+        "CP323-S20",
+        "CP323-S21"
+      ],
+      "groups": [
+        "CP332-G25",
+        "CP332-G26",
+        "CP332-G27"
+      ],
+      "selected_sites": [
+        "CP332-E043",
+        "CP332-E044",
+        "CP332-E045",
+        "CP332-E046",
+        "CP332-E047",
+        "CP332-E048",
+        "CP332-E049",
+        "CP332-E050",
+        "CP332-E051",
+        "CP332-E052"
+      ],
+      "nonmatrix_lines": [
+        122,
+        127,
+        148,
+        155,
+        177,
+        185,
+        196
+      ],
+      "disposition": "Direct source group semantics consistent, distinguish provider/consumer position and normalized price; no acceptance by overlap."
+    },
+    {
+      "checkpoint": 368,
+      "disposition": "Blue local full ordinal and visibility separation preserved; A consumes full calculation evidence."
+    }
+  ],
+  "status": "REVIEWED_BOUNDED_CONSUMERS",
+  "remaining": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02"
+  ]
+}
