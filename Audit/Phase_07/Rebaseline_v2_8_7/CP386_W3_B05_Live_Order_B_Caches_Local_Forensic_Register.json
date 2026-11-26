@@ -1,0 +1,5644 @@
+{
+  "checkpoint": 386,
+  "phase": "W3",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "230050f15660bd3ecfb5ddddafa7de69ed432647",
+  "scope": "B05-03 OA07–OA10 independent live Order_B cache review",
+  "source": {
+    "path": "engine/pipeline/order_audit_engine.py",
+    "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+    "range": [
+      378,
+      441
+    ],
+    "canonical_report": "8e8de138a2e4d165994792923d427ee6d1ac9c09",
+    "prior_partition": "3003bbecff90d954f45f48d4d4026ade9b47ea03",
+    "prior_rebaseline": [
+      "129048fd58a4b43304e467134baae83c36145417",
+      "a35141b33fdcfa207597258ebcccadd7d2b8e9e2"
+    ],
+    "w1_crosswalk": "62645cd2b92c3cbe35f6c0a9500299ec6f44cbc8"
+  },
+  "groups": [
+    {
+      "id": "OA07-A",
+      "range": [
+        378,
+        385
+      ],
+      "interpretation": "Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity."
+    },
+    {
+      "id": "OA07-B",
+      "range": [
+        386,
+        389
+      ],
+      "interpretation": "Initialize independent empty boundary/crossing dictionaries and previous lower timestamp None. No external ledger ownership."
+    },
+    {
+      "id": "OA08-A",
+      "range": [
+        390,
+        396
+      ],
+      "interpretation": "Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification."
+    },
+    {
+      "id": "OA08-B",
+      "range": [
+        397,
+        404
+      ],
+      "interpretation": "Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged."
+    },
+    {
+      "id": "OA09-A",
+      "range": [
+        406,
+        410
+      ],
+      "interpretation": "Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix."
+    },
+    {
+      "id": "OA09-B",
+      "range": [
+        411,
+        415
+      ],
+      "interpretation": "If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider."
+    },
+    {
+      "id": "OA10-A",
+      "range": [
+        416,
+        419
+      ],
+      "interpretation": "Crossing key is (reset_time,level), native hash/equality; equal Decimal numeric values with differing exponents coalesce, not representation-exact key. Current membership distinguishes cached None from absent and returns unchanged immediately."
+    },
+    {
+      "id": "OA10-B",
+      "range": [
+        420,
+        422
+      ],
+      "interpretation": "Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position."
+    },
+    {
+      "id": "OA10-C",
+      "range": [
+        423,
+        427
+      ],
+      "interpretation": "Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation."
+    },
+    {
+      "id": "OA10-D",
+      "range": [
+        428,
+        430
+      ],
+      "interpretation": "Assign found timestamp or None in current crossing dict and return. Distinguish current cache null retention from previous-key suffix eligibility; no direct persistent assignment here."
+    },
+    {
+      "id": "OA08-C",
+      "range": [
+        431,
+        435
+      ],
+      "interpretation": "Call OA06 with fixed direction, all supplied streams, anchors, local boundary/crossing closures. No catch; if discovery or its callbacks raise before normal return, persistent cache assignments below not reached. Arbitrary external callback mutation is not rolled back."
+    },
+    {
+      "id": "OA08-D",
+      "range": [
+        436,
+        441
+      ],
+      "interpretation": "After normal return (including empty result), replace persistent boundaries, crossings, then last lower timestamp, return found unchanged. Unqueried old keys evicted. This is post-success publication, not transactional rollback for arbitrary setter or external side effect."
+    }
+  ],
+  "rows": [
+    {
+      "category": "branches",
+      "current_row": 73,
+      "node": 1428,
+      "ast_node": 1428,
+      "span": [
+        382,
+        8,
+        383,
+        73
+      ],
+      "operation": [
+        29,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "OA07-A",
+      "semantic_role": "If outcomes [\"true\",\"false\"]; Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1428,
+        "disposition": "VERIFIED",
+        "interpretation": "Validate exact direction membership during live object construction."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 74,
+      "node": 1445,
+      "ast_node": 1445,
+      "span": [
+        385,
+        26,
+        385,
+        69
+      ],
+      "operation": [
+        29,
+        "IfExp",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "OA07-A",
+      "semantic_role": "IfExp outcomes [\"true\",\"false\"]; Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1445,
+        "disposition": "VERIFIED",
+        "interpretation": "Store low attribute for bullish, high for validated bearish."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 75,
+      "node": 1474,
+      "ast_node": 1474,
+      "span": [
+        394,
+        8,
+        395,
+        91
+      ],
+      "operation": [
+        30,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "OA08-A",
+      "semantic_role": "If outcomes [\"true\",\"false\"]; Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1474,
+        "disposition": "VERIFIED",
+        "interpretation": "Validate inclusive dirty index range from zero through len(main times); chained comparison short-circuits second comparison if lower bound fails."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 76,
+      "node": 1476,
+      "ast_node": 1476,
+      "span": [
+        394,
+        15,
+        394,
+        61
+      ],
+      "operation": [
+        30,
+        "Compare",
+        [
+          "comparison_0_continue",
+          "comparison_0_short_circuit"
+        ]
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Compare outcomes [\"comparison_0_continue\",\"comparison_0_short_circuit\"]; Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1476,
+        "disposition": "VERIFIED",
+        "interpretation": "Both 0<=dirty and dirty<=len must hold; length evaluated only if first succeeds."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 77,
+      "node": 1489,
+      "ast_node": 1489,
+      "span": [
+        396,
+        16,
+        396,
+        104
+      ],
+      "operation": [
+        30,
+        "IfExp",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "OA08-A",
+      "semantic_role": "IfExp outcomes [\"true\",\"false\"]; Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1489,
+        "disposition": "VERIFIED",
+        "interpretation": "Use dirty main timestamp if index strictly less than length; equality yields None."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 78,
+      "node": 1507,
+      "ast_node": 1507,
+      "span": [
+        398,
+        21,
+        398,
+        61
+      ],
+      "operation": [
+        30,
+        "IfExp",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "OA08-B",
+      "semantic_role": "IfExp outcomes [\"true\",\"false\"]; Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1507,
+        "disposition": "VERIFIED",
+        "interpretation": "Take last lower timestamp using negative-one index only when lower sequence truthy; else None."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 79,
+      "node": 1516,
+      "ast_node": 1516,
+      "span": [
+        399,
+        22,
+        399,
+        96
+      ],
+      "operation": [
+        30,
+        "IfExp",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "OA08-B",
+      "semantic_role": "IfExp outcomes [\"true\",\"false\"]; Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1516,
+        "disposition": "VERIFIED",
+        "interpretation": "Dirty lower position is lower bound at dirty timestamp when non-null; else lower length."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 80,
+      "node": 1529,
+      "ast_node": 1529,
+      "span": [
+        401,
+        12,
+        402,
+        55
+      ],
+      "operation": [
+        30,
+        "IfExp",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "OA08-B",
+      "semantic_role": "IfExp outcomes [\"true\",\"false\"]; Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1529,
+        "disposition": "VERIFIED",
+        "interpretation": "Use old coverage calculation only if prior last lower time non-null; else zero."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 81,
+      "node": 1561,
+      "ast_node": 1561,
+      "span": [
+        409,
+        12,
+        410,
+        50
+      ],
+      "operation": [
+        31,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "OA09-A",
+      "semantic_role": "If outcomes [\"true\",\"false\"]; Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1561,
+        "disposition": "VERIFIED",
+        "interpretation": "Only if current cached value is None AND last strictly before first_dirty_main, try previous boundary cache."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 82,
+      "node": 1562,
+      "ast_node": 1562,
+      "span": [
+        409,
+        15,
+        409,
+        57
+      ],
+      "operation": [
+        31,
+        "BoolOp",
+        [
+          "operand_0_continue",
+          "operand_0_short_circuit"
+        ]
+      ],
+      "group": "OA09-A",
+      "semantic_role": "BoolOp outcomes [\"operand_0_continue\",\"operand_0_short_circuit\"]; Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1562,
+        "disposition": "VERIFIED",
+        "interpretation": "Only if current cached value is None AND last strictly before first_dirty_main, try previous boundary cache."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 83,
+      "node": 1576,
+      "ast_node": 1576,
+      "span": [
+        411,
+        12,
+        412,
+        84
+      ],
+      "operation": [
+        31,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "OA09-B",
+      "semantic_role": "If outcomes [\"true\",\"false\"]; If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1576,
+        "disposition": "VERIFIED",
+        "interpretation": "If still None, compute native boundary; cached tuple otherwise retained."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 84,
+      "node": 1604,
+      "ast_node": 1604,
+      "span": [
+        418,
+        12,
+        419,
+        37
+      ],
+      "operation": [
+        32,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "OA10-A",
+      "semantic_role": "If outcomes [\"true\",\"false\"]; Crossing key is (reset_time,level), native hash/equality; equal Decimal numeric values with differing exponents coalesce, not representation-exact key. Current membership distinguishes cached None from absent and returns unchanged immediately.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1604,
+        "disposition": "VERIFIED",
+        "interpretation": "Membership in current crossing dictionary detects cached None as well as timestamp."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 85,
+      "node": 1619,
+      "ast_node": 1619,
+      "span": [
+        421,
+        12,
+        427,
+        83
+      ],
+      "operation": [
+        32,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "OA10-B",
+      "semantic_role": "If outcomes [\"true\",\"false\"]; Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1619,
+        "disposition": "VERIFIED",
+        "interpretation": "Reuse old only when non-null, dirty absent OR old strictly earlier than dirty, current lower last non-null, and old <= current last; predicates short circuit in this order."
+      },
+      "contained_groups": [
+        "OA10-C"
+      ]
+    },
+    {
+      "category": "branches",
+      "current_row": 86,
+      "node": 1620,
+      "ast_node": 1620,
+      "span": [
+        421,
+        15,
+        421,
+        114
+      ],
+      "operation": [
+        32,
+        "BoolOp",
+        [
+          "operand_0_continue",
+          "operand_0_short_circuit",
+          "operand_1_continue",
+          "operand_1_short_circuit",
+          "operand_2_continue",
+          "operand_2_short_circuit"
+        ]
+      ],
+      "group": "OA10-B",
+      "semantic_role": "BoolOp outcomes [\"operand_0_continue\",\"operand_0_short_circuit\",\"operand_1_continue\",\"operand_1_short_circuit\",\"operand_2_continue\",\"operand_2_short_circuit\"]; Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1620,
+        "disposition": "VERIFIED",
+        "interpretation": "Reuse old only when non-null, dirty absent OR old strictly earlier than dirty, current lower last non-null, and old <= current last; predicates short circuit in this order."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 87,
+      "node": 1624,
+      "ast_node": 1624,
+      "span": [
+        421,
+        36,
+        421,
+        64
+      ],
+      "operation": [
+        32,
+        "BoolOp",
+        [
+          "operand_0_continue",
+          "operand_0_short_circuit"
+        ]
+      ],
+      "group": "OA10-B",
+      "semantic_role": "BoolOp outcomes [\"operand_0_continue\",\"operand_0_short_circuit\"]; Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1624,
+        "disposition": "VERIFIED",
+        "interpretation": "Dirty absent or old strictly before dirty; old equal dirty invalidates reuse."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 88,
+      "node": 1646,
+      "ast_node": 1646,
+      "span": [
+        425,
+        16,
+        426,
+        65
+      ],
+      "operation": [
+        32,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "OA10-C",
+      "semantic_role": "If outcomes [\"true\",\"false\"]; Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1646,
+        "disposition": "VERIFIED",
+        "interpretation": "If key existed in previous cache (including prior null), allow suffix resume."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 45,
+      "node": 1429,
+      "ast_node": 1429,
+      "span": [
+        382,
+        11,
+        382,
+        50
+      ],
+      "operation": [
+        29,
+        [
+          "NotIn"
+        ]
+      ],
+      "group": "OA07-A",
+      "semantic_role": "Comparison [\"NotIn\"]; Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1429,
+        "disposition": "VERIFIED",
+        "interpretation": "Validate exact direction membership during live object construction."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 46,
+      "node": 1446,
+      "ast_node": 1446,
+      "span": [
+        385,
+        35,
+        385,
+        57
+      ],
+      "operation": [
+        29,
+        [
+          "Eq"
+        ]
+      ],
+      "group": "OA07-A",
+      "semantic_role": "Comparison [\"Eq\"]; Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1446,
+        "disposition": "VERIFIED",
+        "interpretation": "Store low attribute for bullish, high for validated bearish."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 47,
+      "node": 1476,
+      "ast_node": 1476,
+      "span": [
+        394,
+        15,
+        394,
+        61
+      ],
+      "operation": [
+        30,
+        [
+          "LtE",
+          "LtE"
+        ]
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Comparison [\"LtE\",\"LtE\"]; Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1476,
+        "disposition": "VERIFIED",
+        "interpretation": "Both 0<=dirty and dirty<=len must hold; length evaluated only if first succeeds."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 48,
+      "node": 1490,
+      "ast_node": 1490,
+      "span": [
+        396,
+        54,
+        396,
+        94
+      ],
+      "operation": [
+        30,
+        [
+          "Lt"
+        ]
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Comparison [\"Lt\"]; Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1490,
+        "disposition": "VERIFIED",
+        "interpretation": "Strict less-than-length selects available dirty timestamp."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 49,
+      "node": 1517,
+      "ast_node": 1517,
+      "span": [
+        399,
+        57,
+        399,
+        74
+      ],
+      "operation": [
+        30,
+        [
+          "IsNot"
+        ]
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Comparison [\"IsNot\"]; Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1517,
+        "disposition": "VERIFIED",
+        "interpretation": "Non-null dirty timestamp chooses lower-bound mapping."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 50,
+      "node": 1530,
+      "ast_node": 1530,
+      "span": [
+        402,
+        15,
+        402,
+        48
+      ],
+      "operation": [
+        30,
+        [
+          "IsNot"
+        ]
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Comparison [\"IsNot\"]; Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1530,
+        "disposition": "VERIFIED",
+        "interpretation": "Use old coverage calculation only if prior last lower time non-null; else zero."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 51,
+      "node": 1563,
+      "ast_node": 1563,
+      "span": [
+        409,
+        15,
+        409,
+        29
+      ],
+      "operation": [
+        31,
+        [
+          "Is"
+        ]
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Comparison [\"Is\"]; Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1563,
+        "disposition": "VERIFIED",
+        "interpretation": "Current boundary cache miss is identity-to-None."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 52,
+      "node": 1566,
+      "ast_node": 1566,
+      "span": [
+        409,
+        34,
+        409,
+        57
+      ],
+      "operation": [
+        31,
+        [
+          "Lt"
+        ]
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Comparison [\"Lt\"]; Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1566,
+        "disposition": "VERIFIED",
+        "interpretation": "Only range last strictly before dirty may reuse previous tuple."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 53,
+      "node": 1577,
+      "ast_node": 1577,
+      "span": [
+        411,
+        15,
+        411,
+        29
+      ],
+      "operation": [
+        31,
+        [
+          "Is"
+        ]
+      ],
+      "group": "OA09-B",
+      "semantic_role": "Comparison [\"Is\"]; If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1577,
+        "disposition": "VERIFIED",
+        "interpretation": "None after current and possible prior lookup invokes native OA04."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 54,
+      "node": 1605,
+      "ast_node": 1605,
+      "span": [
+        418,
+        15,
+        418,
+        31
+      ],
+      "operation": [
+        32,
+        [
+          "In"
+        ]
+      ],
+      "group": "OA10-A",
+      "semantic_role": "Comparison [\"In\"]; Crossing key is (reset_time,level), native hash/equality; equal Decimal numeric values with differing exponents coalesce, not representation-exact key. Current membership distinguishes cached None from absent and returns unchanged immediately.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1605,
+        "disposition": "VERIFIED",
+        "interpretation": "Membership in current crossing dictionary detects cached None as well as timestamp."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 55,
+      "node": 1621,
+      "ast_node": 1621,
+      "span": [
+        421,
+        15,
+        421,
+        30
+      ],
+      "operation": [
+        32,
+        [
+          "IsNot"
+        ]
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Comparison [\"IsNot\"]; Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1621,
+        "disposition": "VERIFIED",
+        "interpretation": "Prior crossing must be non-null to reuse."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 56,
+      "node": 1625,
+      "ast_node": 1625,
+      "span": [
+        421,
+        36,
+        421,
+        49
+      ],
+      "operation": [
+        32,
+        [
+          "Is"
+        ]
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Comparison [\"Is\"]; Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1625,
+        "disposition": "VERIFIED",
+        "interpretation": "Null dirty sentinel bypasses old<dirty test."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 57,
+      "node": 1628,
+      "ast_node": 1628,
+      "span": [
+        421,
+        53,
+        421,
+        64
+      ],
+      "operation": [
+        32,
+        [
+          "Lt"
+        ]
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Comparison [\"Lt\"]; Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1628,
+        "disposition": "VERIFIED",
+        "interpretation": "Require old strictly before dirty when dirty exists."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 58,
+      "node": 1631,
+      "ast_node": 1631,
+      "span": [
+        421,
+        70,
+        421,
+        92
+      ],
+      "operation": [
+        32,
+        [
+          "IsNot"
+        ]
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Comparison [\"IsNot\"]; Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1631,
+        "disposition": "VERIFIED",
+        "interpretation": "Current last lower must be non-null."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 59,
+      "node": 1634,
+      "ast_node": 1634,
+      "span": [
+        421,
+        97,
+        421,
+        114
+      ],
+      "operation": [
+        32,
+        [
+          "LtE"
+        ]
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Comparison [\"LtE\"]; Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1634,
+        "disposition": "VERIFIED",
+        "interpretation": "Require old<=current last; equality allowed."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 60,
+      "node": 1647,
+      "ast_node": 1647,
+      "span": [
+        425,
+        19,
+        425,
+        41
+      ],
+      "operation": [
+        32,
+        [
+          "In"
+        ]
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Comparison [\"In\"]; Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1647,
+        "disposition": "VERIFIED",
+        "interpretation": "Previous cache membership (not non-null value) controls suffix resume."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 16,
+      "node": 1475,
+      "ast_node": 1475,
+      "span": [
+        394,
+        11,
+        394,
+        61
+      ],
+      "operation": [
+        30,
+        "Not"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Operator Not; Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1475,
+        "disposition": "VERIFIED",
+        "interpretation": "Negate entire inclusive chained range test."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 17,
+      "node": 1511,
+      "ast_node": 1511,
+      "span": [
+        398,
+        33,
+        398,
+        35
+      ],
+      "operation": [
+        30,
+        "USub"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Operator USub; Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1511,
+        "disposition": "VERIFIED",
+        "interpretation": "Negative-one subscript selects latest lower time."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 112,
+      "node": 1435,
+      "ast_node": 1435,
+      "span": [
+        383,
+        18,
+        383,
+        73
+      ],
+      "operation": [
+        29,
+        "ValueError",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "OA07-A",
+      "semantic_role": "Call ValueError (BUILTIN_CANDIDATE); native dynamic target conditional. Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1435,
+        "disposition": "VERIFIED",
+        "interpretation": "Raise ValueError on invalid live direction before initializing state."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 113,
+      "node": 1479,
+      "ast_node": 1479,
+      "span": [
+        394,
+        40,
+        394,
+        61
+      ],
+      "operation": [
+        30,
+        "len",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Call len (BUILTIN_CANDIDATE); native dynamic target conditional. Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1479,
+        "disposition": "VERIFIED",
+        "interpretation": "Get main times length for upper-bound validity."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 114,
+      "node": 1484,
+      "ast_node": 1484,
+      "span": [
+        395,
+        18,
+        395,
+        91
+      ],
+      "operation": [
+        30,
+        "ValueError",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Call ValueError (BUILTIN_CANDIDATE); native dynamic target conditional. Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1484,
+        "disposition": "VERIFIED",
+        "interpretation": "Raise ValueError if dirty index outside permitted range."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 115,
+      "node": 1492,
+      "ast_node": 1492,
+      "span": [
+        396,
+        73,
+        396,
+        94
+      ],
+      "operation": [
+        30,
+        "len",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Call len (BUILTIN_CANDIDATE); native dynamic target conditional. Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1492,
+        "disposition": "VERIFIED",
+        "interpretation": "Read main length to distinguish dirty timestamp from end sentinel."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 116,
+      "node": 1520,
+      "ast_node": 1520,
+      "span": [
+        399,
+        22,
+        399,
+        53
+      ],
+      "operation": [
+        30,
+        "bisect_left",
+        "IMPORTED_EXTERNAL_OR_DYNAMIC",
+        [],
+        2,
+        []
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Call bisect_left (IMPORTED_EXTERNAL_OR_DYNAMIC); native dynamic target conditional. Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1520,
+        "disposition": "VERIFIED",
+        "interpretation": "Lower bound gives first lower >= dirty."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 117,
+      "node": 1524,
+      "ast_node": 1524,
+      "span": [
+        399,
+        80,
+        399,
+        96
+      ],
+      "operation": [
+        30,
+        "len",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Call len (BUILTIN_CANDIDATE); native dynamic target conditional. Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1524,
+        "disposition": "VERIFIED",
+        "interpretation": "No dirty main timestamp uses current lower length."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 118,
+      "node": 1534,
+      "ast_node": 1534,
+      "span": [
+        401,
+        12,
+        401,
+        60
+      ],
+      "operation": [
+        30,
+        "bisect_right",
+        "IMPORTED_EXTERNAL_OR_DYNAMIC",
+        [],
+        2,
+        []
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Call bisect_right (IMPORTED_EXTERNAL_OR_DYNAMIC); native dynamic target conditional. Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1534,
+        "disposition": "VERIFIED",
+        "interpretation": "Upper-bound prior last lower timestamp within current lower times."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 119,
+      "node": 1557,
+      "ast_node": 1557,
+      "span": [
+        408,
+        21,
+        408,
+        40
+      ],
+      "operation": [
+        31,
+        "boundaries.get",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        1,
+        []
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Call boundaries.get (UNRESOLVED_DYNAMIC); native dynamic target conditional. Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1557,
+        "disposition": "VERIFIED",
+        "interpretation": "Read per-update boundary cache for exact (first,last) key."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 120,
+      "node": 1571,
+      "ast_node": 1571,
+      "span": [
+        410,
+        25,
+        410,
+        50
+      ],
+      "operation": [
+        31,
+        "self._boundaries.get",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        1,
+        []
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Call self._boundaries.get (UNRESOLVED_DYNAMIC); native dynamic target conditional. Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1571,
+        "disposition": "VERIFIED",
+        "interpretation": "Lookup previous boundary tuple by same key; no further validation."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 121,
+      "node": 1582,
+      "ast_node": 1582,
+      "span": [
+        412,
+        25,
+        412,
+        84
+      ],
+      "operation": [
+        31,
+        "_order_b_boundary",
+        "LEXICAL_CANDIDATE",
+        [
+          "engine/pipeline/order_audit_engine.py:170:0:_order_b_boundary"
+        ],
+        4,
+        []
+      ],
+      "group": "OA09-B",
+      "semantic_role": "Call _order_b_boundary (LEXICAL_CANDIDATE); native dynamic target conditional. If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1582,
+        "disposition": "VERIFIED",
+        "interpretation": "Invoke OA04 with current chronology, first,last and immutable live attribute."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 122,
+      "node": 1614,
+      "ast_node": 1614,
+      "span": [
+        420,
+        18,
+        420,
+        42
+      ],
+      "operation": [
+        32,
+        "self._crossings.get",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        1,
+        []
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Call self._crossings.get (UNRESOLVED_DYNAMIC); native dynamic target conditional. Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1614,
+        "disposition": "VERIFIED",
+        "interpretation": "Read previous crossing cache by (reset_time, level), missing yields None."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 123,
+      "node": 1642,
+      "ast_node": 1642,
+      "span": [
+        424,
+        23,
+        424,
+        60
+      ],
+      "operation": [
+        32,
+        "bisect_right",
+        "IMPORTED_EXTERNAL_OR_DYNAMIC",
+        [],
+        2,
+        []
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Call bisect_right (IMPORTED_EXTERNAL_OR_DYNAMIC); native dynamic target conditional. Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1642,
+        "disposition": "VERIFIED",
+        "interpretation": "Otherwise lower search starts at upper bound of exact Reset time."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 124,
+      "node": 1653,
+      "ast_node": 1653,
+      "span": [
+        426,
+        27,
+        426,
+        65
+      ],
+      "operation": [
+        32,
+        "max",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Call max (BUILTIN_CANDIDATE); native dynamic target conditional. Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1653,
+        "disposition": "VERIFIED",
+        "interpretation": "Max preserves strict post-reset minimum left."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 125,
+      "node": 1656,
+      "ast_node": 1656,
+      "span": [
+        426,
+        37,
+        426,
+        64
+      ],
+      "operation": [
+        32,
+        "min",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Call min (BUILTIN_CANDIDATE); native dynamic target conditional. Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1656,
+        "disposition": "VERIFIED",
+        "interpretation": "Min selects earlier previous coverage or dirty lower frontier."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 126,
+      "node": 1662,
+      "ast_node": 1662,
+      "span": [
+        427,
+        24,
+        427,
+        83
+      ],
+      "operation": [
+        32,
+        "_order_b_crossing",
+        "LEXICAL_CANDIDATE",
+        [
+          "engine/pipeline/order_audit_engine.py:180:0:_order_b_crossing"
+        ],
+        4,
+        []
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Call _order_b_crossing (LEXICAL_CANDIDATE); native dynamic target conditional. Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1662,
+        "disposition": "VERIFIED",
+        "interpretation": "Invoke native OA05 with current chronology, fixed attribute, resumed left, original level."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 127,
+      "node": 1678,
+      "ast_node": 1678,
+      "span": [
+        431,
+        16,
+        435,
+        9
+      ],
+      "operation": [
+        30,
+        "discover_order_b_reset_legs",
+        "LEXICAL_CANDIDATE",
+        [
+          "engine/pipeline/order_audit_engine.py:198:0:discover_order_b_reset_legs"
+        ],
+        7,
+        [
+          "behavior_anchors",
+          "_boundary",
+          "_crossing"
+        ]
+      ],
+      "group": "OA08-C",
+      "semantic_role": "Call discover_order_b_reset_legs (LEXICAL_CANDIDATE); native dynamic target conditional. Call OA06 with fixed direction, all supplied streams, anchors, local boundary/crossing closures. No catch; if discovery or its callbacks raise before normal return, persistent cache assignments below not reached. Arbitrary external callback mutation is not rolled back.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 1678,
+        "disposition": "SOURCE_CONDITIONAL",
+        "interpretation": "Call OA06 using per-update boundary/crossing closures; replace persistent caches and last lower only after successful discovery return."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 748,
+      "node": 1427,
+      "ast_node": 1427,
+      "span": [
+        381,
+        34,
+        381,
+        37
+      ],
+      "operation": [
+        28,
+        1424,
+        "Load",
+        "str"
+      ],
+      "group": "OA07-A",
+      "semantic_role": "Load str (statement 1424); Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 749,
+      "node": 1430,
+      "ast_node": 1430,
+      "span": [
+        382,
+        11,
+        382,
+        20
+      ],
+      "operation": [
+        29,
+        1428,
+        "Load",
+        "direction"
+      ],
+      "group": "OA07-A",
+      "semantic_role": "Load direction (statement 1428); Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 750,
+      "node": 1436,
+      "ast_node": 1436,
+      "span": [
+        383,
+        18,
+        383,
+        28
+      ],
+      "operation": [
+        29,
+        1434,
+        "Load",
+        "ValueError"
+      ],
+      "group": "OA07-A",
+      "semantic_role": "Load ValueError (statement 1434); Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 751,
+      "node": 1439,
+      "ast_node": 1439,
+      "span": [
+        384,
+        8,
+        384,
+        23
+      ],
+      "operation": [
+        29,
+        1438,
+        "Store",
+        "self._direction"
+      ],
+      "group": "OA07-A",
+      "semantic_role": "Store self._direction (statement 1438); Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 752,
+      "node": 1440,
+      "ast_node": 1440,
+      "span": [
+        384,
+        8,
+        384,
+        12
+      ],
+      "operation": [
+        29,
+        1438,
+        "Load",
+        "self"
+      ],
+      "group": "OA07-A",
+      "semantic_role": "Load self (statement 1438); Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 753,
+      "node": 1441,
+      "ast_node": 1441,
+      "span": [
+        384,
+        26,
+        384,
+        35
+      ],
+      "operation": [
+        29,
+        1438,
+        "Load",
+        "direction"
+      ],
+      "group": "OA07-A",
+      "semantic_role": "Load direction (statement 1438); Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 754,
+      "node": 1443,
+      "ast_node": 1443,
+      "span": [
+        385,
+        8,
+        385,
+        23
+      ],
+      "operation": [
+        29,
+        1442,
+        "Store",
+        "self._attribute"
+      ],
+      "group": "OA07-A",
+      "semantic_role": "Store self._attribute (statement 1442); Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 755,
+      "node": 1444,
+      "ast_node": 1444,
+      "span": [
+        385,
+        8,
+        385,
+        12
+      ],
+      "operation": [
+        29,
+        1442,
+        "Load",
+        "self"
+      ],
+      "group": "OA07-A",
+      "semantic_role": "Load self (statement 1442); Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 756,
+      "node": 1447,
+      "ast_node": 1447,
+      "span": [
+        385,
+        35,
+        385,
+        44
+      ],
+      "operation": [
+        29,
+        1442,
+        "Load",
+        "direction"
+      ],
+      "group": "OA07-A",
+      "semantic_role": "Load direction (statement 1442); Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 757,
+      "node": 1452,
+      "ast_node": 1452,
+      "span": [
+        386,
+        8,
+        386,
+        24
+      ],
+      "operation": [
+        29,
+        1451,
+        "Store",
+        "self._boundaries"
+      ],
+      "group": "OA07-B",
+      "semantic_role": "Store self._boundaries (statement 1451); Initialize independent empty boundary/crossing dictionaries and previous lower timestamp None. No external ledger ownership.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 758,
+      "node": 1453,
+      "ast_node": 1453,
+      "span": [
+        386,
+        8,
+        386,
+        12
+      ],
+      "operation": [
+        29,
+        1451,
+        "Load",
+        "self"
+      ],
+      "group": "OA07-B",
+      "semantic_role": "Load self (statement 1451); Initialize independent empty boundary/crossing dictionaries and previous lower timestamp None. No external ledger ownership.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 759,
+      "node": 1456,
+      "ast_node": 1456,
+      "span": [
+        387,
+        8,
+        387,
+        23
+      ],
+      "operation": [
+        29,
+        1455,
+        "Store",
+        "self._crossings"
+      ],
+      "group": "OA07-B",
+      "semantic_role": "Store self._crossings (statement 1455); Initialize independent empty boundary/crossing dictionaries and previous lower timestamp None. No external ledger ownership.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 760,
+      "node": 1457,
+      "ast_node": 1457,
+      "span": [
+        387,
+        8,
+        387,
+        12
+      ],
+      "operation": [
+        29,
+        1455,
+        "Load",
+        "self"
+      ],
+      "group": "OA07-B",
+      "semantic_role": "Load self (statement 1455); Initialize independent empty boundary/crossing dictionaries and previous lower timestamp None. No external ledger ownership.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 761,
+      "node": 1460,
+      "ast_node": 1460,
+      "span": [
+        388,
+        8,
+        388,
+        29
+      ],
+      "operation": [
+        29,
+        1459,
+        "Store",
+        "self._last_lower_time"
+      ],
+      "group": "OA07-B",
+      "semantic_role": "Store self._last_lower_time (statement 1459); Initialize independent empty boundary/crossing dictionaries and previous lower timestamp None. No external ledger ownership.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 762,
+      "node": 1461,
+      "ast_node": 1461,
+      "span": [
+        388,
+        8,
+        388,
+        12
+      ],
+      "operation": [
+        29,
+        1459,
+        "Load",
+        "self"
+      ],
+      "group": "OA07-B",
+      "semantic_role": "Load self (statement 1459); Initialize independent empty boundary/crossing dictionaries and previous lower timestamp None. No external ledger ownership.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 763,
+      "node": 1473,
+      "ast_node": 1473,
+      "span": [
+        392,
+        47,
+        392,
+        50
+      ],
+      "operation": [
+        28,
+        1463,
+        "Load",
+        "int"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Load int (statement 1463); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 764,
+      "node": 1478,
+      "ast_node": 1478,
+      "span": [
+        394,
+        20,
+        394,
+        36
+      ],
+      "operation": [
+        30,
+        1474,
+        "Load",
+        "first_dirty_main"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Load first_dirty_main (statement 1474); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 765,
+      "node": 1480,
+      "ast_node": 1480,
+      "span": [
+        394,
+        40,
+        394,
+        43
+      ],
+      "operation": [
+        30,
+        1474,
+        "Load",
+        "len"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Load len (statement 1474); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 766,
+      "node": 1481,
+      "ast_node": 1481,
+      "span": [
+        394,
+        44,
+        394,
+        60
+      ],
+      "operation": [
+        30,
+        1474,
+        "Load",
+        "chronology.times"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Load chronology.times (statement 1474); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 767,
+      "node": 1482,
+      "ast_node": 1482,
+      "span": [
+        394,
+        44,
+        394,
+        54
+      ],
+      "operation": [
+        30,
+        1474,
+        "Load",
+        "chronology"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Load chronology (statement 1474); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 768,
+      "node": 1485,
+      "ast_node": 1485,
+      "span": [
+        395,
+        18,
+        395,
+        28
+      ],
+      "operation": [
+        30,
+        1483,
+        "Load",
+        "ValueError"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Load ValueError (statement 1483); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 769,
+      "node": 1488,
+      "ast_node": 1488,
+      "span": [
+        396,
+        8,
+        396,
+        13
+      ],
+      "operation": [
+        30,
+        1487,
+        "Store",
+        "dirty"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Store dirty (statement 1487); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 770,
+      "node": 1491,
+      "ast_node": 1491,
+      "span": [
+        396,
+        54,
+        396,
+        70
+      ],
+      "operation": [
+        30,
+        1487,
+        "Load",
+        "first_dirty_main"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Load first_dirty_main (statement 1487); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 771,
+      "node": 1493,
+      "ast_node": 1493,
+      "span": [
+        396,
+        73,
+        396,
+        76
+      ],
+      "operation": [
+        30,
+        1487,
+        "Load",
+        "len"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Load len (statement 1487); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 772,
+      "node": 1494,
+      "ast_node": 1494,
+      "span": [
+        396,
+        77,
+        396,
+        93
+      ],
+      "operation": [
+        30,
+        1487,
+        "Load",
+        "chronology.times"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Load chronology.times (statement 1487); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 773,
+      "node": 1495,
+      "ast_node": 1495,
+      "span": [
+        396,
+        77,
+        396,
+        87
+      ],
+      "operation": [
+        30,
+        1487,
+        "Load",
+        "chronology"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Load chronology (statement 1487); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 774,
+      "node": 1496,
+      "ast_node": 1496,
+      "span": [
+        396,
+        16,
+        396,
+        50
+      ],
+      "operation": [
+        30,
+        1487,
+        "Load",
+        "chronology.times[]"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Load chronology.times[] (statement 1487); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 775,
+      "node": 1497,
+      "ast_node": 1497,
+      "span": [
+        396,
+        16,
+        396,
+        32
+      ],
+      "operation": [
+        30,
+        1487,
+        "Load",
+        "chronology.times"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Load chronology.times (statement 1487); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 776,
+      "node": 1498,
+      "ast_node": 1498,
+      "span": [
+        396,
+        16,
+        396,
+        26
+      ],
+      "operation": [
+        30,
+        1487,
+        "Load",
+        "chronology"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Load chronology (statement 1487); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 777,
+      "node": 1499,
+      "ast_node": 1499,
+      "span": [
+        396,
+        33,
+        396,
+        49
+      ],
+      "operation": [
+        30,
+        1487,
+        "Load",
+        "first_dirty_main"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Load first_dirty_main (statement 1487); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 778,
+      "node": 1502,
+      "ast_node": 1502,
+      "span": [
+        397,
+        8,
+        397,
+        19
+      ],
+      "operation": [
+        30,
+        1501,
+        "Store",
+        "lower_times"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Store lower_times (statement 1501); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 779,
+      "node": 1503,
+      "ast_node": 1503,
+      "span": [
+        397,
+        22,
+        397,
+        45
+      ],
+      "operation": [
+        30,
+        1501,
+        "Load",
+        "chronology.second_times"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Load chronology.second_times (statement 1501); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 780,
+      "node": 1504,
+      "ast_node": 1504,
+      "span": [
+        397,
+        22,
+        397,
+        32
+      ],
+      "operation": [
+        30,
+        1501,
+        "Load",
+        "chronology"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Load chronology (statement 1501); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 781,
+      "node": 1506,
+      "ast_node": 1506,
+      "span": [
+        398,
+        8,
+        398,
+        18
+      ],
+      "operation": [
+        30,
+        1505,
+        "Store",
+        "last_lower"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Store last_lower (statement 1505); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 782,
+      "node": 1508,
+      "ast_node": 1508,
+      "span": [
+        398,
+        40,
+        398,
+        51
+      ],
+      "operation": [
+        30,
+        1505,
+        "Load",
+        "lower_times"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Load lower_times (statement 1505); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 783,
+      "node": 1509,
+      "ast_node": 1509,
+      "span": [
+        398,
+        21,
+        398,
+        36
+      ],
+      "operation": [
+        30,
+        1505,
+        "Load",
+        "lower_times[]"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Load lower_times[] (statement 1505); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 784,
+      "node": 1510,
+      "ast_node": 1510,
+      "span": [
+        398,
+        21,
+        398,
+        32
+      ],
+      "operation": [
+        30,
+        1505,
+        "Load",
+        "lower_times"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Load lower_times (statement 1505); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 785,
+      "node": 1515,
+      "ast_node": 1515,
+      "span": [
+        399,
+        8,
+        399,
+        19
+      ],
+      "operation": [
+        30,
+        1514,
+        "Store",
+        "dirty_lower"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Store dirty_lower (statement 1514); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 786,
+      "node": 1518,
+      "ast_node": 1518,
+      "span": [
+        399,
+        57,
+        399,
+        62
+      ],
+      "operation": [
+        30,
+        1514,
+        "Load",
+        "dirty"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Load dirty (statement 1514); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 787,
+      "node": 1521,
+      "ast_node": 1521,
+      "span": [
+        399,
+        22,
+        399,
+        33
+      ],
+      "operation": [
+        30,
+        1514,
+        "Load",
+        "bisect_left"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Load bisect_left (statement 1514); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 788,
+      "node": 1522,
+      "ast_node": 1522,
+      "span": [
+        399,
+        34,
+        399,
+        45
+      ],
+      "operation": [
+        30,
+        1514,
+        "Load",
+        "lower_times"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Load lower_times (statement 1514); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 789,
+      "node": 1523,
+      "ast_node": 1523,
+      "span": [
+        399,
+        47,
+        399,
+        52
+      ],
+      "operation": [
+        30,
+        1514,
+        "Load",
+        "dirty"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Load dirty (statement 1514); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 790,
+      "node": 1525,
+      "ast_node": 1525,
+      "span": [
+        399,
+        80,
+        399,
+        83
+      ],
+      "operation": [
+        30,
+        1514,
+        "Load",
+        "len"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Load len (statement 1514); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 791,
+      "node": 1526,
+      "ast_node": 1526,
+      "span": [
+        399,
+        84,
+        399,
+        95
+      ],
+      "operation": [
+        30,
+        1514,
+        "Load",
+        "lower_times"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Load lower_times (statement 1514); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 792,
+      "node": 1528,
+      "ast_node": 1528,
+      "span": [
+        400,
+        8,
+        400,
+        17
+      ],
+      "operation": [
+        30,
+        1527,
+        "Store",
+        "old_limit"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Store old_limit (statement 1527); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 793,
+      "node": 1531,
+      "ast_node": 1531,
+      "span": [
+        402,
+        15,
+        402,
+        36
+      ],
+      "operation": [
+        30,
+        1527,
+        "Load",
+        "self._last_lower_time"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Load self._last_lower_time (statement 1527); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 794,
+      "node": 1532,
+      "ast_node": 1532,
+      "span": [
+        402,
+        15,
+        402,
+        19
+      ],
+      "operation": [
+        30,
+        1527,
+        "Load",
+        "self"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Load self (statement 1527); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 795,
+      "node": 1535,
+      "ast_node": 1535,
+      "span": [
+        401,
+        12,
+        401,
+        24
+      ],
+      "operation": [
+        30,
+        1527,
+        "Load",
+        "bisect_right"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Load bisect_right (statement 1527); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 796,
+      "node": 1536,
+      "ast_node": 1536,
+      "span": [
+        401,
+        25,
+        401,
+        36
+      ],
+      "operation": [
+        30,
+        1527,
+        "Load",
+        "lower_times"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Load lower_times (statement 1527); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 797,
+      "node": 1537,
+      "ast_node": 1537,
+      "span": [
+        401,
+        38,
+        401,
+        59
+      ],
+      "operation": [
+        30,
+        1527,
+        "Load",
+        "self._last_lower_time"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Load self._last_lower_time (statement 1527); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 798,
+      "node": 1538,
+      "ast_node": 1538,
+      "span": [
+        401,
+        38,
+        401,
+        42
+      ],
+      "operation": [
+        30,
+        1527,
+        "Load",
+        "self"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Load self (statement 1527); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 799,
+      "node": 1542,
+      "ast_node": 1542,
+      "span": [
+        404,
+        8,
+        404,
+        18
+      ],
+      "operation": [
+        30,
+        1540,
+        "Store",
+        "boundaries"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Store boundaries (statement 1540); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 800,
+      "node": 1543,
+      "ast_node": 1543,
+      "span": [
+        404,
+        20,
+        404,
+        29
+      ],
+      "operation": [
+        30,
+        1540,
+        "Store",
+        "crossings"
+      ],
+      "group": "OA08-B",
+      "semantic_role": "Store crossings (statement 1540); Read current lower timestamp array, last element if truthy else None. dirty_lower lower bound of dirty timestamp or current length when sentinel. old_limit upper bound of previous last timestamp on CURRENT lower array or zero. These count positional coverage only if caller preserved prefix and current arrays/index alignment. Allocate two new local dictionaries; persistent fields unchanged.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 801,
+      "node": 1551,
+      "ast_node": 1551,
+      "span": [
+        407,
+        12,
+        407,
+        15
+      ],
+      "operation": [
+        31,
+        1550,
+        "Store",
+        "key"
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Store key (statement 1550); Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 802,
+      "node": 1553,
+      "ast_node": 1553,
+      "span": [
+        407,
+        19,
+        407,
+        24
+      ],
+      "operation": [
+        31,
+        1550,
+        "Load",
+        "first"
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Load first (statement 1550); Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 803,
+      "node": 1554,
+      "ast_node": 1554,
+      "span": [
+        407,
+        26,
+        407,
+        30
+      ],
+      "operation": [
+        31,
+        1550,
+        "Load",
+        "last"
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Load last (statement 1550); Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 804,
+      "node": 1556,
+      "ast_node": 1556,
+      "span": [
+        408,
+        12,
+        408,
+        18
+      ],
+      "operation": [
+        31,
+        1555,
+        "Store",
+        "cached"
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Store cached (statement 1555); Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 805,
+      "node": 1558,
+      "ast_node": 1558,
+      "span": [
+        408,
+        21,
+        408,
+        35
+      ],
+      "operation": [
+        31,
+        1555,
+        "Load",
+        "boundaries.get"
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Load boundaries.get (statement 1555); Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 806,
+      "node": 1559,
+      "ast_node": 1559,
+      "span": [
+        408,
+        21,
+        408,
+        31
+      ],
+      "operation": [
+        31,
+        1555,
+        "Load",
+        "boundaries"
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Load boundaries (statement 1555); Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 807,
+      "node": 1560,
+      "ast_node": 1560,
+      "span": [
+        408,
+        36,
+        408,
+        39
+      ],
+      "operation": [
+        31,
+        1555,
+        "Load",
+        "key"
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Load key (statement 1555); Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 808,
+      "node": 1564,
+      "ast_node": 1564,
+      "span": [
+        409,
+        15,
+        409,
+        21
+      ],
+      "operation": [
+        31,
+        1561,
+        "Load",
+        "cached"
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Load cached (statement 1561); Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 809,
+      "node": 1567,
+      "ast_node": 1567,
+      "span": [
+        409,
+        34,
+        409,
+        38
+      ],
+      "operation": [
+        31,
+        1561,
+        "Load",
+        "last"
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Load last (statement 1561); Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 810,
+      "node": 1568,
+      "ast_node": 1568,
+      "span": [
+        409,
+        41,
+        409,
+        57
+      ],
+      "operation": [
+        31,
+        1561,
+        "Load",
+        "first_dirty_main"
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Load first_dirty_main (statement 1561); Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 811,
+      "node": 1570,
+      "ast_node": 1570,
+      "span": [
+        410,
+        16,
+        410,
+        22
+      ],
+      "operation": [
+        31,
+        1569,
+        "Store",
+        "cached"
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Store cached (statement 1569); Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 812,
+      "node": 1572,
+      "ast_node": 1572,
+      "span": [
+        410,
+        25,
+        410,
+        45
+      ],
+      "operation": [
+        31,
+        1569,
+        "Load",
+        "self._boundaries.get"
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Load self._boundaries.get (statement 1569); Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 813,
+      "node": 1573,
+      "ast_node": 1573,
+      "span": [
+        410,
+        25,
+        410,
+        41
+      ],
+      "operation": [
+        31,
+        1569,
+        "Load",
+        "self._boundaries"
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Load self._boundaries (statement 1569); Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 814,
+      "node": 1574,
+      "ast_node": 1574,
+      "span": [
+        410,
+        25,
+        410,
+        29
+      ],
+      "operation": [
+        31,
+        1569,
+        "Load",
+        "self"
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Load self (statement 1569); Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 815,
+      "node": 1575,
+      "ast_node": 1575,
+      "span": [
+        410,
+        46,
+        410,
+        49
+      ],
+      "operation": [
+        31,
+        1569,
+        "Load",
+        "key"
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Load key (statement 1569); Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 816,
+      "node": 1578,
+      "ast_node": 1578,
+      "span": [
+        411,
+        15,
+        411,
+        21
+      ],
+      "operation": [
+        31,
+        1576,
+        "Load",
+        "cached"
+      ],
+      "group": "OA09-B",
+      "semantic_role": "Load cached (statement 1576); If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 817,
+      "node": 1581,
+      "ast_node": 1581,
+      "span": [
+        412,
+        16,
+        412,
+        22
+      ],
+      "operation": [
+        31,
+        1580,
+        "Store",
+        "cached"
+      ],
+      "group": "OA09-B",
+      "semantic_role": "Store cached (statement 1580); If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 818,
+      "node": 1583,
+      "ast_node": 1583,
+      "span": [
+        412,
+        25,
+        412,
+        42
+      ],
+      "operation": [
+        31,
+        1580,
+        "Load",
+        "_order_b_boundary"
+      ],
+      "group": "OA09-B",
+      "semantic_role": "Load _order_b_boundary (statement 1580); If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 819,
+      "node": 1584,
+      "ast_node": 1584,
+      "span": [
+        412,
+        43,
+        412,
+        53
+      ],
+      "operation": [
+        31,
+        1580,
+        "Load",
+        "chronology"
+      ],
+      "group": "OA09-B",
+      "semantic_role": "Load chronology (statement 1580); If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 820,
+      "node": 1585,
+      "ast_node": 1585,
+      "span": [
+        412,
+        55,
+        412,
+        60
+      ],
+      "operation": [
+        31,
+        1580,
+        "Load",
+        "first"
+      ],
+      "group": "OA09-B",
+      "semantic_role": "Load first (statement 1580); If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 821,
+      "node": 1586,
+      "ast_node": 1586,
+      "span": [
+        412,
+        62,
+        412,
+        66
+      ],
+      "operation": [
+        31,
+        1580,
+        "Load",
+        "last"
+      ],
+      "group": "OA09-B",
+      "semantic_role": "Load last (statement 1580); If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 822,
+      "node": 1587,
+      "ast_node": 1587,
+      "span": [
+        412,
+        68,
+        412,
+        83
+      ],
+      "operation": [
+        31,
+        1580,
+        "Load",
+        "self._attribute"
+      ],
+      "group": "OA09-B",
+      "semantic_role": "Load self._attribute (statement 1580); If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 823,
+      "node": 1588,
+      "ast_node": 1588,
+      "span": [
+        412,
+        68,
+        412,
+        72
+      ],
+      "operation": [
+        31,
+        1580,
+        "Load",
+        "self"
+      ],
+      "group": "OA09-B",
+      "semantic_role": "Load self (statement 1580); If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 824,
+      "node": 1590,
+      "ast_node": 1590,
+      "span": [
+        413,
+        12,
+        413,
+        27
+      ],
+      "operation": [
+        31,
+        1589,
+        "Store",
+        "boundaries[]"
+      ],
+      "group": "OA09-B",
+      "semantic_role": "Store boundaries[] (statement 1589); If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 825,
+      "node": 1591,
+      "ast_node": 1591,
+      "span": [
+        413,
+        12,
+        413,
+        22
+      ],
+      "operation": [
+        31,
+        1589,
+        "Load",
+        "boundaries"
+      ],
+      "group": "OA09-B",
+      "semantic_role": "Load boundaries (statement 1589); If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 826,
+      "node": 1592,
+      "ast_node": 1592,
+      "span": [
+        413,
+        23,
+        413,
+        26
+      ],
+      "operation": [
+        31,
+        1589,
+        "Load",
+        "key"
+      ],
+      "group": "OA09-B",
+      "semantic_role": "Load key (statement 1589); If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 827,
+      "node": 1593,
+      "ast_node": 1593,
+      "span": [
+        413,
+        30,
+        413,
+        36
+      ],
+      "operation": [
+        31,
+        1589,
+        "Load",
+        "cached"
+      ],
+      "group": "OA09-B",
+      "semantic_role": "Load cached (statement 1589); If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 828,
+      "node": 1595,
+      "ast_node": 1595,
+      "span": [
+        414,
+        19,
+        414,
+        25
+      ],
+      "operation": [
+        31,
+        1594,
+        "Load",
+        "cached"
+      ],
+      "group": "OA09-B",
+      "semantic_role": "Load cached (statement 1594); If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 829,
+      "node": 1600,
+      "ast_node": 1600,
+      "span": [
+        417,
+        12,
+        417,
+        15
+      ],
+      "operation": [
+        32,
+        1599,
+        "Store",
+        "key"
+      ],
+      "group": "OA10-A",
+      "semantic_role": "Store key (statement 1599); Crossing key is (reset_time,level), native hash/equality; equal Decimal numeric values with differing exponents coalesce, not representation-exact key. Current membership distinguishes cached None from absent and returns unchanged immediately.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 830,
+      "node": 1602,
+      "ast_node": 1602,
+      "span": [
+        417,
+        19,
+        417,
+        29
+      ],
+      "operation": [
+        32,
+        1599,
+        "Load",
+        "reset_time"
+      ],
+      "group": "OA10-A",
+      "semantic_role": "Load reset_time (statement 1599); Crossing key is (reset_time,level), native hash/equality; equal Decimal numeric values with differing exponents coalesce, not representation-exact key. Current membership distinguishes cached None from absent and returns unchanged immediately.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 831,
+      "node": 1603,
+      "ast_node": 1603,
+      "span": [
+        417,
+        31,
+        417,
+        36
+      ],
+      "operation": [
+        32,
+        1599,
+        "Load",
+        "level"
+      ],
+      "group": "OA10-A",
+      "semantic_role": "Load level (statement 1599); Crossing key is (reset_time,level), native hash/equality; equal Decimal numeric values with differing exponents coalesce, not representation-exact key. Current membership distinguishes cached None from absent and returns unchanged immediately.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 832,
+      "node": 1606,
+      "ast_node": 1606,
+      "span": [
+        418,
+        15,
+        418,
+        18
+      ],
+      "operation": [
+        32,
+        1604,
+        "Load",
+        "key"
+      ],
+      "group": "OA10-A",
+      "semantic_role": "Load key (statement 1604); Crossing key is (reset_time,level), native hash/equality; equal Decimal numeric values with differing exponents coalesce, not representation-exact key. Current membership distinguishes cached None from absent and returns unchanged immediately.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 833,
+      "node": 1607,
+      "ast_node": 1607,
+      "span": [
+        418,
+        22,
+        418,
+        31
+      ],
+      "operation": [
+        32,
+        1604,
+        "Load",
+        "crossings"
+      ],
+      "group": "OA10-A",
+      "semantic_role": "Load crossings (statement 1604); Crossing key is (reset_time,level), native hash/equality; equal Decimal numeric values with differing exponents coalesce, not representation-exact key. Current membership distinguishes cached None from absent and returns unchanged immediately.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 834,
+      "node": 1609,
+      "ast_node": 1609,
+      "span": [
+        419,
+        23,
+        419,
+        37
+      ],
+      "operation": [
+        32,
+        1608,
+        "Load",
+        "crossings[]"
+      ],
+      "group": "OA10-A",
+      "semantic_role": "Load crossings[] (statement 1608); Crossing key is (reset_time,level), native hash/equality; equal Decimal numeric values with differing exponents coalesce, not representation-exact key. Current membership distinguishes cached None from absent and returns unchanged immediately.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 835,
+      "node": 1610,
+      "ast_node": 1610,
+      "span": [
+        419,
+        23,
+        419,
+        32
+      ],
+      "operation": [
+        32,
+        1608,
+        "Load",
+        "crossings"
+      ],
+      "group": "OA10-A",
+      "semantic_role": "Load crossings (statement 1608); Crossing key is (reset_time,level), native hash/equality; equal Decimal numeric values with differing exponents coalesce, not representation-exact key. Current membership distinguishes cached None from absent and returns unchanged immediately.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 836,
+      "node": 1611,
+      "ast_node": 1611,
+      "span": [
+        419,
+        33,
+        419,
+        36
+      ],
+      "operation": [
+        32,
+        1608,
+        "Load",
+        "key"
+      ],
+      "group": "OA10-A",
+      "semantic_role": "Load key (statement 1608); Crossing key is (reset_time,level), native hash/equality; equal Decimal numeric values with differing exponents coalesce, not representation-exact key. Current membership distinguishes cached None from absent and returns unchanged immediately.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 837,
+      "node": 1613,
+      "ast_node": 1613,
+      "span": [
+        420,
+        12,
+        420,
+        15
+      ],
+      "operation": [
+        32,
+        1612,
+        "Store",
+        "old"
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Store old (statement 1612); Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 838,
+      "node": 1615,
+      "ast_node": 1615,
+      "span": [
+        420,
+        18,
+        420,
+        37
+      ],
+      "operation": [
+        32,
+        1612,
+        "Load",
+        "self._crossings.get"
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Load self._crossings.get (statement 1612); Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 839,
+      "node": 1616,
+      "ast_node": 1616,
+      "span": [
+        420,
+        18,
+        420,
+        33
+      ],
+      "operation": [
+        32,
+        1612,
+        "Load",
+        "self._crossings"
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Load self._crossings (statement 1612); Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 840,
+      "node": 1617,
+      "ast_node": 1617,
+      "span": [
+        420,
+        18,
+        420,
+        22
+      ],
+      "operation": [
+        32,
+        1612,
+        "Load",
+        "self"
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Load self (statement 1612); Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 841,
+      "node": 1618,
+      "ast_node": 1618,
+      "span": [
+        420,
+        38,
+        420,
+        41
+      ],
+      "operation": [
+        32,
+        1612,
+        "Load",
+        "key"
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Load key (statement 1612); Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 842,
+      "node": 1622,
+      "ast_node": 1622,
+      "span": [
+        421,
+        15,
+        421,
+        18
+      ],
+      "operation": [
+        32,
+        1619,
+        "Load",
+        "old"
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Load old (statement 1619); Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 843,
+      "node": 1626,
+      "ast_node": 1626,
+      "span": [
+        421,
+        36,
+        421,
+        41
+      ],
+      "operation": [
+        32,
+        1619,
+        "Load",
+        "dirty"
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Load dirty (statement 1619); Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 844,
+      "node": 1629,
+      "ast_node": 1629,
+      "span": [
+        421,
+        53,
+        421,
+        56
+      ],
+      "operation": [
+        32,
+        1619,
+        "Load",
+        "old"
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Load old (statement 1619); Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 845,
+      "node": 1630,
+      "ast_node": 1630,
+      "span": [
+        421,
+        59,
+        421,
+        64
+      ],
+      "operation": [
+        32,
+        1619,
+        "Load",
+        "dirty"
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Load dirty (statement 1619); Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 846,
+      "node": 1632,
+      "ast_node": 1632,
+      "span": [
+        421,
+        70,
+        421,
+        80
+      ],
+      "operation": [
+        32,
+        1619,
+        "Load",
+        "last_lower"
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Load last_lower (statement 1619); Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 847,
+      "node": 1635,
+      "ast_node": 1635,
+      "span": [
+        421,
+        97,
+        421,
+        100
+      ],
+      "operation": [
+        32,
+        1619,
+        "Load",
+        "old"
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Load old (statement 1619); Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 848,
+      "node": 1636,
+      "ast_node": 1636,
+      "span": [
+        421,
+        104,
+        421,
+        114
+      ],
+      "operation": [
+        32,
+        1619,
+        "Load",
+        "last_lower"
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Load last_lower (statement 1619); Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 849,
+      "node": 1638,
+      "ast_node": 1638,
+      "span": [
+        422,
+        16,
+        422,
+        21
+      ],
+      "operation": [
+        32,
+        1637,
+        "Store",
+        "found"
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Store found (statement 1637); Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 850,
+      "node": 1639,
+      "ast_node": 1639,
+      "span": [
+        422,
+        24,
+        422,
+        27
+      ],
+      "operation": [
+        32,
+        1637,
+        "Load",
+        "old"
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Load old (statement 1637); Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 851,
+      "node": 1641,
+      "ast_node": 1641,
+      "span": [
+        424,
+        16,
+        424,
+        20
+      ],
+      "operation": [
+        32,
+        1640,
+        "Store",
+        "left"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Store left (statement 1640); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 852,
+      "node": 1643,
+      "ast_node": 1643,
+      "span": [
+        424,
+        23,
+        424,
+        35
+      ],
+      "operation": [
+        32,
+        1640,
+        "Load",
+        "bisect_right"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Load bisect_right (statement 1640); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 853,
+      "node": 1644,
+      "ast_node": 1644,
+      "span": [
+        424,
+        36,
+        424,
+        47
+      ],
+      "operation": [
+        32,
+        1640,
+        "Load",
+        "lower_times"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Load lower_times (statement 1640); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 854,
+      "node": 1645,
+      "ast_node": 1645,
+      "span": [
+        424,
+        49,
+        424,
+        59
+      ],
+      "operation": [
+        32,
+        1640,
+        "Load",
+        "reset_time"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Load reset_time (statement 1640); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 855,
+      "node": 1648,
+      "ast_node": 1648,
+      "span": [
+        425,
+        19,
+        425,
+        22
+      ],
+      "operation": [
+        32,
+        1646,
+        "Load",
+        "key"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Load key (statement 1646); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 856,
+      "node": 1649,
+      "ast_node": 1649,
+      "span": [
+        425,
+        26,
+        425,
+        41
+      ],
+      "operation": [
+        32,
+        1646,
+        "Load",
+        "self._crossings"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Load self._crossings (statement 1646); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 857,
+      "node": 1650,
+      "ast_node": 1650,
+      "span": [
+        425,
+        26,
+        425,
+        30
+      ],
+      "operation": [
+        32,
+        1646,
+        "Load",
+        "self"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Load self (statement 1646); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 858,
+      "node": 1652,
+      "ast_node": 1652,
+      "span": [
+        426,
+        20,
+        426,
+        24
+      ],
+      "operation": [
+        32,
+        1651,
+        "Store",
+        "left"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Store left (statement 1651); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 859,
+      "node": 1654,
+      "ast_node": 1654,
+      "span": [
+        426,
+        27,
+        426,
+        30
+      ],
+      "operation": [
+        32,
+        1651,
+        "Load",
+        "max"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Load max (statement 1651); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 860,
+      "node": 1655,
+      "ast_node": 1655,
+      "span": [
+        426,
+        31,
+        426,
+        35
+      ],
+      "operation": [
+        32,
+        1651,
+        "Load",
+        "left"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Load left (statement 1651); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 861,
+      "node": 1657,
+      "ast_node": 1657,
+      "span": [
+        426,
+        37,
+        426,
+        40
+      ],
+      "operation": [
+        32,
+        1651,
+        "Load",
+        "min"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Load min (statement 1651); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 862,
+      "node": 1658,
+      "ast_node": 1658,
+      "span": [
+        426,
+        41,
+        426,
+        50
+      ],
+      "operation": [
+        32,
+        1651,
+        "Load",
+        "old_limit"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Load old_limit (statement 1651); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 863,
+      "node": 1659,
+      "ast_node": 1659,
+      "span": [
+        426,
+        52,
+        426,
+        63
+      ],
+      "operation": [
+        32,
+        1651,
+        "Load",
+        "dirty_lower"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Load dirty_lower (statement 1651); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 864,
+      "node": 1661,
+      "ast_node": 1661,
+      "span": [
+        427,
+        16,
+        427,
+        21
+      ],
+      "operation": [
+        32,
+        1660,
+        "Store",
+        "found"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Store found (statement 1660); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 865,
+      "node": 1663,
+      "ast_node": 1663,
+      "span": [
+        427,
+        24,
+        427,
+        41
+      ],
+      "operation": [
+        32,
+        1660,
+        "Load",
+        "_order_b_crossing"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Load _order_b_crossing (statement 1660); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 866,
+      "node": 1664,
+      "ast_node": 1664,
+      "span": [
+        427,
+        42,
+        427,
+        52
+      ],
+      "operation": [
+        32,
+        1660,
+        "Load",
+        "chronology"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Load chronology (statement 1660); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 867,
+      "node": 1665,
+      "ast_node": 1665,
+      "span": [
+        427,
+        54,
+        427,
+        69
+      ],
+      "operation": [
+        32,
+        1660,
+        "Load",
+        "self._attribute"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Load self._attribute (statement 1660); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 868,
+      "node": 1666,
+      "ast_node": 1666,
+      "span": [
+        427,
+        54,
+        427,
+        58
+      ],
+      "operation": [
+        32,
+        1660,
+        "Load",
+        "self"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Load self (statement 1660); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 869,
+      "node": 1667,
+      "ast_node": 1667,
+      "span": [
+        427,
+        71,
+        427,
+        75
+      ],
+      "operation": [
+        32,
+        1660,
+        "Load",
+        "left"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Load left (statement 1660); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 870,
+      "node": 1668,
+      "ast_node": 1668,
+      "span": [
+        427,
+        77,
+        427,
+        82
+      ],
+      "operation": [
+        32,
+        1660,
+        "Load",
+        "level"
+      ],
+      "group": "OA10-C",
+      "semantic_role": "Load level (statement 1660); Otherwise start strictly after Reset via bisect_right; if old key exists including old None, advance to max(base left,min(old_limit,dirty_lower)); absent old key searches from base. Old coverage computed against current chronology, not independent historical array. Native OA05 scan may return None. Correct reuse requires aligned immutable prefix and complete dirty invalidation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 871,
+      "node": 1670,
+      "ast_node": 1670,
+      "span": [
+        428,
+        12,
+        428,
+        26
+      ],
+      "operation": [
+        32,
+        1669,
+        "Store",
+        "crossings[]"
+      ],
+      "group": "OA10-D",
+      "semantic_role": "Store crossings[] (statement 1669); Assign found timestamp or None in current crossing dict and return. Distinguish current cache null retention from previous-key suffix eligibility; no direct persistent assignment here.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 872,
+      "node": 1671,
+      "ast_node": 1671,
+      "span": [
+        428,
+        12,
+        428,
+        21
+      ],
+      "operation": [
+        32,
+        1669,
+        "Load",
+        "crossings"
+      ],
+      "group": "OA10-D",
+      "semantic_role": "Load crossings (statement 1669); Assign found timestamp or None in current crossing dict and return. Distinguish current cache null retention from previous-key suffix eligibility; no direct persistent assignment here.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 873,
+      "node": 1672,
+      "ast_node": 1672,
+      "span": [
+        428,
+        22,
+        428,
+        25
+      ],
+      "operation": [
+        32,
+        1669,
+        "Load",
+        "key"
+      ],
+      "group": "OA10-D",
+      "semantic_role": "Load key (statement 1669); Assign found timestamp or None in current crossing dict and return. Distinguish current cache null retention from previous-key suffix eligibility; no direct persistent assignment here.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 874,
+      "node": 1673,
+      "ast_node": 1673,
+      "span": [
+        428,
+        29,
+        428,
+        34
+      ],
+      "operation": [
+        32,
+        1669,
+        "Load",
+        "found"
+      ],
+      "group": "OA10-D",
+      "semantic_role": "Load found (statement 1669); Assign found timestamp or None in current crossing dict and return. Distinguish current cache null retention from previous-key suffix eligibility; no direct persistent assignment here.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 875,
+      "node": 1675,
+      "ast_node": 1675,
+      "span": [
+        429,
+        19,
+        429,
+        24
+      ],
+      "operation": [
+        32,
+        1674,
+        "Load",
+        "found"
+      ],
+      "group": "OA10-D",
+      "semantic_role": "Load found (statement 1674); Assign found timestamp or None in current crossing dict and return. Distinguish current cache null retention from previous-key suffix eligibility; no direct persistent assignment here.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 876,
+      "node": 1677,
+      "ast_node": 1677,
+      "span": [
+        431,
+        8,
+        431,
+        13
+      ],
+      "operation": [
+        30,
+        1676,
+        "Store",
+        "found"
+      ],
+      "group": "OA08-C",
+      "semantic_role": "Store found (statement 1676); Call OA06 with fixed direction, all supplied streams, anchors, local boundary/crossing closures. No catch; if discovery or its callbacks raise before normal return, persistent cache assignments below not reached. Arbitrary external callback mutation is not rolled back.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 877,
+      "node": 1679,
+      "ast_node": 1679,
+      "span": [
+        431,
+        16,
+        431,
+        43
+      ],
+      "operation": [
+        30,
+        1676,
+        "Load",
+        "discover_order_b_reset_legs"
+      ],
+      "group": "OA08-C",
+      "semantic_role": "Load discover_order_b_reset_legs (statement 1676); Call OA06 with fixed direction, all supplied streams, anchors, local boundary/crossing closures. No catch; if discovery or its callbacks raise before normal return, persistent cache assignments below not reached. Arbitrary external callback mutation is not rolled back.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 878,
+      "node": 1680,
+      "ast_node": 1680,
+      "span": [
+        432,
+        12,
+        432,
+        27
+      ],
+      "operation": [
+        30,
+        1676,
+        "Load",
+        "self._direction"
+      ],
+      "group": "OA08-C",
+      "semantic_role": "Load self._direction (statement 1676); Call OA06 with fixed direction, all supplied streams, anchors, local boundary/crossing closures. No catch; if discovery or its callbacks raise before normal return, persistent cache assignments below not reached. Arbitrary external callback mutation is not rolled back.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 879,
+      "node": 1681,
+      "ast_node": 1681,
+      "span": [
+        432,
+        12,
+        432,
+        16
+      ],
+      "operation": [
+        30,
+        1676,
+        "Load",
+        "self"
+      ],
+      "group": "OA08-C",
+      "semantic_role": "Load self (statement 1676); Call OA06 with fixed direction, all supplied streams, anchors, local boundary/crossing closures. No catch; if discovery or its callbacks raise before normal return, persistent cache assignments below not reached. Arbitrary external callback mutation is not rolled back.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 880,
+      "node": 1682,
+      "ast_node": 1682,
+      "span": [
+        432,
+        29,
+        432,
+        39
+      ],
+      "operation": [
+        30,
+        1676,
+        "Load",
+        "chronology"
+      ],
+      "group": "OA08-C",
+      "semantic_role": "Load chronology (statement 1676); Call OA06 with fixed direction, all supplied streams, anchors, local boundary/crossing closures. No catch; if discovery or its callbacks raise before normal return, persistent cache assignments below not reached. Arbitrary external callback mutation is not rolled back.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 881,
+      "node": 1683,
+      "ast_node": 1683,
+      "span": [
+        432,
+        41,
+        432,
+        56
+      ],
+      "operation": [
+        30,
+        1676,
+        "Load",
+        "trend_reactions"
+      ],
+      "group": "OA08-C",
+      "semantic_role": "Load trend_reactions (statement 1676); Call OA06 with fixed direction, all supplied streams, anchors, local boundary/crossing closures. No catch; if discovery or its callbacks raise before normal return, persistent cache assignments below not reached. Arbitrary external callback mutation is not rolled back.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 882,
+      "node": 1684,
+      "ast_node": 1684,
+      "span": [
+        432,
+        58,
+        432,
+        64
+      ],
+      "operation": [
+        30,
+        1676,
+        "Load",
+        "resets"
+      ],
+      "group": "OA08-C",
+      "semantic_role": "Load resets (statement 1676); Call OA06 with fixed direction, all supplied streams, anchors, local boundary/crossing closures. No catch; if discovery or its callbacks raise before normal return, persistent cache assignments below not reached. Arbitrary external callback mutation is not rolled back.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 883,
+      "node": 1685,
+      "ast_node": 1685,
+      "span": [
+        432,
+        66,
+        432,
+        84
+      ],
+      "operation": [
+        30,
+        1676,
+        "Load",
+        "opposite_reactions"
+      ],
+      "group": "OA08-C",
+      "semantic_role": "Load opposite_reactions (statement 1676); Call OA06 with fixed direction, all supplied streams, anchors, local boundary/crossing closures. No catch; if discovery or its callbacks raise before normal return, persistent cache assignments below not reached. Arbitrary external callback mutation is not rolled back.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 884,
+      "node": 1686,
+      "ast_node": 1686,
+      "span": [
+        433,
+        12,
+        433,
+        22
+      ],
+      "operation": [
+        30,
+        1676,
+        "Load",
+        "post_stops"
+      ],
+      "group": "OA08-C",
+      "semantic_role": "Load post_stops (statement 1676); Call OA06 with fixed direction, all supplied streams, anchors, local boundary/crossing closures. No catch; if discovery or its callbacks raise before normal return, persistent cache assignments below not reached. Arbitrary external callback mutation is not rolled back.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 885,
+      "node": 1687,
+      "ast_node": 1687,
+      "span": [
+        433,
+        24,
+        433,
+        41
+      ],
+      "operation": [
+        30,
+        1676,
+        "Load",
+        "a_formation_times"
+      ],
+      "group": "OA08-C",
+      "semantic_role": "Load a_formation_times (statement 1676); Call OA06 with fixed direction, all supplied streams, anchors, local boundary/crossing closures. No catch; if discovery or its callbacks raise before normal return, persistent cache assignments below not reached. Arbitrary external callback mutation is not rolled back.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 886,
+      "node": 1689,
+      "ast_node": 1689,
+      "span": [
+        433,
+        60,
+        433,
+        76
+      ],
+      "operation": [
+        30,
+        1676,
+        "Load",
+        "behavior_anchors"
+      ],
+      "group": "OA08-C",
+      "semantic_role": "Load behavior_anchors (statement 1676); Call OA06 with fixed direction, all supplied streams, anchors, local boundary/crossing closures. No catch; if discovery or its callbacks raise before normal return, persistent cache assignments below not reached. Arbitrary external callback mutation is not rolled back.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 887,
+      "node": 1691,
+      "ast_node": 1691,
+      "span": [
+        434,
+        22,
+        434,
+        30
+      ],
+      "operation": [
+        30,
+        1676,
+        "Load",
+        "boundary"
+      ],
+      "group": "OA08-C",
+      "semantic_role": "Load boundary (statement 1676); Call OA06 with fixed direction, all supplied streams, anchors, local boundary/crossing closures. No catch; if discovery or its callbacks raise before normal return, persistent cache assignments below not reached. Arbitrary external callback mutation is not rolled back.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 888,
+      "node": 1693,
+      "ast_node": 1693,
+      "span": [
+        434,
+        42,
+        434,
+        50
+      ],
+      "operation": [
+        30,
+        1676,
+        "Load",
+        "crossing"
+      ],
+      "group": "OA08-C",
+      "semantic_role": "Load crossing (statement 1676); Call OA06 with fixed direction, all supplied streams, anchors, local boundary/crossing closures. No catch; if discovery or its callbacks raise before normal return, persistent cache assignments below not reached. Arbitrary external callback mutation is not rolled back.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 889,
+      "node": 1695,
+      "ast_node": 1695,
+      "span": [
+        436,
+        8,
+        436,
+        24
+      ],
+      "operation": [
+        30,
+        1694,
+        "Store",
+        "self._boundaries"
+      ],
+      "group": "OA08-D",
+      "semantic_role": "Store self._boundaries (statement 1694); After normal return (including empty result), replace persistent boundaries, crossings, then last lower timestamp, return found unchanged. Unqueried old keys evicted. This is post-success publication, not transactional rollback for arbitrary setter or external side effect.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 890,
+      "node": 1696,
+      "ast_node": 1696,
+      "span": [
+        436,
+        8,
+        436,
+        12
+      ],
+      "operation": [
+        30,
+        1694,
+        "Load",
+        "self"
+      ],
+      "group": "OA08-D",
+      "semantic_role": "Load self (statement 1694); After normal return (including empty result), replace persistent boundaries, crossings, then last lower timestamp, return found unchanged. Unqueried old keys evicted. This is post-success publication, not transactional rollback for arbitrary setter or external side effect.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 891,
+      "node": 1697,
+      "ast_node": 1697,
+      "span": [
+        436,
+        27,
+        436,
+        37
+      ],
+      "operation": [
+        30,
+        1694,
+        "Load",
+        "boundaries"
+      ],
+      "group": "OA08-D",
+      "semantic_role": "Load boundaries (statement 1694); After normal return (including empty result), replace persistent boundaries, crossings, then last lower timestamp, return found unchanged. Unqueried old keys evicted. This is post-success publication, not transactional rollback for arbitrary setter or external side effect.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 892,
+      "node": 1699,
+      "ast_node": 1699,
+      "span": [
+        437,
+        8,
+        437,
+        23
+      ],
+      "operation": [
+        30,
+        1698,
+        "Store",
+        "self._crossings"
+      ],
+      "group": "OA08-D",
+      "semantic_role": "Store self._crossings (statement 1698); After normal return (including empty result), replace persistent boundaries, crossings, then last lower timestamp, return found unchanged. Unqueried old keys evicted. This is post-success publication, not transactional rollback for arbitrary setter or external side effect.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 893,
+      "node": 1700,
+      "ast_node": 1700,
+      "span": [
+        437,
+        8,
+        437,
+        12
+      ],
+      "operation": [
+        30,
+        1698,
+        "Load",
+        "self"
+      ],
+      "group": "OA08-D",
+      "semantic_role": "Load self (statement 1698); After normal return (including empty result), replace persistent boundaries, crossings, then last lower timestamp, return found unchanged. Unqueried old keys evicted. This is post-success publication, not transactional rollback for arbitrary setter or external side effect.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 894,
+      "node": 1701,
+      "ast_node": 1701,
+      "span": [
+        437,
+        26,
+        437,
+        35
+      ],
+      "operation": [
+        30,
+        1698,
+        "Load",
+        "crossings"
+      ],
+      "group": "OA08-D",
+      "semantic_role": "Load crossings (statement 1698); After normal return (including empty result), replace persistent boundaries, crossings, then last lower timestamp, return found unchanged. Unqueried old keys evicted. This is post-success publication, not transactional rollback for arbitrary setter or external side effect.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 895,
+      "node": 1703,
+      "ast_node": 1703,
+      "span": [
+        438,
+        8,
+        438,
+        29
+      ],
+      "operation": [
+        30,
+        1702,
+        "Store",
+        "self._last_lower_time"
+      ],
+      "group": "OA08-D",
+      "semantic_role": "Store self._last_lower_time (statement 1702); After normal return (including empty result), replace persistent boundaries, crossings, then last lower timestamp, return found unchanged. Unqueried old keys evicted. This is post-success publication, not transactional rollback for arbitrary setter or external side effect.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 896,
+      "node": 1704,
+      "ast_node": 1704,
+      "span": [
+        438,
+        8,
+        438,
+        12
+      ],
+      "operation": [
+        30,
+        1702,
+        "Load",
+        "self"
+      ],
+      "group": "OA08-D",
+      "semantic_role": "Load self (statement 1702); After normal return (including empty result), replace persistent boundaries, crossings, then last lower timestamp, return found unchanged. Unqueried old keys evicted. This is post-success publication, not transactional rollback for arbitrary setter or external side effect.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 897,
+      "node": 1705,
+      "ast_node": 1705,
+      "span": [
+        438,
+        32,
+        438,
+        42
+      ],
+      "operation": [
+        30,
+        1702,
+        "Load",
+        "last_lower"
+      ],
+      "group": "OA08-D",
+      "semantic_role": "Load last_lower (statement 1702); After normal return (including empty result), replace persistent boundaries, crossings, then last lower timestamp, return found unchanged. Unqueried old keys evicted. This is post-success publication, not transactional rollback for arbitrary setter or external side effect.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 898,
+      "node": 1707,
+      "ast_node": 1707,
+      "span": [
+        439,
+        15,
+        439,
+        20
+      ],
+      "operation": [
+        30,
+        1706,
+        "Load",
+        "found"
+      ],
+      "group": "OA08-D",
+      "semantic_role": "Load found (statement 1706); After normal return (including empty result), replace persistent boundaries, crossings, then last lower timestamp, return found unchanged. Unqueried old keys evicted. This is post-success publication, not transactional rollback for arbitrary setter or external side effect.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 899,
+      "node": 1708,
+      "ast_node": 1708,
+      "span": [
+        393,
+        9,
+        393,
+        29
+      ],
+      "operation": [
+        28,
+        1463,
+        "Load",
+        "list[]"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Load list[] (statement 1463); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 900,
+      "node": 1709,
+      "ast_node": 1709,
+      "span": [
+        393,
+        9,
+        393,
+        13
+      ],
+      "operation": [
+        28,
+        1463,
+        "Load",
+        "list"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Load list (statement 1463); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 901,
+      "node": 1710,
+      "ast_node": 1710,
+      "span": [
+        393,
+        14,
+        393,
+        28
+      ],
+      "operation": [
+        28,
+        1463,
+        "Load",
+        "OrderBResetLeg"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Load OrderBResetLeg (statement 1463); Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 30,
+      "node": 1439,
+      "ast_node": 1439,
+      "span": [
+        384,
+        8,
+        384,
+        23
+      ],
+      "operation": [
+        29,
+        "self._direction",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "OA07-A",
+      "semantic_role": "Effect candidate self._direction [\"EXPLICIT_OBJECT_MUTATION\"]; static flag not external effect proof. Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 31,
+      "node": 1443,
+      "ast_node": 1443,
+      "span": [
+        385,
+        8,
+        385,
+        23
+      ],
+      "operation": [
+        29,
+        "self._attribute",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "OA07-A",
+      "semantic_role": "Effect candidate self._attribute [\"EXPLICIT_OBJECT_MUTATION\"]; static flag not external effect proof. Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 32,
+      "node": 1452,
+      "ast_node": 1452,
+      "span": [
+        386,
+        8,
+        386,
+        24
+      ],
+      "operation": [
+        29,
+        "self._boundaries",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "OA07-B",
+      "semantic_role": "Effect candidate self._boundaries [\"EXPLICIT_OBJECT_MUTATION\"]; static flag not external effect proof. Initialize independent empty boundary/crossing dictionaries and previous lower timestamp None. No external ledger ownership.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 33,
+      "node": 1456,
+      "ast_node": 1456,
+      "span": [
+        387,
+        8,
+        387,
+        23
+      ],
+      "operation": [
+        29,
+        "self._crossings",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "OA07-B",
+      "semantic_role": "Effect candidate self._crossings [\"EXPLICIT_OBJECT_MUTATION\"]; static flag not external effect proof. Initialize independent empty boundary/crossing dictionaries and previous lower timestamp None. No external ledger ownership.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 34,
+      "node": 1460,
+      "ast_node": 1460,
+      "span": [
+        388,
+        8,
+        388,
+        29
+      ],
+      "operation": [
+        29,
+        "self._last_lower_time",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "OA07-B",
+      "semantic_role": "Effect candidate self._last_lower_time [\"EXPLICIT_OBJECT_MUTATION\"]; static flag not external effect proof. Initialize independent empty boundary/crossing dictionaries and previous lower timestamp None. No external ledger ownership.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 35,
+      "node": 1557,
+      "ast_node": 1557,
+      "span": [
+        408,
+        21,
+        408,
+        40
+      ],
+      "operation": [
+        31,
+        "boundaries.get",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Effect candidate boundaries.get [\"DYNAMIC_EFFECT_UNKNOWN\"]; static flag not external effect proof. Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 36,
+      "node": 1571,
+      "ast_node": 1571,
+      "span": [
+        410,
+        25,
+        410,
+        50
+      ],
+      "operation": [
+        31,
+        "self._boundaries.get",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "OA09-A",
+      "semantic_role": "Effect candidate self._boundaries.get [\"DYNAMIC_EFFECT_UNKNOWN\"]; static flag not external effect proof. Boundary key native (first,last) tuple. Current get first; only None permits old lookup and only when last < dirty main; equality invalidates prior boundary. Does not compare prices, source identity or actual prefix.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 37,
+      "node": 1590,
+      "ast_node": 1590,
+      "span": [
+        413,
+        12,
+        413,
+        27
+      ],
+      "operation": [
+        31,
+        "boundaries[]",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "OA09-B",
+      "semantic_role": "Effect candidate boundaries[] [\"EXPLICIT_OBJECT_MUTATION\"]; static flag not external effect proof. If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 38,
+      "node": 1614,
+      "ast_node": 1614,
+      "span": [
+        420,
+        18,
+        420,
+        42
+      ],
+      "operation": [
+        32,
+        "self._crossings.get",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "OA10-B",
+      "semantic_role": "Effect candidate self._crossings.get [\"DYNAMIC_EFFECT_UNKNOWN\"]; static flag not external effect proof. Read previous value with get; reuse non-None only if dirty None or old strictly before dirty, latest lower exists and old <= last_lower. Dirty equality rejects; last equality accepts. Does not locally check old still present or unchanged at exact position.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 39,
+      "node": 1670,
+      "ast_node": 1670,
+      "span": [
+        428,
+        12,
+        428,
+        26
+      ],
+      "operation": [
+        32,
+        "crossings[]",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "OA10-D",
+      "semantic_role": "Effect candidate crossings[] [\"EXPLICIT_OBJECT_MUTATION\"]; static flag not external effect proof. Assign found timestamp or None in current crossing dict and return. Distinguish current cache null retention from previous-key suffix eligibility; no direct persistent assignment here.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 40,
+      "node": 1695,
+      "ast_node": 1695,
+      "span": [
+        436,
+        8,
+        436,
+        24
+      ],
+      "operation": [
+        30,
+        "self._boundaries",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "OA08-D",
+      "semantic_role": "Effect candidate self._boundaries [\"EXPLICIT_OBJECT_MUTATION\"]; static flag not external effect proof. After normal return (including empty result), replace persistent boundaries, crossings, then last lower timestamp, return found unchanged. Unqueried old keys evicted. This is post-success publication, not transactional rollback for arbitrary setter or external side effect.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 41,
+      "node": 1699,
+      "ast_node": 1699,
+      "span": [
+        437,
+        8,
+        437,
+        23
+      ],
+      "operation": [
+        30,
+        "self._crossings",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "OA08-D",
+      "semantic_role": "Effect candidate self._crossings [\"EXPLICIT_OBJECT_MUTATION\"]; static flag not external effect proof. After normal return (including empty result), replace persistent boundaries, crossings, then last lower timestamp, return found unchanged. Unqueried old keys evicted. This is post-success publication, not transactional rollback for arbitrary setter or external side effect.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 42,
+      "node": 1703,
+      "ast_node": 1703,
+      "span": [
+        438,
+        8,
+        438,
+        29
+      ],
+      "operation": [
+        30,
+        "self._last_lower_time",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "OA08-D",
+      "semantic_role": "Effect candidate self._last_lower_time [\"EXPLICIT_OBJECT_MUTATION\"]; static flag not external effect proof. After normal return (including empty result), replace persistent boundaries, crossings, then last lower timestamp, return found unchanged. Unqueried old keys evicted. This is post-success publication, not transactional rollback for arbitrary setter or external side effect.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "exits",
+      "current_row": 23,
+      "node": 1434,
+      "ast_node": 1434,
+      "span": [
+        383,
+        12,
+        383,
+        73
+      ],
+      "operation": [
+        29,
+        "Raise",
+        "ValueError()"
+      ],
+      "group": "OA07-A",
+      "semantic_role": "Exit Raise; Fixed direction at construction: exact bullish/bearish required; invalid direction raises before any assignments. Store direction and low for bullish else high. No per-update direction change or dataset identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "exits",
+      "current_row": 24,
+      "node": 1483,
+      "ast_node": 1483,
+      "span": [
+        395,
+        12,
+        395,
+        91
+      ],
+      "operation": [
+        30,
+        "Raise",
+        "ValueError()"
+      ],
+      "group": "OA08-A",
+      "semantic_role": "Exit Raise; Validate first_dirty_main in inclusive 0..len(main times), chained comparison short-circuits. Sentinel equal length yields None; otherwise direct main timestamp lookup. No proof input dirty index is first actual modification.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "exits",
+      "current_row": 25,
+      "node": 1594,
+      "ast_node": 1594,
+      "span": [
+        414,
+        12,
+        414,
+        25
+      ],
+      "operation": [
+        31,
+        "Return",
+        null
+      ],
+      "group": "OA09-B",
+      "semantic_role": "Exit Return; If still None compute native boundary; assign to current key and return cached triple unchanged. Only queried keys retained after publication. No Decimal normalization on reused values beyond original provider.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "exits",
+      "current_row": 26,
+      "node": 1608,
+      "ast_node": 1608,
+      "span": [
+        419,
+        16,
+        419,
+        37
+      ],
+      "operation": [
+        32,
+        "Return",
+        null
+      ],
+      "group": "OA10-A",
+      "semantic_role": "Exit Return; Crossing key is (reset_time,level), native hash/equality; equal Decimal numeric values with differing exponents coalesce, not representation-exact key. Current membership distinguishes cached None from absent and returns unchanged immediately.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "exits",
+      "current_row": 27,
+      "node": 1674,
+      "ast_node": 1674,
+      "span": [
+        429,
+        12,
+        429,
+        24
+      ],
+      "operation": [
+        32,
+        "Return",
+        null
+      ],
+      "group": "OA10-D",
+      "semantic_role": "Exit Return; Assign found timestamp or None in current crossing dict and return. Distinguish current cache null retention from previous-key suffix eligibility; no direct persistent assignment here.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "exits",
+      "current_row": 28,
+      "node": 1706,
+      "ast_node": 1706,
+      "span": [
+        439,
+        8,
+        439,
+        20
+      ],
+      "operation": [
+        30,
+        "Return",
+        null
+      ],
+      "group": "OA08-D",
+      "semantic_role": "Exit Return; After normal return (including empty result), replace persistent boundaries, crossings, then last lower timestamp, return found unchanged. Unqueried old keys evicted. This is post-success publication, not transactional rollback for arbitrary setter or external side effect.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    }
+  ],
+  "supplemental": [
+    {
+      "id": "B05-03-S1",
+      "span": [
+        381,
+        388
+      ],
+      "groups": [
+        "OA07-A",
+        "OA07-B"
+      ],
+      "historical": "Direction fixed at construction; no additional dataset identity key stored in this local cache.",
+      "disposition": "RECONCILED_WITH_DIRECT_SOURCE_CONTRACTS"
+    },
+    {
+      "id": "B05-03-S2",
+      "span": [
+        394,
+        404
+      ],
+      "groups": [
+        "OA08-A",
+        "OA08-B"
+      ],
+      "historical": "Inclusive dirty index with end sentinel None; old coverage computed using current lower array and previous last time. No local prefix-equivalence validation.",
+      "disposition": "RECONCILED_WITH_DIRECT_SOURCE_CONTRACTS"
+    },
+    {
+      "id": "B05-03-S3",
+      "span": [
+        406,
+        415
+      ],
+      "groups": [
+        "OA09-A",
+        "OA09-B"
+      ],
+      "historical": "Current boundary dictionary read first; old boundary usable only last<dirty main; native computation when result None. Only queried keys retained.",
+      "disposition": "RECONCILED_WITH_DIRECT_SOURCE_CONTRACTS"
+    },
+    {
+      "id": "B05-03-S4",
+      "span": [
+        416,
+        429
+      ],
+      "groups": [
+        "OA10-A",
+        "OA10-B",
+        "OA10-C",
+        "OA10-D"
+      ],
+      "historical": "Crossing key is (reset_time,level) using native equality/hash; current dictionary membership retains null. Prior non-null hit reused only strict before dirty and <= current last; old key including null permits suffix resume.",
+      "disposition": "RECONCILED_WITH_DIRECT_SOURCE_CONTRACTS"
+    },
+    {
+      "id": "B05-03-S5",
+      "span": [
+        431,
+        439
+      ],
+      "groups": [
+        "OA08-C",
+        "OA08-D"
+      ],
+      "historical": "Persistent caches and last lower time replaced only after normal OA06 return (including empty); exceptions before return leave prior persistent assignments untouched. No runtime equivalence asserted.",
+      "disposition": "RECONCILED_WITH_DIRECT_SOURCE_CONTRACTS"
+    }
+  ],
+  "validation": {
+    "category_counts": {
+      "branches": 16,
+      "comparisons": 16,
+      "arithmetic": 2,
+      "calls": 16,
+      "accesses": 154,
+      "effects": 13,
+      "exits": 6
+    },
+    "rows": 223,
+    "w1": 50,
+    "additional": 173,
+    "supplemental": 5,
+    "identity_errors": 0,
+    "overlap": 0,
+    "prior_rows_revalidated": 1047,
+    "prior_registers": [
+      "5141c2ab2b056226e0f7d9a65aa5e8e7766b2da7",
+      "60b00bd427681009ec0affd686715fe056cff60f"
+    ],
+    "range": [
+      378,
+      441
+    ],
+    "runtime": "NOT RUN",
+    "raw_payload": "NOT READ"
+  },
+  "findings": [
+    {
+      "id": "CP386-F01",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "description": "Explicit current/previous null distinction, native Decimal cache-key equality, strict dirty admission, prefix-dependent suffix coverage and post-normal-return publication; no runtime defect asserted."
+    }
+  ],
+  "limitations": [
+    "Local cache mechanics only. Full prefix equivalence, lower-index freshness, dirty-frontier correctness, caller direction/run scope and rollback of external mutation remain independent.",
+    "No RAW payload, runtime, ZIP or production changes. Native exceptions not tested.",
+    "No new runtime defect inferred from missing local caller validation."
+  ]
+}

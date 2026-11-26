@@ -1,0 +1,51 @@
+{
+  "checkpoint": 386,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "source": {
+    "path": "engine/pipeline/order_audit_engine.py",
+    "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+  },
+  "status": "LOCAL_CONTRACTS_ONLY_CROSS_OWNER_PENDING",
+  "handoffs": [
+    {
+      "id": "OA08->OA06",
+      "span": [
+        431,
+        439
+      ],
+      "qualification": "Discovery normal return precedes publication; local exceptions before return do not assign persistent caches. External effects not rolled back."
+    },
+    {
+      "id": "OA09->OA04",
+      "span": [
+        406,
+        414
+      ],
+      "qualification": "Boundary reuse strictly before first_dirty_main; native calculation only on None. Caller must prove unchanged source candles and exact Decimal representation on reused prefix."
+    },
+    {
+      "id": "OA10->OA05",
+      "span": [
+        416,
+        429
+      ],
+      "qualification": "Native numeric Decimal key equality, current null retention, previous key membership permits suffix. Caller must establish aligned current lower arrays/index, prefix through old coverage, safe dirty timestamp, no stale hit or excluded candidate."
+    },
+    {
+      "id": "Caller dirty-frontier and live finder",
+      "qualification": "No dataset identity key or prefix check in OA07–OA10; independent live caller scope, creation and reset/replacement conditions remain pending. No runtime bug asserted."
+    }
+  ],
+  "prior_w2": {
+    "transition": [
+      "CP325-S09",
+      "CP325-S10"
+    ],
+    "registry": "e5ea6a6ea1d754fd0ba2001629e810725027cfad"
+  },
+  "limitations": [
+    "Local cache mechanics only. Full prefix equivalence, lower-index freshness, dirty-frontier correctness, caller direction/run scope and rollback of external mutation remain independent.",
+    "No RAW payload, runtime, ZIP or production changes. Native exceptions not tested.",
+    "No new runtime defect inferred from missing local caller validation."
+  ]
+}
