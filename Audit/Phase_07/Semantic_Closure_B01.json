@@ -1,0 +1,2291 @@
+{
+  "checkpoint": 14,
+  "batch": "B01",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "60fdf1775d39f1c460560cd7fadaf2e1f8fe4d73",
+  "review_pass": "W1 source-first owner review by current assistant; source read before prior ledgers and contracts. W3 separate pass not performed.",
+  "status": "PASS",
+  "scope": "Local source contract only. Cross-owner caller propagation and W3 remain open. No execution.",
+  "counts": {
+    "modules": 5,
+    "original_rows": 74,
+    "supplemental_items": 14,
+    "by_category": {
+      "branches": 21,
+      "comparisons": 19,
+      "arithmetic": 3,
+      "calls": 31
+    }
+  },
+  "modules": [
+    {
+      "path": "engine/__init__.py",
+      "source_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "source_line_count": 1,
+      "site_rows": [],
+      "supplemental_items": [
+        {
+          "supplemental_id": "B01-engine___init__.py-S1",
+          "source_span": [
+            1,
+            1
+          ],
+          "discovery_reason": "Explicit declaration, attribute, mutation, evaluation or boundary review beyond category-row labels; may overlap original expressions.",
+          "interpretation": "Empty module, no local calculation or initialization statement.",
+          "temporal_relevance": "NONE",
+          "verification": "VERIFIED",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/__init__.py#L1-L1"
+        }
+      ]
+    },
+    {
+      "path": "engine/bridge/__init__.py",
+      "source_blob": "7cce7308316bd9e00f1a3687a6a84e0f1adb22d4",
+      "source_line_count": 2,
+      "site_rows": [],
+      "supplemental_items": [
+        {
+          "supplemental_id": "B01-engine_bridge___init__.py-S1",
+          "source_span": [
+            1,
+            1
+          ],
+          "discovery_reason": "Explicit declaration, attribute, mutation, evaluation or boundary review beyond category-row labels; may overlap original expressions.",
+          "interpretation": "Docstring sets descriptive module metadata only; no bridge calculation.",
+          "temporal_relevance": "NONE",
+          "verification": "VERIFIED",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/__init__.py#L1-L1"
+        }
+      ]
+    },
+    {
+      "path": "engine/pipeline/__init__.py",
+      "source_blob": "656ba15cfbd7edab34a66cd5bc907171940af38c",
+      "source_line_count": 29,
+      "site_rows": [
+        {
+          "kind": "branches",
+          "original_id": 16,
+          "source_span": [
+            11,
+            0,
+            12,
+            37
+          ],
+          "procedure": null,
+          "original_context": "SC03",
+          "original_operation": "If",
+          "interpretation": "After resolved path is computed, test list membership; prepend only on absence, otherwise preserve existing position.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/__init__.py#L11-L12",
+          "contract_refs": [
+            "Algorithms/V3/README.md"
+          ],
+          "transition_refs": []
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 17,
+          "source_span": [
+            11,
+            3,
+            11,
+            32
+          ],
+          "procedure": null,
+          "original_context": "SC03",
+          "original_operation": [
+            "NotIn"
+          ],
+          "interpretation": "Compare directory string against entries of sys.path using native membership; negate membership. Existing equal entry suppresses prepend, regardless of its position.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/__init__.py#L11-L11",
+          "contract_refs": [
+            "Algorithms/V3/README.md"
+          ],
+          "transition_refs": []
+        },
+        {
+          "kind": "calls",
+          "original_id": 8,
+          "source_span": [
+            10,
+            16,
+            10,
+            52
+          ],
+          "procedure": null,
+          "original_context": "SC02",
+          "original_operation": "str",
+          "interpretation": "Convert resolved path parent to native string after Path construction, resolution and parent lookup.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/__init__.py#L10-L10",
+          "contract_refs": [
+            "Algorithms/V3/README.md"
+          ],
+          "transition_refs": []
+        },
+        {
+          "kind": "calls",
+          "original_id": 11,
+          "source_span": [
+            10,
+            20,
+            10,
+            44
+          ],
+          "procedure": null,
+          "original_context": "SC02",
+          "original_operation": "Path().resolve",
+          "interpretation": "Resolve the constructed module path before reading its parent; native filesystem resolution failure propagates.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/__init__.py#L10-L10",
+          "contract_refs": [
+            "Algorithms/V3/README.md"
+          ],
+          "transition_refs": []
+        },
+        {
+          "kind": "calls",
+          "original_id": 13,
+          "source_span": [
+            10,
+            20,
+            10,
+            34
+          ],
+          "procedure": null,
+          "original_context": "SC02",
+          "original_operation": "Path",
+          "interpretation": "Construct Path from module __file__ before resolving.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/__init__.py#L10-L10",
+          "contract_refs": [
+            "Algorithms/V3/README.md"
+          ],
+          "transition_refs": []
+        },
+        {
+          "kind": "calls",
+          "original_id": 22,
+          "source_span": [
+            12,
+            4,
+            12,
+            37
+          ],
+          "procedure": null,
+          "original_context": "SC03",
+          "original_operation": "sys.path.insert",
+          "interpretation": "Insert computed directory at index zero only after absence guard; mutate global import search order before Blue imports.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/__init__.py#L12-L12",
+          "contract_refs": [
+            "Algorithms/V3/README.md"
+          ],
+          "transition_refs": []
+        }
+      ],
+      "supplemental_items": [
+        {
+          "supplemental_id": "B01-engine_pipeline___init__.py-S1",
+          "source_span": [
+            10,
+            10
+          ],
+          "discovery_reason": "Explicit declaration, attribute, mutation, evaluation or boundary review beyond category-row labels; may overlap original expressions.",
+          "interpretation": "Attribute lookup of resolved parent precedes string conversion; native import/path behavior, no trading timestamp.",
+          "temporal_relevance": "INDIRECT",
+          "verification": "VERIFIED",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/__init__.py#L10-L10"
+        },
+        {
+          "supplemental_id": "B01-engine_pipeline___init__.py-S2",
+          "source_span": [
+            14,
+            20
+          ],
+          "discovery_reason": "Explicit declaration, attribute, mutation, evaluation or boundary review beyond category-row labels; may overlap original expressions.",
+          "interpretation": "Import Blue API only after optional path prepend; actual module resolution depends on environment/import cache, imported implementation audited separately.",
+          "temporal_relevance": "INDIRECT",
+          "verification": "VERIFIED",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/__init__.py#L14-L20"
+        },
+        {
+          "supplemental_id": "B01-engine_pipeline___init__.py-S3",
+          "source_span": [
+            22,
+            28
+          ],
+          "discovery_reason": "Explicit declaration, attribute, mutation, evaluation or boundary review beyond category-row labels; may overlap original expressions.",
+          "interpretation": "Ordered export declaration lists BlueLine, ScaleStrike, count_scale_strikes, detect_blue_lines, fibonacci_level; no calculation.",
+          "temporal_relevance": "NONE",
+          "verification": "VERIFIED",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/__init__.py#L22-L28"
+        }
+      ]
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "source_blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "source_line_count": 67,
+      "site_rows": [
+        {
+          "kind": "branches",
+          "original_id": 79,
+          "source_span": [
+            25,
+            8,
+            32,
+            36
+          ],
+          "procedure": "C01",
+          "original_context": "SC02",
+          "original_operation": "For",
+          "interpretation": "Consume interval triples in caller iterator order; unpack each before evaluating split guard; malformed triples fail.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L25-L32",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI01",
+            "CI02",
+            "CI03",
+            "CI04"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 85,
+          "source_span": [
+            27,
+            12,
+            29,
+            51
+          ],
+          "procedure": "C01",
+          "original_context": "SC02",
+          "original_operation": "If",
+          "interpretation": "If nonempty and either boundary strictly decreases, append previous run and replace all three arrays before appending incoming triple.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L27-L29",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI01",
+            "CI02",
+            "CI03",
+            "CI04"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 86,
+          "source_span": [
+            27,
+            15,
+            27,
+            64
+          ],
+          "procedure": "C01",
+          "original_context": "SC02",
+          "original_operation": "BoolOp",
+          "interpretation": "Evaluate truthiness of starts first; empty skips both comparisons, avoiding last-element access.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L27-L27",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI01",
+            "CI02",
+            "CI03",
+            "CI04"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 88,
+          "source_span": [
+            27,
+            27,
+            27,
+            63
+          ],
+          "procedure": "C01",
+          "original_context": "SC02",
+          "original_operation": "BoolOp",
+          "interpretation": "Compare incoming start with last start first; only if false compare incoming end with last end. True for either triggers split.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L27-L27",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI01",
+            "CI02",
+            "CI03",
+            "CI04"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 134,
+          "source_span": [
+            33,
+            8,
+            34,
+            55
+          ],
+          "procedure": "C01",
+          "original_context": "SC03",
+          "original_operation": "If",
+          "interpretation": "After iteration, append remaining run only when starts is nonempty.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L33-L34",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI01",
+            "CI02",
+            "CI03",
+            "CI04"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 152,
+          "source_span": [
+            37,
+            8,
+            41,
+            40
+          ],
+          "procedure": "C02",
+          "original_context": "SC04",
+          "original_operation": "For",
+          "interpretation": "Traverse stored runs in original order lazily during iterator consumption.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L37-L41",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI05"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 173,
+          "source_span": [
+            40,
+            12,
+            41,
+            40
+          ],
+          "procedure": "C02",
+          "original_context": "SC04",
+          "original_operation": "For",
+          "interpretation": "Iterate increasing positions from first inclusive to stop exclusive; empty interval yields none.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L40-L41",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI05"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 180,
+          "source_span": [
+            41,
+            16,
+            41,
+            40
+          ],
+          "procedure": "C02",
+          "original_context": "SC04",
+          "original_operation": "Yield",
+          "interpretation": "Yield the original payload reference at current position; suspend until consumer resumes.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L41-L41",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI05"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 195,
+          "source_span": [
+            46,
+            11,
+            48,
+            5
+          ],
+          "procedure": "C03",
+          "original_context": "SC05",
+          "original_operation": "BoolOp",
+          "interpretation": "Complete the exact-type/timezone all-check first; only if true run pairwise nondecreasing check.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L46-L48",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI06"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 199,
+          "source_span": [
+            46,
+            15,
+            46,
+            63
+          ],
+          "procedure": "C03",
+          "original_context": "SC05",
+          "original_operation": "BoolOp",
+          "interpretation": "For each value test exact datetime type first; only then access tzinfo and test null identity.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L46-L46",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI06"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 209,
+          "source_span": [
+            46,
+            68,
+            46,
+            73
+          ],
+          "procedure": "C03",
+          "original_context": "SC05",
+          "original_operation": "comprehension",
+          "interpretation": "Generate values in original sequence iteration order for first all; stop at first false.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L46-L46",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI06"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 224,
+          "source_span": [
+            47,
+            47,
+            47,
+            52
+          ],
+          "procedure": "C03",
+          "original_context": "SC05",
+          "original_operation": "comprehension",
+          "interpretation": "Generate positions from one through length exclusive for second all; stop at first false.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L47-L47",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI06"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 239,
+          "source_span": [
+            53,
+            11,
+            53,
+            71
+          ],
+          "procedure": "C04",
+          "original_context": "SC06",
+          "original_operation": "IfExp",
+          "interpretation": "Evaluate Decimal instance test; true returns original object, false evaluates string conversion then Decimal construction.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L53-L53",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI07"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 89,
+          "source_span": [
+            27,
+            27,
+            27,
+            45
+          ],
+          "procedure": "C01",
+          "original_context": "SC02",
+          "original_operation": [
+            "Lt"
+          ],
+          "interpretation": "Strict incoming start earlier than last stored start; equality false; evaluated only when working run nonempty.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L27-L27",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI01",
+            "CI02",
+            "CI03",
+            "CI04"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 95,
+          "source_span": [
+            27,
+            49,
+            27,
+            63
+          ],
+          "procedure": "C01",
+          "original_context": "SC02",
+          "original_operation": [
+            "Lt"
+          ],
+          "interpretation": "Strict incoming end earlier than last stored end; equality false; evaluated only if working run nonempty and start comparison false.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L27-L27",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI01",
+            "CI02",
+            "CI03",
+            "CI04"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 200,
+          "source_span": [
+            46,
+            15,
+            46,
+            38
+          ],
+          "procedure": "C03",
+          "original_context": "SC05",
+          "original_operation": [
+            "Is"
+          ],
+          "interpretation": "Exact runtime type identity with datetime, not subclass membership; false skips timezone access.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L46-L46",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI06"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 205,
+          "source_span": [
+            46,
+            43,
+            46,
+            63
+          ],
+          "procedure": "C03",
+          "original_context": "SC05",
+          "original_operation": [
+            "Is"
+          ],
+          "interpretation": "Timezone attribute must be identical to null, not merely false-valued; evaluated after type success.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L46-L46",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI06"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 215,
+          "source_span": [
+            47,
+            8,
+            47,
+            42
+          ],
+          "procedure": "C03",
+          "original_context": "SC05",
+          "original_operation": [
+            "LtE"
+          ],
+          "interpretation": "Compare predecessor timestamp <= current timestamp; equality accepted; first inversion fails.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L47-L47",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI06"
+          ]
+        },
+        {
+          "kind": "arithmetic",
+          "original_id": 93,
+          "source_span": [
+            27,
+            42,
+            27,
+            44
+          ],
+          "procedure": "C01",
+          "original_context": "SC02",
+          "original_operation": "USub",
+          "interpretation": "Negative one indexes last existing start; only reached after nonempty guard.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L27-L27",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI01",
+            "CI02",
+            "CI03",
+            "CI04"
+          ]
+        },
+        {
+          "kind": "arithmetic",
+          "original_id": 99,
+          "source_span": [
+            27,
+            60,
+            27,
+            62
+          ],
+          "procedure": "C01",
+          "original_context": "SC02",
+          "original_operation": "USub",
+          "interpretation": "Negative one indexes last existing end; reached only after nonempty guard and false first comparison.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L27-L27",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI01",
+            "CI02",
+            "CI03",
+            "CI04"
+          ]
+        },
+        {
+          "kind": "arithmetic",
+          "original_id": 218,
+          "source_span": [
+            47,
+            15,
+            47,
+            24
+          ],
+          "procedure": "C03",
+          "original_context": "SC05",
+          "original_operation": "Sub",
+          "interpretation": "Subtract one from current consecutive-pair index to address predecessor; loop starts at one.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L47-L47",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI06"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 23,
+          "source_span": [
+            14,
+            11,
+            14,
+            30
+          ],
+          "procedure": null,
+          "original_context": "SC01",
+          "original_operation": "TypeVar",
+          "interpretation": "Create generic payload type parameter; declaration-time metadata only.",
+          "temporal_relevance": "NONE",
+          "relevance_reason": "Declaration metadata; no local event chronology.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L14-L14",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": []
+        },
+        {
+          "kind": "calls",
+          "original_id": 102,
+          "source_span": [
+            28,
+            16,
+            28,
+            59
+          ],
+          "procedure": "C01",
+          "original_context": "SC02",
+          "original_operation": "self._runs.append",
+          "interpretation": "Append tuple holding existing three array references to runs before rebinding working arrays; no copy.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L28-L28",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI01",
+            "CI02",
+            "CI03",
+            "CI04"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 120,
+          "source_span": [
+            30,
+            12,
+            30,
+            32
+          ],
+          "procedure": "C01",
+          "original_context": "SC02",
+          "original_operation": "starts.append",
+          "interpretation": "Append incoming start to current run, before end and payload.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L30-L30",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI01",
+            "CI02",
+            "CI03",
+            "CI04"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 125,
+          "source_span": [
+            31,
+            12,
+            31,
+            28
+          ],
+          "procedure": "C01",
+          "original_context": "SC02",
+          "original_operation": "ends.append",
+          "interpretation": "Append incoming end after start, before payload.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L31-L31",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI01",
+            "CI02",
+            "CI03",
+            "CI04"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 130,
+          "source_span": [
+            32,
+            12,
+            32,
+            36
+          ],
+          "procedure": "C01",
+          "original_context": "SC02",
+          "original_operation": "payloads.append",
+          "interpretation": "Append incoming payload reference after both timestamps; no copy.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L32-L32",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI01",
+            "CI02",
+            "CI03",
+            "CI04"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 137,
+          "source_span": [
+            34,
+            12,
+            34,
+            55
+          ],
+          "procedure": "C01",
+          "original_context": "SC03",
+          "original_operation": "self._runs.append",
+          "interpretation": "Append remaining three array references after exhaustion if nonempty.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L34-L34",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI01",
+            "CI02",
+            "CI03",
+            "CI04"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 161,
+          "source_span": [
+            38,
+            19,
+            38,
+            45
+          ],
+          "procedure": "C02",
+          "original_context": "SC04",
+          "original_operation": "bisect_left",
+          "interpretation": "Find first stored start >= query start; default full run bounds; equal starts excluded from prefix.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L38-L38",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI05"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 167,
+          "source_span": [
+            39,
+            20,
+            39,
+            51
+          ],
+          "procedure": "C02",
+          "original_context": "SC04",
+          "original_operation": "bisect_left",
+          "interpretation": "Find first stored end >= query end within positions zero through stop exclusive; equal end included, no search after start cutoff.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L39-L39",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI05"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 175,
+          "source_span": [
+            40,
+            28,
+            40,
+            46
+          ],
+          "procedure": "C02",
+          "original_context": "SC04",
+          "original_operation": "range",
+          "interpretation": "Create increasing integer interval [first,stop), no reverse or inclusive upper endpoint.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L40-L40",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI05"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 196,
+          "source_span": [
+            46,
+            11,
+            46,
+            84
+          ],
+          "procedure": "C03",
+          "original_context": "SC05",
+          "original_operation": "all",
+          "interpretation": "Consume first generator until false or exhaustion; empty all returns true.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L46-L46",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI06"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 201,
+          "source_span": [
+            46,
+            15,
+            46,
+            26
+          ],
+          "procedure": "C03",
+          "original_context": "SC05",
+          "original_operation": "type",
+          "interpretation": "Obtain exact runtime type of current element before identity comparison.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L46-L46",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI06"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 212,
+          "source_span": [
+            46,
+            89,
+            48,
+            5
+          ],
+          "procedure": "C03",
+          "original_context": "SC05",
+          "original_operation": "all",
+          "interpretation": "Consume second generator until false or exhaustion; only reached after first all true.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L46-L48",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI06"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 226,
+          "source_span": [
+            47,
+            56,
+            47,
+            77
+          ],
+          "procedure": "C03",
+          "original_context": "SC05",
+          "original_operation": "range",
+          "interpretation": "Build integer positions [1,length) for consecutive-pair traversal; zero/one length gives none.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L47-L47",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI06"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 229,
+          "source_span": [
+            47,
+            65,
+            47,
+            76
+          ],
+          "procedure": "C03",
+          "original_context": "SC05",
+          "original_operation": "len",
+          "interpretation": "Read native sequence length after first all passes, before constructing position range.",
+          "temporal_relevance": "DIRECT",
+          "relevance_reason": "Owns temporal order, interval boundary or time-order eligibility.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L47-L47",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI06"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 240,
+          "source_span": [
+            53,
+            20,
+            53,
+            46
+          ],
+          "procedure": "C04",
+          "original_context": "SC06",
+          "original_operation": "isinstance",
+          "interpretation": "Check instance membership including Decimal subclasses; do not reconstruct existing Decimal.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L53-L53",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI07"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 245,
+          "source_span": [
+            53,
+            52,
+            53,
+            71
+          ],
+          "procedure": "C04",
+          "original_context": "SC06",
+          "original_operation": "Decimal",
+          "interpretation": "Construct Decimal from already computed native string; applicable native conversion behavior/errors, no explicit rounding.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L53-L53",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI07"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 247,
+          "source_span": [
+            53,
+            60,
+            53,
+            70
+          ],
+          "procedure": "C04",
+          "original_context": "SC06",
+          "original_operation": "str",
+          "interpretation": "Obtain native string representation only for non-Decimal input; cannot recover lost upstream precision.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L53-L53",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI07"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 268,
+          "source_span": [
+            61,
+            11,
+            61,
+            27
+          ],
+          "procedure": "C05",
+          "original_context": "SC07",
+          "original_operation": "int",
+          "interpretation": "Convert First input to integer before converting Break; native coercion/truncation/errors.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L61-L61",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI07"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 271,
+          "source_span": [
+            61,
+            29,
+            61,
+            45
+          ],
+          "procedure": "C05",
+          "original_context": "SC07",
+          "original_operation": "int",
+          "interpretation": "Convert Break input to integer only after First conversion succeeds.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L61-L61",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI07"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 282,
+          "source_span": [
+            66,
+            11,
+            66,
+            34
+          ],
+          "procedure": "C06",
+          "original_context": "SC08",
+          "original_operation": "int",
+          "interpretation": "Read first_idx attribute and convert to integer before reading break_idx.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L66-L66",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI07"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 286,
+          "source_span": [
+            66,
+            36,
+            66,
+            59
+          ],
+          "procedure": "C06",
+          "original_context": "SC08",
+          "original_operation": "int",
+          "interpretation": "Read break_idx attribute and convert to integer after first_idx conversion succeeds.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L66-L66",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI07"
+          ]
+        }
+      ],
+      "supplemental_items": [
+        {
+          "supplemental_id": "B01-engine_pipeline_core_utils.py-S1",
+          "source_span": [
+            21,
+            24
+          ],
+          "discovery_reason": "Explicit declaration, attribute, mutation, evaluation or boundary review beyond category-row labels; may overlap original expressions.",
+          "interpretation": "Initialize empty run collection and separate working arrays; no global sort.",
+          "temporal_relevance": "DIRECT",
+          "verification": "VERIFIED",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L21-L24"
+        },
+        {
+          "supplemental_id": "B01-engine_pipeline_core_utils.py-S2",
+          "source_span": [
+            25,
+            25
+          ],
+          "discovery_reason": "Explicit declaration, attribute, mutation, evaluation or boundary review beyond category-row labels; may overlap original expressions.",
+          "interpretation": "Tuple unpack in traversal order; native iterator/unpack failure propagates.",
+          "temporal_relevance": "DIRECT",
+          "verification": "VERIFIED",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L25-L25"
+        },
+        {
+          "supplemental_id": "B01-engine_pipeline_core_utils.py-S3",
+          "source_span": [
+            29,
+            29
+          ],
+          "discovery_reason": "Explicit declaration, attribute, mutation, evaluation or boundary review beyond category-row labels; may overlap original expressions.",
+          "interpretation": "Replace all working arrays with fresh lists after storing old references; incoming triple belongs to new run.",
+          "temporal_relevance": "DIRECT",
+          "verification": "VERIFIED",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L29-L29"
+        },
+        {
+          "supplemental_id": "B01-engine_pipeline_core_utils.py-S4",
+          "source_span": [
+            38,
+            41
+          ],
+          "discovery_reason": "Explicit declaration, attribute, mutation, evaluation or boundary review beyond category-row labels; may overlap original expressions.",
+          "interpretation": "Both monotone partitions are per run; query interval validity not explicitly tested; original order retained across nonmonotone runs, no deduplication.",
+          "temporal_relevance": "DIRECT",
+          "verification": "VERIFIED",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L38-L41"
+        },
+        {
+          "supplemental_id": "B01-engine_pipeline_core_utils.py-S5",
+          "source_span": [
+            46,
+            48
+          ],
+          "discovery_reason": "Explicit declaration, attribute, mutation, evaluation or boundary review beyond category-row labels; may overlap original expressions.",
+          "interpretation": "Generator evaluation and short-circuit: exact type then tzinfo; all first pass before second; no timezone normalization, sort or fallback inside helper.",
+          "temporal_relevance": "DIRECT",
+          "verification": "VERIFIED",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L46-L48"
+        },
+        {
+          "supplemental_id": "B01-engine_pipeline_core_utils.py-S6",
+          "source_span": [
+            61,
+            66
+          ],
+          "discovery_reason": "Explicit declaration, attribute, mutation, evaluation or boundary review beyond category-row labels; may overlap original expressions.",
+          "interpretation": "Tuple evaluation left-to-right; no check First precedes Break, no direction/provenance in identity.",
+          "temporal_relevance": "INDIRECT",
+          "verification": "VERIFIED",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L61-L66"
+        }
+      ]
+    },
+    {
+      "path": "engine/pipeline/direction_policy.py",
+      "source_blob": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+      "source_line_count": 71,
+      "site_rows": [
+        {
+          "kind": "branches",
+          "original_id": 55,
+          "source_span": [
+            30,
+            15,
+            30,
+            70
+          ],
+          "procedure": "D01",
+          "original_context": "SC02",
+          "original_operation": "IfExp",
+          "interpretation": "Evaluate stored direction equality; bullish returns bearish, any other stored value returns bullish.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L30-L30",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 71,
+          "source_span": [
+            33,
+            15,
+            33,
+            78
+          ],
+          "procedure": "D02",
+          "original_context": "SC03",
+          "original_operation": "IfExp",
+          "interpretation": "Test stored direction first; bullish evaluates strict less, otherwise strict greater; only selected price predicate runs.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L33-L33",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 90,
+          "source_span": [
+            36,
+            15,
+            36,
+            82
+          ],
+          "procedure": "D03",
+          "original_context": "SC04",
+          "original_operation": "IfExp",
+          "interpretation": "Test stored direction first; bullish evaluates strict improvement downward, otherwise upward; equality does not improve finite values.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L36-L36",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 109,
+          "source_span": [
+            39,
+            15,
+            39,
+            84
+          ],
+          "procedure": "D04",
+          "original_context": "SC05",
+          "original_operation": "IfExp",
+          "interpretation": "Test stored direction first; call only min for bullish or max otherwise; preserve first equal ordinary operand.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L39-L39",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 132,
+          "source_span": [
+            46,
+            15,
+            46,
+            78
+          ],
+          "procedure": "D05",
+          "original_context": "SC06",
+          "original_operation": "IfExp",
+          "interpretation": "Test stored direction first; bullish evaluates greater-than confirmation, otherwise less-than; already-selected price input.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L46-L46",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 153,
+          "source_span": [
+            50,
+            4,
+            51,
+            22
+          ],
+          "procedure": "D06",
+          "original_context": "SC07",
+          "original_operation": "If",
+          "interpretation": "Exact bullish equality selects shared BULLISH and returns immediately; second guard not evaluated.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L50-L51",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "branches",
+          "original_id": 159,
+          "source_span": [
+            52,
+            4,
+            53,
+            22
+          ],
+          "procedure": "D06",
+          "original_context": "SC07",
+          "original_operation": "If",
+          "interpretation": "Only after first guard false test exact bearish; return shared BEARISH or fall through to error.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L52-L53",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 56,
+          "source_span": [
+            30,
+            28,
+            30,
+            55
+          ],
+          "procedure": "D01",
+          "original_context": "SC02",
+          "original_operation": [
+            "Eq"
+          ],
+          "interpretation": "Stored direction equals bullish selects bearish result; else bullish.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L30-L30",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 72,
+          "source_span": [
+            33,
+            32,
+            33,
+            59
+          ],
+          "procedure": "D02",
+          "original_context": "SC03",
+          "original_operation": [
+            "Eq"
+          ],
+          "interpretation": "Stored direction equals bullish selects less-than stop predicate; else greater-than.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L33-L33",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 76,
+          "source_span": [
+            33,
+            15,
+            33,
+            28
+          ],
+          "procedure": "D02",
+          "original_context": "SC03",
+          "original_operation": [
+            "Lt"
+          ],
+          "interpretation": "Selected bullish stop: value strictly below level; finite equality false.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L33-L33",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 79,
+          "source_span": [
+            33,
+            65,
+            33,
+            78
+          ],
+          "procedure": "D02",
+          "original_context": "SC03",
+          "original_operation": [
+            "Gt"
+          ],
+          "interpretation": "Selected nonbullish stop: value strictly above level; finite equality false.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L33-L33",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 91,
+          "source_span": [
+            36,
+            34,
+            36,
+            61
+          ],
+          "procedure": "D03",
+          "original_context": "SC04",
+          "original_operation": [
+            "Eq"
+          ],
+          "interpretation": "Stored direction equals bullish selects less-than improvement; else greater-than.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L36-L36",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 95,
+          "source_span": [
+            36,
+            15,
+            36,
+            30
+          ],
+          "procedure": "D03",
+          "original_context": "SC04",
+          "original_operation": [
+            "Lt"
+          ],
+          "interpretation": "Selected bullish improvement: value strictly below current; equality false.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L36-L36",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 98,
+          "source_span": [
+            36,
+            67,
+            36,
+            82
+          ],
+          "procedure": "D03",
+          "original_context": "SC04",
+          "original_operation": [
+            "Gt"
+          ],
+          "interpretation": "Selected nonbullish improvement: value strictly above current; equality false.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L36-L36",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 110,
+          "source_span": [
+            39,
+            35,
+            39,
+            62
+          ],
+          "procedure": "D04",
+          "original_context": "SC05",
+          "original_operation": [
+            "Eq"
+          ],
+          "interpretation": "Stored direction equals bullish chooses min; otherwise max.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L39-L39",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 133,
+          "source_span": [
+            46,
+            32,
+            46,
+            59
+          ],
+          "procedure": "D05",
+          "original_context": "SC06",
+          "original_operation": [
+            "Eq"
+          ],
+          "interpretation": "Stored direction equals bullish selects greater-than confirmation; otherwise less-than.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L46-L46",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 137,
+          "source_span": [
+            46,
+            15,
+            46,
+            28
+          ],
+          "procedure": "D05",
+          "original_context": "SC06",
+          "original_operation": [
+            "Gt"
+          ],
+          "interpretation": "Selected bullish confirmation: selected value strictly above level; equality false.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L46-L46",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 140,
+          "source_span": [
+            46,
+            65,
+            46,
+            78
+          ],
+          "procedure": "D05",
+          "original_context": "SC06",
+          "original_operation": [
+            "Lt"
+          ],
+          "interpretation": "Selected nonbullish confirmation: selected value strictly below level; equality false.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L46-L46",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 154,
+          "source_span": [
+            50,
+            7,
+            50,
+            29
+          ],
+          "procedure": "D06",
+          "original_context": "SC07",
+          "original_operation": [
+            "Eq"
+          ],
+          "interpretation": "Exact input equality with bullish; success returns shared policy before second guard.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L50-L50",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "comparisons",
+          "original_id": 160,
+          "source_span": [
+            52,
+            7,
+            52,
+            29
+          ],
+          "procedure": "D06",
+          "original_context": "SC07",
+          "original_operation": [
+            "Eq"
+          ],
+          "interpretation": "Exact input equality with bearish, only after bullish check fails; otherwise raise.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L52-L52",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 114,
+          "source_span": [
+            39,
+            15,
+            39,
+            31
+          ],
+          "procedure": "D04",
+          "original_context": "SC05",
+          "original_operation": "min",
+          "interpretation": "Native two-argument minimum for bullish only; first equal ordinary value retained, no rounding.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L39-L39",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 118,
+          "source_span": [
+            39,
+            68,
+            39,
+            84
+          ],
+          "procedure": "D04",
+          "original_context": "SC05",
+          "original_operation": "max",
+          "interpretation": "Native two-argument maximum for nonbullish only; first equal ordinary value retained, no rounding.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L39-L39",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 144,
+          "source_span": [
+            20,
+            1,
+            20,
+            35
+          ],
+          "procedure": null,
+          "original_context": "SC01",
+          "original_operation": "dataclass",
+          "interpretation": "Configure frozen slotted record at declaration; no runtime enforcement of annotated direction literals.",
+          "temporal_relevance": "NONE",
+          "relevance_reason": "Declaration metadata; no local event chronology.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L20-L20",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": []
+        },
+        {
+          "kind": "calls",
+          "original_id": 166,
+          "source_span": [
+            54,
+            10,
+            54,
+            65
+          ],
+          "procedure": "D06",
+          "original_context": "SC07",
+          "original_operation": "ValueError",
+          "interpretation": "Construct ValueError after neither allowed direction matches; raise, no fallback policy.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "VERIFIED",
+          "conditional_boundary": null,
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L54-L54",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": [
+            "CI08"
+          ]
+        },
+        {
+          "kind": "calls",
+          "original_id": 172,
+          "source_span": [
+            57,
+            10,
+            63,
+            1
+          ],
+          "procedure": null,
+          "original_context": "SC08",
+          "original_operation": "DirectionPolicy",
+          "interpretation": "Construct shared bullish record with low/high, RED first, GREEN context at module initialization.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L57-L63",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": []
+        },
+        {
+          "kind": "calls",
+          "original_id": 186,
+          "source_span": [
+            64,
+            10,
+            70,
+            1
+          ],
+          "procedure": null,
+          "original_context": "SC08",
+          "original_operation": "DirectionPolicy",
+          "interpretation": "Construct shared bearish record with high/low, GREEN first, RED context after bullish record.",
+          "temporal_relevance": "INDIRECT",
+          "relevance_reason": "May affect downstream price/identity/selection or module availability; no local event-time comparison.",
+          "verification": "VERIFIED",
+          "disposition": "SOURCE_CONDITIONAL",
+          "conditional_boundary": "Native input/protocol or import environment behavior; only local source contract certified, no execution or arbitrary input result claimed.",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L64-L70",
+          "contract_refs": [
+            "Algorithms/V3/20_Indexes_And_Caching.md",
+            "Algorithms/V3/State_Machines/09_Shared_Services.md"
+          ],
+          "transition_refs": []
+        }
+      ],
+      "supplemental_items": [
+        {
+          "supplemental_id": "B01-engine_pipeline_direction_policy.py-S1",
+          "source_span": [
+            20,
+            26
+          ],
+          "discovery_reason": "Explicit declaration, attribute, mutation, evaluation or boundary review beyond category-row labels; may overlap original expressions.",
+          "interpretation": "Frozen slotted record defines roles; type annotations not general runtime validation; arbitrary directly constructed record may reach otherwise branches.",
+          "temporal_relevance": "INDIRECT",
+          "verification": "VERIFIED",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L20-L26"
+        },
+        {
+          "supplemental_id": "B01-engine_pipeline_direction_policy.py-S2",
+          "source_span": [
+            54,
+            54
+          ],
+          "discovery_reason": "Explicit declaration, attribute, mutation, evaluation or boundary review beyond category-row labels; may overlap original expressions.",
+          "interpretation": "Raise constructed ValueError when neither exact supported direction matches; no alternate selection.",
+          "temporal_relevance": "INDIRECT",
+          "verification": "VERIFIED",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L54-L54"
+        },
+        {
+          "supplemental_id": "B01-engine_pipeline_direction_policy.py-S3",
+          "source_span": [
+            57,
+            70
+          ],
+          "discovery_reason": "Explicit declaration, attribute, mutation, evaluation or boundary review beyond category-row labels; may overlap original expressions.",
+          "interpretation": "Initialize shared record role mapping; no candle color classification or chronology state here.",
+          "temporal_relevance": "INDIRECT",
+          "verification": "VERIFIED",
+          "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/direction_policy.py#L57-L70"
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "open_dependencies": [
+    "Trace actual consumers of ordered_naive_datetimes, containment index, and identity helpers in W1 later batches and W2; do not infer fallback from helper alone.",
+    "Confirm dynamic module resolution contract in W2; actual environment-selected module is conditional.",
+    "Recheck all B01 rows in W3; this is not independently staffed review."
+  ]
+}

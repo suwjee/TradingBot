@@ -1,0 +1,1490 @@
+{
+  "checkpoint": 49,
+  "batch": "B05",
+  "sub_batch": "B05-03",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "4c89229367259b8fb3bb805c854bd1a373c329f7",
+  "path": "engine/pipeline/order_audit_engine.py",
+  "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+  "source_range": [
+    378,
+    441
+  ],
+  "procedures": [
+    "OA07",
+    "OA08",
+    "OA09",
+    "OA10"
+  ],
+  "review_pass": "W1 source-first local owner review; W3 pending",
+  "status": "PASS",
+  "scope": "Local source contracts only; cross-owner and independent forensic closure not certified.",
+  "counts": {
+    "original_rows": 50,
+    "by_category": {
+      "branches": 16,
+      "comparisons": 16,
+      "arithmetic": 2,
+      "calls": 16
+    },
+    "supplemental_items": 5
+  },
+  "inventory_validation": {
+    "crosswalk": "Audit/Phase_07/Decision_Site_Crosswalk_04.json",
+    "crosswalk_blob": "62645cd2b92c3cbe35f6c0a9500299ec6f44cbc8",
+    "original_inventory_blob": "fdd253ac268881876574914b6d79478716f52104",
+    "context_blob": "7de01399b8ff7bf64bb44995b57bdc03296997cf",
+    "exact_category_id_and_span_match": true,
+    "unique_category_ids": true,
+    "direct_phase02_full_blob_read": false,
+    "reason": "Use exact immutable AST crosswalk and context ledger; no direct full Phase 02 inventory read claimed."
+  },
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 1428,
+      "source_span": [
+        382,
+        8,
+        383,
+        73
+      ],
+      "procedure": "OA07",
+      "original_operation": "If",
+      "original_context": "OA-SC15",
+      "interpretation": "Validate exact direction membership during live object construction.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L382-L383",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 40,
+        "heading": "OA07"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1445,
+      "source_span": [
+        385,
+        26,
+        385,
+        69
+      ],
+      "procedure": "OA07",
+      "original_operation": "IfExp",
+      "original_context": "OA-SC15",
+      "interpretation": "Store low attribute for bullish, high for validated bearish.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L385-L385",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 40,
+        "heading": "OA07"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1474,
+      "source_span": [
+        394,
+        8,
+        395,
+        91
+      ],
+      "procedure": "OA08",
+      "original_operation": "If",
+      "original_context": "OA-SC16",
+      "interpretation": "Validate inclusive dirty index range from zero through len(main times); chained comparison short-circuits second comparison if lower bound fails.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L394-L395",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1476,
+      "source_span": [
+        394,
+        15,
+        394,
+        61
+      ],
+      "procedure": "OA08",
+      "original_operation": "Compare",
+      "original_context": "OA-SC16",
+      "interpretation": "Both 0<=dirty and dirty<=len must hold; length evaluated only if first succeeds.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L394-L394",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1489,
+      "source_span": [
+        396,
+        16,
+        396,
+        104
+      ],
+      "procedure": "OA08",
+      "original_operation": "IfExp",
+      "original_context": "OA-SC16",
+      "interpretation": "Use dirty main timestamp if index strictly less than length; equality yields None.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L396-L396",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1507,
+      "source_span": [
+        398,
+        21,
+        398,
+        61
+      ],
+      "procedure": "OA08",
+      "original_operation": "IfExp",
+      "original_context": "OA-SC16",
+      "interpretation": "Take last lower timestamp using negative-one index only when lower sequence truthy; else None.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L398-L398",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1516,
+      "source_span": [
+        399,
+        22,
+        399,
+        96
+      ],
+      "procedure": "OA08",
+      "original_operation": "IfExp",
+      "original_context": "OA-SC16",
+      "interpretation": "Dirty lower position is lower bound at dirty timestamp when non-null; else lower length.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L399-L399",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1529,
+      "source_span": [
+        401,
+        12,
+        402,
+        55
+      ],
+      "procedure": "OA08",
+      "original_operation": "IfExp",
+      "original_context": "OA-SC16",
+      "interpretation": "Use old coverage calculation only if prior last lower time non-null; else zero.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L401-L402",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1561,
+      "source_span": [
+        409,
+        12,
+        410,
+        50
+      ],
+      "procedure": "OA09",
+      "original_operation": "If",
+      "original_context": "OA-SC17",
+      "interpretation": "Only if current cached value is None AND last strictly before first_dirty_main, try previous boundary cache.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L409-L410",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 46,
+        "heading": "OA09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1562,
+      "source_span": [
+        409,
+        15,
+        409,
+        57
+      ],
+      "procedure": "OA09",
+      "original_operation": "BoolOp",
+      "original_context": "OA-SC17",
+      "interpretation": "Only if current cached value is None AND last strictly before first_dirty_main, try previous boundary cache.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L409-L409",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 46,
+        "heading": "OA09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1576,
+      "source_span": [
+        411,
+        12,
+        412,
+        84
+      ],
+      "procedure": "OA09",
+      "original_operation": "If",
+      "original_context": "OA-SC17",
+      "interpretation": "If still None, compute native boundary; cached tuple otherwise retained.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L411-L412",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 46,
+        "heading": "OA09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1604,
+      "source_span": [
+        418,
+        12,
+        419,
+        37
+      ],
+      "procedure": "OA10",
+      "original_operation": "If",
+      "original_context": "OA-SC18",
+      "interpretation": "Membership in current crossing dictionary detects cached None as well as timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L418-L419",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 49,
+        "heading": "OA10"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1619,
+      "source_span": [
+        421,
+        12,
+        427,
+        83
+      ],
+      "procedure": "OA10",
+      "original_operation": "If",
+      "original_context": "OA-SC18",
+      "interpretation": "Reuse old only when non-null, dirty absent OR old strictly earlier than dirty, current lower last non-null, and old <= current last; predicates short circuit in this order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L421-L427",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 49,
+        "heading": "OA10"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1620,
+      "source_span": [
+        421,
+        15,
+        421,
+        114
+      ],
+      "procedure": "OA10",
+      "original_operation": "BoolOp",
+      "original_context": "OA-SC18",
+      "interpretation": "Reuse old only when non-null, dirty absent OR old strictly earlier than dirty, current lower last non-null, and old <= current last; predicates short circuit in this order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L421-L421",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 49,
+        "heading": "OA10"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1624,
+      "source_span": [
+        421,
+        36,
+        421,
+        64
+      ],
+      "procedure": "OA10",
+      "original_operation": "BoolOp",
+      "original_context": "OA-SC18",
+      "interpretation": "Dirty absent or old strictly before dirty; old equal dirty invalidates reuse.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L421-L421",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 49,
+        "heading": "OA10"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1646,
+      "source_span": [
+        425,
+        16,
+        426,
+        65
+      ],
+      "procedure": "OA10",
+      "original_operation": "If",
+      "original_context": "OA-SC18",
+      "interpretation": "If key existed in previous cache (including prior null), allow suffix resume.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L425-L426",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 49,
+        "heading": "OA10"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1429,
+      "source_span": [
+        382,
+        11,
+        382,
+        50
+      ],
+      "procedure": "OA07",
+      "original_operation": [
+        "NotIn"
+      ],
+      "original_context": "OA-SC15",
+      "interpretation": "Validate exact direction membership during live object construction.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L382-L382",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 40,
+        "heading": "OA07"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1446,
+      "source_span": [
+        385,
+        35,
+        385,
+        57
+      ],
+      "procedure": "OA07",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "OA-SC15",
+      "interpretation": "Store low attribute for bullish, high for validated bearish.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L385-L385",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 40,
+        "heading": "OA07"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1476,
+      "source_span": [
+        394,
+        15,
+        394,
+        61
+      ],
+      "procedure": "OA08",
+      "original_operation": [
+        "LtE",
+        "LtE"
+      ],
+      "original_context": "OA-SC16",
+      "interpretation": "Both 0<=dirty and dirty<=len must hold; length evaluated only if first succeeds.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L394-L394",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1490,
+      "source_span": [
+        396,
+        54,
+        396,
+        94
+      ],
+      "procedure": "OA08",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "OA-SC16",
+      "interpretation": "Strict less-than-length selects available dirty timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L396-L396",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1517,
+      "source_span": [
+        399,
+        57,
+        399,
+        74
+      ],
+      "procedure": "OA08",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC16",
+      "interpretation": "Non-null dirty timestamp chooses lower-bound mapping.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L399-L399",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1530,
+      "source_span": [
+        402,
+        15,
+        402,
+        48
+      ],
+      "procedure": "OA08",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC16",
+      "interpretation": "Use old coverage calculation only if prior last lower time non-null; else zero.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L402-L402",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1563,
+      "source_span": [
+        409,
+        15,
+        409,
+        29
+      ],
+      "procedure": "OA09",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "OA-SC17",
+      "interpretation": "Current boundary cache miss is identity-to-None.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L409-L409",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 46,
+        "heading": "OA09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1566,
+      "source_span": [
+        409,
+        34,
+        409,
+        57
+      ],
+      "procedure": "OA09",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "OA-SC17",
+      "interpretation": "Only range last strictly before dirty may reuse previous tuple.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L409-L409",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 46,
+        "heading": "OA09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1577,
+      "source_span": [
+        411,
+        15,
+        411,
+        29
+      ],
+      "procedure": "OA09",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "OA-SC17",
+      "interpretation": "None after current and possible prior lookup invokes native OA04.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L411-L411",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 46,
+        "heading": "OA09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1605,
+      "source_span": [
+        418,
+        15,
+        418,
+        31
+      ],
+      "procedure": "OA10",
+      "original_operation": [
+        "In"
+      ],
+      "original_context": "OA-SC18",
+      "interpretation": "Membership in current crossing dictionary detects cached None as well as timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L418-L418",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 49,
+        "heading": "OA10"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1621,
+      "source_span": [
+        421,
+        15,
+        421,
+        30
+      ],
+      "procedure": "OA10",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC18",
+      "interpretation": "Prior crossing must be non-null to reuse.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L421-L421",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 49,
+        "heading": "OA10"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1625,
+      "source_span": [
+        421,
+        36,
+        421,
+        49
+      ],
+      "procedure": "OA10",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "OA-SC18",
+      "interpretation": "Null dirty sentinel bypasses old<dirty test.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L421-L421",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 49,
+        "heading": "OA10"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1628,
+      "source_span": [
+        421,
+        53,
+        421,
+        64
+      ],
+      "procedure": "OA10",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "OA-SC18",
+      "interpretation": "Require old strictly before dirty when dirty exists.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L421-L421",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 49,
+        "heading": "OA10"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1631,
+      "source_span": [
+        421,
+        70,
+        421,
+        92
+      ],
+      "procedure": "OA10",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC18",
+      "interpretation": "Current last lower must be non-null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L421-L421",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 49,
+        "heading": "OA10"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1634,
+      "source_span": [
+        421,
+        97,
+        421,
+        114
+      ],
+      "procedure": "OA10",
+      "original_operation": [
+        "LtE"
+      ],
+      "original_context": "OA-SC18",
+      "interpretation": "Require old<=current last; equality allowed.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L421-L421",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 49,
+        "heading": "OA10"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1647,
+      "source_span": [
+        425,
+        19,
+        425,
+        41
+      ],
+      "procedure": "OA10",
+      "original_operation": [
+        "In"
+      ],
+      "original_context": "OA-SC18",
+      "interpretation": "Previous cache membership (not non-null value) controls suffix resume.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L425-L425",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 49,
+        "heading": "OA10"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1475,
+      "source_span": [
+        394,
+        11,
+        394,
+        61
+      ],
+      "procedure": "OA08",
+      "original_operation": "Not",
+      "original_context": "OA-SC16",
+      "interpretation": "Negate entire inclusive chained range test.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L394-L394",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1511,
+      "source_span": [
+        398,
+        33,
+        398,
+        35
+      ],
+      "procedure": "OA08",
+      "original_operation": "USub",
+      "original_context": "OA-SC16",
+      "interpretation": "Negative-one subscript selects latest lower time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L398-L398",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1435,
+      "source_span": [
+        383,
+        18,
+        383,
+        73
+      ],
+      "procedure": "OA07",
+      "original_operation": "ValueError",
+      "original_context": "OA-SC15",
+      "interpretation": "Raise ValueError on invalid live direction before initializing state.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L383-L383",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 40,
+        "heading": "OA07"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1479,
+      "source_span": [
+        394,
+        40,
+        394,
+        61
+      ],
+      "procedure": "OA08",
+      "original_operation": "len",
+      "original_context": "OA-SC16",
+      "interpretation": "Get main times length for upper-bound validity.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L394-L394",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1484,
+      "source_span": [
+        395,
+        18,
+        395,
+        91
+      ],
+      "procedure": "OA08",
+      "original_operation": "ValueError",
+      "original_context": "OA-SC16",
+      "interpretation": "Raise ValueError if dirty index outside permitted range.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L395-L395",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1492,
+      "source_span": [
+        396,
+        73,
+        396,
+        94
+      ],
+      "procedure": "OA08",
+      "original_operation": "len",
+      "original_context": "OA-SC16",
+      "interpretation": "Read main length to distinguish dirty timestamp from end sentinel.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L396-L396",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1520,
+      "source_span": [
+        399,
+        22,
+        399,
+        53
+      ],
+      "procedure": "OA08",
+      "original_operation": "bisect_left",
+      "original_context": "OA-SC16",
+      "interpretation": "Lower bound gives first lower >= dirty.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L399-L399",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1524,
+      "source_span": [
+        399,
+        80,
+        399,
+        96
+      ],
+      "procedure": "OA08",
+      "original_operation": "len",
+      "original_context": "OA-SC16",
+      "interpretation": "No dirty main timestamp uses current lower length.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L399-L399",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1534,
+      "source_span": [
+        401,
+        12,
+        401,
+        60
+      ],
+      "procedure": "OA08",
+      "original_operation": "bisect_right",
+      "original_context": "OA-SC16",
+      "interpretation": "Upper-bound prior last lower timestamp within current lower times.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L401-L401",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1557,
+      "source_span": [
+        408,
+        21,
+        408,
+        40
+      ],
+      "procedure": "OA09",
+      "original_operation": "boundaries.get",
+      "original_context": "OA-SC17",
+      "interpretation": "Read per-update boundary cache for exact (first,last) key.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L408-L408",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 46,
+        "heading": "OA09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1571,
+      "source_span": [
+        410,
+        25,
+        410,
+        50
+      ],
+      "procedure": "OA09",
+      "original_operation": "self._boundaries.get",
+      "original_context": "OA-SC17",
+      "interpretation": "Lookup previous boundary tuple by same key; no further validation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L410-L410",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 46,
+        "heading": "OA09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1582,
+      "source_span": [
+        412,
+        25,
+        412,
+        84
+      ],
+      "procedure": "OA09",
+      "original_operation": "_order_b_boundary",
+      "original_context": "OA-SC17",
+      "interpretation": "Invoke OA04 with current chronology, first,last and immutable live attribute.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L412-L412",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 46,
+        "heading": "OA09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1614,
+      "source_span": [
+        420,
+        18,
+        420,
+        42
+      ],
+      "procedure": "OA10",
+      "original_operation": "self._crossings.get",
+      "original_context": "OA-SC18",
+      "interpretation": "Read previous crossing cache by (reset_time, level), missing yields None.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L420-L420",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 49,
+        "heading": "OA10"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1642,
+      "source_span": [
+        424,
+        23,
+        424,
+        60
+      ],
+      "procedure": "OA10",
+      "original_operation": "bisect_right",
+      "original_context": "OA-SC18",
+      "interpretation": "Otherwise lower search starts at upper bound of exact Reset time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L424-L424",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 49,
+        "heading": "OA10"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1653,
+      "source_span": [
+        426,
+        27,
+        426,
+        65
+      ],
+      "procedure": "OA10",
+      "original_operation": "max",
+      "original_context": "OA-SC18",
+      "interpretation": "Max preserves strict post-reset minimum left.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L426-L426",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 49,
+        "heading": "OA10"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1656,
+      "source_span": [
+        426,
+        37,
+        426,
+        64
+      ],
+      "procedure": "OA10",
+      "original_operation": "min",
+      "original_context": "OA-SC18",
+      "interpretation": "Min selects earlier previous coverage or dirty lower frontier.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L426-L426",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 49,
+        "heading": "OA10"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1662,
+      "source_span": [
+        427,
+        24,
+        427,
+        83
+      ],
+      "procedure": "OA10",
+      "original_operation": "_order_b_crossing",
+      "original_context": "OA-SC18",
+      "interpretation": "Invoke native OA05 with current chronology, fixed attribute, resumed left, original level.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L427-L427",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 49,
+        "heading": "OA10"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1678,
+      "source_span": [
+        431,
+        16,
+        435,
+        9
+      ],
+      "procedure": "OA08",
+      "original_operation": "discover_order_b_reset_legs",
+      "original_context": "OA-SC18",
+      "interpretation": "Call OA06 using per-update boundary/crossing closures; replace persistent caches and last lower only after successful discovery return.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronology, strict geometry, provenance, state selection or cache availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Reuse assumes caller supplies correct dirty frontier and current chronology; W2 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L431-L435",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 43,
+        "heading": "OA08"
+      },
+      "transition_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "supplemental_id": "B05-03-S1",
+      "source_span": [
+        381,
+        388
+      ],
+      "discovery_reason": "Source-first review of compound evaluation, ordering, state publication, implicit inputs or output identity beyond inventoried site labels.",
+      "interpretation": "Direction fixed at construction; no additional dataset identity key stored in this local cache.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L381-L388"
+    },
+    {
+      "supplemental_id": "B05-03-S2",
+      "source_span": [
+        394,
+        404
+      ],
+      "discovery_reason": "Source-first review of compound evaluation, ordering, state publication, implicit inputs or output identity beyond inventoried site labels.",
+      "interpretation": "Inclusive dirty index with end sentinel None; old coverage computed using current lower array and previous last time. No local prefix-equivalence validation.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L394-L404"
+    },
+    {
+      "supplemental_id": "B05-03-S3",
+      "source_span": [
+        406,
+        415
+      ],
+      "discovery_reason": "Source-first review of compound evaluation, ordering, state publication, implicit inputs or output identity beyond inventoried site labels.",
+      "interpretation": "Current boundary dictionary read first; old boundary usable only last<dirty main; native computation when result None. Only queried keys retained.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L406-L415"
+    },
+    {
+      "supplemental_id": "B05-03-S4",
+      "source_span": [
+        416,
+        429
+      ],
+      "discovery_reason": "Source-first review of compound evaluation, ordering, state publication, implicit inputs or output identity beyond inventoried site labels.",
+      "interpretation": "Crossing key is (reset_time,level) using native equality/hash; current dictionary membership retains null. Prior non-null hit reused only strict before dirty and <= current last; old key including null permits suffix resume.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L416-L429"
+    },
+    {
+      "supplemental_id": "B05-03-S5",
+      "source_span": [
+        431,
+        439
+      ],
+      "discovery_reason": "Source-first review of compound evaluation, ordering, state publication, implicit inputs or output identity beyond inventoried site labels.",
+      "interpretation": "Persistent caches and last lower time replaced only after normal OA06 return (including empty); exceptions before return leave prior persistent assignments untouched. No runtime equivalence asserted.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L431-L439"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B05-03-F01",
+      "span": [
+        394,
+        404
+      ],
+      "description": "Clarify old coverage is computed on current lower timestamps and local layer trusts caller's dirty/prefix contract.",
+      "document": "Algorithms/V3/07_Order_B.md",
+      "prior_blob": "d8897af9138adbbeaeffcd44cc4c6b36dc588f8d",
+      "resolution": "Active contract amended at line 44 to preserve source-established behavior.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L394-L404",
+      "recheck": "W2 caller and W3 separate review pending."
+    },
+    {
+      "id": "B05-03-F02",
+      "span": [
+        416,
+        429
+      ],
+      "description": "Clarify native key equality, distinction between null and missing, and previous key suffix eligibility.",
+      "document": "Algorithms/V3/07_Order_B.md",
+      "prior_blob": "d8897af9138adbbeaeffcd44cc4c6b36dc588f8d",
+      "resolution": "Active contract amended at line 50 to preserve source-established behavior.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L416-L429",
+      "recheck": "W2 caller and W3 separate review pending."
+    },
+    {
+      "id": "B05-03-F03",
+      "span": [
+        431,
+        439
+      ],
+      "description": "Clarify post-success publication, queried-key eviction and no publication on discovery exception.",
+      "document": "Algorithms/V3/07_Order_B.md",
+      "prior_blob": "d8897af9138adbbeaeffcd44cc4c6b36dc588f8d",
+      "resolution": "Active contract amended at line 44 to preserve source-established behavior.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L431-L439",
+      "recheck": "W2 caller and W3 separate review pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2 verify actual dirty-frontier propagation, append/prefix invariants, cache instance lifetime, Decimal equality and replacement chronology.",
+    "W3 separate source-first review pending; no runtime or RAW execution."
+  ]
+}

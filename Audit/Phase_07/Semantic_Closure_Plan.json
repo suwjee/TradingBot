@@ -1,0 +1,4796 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-26",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "e1b352ae9641ae5b51322f56030159464cb78777",
+  "phase_status": "INCOMPLETE",
+  "phase_08": "BLOCKED",
+  "scope": "SOURCE_ONLY",
+  "planning_status": "COMPLETE",
+  "semantic_audit_status": "INCOMPLETE",
+  "prior_inventory": {
+    "modules": 16,
+    "contexts": 744,
+    "source_lines_including_terminal_blank": 17135,
+    "branches": 3133,
+    "comparisons": 2177,
+    "arithmetic": 1074,
+    "calls": 5120
+  },
+  "original_site_category_rows": 11504,
+  "verified_independent_site_rows_in_this_plan": 11504,
+  "scope_note": "No new semantic verification is claimed. Prior context review remains valid for its original scope. Counts are category rows, not necessarily distinct AST nodes.",
+  "batches": [
+    {
+      "id": "B01",
+      "title": "Shared primitives and initialization",
+      "status": "PASS",
+      "modules": [
+        {
+          "path": "engine/__init__.py",
+          "source_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+          "ledger": "Semantic_Context_Batch_01.json",
+          "source_line_count": 1,
+          "branches": 0,
+          "comparisons": 0,
+          "arithmetic": 0,
+          "calls": 0
+        },
+        {
+          "path": "engine/bridge/__init__.py",
+          "source_blob": "7cce7308316bd9e00f1a3687a6a84e0f1adb22d4",
+          "ledger": "Semantic_Context_Batch_01.json",
+          "source_line_count": 2,
+          "branches": 0,
+          "comparisons": 0,
+          "arithmetic": 0,
+          "calls": 0
+        },
+        {
+          "path": "engine/pipeline/__init__.py",
+          "source_blob": "656ba15cfbd7edab34a66cd5bc907171940af38c",
+          "ledger": "Semantic_Context_Batch_01.json",
+          "source_line_count": 29,
+          "branches": 1,
+          "comparisons": 1,
+          "arithmetic": 0,
+          "calls": 4
+        },
+        {
+          "path": "engine/pipeline/core_utils.py",
+          "source_blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+          "ledger": "Semantic_Context_Batch_01.json",
+          "source_line_count": 67,
+          "branches": 13,
+          "comparisons": 5,
+          "arithmetic": 3,
+          "calls": 21
+        },
+        {
+          "path": "engine/pipeline/direction_policy.py",
+          "source_blob": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+          "ledger": "Semantic_Context_Batch_01.json",
+          "source_line_count": 71,
+          "branches": 7,
+          "comparisons": 13,
+          "arithmetic": 0,
+          "calls": 6
+        }
+      ],
+      "site_category_rows": 74,
+      "review_scope": "W1 local source-first owner review; W2 and W3 remain open",
+      "evidence": [
+        "Audit/Phase_07/Semantic_Closure_B01.json",
+        "Audit/Phase_07/Semantic_Closure_B01.md"
+      ],
+      "reviewed_original_rows": 74,
+      "supplemental_items": 14
+    },
+    {
+      "id": "B02",
+      "title": "Reaction",
+      "status": "PASS",
+      "modules": [
+        {
+          "path": "engine/pipeline/reaction_engine.py",
+          "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+          "ledger": "Semantic_Context_Reaction.json",
+          "source_line_count": 2908,
+          "branches": 555,
+          "comparisons": 453,
+          "arithmetic": 279,
+          "calls": 590
+        }
+      ],
+      "site_category_rows": 1877,
+      "review_scope": "W1 local source-first owner review complete; W2 and W3 open",
+      "reviewed_original_rows": 1877,
+      "supplemental_items": 114,
+      "sub_batches": [
+        {
+          "id": "B02-01",
+          "status": "PASS",
+          "source_range": [
+            1,
+            327
+          ],
+          "procedures": "RE01–RE12",
+          "original_rows": 171,
+          "supplemental_items": 11,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B02_01.json",
+            "Audit/Phase_07/Semantic_Closure_B02_01.md"
+          ]
+        },
+        {
+          "id": "B02-02",
+          "status": "PASS",
+          "source_range": [
+            328,
+            689
+          ],
+          "procedures": "RE13–RE18",
+          "original_rows": 179,
+          "supplemental_items": 15,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B02_02.json",
+            "Audit/Phase_07/Semantic_Closure_B02_02.md"
+          ]
+        },
+        {
+          "id": "B02-03",
+          "status": "PASS",
+          "source_range": [
+            690,
+            885
+          ],
+          "procedures": "RE19–RE30",
+          "original_rows": 103,
+          "supplemental_items": 7,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B02_03.json",
+            "Audit/Phase_07/Semantic_Closure_B02_03.md"
+          ]
+        },
+        {
+          "id": "B02-04",
+          "status": "PASS",
+          "source_range": [
+            886,
+            1131
+          ],
+          "procedures": "RE31–RE52",
+          "original_rows": 229,
+          "supplemental_items": 11,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B02_04.json",
+            "Audit/Phase_07/Semantic_Closure_B02_04.md"
+          ]
+        },
+        {
+          "id": "B02-05",
+          "status": "PASS",
+          "source_range": [
+            1132,
+            1369
+          ],
+          "procedures": "RE53–RE62",
+          "original_rows": 153,
+          "supplemental_items": 8,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B02_05.json",
+            "Audit/Phase_07/Semantic_Closure_B02_05.md"
+          ]
+        },
+        {
+          "id": "B02-06",
+          "status": "PASS",
+          "source_range": [
+            1370,
+            1480
+          ],
+          "procedures": "RE63–RE68",
+          "original_rows": 71,
+          "supplemental_items": 5,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B02_06.json",
+            "Audit/Phase_07/Semantic_Closure_B02_06.md"
+          ]
+        },
+        {
+          "id": "B02-07",
+          "status": "PASS",
+          "source_range": [
+            1481,
+            1616
+          ],
+          "procedures": "RE69–RE72",
+          "original_rows": 111,
+          "supplemental_items": 7,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B02_07.json",
+            "Audit/Phase_07/Semantic_Closure_B02_07.md"
+          ]
+        },
+        {
+          "id": "B02-08",
+          "status": "PASS",
+          "source_range": [
+            1617,
+            1852
+          ],
+          "procedures": "RE73–RE79",
+          "original_rows": 114,
+          "supplemental_items": 9,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B02_08.json",
+            "Audit/Phase_07/Semantic_Closure_B02_08.md"
+          ]
+        },
+        {
+          "id": "B02-09",
+          "status": "PASS",
+          "source_range": [
+            1853,
+            1946
+          ],
+          "procedures": "RE80–RE82",
+          "original_rows": 86,
+          "supplemental_items": 5,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B02_09.json",
+            "Audit/Phase_07/Semantic_Closure_B02_09.md"
+          ]
+        },
+        {
+          "id": "B02-10",
+          "status": "PASS",
+          "source_range": [
+            1947,
+            2067
+          ],
+          "procedures": "RE83–RE87",
+          "original_rows": 82,
+          "supplemental_items": 5,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B02_10.json",
+            "Audit/Phase_07/Semantic_Closure_B02_10.md"
+          ]
+        },
+        {
+          "id": "B02-11",
+          "status": "PASS",
+          "source_range": [
+            2068,
+            2290
+          ],
+          "procedures": "RE88–RE91",
+          "original_rows": 182,
+          "supplemental_items": 9,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B02_11.json",
+            "Audit/Phase_07/Semantic_Closure_B02_11.md"
+          ]
+        },
+        {
+          "id": "B02-12",
+          "status": "PASS",
+          "source_range": [
+            2291,
+            2433
+          ],
+          "procedures": "RE92–RE96",
+          "original_rows": 94,
+          "supplemental_items": 6,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B02_12.json",
+            "Audit/Phase_07/Semantic_Closure_B02_12.md"
+          ]
+        },
+        {
+          "id": "B02-13",
+          "status": "PASS",
+          "source_range": [
+            2434,
+            2783
+          ],
+          "procedures": "RE97–RE98",
+          "original_rows": 209,
+          "supplemental_items": 9,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B02_13.json",
+            "Audit/Phase_07/Semantic_Closure_B02_13.md"
+          ]
+        },
+        {
+          "id": "B02-14",
+          "status": "PASS",
+          "source_range": [
+            2784,
+            2908
+          ],
+          "procedures": "RE99–RE107",
+          "original_rows": 93,
+          "supplemental_items": 7,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B02_14.json",
+            "Audit/Phase_07/Semantic_Closure_B02_14.md"
+          ]
+        }
+      ],
+      "next_source_line": null,
+      "completion_evidence": "Audit/Phase_07/Semantic_Closure_B02_Completion.json"
+    },
+    {
+      "id": "B03",
+      "title": "Blue and A",
+      "status": "PASS",
+      "modules": [
+        {
+          "path": "engine/pipeline/blue_line_detector.py",
+          "source_blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+          "ledger": "Semantic_Context_Blue.json",
+          "source_line_count": 591,
+          "branches": 106,
+          "comparisons": 77,
+          "arithmetic": 58,
+          "calls": 196
+        },
+        {
+          "path": "engine/pipeline/a_zone_detector.py",
+          "source_blob": "431934d2fb597238d5281a769c29fdb51747868b",
+          "ledger": "Semantic_Context_A.json",
+          "source_line_count": 1070,
+          "branches": 180,
+          "comparisons": 135,
+          "arithmetic": 69,
+          "calls": 324
+        }
+      ],
+      "site_category_rows": 1145,
+      "sub_batches": [
+        {
+          "id": "B03-01",
+          "status": "PASS",
+          "path": "engine/pipeline/blue_line_detector.py",
+          "source_range": [
+            1,
+            232
+          ],
+          "procedures": "BL01–BL06",
+          "original_rows": 170,
+          "supplemental_items": 8,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B03_01.json",
+            "Audit/Phase_07/Semantic_Closure_B03_01.md"
+          ]
+        },
+        {
+          "id": "B03-02",
+          "status": "PASS",
+          "path": "engine/pipeline/blue_line_detector.py",
+          "source_range": [
+            233,
+            461
+          ],
+          "procedures": "BL07–BL10",
+          "original_rows": 138,
+          "supplemental_items": 8,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B03_02.json",
+            "Audit/Phase_07/Semantic_Closure_B03_02.md"
+          ]
+        },
+        {
+          "id": "B03-03",
+          "status": "PASS",
+          "path": "engine/pipeline/blue_line_detector.py",
+          "source_range": [
+            462,
+            591
+          ],
+          "procedures": "BL11–BL18",
+          "original_rows": 129,
+          "supplemental_items": 8,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B03_03.json",
+            "Audit/Phase_07/Semantic_Closure_B03_03.md"
+          ]
+        },
+        {
+          "id": "B03-04",
+          "status": "PASS",
+          "path": "engine/pipeline/a_zone_detector.py",
+          "source_range": [
+            1,
+            215
+          ],
+          "procedures": "A01–A08",
+          "original_rows": 131,
+          "supplemental_items": 9,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B03_04.json",
+            "Audit/Phase_07/Semantic_Closure_B03_04.md"
+          ]
+        },
+        {
+          "id": "B03-05",
+          "status": "PASS",
+          "path": "engine/pipeline/a_zone_detector.py",
+          "source_range": [
+            216,
+            336
+          ],
+          "procedures": "A09–A12",
+          "original_rows": 95,
+          "supplemental_items": 6,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B03_05.json",
+            "Audit/Phase_07/Semantic_Closure_B03_05.md"
+          ]
+        },
+        {
+          "id": "B03-06",
+          "status": "PASS",
+          "path": "engine/pipeline/a_zone_detector.py",
+          "source_range": [
+            337,
+            591
+          ],
+          "procedures": "A13–A16",
+          "original_rows": 153,
+          "supplemental_items": 10,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B03_06.json",
+            "Audit/Phase_07/Semantic_Closure_B03_06.md"
+          ]
+        },
+        {
+          "id": "B03-07",
+          "status": "PASS",
+          "path": "engine/pipeline/a_zone_detector.py",
+          "source_range": [
+            592,
+            733
+          ],
+          "procedures": "A17–A18",
+          "original_rows": 72,
+          "supplemental_items": 6,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B03_07.json",
+            "Audit/Phase_07/Semantic_Closure_B03_07.md"
+          ]
+        },
+        {
+          "id": "B03-08",
+          "status": "PASS",
+          "path": "engine/pipeline/a_zone_detector.py",
+          "source_range": [
+            734,
+            847
+          ],
+          "procedures": "A19–A23",
+          "original_rows": 59,
+          "supplemental_items": 6,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B03_08.json",
+            "Audit/Phase_07/Semantic_Closure_B03_08.md"
+          ]
+        },
+        {
+          "id": "B03-09",
+          "status": "PASS",
+          "path": "engine/pipeline/a_zone_detector.py",
+          "source_range": [
+            848,
+            1070
+          ],
+          "procedures": "A24–A39",
+          "original_rows": 198,
+          "supplemental_items": 16,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B03_09.json",
+            "Audit/Phase_07/Semantic_Closure_B03_09.md"
+          ]
+        }
+      ],
+      "review_scope": "Blue and A W1 local owner review complete; W2/W3 open",
+      "reviewed_original_rows": 1145,
+      "supplemental_items": 77,
+      "next_module": null,
+      "next_source_line": null,
+      "blue_completion_evidence": "Audit/Phase_07/Semantic_Closure_B03_Blue_Completion.json",
+      "completion_evidence": "Audit/Phase_07/Semantic_Closure_B03_Completion.json"
+    },
+    {
+      "id": "B04",
+      "title": "S",
+      "status": "PASS",
+      "modules": [
+        {
+          "path": "engine/pipeline/s_zone_detector.py",
+          "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+          "ledger": "Semantic_Context_S.json",
+          "source_line_count": 1552,
+          "branches": 238,
+          "comparisons": 171,
+          "arithmetic": 100,
+          "calls": 453
+        }
+      ],
+      "site_category_rows": 962,
+      "sub_batches": [
+        {
+          "id": "B04-01",
+          "status": "PASS",
+          "path": "engine/pipeline/s_zone_detector.py",
+          "source_range": [
+            1,
+            177
+          ],
+          "procedures": "S01–S01",
+          "original_rows": 117,
+          "supplemental_items": 8,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B04_01.json",
+            "Audit/Phase_07/Semantic_Closure_B04_01.md"
+          ]
+        },
+        {
+          "id": "B04-02",
+          "status": "PASS",
+          "path": "engine/pipeline/s_zone_detector.py",
+          "source_range": [
+            178,
+            402
+          ],
+          "procedures": "S02–S19",
+          "original_rows": 167,
+          "supplemental_items": 10,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B04_02.json",
+            "Audit/Phase_07/Semantic_Closure_B04_02.md"
+          ]
+        },
+        {
+          "id": "B04-03",
+          "status": "PASS",
+          "path": "engine/pipeline/s_zone_detector.py",
+          "source_range": [
+            403,
+            586
+          ],
+          "procedures": "S20–S23",
+          "original_rows": 80,
+          "supplemental_items": 8,
+          "resolved_findings": 5,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B04_03.json",
+            "Audit/Phase_07/Semantic_Closure_B04_03.md"
+          ]
+        },
+        {
+          "id": "B04-04",
+          "status": "PASS",
+          "path": "engine/pipeline/s_zone_detector.py",
+          "source_range": [
+            587,
+            695
+          ],
+          "procedures": "S24–S28",
+          "original_rows": 96,
+          "supplemental_items": 7,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B04_04.json",
+            "Audit/Phase_07/Semantic_Closure_B04_04.md"
+          ]
+        },
+        {
+          "id": "B04-05",
+          "status": "PASS",
+          "path": "engine/pipeline/s_zone_detector.py",
+          "source_range": [
+            696,
+            869
+          ],
+          "procedures": "S29–S36",
+          "original_rows": 116,
+          "supplemental_items": 9,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B04_05.json",
+            "Audit/Phase_07/Semantic_Closure_B04_05.md"
+          ]
+        },
+        {
+          "id": "B04-06",
+          "status": "PASS",
+          "path": "engine/pipeline/s_zone_detector.py",
+          "source_range": [
+            870,
+            1053
+          ],
+          "procedures": "S37–S38",
+          "original_rows": 98,
+          "supplemental_items": 7,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B04_06.json",
+            "Audit/Phase_07/Semantic_Closure_B04_06.md"
+          ]
+        },
+        {
+          "id": "B04-07",
+          "status": "PASS",
+          "path": "engine/pipeline/s_zone_detector.py",
+          "source_range": [
+            1054,
+            1224
+          ],
+          "procedures": "S39",
+          "original_rows": 69,
+          "supplemental_items": 6,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B04_07.json",
+            "Audit/Phase_07/Semantic_Closure_B04_07.md"
+          ]
+        },
+        {
+          "id": "B04-08",
+          "status": "PASS",
+          "path": "engine/pipeline/s_zone_detector.py",
+          "source_range": [
+            1225,
+            1423
+          ],
+          "procedures": "S40–S43",
+          "original_rows": 143,
+          "supplemental_items": 8,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B04_08.json",
+            "Audit/Phase_07/Semantic_Closure_B04_08.md"
+          ]
+        },
+        {
+          "id": "B04-09",
+          "status": "PASS",
+          "path": "engine/pipeline/s_zone_detector.py",
+          "source_range": [
+            1424,
+            1552
+          ],
+          "procedures": "S44–S50",
+          "original_rows": 76,
+          "supplemental_items": 8,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B04_09.json",
+            "Audit/Phase_07/Semantic_Closure_B04_09.md"
+          ]
+        }
+      ],
+      "review_scope": "S W1 local owner review complete; W2/W3 open",
+      "reviewed_original_rows": 962,
+      "supplemental_items": 71,
+      "next_module": null,
+      "next_source_line": null,
+      "completion_evidence": "Audit/Phase_07/Semantic_Closure_B04_Completion.json"
+    },
+    {
+      "id": "B05",
+      "title": "Order Audit",
+      "status": "PASS",
+      "modules": [
+        {
+          "path": "engine/pipeline/order_audit_engine.py",
+          "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+          "ledger": "Semantic_Context_Order_Audit.json",
+          "source_line_count": 2714,
+          "branches": 551,
+          "comparisons": 374,
+          "arithmetic": 123,
+          "calls": 844
+        }
+      ],
+      "site_category_rows": 1892,
+      "review_scope": "Order Audit W1 local owner review complete; W2/W3 remain open",
+      "reviewed_original_rows": 1892,
+      "supplemental_items": 159,
+      "sub_batches": [
+        {
+          "id": "B05-01",
+          "status": "PASS",
+          "source_range": [
+            1,
+            197
+          ],
+          "procedures": "OA01–OA05",
+          "original_rows": 146,
+          "supplemental_items": 8,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_01.json",
+            "Audit/Phase_07/Semantic_Closure_B05_01.md"
+          ]
+        },
+        {
+          "id": "B05-02",
+          "status": "PASS",
+          "source_range": [
+            198,
+            377
+          ],
+          "procedures": "OA06",
+          "original_rows": 100,
+          "supplemental_items": 6,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_02.json",
+            "Audit/Phase_07/Semantic_Closure_B05_02.md"
+          ]
+        },
+        {
+          "id": "B05-03",
+          "status": "PASS",
+          "source_range": [
+            378,
+            441
+          ],
+          "procedures": "OA07–OA08–OA09–OA10",
+          "original_rows": 50,
+          "supplemental_items": 5,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_03.json",
+            "Audit/Phase_07/Semantic_Closure_B05_03.md"
+          ]
+        },
+        {
+          "id": "B05-04",
+          "status": "PASS",
+          "source_range": [
+            442,
+            553
+          ],
+          "procedures": "OA11–OA12",
+          "original_rows": 61,
+          "supplemental_items": 5,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_04.json",
+            "Audit/Phase_07/Semantic_Closure_B05_04.md"
+          ]
+        },
+        {
+          "id": "B05-05",
+          "status": "PASS",
+          "source_range": [
+            554,
+            688
+          ],
+          "procedures": "OA13–OA15",
+          "original_rows": 51,
+          "supplemental_items": 8,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_05.json",
+            "Audit/Phase_07/Semantic_Closure_B05_05.md"
+          ]
+        },
+        {
+          "id": "B05-06",
+          "status": "PASS",
+          "source_range": [
+            689,
+            808
+          ],
+          "procedures": "OA16–OA17–OA18",
+          "original_rows": 76,
+          "supplemental_items": 6,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_06.json",
+            "Audit/Phase_07/Semantic_Closure_B05_06.md"
+          ]
+        },
+        {
+          "id": "B05-07",
+          "status": "PASS",
+          "source_range": [
+            809,
+            920
+          ],
+          "procedures": "OA19–OA20",
+          "original_rows": 76,
+          "supplemental_items": 6,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_07.json",
+            "Audit/Phase_07/Semantic_Closure_B05_07.md"
+          ]
+        },
+        {
+          "id": "B05-08",
+          "status": "PASS",
+          "source_range": [
+            921,
+            1088
+          ],
+          "procedures": "OA21–OA22–OA23–OA24",
+          "original_rows": 93,
+          "supplemental_items": 7,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_08.json",
+            "Audit/Phase_07/Semantic_Closure_B05_08.md"
+          ]
+        },
+        {
+          "id": "B05-09",
+          "status": "PASS",
+          "source_range": [
+            1089,
+            1134
+          ],
+          "procedures": "OA25–OA26–OA27–OA28–OA29",
+          "original_rows": 17,
+          "supplemental_items": 5,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_09.json",
+            "Audit/Phase_07/Semantic_Closure_B05_09.md"
+          ]
+        },
+        {
+          "id": "B05-10",
+          "status": "PASS",
+          "source_range": [
+            1135,
+            1201
+          ],
+          "procedures": "OA30",
+          "original_rows": 26,
+          "supplemental_items": 5,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_10.json",
+            "Audit/Phase_07/Semantic_Closure_B05_10.md"
+          ]
+        },
+        {
+          "id": "B05-11",
+          "status": "PASS",
+          "source_range": [
+            1202,
+            1249
+          ],
+          "procedures": "OA31",
+          "original_rows": 64,
+          "supplemental_items": 5,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_11.json",
+            "Audit/Phase_07/Semantic_Closure_B05_11.md"
+          ]
+        },
+        {
+          "id": "B05-12",
+          "status": "PASS",
+          "source_range": [
+            1250,
+            1338
+          ],
+          "procedures": "OA32–OA33–OA34–OA35–OA36–OA37–OA38–OA39",
+          "original_rows": 70,
+          "supplemental_items": 6,
+          "resolved_findings": 5,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_12.json",
+            "Audit/Phase_07/Semantic_Closure_B05_12.md"
+          ]
+        },
+        {
+          "id": "B05-13",
+          "status": "PASS",
+          "source_range": [
+            1339,
+            1435
+          ],
+          "procedures": "OA40",
+          "original_rows": 84,
+          "supplemental_items": 7,
+          "resolved_findings": 5,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_13.json",
+            "Audit/Phase_07/Semantic_Closure_B05_13.md"
+          ]
+        },
+        {
+          "id": "B05-14",
+          "status": "PASS",
+          "source_range": [
+            1436,
+            1523
+          ],
+          "procedures": "OA41–OA42–OA43–OA44",
+          "original_rows": 56,
+          "supplemental_items": 6,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_14.json",
+            "Audit/Phase_07/Semantic_Closure_B05_14.md"
+          ]
+        },
+        {
+          "id": "B05-15",
+          "status": "PASS",
+          "source_range": [
+            1524,
+            1643
+          ],
+          "procedures": "OA45–OA46–OA47–OA48–OA49",
+          "original_rows": 66,
+          "supplemental_items": 7,
+          "resolved_findings": 5,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_15.json",
+            "Audit/Phase_07/Semantic_Closure_B05_15.md"
+          ]
+        },
+        {
+          "id": "B05-16",
+          "status": "PASS",
+          "source_range": [
+            1644,
+            1721
+          ],
+          "procedures": "OA50–OA51",
+          "original_rows": 94,
+          "supplemental_items": 6,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_16.json",
+            "Audit/Phase_07/Semantic_Closure_B05_16.md"
+          ]
+        },
+        {
+          "id": "B05-17",
+          "status": "PASS",
+          "source_range": [
+            1722,
+            1797
+          ],
+          "procedures": "OA52",
+          "original_rows": 77,
+          "supplemental_items": 6,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_17.json",
+            "Audit/Phase_07/Semantic_Closure_B05_17.md"
+          ]
+        },
+        {
+          "id": "B05-18",
+          "status": "PASS",
+          "source_range": [
+            1798,
+            1878
+          ],
+          "procedures": "OA53–OA54",
+          "original_rows": 78,
+          "supplemental_items": 7,
+          "resolved_findings": 5,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_18.json",
+            "Audit/Phase_07/Semantic_Closure_B05_18.md"
+          ]
+        },
+        {
+          "id": "B05-19",
+          "status": "PASS",
+          "source_range": [
+            1879,
+            2019
+          ],
+          "procedures": "OA55–OA56–OA57–OA58–OA59",
+          "original_rows": 175,
+          "supplemental_items": 8,
+          "resolved_findings": 6,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_19.json",
+            "Audit/Phase_07/Semantic_Closure_B05_19.md"
+          ]
+        },
+        {
+          "id": "B05-20",
+          "status": "PASS",
+          "source_range": [
+            2020,
+            2045
+          ],
+          "procedures": "OA60–OA61",
+          "original_rows": 25,
+          "supplemental_items": 3,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_20.json",
+            "Audit/Phase_07/Semantic_Closure_B05_20.md"
+          ]
+        },
+        {
+          "id": "B05-21",
+          "status": "PASS",
+          "source_range": [
+            2046,
+            2233
+          ],
+          "procedures": "OA62–OA63",
+          "original_rows": 141,
+          "supplemental_items": 8,
+          "resolved_findings": 7,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_21.json",
+            "Audit/Phase_07/Semantic_Closure_B05_21.md"
+          ]
+        },
+        {
+          "id": "B05-22",
+          "status": "PASS",
+          "source_range": [
+            2234,
+            2290
+          ],
+          "procedures": "OA64–OA65",
+          "original_rows": 30,
+          "supplemental_items": 4,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_22.json",
+            "Audit/Phase_07/Semantic_Closure_B05_22.md"
+          ]
+        },
+        {
+          "id": "B05-23",
+          "status": "PASS",
+          "source_range": [
+            2291,
+            2461
+          ],
+          "procedures": "OA66–OA67–OA68–OA69–OA70–OA71",
+          "original_rows": 98,
+          "supplemental_items": 7,
+          "resolved_findings": 6,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_23.json",
+            "Audit/Phase_07/Semantic_Closure_B05_23.md"
+          ]
+        },
+        {
+          "id": "B05-24",
+          "status": "PASS",
+          "source_range": [
+            2462,
+            2516
+          ],
+          "procedures": "OA72–OA73–OA74",
+          "original_rows": 31,
+          "supplemental_items": 4,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_24.json",
+            "Audit/Phase_07/Semantic_Closure_B05_24.md"
+          ]
+        },
+        {
+          "id": "B05-25",
+          "status": "PASS",
+          "source_range": [
+            2517,
+            2621
+          ],
+          "procedures": "OA75–OA76–OA77",
+          "original_rows": 56,
+          "supplemental_items": 7,
+          "resolved_findings": 5,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_25.json",
+            "Audit/Phase_07/Semantic_Closure_B05_25.md"
+          ]
+        },
+        {
+          "id": "B05-26",
+          "status": "PASS",
+          "source_range": [
+            2622,
+            2714
+          ],
+          "procedures": "OA78–OA79–OA80–OA81–OA82",
+          "original_rows": 51,
+          "supplemental_items": 7,
+          "resolved_findings": 5,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_26.json",
+            "Audit/Phase_07/Semantic_Closure_B05_26.md"
+          ]
+        }
+      ],
+      "next_source_line": null,
+      "next_module": null,
+      "completion_evidence": "Audit/Phase_07/Semantic_Closure_B05_Completion.json"
+    },
+    {
+      "id": "B06",
+      "title": "E",
+      "status": "PASS",
+      "modules": [
+        {
+          "path": "engine/pipeline/e_zone_detector.py",
+          "source_blob": "240369edf3352006082efe094eb68ac027d6689f",
+          "ledger": "Semantic_Context_E.json",
+          "source_line_count": 1539,
+          "branches": 334,
+          "comparisons": 218,
+          "arithmetic": 104,
+          "calls": 453
+        }
+      ],
+      "site_category_rows": 1109,
+      "review_scope": "E W1 local owner review complete; W2/W3/W4 open",
+      "reviewed_original_rows": 1109,
+      "supplemental_items": 81,
+      "resolved_findings": 47,
+      "next_source_line": null,
+      "next_module": null,
+      "sub_batches": [
+        {
+          "id": "B06-01",
+          "status": "PASS",
+          "source_range": [
+            1,
+            152
+          ],
+          "procedures": "E01–E03",
+          "original_rows": 34,
+          "supplemental_items": 3,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_01.json",
+            "Audit/Phase_07/Semantic_Closure_B06_01.md"
+          ]
+        },
+        {
+          "id": "B06-02",
+          "status": "PASS",
+          "source_range": [
+            153,
+            195
+          ],
+          "procedures": "E04–E05",
+          "original_rows": 44,
+          "supplemental_items": 3,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_02.json",
+            "Audit/Phase_07/Semantic_Closure_B06_02.md"
+          ]
+        },
+        {
+          "id": "B06-03",
+          "status": "PASS",
+          "source_range": [
+            196,
+            219
+          ],
+          "procedures": "E06",
+          "original_rows": 18,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_03.json",
+            "Audit/Phase_07/Semantic_Closure_B06_03.md"
+          ]
+        },
+        {
+          "id": "B06-04",
+          "status": "PASS",
+          "source_range": [
+            220,
+            311
+          ],
+          "procedures": "E07",
+          "original_rows": 102,
+          "supplemental_items": 4,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_04.json",
+            "Audit/Phase_07/Semantic_Closure_B06_04.md"
+          ]
+        },
+        {
+          "id": "B06-05",
+          "status": "PASS",
+          "source_range": [
+            312,
+            393
+          ],
+          "procedures": "E08",
+          "original_rows": 62,
+          "supplemental_items": 4,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_05.json",
+            "Audit/Phase_07/Semantic_Closure_B06_05.md"
+          ]
+        },
+        {
+          "id": "B06-06",
+          "status": "PASS",
+          "source_range": [
+            394,
+            419
+          ],
+          "procedures": "E09–E12",
+          "original_rows": 9,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_06.json",
+            "Audit/Phase_07/Semantic_Closure_B06_06.md"
+          ]
+        },
+        {
+          "id": "B06-07",
+          "status": "PASS",
+          "source_range": [
+            420,
+            457
+          ],
+          "procedures": "E13–E15",
+          "original_rows": 32,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_07.json",
+            "Audit/Phase_07/Semantic_Closure_B06_07.md"
+          ]
+        },
+        {
+          "id": "B06-08",
+          "status": "PASS",
+          "source_range": [
+            458,
+            506
+          ],
+          "procedures": "E16–E17",
+          "original_rows": 51,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_08.json",
+            "Audit/Phase_07/Semantic_Closure_B06_08.md"
+          ]
+        },
+        {
+          "id": "B06-09",
+          "status": "PASS",
+          "source_range": [
+            507,
+            580
+          ],
+          "procedures": "E18–E27",
+          "original_rows": 47,
+          "supplemental_items": 4,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_09.json",
+            "Audit/Phase_07/Semantic_Closure_B06_09.md"
+          ]
+        },
+        {
+          "id": "B06-10",
+          "status": "PASS",
+          "source_range": [
+            581,
+            607
+          ],
+          "procedures": "E28–E29",
+          "original_rows": 25,
+          "supplemental_items": 2,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_10.json",
+            "Audit/Phase_07/Semantic_Closure_B06_10.md"
+          ]
+        },
+        {
+          "id": "B06-11",
+          "status": "PASS",
+          "source_range": [
+            608,
+            676
+          ],
+          "procedures": "E30–E31",
+          "original_rows": 50,
+          "supplemental_items": 6,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_11.json",
+            "Audit/Phase_07/Semantic_Closure_B06_11.md"
+          ]
+        },
+        {
+          "id": "B06-12",
+          "status": "PASS",
+          "source_range": [
+            677,
+            746
+          ],
+          "procedures": "E32–E33",
+          "original_rows": 29,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_12.json",
+            "Audit/Phase_07/Semantic_Closure_B06_12.md"
+          ]
+        },
+        {
+          "id": "B06-13",
+          "status": "PASS",
+          "source_range": [
+            747,
+            823
+          ],
+          "procedures": "E34–E35",
+          "original_rows": 48,
+          "supplemental_items": 4,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_13.json",
+            "Audit/Phase_07/Semantic_Closure_B06_13.md"
+          ]
+        },
+        {
+          "id": "B06-14",
+          "status": "PASS",
+          "source_range": [
+            824,
+            914
+          ],
+          "procedures": "E36–E39",
+          "original_rows": 52,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_14.json",
+            "Audit/Phase_07/Semantic_Closure_B06_14.md"
+          ]
+        },
+        {
+          "id": "B06-15",
+          "status": "PASS",
+          "source_range": [
+            915,
+            1006
+          ],
+          "procedures": "E40",
+          "original_rows": 75,
+          "supplemental_items": 4,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_15.json",
+            "Audit/Phase_07/Semantic_Closure_B06_15.md"
+          ]
+        },
+        {
+          "id": "B06-16",
+          "status": "PASS",
+          "source_range": [
+            1007,
+            1030
+          ],
+          "procedures": "E41",
+          "original_rows": 22,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_16.json",
+            "Audit/Phase_07/Semantic_Closure_B06_16.md"
+          ]
+        },
+        {
+          "id": "B06-17",
+          "status": "PASS",
+          "source_range": [
+            1031,
+            1131
+          ],
+          "procedures": "E42–E43",
+          "original_rows": 67,
+          "supplemental_items": 5,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_17.json",
+            "Audit/Phase_07/Semantic_Closure_B06_17.md"
+          ]
+        },
+        {
+          "id": "B06-18",
+          "status": "PASS",
+          "source_range": [
+            1132,
+            1203
+          ],
+          "procedures": "E44 initialization (partial outer procedure), E45–E46",
+          "original_rows": 51,
+          "supplemental_items": 3,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_18.json",
+            "Audit/Phase_07/Semantic_Closure_B06_18.md"
+          ]
+        },
+        {
+          "id": "B06-19",
+          "status": "PASS",
+          "source_range": [
+            1204,
+            1228
+          ],
+          "procedures": "E47–E48 (nested in E44)",
+          "original_rows": 27,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_19.json",
+            "Audit/Phase_07/Semantic_Closure_B06_19.md"
+          ]
+        },
+        {
+          "id": "B06-20",
+          "status": "PASS",
+          "source_range": [
+            1229,
+            1293
+          ],
+          "procedures": "E49–E50 (nested in E44)",
+          "original_rows": 66,
+          "supplemental_items": 4,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_20.json",
+            "Audit/Phase_07/Semantic_Closure_B06_20.md"
+          ]
+        },
+        {
+          "id": "B06-21",
+          "status": "PASS",
+          "source_range": [
+            1294,
+            1327
+          ],
+          "procedures": "E44 heap replay and preliminary eligibility",
+          "original_rows": 35,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_21.json",
+            "Audit/Phase_07/Semantic_Closure_B06_21.md"
+          ]
+        },
+        {
+          "id": "B06-22",
+          "status": "PASS",
+          "source_range": [
+            1328,
+            1371
+          ],
+          "procedures": "E44 ownership filters, E51",
+          "original_rows": 45,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_22.json",
+            "Audit/Phase_07/Semantic_Closure_B06_22.md"
+          ]
+        },
+        {
+          "id": "B06-23",
+          "status": "PASS",
+          "source_range": [
+            1372,
+            1456
+          ],
+          "procedures": "E44 winner, family, number and reset",
+          "original_rows": 59,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_23.json",
+            "Audit/Phase_07/Semantic_Closure_B06_23.md"
+          ]
+        },
+        {
+          "id": "B06-24",
+          "status": "PASS",
+          "source_range": [
+            1457,
+            1494
+          ],
+          "procedures": "E44 completion, E52",
+          "original_rows": 40,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_24.json",
+            "Audit/Phase_07/Semantic_Closure_B06_24.md"
+          ]
+        },
+        {
+          "id": "B06-25",
+          "status": "PASS",
+          "source_range": [
+            1495,
+            1539
+          ],
+          "procedures": "E53–E54",
+          "original_rows": 19,
+          "supplemental_items": 2,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_25.json",
+            "Audit/Phase_07/Semantic_Closure_B06_25.md"
+          ]
+        }
+      ],
+      "completion_evidence": "Audit/Phase_07/Semantic_Closure_B06_Completion.json"
+    },
+    {
+      "id": "B07",
+      "title": "Lifecycle and StopAll",
+      "status": "PASS",
+      "modules": [
+        {
+          "path": "engine/pipeline/lifecycle_engine.py",
+          "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+          "ledger": "Semantic_Context_Lifecycle.json",
+          "source_line_count": 1611,
+          "branches": 286,
+          "comparisons": 194,
+          "arithmetic": 104,
+          "calls": 595
+        }
+      ],
+      "site_category_rows": 1179,
+      "review_scope": "Lifecycle and StopAll W1 local owner review complete; W2/W3/W4 open",
+      "reviewed_original_rows": 1179,
+      "supplemental_items": 71,
+      "resolved_findings": 51,
+      "next_source_line": null,
+      "next_module": null,
+      "sub_batches": [
+        {
+          "id": "B07-01",
+          "status": "PASS",
+          "source_range": [
+            1,
+            120
+          ],
+          "procedures": "LC01–LC04 and declarations",
+          "original_rows": 50,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_01.json",
+            "Audit/Phase_07/Semantic_Closure_B07_01.md"
+          ]
+        },
+        {
+          "id": "B07-02",
+          "status": "PASS",
+          "source_range": [
+            121,
+            195
+          ],
+          "procedures": "LC05–LC08 and checkpoint",
+          "original_rows": 43,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_02.json",
+            "Audit/Phase_07/Semantic_Closure_B07_02.md"
+          ]
+        },
+        {
+          "id": "B07-03",
+          "status": "PASS",
+          "source_range": [
+            196,
+            261
+          ],
+          "procedures": "LC09–LC11",
+          "original_rows": 34,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_03.json",
+            "Audit/Phase_07/Semantic_Closure_B07_03.md"
+          ]
+        },
+        {
+          "id": "B07-04",
+          "status": "PASS",
+          "source_range": [
+            262,
+            349
+          ],
+          "procedures": "LC12",
+          "original_rows": 39,
+          "supplemental_items": 3,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_04.json",
+            "Audit/Phase_07/Semantic_Closure_B07_04.md"
+          ]
+        },
+        {
+          "id": "B07-05",
+          "status": "PASS",
+          "source_range": [
+            350,
+            360
+          ],
+          "procedures": "LC13–LC14",
+          "original_rows": 9,
+          "supplemental_items": 2,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_05.json",
+            "Audit/Phase_07/Semantic_Closure_B07_05.md"
+          ]
+        },
+        {
+          "id": "B07-06",
+          "status": "PASS",
+          "source_range": [
+            361,
+            421
+          ],
+          "procedures": "LC15 setup, LC16–LC17",
+          "original_rows": 54,
+          "supplemental_items": 3,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_06.json",
+            "Audit/Phase_07/Semantic_Closure_B07_06.md"
+          ]
+        },
+        {
+          "id": "B07-07",
+          "status": "PASS",
+          "source_range": [
+            422,
+            474
+          ],
+          "procedures": "LC18",
+          "original_rows": 38,
+          "supplemental_items": 3,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_07.json",
+            "Audit/Phase_07/Semantic_Closure_B07_07.md"
+          ]
+        },
+        {
+          "id": "B07-08",
+          "status": "PASS",
+          "source_range": [
+            475,
+            524
+          ],
+          "procedures": "LC19, LC15 dispatch",
+          "original_rows": 49,
+          "supplemental_items": 3,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_08.json",
+            "Audit/Phase_07/Semantic_Closure_B07_08.md"
+          ]
+        },
+        {
+          "id": "B07-09",
+          "status": "PASS",
+          "source_range": [
+            525,
+            549
+          ],
+          "procedures": "LC20–LC22",
+          "original_rows": 12,
+          "supplemental_items": 2,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_09.json",
+            "Audit/Phase_07/Semantic_Closure_B07_09.md"
+          ]
+        },
+        {
+          "id": "B07-10",
+          "status": "PASS",
+          "source_range": [
+            550,
+            605
+          ],
+          "procedures": "LC23–LC24",
+          "original_rows": 52,
+          "supplemental_items": 3,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_10.json",
+            "Audit/Phase_07/Semantic_Closure_B07_10.md"
+          ]
+        },
+        {
+          "id": "B07-11",
+          "status": "PASS",
+          "source_range": [
+            606,
+            659
+          ],
+          "procedures": "LC25 initial audit and blocks",
+          "original_rows": 23,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_11.json",
+            "Audit/Phase_07/Semantic_Closure_B07_11.md"
+          ]
+        },
+        {
+          "id": "B07-12",
+          "status": "PASS",
+          "source_range": [
+            660,
+            694
+          ],
+          "procedures": "LC25 narrow E exception",
+          "original_rows": 39,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_12.json",
+            "Audit/Phase_07/Semantic_Closure_B07_12.md"
+          ]
+        },
+        {
+          "id": "B07-13",
+          "status": "PASS",
+          "source_range": [
+            695,
+            711
+          ],
+          "procedures": "LC26",
+          "original_rows": 13,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_13.json",
+            "Audit/Phase_07/Semantic_Closure_B07_13.md"
+          ]
+        },
+        {
+          "id": "B07-14",
+          "status": "PASS",
+          "source_range": [
+            712,
+            734
+          ],
+          "procedures": "LC27–LC28",
+          "original_rows": 22,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_14.json",
+            "Audit/Phase_07/Semantic_Closure_B07_14.md"
+          ]
+        },
+        {
+          "id": "B07-15",
+          "status": "PASS",
+          "source_range": [
+            735,
+            765
+          ],
+          "procedures": "LC29–LC31",
+          "original_rows": 22,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_15.json",
+            "Audit/Phase_07/Semantic_Closure_B07_15.md"
+          ]
+        },
+        {
+          "id": "B07-16",
+          "status": "PASS",
+          "source_range": [
+            766,
+            834
+          ],
+          "procedures": "LC32 initialization",
+          "original_rows": 41,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_16.json",
+            "Audit/Phase_07/Semantic_Closure_B07_16.md"
+          ]
+        },
+        {
+          "id": "B07-17",
+          "status": "PASS",
+          "source_range": [
+            835,
+            884
+          ],
+          "procedures": "LC32 ready sweep",
+          "original_rows": 46,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_17.json",
+            "Audit/Phase_07/Semantic_Closure_B07_17.md"
+          ]
+        },
+        {
+          "id": "B07-18",
+          "status": "PASS",
+          "source_range": [
+            885,
+            943
+          ],
+          "procedures": "LC32 strict crossing and interior exception",
+          "original_rows": 73,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_18.json",
+            "Audit/Phase_07/Semantic_Closure_B07_18.md"
+          ]
+        },
+        {
+          "id": "B07-19",
+          "status": "PASS",
+          "source_range": [
+            944,
+            972
+          ],
+          "procedures": "LC32 final consumption",
+          "original_rows": 22,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_19.json",
+            "Audit/Phase_07/Semantic_Closure_B07_19.md"
+          ]
+        },
+        {
+          "id": "B07-20",
+          "status": "PASS",
+          "source_range": [
+            973,
+            995
+          ],
+          "procedures": "LC33",
+          "original_rows": 14,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_20.json",
+            "Audit/Phase_07/Semantic_Closure_B07_20.md"
+          ]
+        },
+        {
+          "id": "B07-21",
+          "status": "PASS",
+          "source_range": [
+            996,
+            1036
+          ],
+          "procedures": "LC34 preparation",
+          "original_rows": 24,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_21.json",
+            "Audit/Phase_07/Semantic_Closure_B07_21.md"
+          ]
+        },
+        {
+          "id": "B07-22",
+          "status": "PASS",
+          "source_range": [
+            1037,
+            1066
+          ],
+          "procedures": "LC34 candidate gates",
+          "original_rows": 39,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_22.json",
+            "Audit/Phase_07/Semantic_Closure_B07_22.md"
+          ]
+        },
+        {
+          "id": "B07-23",
+          "status": "PASS",
+          "source_range": [
+            1067,
+            1108
+          ],
+          "procedures": "LC34 latest E lifecycle",
+          "original_rows": 31,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_23.json",
+            "Audit/Phase_07/Semantic_Closure_B07_23.md"
+          ]
+        },
+        {
+          "id": "B07-24",
+          "status": "PASS",
+          "source_range": [
+            1109,
+            1137
+          ],
+          "procedures": "LC34 evidence selection",
+          "original_rows": 28,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_24.json",
+            "Audit/Phase_07/Semantic_Closure_B07_24.md"
+          ]
+        },
+        {
+          "id": "B07-25",
+          "status": "PASS",
+          "source_range": [
+            1138,
+            1179
+          ],
+          "procedures": "LC35–LC36",
+          "original_rows": 48,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_25.json",
+            "Audit/Phase_07/Semantic_Closure_B07_25.md"
+          ]
+        },
+        {
+          "id": "B07-26",
+          "status": "PASS",
+          "source_range": [
+            1180,
+            1198
+          ],
+          "procedures": "LC37",
+          "original_rows": 11,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_26.json",
+            "Audit/Phase_07/Semantic_Closure_B07_26.md"
+          ]
+        },
+        {
+          "id": "B07-27",
+          "status": "PASS",
+          "source_range": [
+            1199,
+            1233
+          ],
+          "procedures": "LC38 setup and LC39",
+          "original_rows": 18,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_27.json",
+            "Audit/Phase_07/Semantic_Closure_B07_27.md"
+          ]
+        },
+        {
+          "id": "B07-28",
+          "status": "PASS",
+          "source_range": [
+            1234,
+            1277
+          ],
+          "procedures": "LC38 source and cutoff",
+          "original_rows": 38,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_28.json",
+            "Audit/Phase_07/Semantic_Closure_B07_28.md"
+          ]
+        },
+        {
+          "id": "B07-29",
+          "status": "PASS",
+          "source_range": [
+            1278,
+            1323
+          ],
+          "procedures": "LC38 external continuation",
+          "original_rows": 50,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_29.json",
+            "Audit/Phase_07/Semantic_Closure_B07_29.md"
+          ]
+        },
+        {
+          "id": "B07-30",
+          "status": "PASS",
+          "source_range": [
+            1324,
+            1376
+          ],
+          "procedures": "LC38 dominant final acceptance",
+          "original_rows": 36,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_30.json",
+            "Audit/Phase_07/Semantic_Closure_B07_30.md"
+          ]
+        },
+        {
+          "id": "B07-31",
+          "status": "PASS",
+          "source_range": [
+            1377,
+            1411
+          ],
+          "procedures": "LC40",
+          "original_rows": 11,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_31.json",
+            "Audit/Phase_07/Semantic_Closure_B07_31.md"
+          ]
+        },
+        {
+          "id": "B07-32",
+          "status": "PASS",
+          "source_range": [
+            1412,
+            1444
+          ],
+          "procedures": "LC41 prior stop inventory",
+          "original_rows": 20,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_32.json",
+            "Audit/Phase_07/Semantic_Closure_B07_32.md"
+          ]
+        },
+        {
+          "id": "B07-33",
+          "status": "PASS",
+          "source_range": [
+            1445,
+            1458
+          ],
+          "procedures": "LC41 provenance boundary",
+          "original_rows": 11,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_33.json",
+            "Audit/Phase_07/Semantic_Closure_B07_33.md"
+          ]
+        },
+        {
+          "id": "B07-34",
+          "status": "PASS",
+          "source_range": [
+            1459,
+            1472
+          ],
+          "procedures": "LC42",
+          "original_rows": 13,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_34.json",
+            "Audit/Phase_07/Semantic_Closure_B07_34.md"
+          ]
+        },
+        {
+          "id": "B07-35",
+          "status": "PASS",
+          "source_range": [
+            1473,
+            1495
+          ],
+          "procedures": "LC43",
+          "original_rows": 23,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_35.json",
+            "Audit/Phase_07/Semantic_Closure_B07_35.md"
+          ]
+        },
+        {
+          "id": "B07-36",
+          "status": "PASS",
+          "source_range": [
+            1496,
+            1508
+          ],
+          "procedures": "LC44",
+          "original_rows": 4,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_36.json",
+            "Audit/Phase_07/Semantic_Closure_B07_36.md"
+          ]
+        },
+        {
+          "id": "B07-37",
+          "status": "PASS",
+          "source_range": [
+            1509,
+            1539
+          ],
+          "procedures": "LC45 occupied E and preliminary S",
+          "original_rows": 11,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_37.json",
+            "Audit/Phase_07/Semantic_Closure_B07_37.md"
+          ]
+        },
+        {
+          "id": "B07-38",
+          "status": "PASS",
+          "source_range": [
+            1540,
+            1559
+          ],
+          "procedures": "LC45 S lineage restoration",
+          "original_rows": 21,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_38.json",
+            "Audit/Phase_07/Semantic_Closure_B07_38.md"
+          ]
+        },
+        {
+          "id": "B07-39",
+          "status": "PASS",
+          "source_range": [
+            1560,
+            1603
+          ],
+          "procedures": "LC45 A lineage and final collision gates",
+          "original_rows": 39,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_39.json",
+            "Audit/Phase_07/Semantic_Closure_B07_39.md"
+          ]
+        },
+        {
+          "id": "B07-40",
+          "status": "PASS",
+          "source_range": [
+            1604,
+            1611
+          ],
+          "procedures": "LC46",
+          "original_rows": 8,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_40.json",
+            "Audit/Phase_07/Semantic_Closure_B07_40.md"
+          ]
+        }
+      ],
+      "completion_evidence": "Audit/Phase_07/Semantic_Closure_B07_Completion.json"
+    },
+    {
+      "id": "B08",
+      "title": "Primary",
+      "status": "PASS",
+      "modules": [
+        {
+          "path": "engine/pipeline/PL_PH_detector.py",
+          "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+          "ledger": "Semantic_Context_Primary.json",
+          "source_line_count": 840,
+          "branches": 214,
+          "comparisons": 141,
+          "arithmetic": 48,
+          "calls": 267
+        }
+      ],
+      "site_category_rows": 670,
+      "review_scope": "W1 local owner review complete; W2/W3/W4 open",
+      "reviewed_original_rows": 670,
+      "supplemental_items": 50,
+      "resolved_findings": 38,
+      "sub_batches": [
+        {
+          "id": "B08-01",
+          "status": "PASS",
+          "source_range": [
+            1,
+            100
+          ],
+          "procedures": "Declarations and P01",
+          "original_rows": 22,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_01.json",
+            "Audit/Phase_07/Semantic_Closure_B08_01.md"
+          ]
+        },
+        {
+          "id": "B08-02",
+          "status": "PASS",
+          "source_range": [
+            101,
+            127
+          ],
+          "procedures": "P02–P03",
+          "original_rows": 27,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_02.json",
+            "Audit/Phase_07/Semantic_Closure_B08_02.md"
+          ]
+        },
+        {
+          "id": "B08-03",
+          "status": "PASS",
+          "source_range": [
+            128,
+            158
+          ],
+          "procedures": "P04–P06 grouping",
+          "original_rows": 15,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_03.json",
+            "Audit/Phase_07/Semantic_Closure_B08_03.md"
+          ]
+        },
+        {
+          "id": "B08-04",
+          "status": "PASS",
+          "source_range": [
+            159,
+            174
+          ],
+          "procedures": "P06–P07 winner",
+          "original_rows": 21,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_04.json",
+            "Audit/Phase_07/Semantic_Closure_B08_04.md"
+          ]
+        },
+        {
+          "id": "B08-05",
+          "status": "PASS",
+          "source_range": [
+            175,
+            180
+          ],
+          "procedures": "P08",
+          "original_rows": 4,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_05.json",
+            "Audit/Phase_07/Semantic_Closure_B08_05.md"
+          ]
+        },
+        {
+          "id": "B08-06",
+          "status": "PASS",
+          "source_range": [
+            181,
+            197
+          ],
+          "procedures": "P09",
+          "original_rows": 17,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_06.json",
+            "Audit/Phase_07/Semantic_Closure_B08_06.md"
+          ]
+        },
+        {
+          "id": "B08-07",
+          "status": "PASS",
+          "source_range": [
+            198,
+            210
+          ],
+          "procedures": "P10",
+          "original_rows": 10,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_07.json",
+            "Audit/Phase_07/Semantic_Closure_B08_07.md"
+          ]
+        },
+        {
+          "id": "B08-08",
+          "status": "PASS",
+          "source_range": [
+            211,
+            237
+          ],
+          "procedures": "P11–P13",
+          "original_rows": 14,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_08.json",
+            "Audit/Phase_07/Semantic_Closure_B08_08.md"
+          ]
+        },
+        {
+          "id": "B08-09",
+          "status": "PASS",
+          "source_range": [
+            238,
+            247
+          ],
+          "procedures": "P14",
+          "original_rows": 9,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_09.json",
+            "Audit/Phase_07/Semantic_Closure_B08_09.md"
+          ]
+        },
+        {
+          "id": "B08-10",
+          "status": "PASS",
+          "source_range": [
+            248,
+            286
+          ],
+          "procedures": "P15",
+          "original_rows": 45,
+          "supplemental_items": 3,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_10.json",
+            "Audit/Phase_07/Semantic_Closure_B08_10.md"
+          ]
+        },
+        {
+          "id": "B08-11",
+          "status": "PASS",
+          "source_range": [
+            287,
+            325
+          ],
+          "procedures": "P16",
+          "original_rows": 31,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_11.json",
+            "Audit/Phase_07/Semantic_Closure_B08_11.md"
+          ]
+        },
+        {
+          "id": "B08-12",
+          "status": "PASS",
+          "source_range": [
+            326,
+            349
+          ],
+          "procedures": "P16",
+          "original_rows": 27,
+          "supplemental_items": 2,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_12.json",
+            "Audit/Phase_07/Semantic_Closure_B08_12.md"
+          ]
+        },
+        {
+          "id": "B08-13",
+          "status": "PASS",
+          "source_range": [
+            350,
+            385
+          ],
+          "procedures": "P16",
+          "original_rows": 46,
+          "supplemental_items": 3,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_13.json",
+            "Audit/Phase_07/Semantic_Closure_B08_13.md"
+          ]
+        },
+        {
+          "id": "B08-14",
+          "status": "PASS",
+          "source_range": [
+            386,
+            420
+          ],
+          "procedures": "P16",
+          "original_rows": 34,
+          "supplemental_items": 3,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_14.json",
+            "Audit/Phase_07/Semantic_Closure_B08_14.md"
+          ]
+        },
+        {
+          "id": "B08-15",
+          "status": "PASS",
+          "source_range": [
+            421,
+            473
+          ],
+          "procedures": "Declarations/P17–P18",
+          "original_rows": 33,
+          "supplemental_items": 2,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_15.json",
+            "Audit/Phase_07/Semantic_Closure_B08_15.md"
+          ]
+        },
+        {
+          "id": "B08-16",
+          "status": "PASS",
+          "source_range": [
+            474,
+            517
+          ],
+          "procedures": "P19–P21",
+          "original_rows": 34,
+          "supplemental_items": 3,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_16.json",
+            "Audit/Phase_07/Semantic_Closure_B08_16.md"
+          ]
+        },
+        {
+          "id": "B08-17",
+          "status": "PASS",
+          "source_range": [
+            518,
+            553
+          ],
+          "procedures": "P22",
+          "original_rows": 40,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_17.json",
+            "Audit/Phase_07/Semantic_Closure_B08_17.md"
+          ]
+        },
+        {
+          "id": "B08-18",
+          "status": "PASS",
+          "source_range": [
+            554,
+            582
+          ],
+          "procedures": "P22",
+          "original_rows": 41,
+          "supplemental_items": 2,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_18.json",
+            "Audit/Phase_07/Semantic_Closure_B08_18.md"
+          ]
+        },
+        {
+          "id": "B08-19",
+          "status": "PASS",
+          "source_range": [
+            583,
+            622
+          ],
+          "procedures": "P22",
+          "original_rows": 34,
+          "supplemental_items": 3,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_19.json",
+            "Audit/Phase_07/Semantic_Closure_B08_19.md"
+          ]
+        },
+        {
+          "id": "B08-20",
+          "status": "PASS",
+          "source_range": [
+            623,
+            682
+          ],
+          "procedures": "P23–P25",
+          "original_rows": 54,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_20.json",
+            "Audit/Phase_07/Semantic_Closure_B08_20.md"
+          ]
+        },
+        {
+          "id": "B08-21",
+          "status": "PASS",
+          "source_range": [
+            683,
+            742
+          ],
+          "procedures": "P26–P36",
+          "original_rows": 25,
+          "supplemental_items": 3,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_21.json",
+            "Audit/Phase_07/Semantic_Closure_B08_21.md"
+          ]
+        },
+        {
+          "id": "B08-22",
+          "status": "PASS",
+          "source_range": [
+            743,
+            769
+          ],
+          "procedures": "P37–P39",
+          "original_rows": 26,
+          "supplemental_items": 2,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_22.json",
+            "Audit/Phase_07/Semantic_Closure_B08_22.md"
+          ]
+        },
+        {
+          "id": "B08-23",
+          "status": "PASS",
+          "source_range": [
+            770,
+            799
+          ],
+          "procedures": "P40–P43/P37",
+          "original_rows": 36,
+          "supplemental_items": 2,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_23.json",
+            "Audit/Phase_07/Semantic_Closure_B08_23.md"
+          ]
+        },
+        {
+          "id": "B08-24",
+          "status": "PASS",
+          "source_range": [
+            800,
+            840
+          ],
+          "procedures": "P44–P46",
+          "original_rows": 25,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B08_24.json",
+            "Audit/Phase_07/Semantic_Closure_B08_24.md"
+          ]
+        }
+      ],
+      "completion_evidence": "Audit/Phase_07/Semantic_Closure_B08_Completion.json"
+    },
+    {
+      "id": "B09",
+      "title": "Trading Pipeline",
+      "status": "PASS",
+      "modules": [
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+          "ledger": "Semantic_Context_Trading_Pipeline.json",
+          "source_line_count": 3757,
+          "branches": 552,
+          "comparisons": 333,
+          "arithmetic": 162,
+          "calls": 1229
+        }
+      ],
+      "site_category_rows": 2276,
+      "sub_batches": [
+        {
+          "id": "B09-01",
+          "status": "PASS",
+          "source_range": [
+            1,
+            53
+          ],
+          "procedures": "Declarations",
+          "original_rows": 9,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_01.json",
+            "Audit/Phase_07/Semantic_Closure_B09_01.md"
+          ]
+        },
+        {
+          "id": "B09-02",
+          "status": "PASS",
+          "source_range": [
+            54,
+            85
+          ],
+          "procedures": "TB01–TB03",
+          "original_rows": 24,
+          "supplemental_items": 1,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_02.json",
+            "Audit/Phase_07/Semantic_Closure_B09_02.md"
+          ]
+        },
+        {
+          "id": "B09-03",
+          "status": "PASS",
+          "source_range": [
+            86,
+            100
+          ],
+          "procedures": "TB04–TB05",
+          "original_rows": 9,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_03.json",
+            "Audit/Phase_07/Semantic_Closure_B09_03.md"
+          ]
+        },
+        {
+          "id": "B09-04",
+          "status": "PASS",
+          "source_range": [
+            101,
+            139
+          ],
+          "procedures": "TB06–TB08",
+          "original_rows": 20,
+          "supplemental_items": 1,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_04.json",
+            "Audit/Phase_07/Semantic_Closure_B09_04.md"
+          ]
+        },
+        {
+          "id": "B09-05",
+          "status": "PASS",
+          "source_range": [
+            140,
+            186
+          ],
+          "procedures": "TB09",
+          "original_rows": 31,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_05.json",
+            "Audit/Phase_07/Semantic_Closure_B09_05.md"
+          ]
+        },
+        {
+          "id": "B09-06",
+          "status": "PASS",
+          "source_range": [
+            187,
+            212
+          ],
+          "procedures": "TB10–TB11/declaration",
+          "original_rows": 6,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_06.json",
+            "Audit/Phase_07/Semantic_Closure_B09_06.md"
+          ]
+        },
+        {
+          "id": "B09-07",
+          "status": "PASS",
+          "source_range": [
+            213,
+            249
+          ],
+          "procedures": "TB12–TB14",
+          "original_rows": 35,
+          "supplemental_items": 1,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_07.json",
+            "Audit/Phase_07/Semantic_Closure_B09_07.md"
+          ]
+        },
+        {
+          "id": "B09-08",
+          "status": "PASS",
+          "source_range": [
+            250,
+            277
+          ],
+          "procedures": "TB14–TB16",
+          "original_rows": 22,
+          "supplemental_items": 1,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_08.json",
+            "Audit/Phase_07/Semantic_Closure_B09_08.md"
+          ]
+        },
+        {
+          "id": "B09-09",
+          "status": "PASS",
+          "source_range": [
+            278,
+            305
+          ],
+          "procedures": "TB14/TB17",
+          "original_rows": 19,
+          "supplemental_items": 1,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_09.json",
+            "Audit/Phase_07/Semantic_Closure_B09_09.md"
+          ]
+        },
+        {
+          "id": "B09-10",
+          "status": "PASS",
+          "source_range": [
+            306,
+            334
+          ],
+          "procedures": "TB18",
+          "original_rows": 7,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_10.json",
+            "Audit/Phase_07/Semantic_Closure_B09_10.md"
+          ]
+        },
+        {
+          "id": "B09-11",
+          "status": "PASS",
+          "source_range": [
+            335,
+            372
+          ],
+          "procedures": "TB19–TB22",
+          "original_rows": 24,
+          "supplemental_items": 1,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_11.json",
+            "Audit/Phase_07/Semantic_Closure_B09_11.md"
+          ]
+        },
+        {
+          "id": "B09-12",
+          "status": "PASS",
+          "source_range": [
+            373,
+            439
+          ],
+          "procedures": "TB23–TB24",
+          "original_rows": 28,
+          "supplemental_items": 1,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_12.json",
+            "Audit/Phase_07/Semantic_Closure_B09_12.md"
+          ]
+        },
+        {
+          "id": "B09-13",
+          "status": "PASS",
+          "source_range": [
+            440,
+            486
+          ],
+          "procedures": "TB25–TB26",
+          "original_rows": 30,
+          "supplemental_items": 1,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_13.json",
+            "Audit/Phase_07/Semantic_Closure_B09_13.md"
+          ]
+        },
+        {
+          "id": "B09-14",
+          "status": "PASS",
+          "source_range": [
+            487,
+            550
+          ],
+          "procedures": "TB27",
+          "original_rows": 39,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_14.json",
+            "Audit/Phase_07/Semantic_Closure_B09_14.md"
+          ]
+        },
+        {
+          "id": "B09-15",
+          "status": "PASS",
+          "source_range": [
+            551,
+            661
+          ],
+          "procedures": "TB28–TB29",
+          "original_rows": 63,
+          "supplemental_items": 1,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_15.json",
+            "Audit/Phase_07/Semantic_Closure_B09_15.md"
+          ]
+        },
+        {
+          "id": "B09-16",
+          "status": "PASS",
+          "source_range": [
+            662,
+            689
+          ],
+          "procedures": "TB30–TB33",
+          "original_rows": 21,
+          "supplemental_items": 1,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_16.json",
+            "Audit/Phase_07/Semantic_Closure_B09_16.md"
+          ]
+        },
+        {
+          "id": "B09-17",
+          "status": "PASS",
+          "source_range": [
+            690,
+            700
+          ],
+          "procedures": "TB34–TB35",
+          "original_rows": 7,
+          "supplemental_items": 1,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_17.json",
+            "Audit/Phase_07/Semantic_Closure_B09_17.md"
+          ]
+        },
+        {
+          "id": "B09-18",
+          "status": "PASS",
+          "source_range": [
+            701,
+            740
+          ],
+          "procedures": "TB36",
+          "original_rows": 32,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_18.json",
+            "Audit/Phase_07/Semantic_Closure_B09_18.md"
+          ]
+        },
+        {
+          "id": "B09-19",
+          "status": "PASS",
+          "source_range": [
+            741,
+            760
+          ],
+          "procedures": "TB37",
+          "original_rows": 11,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_19.json",
+            "Audit/Phase_07/Semantic_Closure_B09_19.md"
+          ]
+        },
+        {
+          "id": "B09-20",
+          "status": "PASS",
+          "source_range": [
+            761,
+            784
+          ],
+          "procedures": "TB38",
+          "original_rows": 9,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_20.json",
+            "Audit/Phase_07/Semantic_Closure_B09_20.md"
+          ]
+        },
+        {
+          "id": "B09-21",
+          "status": "PASS",
+          "source_range": [
+            785,
+            819
+          ],
+          "procedures": "TB39–TB40",
+          "original_rows": 16,
+          "supplemental_items": 1,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_21.json",
+            "Audit/Phase_07/Semantic_Closure_B09_21.md"
+          ]
+        },
+        {
+          "id": "B09-22",
+          "status": "PASS",
+          "source_range": [
+            820,
+            871
+          ],
+          "procedures": "TB41–TB42",
+          "original_rows": 36,
+          "supplemental_items": 1,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_22.json",
+            "Audit/Phase_07/Semantic_Closure_B09_22.md"
+          ]
+        },
+        {
+          "id": "B09-23",
+          "status": "PASS",
+          "source_range": [
+            872,
+            926
+          ],
+          "procedures": "TB43",
+          "original_rows": 54,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_23.json",
+            "Audit/Phase_07/Semantic_Closure_B09_23.md"
+          ]
+        },
+        {
+          "id": "B09-24",
+          "status": "PASS",
+          "source_range": [
+            927,
+            986
+          ],
+          "procedures": "TB44",
+          "original_rows": 36,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_24.json",
+            "Audit/Phase_07/Semantic_Closure_B09_24.md"
+          ]
+        },
+        {
+          "id": "B09-25",
+          "status": "PASS",
+          "source_range": [
+            987,
+            1043
+          ],
+          "procedures": "TB45–TB47",
+          "original_rows": 35,
+          "supplemental_items": 1,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_25.json",
+            "Audit/Phase_07/Semantic_Closure_B09_25.md"
+          ]
+        },
+        {
+          "id": "B09-26",
+          "status": "PASS",
+          "source_range": [
+            1044,
+            1066
+          ],
+          "procedures": "TB48",
+          "original_rows": 25,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_26.json",
+            "Audit/Phase_07/Semantic_Closure_B09_26.md"
+          ]
+        },
+        {
+          "id": "B09-27",
+          "status": "PASS",
+          "source_range": [
+            1067,
+            1132
+          ],
+          "procedures": "TB49–TB50",
+          "original_rows": 38,
+          "supplemental_items": 1,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_27.json",
+            "Audit/Phase_07/Semantic_Closure_B09_27.md"
+          ]
+        },
+        {
+          "id": "B09-28",
+          "status": "PASS",
+          "source_range": [
+            1133,
+            1180
+          ],
+          "procedures": "TB51–TB52",
+          "original_rows": 26,
+          "supplemental_items": 1,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_28.json",
+            "Audit/Phase_07/Semantic_Closure_B09_28.md"
+          ]
+        },
+        {
+          "id": "B09-29",
+          "status": "PASS",
+          "source_range": [
+            1181,
+            1270
+          ],
+          "procedures": "TB53",
+          "original_rows": 55,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_29.json",
+            "Audit/Phase_07/Semantic_Closure_B09_29.md"
+          ]
+        },
+        {
+          "id": "B09-30",
+          "status": "PASS",
+          "source_range": [
+            1271,
+            1334
+          ],
+          "procedures": "TB54–TB55",
+          "original_rows": 42,
+          "supplemental_items": 1,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_30.json",
+            "Audit/Phase_07/Semantic_Closure_B09_30.md"
+          ]
+        },
+        {
+          "id": "B09-31",
+          "status": "PASS",
+          "source_range": [
+            1335,
+            1378
+          ],
+          "procedures": "TB56",
+          "original_rows": 28,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_31.json",
+            "Audit/Phase_07/Semantic_Closure_B09_31.md"
+          ]
+        },
+        {
+          "id": "B09-32",
+          "status": "PASS",
+          "source_range": [
+            1379,
+            1425
+          ],
+          "procedures": "TB57",
+          "original_rows": 22,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_32.json",
+            "Audit/Phase_07/Semantic_Closure_B09_32.md"
+          ]
+        },
+        {
+          "id": "B09-33",
+          "status": "PASS",
+          "source_range": [
+            1426,
+            1494
+          ],
+          "procedures": "TB58",
+          "original_rows": 33,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_33.json",
+            "Audit/Phase_07/Semantic_Closure_B09_33.md"
+          ]
+        },
+        {
+          "id": "B09-34",
+          "status": "PASS",
+          "source_range": [
+            1495,
+            1504
+          ],
+          "procedures": "TB59",
+          "original_rows": 6,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_34.json",
+            "Audit/Phase_07/Semantic_Closure_B09_34.md"
+          ]
+        },
+        {
+          "id": "B09-35",
+          "status": "PASS",
+          "source_range": [
+            1505,
+            1539
+          ],
+          "procedures": "TB60",
+          "original_rows": 12,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_35.json",
+            "Audit/Phase_07/Semantic_Closure_B09_35.md"
+          ]
+        },
+        {
+          "id": "B09-36",
+          "status": "PASS",
+          "source_range": [
+            1540,
+            1561
+          ],
+          "procedures": "TB60",
+          "original_rows": 18,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_36.json",
+            "Audit/Phase_07/Semantic_Closure_B09_36.md"
+          ]
+        },
+        {
+          "id": "B09-37",
+          "status": "PASS",
+          "source_range": [
+            1562,
+            1609
+          ],
+          "procedures": "TB60",
+          "original_rows": 16,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_37.json",
+            "Audit/Phase_07/Semantic_Closure_B09_37.md"
+          ]
+        },
+        {
+          "id": "B09-38",
+          "status": "PASS",
+          "source_range": [
+            1610,
+            1650
+          ],
+          "procedures": "TB61",
+          "original_rows": 25,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_38.json",
+            "Audit/Phase_07/Semantic_Closure_B09_38.md"
+          ]
+        },
+        {
+          "id": "B09-39",
+          "status": "PASS",
+          "source_range": [
+            1651,
+            1677
+          ],
+          "procedures": "TB61",
+          "original_rows": 22,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_39.json",
+            "Audit/Phase_07/Semantic_Closure_B09_39.md"
+          ]
+        },
+        {
+          "id": "B09-40",
+          "status": "PASS",
+          "source_range": [
+            1678,
+            1700
+          ],
+          "procedures": "TB62",
+          "original_rows": 17,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_40.json",
+            "Audit/Phase_07/Semantic_Closure_B09_40.md"
+          ]
+        },
+        {
+          "id": "B09-41",
+          "status": "PASS",
+          "source_range": [
+            1701,
+            1730
+          ],
+          "procedures": "TB62",
+          "original_rows": 35,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_41.json",
+            "Audit/Phase_07/Semantic_Closure_B09_41.md"
+          ]
+        },
+        {
+          "id": "B09-42",
+          "status": "PASS",
+          "source_range": [
+            1731,
+            1754
+          ],
+          "procedures": "Declarations",
+          "original_rows": 5,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_42.json",
+            "Audit/Phase_07/Semantic_Closure_B09_42.md"
+          ]
+        },
+        {
+          "id": "B09-43",
+          "status": "PASS",
+          "source_range": [
+            1755,
+            1777
+          ],
+          "procedures": "TB63",
+          "original_rows": 39,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_43.json",
+            "Audit/Phase_07/Semantic_Closure_B09_43.md"
+          ]
+        },
+        {
+          "id": "B09-44",
+          "status": "PASS",
+          "source_range": [
+            1778,
+            1791
+          ],
+          "procedures": "TB64",
+          "original_rows": 29,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_44.json",
+            "Audit/Phase_07/Semantic_Closure_B09_44.md"
+          ]
+        },
+        {
+          "id": "B09-45",
+          "status": "PASS",
+          "source_range": [
+            1792,
+            1814
+          ],
+          "procedures": "TB65",
+          "original_rows": 26,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_45.json",
+            "Audit/Phase_07/Semantic_Closure_B09_45.md"
+          ]
+        },
+        {
+          "id": "B09-46",
+          "status": "PASS",
+          "source_range": [
+            1815,
+            1891
+          ],
+          "procedures": "TB66",
+          "original_rows": 25,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_46.json",
+            "Audit/Phase_07/Semantic_Closure_B09_46.md"
+          ]
+        },
+        {
+          "id": "B09-47",
+          "status": "PASS",
+          "source_range": [
+            1892,
+            1929
+          ],
+          "procedures": "TB67",
+          "original_rows": 22,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_47.json",
+            "Audit/Phase_07/Semantic_Closure_B09_47.md"
+          ]
+        },
+        {
+          "id": "B09-48",
+          "status": "PASS",
+          "source_range": [
+            1930,
+            1947
+          ],
+          "procedures": "TB68",
+          "original_rows": 6,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_48.json",
+            "Audit/Phase_07/Semantic_Closure_B09_48.md"
+          ]
+        },
+        {
+          "id": "B09-49",
+          "status": "PASS",
+          "source_range": [
+            1948,
+            1972
+          ],
+          "procedures": "TB69",
+          "original_rows": 8,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_49.json",
+            "Audit/Phase_07/Semantic_Closure_B09_49.md"
+          ]
+        },
+        {
+          "id": "B09-50",
+          "status": "PASS",
+          "source_range": [
+            1973,
+            1998
+          ],
+          "procedures": "TB70",
+          "original_rows": 18,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_50.json",
+            "Audit/Phase_07/Semantic_Closure_B09_50.md"
+          ]
+        },
+        {
+          "id": "B09-51",
+          "status": "PASS",
+          "source_range": [
+            1999,
+            2030
+          ],
+          "procedures": "TB70",
+          "original_rows": 24,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_51.json",
+            "Audit/Phase_07/Semantic_Closure_B09_51.md"
+          ]
+        },
+        {
+          "id": "B09-52",
+          "status": "PASS",
+          "source_range": [
+            2031,
+            2068
+          ],
+          "procedures": "Declarations",
+          "original_rows": 4,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_52.json",
+            "Audit/Phase_07/Semantic_Closure_B09_52.md"
+          ]
+        },
+        {
+          "id": "B09-53",
+          "status": "PASS",
+          "source_range": [
+            2069,
+            2126
+          ],
+          "procedures": "TB71–TB72",
+          "original_rows": 13,
+          "supplemental_items": 1,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_53.json",
+            "Audit/Phase_07/Semantic_Closure_B09_53.md"
+          ]
+        },
+        {
+          "id": "B09-54",
+          "status": "PASS",
+          "source_range": [
+            2127,
+            2199
+          ],
+          "procedures": "TB73",
+          "original_rows": 33,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_54.json",
+            "Audit/Phase_07/Semantic_Closure_B09_54.md"
+          ]
+        },
+        {
+          "id": "B09-55",
+          "status": "PASS",
+          "source_range": [
+            2200,
+            2260
+          ],
+          "procedures": "TB73",
+          "original_rows": 25,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_55.json",
+            "Audit/Phase_07/Semantic_Closure_B09_55.md"
+          ]
+        },
+        {
+          "id": "B09-56",
+          "status": "PASS",
+          "source_range": [
+            2261,
+            2293
+          ],
+          "procedures": "TB73",
+          "original_rows": 16,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_56.json",
+            "Audit/Phase_07/Semantic_Closure_B09_56.md"
+          ]
+        },
+        {
+          "id": "B09-57",
+          "status": "PASS",
+          "source_range": [
+            2294,
+            2323
+          ],
+          "procedures": "TB73",
+          "original_rows": 27,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_57.json",
+            "Audit/Phase_07/Semantic_Closure_B09_57.md"
+          ]
+        },
+        {
+          "id": "B09-58",
+          "status": "PASS",
+          "source_range": [
+            2324,
+            2354
+          ],
+          "procedures": "TB73",
+          "original_rows": 25,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_58.json",
+            "Audit/Phase_07/Semantic_Closure_B09_58.md"
+          ]
+        },
+        {
+          "id": "B09-59",
+          "status": "PASS",
+          "source_range": [
+            2355,
+            2375
+          ],
+          "procedures": "TB73",
+          "original_rows": 3,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_59.json",
+            "Audit/Phase_07/Semantic_Closure_B09_59.md"
+          ]
+        },
+        {
+          "id": "B09-60",
+          "status": "PASS",
+          "source_range": [
+            2376,
+            2423
+          ],
+          "procedures": "TB73",
+          "original_rows": 15,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_60.json",
+            "Audit/Phase_07/Semantic_Closure_B09_60.md"
+          ]
+        },
+        {
+          "id": "B09-61",
+          "status": "PASS",
+          "source_range": [
+            2424,
+            2457
+          ],
+          "procedures": "TB73",
+          "original_rows": 26,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_61.json",
+            "Audit/Phase_07/Semantic_Closure_B09_61.md"
+          ]
+        },
+        {
+          "id": "B09-62",
+          "status": "PASS",
+          "source_range": [
+            2458,
+            2484
+          ],
+          "procedures": "TB73",
+          "original_rows": 9,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_62.json",
+            "Audit/Phase_07/Semantic_Closure_B09_62.md"
+          ]
+        },
+        {
+          "id": "B09-63",
+          "status": "PASS",
+          "source_range": [
+            2485,
+            2514
+          ],
+          "procedures": "TB74",
+          "original_rows": 8,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_63.json",
+            "Audit/Phase_07/Semantic_Closure_B09_63.md"
+          ]
+        },
+        {
+          "id": "B09-64",
+          "status": "PASS",
+          "source_range": [
+            2515,
+            2540
+          ],
+          "procedures": "TB74",
+          "original_rows": 12,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_64.json",
+            "Audit/Phase_07/Semantic_Closure_B09_64.md"
+          ]
+        },
+        {
+          "id": "B09-65",
+          "status": "PASS",
+          "source_range": [
+            2541,
+            2551
+          ],
+          "procedures": "TB74",
+          "original_rows": 9,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_65.json",
+            "Audit/Phase_07/Semantic_Closure_B09_65.md"
+          ]
+        },
+        {
+          "id": "B09-66",
+          "status": "PASS",
+          "source_range": [
+            2552,
+            2587
+          ],
+          "procedures": "TB75",
+          "original_rows": 10,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_66.json",
+            "Audit/Phase_07/Semantic_Closure_B09_66.md"
+          ]
+        },
+        {
+          "id": "B09-67",
+          "status": "PASS",
+          "source_range": [
+            2588,
+            2618
+          ],
+          "procedures": "TB75",
+          "original_rows": 25,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_67.json",
+            "Audit/Phase_07/Semantic_Closure_B09_67.md"
+          ]
+        },
+        {
+          "id": "B09-68",
+          "status": "PASS",
+          "source_range": [
+            2619,
+            2635
+          ],
+          "procedures": "TB75",
+          "original_rows": 8,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_68.json",
+            "Audit/Phase_07/Semantic_Closure_B09_68.md"
+          ]
+        },
+        {
+          "id": "B09-69",
+          "status": "PASS",
+          "source_range": [
+            2636,
+            2658
+          ],
+          "procedures": "TB75",
+          "original_rows": 7,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_69.json",
+            "Audit/Phase_07/Semantic_Closure_B09_69.md"
+          ]
+        },
+        {
+          "id": "B09-70",
+          "status": "PASS",
+          "source_range": [
+            2659,
+            2705
+          ],
+          "procedures": "TB75",
+          "original_rows": 20,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_70.json",
+            "Audit/Phase_07/Semantic_Closure_B09_70.md"
+          ]
+        },
+        {
+          "id": "B09-71",
+          "status": "PASS",
+          "source_range": [
+            2706,
+            2737
+          ],
+          "procedures": "Declarations",
+          "original_rows": 3,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_71.json",
+            "Audit/Phase_07/Semantic_Closure_B09_71.md"
+          ]
+        },
+        {
+          "id": "B09-72",
+          "status": "PASS",
+          "source_range": [
+            2738,
+            2776
+          ],
+          "procedures": "TB76",
+          "original_rows": 17,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_72.json",
+            "Audit/Phase_07/Semantic_Closure_B09_72.md"
+          ]
+        },
+        {
+          "id": "B09-73",
+          "status": "PASS",
+          "source_range": [
+            2777,
+            2839
+          ],
+          "procedures": "TB76",
+          "original_rows": 30,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_73.json",
+            "Audit/Phase_07/Semantic_Closure_B09_73.md"
+          ]
+        },
+        {
+          "id": "B09-74",
+          "status": "PASS",
+          "source_range": [
+            2840,
+            2899
+          ],
+          "procedures": "TB77",
+          "original_rows": 25,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_74.json",
+            "Audit/Phase_07/Semantic_Closure_B09_74.md"
+          ]
+        },
+        {
+          "id": "B09-75",
+          "status": "PASS",
+          "source_range": [
+            2900,
+            2941
+          ],
+          "procedures": "TB77",
+          "original_rows": 22,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_75.json",
+            "Audit/Phase_07/Semantic_Closure_B09_75.md"
+          ]
+        },
+        {
+          "id": "B09-76",
+          "status": "PASS",
+          "source_range": [
+            2942,
+            2972
+          ],
+          "procedures": "TB77",
+          "original_rows": 14,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_76.json",
+            "Audit/Phase_07/Semantic_Closure_B09_76.md"
+          ]
+        },
+        {
+          "id": "B09-77",
+          "status": "PASS",
+          "source_range": [
+            2973,
+            3039
+          ],
+          "procedures": "TB77",
+          "original_rows": 50,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_77.json",
+            "Audit/Phase_07/Semantic_Closure_B09_77.md"
+          ]
+        },
+        {
+          "id": "B09-78",
+          "status": "PASS",
+          "source_range": [
+            3040,
+            3078
+          ],
+          "procedures": "TB77",
+          "original_rows": 20,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_78.json",
+            "Audit/Phase_07/Semantic_Closure_B09_78.md"
+          ]
+        },
+        {
+          "id": "B09-79",
+          "status": "PASS",
+          "source_range": [
+            3079,
+            3134
+          ],
+          "procedures": "TB78–TB79",
+          "original_rows": 21,
+          "supplemental_items": 1,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_79.json",
+            "Audit/Phase_07/Semantic_Closure_B09_79.md"
+          ]
+        },
+        {
+          "id": "B09-80",
+          "status": "PASS",
+          "source_range": [
+            3135,
+            3219
+          ],
+          "procedures": "TB78/TB80/TB81",
+          "original_rows": 29,
+          "supplemental_items": 1,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_80.json",
+            "Audit/Phase_07/Semantic_Closure_B09_80.md"
+          ]
+        },
+        {
+          "id": "B09-81",
+          "status": "PASS",
+          "source_range": [
+            3220,
+            3248
+          ],
+          "procedures": "TB82/TB83",
+          "original_rows": 28,
+          "supplemental_items": 1,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_81.json",
+            "Audit/Phase_07/Semantic_Closure_B09_81.md"
+          ]
+        },
+        {
+          "id": "B09-82",
+          "status": "PASS",
+          "source_range": [
+            3249,
+            3289
+          ],
+          "procedures": "TB84/TB85/TB86",
+          "original_rows": 45,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_82.json",
+            "Audit/Phase_07/Semantic_Closure_B09_82.md"
+          ]
+        },
+        {
+          "id": "B09-83",
+          "status": "PASS",
+          "source_range": [
+            3290,
+            3324
+          ],
+          "procedures": "TB84",
+          "original_rows": 56,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_83.json",
+            "Audit/Phase_07/Semantic_Closure_B09_83.md"
+          ]
+        },
+        {
+          "id": "B09-84",
+          "status": "PASS",
+          "source_range": [
+            3325,
+            3349
+          ],
+          "procedures": "TB84",
+          "original_rows": 48,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_84.json",
+            "Audit/Phase_07/Semantic_Closure_B09_84.md"
+          ]
+        },
+        {
+          "id": "B09-85",
+          "status": "PASS",
+          "source_range": [
+            3350,
+            3370
+          ],
+          "procedures": "TB84",
+          "original_rows": 21,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_85.json",
+            "Audit/Phase_07/Semantic_Closure_B09_85.md"
+          ]
+        },
+        {
+          "id": "B09-86",
+          "status": "PASS",
+          "source_range": [
+            3371,
+            3403
+          ],
+          "procedures": "TB87/TB88",
+          "original_rows": 17,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_86.json",
+            "Audit/Phase_07/Semantic_Closure_B09_86.md"
+          ]
+        },
+        {
+          "id": "B09-87",
+          "status": "PASS",
+          "source_range": [
+            3404,
+            3426
+          ],
+          "procedures": "TB87",
+          "original_rows": 16,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_87.json",
+            "Audit/Phase_07/Semantic_Closure_B09_87.md"
+          ]
+        },
+        {
+          "id": "B09-88",
+          "status": "PASS",
+          "source_range": [
+            3427,
+            3468
+          ],
+          "procedures": "TB89",
+          "original_rows": 21,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_88.json",
+            "Audit/Phase_07/Semantic_Closure_B09_88.md"
+          ]
+        },
+        {
+          "id": "B09-89",
+          "status": "PASS",
+          "source_range": [
+            3469,
+            3497
+          ],
+          "procedures": "TB90",
+          "original_rows": 31,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_89.json",
+            "Audit/Phase_07/Semantic_Closure_B09_89.md"
+          ]
+        },
+        {
+          "id": "B09-90",
+          "status": "PASS",
+          "source_range": [
+            3498,
+            3533
+          ],
+          "procedures": "TB91/TB92/TB93",
+          "original_rows": 24,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_90.json",
+            "Audit/Phase_07/Semantic_Closure_B09_90.md"
+          ]
+        },
+        {
+          "id": "B09-91",
+          "status": "PASS",
+          "source_range": [
+            3534,
+            3559
+          ],
+          "procedures": "TB91/TB94",
+          "original_rows": 31,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_91.json",
+            "Audit/Phase_07/Semantic_Closure_B09_91.md"
+          ]
+        },
+        {
+          "id": "B09-92",
+          "status": "PASS",
+          "source_range": [
+            3560,
+            3570
+          ],
+          "procedures": "TB91/TB95",
+          "original_rows": 19,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_92.json",
+            "Audit/Phase_07/Semantic_Closure_B09_92.md"
+          ]
+        },
+        {
+          "id": "B09-93",
+          "status": "PASS",
+          "source_range": [
+            3571,
+            3593
+          ],
+          "procedures": "TB91",
+          "original_rows": 26,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_93.json",
+            "Audit/Phase_07/Semantic_Closure_B09_93.md"
+          ]
+        },
+        {
+          "id": "B09-94",
+          "status": "PASS",
+          "source_range": [
+            3594,
+            3638
+          ],
+          "procedures": "TB96",
+          "original_rows": 21,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_94.json",
+            "Audit/Phase_07/Semantic_Closure_B09_94.md"
+          ]
+        },
+        {
+          "id": "B09-95",
+          "status": "PASS",
+          "source_range": [
+            3639,
+            3647
+          ],
+          "procedures": "TB96",
+          "original_rows": 15,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_95.json",
+            "Audit/Phase_07/Semantic_Closure_B09_95.md"
+          ]
+        },
+        {
+          "id": "B09-96",
+          "status": "PASS",
+          "source_range": [
+            3648,
+            3669
+          ],
+          "procedures": "TB96/TB97",
+          "original_rows": 25,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_96.json",
+            "Audit/Phase_07/Semantic_Closure_B09_96.md"
+          ]
+        },
+        {
+          "id": "B09-97",
+          "status": "PASS",
+          "source_range": [
+            3670,
+            3705
+          ],
+          "procedures": "TB98/TB99/TB100",
+          "original_rows": 17,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_97.json",
+            "Audit/Phase_07/Semantic_Closure_B09_97.md"
+          ]
+        },
+        {
+          "id": "B09-98",
+          "status": "PASS",
+          "source_range": [
+            3706,
+            3716
+          ],
+          "procedures": "TB101",
+          "original_rows": 9,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_98.json",
+            "Audit/Phase_07/Semantic_Closure_B09_98.md"
+          ]
+        },
+        {
+          "id": "B09-99",
+          "status": "PASS",
+          "source_range": [
+            3717,
+            3757
+          ],
+          "procedures": "TB102/module entry",
+          "original_rows": 35,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B09_99.json",
+            "Audit/Phase_07/Semantic_Closure_B09_99.md"
+          ]
+        }
+      ],
+      "review_scope": "W1 local owner review complete; W2/W3/W4 open",
+      "reviewed_original_rows": 2276,
+      "supplemental_items": 99,
+      "resolved_findings": 126,
+      "completion_evidence": "Audit/Phase_07/Semantic_Closure_B09_Completion.json"
+    },
+    {
+      "id": "B10",
+      "title": "Live and True/False",
+      "status": "PASS",
+      "modules": [
+        {
+          "path": "engine/pipeline/true_false.py",
+          "source_blob": "d569d16bc493b9eb5da75ed5594c168751856b6f",
+          "ledger": "Semantic_Context_Batch_01.json",
+          "source_line_count": 157,
+          "branches": 46,
+          "comparisons": 30,
+          "arithmetic": 10,
+          "calls": 41
+        },
+        {
+          "path": "engine/bridge/live_pipeline.py",
+          "source_blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+          "ledger": "Semantic_Context_Batch_01.json",
+          "source_line_count": 226,
+          "branches": 50,
+          "comparisons": 32,
+          "arithmetic": 14,
+          "calls": 97
+        }
+      ],
+      "site_category_rows": 320,
+      "reviewed_original_rows": 320,
+      "supplemental_items": 25,
+      "resolved_findings": 7,
+      "sub_batches": [
+        {
+          "id": "B10-01",
+          "status": "PASS",
+          "path": "engine/pipeline/true_false.py",
+          "source_range": [
+            1,
+            29
+          ],
+          "procedures": "TF01/TF02",
+          "original_rows": 12,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_01.json",
+            "Audit/Phase_07/Semantic_Closure_B10_01.md"
+          ]
+        },
+        {
+          "id": "B10-02",
+          "status": "PASS",
+          "path": "engine/pipeline/true_false.py",
+          "source_range": [
+            30,
+            44
+          ],
+          "procedures": "TF03/declaration",
+          "original_rows": 5,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_02.json",
+            "Audit/Phase_07/Semantic_Closure_B10_02.md"
+          ]
+        },
+        {
+          "id": "B10-03",
+          "status": "PASS",
+          "path": "engine/pipeline/true_false.py",
+          "source_range": [
+            45,
+            55
+          ],
+          "procedures": "TF04/TF05",
+          "original_rows": 7,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_03.json",
+            "Audit/Phase_07/Semantic_Closure_B10_03.md"
+          ]
+        },
+        {
+          "id": "B10-04",
+          "status": "PASS",
+          "path": "engine/pipeline/true_false.py",
+          "source_range": [
+            56,
+            66
+          ],
+          "procedures": "TF04",
+          "original_rows": 14,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_04.json",
+            "Audit/Phase_07/Semantic_Closure_B10_04.md"
+          ]
+        },
+        {
+          "id": "B10-05",
+          "status": "PASS",
+          "path": "engine/pipeline/true_false.py",
+          "source_range": [
+            67,
+            75
+          ],
+          "procedures": "TF04",
+          "original_rows": 8,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_05.json",
+            "Audit/Phase_07/Semantic_Closure_B10_05.md"
+          ]
+        },
+        {
+          "id": "B10-06",
+          "status": "PASS",
+          "path": "engine/pipeline/true_false.py",
+          "source_range": [
+            76,
+            85
+          ],
+          "procedures": "TF04",
+          "original_rows": 11,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_06.json",
+            "Audit/Phase_07/Semantic_Closure_B10_06.md"
+          ]
+        },
+        {
+          "id": "B10-07",
+          "status": "PASS",
+          "path": "engine/pipeline/true_false.py",
+          "source_range": [
+            86,
+            96
+          ],
+          "procedures": "TF04",
+          "original_rows": 15,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_07.json",
+            "Audit/Phase_07/Semantic_Closure_B10_07.md"
+          ]
+        },
+        {
+          "id": "B10-08",
+          "status": "PASS",
+          "path": "engine/pipeline/true_false.py",
+          "source_range": [
+            97,
+            115
+          ],
+          "procedures": "TF06",
+          "original_rows": 8,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_08.json",
+            "Audit/Phase_07/Semantic_Closure_B10_08.md"
+          ]
+        },
+        {
+          "id": "B10-09",
+          "status": "PASS",
+          "path": "engine/pipeline/true_false.py",
+          "source_range": [
+            116,
+            127
+          ],
+          "procedures": "TF06",
+          "original_rows": 18,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_09.json",
+            "Audit/Phase_07/Semantic_Closure_B10_09.md"
+          ]
+        },
+        {
+          "id": "B10-10",
+          "status": "PASS",
+          "path": "engine/pipeline/true_false.py",
+          "source_range": [
+            128,
+            142
+          ],
+          "procedures": "TF07",
+          "original_rows": 12,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_10.json",
+            "Audit/Phase_07/Semantic_Closure_B10_10.md"
+          ]
+        },
+        {
+          "id": "B10-11",
+          "status": "PASS",
+          "path": "engine/pipeline/true_false.py",
+          "source_range": [
+            143,
+            157
+          ],
+          "procedures": "TF07",
+          "original_rows": 17,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_11.json",
+            "Audit/Phase_07/Semantic_Closure_B10_11.md"
+          ]
+        },
+        {
+          "id": "B10-12",
+          "status": "PASS",
+          "path": "engine/bridge/live_pipeline.py",
+          "source_range": [
+            1,
+            34
+          ],
+          "procedures": "L01",
+          "original_rows": 14,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_12.json",
+            "Audit/Phase_07/Semantic_Closure_B10_12.md"
+          ]
+        },
+        {
+          "id": "B10-13",
+          "status": "PASS",
+          "path": "engine/bridge/live_pipeline.py",
+          "source_range": [
+            35,
+            48
+          ],
+          "procedures": "L02",
+          "original_rows": 16,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_13.json",
+            "Audit/Phase_07/Semantic_Closure_B10_13.md"
+          ]
+        },
+        {
+          "id": "B10-14",
+          "status": "PASS",
+          "path": "engine/bridge/live_pipeline.py",
+          "source_range": [
+            49,
+            58
+          ],
+          "procedures": "L02/L03",
+          "original_rows": 8,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_14.json",
+            "Audit/Phase_07/Semantic_Closure_B10_14.md"
+          ]
+        },
+        {
+          "id": "B10-15",
+          "status": "PASS",
+          "path": "engine/bridge/live_pipeline.py",
+          "source_range": [
+            59,
+            80
+          ],
+          "procedures": "L02",
+          "original_rows": 7,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_15.json",
+            "Audit/Phase_07/Semantic_Closure_B10_15.md"
+          ]
+        },
+        {
+          "id": "B10-16",
+          "status": "PASS",
+          "path": "engine/bridge/live_pipeline.py",
+          "source_range": [
+            81,
+            90
+          ],
+          "procedures": "L04",
+          "original_rows": 7,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_16.json",
+            "Audit/Phase_07/Semantic_Closure_B10_16.md"
+          ]
+        },
+        {
+          "id": "B10-17",
+          "status": "PASS",
+          "path": "engine/bridge/live_pipeline.py",
+          "source_range": [
+            91,
+            99
+          ],
+          "procedures": "L05",
+          "original_rows": 10,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_17.json",
+            "Audit/Phase_07/Semantic_Closure_B10_17.md"
+          ]
+        },
+        {
+          "id": "B10-18",
+          "status": "PASS",
+          "path": "engine/bridge/live_pipeline.py",
+          "source_range": [
+            100,
+            113
+          ],
+          "procedures": "L06/L07",
+          "original_rows": 7,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_18.json",
+            "Audit/Phase_07/Semantic_Closure_B10_18.md"
+          ]
+        },
+        {
+          "id": "B10-19",
+          "status": "PASS",
+          "path": "engine/bridge/live_pipeline.py",
+          "source_range": [
+            114,
+            128
+          ],
+          "procedures": "L08",
+          "original_rows": 16,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_19.json",
+            "Audit/Phase_07/Semantic_Closure_B10_19.md"
+          ]
+        },
+        {
+          "id": "B10-20",
+          "status": "PASS",
+          "path": "engine/bridge/live_pipeline.py",
+          "source_range": [
+            129,
+            146
+          ],
+          "procedures": "L09",
+          "original_rows": 25,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_20.json",
+            "Audit/Phase_07/Semantic_Closure_B10_20.md"
+          ]
+        },
+        {
+          "id": "B10-21",
+          "status": "PASS",
+          "path": "engine/bridge/live_pipeline.py",
+          "source_range": [
+            147,
+            158
+          ],
+          "procedures": "L10",
+          "original_rows": 6,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_21.json",
+            "Audit/Phase_07/Semantic_Closure_B10_21.md"
+          ]
+        },
+        {
+          "id": "B10-22",
+          "status": "PASS",
+          "path": "engine/bridge/live_pipeline.py",
+          "source_range": [
+            159,
+            167
+          ],
+          "procedures": "L11/L12",
+          "original_rows": 7,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_22.json",
+            "Audit/Phase_07/Semantic_Closure_B10_22.md"
+          ]
+        },
+        {
+          "id": "B10-23",
+          "status": "PASS",
+          "path": "engine/bridge/live_pipeline.py",
+          "source_range": [
+            168,
+            183
+          ],
+          "procedures": "L13",
+          "original_rows": 16,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_23.json",
+            "Audit/Phase_07/Semantic_Closure_B10_23.md"
+          ]
+        },
+        {
+          "id": "B10-24",
+          "status": "PASS",
+          "path": "engine/bridge/live_pipeline.py",
+          "source_range": [
+            184,
+            197
+          ],
+          "procedures": "L13",
+          "original_rows": 31,
+          "supplemental_items": 1,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_24.json",
+            "Audit/Phase_07/Semantic_Closure_B10_24.md"
+          ]
+        },
+        {
+          "id": "B10-25",
+          "status": "PASS",
+          "path": "engine/bridge/live_pipeline.py",
+          "source_range": [
+            198,
+            226
+          ],
+          "procedures": "L13/module entry",
+          "original_rows": 23,
+          "supplemental_items": 1,
+          "resolved_findings": 0,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B10_25.json",
+            "Audit/Phase_07/Semantic_Closure_B10_25.md"
+          ]
+        }
+      ],
+      "review_scope": "W1 local owner review complete; W2/W3/W4 open",
+      "completion_evidence": "Audit/Phase_07/Semantic_Closure_B10_Completion.json"
+    }
+  ],
+  "work_packages": [
+    {
+      "id": "W1",
+      "checkpoint": "14 onward",
+      "title": "Source-first owner semantic closure",
+      "status": "PASS",
+      "completion_evidence": "Audit/Phase_07/Semantic_Closure_W1_Completion.json"
+    },
+    {
+      "id": "W2",
+      "title": "Cross-owner chronology and replay reconciliation",
+      "status": "NOT RUN"
+    },
+    {
+      "id": "W3",
+      "title": "Separate forensic source-first review and corrective reconciliation",
+      "status": "NOT RUN"
+    },
+    {
+      "id": "W4",
+      "title": "Final source-only acceptance gate",
+      "status": "NOT RUN"
+    }
+  ],
+  "gates": [
+    {
+      "id": "G01",
+      "criterion": "Pinned main unchanged; every relevant production and behavior-affecting source identity verified",
+      "status": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "G02",
+      "criterion": "All original inventory category rows uniquely accounted for; additional discovered temporal expressions and dependencies tracked",
+      "status": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "G03",
+      "criterion": "Every temporal guard and compound operand independently interpreted with source evidence, including evaluation order and state effects",
+      "status": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "G04",
+      "criterion": "Every temporal dependency classified; explicit conditional/dynamic contracts preserve unresolved input-dependent behavior without empirical claims",
+      "status": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "G05",
+      "criterion": "Owner-specific equality, priority, search boundaries, mutation, replay and cross-owner interactions reconciled",
+      "status": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "G06",
+      "criterion": "Relevant Phase 05/06/07 active specifications mutually consistent; every finding resolved or explicitly scoped as source-indeterminate",
+      "status": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "G07",
+      "criterion": "Separate source-first audit completed with evidence and no outstanding semantic defect or unreviewed item",
+      "status": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "G08",
+      "criterion": "Documentation-only tree, unchanged historical evidence, valid new links and metadata, frozen main and verified publication",
+      "status": "NOT RUN",
+      "evidence": []
+    }
+  ],
+  "next_action": "W2 cross-owner chronology and replay reconciliation; start source-first event/ownership and dependency register with Reaction/Reset and Blue/A freeze, then all other owner edges per Semantic_Closure_Execution_Plan.md. W3/W4 NOT RUN; Phase 07 INCOMPLETE; Phase 08 BLOCKED."
+}

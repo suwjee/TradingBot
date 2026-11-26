@@ -1,0 +1,6354 @@
+{
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "93de936408da5f904fdb1d7e482551c4ca671687",
+  "scope": "Direct source-context review of this batch only. T temporal/state/order; P price/priority predicate; N non-temporal/declaration/transport control. Every inventoried site has a manually described context by source focus start; original operators and outcome metadata preserved. No claim of independent evaluation of every compound expression or downstream dynamic call.",
+  "totals": {
+    "modules": 7,
+    "contexts": 86,
+    "branches": 117,
+    "comparisons": 81,
+    "arithmetic": 27,
+    "calls": 169
+  },
+  "modules": [
+    {
+      "path": "engine/__init__.py",
+      "source_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "source_line_count": 1,
+      "owner": "Declaration",
+      "contract_refs": [],
+      "contexts": [
+        {
+          "id": "SC01",
+          "start": 1,
+          "end": 1,
+          "kind": "N",
+          "meaning": "Empty module; no calculation."
+        }
+      ],
+      "site_dispositions": {
+        "branches": [],
+        "comparisons": [],
+        "arithmetic": [],
+        "calls": []
+      },
+      "counts": {
+        "branches": 0,
+        "comparisons": 0,
+        "arithmetic": 0,
+        "calls": 0
+      },
+      "review_status": "DIRECT_SOURCE_CONTEXT_REVIEWED_WITH_PRIOR_CONTRACT_REFERENCES"
+    },
+    {
+      "path": "engine/bridge/__init__.py",
+      "source_blob": "7cce7308316bd9e00f1a3687a6a84e0f1adb22d4",
+      "source_line_count": 2,
+      "owner": "Declaration",
+      "contract_refs": [],
+      "contexts": [
+        {
+          "id": "SC01",
+          "start": 1,
+          "end": 2,
+          "kind": "N",
+          "meaning": "Docstring only; no trading state."
+        }
+      ],
+      "site_dispositions": {
+        "branches": [],
+        "comparisons": [],
+        "arithmetic": [],
+        "calls": []
+      },
+      "counts": {
+        "branches": 0,
+        "comparisons": 0,
+        "arithmetic": 0,
+        "calls": 0
+      },
+      "review_status": "DIRECT_SOURCE_CONTEXT_REVIEWED_WITH_PRIOR_CONTRACT_REFERENCES"
+    },
+    {
+      "path": "engine/pipeline/__init__.py",
+      "source_blob": "656ba15cfbd7edab34a66cd5bc907171940af38c",
+      "source_line_count": 29,
+      "owner": "Compatibility imports",
+      "contract_refs": [],
+      "contexts": [
+        {
+          "id": "SC01",
+          "start": 1,
+          "end": 9,
+          "kind": "N",
+          "meaning": "Declare compatibility imports."
+        },
+        {
+          "id": "SC02",
+          "start": 10,
+          "end": 10,
+          "kind": "N",
+          "meaning": "Resolve module path, parent directory string."
+        },
+        {
+          "id": "SC03",
+          "start": 11,
+          "end": 12,
+          "kind": "N",
+          "meaning": "Insert directory at sys.path position zero only if absent; no reorder if already present."
+        },
+        {
+          "id": "SC04",
+          "start": 13,
+          "end": 29,
+          "kind": "N",
+          "meaning": "Import maintained Blue API and declare exports."
+        }
+      ],
+      "site_dispositions": {
+        "branches": [
+          [
+            16,
+            11,
+            null,
+            "If",
+            [
+              11,
+              0,
+              12,
+              37
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC03"
+          ]
+        ],
+        "comparisons": [
+          [
+            17,
+            11,
+            null,
+            [
+              "NotIn"
+            ],
+            [
+              11,
+              3,
+              11,
+              32
+            ],
+            "SC03"
+          ]
+        ],
+        "arithmetic": [],
+        "calls": [
+          [
+            8,
+            10,
+            null,
+            "str",
+            [
+              10,
+              16,
+              10,
+              52
+            ],
+            "SC02"
+          ],
+          [
+            11,
+            10,
+            null,
+            "Path().resolve",
+            [
+              10,
+              20,
+              10,
+              44
+            ],
+            "SC02"
+          ],
+          [
+            13,
+            10,
+            null,
+            "Path",
+            [
+              10,
+              20,
+              10,
+              34
+            ],
+            "SC02"
+          ],
+          [
+            22,
+            12,
+            null,
+            "sys.path.insert",
+            [
+              12,
+              4,
+              12,
+              37
+            ],
+            "SC03"
+          ]
+        ]
+      },
+      "counts": {
+        "branches": 1,
+        "comparisons": 1,
+        "arithmetic": 0,
+        "calls": 4
+      },
+      "review_status": "DIRECT_SOURCE_CONTEXT_REVIEWED_WITH_PRIOR_CONTRACT_REFERENCES"
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "source_blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "source_line_count": 67,
+      "owner": "C01–C06",
+      "contract_refs": [
+        {
+          "id": "C01",
+          "path": "Algorithms/V3/20_Indexes_And_Caching.md",
+          "blob": "ffad91517842540efd582105353f836eda9967f8"
+        },
+        {
+          "id": "C02",
+          "path": "Algorithms/V3/20_Indexes_And_Caching.md",
+          "blob": "ffad91517842540efd582105353f836eda9967f8"
+        },
+        {
+          "id": "C03",
+          "path": "Algorithms/V3/20_Indexes_And_Caching.md",
+          "blob": "ffad91517842540efd582105353f836eda9967f8"
+        },
+        {
+          "id": "C04",
+          "path": "Algorithms/V3/20_Indexes_And_Caching.md",
+          "blob": "ffad91517842540efd582105353f836eda9967f8"
+        },
+        {
+          "id": "C05",
+          "path": "Algorithms/V3/20_Indexes_And_Caching.md",
+          "blob": "ffad91517842540efd582105353f836eda9967f8"
+        },
+        {
+          "id": "C06",
+          "path": "Algorithms/V3/20_Indexes_And_Caching.md",
+          "blob": "ffad91517842540efd582105353f836eda9967f8"
+        }
+      ],
+      "contexts": [
+        {
+          "id": "SC01",
+          "start": 1,
+          "end": 24,
+          "kind": "N",
+          "meaning": "Initialize empty containment runs and working arrays."
+        },
+        {
+          "id": "SC02",
+          "start": 25,
+          "end": 32,
+          "kind": "T",
+          "meaning": "In caller order split nonempty run before current triple iff start or end strictly decreases; equality does not split. Append original payload."
+        },
+        {
+          "id": "SC03",
+          "start": 33,
+          "end": 34,
+          "kind": "T",
+          "meaning": "Store final run only if nonempty."
+        },
+        {
+          "id": "SC04",
+          "start": 35,
+          "end": 41,
+          "kind": "T",
+          "meaning": "For each run select stop=lower_bound(starts,query start), first=lower_bound(ends,query end,0,stop); yield [first,stop) in order. Stored start strictly earlier, stored end inclusive; no reorder/dedup."
+        },
+        {
+          "id": "SC05",
+          "start": 42,
+          "end": 48,
+          "kind": "T",
+          "meaning": "Require all exact datetime and null tzinfo first; then consecutive earlier <= later. Short-circuit, equality allowed, no sorting."
+        },
+        {
+          "id": "SC06",
+          "start": 49,
+          "end": 54,
+          "kind": "N",
+          "meaning": "Existing Decimal same object; otherwise Decimal(native string), no rounding."
+        },
+        {
+          "id": "SC07",
+          "start": 55,
+          "end": 61,
+          "kind": "N",
+          "meaning": "Convert First and Break to integer pair in that order; no chronology validation."
+        },
+        {
+          "id": "SC08",
+          "start": 62,
+          "end": 67,
+          "kind": "N",
+          "meaning": "Read First then Break and convert to integer, errors propagate."
+        }
+      ],
+      "site_dispositions": {
+        "branches": [
+          [
+            79,
+            25,
+            "C01",
+            "For",
+            [
+              25,
+              8,
+              32,
+              36
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC02"
+          ],
+          [
+            85,
+            27,
+            "C01",
+            "If",
+            [
+              27,
+              12,
+              29,
+              51
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC02"
+          ],
+          [
+            86,
+            27,
+            "C01",
+            "BoolOp",
+            [
+              27,
+              15,
+              27,
+              64
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC02"
+          ],
+          [
+            88,
+            27,
+            "C01",
+            "BoolOp",
+            [
+              27,
+              27,
+              27,
+              63
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC02"
+          ],
+          [
+            134,
+            33,
+            "C01",
+            "If",
+            [
+              33,
+              8,
+              34,
+              55
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC03"
+          ],
+          [
+            152,
+            37,
+            "C02",
+            "For",
+            [
+              37,
+              8,
+              41,
+              40
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC04"
+          ],
+          [
+            173,
+            40,
+            "C02",
+            "For",
+            [
+              40,
+              12,
+              41,
+              40
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC04"
+          ],
+          [
+            180,
+            41,
+            "C02",
+            "Yield",
+            [
+              41,
+              16,
+              41,
+              40
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC04"
+          ],
+          [
+            195,
+            46,
+            "C03",
+            "BoolOp",
+            [
+              46,
+              11,
+              48,
+              5
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC05"
+          ],
+          [
+            199,
+            46,
+            "C03",
+            "BoolOp",
+            [
+              46,
+              15,
+              46,
+              63
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC05"
+          ],
+          [
+            209,
+            46,
+            "C03",
+            "comprehension",
+            [
+              46,
+              68,
+              46,
+              73
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC05"
+          ],
+          [
+            224,
+            47,
+            "C03",
+            "comprehension",
+            [
+              47,
+              47,
+              47,
+              52
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC05"
+          ],
+          [
+            239,
+            53,
+            "C04",
+            "IfExp",
+            [
+              53,
+              11,
+              53,
+              71
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC06"
+          ]
+        ],
+        "comparisons": [
+          [
+            89,
+            27,
+            "C01",
+            [
+              "Lt"
+            ],
+            [
+              27,
+              27,
+              27,
+              45
+            ],
+            "SC02"
+          ],
+          [
+            95,
+            27,
+            "C01",
+            [
+              "Lt"
+            ],
+            [
+              27,
+              49,
+              27,
+              63
+            ],
+            "SC02"
+          ],
+          [
+            200,
+            46,
+            "C03",
+            [
+              "Is"
+            ],
+            [
+              46,
+              15,
+              46,
+              38
+            ],
+            "SC05"
+          ],
+          [
+            205,
+            46,
+            "C03",
+            [
+              "Is"
+            ],
+            [
+              46,
+              43,
+              46,
+              63
+            ],
+            "SC05"
+          ],
+          [
+            215,
+            47,
+            "C03",
+            [
+              "LtE"
+            ],
+            [
+              47,
+              8,
+              47,
+              42
+            ],
+            "SC05"
+          ]
+        ],
+        "arithmetic": [
+          [
+            93,
+            27,
+            "C01",
+            "USub",
+            [
+              27,
+              42,
+              27,
+              44
+            ],
+            "SC02"
+          ],
+          [
+            99,
+            27,
+            "C01",
+            "USub",
+            [
+              27,
+              60,
+              27,
+              62
+            ],
+            "SC02"
+          ],
+          [
+            218,
+            47,
+            "C03",
+            "Sub",
+            [
+              47,
+              15,
+              47,
+              24
+            ],
+            "SC05"
+          ]
+        ],
+        "calls": [
+          [
+            23,
+            14,
+            null,
+            "TypeVar",
+            [
+              14,
+              11,
+              14,
+              30
+            ],
+            "SC01"
+          ],
+          [
+            102,
+            28,
+            "C01",
+            "self._runs.append",
+            [
+              28,
+              16,
+              28,
+              59
+            ],
+            "SC02"
+          ],
+          [
+            120,
+            30,
+            "C01",
+            "starts.append",
+            [
+              30,
+              12,
+              30,
+              32
+            ],
+            "SC02"
+          ],
+          [
+            125,
+            31,
+            "C01",
+            "ends.append",
+            [
+              31,
+              12,
+              31,
+              28
+            ],
+            "SC02"
+          ],
+          [
+            130,
+            32,
+            "C01",
+            "payloads.append",
+            [
+              32,
+              12,
+              32,
+              36
+            ],
+            "SC02"
+          ],
+          [
+            137,
+            34,
+            "C01",
+            "self._runs.append",
+            [
+              34,
+              12,
+              34,
+              55
+            ],
+            "SC03"
+          ],
+          [
+            161,
+            38,
+            "C02",
+            "bisect_left",
+            [
+              38,
+              19,
+              38,
+              45
+            ],
+            "SC04"
+          ],
+          [
+            167,
+            39,
+            "C02",
+            "bisect_left",
+            [
+              39,
+              20,
+              39,
+              51
+            ],
+            "SC04"
+          ],
+          [
+            175,
+            40,
+            "C02",
+            "range",
+            [
+              40,
+              28,
+              40,
+              46
+            ],
+            "SC04"
+          ],
+          [
+            196,
+            46,
+            "C03",
+            "all",
+            [
+              46,
+              11,
+              46,
+              84
+            ],
+            "SC05"
+          ],
+          [
+            201,
+            46,
+            "C03",
+            "type",
+            [
+              46,
+              15,
+              46,
+              26
+            ],
+            "SC05"
+          ],
+          [
+            212,
+            46,
+            "C03",
+            "all",
+            [
+              46,
+              89,
+              48,
+              5
+            ],
+            "SC05"
+          ],
+          [
+            226,
+            47,
+            "C03",
+            "range",
+            [
+              47,
+              56,
+              47,
+              77
+            ],
+            "SC05"
+          ],
+          [
+            229,
+            47,
+            "C03",
+            "len",
+            [
+              47,
+              65,
+              47,
+              76
+            ],
+            "SC05"
+          ],
+          [
+            240,
+            53,
+            "C04",
+            "isinstance",
+            [
+              53,
+              20,
+              53,
+              46
+            ],
+            "SC06"
+          ],
+          [
+            245,
+            53,
+            "C04",
+            "Decimal",
+            [
+              53,
+              52,
+              53,
+              71
+            ],
+            "SC06"
+          ],
+          [
+            247,
+            53,
+            "C04",
+            "str",
+            [
+              53,
+              60,
+              53,
+              70
+            ],
+            "SC06"
+          ],
+          [
+            268,
+            61,
+            "C05",
+            "int",
+            [
+              61,
+              11,
+              61,
+              27
+            ],
+            "SC07"
+          ],
+          [
+            271,
+            61,
+            "C05",
+            "int",
+            [
+              61,
+              29,
+              61,
+              45
+            ],
+            "SC07"
+          ],
+          [
+            282,
+            66,
+            "C06",
+            "int",
+            [
+              66,
+              11,
+              66,
+              34
+            ],
+            "SC08"
+          ],
+          [
+            286,
+            66,
+            "C06",
+            "int",
+            [
+              66,
+              36,
+              66,
+              59
+            ],
+            "SC08"
+          ]
+        ]
+      },
+      "counts": {
+        "branches": 13,
+        "comparisons": 5,
+        "arithmetic": 3,
+        "calls": 21
+      },
+      "review_status": "DIRECT_SOURCE_CONTEXT_REVIEWED_WITH_PRIOR_CONTRACT_REFERENCES"
+    },
+    {
+      "path": "engine/pipeline/direction_policy.py",
+      "source_blob": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+      "source_line_count": 71,
+      "owner": "D01–D06",
+      "contract_refs": [
+        {
+          "id": "D01",
+          "path": "Algorithms/V3/20_Indexes_And_Caching.md",
+          "blob": "ffad91517842540efd582105353f836eda9967f8"
+        },
+        {
+          "id": "D02",
+          "path": "Algorithms/V3/20_Indexes_And_Caching.md",
+          "blob": "ffad91517842540efd582105353f836eda9967f8"
+        },
+        {
+          "id": "D03",
+          "path": "Algorithms/V3/20_Indexes_And_Caching.md",
+          "blob": "ffad91517842540efd582105353f836eda9967f8"
+        },
+        {
+          "id": "D04",
+          "path": "Algorithms/V3/20_Indexes_And_Caching.md",
+          "blob": "ffad91517842540efd582105353f836eda9967f8"
+        },
+        {
+          "id": "D05",
+          "path": "Algorithms/V3/20_Indexes_And_Caching.md",
+          "blob": "ffad91517842540efd582105353f836eda9967f8"
+        },
+        {
+          "id": "D06",
+          "path": "Algorithms/V3/20_Indexes_And_Caching.md",
+          "blob": "ffad91517842540efd582105353f836eda9967f8"
+        }
+      ],
+      "contexts": [
+        {
+          "id": "SC01",
+          "start": 1,
+          "end": 27,
+          "kind": "N",
+          "meaning": "Immutable record fields define direction and price/color roles."
+        },
+        {
+          "id": "SC02",
+          "start": 28,
+          "end": 30,
+          "kind": "P",
+          "meaning": "Stored bullish maps bearish, otherwise bullish."
+        },
+        {
+          "id": "SC03",
+          "start": 31,
+          "end": 33,
+          "kind": "P",
+          "meaning": "Strict stop value < level bullish, > level otherwise; finite equality does not cross."
+        },
+        {
+          "id": "SC04",
+          "start": 34,
+          "end": 36,
+          "kind": "P",
+          "meaning": "Strict improvement value < current bullish, > current otherwise; no equal replacement rule."
+        },
+        {
+          "id": "SC05",
+          "start": 37,
+          "end": 39,
+          "kind": "P",
+          "meaning": "Choose native min bullish or max otherwise; first equal finite operand retained."
+        },
+        {
+          "id": "SC06",
+          "start": 40,
+          "end": 46,
+          "kind": "P",
+          "meaning": "Confirmation value > level bullish, < level otherwise; confirmation-side price already selected."
+        },
+        {
+          "id": "SC07",
+          "start": 47,
+          "end": 54,
+          "kind": "P",
+          "meaning": "Exact bullish first then bearish, else raise ValueError."
+        },
+        {
+          "id": "SC08",
+          "start": 55,
+          "end": 71,
+          "kind": "N",
+          "meaning": "Construct shared direction records."
+        }
+      ],
+      "site_dispositions": {
+        "branches": [
+          [
+            55,
+            30,
+            "D01",
+            "IfExp",
+            [
+              30,
+              15,
+              30,
+              70
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC02"
+          ],
+          [
+            71,
+            33,
+            "D02",
+            "IfExp",
+            [
+              33,
+              15,
+              33,
+              78
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC03"
+          ],
+          [
+            90,
+            36,
+            "D03",
+            "IfExp",
+            [
+              36,
+              15,
+              36,
+              82
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC04"
+          ],
+          [
+            109,
+            39,
+            "D04",
+            "IfExp",
+            [
+              39,
+              15,
+              39,
+              84
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC05"
+          ],
+          [
+            132,
+            46,
+            "D05",
+            "IfExp",
+            [
+              46,
+              15,
+              46,
+              78
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC06"
+          ],
+          [
+            153,
+            50,
+            "D06",
+            "If",
+            [
+              50,
+              4,
+              51,
+              22
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC07"
+          ],
+          [
+            159,
+            52,
+            "D06",
+            "If",
+            [
+              52,
+              4,
+              53,
+              22
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC07"
+          ]
+        ],
+        "comparisons": [
+          [
+            56,
+            30,
+            "D01",
+            [
+              "Eq"
+            ],
+            [
+              30,
+              28,
+              30,
+              55
+            ],
+            "SC02"
+          ],
+          [
+            72,
+            33,
+            "D02",
+            [
+              "Eq"
+            ],
+            [
+              33,
+              32,
+              33,
+              59
+            ],
+            "SC03"
+          ],
+          [
+            76,
+            33,
+            "D02",
+            [
+              "Lt"
+            ],
+            [
+              33,
+              15,
+              33,
+              28
+            ],
+            "SC03"
+          ],
+          [
+            79,
+            33,
+            "D02",
+            [
+              "Gt"
+            ],
+            [
+              33,
+              65,
+              33,
+              78
+            ],
+            "SC03"
+          ],
+          [
+            91,
+            36,
+            "D03",
+            [
+              "Eq"
+            ],
+            [
+              36,
+              34,
+              36,
+              61
+            ],
+            "SC04"
+          ],
+          [
+            95,
+            36,
+            "D03",
+            [
+              "Lt"
+            ],
+            [
+              36,
+              15,
+              36,
+              30
+            ],
+            "SC04"
+          ],
+          [
+            98,
+            36,
+            "D03",
+            [
+              "Gt"
+            ],
+            [
+              36,
+              67,
+              36,
+              82
+            ],
+            "SC04"
+          ],
+          [
+            110,
+            39,
+            "D04",
+            [
+              "Eq"
+            ],
+            [
+              39,
+              35,
+              39,
+              62
+            ],
+            "SC05"
+          ],
+          [
+            133,
+            46,
+            "D05",
+            [
+              "Eq"
+            ],
+            [
+              46,
+              32,
+              46,
+              59
+            ],
+            "SC06"
+          ],
+          [
+            137,
+            46,
+            "D05",
+            [
+              "Gt"
+            ],
+            [
+              46,
+              15,
+              46,
+              28
+            ],
+            "SC06"
+          ],
+          [
+            140,
+            46,
+            "D05",
+            [
+              "Lt"
+            ],
+            [
+              46,
+              65,
+              46,
+              78
+            ],
+            "SC06"
+          ],
+          [
+            154,
+            50,
+            "D06",
+            [
+              "Eq"
+            ],
+            [
+              50,
+              7,
+              50,
+              29
+            ],
+            "SC07"
+          ],
+          [
+            160,
+            52,
+            "D06",
+            [
+              "Eq"
+            ],
+            [
+              52,
+              7,
+              52,
+              29
+            ],
+            "SC07"
+          ]
+        ],
+        "arithmetic": [],
+        "calls": [
+          [
+            114,
+            39,
+            "D04",
+            "min",
+            [
+              39,
+              15,
+              39,
+              31
+            ],
+            "SC05"
+          ],
+          [
+            118,
+            39,
+            "D04",
+            "max",
+            [
+              39,
+              68,
+              39,
+              84
+            ],
+            "SC05"
+          ],
+          [
+            144,
+            20,
+            null,
+            "dataclass",
+            [
+              20,
+              1,
+              20,
+              35
+            ],
+            "SC01"
+          ],
+          [
+            166,
+            54,
+            "D06",
+            "ValueError",
+            [
+              54,
+              10,
+              54,
+              65
+            ],
+            "SC07"
+          ],
+          [
+            172,
+            57,
+            null,
+            "DirectionPolicy",
+            [
+              57,
+              10,
+              63,
+              1
+            ],
+            "SC08"
+          ],
+          [
+            186,
+            64,
+            null,
+            "DirectionPolicy",
+            [
+              64,
+              10,
+              70,
+              1
+            ],
+            "SC08"
+          ]
+        ]
+      },
+      "counts": {
+        "branches": 7,
+        "comparisons": 13,
+        "arithmetic": 0,
+        "calls": 6
+      },
+      "review_status": "DIRECT_SOURCE_CONTEXT_REVIEWED_WITH_PRIOR_CONTRACT_REFERENCES"
+    },
+    {
+      "path": "engine/pipeline/true_false.py",
+      "source_blob": "d569d16bc493b9eb5da75ed5594c168751856b6f",
+      "source_line_count": 157,
+      "owner": "TF01–TF07",
+      "contract_refs": [
+        {
+          "id": "TF02",
+          "path": "Algorithms/V3/22_True_False_Exact_Contract.md",
+          "blob": "b4e85aaeabd10cfea141ec8e2ccb7afb9b8b88e2"
+        },
+        {
+          "id": "TF03",
+          "path": "Algorithms/V3/22_True_False_Exact_Contract.md",
+          "blob": "b4e85aaeabd10cfea141ec8e2ccb7afb9b8b88e2"
+        },
+        {
+          "id": "TF05",
+          "path": "Algorithms/V3/22_True_False_Exact_Contract.md",
+          "blob": "b4e85aaeabd10cfea141ec8e2ccb7afb9b8b88e2"
+        },
+        {
+          "id": "TF04",
+          "path": "Algorithms/V3/22_True_False_Exact_Contract.md",
+          "blob": "b4e85aaeabd10cfea141ec8e2ccb7afb9b8b88e2"
+        },
+        {
+          "id": "TF06",
+          "path": "Algorithms/V3/22_True_False_Exact_Contract.md",
+          "blob": "b4e85aaeabd10cfea141ec8e2ccb7afb9b8b88e2"
+        },
+        {
+          "id": "TF07",
+          "path": "Algorithms/V3/22_True_False_Exact_Contract.md",
+          "blob": "b4e85aaeabd10cfea141ec8e2ccb7afb9b8b88e2"
+        },
+        {
+          "id": "TF01",
+          "path": "Algorithms/V3/22_True_False_Exact_Contract.md",
+          "blob": "b4e85aaeabd10cfea141ec8e2ccb7afb9b8b88e2"
+        }
+      ],
+      "contexts": [
+        {
+          "id": "SC01",
+          "start": 1,
+          "end": 16,
+          "kind": "N",
+          "meaning": "Declare annotations and dependencies; no formation."
+        },
+        {
+          "id": "SC02",
+          "start": 17,
+          "end": 19,
+          "kind": "T",
+          "meaning": "Capture upper bound through horizon, includes equal through time."
+        },
+        {
+          "id": "SC03",
+          "start": 20,
+          "end": 24,
+          "kind": "T",
+          "meaning": "Convert start epoch, lower bound limited to right; select strict first_less for low or first_greater otherwise. Type union annotation not runtime arithmetic."
+        },
+        {
+          "id": "SC04",
+          "start": 25,
+          "end": 29,
+          "kind": "T",
+          "meaning": "Direct Decimal level; search [left,right), null if absent else epoch conversion of hit. Inclusive start/horizon; strict price."
+        },
+        {
+          "id": "SC05",
+          "start": 30,
+          "end": 38,
+          "kind": "N",
+          "meaning": "Mutable latest-row/counter record."
+        },
+        {
+          "id": "SC06",
+          "start": 39,
+          "end": 42,
+          "kind": "P",
+          "meaning": "S rank=(S color priority,0); E rank=(E family priority,number). Compare tuples lexicographically."
+        },
+        {
+          "id": "SC07",
+          "start": 43,
+          "end": 50,
+          "kind": "N",
+          "meaning": "Initialize repeats/known maps and started=false; repair closure."
+        },
+        {
+          "id": "SC08",
+          "start": 51,
+          "end": 54,
+          "kind": "T",
+          "meaning": "Repair only if callback nonnull and key absent; present null blocks. Store returned crossing only if nonnull."
+        },
+        {
+          "id": "SC09",
+          "start": 55,
+          "end": 62,
+          "kind": "T",
+          "meaning": "Process caller order; S starts pass, skip preceding E; compute rank."
+        },
+        {
+          "id": "SC10",
+          "start": 63,
+          "end": 66,
+          "kind": "T",
+          "meaning": "Use source as key, collect strictly lower ranks, lookup parent verdict, engulf if any lower verdict_count >=2."
+        },
+        {
+          "id": "SC11",
+          "start": 67,
+          "end": 74,
+          "kind": "T",
+          "meaning": "S or engulf T; else invert known parent, else odd E F/even T. Write row and known source; overwrite duplicate key."
+        },
+        {
+          "id": "SC12",
+          "start": 75,
+          "end": 79,
+          "kind": "T",
+          "meaning": "Remove lower repeats in map order; latest F with repair_count=1 repaired starting current source time."
+        },
+        {
+          "id": "SC13",
+          "start": 80,
+          "end": 85,
+          "kind": "T",
+          "meaning": "Engulf zeros remaining verdict counts, not repair counts; lookup same rank."
+        },
+        {
+          "id": "SC14",
+          "start": 86,
+          "end": 94,
+          "kind": "T",
+          "meaning": "Counters start1, accumulate only same-rank same-verdict. For F remove prior repair >= current source (default -1); try current repair. Replace repeat, no final sweep."
+        },
+        {
+          "id": "SC15",
+          "start": 95,
+          "end": 102,
+          "kind": "N",
+          "meaning": "Initialize StopAll series markers, prefix and restart."
+        },
+        {
+          "id": "SC16",
+          "start": 103,
+          "end": 114,
+          "kind": "T",
+          "meaning": "First or nonincreasing number starts series, preserves prior end/max end, resets starts/prefix/flag. Else pending restart sets verdict start to current. Update previous number."
+        },
+        {
+          "id": "SC17",
+          "start": 115,
+          "end": 118,
+          "kind": "T",
+          "meaning": "T iff difference from verdict start even; retain prefix only number <= largest prior end."
+        },
+        {
+          "id": "SC18",
+          "start": 119,
+          "end": 125,
+          "kind": "T",
+          "meaning": "At number equal previous or largest historical end, and closure callback absent or truthy, mark all prefix repeated and recalculate parity from group start; set restart, retain prefix. Callback short-circuits."
+        },
+        {
+          "id": "SC19",
+          "start": 126,
+          "end": 133,
+          "kind": "N",
+          "meaning": "Select primaryLows for exact bullish else primaryHighs; source map."
+        },
+        {
+          "id": "SC20",
+          "start": 134,
+          "end": 140,
+          "kind": "T",
+          "meaning": "Visit primary,StopAll,E,S priority; remove annotation keys from all rows including invalid; exclude only exact Boolean false, retain first per source time."
+        },
+        {
+          "id": "SC21",
+          "start": 141,
+          "end": 145,
+          "kind": "T",
+          "meaning": "Sort selected rows by source time, create buffers, assign neutral verdict."
+        },
+        {
+          "id": "SC22",
+          "start": 146,
+          "end": 150,
+          "kind": "T",
+          "meaning": "Primary flushes and clears StopAll buffer; number 1 T,2/3 F, else null."
+        },
+        {
+          "id": "SC23",
+          "start": 151,
+          "end": 157,
+          "kind": "T",
+          "meaning": "Append StopAll or basic row to respective buffer; after traversal process whole basic buffer then trailing stops. Basic not reset by primary; no rollback."
+        }
+      ],
+      "site_dispositions": {
+        "branches": [
+          [
+            63,
+            24,
+            "TF02",
+            "IfExp",
+            [
+              24,
+              18,
+              25,
+              48
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC03"
+          ],
+          [
+            82,
+            27,
+            "TF02",
+            "IfExp",
+            [
+              27,
+              15,
+              27,
+              82
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC04"
+          ],
+          [
+            115,
+            40,
+            "TF03",
+            "If",
+            [
+              40,
+              4,
+              41,
+              54
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC06"
+          ],
+          [
+            155,
+            51,
+            "TF05",
+            "If",
+            [
+              51,
+              8,
+              54,
+              37
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC08"
+          ],
+          [
+            156,
+            51,
+            "TF05",
+            "BoolOp",
+            [
+              51,
+              11,
+              51,
+              59
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC08"
+          ],
+          [
+            172,
+            53,
+            "TF05",
+            "If",
+            [
+              53,
+              12,
+              54,
+              37
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC08"
+          ],
+          [
+            181,
+            56,
+            "TF04",
+            "For",
+            [
+              56,
+              4,
+              94,
+              69
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC09"
+          ],
+          [
+            191,
+            58,
+            "TF04",
+            "If",
+            [
+              58,
+              8,
+              59,
+              26
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC09"
+          ],
+          [
+            196,
+            60,
+            "TF04",
+            "If",
+            [
+              60,
+              8,
+              61,
+              20
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC09"
+          ],
+          [
+            215,
+            64,
+            "TF04",
+            "comprehension",
+            [
+              64,
+              27,
+              64,
+              32
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC10"
+          ],
+          [
+            "engine/pipeline/true_false.py:64:47:Compare:filter",
+            64,
+            "TF04",
+            "ComprehensionFilter",
+            [
+              64,
+              47,
+              64,
+              59
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC10"
+          ],
+          [
+            241,
+            66,
+            "TF04",
+            "comprehension",
+            [
+              66,
+              59,
+              66,
+              64
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC10"
+          ],
+          [
+            244,
+            67,
+            "TF04",
+            "If",
+            [
+              67,
+              8,
+              73,
+              55
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC11"
+          ],
+          [
+            245,
+            67,
+            "TF04",
+            "BoolOp",
+            [
+              67,
+              11,
+              67,
+              25
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC11"
+          ],
+          [
+            251,
+            69,
+            "TF04",
+            "If",
+            [
+              69,
+              8,
+              73,
+              55
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC11"
+          ],
+          [
+            257,
+            70,
+            "TF04",
+            "IfExp",
+            [
+              70,
+              22,
+              70,
+              51
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC11"
+          ],
+          [
+            265,
+            73,
+            "TF04",
+            "IfExp",
+            [
+              73,
+              22,
+              73,
+              55
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC11"
+          ],
+          [
+            281,
+            76,
+            "TF04",
+            "For",
+            [
+              76,
+              8,
+              79,
+              42
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC12"
+          ],
+          [
+            290,
+            78,
+            "TF04",
+            "If",
+            [
+              78,
+              12,
+              79,
+              42
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC12"
+          ],
+          [
+            291,
+            78,
+            "TF04",
+            "BoolOp",
+            [
+              78,
+              15,
+              78,
+              71
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC12"
+          ],
+          [
+            308,
+            81,
+            "TF04",
+            "If",
+            [
+              81,
+              8,
+              84,
+              40
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC13"
+          ],
+          [
+            310,
+            83,
+            "TF04",
+            "For",
+            [
+              83,
+              12,
+              84,
+              40
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC13"
+          ],
+          [
+            329,
+            87,
+            "TF04",
+            "If",
+            [
+              87,
+              8,
+              93,
+              33
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC14"
+          ],
+          [
+            330,
+            87,
+            "TF04",
+            "BoolOp",
+            [
+              87,
+              11,
+              87,
+              71
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC14"
+          ],
+          [
+            348,
+            90,
+            "TF04",
+            "If",
+            [
+              90,
+              12,
+              93,
+              33
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC14"
+          ],
+          [
+            352,
+            91,
+            "TF04",
+            "If",
+            [
+              91,
+              16,
+              92,
+              47
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC14"
+          ],
+          [
+            402,
+            103,
+            "TF06",
+            "For",
+            [
+              103,
+              4,
+              125,
+              39
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC16"
+          ],
+          [
+            410,
+            105,
+            "TF06",
+            "If",
+            [
+              105,
+              8,
+              113,
+              36
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC16"
+          ],
+          [
+            411,
+            105,
+            "TF06",
+            "BoolOp",
+            [
+              105,
+              11,
+              105,
+              59
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC16"
+          ],
+          [
+            438,
+            111,
+            "TF06",
+            "If",
+            [
+              111,
+              8,
+              113,
+              36
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC16"
+          ],
+          [
+            453,
+            116,
+            "TF06",
+            "IfExp",
+            [
+              116,
+              23,
+              116,
+              72
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC17"
+          ],
+          [
+            463,
+            117,
+            "TF06",
+            "If",
+            [
+              117,
+              8,
+              125,
+              39
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC17"
+          ],
+          [
+            472,
+            119,
+            "TF06",
+            "If",
+            [
+              119,
+              12,
+              125,
+              39
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC18"
+          ],
+          [
+            473,
+            119,
+            "TF06",
+            "BoolOp",
+            [
+              119,
+              16,
+              120,
+              81
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC18"
+          ],
+          [
+            479,
+            120,
+            "TF06",
+            "BoolOp",
+            [
+              120,
+              25,
+              120,
+              80
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC18"
+          ],
+          [
+            486,
+            122,
+            "TF06",
+            "For",
+            [
+              122,
+              16,
+              124,
+              99
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC18"
+          ],
+          [
+            498,
+            124,
+            "TF06",
+            "IfExp",
+            [
+              124,
+              40,
+              124,
+              99
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC18"
+          ],
+          [
+            524,
+            130,
+            "TF07",
+            "IfExp",
+            [
+              130,
+              18,
+              130,
+              77
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC19"
+          ],
+          [
+            533,
+            134,
+            "TF07",
+            "For",
+            [
+              134,
+              4,
+              140,
+              67
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC20"
+          ],
+          [
+            540,
+            135,
+            "TF07",
+            "For",
+            [
+              135,
+              8,
+              140,
+              67
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC20"
+          ],
+          [
+            565,
+            139,
+            "TF07",
+            "If",
+            [
+              139,
+              12,
+              140,
+              67
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC20"
+          ],
+          [
+            588,
+            143,
+            "TF07",
+            "For",
+            [
+              143,
+              4,
+              154,
+              36
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC21"
+          ],
+          [
+            610,
+            146,
+            "TF07",
+            "If",
+            [
+              146,
+              8,
+              154,
+              36
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC22"
+          ],
+          [
+            623,
+            149,
+            "TF07",
+            "If",
+            [
+              149,
+              12,
+              150,
+              65
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC22"
+          ],
+          [
+            636,
+            150,
+            "TF07",
+            "IfExp",
+            [
+              150,
+              31,
+              150,
+              65
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC22"
+          ],
+          [
+            644,
+            151,
+            "TF07",
+            "If",
+            [
+              151,
+              8,
+              154,
+              36
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC23"
+          ]
+        ],
+        "comparisons": [
+          [
+            64,
+            24,
+            "TF02",
+            [
+              "Eq"
+            ],
+            [
+              24,
+              44,
+              24,
+              72
+            ],
+            "SC03"
+          ],
+          [
+            83,
+            27,
+            "TF02",
+            [
+              "Is"
+            ],
+            [
+              27,
+              23,
+              27,
+              39
+            ],
+            "SC04"
+          ],
+          [
+            116,
+            40,
+            "TF03",
+            [
+              "Eq"
+            ],
+            [
+              40,
+              7,
+              40,
+              22
+            ],
+            "SC06"
+          ],
+          [
+            157,
+            51,
+            "TF05",
+            [
+              "IsNot"
+            ],
+            [
+              51,
+              11,
+              51,
+              37
+            ],
+            "SC08"
+          ],
+          [
+            160,
+            51,
+            "TF05",
+            [
+              "NotIn"
+            ],
+            [
+              51,
+              42,
+              51,
+              59
+            ],
+            "SC08"
+          ],
+          [
+            173,
+            53,
+            "TF05",
+            [
+              "IsNot"
+            ],
+            [
+              53,
+              15,
+              53,
+              34
+            ],
+            "SC08"
+          ],
+          [
+            188,
+            57,
+            "TF04",
+            [
+              "Eq"
+            ],
+            [
+              57,
+              15,
+              57,
+              30
+            ],
+            "SC09"
+          ],
+          [
+            218,
+            64,
+            "TF04",
+            [
+              "Lt"
+            ],
+            [
+              64,
+              47,
+              64,
+              59
+            ],
+            "SC10"
+          ],
+          [
+            235,
+            66,
+            "TF04",
+            [
+              "GtE"
+            ],
+            [
+              66,
+              21,
+              66,
+              54
+            ],
+            "SC10"
+          ],
+          [
+            252,
+            69,
+            "TF04",
+            [
+              "IsNot"
+            ],
+            [
+              69,
+              13,
+              69,
+              31
+            ],
+            "SC11"
+          ],
+          [
+            258,
+            70,
+            "TF04",
+            [
+              "Eq"
+            ],
+            [
+              70,
+              29,
+              70,
+              42
+            ],
+            "SC11"
+          ],
+          [
+            292,
+            78,
+            "TF04",
+            [
+              "Eq"
+            ],
+            [
+              78,
+              15,
+              78,
+              43
+            ],
+            "SC12"
+          ],
+          [
+            298,
+            78,
+            "TF04",
+            [
+              "Eq"
+            ],
+            [
+              78,
+              48,
+              78,
+              71
+            ],
+            "SC12"
+          ],
+          [
+            331,
+            87,
+            "TF04",
+            [
+              "IsNot"
+            ],
+            [
+              87,
+              11,
+              87,
+              31
+            ],
+            "SC14"
+          ],
+          [
+            334,
+            87,
+            "TF04",
+            [
+              "Eq"
+            ],
+            [
+              87,
+              36,
+              87,
+              71
+            ],
+            "SC14"
+          ],
+          [
+            349,
+            90,
+            "TF04",
+            [
+              "Eq"
+            ],
+            [
+              90,
+              15,
+              90,
+              29
+            ],
+            "SC14"
+          ],
+          [
+            353,
+            91,
+            "TF04",
+            [
+              "GtE"
+            ],
+            [
+              91,
+              19,
+              91,
+              58
+            ],
+            "SC14"
+          ],
+          [
+            412,
+            105,
+            "TF06",
+            [
+              "Is"
+            ],
+            [
+              105,
+              11,
+              105,
+              30
+            ],
+            "SC16"
+          ],
+          [
+            415,
+            105,
+            "TF06",
+            [
+              "LtE"
+            ],
+            [
+              105,
+              34,
+              105,
+              59
+            ],
+            "SC16"
+          ],
+          [
+            454,
+            116,
+            "TF06",
+            [
+              "Eq"
+            ],
+            [
+              116,
+              30,
+              116,
+              63
+            ],
+            "SC17"
+          ],
+          [
+            464,
+            117,
+            "TF06",
+            [
+              "LtE"
+            ],
+            [
+              117,
+              11,
+              117,
+              38
+            ],
+            "SC17"
+          ],
+          [
+            474,
+            119,
+            "TF06",
+            [
+              "In"
+            ],
+            [
+              119,
+              16,
+              119,
+              66
+            ],
+            "SC18"
+          ],
+          [
+            480,
+            120,
+            "TF06",
+            [
+              "Is"
+            ],
+            [
+              120,
+              25,
+              120,
+              52
+            ],
+            "SC18"
+          ],
+          [
+            499,
+            124,
+            "TF06",
+            [
+              "Eq"
+            ],
+            [
+              124,
+              47,
+              124,
+              90
+            ],
+            "SC18"
+          ],
+          [
+            525,
+            130,
+            "TF07",
+            [
+              "Eq"
+            ],
+            [
+              130,
+              35,
+              130,
+              57
+            ],
+            "SC19"
+          ],
+          [
+            566,
+            139,
+            "TF07",
+            [
+              "IsNot"
+            ],
+            [
+              139,
+              15,
+              139,
+              55
+            ],
+            "SC20"
+          ],
+          [
+            611,
+            146,
+            "TF07",
+            [
+              "Eq"
+            ],
+            [
+              146,
+              11,
+              146,
+              29
+            ],
+            "SC22"
+          ],
+          [
+            624,
+            149,
+            "TF07",
+            [
+              "In"
+            ],
+            [
+              149,
+              15,
+              149,
+              41
+            ],
+            "SC22"
+          ],
+          [
+            637,
+            150,
+            "TF07",
+            [
+              "Eq"
+            ],
+            [
+              150,
+              38,
+              150,
+              56
+            ],
+            "SC22"
+          ],
+          [
+            645,
+            151,
+            "TF07",
+            [
+              "Eq"
+            ],
+            [
+              151,
+              13,
+              151,
+              30
+            ],
+            "SC23"
+          ]
+        ],
+        "arithmetic": [
+          [
+            93,
+            21,
+            "TF01",
+            "BitOr",
+            [
+              21,
+              56,
+              21,
+              66
+            ],
+            "SC03"
+          ],
+          [
+            197,
+            60,
+            "TF04",
+            "Not",
+            [
+              60,
+              11,
+              60,
+              22
+            ],
+            "SC09"
+          ],
+          [
+            266,
+            73,
+            "TF04",
+            "Mod",
+            [
+              73,
+              29,
+              73,
+              46
+            ],
+            "SC11"
+          ],
+          [
+            340,
+            88,
+            "TF04",
+            "Add",
+            [
+              88,
+              12,
+              88,
+              49
+            ],
+            "SC14"
+          ],
+          [
+            344,
+            89,
+            "TF04",
+            "Add",
+            [
+              89,
+              12,
+              89,
+              51
+            ],
+            "SC14"
+          ],
+          [
+            359,
+            91,
+            "TF04",
+            "USub",
+            [
+              91,
+              47,
+              91,
+              49
+            ],
+            "SC14"
+          ],
+          [
+            455,
+            116,
+            "TF06",
+            "Mod",
+            [
+              116,
+              30,
+              116,
+              58
+            ],
+            "SC17"
+          ],
+          [
+            456,
+            116,
+            "TF06",
+            "Sub",
+            [
+              116,
+              31,
+              116,
+              53
+            ],
+            "SC17"
+          ],
+          [
+            500,
+            124,
+            "TF06",
+            "Mod",
+            [
+              124,
+              47,
+              124,
+              85
+            ],
+            "SC18"
+          ],
+          [
+            501,
+            124,
+            "TF06",
+            "Sub",
+            [
+              124,
+              48,
+              124,
+              80
+            ],
+            "SC18"
+          ]
+        ],
+        "calls": [
+          [
+            33,
+            19,
+            "TF01",
+            "bisect_right",
+            [
+              19,
+              12,
+              19,
+              52
+            ],
+            "SC02"
+          ],
+          [
+            47,
+            22,
+            "TF02",
+            "bisect_left",
+            [
+              22,
+              15,
+              22,
+              74
+            ],
+            "SC03"
+          ],
+          [
+            51,
+            22,
+            "TF02",
+            "from_epoch",
+            [
+              22,
+              46,
+              22,
+              63
+            ],
+            "SC03"
+          ],
+          [
+            58,
+            23,
+            "TF02",
+            "policy_for",
+            [
+              23,
+              17,
+              23,
+              38
+            ],
+            "SC03"
+          ],
+          [
+            74,
+            26,
+            "TF02",
+            "search",
+            [
+              26,
+              19,
+              26,
+              54
+            ],
+            "SC04"
+          ],
+          [
+            78,
+            26,
+            "TF02",
+            "Decimal",
+            [
+              26,
+              39,
+              26,
+              53
+            ],
+            "SC04"
+          ],
+          [
+            87,
+            27,
+            "TF02",
+            "to_epoch",
+            [
+              27,
+              45,
+              27,
+              82
+            ],
+            "SC04"
+          ],
+          [
+            108,
+            32,
+            null,
+            "dataclass",
+            [
+              32,
+              1,
+              32,
+              22
+            ],
+            "SC05"
+          ],
+          [
+            121,
+            41,
+            "TF03",
+            "sequence_priority",
+            [
+              41,
+              15,
+              41,
+              51
+            ],
+            "SC06"
+          ],
+          [
+            130,
+            42,
+            "TF03",
+            "sequence_priority",
+            [
+              42,
+              11,
+              42,
+              48
+            ],
+            "SC06"
+          ],
+          [
+            165,
+            52,
+            "TF05",
+            "first_crossing",
+            [
+              52,
+              22,
+              52,
+              68
+            ],
+            "SC08"
+          ],
+          [
+            202,
+            62,
+            "TF04",
+            "_basic_rank",
+            [
+              62,
+              15,
+              62,
+              36
+            ],
+            "SC09"
+          ],
+          [
+            223,
+            65,
+            "TF04",
+            "known.get",
+            [
+              65,
+              17,
+              65,
+              55
+            ],
+            "SC10"
+          ],
+          [
+            226,
+            65,
+            "TF04",
+            "row.get",
+            [
+              65,
+              27,
+              65,
+              54
+            ],
+            "SC10"
+          ],
+          [
+            232,
+            66,
+            "TF04",
+            "any",
+            [
+              66,
+              17,
+              66,
+              74
+            ],
+            "SC10"
+          ],
+          [
+            286,
+            77,
+            "TF04",
+            "repeats.pop",
+            [
+              77,
+              20,
+              77,
+              38
+            ],
+            "SC12"
+          ],
+          [
+            303,
+            79,
+            "TF04",
+            "repair",
+            [
+              79,
+              16,
+              79,
+              42
+            ],
+            "SC12"
+          ],
+          [
+            312,
+            83,
+            "TF04",
+            "repeats.values",
+            [
+              83,
+              26,
+              83,
+              42
+            ],
+            "SC13"
+          ],
+          [
+            321,
+            85,
+            "TF04",
+            "repeats.get",
+            [
+              85,
+              19,
+              85,
+              36
+            ],
+            "SC13"
+          ],
+          [
+            354,
+            91,
+            "TF04",
+            "previous.latest.get",
+            [
+              91,
+              19,
+              91,
+              50
+            ],
+            "SC14"
+          ],
+          [
+            363,
+            92,
+            "TF04",
+            "previous.latest.pop",
+            [
+              92,
+              20,
+              92,
+              47
+            ],
+            "SC14"
+          ],
+          [
+            369,
+            93,
+            "TF04",
+            "repair",
+            [
+              93,
+              16,
+              93,
+              33
+            ],
+            "SC14"
+          ],
+          [
+            377,
+            94,
+            "TF04",
+            "BasicRepeat",
+            [
+              94,
+              24,
+              94,
+              69
+            ],
+            "SC14"
+          ],
+          [
+            423,
+            107,
+            "TF06",
+            "max",
+            [
+              107,
+              32,
+              107,
+              75
+            ],
+            "SC16"
+          ],
+          [
+            432,
+            109,
+            "TF06",
+            "repeated_prefix.clear",
+            [
+              109,
+              12,
+              109,
+              35
+            ],
+            "SC16"
+          ],
+          [
+            468,
+            118,
+            "TF06",
+            "repeated_prefix.append",
+            [
+              118,
+              12,
+              118,
+              39
+            ],
+            "SC17"
+          ],
+          [
+            483,
+            120,
+            "TF06",
+            "confirmation_closed",
+            [
+              120,
+              56,
+              120,
+              80
+            ],
+            "SC18"
+          ],
+          [
+            542,
+            135,
+            "TF07",
+            "group.get",
+            [
+              135,
+              19,
+              135,
+              37
+            ],
+            "SC20"
+          ],
+          [
+            548,
+            136,
+            "TF07",
+            "row.pop",
+            [
+              136,
+              12,
+              136,
+              34
+            ],
+            "SC20"
+          ],
+          [
+            554,
+            137,
+            "TF07",
+            "row.pop",
+            [
+              137,
+              12,
+              137,
+              33
+            ],
+            "SC20"
+          ],
+          [
+            560,
+            138,
+            "TF07",
+            "row.pop",
+            [
+              138,
+              12,
+              138,
+              35
+            ],
+            "SC20"
+          ],
+          [
+            567,
+            139,
+            "TF07",
+            "row.get",
+            [
+              139,
+              15,
+              139,
+              42
+            ],
+            "SC20"
+          ],
+          [
+            573,
+            140,
+            "TF07",
+            "by_source.setdefault",
+            [
+              140,
+              16,
+              140,
+              67
+            ],
+            "SC20"
+          ],
+          [
+            592,
+            143,
+            "TF07",
+            "sorted",
+            [
+              143,
+              20,
+              143,
+              88
+            ],
+            "SC21"
+          ],
+          [
+            594,
+            143,
+            "TF07",
+            "by_source.values",
+            [
+              143,
+              27,
+              143,
+              45
+            ],
+            "SC21"
+          ],
+          [
+            615,
+            147,
+            "TF07",
+            "_stopall_verdicts",
+            [
+              147,
+              12,
+              147,
+              65
+            ],
+            "SC22"
+          ],
+          [
+            620,
+            148,
+            "TF07",
+            "stops.clear",
+            [
+              148,
+              12,
+              148,
+              25
+            ],
+            "SC22"
+          ],
+          [
+            649,
+            152,
+            "TF07",
+            "stops.append",
+            [
+              152,
+              12,
+              152,
+              29
+            ],
+            "SC23"
+          ],
+          [
+            654,
+            154,
+            "TF07",
+            "basic.append",
+            [
+              154,
+              12,
+              154,
+              36
+            ],
+            "SC23"
+          ],
+          [
+            661,
+            155,
+            "TF07",
+            "_basic_verdicts",
+            [
+              155,
+              4,
+              155,
+              53
+            ],
+            "SC23"
+          ],
+          [
+            667,
+            156,
+            "TF07",
+            "_stopall_verdicts",
+            [
+              156,
+              4,
+              156,
+              57
+            ],
+            "SC23"
+          ]
+        ]
+      },
+      "counts": {
+        "branches": 46,
+        "comparisons": 30,
+        "arithmetic": 10,
+        "calls": 41
+      },
+      "review_status": "DIRECT_SOURCE_CONTEXT_REVIEWED_WITH_PRIOR_CONTRACT_REFERENCES"
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "source_blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "source_line_count": 226,
+      "owner": "L01–L13",
+      "contract_refs": [
+        {
+          "id": "L01",
+          "path": "Algorithms/V3/18_Live_Bridge.md",
+          "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9"
+        },
+        {
+          "id": "L02",
+          "path": "Algorithms/V3/18_Live_Bridge.md",
+          "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9"
+        },
+        {
+          "id": "L04",
+          "path": "Algorithms/V3/23_Live_Transport_Contract.md",
+          "blob": "5de889d1775cd7a384eddc6e143b2f7ff9fa88fd"
+        },
+        {
+          "id": "L05",
+          "path": "Algorithms/V3/23_Live_Transport_Contract.md",
+          "blob": "5de889d1775cd7a384eddc6e143b2f7ff9fa88fd"
+        },
+        {
+          "id": "L08",
+          "path": "Algorithms/V3/23_Live_Transport_Contract.md",
+          "blob": "5de889d1775cd7a384eddc6e143b2f7ff9fa88fd"
+        },
+        {
+          "id": "L09",
+          "path": "Algorithms/V3/23_Live_Transport_Contract.md",
+          "blob": "5de889d1775cd7a384eddc6e143b2f7ff9fa88fd"
+        },
+        {
+          "id": "L10",
+          "path": "Algorithms/V3/23_Live_Transport_Contract.md",
+          "blob": "5de889d1775cd7a384eddc6e143b2f7ff9fa88fd"
+        },
+        {
+          "id": "L12",
+          "path": "Algorithms/V3/23_Live_Transport_Contract.md",
+          "blob": "5de889d1775cd7a384eddc6e143b2f7ff9fa88fd"
+        },
+        {
+          "id": "L13",
+          "path": "Algorithms/V3/23_Live_Transport_Contract.md",
+          "blob": "5de889d1775cd7a384eddc6e143b2f7ff9fa88fd"
+        },
+        {
+          "id": "L03",
+          "path": "Algorithms/V3/18_Live_Bridge.md",
+          "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9"
+        },
+        {
+          "id": "L06",
+          "path": "Algorithms/V3/23_Live_Transport_Contract.md",
+          "blob": "5de889d1775cd7a384eddc6e143b2f7ff9fa88fd"
+        },
+        {
+          "id": "L07",
+          "path": "Algorithms/V3/23_Live_Transport_Contract.md",
+          "blob": "5de889d1775cd7a384eddc6e143b2f7ff9fa88fd"
+        },
+        {
+          "id": "L11",
+          "path": "Algorithms/V3/23_Live_Transport_Contract.md",
+          "blob": "5de889d1775cd7a384eddc6e143b2f7ff9fa88fd"
+        }
+      ],
+      "contexts": [
+        {
+          "id": "SC01",
+          "start": 1,
+          "end": 24,
+          "kind": "N",
+          "meaning": "Imports and declaration."
+        },
+        {
+          "id": "SC02",
+          "start": 25,
+          "end": 27,
+          "kind": "N",
+          "meaning": "Require nonnull E and S enabled, otherwise reject."
+        },
+        {
+          "id": "SC03",
+          "start": 28,
+          "end": 33,
+          "kind": "T",
+          "meaning": "Require exact integer timeframe >=1; copy args, retain engines, construct fresh buckets/views."
+        },
+        {
+          "id": "SC04",
+          "start": 34,
+          "end": 38,
+          "kind": "T",
+          "meaning": "Iterate caller order from last_raw_time, convert time to int."
+        },
+        {
+          "id": "SC05",
+          "start": 39,
+          "end": 40,
+          "kind": "T",
+          "meaning": "Reject converted time numerically unequal original or <=0."
+        },
+        {
+          "id": "SC06",
+          "start": 41,
+          "end": 43,
+          "kind": "T",
+          "meaning": "Reject earlier than previous when present; equality allowed. Update local previous."
+        },
+        {
+          "id": "SC07",
+          "start": 44,
+          "end": 48,
+          "kind": "T",
+          "meaning": "No prior or new time fails; copy args and set to_time."
+        },
+        {
+          "id": "SC08",
+          "start": 49,
+          "end": 50,
+          "kind": "N",
+          "meaning": "Two direction stages if primary or both, else one."
+        },
+        {
+          "id": "SC09",
+          "start": 51,
+          "end": 56,
+          "kind": "N",
+          "meaning": "Increment stage count before progress; total direction_count+4."
+        },
+        {
+          "id": "SC10",
+          "start": 57,
+          "end": 58,
+          "kind": "N",
+          "meaning": "Start progress outside protected transaction."
+        },
+        {
+          "id": "SC11",
+          "start": 59,
+          "end": 65,
+          "kind": "T",
+          "meaning": "Stage bucket transaction, calculate from buckets with retained views/delta; report ready inside; context must succeed."
+        },
+        {
+          "id": "SC12",
+          "start": 66,
+          "end": 70,
+          "kind": "T",
+          "meaning": "Any BaseException from protected block discards views and reraises; transaction owner rollback. Prevalidation/progress outside catch."
+        },
+        {
+          "id": "SC13",
+          "start": 71,
+          "end": 80,
+          "kind": "N",
+          "meaning": "Declare distinct transport errors."
+        },
+        {
+          "id": "SC14",
+          "start": 81,
+          "end": 85,
+          "kind": "N",
+          "meaning": "Decode JSON parse_float Decimal; require nonempty list; native decode errors."
+        },
+        {
+          "id": "SC15",
+          "start": 86,
+          "end": 93,
+          "kind": "T",
+          "meaning": "Lower bound selected first time in original by row time; end=start+selected length."
+        },
+        {
+          "id": "SC16",
+          "start": 94,
+          "end": 98,
+          "kind": "T",
+          "meaning": "If selected not same object and unequal original slice reject. Store catchup suffix, original last time and remember bytes."
+        },
+        {
+          "id": "SC17",
+          "start": 99,
+          "end": 106,
+          "kind": "T",
+          "meaning": "Last closing bracket index, prefix SHA-256, ending bytes and full digest. No normalization or independent missing-bracket check."
+        },
+        {
+          "id": "SC18",
+          "start": 107,
+          "end": 112,
+          "kind": "N",
+          "meaning": "Copy hash, append ending, return digest without mutating input."
+        },
+        {
+          "id": "SC19",
+          "start": 113,
+          "end": 116,
+          "kind": "T",
+          "meaning": "Reject wrong base or absent leading comma before calculation."
+        },
+        {
+          "id": "SC20",
+          "start": 117,
+          "end": 121,
+          "kind": "T",
+          "meaning": "Clone prefix hash, update delta; reconstructed full digest mismatch recoverable delta error."
+        },
+        {
+          "id": "SC21",
+          "start": 122,
+          "end": 127,
+          "kind": "T",
+          "meaning": "Decode nonempty delta array, append rows, then advance byte end/digest/prefix; old ending retained."
+        },
+        {
+          "id": "SC22",
+          "start": 128,
+          "end": 131,
+          "kind": "T",
+          "meaning": "Require full length > prefix end and exact prefix digest. Length check first; failure RAW_CHANGED."
+        },
+        {
+          "id": "SC23",
+          "start": 132,
+          "end": 138,
+          "kind": "T",
+          "meaning": "Left-strip tail: comma decode appended rows, else closing bracket after right-strip empty append, else reject."
+        },
+        {
+          "id": "SC24",
+          "start": 139,
+          "end": 145,
+          "kind": "T",
+          "meaning": "Append even empty. After success new rows rebuild prefix; otherwise changed ending updates ending and digest only."
+        },
+        {
+          "id": "SC25",
+          "start": 146,
+          "end": 152,
+          "kind": "T",
+          "meaning": "Each new time strictly > original last or preceding supplied time, without conversion; equality rejected here."
+        },
+        {
+          "id": "SC26",
+          "start": 153,
+          "end": 156,
+          "kind": "T",
+          "meaning": "Append catchup then new; only success clears catchup and advances last time."
+        },
+        {
+          "id": "SC27",
+          "start": 157,
+          "end": 160,
+          "kind": "N",
+          "meaning": "Compact JSON line flush; fields may override type, errors propagate."
+        },
+        {
+          "id": "SC28",
+          "start": 161,
+          "end": 165,
+          "kind": "N",
+          "meaning": "Forward progress if started or completedStages exists; status lookup first."
+        },
+        {
+          "id": "SC29",
+          "start": 166,
+          "end": 174,
+          "kind": "T",
+          "meaning": "Protected entry loads args, original path, selected bytes/rows."
+        },
+        {
+          "id": "SC30",
+          "start": 175,
+          "end": 178,
+          "kind": "T",
+          "meaning": "Equal paths reuse bytes/object, else independent read/decode. Bind lineage before releasing local inputs."
+        },
+        {
+          "id": "SC31",
+          "start": 179,
+          "end": 181,
+          "kind": "T",
+          "meaning": "Load engines and seed continuation; emit ready only after successful append."
+        },
+        {
+          "id": "SC32",
+          "start": 182,
+          "end": 186,
+          "kind": "T",
+          "meaning": "Read <=256 byte header, bind each truthy header; EOF exits, no newline rejects."
+        },
+        {
+          "id": "SC33",
+          "start": 187,
+          "end": 192,
+          "kind": "N",
+          "meaning": "Parse header, require exact positive int size, string digest length64; no hex check."
+        },
+        {
+          "id": "SC34",
+          "start": 193,
+          "end": 195,
+          "kind": "N",
+          "meaning": "Read declared size, mismatch rejects."
+        },
+        {
+          "id": "SC35",
+          "start": 196,
+          "end": 197,
+          "kind": "N",
+          "meaning": "Exact Boolean true chooses progress sink, else no-op; context controls restoration."
+        },
+        {
+          "id": "SC36",
+          "start": 198,
+          "end": 204,
+          "kind": "T",
+          "meaning": "Nonnull base selects delta, mismatch sends RAW_DELTA_MISMATCH and continues unchanged."
+        },
+        {
+          "id": "SC37",
+          "start": 205,
+          "end": 208,
+          "kind": "T",
+          "meaning": "No base: bad full SHA sends RAW_RETRY and continues without calculation."
+        },
+        {
+          "id": "SC38",
+          "start": 209,
+          "end": 212,
+          "kind": "T",
+          "meaning": "Verified full append; after progress context succeeds emit update, release locals."
+        },
+        {
+          "id": "SC39",
+          "start": 213,
+          "end": 215,
+          "kind": "T",
+          "meaning": "Outer LiveRawChanged sends RAW_CHANGED and exit1."
+        },
+        {
+          "id": "SC40",
+          "start": 216,
+          "end": 221,
+          "kind": "N",
+          "meaning": "Ordinary Exception diagnostic and LIVE_ENGINE_FAILED exit1; other BaseException not caught. EOF exit0; IO failures may propagate."
+        },
+        {
+          "id": "SC41",
+          "start": 222,
+          "end": 226,
+          "kind": "N",
+          "meaning": "Exact __main__ executes and exits with return code."
+        }
+      ],
+      "site_dispositions": {
+        "branches": [
+          [
+            38,
+            26,
+            "L01",
+            "If",
+            [
+              26,
+              8,
+              27,
+              87
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC02"
+          ],
+          [
+            39,
+            26,
+            "L01",
+            "BoolOp",
+            [
+              26,
+              11,
+              26,
+              62
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC02"
+          ],
+          [
+            52,
+            28,
+            "L01",
+            "If",
+            [
+              28,
+              8,
+              29,
+              92
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC03"
+          ],
+          [
+            53,
+            28,
+            "L01",
+            "BoolOp",
+            [
+              28,
+              11,
+              28,
+              64
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC03"
+          ],
+          [
+            101,
+            37,
+            "L02",
+            "For",
+            [
+              37,
+              8,
+              43,
+              38
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC04"
+          ],
+          [
+            111,
+            39,
+            "L02",
+            "If",
+            [
+              39,
+              12,
+              40,
+              77
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC05"
+          ],
+          [
+            112,
+            39,
+            "L02",
+            "BoolOp",
+            [
+              39,
+              15,
+              39,
+              59
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC05"
+          ],
+          [
+            125,
+            41,
+            "L02",
+            "If",
+            [
+              41,
+              12,
+              42,
+              85
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC06"
+          ],
+          [
+            126,
+            41,
+            "L02",
+            "BoolOp",
+            [
+              41,
+              15,
+              41,
+              71
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC06"
+          ],
+          [
+            140,
+            44,
+            "L02",
+            "If",
+            [
+              44,
+              8,
+              45,
+              81
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC07"
+          ],
+          [
+            160,
+            49,
+            "L02",
+            "IfExp",
+            [
+              49,
+              26,
+              49,
+              98
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC08"
+          ],
+          [
+            161,
+            49,
+            "L02",
+            "BoolOp",
+            [
+              49,
+              31,
+              49,
+              91
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC08"
+          ],
+          [
+            202,
+            59,
+            "L02",
+            "Try",
+            [
+              59,
+              8,
+              69,
+              17
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC11"
+          ],
+          [
+            203,
+            60,
+            "L02",
+            "With",
+            [
+              60,
+              12,
+              65,
+              70
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC11"
+          ],
+          [
+            230,
+            66,
+            "L02",
+            "ExceptHandler",
+            [
+              66,
+              8,
+              69,
+              17
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC12"
+          ],
+          [
+            263,
+            83,
+            "L04",
+            "If",
+            [
+              83,
+              4,
+              84,
+              73
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC14"
+          ],
+          [
+            264,
+            83,
+            "L04",
+            "BoolOp",
+            [
+              83,
+              7,
+              83,
+              45
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC14"
+          ],
+          [
+            309,
+            94,
+            "L05",
+            "If",
+            [
+              94,
+              8,
+              95,
+              112
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC16"
+          ],
+          [
+            310,
+            94,
+            "L05",
+            "BoolOp",
+            [
+              94,
+              11,
+              94,
+              71
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC16"
+          ],
+          [
+            411,
+            115,
+            "L08",
+            "If",
+            [
+              115,
+              8,
+              116,
+              38
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC19"
+          ],
+          [
+            412,
+            115,
+            "L08",
+            "BoolOp",
+            [
+              115,
+              11,
+              115,
+              71
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC19"
+          ],
+          [
+            435,
+            119,
+            "L08",
+            "If",
+            [
+              119,
+              8,
+              120,
+              38
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC20"
+          ],
+          [
+            485,
+            130,
+            "L09",
+            "If",
+            [
+              130,
+              8,
+              131,
+              82
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC22"
+          ],
+          [
+            486,
+            130,
+            "L09",
+            "BoolOp",
+            [
+              130,
+              11,
+              130,
+              120
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC22"
+          ],
+          [
+            523,
+            133,
+            "L09",
+            "If",
+            [
+              133,
+              8,
+              138,
+              112
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC23"
+          ],
+          [
+            538,
+            135,
+            "L09",
+            "If",
+            [
+              135,
+              8,
+              138,
+              112
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC23"
+          ],
+          [
+            558,
+            140,
+            "L09",
+            "If",
+            [
+              140,
+              8,
+              144,
+              81
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC24"
+          ],
+          [
+            565,
+            142,
+            "L09",
+            "If",
+            [
+              142,
+              8,
+              144,
+              81
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC24"
+          ],
+          [
+            602,
+            149,
+            "L10",
+            "For",
+            [
+              149,
+              8,
+              152,
+              34
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC25"
+          ],
+          [
+            605,
+            150,
+            "L10",
+            "If",
+            [
+              150,
+              12,
+              151,
+              107
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC25"
+          ],
+          [
+            660,
+            164,
+            "L12",
+            "If",
+            [
+              164,
+              4,
+              165,
+              53
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC28"
+          ],
+          [
+            661,
+            164,
+            "L12",
+            "BoolOp",
+            [
+              164,
+              7,
+              164,
+              65
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC28"
+          ],
+          [
+            679,
+            170,
+            "L13",
+            "Try",
+            [
+              170,
+              4,
+              220,
+              16
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC29"
+          ],
+          [
+            705,
+            175,
+            "L13",
+            "IfExp",
+            [
+              175,
+              24,
+              175,
+              99
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC30"
+          ],
+          [
+            716,
+            176,
+            "L13",
+            "IfExp",
+            [
+              176,
+              19,
+              176,
+              89
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC30"
+          ],
+          [
+            763,
+            184,
+            "L13",
+            "While",
+            [
+              184,
+              8,
+              212,
+              28
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC32"
+          ],
+          [
+            764,
+            184,
+            "L13",
+            "NamedExpr",
+            [
+              184,
+              14,
+              184,
+              42
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC32"
+          ],
+          [
+            770,
+            185,
+            "L13",
+            "If",
+            [
+              185,
+              12,
+              186,
+              67
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC32"
+          ],
+          [
+            804,
+            191,
+            "L13",
+            "If",
+            [
+              191,
+              12,
+              192,
+              67
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC33"
+          ],
+          [
+            805,
+            191,
+            "L13",
+            "BoolOp",
+            [
+              191,
+              15,
+              191,
+              101
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC33"
+          ],
+          [
+            834,
+            194,
+            "L13",
+            "If",
+            [
+              194,
+              12,
+              195,
+              63
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC34"
+          ],
+          [
+            846,
+            196,
+            "L13",
+            "IfExp",
+            [
+              196,
+              19,
+              196,
+              102
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC35"
+          ],
+          [
+            857,
+            197,
+            "L13",
+            "With",
+            [
+              197,
+              12,
+              210,
+              59
+            ],
+            "DIRECT_LEXICAL_SIGNAL_REVIEW_REQUIRED",
+            "SC35"
+          ],
+          [
+            861,
+            198,
+            "L13",
+            "If",
+            [
+              198,
+              16,
+              210,
+              59
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC36"
+          ],
+          [
+            865,
+            199,
+            "L13",
+            "Try",
+            [
+              199,
+              20,
+              204,
+              32
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC36"
+          ],
+          [
+            875,
+            201,
+            "L13",
+            "ExceptHandler",
+            [
+              201,
+              20,
+              204,
+              32
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC36"
+          ],
+          [
+            886,
+            205,
+            "L13",
+            "If",
+            [
+              205,
+              16,
+              210,
+              59
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC37"
+          ],
+          [
+            920,
+            213,
+            "L13",
+            "ExceptHandler",
+            [
+              213,
+              4,
+              215,
+              16
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC39"
+          ],
+          [
+            934,
+            216,
+            "L13",
+            "ExceptHandler",
+            [
+              216,
+              4,
+              220,
+              16
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC40"
+          ],
+          [
+            960,
+            224,
+            null,
+            "If",
+            [
+              224,
+              0,
+              225,
+              20
+            ],
+            "NO_DIRECT_SIGNAL_INDIRECT_DEPENDENCY_NOT_EXCLUDED",
+            "SC41"
+          ]
+        ],
+        "comparisons": [
+          [
+            40,
+            26,
+            "L01",
+            [
+              "Is"
+            ],
+            [
+              26,
+              11,
+              26,
+              33
+            ],
+            "SC02"
+          ],
+          [
+            44,
+            26,
+            "L01",
+            [
+              "NotEq"
+            ],
+            [
+              26,
+              37,
+              26,
+              62
+            ],
+            "SC02"
+          ],
+          [
+            54,
+            28,
+            "L01",
+            [
+              "IsNot"
+            ],
+            [
+              28,
+              11,
+              28,
+              42
+            ],
+            "SC03"
+          ],
+          [
+            60,
+            28,
+            "L01",
+            [
+              "Lt"
+            ],
+            [
+              28,
+              46,
+              28,
+              64
+            ],
+            "SC03"
+          ],
+          [
+            113,
+            39,
+            "L02",
+            [
+              "NotEq"
+            ],
+            [
+              39,
+              15,
+              39,
+              40
+            ],
+            "SC05"
+          ],
+          [
+            118,
+            39,
+            "L02",
+            [
+              "LtE"
+            ],
+            [
+              39,
+              44,
+              39,
+              59
+            ],
+            "SC05"
+          ],
+          [
+            127,
+            41,
+            "L02",
+            [
+              "IsNot"
+            ],
+            [
+              41,
+              15,
+              41,
+              40
+            ],
+            "SC06"
+          ],
+          [
+            130,
+            41,
+            "L02",
+            [
+              "Lt"
+            ],
+            [
+              41,
+              45,
+              41,
+              71
+            ],
+            "SC06"
+          ],
+          [
+            141,
+            44,
+            "L02",
+            [
+              "Is"
+            ],
+            [
+              44,
+              11,
+              44,
+              32
+            ],
+            "SC07"
+          ],
+          [
+            162,
+            49,
+            "L02",
+            [
+              "IsNot"
+            ],
+            [
+              49,
+              31,
+              49,
+              63
+            ],
+            "SC08"
+          ],
+          [
+            167,
+            49,
+            "L02",
+            [
+              "Eq"
+            ],
+            [
+              49,
+              67,
+              49,
+              91
+            ],
+            "SC08"
+          ],
+          [
+            311,
+            94,
+            "L05",
+            [
+              "IsNot"
+            ],
+            [
+              94,
+              11,
+              94,
+              35
+            ],
+            "SC16"
+          ],
+          [
+            314,
+            94,
+            "L05",
+            [
+              "NotEq"
+            ],
+            [
+              94,
+              40,
+              94,
+              71
+            ],
+            "SC16"
+          ],
+          [
+            413,
+            115,
+            "L08",
+            [
+              "NotEq"
+            ],
+            [
+              115,
+              11,
+              115,
+              42
+            ],
+            "SC19"
+          ],
+          [
+            436,
+            119,
+            "L08",
+            [
+              "NotEq"
+            ],
+            [
+              119,
+              11,
+              119,
+              64
+            ],
+            "SC20"
+          ],
+          [
+            487,
+            130,
+            "L09",
+            [
+              "LtE"
+            ],
+            [
+              130,
+              11,
+              130,
+              33
+            ],
+            "SC22"
+          ],
+          [
+            493,
+            130,
+            "L09",
+            [
+              "NotEq"
+            ],
+            [
+              130,
+              37,
+              130,
+              120
+            ],
+            "SC22"
+          ],
+          [
+            539,
+            135,
+            "L09",
+            [
+              "Eq"
+            ],
+            [
+              135,
+              13,
+              135,
+              34
+            ],
+            "SC23"
+          ],
+          [
+            566,
+            142,
+            "L09",
+            [
+              "NotEq"
+            ],
+            [
+              142,
+              13,
+              142,
+              45
+            ],
+            "SC24"
+          ],
+          [
+            606,
+            150,
+            "L10",
+            [
+              "LtE"
+            ],
+            [
+              150,
+              15,
+              150,
+              38
+            ],
+            "SC25"
+          ],
+          [
+            662,
+            164,
+            "L12",
+            [
+              "Eq"
+            ],
+            [
+              164,
+              7,
+              164,
+              35
+            ],
+            "SC28"
+          ],
+          [
+            667,
+            164,
+            "L12",
+            [
+              "In"
+            ],
+            [
+              164,
+              39,
+              164,
+              65
+            ],
+            "SC28"
+          ],
+          [
+            706,
+            175,
+            "L13",
+            [
+              "Eq"
+            ],
+            [
+              175,
+              41,
+              175,
+              67
+            ],
+            "SC30"
+          ],
+          [
+            717,
+            176,
+            "L13",
+            [
+              "Eq"
+            ],
+            [
+              176,
+              31,
+              176,
+              57
+            ],
+            "SC30"
+          ],
+          [
+            806,
+            191,
+            "L13",
+            [
+              "IsNot"
+            ],
+            [
+              191,
+              15,
+              191,
+              36
+            ],
+            "SC33"
+          ],
+          [
+            811,
+            191,
+            "L13",
+            [
+              "LtE"
+            ],
+            [
+              191,
+              40,
+              191,
+              49
+            ],
+            "SC33"
+          ],
+          [
+            819,
+            191,
+            "L13",
+            [
+              "NotEq"
+            ],
+            [
+              191,
+              84,
+              191,
+              101
+            ],
+            "SC33"
+          ],
+          [
+            835,
+            194,
+            "L13",
+            [
+              "NotEq"
+            ],
+            [
+              194,
+              15,
+              194,
+              31
+            ],
+            "SC34"
+          ],
+          [
+            847,
+            196,
+            "L13",
+            [
+              "Is"
+            ],
+            [
+              196,
+              46,
+              196,
+              77
+            ],
+            "SC35"
+          ],
+          [
+            862,
+            198,
+            "L13",
+            [
+              "IsNot"
+            ],
+            [
+              198,
+              19,
+              198,
+              42
+            ],
+            "SC36"
+          ],
+          [
+            887,
+            205,
+            "L13",
+            [
+              "NotEq"
+            ],
+            [
+              205,
+              21,
+              205,
+              62
+            ],
+            "SC37"
+          ],
+          [
+            961,
+            224,
+            null,
+            [
+              "Eq"
+            ],
+            [
+              224,
+              3,
+              224,
+              25
+            ],
+            "SC41"
+          ]
+        ],
+        "arithmetic": [
+          [
+            179,
+            54,
+            "L03",
+            "Add",
+            [
+              54,
+              12,
+              54,
+              33
+            ],
+            "SC09"
+          ],
+          [
+            192,
+            56,
+            "L03",
+            "Add",
+            [
+              56,
+              38,
+              56,
+              57
+            ],
+            "SC09"
+          ],
+          [
+            265,
+            83,
+            "L04",
+            "Not",
+            [
+              83,
+              7,
+              83,
+              33
+            ],
+            "SC14"
+          ],
+          [
+            270,
+            83,
+            "L04",
+            "Not",
+            [
+              83,
+              37,
+              83,
+              45
+            ],
+            "SC14"
+          ],
+          [
+            304,
+            93,
+            "L05",
+            "Add",
+            [
+              93,
+              14,
+              93,
+              35
+            ],
+            "SC15"
+          ],
+          [
+            338,
+            97,
+            "L05",
+            "USub",
+            [
+              97,
+              35,
+              97,
+              37
+            ],
+            "SC16"
+          ],
+          [
+            417,
+            115,
+            "L08",
+            "Not",
+            [
+              115,
+              46,
+              115,
+              71
+            ],
+            "SC19"
+          ],
+          [
+            450,
+            122,
+            "L08",
+            "Add",
+            [
+              122,
+              31,
+              122,
+              53
+            ],
+            "SC21"
+          ],
+          [
+            451,
+            122,
+            "L08",
+            "Add",
+            [
+              122,
+              31,
+              122,
+              46
+            ],
+            "SC21"
+          ],
+          [
+            465,
+            124,
+            "L08",
+            "Add",
+            [
+              124,
+              8,
+              124,
+              30
+            ],
+            "SC21"
+          ],
+          [
+            532,
+            134,
+            "L09",
+            "Add",
+            [
+              134,
+              35,
+              134,
+              50
+            ],
+            "SC23"
+          ],
+          [
+            625,
+            153,
+            "L10",
+            "Add",
+            [
+              153,
+              33,
+              153,
+              57
+            ],
+            "SC26"
+          ],
+          [
+            771,
+            185,
+            "L13",
+            "Not",
+            [
+              185,
+              15,
+              185,
+              41
+            ],
+            "SC32"
+          ],
+          [
+            814,
+            191,
+            "L13",
+            "Not",
+            [
+              191,
+              53,
+              191,
+              80
+            ],
+            "SC33"
+          ]
+        ],
+        "calls": [
+          [
+            49,
+            27,
+            "L01",
+            "ValueError",
+            [
+              27,
+              18,
+              27,
+              87
+            ],
+            "SC02"
+          ],
+          [
+            55,
+            28,
+            "L01",
+            "type",
+            [
+              28,
+              11,
+              28,
+              31
+            ],
+            "SC03"
+          ],
+          [
+            65,
+            29,
+            "L01",
+            "ValueError",
+            [
+              29,
+              18,
+              29,
+              92
+            ],
+            "SC03"
+          ],
+          [
+            71,
+            30,
+            "L01",
+            "copy",
+            [
+              30,
+              20,
+              30,
+              30
+            ],
+            "SC03"
+          ],
+          [
+            81,
+            32,
+            "L01",
+            "LiveMarketBuckets",
+            [
+              32,
+              24,
+              32,
+              57
+            ],
+            "SC03"
+          ],
+          [
+            88,
+            33,
+            "L01",
+            "LiveMarketViews",
+            [
+              33,
+              29,
+              33,
+              46
+            ],
+            "SC03"
+          ],
+          [
+            106,
+            38,
+            "L02",
+            "int",
+            [
+              38,
+              25,
+              38,
+              41
+            ],
+            "SC04"
+          ],
+          [
+            122,
+            40,
+            "L02",
+            "ValueError",
+            [
+              40,
+              22,
+              40,
+              77
+            ],
+            "SC05"
+          ],
+          [
+            134,
+            42,
+            "L02",
+            "ValueError",
+            [
+              42,
+              22,
+              42,
+              85
+            ],
+            "SC06"
+          ],
+          [
+            145,
+            45,
+            "L02",
+            "ValueError",
+            [
+              45,
+              18,
+              45,
+              81
+            ],
+            "SC07"
+          ],
+          [
+            150,
+            47,
+            "L02",
+            "copy",
+            [
+              47,
+              15,
+              47,
+              30
+            ],
+            "SC07"
+          ],
+          [
+            183,
+            55,
+            "L03",
+            "emit_progress",
+            [
+              55,
+              12,
+              56,
+              58
+            ],
+            "SC09"
+          ],
+          [
+            196,
+            58,
+            "L02",
+            "emit_progress",
+            [
+              58,
+              8,
+              58,
+              83
+            ],
+            "SC10"
+          ],
+          [
+            204,
+            60,
+            "L02",
+            "self._buckets.stage_append",
+            [
+              60,
+              17,
+              60,
+              49
+            ],
+            "SC11"
+          ],
+          [
+            212,
+            61,
+            "L02",
+            "calculate_live_from_buckets",
+            [
+              61,
+              26,
+              64,
+              17
+            ],
+            "SC11"
+          ],
+          [
+            227,
+            65,
+            "L02",
+            "report_stage",
+            [
+              65,
+              16,
+              65,
+              70
+            ],
+            "SC11"
+          ],
+          [
+            235,
+            68,
+            "L02",
+            "LiveMarketViews",
+            [
+              68,
+              33,
+              68,
+              50
+            ],
+            "SC12"
+          ],
+          [
+            257,
+            82,
+            "L04",
+            "json.loads",
+            [
+              82,
+              11,
+              82,
+              48
+            ],
+            "SC14"
+          ],
+          [
+            266,
+            83,
+            "L04",
+            "isinstance",
+            [
+              83,
+              11,
+              83,
+              33
+            ],
+            "SC14"
+          ],
+          [
+            273,
+            84,
+            "L04",
+            "LiveRawChanged",
+            [
+              84,
+              14,
+              84,
+              73
+            ],
+            "SC14"
+          ],
+          [
+            288,
+            92,
+            "L05",
+            "bisect_left",
+            [
+              92,
+              16,
+              92,
+              89
+            ],
+            "SC15"
+          ],
+          [
+            306,
+            93,
+            "L05",
+            "len",
+            [
+              93,
+              22,
+              93,
+              35
+            ],
+            "SC15"
+          ],
+          [
+            322,
+            95,
+            "L05",
+            "LiveRawChanged",
+            [
+              95,
+              18,
+              95,
+              112
+            ],
+            "SC16"
+          ],
+          [
+            342,
+            98,
+            "L05",
+            "self._remember_prefix",
+            [
+              98,
+              8,
+              98,
+              35
+            ],
+            "SC16"
+          ],
+          [
+            352,
+            103,
+            "L06",
+            "data.rfind",
+            [
+              103,
+              20,
+              103,
+              36
+            ],
+            "SC17"
+          ],
+          [
+            359,
+            104,
+            "L06",
+            "hashlib.sha256",
+            [
+              104,
+              28,
+              104,
+              72
+            ],
+            "SC17"
+          ],
+          [
+            363,
+            104,
+            "L06",
+            "memoryview",
+            [
+              104,
+              43,
+              104,
+              59
+            ],
+            "SC17"
+          ],
+          [
+            380,
+            106,
+            "L06",
+            "self._file_digest",
+            [
+              106,
+              27,
+              106,
+              77
+            ],
+            "SC17"
+          ],
+          [
+            392,
+            110,
+            "L07",
+            "prefix_hash.copy",
+            [
+              110,
+              17,
+              110,
+              35
+            ],
+            "SC18"
+          ],
+          [
+            396,
+            111,
+            "L07",
+            "digest.update",
+            [
+              111,
+              8,
+              111,
+              29
+            ],
+            "SC18"
+          ],
+          [
+            401,
+            112,
+            "L07",
+            "digest.hexdigest",
+            [
+              112,
+              15,
+              112,
+              33
+            ],
+            "SC18"
+          ],
+          [
+            418,
+            115,
+            "L08",
+            "data.startswith",
+            [
+              115,
+              50,
+              115,
+              71
+            ],
+            "SC19"
+          ],
+          [
+            426,
+            117,
+            "L08",
+            "self._prefix_hash.copy",
+            [
+              117,
+              17,
+              117,
+              41
+            ],
+            "SC20"
+          ],
+          [
+            431,
+            118,
+            "L08",
+            "prefix.update",
+            [
+              118,
+              8,
+              118,
+              27
+            ],
+            "SC20"
+          ],
+          [
+            437,
+            119,
+            "L08",
+            "self._file_digest",
+            [
+              119,
+              11,
+              119,
+              50
+            ],
+            "SC20"
+          ],
+          [
+            448,
+            122,
+            "L08",
+            "_decode_raw",
+            [
+              122,
+              19,
+              122,
+              54
+            ],
+            "SC21"
+          ],
+          [
+            460,
+            123,
+            "L08",
+            "self._append_rows",
+            [
+              123,
+              17,
+              123,
+              54
+            ],
+            "SC21"
+          ],
+          [
+            468,
+            124,
+            "L08",
+            "len",
+            [
+              124,
+              21,
+              124,
+              30
+            ],
+            "SC21"
+          ],
+          [
+            488,
+            130,
+            "L09",
+            "len",
+            [
+              130,
+              11,
+              130,
+              20
+            ],
+            "SC22"
+          ],
+          [
+            494,
+            130,
+            "L09",
+            "hashlib.sha256().digest",
+            [
+              130,
+              37,
+              130,
+              90
+            ],
+            "SC22"
+          ],
+          [
+            496,
+            130,
+            "L09",
+            "hashlib.sha256",
+            [
+              130,
+              37,
+              130,
+              81
+            ],
+            "SC22"
+          ],
+          [
+            500,
+            130,
+            "L09",
+            "memoryview",
+            [
+              130,
+              52,
+              130,
+              68
+            ],
+            "SC22"
+          ],
+          [
+            506,
+            130,
+            "L09",
+            "self._prefix_hash.digest",
+            [
+              130,
+              94,
+              130,
+              120
+            ],
+            "SC22"
+          ],
+          [
+            511,
+            131,
+            "L09",
+            "LiveRawChanged",
+            [
+              131,
+              18,
+              131,
+              82
+            ],
+            "SC22"
+          ],
+          [
+            516,
+            132,
+            "L09",
+            "data[].lstrip",
+            [
+              132,
+              15,
+              132,
+              40
+            ],
+            "SC23"
+          ],
+          [
+            524,
+            133,
+            "L09",
+            "tail.startswith",
+            [
+              133,
+              11,
+              133,
+              32
+            ],
+            "SC23"
+          ],
+          [
+            530,
+            134,
+            "L09",
+            "_decode_raw",
+            [
+              134,
+              23,
+              134,
+              51
+            ],
+            "SC23"
+          ],
+          [
+            540,
+            135,
+            "L09",
+            "tail.rstrip",
+            [
+              135,
+              13,
+              135,
+              26
+            ],
+            "SC23"
+          ],
+          [
+            548,
+            138,
+            "L09",
+            "LiveRawChanged",
+            [
+              138,
+              18,
+              138,
+              112
+            ],
+            "SC23"
+          ],
+          [
+            553,
+            139,
+            "L09",
+            "self._append_rows",
+            [
+              139,
+              17,
+              139,
+              54
+            ],
+            "SC24"
+          ],
+          [
+            561,
+            141,
+            "L09",
+            "self._remember_prefix",
+            [
+              141,
+              12,
+              141,
+              39
+            ],
+            "SC24"
+          ],
+          [
+            585,
+            144,
+            "L09",
+            "self._file_digest",
+            [
+              144,
+              31,
+              144,
+              81
+            ],
+            "SC24"
+          ],
+          [
+            612,
+            151,
+            "L10",
+            "LiveRawChanged",
+            [
+              151,
+              22,
+              151,
+              107
+            ],
+            "SC25"
+          ],
+          [
+            622,
+            153,
+            "L10",
+            "pipeline.append",
+            [
+              153,
+              17,
+              153,
+              58
+            ],
+            "SC26"
+          ],
+          [
+            643,
+            160,
+            "L11",
+            "print",
+            [
+              160,
+              4,
+              160,
+              82
+            ],
+            "SC27"
+          ],
+          [
+            645,
+            160,
+            "L11",
+            "json.dumps",
+            [
+              160,
+              10,
+              160,
+              69
+            ],
+            "SC27"
+          ],
+          [
+            671,
+            165,
+            "L12",
+            "_send_worker_message",
+            [
+              165,
+              8,
+              165,
+              53
+            ],
+            "SC28"
+          ],
+          [
+            682,
+            171,
+            "L13",
+            "parse_arguments",
+            [
+              171,
+              15,
+              171,
+              32
+            ],
+            "SC29"
+          ],
+          [
+            686,
+            172,
+            "L13",
+            "Path",
+            [
+              172,
+              24,
+              172,
+              70
+            ],
+            "SC29"
+          ],
+          [
+            694,
+            173,
+            "L13",
+            "args.data.read_bytes",
+            [
+              173,
+              24,
+              173,
+              46
+            ],
+            "SC29"
+          ],
+          [
+            700,
+            174,
+            "L13",
+            "_decode_raw",
+            [
+              174,
+              19,
+              174,
+              45
+            ],
+            "SC29"
+          ],
+          [
+            711,
+            175,
+            "L13",
+            "original_path.read_bytes",
+            [
+              175,
+              73,
+              175,
+              99
+            ],
+            "SC30"
+          ],
+          [
+            722,
+            176,
+            "L13",
+            "_decode_raw",
+            [
+              176,
+              63,
+              176,
+              89
+            ],
+            "SC30"
+          ],
+          [
+            727,
+            177,
+            "L13",
+            "LiveRawSource",
+            [
+              177,
+              18,
+              177,
+              66
+            ],
+            "SC30"
+          ],
+          [
+            738,
+            179,
+            "L13",
+            "LivePipelineContinuation",
+            [
+              179,
+              19,
+              179,
+              73
+            ],
+            "SC31"
+          ],
+          [
+            741,
+            179,
+            "L13",
+            "load_engines",
+            [
+              179,
+              50,
+              179,
+              72
+            ],
+            "SC31"
+          ],
+          [
+            746,
+            180,
+            "L13",
+            "_send_worker_message",
+            [
+              180,
+              8,
+              180,
+              83
+            ],
+            "SC31"
+          ],
+          [
+            752,
+            180,
+            "L13",
+            "pipeline.append",
+            [
+              180,
+              57,
+              180,
+              82
+            ],
+            "SC31"
+          ],
+          [
+            766,
+            184,
+            "L13",
+            "pipe.readline",
+            [
+              184,
+              24,
+              184,
+              42
+            ],
+            "SC32"
+          ],
+          [
+            772,
+            185,
+            "L13",
+            "header.endswith",
+            [
+              185,
+              19,
+              185,
+              41
+            ],
+            "SC32"
+          ],
+          [
+            777,
+            186,
+            "L13",
+            "ValueError",
+            [
+              186,
+              22,
+              186,
+              67
+            ],
+            "SC32"
+          ],
+          [
+            782,
+            187,
+            "L13",
+            "json.loads",
+            [
+              187,
+              22,
+              187,
+              40
+            ],
+            "SC33"
+          ],
+          [
+            788,
+            188,
+            "L13",
+            "request.get",
+            [
+              188,
+              19,
+              188,
+              39
+            ],
+            "SC33"
+          ],
+          [
+            794,
+            189,
+            "L13",
+            "request.get",
+            [
+              189,
+              21,
+              189,
+              42
+            ],
+            "SC33"
+          ],
+          [
+            800,
+            190,
+            "L13",
+            "request.get",
+            [
+              190,
+              26,
+              190,
+              51
+            ],
+            "SC33"
+          ],
+          [
+            807,
+            191,
+            "L13",
+            "type",
+            [
+              191,
+              15,
+              191,
+              25
+            ],
+            "SC33"
+          ],
+          [
+            815,
+            191,
+            "L13",
+            "isinstance",
+            [
+              191,
+              57,
+              191,
+              80
+            ],
+            "SC33"
+          ],
+          [
+            820,
+            191,
+            "L13",
+            "len",
+            [
+              191,
+              84,
+              191,
+              95
+            ],
+            "SC33"
+          ],
+          [
+            825,
+            192,
+            "L13",
+            "ValueError",
+            [
+              192,
+              22,
+              192,
+              67
+            ],
+            "SC33"
+          ],
+          [
+            830,
+            193,
+            "L13",
+            "pipe.read",
+            [
+              193,
+              18,
+              193,
+              33
+            ],
+            "SC34"
+          ],
+          [
+            836,
+            194,
+            "L13",
+            "len",
+            [
+              194,
+              15,
+              194,
+              23
+            ],
+            "SC34"
+          ],
+          [
+            841,
+            195,
+            "L13",
+            "ValueError",
+            [
+              195,
+              22,
+              195,
+              63
+            ],
+            "SC34"
+          ],
+          [
+            848,
+            196,
+            "L13",
+            "request.get",
+            [
+              196,
+              46,
+              196,
+              69
+            ],
+            "SC35"
+          ],
+          [
+            858,
+            197,
+            "L13",
+            "progress_events_to",
+            [
+              197,
+              17,
+              197,
+              41
+            ],
+            "SC35"
+          ],
+          [
+            868,
+            200,
+            "L13",
+            "lineage.append_delta",
+            [
+              200,
+              34,
+              200,
+              90
+            ],
+            "SC36"
+          ],
+          [
+            878,
+            202,
+            "L13",
+            "_send_worker_message",
+            [
+              202,
+              24,
+              203,
+              121
+            ],
+            "SC36"
+          ],
+          [
+            888,
+            205,
+            "L13",
+            "hashlib.sha256().hexdigest",
+            [
+              205,
+              21,
+              205,
+              52
+            ],
+            "SC37"
+          ],
+          [
+            890,
+            205,
+            "L13",
+            "hashlib.sha256",
+            [
+              205,
+              21,
+              205,
+              40
+            ],
+            "SC37"
+          ],
+          [
+            896,
+            206,
+            "L13",
+            "_send_worker_message",
+            [
+              206,
+              20,
+              207,
+              120
+            ],
+            "SC37"
+          ],
+          [
+            906,
+            210,
+            "L13",
+            "lineage.append",
+            [
+              210,
+              30,
+              210,
+              59
+            ],
+            "SC38"
+          ],
+          [
+            912,
+            211,
+            "L13",
+            "_send_worker_message",
+            [
+              211,
+              12,
+              211,
+              59
+            ],
+            "SC38"
+          ],
+          [
+            923,
+            214,
+            "L13",
+            "_send_worker_message",
+            [
+              214,
+              8,
+              214,
+              75
+            ],
+            "SC39"
+          ],
+          [
+            929,
+            214,
+            "L13",
+            "str",
+            [
+              214,
+              66,
+              214,
+              74
+            ],
+            "SC39"
+          ],
+          [
+            937,
+            217,
+            "L13",
+            "print",
+            [
+              217,
+              8,
+              217,
+              65
+            ],
+            "SC40"
+          ],
+          [
+            949,
+            218,
+            "L13",
+            "_send_worker_message",
+            [
+              218,
+              8,
+              219,
+              109
+            ],
+            "SC40"
+          ],
+          [
+            965,
+            225,
+            null,
+            "sys.exit",
+            [
+              225,
+              4,
+              225,
+              20
+            ],
+            "SC41"
+          ],
+          [
+            968,
+            225,
+            null,
+            "main",
+            [
+              225,
+              13,
+              225,
+              19
+            ],
+            "SC41"
+          ]
+        ]
+      },
+      "counts": {
+        "branches": 50,
+        "comparisons": 32,
+        "arithmetic": 14,
+        "calls": 97
+      },
+      "review_status": "DIRECT_SOURCE_CONTEXT_REVIEWED_WITH_PRIOR_CONTRACT_REFERENCES"
+    }
+  ]
+}

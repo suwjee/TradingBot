@@ -1,0 +1,1619 @@
+{
+  "checkpoint": 184,
+  "batch": "B09",
+  "sub_batch": "B09-23",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "9658be2dda143e889bb770fa9c249866bb8dadb7",
+  "path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+  "source_range": [
+    872,
+    926
+  ],
+  "procedures": "TB43",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 54,
+    "by_category": {
+      "branches": 17,
+      "comparisons": 16,
+      "arithmetic": 4,
+      "calls": 17
+    },
+    "supplemental_items": 1,
+    "resolved_findings": 1
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "5c49e3c793bfc22301109ace5105b7fcddf1b8e2",
+    "crosswalk_blob": "a6ba394ffa669c027d61784a894eccfc7996cd6f",
+    "exact_site_id_span_procedure_operation_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 3060,
+      "source_span": [
+        885,
+        8,
+        886,
+        23
+      ],
+      "procedure": "TB43",
+      "original_operation": "If",
+      "original_context": "TB-SC37",
+      "interpretation": "No exact stop event means immediate null, before source read.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L885-L886",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3073,
+      "source_span": [
+        888,
+        8,
+        889,
+        23
+      ],
+      "procedure": "TB43",
+      "original_operation": "If",
+      "original_context": "TB-SC37",
+      "interpretation": "Exact null source time returns null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L888-L889",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3091,
+      "source_span": [
+        891,
+        8,
+        922,
+        45
+      ],
+      "procedure": "TB43",
+      "original_operation": "For",
+      "original_context": "TB-SC37",
+      "interpretation": "Iterate canonical audit map in its dictionary order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L891-L922",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3099,
+      "source_span": [
+        892,
+        12,
+        922,
+        45
+      ],
+      "procedure": "TB43",
+      "original_operation": "For",
+      "original_context": "TB-SC37",
+      "interpretation": "Visit each prepared cause in original cause sequence.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L892-L922",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3110,
+      "source_span": [
+        894,
+        16,
+        921,
+        28
+      ],
+      "procedure": "TB43",
+      "original_operation": "If",
+      "original_context": "TB-SC37",
+      "interpretation": "Exact parent-stop kind selects parent cause branch.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L894-L921",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3114,
+      "source_span": [
+        895,
+        20,
+        900,
+        32
+      ],
+      "procedure": "TB43",
+      "original_operation": "If",
+      "original_context": "TB-SC37",
+      "interpretation": "Reject mismatching parentType first; OR short-circuits later comparisons.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L895-L900",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3115,
+      "source_span": [
+        896,
+        24,
+        898,
+        70
+      ],
+      "procedure": "TB43",
+      "original_operation": "BoolOp",
+      "original_context": "TB-SC37",
+      "interpretation": "Reject mismatching parentType first; OR short-circuits later comparisons.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L896-L898",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3141,
+      "source_span": [
+        902,
+        20,
+        906,
+        32
+      ],
+      "procedure": "TB43",
+      "original_operation": "If",
+      "original_context": "TB-SC37",
+      "interpretation": "Requested family exact null enters null/empty admissibility.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L902-L906",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3145,
+      "source_span": [
+        903,
+        24,
+        904,
+        36
+      ],
+      "procedure": "TB43",
+      "original_operation": "If",
+      "original_context": "TB-SC37",
+      "interpretation": "Reject recorded family outside null/empty string membership.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L903-L904",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3152,
+      "source_span": [
+        905,
+        20,
+        906,
+        32
+      ],
+      "procedure": "TB43",
+      "original_operation": "If",
+      "original_context": "TB-SC37",
+      "interpretation": "Otherwise require exact recorded family equals requested family, not case-folded.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L905-L906",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3157,
+      "source_span": [
+        907,
+        16,
+        921,
+        28
+      ],
+      "procedure": "TB43",
+      "original_operation": "If",
+      "original_context": "TB-SC37",
+      "interpretation": "Exact reset-leg selects separate post-behavior branch.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L907-L921",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3169,
+      "source_span": [
+        910,
+        24,
+        912,
+        87
+      ],
+      "procedure": "TB43",
+      "original_operation": "BoolOp",
+      "original_context": "TB-SC37",
+      "interpretation": "Exact post type equality is first accepted type route.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L910-L912",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3173,
+      "source_span": [
+        911,
+        27,
+        911,
+        75
+      ],
+      "procedure": "TB43",
+      "original_operation": "BoolOp",
+      "original_context": "TB-SC37",
+      "interpretation": "Otherwise exact E base post type accepts requested type starting with E; prefix only, no number parser.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L911-L911",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3181,
+      "source_span": [
+        912,
+        27,
+        912,
+        87
+      ],
+      "procedure": "TB43",
+      "original_operation": "BoolOp",
+      "original_context": "TB-SC37",
+      "interpretation": "Otherwise exact StopAll base post type accepts requested prefix StopAll; short-circuit.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L912-L912",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3189,
+      "source_span": [
+        914,
+        20,
+        919,
+        32
+      ],
+      "procedure": "TB43",
+      "original_operation": "If",
+      "original_context": "TB-SC37",
+      "interpretation": "If type mismatch skip before source/time checks.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L914-L919",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3190,
+      "source_span": [
+        915,
+        24,
+        917,
+        81
+      ],
+      "procedure": "TB43",
+      "original_operation": "BoolOp",
+      "original_context": "TB-SC37",
+      "interpretation": "If type mismatch skip before source/time checks.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L915-L917",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3212,
+      "source_span": [
+        923,
+        8,
+        924,
+        23
+      ],
+      "procedure": "TB43",
+      "original_operation": "If",
+      "original_context": "TB-SC37",
+      "interpretation": "Require exactly one distinct matching physical identity; zero or multiple returns null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L923-L924",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3061,
+      "source_span": [
+        885,
+        11,
+        885,
+        36
+      ],
+      "procedure": "TB43",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "TB-SC37",
+      "interpretation": "No exact stop event means immediate null, before source read.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L885-L885",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3074,
+      "source_span": [
+        888,
+        11,
+        888,
+        30
+      ],
+      "procedure": "TB43",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "TB-SC37",
+      "interpretation": "Exact null source time returns null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L888-L888",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3111,
+      "source_span": [
+        894,
+        19,
+        894,
+        40
+      ],
+      "procedure": "TB43",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC37",
+      "interpretation": "Exact parent-stop kind selects parent cause branch.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L894-L894",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3116,
+      "source_span": [
+        896,
+        24,
+        896,
+        62
+      ],
+      "procedure": "TB43",
+      "original_operation": [
+        "NotEq"
+      ],
+      "original_context": "TB-SC37",
+      "interpretation": "Reject mismatching parentType first; OR short-circuits later comparisons.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L896-L896",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3122,
+      "source_span": [
+        897,
+        27,
+        897,
+        71
+      ],
+      "procedure": "TB43",
+      "original_operation": [
+        "NotEq"
+      ],
+      "original_context": "TB-SC37",
+      "interpretation": "Reject mismatching parentSourceTime exact equality to recorded behavior source.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L897-L897",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3128,
+      "source_span": [
+        898,
+        27,
+        898,
+        70
+      ],
+      "procedure": "TB43",
+      "original_operation": [
+        "NotEq"
+      ],
+      "original_context": "TB-SC37",
+      "interpretation": "Reject mismatching eventTime exact equality to proven stop time.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L898-L898",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3142,
+      "source_span": [
+        902,
+        23,
+        902,
+        44
+      ],
+      "procedure": "TB43",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "TB-SC37",
+      "interpretation": "Requested family exact null enters null/empty admissibility.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L902-L902",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3146,
+      "source_span": [
+        903,
+        27,
+        903,
+        60
+      ],
+      "procedure": "TB43",
+      "original_operation": [
+        "NotIn"
+      ],
+      "original_context": "TB-SC37",
+      "interpretation": "Reject recorded family outside null/empty string membership.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L903-L903",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3153,
+      "source_span": [
+        905,
+        25,
+        905,
+        57
+      ],
+      "procedure": "TB43",
+      "original_operation": [
+        "NotEq"
+      ],
+      "original_context": "TB-SC37",
+      "interpretation": "Otherwise require exact recorded family equals requested family, not case-folded.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L905-L905",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3158,
+      "source_span": [
+        907,
+        21,
+        907,
+        40
+      ],
+      "procedure": "TB43",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC37",
+      "interpretation": "Exact reset-leg selects separate post-behavior branch.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L907-L907",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3170,
+      "source_span": [
+        910,
+        24,
+        910,
+        48
+      ],
+      "procedure": "TB43",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC37",
+      "interpretation": "Exact post type equality is first accepted type route.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L910-L910",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3174,
+      "source_span": [
+        911,
+        27,
+        911,
+        43
+      ],
+      "procedure": "TB43",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC37",
+      "interpretation": "Otherwise exact E base post type accepts requested type starting with E; prefix only, no number parser.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L911-L911",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3182,
+      "source_span": [
+        912,
+        27,
+        912,
+        49
+      ],
+      "procedure": "TB43",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC37",
+      "interpretation": "Otherwise exact StopAll base post type accepts requested prefix StopAll; short-circuit.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L912-L912",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3193,
+      "source_span": [
+        916,
+        27,
+        916,
+        77
+      ],
+      "procedure": "TB43",
+      "original_operation": [
+        "NotEq"
+      ],
+      "original_context": "TB-SC37",
+      "interpretation": "Require postBehaviorSourceTime exact match; mismatch short-circuits stop check.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L916-L916",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3199,
+      "source_span": [
+        917,
+        27,
+        917,
+        81
+      ],
+      "procedure": "TB43",
+      "original_operation": [
+        "NotEq"
+      ],
+      "original_context": "TB-SC37",
+      "interpretation": "Require postBehaviorStopTime exact match to strict event; reset-leg has no family check.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L917-L917",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3213,
+      "source_span": [
+        923,
+        11,
+        923,
+        29
+      ],
+      "procedure": "TB43",
+      "original_operation": [
+        "NotEq"
+      ],
+      "original_context": "TB-SC37",
+      "interpretation": "Require exactly one distinct matching physical identity; zero or multiple returns null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L923-L923",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 3051,
+      "source_span": [
+        876,
+        23,
+        876,
+        33
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "TB-SC37",
+      "interpretation": "Type union annotation for nullable interface; not a runtime arithmetic price operation.",
+      "temporal_relevance": "DECLARATION_ONLY",
+      "relevance_reason": "Interface declaration, not a trading operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L876-L876",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 113,
+        "heading": "Declaration"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 3055,
+      "source_span": [
+        877,
+        27,
+        877,
+        42
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "TB-SC37",
+      "interpretation": "Type union annotation for nullable interface; not a runtime arithmetic price operation.",
+      "temporal_relevance": "DECLARATION_ONLY",
+      "relevance_reason": "Interface declaration, not a trading operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L877-L877",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 113,
+        "heading": "Declaration"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 3191,
+      "source_span": [
+        915,
+        24,
+        915,
+        40
+      ],
+      "procedure": "TB43",
+      "original_operation": "Not",
+      "original_context": "TB-SC37",
+      "interpretation": "If type mismatch skip before source/time checks.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L915-L915",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 3231,
+      "source_span": [
+        878,
+        9,
+        878,
+        33
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "TB-SC37",
+      "interpretation": "Type union annotation for nullable interface; not a runtime arithmetic price operation.",
+      "temporal_relevance": "DECLARATION_ONLY",
+      "relevance_reason": "Interface declaration, not a trading operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L878-L878",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 113,
+        "heading": "Declaration"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3068,
+      "source_span": [
+        887,
+        22,
+        887,
+        60
+      ],
+      "procedure": "TB43",
+      "original_operation": "getattr",
+      "original_context": "TB-SC37",
+      "interpretation": "Read behavior source time with null fallback.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L887-L887",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3095,
+      "source_span": [
+        891,
+        34,
+        891,
+        64
+      ],
+      "procedure": "TB43",
+      "original_operation": "self.audit_by_identity.items",
+      "original_context": "TB-SC37",
+      "interpretation": "Iterate canonical audit map in its dictionary order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L891-L891",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3106,
+      "source_span": [
+        893,
+        23,
+        893,
+        40
+      ],
+      "procedure": "TB43",
+      "original_operation": "cause.get",
+      "original_context": "TB-SC37",
+      "interpretation": "Read optional kind via mapping get.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L893-L893",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3117,
+      "source_span": [
+        896,
+        24,
+        896,
+        47
+      ],
+      "procedure": "TB43",
+      "original_operation": "cause.get",
+      "original_context": "TB-SC37",
+      "interpretation": "Reject mismatching parentType first; OR short-circuits later comparisons.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L896-L896",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3123,
+      "source_span": [
+        897,
+        27,
+        897,
+        56
+      ],
+      "procedure": "TB43",
+      "original_operation": "cause.get",
+      "original_context": "TB-SC37",
+      "interpretation": "Reject mismatching parentSourceTime exact equality to recorded behavior source.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L897-L897",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3129,
+      "source_span": [
+        898,
+        27,
+        898,
+        49
+      ],
+      "procedure": "TB43",
+      "original_operation": "cause.get",
+      "original_context": "TB-SC37",
+      "interpretation": "Reject mismatching eventTime exact equality to proven stop time.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L898-L898",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3137,
+      "source_span": [
+        901,
+        38,
+        901,
+        63
+      ],
+      "procedure": "TB43",
+      "original_operation": "cause.get",
+      "original_context": "TB-SC37",
+      "interpretation": "Read recorded parent family with default null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L901-L901",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3163,
+      "source_span": [
+        908,
+        32,
+        908,
+        61
+      ],
+      "procedure": "TB43",
+      "original_operation": "cause.get",
+      "original_context": "TB-SC37",
+      "interpretation": "Read postBehaviorType with null fallback.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L908-L908",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3177,
+      "source_span": [
+        911,
+        48,
+        911,
+        75
+      ],
+      "procedure": "TB43",
+      "original_operation": "parent_type.startswith",
+      "original_context": "TB-SC37",
+      "interpretation": "Otherwise exact E base post type accepts requested type starting with E; prefix only, no number parser.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L911-L911",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3185,
+      "source_span": [
+        912,
+        54,
+        912,
+        87
+      ],
+      "procedure": "TB43",
+      "original_operation": "parent_type.startswith",
+      "original_context": "TB-SC37",
+      "interpretation": "Otherwise exact StopAll base post type accepts requested prefix StopAll; short-circuit.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L912-L912",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3194,
+      "source_span": [
+        916,
+        27,
+        916,
+        62
+      ],
+      "procedure": "TB43",
+      "original_operation": "cause.get",
+      "original_context": "TB-SC37",
+      "interpretation": "Require postBehaviorSourceTime exact match; mismatch short-circuits stop check.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L916-L916",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3200,
+      "source_span": [
+        917,
+        27,
+        917,
+        60
+      ],
+      "procedure": "TB43",
+      "original_operation": "cause.get",
+      "original_context": "TB-SC37",
+      "interpretation": "Require postBehaviorStopTime exact match to strict event; reset-leg has no family check.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L917-L917",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3214,
+      "source_span": [
+        923,
+        11,
+        923,
+        24
+      ],
+      "procedure": "TB43",
+      "original_operation": "len",
+      "original_context": "TB-SC37",
+      "interpretation": "Require exactly one distinct matching physical identity; zero or multiple returns null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L923-L923",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3221,
+      "source_span": [
+        925,
+        15,
+        925,
+        65
+      ],
+      "procedure": "TB43",
+      "original_operation": "self.physical_order",
+      "original_context": "TB-SC37",
+      "interpretation": "Take sole mapping value and pass to physical formatter; no ranking/tie-break.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L925-L925",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3224,
+      "source_span": [
+        925,
+        35,
+        925,
+        64
+      ],
+      "procedure": "TB43",
+      "original_operation": "next",
+      "original_context": "TB-SC37",
+      "interpretation": "Take sole mapping value and pass to physical formatter; no ranking/tie-break.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L925-L925",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3226,
+      "source_span": [
+        925,
+        40,
+        925,
+        63
+      ],
+      "procedure": "TB43",
+      "original_operation": "iter",
+      "original_context": "TB-SC37",
+      "interpretation": "Take sole mapping value and pass to physical formatter; no ranking/tie-break.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L925-L925",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3228,
+      "source_span": [
+        925,
+        45,
+        925,
+        62
+      ],
+      "procedure": "TB43",
+      "original_operation": "matching.values",
+      "original_context": "TB-SC37",
+      "interpretation": "Take sole mapping value and pass to physical formatter; no ranking/tie-break.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, exact chronology, physical identity, source access or conditional formatting.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native detector and chronology services remain conditional; W2/W3/W4 open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L925-L925",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 112,
+        "heading": "TB43"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B09-23-S01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_span": [
+        872,
+        926
+      ],
+      "interpretation": "Parent-stop matching evaluates label, source and event in that order, then family: requested null permits null or empty, otherwise exact equality. Reset-leg accepts exact post type or base E/StopAll with a case-sensitive prefix match (not a number parser), then exact source and stop; no family check on that branch. Unrecognized causes are skipped. Multiple matching causes of one identity count once; multiple distinct identities yield null rather than picking earliest/nearest. The final physical formatter may itself return null.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L872-L926",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "No empirical runtime or cross-owner acceptance asserted."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B09-23-F01",
+      "span": [
+        872,
+        926
+      ],
+      "description": "Parent-stop matching evaluates label, source and event in that order, then family: requested null permits null or empty, otherwise exact equality. Reset-leg accepts exact post type or base E/StopAll with a case-sensitive prefix match (not a number parser), then exact source and stop; no family check on that branch. Unrecognized causes are skipped. Multiple matching causes of one identity count once; multiple distinct identities yield null rather than picking earliest/nearest. The final physical formatter may itself return null.",
+      "document": "Algorithms/V3/19_Serialization.md",
+      "line": 113,
+      "prior_blob": "5bb92eff2c5d88a8364af1abd1bd6d62eb373728",
+      "resolution": "Clarify local source-derived contract; no production changes.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L872-L926",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: native chronology, confirmation and stop service contracts, final accepted Order ownership, pre-range source associations and cross-owner consistency. W3/W4 pending."
+  ]
+}

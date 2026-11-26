@@ -1,0 +1,48 @@
+# Existing test inventory
+
+44 existing test and tool files at pinned baseline. No full suite executed during the partial verification.
+
+- `engine/tests/benchmarks/bench.py`
+- `engine/tests/benchmarks/generate_fixture.py`
+- `engine/tests/regression/compare_order_regressions.py`
+- `engine/tests/regression/hpzr2_regression.py`
+- `engine/tests/regression/hpzr2_verify_saved.py`
+- `engine/tests/regression/order_regression.py`
+- `engine/tests/regression/verify_pl_ph_raw.py`
+- `engine/tests/unit/test_bearish_trend_start.py`
+- `engine/tests/unit/test_bullish_primary_mirror.py`
+- `engine/tests/unit/test_bullish_primary_serialization.py`
+- `engine/tests/unit/test_bullish_trend_start.py`
+- `engine/tests/unit/test_carried_order_query.py`
+- `engine/tests/unit/test_e_reconciliation_indexes.py`
+- `engine/tests/unit/test_e_source_ownership.py`
+- `engine/tests/unit/test_hpzr2_regression.py`
+- `engine/tests/unit/test_lifecycle_index_equivalence.py`
+- `engine/tests/unit/test_live_a_zones.py`
+- `engine/tests/unit/test_live_behavior_reaction_views.py`
+- `engine/tests/unit/test_live_blue_lines.py`
+- `engine/tests/unit/test_live_e_parent_stops.py`
+- `engine/tests/unit/test_live_market_buckets.py`
+- `engine/tests/unit/test_live_order_b_reset_legs.py`
+- `engine/tests/unit/test_live_pipeline_continuation.py`
+- `engine/tests/unit/test_live_primary_continuation.py`
+- `engine/tests/unit/test_live_reaction_continuation.py`
+- `engine/tests/unit/test_live_s_zones.py`
+- `engine/tests/unit/test_live_stopall_continuation.py`
+- `engine/tests/unit/test_main_range_index.py`
+- `engine/tests/unit/test_order_audit_lifecycle_contracts.py`
+- `engine/tests/unit/test_order_b_reset_leg.py`
+- `engine/tests/unit/test_pl_ph_detector.py`
+- `engine/tests/unit/test_primary_cycle_serialization.py`
+- `engine/tests/unit/test_primary_high_numbering.py`
+- `engine/tests/unit/test_primary_high_order_a.py`
+- `engine/tests/unit/test_primary_low_order_a.py`
+- `engine/tests/unit/test_regime_output_determinism.py`
+- `engine/tests/unit/test_removed_setup_contract.py`
+- `engine/tests/unit/test_stage_range_refactor.py`
+- `engine/tests/unit/test_stopall_dominance.py`
+- `engine/tests/unit/test_trend_context.py`
+- `engine/tests/unit/test_trend_transition.py`
+- `engine/tests/unit/test_true_false.py`
+- `engine/tests/verification/verify_order_b_raw.py`
+- `engine/tests/verification/verify_order_references.py`

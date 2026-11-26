@@ -1,0 +1,4877 @@
+{
+  "checkpoint": 47,
+  "batch": "B05",
+  "sub_batch": "B05-01",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "d404afb533fce567439fa459d0988688bb5ac359",
+  "path": "engine/pipeline/order_audit_engine.py",
+  "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+  "source_range": [
+    1,
+    197
+  ],
+  "procedures": [
+    "OA01",
+    "OA02",
+    "OA03",
+    "OA04",
+    "OA05"
+  ],
+  "review_pass": "W1 source-first local owner review; W3 pending",
+  "status": "PASS",
+  "scope": "Local source contracts only. No RAW, runtime, cross-owner or W3 certification.",
+  "counts": {
+    "original_rows": 146,
+    "by_category": {
+      "branches": 42,
+      "comparisons": 28,
+      "arithmetic": 9,
+      "calls": 67
+    },
+    "supplemental_items": 8
+  },
+  "inventory_validation": {
+    "crosswalk": "Audit/Phase_07/Decision_Site_Crosswalk_04.json",
+    "crosswalk_blob": "62645cd2b92c3cbe35f6c0a9500299ec6f44cbc8",
+    "original_inventory_blob": "fdd253ac268881876574914b6d79478716f52104",
+    "context_blob": "7de01399b8ff7bf64bb44995b57bdc03296997cf",
+    "exact_category_id_and_span_match": true,
+    "unique_category_ids": true,
+    "direct_phase02_full_blob_read": false,
+    "reason": "Large Phase 02 inventory returned empty content; immutable exact AST crosswalk used for independent ID/span comparison."
+  },
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 33,
+      "source_span": [
+        17,
+        0,
+        18,
+        37
+      ],
+      "procedure": null,
+      "original_operation": "If",
+      "original_context": "OA-SC01",
+      "interpretation": "TYPE_CHECKING guard controls type-only EZone import, not trading execution.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration/import or annotation only; no trading-time decision at this site.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L17-L18",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 54,
+      "source_span": [
+        28,
+        4,
+        36,
+        30
+      ],
+      "procedure": "OA01",
+      "original_operation": "For",
+      "original_context": "OA-SC02",
+      "interpretation": "Traverse input causes in supplied order, without reordering.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Preserves provenance and stable cause ordering used by downstream acceptance.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L28-L36",
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 33,
+        "heading": "relabel_primary_causes"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OLC07",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 62,
+      "source_span": [
+        30,
+        8,
+        34,
+        47
+      ],
+      "procedure": "OA01",
+      "original_operation": "For",
+      "original_context": "OA-SC02",
+      "interpretation": "Visit parent, post-behavior, then anchor label/source pairs in fixed order.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Preserves provenance and stable cause ordering used by downstream acceptance.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L30-L34",
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 33,
+        "heading": "relabel_primary_causes"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OLC07",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 76,
+      "source_span": [
+        33,
+        12,
+        34,
+        47
+      ],
+      "procedure": "OA01",
+      "original_operation": "If",
+      "original_context": "OA-SC02",
+      "interpretation": "Relabel only if string-normalized label begins PH/PL AND its associated source belongs to labels; source lookup short-circuits after prefix failure.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Preserves provenance and stable cause ordering used by downstream acceptance.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L33-L34",
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 33,
+        "heading": "relabel_primary_causes"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OLC07",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 77,
+      "source_span": [
+        33,
+        15,
+        33,
+        92
+      ],
+      "procedure": "OA01",
+      "original_operation": "BoolOp",
+      "original_context": "OA-SC02",
+      "interpretation": "Relabel only if string-normalized label begins PH/PL AND its associated source belongs to labels; source lookup short-circuits after prefix failure.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Preserves provenance and stable cause ordering used by downstream acceptance.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L33-L33",
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 33,
+        "heading": "relabel_primary_causes"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OLC07",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 105,
+      "source_span": [
+        35,
+        8,
+        36,
+        30
+      ],
+      "procedure": "OA01",
+      "original_operation": "If",
+      "original_context": "OA-SC02",
+      "interpretation": "Full copied dictionary equality deduplication; first equal dictionary survives.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Preserves provenance and stable cause ordering used by downstream acceptance.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L35-L36",
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 33,
+        "heading": "relabel_primary_causes"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OLC07",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 262,
+      "source_span": [
+        89,
+        10,
+        89,
+        20
+      ],
+      "procedure": "OA02",
+      "original_operation": "comprehension",
+      "original_context": "OA-SC04",
+      "interpretation": "Build one rank per lifetime in input order, including lifetimes with no stop.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L89-L89",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 295,
+      "source_span": [
+        92,
+        4,
+        93,
+        39
+      ],
+      "procedure": "OA02",
+      "original_operation": "For",
+      "original_context": "OA-SC04",
+      "interpretation": "Traverse sorted positions with zero-based enumerated rank, writing inverse rank position.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L92-L93",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 313,
+      "source_span": [
+        95,
+        9,
+        97,
+        40
+      ],
+      "procedure": "OA02",
+      "original_operation": "BoolOp",
+      "original_context": "OA-SC04",
+      "interpretation": "Activation is first truthy trigger_event_time, decision_event_time, source_time; short circuit in that order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L95-L97",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 329,
+      "source_span": [
+        98,
+        10,
+        98,
+        25
+      ],
+      "procedure": "OA02",
+      "original_operation": "comprehension",
+      "original_context": "OA-SC04",
+      "interpretation": "Enumerate input lifetimes to retain activation tie ordinal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L98-L98",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 348,
+      "source_span": [
+        102,
+        4,
+        113,
+        27
+      ],
+      "procedure": "OA02",
+      "original_operation": "For",
+      "original_context": "OA-SC04",
+      "interpretation": "Sweep distinct non-null stop events in chronological order; no event created for open-ended lifetime.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L102-L113",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 354,
+      "source_span": [
+        102,
+        33,
+        102,
+        42
+      ],
+      "procedure": "OA02",
+      "original_operation": "comprehension",
+      "original_context": "OA-SC04",
+      "interpretation": "Construct set from lifetime ends; deduplicate equal event times before sorting.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L102-L102",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": "engine/pipeline/order_audit_engine.py:102:59:Compare:filter",
+      "source_span": [
+        102,
+        59,
+        102,
+        74
+      ],
+      "procedure": "OA02",
+      "original_operation": "ComprehensionFilter",
+      "original_context": "OA-SC04",
+      "interpretation": "Include stop endpoint only when it is not None.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L102-L102",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 363,
+      "source_span": [
+        103,
+        8,
+        106,
+        23
+      ],
+      "procedure": "OA02",
+      "original_operation": "While",
+      "original_context": "OA-SC04",
+      "interpretation": "Activate sorted starts while cursor in bounds AND activation<=current stop; bounds tested first.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L103-L106",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 364,
+      "source_span": [
+        103,
+        14,
+        103,
+        65
+      ],
+      "procedure": "OA02",
+      "original_operation": "BoolOp",
+      "original_context": "OA-SC04",
+      "interpretation": "Activate sorted starts while cursor in bounds AND activation<=current stop; bounds tested first.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L103-L103",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 397,
+      "source_span": [
+        107,
+        8,
+        113,
+        27
+      ],
+      "procedure": "OA02",
+      "original_operation": "While",
+      "original_context": "OA-SC04",
+      "interpretation": "While heap nonempty inspect top, lazily removing expired owners.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L107-L113",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 413,
+      "source_span": [
+        110,
+        12,
+        112,
+        21
+      ],
+      "procedure": "OA02",
+      "original_operation": "If",
+      "original_context": "OA-SC04",
+      "interpretation": "Top valid if no end OR current event<=end; record its behavior object and stop scanning. End equality remains active.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L110-L112",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 414,
+      "source_span": [
+        110,
+        15,
+        110,
+        42
+      ],
+      "procedure": "OA02",
+      "original_operation": "BoolOp",
+      "original_context": "OA-SC04",
+      "interpretation": "Top valid if no end OR current event<=end; record its behavior object and stop scanning. End equality remains active.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L110-L110",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 451,
+      "source_span": [
+        115,
+        4,
+        132,
+        50
+      ],
+      "procedure": "OA02",
+      "original_operation": "For",
+      "original_context": "OA-SC05",
+      "interpretation": "Revisit lifetimes in original input order for exact stop ownership and per-main selection.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L115-L132",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 457,
+      "source_span": [
+        116,
+        8,
+        117,
+        20
+      ],
+      "procedure": "OA02",
+      "original_operation": "If",
+      "original_context": "OA-SC05",
+      "interpretation": "Skip lifetime with missing stop before checking identity.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L116-L117",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 462,
+      "source_span": [
+        118,
+        8,
+        119,
+        20
+      ],
+      "procedure": "OA02",
+      "original_operation": "If",
+      "original_context": "OA-SC05",
+      "interpretation": "Require stored owner object at that stop to be the identical behavior object, not equal data or lifetime tuple.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L118-L119",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 522,
+      "source_span": [
+        131,
+        8,
+        132,
+        50
+      ],
+      "procedure": "OA02",
+      "original_operation": "If",
+      "original_context": "OA-SC05",
+      "interpretation": "Set first candidate or replace only if new full rank strictly greater; short-circuit missing prior.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L131-L132",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 523,
+      "source_span": [
+        131,
+        11,
+        131,
+        49
+      ],
+      "procedure": "OA02",
+      "original_operation": "BoolOp",
+      "original_context": "OA-SC05",
+      "interpretation": "Set first candidate or replace only if new full rank strictly greater; short-circuit missing prior.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L131-L131",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 546,
+      "source_span": [
+        134,
+        21,
+        134,
+        25
+      ],
+      "procedure": "OA02",
+      "original_operation": "comprehension",
+      "original_context": "OA-SC05",
+      "interpretation": "Project records (not ranks) from per-main winners in dictionary traversal order before final stable sort.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L134-L134",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 578,
+      "source_span": [
+        144,
+        4,
+        145,
+        43
+      ],
+      "procedure": "OA03",
+      "original_operation": "If",
+      "original_context": "OA-SC06",
+      "interpretation": "Truthy explicit second_time delegates immediately, even if delegated result is null; no second local search.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L144-L145",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 624,
+      "source_span": [
+        151,
+        4,
+        166,
+        16
+      ],
+      "procedure": "OA03",
+      "original_operation": "If",
+      "original_context": "OA-SC06",
+      "interpretation": "Select lower index route only if index is not None; do not retry scan on an indexed miss.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L151-L166",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 631,
+      "source_span": [
+        153,
+        12,
+        155,
+        68
+      ],
+      "procedure": "OA03",
+      "original_operation": "IfExp",
+      "original_context": "OA-SC06",
+      "interpretation": "Exact bullish selects strict lower query; all other direction values select strict greater locally.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L153-L155",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 651,
+      "source_span": [
+        158,
+        20,
+        158,
+        63
+      ],
+      "procedure": "OA03",
+      "original_operation": "IfExp",
+      "original_context": "OA-SC06",
+      "interpretation": "Exact bullish selects low attribute; otherwise high.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L158-L158",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 663,
+      "source_span": [
+        160,
+        22,
+        160,
+        27
+      ],
+      "procedure": "OA03",
+      "original_operation": "comprehension",
+      "original_context": "OA-SC06",
+      "interpretation": "Traverse lower positions left inclusive, right exclusive, ascending.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L160-L160",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": "engine/pipeline/order_audit_engine.py:162:16:IfExp:filter",
+      "source_span": [
+        162,
+        16,
+        164,
+        81
+      ],
+      "procedure": "OA03",
+      "original_operation": "ComprehensionFilter",
+      "original_context": "OA-SC06",
+      "interpretation": "Sequential filter chooses strict low<level for exact bullish, otherwise high>level; only selected operand evaluated.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L162-L164",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 669,
+      "source_span": [
+        162,
+        16,
+        164,
+        81
+      ],
+      "procedure": "OA03",
+      "original_operation": "IfExp",
+      "original_context": "OA-SC06",
+      "interpretation": "Sequential filter chooses strict low<level for exact bullish, otherwise high>level; only selected operand evaluated.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L162-L164",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 697,
+      "source_span": [
+        167,
+        11,
+        167,
+        74
+      ],
+      "procedure": "OA03",
+      "original_operation": "IfExp",
+      "original_context": "OA-SC06",
+      "interpretation": "Return None for absent crossing; otherwise exact lower time at returned position, including position zero.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L167-L167",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 735,
+      "source_span": [
+        173,
+        4,
+        176,
+        49
+      ],
+      "procedure": "OA04",
+      "original_operation": "For",
+      "original_context": "OA-SC07",
+      "interpretation": "Scan subsequent main positions ascending from first+1 through last inclusive; initial anchor always read.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L173-L176",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 31,
+        "heading": "_order_b_boundary"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB06",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 756,
+      "source_span": [
+        175,
+        8,
+        176,
+        49
+      ],
+      "procedure": "OA04",
+      "original_operation": "If",
+      "original_context": "OA-SC07",
+      "interpretation": "Update boundary and source together only for strict directional improvement; equality retains earliest source.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L175-L176",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 31,
+        "heading": "_order_b_boundary"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB06",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 757,
+      "source_span": [
+        175,
+        12,
+        175,
+        72
+      ],
+      "procedure": "OA04",
+      "original_operation": "IfExp",
+      "original_context": "OA-SC07",
+      "interpretation": "Update boundary and source together only for strict directional improvement; equality retains earliest source.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L175-L175",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 31,
+        "heading": "_order_b_boundary"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB06",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 793,
+      "source_span": [
+        182,
+        4,
+        183,
+        19
+      ],
+      "procedure": "OA05",
+      "original_operation": "If",
+      "original_context": "OA-SC08",
+      "interpretation": "Return None if supplied left >= right before any index lookup; no local nonnegative clamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L182-L183",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 803,
+      "source_span": [
+        185,
+        4,
+        194,
+        21
+      ],
+      "procedure": "OA05",
+      "original_operation": "If",
+      "original_context": "OA-SC08",
+      "interpretation": "Use lower index if not None; indexed miss is not a sequential fallback.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L185-L194",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 809,
+      "source_span": [
+        186,
+        15,
+        186,
+        78
+      ],
+      "procedure": "OA05",
+      "original_operation": "IfExp",
+      "original_context": "OA-SC08",
+      "interpretation": "Exact low chooses first_less; other attribute chooses first_greater.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L186-L186",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 827,
+      "source_span": [
+        190,
+        8,
+        194,
+        21
+      ],
+      "procedure": "OA05",
+      "original_operation": "For",
+      "original_context": "OA-SC08",
+      "interpretation": "Without index scan lower positions ascending left inclusive to right exclusive.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L190-L194",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 844,
+      "source_span": [
+        192,
+        12,
+        194,
+        21
+      ],
+      "procedure": "OA05",
+      "original_operation": "If",
+      "original_context": "OA-SC08",
+      "interpretation": "On strict crossing store first position and break; otherwise continue.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L192-L194",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 845,
+      "source_span": [
+        192,
+        16,
+        192,
+        76
+      ],
+      "procedure": "OA05",
+      "original_operation": "IfExp",
+      "original_context": "OA-SC08",
+      "interpretation": "On strict crossing store first position and break; otherwise continue.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L192-L192",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 860,
+      "source_span": [
+        195,
+        11,
+        195,
+        78
+      ],
+      "procedure": "OA05",
+      "original_operation": "IfExp",
+      "original_context": "OA-SC08",
+      "interpretation": "Return exact lower timestamp if position not None, including zero; otherwise null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L195-L195",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 90,
+      "source_span": [
+        33,
+        67,
+        33,
+        92
+      ],
+      "procedure": "OA01",
+      "original_operation": [
+        "In"
+      ],
+      "original_context": "OA-SC02",
+      "interpretation": "Read associated source with default None and test membership in supplied label mapping only after prefix success.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Preserves provenance and stable cause ordering used by downstream acceptance.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L33-L33",
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 33,
+        "heading": "relabel_primary_causes"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OLC07",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 106,
+      "source_span": [
+        35,
+        11,
+        35,
+        28
+      ],
+      "procedure": "OA01",
+      "original_operation": [
+        "NotIn"
+      ],
+      "original_context": "OA-SC02",
+      "interpretation": "Full copied dictionary equality deduplication; first equal dictionary survives.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Preserves provenance and stable cause ordering used by downstream acceptance.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L35-L35",
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 33,
+        "heading": "relabel_primary_causes"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OLC07",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 360,
+      "source_span": [
+        102,
+        59,
+        102,
+        74
+      ],
+      "procedure": "OA02",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC04",
+      "interpretation": "Include stop endpoint only when it is not None.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L102-L102",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 365,
+      "source_span": [
+        103,
+        14,
+        103,
+        34
+      ],
+      "procedure": "OA02",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "OA-SC04",
+      "interpretation": "Check cursor below start-list length before indexing.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L103-L103",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 370,
+      "source_span": [
+        103,
+        39,
+        103,
+        65
+      ],
+      "procedure": "OA02",
+      "original_operation": [
+        "LtE"
+      ],
+      "original_context": "OA-SC04",
+      "interpretation": "Activation exactly at stop is eligible (<=).",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L103-L103",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 415,
+      "source_span": [
+        110,
+        15,
+        110,
+        26
+      ],
+      "procedure": "OA02",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "OA-SC04",
+      "interpretation": "None end is unbounded and short-circuits time comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L110-L110",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 418,
+      "source_span": [
+        110,
+        30,
+        110,
+        42
+      ],
+      "procedure": "OA02",
+      "original_operation": [
+        "LtE"
+      ],
+      "original_context": "OA-SC04",
+      "interpretation": "Event at or before end is active; strict expiration only after end.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L110-L110",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 458,
+      "source_span": [
+        116,
+        11,
+        116,
+        29
+      ],
+      "procedure": "OA02",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "OA-SC05",
+      "interpretation": "Skip lifetime with missing stop before checking identity.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L116-L116",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 463,
+      "source_span": [
+        118,
+        11,
+        118,
+        49
+      ],
+      "procedure": "OA02",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC05",
+      "interpretation": "Require stored owner object at that stop to be the identical behavior object, not equal data or lifetime tuple.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L118-L118",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 524,
+      "source_span": [
+        131,
+        11,
+        131,
+        27
+      ],
+      "procedure": "OA02",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "OA-SC05",
+      "interpretation": "Prior record absent admits first candidate without indexing previous rank.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L131-L131",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 527,
+      "source_span": [
+        131,
+        31,
+        131,
+        49
+      ],
+      "procedure": "OA02",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "OA-SC05",
+      "interpretation": "Strict tuple comparison priority, number, source time, source index, event time; equal retains first input.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L131-L131",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 625,
+      "source_span": [
+        151,
+        7,
+        151,
+        41
+      ],
+      "procedure": "OA03",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC06",
+      "interpretation": "Select lower index route only if index is not None; do not retry scan on an indexed miss.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L151-L151",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 632,
+      "source_span": [
+        154,
+        15,
+        154,
+        37
+      ],
+      "procedure": "OA03",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "OA-SC06",
+      "interpretation": "Exact bullish selects strict lower query; all other direction values select strict greater locally.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L154-L154",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 652,
+      "source_span": [
+        158,
+        29,
+        158,
+        51
+      ],
+      "procedure": "OA03",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "OA-SC06",
+      "interpretation": "Exact bullish selects low attribute; otherwise high.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L158-L158",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 670,
+      "source_span": [
+        163,
+        19,
+        163,
+        41
+      ],
+      "procedure": "OA03",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "OA-SC06",
+      "interpretation": "Sequential filter chooses strict low<level for exact bullish, otherwise high>level; only selected operand evaluated.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L163-L163",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 673,
+      "source_span": [
+        162,
+        16,
+        162,
+        81
+      ],
+      "procedure": "OA03",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "OA-SC06",
+      "interpretation": "Strict low < level in bullish branch; equality is not a crossing.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L162-L162",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 684,
+      "source_span": [
+        164,
+        16,
+        164,
+        81
+      ],
+      "procedure": "OA03",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "OA-SC06",
+      "interpretation": "Strict high > level in other direction branch; equality is not a crossing.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L164-L164",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 698,
+      "source_span": [
+        167,
+        19,
+        167,
+        35
+      ],
+      "procedure": "OA03",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "OA-SC06",
+      "interpretation": "Return None for absent crossing; otherwise exact lower time at returned position, including position zero.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L167-L167",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 758,
+      "source_span": [
+        175,
+        32,
+        175,
+        50
+      ],
+      "procedure": "OA04",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "OA-SC07",
+      "interpretation": "Exact low attribute chooses strict lower; any other attribute chooses strict greater after attribute access.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L175-L175",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 31,
+        "heading": "_order_b_boundary"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB06",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 761,
+      "source_span": [
+        175,
+        12,
+        175,
+        28
+      ],
+      "procedure": "OA04",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "OA-SC07",
+      "interpretation": "Strictly lower candidate updates low boundary; equal does not.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L175-L175",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 31,
+        "heading": "_order_b_boundary"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB06",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 764,
+      "source_span": [
+        175,
+        56,
+        175,
+        72
+      ],
+      "procedure": "OA04",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "OA-SC07",
+      "interpretation": "Strictly higher candidate updates non-low boundary; equal does not.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L175-L175",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 31,
+        "heading": "_order_b_boundary"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB06",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 794,
+      "source_span": [
+        182,
+        7,
+        182,
+        20
+      ],
+      "procedure": "OA05",
+      "original_operation": [
+        "GtE"
+      ],
+      "original_context": "OA-SC08",
+      "interpretation": "Return None if supplied left >= right before any index lookup; no local nonnegative clamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L182-L182",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 804,
+      "source_span": [
+        185,
+        7,
+        185,
+        24
+      ],
+      "procedure": "OA05",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC08",
+      "interpretation": "Use lower index if not None; indexed miss is not a sequential fallback.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L185-L185",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 810,
+      "source_span": [
+        186,
+        35,
+        186,
+        53
+      ],
+      "procedure": "OA05",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "OA-SC08",
+      "interpretation": "Exact low chooses first_less; other attribute chooses first_greater.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L186-L186",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 846,
+      "source_span": [
+        192,
+        36,
+        192,
+        54
+      ],
+      "procedure": "OA05",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "OA-SC08",
+      "interpretation": "Exact low attribute chooses strict lower comparator; otherwise strict greater.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L192-L192",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 849,
+      "source_span": [
+        192,
+        16,
+        192,
+        32
+      ],
+      "procedure": "OA05",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "OA-SC08",
+      "interpretation": "Strict lower comparison; equality does not cross.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L192-L192",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 852,
+      "source_span": [
+        192,
+        60,
+        192,
+        76
+      ],
+      "procedure": "OA05",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "OA-SC08",
+      "interpretation": "Strict higher comparison; equality does not cross.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L192-L192",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 861,
+      "source_span": [
+        195,
+        48,
+        195,
+        68
+      ],
+      "procedure": "OA05",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC08",
+      "interpretation": "Return exact lower timestamp if position not None, including zero; otherwise null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L195-L195",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 226,
+      "source_span": [
+        79,
+        43,
+        79,
+        58
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "OA-SC04",
+      "interpretation": "Type annotation union with None; no numeric or chronological arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration/import or annotation only; no trading-time decision at this site.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L79-L79",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 285,
+      "source_span": [
+        90,
+        76,
+        90,
+        78
+      ],
+      "procedure": "OA02",
+      "original_operation": "USub",
+      "original_context": "OA-SC04",
+      "interpretation": "Negate input ordinal in sort key, giving earlier input higher rank at complete equality.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L90-L90",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 289,
+      "source_span": [
+        91,
+        21,
+        91,
+        41
+      ],
+      "procedure": "OA02",
+      "original_operation": "Mult",
+      "original_context": "OA-SC04",
+      "interpretation": "Allocate zero-filled rank-position array of lifetime length.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L91-L91",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 389,
+      "source_span": [
+        105,
+        30,
+        105,
+        55
+      ],
+      "procedure": "OA02",
+      "original_operation": "USub",
+      "original_context": "OA-SC04",
+      "interpretation": "Push negative rank position and original position, so min heap exposes highest initial rank.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L105-L105",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 394,
+      "source_span": [
+        106,
+        12,
+        106,
+        23
+      ],
+      "procedure": "OA02",
+      "original_operation": "Add",
+      "original_context": "OA-SC04",
+      "interpretation": "Increment start cursor once per activated lifetime; never reset during sweep.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L106-L106",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 612,
+      "source_span": [
+        149,
+        49,
+        149,
+        77
+      ],
+      "procedure": "OA03",
+      "original_operation": "Add",
+      "original_context": "OA-SC06",
+      "interpretation": "Add native timeframe to reset main time; no rounding or unit conversion here.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L149-L149",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 706,
+      "source_span": [
+        141,
+        5,
+        141,
+        20
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "OA-SC06",
+      "interpretation": "Type annotation union with None; no numeric or chronological arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration/import or annotation only; no trading-time decision at this site.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L141-L141",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 739,
+      "source_span": [
+        173,
+        23,
+        173,
+        32
+      ],
+      "procedure": "OA04",
+      "original_operation": "Add",
+      "original_context": "OA-SC07",
+      "interpretation": "Add one to first position to avoid re-reading anchor.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L173-L173",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 31,
+        "heading": "_order_b_boundary"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB06",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 742,
+      "source_span": [
+        173,
+        34,
+        173,
+        42
+      ],
+      "procedure": "OA04",
+      "original_operation": "Add",
+      "original_context": "OA-SC07",
+      "interpretation": "Add one to last position for inclusive endpoint.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L173-L173",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 31,
+        "heading": "_order_b_boundary"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB06",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 59,
+      "source_span": [
+        29,
+        14,
+        29,
+        29
+      ],
+      "procedure": "OA01",
+      "original_operation": "deepcopy",
+      "original_context": "OA-SC02",
+      "interpretation": "Deep-copy each individual cause before relabeling; original object is not mutated.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Preserves provenance and stable cause ordering used by downstream acceptance.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L29-L29",
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 33,
+        "heading": "relabel_primary_causes"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OLC07",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 78,
+      "source_span": [
+        33,
+        15,
+        33,
+        62
+      ],
+      "procedure": "OA01",
+      "original_operation": "str().startswith",
+      "original_context": "OA-SC02",
+      "interpretation": "Test PH or PL prefix on the string-converted current label.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Preserves provenance and stable cause ordering used by downstream acceptance.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L33-L33",
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 33,
+        "heading": "relabel_primary_causes"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OLC07",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 80,
+      "source_span": [
+        33,
+        15,
+        33,
+        37
+      ],
+      "procedure": "OA01",
+      "original_operation": "str",
+      "original_context": "OA-SC02",
+      "interpretation": "Convert the label (including default empty) to str before checking prefix.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Preserves provenance and stable cause ordering used by downstream acceptance.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L33-L33",
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 33,
+        "heading": "relabel_primary_causes"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OLC07",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 82,
+      "source_span": [
+        33,
+        19,
+        33,
+        36
+      ],
+      "procedure": "OA01",
+      "original_operation": "row.get",
+      "original_context": "OA-SC02",
+      "interpretation": "Read current label with empty-string default.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Preserves provenance and stable cause ordering used by downstream acceptance.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L33-L33",
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 33,
+        "heading": "relabel_primary_causes"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OLC07",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 91,
+      "source_span": [
+        33,
+        67,
+        33,
+        82
+      ],
+      "procedure": "OA01",
+      "original_operation": "row.get",
+      "original_context": "OA-SC02",
+      "interpretation": "Read associated source with default None and test membership in supplied label mapping only after prefix success.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Preserves provenance and stable cause ordering used by downstream acceptance.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L33-L33",
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 33,
+        "heading": "relabel_primary_causes"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OLC07",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 110,
+      "source_span": [
+        36,
+        12,
+        36,
+        30
+      ],
+      "procedure": "OA01",
+      "original_operation": "result.append",
+      "original_context": "OA-SC02",
+      "interpretation": "Append unique relabeled copy, preserving traversal order.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Preserves provenance and stable cause ordering used by downstream acceptance.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L36-L36",
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 33,
+        "heading": "relabel_primary_causes"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OLC07",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 129,
+      "source_span": [
+        39,
+        1,
+        39,
+        35
+      ],
+      "procedure": null,
+      "original_operation": "dataclass",
+      "original_context": "OA-SC03",
+      "interpretation": "Create frozen slotted record declaration; does not select a trade or normalize inputs.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration/import or annotation only; no trading-time decision at this site.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L39-L39",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 151,
+      "source_span": [
+        47,
+        1,
+        47,
+        35
+      ],
+      "procedure": null,
+      "original_operation": "dataclass",
+      "original_context": "OA-SC03",
+      "interpretation": "Create frozen slotted record declaration; does not select a trade or normalize inputs.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration/import or annotation only; no trading-time decision at this site.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L47-L47",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 209,
+      "source_span": [
+        56,
+        1,
+        56,
+        35
+      ],
+      "procedure": null,
+      "original_operation": "dataclass",
+      "original_context": "OA-SC03",
+      "interpretation": "Create frozen slotted record declaration; does not select a trade or normalize inputs.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration/import or annotation only; no trading-time decision at this site.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L56-L56",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 242,
+      "source_span": [
+        87,
+        8,
+        87,
+        22
+      ],
+      "procedure": "OA02",
+      "original_operation": "priority",
+      "original_context": "OA-SC04",
+      "interpretation": "Invoke supplied priority callback for each lifetime during initial rank creation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Priority is supplied by caller; local source fixes evaluation order and rank key only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L87-L87",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 245,
+      "source_span": [
+        87,
+        24,
+        87,
+        55
+      ],
+      "procedure": "OA02",
+      "original_operation": "int",
+      "original_context": "OA-SC04",
+      "interpretation": "Convert initial behavior number to int.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L87-L87",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 247,
+      "source_span": [
+        87,
+        28,
+        87,
+        54
+      ],
+      "procedure": "OA02",
+      "original_operation": "getattr",
+      "original_context": "OA-SC04",
+      "interpretation": "Read initial number, default zero.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L87-L87",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 252,
+      "source_span": [
+        88,
+        8,
+        88,
+        36
+      ],
+      "procedure": "OA02",
+      "original_operation": "getattr",
+      "original_context": "OA-SC04",
+      "interpretation": "Read initial source time without conversion.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L88-L88",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 256,
+      "source_span": [
+        88,
+        38,
+        88,
+        72
+      ],
+      "procedure": "OA02",
+      "original_operation": "int",
+      "original_context": "OA-SC04",
+      "interpretation": "Convert initial source index to int.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L88-L88",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 258,
+      "source_span": [
+        88,
+        42,
+        88,
+        71
+      ],
+      "procedure": "OA02",
+      "original_operation": "getattr",
+      "original_context": "OA-SC04",
+      "interpretation": "Read required initial source index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L88-L88",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 270,
+      "source_span": [
+        90,
+        20,
+        90,
+        80
+      ],
+      "procedure": "OA02",
+      "original_operation": "sorted",
+      "original_context": "OA-SC04",
+      "interpretation": "Sort positions ascending by priority, number, source time, source index, then negative original position; highest rank later.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L90-L90",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 272,
+      "source_span": [
+        90,
+        27,
+        90,
+        48
+      ],
+      "procedure": "OA02",
+      "original_operation": "range",
+      "original_context": "OA-SC04",
+      "interpretation": "Enumerate valid lifetime positions from zero to length exclusive for rank ordering.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L90-L90",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 274,
+      "source_span": [
+        90,
+        33,
+        90,
+        47
+      ],
+      "procedure": "OA02",
+      "original_operation": "len",
+      "original_context": "OA-SC04",
+      "interpretation": "Enumerate valid lifetime positions from zero to length exclusive for rank ordering.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L90-L90",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 292,
+      "source_span": [
+        91,
+        27,
+        91,
+        41
+      ],
+      "procedure": "OA02",
+      "original_operation": "len",
+      "original_context": "OA-SC04",
+      "interpretation": "Allocate zero-filled rank-position array of lifetime length.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L91-L91",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 299,
+      "source_span": [
+        92,
+        26,
+        92,
+        50
+      ],
+      "procedure": "OA02",
+      "original_operation": "enumerate",
+      "original_context": "OA-SC04",
+      "interpretation": "Traverse sorted positions with zero-based enumerated rank, writing inverse rank position.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L92-L92",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 309,
+      "source_span": [
+        94,
+        13,
+        98,
+        50
+      ],
+      "procedure": "OA02",
+      "original_operation": "sorted",
+      "original_context": "OA-SC04",
+      "interpretation": "Sort activation tuples by chosen activation time then original position.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L94-L98",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 314,
+      "source_span": [
+        95,
+        9,
+        95,
+        50
+      ],
+      "procedure": "OA02",
+      "original_operation": "getattr",
+      "original_context": "OA-SC04",
+      "interpretation": "Read optional trigger time, default None; if truthy skip later fallback attributes.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L95-L95",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 319,
+      "source_span": [
+        96,
+        12,
+        96,
+        54
+      ],
+      "procedure": "OA02",
+      "original_operation": "getattr",
+      "original_context": "OA-SC04",
+      "interpretation": "Read optional decision time, default None, only if trigger falsey.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L96-L96",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 324,
+      "source_span": [
+        97,
+        12,
+        97,
+        40
+      ],
+      "procedure": "OA02",
+      "original_operation": "getattr",
+      "original_context": "OA-SC04",
+      "interpretation": "Read source time only if both preceding activation values falsey.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L97-L97",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 336,
+      "source_span": [
+        98,
+        29,
+        98,
+        49
+      ],
+      "procedure": "OA02",
+      "original_operation": "enumerate",
+      "original_context": "OA-SC04",
+      "interpretation": "Enumerate input lifetimes to retain activation tie ordinal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L98-L98",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 350,
+      "source_span": [
+        102,
+        17,
+        102,
+        76
+      ],
+      "procedure": "OA02",
+      "original_operation": "sorted",
+      "original_context": "OA-SC04",
+      "interpretation": "Sweep distinct non-null stop events in chronological order; no event created for open-ended lifetime.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L102-L102",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 367,
+      "source_span": [
+        103,
+        23,
+        103,
+        34
+      ],
+      "procedure": "OA02",
+      "original_operation": "len",
+      "original_context": "OA-SC04",
+      "interpretation": "Check cursor below start-list length before indexing.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L103-L103",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 385,
+      "source_span": [
+        105,
+        12,
+        105,
+        67
+      ],
+      "procedure": "OA02",
+      "original_operation": "heappush",
+      "original_context": "OA-SC04",
+      "interpretation": "Push negative rank position and original position, so min heap exposes highest initial rank.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L105-L105",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 432,
+      "source_span": [
+        113,
+        12,
+        113,
+        27
+      ],
+      "procedure": "OA02",
+      "original_operation": "heappop",
+      "original_context": "OA-SC04",
+      "interpretation": "Remove expired heap top; expired non-top elements need not be removed until exposed.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L113-L113",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 464,
+      "source_span": [
+        118,
+        11,
+        118,
+        33
+      ],
+      "procedure": "OA02",
+      "original_operation": "owners.get",
+      "original_context": "OA-SC05",
+      "interpretation": "Lookup dominant owner by exact event key; absent returns None.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L118-L118",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 472,
+      "source_span": [
+        120,
+        22,
+        120,
+        54
+      ],
+      "procedure": "OA02",
+      "original_operation": "getattr",
+      "original_context": "OA-SC05",
+      "interpretation": "Read source timestamp of retained behavior.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L120-L120",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 478,
+      "source_span": [
+        121,
+        23,
+        121,
+        61
+      ],
+      "procedure": "OA02",
+      "original_operation": "int",
+      "original_context": "OA-SC05",
+      "interpretation": "Read and convert retained behavior's source index to int.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L121-L121",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 480,
+      "source_span": [
+        121,
+        27,
+        121,
+        60
+      ],
+      "procedure": "OA02",
+      "original_operation": "getattr",
+      "original_context": "OA-SC05",
+      "interpretation": "Read and convert retained behavior's source index to int.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L121-L121",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 486,
+      "source_span": [
+        122,
+        21,
+        122,
+        66
+      ],
+      "procedure": "OA02",
+      "original_operation": "chronology.main_index",
+      "original_context": "OA-SC05",
+      "interpretation": "Map exact stop to main index using explicit clamp=True.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Containing-main mapping and clamp behavior depend on chronology service.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L122-L122",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 495,
+      "source_span": [
+        124,
+        12,
+        124,
+        30
+      ],
+      "procedure": "OA02",
+      "original_operation": "priority",
+      "original_context": "OA-SC05",
+      "interpretation": "Re-evaluate priority callback at projection, rather than reusing initial heap rank.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Caller-supplied priority value; no local purity check.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L124-L124",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 498,
+      "source_span": [
+        124,
+        32,
+        124,
+        67
+      ],
+      "procedure": "OA02",
+      "original_operation": "int",
+      "original_context": "OA-SC05",
+      "interpretation": "Read number default zero and convert to int for per-main rank.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L124-L124",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 500,
+      "source_span": [
+        124,
+        36,
+        124,
+        66
+      ],
+      "procedure": "OA02",
+      "original_operation": "getattr",
+      "original_context": "OA-SC05",
+      "interpretation": "Read number default zero and convert to int for per-main rank.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L124-L124",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 510,
+      "source_span": [
+        127,
+        19,
+        129,
+        9
+      ],
+      "procedure": "OA02",
+      "original_operation": "PostBehaviorStop",
+      "original_context": "OA-SC05",
+      "interpretation": "Construct PostBehaviorStop with original label, int source index, source time and exact event.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L127-L129",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 518,
+      "source_span": [
+        130,
+        19,
+        130,
+        44
+      ],
+      "procedure": "OA02",
+      "original_operation": "by_candle.get",
+      "original_context": "OA-SC05",
+      "interpretation": "Lookup current winning rank/record for containing main index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L130-L130",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 540,
+      "source_span": [
+        133,
+        11,
+        136,
+        5
+      ],
+      "procedure": "OA02",
+      "original_operation": "sorted",
+      "original_context": "OA-SC05",
+      "interpretation": "Sort winning records by exact event then behavior source index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L133-L136",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 548,
+      "source_span": [
+        134,
+        29,
+        134,
+        47
+      ],
+      "procedure": "OA02",
+      "original_operation": "by_candle.values",
+      "original_context": "OA-SC05",
+      "interpretation": "Project records (not ranks) from per-main winners in dictionary traversal order before final stable sort.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L134-L134",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 25,
+        "heading": "dominant_post_behavior_stops"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB03",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 573,
+      "source_span": [
+        143,
+        14,
+        143,
+        49
+      ],
+      "procedure": "OA03",
+      "original_operation": "getattr",
+      "original_context": "OA-SC06",
+      "interpretation": "Read optional second_time; default None.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L143-L143",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 581,
+      "source_span": [
+        145,
+        15,
+        145,
+        43
+      ],
+      "procedure": "OA03",
+      "original_operation": "chronology.reset_time",
+      "original_context": "OA-SC06",
+      "interpretation": "Return chronology.reset_time(reset) directly.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Exact delegated time interpretation is owned by chronology.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L145-L145",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 587,
+      "source_span": [
+        146,
+        18,
+        146,
+        46
+      ],
+      "procedure": "OA03",
+      "original_operation": "int",
+      "original_context": "OA-SC06",
+      "interpretation": "Read Reset index and convert to int before indexing main time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L146-L146",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 589,
+      "source_span": [
+        146,
+        22,
+        146,
+        45
+      ],
+      "procedure": "OA03",
+      "original_operation": "getattr",
+      "original_context": "OA-SC06",
+      "interpretation": "Read Reset index and convert to int before indexing main time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L146-L146",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 601,
+      "source_span": [
+        148,
+        11,
+        148,
+        54
+      ],
+      "procedure": "OA03",
+      "original_operation": "bisect_left",
+      "original_context": "OA-SC06",
+      "interpretation": "Lower-bound first lower time >= reset main open.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L148-L148",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 608,
+      "source_span": [
+        149,
+        12,
+        149,
+        78
+      ],
+      "procedure": "OA03",
+      "original_operation": "bisect_left",
+      "original_context": "OA-SC06",
+      "interpretation": "Lower-bound first lower time >= main open + timeframe, making end exclusive.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L149-L149",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 618,
+      "source_span": [
+        150,
+        12,
+        150,
+        54
+      ],
+      "procedure": "OA03",
+      "original_operation": "as_decimal",
+      "original_context": "OA-SC06",
+      "interpretation": "Read broken_level and normalize using as_decimal before choosing index or scan.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L150-L150",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 620,
+      "source_span": [
+        150,
+        23,
+        150,
+        53
+      ],
+      "procedure": "OA03",
+      "original_operation": "getattr",
+      "original_context": "OA-SC06",
+      "interpretation": "Read broken_level and normalize using as_decimal before choosing index or scan.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L150-L150",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 635,
+      "source_span": [
+        153,
+        12,
+        153,
+        65
+      ],
+      "procedure": "OA03",
+      "original_operation": "chronology.lower_index.first_less",
+      "original_context": "OA-SC06",
+      "interpretation": "Query first strict lower crossing in [left,right) at normalized level.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Index service owns search; W2 checks position/time consistency.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L153-L153",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 642,
+      "source_span": [
+        155,
+        12,
+        155,
+        68
+      ],
+      "procedure": "OA03",
+      "original_operation": "chronology.lower_index.first_greater",
+      "original_context": "OA-SC06",
+      "interpretation": "Query first strict higher crossing in [left,right) at normalized level.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Index service owns search; W2 checks position/time consistency.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L155-L155",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 659,
+      "source_span": [
+        159,
+        19,
+        166,
+        16
+      ],
+      "procedure": "OA03",
+      "original_operation": "next",
+      "original_context": "OA-SC06",
+      "interpretation": "Consume first matching sequential index using next; default None on exhaustion.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L159-L166",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 665,
+      "source_span": [
+        160,
+        31,
+        160,
+        49
+      ],
+      "procedure": "OA03",
+      "original_operation": "range",
+      "original_context": "OA-SC06",
+      "interpretation": "Traverse lower positions left inclusive, right exclusive, ascending.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L160-L160",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 674,
+      "source_span": [
+        162,
+        16,
+        162,
+        73
+      ],
+      "procedure": "OA03",
+      "original_operation": "as_decimal",
+      "original_context": "OA-SC06",
+      "interpretation": "Read selected lower attribute and normalize in bullish comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L162-L162",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 676,
+      "source_span": [
+        162,
+        27,
+        162,
+        72
+      ],
+      "procedure": "OA03",
+      "original_operation": "getattr",
+      "original_context": "OA-SC06",
+      "interpretation": "Read selected lower attribute and normalize in bullish comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L162-L162",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 685,
+      "source_span": [
+        164,
+        16,
+        164,
+        73
+      ],
+      "procedure": "OA03",
+      "original_operation": "as_decimal",
+      "original_context": "OA-SC06",
+      "interpretation": "Read selected lower attribute and normalize in non-bullish comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L164-L164",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 687,
+      "source_span": [
+        164,
+        27,
+        164,
+        72
+      ],
+      "procedure": "OA03",
+      "original_operation": "getattr",
+      "original_context": "OA-SC06",
+      "interpretation": "Read selected lower attribute and normalize in non-bullish comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L164-L164",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 28,
+        "heading": "order_b_reset_event_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 719,
+      "source_span": [
+        171,
+        13,
+        171,
+        70
+      ],
+      "procedure": "OA04",
+      "original_operation": "as_decimal",
+      "original_context": "OA-SC07",
+      "interpretation": "Read first main candle's selected attribute and normalize anchor before scanning.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L171-L171",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 31,
+        "heading": "_order_b_boundary"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB06",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 721,
+      "source_span": [
+        171,
+        24,
+        171,
+        69
+      ],
+      "procedure": "OA04",
+      "original_operation": "getattr",
+      "original_context": "OA-SC07",
+      "interpretation": "Read first main candle's selected attribute and normalize anchor before scanning.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L171-L171",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 31,
+        "heading": "_order_b_boundary"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB06",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 737,
+      "source_span": [
+        173,
+        17,
+        173,
+        43
+      ],
+      "procedure": "OA04",
+      "original_operation": "range",
+      "original_context": "OA-SC07",
+      "interpretation": "Scan subsequent main positions ascending from first+1 through last inclusive; initial anchor always read.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L173-L173",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 31,
+        "heading": "_order_b_boundary"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB06",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 747,
+      "source_span": [
+        174,
+        16,
+        174,
+        73
+      ],
+      "procedure": "OA04",
+      "original_operation": "as_decimal",
+      "original_context": "OA-SC07",
+      "interpretation": "Read and normalize each visited candle's selected attribute before comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L174-L174",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 31,
+        "heading": "_order_b_boundary"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB06",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 749,
+      "source_span": [
+        174,
+        27,
+        174,
+        72
+      ],
+      "procedure": "OA04",
+      "original_operation": "getattr",
+      "original_context": "OA-SC07",
+      "interpretation": "Read and normalize each visited candle's selected attribute before comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L174-L174",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 31,
+        "heading": "_order_b_boundary"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB06",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 789,
+      "source_span": [
+        181,
+        12,
+        181,
+        40
+      ],
+      "procedure": "OA05",
+      "original_operation": "len",
+      "original_context": "OA-SC08",
+      "interpretation": "Set right to length of lower timestamp array.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L181-L181",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 819,
+      "source_span": [
+        187,
+        19,
+        187,
+        46
+      ],
+      "procedure": "OA05",
+      "original_operation": "find",
+      "original_context": "OA-SC08",
+      "interpretation": "Call selected search from supplied left to right exclusive with original Decimal boundary.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Index service owns strict first crossing and position contract.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L187-L187",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 829,
+      "source_span": [
+        190,
+        22,
+        190,
+        40
+      ],
+      "procedure": "OA05",
+      "original_operation": "range",
+      "original_context": "OA-SC08",
+      "interpretation": "Without index scan lower positions ascending left inclusive to right exclusive.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L190-L190",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 835,
+      "source_span": [
+        191,
+        20,
+        191,
+        78
+      ],
+      "procedure": "OA05",
+      "original_operation": "as_decimal",
+      "original_context": "OA-SC08",
+      "interpretation": "Read and normalize chosen lower price attribute.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L191-L191",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 837,
+      "source_span": [
+        191,
+        31,
+        191,
+        77
+      ],
+      "procedure": "OA05",
+      "original_operation": "getattr",
+      "original_context": "OA-SC08",
+      "interpretation": "Read and normalize chosen lower price attribute.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Affects owner ranking, event boundary, strict price crossing, or evidence identity.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L191-L191",
+      "contract_ref": {
+        "path": "Algorithms/V3/07_Order_B.md",
+        "line": 34,
+        "heading": "_order_b_crossing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "transition": "OB07",
+          "line": 50
+        }
+      ]
+    }
+  ],
+  "supplemental_items": [
+    {
+      "supplemental_id": "B05-01-S1",
+      "source_span": [
+        25,
+        37
+      ],
+      "discovery_reason": "Source-first examination of evaluation order, identity, record declaration, fallback and implicit dependency.",
+      "interpretation": "Deep-copy, string coercion and source-membership short circuit; full-dict equality dedup preserves first output and original ordering. No new label is created without matching mapping key.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L25-L37"
+    },
+    {
+      "supplemental_id": "B05-01-S2",
+      "source_span": [
+        39,
+        75
+      ],
+      "discovery_reason": "Source-first examination of evaluation order, identity, record declaration, fallback and implicit dependency.",
+      "interpretation": "Three immutable slotted evidence records separate stop owner, independent anchor and frozen reset leg; construction does not validate types, direction, prices or timestamps.",
+      "temporal_relevance": "INDIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L39-L75"
+    },
+    {
+      "supplemental_id": "B05-01-S3",
+      "source_span": [
+        86,
+        113
+      ],
+      "discovery_reason": "Source-first examination of evaluation order, identity, record declaration, fallback and implicit dependency.",
+      "interpretation": "Two-stage rank/index and heap traversal: first-equal initial rank is earlier input ordinal; activation and end inclusive, open end unbounded, falsey activation fields fall through. Expired heap entries removed only when exposed at top.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L86-L113"
+    },
+    {
+      "supplemental_id": "B05-01-S4",
+      "source_span": [
+        114,
+        136
+      ],
+      "discovery_reason": "Source-first examination of evaluation order, identity, record declaration, fallback and implicit dependency.",
+      "interpretation": "Ownership tested by object identity at exact stop, not equality of record or tuple. Priority callback is invoked again for per-main rank; tie retains first traversal candidate, final sort exact event then source index.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L114-L136"
+    },
+    {
+      "supplemental_id": "B05-01-S5",
+      "source_span": [
+        143,
+        167
+      ],
+      "discovery_reason": "Source-first examination of evaluation order, identity, record declaration, fallback and implicit dependency.",
+      "interpretation": "Truthy explicit Reset time delegates directly, including null result. Otherwise normalize broken level and use exclusive main-end bounds. Indexed miss does not trigger scan; exact bullish is low, else high; no coarse fallback.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L143-L167"
+    },
+    {
+      "supplemental_id": "B05-01-S6",
+      "source_span": [
+        170,
+        177
+      ],
+      "discovery_reason": "Source-first examination of evaluation order, identity, record declaration, fallback and implicit dependency.",
+      "interpretation": "Initial anchor access unconditional. Inclusive remaining interval, strict improvement and paired value/source mutation. If last precedes first, loop is empty and anchor remains; no local bounds validation.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L170-L177"
+    },
+    {
+      "supplemental_id": "B05-01-S7",
+      "source_span": [
+        180,
+        195
+      ],
+      "discovery_reason": "Source-first examination of evaluation order, identity, record declaration, fallback and implicit dependency.",
+      "interpretation": "Supplied left used without local lower clamp; empty upper range exits. Exact low selects lower, other attribute higher. Index route trusts returned position, scan stops at first strict hit; no second attempt after indexed miss.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L180-L195"
+    },
+    {
+      "supplemental_id": "B05-01-S8",
+      "source_span": [
+        139,
+        195
+      ],
+      "discovery_reason": "Source-first examination of evaluation order, identity, record declaration, fallback and implicit dependency.",
+      "interpretation": "Local helpers do not validate direction/attribute domains or alignment of chronology arrays; exact native conditional behavior retained, caller and index guarantees deferred to W2.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L139-L195"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B05-01-F01",
+      "span": [
+        25,
+        37
+      ],
+      "description": "Make prefix coercion and short-circuit source lookup explicit.",
+      "document": "Algorithms/V3/08_Order_Audit.md",
+      "prior_blob": "b1adbda9bcefe1ea72936087cb7881adaeb09e58",
+      "resolution": "OA01 now states str conversion/defaults, prefix before membership, preserving first equal dict.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L25-L37",
+      "recheck": "W2 caller/chronology contracts and W3 separate source-first review pending."
+    },
+    {
+      "id": "B05-01-F02",
+      "span": [
+        114,
+        136
+      ],
+      "description": "Distinguish behavior identity from lifetime identity and preserve callback reevaluation.",
+      "document": "Algorithms/V3/07_Order_B.md",
+      "prior_blob": "4d053b7e2a42c5e9c4053e467bd9c4f5b2aad1a4",
+      "resolution": "OA02 explicitly uses identical behavior object and invokes priority again at projection.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L114-L136",
+      "recheck": "W2 caller/chronology contracts and W3 separate source-first review pending."
+    },
+    {
+      "id": "B05-01-F03",
+      "span": [
+        139,
+        167
+      ],
+      "description": "Explicit null delegation, exact direction dispatch and no indexed-miss retry.",
+      "document": "Algorithms/V3/07_Order_B.md",
+      "prior_blob": "4d053b7e2a42c5e9c4053e467bd9c4f5b2aad1a4",
+      "resolution": "OA03 documents helper's native dispatch and absence of fallback after delegated/indexed miss.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L139-L167",
+      "recheck": "W2 caller/chronology contracts and W3 separate source-first review pending."
+    },
+    {
+      "id": "B05-01-F04",
+      "span": [
+        170,
+        195
+      ],
+      "description": "Clarify unvalidated supplied bounds and absent-index-only fallback.",
+      "document": "Algorithms/V3/07_Order_B.md",
+      "prior_blob": "4d053b7e2a42c5e9c4053e467bd9c4f5b2aad1a4",
+      "resolution": "OA04 and OA05 preserve unconditional anchor, empty remainder, unclamped left and exact attribute dispatch.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L170-L195",
+      "recheck": "W2 caller/chronology contracts and W3 separate source-first review pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2 verify priority callback purity/stability, repeated behavior identities, chronology main clamp, lower-index/array alignment, normalized Decimal service and valid supplied indices/direction/attribute domains.",
+    "OA06 and remaining Order Audit procedures pending from line 198; W3 separate forensic review not run."
+  ]
+}

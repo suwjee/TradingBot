@@ -1,0 +1,417 @@
+{
+  "checkpoint": 144,
+  "batch": "B08",
+  "sub_batch": "B08-07",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "f270019e27cceaf6122cf03aafe7003de6755f9b",
+  "path": "engine/pipeline/PL_PH_detector.py",
+  "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+  "source_range": [
+    198,
+    210
+  ],
+  "procedures": "P10",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 10,
+    "by_category": {
+      "branches": 5,
+      "comparisons": 3,
+      "arithmetic": 0,
+      "calls": 2
+    },
+    "supplemental_items": 1,
+    "resolved_findings": 1
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "7cfde870aca280b94a75e4ee0bcd57293065c365",
+    "crosswalk_blob": "bd8d85d7c7ad7d7a800c0161d701bd4c9cf9c6ab",
+    "exact_site_id_span_procedure_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 773,
+      "source_span": [
+        204,
+        13,
+        204,
+        101
+      ],
+      "procedure": "P10",
+      "original_operation": "IfExp",
+      "original_context": "P-SC09",
+      "interpretation": "Select aggregate lows if direction exactly bullish, otherwise highs, missing default bearish.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact chronology, source identity, priority, directional eligibility or mutation contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L204-L204",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 66,
+        "heading": "P10"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 73,
+          "transition": "PO03"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 793,
+      "source_span": [
+        205,
+        60,
+        205,
+        65
+      ],
+      "procedure": "P10",
+      "original_operation": "comprehension",
+      "original_context": "P-SC09",
+      "interpretation": "Build promoted physical raw index/time set from selected points.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact chronology, source identity, priority, directional eligibility or mutation contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L205-L205",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 66,
+        "heading": "P10"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 73,
+          "transition": "PO03"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": "engine/pipeline/PL_PH_detector.py:206:19:Compare:filter",
+      "source_span": [
+        206,
+        19,
+        206,
+        56
+      ],
+      "procedure": "P10",
+      "original_operation": "ComprehensionFilter",
+      "original_context": "P-SC09",
+      "interpretation": "Only confirmed decision_index<=horizon enters set; equality included.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact chronology, source identity, priority, directional eligibility or mutation contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L206-L206",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 66,
+        "heading": "P10"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 73,
+          "transition": "PO03"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 803,
+      "source_span": [
+        207,
+        21,
+        207,
+        25
+      ],
+      "procedure": "P10",
+      "original_operation": "comprehension",
+      "original_context": "P-SC09",
+      "interpretation": "Return fresh StopAll list in encounter order, original retained records.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact chronology, source identity, priority, directional eligibility or mutation contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L207-L207",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 66,
+        "heading": "P10"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 73,
+          "transition": "PO03"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": "engine/pipeline/PL_PH_detector.py:208:15:Compare:filter",
+      "source_span": [
+        208,
+        15,
+        208,
+        73
+      ],
+      "procedure": "P10",
+      "original_operation": "ComprehensionFilter",
+      "original_context": "P-SC09",
+      "interpretation": "Normalize StopAll source index via int then pair with source_time; compare against raw point key, no price or number filter.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact chronology, source identity, priority, directional eligibility or mutation contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L208-L208",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 66,
+        "heading": "P10"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 73,
+          "transition": "PO03"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 774,
+      "source_span": [
+        204,
+        29,
+        204,
+        82
+      ],
+      "procedure": "P10",
+      "original_operation": [
+        "Eq"
+      ],
+      "interpretation": "Select aggregate lows if direction exactly bullish, otherwise highs, missing default bearish.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact chronology, source identity, priority, directional eligibility or mutation contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L204-L204",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 66,
+        "heading": "P10"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 73,
+          "transition": "PO03"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 796,
+      "source_span": [
+        206,
+        19,
+        206,
+        56
+      ],
+      "procedure": "P10",
+      "original_operation": [
+        "LtE"
+      ],
+      "interpretation": "Only confirmed decision_index<=horizon enters set; equality included.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact chronology, source identity, priority, directional eligibility or mutation contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L206-L206",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 66,
+        "heading": "P10"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 73,
+          "transition": "PO03"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 806,
+      "source_span": [
+        208,
+        15,
+        208,
+        73
+      ],
+      "procedure": "P10",
+      "original_operation": [
+        "NotIn"
+      ],
+      "interpretation": "Normalize StopAll source index via int then pair with source_time; compare against raw point key, no price or number filter.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact chronology, source identity, priority, directional eligibility or mutation contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L208-L208",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 66,
+        "heading": "P10"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 73,
+          "transition": "PO03"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 775,
+      "source_span": [
+        204,
+        29,
+        204,
+        69
+      ],
+      "procedure": "P10",
+      "original_operation": "getattr",
+      "interpretation": "Select aggregate lows if direction exactly bullish, otherwise highs, missing default bearish.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact chronology, source identity, priority, directional eligibility or mutation contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L204-L204",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 66,
+        "heading": "P10"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 73,
+          "transition": "PO03"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 808,
+      "source_span": [
+        208,
+        16,
+        208,
+        38
+      ],
+      "procedure": "P10",
+      "original_operation": "int",
+      "interpretation": "Normalize StopAll source index via int then pair with source_time; compare against raw point key, no price or number filter.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact chronology, source identity, priority, directional eligibility or mutation contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L208-L208",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 66,
+        "heading": "P10"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 73,
+          "transition": "PO03"
+        }
+      ],
+      "chronology_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B08-07-S01",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "source_span": [
+        204,
+        208
+      ],
+      "interpretation": "Select aggregate role, use confirmed raw physical point pair. Normalize StopAll index only, preserve retained input order, no historical mutation.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L204-L208",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "External owner/caller invariants W2 pending."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B08-07-F01",
+      "span": [
+        204,
+        208
+      ],
+      "description": "Clarify asymmetric index conversion and decision horizon.",
+      "document": "Algorithms/V3/12_Primary_Structures.md",
+      "line": 68,
+      "prior_blob": "bce45ee08f4e5635290748980fdf2fb37bf43b00",
+      "resolution": "Clarified active procedure and related chronology/state transitions where applicable; rechecked pinned source.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L204-L208",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: chronology/index strict query, Decimal conversion, LC05 identity signaling, Order cause relabel and public projection owner. W3 separate review and W4 acceptance pending.",
+    "Remaining P16 onward; no RAW/runtime."
+  ]
+}

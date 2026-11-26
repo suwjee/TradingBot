@@ -1,0 +1,781 @@
+{
+  "checkpoint": 257,
+  "batch": "B09",
+  "sub_batch": "B09-96",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "fc39d697b5807ac621dddb80138f4f8ff3b013c7",
+  "path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+  "source_range": [
+    3648,
+    3669
+  ],
+  "procedures": "TB96/TB97",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 25,
+    "by_category": {
+      "branches": 3,
+      "comparisons": 1,
+      "arithmetic": 8,
+      "calls": 13
+    },
+    "supplemental_items": 1,
+    "resolved_findings": 1
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "5c49e3c793bfc22301109ace5105b7fcddf1b8e2",
+    "crosswalk_blob": "a6ba394ffa669c027d61784a894eccfc7996cd6f",
+    "exact_site_id_span_procedure_operation_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 13291,
+      "source_span": [
+        3657,
+        4,
+        3660,
+        85
+      ],
+      "procedure": "TB96",
+      "original_operation": "For",
+      "original_context": "TB-SC109",
+      "interpretation": "Traverse final public direction mapping.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3657-L3660",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 13300,
+      "source_span": [
+        3658,
+        8,
+        3660,
+        85
+      ],
+      "procedure": "TB96",
+      "original_operation": "For",
+      "original_context": "TB-SC109",
+      "interpretation": "Traverse each group's calculationSegments or absent singleton group.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3658-L3660",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 13329,
+      "source_span": [
+        3663,
+        42,
+        3663,
+        57
+      ],
+      "procedure": "TB96",
+      "original_operation": "comprehension",
+      "original_context": "TB-SC109",
+      "interpretation": "Traverse timings mapping entries to create rounded phase map.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3663-L3663",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 13283,
+      "source_span": [
+        3655,
+        15,
+        3655,
+        69
+      ],
+      "procedure": "TB97",
+      "original_operation": [
+        "LtE"
+      ],
+      "original_context": "TB-SC109",
+      "interpretation": "StopAll decisionTime plus requested timeframe <= closed_through.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3655-L3655",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 125,
+        "heading": "TB97"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 13229,
+      "source_span": [
+        3648,
+        15,
+        3649,
+        67
+      ],
+      "procedure": "TB96",
+      "original_operation": "Sub",
+      "original_context": "TB-SC109",
+      "interpretation": "Subtract one-second delta from main open plus timeframe.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3648-L3649",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 13230,
+      "source_span": [
+        3648,
+        15,
+        3649,
+        44
+      ],
+      "procedure": "TB96",
+      "original_operation": "Add",
+      "original_context": "TB-SC109",
+      "interpretation": "Add chronology timeframe to visible end main candle timestamp.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3648-L3649",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 13265,
+      "source_span": [
+        3652,
+        25,
+        3652,
+        43
+      ],
+      "procedure": "TB96",
+      "original_operation": "Add",
+      "original_context": "TB-SC109",
+      "interpretation": "Add one second to repair through epoch for exclusive close bound.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3652-L3652",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 13270,
+      "source_span": [
+        3652,
+        45,
+        3652,
+        96
+      ],
+      "procedure": "TB96",
+      "original_operation": "Add",
+      "original_context": "TB-SC109",
+      "interpretation": "Add raw timeframe to final seconds candle epoch.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3652-L3652",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 13277,
+      "source_span": [
+        3652,
+        66,
+        3652,
+        68
+      ],
+      "procedure": "TB96",
+      "original_operation": "USub",
+      "original_context": "TB-SC109",
+      "interpretation": "Negative index -1 selects last available seconds candle.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3652-L3652",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 13284,
+      "source_span": [
+        3655,
+        15,
+        3655,
+        51
+      ],
+      "procedure": "TB97",
+      "original_operation": "Add",
+      "original_context": "TB-SC109",
+      "interpretation": "Add requested args.timeframe to row decisionTime.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3655-L3655",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 125,
+        "heading": "TB97"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 13338,
+      "source_span": [
+        3665,
+        31,
+        3665,
+        73
+      ],
+      "procedure": "TB96",
+      "original_operation": "Mult",
+      "original_context": "TB-SC109",
+      "interpretation": "Multiply elapsed total seconds by 1000 for ms.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3665-L3665",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 13339,
+      "source_span": [
+        3665,
+        32,
+        3665,
+        65
+      ],
+      "procedure": "TB96",
+      "original_operation": "Sub",
+      "original_context": "TB-SC109",
+      "interpretation": "Subtract pipeline start from current performance counter.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3665-L3665",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 13240,
+      "source_span": [
+        3649,
+        47,
+        3649,
+        67
+      ],
+      "procedure": "TB96",
+      "original_operation": "timedelta",
+      "original_context": "TB-SC109",
+      "interpretation": "Construct one-second timedelta.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3649-L3649",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 13246,
+      "source_span": [
+        3650,
+        18,
+        3650,
+        100
+      ],
+      "procedure": "TB96",
+      "original_operation": "repair_crossing_lookup",
+      "original_context": "TB-SC109",
+      "interpretation": "Create repair lookup over lower index and specified converters/horizon.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3650-L3650",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 13256,
+      "source_span": [
+        3651,
+        20,
+        3651,
+        53
+      ],
+      "procedure": "TB96",
+      "original_operation": "getattr",
+      "original_context": "TB-SC109",
+      "interpretation": "Read raw_timeframe with absent default 1.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3651-L3651",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 13263,
+      "source_span": [
+        3652,
+        21,
+        3652,
+        97
+      ],
+      "procedure": "TB96",
+      "original_operation": "min",
+      "original_context": "TB-SC109",
+      "interpretation": "Take minimum of nominal and available lower close bounds.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3652-L3652",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 13266,
+      "source_span": [
+        3652,
+        25,
+        3652,
+        39
+      ],
+      "procedure": "TB96",
+      "original_operation": "epoch",
+      "original_context": "TB-SC109",
+      "interpretation": "Convert repair through timestamp to epoch.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3652-L3652",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L116-L122"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 13271,
+      "source_span": [
+        3652,
+        45,
+        3652,
+        80
+      ],
+      "procedure": "TB96",
+      "original_operation": "epoch",
+      "original_context": "TB-SC109",
+      "interpretation": "Convert final seconds candle timestamp to epoch.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3652-L3652",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L116-L122"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 13295,
+      "source_span": [
+        3657,
+        28,
+        3657,
+        57
+      ],
+      "procedure": "TB96",
+      "original_operation": "payload[].items",
+      "original_context": "TB-SC109",
+      "interpretation": "Iterate final public direction mapping items.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3657-L3657",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 13302,
+      "source_span": [
+        3658,
+        23,
+        3658,
+        65
+      ],
+      "procedure": "TB96",
+      "original_operation": "group.get",
+      "original_context": "TB-SC109",
+      "interpretation": "Read calculationSegments with absent singleton tuple.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3658-L3658",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 13309,
+      "source_span": [
+        3659,
+        12,
+        3660,
+        85
+      ],
+      "procedure": "TB96",
+      "original_operation": "apply_true_false",
+      "original_context": "TB-SC109",
+      "interpretation": "Apply True/False to each segment with repair finder and confirmation callback.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3659-L3660",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 13325,
+      "source_span": [
+        3663,
+        19,
+        3663,
+        37
+      ],
+      "procedure": "TB96",
+      "original_operation": "round",
+      "original_context": "TB-SC109",
+      "interpretation": "Round each phase duration to two decimals.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3663-L3663",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 13333,
+      "source_span": [
+        3663,
+        61,
+        3663,
+        76
+      ],
+      "procedure": "TB96",
+      "original_operation": "timings.items",
+      "original_context": "TB-SC109",
+      "interpretation": "Read timing label/duration mapping items.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3663-L3663",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 13336,
+      "source_span": [
+        3665,
+        25,
+        3665,
+        77
+      ],
+      "procedure": "TB96",
+      "original_operation": "round",
+      "original_context": "TB-SC109",
+      "interpretation": "Round total elapsed milliseconds to two decimals.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3665-L3665",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 13340,
+      "source_span": [
+        3665,
+        32,
+        3665,
+        46
+      ],
+      "procedure": "TB96",
+      "original_operation": "perf_counter",
+      "original_context": "TB-SC109",
+      "interpretation": "Read current performance counter for total elapsed.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local chronology, orchestration, state, projection, annotation or telemetry; per-site meaning stated explicitly.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3665-L3665",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 122,
+        "heading": "TB96"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B09-96-S01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_span": [
+        3648,
+        3669
+      ],
+      "interpretation": "Repair through equals visible end main open plus chronology timeframe minus one second. Build repair finder with lower index, local_datetime, epoch and inclusive through parameter. raw_timeframe defaults to 1 only if attribute absent. closed_through is lesser of epoch(through)+1 and last available seconds candle epoch+raw_timeframe. StopAll callback compares decisionTime+args.timeframe<=closed_through; equality closed. Iterate directions and each calculationSegments or absent singleton tuple, call apply_true_false with shared finder and callback. Merged rows may share references; this local path does not separately rebuild aggregate arrays. Phase timings rounded to two decimals; total measured as elapsed perf_counter seconds times 1000 then rounded, not price rounding.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3648-L3669",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "W2/W3 cross-owner reconciliation pending."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B09-96-F01",
+      "span": [
+        3648,
+        3669
+      ],
+      "description": "Repair through equals visible end main open plus chronology timeframe minus one second. Build repair finder with lower index, local_datetime, epoch and inclusive through parameter. raw_timeframe defaults to 1 only if attribute absent. closed_through is lesser of epoch(through)+1 and last available seconds candle epoch+raw_timeframe. StopAll callback compares decisionTime+args.timeframe<=closed_through; equality closed. Iterate directions and each calculationSegments or absent singleton tuple, call apply_true_false with shared finder and callback. Merged rows may share references; this local path does not separately rebuild aggregate arrays. Phase timings rounded to two decimals; total measured as elapsed perf_counter seconds times 1000 then rounded, not price rounding.",
+      "document": "Algorithms/V3/17_Trading_Bridge.md",
+      "line": 122,
+      "prior_blob": "2dc8bf3765ab7845cbe5994a513d87ae13cd109c",
+      "resolution": "Clarify actual local source-derived contract; no production change.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3648-L3669",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: native regime ownership, market chronology, live continuation and True/False interactions; W3/W4 pending."
+  ]
+}

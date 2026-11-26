@@ -1,0 +1,159 @@
+{
+  "checkpoint": 220,
+  "batch": "B09",
+  "sub_batch": "B09-59",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "9867049120fdd0b558150bfb73b642fa4bee4b3e",
+  "path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+  "source_range": [
+    2355,
+    2375
+  ],
+  "procedures": "TB73",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 3,
+    "by_category": {
+      "branches": 0,
+      "comparisons": 0,
+      "arithmetic": 0,
+      "calls": 3
+    },
+    "supplemental_items": 1,
+    "resolved_findings": 1
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "5c49e3c793bfc22301109ace5105b7fcddf1b8e2",
+    "crosswalk_blob": "a6ba394ffa669c027d61784a894eccfc7996cd6f",
+    "exact_site_id_span_procedure_operation_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "calls",
+      "original_id": 8277,
+      "source_span": [
+        2355,
+        17,
+        2371,
+        5
+      ],
+      "procedure": "TB73",
+      "original_operation": "create_e_detector",
+      "original_context": "TB-SC74",
+      "interpretation": "Construct fresh E with current S, accepted_orders, blocked First times, parent exceptions, all invalid S identities, current B legs and live hooks; scope (feedback_index, final).",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Native dispatch, chronology, ownership, state boundary or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2355-L2371",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 73,
+        "heading": "TB73"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 8305,
+      "source_span": [
+        2372,
+        14,
+        2374,
+        5
+      ],
+      "procedure": "TB73",
+      "original_operation": "timed",
+      "original_context": "TB-SC74",
+      "interpretation": "Time final detector.detect and replace E list with returned result.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Native dispatch, chronology, ownership, state boundary or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2372-L2374",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 73,
+        "heading": "TB73"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 8311,
+      "source_span": [
+        2373,
+        26,
+        2373,
+        43
+      ],
+      "procedure": "TB73",
+      "original_operation": "direction.title",
+      "original_context": "TB-SC74",
+      "interpretation": "Title-case direction for telemetry only.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Native dispatch, chronology, ownership, state boundary or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2373-L2373",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 73,
+        "heading": "TB73"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B09-59-S01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_span": [
+        2355,
+        2375
+      ],
+      "interpretation": "Final E rebuild uses accepted Orders, blocked Firsts, exact E parent exceptions, all invalid S roots, current B legs and live hooks. Scope is (feedback_index, final); the new detector and its detected list replace previous E references.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2355-L2375",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "No empirical runtime or cross-owner acceptance asserted."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B09-59-F01",
+      "span": [
+        2355,
+        2375
+      ],
+      "description": "Final E rebuild uses accepted Orders, blocked Firsts, exact E parent exceptions, all invalid S roots, current B legs and live hooks. Scope is (feedback_index, final); the new detector and its detected list replace previous E references.",
+      "document": "Algorithms/V3/17_Trading_Bridge.md",
+      "line": 75,
+      "prior_blob": "001622be7618df93978a14680b343d4283abb248",
+      "resolution": "Clarify local source-derived contract; no production changes.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2355-L2375",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: lifecycle, native Order/geometry, E and S continuation, internal Reaction ownership, primary and live replay dependencies. W3/W4 pending."
+  ]
+}

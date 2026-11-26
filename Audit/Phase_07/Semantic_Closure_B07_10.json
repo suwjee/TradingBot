@@ -1,0 +1,2098 @@
+{
+  "checkpoint": 107,
+  "batch": "B07",
+  "sub_batch": "B07-10",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "454f48cc40b7d2065675075e39fddfc37f837aec",
+  "path": "engine/pipeline/lifecycle_engine.py",
+  "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+  "source_range": [
+    550,
+    605
+  ],
+  "procedures": "LC23–LC24",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 52,
+    "by_category": {
+      "branches": 17,
+      "comparisons": 12,
+      "arithmetic": 5,
+      "calls": 18
+    },
+    "supplemental_items": 3,
+    "resolved_findings": 3
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "02093e925abea0ed526c6e0164166e3928d5de53",
+    "crosswalk_blob": "6b94505fb94d9f11dc775fdc0b423ffe27e03de7",
+    "exact_site_id_span_procedure_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 2054,
+      "source_span": [
+        551,
+        8,
+        552,
+        91
+      ],
+      "procedure": "LC23",
+      "original_operation": "If",
+      "original_context": "LC-SC27",
+      "interpretation": "Reject negated inclusive bound 0<=dirty index<=len(main times) before any state update.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L551-L552",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2056,
+      "source_span": [
+        551,
+        15,
+        551,
+        61
+      ],
+      "procedure": "LC23",
+      "original_operation": "Compare",
+      "original_context": "LC-SC27",
+      "interpretation": "Chained inclusive comparisons; length evaluated only if index >=0.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L551-L551",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2069,
+      "source_span": [
+        553,
+        16,
+        553,
+        104
+      ],
+      "procedure": "LC23",
+      "original_operation": "IfExp",
+      "original_context": "LC-SC27",
+      "interpretation": "For dirty index strictly below count use main timestamp, terminal index yields None.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L553-L553",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2081,
+      "source_span": [
+        555,
+        8,
+        556,
+        39
+      ],
+      "procedure": "LC23",
+      "original_operation": "If",
+      "original_context": "LC-SC27",
+      "interpretation": "Rewind dirty to covered_until when it exists AND (dirty absent or covered earlier).",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L555-L556",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2082,
+      "source_span": [
+        555,
+        11,
+        555,
+        93
+      ],
+      "procedure": "LC23",
+      "original_operation": "BoolOp",
+      "original_context": "LC-SC27",
+      "interpretation": "Rewind dirty to covered_until when it exists AND (dirty absent or covered earlier).",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L555-L555",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2087,
+      "source_span": [
+        555,
+        48,
+        555,
+        92
+      ],
+      "procedure": "LC23",
+      "original_operation": "BoolOp",
+      "original_context": "LC-SC27",
+      "interpretation": "Dirty None short circuits comparison; otherwise test prior coverage strictly earlier.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L555-L555",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2121,
+      "source_span": [
+        560,
+        45,
+        560,
+        55
+      ],
+      "procedure": "LC23",
+      "original_operation": "comprehension",
+      "original_context": "LC-SC27",
+      "interpretation": "Build ordered event keys (kind,repr(item)), no canonicalization.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L560-L560",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2129,
+      "source_span": [
+        562,
+        8,
+        567,
+        26
+      ],
+      "procedure": "LC23",
+      "original_operation": "For",
+      "original_context": "LC-SC27",
+      "interpretation": "Zip current events, old keys and new keys; stops at shortest, no independent price-prefix proof.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L562-L567",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2142,
+      "source_span": [
+        563,
+        12,
+        566,
+        21
+      ],
+      "procedure": "LC23",
+      "original_operation": "If",
+      "original_context": "LC-SC27",
+      "interpretation": "Break prefix scan on key mismatch OR non-null dirty with max(source,decision)>=dirty; mismatch skips time check.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L563-L566",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2143,
+      "source_span": [
+        563,
+        15,
+        565,
+        13
+      ],
+      "procedure": "LC23",
+      "original_operation": "BoolOp",
+      "original_context": "LC-SC27",
+      "interpretation": "Break prefix scan on key mismatch OR non-null dirty with max(source,decision)>=dirty; mismatch skips time check.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L563-L565",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2147,
+      "source_span": [
+        564,
+        16,
+        564,
+        94
+      ],
+      "procedure": "LC23",
+      "original_operation": "BoolOp",
+      "original_context": "LC-SC27",
+      "interpretation": "Only non-None dirty triggers max timestamp guard.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L564-L564",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2200,
+      "source_span": [
+        573,
+        8,
+        581,
+        59
+      ],
+      "procedure": "LC23",
+      "original_operation": "For",
+      "original_context": "LC-SC28",
+      "interpretation": "Enumerate resulting unresolved output in emission order with zero-based index.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L573-L581",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2207,
+      "source_span": [
+        574,
+        12,
+        581,
+        59
+      ],
+      "procedure": "LC23",
+      "original_operation": "If",
+      "original_context": "LC-SC28",
+      "interpretation": "Index < checkpoint.output_count selects prior output prefix; equality newly emitted.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L574-L581",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2218,
+      "source_span": [
+        576,
+        16,
+        578,
+        28
+      ],
+      "procedure": "LC23",
+      "original_operation": "If",
+      "original_context": "LC-SC28",
+      "interpretation": "Reuse old record only if stop event non-None AND (dirty absent or stop strictly earlier).",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L576-L578",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2219,
+      "source_span": [
+        576,
+        19,
+        576,
+        101
+      ],
+      "procedure": "LC23",
+      "original_operation": "BoolOp",
+      "original_context": "LC-SC28",
+      "interpretation": "Reuse old record only if stop event non-None AND (dirty absent or stop strictly earlier).",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L576-L576",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2224,
+      "source_span": [
+        576,
+        56,
+        576,
+        100
+      ],
+      "procedure": "LC23",
+      "original_operation": "BoolOp",
+      "original_context": "LC-SC28",
+      "interpretation": "Dirty None permits existing non-null stop reuse, otherwise compare.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L576-L576",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2275,
+      "source_span": [
+        587,
+        12,
+        588,
+        48
+      ],
+      "procedure": "LC23",
+      "original_operation": "IfExp",
+      "original_context": "LC-SC29",
+      "interpretation": "Truthy second_times selects last time plus one microsecond, empty yields None.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L587-L588",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2056,
+      "source_span": [
+        551,
+        15,
+        551,
+        61
+      ],
+      "procedure": "LC23",
+      "original_operation": [
+        "LtE",
+        "LtE"
+      ],
+      "interpretation": "Chained inclusive comparisons; length evaluated only if index >=0.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L551-L551",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2070,
+      "source_span": [
+        553,
+        54,
+        553,
+        94
+      ],
+      "procedure": "LC23",
+      "original_operation": [
+        "Lt"
+      ],
+      "interpretation": "For dirty index strictly below count use main timestamp, terminal index yields None.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L553-L553",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2083,
+      "source_span": [
+        555,
+        11,
+        555,
+        42
+      ],
+      "procedure": "LC23",
+      "original_operation": [
+        "IsNot"
+      ],
+      "interpretation": "Prior covered_until non-None first.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L555-L555",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2088,
+      "source_span": [
+        555,
+        48,
+        555,
+        61
+      ],
+      "procedure": "LC23",
+      "original_operation": [
+        "Is"
+      ],
+      "interpretation": "Terminal None allows prior coverage rewind.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L555-L555",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2091,
+      "source_span": [
+        555,
+        65,
+        555,
+        92
+      ],
+      "procedure": "LC23",
+      "original_operation": [
+        "Lt"
+      ],
+      "interpretation": "Use earlier prior coverage only if strictly < dirty.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L555-L555",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2144,
+      "source_span": [
+        563,
+        15,
+        563,
+        33
+      ],
+      "procedure": "LC23",
+      "original_operation": [
+        "NotEq"
+      ],
+      "interpretation": "Exact old/new key inequality ends prefix.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L563-L563",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2148,
+      "source_span": [
+        564,
+        16,
+        564,
+        33
+      ],
+      "procedure": "LC23",
+      "original_operation": [
+        "IsNot"
+      ],
+      "interpretation": "Only non-None dirty triggers max timestamp guard.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L564-L564",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2151,
+      "source_span": [
+        564,
+        38,
+        564,
+        94
+      ],
+      "procedure": "LC23",
+      "original_operation": [
+        "GtE"
+      ],
+      "interpretation": "Max of source and decision >= dirty rejects equality and later.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L564-L564",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2208,
+      "source_span": [
+        574,
+        15,
+        574,
+        42
+      ],
+      "procedure": "LC23",
+      "original_operation": [
+        "Lt"
+      ],
+      "interpretation": "Index < checkpoint.output_count selects prior output prefix; equality newly emitted.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L574-L574",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2220,
+      "source_span": [
+        576,
+        19,
+        576,
+        50
+      ],
+      "procedure": "LC23",
+      "original_operation": [
+        "IsNot"
+      ],
+      "interpretation": "Missing old stop requires resolve, even when dirty absent.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L576-L576",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2225,
+      "source_span": [
+        576,
+        56,
+        576,
+        69
+      ],
+      "procedure": "LC23",
+      "original_operation": [
+        "Is"
+      ],
+      "interpretation": "Dirty None permits existing non-null stop reuse, otherwise compare.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L576-L576",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2228,
+      "source_span": [
+        576,
+        73,
+        576,
+        100
+      ],
+      "procedure": "LC23",
+      "original_operation": [
+        "Lt"
+      ],
+      "interpretation": "Old stop strictly < dirty; equality rescans.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L576-L576",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2055,
+      "source_span": [
+        551,
+        11,
+        551,
+        61
+      ],
+      "procedure": "LC23",
+      "original_operation": "Not",
+      "interpretation": "Reject negated inclusive bound 0<=dirty index<=len(main times) before any state update.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L551-L551",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2160,
+      "source_span": [
+        567,
+        12,
+        567,
+        26
+      ],
+      "procedure": "LC23",
+      "original_operation": "Add",
+      "interpretation": "Increment unchanged only after both break conditions fail.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L567-L567",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2175,
+      "source_span": [
+        569,
+        41,
+        569,
+        54
+      ],
+      "procedure": "LC23",
+      "original_operation": "Add",
+      "interpretation": "Checkpoint slice endpoint unchanged+1 retains initial and post-event checkpoints.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L569-L569",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2278,
+      "source_span": [
+        587,
+        12,
+        587,
+        67
+      ],
+      "procedure": "LC23",
+      "original_operation": "Add",
+      "interpretation": "Use last lower timestamp (-1) + timedelta(microseconds=1), not lower candle duration or main bucket end.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L587-L587",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2282,
+      "source_span": [
+        587,
+        36,
+        587,
+        38
+      ],
+      "procedure": "LC23",
+      "original_operation": "USub",
+      "interpretation": "Use last lower timestamp (-1) + timedelta(microseconds=1), not lower candle duration or main bucket end.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L587-L587",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2059,
+      "source_span": [
+        551,
+        40,
+        551,
+        61
+      ],
+      "procedure": "LC23",
+      "original_operation": "len",
+      "interpretation": "Read main times length for bounds check.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L551-L551",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2064,
+      "source_span": [
+        552,
+        18,
+        552,
+        91
+      ],
+      "procedure": "LC23",
+      "original_operation": "ValueError",
+      "interpretation": "Raise declared ValueError on invalid dirty index.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L552-L552",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2072,
+      "source_span": [
+        553,
+        73,
+        553,
+        94
+      ],
+      "procedure": "LC23",
+      "original_operation": "len",
+      "interpretation": "For dirty index strictly below count use main timestamp, terminal index yields None.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L553-L553",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2101,
+      "source_span": [
+        557,
+        19,
+        557,
+        81
+      ],
+      "procedure": "LC23",
+      "original_operation": "StopAllDetector",
+      "interpretation": "Construct new StopAllDetector on supplied S/E/chronology with retained direction.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L557-L557",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2110,
+      "source_span": [
+        558,
+        17,
+        558,
+        35
+      ],
+      "procedure": "LC23",
+      "original_operation": "detector._events",
+      "interpretation": "Obtain detector sorted event list.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L558-L558",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2118,
+      "source_span": [
+        560,
+        29,
+        560,
+        39
+      ],
+      "procedure": "LC23",
+      "original_operation": "repr",
+      "interpretation": "Build ordered event keys (kind,repr(item)), no canonicalization.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L560-L560",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2136,
+      "source_span": [
+        562,
+        43,
+        562,
+        84
+      ],
+      "procedure": "LC23",
+      "original_operation": "zip",
+      "interpretation": "Zip current events, old keys and new keys; stops at shortest, no independent price-prefix proof.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L562-L562",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2152,
+      "source_span": [
+        564,
+        38,
+        564,
+        85
+      ],
+      "procedure": "LC23",
+      "original_operation": "max",
+      "interpretation": "Max of source and decision >= dirty rejects equality and later.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L564-L564",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2187,
+      "source_span": [
+        571,
+        8,
+        571,
+        84
+      ],
+      "procedure": "LC23",
+      "original_operation": "detector._detect_events",
+      "interpretation": "Replay suffix events[unchanged:] using retained checkpoint and copied output/checkpoints slices.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L571-L571",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2204,
+      "source_span": [
+        573,
+        23,
+        573,
+        40
+      ],
+      "procedure": "LC23",
+      "original_operation": "enumerate",
+      "interpretation": "Enumerate resulting unresolved output in emission order with zero-based index.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L573-L573",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2233,
+      "source_span": [
+        577,
+        20,
+        577,
+        38
+      ],
+      "procedure": "LC23",
+      "original_operation": "result.append",
+      "interpretation": "Append original old resolved record reference and continue.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L577-L577",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2239,
+      "source_span": [
+        579,
+        16,
+        579,
+        72
+      ],
+      "procedure": "LC23",
+      "original_operation": "result.append",
+      "interpretation": "For retained output requiring resolution call LC20 with after=dirty then append; no earlier rescan if dirty later than decision.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L579-L579",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2242,
+      "source_span": [
+        579,
+        30,
+        579,
+        71
+      ],
+      "procedure": "LC23",
+      "original_operation": "detector._resolve_stop",
+      "interpretation": "For retained output requiring resolution call LC20 with after=dirty then append; no earlier rescan if dirty later than decision.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L579-L579",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2249,
+      "source_span": [
+        581,
+        16,
+        581,
+        59
+      ],
+      "procedure": "LC23",
+      "original_operation": "result.append",
+      "interpretation": "For new output call LC20 without after and append.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L581-L581",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2252,
+      "source_span": [
+        581,
+        30,
+        581,
+        58
+      ],
+      "procedure": "LC23",
+      "original_operation": "detector._resolve_stop",
+      "interpretation": "For new output call LC20 without after and append.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L581-L581",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2284,
+      "source_span": [
+        587,
+        42,
+        587,
+        67
+      ],
+      "procedure": "LC23",
+      "original_operation": "timedelta",
+      "interpretation": "Use last lower timestamp (-1) + timedelta(microseconds=1), not lower candle duration or main bucket end.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L587-L587",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 84,
+        "heading": "LC23"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 121,
+          "transition": "SA14"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2309,
+      "source_span": [
+        599,
+        11,
+        599,
+        76
+      ],
+      "procedure": "LC24",
+      "original_operation": "StopAllDetector().detect",
+      "interpretation": "Construct detector with supplied direction,S/E and chronology, then return detect result; no wrapper recovery.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L599-L599",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 87,
+        "heading": "LC24"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 108,
+          "transition": "SA01"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2311,
+      "source_span": [
+        599,
+        11,
+        599,
+        67
+      ],
+      "procedure": "LC24",
+      "original_operation": "StopAllDetector",
+      "interpretation": "Construct detector with supplied direction,S/E and chronology, then return detect result; no wrapper recovery.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, exact chronology, priority, state mutation or replay behavior; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; index, chronology and caller ownership remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L599-L599",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 87,
+        "heading": "LC24"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 108,
+          "transition": "SA01"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B07-10-S01",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "source_span": [
+        551,
+        567
+      ],
+      "interpretation": "Inclusive dirty index validation; terminal None; clamp back to earlier prior coverage. New detector and repr keys. Zip to shortest, break on mismatch or max(source,decision)>=dirty; equality invalidates.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L551-L567",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "External owner/caller invariants W2 pending."
+    },
+    {
+      "id": "B07-10-S02",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "source_span": [
+        568,
+        581
+      ],
+      "interpretation": "Restore checkpoint and slices; replay suffix. Retained output old hit reused only if non-null and before dirty or dirty absent. Missing hit rescanned from max(decision,dirty); new output resolved from decision.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L568-L581",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "External owner/caller invariants W2 pending."
+    },
+    {
+      "id": "B07-10-S03",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "source_span": [
+        582,
+        599
+      ],
+      "interpretation": "Assign checkpoints,keys,unresolved output,result in order, then coverage last lower timestamp+1 microsecond or None, return shallow copy. Wrapper constructs detector then detect. No rollback on exception.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L582-L599",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "External owner/caller invariants W2 pending."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B07-10-F01",
+      "span": [
+        551,
+        567
+      ],
+      "description": "Clarify inclusive index, zip shortest and mismatch short circuit.",
+      "document": "Algorithms/V3/11_StopAll.md",
+      "line": 85,
+      "prior_blob": "bbec39b64c5a6ddf7f4d7fb00f2b50ee3b4a956d",
+      "resolution": "Clarified active procedure and related state transitions; rechecked pinned source.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L551-L567",
+      "recheck": "W2/W3 pending."
+    },
+    {
+      "id": "B07-10-F02",
+      "span": [
+        568,
+        590
+      ],
+      "description": "Clarify output prefix reuse, update order and microsecond coverage not candle end.",
+      "document": "Algorithms/V3/11_StopAll.md",
+      "line": 85,
+      "prior_blob": "bbec39b64c5a6ddf7f4d7fb00f2b50ee3b4a956d",
+      "resolution": "Clarified active procedure and related state transitions; rechecked pinned source.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L568-L590",
+      "recheck": "W2/W3 pending."
+    },
+    {
+      "id": "B07-10-F03",
+      "span": [
+        593,
+        599
+      ],
+      "description": "Clarify supplied arguments and no wrapper recovery.",
+      "document": "Algorithms/V3/11_StopAll.md",
+      "line": 88,
+      "prior_blob": "bbec39b64c5a6ddf7f4d7fb00f2b50ee3b4a956d",
+      "resolution": "Clarified active procedure and related state transitions; rechecked pinned source.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L593-L599",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: chronology mapping and strict index, Decimal, exact donor/owner invariants, dirty coverage and upstream accepted S/E order. W3 separate source-first review and W4 acceptance pending.",
+    "Remaining lifecycle LC25 onward; no RAW/runtime."
+  ]
+}

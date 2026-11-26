@@ -1,0 +1,2576 @@
+{
+  "checkpoint": 36,
+  "batch": "B03",
+  "sub_batch": "B03-08",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "02b4ef7d90af3a936a959ffd1ff6155a876a6644",
+  "path": "engine/pipeline/a_zone_detector.py",
+  "source_blob": "431934d2fb597238d5281a769c29fdb51747868b",
+  "source_range": [
+    734,
+    847
+  ],
+  "procedures": [
+    "A19",
+    "A20",
+    "A21",
+    "A22",
+    "A23"
+  ],
+  "review_pass": "W1 source-first local owner review; W3 pending",
+  "status": "PASS",
+  "scope": "Local source contracts only; cross-owner and separate forensic gate not certified.",
+  "counts": {
+    "original_rows": 59,
+    "by_category": {
+      "branches": 18,
+      "comparisons": 9,
+      "arithmetic": 5,
+      "calls": 27
+    },
+    "supplemental_items": 6
+  },
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 2604,
+      "source_span": [
+        742,
+        16,
+        742,
+        20
+      ],
+      "procedure": "A19",
+      "original_operation": "comprehension",
+      "original_context": "A-SC36",
+      "interpretation": "Traverse ordinary records in input order to form reaction-number set.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L742-L742",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": "engine/pipeline/a_zone_detector.py:743:15:Compare:filter",
+      "source_span": [
+        743,
+        15,
+        743,
+        47
+      ],
+      "procedure": "A19",
+      "original_operation": "ComprehensionFilter",
+      "original_context": "A-SC36",
+      "interpretation": "Exclude null ordinary reaction numbers from collision set.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L743-L743",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2615,
+      "source_span": [
+        747,
+        16,
+        747,
+        20
+      ],
+      "procedure": "A19",
+      "original_operation": "comprehension",
+      "original_context": "A-SC36",
+      "interpretation": "Traverse special candidates in original order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L747-L747",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": "engine/pipeline/a_zone_detector.py:748:15:Compare:filter",
+      "source_span": [
+        748,
+        15,
+        748,
+        61
+      ],
+      "procedure": "A19",
+      "original_operation": "ComprehensionFilter",
+      "original_context": "A-SC36",
+      "interpretation": "Keep special only if its reaction number not in ordinary set.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L748-L748",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2628,
+      "source_span": [
+        752,
+        8,
+        769,
+        41
+      ],
+      "procedure": "A19",
+      "original_operation": "For",
+      "original_context": "A-SC37",
+      "interpretation": "Visit each surviving special in original order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L752-L769",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2635,
+      "source_span": [
+        755,
+        20,
+        755,
+        25
+      ],
+      "procedure": "A19",
+      "original_operation": "comprehension",
+      "original_context": "A-SC37",
+      "interpretation": "Collect earlier ordinary candidates in original order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L755-L755",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": "engine/pipeline/a_zone_detector.py:756:19:Compare:filter",
+      "source_span": [
+        756,
+        19,
+        756,
+        55
+      ],
+      "procedure": "A19",
+      "original_operation": "ComprehensionFilter",
+      "original_context": "A-SC37",
+      "interpretation": "Retain only ordinary source times strictly earlier than special source.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L756-L756",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2655,
+      "source_span": [
+        763,
+        12,
+        768,
+        24
+      ],
+      "procedure": "A19",
+      "original_operation": "If",
+      "original_context": "A-SC37",
+      "interpretation": "Discard special if earlier ordinary exists and A22 reports qualifying stop.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L763-L768",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2656,
+      "source_span": [
+        763,
+        15,
+        767,
+        13
+      ],
+      "procedure": "A19",
+      "original_operation": "BoolOp",
+      "original_context": "A-SC37",
+      "interpretation": "Test earlier ordinary nonnull before evaluating its stop history.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L763-L767",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2699,
+      "source_span": [
+        780,
+        16,
+        780,
+        20
+      ],
+      "procedure": "A19",
+      "original_operation": "comprehension",
+      "original_context": "A-SC38",
+      "interpretation": "Collect every surviving special's pair set and exact trigger time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L780-L780",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2702,
+      "source_span": [
+        782,
+        8,
+        795,
+        13
+      ],
+      "procedure": "A19",
+      "original_operation": "If",
+      "original_context": "A-SC38",
+      "interpretation": "Only nonempty consumed_special enables ordinary filtering.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L782-L795",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2708,
+      "source_span": [
+        785,
+        20,
+        785,
+        24
+      ],
+      "procedure": "A19",
+      "original_operation": "comprehension",
+      "original_context": "A-SC38",
+      "interpretation": "Traverse ordinary in original order to retain nonconsumed records.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L785-L785",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": "engine/pipeline/a_zone_detector.py:786:19:UnaryOp:filter",
+      "source_span": [
+        786,
+        19,
+        794,
+        17
+      ],
+      "procedure": "A19",
+      "original_operation": "ComprehensionFilter",
+      "original_context": "A-SC38",
+      "interpretation": "Retain ordinary if no special satisfies both later-trigger and overlapping-ordinal predicates.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L786-L794",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2715,
+      "source_span": [
+        787,
+        20,
+        792,
+        39
+      ],
+      "procedure": "A19",
+      "original_operation": "BoolOp",
+      "original_context": "A-SC38",
+      "interpretation": "Strictly later ordinary trigger first; only then construct its ordinal set and intersect.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L787-L792",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2737,
+      "source_span": [
+        793,
+        24,
+        793,
+        61
+      ],
+      "procedure": "A19",
+      "original_operation": "comprehension",
+      "original_context": "A-SC38",
+      "interpretation": "Visit consumed special pairs in order, any short circuits first truthy intersection.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L793-L793",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2834,
+      "source_span": [
+        827,
+        8,
+        828,
+        24
+      ],
+      "procedure": "A22",
+      "original_operation": "If",
+      "original_context": "A-SC40",
+      "interpretation": "Start at or beyond main length returns false before accessing start candle.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L827-L828",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 132,
+        "heading": "AZoneDetector._a_was_stopped_before"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2858,
+      "source_span": [
+        834,
+        8,
+        835,
+        24
+      ],
+      "procedure": "A22",
+      "original_operation": "If",
+      "original_context": "A-SC40",
+      "interpretation": "No first crossing returns false before not_before gate.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L834-L835",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 132,
+        "heading": "AZoneDetector._a_was_stopped_before"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2865,
+      "source_span": [
+        836,
+        15,
+        836,
+        64
+      ],
+      "procedure": "A22",
+      "original_operation": "BoolOp",
+      "original_context": "A-SC40",
+      "interpretation": "Null not_before accepts any first hit; otherwise require hit at/after gate.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L836-L836",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 132,
+        "heading": "AZoneDetector._a_was_stopped_before"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2607,
+      "source_span": [
+        743,
+        15,
+        743,
+        47
+      ],
+      "procedure": "A19",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "A-SC36",
+      "interpretation": "Ordinary reaction number identity nonnull required in collision set.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L743-L743",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2618,
+      "source_span": [
+        748,
+        15,
+        748,
+        61
+      ],
+      "procedure": "A19",
+      "original_operation": [
+        "NotIn"
+      ],
+      "original_context": "A-SC36",
+      "interpretation": "Special reaction number not in ordinary nonnull-number set.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L748-L748",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2638,
+      "source_span": [
+        756,
+        19,
+        756,
+        55
+      ],
+      "procedure": "A19",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "A-SC37",
+      "interpretation": "Prior ordinary source time strictly less than special; equal source excluded.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L756-L756",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2657,
+      "source_span": [
+        763,
+        15,
+        763,
+        32
+      ],
+      "procedure": "A19",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "A-SC37",
+      "interpretation": "Prior ordinary identity nonnull enables A22.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L763-L763",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2716,
+      "source_span": [
+        787,
+        20,
+        787,
+        76
+      ],
+      "procedure": "A19",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "A-SC38",
+      "interpretation": "Ordinary trigger strictly later than special; equality retained.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L787-L787",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2835,
+      "source_span": [
+        827,
+        11,
+        827,
+        37
+      ],
+      "procedure": "A22",
+      "original_operation": [
+        "GtE"
+      ],
+      "original_context": "A-SC40",
+      "interpretation": "Start>=main length returns false, equality out of range.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L827-L827",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 132,
+        "heading": "AZoneDetector._a_was_stopped_before"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2859,
+      "source_span": [
+        834,
+        11,
+        834,
+        29
+      ],
+      "procedure": "A22",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "A-SC40",
+      "interpretation": "First stop identity null returns false.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L834-L834",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 132,
+        "heading": "AZoneDetector._a_was_stopped_before"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2866,
+      "source_span": [
+        836,
+        15,
+        836,
+        33
+      ],
+      "procedure": "A22",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "A-SC40",
+      "interpretation": "Not_before identity null bypasses time comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L836-L836",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 132,
+        "heading": "AZoneDetector._a_was_stopped_before"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2869,
+      "source_span": [
+        836,
+        37,
+        836,
+        64
+      ],
+      "procedure": "A22",
+      "original_operation": [
+        "GtE"
+      ],
+      "original_context": "A-SC40",
+      "interpretation": "First stop exact time>=not_before, equality accepted.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L836-L836",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 132,
+        "heading": "AZoneDetector._a_was_stopped_before"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2711,
+      "source_span": [
+        786,
+        19,
+        794,
+        17
+      ],
+      "procedure": "A19",
+      "original_operation": "Not",
+      "original_context": "A-SC38",
+      "interpretation": "Negate any result to retain ordinary not consumed by any special.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L786-L794",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2722,
+      "source_span": [
+        788,
+        24,
+        792,
+        39
+      ],
+      "procedure": "A19",
+      "original_operation": "BitAnd",
+      "original_context": "A-SC38",
+      "interpretation": "Set intersection of ordinary and special integer Blue ordinals; truthiness means overlap.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L788-L792",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2784,
+      "source_span": [
+        806,
+        12,
+        806,
+        30
+      ],
+      "procedure": "A20",
+      "original_operation": "Add",
+      "original_context": "A-SC39",
+      "interpretation": "Concatenate ordinary then special before stable final sort.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L806-L806",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 124,
+        "heading": "AZoneDetector.detect"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD09",
+          "line": 71
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2814,
+      "source_span": [
+        818,
+        20,
+        818,
+        35
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "A-SC40",
+      "interpretation": "Type-union annotation, not executable price/time arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration or type annotation; fresh history register factories separately described.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L818-L818",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2822,
+      "source_span": [
+        826,
+        16,
+        826,
+        74
+      ],
+      "procedure": "A22",
+      "original_operation": "Add",
+      "original_context": "A-SC40",
+      "interpretation": "Add one to integer native source candle.index to select next main position.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L826-L826",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 132,
+        "heading": "AZoneDetector._a_was_stopped_before"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2645,
+      "source_span": [
+        758,
+        20,
+        762,
+        13
+      ],
+      "procedure": "A19",
+      "original_operation": "max",
+      "original_context": "A-SC37",
+      "interpretation": "Max earlier ordinary by source_time, first equal maximum, default null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L758-L762",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2660,
+      "source_span": [
+        763,
+        37,
+        767,
+        13
+      ],
+      "procedure": "A19",
+      "original_operation": "self._a_was_stopped_before",
+      "original_context": "A-SC37",
+      "interpretation": "Call A22 with earlier ordinary, special Reaction First as exclusive end and Blue1 source time as lower gate.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L763-L767",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2671,
+      "source_span": [
+        769,
+        12,
+        769,
+        41
+      ],
+      "procedure": "A19",
+      "original_operation": "filtered_special.append",
+      "original_context": "A-SC37",
+      "interpretation": "Append surviving special after earlier-ordinary stop test.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L769-L769",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2683,
+      "source_span": [
+        775,
+        20,
+        775,
+        56
+      ],
+      "procedure": "A19",
+      "original_operation": "int",
+      "original_context": "A-SC38",
+      "interpretation": "Integer-convert first special Blue ordinal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L775-L775",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2685,
+      "source_span": [
+        775,
+        24,
+        775,
+        55
+      ],
+      "procedure": "A19",
+      "original_operation": "getattr",
+      "original_context": "A-SC38",
+      "interpretation": "Read required first special ordinal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L775-L775",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2689,
+      "source_span": [
+        776,
+        20,
+        776,
+        56
+      ],
+      "procedure": "A19",
+      "original_operation": "int",
+      "original_context": "A-SC38",
+      "interpretation": "Integer-convert second special Blue ordinal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L776-L776",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2691,
+      "source_span": [
+        776,
+        24,
+        776,
+        55
+      ],
+      "procedure": "A19",
+      "original_operation": "getattr",
+      "original_context": "A-SC38",
+      "interpretation": "Read required second special ordinal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L776-L776",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2695,
+      "source_span": [
+        778,
+        16,
+        778,
+        51
+      ],
+      "procedure": "A19",
+      "original_operation": "getattr",
+      "original_context": "A-SC38",
+      "interpretation": "Read special trigger exact time for consumption tuple.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L778-L778",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2712,
+      "source_span": [
+        786,
+        23,
+        794,
+        17
+      ],
+      "procedure": "A19",
+      "original_operation": "any",
+      "original_context": "A-SC38",
+      "interpretation": "Any consumes generator until first true later-trigger/overlap result.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L786-L794",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2717,
+      "source_span": [
+        787,
+        20,
+        787,
+        55
+      ],
+      "procedure": "A19",
+      "original_operation": "getattr",
+      "original_context": "A-SC38",
+      "interpretation": "Read ordinary trigger event time before comparing with special.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L787-L787",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2724,
+      "source_span": [
+        789,
+        24,
+        789,
+        60
+      ],
+      "procedure": "A19",
+      "original_operation": "int",
+      "original_context": "A-SC38",
+      "interpretation": "Integer-convert first ordinary ordinal only on later-trigger branch.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L789-L789",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2726,
+      "source_span": [
+        789,
+        28,
+        789,
+        59
+      ],
+      "procedure": "A19",
+      "original_operation": "getattr",
+      "original_context": "A-SC38",
+      "interpretation": "Read required ordinary first ordinal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L789-L789",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2730,
+      "source_span": [
+        790,
+        24,
+        790,
+        60
+      ],
+      "procedure": "A19",
+      "original_operation": "int",
+      "original_context": "A-SC38",
+      "interpretation": "Integer-convert second ordinary ordinal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L790-L790",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2732,
+      "source_span": [
+        790,
+        28,
+        790,
+        59
+      ],
+      "procedure": "A19",
+      "original_operation": "getattr",
+      "original_context": "A-SC38",
+      "interpretation": "Read required ordinary second ordinal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L790-L790",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 120,
+        "heading": "AZoneDetector._filter_special_a"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD08",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2761,
+      "source_span": [
+        800,
+        17,
+        800,
+        42
+      ],
+      "procedure": "A20",
+      "original_operation": "self._build_blue_states",
+      "original_context": "A-SC39",
+      "interpretation": "Build valid Blue states first.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L800-L800",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 124,
+        "heading": "AZoneDetector.detect"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD09",
+          "line": 71
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2766,
+      "source_span": [
+        801,
+        19,
+        801,
+        50
+      ],
+      "procedure": "A20",
+      "original_operation": "self._detect_ordinary_a",
+      "original_context": "A-SC39",
+      "interpretation": "Detect ordinary A using built states before special computation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L801-L801",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 124,
+        "heading": "AZoneDetector.detect"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD09",
+          "line": 71
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2774,
+      "source_span": [
+        802,
+        28,
+        804,
+        9
+      ],
+      "procedure": "A20",
+      "original_operation": "self._filter_special_a",
+      "original_context": "A-SC39",
+      "interpretation": "Resolve special/ordinary collisions after both candidate lists generated.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L802-L804",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 124,
+        "heading": "AZoneDetector.detect"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD09",
+          "line": 71
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2777,
+      "source_span": [
+        803,
+        12,
+        803,
+        44
+      ],
+      "procedure": "A20",
+      "original_operation": "self._double_stop_a_candidates",
+      "original_context": "A-SC39",
+      "interpretation": "Generate double-stop candidates before filter call.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L803-L803",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 124,
+        "heading": "AZoneDetector.detect"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD09",
+          "line": 71
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2782,
+      "source_span": [
+        805,
+        15,
+        808,
+        9
+      ],
+      "procedure": "A20",
+      "original_operation": "sorted",
+      "original_context": "A-SC39",
+      "interpretation": "Stable sort ordinary+special by ascending source_time then trigger_event_time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L805-L808",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 124,
+        "heading": "AZoneDetector.detect"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD06",
+          "line": 68
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD09",
+          "line": 71
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2802,
+      "source_span": [
+        811,
+        15,
+        811,
+        30
+      ],
+      "procedure": "A21",
+      "original_operation": "AZone",
+      "original_context": "A-SC39",
+      "interpretation": "Construct AZone from supplied keyword fields without normalization.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L811-L811",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 128,
+        "heading": "AZoneDetector._zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP13",
+          "line": 53
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2823,
+      "source_span": [
+        826,
+        16,
+        826,
+        70
+      ],
+      "procedure": "A22",
+      "original_operation": "int",
+      "original_context": "A-SC40",
+      "interpretation": "Integer-convert source candle's native index before adding one.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L826-L826",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 132,
+        "heading": "AZoneDetector._a_was_stopped_before"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2825,
+      "source_span": [
+        826,
+        20,
+        826,
+        69
+      ],
+      "procedure": "A22",
+      "original_operation": "getattr",
+      "original_context": "A-SC40",
+      "interpretation": "Read candles[zone.source_index].index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L826-L826",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 132,
+        "heading": "AZoneDetector._a_was_stopped_before"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2837,
+      "source_span": [
+        827,
+        20,
+        827,
+        37
+      ],
+      "procedure": "A22",
+      "original_operation": "len",
+      "original_context": "A-SC40",
+      "interpretation": "Read candle count for start-bound guard.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L827-L827",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 132,
+        "heading": "AZoneDetector._a_was_stopped_before"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2845,
+      "source_span": [
+        829,
+        21,
+        833,
+        9
+      ],
+      "procedure": "A22",
+      "original_operation": "self._first_crossing",
+      "original_context": "A-SC40",
+      "interpretation": "Find first strict crossing of zone.price from next main open to exclusive end.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L829-L833",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 132,
+        "heading": "AZoneDetector._a_was_stopped_before"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2850,
+      "source_span": [
+        831,
+        12,
+        831,
+        53
+      ],
+      "procedure": "A22",
+      "original_operation": "getattr",
+      "original_context": "A-SC40",
+      "interpretation": "Read next main timestamp only when start in range.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L831-L831",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 132,
+        "heading": "AZoneDetector._a_was_stopped_before"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD07",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2889,
+      "source_span": [
+        845,
+        11,
+        845,
+        79
+      ],
+      "procedure": "A23",
+      "original_operation": "AZoneDetector().detect",
+      "original_context": "A-SC41",
+      "interpretation": "Call detect on newly constructed base detector.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L845-L845",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 136,
+        "heading": "detect_a_zones"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/09_Shared_Services.md",
+          "machine": "LS",
+          "transition": "LS13",
+          "line": 89
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2891,
+      "source_span": [
+        845,
+        11,
+        845,
+        70
+      ],
+      "procedure": "A23",
+      "original_operation": "AZoneDetector",
+      "original_context": "A-SC41",
+      "interpretation": "Construct base detector with supplied direction, reactions, Blue, chronology.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ownership, ordered filtering, temporal boundary, cache state, identity or replay dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L845-L845",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 136,
+        "heading": "detect_a_zones"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/09_Shared_Services.md",
+          "machine": "LS",
+          "transition": "LS13",
+          "line": 89
+        }
+      ]
+    }
+  ],
+  "supplemental_items": [
+    {
+      "supplemental_id": "B03-08-S1",
+      "source_span": [
+        740,
+        749
+      ],
+      "discovery_reason": "Source-first review of mutation, ordered evaluation, cache lifetime, provenance, failure or boundary beyond original category labels.",
+      "interpretation": "Build set from ordinary nonnull reaction_number only; special null never matches a null ordinary number. Preserve special order; no record mutation.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L740-L749"
+    },
+    {
+      "supplemental_id": "B03-08-S2",
+      "source_span": [
+        751,
+        770
+      ],
+      "discovery_reason": "Source-first review of mutation, ordered evaluation, cache lifetime, provenance, failure or boundary beyond original category labels.",
+      "interpretation": "For each surviving special, latest earlier ordinary source_time strictly less, max default null and first equal maximum. A22 scans that one prior owner only; no fallback to earlier candidates if it fails. Discard iff qualifying first stop before special First and not before its Blue1 source.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L751-L770"
+    },
+    {
+      "supplemental_id": "B03-08-S3",
+      "source_span": [
+        772,
+        796
+      ],
+      "discovery_reason": "Source-first review of mutation, ordered evaluation, cache lifetime, provenance, failure or boundary beyond original category labels.",
+      "interpretation": "Construct two-integer ordinal sets and special trigger times before ordinary filtering. For each ordinary, any special with strictly earlier trigger and overlapping pair removes ordinary. Equal trigger retained; overlap check skipped unless strict later. Keep relative order of each surviving list.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L772-L796"
+    },
+    {
+      "supplemental_id": "B03-08-S4",
+      "source_span": [
+        800,
+        811
+      ],
+      "discovery_reason": "Source-first review of mutation, ordered evaluation, cache lifetime, provenance, failure or boundary beyond original category labels.",
+      "interpretation": "Build valid states, detect ordinary, then generate double-stop candidates, resolve and sort concatenated ordinary then special by (source_time,trigger_event_time). Equal full keys preserve concatenation order. A21 direct record constructor, no normalization.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L800-L811"
+    },
+    {
+      "supplemental_id": "B03-08-S5",
+      "source_span": [
+        826,
+        836
+      ],
+      "discovery_reason": "Source-first review of mutation, ordered evaluation, cache lifetime, provenance, failure or boundary beyond original category labels.",
+      "interpretation": "First-stop query start uses native candles[zone.source_index].index+1, not source_index+1 or confirmation. Out-of-range upper bound false. A07 end exclusive; no hit false. If first hit before nonnull not_before, false without recross; equality accepted.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L826-L836"
+    },
+    {
+      "supplemental_id": "B03-08-S6",
+      "source_span": [
+        839,
+        845
+      ],
+      "discovery_reason": "Source-first review of mutation, ordered evaluation, cache lifetime, provenance, failure or boundary beyond original category labels.",
+      "interpretation": "Public helper creates base detector and immediately calls detect; no persistent history.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L839-L845"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B03-08-F01",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        826,
+        836
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L826-L836",
+      "description": "Clarify the actual start horizon and single-owner first-stop test, not a universal first-stop search.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/04_A_Zone.md",
+          "prior_blob": "6ece7186cfe6269eda1d49e1bf125569aabdcce1",
+          "procedure": "A-M03"
+        }
+      ],
+      "resolution": "Reject special if latest strictly earlier-source ordinary has an A22 first stop from its next source main open to special Reaction First exclusive and not before special Blue1 source (only that owner's first hit in this window matters; no recross or earlier-owner fallback).",
+      "recheck": "W2 caller and W3 forensic review pending."
+    },
+    {
+      "id": "B03-08-F02",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        826,
+        836
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L826-L836",
+      "description": "Align special collision state transition with exact A22 scan origin.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "prior_blob": "34b64b41c9946a31011be0a08e08f60d008710e3",
+          "procedure": "AD07"
+        }
+      ],
+      "resolution": "Latest strictly earlier-source ordinary A has A22 first stop from next source main open, before special First and >= special Blue1 source",
+      "recheck": "W2 caller and W3 forensic review pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2 verify native source index alignment, special/ordinary owner boundaries and subsequent lifecycle acceptance.",
+    "W3 separate forensic review pending."
+  ]
+}

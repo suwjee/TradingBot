@@ -1,0 +1,4477 @@
+{
+  "checkpoint": 28,
+  "batch": "B02",
+  "sub_batch": "B02-14",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "88cefd3506e0ebf97fc3e7d753849c19a6ae33db",
+  "path": "engine/pipeline/reaction_engine.py",
+  "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+  "source_range": [
+    2784,
+    2908
+  ],
+  "procedures": [
+    "RE99",
+    "RE100",
+    "RE101",
+    "RE102",
+    "RE103",
+    "RE104",
+    "RE105",
+    "RE106",
+    "RE107"
+  ],
+  "review_pass": "W1 source-first local owner review; W3 pending",
+  "status": "PASS",
+  "scope": "Local source contracts only; cross-owner, runtime equivalence and separate forensic gate not certified.",
+  "counts": {
+    "original_rows": 93,
+    "by_category": {
+      "branches": 21,
+      "comparisons": 15,
+      "arithmetic": 20,
+      "calls": 37
+    },
+    "supplemental_items": 7
+  },
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 10562,
+      "source_span": [
+        2798,
+        8,
+        2799,
+        111
+      ],
+      "procedure": "RE99",
+      "original_operation": "If",
+      "original_context": "RE-SC91",
+      "interpretation": "Fewer than two main seed candles raises after policy validation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2798-L2799",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 36,
+        "heading": "LiveReactionContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC02",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10622,
+      "source_span": [
+        2810,
+        8,
+        2813,
+        61
+      ],
+      "procedure": "RE99",
+      "original_operation": "Try",
+      "original_context": "RE-SC91",
+      "interpretation": "Detection in try, release temporary indexes finally; detector construction outside try.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2810-L2813",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 36,
+        "heading": "LiveReactionContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC02",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10680,
+      "source_span": [
+        2829,
+        46,
+        2829,
+        55
+      ],
+      "procedure": "RE101",
+      "original_operation": "comprehension",
+      "original_context": "RE-SC92",
+      "interpretation": "Copy each mutable candidate in original reaction order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2829-L2829",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 42,
+        "heading": "_snapshot"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10748,
+      "source_span": [
+        2844,
+        8,
+        2845,
+        104
+      ],
+      "procedure": "RE104",
+      "original_operation": "If",
+      "original_context": "RE-SC93",
+      "interpretation": "Invalid timeframe or empty main/lower batch raises before traversal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2844-L2845",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10749,
+      "source_span": [
+        2844,
+        11,
+        2844,
+        70
+      ],
+      "procedure": "RE104",
+      "original_operation": "BoolOp",
+      "original_context": "RE-SC93",
+      "interpretation": "Check nonpositive timeframe, then empty main, then empty lower.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2844-L2844",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10764,
+      "source_span": [
+        2846,
+        8,
+        2854,
+        34
+      ],
+      "procedure": "RE104",
+      "original_operation": "For",
+      "original_context": "RE-SC93",
+      "interpretation": "Traverse main rows in supplied order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2846-L2854",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10767,
+      "source_span": [
+        2847,
+        12,
+        2851,
+        128
+      ],
+      "procedure": "RE104",
+      "original_operation": "If",
+      "original_context": "RE-SC93",
+      "interpretation": "Null previous main requires index zero; else validate extension grid.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2847-L2851",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10786,
+      "source_span": [
+        2851,
+        24,
+        2851,
+        128
+      ],
+      "procedure": "RE104",
+      "original_operation": "BoolOp",
+      "original_context": "RE-SC93",
+      "interpretation": "Check consecutive index, then positive gap, then zero modulo in order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2851-L2851",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10807,
+      "source_span": [
+        2852,
+        12,
+        2853,
+        103
+      ],
+      "procedure": "RE104",
+      "original_operation": "If",
+      "original_context": "RE-SC93",
+      "interpretation": "False main validity raises before previous_main assignment.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2852-L2853",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10817,
+      "source_span": [
+        2855,
+        8,
+        2862,
+        35
+      ],
+      "procedure": "RE104",
+      "original_operation": "For",
+      "original_context": "RE-SC93",
+      "interpretation": "Traverse lower rows in supplied order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2855-L2862",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10820,
+      "source_span": [
+        2856,
+        12,
+        2859,
+        112
+      ],
+      "procedure": "RE104",
+      "original_operation": "If",
+      "original_context": "RE-SC93",
+      "interpretation": "Null previous lower requires index zero; else validate adjacency/time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2856-L2859",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10832,
+      "source_span": [
+        2859,
+        24,
+        2859,
+        112
+      ],
+      "procedure": "RE104",
+      "original_operation": "BoolOp",
+      "original_context": "RE-SC93",
+      "interpretation": "Check index adjacency before strictly increasing timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2859-L2859",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10845,
+      "source_span": [
+        2860,
+        12,
+        2861,
+        100
+      ],
+      "procedure": "RE104",
+      "original_operation": "If",
+      "original_context": "RE-SC93",
+      "interpretation": "False lower validity raises before previous_lower assignment.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2860-L2861",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10855,
+      "source_span": [
+        2863,
+        8,
+        2864,
+        107
+      ],
+      "procedure": "RE104",
+      "original_operation": "If",
+      "original_context": "RE-SC93",
+      "interpretation": "Reject lower endpoints outside new main window.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2863-L2864",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10856,
+      "source_span": [
+        2863,
+        11,
+        2863,
+        118
+      ],
+      "procedure": "RE104",
+      "original_operation": "BoolOp",
+      "original_context": "RE-SC93",
+      "interpretation": "First lower before first main first, then last lower>=last main+TF.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2863-L2863",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10937,
+      "source_span": [
+        2876,
+        8,
+        2877,
+        30
+      ],
+      "procedure": "RE107",
+      "original_operation": "If",
+      "original_context": "RE-SC94",
+      "interpretation": "Both arrays empty returns existing snapshot before validation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2876-L2877",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10938,
+      "source_span": [
+        2876,
+        11,
+        2876,
+        36
+      ],
+      "procedure": "RE107",
+      "original_operation": "BoolOp",
+      "original_context": "RE-SC94",
+      "interpretation": "Empty main first, then empty lower; both required.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2876-L2876",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10989,
+      "source_span": [
+        2883,
+        8,
+        2897,
+        56
+      ],
+      "procedure": "RE107",
+      "original_operation": "Try",
+      "original_context": "RE-SC95",
+      "interpretation": "Try replay after new detector construction; release indexes in finally.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2883-L2897",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10990,
+      "source_span": [
+        2884,
+        12,
+        2895,
+        80
+      ],
+      "procedure": "RE107",
+      "original_operation": "If",
+      "original_context": "RE-SC95",
+      "interpretation": "Null checkpoint resumes initial scan, else restore prefix and normal cursor.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2884-L2895",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 11049,
+      "source_span": [
+        2892,
+        30,
+        2892,
+        119
+      ],
+      "procedure": "RE107",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC95",
+      "interpretation": "Copy nonnull cursor candidate, else null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2892-L2892",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 11084,
+      "source_span": [
+        2898,
+        8,
+        2904,
+        52
+      ],
+      "procedure": "RE107",
+      "original_operation": "If",
+      "original_context": "RE-SC96",
+      "interpretation": "Truthy commit updates committed state/count after replay and cleanup; preview skips assignments.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2898-L2904",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10563,
+      "source_span": [
+        2798,
+        11,
+        2798,
+        27
+      ],
+      "procedure": "RE99",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "RE-SC91",
+      "interpretation": "Seed main count<2 invalid.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2798-L2798",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 36,
+        "heading": "LiveReactionContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC02",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10750,
+      "source_span": [
+        2844,
+        11,
+        2844,
+        42
+      ],
+      "procedure": "RE104",
+      "original_operation": [
+        "LtE"
+      ],
+      "original_context": "RE-SC93",
+      "interpretation": "Timeframe<=zero invalid.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2844-L2844",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10768,
+      "source_span": [
+        2847,
+        15,
+        2847,
+        36
+      ],
+      "procedure": "RE104",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "RE-SC93",
+      "interpretation": "Previous main identity null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2847-L2847",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10773,
+      "source_span": [
+        2848,
+        24,
+        2848,
+        41
+      ],
+      "procedure": "RE104",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC93",
+      "interpretation": "Initial main index equals zero.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2848-L2848",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10787,
+      "source_span": [
+        2851,
+        24,
+        2851,
+        63
+      ],
+      "procedure": "RE104",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC93",
+      "interpretation": "Current main index equals previous+1.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2851-L2851",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10794,
+      "source_span": [
+        2851,
+        68,
+        2851,
+        86
+      ],
+      "procedure": "RE104",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "RE-SC93",
+      "interpretation": "Main time gap strictly positive.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2851-L2851",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10799,
+      "source_span": [
+        2851,
+        91,
+        2851,
+        128
+      ],
+      "procedure": "RE104",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC93",
+      "interpretation": "Main gap modulo timeframe equals zero duration.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2851-L2851",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10821,
+      "source_span": [
+        2856,
+        15,
+        2856,
+        37
+      ],
+      "procedure": "RE104",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "RE-SC93",
+      "interpretation": "Previous lower identity null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2856-L2856",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10826,
+      "source_span": [
+        2857,
+        24,
+        2857,
+        41
+      ],
+      "procedure": "RE104",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC93",
+      "interpretation": "Initial lower index equals zero.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2857-L2857",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10833,
+      "source_span": [
+        2859,
+        24,
+        2859,
+        64
+      ],
+      "procedure": "RE104",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC93",
+      "interpretation": "Current lower index equals previous+1.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2859-L2859",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10840,
+      "source_span": [
+        2859,
+        69,
+        2859,
+        112
+      ],
+      "procedure": "RE104",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "RE-SC93",
+      "interpretation": "Current lower timestamp strictly greater than previous.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2859-L2859",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10857,
+      "source_span": [
+        2863,
+        11,
+        2863,
+        52
+      ],
+      "procedure": "RE104",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "RE-SC93",
+      "interpretation": "First lower timestamp strictly before new main start invalid.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2863-L2863",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10866,
+      "source_span": [
+        2863,
+        56,
+        2863,
+        118
+      ],
+      "procedure": "RE104",
+      "original_operation": [
+        "GtE"
+      ],
+      "original_context": "RE-SC93",
+      "interpretation": "Last lower timestamp>=new main end invalid including equality.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2863-L2863",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10991,
+      "source_span": [
+        2884,
+        15,
+        2884,
+        33
+      ],
+      "procedure": "RE107",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "RE-SC95",
+      "interpretation": "Checkpoint identity null selects initial route.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2884-L2884",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 11050,
+      "source_span": [
+        2892,
+        70,
+        2892,
+        109
+      ],
+      "procedure": "RE107",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "RE-SC95",
+      "interpretation": "Saved cursor candidate identity nonnull.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2892-L2892",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10707,
+      "source_span": [
+        2834,
+        58,
+        2834,
+        74
+      ],
+      "procedure": "RE102",
+      "original_operation": "Sub",
+      "original_context": "RE-SC92",
+      "interpretation": "Length-1 inclusive detector end.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2834-L2834",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 45,
+        "heading": "_detector"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC02",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10741,
+      "source_span": [
+        2842,
+        23,
+        2842,
+        36
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "RE-SC93",
+      "interpretation": "Nullable/type-union annotation, not executable price/time arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Type annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2842-L2842",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10745,
+      "source_span": [
+        2842,
+        54,
+        2842,
+        67
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "RE-SC93",
+      "interpretation": "Nullable/type-union annotation, not executable price/time arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Type annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2842-L2842",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10756,
+      "source_span": [
+        2844,
+        46,
+        2844,
+        57
+      ],
+      "procedure": "RE104",
+      "original_operation": "Not",
+      "original_context": "RE-SC93",
+      "interpretation": "Negate main sequence truthiness.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2844-L2844",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10758,
+      "source_span": [
+        2844,
+        61,
+        2844,
+        70
+      ],
+      "procedure": "RE104",
+      "original_operation": "Not",
+      "original_context": "RE-SC93",
+      "interpretation": "Negate lower sequence truthiness.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2844-L2844",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10779,
+      "source_span": [
+        2850,
+        22,
+        2850,
+        64
+      ],
+      "procedure": "RE104",
+      "original_operation": "Sub",
+      "original_context": "RE-SC93",
+      "interpretation": "Current timestamp minus previous main timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2850-L2850",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10790,
+      "source_span": [
+        2851,
+        40,
+        2851,
+        63
+      ],
+      "procedure": "RE104",
+      "original_operation": "Add",
+      "original_context": "RE-SC93",
+      "interpretation": "Previous main index+1 required.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2851-L2851",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10800,
+      "source_span": [
+        2851,
+        91,
+        2851,
+        112
+      ],
+      "procedure": "RE104",
+      "original_operation": "Mod",
+      "original_context": "RE-SC93",
+      "interpretation": "Gap modulo timeframe must equal zero duration.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2851-L2851",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10808,
+      "source_span": [
+        2852,
+        15,
+        2852,
+        24
+      ],
+      "procedure": "RE104",
+      "original_operation": "Not",
+      "original_context": "RE-SC93",
+      "interpretation": "Negate validity for main rejection.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2852-L2852",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10836,
+      "source_span": [
+        2859,
+        40,
+        2859,
+        64
+      ],
+      "procedure": "RE104",
+      "original_operation": "Add",
+      "original_context": "RE-SC93",
+      "interpretation": "Previous lower index+1 required.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2859-L2859",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10846,
+      "source_span": [
+        2860,
+        15,
+        2860,
+        24
+      ],
+      "procedure": "RE104",
+      "original_operation": "Not",
+      "original_context": "RE-SC93",
+      "interpretation": "Negate validity for lower rejection.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2860-L2860",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10870,
+      "source_span": [
+        2863,
+        62,
+        2863,
+        64
+      ],
+      "procedure": "RE104",
+      "original_operation": "USub",
+      "original_context": "RE-SC93",
+      "interpretation": "Negative one selects last lower candle.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2863-L2863",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10872,
+      "source_span": [
+        2863,
+        79,
+        2863,
+        118
+      ],
+      "procedure": "RE104",
+      "original_operation": "Add",
+      "original_context": "RE-SC93",
+      "interpretation": "Last main timestamp+timeframe sets exclusive end.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2863-L2863",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10876,
+      "source_span": [
+        2863,
+        87,
+        2863,
+        89
+      ],
+      "procedure": "RE104",
+      "original_operation": "USub",
+      "original_context": "RE-SC93",
+      "interpretation": "Negative one selects last main candle.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2863-L2863",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10939,
+      "source_span": [
+        2876,
+        11,
+        2876,
+        22
+      ],
+      "procedure": "RE107",
+      "original_operation": "Not",
+      "original_context": "RE-SC94",
+      "interpretation": "Negate main truthiness for both-empty route.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2876-L2876",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10941,
+      "source_span": [
+        2876,
+        27,
+        2876,
+        36
+      ],
+      "procedure": "RE107",
+      "original_operation": "Not",
+      "original_context": "RE-SC94",
+      "interpretation": "Negate lower truthiness for both-empty route.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2876-L2876",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10955,
+      "source_span": [
+        2878,
+        63,
+        2878,
+        65
+      ],
+      "procedure": "RE107",
+      "original_operation": "USub",
+      "original_context": "RE-SC94",
+      "interpretation": "Negative one selects last committed main.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2878-L2878",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10960,
+      "source_span": [
+        2878,
+        80,
+        2878,
+        82
+      ],
+      "procedure": "RE107",
+      "original_operation": "USub",
+      "original_context": "RE-SC94",
+      "interpretation": "Negative one selects last committed lower.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2878-L2878",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 11063,
+      "source_span": [
+        2894,
+        28,
+        2894,
+        62
+      ],
+      "procedure": "RE107",
+      "original_operation": "Sub",
+      "original_context": "RE-SC95",
+      "interpretation": "Full main length minus resumed cursor.next_index is processed count.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2894-L2894",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 11108,
+      "source_span": [
+        2904,
+        12,
+        2904,
+        52
+      ],
+      "procedure": "RE107",
+      "original_operation": "Add",
+      "original_context": "RE-SC96",
+      "interpretation": "Increment processed_main_candles by computed count only on commit.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2904-L2904",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10559,
+      "source_span": [
+        2797,
+        8,
+        2797,
+        29
+      ],
+      "procedure": "RE99",
+      "original_operation": "policy_for",
+      "original_context": "RE-SC91",
+      "interpretation": "Validate direction via shared policy before seed count.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2797-L2797",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 36,
+        "heading": "LiveReactionContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC02",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10564,
+      "source_span": [
+        2798,
+        11,
+        2798,
+        23
+      ],
+      "procedure": "RE99",
+      "original_operation": "len",
+      "original_context": "RE-SC91",
+      "interpretation": "Read seed main length.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2798-L2798",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 36,
+        "heading": "LiveReactionContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC02",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10569,
+      "source_span": [
+        2799,
+        18,
+        2799,
+        111
+      ],
+      "procedure": "RE99",
+      "original_operation": "LiveReactionUnavailable",
+      "original_context": "RE-SC91",
+      "interpretation": "Construct LiveReactionUnavailable for insufficient seed.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2799-L2799",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 36,
+        "heading": "LiveReactionContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC02",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10587,
+      "source_span": [
+        2805,
+        24,
+        2805,
+        37
+      ],
+      "procedure": "RE99",
+      "original_operation": "list",
+      "original_context": "RE-SC91",
+      "interpretation": "Materialize main list copy.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2805-L2805",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 36,
+        "heading": "LiveReactionContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC02",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10593,
+      "source_span": [
+        2806,
+        22,
+        2806,
+        33
+      ],
+      "procedure": "RE99",
+      "original_operation": "list",
+      "original_context": "RE-SC91",
+      "interpretation": "Materialize lower list copy.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2806-L2806",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 36,
+        "heading": "LiveReactionContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC02",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10599,
+      "source_span": [
+        2807,
+        26,
+        2807,
+        62
+      ],
+      "procedure": "RE99",
+      "original_operation": "timedelta",
+      "original_context": "RE-SC91",
+      "interpretation": "Construct native timeframe duration.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2807-L2807",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 36,
+        "heading": "LiveReactionContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC02",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10604,
+      "source_span": [
+        2808,
+        8,
+        2808,
+        72
+      ],
+      "procedure": "RE99",
+      "original_operation": "self._validate_extension",
+      "original_context": "RE-SC91",
+      "interpretation": "Validate full seed with null predecessors.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2808-L2808",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 36,
+        "heading": "LiveReactionContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC02",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10615,
+      "source_span": [
+        2809,
+        19,
+        2809,
+        61
+      ],
+      "procedure": "RE99",
+      "original_operation": "self._detector",
+      "original_context": "RE-SC91",
+      "interpretation": "Construct full-window detector before try.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2809-L2809",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 36,
+        "heading": "LiveReactionContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC02",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10625,
+      "source_span": [
+        2811,
+        21,
+        2811,
+        63
+      ],
+      "procedure": "RE99",
+      "original_operation": "detector._detect",
+      "original_context": "RE-SC91",
+      "interpretation": "Detect with retention true, no stop threshold.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2811-L2811",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 36,
+        "heading": "LiveReactionContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC02",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10632,
+      "source_span": [
+        2813,
+        12,
+        2813,
+        61
+      ],
+      "procedure": "RE99",
+      "original_operation": "self._release_indexes",
+      "original_context": "RE-SC91",
+      "interpretation": "Release seed sequence indexes in finally.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2813-L2813",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 36,
+        "heading": "LiveReactionContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC02",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10661,
+      "source_span": [
+        2823,
+        15,
+        2823,
+        43
+      ],
+      "procedure": "RE100",
+      "original_operation": "self._snapshot",
+      "original_context": "RE-SC92",
+      "interpretation": "Return snapshot of stored result.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2823-L2823",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 39,
+        "heading": "result"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10672,
+      "source_span": [
+        2827,
+        15,
+        2831,
+        9
+      ],
+      "procedure": "RE101",
+      "original_operation": "replace",
+      "original_context": "RE-SC92",
+      "interpretation": "Replace result with new lists.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2827-L2831",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 42,
+        "heading": "_snapshot"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10677,
+      "source_span": [
+        2829,
+        23,
+        2829,
+        41
+      ],
+      "procedure": "RE101",
+      "original_operation": "replace",
+      "original_context": "RE-SC92",
+      "interpretation": "Copy each candidate before result replacement.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2829-L2829",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 42,
+        "heading": "_snapshot"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10685,
+      "source_span": [
+        2830,
+        19,
+        2830,
+        38
+      ],
+      "procedure": "RE101",
+      "original_operation": "list",
+      "original_context": "RE-SC92",
+      "interpretation": "Copy reset list, reuse reset objects.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2830-L2830",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 42,
+        "heading": "_snapshot"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10702,
+      "source_span": [
+        2834,
+        15,
+        2834,
+        109
+      ],
+      "procedure": "RE102",
+      "original_operation": "UnifiedReactionDetector",
+      "original_context": "RE-SC92",
+      "interpretation": "Construct Unified detector with full bounds and options.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2834-L2834",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 45,
+        "heading": "_detector"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC02",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10708,
+      "source_span": [
+        2834,
+        58,
+        2834,
+        70
+      ],
+      "procedure": "RE102",
+      "original_operation": "len",
+      "original_context": "RE-SC92",
+      "interpretation": "Read full main length for end index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2834-L2834",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 45,
+        "heading": "_detector"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC02",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10724,
+      "source_span": [
+        2838,
+        8,
+        2838,
+        42
+      ],
+      "procedure": "RE103",
+      "original_operation": "release_market_indexes",
+      "original_context": "RE-SC92",
+      "interpretation": "Delegate identity-based cache release.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2838-L2838",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 48,
+        "heading": "_release_indexes"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC02",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10753,
+      "source_span": [
+        2844,
+        30,
+        2844,
+        42
+      ],
+      "procedure": "RE104",
+      "original_operation": "timedelta",
+      "original_context": "RE-SC93",
+      "interpretation": "Construct zero duration for timeframe check.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2844-L2844",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10761,
+      "source_span": [
+        2845,
+        18,
+        2845,
+        104
+      ],
+      "procedure": "RE104",
+      "original_operation": "LiveReactionUnavailable",
+      "original_context": "RE-SC93",
+      "interpretation": "Construct invalid batch LiveReactionUnavailable.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2845-L2845",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10796,
+      "source_span": [
+        2851,
+        74,
+        2851,
+        86
+      ],
+      "procedure": "RE104",
+      "original_operation": "timedelta",
+      "original_context": "RE-SC93",
+      "interpretation": "Construct zero duration for positive gap comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2851-L2851",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10804,
+      "source_span": [
+        2851,
+        116,
+        2851,
+        128
+      ],
+      "procedure": "RE104",
+      "original_operation": "timedelta",
+      "original_context": "RE-SC93",
+      "interpretation": "Construct zero duration for modulo comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2851-L2851",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10811,
+      "source_span": [
+        2853,
+        22,
+        2853,
+        103
+      ],
+      "procedure": "RE104",
+      "original_operation": "LiveReactionUnavailable",
+      "original_context": "RE-SC93",
+      "interpretation": "Construct main grid LiveReactionUnavailable.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2853-L2853",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10849,
+      "source_span": [
+        2861,
+        22,
+        2861,
+        100
+      ],
+      "procedure": "RE104",
+      "original_operation": "LiveReactionUnavailable",
+      "original_context": "RE-SC93",
+      "interpretation": "Construct lower chronology LiveReactionUnavailable.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2861-L2861",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10881,
+      "source_span": [
+        2864,
+        18,
+        2864,
+        107
+      ],
+      "procedure": "RE104",
+      "original_operation": "LiveReactionUnavailable",
+      "original_context": "RE-SC93",
+      "interpretation": "Construct lower endpoint bounds LiveReactionUnavailable.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2864-L2864",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 51,
+        "heading": "_validate_extension"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC01",
+          "line": 71
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10896,
+      "source_span": [
+        2867,
+        15,
+        2867,
+        56
+      ],
+      "procedure": "RE105",
+      "original_operation": "self._extend",
+      "original_context": "RE-SC94",
+      "interpretation": "Delegate extension with commit true.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2867-L2867",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 54,
+        "heading": "advance"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10917,
+      "source_span": [
+        2871,
+        15,
+        2871,
+        57
+      ],
+      "procedure": "RE106",
+      "original_operation": "self._extend",
+      "original_context": "RE-SC94",
+      "interpretation": "Delegate extension with commit false.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2871-L2871",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 57,
+        "heading": "preview"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10947,
+      "source_span": [
+        2878,
+        8,
+        2878,
+        84
+      ],
+      "procedure": "RE107",
+      "original_operation": "self._validate_extension",
+      "original_context": "RE-SC94",
+      "interpretation": "Validate new batches against last committed main/lower.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2878-L2878",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10980,
+      "source_span": [
+        2881,
+        19,
+        2881,
+        56
+      ],
+      "procedure": "RE107",
+      "original_operation": "self._detector",
+      "original_context": "RE-SC94",
+      "interpretation": "Construct detector on combined arrays before protected try.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2881-L2881",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10996,
+      "source_span": [
+        2885,
+        28,
+        2885,
+        40
+      ],
+      "procedure": "RE107",
+      "original_operation": "len",
+      "original_context": "RE-SC95",
+      "interpretation": "Read extension main length for initial route processed count.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2885-L2885",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 11001,
+      "source_span": [
+        2886,
+        25,
+        2886,
+        104
+      ],
+      "procedure": "RE107",
+      "original_operation": "detector._detect",
+      "original_context": "RE-SC95",
+      "interpretation": "Resume initial detection retaining cursor, no stop threshold.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2886-L2886",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 11038,
+      "source_span": [
+        2890,
+        25,
+        2893,
+        17
+      ],
+      "procedure": "RE107",
+      "original_operation": "replace",
+      "original_context": "RE-SC95",
+      "interpretation": "Copy checkpoint cursor with replaced previous and candidate.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2890-L2893",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 11043,
+      "source_span": [
+        2891,
+        48,
+        2891,
+        83
+      ],
+      "procedure": "RE107",
+      "original_operation": "replace",
+      "original_context": "RE-SC95",
+      "interpretation": "Copy previous candidate for resumed cursor.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2891-L2891",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 11055,
+      "source_span": [
+        2892,
+        30,
+        2892,
+        66
+      ],
+      "procedure": "RE107",
+      "original_operation": "replace",
+      "original_context": "RE-SC95",
+      "interpretation": "Copy nonnull pending candidate.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2892-L2892",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 11064,
+      "source_span": [
+        2894,
+        28,
+        2894,
+        42
+      ],
+      "procedure": "RE107",
+      "original_operation": "len",
+      "original_context": "RE-SC95",
+      "interpretation": "Read full next main length for replay count.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2894-L2894",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 11071,
+      "source_span": [
+        2895,
+        25,
+        2895,
+        80
+      ],
+      "procedure": "RE107",
+      "original_operation": "detector._scan_normal",
+      "original_context": "RE-SC95",
+      "interpretation": "Scan normal from cloned cursor with retention true.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2895-L2895",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 11079,
+      "source_span": [
+        2897,
+        12,
+        2897,
+        56
+      ],
+      "procedure": "RE107",
+      "original_operation": "self._release_indexes",
+      "original_context": "RE-SC95",
+      "interpretation": "Release combined-sequence indexes in finally.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2897-L2897",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 11113,
+      "source_span": [
+        2905,
+        15,
+        2905,
+        37
+      ],
+      "procedure": "RE107",
+      "original_operation": "self._snapshot",
+      "original_context": "RE-SC96",
+      "interpretation": "Snapshot prospective result after optional commit assignments.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2905-L2905",
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+        "line": 60,
+        "heading": "_extend"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC03",
+          "line": 73
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC04",
+          "line": 74
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC05",
+          "line": 75
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC06",
+          "line": 76
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC08",
+          "line": 78
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC09",
+          "line": 79
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "RC",
+          "transition": "RC10",
+          "line": 80
+        }
+      ]
+    }
+  ],
+  "supplemental_items": [
+    {
+      "supplemental_id": "B02-14-S1",
+      "source_span": [
+        2797,
+        2819
+      ],
+      "discovery_reason": "Source-first review of state mutation, guard order, cursor/cache lifetime, provenance or failure boundary beyond original category labels.",
+      "interpretation": "Validate policy then seed length; store direction/options and shallow list copies, create duration, validate entire seed with null predecessors. Construct detector before try; finally releases indexes only after successful construction enters try. Save result/checkpoint/initial cursor after cleanup; processed zero.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2797-L2819"
+    },
+    {
+      "supplemental_id": "B02-14-S2",
+      "source_span": [
+        2821,
+        2838
+      ],
+      "discovery_reason": "Source-first review of state mutation, guard order, cursor/cache lifetime, provenance or failure boundary beyond original category labels.",
+      "interpretation": "Result property snapshots via replace, shallow copies mutable candidates individually and reset list; reset objects retained. Detector full 0..len-1 and stored flags. Release indexes by original list identity.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2821-L2838"
+    },
+    {
+      "supplemental_id": "B02-14-S3",
+      "source_span": [
+        2844,
+        2854
+      ],
+      "discovery_reason": "Source-first review of state mutation, guard order, cursor/cache lifetime, provenance or failure boundary beyond original category labels.",
+      "interpretation": "Positive duration and both nonempty required; main first index zero only when no predecessor; else compute gap before consecutive-index, positive-gap, integral-timeframe modulo conjunction. No requirement of exactly one timeframe gap.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2844-L2854"
+    },
+    {
+      "supplemental_id": "B02-14-S4",
+      "source_span": [
+        2855,
+        2864
+      ],
+      "discovery_reason": "Source-first review of state mutation, guard order, cursor/cache lifetime, provenance or failure boundary beyond original category labels.",
+      "interpretation": "Lower initial index zero or consecutive index and strictly increasing time. Endpoints confined to new main start inclusive, last main nominal end exclusive. No local requirement of gap-free lower coverage, or per-main lower rows.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2855-L2864"
+    },
+    {
+      "supplemental_id": "B02-14-S5",
+      "source_span": [
+        2866,
+        2882
+      ],
+      "discovery_reason": "Source-first review of state mutation, guard order, cursor/cache lifetime, provenance or failure boundary beyond original category labels.",
+      "interpretation": "Advance commit true, preview false. Both empty returns snapshot without validation or mutation; one empty reaches validation error. Combine lists with original row references, construct detector before protected try.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2866-L2882"
+    },
+    {
+      "supplemental_id": "B02-14-S6",
+      "source_span": [
+        2883,
+        2897
+      ],
+      "discovery_reason": "Source-first review of state mutation, guard order, cursor/cache lifetime, provenance or failure boundary beyond original category labels.",
+      "interpretation": "Checkpoint null uses initial cursor and processed=len(new main); otherwise shallow-slice accepted prefixes, copy cursor/previous/candidate and replay normal from saved next. Processed full length minus next. Release new sequence indexes in finally. Constructor failure outside finally.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2883-L2897"
+    },
+    {
+      "supplemental_id": "B02-14-S7",
+      "source_span": [
+        2898,
+        2908
+      ],
+      "discovery_reason": "Source-first review of state mutation, guard order, cursor/cache lifetime, provenance or failure boundary beyond original category labels.",
+      "interpretation": "Commit assigns new lists, result, checkpoint, initial cursor, then increments count; snapshot performed afterward and can fail natively. Preview skips these assignments, but no universal deep immutability or rollback guarantee. Final terminal blanks no procedure.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2898-L2908"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B02-14-F01",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        2808,
+        2819
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2808-L2819",
+      "description": "Prior always wording obscured detector construction outside protected block.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/18_Live_Bridge.md",
+          "prior_blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+          "procedure": "RE99"
+        }
+      ],
+      "resolution": "RE104 initial validation; construct RE102 before try, run RE97 retain cursor inside try and release indexes finally. Construction failure lies outside this cleanup scope.",
+      "recheck": "W2 caller and W3 forensic recheck remain pending."
+    },
+    {
+      "id": "B02-14-F02",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        2881,
+        2905
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2881-L2905",
+      "description": "Precisely delimit cleanup and post-commit snapshot failure boundary.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/18_Live_Bridge.md",
+          "prior_blob": "9527ed716dd82a962fd0fd785bd9ee1db35800d9",
+          "procedure": "RE107"
+        }
+      ],
+      "resolution": "Release new sequence indexes finally for replay after detector construction; constructor failure is outside try. Only commit true updates owned lists/result/checkpoints/initial cursor and processed count. Return snapshot either way after optional commit (snapshot failure is not a rollback trigger).",
+      "recheck": "W2 caller and W3 forensic recheck remain pending."
+    }
+  ],
+  "open_dependencies": [
+    "Verify actual worker path and optional continuation reachability in W2; no claim active replay uses this service.",
+    "Review cache cleanup construction boundaries and shared-reference mutation across callers.",
+    "W3 separate source-first review pending."
+  ]
+}

@@ -1,0 +1,4569 @@
+{
+  "checkpoint": 44,
+  "batch": "B04",
+  "sub_batch": "B04-07",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "b06351ea69da4a656d3a671d07bf8ec751974e71",
+  "path": "engine/pipeline/s_zone_detector.py",
+  "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+  "source_range": [
+    1054,
+    1224
+  ],
+  "procedures": [
+    "S39"
+  ],
+  "review_pass": "W1 source-first local owner review; W3 pending",
+  "status": "PASS",
+  "scope": "Local source contracts only; cross-owner, runtime and separate forensic gate not certified.",
+  "counts": {
+    "original_rows": 69,
+    "by_category": {
+      "branches": 16,
+      "comparisons": 12,
+      "arithmetic": 4,
+      "calls": 37
+    },
+    "supplemental_items": 6
+  },
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 3870,
+      "source_span": [
+        1072,
+        12,
+        1078,
+        21
+      ],
+      "procedure": "S39",
+      "original_operation": "IfExp",
+      "original_context": "S-SC49",
+      "interpretation": "Exact before timing selects S30; otherwise pre candidate null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1072-L1078",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 3891,
+      "source_span": [
+        1084,
+        8,
+        1107,
+        31
+      ],
+      "procedure": "S39",
+      "original_operation": "If",
+      "original_context": "S-SC50",
+      "interpretation": "Nonnull pre candidate enters preliminary race.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1084-L1107",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 3934,
+      "source_span": [
+        1102,
+        12,
+        1103,
+        27
+      ],
+      "procedure": "S39",
+      "original_operation": "If",
+      "original_context": "S-SC50",
+      "interpretation": "Null preliminary decision returns null immediately, no aligned search.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1102-L1103",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 3940,
+      "source_span": [
+        1104,
+        12,
+        1107,
+        31
+      ],
+      "procedure": "S39",
+      "original_operation": "If",
+      "original_context": "S-SC50",
+      "interpretation": "Preliminary family other than fallback sets use_pre true; fallback clears decision.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1104-L1107",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 3955,
+      "source_span": [
+        1110,
+        8,
+        1115,
+        52
+      ],
+      "procedure": "S39",
+      "original_operation": "If",
+      "original_context": "S-SC51",
+      "interpretation": "Not use_pre triggers nested match search after resetting behavior start.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1110-L1115",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 3973,
+      "source_span": [
+        1117,
+        8,
+        1152,
+        62
+      ],
+      "procedure": "S39",
+      "original_operation": "If",
+      "original_context": "S-SC51",
+      "interpretation": "Not use_pre and advanced flag selects advanced geometry.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1117-L1152",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 3974,
+      "source_span": [
+        1117,
+        11,
+        1117,
+        56
+      ],
+      "procedure": "S39",
+      "original_operation": "BoolOp",
+      "original_context": "S-SC51",
+      "interpretation": "Negated use_pre before advanced flag.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1117-L1117",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 3997,
+      "source_span": [
+        1124,
+        20,
+        1126,
+        45
+      ],
+      "procedure": "S39",
+      "original_operation": "IfExp",
+      "original_context": "S-SC51",
+      "interpretation": "Exact bullish selects Order bottom source index else top source index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1124-L1126",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 4025,
+      "source_span": [
+        1132,
+        8,
+        1152,
+        62
+      ],
+      "procedure": "S39",
+      "original_operation": "If",
+      "original_context": "S-SC51",
+      "interpretation": "If advanced branch not selected, not use_pre enters simple aligned branch.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1132-L1152",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 4037,
+      "source_span": [
+        1137,
+        12,
+        1138,
+        27
+      ],
+      "procedure": "S39",
+      "original_operation": "If",
+      "original_context": "S-SC52",
+      "interpretation": "Missing later trend match returns null before second race.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1137-L1138",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 4061,
+      "source_span": [
+        1146,
+        16,
+        1150,
+        17
+      ],
+      "procedure": "S39",
+      "original_operation": "IfExp",
+      "original_context": "S-SC52",
+      "interpretation": "Pre candidate nonnull reuses it for red_source else calls S24 even if unused at final Red.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1146-L1150",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 4074,
+      "source_span": [
+        1154,
+        8,
+        1162,
+        13
+      ],
+      "procedure": "S39",
+      "original_operation": "If",
+      "original_context": "S-SC53",
+      "interpretation": "Null decision triggers normal qualified race.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1154-L1162",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 4089,
+      "source_span": [
+        1163,
+        8,
+        1164,
+        23
+      ],
+      "procedure": "S39",
+      "original_operation": "If",
+      "original_context": "S-SC53",
+      "interpretation": "Null decision after race returns null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1163-L1164",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 4110,
+      "source_span": [
+        1168,
+        8,
+        1174,
+        17
+      ],
+      "procedure": "S39",
+      "original_operation": "If",
+      "original_context": "S-SC53",
+      "interpretation": "Red family triggers source rewrite, other families retain source.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1168-L1174",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 4114,
+      "source_span": [
+        1169,
+        12,
+        1174,
+        17
+      ],
+      "procedure": "S39",
+      "original_operation": "If",
+      "original_context": "S-SC53",
+      "interpretation": "Selected pre candidate and nonnull red_source retain pre source, else S13.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1169-L1174",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 4115,
+      "source_span": [
+        1169,
+        15,
+        1169,
+        65
+      ],
+      "procedure": "S39",
+      "original_operation": "BoolOp",
+      "original_context": "S-SC53",
+      "interpretation": "use_pre first then nonnull red_source.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1169-L1169",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3871,
+      "source_span": [
+        1077,
+        15,
+        1077,
+        43
+      ],
+      "procedure": "S39",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "S-SC49",
+      "interpretation": "Candidate timing string equals before.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1077-L1077",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3892,
+      "source_span": [
+        1084,
+        11,
+        1084,
+        42
+      ],
+      "procedure": "S39",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "S-SC50",
+      "interpretation": "Pre candidate identity nonnull.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1084-L1084",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3935,
+      "source_span": [
+        1102,
+        15,
+        1102,
+        31
+      ],
+      "procedure": "S39",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "S-SC50",
+      "interpretation": "Preliminary decision identity null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1102-L1102",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3941,
+      "source_span": [
+        1104,
+        15,
+        1104,
+        40
+      ],
+      "procedure": "S39",
+      "original_operation": [
+        "NotEq"
+      ],
+      "original_context": "S-SC50",
+      "interpretation": "Preliminary family not equal fallback.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1104-L1104",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3970,
+      "source_span": [
+        1115,
+        28,
+        1115,
+        52
+      ],
+      "procedure": "S39",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "S-SC51",
+      "interpretation": "Nested match identity nonnull sets advanced flag.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1115-L1115",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3998,
+      "source_span": [
+        1125,
+        23,
+        1125,
+        50
+      ],
+      "procedure": "S39",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "S-SC51",
+      "interpretation": "Exact bullish selects bottom source.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1125-L1125",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 4038,
+      "source_span": [
+        1137,
+        15,
+        1137,
+        34
+      ],
+      "procedure": "S39",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "S-SC52",
+      "interpretation": "Trend match identity null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1137-L1137",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 4062,
+      "source_span": [
+        1147,
+        19,
+        1147,
+        50
+      ],
+      "procedure": "S39",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "S-SC52",
+      "interpretation": "Pre candidate identity nonnull.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1147-L1147",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 4075,
+      "source_span": [
+        1154,
+        11,
+        1154,
+        27
+      ],
+      "procedure": "S39",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "S-SC53",
+      "interpretation": "Decision identity null before normal race.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1154-L1154",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 4090,
+      "source_span": [
+        1163,
+        11,
+        1163,
+        27
+      ],
+      "procedure": "S39",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "S-SC53",
+      "interpretation": "Decision identity null after normal race.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1163-L1163",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 4111,
+      "source_span": [
+        1168,
+        11,
+        1168,
+        25
+      ],
+      "procedure": "S39",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "S-SC53",
+      "interpretation": "Color string equals red.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1168-L1168",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 4117,
+      "source_span": [
+        1169,
+        43,
+        1169,
+        65
+      ],
+      "procedure": "S39",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "S-SC53",
+      "interpretation": "red_source identity nonnull.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1169-L1169",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 3956,
+      "source_span": [
+        1110,
+        11,
+        1110,
+        38
+      ],
+      "procedure": "S39",
+      "original_operation": "Not",
+      "original_context": "S-SC51",
+      "interpretation": "Negate use_pre to decide nested search.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1110-L1110",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 3975,
+      "source_span": [
+        1117,
+        11,
+        1117,
+        38
+      ],
+      "procedure": "S39",
+      "original_operation": "Not",
+      "original_context": "S-SC51",
+      "interpretation": "Negate use_pre before advanced flag.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1117-L1117",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 4026,
+      "source_span": [
+        1132,
+        13,
+        1132,
+        40
+      ],
+      "procedure": "S39",
+      "original_operation": "Not",
+      "original_context": "S-SC51",
+      "interpretation": "Negate use_pre in simple alternative.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1132-L1132",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 4282,
+      "source_span": [
+        1061,
+        9,
+        1061,
+        21
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "S-SC49",
+      "interpretation": "Type-union annotation, not executed price/time arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Type annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1061-L1061",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3854,
+      "source_span": [
+        1066,
+        12,
+        1066,
+        49
+      ],
+      "procedure": "S39",
+      "original_operation": "self._order_stop",
+      "original_context": "S-SC49",
+      "interpretation": "Obtain canonical Order stop tuple via mixin before timing.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1066-L1066",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 3861,
+      "source_span": [
+        1068,
+        27,
+        1070,
+        9
+      ],
+      "procedure": "S39",
+      "original_operation": "self._candidate_timing",
+      "original_context": "S-SC49",
+      "interpretation": "Resolve S29 timing with actual A-stop event.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1068-L1070",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 3874,
+      "source_span": [
+        1072,
+        12,
+        1076,
+        13
+      ],
+      "procedure": "S39",
+      "original_operation": "self._candidate_before_order",
+      "original_context": "S-SC49",
+      "interpretation": "Compute S30 only for before timing.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1072-L1076",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 3912,
+      "source_span": [
+        1089,
+        35,
+        1091,
+        13
+      ],
+      "procedure": "S39",
+      "original_operation": "self._candidate_event_time",
+      "original_context": "S-SC50",
+      "interpretation": "Resolve S31 candidate time including fallback.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1089-L1091",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 3923,
+      "source_span": [
+        1093,
+        23,
+        1101,
+        13
+      ],
+      "procedure": "S39",
+      "original_operation": "self._decision",
+      "original_context": "S-SC50",
+      "interpretation": "Preliminary S37 with ordinal zero, candidate time as behavior start and gate, fallback true.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1093-L1101",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 3963,
+      "source_span": [
+        1112,
+        27,
+        1114,
+        13
+      ],
+      "procedure": "S39",
+      "original_operation": "self._nested_trend_reaction",
+      "original_context": "S-SC51",
+      "interpretation": "Recompute nested trend match if pre decision not selected.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1112-L1114",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 3992,
+      "source_span": [
+        1121,
+        27,
+        1128,
+        13
+      ],
+      "procedure": "S39",
+      "original_operation": "int",
+      "original_context": "S-SC51",
+      "interpretation": "Integer-convert direction-selected Order box source index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1121-L1128",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 3994,
+      "source_span": [
+        1122,
+        16,
+        1127,
+        17
+      ],
+      "procedure": "S39",
+      "original_operation": "getattr",
+      "original_context": "S-SC51",
+      "interpretation": "Read Order bottom source B or top source otherwise.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1122-L1127",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4006,
+      "source_span": [
+        1129,
+        26,
+        1129,
+        74
+      ],
+      "procedure": "S39",
+      "original_operation": "getattr",
+      "original_context": "S-SC51",
+      "interpretation": "Read selected main source time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1129-L1129",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4015,
+      "source_span": [
+        1130,
+        20,
+        1130,
+        67
+      ],
+      "procedure": "S39",
+      "original_operation": "self._trend_extreme",
+      "original_context": "S-SC51",
+      "interpretation": "Normalize selected main directional extreme, not stored Order box level.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1130-L1130",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4033,
+      "source_span": [
+        1134,
+        26,
+        1136,
+        13
+      ],
+      "procedure": "S39",
+      "original_operation": "self._first_trend_reaction_after_order",
+      "original_context": "S-SC52",
+      "interpretation": "Resolve first trend reaction strictly after Order confirmation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1134-L1136",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4054,
+      "source_span": [
+        1142,
+        47,
+        1144,
+        13
+      ],
+      "procedure": "S39",
+      "original_operation": "self._simple_candidate",
+      "original_context": "S-SC52",
+      "interpretation": "S17 Simple source over Order Break..trend Break, last equal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1142-L1144",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4066,
+      "source_span": [
+        1148,
+        21,
+        1150,
+        17
+      ],
+      "procedure": "S39",
+      "original_operation": "self._candidate_after_order",
+      "original_context": "S-SC52",
+      "interpretation": "Compute S24 red_source only absent pre candidate, even though later non-pre Red overwrites source.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1148-L1150",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4080,
+      "source_span": [
+        1155,
+        23,
+        1162,
+        13
+      ],
+      "procedure": "S39",
+      "original_operation": "self._decision",
+      "original_context": "S-SC53",
+      "interpretation": "Normal S37 with selected source and trend confirmation gate, fallback default false.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1155-L1162",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4104,
+      "source_span": [
+        1167,
+        28,
+        1167,
+        60
+      ],
+      "procedure": "S39",
+      "original_operation": "int",
+      "original_context": "S-SC53",
+      "interpretation": "Integer-convert Order Break after decision.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1167-L1167",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4106,
+      "source_span": [
+        1167,
+        32,
+        1167,
+        59
+      ],
+      "procedure": "S39",
+      "original_operation": "getattr",
+      "original_context": "S-SC53",
+      "interpretation": "Read Order.break_idx.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1167-L1167",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4131,
+      "source_span": [
+        1172,
+        51,
+        1174,
+        17
+      ],
+      "procedure": "S39",
+      "original_operation": "self._candidate_source",
+      "original_context": "S-SC53",
+      "interpretation": "For non-pre Red compute S13 earliest-equal Order Break..decision main.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1172-L1174",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4138,
+      "source_span": [
+        1176,
+        28,
+        1176,
+        60
+      ],
+      "procedure": "S39",
+      "original_operation": "int",
+      "original_context": "S-SC54",
+      "interpretation": "Integer-convert Order First before source indices.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1176-L1176",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4140,
+      "source_span": [
+        1176,
+        32,
+        1176,
+        59
+      ],
+      "procedure": "S39",
+      "original_operation": "getattr",
+      "original_context": "S-SC54",
+      "interpretation": "Read Order.first_idx.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1176-L1176",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4146,
+      "source_span": [
+        1177,
+        31,
+        1177,
+        72
+      ],
+      "procedure": "S39",
+      "original_operation": "int",
+      "original_context": "S-SC54",
+      "interpretation": "Integer-convert top source index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1177-L1177",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4148,
+      "source_span": [
+        1177,
+        35,
+        1177,
+        71
+      ],
+      "procedure": "S39",
+      "original_operation": "getattr",
+      "original_context": "S-SC54",
+      "interpretation": "Read Order.box_top_source_idx.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1177-L1177",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4154,
+      "source_span": [
+        1178,
+        34,
+        1178,
+        78
+      ],
+      "procedure": "S39",
+      "original_operation": "int",
+      "original_context": "S-SC54",
+      "interpretation": "Integer-convert bottom source index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1178-L1178",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4156,
+      "source_span": [
+        1178,
+        38,
+        1178,
+        77
+      ],
+      "procedure": "S39",
+      "original_operation": "getattr",
+      "original_context": "S-SC54",
+      "interpretation": "Read Order.box_bottom_source_idx.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1178-L1178",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4161,
+      "source_span": [
+        1179,
+        15,
+        1223,
+        9
+      ],
+      "procedure": "S39",
+      "original_operation": "SZone",
+      "original_context": "S-SC54",
+      "interpretation": "Construct SZone with chosen source, decision, parent and Order provenance.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1179-L1223",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4173,
+      "source_span": [
+        1184,
+        27,
+        1184,
+        61
+      ],
+      "procedure": "S39",
+      "original_operation": "int",
+      "original_context": "S-SC54",
+      "interpretation": "Integer-convert A source index in constructor args.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1184-L1184",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4175,
+      "source_span": [
+        1184,
+        31,
+        1184,
+        60
+      ],
+      "procedure": "S39",
+      "original_operation": "getattr",
+      "original_context": "S-SC54",
+      "interpretation": "Read A source_index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1184-L1184",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4180,
+      "source_span": [
+        1185,
+        26,
+        1185,
+        54
+      ],
+      "procedure": "S39",
+      "original_operation": "getattr",
+      "original_context": "S-SC54",
+      "interpretation": "Read A source_time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1185-L1185",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4198,
+      "source_span": [
+        1192,
+        23,
+        1192,
+        50
+      ],
+      "procedure": "S39",
+      "original_operation": "str",
+      "original_context": "S-SC54",
+      "interpretation": "String-convert Order mode.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1192-L1192",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4200,
+      "source_span": [
+        1192,
+        27,
+        1192,
+        49
+      ],
+      "procedure": "S39",
+      "original_operation": "getattr",
+      "original_context": "S-SC54",
+      "interpretation": "Read Order.mode.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1192-L1192",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4207,
+      "source_span": [
+        1194,
+        29,
+        1196,
+        13
+      ],
+      "procedure": "S39",
+      "original_operation": "getattr",
+      "original_context": "S-SC54",
+      "interpretation": "Read First main timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1194-L1196",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4217,
+      "source_span": [
+        1198,
+        29,
+        1200,
+        13
+      ],
+      "procedure": "S39",
+      "original_operation": "getattr",
+      "original_context": "S-SC54",
+      "interpretation": "Read Break main timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1198-L1200",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4227,
+      "source_span": [
+        1202,
+        26,
+        1202,
+        63
+      ],
+      "procedure": "S39",
+      "original_operation": "as_decimal",
+      "original_context": "S-SC54",
+      "interpretation": "Normalize Order box_top before top source timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1202-L1202",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4229,
+      "source_span": [
+        1202,
+        37,
+        1202,
+        62
+      ],
+      "procedure": "S39",
+      "original_operation": "getattr",
+      "original_context": "S-SC54",
+      "interpretation": "Read Order.box_top.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1202-L1202",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4236,
+      "source_span": [
+        1204,
+        38,
+        1206,
+        13
+      ],
+      "procedure": "S39",
+      "original_operation": "getattr",
+      "original_context": "S-SC54",
+      "interpretation": "Read top source main timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1204-L1206",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4244,
+      "source_span": [
+        1207,
+        29,
+        1207,
+        69
+      ],
+      "procedure": "S39",
+      "original_operation": "as_decimal",
+      "original_context": "S-SC54",
+      "interpretation": "Normalize Order box_bottom after top fields.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1207-L1207",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4246,
+      "source_span": [
+        1207,
+        40,
+        1207,
+        68
+      ],
+      "procedure": "S39",
+      "original_operation": "getattr",
+      "original_context": "S-SC54",
+      "interpretation": "Read Order.box_bottom.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1207-L1207",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4253,
+      "source_span": [
+        1209,
+        41,
+        1211,
+        13
+      ],
+      "procedure": "S39",
+      "original_operation": "getattr",
+      "original_context": "S-SC54",
+      "interpretation": "Read bottom source main timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls event ordering, geometry, qualification, source identity or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1209-L1211",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 163,
+        "heading": "_build_order_backed_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR03",
+          "line": 42
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR04",
+          "line": 43
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR05",
+          "line": 44
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR08",
+          "line": 47
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR11",
+          "line": 50
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR12",
+          "line": 51
+        }
+      ]
+    }
+  ],
+  "supplemental_items": [
+    {
+      "supplemental_id": "B04-07-S1",
+      "source_span": [
+        1063,
+        1083
+      ],
+      "discovery_reason": "Source-first review of ordered evaluation, mutation, provenance or implicit dependency beyond original category labels.",
+      "interpretation": "Unpack A stop and physical Order match. Obtain canonical stop triple then S29; S30 only if before. Initialize behavior start=A-stop exact, decision null, use_pre false.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1063-L1083"
+    },
+    {
+      "supplemental_id": "B04-07-S2",
+      "source_span": [
+        1084,
+        1107
+      ],
+      "discovery_reason": "Source-first review of ordered evaluation, mutation, provenance or implicit dependency beyond original category labels.",
+      "interpretation": "Pre candidate sets simple and red_source reference, trend ordinal zero. S31 returned time serves both behavior start and candidate gate; preliminary S37 scans from Order confirmation with fallback true. Null exits entire route; nonfallback sets use_pre, fallback clears decision only, not pre candidate.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1084-L1107"
+    },
+    {
+      "supplemental_id": "B04-07-S3",
+      "source_span": [
+        1109,
+        1131
+      ],
+      "discovery_reason": "Source-first review of ordered evaluation, mutation, provenance or implicit dependency beyond original category labels.",
+      "interpretation": "If not use_pre reset behavior start and call S16 again, set advanced flag. Advanced source is Order bottom source B/top R, price normalized full main extreme (not raw Order box edge), gate nested confirmation, red_source null.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1109-L1131"
+    },
+    {
+      "supplemental_id": "B04-07-S4",
+      "source_span": [
+        1132,
+        1152
+      ],
+      "discovery_reason": "Source-first review of ordered evaluation, mutation, provenance or implicit dependency beyond original category labels.",
+      "interpretation": "Simple when not use_pre and no advanced. S15 null exits immediately, otherwise S17 last-equal source. red_source pre candidate if present else S24 call still happens, even though non-pre Red later ignores it. Preserve possible error/side effects, not dead-code elimination. Gate aligned trend confirmation.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1132-L1152"
+    },
+    {
+      "supplemental_id": "B04-07-S5",
+      "source_span": [
+        1154,
+        1174
+      ],
+      "discovery_reason": "Source-first review of ordered evaluation, mutation, provenance or implicit dependency beyond original category labels.",
+      "interpretation": "Only absent decision invokes normal S37 with fallback default false. Null exits. Unpack, convert Order Break even for Blue. Red uses pre source only if use_pre and red_source nonnull, else S13 earliest equal inclusive Break..decision. Blue retains selected source.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1154-L1174"
+    },
+    {
+      "supplemental_id": "B04-07-S6",
+      "source_span": [
+        1176,
+        1223
+      ],
+      "discovery_reason": "Source-first review of ordered evaluation, mutation, provenance or implicit dependency beyond original category labels.",
+      "interpretation": "Convert First/top source/bottom source in order; construct record with parent A, original physical Order identity, mode str, main timestamps and supplied confirmation (may be native fallback), normalize top then bottom at respective argument order, canonical stop tuple preserved. Reset fields null. No second physical Order search or additional stop validation.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1176-L1223"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B04-07-F01",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        1089,
+        1107
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1089-L1107",
+      "description": "Preserve preliminary gate fallback provenance.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/05_S_Zone.md",
+          "prior_blob": "80c80a4cfde4f045da45da78490604160a6cc283",
+          "procedure": "S39"
+        }
+      ],
+      "resolution": "Find S31 returned candidate event time (including native fallback);",
+      "recheck": "W2 caller and W3 forensic review pending."
+    },
+    {
+      "id": "B04-07-F02",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        1104,
+        1150
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L1104-L1150",
+      "description": "Distinguish discarded decision from retained candidate.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "prior_blob": "d577ba56df4db48308c7fcdc66fdb1c08eca8964",
+          "procedure": "SOR04"
+        }
+      ],
+      "resolution": "Clear preliminary decision but retain pre-order candidate reference; use aligned after geometry (Simple may still assign that reference to red_source)",
+      "recheck": "W2 caller and W3 forensic review pending."
+    },
+    {
+      "id": "B04-07-F03",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        748,
+        783
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L748-L783",
+      "description": "Correct fallback range, not stop main alone.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "prior_blob": "d577ba56df4db48308c7fcdc66fdb1c08eca8964",
+          "procedure": "SOR02"
+        }
+      ],
+      "resolution": "empty lower returns original full-main S13 candidate over stop..First",
+      "recheck": "W2 caller and W3 forensic review pending."
+    }
+  ],
+  "open_dependencies": [
+    "W1 S40 cross-route arbitration and S42 ownership lifecycle pending; B05 mixin stop semantics pending.",
+    "W2 verify source position/index invariants, S24 evaluation even if unused, exact/fallback confirmation propagation; W3 separate review pending."
+  ]
+}

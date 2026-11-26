@@ -1,0 +1,626 @@
+{
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "4655c6092b88492b9cce25d61fbe581d871f7bdf",
+  "status": "SOURCE_REVIEWED_CLAUSES",
+  "rules": [
+    {
+      "id": "CH76",
+      "title": "Order gate restart versus continue",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 2134,
+      "end": 2216,
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "overlapping_procedure_ids": [
+        "RE88"
+      ],
+      "rule": "With prior owner, outer boundary uses owner First through max(First,gate index minus one). Search strict outer and gate-side hits in [exact gate or gate open, final main end). Outer wins equal lower position. Restart begins at mapped hit main index plus one, continue at gate plus one. Reconstruct missing anchor from latest Reset strictly before result First, through First minus one; never overwrite existing anchor."
+    },
+    {
+      "id": "CH77",
+      "title": "Reset restart handoff",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 2574,
+      "end": 2650,
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "overlapping_procedure_ids": [
+        "RE98"
+      ],
+      "rule": "Record Reset unless already recorded. Preserve earliest pre-Reset checkpoint when pending First can displace bounded result. No confirmed structural candidate terminates scan. Rejected append advances to Break plus one with pending Reset at Break. Accepted structure resumes at Break plus one; exact post-confirmation Reset prevents same-Break successor."
+    },
+    {
+      "id": "CH78",
+      "title": "Normal confirmation and running extreme",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 2651,
+      "end": 2761,
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "overlapping_procedure_ids": [
+        "RE98"
+      ],
+      "rule": "Update opposite edge before strict Break check. On confirmation use exact analysis edge for post-confirmation Reset; append canonical candidate. Stop early only if First >= requested threshold. Otherwise record exact Reset or seed remainder. New mode-B candidate picks running extreme on equality; opposite range begins after earlier extreme source or current main when coincident. Running extreme changes only on strict improvement."
+    },
+    {
+      "id": "CH79",
+      "title": "Committed Reaction continuation",
+      "source": "engine/pipeline/reaction_engine.py",
+      "start": 2763,
+      "end": 2907,
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "overlapping_procedure_ids": [
+        "RE98",
+        "RE99",
+        "RE100",
+        "RE101",
+        "RE102",
+        "RE103",
+        "RE104",
+        "RE105",
+        "RE106",
+        "RE107"
+      ],
+      "rule": "Seed requires at least two main candles. Main index increments one and positive gap is multiple of timeframe; lower index increments one with strictly increasing times, lower batch within [first new main,last new main + duration). Empty append/preview returns snapshot. Resume retained checkpoint or initial cursor. Preview does not advance committed state; append commits result and cursor."
+    },
+    {
+      "id": "CH80",
+      "title": "Scale strikes and exact Break prefix",
+      "source": "engine/pipeline/blue_line_detector.py",
+      "start": 144,
+      "end": 231,
+      "source_blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "overlapping_procedure_ids": [
+        "BL06"
+      ],
+      "rule": "Traverse First through Break inclusive. Break extreme uses only lower rows <= confirmation within Break interval; absent prefix proves no new strike. Penetration strictly extends last confirmed strike or Fibonacci level and current pending extreme. Confirm pending on qualifying main color; unresolved pending uses intrabar confirmation race."
+    },
+    {
+      "id": "CH81",
+      "title": "Reset Blue double-stop validity",
+      "source": "engine/pipeline/blue_line_detector.py",
+      "start": 271,
+      "end": 314,
+      "source_blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "overlapping_procedure_ids": [
+        "BL08"
+      ],
+      "rule": "Invalidate new Reset Blue only when previous line first strictly stops at this Reset index and Reset main extreme strictly crosses prior sourceExtreme. Start previous stop search at prior source index plus one. Draw range is source time minus/plus timeframe, not formation chronology."
+    },
+    {
+      "id": "CH82",
+      "title": "Blue order and spacing",
+      "source": "engine/pipeline/blue_line_detector.py",
+      "start": 325,
+      "end": 431,
+      "source_blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "overlapping_procedure_ids": [
+        "BL09"
+      ],
+      "rule": "Process supplied Reaction order and Reset rows grouped by from-First in supplied order. Mode A clears prior strike count; mode B requires previous Reaction. Scale evaluated first; emit on strictly greater count with no prior Blue or at least one healthy Reaction since Blue. If no Scale emitted increment spacing before Reset processing. Each Reset emission clears spacing."
+    },
+    {
+      "id": "CH83",
+      "title": "Blue rewind",
+      "source": "engine/pipeline/blue_line_detector.py",
+      "start": 469,
+      "end": 495,
+      "source_blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "overlapping_procedure_ids": [
+        "BL11",
+        "BL12",
+        "BL13"
+      ],
+      "rule": "Dirty main can move changed Reaction earlier when earlier Reaction Break >= dirty main or First owns Reset at/after dirty. Retain checkpoint prefix and its line count; replay suffix."
+    },
+    {
+      "id": "CH84",
+      "title": "Blue internal interval",
+      "source": "engine/pipeline/blue_line_detector.py",
+      "start": 531,
+      "end": 589,
+      "source_blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "overlapping_procedure_ids": [
+        "BL15",
+        "BL16",
+        "BL17",
+        "BL18"
+      ],
+      "rule": "Internal if owner marked internal or both semantic extreme and rendered price strictly within same protected box, source time > behavior First and <= confirmation. Naive datetime index path conditional; visibility does not alter calculation validity."
+    },
+    {
+      "id": "CH85",
+      "title": "Ordinary A pair trigger",
+      "source": "engine/pipeline/a_zone_detector.py",
+      "start": 365,
+      "end": 496,
+      "source_blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "overlapping_procedure_ids": [
+        "A13"
+      ],
+      "rule": "Inherited level route searches [current formation,expiry). Without inheritance and prior stop strictly before current formation, choose extreme from prior stop through current source open minus one microsecond. Search current formation through min(main end,expiry) exclusive, then current stop onward if needed. Otherwise require current stop not after expiry; sort two stops by exact time and direction-dependent level. Equal stop time uses second stop directly; unequal requires continuation cross from second stop through expiry exclusive."
+    },
+    {
+      "id": "CH86",
+      "title": "A source freeze",
+      "source": "engine/pipeline/a_zone_detector.py",
+      "start": 592,
+      "end": 605,
+      "source_blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "overlapping_procedure_ids": [
+        "A17"
+      ],
+      "rule": "Extreme from trigger main open through exact A Reaction confirmation inclusive; reversed interval null. Later Break rows cannot move source."
+    },
+    {
+      "id": "CH87",
+      "title": "Adjacent Blue lifecycle",
+      "source": "engine/pipeline/a_zone_detector.py",
+      "start": 607,
+      "end": 724,
+      "source_blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "overlapping_procedure_ids": [
+        "A17",
+        "A18"
+      ],
+      "rule": "Process adjacent states. Current formation after cycle Break; prior also after unless bridge reuse. Third formation is expiry. First aligned Reaction confirmation >= trigger and First >= max(stop main times). No match breaks. After source selection cycle frontier becomes Break. Reuse current Blue only if A first strict stop exists and next formation >= stop; else skip through Break."
+    },
+    {
+      "id": "CH88",
+      "title": "Special versus ordinary A",
+      "source": "engine/pipeline/a_zone_detector.py",
+      "start": 726,
+      "end": 797,
+      "source_blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "overlapping_procedure_ids": [
+        "A18",
+        "A19"
+      ],
+      "rule": "Reject special if same Reaction already ordinary. Latest ordinary source strictly before special may suppress by first-stop test through special First with not-before Blue1 source. Retained special suppresses shared-ordinal ordinary only for strictly later trigger, not equality."
+    },
+    {
+      "id": "CH89",
+      "title": "Post-Order candidate",
+      "source": "engine/pipeline/s_zone_detector.py",
+      "start": 587,
+      "end": 627,
+      "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "overlapping_procedure_ids": [
+        "S24"
+      ],
+      "rule": "Main start first open >= exact Order confirmation bounded by stage start and Reaction First. Eligible anchor at/after selected index. Otherwise range through First; if confirmation belongs to earlier main, inspect lower remainder [confirmation,main end). Earlier remainder replaces on improvement or equality."
+    },
+    {
+      "id": "CH90",
+      "title": "A ownership windows",
+      "source": "engine/pipeline/s_zone_detector.py",
+      "start": 628,
+      "end": 695,
+      "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "overlapping_procedure_ids": [
+        "S25",
+        "S26",
+        "S27",
+        "S28"
+      ],
+      "rule": "Source event first exact matching extreme within source main, else source open. S owns [start,end) or open interval. A trigger strictly after start is independently eligible. Decided interval permits Reset-Reset pair with Blue1 source > start, Blue1 stop < Blue2 source, A source = Blue2 stop main. Open interval does not permit latter exception."
+    },
+    {
+      "id": "CH91",
+      "title": "Simple versus Advanced timing",
+      "source": "engine/pipeline/s_zone_detector.py",
+      "start": 696,
+      "end": 740,
+      "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "overlapping_procedure_ids": [
+        "S29"
+      ],
+      "rule": "Legacy after includes equality; nested trend preserves Advanced. Otherwise legacy after can become before only if exact candidate event < Order First main time."
+    },
+    {
+      "id": "CH92",
+      "title": "Order-backed S handoff",
+      "source": "engine/pipeline/s_zone_detector.py",
+      "start": 1054,
+      "end": 1165,
+      "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "overlapping_procedure_ids": [
+        "S39"
+      ],
+      "rule": "Pre-Order simple opens at source event; race starts at Order confirmation with fallback allowed. No decision null; fallback alone defers to aligned geometry. Nested alignment uses Advanced Order box opposite-edge main and trend confirmation gate; otherwise first post-Order trend required. Red without accepted pre-Order source uses complete main extreme from Order Break through decision index."
+    },
+    {
+      "id": "CH93",
+      "title": "Type 3/4 race",
+      "source": "engine/pipeline/s_zone_detector.py",
+      "start": 1225,
+      "end": 1245,
+      "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "overlapping_procedure_ids": [
+        "S40"
+      ],
+      "rule": "Order confirmation is exclusive no-Order deadline, else range end. Independent Type 3 and 4; earlier exact decision wins, Type 3 on equality. Order-backed route only if neither forms."
+    },
+    {
+      "id": "CH94",
+      "title": "A-to-S scheduling",
+      "source": "engine/pipeline/s_zone_detector.py",
+      "start": 1251,
+      "end": 1305,
+      "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "overlapping_procedure_ids": [
+        "S42"
+      ],
+      "rule": "Audit stopped A first. Skip A owned by S or source before cycle start (equal skipped after output). Stop must strictly precede next A confirmation. Open ownership window at A stop even if no decision. Successful S sets cycle start to S source and closes at max(A stop,decision + one microsecond). Sort source time then decision."
+    },
+    {
+      "id": "CH95",
+      "title": "Shared Order reconciliation",
+      "source": "engine/pipeline/s_zone_detector.py",
+      "start": 1307,
+      "end": 1426,
+      "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "overlapping_procedure_ids": [
+        "S43",
+        "S44"
+      ],
+      "rule": "Dedup physical First/Break preferring record with exact crossing. Crossing strictly after confirmation; sort crossing,confirmation,First,Break. Select earliest crossing >= frozen S source main time and < current decision. Change decision to Red and Order provenance, not frozen S source or Order creation."
+    },
+    {
+      "id": "CH96",
+      "title": "S settled boundary",
+      "source": "engine/pipeline/s_zone_detector.py",
+      "start": 1450,
+      "end": 1519,
+      "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "overlapping_procedure_ids": [
+        "S46",
+        "S47",
+        "S48",
+        "S49"
+      ],
+      "rule": "Same scope dirty frontier min(changed main,earliest symmetric-difference dependency event). Type 3/4 settle through decision. Order-backed requires actual lower evidence >= confirmation and <= decision; main fallback not cacheable. Horizon includes Order Break and aligned trend Break/confirmation if present. Reuse only settled horizon < dirty."
+    },
+    {
+      "id": "CH97",
+      "title": "Healthy direct geometry restart",
+      "source": "engine/pipeline/order_audit_engine.py",
+      "start": 689,
+      "end": 763,
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "overlapping_procedure_ids": [
+        "OA16"
+      ],
+      "rule": "Start parent stop main and exact event. Blocked First equal original gate main advances to candidate First plus one. Latest opposite confirmation <= current search event owns prior Reaction. Reset in (search event,candidate confirmation] restarts at Reset main and exact time. Candidate must be canonical opposite identity."
+    },
+    {
+      "id": "CH98",
+      "title": "Trend-leg direct Order",
+      "source": "engine/pipeline/order_audit_engine.py",
+      "start": 764,
+      "end": 808,
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "overlapping_procedure_ids": [
+        "OA17",
+        "OA18"
+      ],
+      "rule": "Trend confirmation > start and First > start. Exclude internal trend. Bounded geometry must be continue, opposite First > trend confirmation, canonical identity required."
+    },
+    {
+      "id": "CH99",
+      "title": "Direct Order choice",
+      "source": "engine/pipeline/order_audit_engine.py",
+      "start": 829,
+      "end": 920,
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "overlapping_procedure_ids": [
+        "OA20"
+      ],
+      "rule": "Canonical First lower bound is stop main open; optional confirmation-after excludes equality. Blocked same-gate First veto except exact E-parent exception with confirmation > stop. Prefer geometric restart when deadline equals range end or precedes confirmation. Otherwise geometric only if independent crossing absent and geometric First strictly earlier or independent absent; else independent."
+    },
+    {
+      "id": "CH100",
+      "title": "Order deadline and Reset interval",
+      "source": "engine/pipeline/order_audit_engine.py",
+      "start": 982,
+      "end": 1098,
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "overlapping_procedure_ids": [
+        "OA23",
+        "OA24",
+        "OA25"
+      ],
+      "rule": "Merge direct, optional trend continuation, reset-leg First > start. Enforce one exact parent-stop creation owner. Deadline earliest known Order stop or range end, reduced by continuous deadline. Include confirmation <= deadline; sort stop (range end fallback), First time. Reset interval (start,end]."
+    },
+    {
+      "id": "CH101",
+      "title": "Accepted-live eager",
+      "source": "engine/pipeline/order_audit_engine.py",
+      "start": 1798,
+      "end": 1878,
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "overlapping_procedure_ids": [
+        "OA53",
+        "OA54"
+      ],
+      "rule": "Initial and ledger confirmation indexes strictly after parent stop. Require crossing > parent stop and own confirmation; reject Reset in (parent stop,crossing]. Dedup by identity with earlier (stop,confirmation,First); output sorted stop,confirmation,negative First."
+    },
+    {
+      "id": "CH102",
+      "title": "Accepted-live lazy",
+      "source": "engine/pipeline/order_audit_engine.py",
+      "start": 1950,
+      "end": 2018,
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "overlapping_procedure_ids": [
+        "OA55",
+        "OA58",
+        "OA59"
+      ],
+      "rule": "Conflicting or unresolved native geometry falls back to eager query. Immutable sorted runs merge by stop,confirmation,negative First with stable suffix. Start strictly after parent stop; exclude crossing at/after next hard Reset; require confirmation > parent stop; emit first physical identity only."
+    },
+    {
+      "id": "CH103",
+      "title": "Disowned-S and gate filter",
+      "source": "engine/pipeline/order_audit_engine.py",
+      "start": 2020,
+      "end": 2045,
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "overlapping_procedure_ids": [
+        "OA60",
+        "OA61"
+      ],
+      "rule": "No causes, reset-leg cause or initial independent identity excludes S-only disownership. Otherwise all causes S parent-stop with already/prospectively owned source. Parent-stop E blocked if gate-owned initial confirmation < candidate Order First."
+    },
+    {
+      "id": "CH104",
+      "title": "E replay frontier",
+      "source": "engine/pipeline/e_zone_detector.py",
+      "start": 220,
+      "end": 310,
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "overlapping_procedure_ids": [
+        "E07"
+      ],
+      "rule": "Exact saved evidence restores identities and starts. Compatible prior validity permits dirty-main frontier lowered by changed group, E parent source, changed S parent and changed Reset main. Reopened race clears partial steps and restarts complete reconciliation; not saved settled."
+    },
+    {
+      "id": "CH105",
+      "title": "E source conflicts",
+      "source": "engine/pipeline/e_zone_detector.py",
+      "start": 871,
+      "end": 914,
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "overlapping_procedure_ids": [
+        "E38",
+        "E39"
+      ],
+      "rule": "Physical source index/time key. Higher family priority, then higher number within family wins; exact rank preserves earlier accepted object. Sort source time,index,decision."
+    },
+    {
+      "id": "CH106",
+      "title": "Independent S roots",
+      "source": "engine/pipeline/e_zone_detector.py",
+      "start": 915,
+      "end": 1006,
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "overlapping_procedure_ids": [
+        "E40"
+      ],
+      "rule": "Exclude S parent at dominant E source. Heap roots by source time,index,ordinal; newly restored source may disown later root or only Order creator, latter reruns native race. Replace earliest (decision,source) same-parent result or add distinct root, then resolve source conflicts."
+    },
+    {
+      "id": "CH107",
+      "title": "Recursive E chains",
+      "source": "engine/pipeline/e_zone_detector.py",
+      "start": 1031,
+      "end": 1123,
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "overlapping_procedure_ids": [
+        "E42"
+      ],
+      "rule": "Register stopped S Orders before chain traversal. Each stopped S starts E1; next E only on parent stop; repeated source index ends chain. Invalid S cannot open competing family root at native E continuation source."
+    },
+    {
+      "id": "CH108",
+      "title": "E priority before numbering",
+      "source": "engine/pipeline/e_zone_detector.py",
+      "start": 1372,
+      "end": 1459,
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "overlapping_procedure_ids": [
+        "E44"
+      ],
+      "rule": "Choose descending ownership priority then decision then parent stop; Red can win despite later decision. Remove strictly stopped active owners; family/number follow parent and stopped families. Reset source clears active state; else append current; regenerated parent can enqueue child."
+    },
+    {
+      "id": "CH109",
+      "title": "Exact E-parent exception",
+      "source": "engine/pipeline/lifecycle_engine.py",
+      "start": 606,
+      "end": 693,
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "overlapping_procedure_ids": [
+        "LC25"
+      ],
+      "rule": "Remove accepted A First times from veto. Exception requires invalid A pending S parent, exact stop equal accepted E stop, First in stop main, blocked not inherited, A source <= First < exact stop, confirmation > stop. Key exact stop and First; not global."
+    },
+    {
+      "id": "CH110",
+      "title": "A stop records",
+      "source": "engine/pipeline/lifecycle_engine.py",
+      "start": 735,
+      "end": 844,
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "overlapping_procedure_ids": [
+        "LC29",
+        "LC30",
+        "LC31",
+        "LC32"
+      ],
+      "rule": "Explicit stop event precedes finder; tuple final field. Map to main. Last duplicate stop per identity for dominance, first for interior evidence. A iteration source time,index; readiness by stop main."
+    },
+    {
+      "id": "CH111",
+      "title": "A dominant stop and interior",
+      "source": "engine/pipeline/lifecycle_engine.py",
+      "start": 845,
+      "end": 972,
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "overlapping_procedure_ids": [
+        "LC32"
+      ],
+      "rule": "Eligible owner source < A source and stop main <= A source index. Prior A trigger > prior stop escapes. Rank latest stop main,priority,number,source time,index,earliest ordinal. Equality remains valid. Interior exception uses full main extreme owner stop through aligned First and Reaction Break < A source, confirmation < A source. Invalid A under S does not consume S; other lower/equal owners consumed."
+    },
+    {
+      "id": "CH112",
+      "title": "S visibility and reset",
+      "source": "engine/pipeline/lifecycle_engine.py",
+      "start": 1199,
+      "end": 1376,
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "overlapping_procedure_ids": [
+        "LC38",
+        "LC39"
+      ],
+      "rule": "Ownership event exact source finder or source time. Prior source strictly earlier; latest external source bounds lifecycle. Prior stop <= ownership event. Lower-priority S after latest stopped external suppressed by strict source-close penetration of stop-close. Otherwise rank latest exact stop then priority,number,source time,index. Higher S priority supersedes S; price equality valid. Strict lower/equal continuation consumes stopped owners."
+    },
+    {
+      "id": "CH113",
+      "title": "StopAll hard boundary",
+      "source": "engine/pipeline/lifecycle_engine.py",
+      "start": 1377,
+      "end": 1457,
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "overlapping_procedure_ids": [
+        "LC40",
+        "LC41"
+      ],
+      "rule": "Compute StopAll once from accepted E/S; publish source-time reset map to E without retroactive E rebuild. A provenance filter considers module source and stop <= A source, chooses dominant, rejects when earliest Blue1/Blue2/continuation/Reaction First predates exact stop; no price comparison."
+    },
+    {
+      "id": "CH114",
+      "title": "MBL qualification",
+      "source": "engine/pipeline/PL_PH_detector.py",
+      "start": 248,
+      "end": 283,
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "overlapping_procedure_ids": [
+        "P15"
+      ],
+      "rule": "StopAll occupies source main; exclude coincident S/E. Sort source time,StopAll/S/E rank,index. Dedup kind/index/time. StopAll >=3 references and resets owner. Armed qualification is max(reference decision,all accumulated accepted confirmations)."
+    },
+    {
+      "id": "CH115",
+      "title": "Primary scheduler",
+      "source": "engine/pipeline/PL_PH_detector.py",
+      "start": 286,
+      "end": 397,
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "overlapping_procedure_ids": [
+        "P16"
+      ],
+      "rule": "Activate first strict crossing after qualification, sort crossing,qualification,reference index,second index. Reversal wins equality against activation and decision. Activation <= decision takes priority, point ties activation order. Skip promoted StopAll source. PH commit callback clears pending proposals; recompute reversal."
+    },
+    {
+      "id": "CH116",
+      "title": "Primary replay",
+      "source": "engine/pipeline/PL_PH_detector.py",
+      "start": 431,
+      "end": 488,
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "overlapping_procedure_ids": [
+        "P17",
+        "P18",
+        "P19"
+      ],
+      "rule": "Rewind dirty to earliest differing old/new activation; retain steps strictly before frontier. Strict crossing begins upper bound of trigger; reuse old hit < dirty else scan from max(original start,dirty lower bound)."
+    },
+    {
+      "id": "CH117",
+      "title": "Initial causal order",
+      "source": "engine/bridge/trading_pipeline.py",
+      "start": 2127,
+      "end": 2240,
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+      "overlapping_procedure_ids": [
+        "TB73"
+      ],
+      "rule": "Full-history Blue then A then initial S shared across Order_B passes. Only S-eligible A contributes initial audit. E receives accepted audit and provisional S; re-evaluate when S validity changes."
+    },
+    {
+      "id": "CH118",
+      "title": "Invalidity and shared Order feedback",
+      "source": "engine/bridge/trading_pipeline.py",
+      "start": 2240,
+      "end": 2395,
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+      "overlapping_procedure_ids": [
+        "TB73"
+      ],
+      "rule": "Validate all S-eligible A even if hidden. Track all invalid A and separate S-stage-invalid descendants; only latter removed immediately from calculation. Recompute accepted A ledger and E-stop exceptions, rebuild E. Shared accepted Order can revise S; changed S causes one E rebuild."
+    },
+    {
+      "id": "CH119",
+      "title": "Consumed S and ledger refresh",
+      "source": "engine/bridge/trading_pipeline.py",
+      "start": 2390,
+      "end": 2484,
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+      "overlapping_procedure_ids": [
+        "TB73"
+      ],
+      "rule": "Use non-S-stage-invalid candidates. Continuation replacement restricted to accepted independent A Orders; match current E owner by physical index/time. Rebuild ledger after replacement with supplemental S, then suppress all invalid S."
+    },
+    {
+      "id": "CH120",
+      "title": "Order_B feedback",
+      "source": "engine/bridge/trading_pipeline.py",
+      "start": 2485,
+      "end": 2549,
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+      "overlapping_procedure_ids": [
+        "TB74"
+      ],
+      "rule": "At most eight passes. Same StopAll policy as final, restore independent roots and accepted audit before rediscovery. Equal identity returns current state; repeated changed identity and exhaustion error. Do not rerun Reaction/Blue/A/initial S."
+    },
+    {
+      "id": "CH121",
+      "title": "Full history versus selected view",
+      "source": "engine/bridge/trading_pipeline.py",
+      "start": 2738,
+      "end": 2837,
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+      "overlapping_procedure_ids": [
+        "TB76"
+      ],
+      "rule": "Blue/A view may clip by inclusive source index; S/E and eligible A full calculation. Fallback S detector zero to physical last main. Preserve invalid identities."
+    },
+    {
+      "id": "CH122",
+      "title": "Final lifecycle before visibility",
+      "source": "engine/bridge/trading_pipeline.py",
+      "start": 2840,
+      "end": 3078,
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+      "overlapping_procedure_ids": [
+        "TB77"
+      ],
+      "rule": "Supplement StopAll donors only at missing E source identities. Optional StopAll then restore roots and synchronize audit; rediscovered Order_B identity must equal converged legs. Capture parent projection and Primary groups before source clipping. Filter display invalid/internal after. Required visible Order identities preserve referenced accepted audit outside view."
+    },
+    {
+      "id": "CH123",
+      "title": "Reversal regime",
+      "source": "engine/bridge/trading_pipeline.py",
+      "start": 3500,
+      "end": 3598,
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+      "overlapping_procedure_ids": [
+        "TB91",
+        "TB92",
+        "TB93",
+        "TB94",
+        "TB95",
+        "TB96"
+      ],
+      "rule": "Boundary main index strictly between zero and length. Recalculate historical [0,boundary), verify Primary3 source time/price; else fail. New independent regime begins boundary inclusive with target bootstrap and offset. Publish incoming transition, cap closed MBL display. Continue only while next reversal within selected end."
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+# Order_A — Physical parent-stop creation (V3)
+
+**Conventions:** B = bullish, R = bearish. Parent directional extreme is Low for B and High for R; strict parent stop/improvement means lower for B and higher for R. An opposite Order has its own direction and strict predicate, not the parent predicate. Use Decimal normalization and native arithmetic order; preserve source/main versus exact-event times, physical identity, original order, and nulls. Use [record interfaces](../../Contracts/Declared_Record_Schemas.md) and [chronology/index services](20_Indexes_And_Caching.md). Procedure labels name semantic operations, not required implementation symbols.
+
+
+## OA-M01 — Identity and parent eligibility
+
+Order_A is a creation cause, not mode A. Physical Order = opposite-direction Reaction geometry keyed by (integer First, integer Break) inside the owner direction ledger. Canonical stop: mode A includes anchor/First−1 and extends backward through required context color, then selects directional extreme for Order over inclusive interval through Break; mode B uses preceding canonical opposite Reaction edge/source and requires ordinal >1. Actual stop uses Order direction, strict and lower chronological [max(confirmation,range start),range end). No coarse main fallback for ordinary Order stop. See [Reaction](01_Reaction_Engine.md), [ledger](08_Order_Audit.md).
+
+## OA-M02 — First physical Order after stopped A (S-side)
+
+Build opposite matches sorted by (confirmation,First,Break,ordinal). Choose first with confirmation > exact A stop and First >= its containing main. Independent geometry callback may supply another complete physical result, but requires Break, First >= gate and confirmation > stop. Map to canonical if exact physical identity matches opposite First map; otherwise number zero and preserve real geometry. Compare independent vs native by (First,confirmation); strict earlier wins, ties native. Freeze this selection per A stop; audit records selected identity, stop geometry, selected A source/stop, all unique A causes. Multiple A causes may join physical identity. Source visibility is not synonymous with accepted A; lifecycle later filters by accepted A provenance, retaining historical accepted sources outside view.
+
+## OA-M03 — Parent stop after S/E
+
+Geometry service returns earliest complete gate geometry; blocked First at gate moves to next main, intervening previous opposite-owner Reset can restart search. Require exact canonical identity; no arbitrary Order-only exception here. The independent native candidate begins at First lower-bound of gate main, optionally skip confirmations <= specified gate for primary. Invalid-A First veto applies only at gate main; accepted E exception is exact (parent stop,gate main) and confirmation > stop, never global. Compare independent and geometric:
+- prefer restart geometry if continuous deadline supplied and equals range end or precedes geometric confirmation;
+- otherwise use geometric only if independent crossing absent AND (independent absent OR geometric First strictly earlier); independent stop/cross is evaluated whenever independent exists, even if geometry is already preferred;
+- otherwise independent if present.
+No unconditional retry. Optional E trend-leg route requires non-internal trend whose First > parent stop, then continued canonical geometry with opposite First > its exact confirmation.
+
+Merge candidates by physical identity; direct route parent-stop cause, eligible Order_B reset-leg independent. Exactly one parent-stop owner selected earliest confirmation, then First, then Break; remove other parent-stop label, keep reset-leg if present. Earliest actual candidate crossing or range end sets deadline (clamp to supplied continuous deadline); keep confirmation <= deadline and sort by crossing then First. Creation audit includes direct parent candidate even if not consumed by the current E race. Invalid/disowned S or intervening sequence reset cannot introduce parent-stop cause. Reuse and final accepted reconciliation are [ledger semantics](08_Order_Audit.md), not new Order_A.
+
+## Detailed parent-stop procedures
+
+### OA14 — _order_stop
+Ignore context_start. If number valid 1-based and exact object is canonical opposite at number-1, cache by number. Otherwise no cache. Both routes chronology.canonical_order_stop(order_direction,number,reaction,opposite_reactions,start_index). Return normalized level/source index/time from chronology, no synthetic contextual stop. Range guard is inclusive and evaluated before object identity at number−1; geometric equality is insufficient. Non-null cached result returned directly; absent/null cache value computes, assigns only after successful delegation, returns result unchanged. Noncanonical path does not consult or mutate this cache. No local Decimal conversion or extra context stop; chronology owns stop normalization/validation and exceptions propagate. Cache key contains only ordinal, relying on run-local immutable canonical objects and chronology.
+
+### OA15 — order_stop
+Public OA14 wrapper.
+
+### OA16 — _first_healthy_direct_geometry
+No finder => null. Start containing main index and exact event; while index<=end call finder(order_direction,index,end,event). Null => null. If candidate First is blocked and equals original gate main time, advance to candidate First index+1, search_event=First. Otherwise get exact confirmation; prior owner via upper_bound(opposite confirmations,search_event)-1. First prior reset in stored order with search_event<reset<=confirmation restarts at reset main/exact time. Else require candidate identity canonical, otherwise null; return canonical number/object/confirmation. allow_bounded_continue is accepted but not used in function body; restarted assigned but not read. No extra mode gate. The initial and restarted main indices are clamped containing indices; restart uses Reset main with exact Reset event, not main+1. Finder must respect event bounds/progress; no local progress guard. Blocked skip compares original gate even after restart. Reset bound checks precede identity lookup. Canonical replacement returns stored canonical confirmation without repeating candidate Reset or confirmation checks; noncanonical terminates.
+
+### OA17 — _trend_leg_direct_order
+No finder null. Trend confirmation strictly > start via upper bound; skip trend First<=start. Per sorted trend position cache OA18 result (including null), return first canonical number/object/confirmation or null.
+
+### OA18 — _trend_leg_order_position
+Reject internal trend. Finder opposite from trend Break through end at exact trend confirmation. Require candidate and gate decision continue; invoke confirmation callback; candidate First>trend confirmation required. Return canonical physical position or null. OA18 assumes caller provides finder; internal flag uses truthiness. Candidate exact confirmation resolver is invoked but returned value discarded; only First is compared to trend confirmation. No local blocked-First check or canonical confirmation recheck.
+
+### OA19 — _direct_parent_stop_order
+Cache by start,deadline,bounded flag,E flag,confirmation_after including null results; delegate OA20 on miss. Cache membership distinguishes cached null from miss; assign only after successful computation. Native tuple equality and owner invalidation/lifetime contract apply.
+
+### OA20 — _compute_direct_parent_stop_order
+Gate main time from start. Geometric OA16 first; discard if geometry and confirmation_after non-null and canonical confirmation<=threshold. Native starts lower_bound(opposite First times,gate time), initial loop skips confirmation<=confirmation_after when supplied. Separate blocked-First loop then skips only blocked First equal gate, unless E parent truthy, exact (start,gate time) exception and confirmation>start. No recheck of initial confirmation_after loop after blocked skips, no universal confirmation>start gate. Construct native candidate if position in range. Preference is deadline non-null, geometry non-null, returned canonical geometry gate label restart, and (deadline==range_end or deadline<geometry confirmation). Independently of preference, compute native stop and crossing whenever native exists; failure propagates even if geometry preferred. Select preferred geometry, else geometry if geometry exists AND native crossing null AND (native absent OR geometry First strictly earlier), else native if present; otherwise null. Min by (First main time,confirmation) still evaluates key on singleton. No local revalidation or retry beyond stated loops.
+
+### OA21 — _merge_order_candidate
+Resolve canonical stop and crossing; construct OrderMatch cause parent-stop and supplied cause time. Per physical identity insert if absent or rank (confirmation,First,Break) strictly earlier. Return stored winner. Stop and crossing are resolved eagerly before identity lookup, even for a losing duplicate. Strictly earlier rank replaces entire match, not causes merged; equal preserves existing record.
+
+### OA22 — _enforce_single_parent_stop_owner
+If >1 parent-stop match, choose min confirmation,First,Break. For others with parent-stop strip that label; keep remaining causes with parent cause time null or delete identity. Mutates passed dict. At most one (zero allowed); choose first equal-ranked parent candidate. Iterate snapshot of dict items; remove every parent-stop label from losing records, preserve other labels in order including duplicates, retain original first seven fields and clear parent cause time. Delete only if no causes remain.
+
+### OA23 — order_candidates
+Cache key start,deadline,bounded/trend/E flags; return list copy on hit. Add OA19 and optionally OA17 via OA21. For each B leg whose physical First time>start, merge reset-leg label into same identity (ordered unique) or create match from leg confirmation and stop/cross. OA22. Deadline earliest non-null stop crossing among candidates or range_end; min continuous deadline when supplied. Keep confirmation<=deadline. Sort by crossing exact time (range_end for null), reaction First time; cache tuple, return list. Non-null cached tuple includes empty; hit returns shallow list, miss returns newly sorted list after caching tuple. Direct then optional trend, followed by B legs in input order. Existing identity retains first seven fields and parent cause time; append reset-leg and dedup labels in insertion order, without computing leg stop/cross. New B identity uses its supplied physical confirmation and number. Enforce ownership before deadline; range_end is only fallback when no crossing, not unconditional upper cap. Stable equal sort keys preserve dictionary order.
+
+### OA24 — _first_order
+OA23 with flags, filter crossed not null, return first or null. E flag defaults false in OA24; no extra deadline check on crossing, only non-null filter.
+
+### OA40 — _register_order_audit
+Skip S whose identity invalid or accepted E occupies it. Skip known sequence reset in (source,parent_stop]. OA23 with S bounded/E trend flags; also OA19 and append direct match if absent from candidates, even if no stop before decision. Register only matches with parent-stop cause. New physical row preserves geometry, adds index. Label parent type, E+number if present, override StopAll+sequence number at reset source and empty family; otherwise family from color/family. Add unique parent-stop cause with event/source. Determine earlier existing creation from minimum prior parent-stop event; exception => conservative earlier true. Invalidate carried if new row or earlier existing creation. When only appended rows and prior validated creation index refers to same exact dict and size agrees, retain pending index extension for next query. Later/equal additional cause does not change carried eligibility. No post-stop invalidation for cause-only additions. S-only veto checks invalid then accepted E source; reset gate then OA23 followed by independent OA19. Supplement direct only when all existing matches have different physical identity, including B-only matches; no repeated deadline or single-owner enforcement after append. Capture prior creation index only exact dict and truthy carried cache. New row published then indexed then recorded by reference before cause-set assertion. Family default lookup eager even with color present, str chosen value; E number non-null incl zero; sequence source-time override for any type. Cause event from function parent_stop, not match slot 8. Prior min/comparison only in Exception catch, actual add outside. Invalidate carried if new rows or strictly earlier existing creation (or conservative exception); after invalidation defer append only no earlier existing change, previous index non-null, same ledger object, payload non-null and size equation. No local append validation or rollback, no post-stop flush here.
+
+### OA41 — visual_order_lifecycle
+Static method with explicit self argument. Start lower bound opposite First times; first candidate First>=start and confirmation>=start, compute stop/cross, return singleton eight-field tuple with final false; else empty. First and confirmation equality with start allowed, no blocked/reset/acceptance filter or required crossing; return first eligible even crossing null. Native list alignment/sortedness assumed.
+
+### OA42 — _cross_order
+Cache (start,level) including null. Search strict crossing over lower [max(start,range_start),range_end), less unless order_direction bearish. Null absent; otherwise (main index, main timestamp, exact lower event). Cache result. Native key membership caches null; no local price conversion. Non-null lower index uses indexed strict less/greater exclusively (no retry on miss); else sequential normalized-price scan. Exact bearish greater, otherwise less; clamp main via owner and use candle.timestamp, not self.times. No local returned-position validation.
+
+### OA43 — cross_order
+Public OA42 wrapper. Forward unchanged arguments and return unchanged result.
+
+### OA75 — SOrderAuditMixin._initialize_stopped_a_order_lookup
+Opposite First map int->(1-based number,reaction), last duplicate wins. Sort native matches (confirmation,First,Break,number,reaction), confirmation times list; empty first-canonical cache. Two independent one-based enumerations in input order; full tuple lexicographic sort, ordinal unique before object comparison; exact confirmation callback evaluated before int indexes. Publish map then sorted tuples then confirmation array then new cache; no local freezing/validation.
+
+### OA76 — _first_order_after
+Native OA77. If no initial geometry callback return native. Else call with gate main index,exact A stop,end. Null/incomplete physical, First<gate or confirmation<=stop => native. If physical identity matches mapped same First, use canonical number/object and recompute confirmation; else number0. Return independent if native absent or (First index,confirmation) strictly earlier than native; otherwise native. No public Reaction invented for order-only geometry. Native evaluated eagerly before callback check; exact None disables, callback gets mapped gate,exact stop,end. Reject physical None or Break None (optional default), First<gate, confirmation<=stop; no returned upper-bound validation. S main map delegates chronology without explicit clamp. Last-wins First map only; mapped pair equality uses normalized identities. Recompute mapped confirmation without repeating strict gate; independent rank uses original First and current confirmation. Equal rank native.
+
+### OA77 — _first_canonical_order_after
+Cache by exact A stop incl null; upper_bound confirmation stop; first sorted match whose First index>=gate main. Return number,reaction,confirmation or null. Membership cache hit before gate mapping, incl cached None. Upper bound excludes equal confirmations; scan sorted native tuple rows until First>=gate; no crossing gate; store match or None. Immutable run chronology premise not locally enforced.
+
+### OA78 — _record_a_order_audit
+Compute stop via OA80, physical identity. If absent create row with reaction number/object/confirmation, stop geometry, A source/stop and empty a_causes. Append unique (A source,stop). Existing geometry and first selected cause preserved. Stop computed eagerly even on existing row before physical identity lookup. New row has no stop_cross or confirmation-index insertion; no crossing calculation here. setdefault retains existing list (even empty), full pair equality dedup, append in input order; first selected source/stop unchanged. No rollback.
+
+### OA79 — _audit_stopped_a
+Normalize required A price; resolve owner A confirmation then first A stop with normalized level and confirmation (owner lower interval includes effective start, excludes range end; strict price, not necessarily strictly later time). None => return. Unpack third exact A stop event, OA76, None => return, else OA78. No crossed-Order gate; implicit None.
+
+### OA80 — SOrderAuditMixin._order_stop
+Delegate chronology.canonical_order_stop with order_direction,number,reaction,opposite list,start_index. No local cache. Return owner result unchanged, no local conversion or fallback.
+
+### OA81 — _order_stop_crossed
+Bearish Order normalized High>level; otherwise normalized Low<level. Exact bearish only; read and normalize selected High or Low attribute, supplied level unchanged, equality never crosses.
+
+### OA82 — _shared_order_stop_cross
+Lower range [max(confirmation,range_start),range_end). If nonempty and lower index exists, first_greater bearish/first_less otherwise, return null if none; else scan slice OA81. Return main index/timestamp/exact lower event at first crossing or null. Use index iff right>left and non-null (falsey non-null allowed); indexed miss immediate None, no scan retry. Index exact timestamp from lower_times; scan from row.timestamp only on first strict cross. Both use owner main index and candle.timestamp, not self.times. No local cache or returned-position validation.

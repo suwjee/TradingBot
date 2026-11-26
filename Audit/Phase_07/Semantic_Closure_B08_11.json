@@ -1,0 +1,1598 @@
+{
+  "checkpoint": 148,
+  "batch": "B08",
+  "sub_batch": "B08-11",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "a50bf552cc758c65791cd31db2d03386f00bc38b",
+  "path": "engine/pipeline/PL_PH_detector.py",
+  "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+  "source_range": [
+    287,
+    325
+  ],
+  "procedures": "P16 (including signature annotation where applicable)",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 31,
+    "by_category": {
+      "branches": 10,
+      "comparisons": 6,
+      "arithmetic": 2,
+      "calls": 13
+    },
+    "supplemental_items": 2,
+    "resolved_findings": 1
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "7cfde870aca280b94a75e4ee0bcd57293065c365",
+    "crosswalk_blob": "bd8d85d7c7ad7d7a800c0161d701bd4c9cf9c6ab",
+    "exact_site_id_span_procedure_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 1241,
+      "source_span": [
+        301,
+        12,
+        301,
+        60
+      ],
+      "procedure": "P16",
+      "original_operation": "IfExp",
+      "original_context": "P-SC16",
+      "interpretation": "Choose run crossing if run is non-null, otherwise native strict crossing.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L301-L301",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1258,
+      "source_span": [
+        305,
+        4,
+        316,
+        73
+      ],
+      "procedure": "P16",
+      "original_operation": "For",
+      "original_context": "P-SC16",
+      "interpretation": "Enumerate qualifying seeds in generator order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L305-L316",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1271,
+      "source_span": [
+        307,
+        8,
+        308,
+        59
+      ],
+      "procedure": "P16",
+      "original_operation": "If",
+      "original_context": "P-SC16",
+      "interpretation": "Update earliest qualification before dedup; null short-circuits strict earlier comparison.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L307-L308",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1272,
+      "source_span": [
+        307,
+        11,
+        307,
+        101
+      ],
+      "procedure": "P16",
+      "original_operation": "BoolOp",
+      "original_context": "P-SC16",
+      "interpretation": "Update earliest qualification before dedup; null short-circuits strict earlier comparison.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L307-L307",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1296,
+      "source_span": [
+        310,
+        8,
+        311,
+        20
+      ],
+      "procedure": "P16",
+      "original_operation": "If",
+      "original_context": "P-SC16",
+      "interpretation": "Skip already seen pair even if first seed had no crossing.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L310-L311",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1326,
+      "source_span": [
+        315,
+        8,
+        316,
+        73
+      ],
+      "procedure": "P16",
+      "original_operation": "If",
+      "original_context": "P-SC16",
+      "interpretation": "Only non-null hit creates activation.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L315-L316",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1363,
+      "source_span": [
+        320,
+        4,
+        321,
+        77
+      ],
+      "procedure": "P16",
+      "original_operation": "If",
+      "original_context": "P-SC16",
+      "interpretation": "Only non-null run receives schedule.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L320-L321",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1376,
+      "source_span": [
+        321,
+        60,
+        321,
+        63
+      ],
+      "procedure": "P16",
+      "original_operation": "comprehension",
+      "original_context": "P-SC16",
+      "interpretation": "Materialize sorted activation identities, including empty schedule.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L321-L321",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1379,
+      "source_span": [
+        322,
+        4,
+        325,
+        21
+      ],
+      "procedure": "P16",
+      "original_operation": "If",
+      "original_context": "P-SC16",
+      "interpretation": "Empty activation returns without retained-step replay.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L322-L325",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 1382,
+      "source_span": [
+        323,
+        8,
+        324,
+        55
+      ],
+      "procedure": "P16",
+      "original_operation": "If",
+      "original_context": "P-SC16",
+      "interpretation": "Qualified but no crossing sets waiting-for-stopall-break; otherwise keep default.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L323-L324",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1242,
+      "source_span": [
+        301,
+        26,
+        301,
+        42
+      ],
+      "procedure": "P16",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "P-SC16",
+      "interpretation": "Choose run crossing if run is non-null, otherwise native strict crossing.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L301-L301",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1273,
+      "source_span": [
+        307,
+        11,
+        307,
+        50
+      ],
+      "procedure": "P16",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "P-SC16",
+      "interpretation": "Update earliest qualification before dedup; null short-circuits strict earlier comparison.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L307-L307",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1277,
+      "source_span": [
+        307,
+        54,
+        307,
+        101
+      ],
+      "procedure": "P16",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "P-SC16",
+      "interpretation": "Update earliest qualification before dedup; null short-circuits strict earlier comparison.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L307-L307",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1297,
+      "source_span": [
+        310,
+        11,
+        310,
+        27
+      ],
+      "procedure": "P16",
+      "original_operation": [
+        "In"
+      ],
+      "original_context": "P-SC16",
+      "interpretation": "Skip already seen pair even if first seed had no crossing.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L310-L310",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1327,
+      "source_span": [
+        315,
+        11,
+        315,
+        30
+      ],
+      "procedure": "P16",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "P-SC16",
+      "interpretation": "Only non-null hit creates activation.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L315-L315",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1364,
+      "source_span": [
+        320,
+        7,
+        320,
+        23
+      ],
+      "procedure": "P16",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "P-SC16",
+      "interpretation": "Only non-null run receives schedule.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L320-L320",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1229,
+      "source_span": [
+        292,
+        10,
+        292,
+        28
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "P-SC16",
+      "interpretation": "Nullable live-run annotation, not a price operation.",
+      "temporal_relevance": "NONE_DECLARATION",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L292-L292",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1380,
+      "source_span": [
+        322,
+        7,
+        322,
+        20
+      ],
+      "procedure": "P16",
+      "original_operation": "Not",
+      "original_context": "P-SC16",
+      "interpretation": "Empty activation returns without retained-step replay.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L322-L322",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1237,
+      "source_span": [
+        300,
+        13,
+        300,
+        28
+      ],
+      "procedure": "P16",
+      "original_operation": "PrimaryResult",
+      "original_context": "P-SC16",
+      "interpretation": "Create fresh default Primary aggregate.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L300-L300",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1256,
+      "source_span": [
+        304,
+        11,
+        304,
+        16
+      ],
+      "procedure": "P16",
+      "original_operation": "set",
+      "original_context": "P-SC16",
+      "interpretation": "Allocate empty seen-pair set.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L304-L304",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1263,
+      "source_span": [
+        305,
+        44,
+        305,
+        87
+      ],
+      "procedure": "P16",
+      "original_operation": "_matching_seeds",
+      "original_context": "P-SC16",
+      "interpretation": "Enumerate qualifying seeds in generator order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L305-L305",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1288,
+      "source_span": [
+        309,
+        20,
+        309,
+        47
+      ],
+      "procedure": "P16",
+      "original_operation": "int",
+      "original_context": "P-SC16",
+      "interpretation": "Normalize both reference and second indexes for identity; omit times.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L309-L309",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1292,
+      "source_span": [
+        309,
+        49,
+        309,
+        73
+      ],
+      "procedure": "P16",
+      "original_operation": "int",
+      "original_context": "P-SC16",
+      "interpretation": "Normalize both reference and second indexes for identity; omit times.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L309-L309",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1302,
+      "source_span": [
+        312,
+        8,
+        312,
+        26
+      ],
+      "procedure": "P16",
+      "original_operation": "seen.add",
+      "original_context": "P-SC16",
+      "interpretation": "Mark pair seen before price read/crossing.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L312-L312",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1308,
+      "source_span": [
+        313,
+        16,
+        313,
+        80
+      ],
+      "procedure": "P16",
+      "original_operation": "as_decimal",
+      "original_context": "P-SC16",
+      "interpretation": "Read reference main High at integer index and normalize Decimal.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L313-L313",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1314,
+      "source_span": [
+        313,
+        46,
+        313,
+        73
+      ],
+      "procedure": "P16",
+      "original_operation": "int",
+      "original_context": "P-SC16",
+      "interpretation": "Read reference main High at integer index and normalize Decimal.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L313-L313",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1320,
+      "source_span": [
+        314,
+        18,
+        314,
+        63
+      ],
+      "procedure": "P16",
+      "original_operation": "cross",
+      "original_context": "P-SC16",
+      "interpretation": "Request strictly later upward crossing after qualification.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L314-L314",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1331,
+      "source_span": [
+        316,
+        12,
+        316,
+        73
+      ],
+      "procedure": "P16",
+      "original_operation": "activated.append",
+      "original_context": "P-SC16",
+      "interpretation": "Append hit, reference, second and qualification preserving identity.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L316-L316",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1340,
+      "source_span": [
+        317,
+        4,
+        319,
+        6
+      ],
+      "procedure": "P16",
+      "original_operation": "activated.sort",
+      "original_context": "P-SC16",
+      "interpretation": "Stable sort by hit time, qualification, raw reference index and raw second index.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L317-L319",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1370,
+      "source_span": [
+        321,
+        24,
+        321,
+        77
+      ],
+      "procedure": "P16",
+      "original_operation": "tuple",
+      "original_context": "P-SC16",
+      "interpretation": "Materialize sorted activation identities, including empty schedule.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L321-L321",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1373,
+      "source_span": [
+        321,
+        30,
+        321,
+        55
+      ],
+      "procedure": "P16",
+      "original_operation": "_activation_identity",
+      "original_context": "P-SC16",
+      "interpretation": "Materialize sorted activation identities, including empty schedule.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local scheduler, chronology, ownership, construction or control dependency; declaration/index arithmetic is not a price operation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L321-L321",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/12_Primary_Structures.md",
+        "line": 92,
+        "heading": "P16"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 16,
+          "transition": "MB06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 17,
+          "transition": "MB07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 18,
+          "transition": "MB08"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+          "line": 54,
+          "transition": "PG01"
+        }
+      ],
+      "chronology_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B08-11-S01",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "source_span": [
+        300,
+        316
+      ],
+      "interpretation": "Create fresh default Primary aggregate. Choose run crossing if run is non-null, otherwise native strict crossing. Allocate empty seen-pair set. Enumerate qualifying seeds in generator order. Update earliest qualification before dedup; null short-circuits strict earlier comparison. Normalize both reference and second indexes for identity; omit times. Skip already seen pair even if first seed had no crossing. Mark pair seen before price read/crossing. Read reference main High at integer index and normalize Decimal. Request strictly later upward crossing after qualification. Only non-null hit creates activation. Append hit, reference, second and qualification preserving identity.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L300-L316",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "W2/W3 remain open."
+    },
+    {
+      "id": "B08-11-S02",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "source_span": [
+        317,
+        325
+      ],
+      "interpretation": "Stable sort by hit time, qualification, raw reference index and raw second index. Only non-null run receives schedule. Materialize sorted activation identities, including empty schedule. Empty activation returns without retained-step replay. Qualified but no crossing sets waiting-for-stopall-break; otherwise keep default.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L317-L325",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "W2/W3 remain open."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B08-11-F01",
+      "span": [
+        287,
+        325
+      ],
+      "description": "Qualification minimum includes duplicates and seeds without crossing because it precedes dedup. Mark pair seen before crossing so a later duplicate cannot retry a missing hit. Schedule publication precedes empty-activation return, including an empty schedule; no retained steps are replayed on that return.",
+      "document": "Algorithms/V3/12_Primary_Structures.md",
+      "line": 92,
+      "prior_blob": "d39ec5622dee93ef0f8d6dbb8380e72ae9861724",
+      "resolution": "Clarify active P16 specification from pinned source; no production change.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L287-L325",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: crossing, native Order callback and retained-step/caller ownership; W3/W4 pending."
+  ]
+}

@@ -1,0 +1,378 @@
+{
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "columns": [
+    "node_index",
+    "scope_index",
+    "scope_id",
+    "module",
+    "relative_level",
+    "name",
+    "alias",
+    "resolved_candidate"
+  ],
+  "method": "Read original immutable AST imports. Target resolution is prior source inventory evidence, not dynamic module loading proof.",
+  "modules": [
+    {
+      "path": "engine/__init__.py",
+      "source_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "inventory_blob": "7e927388e6f8efb248945189c449c87600107a40",
+      "internal_imports": [],
+      "all_import_count": 0
+    },
+    {
+      "path": "engine/bridge/__init__.py",
+      "source_blob": "7cce7308316bd9e00f1a3687a6a84e0f1adb22d4",
+      "inventory_blob": "9320545ab1aed1316cbd537c68c9b8665bfe24c2",
+      "internal_imports": [],
+      "all_import_count": 0
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "source_blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "inventory_blob": "fefa9c381790a89ff2fd5da34ec2115946b0533e",
+      "internal_imports": [
+        [
+          20,
+          0,
+          "engine/bridge/live_pipeline.py:0:0:Module",
+          "trading_pipeline",
+          0,
+          "LiveMarketBuckets",
+          "LiveMarketBuckets",
+          "engine/bridge/trading_pipeline.py"
+        ],
+        [
+          20,
+          0,
+          "engine/bridge/live_pipeline.py:0:0:Module",
+          "trading_pipeline",
+          0,
+          "LiveMarketViews",
+          "LiveMarketViews",
+          "engine/bridge/trading_pipeline.py"
+        ],
+        [
+          20,
+          0,
+          "engine/bridge/live_pipeline.py:0:0:Module",
+          "trading_pipeline",
+          0,
+          "calculate_live_from_buckets",
+          "calculate_live_from_buckets",
+          "engine/bridge/trading_pipeline.py"
+        ],
+        [
+          20,
+          0,
+          "engine/bridge/live_pipeline.py:0:0:Module",
+          "trading_pipeline",
+          0,
+          "emit_progress",
+          "emit_progress",
+          "engine/bridge/trading_pipeline.py"
+        ],
+        [
+          20,
+          0,
+          "engine/bridge/live_pipeline.py:0:0:Module",
+          "trading_pipeline",
+          0,
+          "load_engines",
+          "load_engines",
+          "engine/bridge/trading_pipeline.py"
+        ],
+        [
+          20,
+          0,
+          "engine/bridge/live_pipeline.py:0:0:Module",
+          "trading_pipeline",
+          0,
+          "parse_arguments",
+          "parse_arguments",
+          "engine/bridge/trading_pipeline.py"
+        ],
+        [
+          20,
+          0,
+          "engine/bridge/live_pipeline.py:0:0:Module",
+          "trading_pipeline",
+          0,
+          "progress_events_to",
+          "progress_events_to",
+          "engine/bridge/trading_pipeline.py"
+        ]
+      ],
+      "all_import_count": 16
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+      "inventory_blob": "0f0ac9496634808eb76847494cdedcf71dc2dae0",
+      "internal_imports": [
+        [
+          69,
+          0,
+          "engine/bridge/trading_pipeline.py:0:0:Module",
+          "core_utils",
+          0,
+          "as_decimal",
+          "as_decimal",
+          "engine/pipeline/core_utils.py"
+        ],
+        [
+          69,
+          0,
+          "engine/bridge/trading_pipeline.py:0:0:Module",
+          "core_utils",
+          0,
+          "order_identity",
+          "order_identity",
+          "engine/pipeline/core_utils.py"
+        ],
+        [
+          72,
+          0,
+          "engine/bridge/trading_pipeline.py:0:0:Module",
+          "order_audit_engine",
+          0,
+          "accepted_audit_entries",
+          "accepted_audit_entries",
+          "engine/pipeline/order_audit_engine.py"
+        ],
+        [
+          72,
+          0,
+          "engine/bridge/trading_pipeline.py:0:0:Module",
+          "order_audit_engine",
+          0,
+          "order_b_leg_identity",
+          "order_b_leg_identity",
+          "engine/pipeline/order_audit_engine.py"
+        ],
+        [
+          75,
+          0,
+          "engine/bridge/trading_pipeline.py:0:0:Module",
+          "true_false",
+          0,
+          "apply_true_false",
+          "apply_true_false",
+          "engine/pipeline/true_false.py"
+        ],
+        [
+          75,
+          0,
+          "engine/bridge/trading_pipeline.py:0:0:Module",
+          "true_false",
+          0,
+          "repair_crossing_lookup",
+          "repair_crossing_lookup",
+          "engine/pipeline/true_false.py"
+        ],
+        [
+          10997,
+          209,
+          "engine/bridge/trading_pipeline.py:3249:0:serialize_primary_structures",
+          "PL_PH_detector",
+          0,
+          "resolve_primary_highs",
+          "resolve_primary_highs",
+          "engine/pipeline/PL_PH_detector.py"
+        ],
+        [
+          10997,
+          209,
+          "engine/bridge/trading_pipeline.py:3249:0:serialize_primary_structures",
+          "PL_PH_detector",
+          0,
+          "resolve_primary_lows",
+          "resolve_primary_lows",
+          "engine/pipeline/PL_PH_detector.py"
+        ],
+        [
+          10997,
+          209,
+          "engine/bridge/trading_pipeline.py:3249:0:serialize_primary_structures",
+          "PL_PH_detector",
+          0,
+          "relabel_primary_order",
+          "relabel_primary_order",
+          "engine/pipeline/PL_PH_detector.py"
+        ],
+        [
+          10997,
+          209,
+          "engine/bridge/trading_pipeline.py:3249:0:serialize_primary_structures",
+          "PL_PH_detector",
+          0,
+          "formed_matching_legs",
+          "formed_matching_legs",
+          "engine/pipeline/PL_PH_detector.py"
+        ]
+      ],
+      "all_import_count": 31
+    },
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "inventory_blob": "275b1912116c6ecded134547403f474915401eaa",
+      "internal_imports": [
+        [
+          20,
+          0,
+          "engine/pipeline/PL_PH_detector.py:0:0:Module",
+          "core_utils",
+          0,
+          "as_decimal",
+          "as_decimal",
+          "engine/pipeline/core_utils.py"
+        ],
+        [
+          22,
+          0,
+          "engine/pipeline/PL_PH_detector.py:0:0:Module",
+          "lifecycle_engine",
+          0,
+          "advance_dominant_behavior",
+          "advance_dominant_behavior",
+          "engine/pipeline/lifecycle_engine.py"
+        ],
+        [
+          24,
+          0,
+          "engine/pipeline/PL_PH_detector.py:0:0:Module",
+          "order_audit_engine",
+          0,
+          "relabel_primary_causes",
+          "relabel_primary_causes",
+          "engine/pipeline/order_audit_engine.py"
+        ]
+      ],
+      "all_import_count": 14
+    },
+    {
+      "path": "engine/pipeline/__init__.py",
+      "source_blob": "656ba15cfbd7edab34a66cd5bc907171940af38c",
+      "inventory_blob": "431c78029e0d5c69c02e2d5bd071d45158b053d8",
+      "internal_imports": [
+        [
+          28,
+          0,
+          "engine/pipeline/__init__.py:0:0:Module",
+          "blue_line_detector",
+          1,
+          "BlueLine",
+          "BlueLine",
+          "engine/pipeline/blue_line_detector.py"
+        ],
+        [
+          28,
+          0,
+          "engine/pipeline/__init__.py:0:0:Module",
+          "blue_line_detector",
+          1,
+          "ScaleStrike",
+          "ScaleStrike",
+          "engine/pipeline/blue_line_detector.py"
+        ],
+        [
+          28,
+          0,
+          "engine/pipeline/__init__.py:0:0:Module",
+          "blue_line_detector",
+          1,
+          "count_scale_strikes",
+          "count_scale_strikes",
+          "engine/pipeline/blue_line_detector.py"
+        ],
+        [
+          28,
+          0,
+          "engine/pipeline/__init__.py:0:0:Module",
+          "blue_line_detector",
+          1,
+          "detect_blue_lines",
+          "detect_blue_lines",
+          "engine/pipeline/blue_line_detector.py"
+        ],
+        [
+          28,
+          0,
+          "engine/pipeline/__init__.py:0:0:Module",
+          "blue_line_detector",
+          1,
+          "fibonacci_level",
+          "fibonacci_level",
+          "engine/pipeline/blue_line_detector.py"
+        ]
+      ],
+      "all_import_count": 7
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "source_blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "inventory_blob": "6942fdad1e039e56b257f7efcc015ec37335a7c5",
+      "internal_imports": [
+        [
+          17,
+          0,
+          "engine/pipeline/a_zone_detector.py:0:0:Module",
+          "core_utils",
+          0,
+          "as_decimal",
+          "as_decimal",
+          "engine/pipeline/core_utils.py"
+        ],
+        [
+          17,
+          0,
+          "engine/pipeline/a_zone_detector.py:0:0:Module",
+          "core_utils",
+          0,
+          "ordered_naive_datetimes",
+          "ordered_naive_datetimes",
+          "engine/pipeline/core_utils.py"
+        ],
+        [
+          20,
+          0,
+          "engine/pipeline/a_zone_detector.py:0:0:Module",
+          "direction_policy",
+          0,
+          "policy_for",
+          "policy_for",
+          "engine/pipeline/direction_policy.py"
+        ]
+      ],
+      "all_import_count": 12
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "source_blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "inventory_blob": "b4b7eb59cfa41c1ebcb5c1e1a27f8bb55f99851b",
+      "internal_imports": [
+        [
+          16,
+          0,
+          "engine/pipeline/blue_line_detector.py:0:0:Module",
+          "core_utils",
+          0,
+          "ChronologicalContainmentIndex",
+          "ChronologicalContainmentIndex",
+          "engine/pipeline/core_utils.py"
+        ],
+        [
+          18,
+          0,
+          "engine/pipeline/blue_line_detector.py:0:0:Module",
+          "direction_policy",
+          0,
+          "policy_for",
+          "policy_for",
+          "engine/pipeline/direction_policy.py"
+        ]
+      ],
+      "all_import_count": 9
+    }
+  ]
+}

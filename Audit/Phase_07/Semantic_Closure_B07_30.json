@@ -1,0 +1,1250 @@
+{
+  "checkpoint": 127,
+  "batch": "B07",
+  "sub_batch": "B07-30",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "0910f7afc39a1c79f07a28eb07b5a797215b958c",
+  "path": "engine/pipeline/lifecycle_engine.py",
+  "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+  "source_range": [
+    1324,
+    1376
+  ],
+  "procedures": "LC38 dominant final acceptance",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; LC34/LC38 divided at complete logical boundaries; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 36,
+    "by_category": {
+      "branches": 5,
+      "comparisons": 2,
+      "arithmetic": 2,
+      "calls": 27
+    },
+    "supplemental_items": 2,
+    "resolved_findings": 1
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "02093e925abea0ed526c6e0164166e3928d5de53",
+    "crosswalk_blob": "6b94505fb94d9f11dc775fdc0b423ffe27e03de7",
+    "exact_site_id_span_procedure_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 4804,
+      "source_span": [
+        1344,
+        16,
+        1350,
+        28
+      ],
+      "procedure": "LC38",
+      "original_operation": "If",
+      "original_context": "LC-SC59",
+      "interpretation": "Require both candidate and dominant have a_source_time attribute, then strictly higher candidate rank; short circuit; no price read in passing branch.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1344-L1350",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 4805,
+      "source_span": [
+        1345,
+        20,
+        1347,
+        75
+      ],
+      "procedure": "LC38",
+      "original_operation": "BoolOp",
+      "original_context": "LC-SC59",
+      "interpretation": "Require both candidate and dominant have a_source_time attribute, then strictly higher candidate rank; short circuit; no price read in passing branch.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1345-L1347",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 4827,
+      "source_span": [
+        1354,
+        16,
+        1360,
+        28
+      ],
+      "procedure": "LC38",
+      "original_operation": "If",
+      "original_context": "LC-SC60",
+      "interpretation": "Normalize candidate and dominant zone price via Decimal(str), test strict directional relation; false (including equality) retains S.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1354-L1360",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 4859,
+      "source_span": [
+        1365,
+        16,
+        1370,
+        61
+      ],
+      "procedure": "LC38",
+      "original_operation": "For",
+      "original_context": "LC-SC60",
+      "interpretation": "Visit stopped prior and read cached stop again even though local result unused; preserve lookup/order, no comparison on that value here.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1365-L1370",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 4867,
+      "source_span": [
+        1367,
+        20,
+        1370,
+        61
+      ],
+      "procedure": "LC38",
+      "original_operation": "If",
+      "original_context": "LC-SC60",
+      "interpretation": "Consume only rows with priority<=dominant rank, equality included; no additional time or price test.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1367-L1370",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 4814,
+      "source_span": [
+        1347,
+        24,
+        1347,
+        75
+      ],
+      "procedure": "LC38",
+      "original_operation": [
+        "Gt"
+      ],
+      "interpretation": "Require both candidate and dominant have a_source_time attribute, then strictly higher candidate rank; short circuit; no price read in passing branch.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1347-L1347",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 4868,
+      "source_span": [
+        1368,
+        24,
+        1368,
+        68
+      ],
+      "procedure": "LC38",
+      "original_operation": [
+        "LtE"
+      ],
+      "interpretation": "Consume only rows with priority<=dominant rank, equality included; no additional time or price test.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1368-L1368",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 4802,
+      "source_span": [
+        1335,
+        58,
+        1335,
+        60
+      ],
+      "procedure": "LC38",
+      "original_operation": "USub",
+      "interpretation": "Key uses cached exact stop then rank, int(number default0), required source time, int(index default -1); defaults only absent.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1335-L1335",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 4828,
+      "source_span": [
+        1354,
+        19,
+        1358,
+        17
+      ],
+      "procedure": "LC38",
+      "original_operation": "Not",
+      "interpretation": "Normalize candidate and dominant zone price via Decimal(str), test strict directional relation; false (including equality) retains S.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1354-L1358",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4772,
+      "source_span": [
+        1328,
+        27,
+        1337,
+        17
+      ],
+      "procedure": "LC38",
+      "original_operation": "max",
+      "interpretation": "Max stopped prior by exact cached stop first, then priority, int number, source time, int index; first exact tie. Not stop-main position.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1328-L1337",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4779,
+      "source_span": [
+        1331,
+        24,
+        1331,
+        47
+      ],
+      "procedure": "LC38",
+      "original_operation": "cached_stop_event",
+      "interpretation": "Key uses cached exact stop then rank, int(number default0), required source time, int(index default -1); defaults only absent.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1331-L1331",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4782,
+      "source_span": [
+        1332,
+        24,
+        1332,
+        45
+      ],
+      "procedure": "LC38",
+      "original_operation": "module_priority",
+      "interpretation": "Key uses cached exact stop then rank, int(number default0), required source time, int(index default -1); defaults only absent.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1332-L1332",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4785,
+      "source_span": [
+        1333,
+        24,
+        1333,
+        55
+      ],
+      "procedure": "LC38",
+      "original_operation": "int",
+      "interpretation": "Key uses cached exact stop then rank, int(number default0), required source time, int(index default -1); defaults only absent.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1333-L1333",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4787,
+      "source_span": [
+        1333,
+        28,
+        1333,
+        54
+      ],
+      "procedure": "LC38",
+      "original_operation": "getattr",
+      "interpretation": "Key uses cached exact stop then rank, int(number default0), required source time, int(index default -1); defaults only absent.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1333-L1333",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4792,
+      "source_span": [
+        1334,
+        24,
+        1334,
+        52
+      ],
+      "procedure": "LC38",
+      "original_operation": "getattr",
+      "interpretation": "Key uses cached exact stop then rank, int(number default0), required source time, int(index default -1); defaults only absent.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1334-L1334",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4796,
+      "source_span": [
+        1335,
+        24,
+        1335,
+        62
+      ],
+      "procedure": "LC38",
+      "original_operation": "int",
+      "interpretation": "Key uses cached exact stop then rank, int(number default0), required source time, int(index default -1); defaults only absent.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1335-L1335",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4798,
+      "source_span": [
+        1335,
+        28,
+        1335,
+        61
+      ],
+      "procedure": "LC38",
+      "original_operation": "getattr",
+      "interpretation": "Key uses cached exact stop then rank, int(number default0), required source time, int(index default -1); defaults only absent.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1335-L1335",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4806,
+      "source_span": [
+        1345,
+        20,
+        1345,
+        52
+      ],
+      "procedure": "LC38",
+      "original_operation": "hasattr",
+      "interpretation": "Require both candidate and dominant have a_source_time attribute, then strictly higher candidate rank; short circuit; no price read in passing branch.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1345-L1345",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4810,
+      "source_span": [
+        1346,
+        24,
+        1346,
+        58
+      ],
+      "procedure": "LC38",
+      "original_operation": "hasattr",
+      "interpretation": "Require both candidate and dominant have a_source_time attribute, then strictly higher candidate rank; short circuit; no price read in passing branch.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1346-L1346",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4815,
+      "source_span": [
+        1347,
+        24,
+        1347,
+        47
+      ],
+      "procedure": "LC38",
+      "original_operation": "module_priority",
+      "interpretation": "Require both candidate and dominant have a_source_time attribute, then strictly higher candidate rank; short circuit; no price read in passing branch.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1347-L1347",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4818,
+      "source_span": [
+        1347,
+        50,
+        1347,
+        75
+      ],
+      "procedure": "LC38",
+      "original_operation": "module_priority",
+      "interpretation": "Require both candidate and dominant have a_source_time attribute, then strictly higher candidate rank; short circuit; no price read in passing branch.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1347-L1347",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4822,
+      "source_span": [
+        1349,
+        20,
+        1349,
+        42
+      ],
+      "procedure": "LC38",
+      "original_operation": "visible.append",
+      "interpretation": "Append candidate and skip remaining checks, no consumption.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1349-L1349",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4829,
+      "source_span": [
+        1354,
+        23,
+        1358,
+        17
+      ],
+      "procedure": "LC38",
+      "original_operation": "strictly_beyond_boundary",
+      "interpretation": "Normalize candidate and dominant zone price via Decimal(str), test strict directional relation; false (including equality) retains S.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1354-L1358",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4831,
+      "source_span": [
+        1355,
+        20,
+        1355,
+        58
+      ],
+      "procedure": "LC38",
+      "original_operation": "Decimal",
+      "interpretation": "Normalize candidate and dominant zone price via Decimal(str), test strict directional relation; false (including equality) retains S.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1355-L1355",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4833,
+      "source_span": [
+        1355,
+        28,
+        1355,
+        57
+      ],
+      "procedure": "LC38",
+      "original_operation": "str",
+      "interpretation": "Normalize candidate and dominant zone price via Decimal(str), test strict directional relation; false (including equality) retains S.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1355-L1355",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4835,
+      "source_span": [
+        1355,
+        32,
+        1355,
+        56
+      ],
+      "procedure": "LC38",
+      "original_operation": "getattr",
+      "interpretation": "Normalize candidate and dominant zone price via Decimal(str), test strict directional relation; false (including equality) retains S.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1355-L1355",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4839,
+      "source_span": [
+        1356,
+        20,
+        1356,
+        60
+      ],
+      "procedure": "LC38",
+      "original_operation": "Decimal",
+      "interpretation": "Normalize candidate and dominant zone price via Decimal(str), test strict directional relation; false (including equality) retains S.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1356-L1356",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4841,
+      "source_span": [
+        1356,
+        28,
+        1356,
+        59
+      ],
+      "procedure": "LC38",
+      "original_operation": "str",
+      "interpretation": "Normalize candidate and dominant zone price via Decimal(str), test strict directional relation; false (including equality) retains S.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1356-L1356",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4843,
+      "source_span": [
+        1356,
+        32,
+        1356,
+        58
+      ],
+      "procedure": "LC38",
+      "original_operation": "getattr",
+      "interpretation": "Normalize candidate and dominant zone price via Decimal(str), test strict directional relation; false (including equality) retains S.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1356-L1356",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4849,
+      "source_span": [
+        1359,
+        20,
+        1359,
+        42
+      ],
+      "procedure": "LC38",
+      "original_operation": "visible.append",
+      "interpretation": "Append valid S and continue without consumption.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1359-L1359",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4856,
+      "source_span": [
+        1364,
+        36,
+        1364,
+        61
+      ],
+      "procedure": "LC38",
+      "original_operation": "module_priority",
+      "interpretation": "Compute dominant rank before consuming.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1364-L1364",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4864,
+      "source_span": [
+        1366,
+        34,
+        1366,
+        59
+      ],
+      "procedure": "LC38",
+      "original_operation": "cached_stop_event",
+      "interpretation": "Visit stopped prior and read cached stop again even though local result unused; preserve lookup/order, no comparison on that value here.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1366-L1366",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4869,
+      "source_span": [
+        1368,
+        24,
+        1368,
+        47
+      ],
+      "procedure": "LC38",
+      "original_operation": "module_priority",
+      "interpretation": "Consume only rows with priority<=dominant rank, equality included; no additional time or price test.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1368-L1368",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4874,
+      "source_span": [
+        1370,
+        24,
+        1370,
+        61
+      ],
+      "procedure": "LC38",
+      "original_operation": "consumed.add",
+      "interpretation": "Add LC28 identity to consumed set; no mutation of source objects or prior visible list.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1370-L1370",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4877,
+      "source_span": [
+        1370,
+        37,
+        1370,
+        60
+      ],
+      "procedure": "LC38",
+      "original_operation": "module_identity",
+      "interpretation": "Add LC28 identity to consumed set; no mutation of source objects or prior visible list.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1370-L1370",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4882,
+      "source_span": [
+        1374,
+        8,
+        1374,
+        30
+      ],
+      "procedure": "LC38",
+      "original_operation": "visible.append",
+      "interpretation": "Fallback append original S when no applicable stopped branch; preserve traversal order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact stop, rank, identity, directional price eligibility or mutation contract; delegated ownership remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1374-L1374",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 101,
+        "heading": "LC38"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 96,
+          "transition": "LCX16"
+        }
+      ]
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B07-30-S01",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "source_span": [
+        1328,
+        1350
+      ],
+      "interpretation": "Dominant uses exact stop before priority, number, source,index; higher-priority S/S by attribute presence bypasses price.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1328-L1350",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "External owner/caller invariants W2 pending."
+    },
+    {
+      "id": "B07-30-S02",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "source_span": [
+        1354,
+        1375
+      ],
+      "interpretation": "No strict price crossing retains candidate; otherwise consume rank<=dominant. Cached stop read retained in loop although result unused; no extra gate. Fallback append.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1354-L1375",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "External owner/caller invariants W2 pending."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B07-30-F01",
+      "span": [
+        1328,
+        1375
+      ],
+      "description": "Clarify exact stop key vs stop-main index, marker gates and unused cached read.",
+      "document": "Algorithms/V3/10_Lifecycle.md",
+      "line": 102,
+      "prior_blob": "0a09199d0d0170efcf19b2aa07c6ec82a1e7aec8",
+      "resolution": "Clarified active procedure and related state transitions; rechecked pinned source.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1328-L1375",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: source/index alignment, direction policy, exact stop finder, module identities and caller eligibility/ownership. W3 separate review and W4 acceptance pending.",
+    "Remaining LC40 onward; no RAW/runtime."
+  ]
+}

@@ -1,0 +1,4275 @@
+{
+  "checkpoint": 26,
+  "batch": "B02",
+  "sub_batch": "B02-12",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "88cefd3506e0ebf97fc3e7d753849c19a6ae33db",
+  "path": "engine/pipeline/reaction_engine.py",
+  "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+  "source_range": [
+    2291,
+    2433
+  ],
+  "procedures": [
+    "RE92",
+    "RE93",
+    "RE94",
+    "RE95",
+    "RE96"
+  ],
+  "review_pass": "W1 source-first local owner review; W3 pending",
+  "status": "PASS",
+  "scope": "Local source contracts only; cross-owner, runtime equivalence and separate forensic gate not certified.",
+  "counts": {
+    "original_rows": 94,
+    "by_category": {
+      "branches": 29,
+      "comparisons": 30,
+      "arithmetic": 21,
+      "calls": 14
+    },
+    "supplemental_items": 6
+  },
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 8878,
+      "source_span": [
+        2294,
+        22,
+        2294,
+        66
+      ],
+      "procedure": "RE92",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC77",
+      "interpretation": "Exact bullish chooses GREEN context, otherwise RED.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2294-L2294",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 8886,
+      "source_span": [
+        2295,
+        20,
+        2295,
+        64
+      ],
+      "procedure": "RE92",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC77",
+      "interpretation": "Exact bullish chooses RED First, otherwise GREEN.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2295-L2295",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 8898,
+      "source_span": [
+        2297,
+        8,
+        2302,
+        23
+      ],
+      "procedure": "RE92",
+      "original_operation": "If",
+      "original_context": "RE-SC77",
+      "interpretation": "Reject invalid First boundary or adjacent tags after reading First row.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2297-L2302",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 8899,
+      "source_span": [
+        2298,
+        12,
+        2300,
+        63
+      ],
+      "procedure": "RE92",
+      "original_operation": "BoolOp",
+      "original_context": "RE-SC77",
+      "interpretation": "Test First<=Reset, then wrong First tag, then wrong predecessor tag; short circuit.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2298-L2300",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 8923,
+      "source_span": [
+        2305,
+        8,
+        2309,
+        30
+      ],
+      "procedure": "RE92",
+      "original_operation": "While",
+      "original_context": "RE-SC77",
+      "interpretation": "Extend contiguous preceding context backward while bounded and matching.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2305-L2309",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 8924,
+      "source_span": [
+        2306,
+        12,
+        2307,
+        66
+      ],
+      "procedure": "RE92",
+      "original_operation": "BoolOp",
+      "original_context": "RE-SC77",
+      "interpretation": "Predecessor>=Reset first, then context tag test.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2306-L2307",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 8945,
+      "source_span": [
+        2311,
+        8,
+        2315,
+        28
+      ],
+      "procedure": "RE92",
+      "original_operation": "While",
+      "original_context": "RE-SC77",
+      "interpretation": "Extend preceding First-color run backward from context start.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2311-L2315",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 8946,
+      "source_span": [
+        2312,
+        12,
+        2313,
+        62
+      ],
+      "procedure": "RE92",
+      "original_operation": "BoolOp",
+      "original_context": "RE-SC77",
+      "interpretation": "Predecessor>=Reset first, then First tag test.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2312-L2313",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 8964,
+      "source_span": [
+        2317,
+        8,
+        2331,
+        13
+      ],
+      "procedure": "RE92",
+      "original_operation": "If",
+      "original_context": "RE-SC77",
+      "interpretation": "Exact bullish chooses floor/top/bottom construction; otherwise ceiling mirror.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2317-L2331",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 8979,
+      "source_span": [
+        2319,
+        12,
+        2320,
+        27
+      ],
+      "procedure": "RE92",
+      "original_operation": "If",
+      "original_context": "RE-SC77",
+      "interpretation": "Strict First Low below local floor rejects; equality allowed.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2319-L2320",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9042,
+      "source_span": [
+        2334,
+        8,
+        2335,
+        23
+      ],
+      "procedure": "RE92",
+      "original_operation": "If",
+      "original_context": "RE-SC77",
+      "interpretation": "Strict First High above local ceiling rejects; equality allowed.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2334-L2335",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9105,
+      "source_span": [
+        2352,
+        8,
+        2376,
+        38
+      ],
+      "procedure": "RE93",
+      "original_operation": "For",
+      "original_context": "RE-SC78",
+      "interpretation": "Traverse later main positions First+1 through supplied stop inclusive.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2352-L2376",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9124,
+      "source_span": [
+        2355,
+        16,
+        2357,
+        54
+      ],
+      "procedure": "RE93",
+      "original_operation": "IfExp",
+      "original_context": "RE-SC78",
+      "interpretation": "Calculate confirmation before invalidation call; bullish strict High else Low.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2355-L2357",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9146,
+      "source_span": [
+        2362,
+        12,
+        2363,
+        33
+      ],
+      "procedure": "RE93",
+      "original_operation": "If",
+      "original_context": "RE-SC78",
+      "interpretation": "Invalidation true returns null candidate and current loop position before mutation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2362-L2363",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9152,
+      "source_span": [
+        2364,
+        12,
+        2367,
+        70
+      ],
+      "procedure": "RE93",
+      "original_operation": "If",
+      "original_context": "RE-SC78",
+      "interpretation": "Exact bullish and strictly lower Low updates bottom/source.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2364-L2367",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9153,
+      "source_span": [
+        2364,
+        15,
+        2364,
+        75
+      ],
+      "procedure": "RE93",
+      "original_operation": "BoolOp",
+      "original_context": "RE-SC78",
+      "interpretation": "Direction equality before Low comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2364-L2364",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9177,
+      "source_span": [
+        2368,
+        12,
+        2371,
+        67
+      ],
+      "procedure": "RE93",
+      "original_operation": "If",
+      "original_context": "RE-SC78",
+      "interpretation": "Separate exact bearish and strictly higher High updates top/source.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2368-L2371",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9178,
+      "source_span": [
+        2368,
+        15,
+        2368,
+        73
+      ],
+      "procedure": "RE93",
+      "original_operation": "BoolOp",
+      "original_context": "RE-SC78",
+      "interpretation": "Direction equality before High comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2368-L2368",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9202,
+      "source_span": [
+        2372,
+        12,
+        2376,
+        38
+      ],
+      "procedure": "RE93",
+      "original_operation": "If",
+      "original_context": "RE-SC78",
+      "interpretation": "Previously calculated confirms flag sets Break, refines, returns.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2372-L2376",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9251,
+      "source_span": [
+        2391,
+        8,
+        2392,
+        24
+      ],
+      "procedure": "RE94",
+      "original_operation": "If",
+      "original_context": "RE-SC79",
+      "interpretation": "Null boundary returns false before price tests.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2391-L2392",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9257,
+      "source_span": [
+        2394,
+        8,
+        2399,
+        56
+      ],
+      "procedure": "RE94",
+      "original_operation": "If",
+      "original_context": "RE-SC79",
+      "interpretation": "Exact bullish computes both main predicates, otherwise opposite.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2394-L2399",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9287,
+      "source_span": [
+        2400,
+        8,
+        2401,
+        24
+      ],
+      "procedure": "RE94",
+      "original_operation": "If",
+      "original_context": "RE-SC79",
+      "interpretation": "No strict boundary breach returns false.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2400-L2401",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9292,
+      "source_span": [
+        2402,
+        8,
+        2403,
+        23
+      ],
+      "procedure": "RE94",
+      "original_operation": "If",
+      "original_context": "RE-SC79",
+      "interpretation": "Boundary breach without confirmation returns true.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2402-L2403",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9304,
+      "source_span": [
+        2406,
+        8,
+        2416,
+        32
+      ],
+      "procedure": "RE94",
+      "original_operation": "For",
+      "original_context": "RE-SC79",
+      "interpretation": "Traverse full main lower window in native order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2406-L2416",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9312,
+      "source_span": [
+        2407,
+        12,
+        2416,
+        32
+      ],
+      "procedure": "RE94",
+      "original_operation": "If",
+      "original_context": "RE-SC79",
+      "interpretation": "Exact bullish checks lower Low outward first then High confirmation; else opposite.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2407-L2416",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9316,
+      "source_span": [
+        2408,
+        16,
+        2409,
+        31
+      ],
+      "procedure": "RE94",
+      "original_operation": "If",
+      "original_context": "RE-SC79",
+      "interpretation": "Lower Low strictly breaches boundary => true immediately.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2408-L2409",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9323,
+      "source_span": [
+        2410,
+        16,
+        2411,
+        32
+      ],
+      "procedure": "RE94",
+      "original_operation": "If",
+      "original_context": "RE-SC79",
+      "interpretation": "Lower High strictly confirms => false after outward check.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2410-L2411",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9331,
+      "source_span": [
+        2413,
+        16,
+        2414,
+        31
+      ],
+      "procedure": "RE94",
+      "original_operation": "If",
+      "original_context": "RE-SC79",
+      "interpretation": "Lower High strictly breaches boundary => true immediately.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2413-L2414",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 9338,
+      "source_span": [
+        2415,
+        16,
+        2416,
+        32
+      ],
+      "procedure": "RE94",
+      "original_operation": "If",
+      "original_context": "RE-SC79",
+      "interpretation": "Lower Low strictly confirms => false after outward check.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2415-L2416",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 8879,
+      "source_span": [
+        2294,
+        33,
+        2294,
+        55
+      ],
+      "procedure": "RE92",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC77",
+      "interpretation": "Direction equals bullish for GREEN context.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2294-L2294",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 8887,
+      "source_span": [
+        2295,
+        29,
+        2295,
+        51
+      ],
+      "procedure": "RE92",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC77",
+      "interpretation": "Direction equals bullish for RED First.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2295-L2295",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 8900,
+      "source_span": [
+        2298,
+        12,
+        2298,
+        38
+      ],
+      "procedure": "RE92",
+      "original_operation": [
+        "LtE"
+      ],
+      "original_context": "RE-SC77",
+      "interpretation": "First<=Reset invalid including equal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2298-L2298",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 8903,
+      "source_span": [
+        2299,
+        15,
+        2299,
+        37
+      ],
+      "procedure": "RE92",
+      "original_operation": [
+        "NotEq"
+      ],
+      "original_context": "RE-SC77",
+      "interpretation": "First tag unequal required invalid.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2299-L2299",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 8907,
+      "source_span": [
+        2300,
+        15,
+        2300,
+        63
+      ],
+      "procedure": "RE92",
+      "original_operation": [
+        "NotEq"
+      ],
+      "original_context": "RE-SC77",
+      "interpretation": "Previous tag unequal context invalid.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2300-L2300",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 8925,
+      "source_span": [
+        2306,
+        12,
+        2306,
+        44
+      ],
+      "procedure": "RE92",
+      "original_operation": [
+        "GtE"
+      ],
+      "original_context": "RE-SC77",
+      "interpretation": "Context predecessor>=Reset includes Reset.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2306-L2306",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 8930,
+      "source_span": [
+        2307,
+        16,
+        2307,
+        66
+      ],
+      "procedure": "RE92",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC77",
+      "interpretation": "Preceding tag equals context.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2307-L2307",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 8947,
+      "source_span": [
+        2312,
+        12,
+        2312,
+        42
+      ],
+      "procedure": "RE92",
+      "original_operation": [
+        "GtE"
+      ],
+      "original_context": "RE-SC77",
+      "interpretation": "Local predecessor>=Reset includes Reset.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2312-L2312",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 8952,
+      "source_span": [
+        2313,
+        16,
+        2313,
+        62
+      ],
+      "procedure": "RE92",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC77",
+      "interpretation": "Preceding tag equals First.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2313-L2313",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 8965,
+      "source_span": [
+        2317,
+        11,
+        2317,
+        33
+      ],
+      "procedure": "RE92",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC77",
+      "interpretation": "Exact bullish selects branch.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2317-L2317",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 8980,
+      "source_span": [
+        2319,
+        15,
+        2319,
+        38
+      ],
+      "procedure": "RE92",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "RE-SC77",
+      "interpretation": "First Low strictly below floor rejects.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2319-L2319",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9043,
+      "source_span": [
+        2334,
+        11,
+        2334,
+        37
+      ],
+      "procedure": "RE92",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "RE-SC77",
+      "interpretation": "First High strictly above ceiling rejects.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2334-L2334",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9125,
+      "source_span": [
+        2356,
+        19,
+        2356,
+        41
+      ],
+      "procedure": "RE93",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC78",
+      "interpretation": "Exact bullish selects High confirmation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2356-L2356",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9128,
+      "source_span": [
+        2355,
+        16,
+        2355,
+        47
+      ],
+      "procedure": "RE93",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "RE-SC78",
+      "interpretation": "Strict High>top confirms.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2355-L2355",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9133,
+      "source_span": [
+        2357,
+        21,
+        2357,
+        54
+      ],
+      "procedure": "RE93",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "RE-SC78",
+      "interpretation": "Strict Low<bottom confirms otherwise.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2357-L2357",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9154,
+      "source_span": [
+        2364,
+        15,
+        2364,
+        37
+      ],
+      "procedure": "RE93",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC78",
+      "interpretation": "Exact bullish for bottom mutation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2364-L2364",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9157,
+      "source_span": [
+        2364,
+        42,
+        2364,
+        75
+      ],
+      "procedure": "RE93",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "RE-SC78",
+      "interpretation": "Strict lower Low improves.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2364-L2364",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9179,
+      "source_span": [
+        2368,
+        15,
+        2368,
+        37
+      ],
+      "procedure": "RE93",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC78",
+      "interpretation": "Exact bearish for top mutation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2368-L2368",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9182,
+      "source_span": [
+        2368,
+        42,
+        2368,
+        73
+      ],
+      "procedure": "RE93",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "RE-SC78",
+      "interpretation": "Strict higher High improves.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2368-L2368",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9252,
+      "source_span": [
+        2391,
+        11,
+        2391,
+        27
+      ],
+      "procedure": "RE94",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "RE-SC79",
+      "interpretation": "Boundary identity null disables invalidation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2391-L2391",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9258,
+      "source_span": [
+        2394,
+        11,
+        2394,
+        33
+      ],
+      "procedure": "RE94",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC79",
+      "interpretation": "Exact bullish selects main tests.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2394-L2394",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9263,
+      "source_span": [
+        2395,
+        31,
+        2395,
+        52
+      ],
+      "procedure": "RE94",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "RE-SC79",
+      "interpretation": "Main Low<boundary strict outward.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2395-L2395",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9269,
+      "source_span": [
+        2396,
+        23,
+        2396,
+        54
+      ],
+      "procedure": "RE94",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "RE-SC79",
+      "interpretation": "Main High>top strict confirm.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2396-L2396",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9276,
+      "source_span": [
+        2398,
+        31,
+        2398,
+        53
+      ],
+      "procedure": "RE94",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "RE-SC79",
+      "interpretation": "Main High>boundary strict outward.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2398-L2398",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9282,
+      "source_span": [
+        2399,
+        23,
+        2399,
+        56
+      ],
+      "procedure": "RE94",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "RE-SC79",
+      "interpretation": "Main Low<bottom strict confirm.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2399-L2399",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9313,
+      "source_span": [
+        2407,
+        15,
+        2407,
+        37
+      ],
+      "procedure": "RE94",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "RE-SC79",
+      "interpretation": "Exact bullish selects lower tests.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2407-L2407",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9317,
+      "source_span": [
+        2408,
+        19,
+        2408,
+        40
+      ],
+      "procedure": "RE94",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "RE-SC79",
+      "interpretation": "Lower Low<boundary strict invalidation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2408-L2408",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9324,
+      "source_span": [
+        2410,
+        19,
+        2410,
+        50
+      ],
+      "procedure": "RE94",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "RE-SC79",
+      "interpretation": "Lower High>top strict confirm.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2410-L2410",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9332,
+      "source_span": [
+        2413,
+        19,
+        2413,
+        41
+      ],
+      "procedure": "RE94",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "RE-SC79",
+      "interpretation": "Lower High>boundary strict invalidation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2413-L2413",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 9339,
+      "source_span": [
+        2415,
+        19,
+        2415,
+        52
+      ],
+      "procedure": "RE94",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "RE-SC79",
+      "interpretation": "Lower Low<bottom strict confirm.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2415-L2415",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 8912,
+      "source_span": [
+        2300,
+        28,
+        2300,
+        43
+      ],
+      "procedure": "RE92",
+      "original_operation": "Sub",
+      "original_context": "RE-SC77",
+      "interpretation": "First-1 predecessor lookup after earlier guards.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2300-L2300",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 8920,
+      "source_span": [
+        2304,
+        24,
+        2304,
+        39
+      ],
+      "procedure": "RE92",
+      "original_operation": "Sub",
+      "original_context": "RE-SC77",
+      "interpretation": "First-1 initializes context start.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2304-L2304",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 8926,
+      "source_span": [
+        2306,
+        12,
+        2306,
+        29
+      ],
+      "procedure": "RE92",
+      "original_operation": "Sub",
+      "original_context": "RE-SC77",
+      "interpretation": "Context_start-1 compared to Reset bound.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2306-L2306",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 8935,
+      "source_span": [
+        2307,
+        29,
+        2307,
+        46
+      ],
+      "procedure": "RE92",
+      "original_operation": "Sub",
+      "original_context": "RE-SC77",
+      "interpretation": "Context_start-1 indexes prior context candle.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2307-L2307",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 8939,
+      "source_span": [
+        2309,
+        12,
+        2309,
+        30
+      ],
+      "procedure": "RE92",
+      "original_operation": "Sub",
+      "original_context": "RE-SC77",
+      "interpretation": "Decrement context_start after match.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2309-L2309",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 8948,
+      "source_span": [
+        2312,
+        12,
+        2312,
+        27
+      ],
+      "procedure": "RE92",
+      "original_operation": "Sub",
+      "original_context": "RE-SC77",
+      "interpretation": "Local_start-1 compared to Reset bound.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2312-L2312",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 8957,
+      "source_span": [
+        2313,
+        29,
+        2313,
+        44
+      ],
+      "procedure": "RE92",
+      "original_operation": "Sub",
+      "original_context": "RE-SC77",
+      "interpretation": "Local_start-1 indexes prior First-color candle.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2313-L2313",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 8961,
+      "source_span": [
+        2315,
+        12,
+        2315,
+        28
+      ],
+      "procedure": "RE92",
+      "original_operation": "Sub",
+      "original_context": "RE-SC77",
+      "interpretation": "Decrement local_start after match.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2315-L2315",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 8976,
+      "source_span": [
+        2318,
+        59,
+        2318,
+        74
+      ],
+      "procedure": "RE92",
+      "original_operation": "Sub",
+      "original_context": "RE-SC77",
+      "interpretation": "First-1 inclusive local floor endpoint.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2318-L2318",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 9003,
+      "source_span": [
+        2323,
+        29,
+        2323,
+        44
+      ],
+      "procedure": "RE92",
+      "original_operation": "Sub",
+      "original_context": "RE-SC77",
+      "interpretation": "First-1 inclusive leg floor endpoint.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2323-L2323",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 9039,
+      "source_span": [
+        2333,
+        58,
+        2333,
+        73
+      ],
+      "procedure": "RE92",
+      "original_operation": "Sub",
+      "original_context": "RE-SC77",
+      "interpretation": "First-1 inclusive local ceiling endpoint.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2333-L2333",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 9066,
+      "source_span": [
+        2338,
+        25,
+        2338,
+        40
+      ],
+      "procedure": "RE92",
+      "original_operation": "Sub",
+      "original_context": "RE-SC77",
+      "interpretation": "First-1 inclusive leg ceiling endpoint.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2338-L2338",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 9094,
+      "source_span": [
+        2293,
+        9,
+        2293,
+        25
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "RE-SC77",
+      "interpretation": "Nullable/type-union annotation, not executable price/time arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Type annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2293-L2293",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 9109,
+      "source_span": [
+        2352,
+        26,
+        2352,
+        49
+      ],
+      "procedure": "RE93",
+      "original_operation": "Add",
+      "original_context": "RE-SC78",
+      "interpretation": "First+1 excludes First from confirmation scan.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2352-L2352",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 9113,
+      "source_span": [
+        2352,
+        51,
+        2352,
+        65
+      ],
+      "procedure": "RE93",
+      "original_operation": "Add",
+      "original_context": "RE-SC78",
+      "interpretation": "Stop+1 includes supplied stop.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2352-L2352",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 9231,
+      "source_span": [
+        2351,
+        15,
+        2351,
+        31
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "RE-SC78",
+      "interpretation": "Nullable/type-union annotation, not executable price/time arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Type annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2351-L2351",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 9234,
+      "source_span": [
+        2351,
+        33,
+        2351,
+        43
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "RE-SC78",
+      "interpretation": "Nullable/type-union annotation, not executable price/time arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Type annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2351-L2351",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 9288,
+      "source_span": [
+        2400,
+        11,
+        2400,
+        31
+      ],
+      "procedure": "RE94",
+      "original_operation": "Not",
+      "original_context": "RE-SC79",
+      "interpretation": "Negate reaches_boundary for no-invalidation branch.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2400-L2400",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 9293,
+      "source_span": [
+        2402,
+        11,
+        2402,
+        23
+      ],
+      "procedure": "RE94",
+      "original_operation": "Not",
+      "original_context": "RE-SC79",
+      "interpretation": "Negate confirms for unopposed invalidation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2402-L2402",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 9299,
+      "source_span": [
+        2405,
+        14,
+        2405,
+        47
+      ],
+      "procedure": "RE94",
+      "original_operation": "Add",
+      "original_context": "RE-SC79",
+      "interpretation": "Main open+timeframe exclusive lower window end.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2405-L2405",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 9379,
+      "source_span": [
+        2430,
+        47,
+        2430,
+        57
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "RE-SC80",
+      "interpretation": "Nullable/type-union annotation, not executable price/time arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Type annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2430-L2430",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 8972,
+      "source_span": [
+        2318,
+        29,
+        2318,
+        75
+      ],
+      "procedure": "RE92",
+      "original_operation": "self.minimum_low",
+      "original_context": "RE-SC77",
+      "interpretation": "Inclusive min Low local_start..First-1.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2318-L2318",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 8990,
+      "source_span": [
+        2321,
+        34,
+        2321,
+        79
+      ],
+      "procedure": "RE92",
+      "original_operation": "self.maximum_high",
+      "original_context": "RE-SC77",
+      "interpretation": "Inclusive max High context_start..First.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2321-L2321",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 8999,
+      "source_span": [
+        2322,
+        39,
+        2324,
+        13
+      ],
+      "procedure": "RE92",
+      "original_operation": "self.minimum_low",
+      "original_context": "RE-SC77",
+      "interpretation": "Inclusive min Low Reset..First-1 freezes leg boundary/source.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2322-L2324",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 9007,
+      "source_span": [
+        2325,
+        19,
+        2331,
+        13
+      ],
+      "procedure": "RE92",
+      "original_operation": "Candidate",
+      "original_context": "RE-SC77",
+      "interpretation": "Construct Mode A bullish candidate with First positional source and leg anchor.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2325-L2331",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 9035,
+      "source_span": [
+        2333,
+        27,
+        2333,
+        74
+      ],
+      "procedure": "RE92",
+      "original_operation": "self.maximum_high",
+      "original_context": "RE-SC77",
+      "interpretation": "Inclusive max High local_start..First-1.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2333-L2333",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 9053,
+      "source_span": [
+        2336,
+        36,
+        2336,
+        80
+      ],
+      "procedure": "RE92",
+      "original_operation": "self.minimum_low",
+      "original_context": "RE-SC77",
+      "interpretation": "Inclusive min Low context_start..First.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2336-L2336",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 9062,
+      "source_span": [
+        2337,
+        35,
+        2339,
+        9
+      ],
+      "procedure": "RE92",
+      "original_operation": "self.maximum_high",
+      "original_context": "RE-SC77",
+      "interpretation": "Inclusive max High Reset..First-1 freezes leg boundary/source.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2337-L2339",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 9070,
+      "source_span": [
+        2340,
+        15,
+        2346,
+        9
+      ],
+      "procedure": "RE92",
+      "original_operation": "Candidate",
+      "original_context": "RE-SC77",
+      "interpretation": "Construct Mode A nonbullish candidate with First positional top and leg anchor.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2340-L2346",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 230,
+        "heading": "_build_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS02",
+          "line": 57
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 9107,
+      "source_span": [
+        2352,
+        20,
+        2352,
+        66
+      ],
+      "procedure": "RE93",
+      "original_operation": "range",
+      "original_context": "RE-SC78",
+      "interpretation": "Create increasing range First+1..stop inclusive.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2352-L2352",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 9140,
+      "source_span": [
+        2359,
+        26,
+        2361,
+        13
+      ],
+      "procedure": "RE93",
+      "original_operation": "self._owner_boundary_before_confirmation",
+      "original_context": "RE-SC78",
+      "interpretation": "Evaluate boundary race after precomputed confirms before geometry mutation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2359-L2361",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 9214,
+      "source_span": [
+        2375,
+        16,
+        2375,
+        58
+      ],
+      "procedure": "RE93",
+      "original_operation": "self._refine",
+      "original_context": "RE-SC78",
+      "interpretation": "Refine candidate after Break fields set; return ignored.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2375-L2375",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 233,
+        "heading": "_scan_direct_candidate"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS03",
+          "line": 58
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS05",
+          "line": 60
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS06",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 9306,
+      "source_span": [
+        2406,
+        22,
+        2406,
+        65
+      ],
+      "procedure": "RE94",
+      "original_operation": "self.seconds_between",
+      "original_context": "RE-SC79",
+      "interpretation": "Get full main lower window generator, native order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2406-L2406",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 236,
+        "heading": "_owner_boundary_before_confirmation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXS",
+          "transition": "RXS04",
+          "line": 59
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXG",
+          "transition": "RXG08",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 9352,
+      "source_span": [
+        2421,
+        15,
+        2427,
+        9
+      ],
+      "procedure": "RE95",
+      "original_operation": "DetectionResult",
+      "original_context": "RE-SC80",
+      "interpretation": "Construct result using direct native direction list references.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2421-L2427",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 239,
+        "heading": "_result"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+          "machine": "RXU",
+          "transition": "RXU14",
+          "line": 48
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 9384,
+      "source_span": [
+        2432,
+        15,
+        2432,
+        78
+      ],
+      "procedure": "RE96",
+      "original_operation": "self._detect",
+      "original_context": "RE-SC80",
+      "interpretation": "Delegate detect with retain_cursor false.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls chronological traversal, boundary, ownership, mutation, or checkpoint lifetime.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2432-L2432",
+      "contract_ref": {
+        "path": "Algorithms/V3/01_Reaction_Engine.md",
+        "blob": "2d2fc170fd5b58b8ad885fc158e8eaeab6ae5391",
+        "line": 242,
+        "heading": "UnifiedReactionDetector.detect"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/09_Shared_Services.md",
+          "machine": "MC",
+          "transition": "MC11",
+          "line": 34
+        }
+      ]
+    }
+  ],
+  "supplemental_items": [
+    {
+      "supplemental_id": "B02-12-S1",
+      "source_span": [
+        2294,
+        2302
+      ],
+      "discovery_reason": "Source-first review of state mutation, guard order, cursor/cache lifetime, provenance or failure boundary beyond original category labels.",
+      "interpretation": "Direction selects tags, First source lookup occurs before First<=Reset rejection; no clamping or local index validator. Current tag checked before predecessor.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2294-L2302"
+    },
+    {
+      "supplemental_id": "B02-12-S2",
+      "source_span": [
+        2304,
+        2315
+      ],
+      "discovery_reason": "Source-first review of state mutation, guard order, cursor/cache lifetime, provenance or failure boundary beyond original category labels.",
+      "interpretation": "Extend two contiguous runs backward in order; each preceding position must remain >=Reset. No scan of disjoint runs.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2304-L2315"
+    },
+    {
+      "supplemental_id": "B02-12-S3",
+      "source_span": [
+        2317,
+        2346
+      ],
+      "discovery_reason": "Source-first review of state mutation, guard order, cursor/cache lifetime, provenance or failure boundary beyond original category labels.",
+      "interpretation": "Local floor/ceiling strict rejection, equality allowed. Confirmation edge from context..First, outer frozen boundary from Reset..First-1. First/opposite source positional index, other source and anchor Candle.index. Nonbullish uses ceiling branch.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2317-L2346"
+    },
+    {
+      "supplemental_id": "B02-12-S4",
+      "source_span": [
+        2352,
+        2377
+      ],
+      "discovery_reason": "Source-first review of state mutation, guard order, cursor/cache lifetime, provenance or failure boundary beyond original category labels.",
+      "interpretation": "Precompute main confirms before RE94, then invalidation result may return null,scan. Separate exact B/R mutation guards; confirmation sets Break to loop scan, source updates Candle.index. Refine result ignored; exhaustion returns null,null.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2352-L2377"
+    },
+    {
+      "supplemental_id": "B02-12-S5",
+      "source_span": [
+        2390,
+        2417
+      ],
+      "discovery_reason": "Source-first review of state mutation, guard order, cursor/cache lifetime, provenance or failure boundary beyond original category labels.",
+      "interpretation": "Null boundary false; compute both main predicates before short circuit. Strict outward only =>true; both => lower rows ordered outward before confirmation, equality never strict, no resolving row =>true. Full main window no intrabar clamp.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2390-L2417"
+    },
+    {
+      "supplemental_id": "B02-12-S6",
+      "source_span": [
+        2420,
+        2432
+      ],
+      "discovery_reason": "Source-first review of state mutation, guard order, cursor/cache lifetime, provenance or failure boundary beyond original category labels.",
+      "interpretation": "Result wraps existing direction list references; no clone or sort. Public detect delegates retention false.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2420-L2432"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B02-12-F01",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        2352,
+        2377
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L2352-L2377",
+      "description": "Clarify evaluation order, separate exact directional mutations and positional Break provenance.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/01_Reaction_Engine.md",
+          "prior_blob": "470f2eeb642ed780dde3786f83e5aa12f95d2eec",
+          "procedure": "RE93"
+        }
+      ],
+      "resolution": "For each later main through stop inclusive calculate strict confirmation before calling RE94; invalidation result true returns null,scan before mutation. Separate exact bullish and exact bearish guards update the opposite edge strictly. On saved confirmation set Break to loop scan (source updates use Candle.index), refine, return candidate,null. End null,null.",
+      "recheck": "W2 caller and W3 forensic recheck remain pending."
+    }
+  ],
+  "open_dependencies": [
+    "Trace direct-search callers and source positional alignment in W2.",
+    "W3 separate source-first review pending."
+  ]
+}

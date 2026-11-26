@@ -1,0 +1,2199 @@
+{
+  "checkpoint": 72,
+  "batch": "B05",
+  "sub_batch": "B05-26",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "0fb58e1845ec0002f75d9ddc7d149d11ebc98081",
+  "path": "engine/pipeline/order_audit_engine.py",
+  "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+  "source_range": [
+    2622,
+    2714
+  ],
+  "procedures": [
+    "OA78",
+    "OA79",
+    "OA80",
+    "OA81",
+    "OA82"
+  ],
+  "review_pass": "W1 source-first local owner review; W3 pending",
+  "status": "PASS",
+  "scope": "Local source contracts only; no empirical or cross-owner certification.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 51,
+    "by_category": {
+      "branches": 11,
+      "comparisons": 11,
+      "arithmetic": 1,
+      "calls": 28
+    },
+    "supplemental_items": 7
+  },
+  "inventory_validation": {
+    "crosswalk": "Audit/Phase_07/Decision_Site_Crosswalk_04.json",
+    "crosswalk_blob": "62645cd2b92c3cbe35f6c0a9500299ec6f44cbc8",
+    "original_inventory_blob": "fdd253ac268881876574914b6d79478716f52104",
+    "context_blob": "7de01399b8ff7bf64bb44995b57bdc03296997cf",
+    "exact_category_id_and_span_match": true,
+    "unique_category_ids": true,
+    "prior_partition_overlap": false,
+    "direct_phase02_full_blob_read": false,
+    "reason": "Exact immutable AST crosswalk and context ledger compared; no full Phase 02 inventory read claimed."
+  },
+  "dependency_sources": [
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "source_ranges": [
+        [
+          51,
+          53
+        ],
+        [
+          59,
+          61
+        ],
+        [
+          64,
+          66
+        ]
+      ],
+      "scope": "Decimal normalization and physical identity."
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "source_ranges": [
+        [
+          78,
+          119
+        ],
+        [
+          178,
+          189
+        ],
+        [
+          201,
+          207
+        ],
+        [
+          217,
+          233
+        ],
+        [
+          1256,
+          1256
+        ],
+        [
+          1367,
+          1367
+        ]
+      ],
+      "scope": "S owner callbacks and use sites; W2 pending."
+    }
+  ],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 10596,
+      "source_span": [
+        2639,
+        8,
+        2651,
+        46
+      ],
+      "procedure": "OA78",
+      "original_operation": "If",
+      "original_context": "OA-SC89",
+      "interpretation": "Only None triggers new row with supplied first geometry and A source/stop, fresh empty a_causes; existing geometry unchanged.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2639-L2651",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 81,
+        "heading": "OA78"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10634,
+      "source_span": [
+        2653,
+        8,
+        2654,
+        34
+      ],
+      "procedure": "OA78",
+      "original_operation": "If",
+      "original_context": "OA-SC89",
+      "interpretation": "Full tuple membership (source_time,exact stop) determines duplicate; append only if absent.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2653-L2654",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 81,
+        "heading": "OA78"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10668,
+      "source_span": [
+        2661,
+        8,
+        2662,
+        18
+      ],
+      "procedure": "OA79",
+      "original_operation": "If",
+      "original_context": "OA-SC90",
+      "interpretation": "None A stop returns before independent Order search.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2661-L2662",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 84,
+        "heading": "OA79"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 15,
+          "transition": "OAS05"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10685,
+      "source_span": [
+        2665,
+        8,
+        2666,
+        18
+      ],
+      "procedure": "OA79",
+      "original_operation": "If",
+      "original_context": "OA-SC90",
+      "interpretation": "None Order match returns without registration; non-null does not require crossed Order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2665-L2666",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 84,
+        "heading": "OA79"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 15,
+          "transition": "OAS05"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10730,
+      "source_span": [
+        2683,
+        8,
+        2684,
+        62
+      ],
+      "procedure": "OA81",
+      "original_operation": "If",
+      "original_context": "OA-SC91",
+      "interpretation": "Exact bearish selects high strict-greater branch, all other directions low strict-less.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2683-L2684",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 90,
+        "heading": "OA81"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10784,
+      "source_span": [
+        2695,
+        8,
+        2705,
+        79
+      ],
+      "procedure": "OA82",
+      "original_operation": "If",
+      "original_context": "OA-SC92",
+      "interpretation": "Use index only if right>left AND lower_index is not None, in order; falsey non-null index is still used.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Index strict search contract owner; no retry after indexed miss.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2695-L2705",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10785,
+      "source_span": [
+        2695,
+        11,
+        2695,
+        56
+      ],
+      "procedure": "OA82",
+      "original_operation": "BoolOp",
+      "original_context": "OA-SC92",
+      "interpretation": "AND nonempty index interval then lower index non-null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Index strict search contract owner; no retry after indexed miss.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2695-L2695",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10795,
+      "source_span": [
+        2697,
+        16,
+        2699,
+        68
+      ],
+      "procedure": "OA82",
+      "original_operation": "IfExp",
+      "original_context": "OA-SC92",
+      "interpretation": "Conditional expression chooses index method by exact bearish.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2697-L2699",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10814,
+      "source_span": [
+        2701,
+        12,
+        2702,
+        27
+      ],
+      "procedure": "OA82",
+      "original_operation": "If",
+      "original_context": "OA-SC92",
+      "interpretation": "None position returns immediately, no linear retry after indexed miss; zero valid.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2701-L2702",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10843,
+      "source_span": [
+        2707,
+        8,
+        2711,
+        83
+      ],
+      "procedure": "OA82",
+      "original_operation": "For",
+      "original_context": "OA-SC92",
+      "interpretation": "Otherwise traverse materialized lower[left:right] slice in input order, even empty/reversed bounds.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Lower slice chronology and alignment owner dependency.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2707-L2711",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 10851,
+      "source_span": [
+        2708,
+        12,
+        2711,
+        83
+      ],
+      "procedure": "OA82",
+      "original_operation": "If",
+      "original_context": "OA-SC92",
+      "interpretation": "Call OA81 each row, stop at first strict crossing; no equality crossing.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2708-L2711",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2682-L2685"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10597,
+      "source_span": [
+        2639,
+        11,
+        2639,
+        24
+      ],
+      "procedure": "OA78",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "OA-SC89",
+      "interpretation": "Entry is None, not falsey.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2639-L2639",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 81,
+        "heading": "OA78"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10635,
+      "source_span": [
+        2653,
+        11,
+        2653,
+        32
+      ],
+      "procedure": "OA78",
+      "original_operation": [
+        "NotIn"
+      ],
+      "original_context": "OA-SC89",
+      "interpretation": "Cause tuple absent from list.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2653-L2653",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 81,
+        "heading": "OA78"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10669,
+      "source_span": [
+        2661,
+        11,
+        2661,
+        25
+      ],
+      "procedure": "OA79",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "OA-SC90",
+      "interpretation": "A stop is None.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2661-L2661",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 84,
+        "heading": "OA79"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 15,
+          "transition": "OAS05"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10686,
+      "source_span": [
+        2665,
+        11,
+        2665,
+        30
+      ],
+      "procedure": "OA79",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "OA-SC90",
+      "interpretation": "Order match is None.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2665-L2665",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 84,
+        "heading": "OA79"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 15,
+          "transition": "OAS05"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10731,
+      "source_span": [
+        2683,
+        11,
+        2683,
+        44
+      ],
+      "procedure": "OA81",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "OA-SC91",
+      "interpretation": "Direction exact bearish.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2683-L2683",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 90,
+        "heading": "OA81"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10736,
+      "source_span": [
+        2684,
+        19,
+        2684,
+        62
+      ],
+      "procedure": "OA81",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "OA-SC91",
+      "interpretation": "Normalized high > level.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2684-L2684",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L51-L53"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 90,
+        "heading": "OA81"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10745,
+      "source_span": [
+        2685,
+        15,
+        2685,
+        57
+      ],
+      "procedure": "OA81",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "OA-SC91",
+      "interpretation": "Normalized low < level.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2685-L2685",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L51-L53"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 90,
+        "heading": "OA81"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10786,
+      "source_span": [
+        2695,
+        11,
+        2695,
+        23
+      ],
+      "procedure": "OA82",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "OA-SC92",
+      "interpretation": "Right>left.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Index strict search contract owner; no retry after indexed miss.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2695-L2695",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10789,
+      "source_span": [
+        2695,
+        28,
+        2695,
+        56
+      ],
+      "procedure": "OA82",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC92",
+      "interpretation": "lower_index is not None.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Index strict search contract owner; no retry after indexed miss.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2695-L2695",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10796,
+      "source_span": [
+        2698,
+        19,
+        2698,
+        52
+      ],
+      "procedure": "OA82",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "OA-SC92",
+      "interpretation": "Direction equals bearish.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2698-L2698",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 10815,
+      "source_span": [
+        2701,
+        15,
+        2701,
+        31
+      ],
+      "procedure": "OA82",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "OA-SC92",
+      "interpretation": "Position is None triggers immediate return.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2701-L2701",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 10882,
+      "source_span": [
+        2690,
+        9,
+        2690,
+        46
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "OA-SC92",
+      "interpretation": "Optional type annotation union; no numeric bitwise operation or market decision.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2690-L2690",
+      "dependency_anchors": [],
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 10559,
+      "source_span": [
+        2629,
+        22,
+        2629,
+        50
+      ],
+      "procedure": "OA78",
+      "original_operation": "getattr",
+      "original_context": "OA-SC89",
+      "interpretation": "Read required A source_time before unpacking match and stop resolver.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2629-L2629",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 81,
+        "heading": "OA78"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10574,
+      "source_span": [
+        2635,
+        12,
+        2635,
+        49
+      ],
+      "procedure": "OA78",
+      "original_operation": "self._order_stop",
+      "original_context": "OA-SC89",
+      "interpretation": "Call stop resolver eagerly before checking whether physical identity already exists; unpack triple.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Chronology canonical stop called even for existing identity, exceptions propagate before cause update.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2635-L2635",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2670-L2679"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 81,
+        "heading": "OA78"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10581,
+      "source_span": [
+        2636,
+        19,
+        2636,
+        43
+      ],
+      "procedure": "OA78",
+      "original_operation": "reaction_identity",
+      "original_context": "OA-SC89",
+      "interpretation": "Normalize physical reaction pair.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2636-L2636",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L64-L66"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 81,
+        "heading": "OA78"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10591,
+      "source_span": [
+        2638,
+        16,
+        2638,
+        46
+      ],
+      "procedure": "OA78",
+      "original_operation": "self.order_audit.get",
+      "original_context": "OA-SC89",
+      "interpretation": "Read existing S audit entry by identity, default None.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2638-L2638",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 81,
+        "heading": "OA78"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10629,
+      "source_span": [
+        2652,
+        19,
+        2652,
+        51
+      ],
+      "procedure": "OA78",
+      "original_operation": "entry.setdefault",
+      "original_context": "OA-SC89",
+      "interpretation": "Use setdefault to retain existing a_causes object (including empty list); missing creates fresh list.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Existing a_causes mutable list expected; no validation.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2652-L2652",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 81,
+        "heading": "OA78"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10639,
+      "source_span": [
+        2654,
+        12,
+        2654,
+        34
+      ],
+      "procedure": "OA78",
+      "original_operation": "a_causes.append",
+      "original_context": "OA-SC89",
+      "interpretation": "Append same two-field tuple to cause list in place, no sort or rewrite first selected fields.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2654-L2654",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 81,
+        "heading": "OA78"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10652,
+      "source_span": [
+        2659,
+        18,
+        2659,
+        52
+      ],
+      "procedure": "OA79",
+      "original_operation": "as_decimal",
+      "original_context": "OA-SC90",
+      "interpretation": "Normalize required zone price using as_decimal before computing confirmation/stop.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2659-L2659",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L51-L53"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 84,
+        "heading": "OA79"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 15,
+          "transition": "OAS05"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10654,
+      "source_span": [
+        2659,
+        29,
+        2659,
+        51
+      ],
+      "procedure": "OA79",
+      "original_operation": "getattr",
+      "original_context": "OA-SC90",
+      "interpretation": "Normalize required zone price using as_decimal before computing confirmation/stop.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2659-L2659",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L51-L53"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 84,
+        "heading": "OA79"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 15,
+          "transition": "OAS05"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10660,
+      "source_span": [
+        2660,
+        17,
+        2660,
+        77
+      ],
+      "procedure": "OA79",
+      "original_operation": "self._first_a_stop",
+      "original_context": "OA-SC90",
+      "interpretation": "Resolve A confirmation then call first A stop with normalized price and confirmation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "S _a_confirmation_time int ordinal requires 1<=number<=len trend reactions; _first_a_stop exact lower crossing; owner time range inclusive start/exclusive end, not unconditional strictly later timestamp.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2660-L2660",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L201-L207",
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L217-L233"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 84,
+        "heading": "OA79"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 15,
+          "transition": "OAS05"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10664,
+      "source_span": [
+        2660,
+        45,
+        2660,
+        76
+      ],
+      "procedure": "OA79",
+      "original_operation": "self._a_confirmation_time",
+      "original_context": "OA-SC90",
+      "interpretation": "Resolve A confirmation then call first A stop with normalized price and confirmation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "S _a_confirmation_time int ordinal requires 1<=number<=len trend reactions; _first_a_stop exact lower crossing; owner time range inclusive start/exclusive end, not unconditional strictly later timestamp.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2660-L2660",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L201-L207",
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L217-L233"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 84,
+        "heading": "OA79"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 15,
+          "transition": "OAS05"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10681,
+      "source_span": [
+        2664,
+        22,
+        2664,
+        64
+      ],
+      "procedure": "OA79",
+      "original_operation": "self._first_order_after",
+      "original_context": "OA-SC90",
+      "interpretation": "Use third field exact stop from triple; call OA76 at that event.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2664-L2664",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2546-L2598"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 84,
+        "heading": "OA79"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 15,
+          "transition": "OAS05"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10691,
+      "source_span": [
+        2667,
+        8,
+        2667,
+        72
+      ],
+      "procedure": "OA79",
+      "original_operation": "self._record_a_order_audit",
+      "original_context": "OA-SC90",
+      "interpretation": "Delegate OA78 with zone,exact A stop and match; implicit None.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2667-L2667",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2622-L2654"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 84,
+        "heading": "OA79"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 15,
+          "transition": "OAS05"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10705,
+      "source_span": [
+        2673,
+        15,
+        2679,
+        9
+      ],
+      "procedure": "OA80",
+      "original_operation": "self.chronology.canonical_order_stop",
+      "original_context": "OA-SC91",
+      "interpretation": "Delegate chronology.canonical_order_stop with order_direction,number,reaction,opposite stream,start_index keyword; return result unchanged, no local cache.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Chronology canonical stop owner; source-only local delegation.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2673-L2679",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 87,
+        "heading": "OA80"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10737,
+      "source_span": [
+        2684,
+        19,
+        2684,
+        54
+      ],
+      "procedure": "OA81",
+      "original_operation": "as_decimal",
+      "original_context": "OA-SC91",
+      "interpretation": "Normalize high.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2684-L2684",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L51-L53"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 90,
+        "heading": "OA81"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10739,
+      "source_span": [
+        2684,
+        30,
+        2684,
+        53
+      ],
+      "procedure": "OA81",
+      "original_operation": "getattr",
+      "original_context": "OA-SC91",
+      "interpretation": "Read required high.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2684-L2684",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L51-L53"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 90,
+        "heading": "OA81"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10746,
+      "source_span": [
+        2685,
+        15,
+        2685,
+        49
+      ],
+      "procedure": "OA81",
+      "original_operation": "as_decimal",
+      "original_context": "OA-SC91",
+      "interpretation": "Normalize low.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2685-L2685",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L51-L53"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 90,
+        "heading": "OA81"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10748,
+      "source_span": [
+        2685,
+        26,
+        2685,
+        48
+      ],
+      "procedure": "OA81",
+      "original_operation": "getattr",
+      "original_context": "OA-SC91",
+      "interpretation": "Read required low.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2685-L2685",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L51-L53"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 90,
+        "heading": "OA81"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10764,
+      "source_span": [
+        2692,
+        21,
+        2692,
+        56
+      ],
+      "procedure": "OA82",
+      "original_operation": "max",
+      "original_context": "OA-SC92",
+      "interpretation": "Effective scan start max(confirmation,range_start) without normalization.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2692-L2692",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10771,
+      "source_span": [
+        2693,
+        15,
+        2693,
+        56
+      ],
+      "procedure": "OA82",
+      "original_operation": "bisect_left",
+      "original_context": "OA-SC92",
+      "interpretation": "Lower bound lower_times at effective start, includes equality.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Lower timestamps sorted and aligned by owner.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2693-L2693",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10778,
+      "source_span": [
+        2694,
+        16,
+        2694,
+        61
+      ],
+      "procedure": "OA82",
+      "original_operation": "bisect_left",
+      "original_context": "OA-SC92",
+      "interpretation": "Lower bound lower_times at range_end, excludes equality.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2694-L2694",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10800,
+      "source_span": [
+        2697,
+        16,
+        2697,
+        66
+      ],
+      "procedure": "OA82",
+      "original_operation": "self.lower_index.first_greater",
+      "original_context": "OA-SC92",
+      "interpretation": "Indexed strict greater call with unchanged level.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2697-L2697",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10807,
+      "source_span": [
+        2699,
+        21,
+        2699,
+        68
+      ],
+      "procedure": "OA82",
+      "original_operation": "self.lower_index.first_less",
+      "original_context": "OA-SC92",
+      "interpretation": "Indexed strict less call with unchanged level.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2699-L2699",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10828,
+      "source_span": [
+        2704,
+        20,
+        2704,
+        48
+      ],
+      "procedure": "OA82",
+      "original_operation": "self._main_index",
+      "original_context": "OA-SC92",
+      "interpretation": "Resolve indexed exact event via lower_times[position], map main via S owner chronology.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Returned position assumed valid, main index mapping uses owner default.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2704-L2704",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L178-L179"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10835,
+      "source_span": [
+        2705,
+        26,
+        2705,
+        67
+      ],
+      "procedure": "OA82",
+      "original_operation": "getattr",
+      "original_context": "OA-SC92",
+      "interpretation": "Read main candle timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2705-L2705",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10852,
+      "source_span": [
+        2708,
+        15,
+        2708,
+        52
+      ],
+      "procedure": "OA82",
+      "original_operation": "self._order_stop_crossed",
+      "original_context": "OA-SC92",
+      "interpretation": "Call OA81 each row, stop at first strict crossing; no equality crossing.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2708-L2708",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2682-L2685"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10859,
+      "source_span": [
+        2709,
+        29,
+        2709,
+        55
+      ],
+      "procedure": "OA82",
+      "original_operation": "getattr",
+      "original_context": "OA-SC92",
+      "interpretation": "Read required crossing row timestamp only on successful predicate.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2709-L2709",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10865,
+      "source_span": [
+        2710,
+        24,
+        2710,
+        52
+      ],
+      "procedure": "OA82",
+      "original_operation": "self._main_index",
+      "original_context": "OA-SC92",
+      "interpretation": "Map row event to main index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Owner main mapping and candle array validity.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2710-L2710",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L178-L179"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 10872,
+      "source_span": [
+        2711,
+        30,
+        2711,
+        71
+      ],
+      "procedure": "OA82",
+      "original_operation": "getattr",
+      "original_context": "OA-SC92",
+      "interpretation": "Read main candle timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source eligibility, chronological selection, identity, strict crossing, provenance or state availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2711-L2711",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/06_Order_A.md",
+        "line": 93,
+        "heading": "OA82"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 16,
+          "transition": "OAS06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 68,
+          "transition": "OLR03"
+        }
+      ]
+    }
+  ],
+  "supplemental_items": [
+    {
+      "supplemental_id": "B05-26-S1",
+      "source_span": [
+        2629,
+        2654
+      ],
+      "discovery_reason": "Source-first review of evaluation order, mutation, aliasing, precise chronology and conditional owner contract beyond site labels.",
+      "interpretation": "Read source, unpack match, eagerly derive canonical stop before physical identity lookup even if row exists. New row retains supplied number/reaction/confirmation/stop geometry and first A source/stop, no stop_cross field or confirmation index insertion. Existing geometry and selected fields unchanged; setdefault list, distinct tuple append in input order. No crossing calculation in OA78.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2629-L2654"
+    },
+    {
+      "supplemental_id": "B05-26-S2",
+      "source_span": [
+        2659,
+        2667
+      ],
+      "discovery_reason": "Source-first review of evaluation order, mutation, aliasing, precise chronology and conditional owner contract beyond site labels.",
+      "interpretation": "Normalize A price, resolve owner A confirmation then first A stop; None exits. Unpack third exact event, OA76; None exits; otherwise OA78. Owner first A stop uses inclusive lower start and exclusive range end, so do not claim strictly later timestamp than A confirmation. No crossing eligibility required to register.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2659-L2667"
+    },
+    {
+      "supplemental_id": "B05-26-S3",
+      "source_span": [
+        2670,
+        2679
+      ],
+      "discovery_reason": "Source-first review of evaluation order, mutation, aliasing, precise chronology and conditional owner contract beyond site labels.",
+      "interpretation": "Forward exact chronology canonical stop arguments with start_index keyword, return unchanged; no local caching, price conversion or fallback.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2670-L2679"
+    },
+    {
+      "supplemental_id": "B05-26-S4",
+      "source_span": [
+        2682,
+        2685
+      ],
+      "discovery_reason": "Source-first review of evaluation order, mutation, aliasing, precise chronology and conditional owner contract beyond site labels.",
+      "interpretation": "Exact bearish only => normalized high>level; otherwise normalized low<level. Read only selected attribute, strict inequality, no conversion of supplied level.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2682-L2685"
+    },
+    {
+      "supplemental_id": "B05-26-S5",
+      "source_span": [
+        2692,
+        2705
+      ],
+      "discovery_reason": "Source-first review of evaluation order, mutation, aliasing, precise chronology and conditional owner contract beyond site labels.",
+      "interpretation": "Compute [max(confirmation,range_start),range_end) lower bounds. If right>left and index non-null, exact bearish greater else less; indexed miss returns None immediately, no scan retry; found position uses lower_times exact event, owner main mapping, candle.timestamp.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2692-L2705"
+    },
+    {
+      "supplemental_id": "B05-26-S6",
+      "source_span": [
+        2707,
+        2712
+      ],
+      "discovery_reason": "Source-first review of evaluation order, mutation, aliasing, precise chronology and conditional owner contract beyond site labels.",
+      "interpretation": "Otherwise traverse sliced lower rows in order; strict OA81 predicate, read actual row.timestamp only on first crossing, map main and candle timestamp, return triple; exhaustion None. No local cache or fabricated crossing.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2707-L2712"
+    },
+    {
+      "supplemental_id": "B05-26-S7",
+      "source_span": [
+        2622,
+        2714
+      ],
+      "discovery_reason": "Source-first review of evaluation order, mutation, aliasing, precise chronology and conditional owner contract beyond site labels.",
+      "interpretation": "S provisional ledger and shared crossing distinct operations; exact level representation preserved, no local rollback/catch. Owner chronology, canonical stop and lower-index consistency remain W2.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2622-L2714"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B05-26-F01",
+      "span": [
+        2629,
+        2654
+      ],
+      "description": "Specify eager stop, first geometry, no crossing/index registration and cause list mutation.",
+      "document": "Algorithms/V3/06_Order_A.md",
+      "line": 81,
+      "prior_blob": "532b6d32184ff7f27b2c1306724a11039c7fc4cf",
+      "resolution": "Active contract amended at line 81 and related clauses; rechecked against pinned source.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2629-L2654",
+      "recheck": "W2 cross-owner and W3 separate forensic review pending."
+    },
+    {
+      "id": "B05-26-F02",
+      "span": [
+        2659,
+        2667
+      ],
+      "description": "Correct ambiguous after-confirmation timestamp to owner inclusive start, and exact triple/use gate.",
+      "document": "Algorithms/V3/06_Order_A.md",
+      "line": 84,
+      "prior_blob": "532b6d32184ff7f27b2c1306724a11039c7fc4cf",
+      "resolution": "Active contract amended at line 84 and related clauses; rechecked against pinned source.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2659-L2667",
+      "recheck": "W2 cross-owner and W3 separate forensic review pending."
+    },
+    {
+      "id": "B05-26-F03",
+      "span": [
+        2670,
+        2685
+      ],
+      "description": "Specify delegation and direction/selected price conversion.",
+      "document": "Algorithms/V3/06_Order_A.md",
+      "line": 87,
+      "prior_blob": "532b6d32184ff7f27b2c1306724a11039c7fc4cf",
+      "resolution": "Active contract amended at line 87 and related clauses; rechecked against pinned source.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2670-L2685",
+      "recheck": "W2 cross-owner and W3 separate forensic review pending."
+    },
+    {
+      "id": "B05-26-F04",
+      "span": [
+        2692,
+        2712
+      ],
+      "description": "Specify strict price, inclusive start, index miss, exact timestamp source and no retry.",
+      "document": "Algorithms/V3/06_Order_A.md",
+      "line": 93,
+      "prior_blob": "532b6d32184ff7f27b2c1306724a11039c7fc4cf",
+      "resolution": "Active contract amended at line 93 and related clauses; rechecked against pinned source.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2692-L2712",
+      "recheck": "W2 cross-owner and W3 separate forensic review pending."
+    },
+    {
+      "id": "B05-26-F05",
+      "span": [
+        2622,
+        2667
+      ],
+      "description": "Correct OAS06 conflation of provisional registration and later crossing.",
+      "document": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+      "line": 16,
+      "prior_blob": "c2dfad275e64e670cc2603c5e92692594a6a88d2",
+      "resolution": "Active contract amended at line 16 and related clauses; rechecked against pinned source.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2622-L2667",
+      "recheck": "W2 cross-owner and W3 separate forensic review pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: S initial ledger consumers, exact chronology and canonical stop owner, strict lower index versus scan, main-index mapping, provisional geometry and accepted provenance. No runtime equivalence claim.",
+    "W3 separate source-first forensic review pending. No RAW, runtime, differential or benchmark."
+  ]
+}

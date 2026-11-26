@@ -1,0 +1,2885 @@
+{
+  "checkpoint": 40,
+  "batch": "B04",
+  "sub_batch": "B04-03",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "248b8c3b5d1061d4a5f04123f0fd08b5825dff40",
+  "path": "engine/pipeline/s_zone_detector.py",
+  "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+  "source_range": [
+    403,
+    586
+  ],
+  "procedures": [
+    "S20",
+    "S21",
+    "S22",
+    "S23"
+  ],
+  "review_pass": "W1 source-first local owner review; W3 pending",
+  "status": "PASS",
+  "scope": "Local source contracts only; cross-owner and separate forensic gate not certified.",
+  "counts": {
+    "original_rows": 80,
+    "by_category": {
+      "branches": 20,
+      "comparisons": 15,
+      "arithmetic": 8,
+      "calls": 37
+    },
+    "supplemental_items": 8
+  },
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 1702,
+      "source_span": [
+        412,
+        8,
+        449,
+        34
+      ],
+      "procedure": "S20",
+      "original_operation": "For",
+      "original_context": "S-SC20",
+      "interpretation": "Traverse stable sorted Reset events strictly inside (A stop,deadline).",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L412-L449",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1727,
+      "source_span": [
+        415,
+        12,
+        416,
+        24
+      ],
+      "procedure": "S20",
+      "original_operation": "If",
+      "original_context": "S-SC20",
+      "interpretation": "Skip missing owner confirmation or confirmation later than A stop.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L415-L416",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1728,
+      "source_span": [
+        415,
+        15,
+        415,
+        78
+      ],
+      "procedure": "S20",
+      "original_operation": "BoolOp",
+      "original_context": "S-SC20",
+      "interpretation": "Owner confirmation null first, then compare with stop.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L415-L415",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1744,
+      "source_span": [
+        418,
+        12,
+        419,
+        24
+      ],
+      "procedure": "S20",
+      "original_operation": "If",
+      "original_context": "S-SC20",
+      "interpretation": "Skip if owner Reset list truthy and first event<=A stop.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L418-L419",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1745,
+      "source_span": [
+        418,
+        15,
+        418,
+        63
+      ],
+      "procedure": "S20",
+      "original_operation": "BoolOp",
+      "original_context": "S-SC20",
+      "interpretation": "Owner Reset list truthiness precedes first element access.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L418-L418",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1759,
+      "source_span": [
+        421,
+        12,
+        422,
+        24
+      ],
+      "procedure": "S20",
+      "original_operation": "If",
+      "original_context": "S-SC20",
+      "interpretation": "Null leg skips before lower bounds.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L421-L422",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1786,
+      "source_span": [
+        427,
+        16,
+        429,
+        86
+      ],
+      "procedure": "S20",
+      "original_operation": "IfExp",
+      "original_context": "S-SC21",
+      "interpretation": "Exact bullish first_less else first_greater, direct index call.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L427-L429",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1805,
+      "source_span": [
+        431,
+        12,
+        432,
+        24
+      ],
+      "procedure": "S20",
+      "original_operation": "If",
+      "original_context": "S-SC21",
+      "interpretation": "Null first crossing skips entire Reset, no fallback.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L431-L432",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1816,
+      "source_span": [
+        434,
+        12,
+        435,
+        24
+      ],
+      "procedure": "S20",
+      "original_operation": "If",
+      "original_context": "S-SC21",
+      "interpretation": "Unqualified first hit skips Reset, no recross.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L434-L435",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1855,
+      "source_span": [
+        448,
+        12,
+        449,
+        34
+      ],
+      "procedure": "S20",
+      "original_operation": "If",
+      "original_context": "S-SC22",
+      "interpretation": "Replace winner only if absent or crossing strictly earlier.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L448-L449",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1856,
+      "source_span": [
+        448,
+        15,
+        448,
+        59
+      ],
+      "procedure": "S20",
+      "original_operation": "BoolOp",
+      "original_context": "S-SC22",
+      "interpretation": "Missing winner short circuits comparison, equal event retains prior.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L448-L448",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1909,
+      "source_span": [
+        460,
+        12,
+        461,
+        77
+      ],
+      "procedure": "S21",
+      "original_operation": "BoolOp",
+      "original_context": "S-SC23",
+      "interpretation": "Require in-range Blue lower-bound position then <=crossing.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L460-L461",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 104,
+        "heading": "_type4_has_blue"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1963,
+      "source_span": [
+        484,
+        16,
+        484,
+        67
+      ],
+      "procedure": "S22",
+      "original_operation": "comprehension",
+      "original_context": "S-SC24",
+      "interpretation": "Collect aligned sorted trend rows strictly inside time interval.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L484-L484",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": "engine/pipeline/s_zone_detector.py:486:15:Compare:filter",
+      "source_span": [
+        486,
+        15,
+        486,
+        42
+      ],
+      "procedure": "S22",
+      "original_operation": "ComprehensionFilter",
+      "original_context": "S-SC24",
+      "interpretation": "Keep only Break index>=A-stop main index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L486-L486",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1979,
+      "source_span": [
+        489,
+        8,
+        531,
+        13
+      ],
+      "procedure": "S22",
+      "original_operation": "For",
+      "original_context": "S-SC25",
+      "interpretation": "Enumerate filtered aligned list in sorted order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L489-L531",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2024,
+      "source_span": [
+        499,
+        16,
+        501,
+        29
+      ],
+      "procedure": "S22",
+      "original_operation": "IfExp",
+      "original_context": "S-SC25",
+      "interpretation": "Next filtered aligned row exists selects confirmation, otherwise deadline.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L499-L501",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2046,
+      "source_span": [
+        504,
+        12,
+        505,
+        24
+      ],
+      "procedure": "S22",
+      "original_operation": "If",
+      "original_context": "S-SC25",
+      "interpretation": "Start>=end skips empty or reversed window.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L504-L505",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2067,
+      "source_span": [
+        510,
+        16,
+        512,
+        93
+      ],
+      "procedure": "S22",
+      "original_operation": "IfExp",
+      "original_context": "S-SC26",
+      "interpretation": "Exact bullish first_less else first_greater.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L510-L512",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2086,
+      "source_span": [
+        514,
+        12,
+        515,
+        24
+      ],
+      "procedure": "S22",
+      "original_operation": "If",
+      "original_context": "S-SC26",
+      "interpretation": "Null first lower crossing skips aligned row, no fallback.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L514-L515",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2097,
+      "source_span": [
+        517,
+        12,
+        520,
+        24
+      ],
+      "procedure": "S22",
+      "original_operation": "If",
+      "original_context": "S-SC26",
+      "interpretation": "First hit without public Blue skips row, no recross.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L517-L520",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1729,
+      "source_span": [
+        415,
+        15,
+        415,
+        41
+      ],
+      "procedure": "S20",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "S-SC20",
+      "interpretation": "Owner confirmation identity null rejects.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L415-L415",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1732,
+      "source_span": [
+        415,
+        45,
+        415,
+        78
+      ],
+      "procedure": "S20",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "S-SC20",
+      "interpretation": "Owner confirmation>A stop rejects, equality accepted.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L415-L415",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1747,
+      "source_span": [
+        418,
+        32,
+        418,
+        63
+      ],
+      "procedure": "S20",
+      "original_operation": [
+        "LtE"
+      ],
+      "original_context": "S-SC20",
+      "interpretation": "Earliest owner Reset<=A stop rejects including equal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L418-L418",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1760,
+      "source_span": [
+        421,
+        15,
+        421,
+        26
+      ],
+      "procedure": "S20",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "S-SC20",
+      "interpretation": "Reset leg identity null skips.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L421-L421",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1787,
+      "source_span": [
+        428,
+        19,
+        428,
+        46
+      ],
+      "procedure": "S20",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "S-SC21",
+      "interpretation": "Exact bullish selects strict Low crossing.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L428-L428",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1806,
+      "source_span": [
+        431,
+        15,
+        431,
+        40
+      ],
+      "procedure": "S20",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "S-SC21",
+      "interpretation": "Crossing position identity null, zero valid.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L431-L431",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1857,
+      "source_span": [
+        448,
+        15,
+        448,
+        29
+      ],
+      "procedure": "S20",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "S-SC22",
+      "interpretation": "Winner identity null permits first assignment.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L448-L448",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1860,
+      "source_span": [
+        448,
+        33,
+        448,
+        59
+      ],
+      "procedure": "S20",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "S-SC22",
+      "interpretation": "Candidate final exact event strictly earlier replaces.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L448-L448",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1910,
+      "source_span": [
+        460,
+        12,
+        460,
+        61
+      ],
+      "procedure": "S21",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "S-SC23",
+      "interpretation": "Blue lower-bound position strictly below count.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L460-L460",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 104,
+        "heading": "_type4_has_blue"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1916,
+      "source_span": [
+        461,
+        16,
+        461,
+        77
+      ],
+      "procedure": "S21",
+      "original_operation": [
+        "LtE"
+      ],
+      "original_context": "S-SC23",
+      "interpretation": "First eligible Blue formation<=crossing inclusive.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L461-L461",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 104,
+        "heading": "_type4_has_blue"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1976,
+      "source_span": [
+        486,
+        15,
+        486,
+        42
+      ],
+      "procedure": "S22",
+      "original_operation": [
+        "GtE"
+      ],
+      "original_context": "S-SC24",
+      "interpretation": "Break index>=A-stop index includes same main.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L486-L486",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2025,
+      "source_span": [
+        500,
+        19,
+        500,
+        46
+      ],
+      "procedure": "S22",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "S-SC25",
+      "interpretation": "Position+1 strictly below filtered aligned count.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L500-L500",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2047,
+      "source_span": [
+        504,
+        15,
+        504,
+        41
+      ],
+      "procedure": "S22",
+      "original_operation": [
+        "GtE"
+      ],
+      "original_context": "S-SC25",
+      "interpretation": "Start>=end excludes equality.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L504-L504",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2068,
+      "source_span": [
+        511,
+        19,
+        511,
+        46
+      ],
+      "procedure": "S22",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "S-SC26",
+      "interpretation": "Exact bullish chooses first_less.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L511-L511",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2087,
+      "source_span": [
+        514,
+        15,
+        514,
+        40
+      ],
+      "procedure": "S22",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "S-SC26",
+      "interpretation": "Crossing position identity null skips.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L514-L514",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1817,
+      "source_span": [
+        434,
+        15,
+        434,
+        73
+      ],
+      "procedure": "S20",
+      "original_operation": "Not",
+      "original_context": "S-SC21",
+      "interpretation": "Negate S19 qualification to skip unqualified first hit.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L434-L434",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1863,
+      "source_span": [
+        448,
+        43,
+        448,
+        45
+      ],
+      "procedure": "S20",
+      "original_operation": "USub",
+      "original_context": "S-SC22",
+      "interpretation": "Negative one selects candidate exact crossing field.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L448-L448",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1867,
+      "source_span": [
+        448,
+        56,
+        448,
+        58
+      ],
+      "procedure": "S20",
+      "original_operation": "USub",
+      "original_context": "S-SC22",
+      "interpretation": "Negative one selects winner exact crossing field.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L448-L448",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1874,
+      "source_span": [
+        407,
+        9,
+        407,
+        85
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "S-SC20",
+      "interpretation": "Nullable/type-union annotation, not executable price/time arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Type annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L407-L407",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2026,
+      "source_span": [
+        500,
+        19,
+        500,
+        31
+      ],
+      "procedure": "S22",
+      "original_operation": "Add",
+      "original_context": "S-SC25",
+      "interpretation": "Position+1 tests next aligned row existence.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L500-L500",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2035,
+      "source_span": [
+        499,
+        24,
+        499,
+        36
+      ],
+      "procedure": "S22",
+      "original_operation": "Add",
+      "original_context": "S-SC25",
+      "interpretation": "Position+1 accesses next aligned confirmation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L499-L499",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2098,
+      "source_span": [
+        517,
+        15,
+        517,
+        69
+      ],
+      "procedure": "S22",
+      "original_operation": "Not",
+      "original_context": "S-SC26",
+      "interpretation": "Negate S21 qualification to skip first hit without Blue.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L517-L517",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2128,
+      "source_span": [
+        468,
+        9,
+        468,
+        75
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "S-SC24",
+      "interpretation": "Nullable/type-union annotation, not executable price/time arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Type annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L468-L468",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 1690,
+      "source_span": [
+        410,
+        15,
+        410,
+        75
+      ],
+      "procedure": "S20",
+      "original_operation": "bisect_right",
+      "original_context": "S-SC20",
+      "interpretation": "Upper bound Reset event times at A stop excludes equality.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L410-L410",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1697,
+      "source_span": [
+        411,
+        16,
+        411,
+        71
+      ],
+      "procedure": "S20",
+      "original_operation": "bisect_left",
+      "original_context": "S-SC20",
+      "interpretation": "Lower bound Reset times at deadline excludes equality.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L411-L411",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1714,
+      "source_span": [
+        413,
+        26,
+        413,
+        63
+      ],
+      "procedure": "S20",
+      "original_operation": "int",
+      "original_context": "S-SC20",
+      "interpretation": "Integer-convert Reset owner First.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L413-L413",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1716,
+      "source_span": [
+        413,
+        30,
+        413,
+        62
+      ],
+      "procedure": "S20",
+      "original_operation": "getattr",
+      "original_context": "S-SC20",
+      "interpretation": "Read Reset.from_first_idx.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L413-L413",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1722,
+      "source_span": [
+        414,
+        33,
+        414,
+        86
+      ],
+      "procedure": "S20",
+      "original_operation": "self._opposite_confirmation_by_first.get",
+      "original_context": "S-SC20",
+      "interpretation": "Lookup owner confirmation, absent defaults null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L414-L414",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1738,
+      "source_span": [
+        417,
+        27,
+        417,
+        83
+      ],
+      "procedure": "S20",
+      "original_operation": "self._opposite_reset_times_by_owner.get",
+      "original_context": "S-SC20",
+      "interpretation": "Lookup owner Reset times, default empty tuple.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L417-L417",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1755,
+      "source_span": [
+        420,
+        18,
+        420,
+        46
+      ],
+      "procedure": "S20",
+      "original_operation": "self._type3_reset_leg",
+      "original_context": "S-SC20",
+      "interpretation": "Resolve independent Break-to-Reset geometry S18.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L420-L420",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1772,
+      "source_span": [
+        424,
+        25,
+        424,
+        66
+      ],
+      "procedure": "S20",
+      "original_operation": "bisect_left",
+      "original_context": "S-SC21",
+      "interpretation": "Lower bound lower timestamps at Reset inclusive.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L424-L424",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1779,
+      "source_span": [
+        425,
+        26,
+        425,
+        65
+      ],
+      "procedure": "S20",
+      "original_operation": "bisect_left",
+      "original_context": "S-SC21",
+      "interpretation": "Lower bound at deadline exclusive.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L425-L425",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1791,
+      "source_span": [
+        427,
+        16,
+        427,
+        78
+      ],
+      "procedure": "S20",
+      "original_operation": "self.lower_index.first_less",
+      "original_context": "S-SC21",
+      "interpretation": "Query first strict Low<boundary directly on lower index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L427-L427",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1798,
+      "source_span": [
+        429,
+        21,
+        429,
+        86
+      ],
+      "procedure": "S20",
+      "original_operation": "self.lower_index.first_greater",
+      "original_context": "S-SC21",
+      "interpretation": "Query first strict High>boundary directly on lower index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L429-L429",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1818,
+      "source_span": [
+        434,
+        19,
+        434,
+        73
+      ],
+      "procedure": "S20",
+      "original_operation": "self._type3_has_trend_reaction",
+      "original_context": "S-SC21",
+      "interpretation": "Test trend confirmation in (A stop,first crossing] via S19.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L434-L434",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1826,
+      "source_span": [
+        436,
+        29,
+        436,
+        55
+      ],
+      "procedure": "S20",
+      "original_operation": "self._main_index",
+      "original_context": "S-SC21",
+      "interpretation": "Map qualified first crossing to main position.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L436-L436",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1845,
+      "source_span": [
+        443,
+        16,
+        443,
+        66
+      ],
+      "procedure": "S20",
+      "original_operation": "getattr",
+      "original_context": "S-SC22",
+      "interpretation": "Read mapped decision main timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L443-L443",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 101,
+        "heading": "_first_type3"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT02",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1903,
+      "source_span": [
+        458,
+        19,
+        458,
+        79
+      ],
+      "procedure": "S21",
+      "original_operation": "bisect_left",
+      "original_context": "S-SC23",
+      "interpretation": "Lower bound public Blue formation times at source main open.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L458-L458",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 104,
+        "heading": "_type4_has_blue"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1912,
+      "source_span": [
+        460,
+        23,
+        460,
+        61
+      ],
+      "procedure": "S21",
+      "original_operation": "len",
+      "original_context": "S-SC23",
+      "interpretation": "Read public Blue count before indexing first eligible formation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L460-L460",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 104,
+        "heading": "_type4_has_blue"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1944,
+      "source_span": [
+        480,
+        15,
+        480,
+        81
+      ],
+      "procedure": "S22",
+      "original_operation": "bisect_right",
+      "original_context": "S-SC24",
+      "interpretation": "Upper bound trend confirmations at A stop excludes equality.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L480-L480",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1951,
+      "source_span": [
+        481,
+        16,
+        481,
+        77
+      ],
+      "procedure": "S22",
+      "original_operation": "bisect_left",
+      "original_context": "S-SC24",
+      "interpretation": "Lower bound at deadline excludes equality.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L481-L481",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1986,
+      "source_span": [
+        489,
+        67,
+        489,
+        85
+      ],
+      "procedure": "S22",
+      "original_operation": "enumerate",
+      "original_context": "S-SC25",
+      "interpretation": "Enumerate filtered aligned rows in sorted order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L489-L489",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1991,
+      "source_span": [
+        490,
+        26,
+        490,
+        61
+      ],
+      "procedure": "S22",
+      "original_operation": "int",
+      "original_context": "S-SC25",
+      "interpretation": "Integer-convert aligned Break again from original reaction.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L490-L490",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1993,
+      "source_span": [
+        490,
+        30,
+        490,
+        60
+      ],
+      "procedure": "S22",
+      "original_operation": "getattr",
+      "original_context": "S-SC25",
+      "interpretation": "Read reaction.break_idx.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L490-L490",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2002,
+      "source_span": [
+        491,
+        57,
+        493,
+        13
+      ],
+      "procedure": "S22",
+      "original_operation": "self._candidate_source_last",
+      "original_context": "S-SC25",
+      "interpretation": "Select last-equal extreme over inclusive A-stop..aligned Break.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L491-L493",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2009,
+      "source_span": [
+        494,
+        30,
+        496,
+        13
+      ],
+      "procedure": "S22",
+      "original_operation": "self._candidate_event_time",
+      "original_context": "S-SC25",
+      "interpretation": "Resolve candidate event via S31 with A-stop event lower gate.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L494-L496",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2017,
+      "source_span": [
+        497,
+        27,
+        497,
+        75
+      ],
+      "procedure": "S22",
+      "original_operation": "max",
+      "original_context": "S-SC25",
+      "interpretation": "Max confirmation, candidate event, A-stop event.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L497-L497",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2029,
+      "source_span": [
+        500,
+        34,
+        500,
+        46
+      ],
+      "procedure": "S22",
+      "original_operation": "len",
+      "original_context": "S-SC25",
+      "interpretation": "Read filtered aligned count for successor guard.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L500-L500",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2042,
+      "source_span": [
+        503,
+        25,
+        503,
+        57
+      ],
+      "procedure": "S22",
+      "original_operation": "min",
+      "original_context": "S-SC25",
+      "interpretation": "Min deadline and next filtered confirmation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L503-L503",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2053,
+      "source_span": [
+        507,
+        25,
+        507,
+        68
+      ],
+      "procedure": "S22",
+      "original_operation": "bisect_left",
+      "original_context": "S-SC26",
+      "interpretation": "Lower bound candidate start inclusive.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L507-L507",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2060,
+      "source_span": [
+        508,
+        26,
+        508,
+        67
+      ],
+      "procedure": "S22",
+      "original_operation": "bisect_left",
+      "original_context": "S-SC26",
+      "interpretation": "Lower bound candidate end exclusive.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L508-L508",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2072,
+      "source_span": [
+        510,
+        16,
+        510,
+        85
+      ],
+      "procedure": "S22",
+      "original_operation": "self.lower_index.first_less",
+      "original_context": "S-SC26",
+      "interpretation": "Query first strict Low crossing directly on lower index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L510-L510",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2079,
+      "source_span": [
+        512,
+        21,
+        512,
+        93
+      ],
+      "procedure": "S22",
+      "original_operation": "self.lower_index.first_greater",
+      "original_context": "S-SC26",
+      "interpretation": "Query first strict High crossing directly on lower index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L512-L512",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2099,
+      "source_span": [
+        517,
+        19,
+        517,
+        69
+      ],
+      "procedure": "S22",
+      "original_operation": "self._type4_has_blue",
+      "original_context": "S-SC26",
+      "interpretation": "Test public Blue source main open through first crossing inclusive.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L517-L517",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2107,
+      "source_span": [
+        522,
+        29,
+        522,
+        61
+      ],
+      "procedure": "S22",
+      "original_operation": "self._main_index",
+      "original_context": "S-SC26",
+      "interpretation": "Map qualified crossing to main position.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L522-L522",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2117,
+      "source_span": [
+        528,
+        16,
+        528,
+        66
+      ],
+      "procedure": "S22",
+      "original_operation": "getattr",
+      "original_context": "S-SC26",
+      "interpretation": "Read mapped decision main timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L528-L528",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 107,
+        "heading": "_first_type4"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT03",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2185,
+      "source_span": [
+        548,
+        15,
+        584,
+        9
+      ],
+      "procedure": "S23",
+      "original_operation": "SZone",
+      "original_context": "S-SC27",
+      "interpretation": "Construct order-free Blue type4 SZone with supplied parent and candidate fields.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L548-L584",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 110,
+        "heading": "_build_type4_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT05",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2197,
+      "source_span": [
+        553,
+        27,
+        553,
+        61
+      ],
+      "procedure": "S23",
+      "original_operation": "int",
+      "original_context": "S-SC27",
+      "interpretation": "Integer-convert parent A source index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L553-L553",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 110,
+        "heading": "_build_type4_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT05",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2199,
+      "source_span": [
+        553,
+        31,
+        553,
+        60
+      ],
+      "procedure": "S23",
+      "original_operation": "getattr",
+      "original_context": "S-SC27",
+      "interpretation": "Read parent A source_index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L553-L553",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 110,
+        "heading": "_build_type4_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT05",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2204,
+      "source_span": [
+        554,
+        26,
+        554,
+        54
+      ],
+      "procedure": "S23",
+      "original_operation": "getattr",
+      "original_context": "S-SC27",
+      "interpretation": "Read parent A source_time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls crossing, event order, qualification, provenance or record construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L554-L554",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 110,
+        "heading": "_build_type4_zone"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SRT",
+          "transition": "SRT05",
+          "line": 32
+        }
+      ]
+    }
+  ],
+  "supplemental_items": [
+    {
+      "supplemental_id": "B04-03-S1",
+      "source_span": [
+        409,
+        419
+      ],
+      "discovery_reason": "Source-first review of ordered search, assignment, tie, provenance and dependency beyond original site labels.",
+      "interpretation": "Winner initially null. Stable sorted Reset traversal in strict time interval. Owner confirmation from S01 map (later duplicate First wins) must exist and <=A stop. Earliest owner Reset<=A stop rejects, even if current Reset later.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L409-L419"
+    },
+    {
+      "supplemental_id": "B04-03-S2",
+      "source_span": [
+        420,
+        437
+      ],
+      "discovery_reason": "Source-first review of ordered search, assignment, tie, provenance and dependency beyond original site labels.",
+      "interpretation": "Resolve S18 leg; direct lower_index strict query, Reset inclusive/deadline exclusive, without local null-index or empty-window guard. First hit only: if S19 false, skip Reset, no later recross. Owner ordinal from mixin map; cross-map consistency caller-owned.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L420-L437"
+    },
+    {
+      "supplemental_id": "B04-03-S3",
+      "source_span": [
+        438,
+        450
+      ],
+      "discovery_reason": "Source-first review of ordered search, assignment, tie, provenance and dependency beyond original site labels.",
+      "interpretation": "Tuple preserves source, boundary, mapped decision main, owner ordinal, Reset event and crossing. Strict comparison of final event field, equal retains first sorted candidate. No early return at first success.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L438-L450"
+    },
+    {
+      "supplemental_id": "B04-03-S4",
+      "source_span": [
+        457,
+        462
+      ],
+      "discovery_reason": "Source-first review of ordered search, assignment, tie, provenance and dependency beyond original site labels.",
+      "interpretation": "Type4 Blue starts at candidate source main open, not exact candidate event or A stop. First public formation >=source and <=crossing, inclusive; no identity/kind matching.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L457-L462"
+    },
+    {
+      "supplemental_id": "B04-03-S5",
+      "source_span": [
+        479,
+        487
+      ],
+      "discovery_reason": "Source-first review of ordered search, assignment, tie, provenance and dependency beyond original site labels.",
+      "interpretation": "Strict confirmation interval then Break>=A-stop index filter. Retain sorted S01 tuple order with First/Break/ordinal tie keys. Next aligned means next filtered row, not next unfiltered confirmation.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L479-L487"
+    },
+    {
+      "supplemental_id": "B04-03-S6",
+      "source_span": [
+        489,
+        505
+      ],
+      "discovery_reason": "Source-first review of ordered search, assignment, tie, provenance and dependency beyond original site labels.",
+      "interpretation": "Re-read Break from original reaction; S14 last equal extreme over inclusive range. S31 event lower gate A stop. Start max of three times; end min deadline and next filtered confirmation. Equal consecutive confirmations make earlier window empty when start>=end, skip rather than merge.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L489-L505"
+    },
+    {
+      "supplemental_id": "B04-03-S7",
+      "source_span": [
+        507,
+        532
+      ],
+      "discovery_reason": "Source-first review of ordered search, assignment, tie, provenance and dependency beyond original site labels.",
+      "interpretation": "Direct lower index, no main fallback. First hit alone tested for Blue, absent Blue skips row rather than seek later crossing. Return first qualifying aligned row immediately, native ordinal and mapped main/event separate.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L507-L532"
+    },
+    {
+      "supplemental_id": "B04-03-S8",
+      "source_span": [
+        543,
+        584
+      ],
+      "discovery_reason": "Source-first review of ordered search, assignment, tie, provenance and dependency beyond original site labels.",
+      "interpretation": "Type4 discards aligned trend ordinal; Blue type4, all Order and Reset fields null. Parent source index int converted; caller price and candidate/decision fields unchanged; no further normalization or lifecycle acceptance.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L543-L584"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B04-03-F01",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        424,
+        435
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L424-L435",
+      "description": "First-hit qualification and direct index dependency.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/05_S_Zone.md",
+          "prior_blob": "7f7749871bb12a97746ec0956ddb69be410453f7",
+          "procedure": "S20"
+        }
+      ],
+      "resolution": "Skip absent or S19 false for the first hit; no search for a later qualified recross in the same Reset interval. Direct lower_index call has no local null-index or empty-window guard; no coarse fallback.",
+      "recheck": "W2 caller and W3 forensic review pending."
+    },
+    {
+      "id": "B04-03-F02",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        482,
+        505
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L482-L505",
+      "description": "Filtered successor and equal-time window behavior.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/05_S_Zone.md",
+          "prior_blob": "7f7749871bb12a97746ec0956ddb69be410453f7",
+          "procedure": "S22"
+        }
+      ],
+      "resolution": "Search start=max(confirmation,candidate event,A stop), end=min(deadline,next filtered aligned confirmation or deadline); skip start>=end, including equal-confirmation windows. Do not merge equal-time aligned rows or use the next unfiltered trend row.",
+      "recheck": "W2 caller and W3 forensic review pending."
+    },
+    {
+      "id": "B04-03-F03",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        507,
+        520
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L507-L520",
+      "description": "First-hit Blue qualification and direct index dependency.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/05_S_Zone.md",
+          "prior_blob": "7f7749871bb12a97746ec0956ddb69be410453f7",
+          "procedure": "S22"
+        }
+      ],
+      "resolution": "skip absent or no S21 Blue from candidate source main time through the first crossing. No rescan for a later crossing within the same window; direct lower_index call has no local null-index guard.",
+      "recheck": "W2 caller and W3 forensic review pending."
+    },
+    {
+      "id": "B04-03-F04",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        424,
+        435
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L424-L435",
+      "description": "Type3 transition first-hit-only qualification.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "prior_blob": "c7df118426e8e0465f4209b4751e32461567b304",
+          "procedure": "SRT02"
+        }
+      ],
+      "resolution": "first strict crossing from Reset to exclusive deadline, require aligned trend confirmation in (A stop,cross]; no later recross search if first hit unqualified",
+      "recheck": "W2 caller and W3 forensic review pending."
+    },
+    {
+      "id": "B04-03-F05",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        482,
+        520
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L482-L520",
+      "description": "Type4 transition filtered successor and first-hit-only qualification.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "prior_blob": "c7df118426e8e0465f4209b4751e32461567b304",
+          "procedure": "SRT03"
+        }
+      ],
+      "resolution": "search first strict cross from max(confirmation,candidate event,A stop) to exclusive min(next filtered aligned confirmation,deadline), require public Blue formation from source main through crossing; skip candidate without later recross search if unqualified",
+      "recheck": "W2 caller and W3 forensic review pending."
+    }
+  ],
+  "open_dependencies": [
+    "W1 S31 candidate event-time service and S40 actual route arbitration remain to review.",
+    "W2 verify lower-index presence, owner map consistency, valid source indexes and actual Blue/Reaction chronology including fallback.",
+    "W3 separate source-first forensic review pending."
+  ]
+}

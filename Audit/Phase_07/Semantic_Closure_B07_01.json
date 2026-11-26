@@ -1,0 +1,1470 @@
+{
+  "checkpoint": 98,
+  "batch": "B07",
+  "sub_batch": "B07-01",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "81b9ac43ec79fa5032d15d8a99c5010f73793a3e",
+  "path": "engine/pipeline/lifecycle_engine.py",
+  "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+  "source_range": [
+    1,
+    120
+  ],
+  "procedures": "LC01–LC04 and declarations",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 50,
+    "by_category": {
+      "branches": 1,
+      "comparisons": 2,
+      "arithmetic": 32,
+      "calls": 15
+    },
+    "supplemental_items": 3,
+    "resolved_findings": 2
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "02093e925abea0ed526c6e0164166e3928d5de53",
+    "crosswalk_blob": "6b94505fb94d9f11dc775fdc0b423ffe27e03de7",
+    "exact_site_id_span_procedure_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 375,
+      "source_span": [
+        116,
+        12,
+        117,
+        55
+      ],
+      "procedure": "LC04",
+      "original_operation": "IfExp",
+      "original_context": "LC-SC04",
+      "interpretation": "Exact kind E formats E{number} family; every other kind formats S family; no case normalization here.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, strict event, priority, data normalization or state contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior only; delegated index, Decimal and external owner behavior W2/W3 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L116-L117",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 53,
+        "heading": "LC04"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 110,
+          "transition": "SA03"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 366,
+      "source_span": [
+        111,
+        15,
+        111,
+        30
+      ],
+      "procedure": "LC03",
+      "original_operation": [
+        "GtE"
+      ],
+      "interpretation": "Armed iff count >=2, inclusive; no stop check in property.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, strict event, priority, data normalization or state contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior only; delegated index, Decimal and external owner behavior W2/W3 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L111-L111",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 50,
+        "heading": "LC03"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 113,
+          "transition": "SA06"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 376,
+      "source_span": [
+        117,
+        15,
+        117,
+        31
+      ],
+      "procedure": "LC04",
+      "original_operation": [
+        "Eq"
+      ],
+      "interpretation": "Exact kind E formats E{number} family; every other kind formats S family; no case normalization here.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, strict event, priority, data normalization or state contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior only; delegated index, Decimal and external owner behavior W2/W3 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L117-L117",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 53,
+        "heading": "LC04"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 110,
+          "transition": "SA03"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 118,
+      "source_span": [
+        57,
+        25,
+        57,
+        35
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L57-L57",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 123,
+      "source_span": [
+        58,
+        25,
+        58,
+        35
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L58-L58",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 128,
+      "source_span": [
+        59,
+        21,
+        59,
+        31
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L59-L59",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 133,
+      "source_span": [
+        60,
+        27,
+        60,
+        37
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L60-L60",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 138,
+      "source_span": [
+        61,
+        16,
+        61,
+        26
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L61-L61",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 150,
+      "source_span": [
+        63,
+        34,
+        63,
+        49
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L63-L63",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 155,
+      "source_span": [
+        64,
+        23,
+        64,
+        33
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L64-L64",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 160,
+      "source_span": [
+        65,
+        22,
+        65,
+        37
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L65-L65",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 165,
+      "source_span": [
+        66,
+        23,
+        66,
+        33
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L66-L66",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 170,
+      "source_span": [
+        67,
+        22,
+        67,
+        37
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L67-L67",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 175,
+      "source_span": [
+        68,
+        29,
+        68,
+        44
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L68-L68",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 180,
+      "source_span": [
+        69,
+        19,
+        69,
+        33
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L69-L69",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 185,
+      "source_span": [
+        70,
+        32,
+        70,
+        42
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L70-L70",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 190,
+      "source_span": [
+        71,
+        31,
+        71,
+        46
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L71-L71",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 195,
+      "source_span": [
+        72,
+        22,
+        72,
+        36
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L72-L72",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 200,
+      "source_span": [
+        73,
+        35,
+        73,
+        45
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L73-L73",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 205,
+      "source_span": [
+        74,
+        34,
+        74,
+        49
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L74-L74",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 210,
+      "source_span": [
+        75,
+        22,
+        75,
+        36
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L75-L75",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 215,
+      "source_span": [
+        76,
+        29,
+        76,
+        39
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L76-L76",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 220,
+      "source_span": [
+        77,
+        28,
+        77,
+        43
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L77-L77",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 225,
+      "source_span": [
+        78,
+        16,
+        78,
+        26
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L78-L78",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 230,
+      "source_span": [
+        79,
+        15,
+        79,
+        30
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L79-L79",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 235,
+      "source_span": [
+        80,
+        21,
+        80,
+        36
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L80-L80",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 240,
+      "source_span": [
+        85,
+        16,
+        85,
+        26
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L85-L85",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 251,
+      "source_span": [
+        86,
+        24,
+        86,
+        34
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L86-L86",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 262,
+      "source_span": [
+        87,
+        23,
+        87,
+        38
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L87-L87",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 273,
+      "source_span": [
+        88,
+        17,
+        88,
+        27
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L88-L88",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 284,
+      "source_span": [
+        89,
+        18,
+        89,
+        28
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L89-L89",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 295,
+      "source_span": [
+        90,
+        17,
+        90,
+        31
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L90-L90",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 306,
+      "source_span": [
+        91,
+        21,
+        91,
+        36
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L91-L91",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 317,
+      "source_span": [
+        92,
+        27,
+        92,
+        42
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L92-L92",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 343,
+      "source_span": [
+        101,
+        12,
+        101,
+        22
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "interpretation": "Type union annotation, not a runtime price or time arithmetic operation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L101-L101",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 47,
+        "heading": "LC02"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 65,
+      "source_span": [
+        39,
+        30,
+        39,
+        47
+      ],
+      "procedure": "LC01",
+      "original_operation": "str().lower",
+      "interpretation": "Convert kind to str then lowercase before table key lookup; no trim or fallback.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, strict event, priority, data normalization or state contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior only; delegated index, Decimal and external owner behavior W2/W3 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L39-L39",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 44,
+        "heading": "LC01"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 111,
+          "transition": "SA04"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 67,
+      "source_span": [
+        39,
+        30,
+        39,
+        39
+      ],
+      "procedure": "LC01",
+      "original_operation": "str",
+      "interpretation": "Convert kind to str then lowercase before table key lookup; no trim or fallback.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, strict event, priority, data normalization or state contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior only; delegated index, Decimal and external owner behavior W2/W3 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L39-L39",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 44,
+        "heading": "LC01"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 111,
+          "transition": "SA04"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 70,
+      "source_span": [
+        39,
+        49,
+        39,
+        68
+      ],
+      "procedure": "LC01",
+      "original_operation": "str().lower",
+      "interpretation": "Convert family to str then lowercase after kind normalization; unknown normalized pair raises KeyError.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, strict event, priority, data normalization or state contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior only; delegated index, Decimal and external owner behavior W2/W3 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L39-L39",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 44,
+        "heading": "LC01"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 111,
+          "transition": "SA04"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 72,
+      "source_span": [
+        39,
+        49,
+        39,
+        60
+      ],
+      "procedure": "LC01",
+      "original_operation": "str",
+      "interpretation": "Convert family to str then lowercase after kind normalization; unknown normalized pair raises KeyError.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, strict event, priority, data normalization or state contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior only; delegated index, Decimal and external owner behavior W2/W3 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L39-L39",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 44,
+        "heading": "LC01"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 111,
+          "transition": "SA04"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 243,
+      "source_span": [
+        85,
+        29,
+        85,
+        62
+      ],
+      "procedure": null,
+      "original_operation": "field",
+      "interpretation": "Declare separate optional donor field with default None and keyword-only construction; no selection or event mutation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L85-L85",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 254,
+      "source_span": [
+        86,
+        37,
+        86,
+        70
+      ],
+      "procedure": null,
+      "original_operation": "field",
+      "interpretation": "Declare separate optional donor field with default None and keyword-only construction; no selection or event mutation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L86-L86",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 265,
+      "source_span": [
+        87,
+        41,
+        87,
+        74
+      ],
+      "procedure": null,
+      "original_operation": "field",
+      "interpretation": "Declare separate optional donor field with default None and keyword-only construction; no selection or event mutation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L87-L87",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 276,
+      "source_span": [
+        88,
+        30,
+        88,
+        63
+      ],
+      "procedure": null,
+      "original_operation": "field",
+      "interpretation": "Declare separate optional donor field with default None and keyword-only construction; no selection or event mutation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L88-L88",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 287,
+      "source_span": [
+        89,
+        31,
+        89,
+        64
+      ],
+      "procedure": null,
+      "original_operation": "field",
+      "interpretation": "Declare separate optional donor field with default None and keyword-only construction; no selection or event mutation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L89-L89",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 298,
+      "source_span": [
+        90,
+        34,
+        90,
+        67
+      ],
+      "procedure": null,
+      "original_operation": "field",
+      "interpretation": "Declare separate optional donor field with default None and keyword-only construction; no selection or event mutation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L90-L90",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 309,
+      "source_span": [
+        91,
+        39,
+        91,
+        72
+      ],
+      "procedure": null,
+      "original_operation": "field",
+      "interpretation": "Declare separate optional donor field with default None and keyword-only construction; no selection or event mutation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L91-L91",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 320,
+      "source_span": [
+        92,
+        45,
+        92,
+        78
+      ],
+      "procedure": null,
+      "original_operation": "field",
+      "interpretation": "Declare separate optional donor field with default None and keyword-only construction; no selection or event mutation.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L92-L92",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 326,
+      "source_span": [
+        42,
+        1,
+        42,
+        35
+      ],
+      "procedure": null,
+      "original_operation": "dataclass",
+      "interpretation": "Apply frozen/slotted dataclass declaration; no runtime trading event, frozen attribute bindings do not imply deep immutability of referenced objects.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L42-L42",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 42,
+        "heading": "LC09"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 355,
+      "source_span": [
+        107,
+        15,
+        107,
+        56
+      ],
+      "procedure": "LC02",
+      "original_operation": "sequence_priority",
+      "interpretation": "Delegate priority to authoritative sequence_priority using stored kind/family each access; no cached value.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, strict event, priority, data normalization or state contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior only; delegated index, Decimal and external owner behavior W2/W3 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L107-L107",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 47,
+        "heading": "LC02"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 111,
+          "transition": "SA04"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 396,
+      "source_span": [
+        95,
+        1,
+        95,
+        35
+      ],
+      "procedure": null,
+      "original_operation": "dataclass",
+      "interpretation": "Apply frozen/slotted dataclass declaration; no runtime trading event, frozen attribute bindings do not imply deep immutability of referenced objects.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration metadata, not an event decision.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L95-L95",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 47,
+        "heading": "LC02"
+      },
+      "transition_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B07-01-S01",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "source_span": [
+        24,
+        39
+      ],
+      "interpretation": "Version strings are metadata. Exact table S blue1/E blue2/S red3/E red4. Convert kind then family via str/lower; no trimming or default.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L24-L39",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "External caller/owner behavior W2 pending."
+    },
+    {
+      "id": "B07-01-S02",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "source_span": [
+        42,
+        94
+      ],
+      "interpretation": "StopAll record separates own source/decision, supplied gate and stopped group, underlying E/Order, own stop and eight keyword-only nullable donor fields. Record frozen/slotted, no constructor selection performed by declaration.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L42-L94",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "External caller/owner behavior W2 pending."
+    },
+    {
+      "id": "B07-01-S03",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "source_span": [
+        95,
+        118
+      ],
+      "interpretation": "Dominant owner stores exact kind/family/number, count and latest reference. Priority property recomputes normalized table lookup, armed count>=2 inclusive; key uses exact E kind else S label.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L95-L118",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "External caller/owner behavior W2 pending."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B07-01-F01",
+      "span": [
+        29,
+        39
+      ],
+      "description": "Specify normalization order and absence of fallback.",
+      "document": "Algorithms/V3/10_Lifecycle.md",
+      "line": 45,
+      "prior_blob": "42e1a6adf2bcb6c9b0f9706d30c90bd424dae087",
+      "resolution": "Clarified active procedure paragraph, rechecked pinned source; corresponding state descriptions refined.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L29-L39",
+      "recheck": "W2/W3 pending."
+    },
+    {
+      "id": "B07-01-F02",
+      "span": [
+        42,
+        118
+      ],
+      "description": "Clarify shallow immutable record and exact key metadata versus lookup normalization.",
+      "document": "Algorithms/V3/10_Lifecycle.md",
+      "line": 48,
+      "prior_blob": "42e1a6adf2bcb6c9b0f9706d30c90bd424dae087",
+      "resolution": "Clarified active procedure paragraph, rechecked pinned source; corresponding state descriptions refined.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L42-L118",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2 shared direction/price conversion, chronology/index strict queries, caller-supplied S/E eligibility, donor and owner field invariants.",
+    "Remaining LC15 onward, W3 separate source-first review and W4 acceptance pending; no RAW or runtime."
+  ]
+}

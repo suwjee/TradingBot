@@ -1,0 +1,2055 @@
+{
+  "checkpoint": 94,
+  "batch": "B06",
+  "sub_batch": "B06-22",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "0b5f1b42706bff08a26b3644d4995cfefc345fe6",
+  "path": "engine/pipeline/e_zone_detector.py",
+  "source_blob": "240369edf3352006082efe094eb68ac027d6689f",
+  "source_range": [
+    1328,
+    1371
+  ],
+  "procedures": "E44 ownership filters, E51",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 45,
+    "by_category": {
+      "branches": 18,
+      "comparisons": 13,
+      "arithmetic": 3,
+      "calls": 11
+    },
+    "supplemental_items": 3,
+    "resolved_findings": 2
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "70b51e1569cc64afe90e95851393dea9a1c989a4",
+    "crosswalk_blob": "6b94505fb94d9f11dc775fdc0b423ffe27e03de7",
+    "exact_site_id_span_procedure_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 5800,
+      "source_span": [
+        1330,
+        20,
+        1330,
+        24
+      ],
+      "procedure": "E44",
+      "original_operation": "comprehension",
+      "original_context": "E-SC61",
+      "interpretation": "Traverse eligible in current order for S-versus-active-owner exclusion.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1330-L1330",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": "engine/pipeline/e_zone_detector.py:1331:19:UnaryOp:filter",
+      "source_span": [
+        1331,
+        19,
+        1342,
+        17
+      ],
+      "procedure": "E44",
+      "original_operation": "ComprehensionFilter",
+      "original_context": "E-SC61",
+      "interpretation": "Negate compound S suppression predicate; retain unless every outer condition and some active owner qualify.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1331-L1342",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 5804,
+      "source_span": [
+        1332,
+        20,
+        1341,
+        21
+      ],
+      "procedure": "E44",
+      "original_operation": "BoolOp",
+      "original_context": "E-SC61",
+      "interpretation": "Only exact S-parent candidate tests active-owner suppression.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1332-L1341",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 5812,
+      "source_span": [
+        1334,
+        24,
+        1339,
+        70
+      ],
+      "procedure": "E44",
+      "original_operation": "BoolOp",
+      "original_context": "E-SC61",
+      "interpretation": "Per owner: strict stopped_by, then red owner OR blue candidate, then non-null max child decision, then child decision>=candidate decision.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1334-L1339",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 5817,
+      "source_span": [
+        1335,
+        29,
+        1335,
+        75
+      ],
+      "procedure": "E44",
+      "original_operation": "BoolOp",
+      "original_context": "E-SC61",
+      "interpretation": "Owner red OR candidate blue; second test skipped for red owner.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1335-L1335",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 5827,
+      "source_span": [
+        1336,
+        29,
+        1338,
+        25
+      ],
+      "procedure": "E44",
+      "original_operation": "NamedExpr",
+      "original_context": "E-SC61",
+      "interpretation": "Assign child_decision from raw owner identity lookup only after previous predicates pass.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1336-L1338",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 5842,
+      "source_span": [
+        1340,
+        28,
+        1340,
+        33
+      ],
+      "procedure": "E44",
+      "original_operation": "comprehension",
+      "original_context": "E-SC61",
+      "interpretation": "Traverse active list lazily for suppression.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1340-L1340",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 5845,
+      "source_span": [
+        1344,
+        12,
+        1345,
+        24
+      ],
+      "procedure": "E44",
+      "original_operation": "If",
+      "original_context": "E-SC61",
+      "interpretation": "Skip source when second eligible filter empties list.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1344-L1345",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 5853,
+      "source_span": [
+        1347,
+        25,
+        1347,
+        29
+      ],
+      "procedure": "E44",
+      "original_operation": "comprehension",
+      "original_context": "E-SC62",
+      "interpretation": "Traverse remaining eligible to form preferred subset.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1347-L1347",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": "engine/pipeline/e_zone_detector.py:1348:19:UnaryOp:filter",
+      "source_span": [
+        1348,
+        19,
+        1361,
+        17
+      ],
+      "procedure": "E44",
+      "original_operation": "ComprehensionFilter",
+      "original_context": "E-SC62",
+      "interpretation": "Keep candidate unless exact E-parent blue and some qualifying unaccepted later red S exists.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1348-L1361",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 5857,
+      "source_span": [
+        1349,
+        20,
+        1360,
+        21
+      ],
+      "procedure": "E44",
+      "original_operation": "BoolOp",
+      "original_context": "E-SC62",
+      "interpretation": "Test exact E parent, then blue family, then S any query in that order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1349-L1360",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 5869,
+      "source_span": [
+        1352,
+        24,
+        1358,
+        53
+      ],
+      "procedure": "E44",
+      "original_operation": "BoolOp",
+      "original_context": "E-SC62",
+      "interpretation": "For each S test string color red, identity not accepted, source strictly after candidate parent source, decision strictly before parent stop.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1352-L1358",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 5901,
+      "source_span": [
+        1359,
+        28,
+        1359,
+        34
+      ],
+      "procedure": "E44",
+      "original_operation": "comprehension",
+      "original_context": "E-SC62",
+      "interpretation": "Visit self.s_zones in order, short circuit first qualifying S.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1359-L1359",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 5905,
+      "source_span": [
+        1363,
+        12,
+        1364,
+        41
+      ],
+      "procedure": "E44",
+      "original_operation": "If",
+      "original_context": "E-SC62",
+      "interpretation": "Replace eligible with preferred subset only if nonempty; otherwise retain original filtered list.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1363-L1364",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 5919,
+      "source_span": [
+        1366,
+        41,
+        1366,
+        46
+      ],
+      "procedure": "E51",
+      "original_operation": "comprehension",
+      "original_context": "E-SC63",
+      "interpretation": "Find first active record matching E parent condition/time, next default None.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1366-L1366",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 202,
+        "heading": "E51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": "engine/pipeline/e_zone_detector.py:1367:23:BoolOp:filter",
+      "source_span": [
+        1367,
+        23,
+        1368,
+        68
+      ],
+      "procedure": "E51",
+      "original_operation": "ComprehensionFilter",
+      "original_context": "E-SC63",
+      "interpretation": "Per active prior require exact E parent then source_time equality; no source index check.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1367-L1368",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 202,
+        "heading": "E51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 5922,
+      "source_span": [
+        1367,
+        23,
+        1368,
+        68
+      ],
+      "procedure": "E51",
+      "original_operation": "BoolOp",
+      "original_context": "E-SC63",
+      "interpretation": "Per active prior require exact E parent then source_time equality; no source index check.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1367-L1368",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 202,
+        "heading": "E51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 5935,
+      "source_span": [
+        1369,
+        32,
+        1369,
+        72
+      ],
+      "procedure": "E51",
+      "original_operation": "IfExp",
+      "original_context": "E-SC63",
+      "interpretation": "Use parent.family if parent truthy, otherwise candidate.family.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1369-L1369",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 202,
+        "heading": "E51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 5805,
+      "source_span": [
+        1332,
+        20,
+        1332,
+        43
+      ],
+      "procedure": "E44",
+      "original_operation": [
+        "Eq"
+      ],
+      "interpretation": "Only exact S-parent candidate tests active-owner suppression.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1332-L1332",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 5818,
+      "source_span": [
+        1335,
+        29,
+        1335,
+        50
+      ],
+      "procedure": "E44",
+      "original_operation": [
+        "Eq"
+      ],
+      "interpretation": "Exact owner.family red tested first.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1335-L1335",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 5822,
+      "source_span": [
+        1335,
+        54,
+        1335,
+        75
+      ],
+      "procedure": "E44",
+      "original_operation": [
+        "Eq"
+      ],
+      "interpretation": "Exact item.family blue tested only if owner not red.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1335-L1335",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 5826,
+      "source_span": [
+        1336,
+        28,
+        1338,
+        38
+      ],
+      "procedure": "E44",
+      "original_operation": [
+        "IsNot"
+      ],
+      "interpretation": "Require assigned child decision non-None; no comparison on null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1336-L1338",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 5838,
+      "source_span": [
+        1339,
+        28,
+        1339,
+        70
+      ],
+      "procedure": "E44",
+      "original_operation": [
+        "GtE"
+      ],
+      "interpretation": "Child maximum decision >= candidate decision suppresses, including equality.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1339-L1339",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 5858,
+      "source_span": [
+        1349,
+        20,
+        1349,
+        43
+      ],
+      "procedure": "E44",
+      "original_operation": [
+        "Eq"
+      ],
+      "interpretation": "Require exact E parent for suppression preference.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1349-L1349",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 5862,
+      "source_span": [
+        1350,
+        24,
+        1350,
+        45
+      ],
+      "procedure": "E44",
+      "original_operation": [
+        "Eq"
+      ],
+      "interpretation": "Require exact blue family after parent test.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1350-L1350",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 5870,
+      "source_span": [
+        1352,
+        24,
+        1352,
+        62
+      ],
+      "procedure": "E44",
+      "original_operation": [
+        "Eq"
+      ],
+      "interpretation": "Read S color, stringify then compare red first.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1352-L1352",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 5878,
+      "source_span": [
+        1353,
+        28,
+        1354,
+        47
+      ],
+      "procedure": "E44",
+      "original_operation": [
+        "NotIn"
+      ],
+      "interpretation": "Normalize S index and test (time,index) absent from accepted_sources.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1353-L1354",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 5887,
+      "source_span": [
+        1355,
+        28,
+        1356,
+        49
+      ],
+      "procedure": "E44",
+      "original_operation": [
+        "Gt"
+      ],
+      "interpretation": "S source_time > item.parent_source_time strictly.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1355-L1356",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 5894,
+      "source_span": [
+        1357,
+        28,
+        1358,
+        53
+      ],
+      "procedure": "E44",
+      "original_operation": [
+        "Lt"
+      ],
+      "interpretation": "S decision_event_time < item.parent_stop_event_time strictly; equal fails.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1357-L1358",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 5923,
+      "source_span": [
+        1367,
+        23,
+        1367,
+        46
+      ],
+      "procedure": "E51",
+      "original_operation": [
+        "Eq"
+      ],
+      "interpretation": "Exact E parent type checked before time match.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1367-L1367",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 202,
+        "heading": "E51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 5927,
+      "source_span": [
+        1368,
+        24,
+        1368,
+        68
+      ],
+      "procedure": "E51",
+      "original_operation": [
+        "Eq"
+      ],
+      "interpretation": "Match active prior time to item.parent_source_time, not index.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1368-L1368",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 202,
+        "heading": "E51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 5803,
+      "source_span": [
+        1331,
+        19,
+        1342,
+        17
+      ],
+      "procedure": "E44",
+      "original_operation": "Not",
+      "interpretation": "Negate compound S suppression predicate; retain unless every outer condition and some active owner qualify.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1331-L1342",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 5846,
+      "source_span": [
+        1344,
+        15,
+        1344,
+        27
+      ],
+      "procedure": "E44",
+      "original_operation": "Not",
+      "interpretation": "Skip source when second eligible filter empties list.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1344-L1344",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 5856,
+      "source_span": [
+        1348,
+        19,
+        1361,
+        17
+      ],
+      "procedure": "E44",
+      "original_operation": "Not",
+      "interpretation": "Keep candidate unless exact E-parent blue and some qualifying unaccepted later red S exists.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1348-L1361",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5809,
+      "source_span": [
+        1333,
+        24,
+        1341,
+        21
+      ],
+      "procedure": "E44",
+      "original_operation": "any",
+      "interpretation": "Any active owner satisfying ordered tests suppresses candidate; short circuit first hit.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1333-L1341",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5813,
+      "source_span": [
+        1334,
+        24,
+        1334,
+        47
+      ],
+      "procedure": "E44",
+      "original_operation": "stopped_by",
+      "interpretation": "Test directional strict price and later decision through E50 first.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1334-L1334",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5829,
+      "source_span": [
+        1336,
+        47,
+        1338,
+        25
+      ],
+      "procedure": "E44",
+      "original_operation": "child_decision_by_parent.get",
+      "interpretation": "Assign child_decision from raw owner identity lookup only after previous predicates pass.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1336-L1338",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5866,
+      "source_span": [
+        1351,
+        24,
+        1360,
+        21
+      ],
+      "procedure": "E44",
+      "original_operation": "any",
+      "interpretation": "Any S meeting ordered red/unaccepted/time tests excludes this candidate from preferred subset.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1351-L1360",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5871,
+      "source_span": [
+        1352,
+        24,
+        1352,
+        53
+      ],
+      "procedure": "E44",
+      "original_operation": "str",
+      "interpretation": "Read S color, stringify then compare red first.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1352-L1352",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5873,
+      "source_span": [
+        1352,
+        28,
+        1352,
+        52
+      ],
+      "procedure": "E44",
+      "original_operation": "getattr",
+      "interpretation": "Read S color, stringify then compare red first.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1352-L1352",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5882,
+      "source_span": [
+        1353,
+        49,
+        1353,
+        73
+      ],
+      "procedure": "E44",
+      "original_operation": "int",
+      "interpretation": "Normalize S index and test (time,index) absent from accepted_sources.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1353-L1353",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5888,
+      "source_span": [
+        1355,
+        28,
+        1355,
+        58
+      ],
+      "procedure": "E44",
+      "original_operation": "getattr",
+      "interpretation": "S source_time > item.parent_source_time strictly.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1355-L1355",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5895,
+      "source_span": [
+        1357,
+        28,
+        1357,
+        66
+      ],
+      "procedure": "E44",
+      "original_operation": "getattr",
+      "interpretation": "S decision_event_time < item.parent_stop_event_time strictly; equal fails.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1357-L1357",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 172,
+        "heading": "E44"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5915,
+      "source_span": [
+        1366,
+        25,
+        1368,
+        76
+      ],
+      "procedure": "E51",
+      "original_operation": "next",
+      "interpretation": "Find first active record matching E parent condition/time, next default None.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1366-L1368",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 202,
+        "heading": "E51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5942,
+      "source_span": [
+        1370,
+        23,
+        1370,
+        78
+      ],
+      "procedure": "E51",
+      "original_operation": "self.sequence_priority",
+      "interpretation": "Call injected sequence_priority with candidate parent type and chosen family.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local event, eligibility, identity, priority, mutation or state contract; owner W2 pending.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; W2/W3 caller and owner invariants open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1370-L1370",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 202,
+        "heading": "E51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 47,
+          "transition": "EQ06"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 48,
+          "transition": "EQ07"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 50,
+          "transition": "EQ09"
+        }
+      ]
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B06-22-S01",
+      "source_span": [
+        1328,
+        1345
+      ],
+      "path": "engine/pipeline/e_zone_detector.py",
+      "interpretation": "Suppress S if any active owner meets strict stop, red-owner or blue-candidate, existing max child decision >= candidate decision. Child lookup happens only after previous gates.",
+      "discovery_reason": "Explicit state, evaluation order, alias or implicit data flow beyond isolated AST site.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1328-L1345",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "Cross-owner/runtime proof outside W1."
+    },
+    {
+      "id": "B06-22-S02",
+      "source_span": [
+        1346,
+        1364
+      ],
+      "path": "engine/pipeline/e_zone_detector.py",
+      "interpretation": "Prefer excluding E-blue when any still-unaccepted red S has strictly later source than parent and strictly earlier decision than parent stop. If preferred subset empty retain original.",
+      "discovery_reason": "Explicit state, evaluation order, alias or implicit data flow beyond isolated AST site.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1346-L1364",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "Cross-owner/runtime proof outside W1."
+    },
+    {
+      "id": "B06-22-S03",
+      "source_span": [
+        1365,
+        1370
+      ],
+      "path": "engine/pipeline/e_zone_detector.py",
+      "interpretation": "Priority owner lookup is first active record by source time only for E parent, uses truthy parent; injected sequence_priority determines rank.",
+      "discovery_reason": "Explicit state, evaluation order, alias or implicit data flow beyond isolated AST site.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1365-L1370",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "Cross-owner/runtime proof outside W1."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B06-22-F01",
+      "span": [
+        1328,
+        1345
+      ],
+      "description": "Specify ordered short circuit and child decision assignment.",
+      "document": "Algorithms/V3/09_E_Zone.md",
+      "line": 177,
+      "prior_blob": "51a1076f7a7aedee2f73251a05da5cc12f036173",
+      "resolution": "Clarified active procedure and related state transitions; rechecked pinned source.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1328-L1345",
+      "recheck": "W2/W3 pending."
+    },
+    {
+      "id": "B06-22-F02",
+      "span": [
+        1365,
+        1370
+      ],
+      "description": "Emphasize time-only owner lookup and truthiness distinct from later owner gate.",
+      "document": "Algorithms/V3/09_E_Zone.md",
+      "line": 203,
+      "prior_blob": "51a1076f7a7aedee2f73251a05da5cc12f036173",
+      "resolution": "Clarified active procedure and related state transitions; rechecked pinned source.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L1365-L1370",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: actual priority resolver, live replay and owner invalidation, audit rebuild and cross-owner ownership; W3 separate review and W4 acceptance pending. No RAW/runtime."
+  ]
+}

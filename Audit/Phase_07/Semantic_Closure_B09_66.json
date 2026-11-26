@@ -1,0 +1,367 @@
+{
+  "checkpoint": 227,
+  "batch": "B09",
+  "sub_batch": "B09-66",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "9867049120fdd0b558150bfb73b642fa4bee4b3e",
+  "path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+  "source_range": [
+    2552,
+    2587
+  ],
+  "procedures": "TB75",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 10,
+    "by_category": {
+      "branches": 4,
+      "comparisons": 6,
+      "arithmetic": 0,
+      "calls": 0
+    },
+    "supplemental_items": 1,
+    "resolved_findings": 1
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "5c49e3c793bfc22301109ace5105b7fcddf1b8e2",
+    "crosswalk_blob": "a6ba394ffa669c027d61784a894eccfc7996cd6f",
+    "exact_site_id_span_procedure_operation_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 8858,
+      "source_span": [
+        2567,
+        17,
+        2567,
+        90
+      ],
+      "procedure": "TB75",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC79",
+      "interpretation": "Exact both expands to bullish then bearish; otherwise single supplied direction.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Native dispatch, chronology, ownership, state boundary or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2567-L2567",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 81,
+        "heading": "TB75"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 8871,
+      "source_span": [
+        2569,
+        8,
+        2571,
+        36
+      ],
+      "procedure": "TB75",
+      "original_operation": "BoolOp",
+      "original_context": "TB-SC79",
+      "interpretation": "Any exact enabled Blue flag enables behavior dependency.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Native dispatch, chronology, ownership, state boundary or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2569-L2571",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 81,
+        "heading": "TB75"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 8886,
+      "source_span": [
+        2574,
+        8,
+        2574,
+        74
+      ],
+      "procedure": "TB75",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC79",
+      "interpretation": "If any behavior enabled require both directions, otherwise requested tuple.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Native dispatch, chronology, ownership, state boundary or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2574-L2574",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 81,
+        "heading": "TB75"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 8894,
+      "source_span": [
+        2576,
+        28,
+        2576,
+        78
+      ],
+      "procedure": "TB75",
+      "original_operation": "BoolOp",
+      "original_context": "TB-SC79",
+      "interpretation": "Reusable full context iff E engine non-null and exact enabled S, short-circuit.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Native dispatch, chronology, ownership, state boundary or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2576-L2576",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 81,
+        "heading": "TB75"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 8859,
+      "source_span": [
+        2567,
+        43,
+        2567,
+        67
+      ],
+      "procedure": "TB75",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC79",
+      "interpretation": "Exact both expands to bullish then bearish; otherwise single supplied direction.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Native dispatch, chronology, ownership, state boundary or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2567-L2567",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 81,
+        "heading": "TB75"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 8872,
+      "source_span": [
+        2569,
+        8,
+        2569,
+        36
+      ],
+      "procedure": "TB75",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC79",
+      "interpretation": "Any exact enabled Blue flag enables behavior dependency.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Native dispatch, chronology, ownership, state boundary or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2569-L2569",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 81,
+        "heading": "TB75"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 8876,
+      "source_span": [
+        2570,
+        11,
+        2570,
+        36
+      ],
+      "procedure": "TB75",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC79",
+      "interpretation": "Or exact enabled A flag; short-circuit.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Native dispatch, chronology, ownership, state boundary or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2570-L2570",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 81,
+        "heading": "TB75"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 8880,
+      "source_span": [
+        2571,
+        11,
+        2571,
+        36
+      ],
+      "procedure": "TB75",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC79",
+      "interpretation": "Or exact enabled S flag.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Native dispatch, chronology, ownership, state boundary or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2571-L2571",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 81,
+        "heading": "TB75"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 8895,
+      "source_span": [
+        2576,
+        28,
+        2576,
+        48
+      ],
+      "procedure": "TB75",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC79",
+      "interpretation": "Reusable full context iff E engine non-null and exact enabled S, short-circuit.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Native dispatch, chronology, ownership, state boundary or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2576-L2576",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 81,
+        "heading": "TB75"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 8898,
+      "source_span": [
+        2576,
+        53,
+        2576,
+        78
+      ],
+      "procedure": "TB75",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC79",
+      "interpretation": "Reusable full context iff E engine non-null and exact enabled S, short-circuit.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Native dispatch, chronology, ownership, state boundary or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2576-L2576",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 81,
+        "heading": "TB75"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B09-66-S01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_span": [
+        2552,
+        2587
+      ],
+      "interpretation": "Requested both is ordered bullish then bearish; behavior flags independently require both native Reaction directions. Reusable context requires non-null E and enabled S, not an explicit lifecycle flag. All directional state maps start empty.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2552-L2587",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "No empirical runtime or cross-owner acceptance asserted."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B09-66-F01",
+      "span": [
+        2552,
+        2587
+      ],
+      "description": "Requested both is ordered bullish then bearish; behavior flags independently require both native Reaction directions. Reusable context requires non-null E and enabled S, not an explicit lifecycle flag. All directional state maps start empty.",
+      "document": "Algorithms/V3/17_Trading_Bridge.md",
+      "line": 82,
+      "prior_blob": "001622be7618df93978a14680b343d4283abb248",
+      "resolution": "Clarify local source-derived contract; no production changes.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2552-L2587",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: lifecycle, native Order/geometry, E and S continuation, internal Reaction ownership, primary and live replay dependencies. W3/W4 pending."
+  ]
+}

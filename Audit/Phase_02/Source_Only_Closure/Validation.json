@@ -1,0 +1,88 @@
+{
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "parent": "4ce52e8b2492b6ba1ba6e9f5c870e6711fa8a809",
+  "scope": "source-only static inventory handoff",
+  "source_files_matched": 16,
+  "counts": {
+    "scopes": 1168,
+    "calls": 5120,
+    "effects": 2045,
+    "literals": 6696,
+    "reference_bindings": 449,
+    "exits": 1184,
+    "branches": 3133,
+    "handlers": 17,
+    "possible_exception_or_raise_edges": 8193
+  },
+  "literal_kinds": {
+    "string": 3140,
+    "null": 2073,
+    "numeric": 1048,
+    "boolean": 328,
+    "bytes": 9,
+    "other": 64,
+    "ellipsis": 34
+  },
+  "scope_kinds": {
+    "Module": 16,
+    "ClassDef": 85,
+    "FunctionDef": 576,
+    "Lambda": 127,
+    "ListComp": 163,
+    "DictComp": 38,
+    "SetComp": 65,
+    "GeneratorExp": 98
+  },
+  "exit_kinds": {
+    "Raise": 98,
+    "Return": 869,
+    "Continue": 177,
+    "Yield": 10,
+    "Break": 29,
+    "YieldFrom": 1
+  },
+  "effect_flags": {
+    "EXPLICIT_OBJECT_MUTATION": 688,
+    "EXPLICIT_OBJECT_DELETE": 4,
+    "NONLOCAL_DECLARATION": 7,
+    "AUGMENTED_ASSIGNMENT_READ_WRITE_POSSIBLE_INPLACE": 53,
+    "DYNAMIC_EFFECT_UNKNOWN": 1164,
+    "POTENTIAL_IO_OR_RUNTIME_BOUNDARY": 76,
+    "POTENTIAL_MUTATION": 404
+  },
+  "dynamic_review": {
+    "prior_detailed_rows": 1528,
+    "previously_unclassified": 240,
+    "new_selection_descriptions": 240,
+    "unclassified_in_new_review": 0,
+    "prior_name_only_candidates": 596,
+    "prior_imported_candidates": 364,
+    "not_exact_dispatch_proof": true
+  },
+  "checks": {
+    "pinned": true,
+    "modules": true,
+    "scope_ids": true,
+    "counts": true,
+    "scope_partition": true,
+    "dynamic": true,
+    "literal": true,
+    "aliases": true,
+    "exceptions": true
+  },
+  "artifact_git_blobs": {
+    "Scope_Evidence_01.json": "14a242f33df863434bf0c3e2b261b31183f5f52c",
+    "Scope_Evidence_02.json": "e9a89bf5e534043dfd3784b471861ab3907bd62d",
+    "Scope_Evidence_03.json": "997ff9583642bb60e22f717e9ac24812a495d53e",
+    "Scope_Evidence_04.json": "b30168d8ebdca8f9f2ec38f55ccadddac5454d48",
+    "Dynamic_Selection_Review.json": "94faabd2845383471c4366666d011dee085a9e65"
+  },
+  "limitations": [
+    "Prior AST and CFG inventories reused rather than regenerated.",
+    "Simple binding detection excludes multiline, destructuring, indirect, indexed and other assignments; not sound heap alias analysis.",
+    "Literal lexical kinds and lengths are not decoded values or exact runtime types; f-string spans may be wider than a component.",
+    "All call candidates and same-statement links remain conservative; 596 name-only rows have no exact binding proof.",
+    "Exact semantic feasibility, whole-program side effects, and full source-to-spec coverage are not established.",
+    "No RAW, engine execution, runtime testing, benchmark or candidate implementation."
+  ]
+}

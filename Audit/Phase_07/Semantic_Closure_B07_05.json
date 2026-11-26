@@ -1,0 +1,420 @@
+{
+  "checkpoint": 102,
+  "batch": "B07",
+  "sub_batch": "B07-05",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "81b9ac43ec79fa5032d15d8a99c5010f73793a3e",
+  "path": "engine/pipeline/lifecycle_engine.py",
+  "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+  "source_range": [
+    350,
+    360
+  ],
+  "procedures": "LC13–LC14",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 9,
+    "by_category": {
+      "branches": 3,
+      "comparisons": 0,
+      "arithmetic": 1,
+      "calls": 5
+    },
+    "supplemental_items": 2,
+    "resolved_findings": 2
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "02093e925abea0ed526c6e0164166e3928d5de53",
+    "crosswalk_blob": "6b94505fb94d9f11dc775fdc0b423ffe27e03de7",
+    "exact_site_id_span_procedure_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 1201,
+      "source_span": [
+        352,
+        29,
+        352,
+        33
+      ],
+      "procedure": "LC13",
+      "original_operation": "comprehension",
+      "original_context": "LC-SC13",
+      "interpretation": "Build S-tagged events in copied S encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, strict event, priority, data normalization or state contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior only; delegated index, Decimal and external owner behavior W2/W3 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L352-L352",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 54,
+        "heading": "LC13"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 108,
+          "transition": "SA01"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1209,
+      "source_span": [
+        352,
+        70,
+        352,
+        74
+      ],
+      "procedure": "LC13",
+      "original_operation": "comprehension",
+      "original_context": "LC-SC13",
+      "interpretation": "Build E-tagged events in copied E encounter order after S list.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, strict event, priority, data normalization or state contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior only; delegated index, Decimal and external owner behavior W2/W3 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L352-L352",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 54,
+        "heading": "LC13"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 108,
+          "transition": "SA01"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1259,
+      "source_span": [
+        359,
+        45,
+        359,
+        49
+      ],
+      "procedure": "LC14",
+      "original_operation": "comprehension",
+      "original_context": "LC-SC14",
+      "interpretation": "Iterate output in emission order and create new list of resolved records.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, strict event, priority, data normalization or state contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior only; delegated index, Decimal and external owner behavior W2/W3 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L359-L359",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 57,
+        "heading": "LC14"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 108,
+          "transition": "SA01"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1196,
+      "source_span": [
+        352,
+        12,
+        352,
+        91
+      ],
+      "procedure": "LC13",
+      "original_operation": "Add",
+      "interpretation": "Concatenate S-tagged list then E-tagged list; both lists built before sort.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, strict event, priority, data normalization or state contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior only; delegated index, Decimal and external owner behavior W2/W3 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L352-L352",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 54,
+        "heading": "LC13"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 108,
+          "transition": "SA01"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1194,
+      "source_span": [
+        351,
+        15,
+        354,
+        9
+      ],
+      "procedure": "LC13",
+      "original_operation": "sorted",
+      "interpretation": "Stable sort concatenated tagged events by raw source_time, kind, raw source_index; E before S on same time, equal keys retain input order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, strict event, priority, data normalization or state contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior only; delegated index, Decimal and external owner behavior W2/W3 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L351-L354",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 54,
+        "heading": "LC13"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 108,
+          "transition": "SA01"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1244,
+      "source_span": [
+        358,
+        8,
+        358,
+        73
+      ],
+      "procedure": "LC14",
+      "original_operation": "self._detect_events",
+      "interpretation": "Invoke _detect_events with sorted events, new default checkpoint and output list; then resolve stops.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, strict event, priority, data normalization or state contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior only; delegated index, Decimal and external owner behavior W2/W3 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L358-L358",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 57,
+        "heading": "LC14"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 108,
+          "transition": "SA01"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1247,
+      "source_span": [
+        358,
+        28,
+        358,
+        42
+      ],
+      "procedure": "LC14",
+      "original_operation": "self._events",
+      "interpretation": "Get sorted event list before constructing default checkpoint.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, strict event, priority, data normalization or state contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior only; delegated index, Decimal and external owner behavior W2/W3 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L358-L358",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 57,
+        "heading": "LC14"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 108,
+          "transition": "SA01"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1250,
+      "source_span": [
+        358,
+        44,
+        358,
+        64
+      ],
+      "procedure": "LC14",
+      "original_operation": "_StopAllCheckpoint",
+      "interpretation": "Create checkpoint with default owner/pending None, active empty, output_count0.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, strict event, priority, data normalization or state contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior only; delegated index, Decimal and external owner behavior W2/W3 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L358-L358",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 57,
+        "heading": "LC14"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 108,
+          "transition": "SA01"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1255,
+      "source_span": [
+        359,
+        16,
+        359,
+        40
+      ],
+      "procedure": "LC14",
+      "original_operation": "self._resolve_stop",
+      "interpretation": "Resolve own stop of each emitted record after complete event traversal.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local eligibility, strict event, priority, data normalization or state contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior only; delegated index, Decimal and external owner behavior W2/W3 pending.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L359-L359",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/11_StopAll.md",
+        "line": 57,
+        "heading": "LC14"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 108,
+          "transition": "SA01"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 122,
+          "transition": "SA15"
+        }
+      ]
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B07-05-S01",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "source_span": [
+        350,
+        354
+      ],
+      "interpretation": "Build S list then E list; stable sorting uses raw (source_time,kind,source_index) not exact decision. E before S at equal source time, same-key order retained.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L350-L354",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "External caller/owner behavior W2 pending."
+    },
+    {
+      "id": "B07-05-S02",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "source_span": [
+        356,
+        359
+      ],
+      "interpretation": "Allocate output, evaluate events then default checkpoint, run full event detection, then resolve each own stop in emission order into fresh list; no local exception recovery.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L356-L359",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "External caller/owner behavior W2 pending."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B07-05-F01",
+      "span": [
+        350,
+        359
+      ],
+      "description": "Clarify raw index and source-time sorting, not decision-time sorting.",
+      "document": "Algorithms/V3/11_StopAll.md",
+      "line": 55,
+      "prior_blob": "0d157c31755effc476313f51e0b445060331cc83",
+      "resolution": "Clarified active procedure paragraph, rechecked pinned source; corresponding state descriptions refined.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L350-L359",
+      "recheck": "W2/W3 pending."
+    },
+    {
+      "id": "B07-05-F02",
+      "span": [
+        356,
+        359
+      ],
+      "description": "Clarify evaluation and post-traversal stop resolution order.",
+      "document": "Algorithms/V3/11_StopAll.md",
+      "line": 58,
+      "prior_blob": "0d157c31755effc476313f51e0b445060331cc83",
+      "resolution": "Clarified active procedure paragraph, rechecked pinned source; corresponding state descriptions refined.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L356-L359",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2 shared direction/price conversion, chronology/index strict queries, caller-supplied S/E eligibility, donor and owner field invariants.",
+    "Remaining LC15 onward, W3 separate source-first review and W4 acceptance pending; no RAW or runtime."
+  ]
+}

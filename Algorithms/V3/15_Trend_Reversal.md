@@ -1,0 +1,16 @@
+# Trend reversal — exact Primary3 boundary and independent regimes (V3)
+
+**Conventions:** B = bullish, R = bearish. A strict trend stop means Low < level for B, High > level for R; improvement uses the same predicate. Main source identity and exact event chronology are separate. Preserve Decimal representation, operation order and stable ordering. Required record fields/defaults are in [record interfaces](../../Contracts/Declared_Record_Schemas.md); shared searches in [Index and cache contracts](20_Indexes_And_Caching.md). Procedure labels identify semantic operations, not required implementation symbols.
+
+
+## TR-M01 — Detection and precedence
+
+Resolve physical PHs for bearish owner / PLs for bullish owner through full horizon. For each final number exactly 3, find first lower strict High>PH price (bearish) or Low<PL price (bullish) strictly after point decision; no main fallback. Choose earliest exact event, then point source index, then cycle id (empty fallback). Retain stopped point, exact event, containing main index, price and target opposite direction. Primary global schedule gives transition priority on equal event vs point commitment or MBL activation. If transition not within visible end, no regime output replacement.
+
+## TR-M02 — Historical prefix and incoming regime
+
+At each reversal boundary require 0<index<current candle count. Independently calculate closed prefix [0,boundary) with no carry of prior geometry. If no visible history, calculate full prefix internally, then clear public list fields recursively. Require confirmed Primary3 of same source time and price in prefix, else RuntimeError. Publish historical regime with calculationEndTime at reversal main open, status reversed-to-target, cycles stopped-on-trend-reversal, MBL caps min(old,end). Slice new context from boundary inclusive through end; reset local indexes, offset to absolute input identity and initial trend bootstrap flag only for target. Recompute target direction with fresh calculation state. No arbitrary reversal count limit; each transition advances boundary. Continue until absent or outside horizon. Release per-regime indexes in finally. Optional live closed/active regime callbacks conditional; they do not change boundary rules.
+
+## TR-M03 — Projection
+
+Transition event contains direction/previous direction, absolute source index/time, exact event, level and stopped PH3/PL3 identity; icon candle is source+49 (actual fiftieth candle, if available) with appropriate High/Low, else null. Preserve stable IDs and adjust only specified index fields, including physical/reset identity elements. Group historical segments by direction; multiple segments concatenate list fields, merge bridge arrays, retain calculationSegments and remove aggregate end time. Active direction is segment with greatest calculationStartIndex (default −1), lexical direction tie. Do not regenerate calculations in merge. T/F annotation runs independently per final segment after regime selection. Procedures P02–P06 in [Primary Structures](12_Primary_Structures.md), TB63–65 and TB90–96 in [RAW](21_RAW_Aggregation_Contract.md), [Serialization](19_Serialization.md) and [Trading Bridge](17_Trading_Bridge.md).

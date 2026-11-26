@@ -1,0 +1,1314 @@
+{
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "scope": "Complete Engine tests and tooling; external current runners and Golden evidence discovered separately. Lexical test_* definitions are not runtime collected case counts. No full suite run in phase 01.",
+  "engine_test_files": [
+    {
+      "path": "engine/tests/benchmarks/bench.py",
+      "git_blob_sha1": "7dcfba5995a08c4006524223f02b45079296749d",
+      "sha256": "813391f0e849885c88dda02bfe1a4cd1014f7d0c4333f74f1fe3f1ca0e9765af",
+      "bytes": 4068,
+      "lines": 93,
+      "test_definitions": [],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "benchmark_tool"
+    },
+    {
+      "path": "engine/tests/benchmarks/generate_fixture.py",
+      "git_blob_sha1": "807cdcfc9d1632c0ec063a2eb61890f32d6e2d46",
+      "sha256": "c2d46d8ea12ca8ffc076d7c416f28d3365e515d3e7c8759a04f068304fda9bf3",
+      "bytes": 870,
+      "lines": 23,
+      "test_definitions": [],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "benchmark_tool"
+    },
+    {
+      "path": "engine/tests/regression/compare_order_regressions.py",
+      "git_blob_sha1": "48795f96d477b41848c319325f03da6e8b9c893f",
+      "sha256": "ac64e5ad1699a2c68dd477c9519c4bf9ed58e036e57cdb7ca51a36b57c508937",
+      "bytes": 4096,
+      "lines": 92,
+      "test_definitions": [],
+      "entrypoint": true,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "regression_tool"
+    },
+    {
+      "path": "engine/tests/regression/hpzr2_regression.py",
+      "git_blob_sha1": "23026d19322dc0f92f85dc7a7a610a55a6fe9bc4",
+      "sha256": "a86fa59fb12a54a18365e55135a6eea0890b764fe0a3a07eb4b7cc4502a9e5eb",
+      "bytes": 12320,
+      "lines": 279,
+      "test_definitions": [],
+      "entrypoint": true,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "regression_tool"
+    },
+    {
+      "path": "engine/tests/regression/hpzr2_verify_saved.py",
+      "git_blob_sha1": "1ff8d3b7790015d4344d629fec8d8d4ece7bab30",
+      "sha256": "de6be54a64ef7149104365969f1daf1c72b147b129db7e8d4515b4c42d7b8589",
+      "bytes": 8489,
+      "lines": 171,
+      "test_definitions": [],
+      "entrypoint": true,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "regression_tool"
+    },
+    {
+      "path": "engine/tests/regression/order_regression.py",
+      "git_blob_sha1": "a4ade4dea211fa912baf805d6c4bd586db3bfea7",
+      "sha256": "de35082e81e2087eae0b15aa44f01eac09486ed655ea8376e5391be621251fca",
+      "bytes": 7937,
+      "lines": 209,
+      "test_definitions": [],
+      "entrypoint": true,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "regression_tool"
+    },
+    {
+      "path": "engine/tests/regression/verify_pl_ph_raw.py",
+      "git_blob_sha1": "949fecd0523a868797466d6fd8b17844e852b313",
+      "sha256": "7a9da4df26ee405068634237347a5f69d624107735376a5438e9b30c1c63b82d",
+      "bytes": 9954,
+      "lines": 184,
+      "test_definitions": [],
+      "entrypoint": true,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "regression_tool"
+    },
+    {
+      "path": "engine/tests/unit/test_bearish_trend_start.py",
+      "git_blob_sha1": "846f2b1f0b4e37f5507dd9afa90ff19db6e3d23a",
+      "sha256": "a191c9d6736d3bc6dafc57ec82b8f6f941639d7740ff13b00e155e088e2d5fef",
+      "bytes": 2533,
+      "lines": 56,
+      "test_definitions": [
+        "test_first_green_seeds_bearish_reaction_without_prior_red_or_reset",
+        "test_normal_bearish_reset_resumes_after_first_confirmation",
+        "test_equal_low_does_not_confirm_the_new_bearish_reaction",
+        "test_bearish_bootstrap_keeps_market_doji_green_and_eligible_as_first",
+        "test_disabled_bearish_bootstrap_preserves_ordinary_detection"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_bullish_primary_mirror.py",
+      "git_blob_sha1": "d25ebe682f37b8226e6946129f07e4bffd528121",
+      "sha256": "136fe1529617b20afa723d809244ea41c250fb63e79ea03c4693e3375362f673",
+      "bytes": 10130,
+      "lines": 202,
+      "test_definitions": [
+        "test_bullish_stopall_low_break_selects_minimum_pl_and_fixed_maximum_mbl",
+        "test_bullish_reference_equality_does_not_activate_a_cycle",
+        "test_bullish_secondary_ph_uses_its_own_break_to_order_stop_maximum",
+        "test_bullish_third_pl_stop_reverses_all_cycles_without_pl4",
+        "test_bullish_equal_pl3_low_does_not_reverse",
+        "test_lower_physical_pl_continues_final_number_after_local_reset",
+        "test_bullish_mirror_retains_real_order_prices_and_physical_provenance",
+        "test_bullish_stopall_ownership_is_promoted_only_by_confirmed_primary_pl",
+        "test_bullish_primary_native_gate_admits_older_first_and_joint_confirmation",
+        "test_bullish_secondary_ph_keeps_strict_first_gate_and_first_direct_a_lock",
+        "test_native_pl_continuation_exposes_reset_leg_order_for_the_primary_gate",
+        "test_reset_leg_box_must_strictly_extend_the_primary_to_win_continuation",
+        "test_primary_mirror_preserves_decisions_cancellations_and_source_ownership",
+        "test_reflection_preserves_long_decimal_lexemes_under_a_small_context"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_bullish_primary_serialization.py",
+      "git_blob_sha1": "1638585258df42fef2c94b550c0aab628a2d8e43",
+      "sha256": "ac894068399c6061964496a844ed7df80067a810d9c73dcc9a6c0ec6b956cdeb",
+      "bytes": 7055,
+      "lines": 135,
+      "test_definitions": [
+        "test_bullish_projection_keeps_real_kind_direction_and_low_cycle_joins",
+        "test_fresh_same_direction_segments_cannot_reuse_primary_ids",
+        "test_bearish_start_metadata_uses_pl_provenance_and_target_low",
+        "test_bearish_segment_contains_whole_boundary_and_has_fresh_bootstrap",
+        "test_merging_repeated_direction_preserves_each_historical_boundary",
+        "test_absolute_projection_translates_order_identity_pairs_without_changing_other_lists",
+        "test_repeated_reversals_rebuild_each_direction_from_its_whole_start_candle"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_bullish_trend_start.py",
+      "git_blob_sha1": "dfc87356156fbb94604d93382bf31a49b0729deb",
+      "sha256": "1210e86a538a802e178a3658550b53f8b62459bd952c119d10558ffbebdf2b4b",
+      "bytes": 2758,
+      "lines": 65,
+      "test_definitions": [
+        "test_initial_red_seeds_first_bullish_reaction_and_bottom_may_fall",
+        "test_normal_reset_resumes_immediately_after_first_confirmation",
+        "test_equal_high_does_not_confirm_the_initial_trend_reaction",
+        "test_explicitly_disabled_bootstrap_preserves_standard_detection",
+        "test_initial_reaction_keeps_the_new_leg_head_for_native_blue_calculation"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_carried_order_query.py",
+      "git_blob_sha1": "6526aaf9878a807f78eda74632f336c69693275d",
+      "sha256": "22eb9b8fb53a5db3a94f776c1fe23d27d0a738f1490ba9e3c4fcf6475077a394",
+      "bytes": 18684,
+      "lines": 352,
+      "test_definitions": [
+        "test_carried_creation_uses_earliest_parent_and_all_b_events",
+        "test_carried_confirmation_and_stop_boundaries",
+        "test_carried_exact_sort_ties_keep_ledger_insertion_and_cache_returns_fresh_lists",
+        "test_causeless_partial_row_is_skipped_before_physical_field_access",
+        "test_every_b_creation_is_extracted_before_metadata_rejection",
+        "test_nonempty_creation_keeps_missing_confirmation_error",
+        "test_carried_preserves_earlier_selected_metadata_error_before_later_creation_error",
+        "test_carried_keeps_creation_short_circuit_before_an_unhashable_later_b_event",
+        "test_carried_keeps_creation_short_circuit_before_an_incomparable_later_b_event",
+        "test_carried_guard_does_not_change_decimal_flags_for_an_unselected_invalid_price",
+        "test_distinct_parent_queries_reuse_creation_index_and_invalidate_on_new_cause",
+        "test_later_parent_provenance_keeps_creation_cache_but_earlier_parent_invalidates",
+        "test_new_physical_order_extends_carried_creation_index",
+        "test_lazy_post_stop_stream_matches_complete_query_across_mutation_and_reset",
+        "test_post_stop_stream_skips_unselected_malformed_price_without_decimal_flags",
+        "test_post_stop_stream_preserves_selected_metadata_failure_at_query_call",
+        "test_post_stop_stream_preserves_legacy_cross_lookup_for_partial_row",
+        "test_post_stop_stream_does_not_inspect_excluded_mixed_timezone_cross",
+        "test_native_post_stop_stream_reuses_generation_without_rescanning_ledger",
+        "test_post_stop_replacement_keeps_initial_identity_insertion_tie",
+        "test_creation_lists_do_not_retain_both_dense_parent_and_b_history"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_e_reconciliation_indexes.py",
+      "git_blob_sha1": "df61eda7cbd49d76d8dcc535697ca444174ae7ef",
+      "sha256": "872ce141313a0b9e09e73787339e547bc8b9694f86d0d5c1d17052b889a4d693",
+      "bytes": 4976,
+      "lines": 103,
+      "test_definitions": [
+        "test_e_duplicate_s_parent_retains_first_physical_parent",
+        "test_e_future_child_race_uses_maximum_decision_with_inclusive_tie",
+        "test_e_sparse_main_extremes_are_reused_only_within_one_immutable_chronology",
+        "test_e_legacy_chronology_without_sparse_cache_retains_local_tables",
+        "test_e_live_extreme_cache_remains_owned_by_its_continuation"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_e_source_ownership.py",
+      "git_blob_sha1": "ca7fc59b840e6779a150e2b7ac9bda780bbbf9dd",
+      "sha256": "2071aa38f59feb3b94a25d2a51e6a266358f33c38dc2f049e2b6e8442fb3be4f",
+      "bytes": 23037,
+      "lines": 413,
+      "test_definitions": [
+        "test_same_source_s_cannot_replace_accepted_blue_e_continuation",
+        "test_distinct_source_red_s_retains_its_existing_precedence",
+        "test_unaccepted_e_candidate_does_not_take_source_ownership_from_s",
+        "test_e_owned_s_cannot_veto_another_accepted_e_parent",
+        "test_reconciliation_recomputes_source_ownership_from_current_acceptance",
+        "test_restoring_independent_roots_cannot_revive_a_newly_e_owned_s",
+        "test_same_source_s_evidence_cannot_reopen_consumed_continuation",
+        "test_external_acceptance_blocks_later_same_source_s_evidence",
+        "test_e_continuation_requires_an_independent_cause_after_s_loses_source",
+        "test_invalid_creator_reselects_the_next_native_order_without_losing_e",
+        "test_consumed_s_recursion_reselects_after_its_new_e_disowns_a_creator",
+        "test_independent_root_restoration_reselects_a_valid_native_order",
+        "test_later_source_ownership_reselects_an_earlier_parents_native_order",
+        "test_moved_fallback_rebuilds_its_native_descendant_after_hard_reset",
+        "test_prospective_e_source_cannot_disown_its_orders_only_creator",
+        "test_e_owned_s_loses_only_its_order_creation_cause"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_hpzr2_regression.py",
+      "git_blob_sha1": "1ff4793e8d71e9480f2e31b757e43ed9db414aeb",
+      "sha256": "941f5672ee589ab2becea94c88853dd2e9a25960502f93a4ad9b0396c7d58ab5",
+      "bytes": 1301,
+      "lines": 35,
+      "test_definitions": [
+        "test_first_difference_reports_stable_json_key_order",
+        "test_first_difference_reports_numeric_json_representation"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_lifecycle_index_equivalence.py",
+      "git_blob_sha1": "91ac5b71b89d7db3134e916223112fe50a826cea",
+      "sha256": "81a22e3511064bf09ae2c0be0dec6c223132e5d0743cf7c30899866d525ad7b2",
+      "bytes": 6203,
+      "lines": 134,
+      "test_definitions": [
+        "test_dominance_preserves_inclusive_boundaries_ties_and_duplicate_objects",
+        "test_dominance_ranks_each_lifetime_once_in_dense_history",
+        "test_s_eligibility_preserves_first_equal_source_and_e_precedence",
+        "test_s_eligibility_does_not_rescan_prior_history"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_live_a_zones.py",
+      "git_blob_sha1": "f7dc33e5f72bfeb77eae6dd381ad5b1d5dda9375",
+      "sha256": "be9900f13a9ff99698b4471d768474ea9b666209113230cafeff2a496854f69f",
+      "bytes": 4423,
+      "lines": 103,
+      "test_definitions": [
+        "test_pending_a_continues_and_preserves_its_frozen_source",
+        "test_revised_lower_tail_withdraws_an_old_stop_and_a",
+        "test_open_lower_search_does_not_fall_back_to_new_mains_with_no_lower_rows",
+        "test_first_appended_lower_rows_supersede_an_old_main_only_fallback"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_live_behavior_reaction_views.py",
+      "git_blob_sha1": "b90d0dc5aa66b3135d8ffeadf3a598cc69b670d1",
+      "sha256": "c0ad6ff4a6ab15c30b95a53c50bbaa1142b3a2fe54dbe5c4212fddcc95a668b1",
+      "bytes": 3628,
+      "lines": 86,
+      "test_definitions": [
+        "test_new_opposite_owner_can_hide_and_release_an_older_reaction",
+        "test_lower_timeframe_revision_rechecks_containment_with_identical_reactions",
+        "test_live_view_preserves_the_public_decimal_representation"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_live_blue_lines.py",
+      "git_blob_sha1": "c668bce1c25301d1517a900e21e6487a5fe6b747",
+      "sha256": "16de2c1fb0b0ab23bcbd42fffd849e530fabfc72d9724e992ad340e38376116a",
+      "bytes": 2991,
+      "lines": 64,
+      "test_definitions": [
+        "test_late_reset_updates_only_its_own_reaction_tail",
+        "test_a_revised_reset_candle_updates_blue_even_when_reaction_events_are_identical"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_live_e_parent_stops.py",
+      "git_blob_sha1": "f5b00e15b88e0d6cccdc46f8416645c3f7ddc237",
+      "sha256": "7990efacf77764b84823fcebac1760239e450bd38e8e87d15548a13999d01b23",
+      "bytes": 9677,
+      "lines": 231,
+      "test_definitions": [
+        "test_live_accepted_order_stream_reuses_the_proven_crossing_state",
+        "test_open_e_parent_stop_resumes_at_the_first_new_lower_row",
+        "test_dirty_preview_revokes_parent_stop_and_retains_negative_prefix",
+        "test_unchanged_e_races_reuse_candidate_and_accepted_state",
+        "test_changed_accepted_order_provenance_reopens_reconciliation",
+        "test_a_new_independent_e_root_keeps_the_settled_prefix"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_live_market_buckets.py",
+      "git_blob_sha1": "a72e53ba7276e8489e55d2be5eae6c37568e716b",
+      "sha256": "852c219b43a06fd641fbe05db05eb7c564d4a7c960b11b47db458d7794062495",
+      "bytes": 2776,
+      "lines": 61,
+      "test_definitions": [
+        "test_each_suffix_matches_batch_and_preserves_settled_buckets",
+        "test_appending_inside_last_main_bucket_only_replaces_the_unsettled_bucket",
+        "test_rejecting_a_nonappend_batch_keeps_buckets_and_decimal_representation"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_live_order_b_reset_legs.py",
+      "git_blob_sha1": "7aad93e3abd9a1addcf280487f443914005eb7f4",
+      "sha256": "5081e9bfd3669b5ed72a4a820d9235ae1fbf226906cd11d796068b44a67229fa",
+      "bytes": 1908,
+      "lines": 48,
+      "test_definitions": [
+        "test_live_order_b_reuses_the_boundary_and_extends_an_open_strict_crossing",
+        "test_live_order_b_invalidates_a_revised_strict_crossing"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_live_pipeline_continuation.py",
+      "git_blob_sha1": "f42af15e768be4613deec307c150c84dc947ddf8",
+      "sha256": "b4157104f4530219d42fb2213cb5df1493ede9ac0233bc544ddb2ba111142567",
+      "bytes": 7976,
+      "lines": 192,
+      "test_definitions": [
+        "test_live_pipeline_matches_manual_apply_at_each_horizon",
+        "test_failed_full_replay_leaves_the_raw_append_retryable",
+        "test_failed_publication_rebuilds_market_indexes_from_the_rolled_back_prefix",
+        "test_raw_lineage_catches_up_once_and_accepts_only_an_exact_append",
+        "test_worker_rejects_a_path_supplied_over_stdin",
+        "test_raw_delta_requires_the_exact_base_and_final_bytes_and_can_return_to_a_full_snapshot"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_live_primary_continuation.py",
+      "git_blob_sha1": "776d5d718cce701cf56f7b441df7567c9aa40f95",
+      "sha256": "1fabcc1ecb33a145da722b7774a20ee613cbc012125e9f61f984c0f0d8820844",
+      "bytes": 4494,
+      "lines": 101,
+      "test_definitions": [
+        "test_resume_retains_first_point_and_registers_it_before_new_orders",
+        "test_missing_seed_rewinds_before_the_reported_order_change",
+        "test_new_candle_can_close_the_mbl_without_reselecting_the_old_high",
+        "test_later_tick_in_stop_main_rewinds_its_primary_source"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_live_reaction_continuation.py",
+      "git_blob_sha1": "1a08927ae85c9c67c12fe97ab12e47fb21efb953",
+      "sha256": "8137b0e2ff5df21cba0238d036dcaee2f14321cbec3cc9d2908800ae39fe77e5",
+      "bytes": 5959,
+      "lines": 136,
+      "test_definitions": [
+        "test_open_normal_reaction_continues_across_the_boundary",
+        "test_reset_keeps_its_open_search_between_polls",
+        "test_invalid_append_does_not_replace_the_committed_result",
+        "test_unconfirmed_initial_candidate_survives_first_poll",
+        "test_preview_does_not_commit_a_confirmation_on_a_mutable_analysis_bar",
+        "test_initial_market_gap_does_not_define_the_append_grid"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_live_s_zones.py",
+      "git_blob_sha1": "a74b8f428c58ec9fb62e30f9530487001d6ecca4",
+      "sha256": "09e3fa987df373e2d1f8da1553bc456bfb999849132fdba119e2030289cae12c",
+      "bytes": 3801,
+      "lines": 91,
+      "test_definitions": [
+        "test_open_s_can_decide_and_then_reuse_the_original_candidate",
+        "test_earlier_blue_ownership_revision_reopens_an_s_candidate",
+        "test_main_candle_revision_reopens_an_s_candidate"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_live_stopall_continuation.py",
+      "git_blob_sha1": "6e4ad91d324dd793efb9e18ab8123c9266dde1ed",
+      "sha256": "768532675a0f0bd9a89112449f6ee0a707bad05efd3d26171db3106b4f8bd9b5",
+      "bytes": 2245,
+      "lines": 52,
+      "test_definitions": [
+        "test_live_stopall_keeps_armed_owner_and_reuses_the_prior_donor",
+        "test_live_stopall_rewinds_a_market_or_upstream_revision"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_main_range_index.py",
+      "git_blob_sha1": "0b71754289ecd3b325297d33f03caa938207402e",
+      "sha256": "bef1d5af8b3ccba7a89c736b16161571079bc17cdae7a55f615ad8f47fa8c320",
+      "bytes": 4578,
+      "lines": 94,
+      "test_definitions": [
+        "test_all_main_ranges_keep_earliest_extreme_identity_and_decimal_tuple",
+        "test_reversed_legacy_range_keeps_start_owner",
+        "test_immutable_e_indexes_are_scoped_to_each_chronology",
+        "test_reflected_main_queries_share_original_index_and_release_with_source",
+        "test_refreshed_index_retains_strict_crossings_and_earliest_extrema"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_order_audit_lifecycle_contracts.py",
+      "git_blob_sha1": "ed6b1531cb5482a3bd4175ce45a3ccae5d963ab0",
+      "sha256": "20b98e5afd58c6c607035bf9d3bba507599d3a738716a0322c19ccc5fcfc2bf0",
+      "bytes": 17894,
+      "lines": 385,
+      "test_definitions": [
+        "test_extreme_range_query_keeps_first_equal_source",
+        "test_explicitly_invalid_s_cannot_freshly_create_parent_stop_order",
+        "test_invalid_s_cause_is_not_reconstructed_from_internal_e_evidence",
+        "test_public_e_reference_cannot_create_an_order_without_valid_cause",
+        "test_invalid_s_order_cannot_enter_accepted_e_lifecycle",
+        "test_invalid_s_order_cannot_be_restored_as_independent_e_root",
+        "test_valid_s_order_can_be_restored_as_independent_e_root",
+        "test_invalid_s_root_with_reset_leg_order_can_be_restored",
+        "test_invalid_s_order_cannot_start_consumed_s_continuation",
+        "test_consumed_s_continuation_uses_independent_a_order_cause",
+        "test_invalid_s_chain_cannot_publish_cause_less_descendant",
+        "test_invalid_s_root_can_use_independent_reset_leg_order",
+        "test_valid_s_order_enters_accepted_e_lifecycle",
+        "test_required_identity_does_not_prepare_cause_less_order",
+        "test_same_identity_same_ledger_size_changed_causes_refresh_carried_query",
+        "test_ensure_restored_order_is_visible_through_confirmation_query",
+        "test_valid_historical_s_creation_cause_survives_public_parent_removal",
+        "test_invalid_s_removal_retains_shared_physical_order_b_reset_cause",
+        "test_real_stopall_publication_refreshes_reset_queries_and_context_caches",
+        "test_reset_publication_builds_one_sorted_index_and_copies_the_supplied_map"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_order_b_reset_leg.py",
+      "git_blob_sha1": "96faf0cd726d17794599140b9212350584745b94",
+      "sha256": "cfff1b9d7fc941a463d7ffb926cdb4b34647b62f48fbb99f391982749ebbf900",
+      "bytes": 10641,
+      "lines": 275,
+      "test_definitions": [
+        "test_strict_lower_crossing_and_inclusive_leg_source",
+        "test_equal_boundary_does_not_create_order",
+        "test_opposite_first_candle_before_strict_break_main_candle_is_rejected",
+        "test_opposite_first_in_strict_break_main_candle_is_eligible",
+        "test_next_a_formation_expires_incomplete_candidate",
+        "test_a_after_exact_break_still_expires_same_main_candle_candidate",
+        "test_bearish_direction_uses_strict_high_above_inclusive_ceiling",
+        "test_latest_accepted_behavior_is_anchor_independent_of_previous_reaction",
+        "test_dominant_stop_owns_one_main_candle_transition",
+        "test_open_higher_priority_behavior_blocks_lower_priority_stop",
+        "test_same_physical_identity_keeps_parent_and_all_reset_leg_causes",
+        "test_b_only_accepted_order_can_carry_into_next_parent_lifecycle"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_pl_ph_detector.py",
+      "git_blob_sha1": "9ffc4c3c9abf406142aab6989c15aa1a4b3f0615",
+      "sha256": "7600e60f37838cf00f60cdd8707df62e4725049d3fac55717209b386a2a01701",
+      "bytes": 29605,
+      "lines": 636,
+      "test_definitions": [
+        "test_ph_source_differs_from_confirmation_and_mbl_is_inclusive",
+        "test_reference_equality_does_not_open_ph_space",
+        "test_second_behavior_and_break_candles_belong_to_mbl_range",
+        "test_later_stopall_does_not_cancel_an_already_qualified_matching_leg",
+        "test_third_high_strict_stop_ends_numbering_before_a_fourth_high",
+        "test_first_stopped_order_wins_regardless_of_formation_order",
+        "test_equal_extrema_choose_first_candle",
+        "test_mbl_break_cancels_pending_first_high_and_opens_low",
+        "test_mbl_break_cancels_pending_second_high",
+        "test_high_break_before_low_confirmation_cancels_low_and_continues_ph",
+        "test_ph_reset_preserves_mbl_and_pl_number_and_previous_low_gate",
+        "test_incomplete_order_does_not_create_a_point",
+        "test_mbl_equality_does_not_cancel_pending_high",
+        "test_matching_excludes_different_e_numbers",
+        "test_stopall_donor_is_not_an_independent_matching_behavior",
+        "test_native_order_a_uses_canonical_direction_stop_and_identity",
+        "test_canonical_reaction_without_accepted_audit_is_not_an_order",
+        "test_initial_low_accepts_order_a_after_first_valid_bearish_reaction",
+        "test_native_ph_continuation_exposes_reset_leg_order_for_the_primary_gate",
+        "test_after_pl3_break_evaluates_orders_without_inventing_pl4",
+        "test_pl_first_valid_a_is_not_replaced_because_it_has_not_stopped",
+        "test_lower_timeframe_orders_opposing_breaks_inside_one_main_candle",
+        "test_equal_raw_timestamp_does_not_invent_boundary_ordering",
+        "test_stopall_confirmation_cannot_be_used_before_it_exists",
+        "test_selected_native_order_preserves_full_cause_and_reaction_mode",
+        "test_ph_cancel_cannot_order_opposing_breaks_inside_one_raw_candle",
+        "test_pl_cancel_cannot_order_opposing_breaks_inside_one_raw_candle",
+        "test_post_pl3_high_transition_also_requires_resolvable_raw_order",
+        "test_lower_priority_intervening_e_does_not_break_matching_s",
+        "test_higher_priority_owner_replacement_restarts_matching_count",
+        "test_two_matching_behaviors_before_stopall_three_are_insufficient",
+        "test_unbroken_first_setup_does_not_block_later_qualified_leg",
+        "test_first_actual_break_wins_over_first_qualification",
+        "test_earlier_setup_remains_eligible_after_later_numbered_stopall",
+        "test_confirmed_ph_replaces_only_the_same_stopall_candle",
+        "test_future_ph_confirmation_does_not_erase_stopall_from_an_earlier_window",
+        "test_unconfirmed_ph_space_does_not_replace_stopall",
+        "test_confirmed_high_is_committed_before_resolving_its_next_order",
+        "test_mbl_extension_is_four_hundred_actual_candles_across_session_gap",
+        "test_mbl_extension_extrapolates_four_hundred_slots_when_history_ends",
+        "test_ph_can_use_an_earlier_first_confirmed_at_the_structure_break",
+        "test_native_ph_accepts_earlier_first_on_or_after_exact_gate_confirmation",
+        "test_native_ph_rejects_confirmation_before_the_structure_break",
+        "test_pl_does_not_inherit_the_clarified_ph_confirmation_gate",
+        "test_overlapping_cycles_keep_both_high_sequences_and_immutable_legs",
+        "test_confirmed_ph_source_cannot_be_reused_as_a_stopall_cycle_reference",
+        "test_invalid_ph_reference_cycle_cannot_commit_native_order_causes",
+        "test_one_cycle_low_and_high_reset_do_not_reset_another_cycle",
+        "test_native_callbacks_follow_global_decision_order_and_recheck_pending_orders",
+        "test_waiting_cycle_wakes_after_shared_native_order_acceptance_changes",
+        "test_repeated_matching_occurrences_do_not_manufacture_extra_cycles",
+        "test_duplicate_first_occurrence_cannot_qualify_a_cycle",
+        "test_qualification_provenance_preserves_earliest_pair_and_each_cycle",
+        "test_qualified_unbroken_setup_retains_qualification_provenance",
+        "test_qualification_provenance_uses_exact_decision_order_not_source_order",
+        "test_activation_equal_to_a_decision_preserves_both_contexts_deterministically"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_primary_cycle_serialization.py",
+      "git_blob_sha1": "7f074a14003790c3341adf74bf85d0ffd2e56400",
+      "sha256": "b500c60ac53213976a7e46863734caddc451b902ed3209eaa6ac39650d924711",
+      "bytes": 7385,
+      "lines": 153,
+      "test_definitions": [
+        "test_independent_cycles_publish_both_immutable_legs_and_number_one_highs",
+        "test_coincident_cycle_points_publish_one_owner_with_both_cycle_memberships",
+        "test_visible_window_keeps_numbering_from_earlier_confirmed_highs",
+        "test_later_higher_role_keeps_the_first_physical_id_across_horizons",
+        "test_cycle_metadata_and_leg_visibility_follow_each_activation_horizon",
+        "test_post_pl3_order_usage_retains_each_independent_cycle_identity",
+        "test_prequalification_horizon_does_not_report_a_future_cycle_status",
+        "test_qualified_but_unbroken_horizon_reports_waiting_for_the_reference_break",
+        "test_matching_leg_is_not_formed_before_its_first_ph_confirmation",
+        "test_matching_leg_without_any_confirmed_ph_never_becomes_public",
+        "test_another_cycles_ph_does_not_confirm_a_still_pending_matching_leg"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_primary_high_numbering.py",
+      "git_blob_sha1": "52b1e4653f645d1e7017645f338f523a643a4918",
+      "sha256": "217a611b6641f1c1566380fd90f6a1e48645c51e7dd5c64e3d7d212fbaa76ef2",
+      "bytes": 3659,
+      "lines": 84,
+      "test_definitions": [
+        "test_coincident_high_keeps_larger_number_and_one_physical_owner",
+        "test_new_cycle_ph_one_above_previous_high_continues_numbering",
+        "test_equal_or_lower_new_cycle_high_preserves_reset_one",
+        "test_greater_local_number_is_not_reduced_by_a_lower_prior_counter",
+        "test_future_role_does_not_promote_an_earlier_horizon",
+        "test_confirmation_order_controls_numbering_without_changing_logical_roles",
+        "test_retrospective_source_candle_cannot_reorder_confirmation_chronology",
+        "test_canonical_order_provenance_uses_final_ph_names_without_mutation"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_primary_high_order_a.py",
+      "git_blob_sha1": "866d4a1ab888beba4fea8895526708a3cd2c8d44",
+      "sha256": "827026510fa2240e03244b583027d947dcb9e0dcbbc204eb71081da0dc3138c2",
+      "bytes": 7569,
+      "lines": 155,
+      "test_definitions": [
+        "test_ph_stop_creates_native_order_a_despite_historical_stopall_reset",
+        "test_ph_stop_equality_cannot_create_order_a",
+        "test_ph_order_requires_confirmation_strictly_after_its_stop",
+        "test_superseded_stopall_cannot_steal_ph_cause_with_an_ineligible_order",
+        "test_revoked_ph_cause_cannot_survive_in_native_accepted_order_queries",
+        "test_ph_open_order_is_retained_and_registration_is_idempotent",
+        "test_final_ph_label_reconciles_native_causes_without_changing_physical_orders",
+        "test_stopall_parent_cause_is_reparented_only_at_the_confirmed_ph_stop",
+        "test_independent_reset_leg_keeps_its_type_with_temporally_current_ph_owner",
+        "test_reset_roles_before_ph_confirmation_retain_historical_stopall_owner",
+        "test_ph_cannot_claim_a_different_stopall_stop_or_anchor"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_primary_low_order_a.py",
+      "git_blob_sha1": "ae9cdbba58ae4d926da5dc89913c75832280a378",
+      "sha256": "734bf69f88679655ea6a6f991c2a03321263a1e7a1cfcb5b1504bec35cd34d69",
+      "bytes": 2512,
+      "lines": 54,
+      "test_definitions": [
+        "test_pl_stop_creates_native_order_a_with_actual_pl_parent",
+        "test_equal_pl_low_does_not_create_native_parent_order",
+        "test_final_pl_names_reconcile_all_causes_without_moving_the_order",
+        "test_pl_replaces_only_the_stopall_cause_at_its_actual_confirmed_stop"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_regime_output_determinism.py",
+      "git_blob_sha1": "f0a7fe774c2c384d84ec0ec9209f810f201323d5",
+      "sha256": "ea39649318f74a2a3d95132994fc4421ae96a7b475431545d21f9e49d5d58237",
+      "bytes": 3122,
+      "lines": 69,
+      "test_definitions": [
+        "test_merged_projection_keys_follow_first_appearance_across_hash_seeds",
+        "test_single_regime_preserves_original_group_identity",
+        "test_merge_preserves_row_identity_segment_order_and_final_metadata",
+        "test_empty_projection_segments_remain_empty"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_removed_setup_contract.py",
+      "git_blob_sha1": "73dbf5efdf3acbac1c630b4ae84a3fbc9a11e781",
+      "sha256": "e3bf87f1b191119e89c1e0f215dd0cec15e13b8d36feabd4e8b484649b826a17",
+      "bytes": 2390,
+      "lines": 58,
+      "test_definitions": [
+        "test_manual_and_live_calculations_publish_native_contract_without_assessments"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_stage_range_refactor.py",
+      "git_blob_sha1": "aca7224e78ff0ebaa950fec90e21e013dab0db06",
+      "sha256": "5b81732b05eb6594427264627a998680f7258b603c49e7cc1c343e2ba53e09fe",
+      "bytes": 5156,
+      "lines": 115,
+      "test_definitions": [
+        "test_a_range_matches_scan_for_all_ties_and_irregular_boundary_windows",
+        "test_a_range_keeps_exact_long_decimal_at_inclusive_microsecond_end",
+        "test_a_range_falls_back_to_first_main_extreme_when_lower_is_empty",
+        "test_a_range_reuses_the_existing_index_without_materializing_lower_windows",
+        "test_a_range_rejects_reversed_time_before_any_index_query"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_stopall_dominance.py",
+      "git_blob_sha1": "f124fe146a33b04ab86c9e615c496d10fe84cdf5",
+      "sha256": "20d9513c2747c0eac3960aa34c3e82fd8a504fc7c1458c278eb81b67e4a50749",
+      "bytes": 11325,
+      "lines": 299,
+      "test_definitions": [
+        "test_exact_e_owner_arms_only_after_second_occurrence",
+        "test_equal_level_does_not_stop_armed_blue_owner",
+        "test_armed_blue_owner_reverses_on_red_s_without_a_price_stop",
+        "test_red_s_cannot_reverse_blue_before_second_blue_has_confirmed",
+        "test_higher_priority_formation_before_stop_disarms_lower_owner",
+        "test_stop_before_higher_priority_formation_remains_valid",
+        "test_e_child_of_armed_owner_can_donate_at_its_retrospective_source",
+        "test_single_s_owner_cannot_use_direct_e_child_stop",
+        "test_red_s_direct_gate_uses_its_decision_even_after_blue_price_stop",
+        "test_mode_a_red_s_takes_direct_gate_before_later_e_donor",
+        "test_completed_red_stop_survives_lower_s_before_e_donor",
+        "test_different_e_numbers_do_not_form_an_exact_repeat",
+        "test_lower_blue_occurrences_cannot_arm_behind_red_e",
+        "test_lower_e_blue_occurrences_cannot_arm_behind_red_e",
+        "test_hard_stopall_resets_exact_owner_count",
+        "test_valid_stopall_chain_keeps_existing_numbering"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_trend_context.py",
+      "git_blob_sha1": "0053560b3275e54fd5810f3f9c6dcb545b42151a",
+      "sha256": "5bc9677ba2b4d6dc8a8ff244ff51ebbc6baa904b0c6c9435a8fa371cd5650f4e",
+      "bytes": 4357,
+      "lines": 84,
+      "test_definitions": [
+        "test_suffix_contains_only_boundary_and_later_candles_with_fresh_indexes",
+        "test_serialized_index_translation_preserves_numbers_times_and_sentinels",
+        "test_fiftieth_icon_candle_counts_actual_candles_and_includes_start",
+        "test_icon_target_is_absent_until_fifty_actual_candles_exist",
+        "test_future_transition_does_not_replace_an_earlier_presentation_window"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_trend_transition.py",
+      "git_blob_sha1": "67a11553b1a29d47d6540926fed5989497eb7fd6",
+      "sha256": "acf510f6e3c9244c19231563d45ca7c7540a9f4796c580b6f9bcd7b1cf780d6e",
+      "bytes": 4001,
+      "lines": 93,
+      "test_definitions": [
+        "test_first_strict_ph3_stop_reverses_without_committing_ph4",
+        "test_equal_ph3_high_does_not_reverse_until_a_strict_crossing",
+        "test_no_later_strict_crossing_preserves_three_highs_without_transition",
+        "test_order_resolver_is_not_asked_for_ph4_after_reversal",
+        "test_first_ph3_stop_is_selected_across_independent_cycle_owners",
+        "test_later_qualified_cycles_cannot_activate_after_the_global_reversal",
+        "test_pretransition_horizon_does_not_publish_a_completed_reversal_status"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/unit/test_true_false.py",
+      "git_blob_sha1": "26ce8e9a45d33674de1cb2ab53c450a7a31d7a56",
+      "sha256": "9ef7999cd1194985ff0d168c0bb986d80afa9b63fa8c436a8361f301d527b0f7",
+      "bytes": 11478,
+      "lines": 259,
+      "test_definitions": [
+        "test_three_groups_and_unequal_repeat_labels",
+        "test_basic_schematic_repetition_restarts",
+        "test_stopall_schematic_series",
+        "test_largest_stopall_repeat_rebases_the_prefix_only_after_confirmation_close",
+        "test_each_directional_primary_restarts_stopall_verdicts",
+        "test_after_primary_the_first_series_has_no_repetition_marker",
+        "test_live_stopall_repeats_only_after_the_confirmation_candle_closes",
+        "test_repeated_f_uses_latest_reference_and_strict_original_direction",
+        "test_final_behavior_takes_precedence_over_hidden_donor",
+        "test_repair_uses_lower_raw_inside_last_visible_candle"
+      ],
+      "entrypoint": false,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "unit_test"
+    },
+    {
+      "path": "engine/tests/verification/verify_order_b_raw.py",
+      "git_blob_sha1": "01a2d0f54dd0b836bcea342ae485c0e1451bea01",
+      "sha256": "544ea8db243753e6a9bbec622fb8f36264999a8cb15673886146c3d6ed3a9c60",
+      "bytes": 6151,
+      "lines": 125,
+      "test_definitions": [],
+      "entrypoint": true,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "verification_tool"
+    },
+    {
+      "path": "engine/tests/verification/verify_order_references.py",
+      "git_blob_sha1": "b012719ec85883c8a9f88b025ed3f57cb9da499f",
+      "sha256": "9701a26a284a2e63a75e8155d8df32d4884a791167d32c8a29a0c65d610b9790",
+      "bytes": 2294,
+      "lines": 39,
+      "test_definitions": [],
+      "entrypoint": true,
+      "status": "DISCOVERED_NOT_RUN",
+      "role": "verification_tool"
+    }
+  ],
+  "counts": {
+    "unit": 35,
+    "regression": 5,
+    "benchmark": 2,
+    "verification": 2,
+    "lexical_test_definitions": 295,
+    "external_chart_tests": 50
+  },
+  "external_related_files": [
+    {
+      "path": ".github/workflows/anti-drift.yml",
+      "bytes": 1659,
+      "git_blob_sha1": "a57297005cba07aa7c1b948848210f640d83fb92",
+      "role": "repository_ci",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/integration/drawing-interaction.test.mjs",
+      "bytes": 6397,
+      "git_blob_sha1": "991c61f03cf893bf95ed210a6196a482324a813c",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/integration/live-indicator-recovery.test.mjs",
+      "bytes": 43141,
+      "git_blob_sha1": "4900e50446187284228b340d99d61e1c05e26194",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/alert-rules.test.mjs",
+      "bytes": 5863,
+      "git_blob_sha1": "78e539dfffa7c537edf2d308bb1307f359ad80f0",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/calculation-cache.test.mjs",
+      "bytes": 1900,
+      "git_blob_sha1": "164a13a0da722e31d21da8eca39e8f93529e1c16",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/calculation-coordinator.test.mjs",
+      "bytes": 9190,
+      "git_blob_sha1": "d3721266b35e567dd353685d59f0247931eb79ff",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/candle-buckets.test.mjs",
+      "bytes": 1054,
+      "git_blob_sha1": "19b84d1b6c3d6016757252cfe4f65a2facc4be17",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/candle-export-log.test.mjs",
+      "bytes": 1097,
+      "git_blob_sha1": "08b3a0fad34c0a1431f3b5620d3bbf545717cc18",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/candle-file-response.test.mjs",
+      "bytes": 3167,
+      "git_blob_sha1": "b61ac99184b43f423b101a201e7d3d54c34a598e",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/candle-update.test.mjs",
+      "bytes": 7946,
+      "git_blob_sha1": "30fa395bb15269c7532c0867e91e66438780f746",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/chart-transfer.test.mjs",
+      "bytes": 4226,
+      "git_blob_sha1": "fe2d429dcf6008fb29b74edbdc8b785a62c5066c",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/chart-update-contract.test.mjs",
+      "bytes": 4363,
+      "git_blob_sha1": "d2c877fa33dac1e3b59d30ef3471c31d625ce080",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/chart-update-merge.test.mjs",
+      "bytes": 2749,
+      "git_blob_sha1": "cf02262919b7b7af29e92ad969723cfc7c2b86b7",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/drawing-coordinates.test.mjs",
+      "bytes": 2298,
+      "git_blob_sha1": "325ae69c5f3760257c048c064407d06bdf07c9ef",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/drawing-tools.test.mjs",
+      "bytes": 7373,
+      "git_blob_sha1": "bc8050b7ee3fccf07ffb1b768c5e33b5d51bf7b8",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/faraz-candle-api.test.mjs",
+      "bytes": 104916,
+      "git_blob_sha1": "d63111a7f7253c2d697453ebd037d97430c23266",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/faraz-symbol.test.mjs",
+      "bytes": 704,
+      "git_blob_sha1": "616d51861cab05a85dc46f6f72991873e6a29fcb",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/feedback.test.mjs",
+      "bytes": 4894,
+      "git_blob_sha1": "a1cf571c4eef8fde83f43e667c60cc3a0e7131b4",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/indicator-cache.test.mjs",
+      "bytes": 1977,
+      "git_blob_sha1": "981a456e1c7f6733b079e4730bae62c579cf5fe8",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/indicator-calculation-request.test.mjs",
+      "bytes": 783,
+      "git_blob_sha1": "b59fdeb65f69ffab43b650d91db27ec8e7bbe70d",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/indicator-lifecycle.test.mjs",
+      "bytes": 1996,
+      "git_blob_sha1": "31d3744a9f0749d3ae94d032cee8c79c5c72cf38",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/indicator-live-progress.test.mjs",
+      "bytes": 2204,
+      "git_blob_sha1": "14660d6b5104832b2cee5b8ec16c2ea4d85aa873",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/indicator-probe-ownership.test.mjs",
+      "bytes": 7809,
+      "git_blob_sha1": "5d6be1192ccc2be6a5a83d9a5486d2a4d15caf02",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/indicator-range-input.test.mjs",
+      "bytes": 11435,
+      "git_blob_sha1": "12f181e1aaf277cb9cfd9b7e79d2d0974463b3d6",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/indicator-range.test.mjs",
+      "bytes": 1513,
+      "git_blob_sha1": "6bd2954265eaeb089b52088f7cbdb797dbb5648d",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/indicator-renderer.test.mjs",
+      "bytes": 3588,
+      "git_blob_sha1": "4622f47260a7c6412b1998217540d88a7fb64eae",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/live-engine-sessions.test.mjs",
+      "bytes": 15749,
+      "git_blob_sha1": "55f0333defadf176bed4fc8d939453e54c5975ae",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/local-state-paths.test.mjs",
+      "bytes": 2879,
+      "git_blob_sha1": "a5be15beef129650a7a2b9c2ac66939aeb3a7e70",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/manual-position-state.test.mjs",
+      "bytes": 1247,
+      "git_blob_sha1": "5b6b71b839d7e1c5b44dcfa8c51c93fd42ba1d39",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/manual-review.test.mjs",
+      "bytes": 20267,
+      "git_blob_sha1": "5d0232caeab1f65abd582eedc3c0b392cc956909",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/popover.test.mjs",
+      "bytes": 1998,
+      "git_blob_sha1": "0c6954e079f85bd830d1841b0bdf2254858d19c1",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/primary-detection-summary.test.mjs",
+      "bytes": 2599,
+      "git_blob_sha1": "c8f96fa180eee891d031bc67e1f4d6e7c772ece9",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/primary-structure.test.mjs",
+      "bytes": 20437,
+      "git_blob_sha1": "6ac3f36c627c50d571b4f71f7f5959804db4e662",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/progress-channels.test.mjs",
+      "bytes": 6452,
+      "git_blob_sha1": "b9d180a17f95762e25d7acc793f37e526a28cfed",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/raw-cut.test.mjs",
+      "bytes": 3525,
+      "git_blob_sha1": "86f5593a261ec98f46e57c8a380d2feadf3d6a02",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/raw-file-contract.test.mjs",
+      "bytes": 1053,
+      "git_blob_sha1": "29bec81de87e1735070a368c4a31e29ba2eb1c30",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/raw-input-identity.test.mjs",
+      "bytes": 2455,
+      "git_blob_sha1": "47789b23654d7fd5616f302804ebdab8209377c5",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/raw-integrity.test.mjs",
+      "bytes": 1072,
+      "git_blob_sha1": "c0bf0033f3d8569d57cb467c62d211203dfe8e8b",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/raw-inventory.test.mjs",
+      "bytes": 5019,
+      "git_blob_sha1": "8a69d22ef0a4a5ed952dd450f21d5a3fbb1c669f",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/raw-resource-store.test.mjs",
+      "bytes": 14884,
+      "git_blob_sha1": "2a83deca1d33e921283a28cca3e6935b0fe293a0",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/realtime-chart.test.mjs",
+      "bytes": 24671,
+      "git_blob_sha1": "a381f7bf8112e6db588aa735d6ccae591faa7201",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/realtime-indicator-ownership.test.mjs",
+      "bytes": 29437,
+      "git_blob_sha1": "741e5d7cbadba8caf96fa46252889349a2fb6d73",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/request-body.test.mjs",
+      "bytes": 3363,
+      "git_blob_sha1": "203d60d7b66645e583374cacc241ba00627199c8",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/screenshot-overlay.test.mjs",
+      "bytes": 659,
+      "git_blob_sha1": "bf30c9d0a9b335a37f3e4eec6dde0d9dfbdc684a",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/symbol-format.test.mjs",
+      "bytes": 1150,
+      "git_blob_sha1": "c8e6a53de6f6e2b5da4c113b27f725812ae429dd",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/true-false-label.test.mjs",
+      "bytes": 1835,
+      "git_blob_sha1": "1d64c91f9db319fb9c5ef8fb4c2b13a30731e185",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/view-transform.test.mjs",
+      "bytes": 2939,
+      "git_blob_sha1": "acda11c08c9d11e8acb4bd44d25125b8c804b367",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/vite-state-policy.test.mjs",
+      "bytes": 2989,
+      "git_blob_sha1": "1fb290ccffdbb59239675594e4071d07474bf1ec",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/workspace-session.test.mjs",
+      "bytes": 2526,
+      "git_blob_sha1": "13c6a8056987f71b0539426014756d0877c2bc18",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/workspace-state.test.mjs",
+      "bytes": 3480,
+      "git_blob_sha1": "39597fc71d0e7837fe6ae3347d831c2f86465f79",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "apps/chart/tests/unit/zoom-config.test.mjs",
+      "bytes": 442,
+      "git_blob_sha1": "fa162388f340ca9d27ec1dbaf314808822e1a134",
+      "role": "external_chart_test",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "engineering/verification/golden-baseline-30s-both/ARTIFACTS.md",
+      "bytes": 2664,
+      "git_blob_sha1": "416aca302c4f860ce0c99c3b28217b4eec7bc84b",
+      "role": "frozen_golden_evidence_or_verifier",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "engineering/verification/golden-baseline-30s-both/FUTURE_RELEASE_TEMPLATE.md",
+      "bytes": 1382,
+      "git_blob_sha1": "919d7f0a7072ed8d0a344c49abd80e7ce0b7ff21",
+      "role": "frozen_golden_evidence_or_verifier",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "engineering/verification/golden-baseline-30s-both/README.fa.md",
+      "bytes": 2072,
+      "git_blob_sha1": "270d25d4f18c54efe21c86a586ce929bd8949b42",
+      "role": "frozen_golden_evidence_or_verifier",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "engineering/verification/golden-baseline-30s-both/README.md",
+      "bytes": 4028,
+      "git_blob_sha1": "667f4853b8832ea221dc714696f029fd1bed3f69",
+      "role": "frozen_golden_evidence_or_verifier",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "engineering/verification/golden-baseline-30s-both/V9_TOOLING_AUDIT_20261124.md",
+      "bytes": 4925,
+      "git_blob_sha1": "dabf46737b2af9bee190624d606c0d49d6c2460a",
+      "role": "frozen_golden_evidence_or_verifier",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "engineering/verification/golden-baseline-30s-both/ZERO_DIFFERENCE_CONTRACT.md",
+      "bytes": 2715,
+      "git_blob_sha1": "09d661d1dd1e279f491b0c9b1208397d2120d06f",
+      "role": "frozen_golden_evidence_or_verifier",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "engineering/verification/golden-baseline-30s-both/golden_results.csv",
+      "bytes": 1364,
+      "git_blob_sha1": "4ee2bfcfe4e6d9fc68bfc6d642f245a94e75ce1e",
+      "role": "frozen_golden_evidence_or_verifier",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "engineering/verification/golden-baseline-30s-both/inputs.json",
+      "bytes": 3172,
+      "git_blob_sha1": "5ca78fe9fa1aa869147babcdfc4557a507776593",
+      "role": "frozen_golden_evidence_or_verifier",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "engineering/verification/golden-baseline-30s-both/source_blobs.json",
+      "bytes": 1481,
+      "git_blob_sha1": "9d4b739f4fc37873d9e6a1b44242e9db82085d90",
+      "role": "frozen_golden_evidence_or_verifier",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "engineering/verification/golden-baseline-30s-both/verify_golden.py",
+      "bytes": 6631,
+      "git_blob_sha1": "021ae8ea496dc15ab3438555e301c26bebbbc966",
+      "role": "frozen_golden_evidence_or_verifier",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "engineering/verification/golden-baseline-30s-both/version_history.json",
+      "bytes": 3818,
+      "git_blob_sha1": "a8d7f5c0e221fa00de3c6c85df31be249f18c50e",
+      "role": "frozen_golden_evidence_or_verifier",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "engineering/verification/golden-baseline-30s-both/version_performance.csv",
+      "bytes": 2270,
+      "git_blob_sha1": "1c6968a743089298c2411038b7b6d4f00c32730f",
+      "role": "frozen_golden_evidence_or_verifier",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "scripts/git/Test-GitManager.ps1",
+      "bytes": 35976,
+      "git_blob_sha1": "bae3cfaa539a5db2287322fa51cbe77aa5e30367",
+      "role": "repository_test_or_verifier",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "scripts/git/Test-ReleaseWorkflow.ps1",
+      "bytes": 46584,
+      "git_blob_sha1": "4dea0a85cf9cae5416ac7b2dbfa231cb9c493cbf",
+      "role": "repository_test_or_verifier",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "scripts/verification/anti_drift.py",
+      "bytes": 39996,
+      "git_blob_sha1": "bc56e085872f02075ded9380763f64508f8decb8",
+      "role": "repository_test_or_verifier",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "scripts/verification/test-launcher.ps1",
+      "bytes": 6786,
+      "git_blob_sha1": "71cae4f7a0845d19f38c50ba98fb8cd5cb957311",
+      "role": "repository_test_or_verifier",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    },
+    {
+      "path": "scripts/verification/test_anti_drift.py",
+      "bytes": 20115,
+      "git_blob_sha1": "852f4816fdeb3578efd69c247303e9920888b64a",
+      "role": "repository_test_or_verifier",
+      "status": "DISCOVERED_TREE_METADATA_NOT_RUN"
+    }
+  ],
+  "runner_discovery": {
+    "engine_unit": "Python unittest discovery under engine/tests/unit; confirm current import/runtime prerequisites before execution",
+    "reference": "engine/tests/verification/verify_order_references.py (direct byte, declared metadata and compile checks)",
+    "golden": "engineering/verification/golden-baseline-30s-both/verify_golden.py (historical immutable comparison, see conflicts register for verifier caveats)",
+    "chart_unit": "npm test in apps/chart; package.json invokes node --test tests/unit/*.test.mjs",
+    "live_integration": "node --test tests/integration/live-indicator-recovery.test.mjs from apps/chart on Windows, TRADINGBOT_LIVE_TEST_RAW optional",
+    "ci": "Current anti-drift workflow runs Python unittest under scripts/verification, full anti_drift.py and deterministic JSON comparison; release inventory checks on main/pull requests to main."
+  }
+}

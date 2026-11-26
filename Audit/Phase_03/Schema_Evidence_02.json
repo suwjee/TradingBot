@@ -1,0 +1,3927 @@
+{
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "group": 2,
+  "method": "Source-located class field schema derived from Phase 02 AST field nodes and pinned declaration spans. Native annotations/defaults are interface metadata, not implementation. Required means no declaration default, nullable does not imply omitted allowed. Non-record class annotations do not imply generated constructors. Cache identifier screen is lexical navigation only, not complete semantic cache analysis.",
+  "modules": [
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "source_sha": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "inventory_blob": "2fd3d102b79420e470a0935e6ffb9a00e2aa91a6",
+      "classes": [
+        {
+          "name": "ChronologicalContainmentIndex",
+          "id": "engine/pipeline/core_utils.py:17:0:ChronologicalContainmentIndex",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        }
+      ],
+      "field_count": 0,
+      "cache_identifier_screen": []
+    },
+    {
+      "path": "engine/pipeline/direction_policy.py",
+      "source_sha": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+      "inventory_blob": "0b15c2612d6be0228dd2456e6849cfbe55d81aae",
+      "classes": [
+        {
+          "name": "DirectionPolicy",
+          "id": "engine/pipeline/direction_policy.py:21:0:DirectionPolicy",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "direction",
+              "type": "Direction",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 22
+            },
+            {
+              "field": "extreme_attr",
+              "type": "Literal[\"low\", \"high\"]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 23
+            },
+            {
+              "field": "opposite_extreme_attr",
+              "type": "Literal[\"high\", \"low\"]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 24
+            },
+            {
+              "field": "first_reaction_tag",
+              "type": "Literal[\"RED\", \"GREEN\"]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 25
+            },
+            {
+              "field": "context_tag",
+              "type": "Literal[\"GREEN\", \"RED\"]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 26
+            }
+          ]
+        }
+      ],
+      "field_count": 5,
+      "cache_identifier_screen": []
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "source_sha": "240369edf3352006082efe094eb68ac027d6689f",
+      "inventory_blob": "1308a85ef49957aeb5e603c5347916fb79d616bf",
+      "classes": [
+        {
+          "name": "EZone",
+          "id": "engine/pipeline/e_zone_detector.py:36:0:EZone",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "direction",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 37
+            },
+            {
+              "field": "family",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 38
+            },
+            {
+              "field": "number",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 39
+            },
+            {
+              "field": "parent_type",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 40
+            },
+            {
+              "field": "parent_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 41
+            },
+            {
+              "field": "parent_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 42
+            },
+            {
+              "field": "parent_price",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 43
+            },
+            {
+              "field": "parent_stop_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 44
+            },
+            {
+              "field": "parent_stop_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 45
+            },
+            {
+              "field": "parent_stop_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 46
+            },
+            {
+              "field": "order_direction",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 47
+            },
+            {
+              "field": "order_reaction_number",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 48
+            },
+            {
+              "field": "order_mode",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 49
+            },
+            {
+              "field": "order_causes",
+              "type": "tuple[str, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 50
+            },
+            {
+              "field": "order_parent_stop_cause_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 51
+            },
+            {
+              "field": "order_first_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 52
+            },
+            {
+              "field": "order_first_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 53
+            },
+            {
+              "field": "order_break_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 54
+            },
+            {
+              "field": "order_break_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 55
+            },
+            {
+              "field": "order_confirmation_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 56
+            },
+            {
+              "field": "order_box_top",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 57
+            },
+            {
+              "field": "order_box_top_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 58
+            },
+            {
+              "field": "order_box_top_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 59
+            },
+            {
+              "field": "order_box_bottom",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 60
+            },
+            {
+              "field": "order_box_bottom_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 61
+            },
+            {
+              "field": "order_box_bottom_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 62
+            },
+            {
+              "field": "order_stop_level",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 63
+            },
+            {
+              "field": "order_stop_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 64
+            },
+            {
+              "field": "order_stop_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 65
+            },
+            {
+              "field": "source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 66
+            },
+            {
+              "field": "source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 67
+            },
+            {
+              "field": "price",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 68
+            },
+            {
+              "field": "decision_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 69
+            },
+            {
+              "field": "decision_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 70
+            },
+            {
+              "field": "decision_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 71
+            }
+          ]
+        },
+        {
+          "name": "_ParentStopProgress",
+          "id": "engine/pipeline/e_zone_detector.py:75:0:_ParentStopProgress",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "scanned_until",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 76
+            },
+            {
+              "field": "event",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 77
+            }
+          ]
+        },
+        {
+          "name": "_EReconciliationStep",
+          "id": "engine/pipeline/e_zone_detector.py:81:0:_EReconciliationStep",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "source",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 82
+            },
+            {
+              "field": "count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 83
+            },
+            {
+              "field": "active",
+              "type": "tuple[EZone, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 84
+            },
+            {
+              "field": "sequence_start",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 85
+            }
+          ]
+        },
+        {
+          "name": "_ReopenedERace",
+          "id": "engine/pipeline/e_zone_detector.py:88:0:_ReopenedERace",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "_ReconciledE",
+          "id": "engine/pipeline/e_zone_detector.py:93:0:_ReconciledE",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "candidates",
+              "type": "tuple[EZone, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 94
+            },
+            {
+              "field": "numbered",
+              "type": "tuple[EZone, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 95
+            },
+            {
+              "field": "accepted",
+              "type": "frozenset[tuple[datetime, int]]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 96
+            },
+            {
+              "field": "lifecycle_starts",
+              "type": "frozenset[datetime]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 97
+            },
+            {
+              "field": "evidence",
+              "type": "tuple",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 98
+            },
+            {
+              "field": "steps",
+              "type": "tuple[_EReconciliationStep, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 99
+            },
+            {
+              "field": "native_numbered",
+              "type": "tuple[EZone, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 100
+            }
+          ]
+        },
+        {
+          "name": "LiveEContinuation",
+          "id": "engine/pipeline/e_zone_detector.py:103:0:LiveEContinuation",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "EZoneDetector",
+          "id": "engine/pipeline/e_zone_detector.py:312:0:EZoneDetector",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        }
+      ],
+      "field_count": 48,
+      "cache_identifier_screen": [
+        [
+          117,
+          [
+            "_previous_stops"
+          ]
+        ],
+        [
+          119,
+          [
+            "_previous_extremes"
+          ]
+        ],
+        [
+          125,
+          [
+            "_previous_scoped"
+          ]
+        ],
+        [
+          126,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          138,
+          [
+            "_previous_stops"
+          ]
+        ],
+        [
+          139,
+          [
+            "_previous_extremes"
+          ]
+        ],
+        [
+          142,
+          [
+            "_previous_scoped"
+          ]
+        ],
+        [
+          145,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          161,
+          [
+            "_previous_stops"
+          ]
+        ],
+        [
+          183,
+          [
+            "_previous_extremes"
+          ]
+        ],
+        [
+          185,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          188,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          189,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          190,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          251,
+          [
+            "_live_scope"
+          ]
+        ],
+        [
+          267,
+          [
+            "_previous_scoped"
+          ]
+        ],
+        [
+          273,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          284,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          381,
+          [
+            "_initialize_main_extremes"
+          ]
+        ],
+        [
+          388,
+          [
+            "_live_scope"
+          ]
+        ],
+        [
+          404,
+          [
+            "_order_candidates_cache"
+          ]
+        ],
+        [
+          405,
+          [
+            "_carried_orders_cache"
+          ]
+        ],
+        [
+          406,
+          [
+            "_post_stop_orders_cache"
+          ]
+        ],
+        [
+          407,
+          [
+            "_direct_parent_stop_cache"
+          ]
+        ],
+        [
+          416,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          440,
+          [
+            "_initialize_main_extremes"
+          ]
+        ],
+        [
+          442,
+          [
+            "_e_main_extremes"
+          ]
+        ],
+        [
+          517,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          545,
+          [
+            "_cross_order_cache"
+          ]
+        ],
+        [
+          547,
+          [
+            "_cross_order_cache"
+          ]
+        ],
+        [
+          554,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          556,
+          [
+            "_cross_order_cache"
+          ]
+        ],
+        [
+          586,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          587,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          600,
+          [
+            "_initialize_main_extremes"
+          ]
+        ],
+        [
+          689,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          692,
+          [
+            "_main_index"
+          ]
+        ]
+      ]
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "source_sha": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "inventory_blob": "da160a1d7c4d66769f4802bf350a741a7a3c0d6d",
+      "classes": [
+        {
+          "name": "StopAll",
+          "id": "engine/pipeline/lifecycle_engine.py:43:0:StopAll",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "direction",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 44
+            },
+            {
+              "field": "number",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 45
+            },
+            {
+              "field": "source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 46
+            },
+            {
+              "field": "source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 47
+            },
+            {
+              "field": "price",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 48
+            },
+            {
+              "field": "decision_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 49
+            },
+            {
+              "field": "decision_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 50
+            },
+            {
+              "field": "decision_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 51
+            },
+            {
+              "field": "gate_type",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 52
+            },
+            {
+              "field": "gate_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 53
+            },
+            {
+              "field": "stopped_behavior_type",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 54
+            },
+            {
+              "field": "stopped_behavior_key",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 55
+            },
+            {
+              "field": "stopped_behavior_count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 56
+            },
+            {
+              "field": "underlying_e_family",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 57
+            },
+            {
+              "field": "underlying_e_number",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 58
+            },
+            {
+              "field": "order_direction",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 59
+            },
+            {
+              "field": "order_reaction_number",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 60
+            },
+            {
+              "field": "order_mode",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 61
+            },
+            {
+              "field": "order_causes",
+              "type": "tuple[str, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 62
+            },
+            {
+              "field": "order_parent_stop_cause_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 63
+            },
+            {
+              "field": "order_first_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 64
+            },
+            {
+              "field": "order_first_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 65
+            },
+            {
+              "field": "order_break_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 66
+            },
+            {
+              "field": "order_break_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 67
+            },
+            {
+              "field": "order_confirmation_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 68
+            },
+            {
+              "field": "order_box_top",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 69
+            },
+            {
+              "field": "order_box_top_source_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 70
+            },
+            {
+              "field": "order_box_top_source_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 71
+            },
+            {
+              "field": "order_box_bottom",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 72
+            },
+            {
+              "field": "order_box_bottom_source_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 73
+            },
+            {
+              "field": "order_box_bottom_source_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 74
+            },
+            {
+              "field": "order_stop_level",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 75
+            },
+            {
+              "field": "order_stop_source_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 76
+            },
+            {
+              "field": "order_stop_source_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 77
+            },
+            {
+              "field": "stop_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 78
+            },
+            {
+              "field": "stop_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 79
+            },
+            {
+              "field": "stop_event_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 80
+            },
+            {
+              "field": "donor_type",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 85
+            },
+            {
+              "field": "donor_source_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 86
+            },
+            {
+              "field": "donor_source_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 87
+            },
+            {
+              "field": "donor_color",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 88
+            },
+            {
+              "field": "donor_number",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 89
+            },
+            {
+              "field": "donor_price",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 90
+            },
+            {
+              "field": "donor_stop_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 91
+            },
+            {
+              "field": "donor_stop_event_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 92
+            }
+          ]
+        },
+        {
+          "name": "_DominantBehavior",
+          "id": "engine/pipeline/lifecycle_engine.py:96:0:_DominantBehavior",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "kind",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 99
+            },
+            {
+              "field": "family",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 100
+            },
+            {
+              "field": "number",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 101
+            },
+            {
+              "field": "count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 102
+            },
+            {
+              "field": "latest",
+              "type": "object",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 103
+            }
+          ]
+        },
+        {
+          "name": "_StopAllCheckpoint",
+          "id": "engine/pipeline/lifecycle_engine.py:143:0:_StopAllCheckpoint",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "owner",
+              "type": "_DominantBehavior | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 144
+            },
+            {
+              "field": "pending_stop",
+              "type": "tuple[_DominantBehavior, datetime] | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 145
+            },
+            {
+              "field": "active",
+              "type": "tuple[StopAll, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "()"
+              },
+              "line": 146
+            },
+            {
+              "field": "output_count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "0"
+              },
+              "line": 147
+            }
+          ]
+        },
+        {
+          "name": "StopAllDetector",
+          "id": "engine/pipeline/lifecycle_engine.py:150:0:StopAllDetector",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "LiveStopAllContinuation",
+          "id": "engine/pipeline/lifecycle_engine.py:534:0:LiveStopAllContinuation",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        }
+      ],
+      "field_count": 54,
+      "cache_identifier_screen": [
+        [
+          143,
+          [
+            "_StopAllCheckpoint"
+          ]
+        ],
+        [
+          358,
+          [
+            "_StopAllCheckpoint"
+          ]
+        ],
+        [
+          523,
+          [
+            "_StopAllCheckpoint"
+          ]
+        ],
+        [
+          539,
+          [
+            "_StopAllCheckpoint"
+          ]
+        ],
+        [
+          540,
+          [
+            "_event_keys"
+          ]
+        ],
+        [
+          562,
+          [
+            "_event_keys"
+          ]
+        ],
+        [
+          583,
+          [
+            "_event_keys"
+          ]
+        ]
+      ]
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "source_sha": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "inventory_blob": "fdd253ac268881876574914b6d79478716f52104",
+      "classes": [
+        {
+          "name": "PostBehaviorStop",
+          "id": "engine/pipeline/order_audit_engine.py:40:0:PostBehaviorStop",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "behavior_type",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 41
+            },
+            {
+              "field": "behavior_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 42
+            },
+            {
+              "field": "behavior_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 43
+            },
+            {
+              "field": "event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 44
+            }
+          ]
+        },
+        {
+          "name": "OrderBBehaviorAnchor",
+          "id": "engine/pipeline/order_audit_engine.py:48:0:OrderBBehaviorAnchor",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "behavior_type",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 49
+            },
+            {
+              "field": "behavior_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 50
+            },
+            {
+              "field": "behavior_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 51
+            },
+            {
+              "field": "priority",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 52
+            },
+            {
+              "field": "number",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 53
+            }
+          ]
+        },
+        {
+          "name": "OrderBResetLeg",
+          "id": "engine/pipeline/order_audit_engine.py:57:0:OrderBResetLeg",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "post_stop",
+              "type": "PostBehaviorStop",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 58
+            },
+            {
+              "field": "anchor_behavior_type",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 59
+            },
+            {
+              "field": "anchor_behavior_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 60
+            },
+            {
+              "field": "anchor_behavior_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 61
+            },
+            {
+              "field": "anchor_behavior_extreme",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 62
+            },
+            {
+              "field": "reset_reaction",
+              "type": "object",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 63
+            },
+            {
+              "field": "reset_confirmation_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 64
+            },
+            {
+              "field": "reset_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 65
+            },
+            {
+              "field": "reset_broken_level",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 66
+            },
+            {
+              "field": "reset_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 67
+            },
+            {
+              "field": "leg_boundary",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 68
+            },
+            {
+              "field": "leg_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 69
+            },
+            {
+              "field": "leg_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 70
+            },
+            {
+              "field": "strict_break_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 71
+            },
+            {
+              "field": "reaction_number",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 72
+            },
+            {
+              "field": "physical_reaction",
+              "type": "object",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 73
+            },
+            {
+              "field": "physical_confirmation_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 74
+            }
+          ]
+        },
+        {
+          "name": "LiveOrderBResetLegs",
+          "id": "engine/pipeline/order_audit_engine.py:378:0:LiveOrderBResetLegs",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "OrderAuditEngineMixin",
+          "id": "engine/pipeline/order_audit_engine.py:554:0:OrderAuditEngineMixin",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "SOrderAuditMixin",
+          "id": "engine/pipeline/order_audit_engine.py:2517:0:SOrderAuditMixin",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        }
+      ],
+      "field_count": 26,
+      "cache_identifier_screen": [
+        [
+          559,
+          [
+            "_cross_order_cache"
+          ]
+        ],
+        [
+          567,
+          [
+            "_canonical_order_stop_cache"
+          ]
+        ],
+        [
+          574,
+          [
+            "_initial_order_records_cache"
+          ]
+        ],
+        [
+          588,
+          [
+            "_order_candidates_cache"
+          ]
+        ],
+        [
+          591,
+          [
+            "_carried_orders_cache"
+          ]
+        ],
+        [
+          594,
+          [
+            "_post_stop_orders_cache"
+          ]
+        ],
+        [
+          597,
+          [
+            "_direct_parent_stop_cache"
+          ]
+        ],
+        [
+          607,
+          [
+            "_order_audit_confirmation_index"
+          ]
+        ],
+        [
+          611,
+          [
+            "_post_stop_pending"
+          ]
+        ],
+        [
+          640,
+          [
+            "_opposite_by_first_index"
+          ]
+        ],
+        [
+          661,
+          [
+            "_canonical_order_stop_cache"
+          ]
+        ],
+        [
+          671,
+          [
+            "_canonical_order_stop_cache"
+          ]
+        ],
+        [
+          704,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          716,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          740,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          819,
+          [
+            "_direct_parent_stop_cache"
+          ]
+        ],
+        [
+          820,
+          [
+            "_direct_parent_stop_cache"
+          ]
+        ],
+        [
+          826,
+          [
+            "_direct_parent_stop_cache"
+          ]
+        ],
+        [
+          837,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          998,
+          [
+            "_order_candidates_cache"
+          ]
+        ],
+        [
+          1069,
+          [
+            "_order_candidates_cache"
+          ]
+        ],
+        [
+          1106,
+          [
+            "_order_audit_confirmation_index"
+          ]
+        ],
+        [
+          1107,
+          [
+            "_order_audit_confirmation_index"
+          ]
+        ],
+        [
+          1109,
+          [
+            "_post_stop_pending"
+          ]
+        ],
+        [
+          1116,
+          [
+            "_order_audit_confirmation_index"
+          ]
+        ],
+        [
+          1117,
+          [
+            "_invalidate_carried_order_caches"
+          ]
+        ],
+        [
+          1118,
+          [
+            "_invalidate_post_stop_order_cache"
+          ]
+        ],
+        [
+          1120,
+          [
+            "_invalidate_carried_order_caches"
+          ]
+        ],
+        [
+          1125,
+          [
+            "_carried_orders_cache"
+          ]
+        ],
+        [
+          1126,
+          [
+            "_carried_creation_index"
+          ]
+        ],
+        [
+          1129,
+          [
+            "_invalidate_post_stop_order_cache"
+          ]
+        ],
+        [
+          1130,
+          [
+            "_post_stop_orders_cache"
+          ]
+        ],
+        [
+          1132,
+          [
+            "_post_stop_pending"
+          ]
+        ],
+        [
+          1140,
+          [
+            "_invalidate_carried_order_caches"
+          ]
+        ],
+        [
+          1199,
+          [
+            "_invalidate_carried_order_caches"
+          ]
+        ],
+        [
+          1242,
+          [
+            "_order_audit_confirmation_index"
+          ]
+        ],
+        [
+          1243,
+          [
+            "_order_audit_confirmation_index"
+          ]
+        ],
+        [
+          1246,
+          [
+            "_invalidate_post_stop_order_cache"
+          ]
+        ],
+        [
+          1248,
+          [
+            "_invalidate_carried_order_caches"
+          ]
+        ],
+        [
+          1309,
+          [
+            "_invalidate_carried_order_caches"
+          ]
+        ],
+        [
+          1337,
+          [
+            "_invalidate_carried_order_caches"
+          ]
+        ],
+        [
+          1373,
+          [
+            "_carried_orders_cache"
+          ]
+        ],
+        [
+          1374,
+          [
+            "_carried_creation_index"
+          ]
+        ],
+        [
+          1428,
+          [
+            "_invalidate_carried_order_caches"
+          ]
+        ],
+        [
+          1463,
+          [
+            "_cross_order_cache"
+          ]
+        ],
+        [
+          1464,
+          [
+            "_cross_order_cache"
+          ]
+        ],
+        [
+          1471,
+          [
+            "_cross_order_cache"
+          ]
+        ],
+        [
+          1474,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          1476,
+          [
+            "_cross_order_cache"
+          ]
+        ],
+        [
+          1535,
+          [
+            "_initial_order_records_cache"
+          ]
+        ],
+        [
+          1557,
+          [
+            "_initial_order_records_cache"
+          ]
+        ],
+        [
+          1616,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          1644,
+          [
+            "_validated_carried_creation_index"
+          ]
+        ],
+        [
+          1699,
+          [
+            "_extend_carried_creation_index"
+          ]
+        ],
+        [
+          1708,
+          [
+            "_validated_carried_creation_index"
+          ]
+        ],
+        [
+          1730,
+          [
+            "_carried_orders_cache"
+          ]
+        ],
+        [
+          1733,
+          [
+            "_carried_creation_index"
+          ]
+        ],
+        [
+          1734,
+          [
+            "_carried_orders_cache"
+          ]
+        ],
+        [
+          1735,
+          [
+            "_extend_carried_creation_index"
+          ]
+        ],
+        [
+          1739,
+          [
+            "_validated_carried_creation_index"
+          ]
+        ],
+        [
+          1740,
+          [
+            "_carried_creation_index"
+          ]
+        ],
+        [
+          1794,
+          [
+            "_carried_orders_cache"
+          ]
+        ],
+        [
+          1806,
+          [
+            "_order_audit_confirmation_index"
+          ]
+        ],
+        [
+          1807,
+          [
+            "_post_stop_orders_cache"
+          ]
+        ],
+        [
+          1839,
+          [
+            "_order_audit_confirmation_index"
+          ]
+        ],
+        [
+          1843,
+          [
+            "_order_audit_confirmation_index"
+          ]
+        ],
+        [
+          1876,
+          [
+            "_post_stop_orders_cache"
+          ]
+        ],
+        [
+          1936,
+          [
+            "_post_stop_pending"
+          ]
+        ],
+        [
+          1941,
+          [
+            "_order_audit_confirmation_index"
+          ]
+        ],
+        [
+          1962,
+          [
+            "_cross_order_cache"
+          ]
+        ],
+        [
+          2055,
+          [
+            "_source_index"
+          ]
+        ],
+        [
+          2106,
+          [
+            "_opposite_by_first_index"
+          ]
+        ],
+        [
+          2287,
+          [
+            "_invalidate_carried_order_caches"
+          ]
+        ],
+        [
+          2300,
+          [
+            "_collect_s_ledger_entries"
+          ]
+        ],
+        [
+          2332,
+          [
+            "_collect_e_ledger_entries"
+          ]
+        ],
+        [
+          2453,
+          [
+            "_collect_s_ledger_entries"
+          ]
+        ],
+        [
+          2454,
+          [
+            "_collect_e_ledger_entries"
+          ]
+        ],
+        [
+          2522,
+          [
+            "_opposite_by_first_index"
+          ]
+        ],
+        [
+          2529,
+          [
+            "_opposite_order_matches"
+          ]
+        ],
+        [
+          2540,
+          [
+            "_opposite_order_matches"
+          ]
+        ],
+        [
+          2542,
+          [
+            "_first_canonical_order_cache"
+          ]
+        ],
+        [
+          2562,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          2578,
+          [
+            "_opposite_by_first_index"
+          ]
+        ],
+        [
+          2605,
+          [
+            "_first_canonical_order_cache"
+          ]
+        ],
+        [
+          2609,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          2614,
+          [
+            "_opposite_order_matches"
+          ]
+        ],
+        [
+          2615,
+          [
+            "_opposite_order_matches"
+          ]
+        ],
+        [
+          2704,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          2710,
+          [
+            "_main_index"
+          ]
+        ]
+      ]
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_sha": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "inventory_blob": "dd607cd741d66ee0561f4d26e9d1bef815bdcbce",
+      "classes": [
+        {
+          "name": "Candle",
+          "id": "engine/pipeline/reaction_engine.py:35:0:Candle",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 36
+            },
+            {
+              "field": "timestamp",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 37
+            },
+            {
+              "field": "display_time",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 38
+            },
+            {
+              "field": "tag",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 39
+            },
+            {
+              "field": "open",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 40
+            },
+            {
+              "field": "high",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 41
+            },
+            {
+              "field": "low",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 42
+            },
+            {
+              "field": "close",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 43
+            }
+          ]
+        },
+        {
+          "name": "Candidate",
+          "id": "engine/pipeline/reaction_engine.py:47:0:Candidate",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "first_idx",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 48
+            },
+            {
+              "field": "first_time",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 49
+            },
+            {
+              "field": "box_top_source_idx",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 50
+            },
+            {
+              "field": "box_top_source_time",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 51
+            },
+            {
+              "field": "box_top",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 52
+            },
+            {
+              "field": "box_bottom_source_idx",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 53
+            },
+            {
+              "field": "box_bottom_source_time",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 54
+            },
+            {
+              "field": "box_bottom",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 55
+            },
+            {
+              "field": "mode",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 56
+            },
+            {
+              "field": "anchor_idx",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 57
+            },
+            {
+              "field": "anchor_value",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 58
+            },
+            {
+              "field": "leg_boundary_value",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 59
+            },
+            {
+              "field": "break_idx",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 60
+            },
+            {
+              "field": "break_time",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 61
+            },
+            {
+              "field": "intrabar_start",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 62
+            },
+            {
+              "field": "cross_direction_origin",
+              "type": "bool",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "False"
+              },
+              "line": 63
+            },
+            {
+              "field": "cross_direction_chain_owner",
+              "type": "bool",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "False"
+              },
+              "line": 64
+            },
+            {
+              "field": "order_gate_decision",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 65
+            },
+            {
+              "field": "behavior_public_number",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 66
+            },
+            {
+              "field": "behavior_public_box_top",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 67
+            },
+            {
+              "field": "behavior_public_box_bottom",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 68
+            },
+            {
+              "field": "behavior_confirmation_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 69
+            },
+            {
+              "field": "behavior_first_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 70
+            },
+            {
+              "field": "behavior_internal",
+              "type": "bool",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "False"
+              },
+              "line": 71
+            }
+          ]
+        },
+        {
+          "name": "ResetEvent",
+          "id": "engine/pipeline/reaction_engine.py:75:0:ResetEvent",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 76
+            },
+            {
+              "field": "display_time",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 77
+            },
+            {
+              "field": "second_time",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 78
+            },
+            {
+              "field": "broken_level",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 79
+            },
+            {
+              "field": "from_first_idx",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 80
+            }
+          ]
+        },
+        {
+          "name": "IntrabarAnalysis",
+          "id": "engine/pipeline/reaction_engine.py:84:0:IntrabarAnalysis",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "event_second",
+              "type": "Candle",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 85
+            },
+            {
+              "field": "extreme",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 86
+            },
+            {
+              "field": "extreme_source",
+              "type": "Candle",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 87
+            }
+          ]
+        },
+        {
+          "name": "DetectionResult",
+          "id": "engine/pipeline/reaction_engine.py:91:0:DetectionResult",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "direction",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 92
+            },
+            {
+              "field": "reactions",
+              "type": "list[Candidate]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 93
+            },
+            {
+              "field": "resets",
+              "type": "list[ResetEvent]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 94
+            },
+            {
+              "field": "start_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 95
+            },
+            {
+              "field": "end_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 96
+            }
+          ]
+        },
+        {
+          "name": "_NormalReactionCursor",
+          "id": "engine/pipeline/reaction_engine.py:100:0:_NormalReactionCursor",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "next_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 101
+            },
+            {
+              "field": "previous",
+              "type": "Candidate",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 102
+            },
+            {
+              "field": "candidate",
+              "type": "Candidate | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 103
+            },
+            {
+              "field": "running_value",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 104
+            },
+            {
+              "field": "running_source",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 105
+            },
+            {
+              "field": "pending_reset_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 106
+            }
+          ]
+        },
+        {
+          "name": "_ReactionCheckpoint",
+          "id": "engine/pipeline/reaction_engine.py:110:0:_ReactionCheckpoint",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "cursor",
+              "type": "_NormalReactionCursor",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 111
+            },
+            {
+              "field": "reaction_count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 112
+            },
+            {
+              "field": "reset_count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 113
+            }
+          ]
+        },
+        {
+          "name": "_InitialLegCursor",
+          "id": "engine/pipeline/reaction_engine.py:117:0:_InitialLegCursor",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "next_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 118
+            },
+            {
+              "field": "state",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 119
+            },
+            {
+              "field": "leg_open_low",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 120
+            },
+            {
+              "field": "leg_just_started",
+              "type": "bool",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 121
+            },
+            {
+              "field": "anchor",
+              "type": "Candle | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 122
+            },
+            {
+              "field": "anchor_origin",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 123
+            },
+            {
+              "field": "candidate",
+              "type": "Candidate | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 124
+            }
+          ]
+        },
+        {
+          "name": "_TrendLegCursor",
+          "id": "engine/pipeline/reaction_engine.py:128:0:_TrendLegCursor",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "next_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 129
+            },
+            {
+              "field": "fixed_source",
+              "type": "Candle",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 130
+            },
+            {
+              "field": "candidate",
+              "type": "Candidate | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 131
+            }
+          ]
+        },
+        {
+          "name": "LiveReactionUnavailable",
+          "id": "engine/pipeline/reaction_engine.py:134:0:LiveReactionUnavailable",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "DetectorBase",
+          "id": "engine/pipeline/reaction_engine.py:148:0:DetectorBase",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "BullishDetector",
+          "id": "engine/pipeline/reaction_engine.py:235:0:BullishDetector",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "_ReflectedCandles",
+          "id": "engine/pipeline/reaction_engine.py:690:0:_ReflectedCandles",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "BearishDetector",
+          "id": "engine/pipeline/reaction_engine.py:728:0:BearishDetector",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "LowerTimeframeIndex",
+          "id": "engine/pipeline/reaction_engine.py:886:0:LowerTimeframeIndex",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "ReflectedLowerTimeframeIndex",
+          "id": "engine/pipeline/reaction_engine.py:1095:0:ReflectedLowerTimeframeIndex",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "MarketChronology",
+          "id": "engine/pipeline/reaction_engine.py:1132:0:MarketChronology",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "_BehaviorReactionSpan",
+          "id": "engine/pipeline/reaction_engine.py:1371:0:_BehaviorReactionSpan",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "identity",
+              "type": "tuple[int, int]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1372
+            },
+            {
+              "field": "first_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1373
+            },
+            {
+              "field": "confirmed_at",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1374
+            },
+            {
+              "field": "top",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1375
+            },
+            {
+              "field": "bottom",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1376
+            }
+          ]
+        },
+        {
+          "name": "_LiveBehaviorReactionEntry",
+          "id": "engine/pipeline/reaction_engine.py:1482:0:_LiveBehaviorReactionEntry",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "geometry",
+              "type": "tuple",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1483
+            },
+            {
+              "field": "span",
+              "type": "_BehaviorReactionSpan",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1484
+            },
+            {
+              "field": "extremes",
+              "type": "tuple[Decimal, Decimal] | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1485
+            }
+          ]
+        },
+        {
+          "name": "LiveBehaviorReactionViews",
+          "id": "engine/pipeline/reaction_engine.py:1488:0:LiveBehaviorReactionViews",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "UnifiedReactionDetector",
+          "id": "engine/pipeline/reaction_engine.py:1617:0:UnifiedReactionDetector",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "LiveReactionContinuation",
+          "id": "engine/pipeline/reaction_engine.py:2784:0:LiveReactionContinuation",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        }
+      ],
+      "field_count": 72,
+      "cache_identifier_screen": [
+        [
+          29,
+          [
+            "_ORDER_GATE_CACHE_MAX_ENTRIES"
+          ]
+        ],
+        [
+          30,
+          [
+            "_LIVE_CROSSING_CACHE_MAX_ENTRIES"
+          ]
+        ],
+        [
+          32,
+          [
+            "_SEQUENCE_TIME_INDEXES"
+          ]
+        ],
+        [
+          110,
+          [
+            "_ReactionCheckpoint"
+          ]
+        ],
+        [
+          160,
+          [
+            "_shared_time_index"
+          ]
+        ],
+        [
+          161,
+          [
+            "_shared_time_index"
+          ]
+        ],
+        [
+          163,
+          [
+            "_reaction_break_index_cache"
+          ]
+        ],
+        [
+          174,
+          [
+            "_shared_time_index"
+          ]
+        ],
+        [
+          177,
+          [
+            "_SEQUENCE_TIME_INDEXES"
+          ]
+        ],
+        [
+          181,
+          [
+            "_SEQUENCE_TIME_INDEXES"
+          ]
+        ],
+        [
+          1017,
+          [
+            "_first_with_history"
+          ]
+        ],
+        [
+          1019,
+          [
+            "_first_with_history"
+          ]
+        ],
+        [
+          1039,
+          [
+            "_LIVE_CROSSING_CACHE_MAX_ENTRIES"
+          ]
+        ],
+        [
+          1072,
+          [
+            "_LOWER_TIMEFRAME_INDEXES"
+          ]
+        ],
+        [
+          1085,
+          [
+            "_LOWER_TIMEFRAME_INDEXES"
+          ]
+        ],
+        [
+          1087,
+          [
+            "_LOWER_TIMEFRAME_INDEXES"
+          ]
+        ],
+        [
+          1091,
+          [
+            "_LOWER_TIMEFRAME_INDEXES"
+          ]
+        ],
+        [
+          1121,
+          [
+            "_SEQUENCE_TIME_INDEXES",
+            "_LOWER_TIMEFRAME_INDEXES"
+          ]
+        ],
+        [
+          1128,
+          [
+            "_SEQUENCE_TIME_INDEXES",
+            "_LOWER_TIMEFRAME_INDEXES"
+          ]
+        ],
+        [
+          1148,
+          [
+            "_confirmation_cache"
+          ]
+        ],
+        [
+          1149,
+          [
+            "_reset_time_cache"
+          ]
+        ],
+        [
+          1150,
+          [
+            "_e_main_extremes"
+          ]
+        ],
+        [
+          1174,
+          [
+            "_confirmation_cache"
+          ]
+        ],
+        [
+          1175,
+          [
+            "_reset_time_cache"
+          ]
+        ],
+        [
+          1178,
+          [
+            "_e_main_extremes"
+          ]
+        ],
+        [
+          1212,
+          [
+            "_reset_cache_key"
+          ]
+        ],
+        [
+          1224,
+          [
+            "_reaction_cache_key"
+          ]
+        ],
+        [
+          1240,
+          [
+            "_reset_cache_key"
+          ]
+        ],
+        [
+          1241,
+          [
+            "_reset_time_cache"
+          ]
+        ],
+        [
+          1254,
+          [
+            "_reset_time_cache"
+          ]
+        ],
+        [
+          1271,
+          [
+            "_reaction_cache_key"
+          ]
+        ],
+        [
+          1274,
+          [
+            "_confirmation_cache"
+          ]
+        ],
+        [
+          1299,
+          [
+            "_confirmation_cache"
+          ]
+        ],
+        [
+          1301,
+          [
+            "_confirmation_cache"
+          ]
+        ],
+        [
+          1654,
+          [
+            "_geometry_after_reset_cache"
+          ]
+        ],
+        [
+          1659,
+          [
+            "_order_gate_geometry_cache"
+          ]
+        ],
+        [
+          1662,
+          [
+            "_live_checkpoint",
+            "_ReactionCheckpoint"
+          ]
+        ],
+        [
+          2005,
+          [
+            "_geometry_after_reset_cache"
+          ]
+        ],
+        [
+          2006,
+          [
+            "_geometry_after_reset_cache"
+          ]
+        ],
+        [
+          2061,
+          [
+            "_reaction_break_index_cache"
+          ]
+        ],
+        [
+          2065,
+          [
+            "_reaction_break_index_cache"
+          ]
+        ],
+        [
+          2080,
+          [
+            "_order_gate_geometry_cache"
+          ]
+        ],
+        [
+          2081,
+          [
+            "_order_gate_geometry_cache"
+          ]
+        ],
+        [
+          2087,
+          [
+            "_order_gate_geometry_cache",
+            "_ORDER_GATE_CACHE_MAX_ENTRIES"
+          ]
+        ],
+        [
+          2088,
+          [
+            "_order_gate_geometry_cache"
+          ]
+        ],
+        [
+          2089,
+          [
+            "_order_gate_geometry_cache"
+          ]
+        ],
+        [
+          2090,
+          [
+            "_order_gate_geometry_cache"
+          ]
+        ],
+        [
+          2558,
+          [
+            "_ReactionCheckpoint"
+          ]
+        ],
+        [
+          2777,
+          [
+            "_live_checkpoint",
+            "_ReactionCheckpoint"
+          ]
+        ],
+        [
+          2813,
+          [
+            "_release_indexes"
+          ]
+        ],
+        [
+          2815,
+          [
+            "_live_checkpoint"
+          ]
+        ],
+        [
+          2837,
+          [
+            "_release_indexes"
+          ]
+        ],
+        [
+          2897,
+          [
+            "_release_indexes"
+          ]
+        ],
+        [
+          2902,
+          [
+            "_live_checkpoint"
+          ]
+        ]
+      ]
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "source_sha": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "inventory_blob": "50856bbb8e5e1473787d3f48a478d508ef49228b",
+      "classes": [
+        {
+          "name": "SZone",
+          "id": "engine/pipeline/s_zone_detector.py:28:0:SZone",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "direction",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 29
+            },
+            {
+              "field": "color",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 30
+            },
+            {
+              "field": "formation_type",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 31
+            },
+            {
+              "field": "a_ordinal",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 32
+            },
+            {
+              "field": "a_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 33
+            },
+            {
+              "field": "a_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 34
+            },
+            {
+              "field": "a_price",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 35
+            },
+            {
+              "field": "a_stop_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 36
+            },
+            {
+              "field": "a_stop_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 37
+            },
+            {
+              "field": "a_stop_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 38
+            },
+            {
+              "field": "order_direction",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 39
+            },
+            {
+              "field": "order_reaction_number",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 40
+            },
+            {
+              "field": "order_mode",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 41
+            },
+            {
+              "field": "order_first_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 42
+            },
+            {
+              "field": "order_first_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 43
+            },
+            {
+              "field": "order_break_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 44
+            },
+            {
+              "field": "order_break_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 45
+            },
+            {
+              "field": "order_confirmation_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 46
+            },
+            {
+              "field": "order_box_top",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 47
+            },
+            {
+              "field": "order_box_top_source_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 48
+            },
+            {
+              "field": "order_box_top_source_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 49
+            },
+            {
+              "field": "order_box_bottom",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 50
+            },
+            {
+              "field": "order_box_bottom_source_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 51
+            },
+            {
+              "field": "order_box_bottom_source_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 52
+            },
+            {
+              "field": "order_stop_level",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 53
+            },
+            {
+              "field": "order_stop_source_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 54
+            },
+            {
+              "field": "order_stop_source_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 55
+            },
+            {
+              "field": "reset_reaction_number",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 56
+            },
+            {
+              "field": "reset_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 57
+            },
+            {
+              "field": "source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 58
+            },
+            {
+              "field": "source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 59
+            },
+            {
+              "field": "price",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 60
+            },
+            {
+              "field": "decision_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 61
+            },
+            {
+              "field": "decision_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 62
+            },
+            {
+              "field": "decision_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 63
+            }
+          ]
+        },
+        {
+          "name": "SZoneDetector",
+          "id": "engine/pipeline/s_zone_detector.py:66:0:SZoneDetector",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "LiveSZoneContinuation",
+          "id": "engine/pipeline/s_zone_detector.py:1433:0:LiveSZoneContinuation",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        }
+      ],
+      "field_count": 35,
+      "cache_identifier_screen": [
+        [
+          149,
+          [
+            "_ordered_first_indexes"
+          ]
+        ],
+        [
+          178,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          232,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          239,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          343,
+          [
+            "_ordered_first_indexes"
+          ]
+        ],
+        [
+          344,
+          [
+            "_ordered_first_indexes"
+          ]
+        ],
+        [
+          345,
+          [
+            "_ordered_first_indexes"
+          ]
+        ],
+        [
+          382,
+          [
+            "_opposite_by_first_index"
+          ]
+        ],
+        [
+          389,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          436,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          437,
+          [
+            "_opposite_by_first_index"
+          ]
+        ],
+        [
+          522,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          612,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          943,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          954,
+          [
+            "_main_index"
+          ]
+        ],
+        [
+          1449,
+          [
+            "_current_dependencies"
+          ]
+        ],
+        [
+          1500,
+          [
+            "_current_dependencies"
+          ]
+        ]
+      ]
+    },
+    {
+      "path": "engine/pipeline/true_false.py",
+      "source_sha": "d569d16bc493b9eb5da75ed5594c168751856b6f",
+      "inventory_blob": "9a6cb5cf2306c9acb96d7bb9e811acf4af90be8f",
+      "classes": [
+        {
+          "name": "BasicRepeat",
+          "id": "engine/pipeline/true_false.py:33:0:BasicRepeat",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "latest",
+              "type": "dict",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 34
+            },
+            {
+              "field": "repair_count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 35
+            },
+            {
+              "field": "verdict_count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 36
+            }
+          ]
+        }
+      ],
+      "field_count": 3,
+      "cache_identifier_screen": []
+    }
+  ]
+}

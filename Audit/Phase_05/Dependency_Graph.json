@@ -1,0 +1,186 @@
+{
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "method": "SCC on matched static internal import-candidate edges; guard classification independently checked in pinned source. Configured module loading, injected callbacks and semantic feedback are separately documented, not import edges.",
+  "module_count": 16,
+  "edges": [
+    {
+      "from": "engine/bridge/live_pipeline.py",
+      "to": "engine/bridge/trading_pipeline.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/bridge/trading_pipeline.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/bridge/trading_pipeline.py",
+      "to": "engine/pipeline/order_audit_engine.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/bridge/trading_pipeline.py",
+      "to": "engine/pipeline/true_false.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/bridge/trading_pipeline.py",
+      "to": "engine/pipeline/PL_PH_detector.py",
+      "classification": "LOCAL_PRIMARY_SERIALIZATION"
+    },
+    {
+      "from": "engine/pipeline/PL_PH_detector.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/PL_PH_detector.py",
+      "to": "engine/pipeline/lifecycle_engine.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/PL_PH_detector.py",
+      "to": "engine/pipeline/order_audit_engine.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/__init__.py",
+      "to": "engine/pipeline/blue_line_detector.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/a_zone_detector.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/a_zone_detector.py",
+      "to": "engine/pipeline/direction_policy.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/blue_line_detector.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/blue_line_detector.py",
+      "to": "engine/pipeline/direction_policy.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/e_zone_detector.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/e_zone_detector.py",
+      "to": "engine/pipeline/direction_policy.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/e_zone_detector.py",
+      "to": "engine/pipeline/order_audit_engine.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/e_zone_detector.py",
+      "to": "engine/pipeline/reaction_engine.py",
+      "classification": "LOCAL_LIVE_EXTREME"
+    },
+    {
+      "from": "engine/pipeline/lifecycle_engine.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/lifecycle_engine.py",
+      "to": "engine/pipeline/order_audit_engine.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/lifecycle_engine.py",
+      "to": "engine/pipeline/direction_policy.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/order_audit_engine.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/order_audit_engine.py",
+      "to": "engine/pipeline/e_zone_detector.py",
+      "classification": "TYPE_CHECKING_ONLY"
+    },
+    {
+      "from": "engine/pipeline/reaction_engine.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/reaction_engine.py",
+      "to": "engine/pipeline/direction_policy.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/s_zone_detector.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/s_zone_detector.py",
+      "to": "engine/pipeline/order_audit_engine.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/s_zone_detector.py",
+      "to": "engine/pipeline/direction_policy.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/true_false.py",
+      "to": "engine/pipeline/direction_policy.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/true_false.py",
+      "to": "engine/pipeline/lifecycle_engine.py",
+      "classification": "EAGER_IMPORT"
+    }
+  ],
+  "all_static_candidate_cycles": [
+    [
+      "engine/pipeline/e_zone_detector.py",
+      "engine/pipeline/order_audit_engine.py"
+    ]
+  ],
+  "eager_candidate_cycles": [],
+  "source_checks": [
+    [
+      "engine/pipeline/order_audit_engine.py",
+      17,
+      18,
+      "TYPE_CHECKING guard"
+    ],
+    [
+      "engine/pipeline/e_zone_detector.py",
+      180,
+      193,
+      "lazy live main index import"
+    ],
+    [
+      "engine/bridge/trading_pipeline.py",
+      3249,
+      3252,
+      "local primary serialization import"
+    ]
+  ],
+  "semantic_feedback": [
+    "Order_B discovery → E rebuild → accepted S/E/StopAll → Order_B discovery; equality convergence, repeated signature error, cap eight passes",
+    "E candidate race → accepted Order ledger → disowned-S cause check → reopen/rerace; no generic eight-pass cap",
+    "Primary confirmation callback → native Order ledger reparent → refreshed eligible proposals → global scheduler; event precedence and no arbitrary cap",
+    "Primary3 transition → independently rebuilt closed prefix and new regime → possible new transition; boundary strictly advances",
+    "Live input append → full replay → input transaction commit or rollback; optional retained stage interfaces are not the active worker path"
+  ]
+}

@@ -1,0 +1,3741 @@
+{
+  "checkpoint": 62,
+  "batch": "B05",
+  "sub_batch": "B05-16",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "798159d64a58d795077606047d75f65e019a5492",
+  "path": "engine/pipeline/order_audit_engine.py",
+  "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+  "source_range": [
+    1644,
+    1721
+  ],
+  "procedures": [
+    "OA50",
+    "OA51"
+  ],
+  "review_pass": "W1 source-first local owner review; W3 pending",
+  "status": "PASS",
+  "scope": "Local source contracts only; no empirical or cross-owner certification.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 94,
+    "by_category": {
+      "branches": 34,
+      "comparisons": 18,
+      "arithmetic": 7,
+      "calls": 35
+    },
+    "supplemental_items": 6
+  },
+  "inventory_validation": {
+    "crosswalk": "Audit/Phase_07/Decision_Site_Crosswalk_04.json",
+    "crosswalk_blob": "62645cd2b92c3cbe35f6c0a9500299ec6f44cbc8",
+    "original_inventory_blob": "fdd253ac268881876574914b6d79478716f52104",
+    "context_blob": "7de01399b8ff7bf64bb44995b57bdc03296997cf",
+    "exact_category_id_and_span_match": true,
+    "unique_category_ids": true,
+    "prior_partition_overlap": false,
+    "direct_phase02_full_blob_read": false,
+    "reason": "Exact immutable AST crosswalk and context ledger compared; no full Phase 02 inventory read claimed."
+  },
+  "dependency_sources": [
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "source_ranges": [
+        [
+          51,
+          53
+        ],
+        [
+          64,
+          66
+        ]
+      ],
+      "scope": "Decimal normalization and physical identity helper."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "source_ranges": [
+        [
+          1089,
+          1097
+        ],
+        [
+          1120,
+          1132
+        ],
+        [
+          1427,
+          1433
+        ],
+        [
+          1459,
+          1477
+        ],
+        [
+          1524,
+          1642
+        ]
+      ],
+      "scope": "Previously reviewed local dependency boundaries; W2 full reconciliation pending."
+    }
+  ],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 6455,
+      "source_span": [
+        1649,
+        8,
+        1696,
+        23
+      ],
+      "procedure": "OA50",
+      "original_operation": "Try",
+      "original_context": "OA-SC58",
+      "interpretation": "Try covers complete local context and sort.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1649-L1696",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6456,
+      "source_span": [
+        1652,
+        12,
+        1693,
+        29
+      ],
+      "procedure": "OA50",
+      "original_operation": "With",
+      "original_context": "OA-SC58",
+      "interpretation": "With localcontext isolates caller Decimal state.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Native Decimal localcontext isolates flags/traps, validation can still fail according to inherited context; no proof of runtime equivalence.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1652-L1693",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6459,
+      "source_span": [
+        1653,
+        16,
+        1692,
+        77
+      ],
+      "procedure": "OA50",
+      "original_operation": "For",
+      "original_context": "OA-SC58",
+      "interpretation": "Enumerate input rows in supplied order starting ordinal zero, including skipped rows in ordinal accounting.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1653-L1692",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6466,
+      "source_span": [
+        1654,
+        20,
+        1655,
+        35
+      ],
+      "procedure": "OA50",
+      "original_operation": "If",
+      "original_context": "OA-SC58",
+      "interpretation": "Reject any entry whose exact type is not dict (subclasses rejected).",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1654-L1655",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6488,
+      "source_span": [
+        1658,
+        20,
+        1659,
+        35
+      ],
+      "procedure": "OA50",
+      "original_operation": "If",
+      "original_context": "OA-SC58",
+      "interpretation": "Reject if exact parent collection type outside set/frozenset/tuple/list OR exact B type outside tuple/list; short circuit in order.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1658-L1659",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6489,
+      "source_span": [
+        1658,
+        23,
+        1658,
+        111
+      ],
+      "procedure": "OA50",
+      "original_operation": "BoolOp",
+      "original_context": "OA-SC58",
+      "interpretation": "OR parent container type invalid then B type invalid.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1658-L1658",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6508,
+      "source_span": [
+        1660,
+        20,
+        1661,
+        35
+      ],
+      "procedure": "OA50",
+      "original_operation": "If",
+      "original_context": "OA-SC58",
+      "interpretation": "Reject any parent cause whose exact type is not tuple OR tuple falsey; generator short circuits. Nonempty tuple only, no length check at this gate.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1660-L1661",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6512,
+      "source_span": [
+        1660,
+        27,
+        1660,
+        64
+      ],
+      "procedure": "OA50",
+      "original_operation": "BoolOp",
+      "original_context": "OA-SC58",
+      "interpretation": "OR exact tuple mismatch then empty cause.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1660-L1660",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6520,
+      "source_span": [
+        1660,
+        69,
+        1660,
+        74
+      ],
+      "procedure": "OA50",
+      "original_operation": "comprehension",
+      "original_context": "OA-SC58",
+      "interpretation": "Generate parent shape predicate in native cause iteration order.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1660-L1660",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6525,
+      "source_span": [
+        1662,
+        20,
+        1663,
+        35
+      ],
+      "procedure": "OA50",
+      "original_operation": "If",
+      "original_context": "OA-SC58",
+      "interpretation": "Reject any B cause whose exact type is not dict; short circuit.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1662-L1663",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6534,
+      "source_span": [
+        1662,
+        55,
+        1662,
+        60
+      ],
+      "procedure": "OA50",
+      "original_operation": "comprehension",
+      "original_context": "OA-SC58",
+      "interpretation": "Generate B cause type test lazily.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1662-L1662",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6545,
+      "source_span": [
+        1665,
+        20,
+        1666,
+        32
+      ],
+      "procedure": "OA50",
+      "original_operation": "If",
+      "original_context": "OA-SC58",
+      "interpretation": "Skip rows with falsey created list before accessing confirmation, stop or geometry; cause shape checks already executed.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1665-L1666",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6569,
+      "source_span": [
+        1670,
+        20,
+        1673,
+        48
+      ],
+      "procedure": "OA50",
+      "original_operation": "If",
+      "original_context": "OA-SC58",
+      "interpretation": "Only non-null crossing triggers shape checks and additional dates.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1670-L1673",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6573,
+      "source_span": [
+        1671,
+        24,
+        1672,
+        39
+      ],
+      "procedure": "OA50",
+      "original_operation": "If",
+      "original_context": "OA-SC58",
+      "interpretation": "Reject crossing if exact type not tuple OR len<3 OR exact type slot zero not int, ordered short circuit; extra fields allowed.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1671-L1672",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6574,
+      "source_span": [
+        1671,
+        27,
+        1671,
+        104
+      ],
+      "procedure": "OA50",
+      "original_operation": "BoolOp",
+      "original_context": "OA-SC58",
+      "interpretation": "OR exact tuple type, length, index type rejection in order.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1671-L1671",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6602,
+      "source_span": [
+        1674,
+        20,
+        1681,
+        48
+      ],
+      "procedure": "OA50",
+      "original_operation": "For",
+      "original_context": "OA-SC58",
+      "interpretation": "Iterate date groups in order: created events, confirmation/source time, optional crossing main/exact times.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1674-L1681",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6605,
+      "source_span": [
+        1675,
+        24,
+        1681,
+        48
+      ],
+      "procedure": "OA50",
+      "original_operation": "For",
+      "original_context": "OA-SC58",
+      "interpretation": "Visit each date in its group order; timezone state shared across all rows and groups.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1675-L1681",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6608,
+      "source_span": [
+        1676,
+        28,
+        1677,
+        43
+      ],
+      "procedure": "OA50",
+      "original_operation": "If",
+      "original_context": "OA-SC58",
+      "interpretation": "Reject date whose exact type not datetime; subclasses rejected.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Exact datetime and timezone object identity do not alone prove comparable values or well-behaved tzinfo; native comparisons may throw.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1676-L1677",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6616,
+      "source_span": [
+        1678,
+        28,
+        1679,
+        43
+      ],
+      "procedure": "OA50",
+      "original_operation": "If",
+      "original_context": "OA-SC58",
+      "interpretation": "If have_timezone true require event.tzinfo is identical object to previously recorded timezone, not equality. First date seeds even None.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1678-L1679",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6617,
+      "source_span": [
+        1678,
+        31,
+        1678,
+        83
+      ],
+      "procedure": "OA50",
+      "original_operation": "BoolOp",
+      "original_context": "OA-SC58",
+      "interpretation": "AND have_timezone then timezone object mismatch.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1678-L1678",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6637,
+      "source_span": [
+        1683,
+        20,
+        1687,
+        35
+      ],
+      "procedure": "OA50",
+      "original_operation": "If",
+      "original_context": "OA-SC58",
+      "interpretation": "Eagerly construct tuple of reaction number, source index, First and Break then test any exact non-int; bool and subclasses rejected.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1683-L1687",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6646,
+      "source_span": [
+        1683,
+        54,
+        1683,
+        59
+      ],
+      "procedure": "OA50",
+      "original_operation": "comprehension",
+      "original_context": "OA-SC58",
+      "interpretation": "Generate exact int predicates over eagerly built tuple.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1683-L1683",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6665,
+      "source_span": [
+        1688,
+        20,
+        1689,
+        35
+      ],
+      "procedure": "OA50",
+      "original_operation": "If",
+      "original_context": "OA-SC58",
+      "interpretation": "Allow exact level types Decimal,str,int,float only, not bool/subclasses.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1688-L1689",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6679,
+      "source_span": [
+        1690,
+        20,
+        1691,
+        35
+      ],
+      "procedure": "OA50",
+      "original_operation": "If",
+      "original_context": "OA-SC58",
+      "interpretation": "Normalize price via as_decimal then require finite; no quantization. False or Exception rejects whole index.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "as_decimal preserves Decimal or constructs from str; inherited local context/traps and conversion determine result.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1690-L1691",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L51-L53"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6698,
+      "source_span": [
+        1692,
+        55,
+        1692,
+        60
+      ],
+      "procedure": "OA50",
+      "original_operation": "comprehension",
+      "original_context": "OA-SC58",
+      "interpretation": "Generate event/ordinal pair per unique created event.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1692-L1692",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6707,
+      "source_span": [
+        1694,
+        8,
+        1696,
+        23
+      ],
+      "procedure": "OA50",
+      "original_operation": "ExceptHandler",
+      "original_context": "OA-SC58",
+      "interpretation": "Catch Exception from validation, sorting or context management, return None; original scan owns errors and evaluation order.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1694-L1696",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6730,
+      "source_span": [
+        1703,
+        8,
+        1704,
+        23
+      ],
+      "procedure": "OA51",
+      "original_operation": "If",
+      "original_context": "OA-SC59",
+      "interpretation": "Pending is cleared before None check; consumed once regardless of later result.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1703-L1704",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6746,
+      "source_span": [
+        1706,
+        8,
+        1707,
+        23
+      ],
+      "procedure": "OA51",
+      "original_operation": "If",
+      "original_context": "OA-SC59",
+      "interpretation": "Unpack pending shape first; require ledger same object as current audit and old entry length+new length equals current ledger length; short circuit.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Pending shape assumed from OA40; malformed unpack/identity/size errors outside validator not caught here.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1706-L1707",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1427-L1433",
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1120-L1127"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6747,
+      "source_span": [
+        1706,
+        11,
+        1706,
+        91
+      ],
+      "procedure": "OA51",
+      "original_operation": "BoolOp",
+      "original_context": "OA-SC59",
+      "interpretation": "OR ledger identity mismatch then size mismatch.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Pending shape assumed from OA40; malformed unpack/identity/size errors outside validator not caught here.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1706-L1706",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1427-L1433",
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1120-L1127"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6772,
+      "source_span": [
+        1709,
+        8,
+        1710,
+        23
+      ],
+      "procedure": "OA51",
+      "original_operation": "If",
+      "original_context": "OA-SC59",
+      "interpretation": "Null validation result rejects extension; empty event list within non-null tuple is valid.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1709-L1710",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6783,
+      "source_span": [
+        1712,
+        8,
+        1713,
+        23
+      ],
+      "procedure": "OA51",
+      "original_operation": "If",
+      "original_context": "OA-SC59",
+      "interpretation": "Reject timezone mismatch by object identity only when both existing and new event lists truthy.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1712-L1713",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6784,
+      "source_span": [
+        1712,
+        11,
+        1712,
+        65
+      ],
+      "procedure": "OA51",
+      "original_operation": "BoolOp",
+      "original_context": "OA-SC59",
+      "interpretation": "AND old events truthy, new events truthy, timezone identity mismatch.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1712-L1712",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6792,
+      "source_span": [
+        1714,
+        8,
+        1715,
+        35
+      ],
+      "procedure": "OA51",
+      "original_operation": "If",
+      "original_context": "OA-SC59",
+      "interpretation": "If old event list empty adopt new timezone even None; otherwise keep old timezone.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1714-L1715",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 6803,
+      "source_span": [
+        1717,
+        8,
+        1718,
+        59
+      ],
+      "procedure": "OA51",
+      "original_operation": "For",
+      "original_context": "OA-SC59",
+      "interpretation": "Traverse new events in validated sorted order.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1717-L1718",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6467,
+      "source_span": [
+        1654,
+        23,
+        1654,
+        46
+      ],
+      "procedure": "OA50",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC58",
+      "interpretation": "Exact entry type is not dict rejects.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1654-L1654",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6490,
+      "source_span": [
+        1658,
+        23,
+        1658,
+        72
+      ],
+      "procedure": "OA50",
+      "original_operation": [
+        "NotIn"
+      ],
+      "original_context": "OA-SC58",
+      "interpretation": "Parent exact type membership restriction.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1658-L1658",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6499,
+      "source_span": [
+        1658,
+        76,
+        1658,
+        111
+      ],
+      "procedure": "OA50",
+      "original_operation": [
+        "NotIn"
+      ],
+      "original_context": "OA-SC58",
+      "interpretation": "B exact type membership restriction.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1658-L1658",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6513,
+      "source_span": [
+        1660,
+        27,
+        1660,
+        51
+      ],
+      "procedure": "OA50",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC58",
+      "interpretation": "Exact cause type is not tuple.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1660-L1660",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6529,
+      "source_span": [
+        1662,
+        27,
+        1662,
+        50
+      ],
+      "procedure": "OA50",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC58",
+      "interpretation": "B cause exact type not dict.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1662-L1662",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6570,
+      "source_span": [
+        1670,
+        23,
+        1670,
+        42
+      ],
+      "procedure": "OA50",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC58",
+      "interpretation": "Crossed is not None activates validation.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1670-L1670",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6575,
+      "source_span": [
+        1671,
+        27,
+        1671,
+        53
+      ],
+      "procedure": "OA50",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC58",
+      "interpretation": "Exact crossing type not tuple.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1671-L1671",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6580,
+      "source_span": [
+        1671,
+        57,
+        1671,
+        73
+      ],
+      "procedure": "OA50",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "OA-SC58",
+      "interpretation": "Crossing len<3 rejects.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1671-L1671",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6585,
+      "source_span": [
+        1671,
+        77,
+        1671,
+        104
+      ],
+      "procedure": "OA50",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC58",
+      "interpretation": "Crossing slot zero exact type not int rejects.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1671-L1671",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6609,
+      "source_span": [
+        1676,
+        31,
+        1676,
+        58
+      ],
+      "procedure": "OA50",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC58",
+      "interpretation": "Event exact type not datetime rejects.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Exact datetime and timezone object identity do not alone prove comparable values or well-behaved tzinfo; native comparisons may throw.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1676-L1676",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6619,
+      "source_span": [
+        1678,
+        49,
+        1678,
+        83
+      ],
+      "procedure": "OA50",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC58",
+      "interpretation": "Timezone identity mismatch, not value equality.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1678-L1678",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6641,
+      "source_span": [
+        1683,
+        27,
+        1683,
+        49
+      ],
+      "procedure": "OA50",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC58",
+      "interpretation": "Exact field type not int.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1683-L1683",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6666,
+      "source_span": [
+        1688,
+        23,
+        1688,
+        82
+      ],
+      "procedure": "OA50",
+      "original_operation": [
+        "NotIn"
+      ],
+      "original_context": "OA-SC58",
+      "interpretation": "Exact level type not allowed rejects.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1688-L1688",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6731,
+      "source_span": [
+        1703,
+        11,
+        1703,
+        26
+      ],
+      "procedure": "OA51",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "OA-SC59",
+      "interpretation": "Pending None exits after consuming state.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1703-L1703",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6748,
+      "source_span": [
+        1706,
+        11,
+        1706,
+        41
+      ],
+      "procedure": "OA51",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC59",
+      "interpretation": "Ledger is not current audit object.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Pending shape assumed from OA40; malformed unpack/identity/size errors outside validator not caught here.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1706-L1706",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1427-L1433",
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1120-L1127"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6752,
+      "source_span": [
+        1706,
+        45,
+        1706,
+        91
+      ],
+      "procedure": "OA51",
+      "original_operation": [
+        "NotEq"
+      ],
+      "original_context": "OA-SC59",
+      "interpretation": "Size sum != current ledger length.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Pending shape assumed from OA40; malformed unpack/identity/size errors outside validator not caught here.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1706-L1706",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1427-L1433",
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1120-L1127"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6773,
+      "source_span": [
+        1709,
+        11,
+        1709,
+        27
+      ],
+      "procedure": "OA51",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "OA-SC59",
+      "interpretation": "Appended result None exits.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1709-L1709",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6787,
+      "source_span": [
+        1712,
+        37,
+        1712,
+        65
+      ],
+      "procedure": "OA51",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "OA-SC59",
+      "interpretation": "Timezone objects differ by identity.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1712-L1712",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 6518,
+      "source_span": [
+        1660,
+        55,
+        1660,
+        64
+      ],
+      "procedure": "OA50",
+      "original_operation": "Not",
+      "original_context": "OA-SC58",
+      "interpretation": "Negate parent cause truthiness.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1660-L1660",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 6546,
+      "source_span": [
+        1665,
+        23,
+        1665,
+        34
+      ],
+      "procedure": "OA50",
+      "original_operation": "Not",
+      "original_context": "OA-SC58",
+      "interpretation": "Negate created list truthiness.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1665-L1665",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 6594,
+      "source_span": [
+        1673,
+        24,
+        1673,
+        48
+      ],
+      "procedure": "OA50",
+      "original_operation": "Add",
+      "original_context": "OA-SC58",
+      "interpretation": "Tuple concatenation of optional crossing date group, not price arithmetic.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1673-L1673",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 6680,
+      "source_span": [
+        1690,
+        23,
+        1690,
+        70
+      ],
+      "procedure": "OA50",
+      "original_operation": "Not",
+      "original_context": "OA-SC58",
+      "interpretation": "Negate finite predicate.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "as_decimal preserves Decimal or constructs from str; inherited local context/traps and conversion determine result.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1690-L1690",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L51-L53"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 6753,
+      "source_span": [
+        1706,
+        45,
+        1706,
+        76
+      ],
+      "procedure": "OA51",
+      "original_operation": "Add",
+      "original_context": "OA-SC59",
+      "interpretation": "Add old and appended entry counts.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Pending shape assumed from OA40; malformed unpack/identity/size errors outside validator not caught here.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1706-L1706",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1427-L1433",
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1120-L1127"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 6793,
+      "source_span": [
+        1714,
+        11,
+        1714,
+        21
+      ],
+      "procedure": "OA51",
+      "original_operation": "Not",
+      "original_context": "OA-SC59",
+      "interpretation": "Negate old event list truthiness.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1714-L1714",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 6814,
+      "source_span": [
+        1718,
+        41,
+        1718,
+        57
+      ],
+      "procedure": "OA51",
+      "original_operation": "Add",
+      "original_context": "OA-SC59",
+      "interpretation": "Offset + new local ordinal.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Mutates old event list incrementally; native insertion may raise; no exception handler/rollback.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1718-L1718",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6457,
+      "source_span": [
+        1652,
+        17,
+        1652,
+        31
+      ],
+      "procedure": "OA50",
+      "original_operation": "localcontext",
+      "original_context": "OA-SC58",
+      "interpretation": "Call localcontext with no arguments.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Native Decimal localcontext isolates flags/traps, validation can still fail according to inherited context; no proof of runtime equivalence.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1652-L1652",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6463,
+      "source_span": [
+        1653,
+        38,
+        1653,
+        56
+      ],
+      "procedure": "OA50",
+      "original_operation": "enumerate",
+      "original_context": "OA-SC58",
+      "interpretation": "Enumerate entries with zero-based original ordinals.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1653-L1653",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6468,
+      "source_span": [
+        1654,
+        23,
+        1654,
+        34
+      ],
+      "procedure": "OA50",
+      "original_operation": "type",
+      "original_context": "OA-SC58",
+      "interpretation": "Read exact entry type.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1654-L1654",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6476,
+      "source_span": [
+        1656,
+        29,
+        1656,
+        52
+      ],
+      "procedure": "OA50",
+      "original_operation": "entry.get",
+      "original_context": "OA-SC58",
+      "interpretation": "Read parent causes with empty tuple default.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1656-L1656",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6483,
+      "source_span": [
+        1657,
+        31,
+        1657,
+        62
+      ],
+      "procedure": "OA50",
+      "original_operation": "entry.get",
+      "original_context": "OA-SC58",
+      "interpretation": "Read B causes with empty tuple default.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1657-L1657",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6491,
+      "source_span": [
+        1658,
+        23,
+        1658,
+        35
+      ],
+      "procedure": "OA50",
+      "original_operation": "type",
+      "original_context": "OA-SC58",
+      "interpretation": "Read parent collection exact type.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1658-L1658",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6500,
+      "source_span": [
+        1658,
+        76,
+        1658,
+        90
+      ],
+      "procedure": "OA50",
+      "original_operation": "type",
+      "original_context": "OA-SC58",
+      "interpretation": "Read B collection exact type.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1658-L1658",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6509,
+      "source_span": [
+        1660,
+        23,
+        1660,
+        85
+      ],
+      "procedure": "OA50",
+      "original_operation": "any",
+      "original_context": "OA-SC58",
+      "interpretation": "Any malformed parent tuple short circuits.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1660-L1660",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6514,
+      "source_span": [
+        1660,
+        27,
+        1660,
+        38
+      ],
+      "procedure": "OA50",
+      "original_operation": "type",
+      "original_context": "OA-SC58",
+      "interpretation": "Read exact parent cause type.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1660-L1660",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6526,
+      "source_span": [
+        1662,
+        23,
+        1662,
+        73
+      ],
+      "procedure": "OA50",
+      "original_operation": "any",
+      "original_context": "OA-SC58",
+      "interpretation": "Any non-dict B cause rejects.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1662-L1662",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6530,
+      "source_span": [
+        1662,
+        27,
+        1662,
+        38
+      ],
+      "procedure": "OA50",
+      "original_operation": "type",
+      "original_context": "OA-SC58",
+      "interpretation": "Read B cause exact type.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1662-L1662",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6541,
+      "source_span": [
+        1664,
+        30,
+        1664,
+        83
+      ],
+      "procedure": "OA50",
+      "original_operation": "OrderAuditEngineMixin._carried_creation_events",
+      "original_context": "OA-SC58",
+      "interpretation": "Call OA49 via class-qualified dispatch; parent minimum plus every B event. Exceptions fall into validator fallback.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "OA49 assumes required cause tuple/key fields; malformed shapes may throw and trigger fallback.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1664-L1664",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1635-L1642"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6556,
+      "source_span": [
+        1668,
+        30,
+        1668,
+        53
+      ],
+      "procedure": "OA50",
+      "original_operation": "entry.get",
+      "original_context": "OA-SC58",
+      "interpretation": "Read optional stop_cross default None; no recomputation during validation.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1668-L1668",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6576,
+      "source_span": [
+        1671,
+        27,
+        1671,
+        40
+      ],
+      "procedure": "OA50",
+      "original_operation": "type",
+      "original_context": "OA-SC58",
+      "interpretation": "Read crossing type.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1671-L1671",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6581,
+      "source_span": [
+        1671,
+        57,
+        1671,
+        69
+      ],
+      "procedure": "OA50",
+      "original_operation": "len",
+      "original_context": "OA-SC58",
+      "interpretation": "Get crossing length only after tuple type passes.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1671-L1671",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6586,
+      "source_span": [
+        1671,
+        77,
+        1671,
+        93
+      ],
+      "procedure": "OA50",
+      "original_operation": "type",
+      "original_context": "OA-SC58",
+      "interpretation": "Read type of crossing slot zero after bounds check.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1671-L1671",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6610,
+      "source_span": [
+        1676,
+        31,
+        1676,
+        42
+      ],
+      "procedure": "OA50",
+      "original_operation": "type",
+      "original_context": "OA-SC58",
+      "interpretation": "Read exact event type.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Exact datetime and timezone object identity do not alone prove comparable values or well-behaved tzinfo; native comparisons may throw.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1676-L1676",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6638,
+      "source_span": [
+        1683,
+        23,
+        1686,
+        22
+      ],
+      "procedure": "OA50",
+      "original_operation": "any",
+      "original_context": "OA-SC58",
+      "interpretation": "Any exact non-int in four required fields rejects.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1683-L1686",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6642,
+      "source_span": [
+        1683,
+        27,
+        1683,
+        38
+      ],
+      "procedure": "OA50",
+      "original_operation": "type",
+      "original_context": "OA-SC58",
+      "interpretation": "Read exact type of field.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1683-L1683",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6655,
+      "source_span": [
+        1685,
+        24,
+        1685,
+        54
+      ],
+      "procedure": "OA50",
+      "original_operation": "getattr",
+      "original_context": "OA-SC58",
+      "interpretation": "Read required First index.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1685-L1685",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6659,
+      "source_span": [
+        1685,
+        56,
+        1685,
+        86
+      ],
+      "procedure": "OA50",
+      "original_operation": "getattr",
+      "original_context": "OA-SC58",
+      "interpretation": "Read required Break index.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1685-L1685",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6667,
+      "source_span": [
+        1688,
+        23,
+        1688,
+        48
+      ],
+      "procedure": "OA50",
+      "original_operation": "type",
+      "original_context": "OA-SC58",
+      "interpretation": "Read exact price type.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1688-L1688",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6681,
+      "source_span": [
+        1690,
+        27,
+        1690,
+        70
+      ],
+      "procedure": "OA50",
+      "original_operation": "as_decimal().is_finite",
+      "original_context": "OA-SC58",
+      "interpretation": "Call is_finite on normalized Decimal.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "as_decimal preserves Decimal or constructs from str; inherited local context/traps and conversion determine result.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1690-L1690",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L51-L53"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6683,
+      "source_span": [
+        1690,
+        27,
+        1690,
+        58
+      ],
+      "procedure": "OA50",
+      "original_operation": "as_decimal",
+      "original_context": "OA-SC58",
+      "interpretation": "Normalize via exact helper as_decimal.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "as_decimal preserves Decimal or constructs from str; inherited local context/traps and conversion determine result.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1690-L1690",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/core_utils.py#L51-L53"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6691,
+      "source_span": [
+        1692,
+        20,
+        1692,
+        77
+      ],
+      "procedure": "OA50",
+      "original_operation": "events.extend",
+      "original_context": "OA-SC58",
+      "interpretation": "Extend event list with pairs from generator.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1692-L1692",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6700,
+      "source_span": [
+        1692,
+        64,
+        1692,
+        76
+      ],
+      "procedure": "OA50",
+      "original_operation": "set",
+      "original_context": "OA-SC58",
+      "interpretation": "Native set(created) per row, duplicates removed.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1692-L1692",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6704,
+      "source_span": [
+        1693,
+        16,
+        1693,
+        29
+      ],
+      "procedure": "OA50",
+      "original_operation": "events.sort",
+      "original_context": "OA-SC58",
+      "interpretation": "In-place tuple-order sort.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Sort under local context may raise for incomparable times; fallback None.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1693-L1693",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 102,
+        "heading": "OA50"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 75,
+          "transition": "OLR10"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6721,
+      "source_span": [
+        1701,
+        18,
+        1701,
+        65
+      ],
+      "procedure": "OA51",
+      "original_operation": "getattr",
+      "original_context": "OA-SC59",
+      "interpretation": "Read pending append optional attribute, default None.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1701-L1701",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1427-L1433",
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1120-L1127"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6754,
+      "source_span": [
+        1706,
+        45,
+        1706,
+        57
+      ],
+      "procedure": "OA51",
+      "original_operation": "len",
+      "original_context": "OA-SC59",
+      "interpretation": "Len old entries.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Pending shape assumed from OA40; malformed unpack/identity/size errors outside validator not caught here.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1706-L1706",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1427-L1433",
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1120-L1127"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6757,
+      "source_span": [
+        1706,
+        60,
+        1706,
+        76
+      ],
+      "procedure": "OA51",
+      "original_operation": "len",
+      "original_context": "OA-SC59",
+      "interpretation": "Len new entries.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Pending shape assumed from OA40; malformed unpack/identity/size errors outside validator not caught here.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1706-L1706",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1427-L1433",
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1120-L1127"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6760,
+      "source_span": [
+        1706,
+        80,
+        1706,
+        91
+      ],
+      "procedure": "OA51",
+      "original_operation": "len",
+      "original_context": "OA-SC59",
+      "interpretation": "Len ledger.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Pending shape assumed from OA40; malformed unpack/identity/size errors outside validator not caught here.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1706-L1706",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1427-L1433",
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1120-L1127"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6767,
+      "source_span": [
+        1708,
+        19,
+        1708,
+        93
+      ],
+      "procedure": "OA51",
+      "original_operation": "OrderAuditEngineMixin._validated_carried_creation_index",
+      "original_context": "OA-SC59",
+      "interpretation": "Validate only appended entries by class-qualified OA50 dispatch.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "OA50 validation only appended rows; old prefix validity/lifetime depends on owner invalidation.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1708-L1708",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6800,
+      "source_span": [
+        1716,
+        17,
+        1716,
+        29
+      ],
+      "procedure": "OA51",
+      "original_operation": "len",
+      "original_context": "OA-SC59",
+      "interpretation": "Offset old entries length.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1716-L1716",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6809,
+      "source_span": [
+        1718,
+        12,
+        1718,
+        59
+      ],
+      "procedure": "OA51",
+      "original_operation": "insort_right",
+      "original_context": "OA-SC59",
+      "interpretation": "Insert (event,offset+ordinal) into existing event list to right of equals; mutate old list, no rollback/catch.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "SOURCE_CONDITIONAL",
+      "conditional_boundary": "Mutates old event list incrementally; native insertion may raise; no exception handler/rollback.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1718-L1718",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 6818,
+      "source_span": [
+        1719,
+        8,
+        1719,
+        35
+      ],
+      "procedure": "OA51",
+      "original_operation": "entries.extend",
+      "original_context": "OA-SC59",
+      "interpretation": "Extend old entry list in place with new entries after all event insertions.",
+      "temporal_relevance": "INDIRECT",
+      "relevance_reason": "Controls native validation, chronological eligibility, ordering, exact identity, fallback, or dependent cached availability.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": null,
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1719-L1719",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/08_Order_Audit.md",
+        "line": 105,
+        "heading": "OA51"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+          "line": 74,
+          "transition": "OLR09"
+        }
+      ]
+    }
+  ],
+  "supplemental_items": [
+    {
+      "supplemental_id": "B05-16-S1",
+      "source_span": [
+        1649,
+        1666
+      ],
+      "discovery_reason": "Source-first review of compound evaluation, state effects, chronology, shape checks and conditional owner contract beyond site labels.",
+      "interpretation": "Exact dict and allowed exact cause-container types, nonempty exact parent tuples and exact B dicts checked before OA49; skip no-creation rows before geometry access. Ordinal includes skipped rows. Local Decimal context encloses validation and final sort; Exception returns None, no partial index published.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1649-L1666"
+    },
+    {
+      "supplemental_id": "B05-16-S2",
+      "source_span": [
+        1667,
+        1681
+      ],
+      "discovery_reason": "Source-first review of compound evaluation, state effects, chronology, shape checks and conditional owner contract beyond site labels.",
+      "interpretation": "Validate created, confirmation/source and optional crossing main/exact timestamps in order, exact datetime and same tzinfo object across all rows. Crossing exact tuple len>=3, slot zero exact int; extra fields ignored. None permitted. Timezone None may mean naive dates or no events; have_timezone tracks first date.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1667-L1681"
+    },
+    {
+      "supplemental_id": "B05-16-S3",
+      "source_span": [
+        1682,
+        1697
+      ],
+      "discovery_reason": "Source-first review of compound evaluation, state effects, chronology, shape checks and conditional owner contract beyond site labels.",
+      "interpretation": "Eager four-value tuple, exact int checks (no bool/subclasses); level exact Decimal,str,int,float, as_decimal finite. No local range/index positivity or reaction-class check. Dedup events per row, preserve original ordinal, sort pairs. Any Exception/invalid type => None; legacy owns runtime evaluation.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1682-L1697"
+    },
+    {
+      "supplemental_id": "B05-16-S4",
+      "source_span": [
+        1701,
+        1710
+      ],
+      "discovery_reason": "Source-first review of compound evaluation, state effects, chronology, shape checks and conditional owner contract beyond site labels.",
+      "interpretation": "Consume pending append immediately before guard/unpack. Same ledger object then size equation. Validate appended rows only; old prefix trust delegated to invalidation contract. Null result rejects, no catch for malformed pending.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1701-L1710"
+    },
+    {
+      "supplemental_id": "B05-16-S5",
+      "source_span": [
+        1711,
+        1720
+      ],
+      "discovery_reason": "Source-first review of compound evaluation, state effects, chronology, shape checks and conditional owner contract beyond site labels.",
+      "interpretation": "Timezone mismatch only if both event lists nonempty. Empty old adopts new timezone. Offset counts old rows, not old events; insort_right in-place then entries.extend in-place. No transaction rollback on insertion errors.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1711-L1720"
+    },
+    {
+      "supplemental_id": "B05-16-S6",
+      "source_span": [
+        1644,
+        1720
+      ],
+      "discovery_reason": "Source-first review of compound evaluation, state effects, chronology, shape checks and conditional owner contract beyond site labels.",
+      "interpretation": "Optimization checks are not trading acceptance: malformed native rows can trigger fallback, no silent price rounding or changes to existing provenance. No guarantee of exact legacy equivalence from source-only validation.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1644-L1720"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B05-16-F01",
+      "span": [
+        1649,
+        1666
+      ],
+      "description": "Clarify shape checks before no-creation skip, original ordinal and exception scope.",
+      "document": "Algorithms/V3/08_Order_Audit.md",
+      "line": 102,
+      "prior_blob": "b5580d707c96f2eeb6e4b4b3fbc3b79c52fe6e09",
+      "resolution": "Active contract amended at line 102 and related clauses; rechecked against pinned source.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1649-L1666",
+      "recheck": "W2 cross-owner and W3 separate forensic review pending."
+    },
+    {
+      "id": "B05-16-F02",
+      "span": [
+        1667,
+        1697
+      ],
+      "description": "Specify crossing extra fields, exact native types, timezone identity and per-row set dedup; no positivity validation.",
+      "document": "Algorithms/V3/08_Order_Audit.md",
+      "line": 102,
+      "prior_blob": "b5580d707c96f2eeb6e4b4b3fbc3b79c52fe6e09",
+      "resolution": "Active contract amended at line 102 and related clauses; rechecked against pinned source.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1667-L1697",
+      "recheck": "W2 cross-owner and W3 separate forensic review pending."
+    },
+    {
+      "id": "B05-16-F03",
+      "span": [
+        1701,
+        1720
+      ],
+      "description": "Specify consume-once timing, identity/size, timezone-empty cases, in-place mutation and no rollback.",
+      "document": "Algorithms/V3/08_Order_Audit.md",
+      "line": 105,
+      "prior_blob": "b5580d707c96f2eeb6e4b4b3fbc3b79c52fe6e09",
+      "resolution": "Active contract amended at line 105 and related clauses; rechecked against pinned source.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L1701-L1720",
+      "recheck": "W2 cross-owner and W3 separate forensic review pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: owner mutation and invalidation guarantees, prefix alias lifetime, native datetime/tzinfo/Decimal context compatibility and caller fallback behavior; no empirical equivalence claim.",
+    "W3 separate source-first forensic review pending. No RAW, runtime, differential or benchmark."
+  ]
+}

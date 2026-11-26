@@ -1,0 +1,3669 @@
+{
+  "checkpoint": 42,
+  "batch": "B04",
+  "sub_batch": "B04-05",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "e727bfd89a86cd9aef171701bc8a74b69cbf02ed",
+  "path": "engine/pipeline/s_zone_detector.py",
+  "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+  "source_range": [
+    696,
+    869
+  ],
+  "procedures": [
+    "S29",
+    "S30",
+    "S31",
+    "S32",
+    "S33",
+    "S34",
+    "S35",
+    "S36"
+  ],
+  "review_pass": "W1 source-first local owner review; W3 pending",
+  "status": "PASS",
+  "scope": "Local source contracts only; cross-owner, runtime and separate forensic gate not certified.",
+  "counts": {
+    "original_rows": 116,
+    "by_category": {
+      "branches": 32,
+      "comparisons": 32,
+      "arithmetic": 8,
+      "calls": 44
+    },
+    "supplemental_items": 9
+  },
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 2709,
+      "source_span": [
+        715,
+        16,
+        715,
+        74
+      ],
+      "procedure": "S29",
+      "original_operation": "IfExp",
+      "original_context": "S-SC34",
+      "interpretation": "Exact bullish chooses Order box_bottom else box_top.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L715-L715",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2716,
+      "source_span": [
+        718,
+        8,
+        721,
+        70
+      ],
+      "procedure": "S29",
+      "original_operation": "If",
+      "original_context": "S-SC34",
+      "interpretation": "Exact bullish uses <= legacy classification; otherwise >=.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L718-L721",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2723,
+      "source_span": [
+        719,
+        21,
+        719,
+        70
+      ],
+      "procedure": "S29",
+      "original_operation": "IfExp",
+      "original_context": "S-SC34",
+      "interpretation": "Bullish boundary<=stop extreme selects after, else before.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L719-L719",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2731,
+      "source_span": [
+        721,
+        21,
+        721,
+        70
+      ],
+      "procedure": "S29",
+      "original_operation": "IfExp",
+      "original_context": "S-SC34",
+      "interpretation": "Other direction boundary>=stop extreme selects after, else before.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L721-L721",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2737,
+      "source_span": [
+        722,
+        8,
+        723,
+        25
+      ],
+      "procedure": "S29",
+      "original_operation": "If",
+      "original_context": "S-SC34",
+      "interpretation": "Legacy before returns before nested search.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L722-L723",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2743,
+      "source_span": [
+        727,
+        8,
+        728,
+        25
+      ],
+      "procedure": "S29",
+      "original_operation": "If",
+      "original_context": "S-SC34",
+      "interpretation": "Any nonnull nested match preserves legacy after.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L727-L728",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2753,
+      "source_span": [
+        730,
+        8,
+        731,
+        63
+      ],
+      "procedure": "S29",
+      "original_operation": "If",
+      "original_context": "S-SC35",
+      "interpretation": "Null A-stop event defaults to stop main open.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L730-L731",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2796,
+      "source_span": [
+        739,
+        15,
+        739,
+        74
+      ],
+      "procedure": "S29",
+      "original_operation": "IfExp",
+      "original_context": "S-SC35",
+      "interpretation": "S31 returned time strictly earlier than Order First open chooses before; equality after.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L739-L739",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2816,
+      "source_span": [
+        748,
+        8,
+        749,
+        63
+      ],
+      "procedure": "S30",
+      "original_operation": "If",
+      "original_context": "S-SC36",
+      "interpretation": "Null A-stop event uses stop main open.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L748-L749",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2857,
+      "source_span": [
+        756,
+        8,
+        757,
+        28
+      ],
+      "procedure": "S30",
+      "original_operation": "If",
+      "original_context": "S-SC36",
+      "interpretation": "Empty lower remainder returns original full-main candidate.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L756-L757",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2873,
+      "source_span": [
+        760,
+        8,
+        769,
+        34
+      ],
+      "procedure": "S30",
+      "original_operation": "For",
+      "original_context": "S-SC37",
+      "interpretation": "Traverse remainder after seeded first row.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L760-L769",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2887,
+      "source_span": [
+        763,
+        16,
+        765,
+        39
+      ],
+      "procedure": "S30",
+      "original_operation": "IfExp",
+      "original_context": "S-SC37",
+      "interpretation": "Exact bullish compares item Low strictly lower, else higher.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L763-L765",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2898,
+      "source_span": [
+        767,
+        12,
+        769,
+        34
+      ],
+      "procedure": "S30",
+      "original_operation": "If",
+      "original_context": "S-SC37",
+      "interpretation": "Strict improvement replaces lower source/value, equality keeps first.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L767-L769",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2908,
+      "source_span": [
+        771,
+        12,
+        773,
+        21
+      ],
+      "procedure": "S30",
+      "original_operation": "IfExp",
+      "original_context": "S-SC37",
+      "interpretation": "Only First>stop index evaluates later main candidate S13.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L771-L773",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2920,
+      "source_span": [
+        775,
+        8,
+        782,
+        38
+      ],
+      "procedure": "S30",
+      "original_operation": "If",
+      "original_context": "S-SC37",
+      "interpretation": "Nonnull later candidate permits strict comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L775-L782",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2926,
+      "source_span": [
+        777,
+        16,
+        779,
+        47
+      ],
+      "procedure": "S30",
+      "original_operation": "IfExp",
+      "original_context": "S-SC37",
+      "interpretation": "Exact bullish later price<lower value, else >.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L777-L779",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2941,
+      "source_span": [
+        781,
+        12,
+        782,
+        38
+      ],
+      "procedure": "S30",
+      "original_operation": "If",
+      "original_context": "S-SC37",
+      "interpretation": "Strict better later candidate returns it, equality falls through stop main.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L781-L782",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2975,
+      "source_span": [
+        793,
+        8,
+        797,
+        49
+      ],
+      "procedure": "S31",
+      "original_operation": "For",
+      "original_context": "S-SC38",
+      "interpretation": "Traverse lower rows from max(source,not_before) to nominal source end.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L793-L797",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 134,
+        "heading": "_candidate_event_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2988,
+      "source_span": [
+        796,
+        12,
+        797,
+        49
+      ],
+      "procedure": "S31",
+      "original_operation": "If",
+      "original_context": "S-SC38",
+      "interpretation": "First normalized extreme equal target level returns timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L796-L797",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 134,
+        "heading": "_candidate_event_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3035,
+      "source_span": [
+        809,
+        8,
+        810,
+        27
+      ],
+      "procedure": "S33",
+      "original_operation": "If",
+      "original_context": "S-SC39",
+      "interpretation": "Nonnull explicit Blue formation time returns immediately.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L809-L810",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3058,
+      "source_span": [
+        813,
+        8,
+        819,
+        30
+      ],
+      "procedure": "S33",
+      "original_operation": "If",
+      "original_context": "S-SC39",
+      "interpretation": "String kind not reset uses ordinal/confirmation route.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L813-L819",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3075,
+      "source_span": [
+        815,
+        12,
+        818,
+        17
+      ],
+      "procedure": "S33",
+      "original_operation": "If",
+      "original_context": "S-SC39",
+      "interpretation": "Valid chained ordinal selects S04 else source main time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L815-L818",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3076,
+      "source_span": [
+        815,
+        15,
+        815,
+        64
+      ],
+      "procedure": "S33",
+      "original_operation": "Compare",
+      "original_context": "S-SC39",
+      "interpretation": "Chain 1<=number<=trend count, middle evaluated once; count only after lower succeeds.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L815-L815",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3104,
+      "source_span": [
+        821,
+        8,
+        822,
+        30
+      ],
+      "procedure": "S33",
+      "original_operation": "If",
+      "original_context": "S-SC39",
+      "interpretation": "Null broken_level returns source time before lower search.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L821-L822",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3116,
+      "source_span": [
+        824,
+        8,
+        834,
+        49
+      ],
+      "procedure": "S33",
+      "original_operation": "For",
+      "original_context": "S-SC39",
+      "interpretation": "Traverse Reset source lower window in input order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L824-L834",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3130,
+      "source_span": [
+        826,
+        30,
+        826,
+        78
+      ],
+      "procedure": "S33",
+      "original_operation": "IfExp",
+      "original_context": "S-SC39",
+      "interpretation": "Exact bullish reads Low else High.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L826-L826",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3139,
+      "source_span": [
+        829,
+        16,
+        831,
+        53
+      ],
+      "procedure": "S33",
+      "original_operation": "IfExp",
+      "original_context": "S-SC39",
+      "interpretation": "Exact bullish strict less than normalized broken level, else greater.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L829-L831",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3154,
+      "source_span": [
+        833,
+        12,
+        834,
+        49
+      ],
+      "procedure": "S33",
+      "original_operation": "If",
+      "original_context": "S-SC39",
+      "interpretation": "First crossing returns lower timestamp; miss falls back source main.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L833-L834",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3172,
+      "source_span": [
+        849,
+        8,
+        850,
+        24
+      ],
+      "procedure": "S34",
+      "original_operation": "If",
+      "original_context": "S-SC40",
+      "interpretation": "Invalid reaction number rejects before Reset Blue lookup.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L849-L850",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 143,
+        "heading": "_candidate_cross_has_blue"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3173,
+      "source_span": [
+        849,
+        11,
+        849,
+        77
+      ],
+      "procedure": "S34",
+      "original_operation": "BoolOp",
+      "original_context": "S-SC40",
+      "interpretation": "Lower ordinal invalidity first then upper.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L849-L849",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 143,
+        "heading": "_candidate_cross_has_blue"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3193,
+      "source_span": [
+        852,
+        15,
+        852,
+        74
+      ],
+      "procedure": "S34",
+      "original_operation": "BoolOp",
+      "original_context": "S-SC40",
+      "interpretation": "Formation time nonnull then <=candidate event, includes equality.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L852-L852",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 143,
+        "heading": "_candidate_cross_has_blue"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 3217,
+      "source_span": [
+        860,
+        12,
+        861,
+        78
+      ],
+      "procedure": "S35",
+      "original_operation": "BoolOp",
+      "original_context": "S-SC40",
+      "interpretation": "Next sorted confirmation exists then <=event; strict-after behavior start via upper bound.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L860-L861",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 146,
+        "heading": "_has_ordinary_trend_reaction"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2710,
+      "source_span": [
+        715,
+        32,
+        715,
+        59
+      ],
+      "procedure": "S29",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "S-SC34",
+      "interpretation": "Exact bullish selects opposite boundary box_bottom.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L715-L715",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2717,
+      "source_span": [
+        718,
+        11,
+        718,
+        38
+      ],
+      "procedure": "S29",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "S-SC34",
+      "interpretation": "Exact bullish chooses legacy bullish comparator.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L718-L718",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2724,
+      "source_span": [
+        719,
+        32,
+        719,
+        56
+      ],
+      "procedure": "S29",
+      "original_operation": [
+        "LtE"
+      ],
+      "original_context": "S-SC34",
+      "interpretation": "Boundary<=stop extreme yields after including equality.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L719-L719",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2732,
+      "source_span": [
+        721,
+        32,
+        721,
+        56
+      ],
+      "procedure": "S29",
+      "original_operation": [
+        "GtE"
+      ],
+      "original_context": "S-SC34",
+      "interpretation": "Boundary>=stop extreme yields after including equality.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L721-L721",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2738,
+      "source_span": [
+        722,
+        11,
+        722,
+        29
+      ],
+      "procedure": "S29",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "S-SC34",
+      "interpretation": "Legacy string equals before short circuits later operations.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L722-L722",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2744,
+      "source_span": [
+        727,
+        11,
+        727,
+        82
+      ],
+      "procedure": "S29",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "S-SC34",
+      "interpretation": "S16 result identity nonnull preserves after.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L727-L727",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2754,
+      "source_span": [
+        730,
+        11,
+        730,
+        36
+      ],
+      "procedure": "S29",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "S-SC35",
+      "interpretation": "A-stop event identity null triggers fallback.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L730-L730",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2797,
+      "source_span": [
+        739,
+        27,
+        739,
+        61
+      ],
+      "procedure": "S29",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "S-SC35",
+      "interpretation": "Candidate returned event<main Order First strict, equality after.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L739-L739",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2817,
+      "source_span": [
+        748,
+        11,
+        748,
+        36
+      ],
+      "procedure": "S30",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "S-SC36",
+      "interpretation": "A-stop event identity null triggers stop main fallback.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L748-L748",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2888,
+      "source_span": [
+        764,
+        19,
+        764,
+        46
+      ],
+      "procedure": "S30",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "S-SC37",
+      "interpretation": "Exact bullish chooses strict lower improvement.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L764-L764",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2892,
+      "source_span": [
+        763,
+        16,
+        763,
+        34
+      ],
+      "procedure": "S30",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "S-SC37",
+      "interpretation": "New lower value<current value strict.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L763-L763",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2895,
+      "source_span": [
+        765,
+        21,
+        765,
+        39
+      ],
+      "procedure": "S30",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "S-SC37",
+      "interpretation": "New lower value>current value strict.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L765-L765",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2909,
+      "source_span": [
+        772,
+        15,
+        772,
+        41
+      ],
+      "procedure": "S30",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "S-SC37",
+      "interpretation": "First index>stop index strict enables later range.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L772-L772",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2921,
+      "source_span": [
+        775,
+        11,
+        775,
+        38
+      ],
+      "procedure": "S30",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "S-SC37",
+      "interpretation": "Later candidate identity nonnull.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L775-L775",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2927,
+      "source_span": [
+        778,
+        19,
+        778,
+        46
+      ],
+      "procedure": "S30",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "S-SC37",
+      "interpretation": "Exact bullish chooses lower comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L778-L778",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2931,
+      "source_span": [
+        777,
+        16,
+        777,
+        42
+      ],
+      "procedure": "S30",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "S-SC37",
+      "interpretation": "Later candidate price<lower remainder value strict.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L777-L777",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2936,
+      "source_span": [
+        779,
+        21,
+        779,
+        47
+      ],
+      "procedure": "S30",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "S-SC37",
+      "interpretation": "Later candidate price>lower remainder value strict.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L779-L779",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2989,
+      "source_span": [
+        796,
+        15,
+        796,
+        49
+      ],
+      "procedure": "S31",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "S-SC38",
+      "interpretation": "Normalized lower extreme==supplied candidate level.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L796-L796",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 134,
+        "heading": "_candidate_event_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3036,
+      "source_span": [
+        809,
+        11,
+        809,
+        31
+      ],
+      "procedure": "S33",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "S-SC39",
+      "interpretation": "Explicit formation identity nonnull accepted as supplied.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L809-L809",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3059,
+      "source_span": [
+        813,
+        11,
+        813,
+        48
+      ],
+      "procedure": "S33",
+      "original_operation": [
+        "NotEq"
+      ],
+      "original_context": "S-SC39",
+      "interpretation": "String kind!=reset selects non-Reset route.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L813-L813",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3076,
+      "source_span": [
+        815,
+        15,
+        815,
+        64
+      ],
+      "procedure": "S33",
+      "original_operation": [
+        "LtE",
+        "LtE"
+      ],
+      "original_context": "S-SC39",
+      "interpretation": "Chain 1<=reaction number<=count inclusive.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L815-L815",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3105,
+      "source_span": [
+        821,
+        11,
+        821,
+        31
+      ],
+      "procedure": "S33",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "S-SC39",
+      "interpretation": "Broken level identity null returns main open.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L821-L821",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3131,
+      "source_span": [
+        826,
+        39,
+        826,
+        66
+      ],
+      "procedure": "S33",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "S-SC39",
+      "interpretation": "Exact bullish chooses Low attr.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L826-L826",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3140,
+      "source_span": [
+        830,
+        19,
+        830,
+        46
+      ],
+      "procedure": "S33",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "S-SC39",
+      "interpretation": "Exact bullish chooses strict less comparator.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L830-L830",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3144,
+      "source_span": [
+        829,
+        16,
+        829,
+        48
+      ],
+      "procedure": "S33",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "S-SC39",
+      "interpretation": "Normalized value<normalized broken level strict.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L829-L829",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3149,
+      "source_span": [
+        831,
+        21,
+        831,
+        53
+      ],
+      "procedure": "S33",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "S-SC39",
+      "interpretation": "Normalized value>normalized broken level strict.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L831-L831",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3174,
+      "source_span": [
+        849,
+        11,
+        849,
+        30
+      ],
+      "procedure": "S34",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "S-SC40",
+      "interpretation": "Reaction number<1 invalid.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L849-L849",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 143,
+        "heading": "_candidate_cross_has_blue"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3177,
+      "source_span": [
+        849,
+        34,
+        849,
+        77
+      ],
+      "procedure": "S34",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "S-SC40",
+      "interpretation": "Reaction number>trend count invalid.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L849-L849",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 143,
+        "heading": "_candidate_cross_has_blue"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3194,
+      "source_span": [
+        852,
+        15,
+        852,
+        41
+      ],
+      "procedure": "S34",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "S-SC40",
+      "interpretation": "Formation time identity nonnull.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L852-L852",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 143,
+        "heading": "_candidate_cross_has_blue"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3197,
+      "source_span": [
+        852,
+        46,
+        852,
+        74
+      ],
+      "procedure": "S34",
+      "original_operation": [
+        "LtE"
+      ],
+      "original_context": "S-SC40",
+      "interpretation": "Formation time<=event inclusive.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L852-L852",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 143,
+        "heading": "_candidate_cross_has_blue"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3218,
+      "source_span": [
+        860,
+        12,
+        860,
+        66
+      ],
+      "procedure": "S35",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "S-SC40",
+      "interpretation": "Upper bound position<sorted confirmation count.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L860-L860",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 146,
+        "heading": "_has_ordinary_trend_reaction"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 3224,
+      "source_span": [
+        861,
+        16,
+        861,
+        78
+      ],
+      "procedure": "S35",
+      "original_operation": [
+        "LtE"
+      ],
+      "original_context": "S-SC40",
+      "interpretation": "Selected confirmation<=event inclusive.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L861-L861",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 146,
+        "heading": "_has_ordinary_trend_reaction"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2687,
+      "source_span": [
+        701,
+        27,
+        701,
+        42
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "S-SC34",
+      "interpretation": "Nullable/type-union annotation, not executable trading arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Type annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L701-L701",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2810,
+      "source_span": [
+        745,
+        27,
+        745,
+        42
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "S-SC36",
+      "interpretation": "Nullable/type-union annotation, not executable trading arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Type annotation only.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L745-L745",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2843,
+      "source_span": [
+        752,
+        26,
+        752,
+        74
+      ],
+      "procedure": "S30",
+      "original_operation": "Add",
+      "original_context": "S-SC36",
+      "interpretation": "Stop main open+timeframe exclusive remainder end.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L752-L752",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2858,
+      "source_span": [
+        756,
+        11,
+        756,
+        38
+      ],
+      "procedure": "S30",
+      "original_operation": "Not",
+      "original_context": "S-SC36",
+      "interpretation": "Negate remainder truthiness to choose full-main fallback.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L756-L756",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2915,
+      "source_span": [
+        771,
+        35,
+        771,
+        51
+      ],
+      "procedure": "S30",
+      "original_operation": "Add",
+      "original_context": "S-SC37",
+      "interpretation": "Stop index+1 excludes stop main from subsequent range.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L771-L771",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2984,
+      "source_span": [
+        794,
+        42,
+        794,
+        70
+      ],
+      "procedure": "S31",
+      "original_operation": "Add",
+      "original_context": "S-SC38",
+      "interpretation": "Source main open+timeframe exclusive candidate event scan end.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L794-L794",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 134,
+        "heading": "_candidate_event_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 3090,
+      "source_span": [
+        817,
+        41,
+        817,
+        60
+      ],
+      "procedure": "S33",
+      "original_operation": "Sub",
+      "original_context": "S-SC39",
+      "interpretation": "Reaction ordinal-1 selects original trend reaction.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L817-L817",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 3112,
+      "source_span": [
+        823,
+        14,
+        823,
+        42
+      ],
+      "procedure": "S33",
+      "original_operation": "Add",
+      "original_context": "S-SC39",
+      "interpretation": "Blue source main open+timeframe exclusive Reset formation scan end.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L823-L823",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2695,
+      "source_span": [
+        711,
+        23,
+        711,
+        70
+      ],
+      "procedure": "S29",
+      "original_operation": "self._trend_extreme",
+      "original_context": "S-SC34",
+      "interpretation": "Normalize A-stop main directional extreme.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L711-L711",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2704,
+      "source_span": [
+        712,
+        19,
+        717,
+        9
+      ],
+      "procedure": "S29",
+      "original_operation": "as_decimal",
+      "original_context": "S-SC34",
+      "interpretation": "Normalize selected Order box boundary.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L712-L717",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2706,
+      "source_span": [
+        713,
+        12,
+        716,
+        13
+      ],
+      "procedure": "S29",
+      "original_operation": "getattr",
+      "original_context": "S-SC34",
+      "interpretation": "Read selected box_bottom B or box_top otherwise.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L713-L716",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2745,
+      "source_span": [
+        727,
+        11,
+        727,
+        70
+      ],
+      "procedure": "S29",
+      "original_operation": "self._nested_trend_reaction",
+      "original_context": "S-SC34",
+      "interpretation": "Resolve nested trend match before pre-Order source calculation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L727-L727",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2765,
+      "source_span": [
+        732,
+        20,
+        734,
+        9
+      ],
+      "procedure": "S29",
+      "original_operation": "self._candidate_before_order",
+      "original_context": "S-SC35",
+      "interpretation": "Compute S30 with actual or fallback A-stop event.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L732-L734",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2774,
+      "source_span": [
+        735,
+        26,
+        737,
+        9
+      ],
+      "procedure": "S29",
+      "original_operation": "self._candidate_event_time",
+      "original_context": "S-SC35",
+      "interpretation": "Resolve S31 candidate event including fallback.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L735-L737",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2789,
+      "source_span": [
+        738,
+        45,
+        738,
+        77
+      ],
+      "procedure": "S29",
+      "original_operation": "int",
+      "original_context": "S-SC35",
+      "interpretation": "Integer-convert Order First for main timestamp lookup.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L738-L738",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2791,
+      "source_span": [
+        738,
+        49,
+        738,
+        76
+      ],
+      "procedure": "S29",
+      "original_operation": "getattr",
+      "original_context": "S-SC35",
+      "interpretation": "Read required Order.first_idx.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L738-L738",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 128,
+        "heading": "_candidate_timing"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR01",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2828,
+      "source_span": [
+        750,
+        22,
+        750,
+        54
+      ],
+      "procedure": "S30",
+      "original_operation": "int",
+      "original_context": "S-SC36",
+      "interpretation": "Integer-convert Order First after null stop-time handling.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L750-L750",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2830,
+      "source_span": [
+        750,
+        26,
+        750,
+        53
+      ],
+      "procedure": "S30",
+      "original_operation": "getattr",
+      "original_context": "S-SC36",
+      "interpretation": "Read required Order.first_idx.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L750-L750",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2836,
+      "source_span": [
+        751,
+        20,
+        751,
+        69
+      ],
+      "procedure": "S30",
+      "original_operation": "self._candidate_source",
+      "original_context": "S-SC36",
+      "interpretation": "Compute full-main earliest-equal stop..First candidate before any lower query.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L751-L751",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2852,
+      "source_span": [
+        753,
+        34,
+        755,
+        9
+      ],
+      "procedure": "S30",
+      "original_operation": "self._lower_window",
+      "original_context": "S-SC36",
+      "interpretation": "Query lower remainder from supplied stop event to nominal stop main end.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L753-L755",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2869,
+      "source_span": [
+        759,
+        16,
+        759,
+        43
+      ],
+      "procedure": "S30",
+      "original_operation": "self._trend_extreme",
+      "original_context": "S-SC37",
+      "interpretation": "Normalize first lower price.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L759-L759",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2881,
+      "source_span": [
+        761,
+        25,
+        761,
+        50
+      ],
+      "procedure": "S30",
+      "original_operation": "self._trend_extreme",
+      "original_context": "S-SC37",
+      "interpretation": "Normalize later lower price before directional strict comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L761-L761",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2912,
+      "source_span": [
+        771,
+        12,
+        771,
+        65
+      ],
+      "procedure": "S30",
+      "original_operation": "self._candidate_source",
+      "original_context": "S-SC37",
+      "interpretation": "Compute S13 subsequent main candidate only if First>stop.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L771-L771",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 131,
+        "heading": "_candidate_before_order"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "machine": "SOR",
+          "transition": "SOR02",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2977,
+      "source_span": [
+        793,
+        20,
+        795,
+        9
+      ],
+      "procedure": "S31",
+      "original_operation": "self._lower_window",
+      "original_context": "S-SC38",
+      "interpretation": "Query candidate source lower window with clamped start and nominal end.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L793-L795",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 134,
+        "heading": "_candidate_event_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2980,
+      "source_span": [
+        794,
+        12,
+        794,
+        40
+      ],
+      "procedure": "S31",
+      "original_operation": "max",
+      "original_context": "S-SC38",
+      "interpretation": "Max source main open and not_before for lower scan start.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L794-L794",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 134,
+        "heading": "_candidate_event_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2990,
+      "source_span": [
+        796,
+        15,
+        796,
+        40
+      ],
+      "procedure": "S31",
+      "original_operation": "self._trend_extreme",
+      "original_context": "S-SC38",
+      "interpretation": "Normalize directional price before equality.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L796-L796",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 134,
+        "heading": "_candidate_event_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2996,
+      "source_span": [
+        797,
+        23,
+        797,
+        49
+      ],
+      "procedure": "S31",
+      "original_operation": "getattr",
+      "original_context": "S-SC38",
+      "interpretation": "Read first matching lower timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L797-L797",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 134,
+        "heading": "_candidate_event_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3001,
+      "source_span": [
+        798,
+        15,
+        798,
+        43
+      ],
+      "procedure": "S31",
+      "original_operation": "max",
+      "original_context": "S-SC38",
+      "interpretation": "Recompute max of source and not_before as fallback without clamp to end.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L798-L798",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 134,
+        "heading": "_candidate_event_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3017,
+      "source_span": [
+        804,
+        15,
+        804,
+        72
+      ],
+      "procedure": "S32",
+      "original_operation": "self._candidate_event_time",
+      "original_context": "S-SC38",
+      "interpretation": "Public wrapper delegates price and fallback as S31 level/not_before.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L804-L804",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 137,
+        "heading": "candidate_event_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3030,
+      "source_span": [
+        808,
+        19,
+        808,
+        56
+      ],
+      "procedure": "S33",
+      "original_operation": "getattr",
+      "original_context": "S-SC39",
+      "interpretation": "Read optional explicit Blue formation_time default null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L808-L808",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3043,
+      "source_span": [
+        811,
+        23,
+        811,
+        57
+      ],
+      "procedure": "S33",
+      "original_operation": "int",
+      "original_context": "S-SC39",
+      "interpretation": "Integer-convert Blue source index only absent explicit time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L811-L811",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3045,
+      "source_span": [
+        811,
+        27,
+        811,
+        56
+      ],
+      "procedure": "S33",
+      "original_operation": "getattr",
+      "original_context": "S-SC39",
+      "interpretation": "Read required Blue source_index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L811-L811",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3051,
+      "source_span": [
+        812,
+        22,
+        812,
+        70
+      ],
+      "procedure": "S33",
+      "original_operation": "getattr",
+      "original_context": "S-SC39",
+      "interpretation": "Read main source timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L812-L812",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3060,
+      "source_span": [
+        813,
+        11,
+        813,
+        37
+      ],
+      "procedure": "S33",
+      "original_operation": "str",
+      "original_context": "S-SC39",
+      "interpretation": "String-convert Blue kind for exact reset test.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L813-L813",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3062,
+      "source_span": [
+        813,
+        15,
+        813,
+        36
+      ],
+      "procedure": "S33",
+      "original_operation": "getattr",
+      "original_context": "S-SC39",
+      "interpretation": "Read required Blue kind.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L813-L813",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3069,
+      "source_span": [
+        814,
+        30,
+        814,
+        67
+      ],
+      "procedure": "S33",
+      "original_operation": "int",
+      "original_context": "S-SC39",
+      "interpretation": "Integer-convert reaction number on non-Reset route.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L814-L814",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3071,
+      "source_span": [
+        814,
+        34,
+        814,
+        66
+      ],
+      "procedure": "S33",
+      "original_operation": "getattr",
+      "original_context": "S-SC39",
+      "interpretation": "Read required Blue reaction_number.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L814-L814",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3079,
+      "source_span": [
+        815,
+        39,
+        815,
+        64
+      ],
+      "procedure": "S33",
+      "original_operation": "len",
+      "original_context": "S-SC39",
+      "interpretation": "Read trend count only after ordinal lower bound passes.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L815-L815",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3084,
+      "source_span": [
+        816,
+        23,
+        818,
+        17
+      ],
+      "procedure": "S33",
+      "original_operation": "self._reaction_confirmation_time",
+      "original_context": "S-SC39",
+      "interpretation": "Delegate S04 default-intrabar confirmation for valid non-Reset ordinal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L816-L818",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3099,
+      "source_span": [
+        820,
+        23,
+        820,
+        58
+      ],
+      "procedure": "S33",
+      "original_operation": "getattr",
+      "original_context": "S-SC39",
+      "interpretation": "Read optional broken_level default null on Reset route.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L820-L820",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3118,
+      "source_span": [
+        824,
+        20,
+        824,
+        56
+      ],
+      "procedure": "S33",
+      "original_operation": "self._lower_window",
+      "original_context": "S-SC39",
+      "interpretation": "Query source main lower interval.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L824-L824",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3125,
+      "source_span": [
+        825,
+        20,
+        827,
+        13
+      ],
+      "procedure": "S33",
+      "original_operation": "as_decimal",
+      "original_context": "S-SC39",
+      "interpretation": "Normalize selected lower price before comparing.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L825-L827",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3127,
+      "source_span": [
+        826,
+        16,
+        826,
+        79
+      ],
+      "procedure": "S33",
+      "original_operation": "getattr",
+      "original_context": "S-SC39",
+      "interpretation": "Read direction-selected Low or High.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L826-L826",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3146,
+      "source_span": [
+        829,
+        24,
+        829,
+        48
+      ],
+      "procedure": "S33",
+      "original_operation": "as_decimal",
+      "original_context": "S-SC39",
+      "interpretation": "Normalize broken_level inside each bullish lower row comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L829-L829",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3151,
+      "source_span": [
+        831,
+        29,
+        831,
+        53
+      ],
+      "procedure": "S33",
+      "original_operation": "as_decimal",
+      "original_context": "S-SC39",
+      "interpretation": "Normalize broken_level inside each nonbullish lower row comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L831-L831",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3157,
+      "source_span": [
+        834,
+        23,
+        834,
+        49
+      ],
+      "procedure": "S33",
+      "original_operation": "getattr",
+      "original_context": "S-SC39",
+      "interpretation": "Read timestamp of first strict hit.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L834-L834",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 140,
+        "heading": "_blue_formation_time"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3179,
+      "source_span": [
+        849,
+        52,
+        849,
+        77
+      ],
+      "procedure": "S34",
+      "original_operation": "len",
+      "original_context": "S-SC40",
+      "interpretation": "Read trend count only after ordinal>=1.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L849-L849",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 143,
+        "heading": "_candidate_cross_has_blue"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3187,
+      "source_span": [
+        851,
+        25,
+        851,
+        84
+      ],
+      "procedure": "S34",
+      "original_operation": "self._reset_blue_formation_by_reaction.get",
+      "original_context": "S-SC40",
+      "interpretation": "Lookup first valid Reset Blue formation by ordinal, may be internal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L851-L851",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 143,
+        "heading": "_candidate_cross_has_blue"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3211,
+      "source_span": [
+        858,
+        19,
+        858,
+        87
+      ],
+      "procedure": "S35",
+      "original_operation": "bisect_right",
+      "original_context": "S-SC40",
+      "interpretation": "Upper bound sorted confirmations at behavior_start excludes equality.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L858-L858",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 146,
+        "heading": "_has_ordinary_trend_reaction"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3220,
+      "source_span": [
+        860,
+        23,
+        860,
+        66
+      ],
+      "procedure": "S35",
+      "original_operation": "len",
+      "original_context": "S-SC40",
+      "interpretation": "Read sorted confirmation count before indexing.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L860-L860",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 146,
+        "heading": "_has_ordinary_trend_reaction"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3239,
+      "source_span": [
+        866,
+        16,
+        866,
+        43
+      ],
+      "procedure": "S36",
+      "original_operation": "self._trend_extreme",
+      "original_context": "S-SC41",
+      "interpretation": "Normalize candle extreme via S08.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L866-L866",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 149,
+        "heading": "_candidate_crossed"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 3244,
+      "source_span": [
+        867,
+        15,
+        867,
+        44
+      ],
+      "procedure": "S36",
+      "original_operation": "self._a_stopped",
+      "original_context": "S-SC41",
+      "interpretation": "Delegate strict crossing with normalized value and supplied level.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls temporal boundary, ordered eligibility, source provenance, price comparison or ownership.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L867-L867",
+      "contract_ref": {
+        "path": "Algorithms/V3/05_S_Zone.md",
+        "blob": "e89925dbd273db5501a91328444136cee374caec",
+        "line": 149,
+        "heading": "_candidate_crossed"
+      },
+      "transition_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "supplemental_id": "B04-05-S1",
+      "source_span": [
+        711,
+        728
+      ],
+      "discovery_reason": "Source-first ordered evaluation, provenance, implicit dependency, state or fallback beyond original category labels.",
+      "interpretation": "Read stop main extreme then normalize opposite Order boundary. Exact bullish after when bottom<=stop Low, otherwise after when top>=stop High; equality after. Legacy before returns before S16. Nonnull nested match preserves after, no candidate timing query.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L711-L728"
+    },
+    {
+      "supplemental_id": "B04-05-S2",
+      "source_span": [
+        730,
+        739
+      ],
+      "discovery_reason": "Source-first ordered evaluation, provenance, implicit dependency, state or fallback beyond original category labels.",
+      "interpretation": "Default null stop event to main open; S30 candidate then S31 returned time, then read Order First open. Strict earlier -> before, equal/later -> after. S31 fallback not observed exact event.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L730-L739"
+    },
+    {
+      "supplemental_id": "B04-05-S3",
+      "source_span": [
+        748,
+        757
+      ],
+      "discovery_reason": "Source-first ordered evaluation, provenance, implicit dependency, state or fallback beyond original category labels.",
+      "interpretation": "Default null stop time only; integer First; S13 full-main candidate computed before lower remainder even if discarded later. Reversed range propagates. Lower query from supplied event, not clamped to stop main open, to stop main end exclusive. Empty returns initial candidate.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L748-L757"
+    },
+    {
+      "supplemental_id": "B04-05-S4",
+      "source_span": [
+        758,
+        783
+      ],
+      "discovery_reason": "Source-first ordered evaluation, provenance, implicit dependency, state or fallback beyond original category labels.",
+      "interpretation": "Seed first lower row, strict directional improvement keeps first tie. Later S13 only First>stop index, compare strictly; tie or absent keeps stop main positional index/time and selected lower price. Lower source row reference not output.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L758-L783"
+    },
+    {
+      "supplemental_id": "B04-05-S5",
+      "source_span": [
+        792,
+        804
+      ],
+      "discovery_reason": "Source-first ordered evaluation, provenance, implicit dependency, state or fallback beyond original category labels.",
+      "interpretation": "Read source main open; query max(open,not_before) through open+TF. First equal normalized price -> lower event. Otherwise max(open,not_before) even beyond nominal end. Public fallback parameter is lower gate, not independently selected replacement time.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L792-L804"
+    },
+    {
+      "supplemental_id": "B04-05-S6",
+      "source_span": [
+        808,
+        819
+      ],
+      "discovery_reason": "Source-first ordered evaluation, provenance, implicit dependency, state or fallback beyond original category labels.",
+      "interpretation": "Explicit formation_time nonnull returns unchanged before accessing required source fields. Otherwise int source index/main open, string kind !=reset chooses any nonreset kind. Integer ordinal valid 1..count uses S04 default intrabar, fallback possible; invalid ordinal uses source open.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L808-L819"
+    },
+    {
+      "supplemental_id": "B04-05-S7",
+      "source_span": [
+        820,
+        835
+      ],
+      "discovery_reason": "Source-first ordered evaluation, provenance, implicit dependency, state or fallback beyond original category labels.",
+      "interpretation": "Reset broken_level optional, null returns source. Lower query whole source main. Per row select Low/High, normalize value, then normalize broken_level in selected strict comparison; empty avoids broken-level conversion. First hit exact timestamp, no hit source open; no main OHLC proof.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L820-L835"
+    },
+    {
+      "supplemental_id": "B04-05-S8",
+      "source_span": [
+        849,
+        852
+      ],
+      "discovery_reason": "Source-first ordered evaluation, provenance, implicit dependency, state or fallback beyond original category labels.",
+      "interpretation": "Invalid ordinal rejects before lookup. First valid Reset Blue map from S01 may include internal, not necessarily earliest formation. Nonnull formation<=event, no same-main or behavior_start bound.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L849-L852"
+    },
+    {
+      "supplemental_id": "B04-05-S9",
+      "source_span": [
+        858,
+        867
+      ],
+      "discovery_reason": "Source-first ordered evaluation, provenance, implicit dependency, state or fallback beyond original category labels.",
+      "interpretation": "S35 upper_bound sorted trend confirmation times at behavior_start, bounds then <=event, includes native fallback times. S36 normalizes directional price then strict policy cross.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L858-L867"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B04-05-F01",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        730,
+        739
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L730-L739",
+      "description": "Preserve fallback provenance in pre/post timing.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/05_S_Zone.md",
+          "prior_blob": "cc75ac7d62b254013b27aed6c130b67583f57885",
+          "procedure": "S29"
+        }
+      ],
+      "resolution": "return before iff S31 returned candidate time<main Order First timestamp, else after (equality after). S31 may return a fallback, not proof of an observed price event.",
+      "recheck": "W2 caller and W3 forensic review pending."
+    },
+    {
+      "id": "B04-05-F02",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        748,
+        757
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L748-L757",
+      "description": "Explicit unclamped lower remainder start and fallback.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/05_S_Zone.md",
+          "prior_blob": "cc75ac7d62b254013b27aed6c130b67583f57885",
+          "procedure": "S30"
+        }
+      ],
+      "resolution": "Query lower remainder [supplied or fallback A-stop time,stop main end), with no extra clamp to stop main open; empty returns the already-computed full-main candidate.",
+      "recheck": "W2 caller and W3 forensic review pending."
+    },
+    {
+      "id": "B04-05-F03",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        808,
+        835
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L808-L835",
+      "description": "Preserve per-row conversion order and explicit/fallback time provenance.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/05_S_Zone.md",
+          "prior_blob": "cc75ac7d62b254013b27aed6c130b67583f57885",
+          "procedure": "S33"
+        }
+      ],
+      "resolution": "Reset: if broken_level null return source; otherwise scan [source,source+timeframe), normalize each selected lower price then normalize broken_level inside that row's selected strict comparison. Empty range never normalizes broken_level. Return first strict crossing timestamp or source fallback. Explicit formation and non-Reset S04 returns are not independent proof of observed crossing.",
+      "recheck": "W2 caller and W3 forensic review pending."
+    },
+    {
+      "id": "B04-05-F04",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        711,
+        739
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/s_zone_detector.py#L711-L739",
+      "description": "Align state transition with timing fallback.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+          "prior_blob": "40e3660babe844d6ba4c67e73a664ed7b5725fa4",
+          "procedure": "SOR01"
+        }
+      ],
+      "resolution": "consider nested trend and S31 returned pre-order event time (including native fallback)",
+      "recheck": "W2 caller and W3 forensic review pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2 compare S31 fallback use in Type4, S37 and lifecycle; verify S33 and A10 time flag differences and caller Blue ordering/identity.",
+    "W1 S37 race and S39/S40 arbitration remain; W3 separate review pending."
+  ]
+}

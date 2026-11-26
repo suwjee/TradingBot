@@ -1,0 +1,543 @@
+{
+  "checkpoint": 248,
+  "batch": "B09",
+  "sub_batch": "B09-87",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "22f1df1a1df592fb1b4911d5057f6cf80940b7f4",
+  "path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+  "source_range": [
+    3404,
+    3426
+  ],
+  "procedures": "TB87",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 16,
+    "by_category": {
+      "branches": 5,
+      "comparisons": 4,
+      "arithmetic": 0,
+      "calls": 7
+    },
+    "supplemental_items": 1,
+    "resolved_findings": 1
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "5c49e3c793bfc22301109ace5105b7fcddf1b8e2",
+    "crosswalk_blob": "a6ba394ffa669c027d61784a894eccfc7996cd6f",
+    "exact_site_id_span_procedure_operation_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "source_range": [
+        198,
+        209
+      ],
+      "reason": "Primary ownership helper; native detector dispatch boundaries reviewed locally."
+    }
+  ],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 12024,
+      "source_span": [
+        3406,
+        13,
+        3406,
+        105
+      ],
+      "procedure": "TB87",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC101",
+      "interpretation": "Select native bullish detector for exact bullish else bearish.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3406-L3406",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 95,
+        "heading": "TB87"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 12042,
+      "source_span": [
+        3409,
+        8,
+        3413,
+        9
+      ],
+      "procedure": "TB87",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC101",
+      "interpretation": "Non-null live_stages selects live primary path; otherwise batch detector.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3409-L3413",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 95,
+        "heading": "TB87"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 12077,
+      "source_span": [
+        3415,
+        14,
+        3415,
+        119
+      ],
+      "procedure": "TB87",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC101",
+      "interpretation": "Choose low resolver for bullish else high resolver.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3415-L3415",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 95,
+        "heading": "TB87"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 12089,
+      "source_span": [
+        3416,
+        16,
+        3416,
+        123
+      ],
+      "procedure": "TB87",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC101",
+      "interpretation": "Choose low label reconciliation for bullish else high reconciliation.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3416-L3416",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 95,
+        "heading": "TB87"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 12119,
+      "source_span": [
+        3419,
+        20,
+        3419,
+        24
+      ],
+      "procedure": "TB87",
+      "original_operation": "comprehension",
+      "original_context": "TB-SC101",
+      "interpretation": "Traverse existing prepared visible audit to construct required identity set.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3419-L3419",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 95,
+        "heading": "TB87"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 12025,
+      "source_span": [
+        3406,
+        47,
+        3406,
+        69
+      ],
+      "procedure": "TB87",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC101",
+      "interpretation": "Exact direction equality selects batch detector.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3406-L3406",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 95,
+        "heading": "TB87"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 12043,
+      "source_span": [
+        3410,
+        11,
+        3410,
+        40
+      ],
+      "procedure": "TB87",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC101",
+      "interpretation": "Live stages is not None, not truthiness.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3410-L3410",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 95,
+        "heading": "TB87"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 12078,
+      "source_span": [
+        3415,
+        54,
+        3415,
+        76
+      ],
+      "procedure": "TB87",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC101",
+      "interpretation": "Exact direction equality selects low resolver.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3415-L3415",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 95,
+        "heading": "TB87"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 12090,
+      "source_span": [
+        3416,
+        57,
+        3416,
+        79
+      ],
+      "procedure": "TB87",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC101",
+      "interpretation": "Exact direction equality selects low label reconciler.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3416-L3416",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 95,
+        "heading": "TB87"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12011,
+      "source_span": [
+        3404,
+        15,
+        3405,
+        49
+      ],
+      "procedure": "TB87",
+      "original_operation": "engines.primary.NativePrimaryOrders",
+      "original_context": "TB-SC101",
+      "interpretation": "Construct NativePrimaryOrders with chronology, both groups, callback and direction.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3404-L3405",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L624-L635"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 95,
+        "heading": "TB87"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12047,
+      "source_span": [
+        3409,
+        8,
+        3409,
+        72
+      ],
+      "procedure": "TB87",
+      "original_operation": "state.live_stages.primary",
+      "original_context": "TB-SC101",
+      "interpretation": "Delegate primary computation to live service when non-null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3409-L3409",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 95,
+        "heading": "TB87"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12055,
+      "source_span": [
+        3410,
+        46,
+        3413,
+        9
+      ],
+      "procedure": "TB87",
+      "original_operation": "detect",
+      "original_context": "TB-SC101",
+      "interpretation": "Call selected batch detector with chronology, requested S/E/StopAll and resolver.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3410-L3413",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 95,
+        "heading": "TB87"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12098,
+      "source_span": [
+        3417,
+        4,
+        3417,
+        63
+      ],
+      "procedure": "TB87",
+      "original_operation": "reconcile",
+      "original_context": "TB-SC101",
+      "interpretation": "Reconcile selected detector labels using resolved primary points.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3417-L3417",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 95,
+        "heading": "TB87"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12100,
+      "source_span": [
+        3417,
+        14,
+        3417,
+        62
+      ],
+      "procedure": "TB87",
+      "original_operation": "resolve",
+      "original_context": "TB-SC101",
+      "interpretation": "Resolve primary side through visible end before reconciliation.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3417-L3417",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 95,
+        "heading": "TB87"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12109,
+      "source_span": [
+        3418,
+        16,
+        3418,
+        86
+      ],
+      "procedure": "TB87",
+      "original_operation": "order_identity",
+      "original_context": "TB-SC101",
+      "interpretation": "Construct physical identity from existing audit reaction first and break indexes.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3418-L3418",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 95,
+        "heading": "TB87"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12126,
+      "source_span": [
+        3420,
+        38,
+        3423,
+        5
+      ],
+      "procedure": "TB87",
+      "original_operation": "engines.lifecycle.prepare_order_audit",
+      "original_context": "TB-SC101",
+      "interpretation": "Prepare visible audit with accepted source set and retained required identities.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3420-L3423",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 95,
+        "heading": "TB87"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B09-87-S01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_span": [
+        3404,
+        3426
+      ],
+      "interpretation": "Construct one NativePrimaryOrders resolver from chronology, both groups, callback and requested direction. Select detect_bullish only for exact bullish, otherwise detect_bearish; if live_stages is non-null call its primary service with direction, groups, resolver and requested E detector instead of the batch detector. Batch consumes requested S/E/StopAll groups and same resolver. After obtaining primary result select low resolution and low-label reconciliation for bullish, otherwise high counterparts; invoke resolution through market.end_index before reconciliation. Capture required identities from every existing visibility.prepared_order_audit reaction's first_idx and break_idx using order_identity; set deduplicates. Rebuild only the visibility audit using visible start/end, requested detectors, retained accepted A set and required identities. Return primary; failures propagate; callback and reconciliation effects are not locally undone.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3404-L3426",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "W2/W3 cross-owner reconciliation pending."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B09-87-F01",
+      "span": [
+        3404,
+        3426
+      ],
+      "description": "Construct one NativePrimaryOrders resolver from chronology, both groups, callback and requested direction. Select detect_bullish only for exact bullish, otherwise detect_bearish; if live_stages is non-null call its primary service with direction, groups, resolver and requested E detector instead of the batch detector. Batch consumes requested S/E/StopAll groups and same resolver. After obtaining primary result select low resolution and low-label reconciliation for bullish, otherwise high counterparts; invoke resolution through market.end_index before reconciliation. Capture required identities from every existing visibility.prepared_order_audit reaction's first_idx and break_idx using order_identity; set deduplicates. Rebuild only the visibility audit using visible start/end, requested detectors, retained accepted A set and required identities. Return primary; failures propagate; callback and reconciliation effects are not locally undone.",
+      "document": "Algorithms/V3/17_Trading_Bridge.md",
+      "line": 95,
+      "prior_blob": "e852d935422c3973f0eeee82bf29b682324f0586",
+      "resolution": "Clarify actual local source-derived contract; no production change.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3404-L3426",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: native services, callback ownership, live dispatch and cross-owner state reconciliation; W3/W4 pending."
+  ]
+}

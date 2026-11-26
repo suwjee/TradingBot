@@ -1,0 +1,694 @@
+{
+  "checkpoint": 246,
+  "batch": "B09",
+  "sub_batch": "B09-85",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "2dda09909aae83e73299ac587d313f7a24f5d7e9",
+  "path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+  "source_range": [
+    3350,
+    3370
+  ],
+  "procedures": "TB84",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 21,
+    "by_category": {
+      "branches": 9,
+      "comparisons": 4,
+      "arithmetic": 2,
+      "calls": 6
+    },
+    "supplemental_items": 1,
+    "resolved_findings": 1
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "5c49e3c793bfc22301109ace5105b7fcddf1b8e2",
+    "crosswalk_blob": "a6ba394ffa669c027d61784a894eccfc7996cd6f",
+    "exact_site_id_span_procedure_operation_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "source_range": [
+        128,
+        195
+      ],
+      "reason": "Primary resolution, relabeling, formed leg dispatch; local source boundary."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+      "source_range": [
+        116,
+        122
+      ],
+      "reason": "Epoch conversion."
+    }
+  ],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 11742,
+      "source_span": [
+        3351,
+        4,
+        3359,
+        35
+      ],
+      "procedure": "TB84",
+      "original_operation": "For",
+      "original_context": "TB-SC99",
+      "interpretation": "Traverse visible cycles in encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3351-L3359",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 11745,
+      "source_span": [
+        3352,
+        8,
+        3359,
+        35
+      ],
+      "procedure": "TB84",
+      "original_operation": "For",
+      "original_context": "TB-SC99",
+      "interpretation": "Traverse native post_pl3_orders per cycle in encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3352-L3359",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 11749,
+      "source_span": [
+        3353,
+        12,
+        3354,
+        24
+      ],
+      "procedure": "TB84",
+      "original_operation": "If",
+      "original_context": "TB-SC99",
+      "interpretation": "Skip order only if stop index strictly exceeds visible end.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3353-L3354",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 11765,
+      "source_span": [
+        3356,
+        42,
+        3356,
+        77
+      ],
+      "procedure": "TB84",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC99",
+      "interpretation": "Conceptual owner bearish if bullish else bullish.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3356-L3356",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 11769,
+      "source_span": [
+        3357,
+        12,
+        3358,
+        63
+      ],
+      "procedure": "TB84",
+      "original_operation": "If",
+      "original_context": "TB-SC99",
+      "interpretation": "Add cycleId only for non-null cycle id.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3357-L3358",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 11811,
+      "source_span": [
+        3362,
+        14,
+        3364,
+        51
+      ],
+      "procedure": "TB84",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC99",
+      "interpretation": "If visible cycles truthy select last cycle status, otherwise evaluate qualification fallback.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3362-L3364",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 11818,
+      "source_span": [
+        3363,
+        14,
+        3364,
+        51
+      ],
+      "procedure": "TB84",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC99",
+      "interpretation": "Choose waiting-for-stopall-break only for accepted qualification guard; otherwise waiting-for-matching-behaviors.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3363-L3364",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 11819,
+      "source_span": [
+        3363,
+        45,
+        3363,
+        98
+      ],
+      "procedure": "TB84",
+      "original_operation": "BoolOp",
+      "original_context": "TB-SC99",
+      "interpretation": "Short-circuit non-null qualification before strict horizon comparison.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3363-L3363",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 11835,
+      "source_span": [
+        3368,
+        12,
+        3368,
+        59
+      ],
+      "procedure": "TB84",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC99",
+      "interpretation": "Select postPH3Orders key for bullish else postPL3Orders.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3368-L3368",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 11750,
+      "source_span": [
+        3353,
+        15,
+        3353,
+        50
+      ],
+      "procedure": "TB84",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "TB-SC99",
+      "interpretation": "Stop index > end skips; equality retained.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3353-L3353",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 11770,
+      "source_span": [
+        3357,
+        15,
+        3357,
+        59
+      ],
+      "procedure": "TB84",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC99",
+      "interpretation": "Cycle id is not None.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3357-L3357",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 11820,
+      "source_span": [
+        3363,
+        45,
+        3363,
+        70
+      ],
+      "procedure": "TB84",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC99",
+      "interpretation": "Qualification is not None before time comparison.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3363-L3363",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 11823,
+      "source_span": [
+        3363,
+        75,
+        3363,
+        98
+      ],
+      "procedure": "TB84",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "TB-SC99",
+      "interpretation": "Qualification strictly < horizon; equality excluded.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3363-L3363",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 11799,
+      "source_span": [
+        3361,
+        14,
+        3361,
+        86
+      ],
+      "procedure": "TB84",
+      "original_operation": "Add",
+      "original_context": "TB-SC99",
+      "interpretation": "Horizon = main candle at end timestamp + timeframe.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3361-L3361",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 11816,
+      "source_span": [
+        3362,
+        29,
+        3362,
+        31
+      ],
+      "procedure": "TB84",
+      "original_operation": "USub",
+      "original_context": "TB-SC99",
+      "interpretation": "Negative index -1 refers to last visible cycle in encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3362-L3362",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 11758,
+      "source_span": [
+        3355,
+        18,
+        3356,
+        78
+      ],
+      "procedure": "TB84",
+      "original_operation": "serialize_primary_order",
+      "original_context": "TB-SC99",
+      "interpretation": "Serialize accepted relabeled order with opposite conceptual owner.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3355-L3356",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3220-L3248"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 11760,
+      "source_span": [
+        3355,
+        42,
+        3355,
+        85
+      ],
+      "procedure": "TB84",
+      "original_operation": "relabel_primary_order",
+      "original_context": "TB-SC99",
+      "interpretation": "Relabel against final resolved primary side before serialization.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3355-L3355",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L175-L178"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 11771,
+      "source_span": [
+        3357,
+        15,
+        3357,
+        47
+      ],
+      "procedure": "TB84",
+      "original_operation": "getattr",
+      "original_context": "TB-SC99",
+      "interpretation": "Read optional cycle id with None default.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3357-L3357",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 11781,
+      "source_span": [
+        3358,
+        33,
+        3358,
+        63
+      ],
+      "procedure": "TB84",
+      "original_operation": "cycle_identity",
+      "original_context": "TB-SC99",
+      "interpretation": "Transform non-null cycle id for row.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3358-L3358",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 11786,
+      "source_span": [
+        3359,
+        12,
+        3359,
+        35
+      ],
+      "procedure": "TB84",
+      "original_operation": "post_orders.append",
+      "original_context": "TB-SC99",
+      "interpretation": "Append serialized row without sorting.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3359-L3359",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 11792,
+      "source_span": [
+        3360,
+        20,
+        3360,
+        70
+      ],
+      "procedure": "TB84",
+      "original_operation": "getattr",
+      "original_context": "TB-SC99",
+      "interpretation": "Read optional qualification event time with None default.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local primary selection, chronology, identity, serialization or dependency.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated native services and caller-supplied shape/index validity remain cross-owner W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3360-L3360",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 196,
+        "heading": "TB84"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B09-85-S01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_span": [
+        3350,
+        3370
+      ],
+      "interpretation": "Post-primary orders traverse visible cycles then their post_pl3_orders in encounter order for both directions. A stop index strictly greater than end skips the order; equal is retained and no local missing-stop fallback exists. Accepted orders are relabeled against the same finalized primary and serialized with opposite conceptual owner (bearish if bullish, otherwise bullish); non-null cycle id optionally adds transformed cycleId. Qualification defaults None only for absent attribute. Horizon is end candle timestamp plus timeframe. If visible cycles exist, last encounter's status wins unconditionally; otherwise non-null qualification strictly earlier than horizon yields waiting-for-stopall-break, while equality, later or absent qualification yields waiting-for-matching-behaviors. Return key postPH3Orders only for exact bullish flag, otherwise postPL3Orders; no sort or requalification.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3350-L3370",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "W2/W3 cross-owner reconciliation pending."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B09-85-F01",
+      "span": [
+        3350,
+        3370
+      ],
+      "description": "Post-primary orders traverse visible cycles then their post_pl3_orders in encounter order for both directions. A stop index strictly greater than end skips the order; equal is retained and no local missing-stop fallback exists. Accepted orders are relabeled against the same finalized primary and serialized with opposite conceptual owner (bearish if bullish, otherwise bullish); non-null cycle id optionally adds transformed cycleId. Qualification defaults None only for absent attribute. Horizon is end candle timestamp plus timeframe. If visible cycles exist, last encounter's status wins unconditionally; otherwise non-null qualification strictly earlier than horizon yields waiting-for-stopall-break, while equality, later or absent qualification yields waiting-for-matching-behaviors. Return key postPH3Orders only for exact bullish flag, otherwise postPL3Orders; no sort or requalification.",
+      "document": "Algorithms/V3/19_Serialization.md",
+      "line": 196,
+      "prior_blob": "5a964e9f525bd8d890297cbc7242ef978d766ce9",
+      "resolution": "Clarify actual local source-derived contract; no production change.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3350-L3370",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2 primary native resolution, ownership, relabeling, market chronology and caller index validity; W3/W4 pending."
+  ]
+}

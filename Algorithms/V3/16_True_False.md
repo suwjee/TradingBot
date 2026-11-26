@@ -1,0 +1,14 @@
+# True/False — final published behavior annotation (V3)
+
+**Conventions:** B = bullish, R = bearish. Preserve Decimal representation and arithmetic order, native exception behavior, main time versus exact lower event, order and nulls. Record definitions are in [declared interfaces](../../Contracts/Declared_Record_Schemas.md). Procedure IDs designate semantic operations, not required implementation symbols. No runtime equivalence asserted.
+
+
+## TF-M01 — Presentation-only input and scope
+
+After all calculation, public visibility, regime and primary ownership rules, annotate each final segment independently. This pass mutates published dictionaries only, never native geometry or physical Order ownership. The three fields are trueFalse, trueFalseRepairTime, trueFalseRepeated. Remove prior annotation keys from every visited row even if invalid or donor. Choose one record per sourceTime by first insertion in priority traversal: primaryLows for B / primaryHighs otherwise, StopAll, E, S. Explicit Boolean false calculationValid excluded. A, Blue and opposite-side secondary points are not visited. Sort selected rows by source time. Non-winning rows do not acquire a neutral annotation. Selected rows begin with verdict null.
+
+## TF-M02 — Two independent sequences
+
+Scan selected rows; primary point numbers 1/2/3 receive T/F/F; other numbers null. Each primary flushes pending StopAll sequence and restarts its buffer. StopAll rows append to StopAll buffer; S/E append to a single basic buffer across primary boundaries. After traversal evaluate basic buffer then remaining StopAll buffer. Basic begins at first S, rank lexicographic (S/E family sequence priority, E number or 0 for S). S or engulf of lower rank with two accumulated verdicts -> T. Else E flips known parent verdict; if no parent known uses odd F/even T. Remove lower ranks and repair single unpaired F where eligible. Same-rank same-verdict repeats update two distinct counters; engulf resets verdict_count of surviving repeats but not repair history. F repair uses first strict original RAW crossing from prescribed source-time gate through visible horizon inclusive.
+
+StopAll uses separate number series: equal/decreasing number starts new series; T/F alternates relative to current verdict_start. Track largest prior series end and immediate prior end; repeated prefix gets retrospective repeated=true and group-relative parity only when matching a boundary and confirmation is closed. Next number can restart verdict parity; a larger match can absorb interim verdicts. The exact recurrence and repair conditions are [True/False exact contract](22_True_False_Exact_Contract.md). StopAll closed test: decision main epoch + requested timeframe <= min(visible end main + timeframe, last RAW epoch + raw timeframe). Timing/serialization fields are not trading outputs.
