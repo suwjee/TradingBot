@@ -24,10 +24,10 @@ Registers previous Reaction, previous_count nullable, output (including internal
 | BLQ01 | NEXT | Mode A | Anchor if non-null else leg boundary; missing both error; previous_count=null; spacing unchanged | COUNT or ERROR | BL09 |
 | BLQ02 | NEXT | Other mode | Previous Reaction edge required; missing predecessor error | COUNT or ERROR | BL09 |
 | BLQ03 | COUNT | Prior count nonnull, new count > prior and (no output or counter>=1) | Emit Scale at decisive strike, counter=0 | RESET_SCAN | BL07,BL09 |
-| BLQ04 | COUNT | No Scale | Increment counter once iff any Blue already exists | RESET_SCAN | BL09 |
+| BLQ04 | COUNT | No Scale | Increment counter once iff any Blue already exists, including internal owner (no separate healthy test) | RESET_SCAN | BL09 |
 | BLQ05 | RESET_SCAN | Matching Reset and (no Blue or counter>=1) | Emit Reset even if invalid; invalid iff previous line first strict stop occurs on Reset main and Reset extends farther than prior extreme; counter=0 | RESET_SCAN | BL03,BL08,BL09 |
 | BLQ06 | RESET_SCAN | Matching Reset but output and counter<1 | Skip | RESET_SCAN | BL09 |
-| BLQ07 | RESET_SCAN | All matching Resets handled | Store previous Reaction/count, optional checkpoint of count/counter/output length | NEXT | BL09 |
+| BLQ07 | RESET_SCAN | All matching Resets handled | Store original previous Reaction/count; optional checkpoint takes shallow Reaction copy and count/counter/output length after Reset scan | NEXT | BL09 |
 | BLQ08 | NEXT | Input exhausted | Return calculation evidence, not public filter | RETURN | BL09,BL10 |
 | BLQ09 | RETURN | Internal owner or both prices strictly inside same protecting Reaction with First < source <= confirmation | Mark internal; keep calculation flag and ordinal | RETURN | BL15,BL16,BL17,BL18 |
 | BLQ10 | RETURN | Public projection | Select calculation_valid and not behavior_internal; invalid Reset remains accessible to A | RETURN | BL14 |
