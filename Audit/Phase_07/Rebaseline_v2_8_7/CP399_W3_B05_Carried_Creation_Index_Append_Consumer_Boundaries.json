@@ -1,0 +1,82 @@
+{
+  "checkpoint": 399,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Focused conditional source boundaries, not cross-owner acceptance",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          5,
+          15
+        ],
+        [
+          1635,
+          1642
+        ]
+      ],
+      "meaning": "Native bisect/insort_right, datetime, Decimal and localcontext imports; class-qualified OA49 reduces multiple parent-stop dates to minimum, appends every B confirmation before OA50 dedup. Invalid cause shape or comparison can raise inside validation and yield fallback."
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "ranges": [
+        [
+          51,
+          53
+        ]
+      ],
+      "meaning": "Decimal instance unchanged, otherwise Decimal(str(value)); OA50 exact input type check and finite check under localcontext, not mutation of ledger price."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          1114,
+          1127
+        ],
+        [
+          1135,
+          1140
+        ],
+        [
+          1371,
+          1433
+        ]
+      ],
+      "meaning": "Clear and B registration invalidate carried state; parent registration captures prior index only exact dict ledger with truthy carried cache. New rows and earlier existing parent creation invalidate; equal/later ordinary creation remains in causes but does not trigger earlier flag. Exception in earliest comparison conservatively marks earlier. Pending staged only if no earlier existing creation, prior index exists with identical ledger and non-null validated payload, prefix plus new size matches. Deferred validation under next query context. No unconditional prefix content check in OA51."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          398,
+          411
+        ]
+      ],
+      "meaning": "Sequence reset setter clears named carried query cache, not explicitly creation index/pending; OA52 refreshes when cache empty, extension or complete snapshot. Full synchronization conditional on owner."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          1722,
+          1755
+        ],
+        [
+          1757,
+          1795
+        ]
+      ],
+      "meaning": "OA52 returns empty on missing lifecycle start; cache hit bypasses index. On miss refresh if index absent or carried cache falsey, consume OA51 then full values snapshot and OA50 on None. Store outer tuple even validation None. Native query requires exact datetime and tzinfo identity; bounds strictly lifecycle_start<creation<parent_stop by tuple sentinels, selected ordinals deduped and sorted. Legacy generator invokes OA49 lazily. Selection compares confirmation<=stop and crossing>=stop; selected price normalized only in legacy match construction shared by both branches. Initial route then stable crossing/negative First sort. OA52 closure deferred."
+    }
+  ],
+  "limitations": [
+    "Separate source-first pass by GPT, not independently staffed. Local source review only; old prefix immutability, owner invalidation, native timezone/date comparability and Decimal-context behavior remain conditional. No exact indexed/legacy runtime equivalence asserted; partial mutation is source-visible possibility, not observed runtime defect.",
+    "No runtime, RAW payload, ZIP or production changes. Counts derived from pinned canonical source-backed inventory, not newly generated AST. Prior B05 row identity and all supplemental ID/span checks revalidated; unrelated historical artifacts not re-read. Remote Git blob identity used; independent SHA-256 not computed."
+  ]
+}
