@@ -1,0 +1,561 @@
+{
+  "checkpoint": 326,
+  "status": "PASS_SCOPED_W2_E_RECONCILIATION",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "b58671cbf2f845103a3cdac5d10e7df120f6558c",
+  "entry_tree": "d2d13f58761f36b24f92cf935397936f6777a53d",
+  "scope": "E candidate/stop/source/route race, invalid S, independent roots, numbering and conditional live reconciliation. Lifecycle and downstream final visibility remain separate.",
+  "prior": [
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "blob": "1027cb4a9241b8adb5a0b7f11c8c2a5fcbfa9c45",
+      "rows": 29
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "blob": "9dcc81cc416ffced36e2ef87e86ad58504c28201",
+      "rows": 44
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "blob": "44bc985228f9d698da7b1fb30173f55f886b60f4",
+      "rows": 29
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "blob": "77967520d746b0ce52e86784822bbe923a6c8966",
+      "rows": 45
+    }
+  ],
+  "source_modules": [
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "lines": 1539
+    }
+  ],
+  "additional_rows": [
+    {
+      "id": "CP326-S01",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        35,
+        100
+      ],
+      "procedure_refs": "E records",
+      "contract": "Frozen EZone and live progress/reconciliation records retain physical parent and Order identity, exact event times versus main timestamps, frozen source price, cause and route. Frozen wrapper does not recursively freeze nested objects. Internal reopen signal distinct from public result."
+    },
+    {
+      "id": "CP326-S02",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        112,
+        146
+      ],
+      "procedure_refs": "Live init/advance",
+      "contract": "Require nonempty times and dirty main index in 0..len. Market scope is first main timestamp and timeframe; dirty time is indexed main or last+timeframe. Same scope moves current stop, extreme, zone, reconciliation and scoped caches to previous; new scope discards them. Current caches and main index reset, chronology reference replaced."
+    },
+    {
+      "id": "CP326-S03",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        148,
+        174
+      ],
+      "procedure_refs": "Live parent stop cache",
+      "contract": "Chronology identity required. Stop key is direction predicate, start and numeric Decimal level. Prior null or hit >= dirty reopens progress at min(scanned_until,dirty); prior retained hit returned only before range_end. Resume from max(start,scanned_until), return null if start>=end; fresh callback result stored as event or range_end coverage. Caller maintains coherent search contract."
+    },
+    {
+      "id": "CP326-S04",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        176,
+        194
+      ],
+      "procedure_refs": "Live main extreme",
+      "contract": "Key direction/start/end; reuse previous only when end main time < dirty. Lazily index main candles; use range minimum for bullish and maximum for bearish over [start,end+1); earliest equal extreme. Store actual candle index, main timestamp and price."
+    },
+    {
+      "id": "CP326-S05",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        196,
+        218
+      ],
+      "procedure_refs": "Live E object cache",
+      "contract": "Key includes parent, Order physical identity and geometry, route, cause, stop, confirmation, crossing and source; price strings preserve representation in this key. Prior object reused only when max(parent stop, crossing, confirmation)<dirty; current hit has no additional cutoff. No independent First/Break or source timestamps in key; coherent chronology is required. Native race determines arguments before cache lookup."
+    },
+    {
+      "id": "CP326-S06",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        220,
+        265
+      ],
+      "procedure_refs": "Live reconciliation dependency",
+      "contract": "Empty candidates delegate to native reconciliation. Evidence includes ordered candidate identities and repr, ledger presence/initial/B/parent causes, blocked query, both family priorities, source and parent indexes, S source/A/decision/color, resets and invalid/visual starts. Key retains candidate object identities and grouped insertion order; scope direction/live_scope. Exact cache hit restores candidate list, accepted identities and visual starts and returns list of numbered records."
+    },
+    {
+      "id": "CP326-S07",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        267,
+        309
+      ],
+      "procedure_refs": "Live reconciliation replay",
+      "contract": "For compatible prior validity, frontier is min(dirty main, changed candidate source and parent indexes, changed S groups, mapped reset symmetric difference). Bisect previous steps; restore preceding steps and checkpoint, or last step with last retained step removed. Replay catches only internal reopened-race signal and restarts without checkpoint. Save only non-reopened reconciliation; retain original candidates, native and numbered results and evidence. No universal arbitrary-input guarantee."
+    },
+    {
+      "id": "CP326-S08",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        313,
+        392
+      ],
+      "procedure_refs": "E detector initialization",
+      "contract": "Validate direction and required priority. Copy invalid identity set; sequence reset setter copies mapping. Stable S sort by source_time,int index; resets exact sorted. Retain chronology references and inclusive main bounds/exclusive end. Native shared main index only with candle object identity; one-second lower index fallback if main absent, else sparse extrema. Live uses continuation. Truthy blocked/initial maps retained; B legs tuple; initialize mixin ledger and consumed/visual/candidate state."
+    },
+    {
+      "id": "CP326-S09",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        394,
+        411
+      ],
+      "procedure_refs": "Sequence reset state",
+      "contract": "Getter returns actual mapping; setter copies and sorts and clears order_candidates, carried, post_stop and direct_parent_stop caches only. In-place mutation bypasses setter; no additional rollback/invalidation implied."
+    },
+    {
+      "id": "CP326-S10",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        413,
+        438
+      ],
+      "procedure_refs": "Chronology and strict lower crossing",
+      "contract": "Reset and main-index accessors delegate, main lookup clamped. Search first strict lower low/high via prepared index or linear predicate; no main fallback and no retry on index miss. Normalize policy extreme."
+    },
+    {
+      "id": "CP326-S11",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        440,
+        504
+      ],
+      "procedure_refs": "Native sparse main extrema",
+      "contract": "Per-chronology direction cache shares sparse index/pairs. Compare strict lows/highs, retain earliest position on equality. Inclusive query uses two overlapping blocks; nonpositive length returns left. No separate bounds validation in sparse helper."
+    },
+    {
+      "id": "CP326-S12",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        507,
+        557
+      ],
+      "procedure_refs": "Parent/Order stop provider",
+      "contract": "Parent search starts max(start,range_start), lower interval half-open, strict directional penetration. Live progress or native mixin for Order; live per-detector raw start/Decimal key includes null, dirty validation on hit; live tuple main time from chronology.times, native from candle timestamp. Consistency requires coherent prepared chronology."
+    },
+    {
+      "id": "CP326-S13",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        559,
+        578
+      ],
+      "procedure_refs": "Parent confirmation and stop",
+      "contract": "Reaction confirmation delegates with Order direction; First timestamp from main index. Parent type is not used to select predicate. Start at exact decision, normalized price, return (index,event) or null; no lower-to-main substitute."
+    },
+    {
+      "id": "CP326-S14",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        581,
+        606
+      ],
+      "procedure_refs": "E price freeze",
+      "contract": "Main range includes complete OHLC of both stop and decision candles. Start max(detector start,mapped start), end min(detector end,mapped end), raise end to start if inverted. Native shared query when valid, else sparse; live separate index. Strict extreme wins, earliest equal. Extreme may occur later than exact decision within its main candle; do not intrabar-truncate."
+    },
+    {
+      "id": "CP326-S15",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        608,
+        675
+      ],
+      "procedure_refs": "Global Order-route race",
+      "contract": "Inherited S only for S parent; evaluate gate-owned query even though local result unused. Carried before registration, register, accepted iterator, then direct. S without carried uses earliest inherited crossing or range_end deadline. Direct S bounded, E trend/parent flag. Merge crossed direct/inherited/carried and accepted equal-cross groups by (exact crossing,-First), stable route order. Prospective full-main source used to skip disowned-only S creator; first remaining wins, optional live cache. Ledger presentation order is not this race."
+    },
+    {
+      "id": "CP326-S16",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        677,
+        733
+      ],
+      "procedure_refs": "E immutable construction",
+      "contract": "Decision max(parent stop,Order crossing); supplied frozen source unchanged. Record normalized parent index/price, exact physical Order direction/number/mode/cause/stop, Order and source geometry, main and exact events. Construction does not mutate accepted collection."
+    },
+    {
+      "id": "CP326-S17",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        735,
+        763
+      ],
+      "procedure_refs": "Consumed S evidence application",
+      "contract": "Normalize owner physical pair; iterate evidence and first currently matching owner. Rebuild continuation then replace sequentially. Internal helper does not explicitly pass independent A Order identities, unlike Bridge caller; preserve default behavior."
+    },
+    {
+      "id": "CP326-S18",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        765,
+        822
+      ],
+      "procedure_refs": "Continuation from consumed S",
+      "contract": "Reject same owner source or already E-owned S source. Require strict stop, inherit owner family/next number. Owned source times include accepted and owner. Reject null/repeated source index, invalid S unless independent A identity, or sequence reset in (parent source,zone source]. Append and continue only after strict E stop; increment number."
+    },
+    {
+      "id": "CP326-S19",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        824,
+        869
+      ],
+      "procedure_refs": "Replacement by earlier continuation",
+      "contract": "Empty continuation returns copy. Last-wins source map; descend only through E parent chain with cycle guard. Earliest direct child by decision/source; replace only when first new decision strictly earlier, or no child. Remove descendants, keep unrelated/owner, resolve conflicts and refresh accepted identities."
+    },
+    {
+      "id": "CP326-S20",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        871,
+        913
+      ],
+      "procedure_refs": "Physical source conflict",
+      "contract": "Group by (int source index,time). Higher callback E-family priority wins; same family then higher number; exact tie retains first object. Final stable order source_time,index,decision; no price-only identity."
+    },
+    {
+      "id": "CP326-S21",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        915,
+        1005
+      ],
+      "procedure_refs": "Independent E roots",
+      "contract": "Mask dominant physical pairs. Eligible E1/S roots not invalid without Order; heap source time,index,original ordinal with equality set. Skip newly occupied parent. Disowned-only reraces parent and queues unseen result. Replace earliest same-parent existing root by independent root without earlier-decision gate, else add if five-field identity distinct. Mark root source even if not appended; resolve and update accepted."
+    },
+    {
+      "id": "CP326-S22",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1007,
+        1029
+      ],
+      "procedure_refs": "Invalid S gate",
+      "contract": "Only S parent with exact invalid source pair is tested. Initial A or B cause suffices independently; missing ledger invalid. Otherwise require parent-stop cause other than S at invalid source time. This is a gate, not removal of all suppressed geometry."
+    },
+    {
+      "id": "CP326-S23",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1031,
+        1084
+      ],
+      "procedure_refs": "Stopped-S discovery and candidate chain",
+      "contract": "Pre-register all stopped S before individual chain generation. Each chain starts parent color and number 1. Null candidate/repeated source index ends chain. Add source times to owned set; next E requires strict stop. No fixed recursion depth in source."
+    },
+    {
+      "id": "CP326-S24",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1086,
+        1122
+      ],
+      "procedure_refs": "Invalid root cross-family suppression",
+      "contract": "Map E-parent continuations by source geometry. For an invalid S root whose source also belongs to an E continuation of different family, remove entire chain. Prior ledger registration is not rolled back."
+    },
+    {
+      "id": "CP326-S25",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1124,
+        1130
+      ],
+      "procedure_refs": "Reconciliation dispatch",
+      "contract": "Optional live continuation delegates; native path returns first result of computation. No live execution required for static reconciliation."
+    },
+    {
+      "id": "CP326-S26",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1132,
+        1173
+      ],
+      "procedure_refs": "Reconciliation initialization",
+      "contract": "Group all candidates by source index. Heap includes groups >=frontier, each key independent minima source time/decision; known set. Restore checkpoint native numbered prefix, active, accepted sets and sequence_start. Candidate map last-wins, S map first-wins, physical pairs retained."
+    },
+    {
+      "id": "CP326-S27",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1175,
+        1218
+      ],
+      "procedure_refs": "Reconciliation helper indexes",
+      "contract": "Numbered index first physical/time; unique sorted times and used S parent time. Child max decision indexes all inputs and generated candidates. Enqueue null/known skip; copy input only at first mutation; update maps and group. Schedule different current source not already scheduled; no frontier guard or heap-key refresh for already queued group."
+    },
+    {
+      "id": "CP326-S28",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1220,
+        1285
+      ],
+      "procedure_refs": "Order validity and parent activation",
+      "contract": "Order gate order: disowned, gate-owned veto, invalid S. S requires parent present/not E-owned; post-reset source>sequence_start and A source>=start. Prior numbered time strictly earlier; absent or <=sequence start accepts; else rebuilt S or unused earlier Red S vs Blue prior. Non-S boundary equality/physical active parent, else recursively trace skipped invalid Order parent that is not invalid-without-cause. Shared seen set no pop; preliminary eligibility not final active check."
+    },
+    {
+      "id": "CP326-S29",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1287,
+        1324
+      ],
+      "procedure_refs": "Stop and reopened race",
+      "contract": "Candidate decision strictly after prior and price strict directional penetration; no new market scan. For disowned-only current candidate with active parent rerace actual parent; checkpoint raises internal reopen. Native rerace derives family/number from candidate S or actual E parent, enqueue. Filter valid Order and active parent, skip empty."
+    },
+    {
+      "id": "CP326-S30",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1325,
+        1364
+      ],
+      "procedure_refs": "Competing families",
+      "contract": "Suppress S that strictly stops active E if owner Red or S Blue and owner's max child decision>=candidate decision. Prefer subset not blocked by unaccepted later Red S with source>parent source and decision<parent stop against E-parent Blue; if subset empty retain eligible."
+    },
+    {
+      "id": "CP326-S31",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1365,
+        1404
+      ],
+      "procedure_refs": "Ranking and final parent gate",
+      "contract": "For E use first active parent matching source TIME, else own family. Rank min(-priority,decision,parent_stop), stable tie. Gather stopped family before final physical parent active/boundary gate; if selected fails skip whole group without runner-up."
+    },
+    {
+      "id": "CP326-S32",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1406,
+        1453
+      ],
+      "procedure_refs": "Family numbering and reset",
+      "contract": "Actual E parent family first active time match. Branch order Red parent, stopped Red, Blue parent, stopped Blue, original. Number max stopped same family+1 or 1. Remove stopped physical pairs, replace family/number only, update accepted. Reset source clears active and updates sequence_start, historical numbered stays."
+    },
+    {
+      "id": "CP326-S33",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1454,
+        1464
+      ],
+      "procedure_refs": "Regenerated child",
+      "contract": "Only regenerated winner triggers next stop and child race; mark reopened. Enqueue only child strictly later source index. No local rollback of rejected race side effects."
+    },
+    {
+      "id": "CP326-S34",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1465,
+        1492
+      ],
+      "procedure_refs": "Lineage and returned projection",
+      "contract": "Shared seen source pair; add parent stop to visual lifecycle starts, terminate S else follow candidate parent. Optional terminal step at candle count. Native tuple before projection; parent_type E becomes StopAll where parent source reset, no geometry change. Publish accepted identities and last candidates."
+    },
+    {
+      "id": "CP326-S35",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1495,
+        1506
+      ],
+      "procedure_refs": "Native detect pipeline",
+      "contract": "Clear accepted and ledger; register B; clear visual starts; discover and copy candidates; reconcile; apply consumed S, resolve conflicts; rebuild accepted Order ledger. No catch or runtime parity assertion."
+    },
+    {
+      "id": "CP326-S36",
+      "module": "E",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1509,
+        1538
+      ],
+      "procedure_refs": "Public E wrapper",
+      "contract": "Forward positional chronology and source arguments and explicit keyword options; priority default null but constructor requires it. Other advanced live/reset/geometry options not universally forwarded."
+    }
+  ],
+  "reference_anchors": [
+    {
+      "path": "Algorithms/V3/09_E_Zone.md",
+      "blob": "1211629fec19d914888af9165c77642fe6fc9dee"
+    },
+    {
+      "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+      "blob": "02a57040358f45f22aa0091bbd73837bcdb2ce4f"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "blob": "118a4e00b9f8c647ac3ebdb7dabfa04a7f39ffd3"
+    }
+  ],
+  "cross_owner_edges": [
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2153,
+        2208
+      ],
+      "contract": "Bridge constructs E with owner-specific priority, sequence resets, geometry/index inputs; prior CP323 rows retained."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2293,
+        2413
+      ],
+      "contract": "Feedback, S invalidation and E recreation handoff; prior transition records not recounted."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2508,
+        2567
+      ],
+      "contract": "Consumed evidence/continuation replacement and independent-root integration; Bridge supplies independent A physical identities."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        29,
+        39
+      ],
+      "contract": "Sequence priority is S Blue 1, E Blue 2, S Red 3, E Red 4; distinct module priority includes StopAll; unknown key errors."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        996,
+        1136
+      ],
+      "contract": "Consumed S evidence selection is lifecycle-owned; strict Close extension and owner stop/rank precede E continuation; detailed lifecycle rows reserved for CP327."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1153,
+        1192
+      ],
+      "contract": "Main times may derive from supplied prepared index; per-chronology E extrema cache; clamp underflow and coherent chronology dependency."
+    }
+  ],
+  "qualifications": [
+    "CP325 cross-owner E edge references retained, not counted as prior transition rows.",
+    "Native and optional live paths are statically reconciled; no runtime parity, market-data execution or arbitrary-input termination asserted.",
+    "Complete main-candle E price freeze and exact stop chronology are different ownership domains.",
+    "Independent root replacement and earlier continuation replacement have different decision gates."
+  ],
+  "validation": {
+    "prior_transition_rows": 147,
+    "new_transition_rows": 36,
+    "cumulative_transition_rows": 183,
+    "prior_overlap": 0,
+    "new_overlap": 0,
+    "duplicate_ids": 0,
+    "source_blob_verified": true,
+    "reference_anchors": 3,
+    "cross_owner_edges": 6,
+    "runtime": "NOT_RUN_BY_SCOPE",
+    "raw": "NOT_RUN_BY_SCOPE"
+  },
+  "remaining": "CP327 / W2 lifecycle and StopAll: priority/identity, exact stops, ownership filters, consumption, final visibility, StopAll state/feedback; then Primary, projection/live and W3/W4."
+}
