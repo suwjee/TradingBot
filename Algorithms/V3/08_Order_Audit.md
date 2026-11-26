@@ -11,12 +11,12 @@ One direction's ledger is keyed by physical opposite (First index,Break index). 
 
 | Candidate path | Gates |
 |---|---|
-| Direct parent-stop | [Order A](06_Order_A.md), canonical owner and strict stop |
+| Direct parent-stop | [Order A](06_Order_A.md), canonical owner and stop geometry; actual Order crossing can be null at creation, whereas E consumption requires a qualifying crossing |
 | Reset-leg | [Order B](07_Order_B.md), accepted exact reset provenance |
 | Unconsumed S Blue Order | S Blue with Order confirmation/stop, actual crossing >= new parent stop, copy its physical geometry |
 | Gate-owned initial A | First main exactly gate, confirmation >= parent stop and stop >= parent stop; earliest crossing then First |
 | Carried accepted Order | Creation strictly in (parent lifecycle decision,parent stop); own confirmation <= parent stop; strict crossing >= parent stop. Initial A uses First in inclusive lifecycle..stop as separate eligibility path |
-| Post-stop accepted | Confirmation > parent stop and crossing > both; no sequence reset in (parent stop,cross]; deduplicate physical identity |
+| Post-stop accepted | Native stream: confirmation > parent stop and crossing > both; no sequence reset in (parent stop,cross]; deduplicate physical identity. Eager legacy scan uses its confirmation index tuple bound and current row without an additional confirmation > parent stop recheck (OA53/54). |
 
 Carried creation event from earliest parent-stop cause (when multiple) plus every reset-leg physical confirmation. Sort carried crossing then later First. Post-stop fallback materializes and sorts, optimized native stream merges initial and ledger runs, same crossing/confirmation tie keeps later First and initial exact tie. Validate exact native types/timezone, finite Decimal level and crossing shape under local context; invalid/unverifiable data falls back to legacy scan. Never use speculative cache results as accepted evidence. Scope/key and invalidation details below.
 
