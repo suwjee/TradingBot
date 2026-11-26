@@ -62,3 +62,6 @@ If legs invalidate carried cache. Per physical reaction insert new ledger row wi
 
 ## Primary and parent registration
 
+## CP384 — W3 OA02–OA05 independent local qualification
+
+Frozen slotted records are shallow, not validated or coercive; object-valued members can remain mutable. Dominance matches the actual behavior reference and invokes priority again for projection, so stability and alias uniqueness remain consumer conditions. Strict boundary improvements retain the original Decimal representation on numeric ties. Delegated/indexed null does not retry; timestamp-array alignment, bounds, supplied level type and attribute/direction domains are caller conditions. See [independent foundations review](Chronology/CP384_W3_B05_Order_Audit_Foundations.md).

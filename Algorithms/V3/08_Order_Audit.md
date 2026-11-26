@@ -176,3 +176,7 @@ Map physical identities to non-null OA72 results. Input mapping order, OA72 once
 Both order First/Break required; check normalized identity in internal identities, else false. Read both optional attributes before ordered None guard; zero allowed, int conversion then supplied membership, no bounds validation.
 
 ## S-side physical Order_A
+
+## CP384 — W3 OA01 independent local qualification
+
+Full-record equality after relabeling is not physical Order identity. A missing source key defaults to None, which can match a supplied None mapping key. Native copy, string, membership and mapping failures propagate. See [independent foundations review](Chronology/CP384_W3_B05_Order_Audit_Foundations.md). This is not caller or ledger acceptance.

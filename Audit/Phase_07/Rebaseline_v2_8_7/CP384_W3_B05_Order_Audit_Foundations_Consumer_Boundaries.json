@@ -1,0 +1,88 @@
+{
+  "checkpoint": 384,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "source": {
+    "path": "engine/pipeline/order_audit_engine.py",
+    "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+  },
+  "status": "LOCAL_CONTRACTS_ONLY_CROSS_OWNER_PENDING",
+  "handoffs": [
+    {
+      "id": "OA01->OA39",
+      "source": [
+        25,
+        37
+      ],
+      "consumer": [
+        1332,
+        1332
+      ],
+      "qualification": "Copy/relabel does not itself mutate ledger; native consumer invokes on previous B causes. Equality dedup distinct from physical identity; wrapper replacement/cache invalidation pending."
+    },
+    {
+      "id": "OA02->OA11",
+      "source": [
+        77,
+        136
+      ],
+      "consumer": [
+        442,
+        520
+      ],
+      "qualification": "Caller filters invalid A by exact source pair; derives A/S/E/StopAll lifetimes, passes same priority callback to sweep and separate anchors. Sweep uses object identity; caller purity, repeated aliases, stop-source chronology and complete acceptance remain independent."
+    },
+    {
+      "id": "OA03->OA06",
+      "source": [
+        139,
+        167
+      ],
+      "consumer": [
+        264,
+        272
+      ],
+      "qualification": "Native reset event enters sorted events only if non-null; precise delegation, lower index freshness, sorted times and alignment remain independent."
+    },
+    {
+      "id": "OA04/OA05->OA06/OA09/OA10",
+      "source": [
+        170,
+        195
+      ],
+      "consumer": [
+        235,
+        238,
+        409,
+        429
+      ],
+      "qualification": "Default crossing uses bisect_right(reset_time); live closures use native helpers and cache paths. Scope excludes cache invalidation/dirty frontier and callback equivalence."
+    },
+    {
+      "id": "Decimal normalization",
+      "provider": {
+        "path": "engine/pipeline/core_utils.py",
+        "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+        "range": [
+          51,
+          66
+        ]
+      },
+      "qualification": "as_decimal retains existing Decimal object or constructs Decimal from str(value); no quantization. Equal extrema retain first representation. order_identity/reaction_identity use int First/Break and are not called in OA01–OA05."
+    }
+  ],
+  "prior_w2": {
+    "transition": [
+      "CP325-S01",
+      "CP325-S03",
+      "CP325-S04"
+    ],
+    "consumer": "CP332-G36",
+    "accessor": "CP322-E16",
+    "registry": "0e56ec4f9fd5212fce2bfa3d0ff0dde033f64336"
+  },
+  "limitations": [
+    "Local source review only. Frozen records retain mutable references; callback purity, repeated aliases, native chronology alignment, provider return validity and accepted creator/consumer ownership require independent cross-owner proof.",
+    "No RAW payload, runtime, ZIP or production changes. Native exceptions not tested.",
+    "W1/W2 scoped evidence preserved; overlap alone not proof."
+  ]
+}
