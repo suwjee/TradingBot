@@ -1,0 +1,1513 @@
+{
+  "checkpoint": 80,
+  "batch": "B06",
+  "sub_batch": "B06-08",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "8ae2c90b2b4b92be2c74dd7abacd176b4845923f",
+  "path": "engine/pipeline/e_zone_detector.py",
+  "source_blob": "240369edf3352006082efe094eb68ac027d6689f",
+  "source_range": [
+    458,
+    506
+  ],
+  "procedures": "E16–E17",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source semantics only; external owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 51,
+    "by_category": {
+      "branches": 14,
+      "comparisons": 15,
+      "arithmetic": 16,
+      "calls": 6
+    },
+    "supplemental_items": 2,
+    "resolved_findings": 1
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "70b51e1569cc64afe90e95851393dea9a1c989a4",
+    "crosswalk_blob": "6b94505fb94d9f11dc775fdc0b423ffe27e03de7",
+    "exact_site_id_span_procedure_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 2216,
+      "source_span": [
+        462,
+        8,
+        463,
+        21
+      ],
+      "procedure": "E16",
+      "original_operation": "If",
+      "original_context": "E-SC20",
+      "interpretation": "Empty values return empty sparse table before direction and level setup.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L462-L463",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2244,
+      "source_span": [
+        467,
+        8,
+        484,
+        18
+      ],
+      "procedure": "E16",
+      "original_operation": "While",
+      "original_context": "E-SC20",
+      "interpretation": "Build each level k while 2^k <= n, inclusive exact power-of-two length.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L467-L484",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2278,
+      "source_span": [
+        472,
+        12,
+        482,
+        61
+      ],
+      "procedure": "E16",
+      "original_operation": "For",
+      "original_context": "E-SC20",
+      "interpretation": "Traverse every start position 0 to width-1.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L472-L482",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2305,
+      "source_span": [
+        477,
+        16,
+        482,
+        61
+      ],
+      "procedure": "E16",
+      "original_operation": "If",
+      "original_context": "E-SC20",
+      "interpretation": "First test left candidate directional strict superiority; only chosen comparison evaluated.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L477-L482",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2306,
+      "source_span": [
+        477,
+        19,
+        477,
+        51
+      ],
+      "procedure": "E16",
+      "original_operation": "IfExp",
+      "original_context": "E-SC20",
+      "interpretation": "First test left candidate directional strict superiority; only chosen comparison evaluated.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L477-L477",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2319,
+      "source_span": [
+        479,
+        16,
+        482,
+        61
+      ],
+      "procedure": "E16",
+      "original_operation": "If",
+      "original_context": "E-SC20",
+      "interpretation": "Only if first test false, test right directional strict superiority.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L479-L482",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2320,
+      "source_span": [
+        479,
+        21,
+        479,
+        53
+      ],
+      "procedure": "E16",
+      "original_operation": "IfExp",
+      "original_context": "E-SC20",
+      "interpretation": "Only if first test false, test right directional strict superiority.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L479-L479",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2337,
+      "source_span": [
+        482,
+        29,
+        482,
+        61
+      ],
+      "procedure": "E16",
+      "original_operation": "IfExp",
+      "original_context": "E-SC20",
+      "interpretation": "If neither strict predicate wins, select smaller position; <= preserves left on identical positions.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L482-L482",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2383,
+      "source_span": [
+        492,
+        8,
+        493,
+        23
+      ],
+      "procedure": "E17",
+      "original_operation": "If",
+      "original_context": "E-SC21",
+      "interpretation": "Nonpositive interval length returns supplied left without sparse lookup.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L492-L493",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2430,
+      "source_span": [
+        500,
+        8,
+        501,
+        21
+      ],
+      "procedure": "E17",
+      "original_operation": "If",
+      "original_context": "E-SC21",
+      "interpretation": "Test first interval position directional superiority before second test.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L500-L501",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2431,
+      "source_span": [
+        500,
+        11,
+        500,
+        43
+      ],
+      "procedure": "E17",
+      "original_operation": "IfExp",
+      "original_context": "E-SC21",
+      "interpretation": "Test first interval position directional superiority before second test.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L500-L500",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2441,
+      "source_span": [
+        502,
+        8,
+        503,
+        21
+      ],
+      "procedure": "E17",
+      "original_operation": "If",
+      "original_context": "E-SC21",
+      "interpretation": "Only if first test false, test second interval directional superiority.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L502-L503",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2442,
+      "source_span": [
+        502,
+        11,
+        502,
+        43
+      ],
+      "procedure": "E17",
+      "original_operation": "IfExp",
+      "original_context": "E-SC21",
+      "interpretation": "Only if first test false, test second interval directional superiority.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L502-L502",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2453,
+      "source_span": [
+        504,
+        15,
+        504,
+        37
+      ],
+      "procedure": "E17",
+      "original_operation": "IfExp",
+      "original_context": "E-SC21",
+      "interpretation": "Neither strict predicate wins: return smaller position, first on <=.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L504-L504",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2217,
+      "source_span": [
+        462,
+        11,
+        462,
+        17
+      ],
+      "procedure": "E16",
+      "original_operation": [
+        "Eq"
+      ],
+      "interpretation": "Empty values return empty sparse table before direction and level setup.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L462-L462",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2224,
+      "source_span": [
+        464,
+        15,
+        464,
+        42
+      ],
+      "procedure": "E16",
+      "original_operation": [
+        "Eq"
+      ],
+      "interpretation": "Exact bullish selects less; any other local direction selects greater.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L464-L464",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2245,
+      "source_span": [
+        467,
+        14,
+        467,
+        27
+      ],
+      "procedure": "E16",
+      "original_operation": [
+        "LtE"
+      ],
+      "interpretation": "Build each level k while 2^k <= n, inclusive exact power-of-two length.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L467-L467",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2308,
+      "source_span": [
+        477,
+        20,
+        477,
+        27
+      ],
+      "procedure": "E16",
+      "original_operation": [
+        "Lt"
+      ],
+      "interpretation": "Bullish left value strictly lower than right wins.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L477-L477",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2311,
+      "source_span": [
+        477,
+        43,
+        477,
+        50
+      ],
+      "procedure": "E16",
+      "original_operation": [
+        "Gt"
+      ],
+      "interpretation": "Nonbullish left value strictly greater than right wins.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L477-L477",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2322,
+      "source_span": [
+        479,
+        22,
+        479,
+        29
+      ],
+      "procedure": "E16",
+      "original_operation": [
+        "Lt"
+      ],
+      "interpretation": "Bullish right value strictly lower than left wins.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L479-L479",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2325,
+      "source_span": [
+        479,
+        45,
+        479,
+        52
+      ],
+      "procedure": "E16",
+      "original_operation": [
+        "Gt"
+      ],
+      "interpretation": "Nonbullish right value strictly greater than left wins.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L479-L479",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2338,
+      "source_span": [
+        482,
+        37,
+        482,
+        50
+      ],
+      "procedure": "E16",
+      "original_operation": [
+        "LtE"
+      ],
+      "interpretation": "If neither strict predicate wins, select smaller position; <= preserves left on identical positions.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L482-L482",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2372,
+      "source_span": [
+        490,
+        15,
+        490,
+        42
+      ],
+      "procedure": "E17",
+      "original_operation": [
+        "Eq"
+      ],
+      "interpretation": "Exact bullish selects less for inclusive extreme query.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L490-L490",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2384,
+      "source_span": [
+        492,
+        11,
+        492,
+        22
+      ],
+      "procedure": "E17",
+      "original_operation": [
+        "LtE"
+      ],
+      "interpretation": "Nonpositive interval length returns supplied left without sparse lookup.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L492-L492",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2433,
+      "source_span": [
+        500,
+        12,
+        500,
+        19
+      ],
+      "procedure": "E17",
+      "original_operation": [
+        "Lt"
+      ],
+      "interpretation": "Bullish first value strictly lower wins.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L500-L500",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2436,
+      "source_span": [
+        500,
+        35,
+        500,
+        42
+      ],
+      "procedure": "E17",
+      "original_operation": [
+        "Gt"
+      ],
+      "interpretation": "Nonbullish first value strictly greater wins.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L500-L500",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2444,
+      "source_span": [
+        502,
+        12,
+        502,
+        19
+      ],
+      "procedure": "E17",
+      "original_operation": [
+        "Lt"
+      ],
+      "interpretation": "Bullish second value strictly lower wins.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L502-L502",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2447,
+      "source_span": [
+        502,
+        35,
+        502,
+        42
+      ],
+      "procedure": "E17",
+      "original_operation": [
+        "Gt"
+      ],
+      "interpretation": "Nonbullish second value strictly greater wins.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L502-L502",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2454,
+      "source_span": [
+        504,
+        21,
+        504,
+        29
+      ],
+      "procedure": "E17",
+      "original_operation": [
+        "LtE"
+      ],
+      "interpretation": "Neither strict predicate wins: return smaller position, first on <=.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L504-L504",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2246,
+      "source_span": [
+        467,
+        15,
+        467,
+        21
+      ],
+      "procedure": "E16",
+      "original_operation": "LShift",
+      "interpretation": "Compute power of two via shift.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L467-L467",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2254,
+      "source_span": [
+        468,
+        22,
+        468,
+        24
+      ],
+      "procedure": "E16",
+      "original_operation": "USub",
+      "interpretation": "Select last completed sparse level.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L468-L468",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2258,
+      "source_span": [
+        469,
+        19,
+        469,
+        31
+      ],
+      "procedure": "E16",
+      "original_operation": "LShift",
+      "interpretation": "Half-span is 2^(k-1), previous interval length.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L469-L469",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2260,
+      "source_span": [
+        469,
+        25,
+        469,
+        30
+      ],
+      "procedure": "E16",
+      "original_operation": "Sub",
+      "interpretation": "Half-span is 2^(k-1), previous interval length.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L469-L469",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2265,
+      "source_span": [
+        470,
+        20,
+        470,
+        36
+      ],
+      "procedure": "E16",
+      "original_operation": "Add",
+      "interpretation": "Width n - 2^k + 1, all complete interval starts.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L470-L470",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2266,
+      "source_span": [
+        470,
+        20,
+        470,
+        32
+      ],
+      "procedure": "E16",
+      "original_operation": "Sub",
+      "interpretation": "Width n - 2^k + 1, all complete interval starts.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L470-L470",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2268,
+      "source_span": [
+        470,
+        25,
+        470,
+        31
+      ],
+      "procedure": "E16",
+      "original_operation": "LShift",
+      "interpretation": "Width n - 2^k + 1, all complete interval starts.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L470-L470",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2274,
+      "source_span": [
+        471,
+        18,
+        471,
+        29
+      ],
+      "procedure": "E16",
+      "original_operation": "Mult",
+      "interpretation": "Allocate width zero-initialized positions before filling.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L471-L471",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2292,
+      "source_span": [
+        474,
+        29,
+        474,
+        37
+      ],
+      "procedure": "E16",
+      "original_operation": "Add",
+      "interpretation": "Second half starts i+span, not i+full interval.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L474-L474",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2348,
+      "source_span": [
+        484,
+        12,
+        484,
+        18
+      ],
+      "procedure": "E16",
+      "original_operation": "Add",
+      "interpretation": "Increment k by one after level append.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L484-L484",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2378,
+      "source_span": [
+        491,
+        17,
+        491,
+        33
+      ],
+      "procedure": "E17",
+      "original_operation": "Add",
+      "interpretation": "Compute inclusive length right-left+1.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L491-L491",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2379,
+      "source_span": [
+        491,
+        17,
+        491,
+        29
+      ],
+      "procedure": "E17",
+      "original_operation": "Sub",
+      "interpretation": "Compute inclusive length right-left+1.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L491-L491",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2391,
+      "source_span": [
+        494,
+        12,
+        494,
+        35
+      ],
+      "procedure": "E17",
+      "original_operation": "Sub",
+      "interpretation": "k = bit_length of positive length minus one, integer floor log2.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L494-L494",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2413,
+      "source_span": [
+        497,
+        19,
+        497,
+        39
+      ],
+      "procedure": "E17",
+      "original_operation": "Add",
+      "interpretation": "Right-aligned block start = right - 2^k + 1, inclusive right endpoint.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L497-L497",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2414,
+      "source_span": [
+        497,
+        19,
+        497,
+        35
+      ],
+      "procedure": "E17",
+      "original_operation": "Sub",
+      "interpretation": "Right-aligned block start = right - 2^k + 1, inclusive right endpoint.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L497-L497",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 2416,
+      "source_span": [
+        497,
+        28,
+        497,
+        34
+      ],
+      "procedure": "E17",
+      "original_operation": "LShift",
+      "interpretation": "Right-aligned block start = right - 2^k + 1, inclusive right endpoint.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L497-L497",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2213,
+      "source_span": [
+        461,
+        12,
+        461,
+        23
+      ],
+      "procedure": "E16",
+      "original_operation": "len",
+      "interpretation": "Read count of normalized main extreme values.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L461-L461",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2236,
+      "source_span": [
+        465,
+        31,
+        465,
+        45
+      ],
+      "procedure": "E16",
+      "original_operation": "list",
+      "interpretation": "Level zero is list of positions 0 through n-1, not candle codes.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L465-L465",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2238,
+      "source_span": [
+        465,
+        36,
+        465,
+        44
+      ],
+      "procedure": "E16",
+      "original_operation": "range",
+      "interpretation": "Level zero is list of positions 0 through n-1, not candle codes.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L465-L465",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2280,
+      "source_span": [
+        472,
+        21,
+        472,
+        33
+      ],
+      "procedure": "E16",
+      "original_operation": "range",
+      "interpretation": "Traverse every start position 0 to width-1.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L472-L472",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2344,
+      "source_span": [
+        483,
+        12,
+        483,
+        26
+      ],
+      "procedure": "E16",
+      "original_operation": "st.append",
+      "interpretation": "Append completed level to table.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L483-L483",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 88,
+        "heading": "E16"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2392,
+      "source_span": [
+        494,
+        12,
+        494,
+        31
+      ],
+      "procedure": "E17",
+      "original_operation": "length.bit_length",
+      "interpretation": "k = bit_length of positive length minus one, integer floor log2.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local search eligibility, exact price/time representation, order or state semantics; cross-owner behavior remains W2.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Inputs, delegated owner and caller invariants documented in local contract; W2/W3 remain open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L494-L494",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 91,
+        "heading": "E17"
+      },
+      "chronology_refs": [],
+      "transition_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B06-08-S01",
+      "source_span": [
+        461,
+        485
+      ],
+      "path": "engine/pipeline/e_zone_detector.py",
+      "interpretation": "Level zero retains positions; each subsequent level combines two previous half-span positions. Exact power-of-two widths included. If neither strict directional comparison wins, smaller position selected; no separate equality test.",
+      "discovery_reason": "Explicit mutation, alias, caller boundary or non-inventory data-flow evidence.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L461-L485",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "Decimal comparison errors propagate."
+    },
+    {
+      "id": "B06-08-S02",
+      "source_span": [
+        489,
+        504
+      ],
+      "path": "engine/pipeline/e_zone_detector.py",
+      "interpretation": "Nonpositive interval returns left before table lookup; positive queries use overlapping left/right power-of-two blocks, strict left then strict right then smaller index.",
+      "discovery_reason": "Explicit mutation, alias, caller boundary or non-inventory data-flow evidence.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L489-L504",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "No local validation of endpoints; W2 callers ensure valid bounds."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B06-08-F01",
+      "span": [
+        489,
+        504
+      ],
+      "description": "Clarify neither strict comparison wins, rather than adding an equality test; nonpositive range returns left before table read.",
+      "document": "Algorithms/V3/09_E_Zone.md",
+      "line": 92,
+      "prior_blob": "acea0809f65cd91e8c69c3623bc829df03872e9e",
+      "resolution": "Clarified active procedure paragraph; rechecked pinned source. Related chronology clauses CH24–26 clarified where applicable.",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L489-L504",
+      "recheck": "W2 cross-owner and W3 separate forensic review pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: reset writers and alias lifetimes; directional/Decimal and chronology/index owners; Live cache identity and timestamp equivalence; stage bounds and sparse preconditions.",
+    "W3 independent source-first review and W4 acceptance pending. No runtime claim."
+  ]
+}

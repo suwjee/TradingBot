@@ -402,3 +402,25 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 [Local review](Semantic_Closure_B06_05.md) and [site evidence](Semantic_Closure_B06_05.json): 62 original rows, 4 supplemental items, 1 resolved local clarifications; local PASS. E 260/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
 
 W1 cumulative 6210/11504. Next B06 E09, line 394; W2/W3/W4 open.
+
+## Checkpoint 78 — Reset boundaries, targeted invalidation and chronology delegation
+
+[Local review](Semantic_Closure_B06_06.md) and [site evidence](Semantic_Closure_B06_06.json): 9 original rows, 3 supplemental items, 2 resolved local clarifications; local PASS. E 269/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 79 — Strict lower crossing and directional main extreme initialization
+
+[Local review](Semantic_Closure_B06_07.md) and [site evidence](Semantic_Closure_B06_07.json): 32 original rows, 3 supplemental items, 2 resolved local clarifications; local PASS. E 301/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 80 — Sparse table construction, inclusive query and earliest ties
+
+[Local review](Semantic_Closure_B06_08.md) and [site evidence](Semantic_Closure_B06_08.json): 51 original rows, 2 supplemental items, 1 resolved local clarifications; local PASS. E 352/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 81 — Parent and Order exact stop, live cache, confirmation delegation
+
+[Local review](Semantic_Closure_B06_09.md) and [site evidence](Semantic_Closure_B06_09.json): 47 original rows, 4 supplemental items, 2 resolved local clarifications; local PASS. E 399/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 82 — Complete main candle ownership and shared-query fallback
+
+[Local review](Semantic_Closure_B06_10.md) and [site evidence](Semantic_Closure_B06_10.json): 25 original rows, 2 supplemental items, 2 resolved local clarifications; local PASS. E 424/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+W1 cumulative 6374/11504. Next B06 E30, line 608; W2/W3/W4 open.

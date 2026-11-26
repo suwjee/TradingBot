@@ -65,10 +65,10 @@ Otherwise previous scoped result if any; steps empty, frontier=0, checkpoint nul
 Inputs direction,trend/opposite Reactions,S zones,opposite resets,chronology; start_index=0,end=null; direct_geometry_finder null; blocked_order_first_times null; e_parent_order_first_exceptions empty frozenset; initial_order_audit null; sequence_resets null; sequence_priority null (required at runtime); invalid_s_root_identities null; order_b_legs empty tuple; live_continuation null; live_scope empty tuple. Validate direction and non-null priority resolver separately. Store policy, priority; copy invalid identity set; fresh accepted identities; assign resets via E10 (copy and sort). Opposite direction via chronology. Shallow reaction lists; stable sort S by (source_time,integer source_index), resets by E11. Retain candles/lower/times/index/timeframe. Integer start and end or last; derive range [times[start],times[end]+timeframe), no explicit range check. Shared main-extreme callable initially null. Candidate index=chronology.main_range_index if present; if null and timeframe seconds==1 use lower index. Nonlive and candidate index.candles IS detector candles: take range_minimum B/range_maximum R or null. Nonlive with no callable initialize sparse E15. Store callback, blocked set or fresh empty, exceptions, initial ledger or fresh empty, tuple of legs, live continuation/scope. Invoke mixin initialize_order_audit, fresh visual lifecycle starts, consumed S evidence and last candidates lists. No local callable validation of priority or shared query. Truthy supplied blocked set and initial ledger are retained by reference, falsy values replaced; invalid root set copied. Inherited audit initialization precedes new visual, consumed and candidate collections.
 
 ### E09 — sequence_resets getter
-Return stored dict itself.
+Return stored dict itself. This is a mutable alias, not a copy. In-place mutation through the returned mapping does not itself invoke E10, rebuild sorted reset times, or clear caches.
 
 ### E10 — sequence_resets setter
-Copy resets mapping, sort keys into _sequence_reset_times. For each existing non-null cache named _order_candidates_cache,_carried_orders_cache,_post_stop_orders_cache,_direct_parent_stop_cache clear it. Missing attrs tolerated. No broader state reset.
+Copy resets mapping, sort keys into _sequence_reset_times. For each existing non-null cache named _order_candidates_cache,_carried_orders_cache,_post_stop_orders_cache,_direct_parent_stop_cache clear it. Missing attrs tolerated. No broader state reset. Assign the copied mapping before sorting its keys, then clear the four caches in the exact listed order, in place, including empty non-null caches. Missing attributes default to null. There is no local exception rollback: earlier mutations remain if a later operation fails.
 
 ### E11 — _reset_time
 Return chronology.reset_time(reset).
@@ -77,19 +77,19 @@ Return chronology.reset_time(reset).
 Return chronology.main_index(value,clamp=true).
 
 ### E13 — _first_cross_position
-Inputs left/right positions, level, keyword less. Lower index present: delegate first_less or first_greater. Otherwise scan range [left,right), normalize Low if less else High, return first strictly < or >. Null absent. No main fallback.
+Inputs left/right positions, level, keyword less. Lower index present: delegate first_less or first_greater. Otherwise scan range [left,right), normalize Low if less else High, return first strictly < or >. Null absent. No main fallback. An indexed result (including null) returns immediately; no scan retry or local empty-range/bounds guard. Linear range uses supplied positions directly; only the selected field is normalized, the supplied level is not. Indexed bounds and strict-query behavior remain index-owned.
 
 ### E14 — _stop_value
 Normalize attribute from policy extreme_attr, return.
 
 ### E15 — _initialize_main_extremes
-Read optional chronology._e_main_extremes dictionary; use direction cache if non-null. Otherwise build normalized main directional value list, integer candle code list, E16 sparse table; if chronology dict exists store triple. Cached hit assigns shared lists/table to detector. No new dict on chronology if absent.
+Read optional chronology._e_main_extremes dictionary; use direction cache if non-null. Otherwise build normalized main directional value list, integer candle code list, E16 sparse table; if chronology dict exists store triple. Cached hit assigns shared lists/table to detector. No new dict on chronology if absent. A non-null mapping includes an empty dict. On miss, price list, code list and sparse table are assigned in that order; publish the same three references into the existing mapping. On hit, unpack all three references without copying.
 
 ### E16 — _build_extreme_sparse
 Values length n, empty=>empty list. Level0 positions 0..n−1. For k starting 1 while 2^k<=n, compare previous level positions i and i+2^(k−1) over width n−2^k+1. Choose lower value B/higher R; if neither strict comparison wins choose smaller position (earliest tie). Append level; increment k. Return table. Uses exact normalized values, no price transform.
 
 ### E17 — _extreme_position
-Inclusive [left,right], length=right−left+1; <=0 returns left. k=floor(log2 length) via bit_length−1; compare stored positions for intervals starting left and ending right of size 2^k. Directional strict extreme wins; equal choose smaller position. No bounds clamping here.
+Inclusive [left,right], length=right−left+1; <=0 returns left. k=floor(log2 length) via bit_length−1; compare stored positions for intervals starting left and ending right of size 2^k. Directional strict extreme wins; equal choose smaller position. No bounds clamping here. The nonpositive-length return precedes reading the sparse table. Evaluate the first directional strict test, then the reverse test only if the first fails; if neither wins choose the smaller position (no explicit equality predicate).
 
 ### E18 — _first_parent_stop
 Start=max(source_time,range_start). Nonlive E19(start,range_end,level); live E04 with less=(direction B), search bound E19. Return (clamped main index,event) on non-null else null.
@@ -104,10 +104,10 @@ Delegate E21 with less=(order_direction !=bearish).
 Lower-bound start/end, E13 [left,right), return lower timestamp on non-null position else null.
 
 ### E22 — _cross_order
-Nonlive call mixin superclass implementation. Live key=(start,level); cache hit validates live dirty then returns nullable result. Otherwise E04 from max(start,range_start), less=(order_direction !=bearish), search E20. Hit maps clamped main index and main time; result (index,time,event), else null. Cache current. Exact stop chronology not recomputed by caller.
+Nonlive call mixin superclass implementation. Live key=(start,level); cache hit validates live dirty then returns nullable result. Otherwise E04 from max(start,range_start), less=(order_direction !=bearish), search E20. Hit maps clamped main index and main time; result (index,time,event), else null. Cache current. Exact stop chronology not recomputed by caller. The cache key uses raw start, whereas the live search uses max(start,range_start); membership preserves cached null. The live triple reads main time from detector.times[index]. The pinned inherited nonlive E dispatch (Order Audit _cross_order) instead reads candle.timestamp; their consistency is a W2 owner dependency. No local catch or alternate scan.
 
 ### E23 — _confirmation_for
-Return chronology.reaction_confirmation(direction,reaction), default intrabar behavior.
+Return chronology.reaction_confirmation(direction,reaction), default intrabar behavior. E supplies no explicit intrabar keyword or fallback; chronology owns the default and its interpretation.
 
 ### E24 — _confirmation
 Return E23(reaction,order_direction).
@@ -122,10 +122,10 @@ Parent type parameter unused. Start parent.decision_event_time, normalize parent
 Public delegate E26.
 
 ### E28 — _extreme_between
-Map start/end exact times to clamped main indexes. Start=max(detector start,mapped); end=min(detector end,mapped); if end<start set end=start. Include COMPLETE boundary main candles, even prices after exact stop. Live E05 else E29.
+Map start/end exact times to clamped main indexes. Start=max(detector start,mapped); end=min(detector end,mapped); if end<start set end=start. Include COMPLETE boundary main candles, even prices after exact stop. Live E05 else E29. The start is only lower-bounded by detector start, and end only upper-bounded by detector end; after promoting reversed end to start, no second stage clamp is made. Valid stage membership depends on caller inputs.
 
 ### E29 — _find_extreme
-If shared callable and valid 0<=start<=end<count, query [start,end+1), return (integer candle.index,time,value). If shared callable but invalid bounds and sparse absent initialize E15. Otherwise E17 then return cached code/time/value. No additional clamping.
+If shared callable and valid 0<=start<=end<count, query [start,end+1), return (integer candle.index,time,value). If shared callable but invalid bounds and sparse absent initialize E15. Otherwise E17 then return cached code/time/value. No additional clamping. The shared guard is non-null, not callable validation. Under invalid shared-query bounds, fallback initialization tests attribute presence via hasattr, not whether its value is null. With no shared query, that lazy initialization branch is not entered. Returned value is not renormalized.
 
 ### E30 — _zone
 Inputs family,number,parent type/object,stop event, optional keyword e_owned_source_times null. For S only get mixin unconsumed S orders else empty. Invoke gate-owned initial Order query (result local unused but preserve call). Get carried orders, register parent audit, obtain lazy post-stop accepted stream. If S and no carried: continuous deadline=min(exact stop of inherited crossed entries,default range_end); otherwise null. Get direct candidates from mixin order_candidates(stop_event,deadline,allow_bounded_continue=S,allow_trend_leg_continue=E,e_parent=E). Choice key=(exact crossing event,negative integer Order First). Sort crossed-only direct/inherited/carried independently by key; merge those streams with E31 post-stop stream in route order on exact ties. Owned sources = supplied set if non-null, else source times from accepted E identities. Iterate choices: prospective source E28 from stop to max(stop,Order cross event); skip if mixin says Order created only by disowned S for physical First/Break,owned times,prospective source time. First remaining match wins. Null if no match. Live E06 else E32 builder with selected match/source. No route-local reduction discards later First before global tie-break.

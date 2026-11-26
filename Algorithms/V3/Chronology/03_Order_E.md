@@ -34,19 +34,19 @@ Order_A post-stop: First >= gate main, confirmation strictly later. Native searc
 
 ## CH24
 
-E first strict crossing is in half-open lower positions, indexed or linear; no main fallback in this primitive.
+E first strict crossing is in half-open lower positions, indexed or linear; no main fallback in this primitive. Indexed return (including missing hit) is final; the linear path does not locally clamp positions. No fallback between routes.
 
 [Source engine/pipeline/e_zone_detector.py:420–435](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L420-L435)
 
 ## CH25
 
-E parent-stop scans [max(source time,range start),range end). Parent and opposite Order have separate directional stop policies; optional continuation retains exact event and main owner.
+E parent-stop scans [max(source time,range start),range end). Parent and opposite Order have separate directional stop policies; optional continuation retains exact event and main owner. Live E Order crossing caches raw (start,level) membership including null, clamps search start separately, and reads main time from times[index]; nonlive inherited Order crossing uses candle.timestamp. W2 must reconcile owner time representations.
 
 [Source engine/pipeline/e_zone_detector.py:507–557](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L507-L557)
 
 ## CH26
 
-E extreme uses full main candles containing parent and Order stops, both included and clamped to stage bounds. Lower events determine chronology without truncating boundary OHLC.
+E extreme uses full main candles containing parent and Order stops, both included and clamped to stage bounds. Lower events determine chronology without truncating boundary OHLC. The local boundary expressions are asymmetric: max(stage_start,mapped_start) and min(stage_end,mapped_end), then promote end to start when reversed, with no second stage clamp.
 
 [Source engine/pipeline/e_zone_detector.py:581–606](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L581-L606)
 
