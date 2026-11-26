@@ -1,0 +1,104 @@
+{
+  "checkpoint": 396,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Source-traced conditional local owner boundaries, not cross-owner acceptance",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        809,
+        918
+      ],
+      "meaning": "OA19 direct query owns selection and cached result; OA40 calls independently after OA23."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        921,
+        1070
+      ],
+      "meaning": "OA21/22/23 merge geometry, select at most one parent owner within map, maintain reset-leg independence, choose earliest crossing deadline and eligible confirmations, sort and cache; OA40 can append after reduction without rechecking."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1089,
+        1132
+      ],
+      "meaning": "OA25 reset (source,stop]; OA26 confirmation sorted insertion and post-stop pending; OA28 carried cache/index/append clear only."
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "range": [
+        64,
+        66
+      ],
+      "meaning": "Physical identity exact integer FirstIndex/BreakIndex; label/number/confirmation/cause not key."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1635,
+        1740
+      ],
+      "meaning": "Earliest parent creation plus every B confirmation; deferred append consumed and validated under local Decimal context, identity/length/timezone guards; fallback on invalid native rows. OA40 does not validate at registration."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          343,
+          345
+        ],
+        [
+          401,
+          401
+        ],
+        [
+          622,
+          622
+        ],
+        [
+          866,
+          866
+        ],
+        [
+          1002,
+          1002
+        ],
+        [
+          1048,
+          1048
+        ],
+        [
+          1160,
+          1160
+        ],
+        [
+          1490,
+          1490
+        ]
+      ],
+      "meaning": "Caller supplies invalid/accepted root sets, reset state and stop event; parent race computes carried before registration, then post-stop queries. Stopped S prescan also calls registration. Actual owner state conditional."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2046,
+        2094
+      ],
+      "meaning": "Rebuild sets accepted E identities, excludes invalid S time causes from historical ledger, clears and registers B legs first; re-register S and E or StopAll based on source mapping when parent stop exists. Final prepared owner reduction is separate, not OA40 local invariant."
+    }
+  ],
+  "limitations": [
+    "Separate source-first pass by GPT, not independently staffed. Local review only; caller chronology, native tuple shapes, reset synchronization, cache/Decimal context and final cross-owner ownership remain conditional.",
+    "No runtime, RAW payload, ZIP or production changes. Counts derived from pinned canonical source-backed inventory, not newly generated AST. CP321–395 historical progress retained via active plan and CP395 completion; direct re-read of all 12 relevant B05 registers, not every unrelated historical artifact."
+  ]
+}
