@@ -1,0 +1,320 @@
+{
+  "checkpoint": 323,
+  "status": "INCOMPLETE",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "61a7d446a041901975a5cf04b1640d3561137599",
+  "entry_tree": "0faaf4ea54598f0390d589dcb72f8e8682f305e0",
+  "scope": "Partial source-first W2 state transition register; not CP323 acceptance. Rows are transition/ownership evidence, not another census of CP322 named accessor calls.",
+  "source_modules": [
+    {
+      "id": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "id": "BL",
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891"
+    },
+    {
+      "id": "A",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b"
+    },
+    {
+      "id": "BR",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735"
+    }
+  ],
+  "reviewed_rows": [
+    {
+      "id": "CP323-P01",
+      "module": "RE",
+      "range": [
+        1681,
+        1721
+      ],
+      "contract": "Conditional adjacent confirmed opposite anchor adjustment; requires break and adjacent anchor and prior Reset. Recompute opposite detector from last Reset to candidate First; exact anchor Break match. Bullish changes top only when anchor low >= First low; bearish changes bottom only when anchor high <= First high."
+    },
+    {
+      "id": "CP323-P02",
+      "module": "RE",
+      "range": [
+        1723,
+        1761
+      ],
+      "contract": "Confirmed candidate opposite edge recalculated from First..Break inclusive main extrema; only when winning source is Break and analysis exists replace with intrabar extreme and source. Append replace(candidate), return true. Confirmation edge remains distinct."
+    },
+    {
+      "id": "CP323-P03",
+      "module": "RE",
+      "range": [
+        1763,
+        1778
+      ],
+      "contract": "Reset append records main index/display, optional second display, exact broken level and originating First index. No timestamp recovery in append."
+    },
+    {
+      "id": "CP323-P04",
+      "module": "RE",
+      "range": [
+        2420,
+        2456
+      ],
+      "contract": "Result references direction-specific ledgers; no initial -> empty result. Initial append precedes optional First-threshold early return."
+    },
+    {
+      "id": "CP323-P05",
+      "module": "RE",
+      "range": [
+        2457,
+        2515
+      ],
+      "contract": "Initial handoff sets cursor at Break+1, running directional extreme/source at Break. Re-analyze initial; use analysis extreme else opposite edge for post-confirmation Reset; record precise Reset and pending index or seed confirmation remainder."
+    },
+    {
+      "id": "CP323-P06",
+      "module": "RE",
+      "range": [
+        2517,
+        2573
+      ],
+      "contract": "Normal scan: pending or strict previous-edge Reset; candidate strict Break. Joint hit delegates native chronology resolver; earliest pre-Reset checkpoint only if retain_cursor and no earlier open search. Suppress repeated Reset only when last owner First equals previous First."
+    },
+    {
+      "id": "CP323-P07",
+      "module": "RE",
+      "range": [
+        2574,
+        2650
+      ],
+      "contract": "Retained search may mark earliest_open; otherwise direct ordinary restart. Missing confirmed structural result breaks. Mode A clears both cross-direction flags; rejected append sets Break+1 and pending reset. Accepted restart checks threshold; post-confirmation exact Reset precludes remainder seed, otherwise candidate from remainder."
+    },
+    {
+      "id": "CP323-P08",
+      "module": "RE",
+      "range": [
+        2651,
+        2761
+      ],
+      "contract": "Normal candidate strict opposite-edge update before directional confirmation. Refine then determine post-reset before canonical append; early threshold checked after append. Copy previous, update running edge; exact Reset or remainder. Fresh mode B uses running extreme on equality and opposite extrema start after earlier winning source; running extrema strictly improve."
+    },
+    {
+      "id": "CP323-P09",
+      "module": "RE",
+      "range": [
+        2762,
+        2783
+      ],
+      "contract": "When retained, checkpoint earliest open reset or final cursor plus current ledger counts; returns requested direction result."
+    },
+    {
+      "id": "CP323-P10",
+      "module": "RE",
+      "range": [
+        2792,
+        2864
+      ],
+      "contract": "Continuation seed at least two main; grid positive integral timeframe gaps and consecutive main indexes; lower timestamps strictly increasing and indexes consecutive; lower bounds inside newly committed main span. Snapshot copies candidates and reset list, not reset objects."
+    },
+    {
+      "id": "CP323-P11",
+      "module": "RE",
+      "range": [
+        2866,
+        2905
+      ],
+      "contract": "Advance commits vs preview does not. Both empty returns snapshot; otherwise validates and constructs next sequences. No checkpoint reruns initial search with cursor; existing checkpoint slices ledgers to counts, copies cursor candidates, scans suffix. Finally release indexes; commit updates market, result, checkpoint, initial cursor and processed count only."
+    },
+    {
+      "id": "CP323-P12",
+      "module": "BL",
+      "range": [
+        233,
+        268
+      ],
+      "contract": "Scale geometry from last decisive strike source main; Decimal third formula mirrored; original ordinal and counts retained; source time ± timeframe draw range."
+    },
+    {
+      "id": "CP323-P13",
+      "module": "BL",
+      "range": [
+        271,
+        323
+      ],
+      "contract": "Reset Blue source main, Decimal fifth formula; invalid iff previous line first-stop owner test and strict crossing of prior sourceExtreme by Reset main directional extreme; stores invalid line, not exclusion."
+    },
+    {
+      "id": "CP323-P14",
+      "module": "BL",
+      "range": [
+        325,
+        444
+      ],
+      "contract": "Group resets by originating First preserving input order; enumerate reactions in supplied order (one-based). Mode A resets previous strike count; boundary anchor then leg fallback else error; Normal requires previous. Scale strict count increase and spacing; emit scale first, zero spacing, otherwise increment when existing Blue; Reset group emits only when spacing allows and resets spacing. Checkpoint copies reaction and saves counts."
+    },
+    {
+      "id": "CP323-P15",
+      "module": "BL",
+      "range": [
+        447,
+        514
+      ],
+      "contract": "Batch initial empty checkpoint; live retains checkpoints and lines. Validate first_changed against existing checkpoints and new count. Earlier dirty Break or dirty Reset owner may rewind first_changed. Slice line/checkpoint prefixes and replay only suffix. Result shallow list copy."
+    },
+    {
+      "id": "CP323-P16",
+      "module": "A",
+      "range": [
+        216,
+        272
+      ],
+      "contract": "Scale A formation via false-flag confirmation; Reset formation strict lower crossing in source interval or open fallback; stops from confirmation or next main open respectively. Enumerate original Blue ordinals; skip calculation-invalid Blue from normal states; stop main and event times distinct."
+    },
+    {
+      "id": "CP323-P17",
+      "module": "A",
+      "range": [
+        274,
+        307
+      ],
+      "contract": "Double-stop special route tracks latest valid predecessor; invalid Blue before valid ignored. Strict predecessor crossing restricted to invalid Blue source interval and source index; first matching reaction not before formation; source selection delegated. Output construction beyond 307 not yet audited here."
+    },
+    {
+      "id": "CP323-P18",
+      "module": "A",
+      "range": [
+        502,
+        531
+      ],
+      "contract": "First aligned reaction confirmation >= trigger, First >= optional not_before. Ordered naive datetime bisect path or original-order linear fallback; ordinal one-based."
+    },
+    {
+      "id": "CP323-P19",
+      "module": "A",
+      "range": [
+        533,
+        611
+      ],
+      "contract": "Inherited stop requires previous formation < current; chained only prior strict stop event < current and both external. Unchained Scale cannot inherit. First strictly after window start, Break strictly before next formation. Chained range through entire Break; nonchained through Break open. A source from trigger main open through false-flag confirmation inclusive; reversed interval null."
+    },
+    {
+      "id": "CP323-P20",
+      "module": "A",
+      "range": [
+        613,
+        730
+      ],
+      "contract": "Adjacent valid states; prior/current must clear cycle unless allowed bridge reuse; third formation expiry. Trigger then aligned reaction with First >= max stop main times; no match breaks; source None skips. Output records separate exact stop events only if stored stop main matches selected. Cycle frontier Break; reuse current if A strict stop exists and next formation >= stop event, else skip through cycle."
+    },
+    {
+      "id": "CP323-P21",
+      "module": "A",
+      "range": [
+        839,
+        897
+      ],
+      "contract": "Batch detector direct. Live history separate dictionaries; compare triples First/Break/confirmation for common prefix; changed reaction time earliest old/new suffix Break; settled strict < dirty, settled reaction window end <= changed time."
+    },
+    {
+      "id": "CP323-P22",
+      "module": "A",
+      "range": [
+        898,
+        960
+      ],
+      "contract": "Live confirmation and Reset formation caches keyed by owning main and string level, only previous settled reuse. Crossing cache uses level/start/end plus lower existence; settled bounded window or settled old hit with same lower presence reusable. Lower prefix suppresses fallback; otherwise scan from dirty conditionally. Range extreme prior reuse only settled end."
+    },
+    {
+      "id": "CP323-P23",
+      "module": "A",
+      "range": [
+        962,
+        1036
+      ],
+      "contract": "Reuse match ordinal only within common prefix or previous miss with same triples; otherwise search from common prefix for known key. Blue key includes formation/stop indices/times, exact price strings, kind/internal. Inherited stop reuse only settled reaction window. Pair trigger needs non-null settled expiry and all relevant non-null events settled. A source keyed trigger/end with both settled. Zone identity cache all fields, Decimal as_tuple."
+    },
+    {
+      "id": "CP323-P24",
+      "module": "A",
+      "range": [
+        1042,
+        1069
+      ],
+      "contract": "Live update validates timeframe and dirty main within both sequences. Dirty time earliest available old/new main timestamp, else new end+timeframe or None. Recompute detector with previous history, then sever previous history and replace owner result."
+    },
+    {
+      "id": "CP323-P25",
+      "module": "BR",
+      "range": [
+        1756,
+        1785
+      ],
+      "contract": "Closed-regime cache distinct from optional detector live protocol. Key direction, absolute offset/end, boundary timestamp, visible start/end and trend flags. Reuse iff exclusive end <= dirty main; replace published set only after successful stage exit."
+    },
+    {
+      "id": "CP323-P26",
+      "module": "BR",
+      "range": [
+        2211,
+        2282
+      ],
+      "contract": "Full direction stages Blue then A then S conditional optional live object; no shared_stages -> compute, else reuse Blue/A/S detector and initial S copy independent of Order_B. A provisional; downstream owner acceptance separate."
+    },
+    {
+      "id": "CP323-P27",
+      "module": "BR",
+      "range": [
+        2837,
+        2895
+      ],
+      "contract": "Range Blue required by Blue/A/S enabled; A by A/S. Reusable context filters full by inclusive source range; else recalculates or empty. Not same as full ledger."
+    },
+    {
+      "id": "CP323-P28",
+      "module": "BR",
+      "range": [
+        3531,
+        3630
+      ],
+      "contract": "Reversal independently calculates prefix before boundary; optional closed resolver. Validate boundary and independent Primary3 evidence. New regime fresh market at boundary and target initial flags; optional active_regime protocol conditional; release indexes in finally."
+    },
+    {
+      "id": "CP323-P29",
+      "module": "BR",
+      "range": [
+        3740,
+        3786
+      ],
+      "contract": "Public live bucket with views stages closed regimes; _run_live_calculation calls prepare_pipeline_state without live protocol and passes closed resolver to response. CLI also prepares state without live. Do not equate optional detector live methods with active entry path."
+    }
+  ],
+  "reference_checks": [
+    {
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "blob": "118a4e00b9f8c647ac3ebdb7dabfa04a7f39ffd3",
+      "clauses": "CH77–CH86, ordinary A",
+      "finding": "Scoped source rows align with restart/normal continuation, Blue spacing and source freeze clauses; full reference reconciliation remains open."
+    },
+    {
+      "path": "Algorithms/V3/Chronology/08_Current_Chronology_Rebaseline.md",
+      "blob": "a13e9ac9b7916094e6a7268b362134b39dd2dae9",
+      "finding": "Closed-prefix and conditional live protocol distinction confirmed in listed Bridge ranges."
+    }
+  ],
+  "remaining": [
+    "Reaction native analysis/race and initial/direct/refinement/remainder helper paths; behavior-view mutation and identity, transitive callers and source order.",
+    "Blue native strike and stop helpers and internal/public filtering; A range extreme/crossing helpers, special and pair-trigger routes, final detect/suppression; trace exact tie and fallback boundaries.",
+    "Bridge prepare_pipeline_state, full/range Reaction ownership, live protocol dispatch/call sites and downstream S/A invalidation; reconcile all current references, enumerate non-overlap against CP322 and audit completeness before PASS."
+  ],
+  "validation": {
+    "reviewed_transition_rows": 29,
+    "source_tree_blobs_matched": 4,
+    "full_scope_census": "NOT RUN",
+    "runtime": "NOT RUN",
+    "raw": "NOT RUN",
+    "benchmark": "NOT RUN"
+  },
+  "note": "Source text inspected directly at pinned main. Partial rows do not establish completeness, reachability or runtime equivalence. No production/source changes."
+}
