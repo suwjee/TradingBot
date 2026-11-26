@@ -132,4 +132,34 @@ These are source-supported optional continuation boundaries. They must not be co
 
 ## v2.8.7 closed-prefix cache lifecycle
 
-LiveMarketViews owns a fresh closed-regime cache. The staged resolver reads the previous published mapping only for exact range keys whose absolute exclusive end is no later than first_dirty_main; missing/ineligible results are calculated. Store used results in a fresh mapping, publish only on normal cache-stage completion. On outer protected append failure discard views and their cache. MarketIndexWindow clamps crossing searches, but validates range-extreme queries without clamping; both translate results back to the local segment position. See TB103–104 for precise key order, bounds and errors. [Source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1756-L1857).
+LiveMarketViews owns a fresh closed-regime cache. The staged resolver reads the previous published mapping only for exact range keys whose absolute exclusive end is no later than first_dirty_main; missing/ineligible results are calculated. Store used results in a fresh mapping, publish only on normal cache-stage completion. On outer protected append failure discard views and their cache. MarketIndexWindow clamps crossing searches, but validates range-extreme queries without clamping; both translate results back to the local segment position. See TB103–112 for precise key order, bounds and errors. [Source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1756-L1857).
+
+
+## CR — Independent closed-prefix cache stage
+
+Registers published map (per LiveClosedRegimes instance), previous map reference, current map, first_dirty_main. These are cache-stage control labels, not new Engine state. Context-manager completion is distinct from outer append commit; the latter may still fail and discard the entire view.
+
+| ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
+|---|---|---|---|---|---|
+| CR01 | INIT | New view/cache instance | Allocate empty published map | READY | TB19,TB105 |
+| CR02 | READY | Enter stage with dirty boundary | Capture previous map by reference, allocate empty current map and yield resolver | STAGED | TB103 |
+| CR03 | STAGED | Resolve with complete key, exclusive absolute end <= dirty, non-null previous value | Select previous value; never consult current map for a hit | SELECTED | TB106 |
+| CR04 | STAGED | Resolve with ineligible end or missing/null previous value | Invoke supplied calculate callback without arguments; exceptions propagate | SELECTED or ERROR | TB106 |
+| CR05 | SELECTED | Selected result available | Set current[key] to result and return same reference; caller still validates Primary3 | STAGED | TB106,TB91,TB94 |
+| CR06 | STAGED | Normal resumption after yield | Replace published map with current map, drop unused prior entries | READY | TB103 |
+| CR07 | STAGED or ERROR | Exception through stage yield | Skip publication; propagate; outer protected Live append failure replaces market views | ERROR | TB103,L02 |
+
+## IW — MarketIndexWindow local-coordinate adapter
+
+Registers supplied candle reference, parent timestamp slice, logical length, base index, base offset. A window delegates rather than recalculates price or ties. The following are independent operations on a constructed window.
+
+| ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
+|---|---|---|---|---|---|
+| IW01 | INIT | Parent is a MarketIndexWindow | Store candles, times[start:stop], length=stop-start; flatten base, add parent offset to start | READY | TB104 |
+| IW02 | INIT | Other parent index | Store candles, times[start:stop], length=stop-start; base=parent, offset=start | READY | TB104 |
+| IW03 | READY | First-crossing query after clamping left>=0/right<=length yields empty interval | Return null without calling base | READY | TB107,TB108,TB109 |
+| IW04 | READY | First-crossing query, clamped interval nonempty | Call selected strict base method with translated bounds, return null or position-offset | READY | TB107,TB108,TB109 |
+| IW05 | READY | Extreme query with valid 0<=left<right<=length | Query matching base extreme; preserve value, translate position | READY | TB110,TB111,TB112 |
+| IW06 | READY | Extreme query outside valid nonempty bounds | Raise ValueError; do not clamp | ERROR | TB110,TB111,TB112 |
+
+Source anchors: pinned main engine/bridge/trading_pipeline.py:1756–1823, 1826–1857, 3738–3767. No model-checking or execution.

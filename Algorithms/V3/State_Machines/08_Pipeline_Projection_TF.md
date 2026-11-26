@@ -35,9 +35,9 @@ Registers current reset legs (empty first), seen semantic signatures (empty firs
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
 | OF01 | INIT | First pass | Calculate full direction with current legs, set shared state only first pass | RECONCILE | TB73,TB74 |
-| OF02 | RECONCILE | StopAll enabled | Supplement missing independent physical E sources without replacing accepted donors; reconcile StopAll; disabled copies E and empty StopAll | REDISCOVER | TB74,LC40 |
+| OF02 | RECONCILE | StopAll enabled or disabled | Enabled: collect original accepted E source pairs; restore roots and append only missing-pair donors, run LC40 (including sequence_resets assignment). Disabled: copy E and empty StopAll. Both proceed to restoration/audit | REDISCOVER | TB74,LC40,E40 |
 | OF03 | REDISCOVER | Accepted state | Restore independent roots and ensure audit; discover reset legs using eligible A, invalid A set, accepted S/E/StopAll, native trend/opposite streams | COMPARE | OA11,OA65,TB74 |
-| OF04 | COMPARE | New semantic signature == old | Register discovered legs, return replaced full-direction state with converged E and StopAll | RETURN | OA12,TB74 |
+| OF04 | COMPARE | New semantic signature == old | Register discovered legs, return replaced full-direction state with converged E and StopAll; TB75 stores directional lists | RETURN | OA12,TB74,TB75 |
 | OF05 | COMPARE | Unequal signature already seen | RuntimeError nonconvergence | ERROR | TB74 |
 | OF06 | COMPARE | Unequal unseen signature and more passes remain | Add signature to seen, replace legs, reuse shared stages, increment pass | INIT | TB74 |
 | OF07 | COMPARE | Eighth pass ends unequal and not repeated | RuntimeError exceeded eight passes | ERROR | TB74 |
@@ -77,7 +77,7 @@ Registers selected mapping by sourceTime, sorted complete events and StopAll buf
 
 ## TFB — Basic S/E verdict and repair recurrence
 
-Registers started=false, repeats rank→(latest,repair_count,verdict_count,base_count), price-reference frontier rank→(transformed Decimal price,verdict) list. Rank lexicographic S Blue(1,0),E Blue(2,n),S Red(3,0),E Red(4,n).
+Registers started=false, repeats rank→(latest,repair_count,verdict_count,base_count), price-reference frontier rank→(transformed Decimal price,verdict) list. Resolve direction policy at entry, even if no events; convert price directly to Decimal and copy-negate only for low extreme. Collect lower ranks and evaluate both base engulf and display_restart before mutating repeats. Rank lexicographic S Blue(1,0),E Blue(2,n),S Red(3,0),E Red(4,n).
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
@@ -87,10 +87,10 @@ Registers started=false, repeats rank→(latest,repair_count,verdict_count,base_
 | TFB04 | ROW | Otherwise greatest smaller rank strictly crossed | Invert latest eligible reference verdict; compare transformed Decimal prices | MUTATE | TF04,TF08 |
 | TFB05 | ROW | Otherwise | F if number odd, T if even | MUTATE | TF04 |
 | TFB06 | MUTATE | Current verdict selected | Write row, prune frontier tail >= price and append pair; pop lower repeats; repair singleton F | REPEAT | TF04,TF05 |
-| TFB07 | REPEAT | Same-rank same-verdict AND not display_restart | Accumulate verdict_count; at >=2 set prior and current repeated=true | REPEAT | TF04 |
-| TFB08 | REPEAT | Prior same rank and same verdict | Accumulate repair_count; for F remove prior repair if >=time, attempt repair current; display count independently gated | ROW | TF04,TF05 |
+| TFB07 | REPEAT | Same-rank same-verdict AND not display_restart | With fresh count 1 add prior verdict_count; at >=2 set prior and current repeated=true; display_restart leaves count 1 | REPEAT | TF04 |
+| TFB08 | REPEAT | Prior same rank and same verdict | From fresh repair_count 1 add prior repair_count; for F remove prior repair if its value (missing default -1) >=time, attempt repair current; display count independently gated | ROW | TF04,TF05 |
 | TFB09 | REPEAT | No same-verdict prior | repair_count=verdict_count=1 | ROW | TF04 |
-| TFB10 | ROW | Store current rank state | base_count=prior.base_count+1 if prior exists, else 1; replace latest; no final sweep | ROW or RETURN | TF04 |
+| TFB10 | ROW | Store current rank state after repeat substeps | base_count=prior.base_count+1 if prior exists, else 1, regardless of verdict; store new BasicRepeat with all counters/latest; no final sweep | ROW or RETURN | TF04 |
 | TFB11 | MUTATE or REPEAT | Repair callback exists AND key absent | Search original RAW inclusive start/through with row direction strict predicate; store epoch iff hit; present null counts as existing key | MUTATE or REPEAT | TF01,TF02,TF05 |
 | TFB12 | ROW or INIT | Non-S/E selected event (Primary or StopAll) | Clear price references; started=false; zero all retained verdict_count and base_count; retain latest and repair_count; continue | INIT | TF04 |
 
