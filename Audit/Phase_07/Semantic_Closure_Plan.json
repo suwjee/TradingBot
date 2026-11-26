@@ -18,7 +18,7 @@
     "calls": 5120
   },
   "original_site_category_rows": 11504,
-  "verified_independent_site_rows_in_this_plan": 4058,
+  "verified_independent_site_rows_in_this_plan": 4204,
   "scope_note": "No new semantic verification is claimed. Prior context review remains valid for its original scope. Counts are category rows, not necessarily distinct AST nodes.",
   "batches": [
     {
@@ -706,7 +706,7 @@
     {
       "id": "B05",
       "title": "Order Audit",
-      "status": "NOT RUN",
+      "status": "INCOMPLETE",
       "modules": [
         {
           "path": "engine/pipeline/order_audit_engine.py",
@@ -719,7 +719,29 @@
           "calls": 844
         }
       ],
-      "site_category_rows": 1892
+      "site_category_rows": 1892,
+      "review_scope": "W1 local source-first owner review; W2/W3 remain open",
+      "reviewed_original_rows": 146,
+      "supplemental_items": 8,
+      "sub_batches": [
+        {
+          "id": "B05-01",
+          "status": "PASS",
+          "source_range": [
+            1,
+            197
+          ],
+          "procedures": "OA01–OA05",
+          "original_rows": 146,
+          "supplemental_items": 8,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B05_01.json",
+            "Audit/Phase_07/Semantic_Closure_B05_01.md"
+          ]
+        }
+      ],
+      "next_source_line": 198
     },
     {
       "id": "B06",
@@ -895,5 +917,5 @@
       "evidence": []
     }
   ],
-  "next_action": "B05 Order Audit Engine, begin pinned source line 1 and original site inventory; W2 and W3 open."
+  "next_action": "B05-02 Order Audit Engine, OA06 discover_order_b_reset_legs, begin pinned source line 198; W2 and W3 open."
 }

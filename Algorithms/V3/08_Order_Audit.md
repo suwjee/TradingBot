@@ -31,7 +31,7 @@ Collect accepted S/A ledger (filter accepted A set) then E ledger; preserve firs
 ## Detailed ledger procedures
 
 ### OA01 — relabel_primary_causes
-Deep-copy each input cause; for parentType/postBehaviorType/anchorBehaviorType paired with corresponding source-time key, change a PH/PL-prefixed label only if source in labels. Retain first equal dict, preserve order; no original mutation.
+Deep-copy each input cause; for parentType/postBehaviorType/anchorBehaviorType paired with corresponding source-time key, string-convert the current label (default empty) and test PH/PL prefix first; only then read associated source (default null) and test membership in labels before replacement. Retain first equal dict, preserve order; no original mutation.
 
 ### OA13 — OrderAuditEngineMixin._initialize_order_audit
 Initialize empty cross/canonical stop, candidate/carried/post-stop/direct caches, empty ledger and confirmation index, pending list, lazy initial records/indexes null or empty. Materialize trend/opposite First times and confirmations via owner callbacks. Stable trend confirmation sort, times list. Group opposite reset times by int from First in input order; opposite-by-First dictionary last wins. Physical identity-to-canonical position first wins with setdefault.

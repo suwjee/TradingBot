@@ -246,3 +246,8 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## B04 W1 local completion
 
 [Completion evidence](Semantic_Closure_B04_Completion.json): 962/962 original rows, 50 procedures, 1552 lines including terminal blank, 71 supplemental items, nine contiguous partitions; local PASS. W2/W3 open. Next B05 Order Audit Engine. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 47 — Order Audit provenance, dominant stops and strict crossing primitives
+
+[Local review](Semantic_Closure_B05_01.md) and [site evidence](Semantic_Closure_B05_01.json): 146 original rows, 8 supplemental items, 4 resolved findings; local PASS. Order Audit 146/1892. Next OA06, line 198. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
