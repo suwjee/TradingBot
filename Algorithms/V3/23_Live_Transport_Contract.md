@@ -72,3 +72,24 @@ Repeatedly read header from binary stdin with size limit 256. Empty header (EOF)
 - Otherwise invoke L09.
 After successful progress context, send update with payload, release updated/raw locals. Outer LiveRawChanged handler sends error code RAW_CHANGED with exception text and returns 1. Outer ordinary Exception handler prints error to stderr (flushed), sends LIVE_ENGINE_FAILED generic Apply-again message, returns 1. Otherwise return 0. BaseException outside the ordinary exception family is not caught by main. Module entry invokes native process exit with returned code only when run as main. Progress context/IO/callback failures may propagate from handlers; no blanket guarantee of response on broken pipe.
 Both lambda scopes covered conceptually: time-key function in L05, no-op progress sink here. No speculative transport scheduling behavior.
+
+## CP310 — v2.8.7 pinned live transport local review
+
+- **LV01 (1–21):** Import bridge interfaces; transport version 1.3.0; source-only review.
+- **LV02 (22–34):** Require E engine and S enabled, exact int positive timeframe. Copy args; retain engine bundle and fresh buckets/views.
+- **LV03 (35–46):** Append validates int conversion equality and positive time, nondecreasing versus previous bucket raw time (equal allowed). Empty initial history raises.
+- **LV04 (47–58):** Copy args and set to_time; 2 directions if primary exists or both requested else 1. Progress callback increments completed stages with total direction_count+4; started emitted before try.
+- **LV05 (59–72):** Bucket staged append context passes delta and retained views to native calculation; final validation-ready progress inside context. BaseException resets views and reraises; bucket rollback delegated. Return payload only on successful context exit.
+- **LV06 (73–87):** Two ValueError subclasses distinguish changed lineage and unproved delta. JSON decoding uses Decimal for floats, requires nonempty list, no per-row validation here.
+- **LV07 (88–99):** Bisect original by first selected time; compare selected to slice unless same object; keep original suffix as catchup, original last time, then remember prefix.
+- **LV08 (100–113):** Find last closing bracket, hash bytes strictly before it, retain ending; digest copies hash then updates ending.
+- **LV09 (114–128):** Require base digest match and leading comma; hash proposed appended bytes against retained ending, compare target digest, decode bracketed delta. Call pipeline first, update prefix/end/current digest only on success.
+- **LV10 (129–146):** Full append requires length beyond prefix and exact prefix digest. lstrip tail, decode comma suffix or allow only closing bracket with trailing whitespace; other tail raises. After pipeline succeeds, remember prefix if rows else update changed ending/digest only.
+- **LV11 (147–158):** New raw times strictly greater than original last time, unlike low-level nondecreasing gate. Send catchup + new rows; clear catchup and advance last time only after successful pipeline.
+- **LV12 (159–167):** Compact flushed JSON worker messages; fields follow type and may override it. Progress forwarded if started or completedStages present.
+- **LV13 (168–183):** Read selected/original path according to env; same path reuses data and decoded list. Construct lineage and pipeline; send seed ready and payload from selected rows. Release references; stdin binary transport.
+- **LV14 (184–196):** Read at most 256 header bytes; require newline. Parse JSON, exact positive int bytes, string digest length 64; read exact bytes. Only progress is True enables progress sink.
+- **LV15 (197–212):** Scoped progress sink; non-null base digest selects delta route. Delta mismatch sends RAW_DELTA_MISMATCH and continues. Full digest mismatch sends RAW_RETRY and continues; otherwise full append. Successful update sends payload.
+- **LV16 (213–225):** LiveRawChanged => RAW_CHANGED and return1; other Exception logs stderr, LIVE_ENGINE_FAILED and return1. Normal exit0; module sys.exit(main()).
+
+No RAW or runtime execution. Current canonical row evidence: `Audit/Phase_07/Rebaseline_v2_8_7/CP310_Live_Row_Review.json`.
