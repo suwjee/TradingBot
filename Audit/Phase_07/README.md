@@ -271,3 +271,18 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 51 — Order Audit initialization, chronology indexes and canonical stop cache
 
 [Local review](Semantic_Closure_B05_05.md) and [site evidence](Semantic_Closure_B05_05.json): 51 original rows, 8 supplemental items, 4 resolved findings; local PASS. Order Audit 408/1892. Next OA16, line 689. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 52 — Healthy Direct Order Geometry and Reset Restart
+
+[Local review](Semantic_Closure_B05_06.md) and [site evidence](Semantic_Closure_B05_06.json): 76 original rows, 6 supplemental items, 3 resolved findings; local PASS. Order Audit 484/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 53 — Direct Parent-Stop Cache and Order_A Arbitration
+
+[Local review](Semantic_Closure_B05_07.md) and [site evidence](Semantic_Closure_B05_07.json): 76 original rows, 6 supplemental items, 4 resolved findings; local PASS. Order Audit 560/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 54 — Physical Candidate Merge, Single Parent Ownership and Decision Deadline
+
+[Local review](Semantic_Closure_B05_08.md) and [site evidence](Semantic_Closure_B05_08.json): 93 original rows, 7 supplemental items, 4 resolved findings; local PASS. Order Audit 653/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

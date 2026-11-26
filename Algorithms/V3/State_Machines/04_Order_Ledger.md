@@ -24,14 +24,14 @@ Input parent source, exact stop, native direction, optional deadline and flags. 
 |---|---|---|---|---|---|
 | OAP01 | INIT | Parent S invalid or E-owned source, or sequence reset between parent source and stop | No parent-stop registration | RETURN | OA25,OA40 |
 | OAP02 | INIT | Parent eligible | Query direct geometry; map gate to main and resolve eligible native opposite First; canonical identity required except OAS independent A path | DIRECT | OA16,OA19,OA20 |
-| OAP03 | DIRECT | Same-gate blocked First | Skip; E exception requires exact allowed (stop,gate time) and confirmation>stop; inherited blocked not globally released | DIRECT | OA20,LC25 |
-| OAP04 | DIRECT | Optional confirmation_after | Discard geometry and skip initial native rows whose confirmations <= supplied boundary | DIRECT | OA20 |
-| OAP05 | DIRECT | Restart geometry and continuous deadline supplied, equals range end or < geometry confirmation | Prefer restart geometry | CANDIDATES | OA20 |
-| OAP06 | DIRECT | Otherwise geometry exists, native crossing absent, native absent or geometric First earlier | Select geometry | CANDIDATES | OA20 |
+| OAP03 | DIRECT | After initial optional confirmation filter, native First blocked AND equal gate | Skip; E exception requires exact allowed (stop,gate time) and confirmation>stop; no confirmation-after recheck after blocked skips | DIRECT | OA20,LC25 |
+| OAP04 | DIRECT | Optional confirmation_after (evaluated before native blocked-First loop) | Discard geometry and skip initial native rows whose confirmations <= supplied boundary | DIRECT | OA20 |
+| OAP05 | DIRECT | Canonical restart geometry and continuous deadline supplied, equals range end or < geometry confirmation | Prefer restart geometry; still compute native stop/cross if native exists before final selection | CANDIDATES | OA20 |
+| OAP06 | DIRECT | Otherwise geometry exists AND native crossing absent AND (native absent OR geometric First strictly earlier) | Select geometry | CANDIDATES | OA20 |
 | OAP07 | DIRECT | Otherwise native exists | Select native; if none then no direct match | CANDIDATES | OA20 |
 | OAP08 | CANDIDATES | E trend-leg continuation enabled | Consider noninternal trend First>parent stop and opposite First after trend confirmation using owner eligibility | CANDIDATES | OA17,OA18,OA23 |
-| OAP09 | CANDIDATES | Direct and independent reset-leg candidates | Merge by physical identity; enforce one parent-stop owner by (confirmation,First,Break), keep independent reset-leg causes | BOUNDED | OA21,OA22,OA23 |
-| OAP10 | BOUNDED | Candidate crossings known or absent | Earliest crossing or range end sets deadline, clipped by supplied continuous deadline; keep confirmation<=deadline; sort per owner | RETURN | OA23 |
+| OAP09 | CANDIDATES | Direct and independent reset-leg candidates | Merge by physical identity; enforce at most one parent-stop owner by (confirmation,First,Break), retain independent reset-leg causes | BOUNDED | OA21,OA22,OA23 |
+| OAP10 | BOUNDED | Candidate crossings known or absent | Earliest retained crossing or range_end only if none sets deadline, clipped by supplied continuous deadline; keep confirmation<=deadline; stable sort by exact crossing (range_end if null), First | RETURN | OA23 |
 | OAP11 | RETURN | Register parent-stop | Include direct selected identity even if absent from bounded list; create missing row, add unique cause with label E number/StopAll replacement as appropriate; preserve existing geometry | RECORDED | OA40 |
 | OAP12 | RECORDED | New row or earlier existing parent creation | Update confirmation index for new row and invalidate relevant carried/post-stop caches as specified; later/equal cause alone does not change earliest carried gate | RECORDED | OA26,OA28,OA29,OA40 |
 
