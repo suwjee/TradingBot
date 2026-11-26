@@ -18,4 +18,8 @@ RAW dataset testing, full RAW backtests, execution-based branch coverage, indepe
 
 ## Precedence
 
-This explicit instruction supersedes the runtime and RAW verification requirements in [the historical requested prompt](Requested_Prompt.md), Phase 01/02 historical reports, and earlier reconstruction protocol for the active task. Historical reports and their manifests are immutable. The prior structural inventory remains valid for its recorded pinned baseline; semantic specification coverage remains incomplete. No source or trading behavior is changed. The active branch remains documentation-only and English.
+This explicit instruction supersedes the runtime and RAW verification requirements in [the historical requested prompt](Requested_Prompt.md), Phase 01/02 historical reports, and earlier reconstruction protocol for the active task. Historical reports and their manifests are immutable. The prior structural inventory remains valid for its recorded pinned baseline; semantic specification coverage remains incomplete. No source or trading behavior is changed. The active branch remains English and specification-only, with the user-designated RAW fixture directory as a permitted data-only exception.
+
+## Standing RAW test requirement (subsequent user instruction, 2026-11-26)
+
+The user designates [algorithm/raw](../raw/) as the permanent canonical real-market test dataset directory. For any applicable authorized runtime test, follow [the mandatory RAW test protocol](../Verification/RAW_Test_Protocol.md): every file, native 30-second analysis, independent Bullish and Bearish runs, first through last actual 30-second candle inclusive. The source-only task remains static; no RAW payload is read or calculation executed solely to register this instruction. This distinguishes the method for future tests from the present static completion gates.

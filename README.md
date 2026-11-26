@@ -2,7 +2,7 @@
 
 **Documentation-only branch | English | SOURCE-ONLY REVERSE ENGINEERING IN PROGRESS**
 
-This branch is an independent reading and distribution surface for algorithmic knowledge. Its current checked-out tree contains only Markdown specifications, language-neutral pseudocode, diagrams, structured metadata and verification evidence. It contains no production application or engine files, runnable test scripts, copied source appendices, build workflows, archives or RAW market datasets.
+This branch is an independent reading and distribution surface for algorithmic knowledge. Its current checked-out tree contains Markdown specifications, language-neutral pseudocode, diagrams, structured metadata and verification evidence, plus user-designated RAW market fixtures under [raw/](raw/) tracked via Git LFS. It contains no production application or engine files, runnable test scripts, copied source appendices, build workflows or archives.
 
 The implementation baseline is commit `466eb875070f02cd0dbfb105033422bbe2fd8c70`. The specification describes actual implemented behavior; intended trading-rule changes must be separately approved. The present specification is not certified sufficient for a full reconstruction.
 
@@ -24,6 +24,8 @@ Read [the final audit](Audit/Final_Audit_Report.md) before using any algorithm f
 Source code and runnable verification tools must live outside this branch's current tree. An independent implementer should receive only Specification, Algorithms, Directional, Contracts and the approved semantic test cases from Verification; exclude Audit and any historical Git references. The repository's earlier shared history is retained and is not a clean-room access boundary. For strict isolation, export the allowlisted documents without Git metadata and supply them to a separate implementation environment.
 
 See [AGENTS.md](AGENTS.md) for maintenance rules.
+
+**Permanent RAW test standard:** [Mandatory RAW indicator verification protocol](Verification/RAW_Test_Protocol.md). Whenever relevant runtime tests are authorized, use every current file in [raw/](raw/), at 30s, both Bullish and Bearish independently, first through last actual aggregated candle inclusive. This does not change the current source-only audit scope.
 
 ## Formal specification V2.0 — Phase 01
 
