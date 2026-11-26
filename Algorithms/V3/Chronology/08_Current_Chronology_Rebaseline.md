@@ -113,3 +113,11 @@ Byte-prefix continuity verified before append; append lineage requires strictly 
 ## Remaining gate
 
 All 18 previously unmatched scope source identities have been located, including 12 named and six anonymous constructs. Canonical indices are inferred from the contiguous lexical sequence, not independently re-executed. The 589 unmatched site rows remain open. See [scope and chronology evidence](../../../Audit/Phase_07/Rebaseline_v2_8_7/CP292_Chronology_Scope_Review.json). No RAW or runtime tests were run; Phase 07 remains incomplete.
+
+## CP292 follow-up — Changed dependency context
+
+Native configured Reaction index validates sequence identity for prepared registration, retains strict crossing and earliest-position extrema ties, and keeps per-chronology caches separate. The current public main and live calculation entry paths prepare pipeline state without a per-detector live protocol object. Retained views and staged closed-prefix resolution are distinct from that optional interface; conditional finder methods are not claimed active on these entry paths.
+
+Independent E-root restoration updates accepted-source identity state. Native E reexports accepted Order_B discovery and inherits audit-preserving registration from OrderAuditEngineMixin. Lifecycle derives StopAll from donor chronology and publishes reset boundaries without retroactively rebuilding E from future boundaries. Visibility E and S stop results have distinct tuple shapes. True/False repair is strict and bounded on lower timeframe; repeated StopAll prefix relabeling has a separate confirmation closure gate.
+
+See [dependency context review](../../../Audit/Phase_07/Rebaseline_v2_8_7/CP292_Dependency_Context_Review.json) for 14 source-anchored contracts. The historical Remaining gate above describes entry state; [combined gap evidence](../../../Audit/Phase_07/Rebaseline_v2_8_7/CP292_Combined_Gap_Validation.json) accounts for all 589 complement rows. Canonical full-module node/statement/anonymous linkage remains open; RB07 INCOMPLETE.

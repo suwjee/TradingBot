@@ -1,0 +1,736 @@
+{
+  "checkpoint": 292,
+  "batch": "RB07",
+  "subcheck": "CHANGED_CANDIDATE_DEPENDENCY_CONTEXT",
+  "status": "PASS_SCOPED_DEPENDENCY_REVIEW",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "91cc7dcd4aa5d16b306816b2f7f895343eb912ea",
+  "source_blobs": {
+    "engine/bridge/trading_pipeline.py": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+    "engine/pipeline/reaction_engine.py": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+    "engine/pipeline/e_zone_detector.py": "240369edf3352006082efe094eb68ac027d6689f",
+    "engine/pipeline/order_audit_engine.py": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+    "engine/pipeline/lifecycle_engine.py": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+    "engine/pipeline/s_zone_detector.py": "53460e68538ac790ab969084c1c7101e5ca833d7",
+    "engine/pipeline/PL_PH_detector.py": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+    "engine/pipeline/true_false.py": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+    "engine/pipeline/direction_policy.py": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+    "engine/bridge/live_pipeline.py": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182"
+  },
+  "counts": {
+    "dependency_contracts": 14,
+    "distinct_gap_call_rows_linked": 37,
+    "pinned_modules": 10
+  },
+  "rows": [
+    {
+      "id": "D01",
+      "title": "Delegated index queries",
+      "bridge_call_rows": [
+        {
+          "row": 619,
+          "line": 1804,
+          "callee": "query"
+        },
+        {
+          "row": 623,
+          "line": 1816,
+          "callee": "query"
+        },
+        {
+          "row": 620,
+          "line": 1808,
+          "callee": "self._first"
+        },
+        {
+          "row": 621,
+          "line": 1811,
+          "callee": "self._first"
+        },
+        {
+          "row": 624,
+          "line": 1820,
+          "callee": "self._extreme"
+        },
+        {
+          "row": 625,
+          "line": 1823,
+          "callee": "self._extreme"
+        }
+      ],
+      "anchors": [
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 1788,
+          "end": 1823,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1788-L1823"
+        },
+        {
+          "path": "engine/pipeline/reaction_engine.py",
+          "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+          "start": 959,
+          "end": 1044,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/reaction_engine.py#L959-L1044"
+        }
+      ],
+      "disposition": "SOURCE_CONDITIONAL_REVIEWED",
+      "finding": "Native base preserves strict crossing, earliest-position extrema ties and half-open bounds. Wrapper clamps search, rejects invalid extrema bounds and translates index only; value unchanged. Supplied protocol targets remain conditional."
+    },
+    {
+      "id": "D02",
+      "title": "Prepared registration and chronology",
+      "bridge_call_rows": [
+        {
+          "row": 635,
+          "line": 1844,
+          "callee": "MarketIndexWindow"
+        },
+        {
+          "row": 636,
+          "line": 1845,
+          "callee": "MarketIndexWindow"
+        },
+        {
+          "row": 637,
+          "line": 1847,
+          "callee": "register"
+        },
+        {
+          "row": 638,
+          "line": 1847,
+          "callee": "register"
+        },
+        {
+          "row": 639,
+          "line": 1848,
+          "callee": "type()"
+        },
+        {
+          "row": 640,
+          "line": 1848,
+          "callee": "type"
+        },
+        {
+          "row": 641,
+          "line": 1849,
+          "callee": "int"
+        },
+        {
+          "row": 642,
+          "line": 1849,
+          "callee": "market.chronology.timeframe.total_seconds"
+        }
+      ],
+      "anchors": [
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 1826,
+          "end": 1857,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1826-L1857"
+        },
+        {
+          "path": "engine/pipeline/reaction_engine.py",
+          "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+          "start": 1077,
+          "end": 1092,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/reaction_engine.py#L1077-L1092"
+        },
+        {
+          "path": "engine/pipeline/reaction_engine.py",
+          "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+          "start": 1153,
+          "end": 1178,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/reaction_engine.py#L1153-L1178"
+        }
+      ],
+      "disposition": "SOURCE_CONDITIONAL_REVIEWED",
+      "finding": "Configured Reaction registration checks prepared sequence identity, writes identity-keyed cache. Runtime chronology class takes main/lower rows, integer duration, then prepared lower/main pair if indexed. Separate confirmation/reset/extreme caches."
+    },
+    {
+      "id": "D03",
+      "title": "Independent E donors",
+      "bridge_call_rows": [
+        {
+          "row": 851,
+          "line": 2600,
+          "callee": "state.e_detector.restore_independent_s_roots"
+        }
+      ],
+      "anchors": [
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 2596,
+          "end": 2606,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2596-L2606"
+        },
+        {
+          "path": "engine/pipeline/e_zone_detector.py",
+          "blob": "240369edf3352006082efe094eb68ac027d6689f",
+          "start": 915,
+          "end": 1005,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/e_zone_detector.py#L915-L1005"
+        }
+      ],
+      "disposition": "SOURCE_CONDITIONAL_REVIEWED",
+      "finding": "Restoration updates accepted E source identity set after same-source resolution. Bridge protects existing E at occupied physical source (source_index,source_time), admits restored donors at omitted sources only. Restoration also occurs after StopAll branch; donor and final E lists need not match."
+    },
+    {
+      "id": "D04",
+      "title": "Lifecycle and timing",
+      "bridge_call_rows": [
+        {
+          "row": 852,
+          "line": 2606,
+          "callee": "engines.lifecycle.reconcile_stopall_lifecycle"
+        },
+        {
+          "row": 853,
+          "line": 2609,
+          "callee": "timed"
+        }
+      ],
+      "anchors": [
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 75,
+          "end": 84,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L75-L84"
+        },
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 2606,
+          "end": 2615,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2606-L2615"
+        },
+        {
+          "path": "engine/pipeline/lifecycle_engine.py",
+          "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+          "start": 1377,
+          "end": 1409,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/lifecycle_engine.py#L1377-L1409"
+        }
+      ],
+      "disposition": "SOURCE_CONDITIONAL_REVIEWED",
+      "finding": "Lifecycle selects timing and StopAll finder by truthiness, derives S visibility, then StopAll, assigns detector.sequence_resets by source time/number; no retrospective E rebuild. Timing/progress effects in finally survive errors."
+    },
+    {
+      "id": "D05",
+      "title": "Accepted Order_B discovery binding",
+      "bridge_call_rows": [
+        {
+          "row": 858,
+          "line": 2616,
+          "callee": "timed"
+        },
+        {
+          "row": 859,
+          "line": 2618,
+          "callee": "direction.title"
+        },
+        {
+          "row": 860,
+          "line": 2619,
+          "callee": "engines.e_zone.discover_accepted_order_b_reset_legs"
+        }
+      ],
+      "anchors": [
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 2614,
+          "end": 2635,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2614-L2635"
+        },
+        {
+          "path": "engine/pipeline/e_zone_detector.py",
+          "blob": "240369edf3352006082efe094eb68ac027d6689f",
+          "start": 23,
+          "end": 27,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/e_zone_detector.py#L23-L27"
+        },
+        {
+          "path": "engine/pipeline/order_audit_engine.py",
+          "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+          "start": 442,
+          "end": 520,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/order_audit_engine.py#L442-L520"
+        },
+        {
+          "path": "engine/pipeline/lifecycle_engine.py",
+          "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+          "start": 712,
+          "end": 724,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/lifecycle_engine.py#L712-L724"
+        }
+      ],
+      "disposition": "SOURCE_CONDITIONAL_REVIEWED",
+      "finding": "E reexports Order Audit discovery. Accepted A excludes invalid identities and uses confirmation then S stop; S/E use parent stop, StopAll explicit stop_event_time. Dominance precedes finder. Anchor ties at exact physical source compare priority, number, behavior type; later lower-priority anchor still eligible. Module priority not global event ordering."
+    },
+    {
+      "id": "D06",
+      "title": "Mixin, audit and convergence",
+      "bridge_call_rows": [
+        {
+          "row": 864,
+          "line": 2639,
+          "callee": "state.e_detector.register_order_b_reset_legs"
+        },
+        {
+          "row": 865,
+          "line": 2640,
+          "callee": "replace"
+        }
+      ],
+      "anchors": [
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 2612,
+          "end": 2645,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2612-L2645"
+        },
+        {
+          "path": "engine/pipeline/e_zone_detector.py",
+          "blob": "240369edf3352006082efe094eb68ac027d6689f",
+          "start": 312,
+          "end": 312,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/e_zone_detector.py#L312-L312"
+        },
+        {
+          "path": "engine/pipeline/order_audit_engine.py",
+          "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+          "start": 530,
+          "end": 550,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/order_audit_engine.py#L530-L550"
+        },
+        {
+          "path": "engine/pipeline/order_audit_engine.py",
+          "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+          "start": 1135,
+          "end": 1163,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/order_audit_engine.py#L1135-L1163"
+        },
+        {
+          "path": "engine/pipeline/order_audit_engine.py",
+          "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+          "start": 2249,
+          "end": 2285,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/order_audit_engine.py#L2249-L2285"
+        }
+      ],
+      "disposition": "SOURCE_CONDITIONAL_REVIEWED",
+      "finding": "E inherits OrderAuditEngineMixin. Ensure accepted audit rebuilds subset and merges eligible preserved identities/causes; registration invalidates carried caches for nonempty legs and merges physical causes. Identity is sorted full-field tuple, equality gates return before repeated identity error, eight passes maximum."
+    },
+    {
+      "id": "D07",
+      "title": "Optional continuation protocol",
+      "bridge_call_rows": [
+        {
+          "row": 861,
+          "line": 2633,
+          "callee": "live.order_b_finder"
+        }
+      ],
+      "anchors": [
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 2609,
+          "end": 2610,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2609-L2610"
+        },
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 2633,
+          "end": 2633,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2633-L2633"
+        },
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 2648,
+          "end": 2657,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2648-L2657"
+        },
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 2801,
+          "end": 2802,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2801-L2802"
+        },
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 3756,
+          "end": 3767,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L3756-L3767"
+        },
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 3770,
+          "end": 3786,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L3770-L3786"
+        },
+        {
+          "path": "engine/bridge/live_pipeline.py",
+          "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+          "start": 58,
+          "end": 70,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/live_pipeline.py#L58-L70"
+        },
+        {
+          "path": "engine/pipeline/order_audit_engine.py",
+          "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+          "start": 514,
+          "end": 520,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/order_audit_engine.py#L514-L520"
+        },
+        {
+          "path": "engine/pipeline/lifecycle_engine.py",
+          "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+          "start": 1396,
+          "end": 1409,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/lifecycle_engine.py#L1396-L1409"
+        }
+      ],
+      "disposition": "SOURCE_CONDITIONAL_REVIEWED",
+      "finding": "Public main and _run_live_calculation omit live argument to prepare_pipeline_state. It defaults to None and is stored as live_stages. These shown entry paths select native fallback finders; externally supplied non-None live is a conditional protocol, not proven active path."
+    },
+    {
+      "id": "D08",
+      "title": "Visibility and exact price conversion",
+      "bridge_call_rows": [
+        {
+          "row": 927,
+          "line": 2965,
+          "callee": "list"
+        },
+        {
+          "row": 928,
+          "line": 2965,
+          "callee": "state.full_stopalls_by_direction.get"
+        },
+        {
+          "row": 932,
+          "line": 2972,
+          "callee": "state.full_s_detectors[direction].first_a_stop"
+        },
+        {
+          "row": 933,
+          "line": 2973,
+          "callee": "Decimal"
+        },
+        {
+          "row": 934,
+          "line": 2973,
+          "callee": "str"
+        },
+        {
+          "row": 935,
+          "line": 2973,
+          "callee": "getattr"
+        }
+      ],
+      "anchors": [
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 2962,
+          "end": 2979,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2962-L2979"
+        },
+        {
+          "path": "engine/pipeline/e_zone_detector.py",
+          "blob": "240369edf3352006082efe094eb68ac027d6689f",
+          "start": 569,
+          "end": 578,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/e_zone_detector.py#L569-L578"
+        },
+        {
+          "path": "engine/pipeline/s_zone_detector.py",
+          "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+          "start": 217,
+          "end": 257,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/s_zone_detector.py#L217-L257"
+        }
+      ],
+      "disposition": "SOURCE_CONDITIONAL_REVIEWED",
+      "finding": "Copy retained StopAll list, empty default. E parent-stop starts at decision_event_time; fallback S uses Decimal(str(price)) and decision event. Indexed or nonempty lower interval without crossing does not fall back; only empty lower interval permits main fallback. E two-element and S three-element tuple shapes distinct."
+    },
+    {
+      "id": "D09",
+      "title": "Reversal and resolver",
+      "bridge_call_rows": [
+        {
+          "row": 1152,
+          "line": 3577,
+          "callee": "market_segment"
+        },
+        {
+          "row": 1160,
+          "line": 3595,
+          "callee": "resolve_closed"
+        },
+        {
+          "row": 1161,
+          "line": 3596,
+          "callee": "calculate_closed"
+        },
+        {
+          "row": 1172,
+          "line": 3612,
+          "callee": "market_segment"
+        }
+      ],
+      "anchors": [
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 3531,
+          "end": 3550,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L3531-L3550"
+        },
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 3571,
+          "end": 3630,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L3571-L3630"
+        },
+        {
+          "path": "engine/pipeline/PL_PH_detector.py",
+          "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+          "start": 128,
+          "end": 156,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/PL_PH_detector.py#L128-L156"
+        },
+        {
+          "path": "engine/pipeline/reaction_engine.py",
+          "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+          "start": 1125,
+          "end": 1129,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/reaction_engine.py#L1125-L1129"
+        },
+        {
+          "path": "engine/pipeline/reaction_engine.py",
+          "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+          "start": 2836,
+          "end": 2838,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/reaction_engine.py#L2836-L2838"
+        }
+      ],
+      "disposition": "SOURCE_CONDITIONAL_REVIEWED",
+      "finding": "Closed prefix excludes reversal boundary; live.closed_regime if live present else supplied resolver. Indexed mode depends specifically on supplied closed_regime. Primary filter decision_index <= through_index; cached result must still prove exact Primary3 number/source timestamp/price. Release sequence indexes in finally; new regime includes boundary."
+    },
+    {
+      "id": "D10",
+      "title": "Actual replay entry and staged publication",
+      "bridge_call_rows": [
+        {
+          "row": 1212,
+          "line": 3745,
+          "callee": "_run_live_calculation"
+        },
+        {
+          "row": 1213,
+          "line": 3749,
+          "callee": "live_views.closed_regimes.stage"
+        },
+        {
+          "row": 1214,
+          "line": 3750,
+          "callee": "_run_live_calculation"
+        },
+        {
+          "row": 1220,
+          "line": 3765,
+          "callee": "build_response_payload"
+        }
+      ],
+      "anchors": [
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 1756,
+          "end": 1785,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1756-L1785"
+        },
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 3738,
+          "end": 3767,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L3738-L3767"
+        },
+        {
+          "path": "engine/bridge/live_pipeline.py",
+          "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+          "start": 25,
+          "end": 70,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/live_pipeline.py#L25-L70"
+        }
+      ],
+      "disposition": "SOURCE_CONDITIONAL_REVIEWED",
+      "finding": "Retained views and delta stage closed-prefix resolver, not per-detector live object. Fresh bucket path omits resolver; cache publishes after normal stage exit. Outer append failure resets views after bucket rollback."
+    },
+    {
+      "id": "D11",
+      "title": "True/False repair",
+      "bridge_call_rows": [],
+      "anchors": [
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 3691,
+          "end": 3703,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L3691-L3703"
+        },
+        {
+          "path": "engine/pipeline/true_false.py",
+          "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+          "start": 18,
+          "end": 30,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/true_false.py#L18-L30"
+        },
+        {
+          "path": "engine/pipeline/direction_policy.py",
+          "blob": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+          "start": 32,
+          "end": 70,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/direction_policy.py#L32-L70"
+        },
+        {
+          "path": "engine/pipeline/reaction_engine.py",
+          "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+          "start": 959,
+          "end": 963,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/reaction_engine.py#L959-L963"
+        },
+        {
+          "path": "engine/pipeline/reaction_engine.py",
+          "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+          "start": 1011,
+          "end": 1044,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/reaction_engine.py#L1011-L1044"
+        }
+      ],
+      "disposition": "SOURCE_CONDITIONAL_REVIEWED",
+      "finding": "Visible-end through inclusive, bisect_right(through), bisect_left(start); strict direction-specific lower crossing, exact Decimal and lower timestamp. No main fallback. Callback only invoked by repair conditions."
+    },
+    {
+      "id": "D12",
+      "title": "True/False rank and ownership",
+      "bridge_call_rows": [],
+      "anchors": [
+        {
+          "path": "engine/pipeline/true_false.py",
+          "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+          "start": 41,
+          "end": 128,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/true_false.py#L41-L128"
+        },
+        {
+          "path": "engine/pipeline/true_false.py",
+          "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+          "start": 131,
+          "end": 188,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/true_false.py#L131-L188"
+        },
+        {
+          "path": "engine/pipeline/lifecycle_engine.py",
+          "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+          "start": 37,
+          "end": 39,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/lifecycle_engine.py#L37-L39"
+        }
+      ],
+      "disposition": "SOURCE_CONDITIONAL_REVIEWED",
+      "finding": "Rank uses sequence_priority and E number; descending smaller ranks with strict bisect-left finds latest eligible reference at greatest lower rank. Separate repeat counters. Presentation source-time precedence Primary/StopAll/E/S excludes exact False and clears old annotation, not global event priority."
+    },
+    {
+      "id": "D13",
+      "title": "StopAll closure",
+      "bridge_call_rows": [],
+      "anchors": [
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 3691,
+          "end": 3703,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L3691-L3703"
+        },
+        {
+          "path": "engine/pipeline/true_false.py",
+          "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+          "start": 131,
+          "end": 159,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/true_false.py#L131-L159"
+        },
+        {
+          "path": "engine/pipeline/true_false.py",
+          "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+          "start": 162,
+          "end": 188,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/true_false.py#L162-L188"
+        }
+      ],
+      "disposition": "SOURCE_CONDITIONAL_REVIEWED",
+      "finding": "Closure min(visible through+1,last lower epoch+RAW duration); decisionTime+main timeframe <= closure. Callback absent permits matching; supplied callback gates repeated-prefix relabeling, not initial parity. Applied per segment."
+    },
+    {
+      "id": "D14",
+      "title": "Configured loading",
+      "bridge_call_rows": [],
+      "anchors": [
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 87,
+          "end": 98,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L87-L98"
+        },
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "start": 1974,
+          "end": 2009,
+          "url": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1974-L2009"
+        }
+      ],
+      "disposition": "SOURCE_CONDITIONAL_REVIEWED",
+      "finding": "Configured paths loaded via module loader; optional E, lifecycle configured or default, Primary fixed module if enabled. Native targets are conditional on actual configuration."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP292-F01",
+      "status": "DOCUMENTED_SOURCE_CONDITIONAL",
+      "finding": "Public entry paths do not supply optional per-detector live protocol. Staged closed-prefix cache is distinct."
+    },
+    {
+      "id": "CP292-F02",
+      "status": "DOCUMENTED",
+      "finding": "E restore_independent_s_roots mutates accepted source identity state."
+    },
+    {
+      "id": "CP292-F03",
+      "status": "DOCUMENTED",
+      "finding": "Native E reexports Order_B discovery and inherits audit methods; configured runtime targets remain conditional."
+    }
+  ],
+  "verification_note": "Initial pre-publication identity check rejected a transcription error in the expected Order Audit SHA. Fresh pinned tree and fetch_file agreed on 6ddb93ba097ef137af2405ef15356b6f6bcf97de; corrected literal before publication. No failed candidate tree was written.",
+  "limitations": [
+    "Scoped dependency context review only; not W1/W2 acceptance.",
+    "Full current Bridge AST replay and exact canonical integer statement/anonymous linkage still open; no RAW or engine execution."
+  ],
+  "runtime": "NOT RUN",
+  "raw": "NOT RUN"
+}
