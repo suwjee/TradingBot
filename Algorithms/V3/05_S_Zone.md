@@ -35,7 +35,7 @@ Race starts at Order confirmation and uses lower data when any exists in range. 
 
 ## S-M05 — Shared accepted Order reconciliation and continuation
 
-Once E supplies accepted ledger, deduplicate physical entries by First/Break (replace missing-cross entry only when new has crossing), require own confirmation < stop. Sort by (stop,confirmation,First,Break); for each S choose earliest stop >= frozen source main and strictly earlier than its current decision. Convert to Red and replace Order/decision provenance, retain source/price, A identity and formation type; clear Reset provenance. No new Order creation here. Live S caches resolved non-null decisions only if actual lower evidence and dependency frontier are settled; dirty includes changes in trend/opposite geometry, reset/Blue events and scope. Full details below.
+Once E supplies accepted ledger, deduplicate physical entries by First/Break (replace missing-cross entry only when new has crossing), require own confirmation < stop. Sort by (stop,confirmation,First,Break); for each S choose earliest stop >= frozen source main and strictly earlier than its current decision. Convert to Red and replace Order/decision provenance, retain source/price, A identity and formation type; clear Reset provenance. No new Order creation here. Live S caches resolved non-null decisions only if the route-specific settled-through guard and dependency frontier permit reuse (Type3/4 directly use decision time; Order-backed guard tests lower-row presence, not a crossing proof); dirty includes changes in trend/opposite geometry, reset/Blue events and scope. Full details below.
 
 ## Detailed S procedures
 

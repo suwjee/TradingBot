@@ -16,7 +16,7 @@ Reset time precedence is nonempty second_time, display_time, native timestamp; n
 
 ## CH03
 
-Reaction confirmation scans [valid intrabar start,Break open + timeframe), strict high above BoxTop bullish / low below BoxBottom bearish. Invalid start and absent crossing fall back to Break open. A disables intrabar start.
+Reaction confirmation scans [valid intrabar start,Break open + timeframe), strict high above BoxTop bullish / low below BoxBottom bearish. Invalid start resets scan start to Break open; absent strict crossing returns Break open as the confirmation fallback. A disables intrabar start.
 
 [Source engine/pipeline/reaction_engine.py:1257–1302](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/reaction_engine.py#L1257-L1302)
 

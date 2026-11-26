@@ -1,0 +1,1028 @@
+{
+  "checkpoint": 347,
+  "status": "PASS_SCOPED_HISTORICAL_LINKED_REACTION_BLUE_A_S_RECHECK",
+  "w2_acceptance": "NOT_ACCEPTED",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "d138499eeb7b8299855427e323a7d722c41e7f4f",
+  "entry_tree": "c69a8945649e3ca2f585d940d7947a078f091f46",
+  "scope": "22 remaining historical-linked Reaction/Blue/A/S/core records, directly re-reviewed; 66/131 cumulative, 65 remaining.",
+  "references": [
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP346_W2_Historical_Linked_Bridge_Recheck.json",
+      "blob": "d8a42520d7b55e1905317d0e83e22af9c715ea0e"
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP331_W2_Closure_Gate_Assessment.json",
+      "blob": "f7327e4a1ea9a190b420aeae72b4997e73f7ec5f"
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP333_W2_Dependency_Matrix.json",
+      "blob": "b48bae43c8a3a284cc164dc148fd542855420f95"
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP332_W2_Provider_Consumer_Supplement.json",
+      "blob": "eb02f1c1c5bf460a15f4c9ec8e8af750897b143b"
+    }
+  ],
+  "specification_blobs_before": [
+    [
+      "Algorithms/V3/01_Reaction_Engine.md",
+      "b21ad202aaf1fbbc0e098ad553b143c6bb4fc611"
+    ],
+    [
+      "Algorithms/V3/03_Blue_Line.md",
+      "69328918ac76dcde29eee0dc4a444b6412f6d37f"
+    ],
+    [
+      "Algorithms/V3/04_A_Zone.md",
+      "018c6276b6d5203369a95301e7b2480ec22e2d18"
+    ],
+    [
+      "Algorithms/V3/05_S_Zone.md",
+      "8e461aae1a14ac08a39fe7c8d73747d8a4a16ef0"
+    ],
+    [
+      "Algorithms/V3/Chronology/01_Time_Reaction.md",
+      "9cca7bd5bdbd4b01837ce07d9a3d194a639186b4"
+    ],
+    [
+      "Algorithms/V3/Chronology/02_Blue_A_S.md",
+      "247a11375b5c591b147ec204e10274d8c4e7e139"
+    ],
+    [
+      "Algorithms/V3/18_Live_Bridge.md",
+      "a236e63850e4815fa928a0e9a3f750fc5ad1a421"
+    ],
+    [
+      "Algorithms/V3/20_Indexes_And_Caching.md",
+      "1d915fe47adc154f6c8cfc63e4ba18ca0c7c3211"
+    ]
+  ],
+  "rows": [
+    {
+      "id": "CP323-P10",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2792,
+        2864
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "procedure": "LV-M02 / RE101–104",
+      "semantic_review": "Validate direction and >=2 committed main, copy lists, positive timeframe and contiguous positional extension with strictly increasing times; main gaps integral timeframe multiples, lower within new main range. Detector construction precedes try; retained cursor scan and index release finally. Snapshot clones Reaction candidates but only shallow Reset list.",
+      "cross_owner_disposition": "Standalone optional continuation; no active worker equivalence. Cleanup not guaranteed on detector construction failure.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M08"
+      ],
+      "consumer_groups": [
+        "CP332-G24"
+      ]
+    },
+    {
+      "id": "CP323-P11",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2866,
+        2905
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "procedure": "RE105–107 / LV-M02",
+      "semantic_review": "Both empty snapshot; otherwise validate against last committed rows and concatenate. No checkpoint replays initial cursor and counts batch main length; checkpoint seeds retained prefixes, clones previous/candidate and scans from next index. Release new sequence indexes in finally; commit only after successful scan/cleanup, then snapshot; preview leaves owned state unchanged.",
+      "cross_owner_disposition": "Snapshot failure after commit not rollback; retained prefixes may share original records. No runtime execution.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M08"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP323-P15",
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "range": [
+        447,
+        514
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "procedure": "BL10–13",
+      "semantic_review": "Validate direction, initialize checkpoint and calculate tail. Update bounds first_changed by existing checkpoint count/new reaction count; optional dirty main rewinds to first earlier break at/after dirty or affected Reset owner. Retain shallow checkpoint/line prefixes, replay nonempty suffix, publish only after success, shallow result.",
+      "cross_owner_disposition": "Removed Reset owners must be supplied by upstream frontier; no local universal dirty range or timeframe check.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M09"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP323-P18",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        502,
+        531
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "procedure": "A15 / CH14",
+      "semantic_review": "Binary path only nonnegative start, ordered confirmations, exact naive trigger, and if optional not_before, ordered Firsts and exact naive bound. Max of start and lower bounds; return 1-based original reaction. Else list-order inclusive comparisons, native negative indexing not normalized.",
+      "cross_owner_disposition": "A confirmation is caller's false-intrabar chronology value, including possible open fallback; ordering guards not proof of exact event.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M11"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP323-P21",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        839,
+        897
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "procedure": "A23–25",
+      "semantic_review": "Native wrapper constructs detector then detect; live history has separate dicts. Fresh history and previous reference initialized before base constructor (virtual confirmation calls). Compare zipped First/Break/confirmation triples and lengths; changed time minimum Break in both differing suffixes. Settled strictly before nonnull dirty.",
+      "cross_owner_disposition": "No full Reaction structural comparison; cache reuse requires relevant upstream frontier.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M12"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP323-P22",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        898,
+        960
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "procedure": "A26–30",
+      "semantic_review": "Settled reaction window end<=changed Break boundary. Confirmation cache key Break index/str level; previous hit only when Break main settled. Reset key source/str broken level uses previous if main settled. Crossing key str level,start,end retains null plus lower presence; old bounded end<=dirty or settled hit with same lower availability permits reuse. Earlier unchanged lower rows prevent fallback even when suffix empty; otherwise scan from dirty only in stated cases. Extrema prefer settled previous, else current, else native.",
+      "cross_owner_disposition": "String representations not Decimal numeric equality; lower availability controls fallback, not an unrestricted miss cache.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M12"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP323-P23",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        962,
+        1036
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "procedure": "A31–36",
+      "semantic_review": "Match key trigger/not_before; current, then old nonnull ordinal within common prefix, or old null with same inputs; else search from common prefix if old key exists. Return current Reaction. Blue key includes formation/stop/event/levels/kind/internal, not ordinal. Inherited stop reuse settled reaction window; pair trigger requires expiry and all relevant nonnull events settled; source key trigger index/confirmation both settled; zone identity key preserves Decimal as_tuple.",
+      "cross_owner_disposition": "Reuse bounded by exact keys and dirty input contract; no stale old Reaction object on match.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M12"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP323-P24",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        1042,
+        1069
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "procedure": "A37–39",
+      "semantic_review": "Wrapper result shallow list. Validate timeframe and dirty <= min old/new main counts; dirty minimum available old/new timestamp, else new last+TF (or None). Construct live detector, detect, clear previous history reference, publish detector/result, snapshot.",
+      "cross_owner_disposition": "Failure before assignment retains wrapper references, not generalized rollback of external owner objects.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M12"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP323-S08",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1371,
+        1408
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "procedure": "RE63–66 / RX-M04",
+      "semantic_review": "Span identity integer First/Break; published box bounds, native confirmation and First main. Outer First strictly earlier, confirmation/box inclusive. Inner path available lower rows inclusive via left/right bisect, nonempty required; extremes index and containment inclusive.",
+      "cross_owner_disposition": "No completeness/gap proof beyond actual available rows; published and native geometry distinct.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M02",
+        "CP333-M07"
+      ],
+      "consumer_groups": [
+        "CP332-G20"
+      ]
+    },
+    {
+      "id": "CP323-S09",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1409,
+        1478
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "procedure": "RE67–68",
+      "semantic_review": "Build both direction spans; optimize only exact naive times globally, otherwise scan all. Lazy inner extrema once eligible, empty breaks owner loop, first valid owner marks identity. Mutate original Candidate metadata by zipped ordinal, identity number map, blocked First timestamps; preserve full result lists.",
+      "cross_owner_disposition": "No removal of internal Reactions; no explicit rollback on metadata failure.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M02",
+        "CP333-M07"
+      ],
+      "consumer_groups": [
+        "CP332-G21"
+      ]
+    },
+    {
+      "id": "CP323-S19",
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "range": [
+        517,
+        590
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "procedure": "BL14–18",
+      "semantic_review": "Public filter calculation-valid truthy and not internal. Mark original lines via owner ordinal or strict same Reaction interior for semantic/rendered prices; owner short-circuit, ordinal range guard. Lazy index only once if all nonmissing windows exact naive; fallback full scan. Time First<source<=confirmation and both prices strictly interior; no separate healthy flag. Set true never clear.",
+      "cross_owner_disposition": "Caller supplies all candidate reactions; invalid evidence not erased before A; partial mutation may survive failure.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M02",
+        "CP333-M10"
+      ],
+      "consumer_groups": [
+        "CP332-G29"
+      ]
+    },
+    {
+      "id": "CP323-S20",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        26,
+        128
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "procedure": "A01–06 / A-M01",
+      "semantic_review": "Direction exact validation, copy native Reactions, stable Blue sort int ordinal/source time/str kind, chronology refs. First and Break main arrays and native A confirmation precomputed, independent ordered-naive flags. BlueState and AZone field contracts separate exact/main events; optional presentation fields not acceptance keys.",
+      "cross_owner_disposition": "A owns pairing and uses full Blue ordering including invalid/internal; policy/chronology primitives delegated.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M11"
+      ],
+      "consumer_groups": [
+        "CP332-G25"
+      ]
+    },
+    {
+      "id": "CP323-S24",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        731,
+        836
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "procedure": "A19–22",
+      "semantic_review": "Drop special if ordinary same nonnull Reaction ordinal. Latest ordinary strictly earlier source (first equal max), discard if its first strict stop from next source main until special First is at/after special Blue1 source. Remaining special consumes later-trigger ordinary intersecting integer Blue pair; equal trigger not consumed. Stable source/trigger final sort.",
+      "cross_owner_disposition": "No re-cross or older-owner fallback; stop query and visibility distinct.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M12"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP323-S34",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        80,
+        176
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "procedure": "S01–03 / S-M01",
+      "semantic_review": "Copy inputs, sort A by Break main/source int; validate inclusive range, derive half-open end. Initialize physical audit/windows and stopped-A lookup. First valid Reset Blue formation per ordinal, including internal. Trend chronological sorted tuples distinct from original order; optional ordered-naive confirmations and valid monotonic First indexes. Opposite confirmation keyed First last wins; exact Reset sort/owner map; public Blue excludes invalid/internal.",
+      "cross_owner_disposition": "Native default confirmation may fallback. Do not equate original ordinal with sorted confirmation rank or collapse physical pair by First.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M13"
+      ],
+      "consumer_groups": [
+        "CP332-G30"
+      ]
+    },
+    {
+      "id": "CP323-S35",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        201,
+        251
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "procedure": "S07–11 / CH15",
+      "semantic_review": "A ordinal range checked; price via as_decimal/policy. Strict stop from max(start,range_start), lower half-open to range end; indexed nonempty miss null, unindexed nonempty scan miss null; only empty lower scan main from lower_bound(original start) bounded stage. Main fallback duplicates timestamp.",
+      "cross_owner_disposition": "Exact lower evidence not guaranteed by main fallback; different start callers preserved.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M14"
+      ],
+      "consumer_groups": [
+        "CP332-G31"
+      ]
+    },
+    {
+      "id": "CP323-S38",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1248,
+        1304
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "procedure": "S42 / S-M02",
+      "semantic_review": "Clear windows/audit then audit every A before eligibility. Skip owned/cycle older or equal after output; next A confirmation bound strict stop<next. Compute first Order match before next bound rejection. Open ownership before candidate resolution; null leaves open. Success closes at max(A stop,decision+microsecond), advances cycle source; stable final sort.",
+      "cross_owner_disposition": "Initial audit includes later ineligible candidates; accepted A filtering downstream. Wrapper may mutate before exceptions.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M14",
+        "CP333-M15"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP324-S02",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        253,
+        276
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "procedure": "S12 / Order A",
+      "semantic_review": "Resolved first Order-backed zone delegates builder with original first physical Order and A stop unchanged.",
+      "cross_owner_disposition": "Later canonical Reaction does not replace creation provenance; source decision may use shared accepted Order only in separate reconciliation.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M14"
+      ],
+      "consumer_groups": [
+        "CP332-G31"
+      ]
+    },
+    {
+      "id": "CP324-S19",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1307,
+        1421
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "procedure": "S43 / S-M05",
+      "semantic_review": "Dedup physical First/Break, prefer nonnull stop_cross over null even if malformed. Require datetime confirmation; supplied tuple len>=3 with datetime element 2 accepted as shape, else compute strict cross; require confirmation<cross. Sort exact event/confirmation/First/Break. Earliest cross>=S source (inclusive), <current decision. Replace Red Order/decision fields, clear Reset; preserve source/A/formation.",
+      "cross_owner_disposition": "No local price proof of shape-valid supplied cross; no confirmation relative to S source required; no creation cause change.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M15"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP324-S20",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1424,
+        1466
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "procedure": "S44–46",
+      "semantic_review": "Dependency key includes raw geometry and string price/anchor, intrabar optional; set of trend/opposite Break time/side/zero ordinal/key plus exact reset owner, reset-Blue ordinal, public Blue time. Scope and stored decisions fresh.",
+      "cross_owner_disposition": "Dependency set dedups; caller supplies current authoritative detector and dirty market.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M16"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP324-S21",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1468,
+        1490
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "procedure": "S47",
+      "semantic_review": "Type3/4 frontier decision directly. Other types assert Order; lower_bound(max(Order confirmation,range start)) needs a row not later than decision; otherwise null. Max decision/Order Break, aligned trend Break and confirmation if present.",
+      "cross_owner_disposition": "Presence guard not crossing proof or range_end check; prevents simple main-only fallback caching where absent lower evidence.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M16"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP324-S22",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1492,
+        1525
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "procedure": "S48–49",
+      "semantic_review": "Validate dirty index inclusive count, scope direction/timeframe/start/range start; dirty timestamp or range end. Same scope min dirty with symmetric dependency difference event; other scope no prior. Key A ordinal/source index/time/str price/stop/optional Order number+geometry+confirmation. Reuse prior only frontier<dirty; otherwise resolve, cache nonnull with settled frontier. Publish scope/deps/decisions after detector success.",
+      "cross_owner_disposition": "No null decision caching/current-map hit; wrapper commit distinct from detector mutation. Conditional continuation only.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M16"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP325-S45",
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "range": [
+        51,
+        66
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "procedure": "Core utility / C contracts",
+      "semantic_review": "as_decimal returns existing Decimal unchanged (isinstance), otherwise Decimal(str(value)). Canonical Order identity and Reaction identity use int First/Break only.",
+      "cross_owner_disposition": "No rounding or lexical preservation promise for arbitrary non-Decimal input; no direction/parent key, bounds or identity validation.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M03"
+      ],
+      "consumer_groups": []
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP347-F01",
+      "status": "RESOLVED_SCOPED",
+      "meaning": "RX-M04 nonempty available lower path does not prove complete coverage; S-M05 settled-through lower presence does not prove crossing and Type3/4 route differs; CH03 invalid intrabar start resets search start, not immediate returned fallback. Active summaries qualified."
+    }
+  ],
+  "validation": {
+    "prior_transition_count": 316,
+    "queue_reviewed": 185,
+    "queue_missing": 0,
+    "queue_duplicate": 0,
+    "matrix_linked": 131,
+    "queue_and_matrix_union": 316,
+    "queue_matrix_overlap": 0,
+    "accessor_union": 20,
+    "additional_accessor_reviewed": 9,
+    "cp332_sites_preserved": 125,
+    "cp333_contracts_preserved": 37,
+    "new_linked_recheck": 22,
+    "linked_recheck_remaining": 65,
+    "raw": "NOT_RUN",
+    "runtime": "NOT_RUN",
+    "w2": "NOT_ACCEPTED",
+    "linked_recheck_cumulative": 66
+  },
+  "remaining_linked_transition_review_queue": [
+    {
+      "id": "CP323-S39",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        695,
+        763
+      ]
+    },
+    {
+      "id": "CP323-S40",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        766,
+        971
+      ]
+    },
+    {
+      "id": "CP323-S41",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        1412,
+        1610
+      ]
+    },
+    {
+      "id": "CP324-S24",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "range": [
+        2520,
+        2544
+      ]
+    },
+    {
+      "id": "CP324-S25",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "range": [
+        2546,
+        2598
+      ]
+    },
+    {
+      "id": "CP325-S03",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "range": [
+        77,
+        136
+      ]
+    },
+    {
+      "id": "CP325-S11",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "range": [
+        442,
+        520
+      ]
+    },
+    {
+      "id": "CP325-S12",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "range": [
+        523,
+        550
+      ]
+    },
+    {
+      "id": "CP325-S16",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "range": [
+        809,
+        918
+      ]
+    },
+    {
+      "id": "CP325-S18",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "range": [
+        982,
+        1086
+      ]
+    },
+    {
+      "id": "CP325-S20",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "range": [
+        1135,
+        1199
+      ]
+    },
+    {
+      "id": "CP325-S40",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "range": [
+        2206,
+        2288
+      ]
+    },
+    {
+      "id": "CP325-S41",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "range": [
+        2291,
+        2401
+      ]
+    },
+    {
+      "id": "CP325-S42",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "range": [
+        2404,
+        2459
+      ]
+    },
+    {
+      "id": "CP325-S44",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        606,
+        693
+      ]
+    },
+    {
+      "id": "CP326-S03",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "range": [
+        148,
+        174
+      ]
+    },
+    {
+      "id": "CP326-S04",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "range": [
+        176,
+        194
+      ]
+    },
+    {
+      "id": "CP326-S05",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "range": [
+        196,
+        218
+      ]
+    },
+    {
+      "id": "CP326-S08",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "range": [
+        313,
+        392
+      ]
+    },
+    {
+      "id": "CP326-S09",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "range": [
+        394,
+        411
+      ]
+    },
+    {
+      "id": "CP326-S11",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "range": [
+        440,
+        504
+      ]
+    },
+    {
+      "id": "CP326-S12",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "range": [
+        507,
+        557
+      ]
+    },
+    {
+      "id": "CP326-S13",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "range": [
+        559,
+        578
+      ]
+    },
+    {
+      "id": "CP326-S21",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "range": [
+        915,
+        1005
+      ]
+    },
+    {
+      "id": "CP326-S26",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "range": [
+        1132,
+        1173
+      ]
+    },
+    {
+      "id": "CP326-S27",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "range": [
+        1175,
+        1218
+      ]
+    },
+    {
+      "id": "CP326-S31",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "range": [
+        1365,
+        1404
+      ]
+    },
+    {
+      "id": "CP326-S32",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "range": [
+        1406,
+        1453
+      ]
+    },
+    {
+      "id": "CP326-S33",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "range": [
+        1454,
+        1464
+      ]
+    },
+    {
+      "id": "CP326-S35",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "range": [
+        1495,
+        1506
+      ]
+    },
+    {
+      "id": "CP327-S03",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        95,
+        139
+      ]
+    },
+    {
+      "id": "CP327-S04",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        142,
+        168
+      ]
+    },
+    {
+      "id": "CP327-S08",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        350,
+        366
+      ]
+    },
+    {
+      "id": "CP327-S09",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        368,
+        416
+      ]
+    },
+    {
+      "id": "CP327-S10",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        418,
+        446
+      ]
+    },
+    {
+      "id": "CP327-S15",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        534,
+        548
+      ]
+    },
+    {
+      "id": "CP327-S16",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        550,
+        571
+      ]
+    },
+    {
+      "id": "CP327-S17",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        572,
+        590
+      ]
+    },
+    {
+      "id": "CP327-S20",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        996,
+        1034
+      ]
+    },
+    {
+      "id": "CP327-S21",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        1036,
+        1066
+      ]
+    },
+    {
+      "id": "CP327-S22",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        1073,
+        1108
+      ]
+    },
+    {
+      "id": "CP327-S23",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        1112,
+        1136
+      ]
+    },
+    {
+      "id": "CP327-S30",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        1377,
+        1409
+      ]
+    },
+    {
+      "id": "CP328-S01",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        25,
+        99
+      ]
+    },
+    {
+      "id": "CP328-S02",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        101,
+        125
+      ]
+    },
+    {
+      "id": "CP328-S03",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        128,
+        172
+      ]
+    },
+    {
+      "id": "CP328-S04",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        175,
+        195
+      ]
+    },
+    {
+      "id": "CP328-S05",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        198,
+        219
+      ]
+    },
+    {
+      "id": "CP328-S06",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        222,
+        245
+      ]
+    },
+    {
+      "id": "CP328-S07",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        248,
+        284
+      ]
+    },
+    {
+      "id": "CP328-S08",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        287,
+        325
+      ]
+    },
+    {
+      "id": "CP328-S09",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        326,
+        349
+      ]
+    },
+    {
+      "id": "CP328-S10",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        350,
+        385
+      ]
+    },
+    {
+      "id": "CP328-S11",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        386,
+        418
+      ]
+    },
+    {
+      "id": "CP328-S12",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        421,
+        455
+      ]
+    },
+    {
+      "id": "CP328-S17",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        575,
+        596
+      ]
+    },
+    {
+      "id": "CP328-S18",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        597,
+        621
+      ]
+    },
+    {
+      "id": "CP328-S19",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        624,
+        642
+      ]
+    },
+    {
+      "id": "CP328-S20",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        644,
+        662
+      ]
+    },
+    {
+      "id": "CP328-S21",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        663,
+        680
+      ]
+    },
+    {
+      "id": "CP328-S22",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        683,
+        732
+      ]
+    },
+    {
+      "id": "CP328-S23",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        735,
+        740
+      ]
+    },
+    {
+      "id": "CP328-S25",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        770,
+        797
+      ]
+    },
+    {
+      "id": "CP328-S26",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        800,
+        814
+      ]
+    },
+    {
+      "id": "CP328-S27",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        816,
+        839
+      ]
+    }
+  ],
+  "remaining": "CP348: independent historical matrix-linked Order/E 26 records; then Lifecycle/Primary 39 and separate F05/R01/R02 closure gate. W3/W4 NOT RUN."
+}
