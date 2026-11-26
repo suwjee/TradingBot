@@ -1,0 +1,80 @@
+{
+  "checkpoint": 361,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded native handoffs; no full cross-owner acceptance",
+  "boundaries": [
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        148,
+        163
+      ],
+      "meaning": "Base initializes _reaction_break_index_cache after shared time/lower indexes; RE87 uses inherited cache, not missing Unified-local initialization."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2115,
+        2128
+      ],
+      "meaning": "Gate selection bisects cached Break indices and uses corresponding native ledger positions; duplicate/order/alignment assumptions are not validated by RE87."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2291,
+        2417
+      ],
+      "meaning": "RE92 local floor/ceiling admission remains active in both searches; RE93 evaluates strict confirmation, owner invalidation before writes, returns candidate or positional invalidation/None. RE85 bypasses owner invalidation, not builder. Full RE92–94 local review pending."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2557,
+        2607
+      ],
+      "meaning": "Retained scan captures prior cursor/counts, calls RE84 with earlier pending flag and remembers checkpoint when true; ordinary route calls RE83 and discards flag. Incomplete structural result breaks; accepted structural candidate normalized and appended. Complete continuation review pending."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2873,
+        2905
+      ],
+      "meaning": "When checkpoint absent, extension creates fresh detector and calls _detect with saved initial cursor; otherwise copies checkpoint cursor and scans normal. Commit updates retained state only on commit; preview returns snapshot. Full validation/failure/alias review pending."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2685,
+        2693
+      ],
+      "meaning": "Full-context geometry constructors gate each trend flag by exact direction; analogous branch 2764–2774. Independent regime segment call 3612–3614 sets flags from transition target. Full regime/consumer acceptance deferred."
+    }
+  ],
+  "prior": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02",
+    "CP313",
+    "CP321",
+    "CP323-S13",
+    "CP323-S14",
+    "CP323-S15",
+    "CP335",
+    "CP350",
+    "CP356",
+    "CP359",
+    "CP360"
+  ],
+  "status": "PARTIAL_CONSUMER_TRACE",
+  "remaining": "Complete Order gate, builder/race and continuation; validate native caller identity, dirty frontier and projection."
+}
