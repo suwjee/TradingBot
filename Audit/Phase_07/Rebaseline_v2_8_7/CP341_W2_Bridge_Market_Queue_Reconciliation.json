@@ -1,0 +1,2854 @@
+{
+  "checkpoint": 341,
+  "status": "PASS_SCOPED_W2_BRIDGE_MARKET_INPUT_QUEUE_RECONCILIATION",
+  "w2_acceptance": "NOT_ACCEPTED",
+  "entry_algorithm": "59263b8c7621b5034af0c132b170c9b00e2f32ce",
+  "entry_tree": "097a6e46c87d09f8062a2c44244fc58e9fb7673b",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "17 queued market input/context/closed-regime/entry transitions; full B09 W1 row traceability normalization from 16 source review files, CP308 parts, canonical row crosswalk and prior ledger. Not all Bridge transitions or W2 acceptance.",
+  "source": {
+    "path": "engine/bridge/trading_pipeline.py",
+    "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735"
+  },
+  "specification_blobs": {
+    "Algorithms/V3/17_Trading_Bridge.md": "fd709462a61df11ebeb5bf4f4e5dc66be794bef5",
+    "Algorithms/V3/21_RAW_Aggregation_Contract.md": "1344786aac8bde8b309c13a5e40cef8e3e519c7e",
+    "Algorithms/V3/18_Live_Bridge.md": "08d94f96b520199bda362c5c88470b10d1804dcc",
+    "Algorithms/V3/15_Trend_Reversal.md": "c9c9bc34355605d07d66ee7c271678f5f1e95661"
+  },
+  "w1": {
+    "reconciliation_blobs": [
+      "1c9fdc8309c7eb0ee01e824a17b0d13f14a24c75",
+      "f13a20275dad28c2b6d94b57108e89dc57d22dd4"
+    ],
+    "crosswalk_blob": "6e63f089224527066d860078ff87853b9e56c1c9",
+    "ledger_blob": "3c6a6ad5daac23bfdc30b39cf052dd6f45c7f079",
+    "parts": [
+      {
+        "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+        "blob": "319484424a1c66a8796b5f343019b8396c0b9d69",
+        "size": 332569
+      },
+      {
+        "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+        "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3",
+        "size": 242228
+      }
+    ],
+    "method": "Read actual review rows, verify file blob and category counts, normalize span/group/disposition and compare recorded prior row to canonical mapping; independently compare union to exact CP308 category IDs and ledger prior IDs. Overlap links are traceability only."
+  },
+  "rows": [
+    {
+      "id": "CP323-P25",
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        1756,
+        1785
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "review": "Stage captures previous published map and fresh current map. Key exact direction, absolute offset and excluded end, boundary candle timestamp, visible start and min(end,boundary-1), both initial flags. Read previous only when absolute exclusive end<=first_dirty_main; None miss recalculates. No current-map lookup on repeated same-stage key. Yield then publish current only on successful exit.",
+      "handoff": "Only reuse independent closed prefixes, not open trading stages. Outer protected append discards retained views on failure. Cached local payload is copied before publication/index projection and T/F.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "LV-M04 / TR-M02",
+        "paths": [
+          "Algorithms/V3/17_Trading_Bridge.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/15_Trend_Reversal.md"
+        ]
+      },
+      "w1": {
+        "batch": "B09",
+        "overlapping_row_links": [
+          [
+            "branches",
+            220,
+            [
+              "B293-B09"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "branches",
+            221,
+            [
+              "B293-B09"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "branches",
+            222,
+            [
+              "B293-B10"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "comparisons",
+            137,
+            [
+              "B293-B09"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "comparisons",
+            138,
+            [
+              "B293-B09"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "arithmetic",
+            79,
+            [
+              "B293-B08"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "arithmetic",
+            80,
+            [
+              "B293-B08"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            613,
+            [
+              "B293-B08"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            614,
+            [
+              "B293-B09"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            615,
+            [
+              "B293-B09"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ]
+        ],
+        "traceability_parts": [
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+            "blob": "319484424a1c66a8796b5f343019b8396c0b9d69"
+          },
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+            "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3"
+          }
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP330-S01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        54,
+        84
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "review": "ContextVar token restored in finally. Details merged after status/label; explicit nonnull duration overwrites durationMs after rounding. Sink non-null called directly, else compact flushed stderr. Timed stage starts clock and emits started before try; finally accumulates unrounded milliseconds then completed, even when work fails; finally exception can replace original failure/result.",
+      "handoff": "Telemetry has no intended price effect, but no blanket exception suppression. Callback errors remain observable.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "TB01–03",
+        "paths": [
+          "Algorithms/V3/17_Trading_Bridge.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/15_Trend_Reversal.md"
+        ]
+      },
+      "w1": {
+        "batch": "B09",
+        "overlapping_row_links": [
+          [
+            "branches",
+            1,
+            [
+              "CP300-G04"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "branches",
+            2,
+            [
+              "CP300-G04"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "branches",
+            3,
+            [
+              "CP300-G05"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "branches",
+            4,
+            [
+              "CP300-G06"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "branches",
+            5,
+            [
+              "CP300-G07",
+              "CP300-G08"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "comparisons",
+            1,
+            [
+              "CP300-G05"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "comparisons",
+            2,
+            [
+              "CP300-G06"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "arithmetic",
+            1,
+            [
+              "CP300-G05"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "arithmetic",
+            2,
+            [
+              "CP300-G08"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "arithmetic",
+            3,
+            [
+              "CP300-G08"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "arithmetic",
+            4,
+            [
+              "CP300-G08"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "calls",
+            6,
+            [
+              "CP300-G04"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "calls",
+            7,
+            [
+              "CP300-G04"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "calls",
+            8,
+            [
+              "CP300-G05"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "calls",
+            9,
+            [
+              "CP300-G06"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "calls",
+            10,
+            [
+              "CP300-G06"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "calls",
+            11,
+            [
+              "CP300-G06"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "calls",
+            12,
+            [
+              "CP300-G06"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "calls",
+            13,
+            [
+              "CP300-G07"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "calls",
+            14,
+            [
+              "CP300-G07"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "calls",
+            15,
+            [
+              "CP300-G07"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "calls",
+            16,
+            [
+              "CP300-G08"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "calls",
+            17,
+            [
+              "CP300-G08"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ],
+          [
+            "calls",
+            18,
+            [
+              "CP300-G08"
+            ],
+            "CP300_B09_Core_Helpers_Serialization_Review"
+          ]
+        ],
+        "traceability_parts": [
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+            "blob": "319484424a1c66a8796b5f343019b8396c0b9d69"
+          },
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+            "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3"
+          }
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP330-S03",
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        101,
+        137
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "review": "Epoch cache miss converts via Tehran then strips tzinfo. Reverse conversion attaches/replaces tzinfo, not timezone conversion; int truncates toward zero. Native datetime including subclass bypasses display string cache, otherwise exact format parsed; nonnull hits reused (0 epoch valid). No fallback.",
+      "handoff": "Native chronology uses wall-clock values; serialized epoch is distinct coordinate. Cache lifecycle TB97 scope.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "TB06–08",
+        "paths": [
+          "Algorithms/V3/17_Trading_Bridge.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/15_Trend_Reversal.md"
+        ]
+      },
+      "w1": {
+        "batch": "B09",
+        "overlapping_row_links": [
+          [
+            "branches",
+            8,
+            [
+              "B293-B01"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "branches",
+            9,
+            [
+              "B293-B02"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "branches",
+            10,
+            [
+              "B293-B03"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "branches",
+            11,
+            [
+              "B293-B03"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "comparisons",
+            5,
+            [
+              "B293-B01"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "comparisons",
+            6,
+            [
+              "B293-B02"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "comparisons",
+            7,
+            [
+              "B293-B03"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "arithmetic",
+            5,
+            [
+              "B293-B03"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            24,
+            [
+              "B293-B01"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            25,
+            [
+              "B293-B01"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            26,
+            [
+              "B293-B01"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            27,
+            [
+              "B293-B02"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            28,
+            [
+              "B293-B02"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            29,
+            [
+              "B293-B02"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            30,
+            [
+              "B293-B02"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            31,
+            [
+              "B293-B03"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            32,
+            [
+              "B293-B03"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            33,
+            [
+              "B293-B03"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            34,
+            [
+              "B293-B03"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            35,
+            [
+              "B293-B03"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ]
+        ],
+        "traceability_parts": [
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+            "blob": "319484424a1c66a8796b5f343019b8396c0b9d69"
+          },
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+            "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3"
+          }
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP330-S04",
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        140,
+        184
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "review": "Optional tails are retained by reference even main tail if lower_only. Iterate supplied order, int time then Decimal callback O,H,L,C. Consecutive equal key preserves O, max/min previous-first (equal representation retained), latest C. Main floor division except TF1; lower_only bypasses main update entirely. No global merge of discontiguous equal keys, sorting, filling or validation.",
+      "handoff": "Batch aggregation differs from live checked iterator; same-time lower grouping not equal to RAW timeframe expansion.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "RAW-M01/02 / TB09",
+        "paths": [
+          "Algorithms/V3/17_Trading_Bridge.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/15_Trend_Reversal.md"
+        ]
+      },
+      "w1": {
+        "batch": "B09",
+        "overlapping_row_links": [
+          [
+            "branches",
+            12,
+            [
+              "B293-A01"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            13,
+            [
+              "B293-A01"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            14,
+            [
+              "B293-A02"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            15,
+            [
+              "B293-A03"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            16,
+            [
+              "B293-A03"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            17,
+            [
+              "B293-A05"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            18,
+            [
+              "B293-A05"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            19,
+            [
+              "B293-A06"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            20,
+            [
+              "B293-A06"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "comparisons",
+            8,
+            [
+              "B293-A01"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "comparisons",
+            9,
+            [
+              "B293-A01"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "comparisons",
+            10,
+            [
+              "B293-A03"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "comparisons",
+            11,
+            [
+              "B293-A03"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "comparisons",
+            12,
+            [
+              "B293-A05"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "comparisons",
+            13,
+            [
+              "B293-A06"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "comparisons",
+            14,
+            [
+              "B293-A06"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            6,
+            [
+              "B293-A01"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            7,
+            [
+              "B293-A01"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            8,
+            [
+              "B293-A05"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            9,
+            [
+              "B293-A05"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            36,
+            [
+              "B293-A02"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            37,
+            [
+              "B293-A02"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            38,
+            [
+              "B293-A02"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            39,
+            [
+              "B293-A02"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            40,
+            [
+              "B293-A02"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            41,
+            [
+              "B293-A03"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            42,
+            [
+              "B293-A04"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            43,
+            [
+              "B293-A04"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            44,
+            [
+              "B293-A06"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            45,
+            [
+              "B293-A07"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            46,
+            [
+              "B293-A07"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ]
+        ],
+        "traceability_parts": [
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+            "blob": "319484424a1c66a8796b5f343019b8396c0b9d69"
+          },
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+            "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3"
+          }
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP330-S05",
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        187,
+        202
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "review": "Fresh typed value cache per invocation. Lookup only inside KeyError catch, on miss as_decimal and store. Same-type equal Decimal can return first representation despite different exponent; existing Decimal returned unchanged by provider on miss. No newly introduced float conversion.",
+      "handoff": "Exact native representation contract, not universal preservation of every distinct input lexeme. Unhashable/malformed values propagate.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "TB10–11",
+        "paths": [
+          "Algorithms/V3/17_Trading_Bridge.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/15_Trend_Reversal.md"
+        ]
+      },
+      "w1": {
+        "batch": "B09",
+        "overlapping_row_links": [
+          [
+            "branches",
+            21,
+            [
+              "B293-A09"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            22,
+            [
+              "B293-A09"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            47,
+            [
+              "B293-A09"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            48,
+            [
+              "B293-A09"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            49,
+            [
+              "B293-A10"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ]
+        ],
+        "traceability_parts": [
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+            "blob": "319484424a1c66a8796b5f343019b8396c0b9d69"
+          },
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+            "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3"
+          }
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP330-S06",
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        205,
+        227
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "review": "Frozen slotted delta holds dirty and settled counts; exact int timeframe (not bool/subclass) positive. Main aliases same lower list at TF1, otherwise separate. Last timestamp null, typed persistent prices empty; append enters stage and returns yielded delta after context exit.",
+      "handoff": "Bucket owner is input normalization; not behavior ownership.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "TB12–13",
+        "paths": [
+          "Algorithms/V3/17_Trading_Bridge.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/15_Trend_Reversal.md"
+        ]
+      },
+      "w1": {
+        "batch": "B09",
+        "overlapping_row_links": [
+          [
+            "branches",
+            23,
+            [
+              "B293-A11"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            24,
+            [
+              "B293-A11"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            25,
+            [
+              "B293-A11"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            26,
+            [
+              "B293-A12"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "comparisons",
+            15,
+            [
+              "B293-A11"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "comparisons",
+            16,
+            [
+              "B293-A11"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "comparisons",
+            17,
+            [
+              "B293-A11"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            10,
+            [
+              "B293-A11"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            50,
+            [
+              "B293-A10"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            51,
+            [
+              "B293-A11"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            52,
+            [
+              "B293-A11"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            53,
+            [
+              "B293-A12"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ]
+        ],
+        "traceability_parts": [
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+            "blob": "319484424a1c66a8796b5f343019b8396c0b9d69"
+          },
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+            "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3"
+          }
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP330-S07",
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        229,
+        254
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "review": "Initial dirty indices lengths; empty yields delta without modification. First timestamp int-converted before validation; rewind lower on previous last exact equality and existing bucket, copy tail; rewind main on aligned last key only nonshared, copy tail. TF1 dirty main=dirty lower. Private price additions and previous-time capture begin before checked iteration.",
+      "handoff": "Time check occurs during later lazy checked rows; preliminary int conversion can fail outside rollback. Caller input order not repaired.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "TB14",
+        "paths": [
+          "Algorithms/V3/17_Trading_Bridge.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/15_Trend_Reversal.md"
+        ]
+      },
+      "w1": {
+        "batch": "B09",
+        "overlapping_row_links": [
+          [
+            "branches",
+            27,
+            [
+              "B293-A13"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            28,
+            [
+              "B293-A13"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            29,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            30,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            31,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            32,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            33,
+            [
+              "B293-A15"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "comparisons",
+            18,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "comparisons",
+            19,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "comparisons",
+            20,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            11,
+            [
+              "B293-A13"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            12,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            13,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            14,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            15,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            16,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            17,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            18,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            19,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            54,
+            [
+              "B293-A13"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            55,
+            [
+              "B293-A13"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            56,
+            [
+              "B293-A13"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            57,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            58,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            59,
+            [
+              "B293-A14"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ]
+        ],
+        "traceability_parts": [
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+            "blob": "319484424a1c66a8796b5f343019b8396c0b9d69"
+          },
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+            "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3"
+          }
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP330-S09",
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        278,
+        303
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "review": "Snapshot old suffixes, prior timestamp; publish new prices then lower/main suffix then last time BEFORE try. Catch BaseException in delta construction or consumer body: restore lower then nonshared main then last time, delete new keys, rethrow. Earlier commit assignments outside try; empty branch outside rollback. Delta counts exclusive max(0,len-1).",
+      "handoff": "Only bucket transaction rollback, not arbitrary callbacks or view index mutations. Last bucket provisional even with RAW gaps.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "TB14/17",
+        "paths": [
+          "Algorithms/V3/17_Trading_Bridge.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/15_Trend_Reversal.md"
+        ]
+      },
+      "w1": {
+        "batch": "B09",
+        "overlapping_row_links": [
+          [
+            "branches",
+            42,
+            [
+              "B293-A19"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            43,
+            [
+              "B293-A19"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            44,
+            [
+              "B293-A20"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            45,
+            [
+              "B293-A20"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            46,
+            [
+              "B293-A20"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            47,
+            [
+              "B293-A20"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            48,
+            [
+              "B293-A20"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            20,
+            [
+              "B293-A19"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            21,
+            [
+              "B293-A19"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            22,
+            [
+              "B293-A20"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            23,
+            [
+              "B293-A21"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "arithmetic",
+            24,
+            [
+              "B293-A21"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            67,
+            [
+              "B293-A19"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            68,
+            [
+              "B293-A20"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            69,
+            [
+              "B293-A21"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            70,
+            [
+              "B293-A21"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            71,
+            [
+              "B293-A21"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            72,
+            [
+              "B293-A21"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            73,
+            [
+              "B293-A21"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ]
+        ],
+        "traceability_parts": [
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+            "blob": "319484424a1c66a8796b5f343019b8396c0b9d69"
+          },
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+            "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3"
+          }
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP330-S10",
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        306,
+        333
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "review": "Enumerate supplied normalized buckets from start_index, convert epoch to Tehran naive and format six components; engine callback classifies original open/close; construct Candle with original OHLC references, order and positional indices. No independent normalization.",
+      "handoff": "Dynamic Candle/classifier owner conditional; native classifier semantics not inferred for arbitrary configured engine.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "TB18",
+        "paths": [
+          "Algorithms/V3/17_Trading_Bridge.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/15_Trend_Reversal.md"
+        ]
+      },
+      "w1": {
+        "batch": "B09",
+        "overlapping_row_links": [
+          [
+            "branches",
+            49,
+            [
+              "B293-A22"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            74,
+            [
+              "B293-A22"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            75,
+            [
+              "B293-A22"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            76,
+            [
+              "B293-A23"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            77,
+            [
+              "B293-A23"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            78,
+            [
+              "B293-A23"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            79,
+            [
+              "B293-A23"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ]
+        ],
+        "traceability_parts": [
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+            "blob": "319484424a1c66a8796b5f343019b8396c0b9d69"
+          },
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+            "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3"
+          }
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP330-S11",
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        336,
+        364
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "review": "Fresh view lists/index null and closed cache. Rebuild dirty suffix or zero if no index, replace list before index update. New index with retain_crossings=True if absent or length>capacity; equal capacity refresh. Native refresh guard requires 0<=first<=old_length<=new_length<=size; clear prior history only first<old_length-1; no local rollback. Lower update assigned before separate main; TF1 aliases list/index.",
+      "handoff": "Retained view may be partially mutated on failure, outer Live owner discards it. Dirty frontier and stable prefix are caller premise, not runtime equivalence.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "TB19–21",
+        "paths": [
+          "Algorithms/V3/17_Trading_Bridge.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/15_Trend_Reversal.md"
+        ]
+      },
+      "w1": {
+        "batch": "B09",
+        "overlapping_row_links": [
+          [
+            "branches",
+            50,
+            [
+              "B293-A25"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            51,
+            [
+              "B293-A26"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            52,
+            [
+              "B293-A26"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "branches",
+            53,
+            [
+              "B293-A28"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "comparisons",
+            27,
+            [
+              "B293-A25"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "comparisons",
+            28,
+            [
+              "B293-A26"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "comparisons",
+            29,
+            [
+              "B293-A26"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "comparisons",
+            30,
+            [
+              "B293-A28"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            80,
+            [
+              "B293-A24"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            81,
+            [
+              "B293-A25"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            82,
+            [
+              "B293-A26"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            83,
+            [
+              "B293-A26"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            84,
+            [
+              "B293-A26"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            85,
+            [
+              "B293-A27"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            86,
+            [
+              "B293-A27"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            87,
+            [
+              "B293-A28"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ],
+          [
+            "calls",
+            88,
+            [
+              "B293-A28"
+            ],
+            "CP293_B09_Market_Input_Review_01"
+          ]
+        ],
+        "traceability_parts": [
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+            "blob": "319484424a1c66a8796b5f343019b8396c0b9d69"
+          },
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+            "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3"
+          }
+        ]
+      },
+      "cp332_group_ids": [
+        "CP332-G01"
+      ]
+    },
+    {
+      "id": "CP330-S12",
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        1732,
+        1753
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "review": "Frozen slotted EngineBundle and MarketContext are reference containers: required engine entries incl nullable E/lifecycle, primary default null; context full lower/main lists and chronology/index, visible bounds, offset zero, trend flags false. Freeze does not recursively freeze lists/index.",
+      "handoff": "No source selection or behavior acceptance inside record declarations; dynamically supplied module interfaces conditional.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "TB-M05 / records",
+        "paths": [
+          "Algorithms/V3/17_Trading_Bridge.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/15_Trend_Reversal.md"
+        ]
+      },
+      "w1": {
+        "batch": "B09",
+        "overlapping_row_links": [
+          [
+            "arithmetic",
+            76,
+            [
+              "B293-B04"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "arithmetic",
+            77,
+            [
+              "B293-B04"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "arithmetic",
+            78,
+            [
+              "B293-B04"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            611,
+            [
+              "B293-B04"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            612,
+            [
+              "B293-B05"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ]
+        ],
+        "traceability_parts": [
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+            "blob": "319484424a1c66a8796b5f343019b8396c0b9d69"
+          },
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+            "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3"
+          }
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP330-S15",
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        1897,
+        1971
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "review": "Required engine path aliases Reaction/Blue/A/S, data, timeframe/from/to and direction enumerated. E/lifecycle optional; four enabled/disabled flags default enabled, bridge-output store_true, raw timeframe default1. Parse native int then analysis TF guard before RAW TF guard. No independent from/to order or timestamp positivity.",
+      "handoff": "CLI options do not prove all engines enabled; load and stage gates are distinct (TB67,TB71/73).",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "TB66",
+        "paths": [
+          "Algorithms/V3/17_Trading_Bridge.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/15_Trend_Reversal.md"
+        ]
+      },
+      "w1": {
+        "batch": "B09",
+        "overlapping_row_links": [
+          [
+            "branches",
+            262,
+            [
+              "CP307-G03"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "branches",
+            263,
+            [
+              "CP307-G03"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "comparisons",
+            162,
+            [
+              "CP307-G03"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "comparisons",
+            163,
+            [
+              "CP307-G03"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            664,
+            [
+              "CP307-G01"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            665,
+            [
+              "CP307-G01"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            666,
+            [
+              "CP307-G01"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            667,
+            [
+              "CP307-G01"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            668,
+            [
+              "CP307-G01"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            669,
+            [
+              "CP307-G01"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            670,
+            [
+              "CP307-G01"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            671,
+            [
+              "CP307-G02"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            672,
+            [
+              "CP307-G02"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            673,
+            [
+              "CP307-G02"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            674,
+            [
+              "CP307-G02"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            675,
+            [
+              "CP307-G02"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            676,
+            [
+              "CP307-G03"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            677,
+            [
+              "CP307-G03"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            678,
+            [
+              "CP307-G03"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            679,
+            [
+              "CP307-G03"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            680,
+            [
+              "CP307-G03"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            681,
+            [
+              "CP307-G03"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            682,
+            [
+              "CP307-G03"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            683,
+            [
+              "CP307-G03"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ],
+          [
+            "calls",
+            684,
+            [
+              "CP307-G03"
+            ],
+            "CP307_B09_CLI_Engine_Bundle_Review"
+          ]
+        ],
+        "traceability_parts": [
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+            "blob": "319484424a1c66a8796b5f343019b8396c0b9d69"
+          },
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+            "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3"
+          }
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP330-S17",
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        2012,
+        2027
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "review": "Timed full read then remove exactly one BOM prefix; JSON parse_float Decimal and default ints. No filter before normalization; parse/read failure propagate, telemetry finally observable.",
+      "handoff": "Source-only review; no file payload loaded. Decimal lexeme preservation at parse distinct from typed cache equality.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "TB68",
+        "paths": [
+          "Algorithms/V3/17_Trading_Bridge.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/15_Trend_Reversal.md"
+        ]
+      },
+      "w1": {
+        "batch": "B09",
+        "overlapping_row_links": [
+          [
+            "calls",
+            700,
+            [
+              "B293-B22"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            701,
+            [
+              "B293-B22"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            702,
+            [
+              "B293-B22"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            703,
+            [
+              "B293-B23"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            704,
+            [
+              "B293-B23"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            705,
+            [
+              "B293-B23"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ]
+        ],
+        "traceability_parts": [
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+            "blob": "319484424a1c66a8796b5f343019b8396c0b9d69"
+          },
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+            "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3"
+          }
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP330-S18",
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        2030,
+        2052
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "review": "Timed pass-through of same source_rows object; reject falsy, normalize full history with lower_only exactly TF1, delegate context construction. No requested window filtering, sorting or future-row truncation.",
+      "handoff": "Range is presentation, full chronology may resolve provisional earlier behavior with later rows; independent reversal slicing is separate.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "TB69",
+        "paths": [
+          "Algorithms/V3/17_Trading_Bridge.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/15_Trend_Reversal.md"
+        ]
+      },
+      "w1": {
+        "batch": "B09",
+        "overlapping_row_links": [
+          [
+            "branches",
+            267,
+            [
+              "B293-B24"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "comparisons",
+            166,
+            [
+              "B293-B25"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "arithmetic",
+            106,
+            [
+              "B293-B24"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            706,
+            [
+              "B293-B24"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            707,
+            [
+              "B293-B24"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            708,
+            [
+              "B293-B25"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            709,
+            [
+              "B293-B25"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            710,
+            [
+              "B293-B25"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ]
+        ],
+        "traceability_parts": [
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+            "blob": "319484424a1c66a8796b5f343019b8396c0b9d69"
+          },
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+            "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3"
+          }
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP330-S20",
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        2081,
+        2111
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "review": "Use lower buckets at TF1 else main; align from/to floor except TF1. Start lower_bound(start key), inclusive end lower_bound(end key+TF)-1. Reject start>=main len or end<start before clamp to last main. Return context full arrays/index and local display bounds, defaults offset/trends.",
+      "handoff": "No calculation slicing, no raw_timeframe slots; selected range not necessarily exact requested timestamp endpoints.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "TB70",
+        "paths": [
+          "Algorithms/V3/17_Trading_Bridge.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/15_Trend_Reversal.md"
+        ]
+      },
+      "w1": {
+        "batch": "B09",
+        "overlapping_row_links": [
+          [
+            "branches",
+            271,
+            [
+              "B293-B29"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "branches",
+            272,
+            [
+              "B293-B29"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "branches",
+            273,
+            [
+              "B293-B29"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "branches",
+            274,
+            [
+              "B293-B31"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "branches",
+            275,
+            [
+              "B293-B31"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "comparisons",
+            170,
+            [
+              "B293-B29"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "comparisons",
+            171,
+            [
+              "B293-B29"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "comparisons",
+            172,
+            [
+              "B293-B29"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "comparisons",
+            173,
+            [
+              "B293-B31"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "comparisons",
+            174,
+            [
+              "B293-B31"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "arithmetic",
+            109,
+            [
+              "B293-B29"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "arithmetic",
+            110,
+            [
+              "B293-B29"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "arithmetic",
+            111,
+            [
+              "B293-B29"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "arithmetic",
+            112,
+            [
+              "B293-B29"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "arithmetic",
+            113,
+            [
+              "B293-B30"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "arithmetic",
+            114,
+            [
+              "B293-B30"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "arithmetic",
+            115,
+            [
+              "B293-B31"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            721,
+            [
+              "B293-B30"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            722,
+            [
+              "B293-B30"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            723,
+            [
+              "B293-B31"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            724,
+            [
+              "B293-B31"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            725,
+            [
+              "B293-B31"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            726,
+            [
+              "B293-B31"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            727,
+            [
+              "B293-B31"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ]
+        ],
+        "traceability_parts": [
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+            "blob": "319484424a1c66a8796b5f343019b8396c0b9d69"
+          },
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+            "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3"
+          }
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP330-S21",
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        2113,
+        2150
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "review": "Mutable slotted PipelineState retains directional results, reusable flag, initial geometry, internal IDs, full E/StopAll/S/candidates and detector/Blue/A maps, invalid A/S IDs, optional primary/live. FullDirectionState holds initial S separately, default fresh StopAll list. No deep copies on construction.",
+      "handoff": "Accepted vs candidate distinction supplied by orchestration; presence in container not proof of calculation validity or display.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "TB-M05 / records",
+        "paths": [
+          "Algorithms/V3/17_Trading_Bridge.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/15_Trend_Reversal.md"
+        ]
+      },
+      "w1": {
+        "batch": "B09",
+        "overlapping_row_links": [
+          [
+            "arithmetic",
+            116,
+            [
+              "CP294-G01"
+            ],
+            "CP294_B09_Full_Direction_Review_01"
+          ],
+          [
+            "arithmetic",
+            117,
+            [
+              "CP294-G01"
+            ],
+            "CP294_B09_Full_Direction_Review_01"
+          ],
+          [
+            "calls",
+            728,
+            [
+              "CP294-G01"
+            ],
+            "CP294_B09_Full_Direction_Review_01"
+          ],
+          [
+            "calls",
+            730,
+            [
+              "CP294-G02"
+            ],
+            "CP294_B09_Full_Direction_Review_01"
+          ],
+          [
+            "calls",
+            729,
+            [
+              "CP294-G02"
+            ],
+            "CP294_B09_Full_Direction_Review_01"
+          ]
+        ],
+        "traceability_parts": [
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+            "blob": "319484424a1c66a8796b5f343019b8396c0b9d69"
+          },
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+            "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3"
+          }
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP330-S22",
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        3713,
+        3735
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "review": "Clear three caches before fetching optional clear_market_indexes; nonnull callback invoked before try. Finally invoke same callback then clear time caches. Setup exception bypasses try; callback failure in finally can prevent later time clears. RAW live entry forwards rows and fresh preparer to common runner.",
+      "handoff": "Native runner calls prepare_pipeline_state without live trading-stage continuation, closed regime resolver separate. No runtime guarantee.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "TB-M01 / scope",
+        "paths": [
+          "Algorithms/V3/17_Trading_Bridge.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/15_Trend_Reversal.md"
+        ]
+      },
+      "w1": {
+        "batch": "B09",
+        "overlapping_row_links": [
+          [
+            "branches",
+            547,
+            [
+              "B293-B32"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "branches",
+            548,
+            [
+              "B293-B32"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "branches",
+            549,
+            [
+              "B293-B33"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "branches",
+            550,
+            [
+              "B293-B33"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "branches",
+            551,
+            [
+              "B293-B33"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "branches",
+            552,
+            [
+              "B293-B33"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "comparisons",
+            331,
+            [
+              "B293-B32"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "comparisons",
+            332,
+            [
+              "B293-B33"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            1206,
+            [
+              "B293-B32"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            1207,
+            [
+              "B293-B32"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            1208,
+            [
+              "B293-B32"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            1209,
+            [
+              "B293-B33"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            1210,
+            [
+              "B293-B33"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ],
+          [
+            "calls",
+            1211,
+            [
+              "B293-B34"
+            ],
+            "CP293_B09_Market_Context_Review_02"
+          ]
+        ],
+        "traceability_parts": [
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_01.json",
+            "blob": "319484424a1c66a8796b5f343019b8396c0b9d69"
+          },
+          {
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP341_B09_W1_Traceability_02.json",
+            "blob": "e39e49da59917ce9a9c0842de4d785027f02efe3"
+          }
+        ]
+      },
+      "cp332_group_ids": [
+        "CP332-G12"
+      ]
+    }
+  ],
+  "accessors": [],
+  "additional_source_anchors": [
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "range": [
+        51,
+        53
+      ],
+      "contract": "Existing Decimal returned unchanged, other input converted with Decimal(str(value)). Typed equality cache is Bridge-owned."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        886,
+        960
+      ],
+      "contract": "Index constructor retains source, capacity powers of two, earliest equal extrema. Refresh requires nonshrinking range, clears history on earlier-than-tail dirty, updates times/leaves/parents."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        255,
+        277
+      ],
+      "contract": "Checked live row iterator numerical int equality, positive, nondecreasing. Persistent prices before private cache additions; pre-yield validation."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2055,
+        2079
+      ],
+      "contract": "Batch versus retained view context construction; prepared index registration and chronology owner."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3738,
+        3767
+      ],
+      "contract": "Closed regime resolver conditional; native active full-stage preparation passes no live stage argument."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP341-F01",
+      "status": "REVIEWED_NO_ACTIVE_SPEC_CHANGE_REQUIRED",
+      "detail": "Active detailed RAW/Live/Bridge clauses already preserve actual cache equality, transaction scope and chronology. CP341 clarifies historical row linkage and failure/conditional handoffs without rewriting source."
+    },
+    {
+      "id": "CP341-F02",
+      "status": "QUALIFIED",
+      "detail": "W1 normalized index is traceability, not fresh semantic review of every W1 operation. Access/effect/exit categories retained in original evidence, not counted here."
+    },
+    {
+      "id": "CP341-F03",
+      "status": "OPEN_CROSS_OWNER",
+      "detail": "28 Bridge and 2 Live queue records and 3 accessors remain; semantic F05, R01/R02 remain open."
+    }
+  ],
+  "validation": {
+    "prior_transition_count": 316,
+    "prior_accessors": 20,
+    "prior_cp332_sites": 125,
+    "prior_cp333_contracts": 37,
+    "queue_entry": 185,
+    "previous_reviewed": 138,
+    "new_reviewed": 17,
+    "unique_new_review_ids": 17,
+    "cumulative_reviewed": 155,
+    "queue_remaining": 30,
+    "accessor_entry": 9,
+    "previous_accessor_reviewed": 6,
+    "new_accessor_reviewed": 0,
+    "cumulative_accessor_reviewed": 6,
+    "remaining_accessor_sites": 3,
+    "remaining_accessor_ids": [
+      "CP322-E02",
+      "CP322-E03",
+      "CP322-E04"
+    ],
+    "remaining_queue_by_path": {
+      "engine/bridge/trading_pipeline.py": 28,
+      "engine/bridge/live_pipeline.py": 2
+    },
+    "w1_b09_rows": 2317,
+    "w1_b09_category_counts": {
+      "branches": 562,
+      "comparisons": 337,
+      "arithmetic": 173,
+      "calls": 1245
+    },
+    "w1_overlap_occurrences": 257,
+    "w1_crosswalk_recorded_prior_row_disagreements": 0,
+    "w1_ledger_membership_checked": true,
+    "source_modules": 1,
+    "runtime": "NOT_RUN",
+    "raw": "NOT_RUN"
+  },
+  "remaining": "CP342 / W2 Trading Pipeline serialization and chronology queue: 28 remaining Bridge transition records, CP322-E02/E03/E04, then 2 Live records; split by projection, range/Primary and accepted ledger as warranted. Use CP341 normalized B09 traceability parts. F05 and CP333-R01/R02 remain OPEN."
+}
